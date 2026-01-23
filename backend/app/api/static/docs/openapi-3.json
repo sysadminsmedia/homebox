@@ -232,6 +232,456 @@
                 }
             }
         },
+        "/v1/entities/{id}/attachments": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Items Attachments"
+                ],
+                "summary": "Create Item Attachment",
+                "parameters": [
+                    {
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/postV1Entities_id_attachments"
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.ItemOut"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/validate.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/{id}/attachments/{attachment_id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Items Attachments"
+                ],
+                "summary": "Get Item Attachment",
+                "parameters": [
+                    {
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Attachment ID",
+                        "name": "attachment_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/octet-stream": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.ItemAttachmentToken"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Items Attachments"
+                ],
+                "summary": "Update Item Attachment",
+                "parameters": [
+                    {
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Attachment ID",
+                        "name": "attachment_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/repo.EntityAttachmentUpdate"
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.ItemOut"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Items Attachments"
+                ],
+                "summary": "Delete Item Attachment",
+                "parameters": [
+                    {
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Attachment ID",
+                        "name": "attachment_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/entities/{id}/maintenance": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Item Maintenance"
+                ],
+                "summary": "Get Maintenance Log",
+                "parameters": [
+                    {
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "x-enum-varnames": [
+                            "MaintenanceFilterStatusScheduled",
+                            "MaintenanceFilterStatusCompleted",
+                            "MaintenanceFilterStatusBoth"
+                        ],
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "scheduled",
+                                "completed",
+                                "both"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/repo.MaintenanceEntryWithDetails"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Item Maintenance"
+                ],
+                "summary": "Create Maintenance Entry",
+                "parameters": [
+                    {
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/repo.MaintenanceEntryCreate"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.MaintenanceEntry"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entitytype": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "EntityTypes"
+                ],
+                "summary": "Query All Entity Types",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/repo.EntityType"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "EntityTypes"
+                ],
+                "summary": "Create Entity Type",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/repo.EntityTypeCreate"
+                            }
+                        }
+                    },
+                    "description": "Entity Type Data",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.EntityType"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entitytype/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "EntityTypes"
+                ],
+                "summary": "Get One Entity Type",
+                "parameters": [
+                    {
+                        "description": "Entity Type ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.EntityType"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "EntityTypes"
+                ],
+                "summary": "Update Entity Type",
+                "parameters": [
+                    {
+                        "description": "Entity Type ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/repo.EntityTypeUpdate"
+                            }
+                        }
+                    },
+                    "description": "Entity Type Data",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.EntityType"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "EntityTypes"
+                ],
+                "summary": "Delete Entity Type",
+                "parameters": [
+                    {
+                        "description": "Entity Type ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/repo.EntityTypeDelete"
+                            }
+                        }
+                    },
+                    "description": "Entity Type Delete Options",
+                    "required": true
+                },
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
         "/v1/groups": {
             "get": {
                 "security": [
@@ -712,7 +1162,8 @@
                 "tags": [
                     "Items"
                 ],
-                "summary": "Query All Items",
+                "summary": "(Deprecated) Query All Items",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "search string",
@@ -798,6 +1249,7 @@
                     "Items"
                 ],
                 "summary": "Create Item",
+                "deprecated": true,
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -833,7 +1285,8 @@
                 "tags": [
                     "Items"
                 ],
-                "summary": "Export Items",
+                "summary": "(Deprecated) Export Items",
+                "deprecated": true,
                 "responses": {
                     "200": {
                         "description": "text/csv",
@@ -858,7 +1311,8 @@
                 "tags": [
                     "Items"
                 ],
-                "summary": "Get All Custom Field Names",
+                "summary": "(Deprecated) Get All Custom Field Names",
+                "deprecated": true,
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -886,7 +1340,8 @@
                 "tags": [
                     "Items"
                 ],
-                "summary": "Get All Custom Field Values",
+                "summary": "(Deprecated) Get All Custom Field Values",
+                "deprecated": true,
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -914,7 +1369,8 @@
                 "tags": [
                     "Items"
                 ],
-                "summary": "Import Items",
+                "summary": "(Deprecated) Import Items",
+                "deprecated": true,
                 "requestBody": {
                     "content": {
                         "multipart/form-data": {
@@ -952,7 +1408,8 @@
                 "tags": [
                     "Items"
                 ],
-                "summary": "Get Item",
+                "summary": "(Deprecated) Get Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Item ID",
@@ -986,7 +1443,8 @@
                 "tags": [
                     "Items"
                 ],
-                "summary": "Update Item",
+                "summary": "(Deprecated) Update Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Item ID",
@@ -1031,7 +1489,8 @@
                 "tags": [
                     "Items"
                 ],
-                "summary": "Delete Item",
+                "summary": "(Deprecated) Delete Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Item ID",
@@ -1058,7 +1517,8 @@
                 "tags": [
                     "Items"
                 ],
-                "summary": "Update Item",
+                "summary": "(Deprecated) Update Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Item ID",
@@ -1106,6 +1566,7 @@
                     "Items Attachments"
                 ],
                 "summary": "Create Item Attachment",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Item ID",
@@ -1118,37 +1579,7 @@
                     }
                 ],
                 "requestBody": {
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "file": {
-                                        "description": "File attachment",
-                                        "type": "string",
-                                        "format": "binary"
-                                    },
-                                    "type": {
-                                        "description": "Type of file",
-                                        "type": "string"
-                                    },
-                                    "primary": {
-                                        "description": "Is this the primary attachment",
-                                        "type": "boolean"
-                                    },
-                                    "name": {
-                                        "description": "name of the file including extension",
-                                        "type": "string"
-                                    }
-                                },
-                                "required": [
-                                    "file",
-                                    "name"
-                                ]
-                            }
-                        }
-                    },
-                    "required": true
+                    "$ref": "#/components/requestBodies/postV1Entities_id_attachments"
                 },
                 "responses": {
                     "200": {
@@ -1185,6 +1616,7 @@
                     "Items Attachments"
                 ],
                 "summary": "Get Item Attachment",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Item ID",
@@ -1228,6 +1660,7 @@
                     "Items Attachments"
                 ],
                 "summary": "Update Item Attachment",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Item ID",
@@ -1249,15 +1682,7 @@
                     }
                 ],
                 "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/repo.ItemAttachmentUpdate"
-                            }
-                        }
-                    },
-                    "description": "Attachment Update",
-                    "required": true
+                    "$ref": "#/components/requestBodies/repo.EntityAttachmentUpdate"
                 },
                 "responses": {
                     "200": {
@@ -1282,6 +1707,7 @@
                     "Items Attachments"
                 ],
                 "summary": "Delete Item Attachment",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Item ID",
@@ -1367,6 +1793,7 @@
                     "Item Maintenance"
                 ],
                 "summary": "Get Maintenance Log",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Item ID",
@@ -1421,6 +1848,7 @@
                     "Item Maintenance"
                 ],
                 "summary": "Create Maintenance Entry",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Item ID",
@@ -1433,15 +1861,7 @@
                     }
                 ],
                 "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/repo.MaintenanceEntryCreate"
-                            }
-                        }
-                    },
-                    "description": "Entry Data",
-                    "required": true
+                    "$ref": "#/components/requestBodies/repo.MaintenanceEntryCreate"
                 },
                 "responses": {
                     "201": {
@@ -1467,7 +1887,8 @@
                 "tags": [
                     "Items"
                 ],
-                "summary": "Get the full path of an item",
+                "summary": "(Deprecated) Get the full path of an item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Item ID",
@@ -1638,7 +2059,8 @@
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Get All Locations",
+                "summary": "(Deprecated) Get All Locations",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Filter locations with parents",
@@ -1674,7 +2096,8 @@
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Create Location",
+                "summary": "(Deprecated) Create Location",
+                "deprecated": true,
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1710,7 +2133,8 @@
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Get Locations Tree",
+                "summary": "(Deprecated) Get Locations Tree",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "include items in response tree",
@@ -1748,7 +2172,8 @@
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Get Location",
+                "summary": "(Deprecated) Get Location",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Location ID",
@@ -1782,7 +2207,8 @@
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Update Location",
+                "summary": "(Deprecated) Update Location",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Location ID",
@@ -1827,7 +2253,8 @@
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Delete Location",
+                "summary": "(Deprecated) Delete Location",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Location ID",
@@ -2927,6 +3354,63 @@
         }
     ],
     "components": {
+        "requestBodies": {
+            "postV1Entities_id_attachments": {
+                "content": {
+                    "multipart/form-data": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "file": {
+                                    "description": "File attachment",
+                                    "type": "string",
+                                    "format": "binary"
+                                },
+                                "type": {
+                                    "description": "Type of file",
+                                    "type": "string"
+                                },
+                                "primary": {
+                                    "description": "Is this the primary attachment",
+                                    "type": "boolean"
+                                },
+                                "name": {
+                                    "description": "name of the file including extension",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "file",
+                                "name"
+                            ]
+                        }
+                    }
+                },
+                "required": true
+            },
+            "repo.MaintenanceEntryCreate": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/repo.MaintenanceEntryCreate"
+                        }
+                    }
+                },
+                "description": "Entry Data",
+                "required": true
+            },
+            "repo.EntityAttachmentUpdate": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/repo.EntityAttachmentUpdate"
+                        }
+                    }
+                },
+                "description": "Attachment Update",
+                "required": true
+            }
+        },
         "securitySchemes": {
             "Bearer": {
                 "description": "\"Type 'Bearer TOKEN' to correctly set the API Key\"",
@@ -3044,11 +3528,11 @@
             "ent.AttachmentEdges": {
                 "type": "object",
                 "properties": {
-                    "item": {
-                        "description": "Item holds the value of the item edge.",
+                    "entity": {
+                        "description": "Entity holds the value of the entity edge.",
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/ent.Item"
+                                "$ref": "#/components/schemas/ent.Entity"
                             }
                         ]
                     },
@@ -3157,6 +3641,333 @@
                     }
                 }
             },
+            "ent.Entity": {
+                "type": "object",
+                "properties": {
+                    "archived": {
+                        "description": "Archived holds the value of the \"archived\" field.",
+                        "type": "boolean"
+                    },
+                    "asset_id": {
+                        "description": "AssetID holds the value of the \"asset_id\" field.",
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "description": "CreatedAt holds the value of the \"created_at\" field.",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Description holds the value of the \"description\" field.",
+                        "type": "string"
+                    },
+                    "edges": {
+                        "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the EntityQuery when eager-loading is set.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.EntityEdges"
+                            }
+                        ]
+                    },
+                    "id": {
+                        "description": "ID of the ent.",
+                        "type": "string"
+                    },
+                    "import_ref": {
+                        "description": "ImportRef holds the value of the \"import_ref\" field.",
+                        "type": "string"
+                    },
+                    "insured": {
+                        "description": "Insured holds the value of the \"insured\" field.",
+                        "type": "boolean"
+                    },
+                    "lifetime_warranty": {
+                        "description": "LifetimeWarranty holds the value of the \"lifetime_warranty\" field.",
+                        "type": "boolean"
+                    },
+                    "manufacturer": {
+                        "description": "Manufacturer holds the value of the \"manufacturer\" field.",
+                        "type": "string"
+                    },
+                    "model_number": {
+                        "description": "ModelNumber holds the value of the \"model_number\" field.",
+                        "type": "string"
+                    },
+                    "name": {
+                        "description": "Name holds the value of the \"name\" field.",
+                        "type": "string"
+                    },
+                    "notes": {
+                        "description": "Notes holds the value of the \"notes\" field.",
+                        "type": "string"
+                    },
+                    "purchase_from": {
+                        "description": "PurchaseFrom holds the value of the \"purchase_from\" field.",
+                        "type": "string"
+                    },
+                    "purchase_price": {
+                        "description": "PurchasePrice holds the value of the \"purchase_price\" field.",
+                        "type": "number"
+                    },
+                    "purchase_time": {
+                        "description": "PurchaseTime holds the value of the \"purchase_time\" field.",
+                        "type": "string"
+                    },
+                    "quantity": {
+                        "description": "Quantity holds the value of the \"quantity\" field.",
+                        "type": "integer"
+                    },
+                    "serial_number": {
+                        "description": "SerialNumber holds the value of the \"serial_number\" field.",
+                        "type": "string"
+                    },
+                    "sold_notes": {
+                        "description": "SoldNotes holds the value of the \"sold_notes\" field.",
+                        "type": "string"
+                    },
+                    "sold_price": {
+                        "description": "SoldPrice holds the value of the \"sold_price\" field.",
+                        "type": "number"
+                    },
+                    "sold_time": {
+                        "description": "SoldTime holds the value of the \"sold_time\" field.",
+                        "type": "string"
+                    },
+                    "sold_to": {
+                        "description": "SoldTo holds the value of the \"sold_to\" field.",
+                        "type": "string"
+                    },
+                    "sync_child_entities_locations": {
+                        "description": "SyncChildEntitiesLocations holds the value of the \"sync_child_entities_locations\" field.",
+                        "type": "boolean"
+                    },
+                    "updated_at": {
+                        "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                        "type": "string"
+                    },
+                    "warranty_details": {
+                        "description": "WarrantyDetails holds the value of the \"warranty_details\" field.",
+                        "type": "string"
+                    },
+                    "warranty_expires": {
+                        "description": "WarrantyExpires holds the value of the \"warranty_expires\" field.",
+                        "type": "string"
+                    }
+                }
+            },
+            "ent.EntityEdges": {
+                "type": "object",
+                "properties": {
+                    "attachments": {
+                        "description": "Attachments holds the value of the attachments edge.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ent.Attachment"
+                        }
+                    },
+                    "children": {
+                        "description": "Children holds the value of the children edge.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ent.Entity"
+                        }
+                    },
+                    "entity": {
+                        "description": "Entity holds the value of the entity edge.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ent.Entity"
+                        }
+                    },
+                    "fields": {
+                        "description": "Fields holds the value of the fields edge.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ent.EntityField"
+                        }
+                    },
+                    "group": {
+                        "description": "Group holds the value of the group edge.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.Group"
+                            }
+                        ]
+                    },
+                    "location": {
+                        "description": "Location holds the value of the location edge.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.Entity"
+                            }
+                        ]
+                    },
+                    "maintenance_entries": {
+                        "description": "MaintenanceEntries holds the value of the maintenance_entries edge.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ent.MaintenanceEntry"
+                        }
+                    },
+                    "parent": {
+                        "description": "Parent holds the value of the parent edge.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.Entity"
+                            }
+                        ]
+                    },
+                    "tag": {
+                        "description": "Tag holds the value of the tag edge.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ent.Tag"
+                        }
+                    },
+                    "type": {
+                        "description": "Type holds the value of the type edge.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.EntityType"
+                            }
+                        ]
+                    }
+                }
+            },
+            "ent.EntityField": {
+                "type": "object",
+                "properties": {
+                    "boolean_value": {
+                        "description": "BooleanValue holds the value of the \"boolean_value\" field.",
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "description": "CreatedAt holds the value of the \"created_at\" field.",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Description holds the value of the \"description\" field.",
+                        "type": "string"
+                    },
+                    "edges": {
+                        "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the EntityFieldQuery when eager-loading is set.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.EntityFieldEdges"
+                            }
+                        ]
+                    },
+                    "id": {
+                        "description": "ID of the ent.",
+                        "type": "string"
+                    },
+                    "name": {
+                        "description": "Name holds the value of the \"name\" field.",
+                        "type": "string"
+                    },
+                    "number_value": {
+                        "description": "NumberValue holds the value of the \"number_value\" field.",
+                        "type": "integer"
+                    },
+                    "text_value": {
+                        "description": "TextValue holds the value of the \"text_value\" field.",
+                        "type": "string"
+                    },
+                    "time_value": {
+                        "description": "TimeValue holds the value of the \"time_value\" field.",
+                        "type": "string"
+                    },
+                    "type": {
+                        "description": "Type holds the value of the \"type\" field.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/entityfield.Type"
+                            }
+                        ]
+                    },
+                    "updated_at": {
+                        "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                        "type": "string"
+                    }
+                }
+            },
+            "ent.EntityFieldEdges": {
+                "type": "object",
+                "properties": {
+                    "entity": {
+                        "description": "Entity holds the value of the entity edge.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.Entity"
+                            }
+                        ]
+                    }
+                }
+            },
+            "ent.EntityType": {
+                "type": "object",
+                "properties": {
+                    "color": {
+                        "description": "Color holds the value of the \"color\" field.",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "CreatedAt holds the value of the \"created_at\" field.",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Description holds the value of the \"description\" field.",
+                        "type": "string"
+                    },
+                    "edges": {
+                        "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the EntityTypeQuery when eager-loading is set.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.EntityTypeEdges"
+                            }
+                        ]
+                    },
+                    "icon": {
+                        "description": "Icon holds the value of the \"icon\" field.",
+                        "type": "string"
+                    },
+                    "id": {
+                        "description": "ID of the ent.",
+                        "type": "string"
+                    },
+                    "is_location": {
+                        "description": "IsLocation holds the value of the \"is_location\" field.",
+                        "type": "boolean"
+                    },
+                    "name": {
+                        "description": "Name holds the value of the \"name\" field.",
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                        "type": "string"
+                    }
+                }
+            },
+            "ent.EntityTypeEdges": {
+                "type": "object",
+                "properties": {
+                    "entities": {
+                        "description": "Entities holds the value of the entities edge.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ent.Entity"
+                        }
+                    },
+                    "group": {
+                        "description": "Group holds the value of the group edge.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.Group"
+                            }
+                        ]
+                    }
+                }
+            },
             "ent.Group": {
                 "type": "object",
                 "properties": {
@@ -3193,6 +4004,20 @@
             "ent.GroupEdges": {
                 "type": "object",
                 "properties": {
+                    "entities": {
+                        "description": "Entities holds the value of the entities edge.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ent.Entity"
+                        }
+                    },
+                    "entity_types": {
+                        "description": "EntityTypes holds the value of the entity_types edge.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ent.EntityType"
+                        }
+                    },
                     "invitation_tokens": {
                         "description": "InvitationTokens holds the value of the invitation_tokens edge.",
                         "type": "array",
@@ -3205,20 +4030,6 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/ent.ItemTemplate"
-                        }
-                    },
-                    "items": {
-                        "description": "Items holds the value of the items edge.",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ent.Item"
-                        }
-                    },
-                    "locations": {
-                        "description": "Locations holds the value of the locations edge.",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ent.Location"
                         }
                     },
                     "notifiers": {
@@ -3292,253 +4103,6 @@
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/ent.Group"
-                            }
-                        ]
-                    }
-                }
-            },
-            "ent.Item": {
-                "type": "object",
-                "properties": {
-                    "archived": {
-                        "description": "Archived holds the value of the \"archived\" field.",
-                        "type": "boolean"
-                    },
-                    "asset_id": {
-                        "description": "AssetID holds the value of the \"asset_id\" field.",
-                        "type": "integer"
-                    },
-                    "created_at": {
-                        "description": "CreatedAt holds the value of the \"created_at\" field.",
-                        "type": "string"
-                    },
-                    "description": {
-                        "description": "Description holds the value of the \"description\" field.",
-                        "type": "string"
-                    },
-                    "edges": {
-                        "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the ItemQuery when eager-loading is set.",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/ent.ItemEdges"
-                            }
-                        ]
-                    },
-                    "id": {
-                        "description": "ID of the ent.",
-                        "type": "string"
-                    },
-                    "import_ref": {
-                        "description": "ImportRef holds the value of the \"import_ref\" field.",
-                        "type": "string"
-                    },
-                    "insured": {
-                        "description": "Insured holds the value of the \"insured\" field.",
-                        "type": "boolean"
-                    },
-                    "lifetime_warranty": {
-                        "description": "LifetimeWarranty holds the value of the \"lifetime_warranty\" field.",
-                        "type": "boolean"
-                    },
-                    "manufacturer": {
-                        "description": "Manufacturer holds the value of the \"manufacturer\" field.",
-                        "type": "string"
-                    },
-                    "model_number": {
-                        "description": "ModelNumber holds the value of the \"model_number\" field.",
-                        "type": "string"
-                    },
-                    "name": {
-                        "description": "Name holds the value of the \"name\" field.",
-                        "type": "string"
-                    },
-                    "notes": {
-                        "description": "Notes holds the value of the \"notes\" field.",
-                        "type": "string"
-                    },
-                    "purchase_from": {
-                        "description": "PurchaseFrom holds the value of the \"purchase_from\" field.",
-                        "type": "string"
-                    },
-                    "purchase_price": {
-                        "description": "PurchasePrice holds the value of the \"purchase_price\" field.",
-                        "type": "number"
-                    },
-                    "purchase_time": {
-                        "description": "PurchaseTime holds the value of the \"purchase_time\" field.",
-                        "type": "string"
-                    },
-                    "quantity": {
-                        "description": "Quantity holds the value of the \"quantity\" field.",
-                        "type": "integer"
-                    },
-                    "serial_number": {
-                        "description": "SerialNumber holds the value of the \"serial_number\" field.",
-                        "type": "string"
-                    },
-                    "sold_notes": {
-                        "description": "SoldNotes holds the value of the \"sold_notes\" field.",
-                        "type": "string"
-                    },
-                    "sold_price": {
-                        "description": "SoldPrice holds the value of the \"sold_price\" field.",
-                        "type": "number"
-                    },
-                    "sold_time": {
-                        "description": "SoldTime holds the value of the \"sold_time\" field.",
-                        "type": "string"
-                    },
-                    "sold_to": {
-                        "description": "SoldTo holds the value of the \"sold_to\" field.",
-                        "type": "string"
-                    },
-                    "sync_child_items_locations": {
-                        "description": "SyncChildItemsLocations holds the value of the \"sync_child_items_locations\" field.",
-                        "type": "boolean"
-                    },
-                    "updated_at": {
-                        "description": "UpdatedAt holds the value of the \"updated_at\" field.",
-                        "type": "string"
-                    },
-                    "warranty_details": {
-                        "description": "WarrantyDetails holds the value of the \"warranty_details\" field.",
-                        "type": "string"
-                    },
-                    "warranty_expires": {
-                        "description": "WarrantyExpires holds the value of the \"warranty_expires\" field.",
-                        "type": "string"
-                    }
-                }
-            },
-            "ent.ItemEdges": {
-                "type": "object",
-                "properties": {
-                    "attachments": {
-                        "description": "Attachments holds the value of the attachments edge.",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ent.Attachment"
-                        }
-                    },
-                    "children": {
-                        "description": "Children holds the value of the children edge.",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ent.Item"
-                        }
-                    },
-                    "fields": {
-                        "description": "Fields holds the value of the fields edge.",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ent.ItemField"
-                        }
-                    },
-                    "group": {
-                        "description": "Group holds the value of the group edge.",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/ent.Group"
-                            }
-                        ]
-                    },
-                    "location": {
-                        "description": "Location holds the value of the location edge.",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/ent.Location"
-                            }
-                        ]
-                    },
-                    "maintenance_entries": {
-                        "description": "MaintenanceEntries holds the value of the maintenance_entries edge.",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ent.MaintenanceEntry"
-                        }
-                    },
-                    "parent": {
-                        "description": "Parent holds the value of the parent edge.",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/ent.Item"
-                            }
-                        ]
-                    },
-                    "tag": {
-                        "description": "Tag holds the value of the tag edge.",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ent.Tag"
-                        }
-                    }
-                }
-            },
-            "ent.ItemField": {
-                "type": "object",
-                "properties": {
-                    "boolean_value": {
-                        "description": "BooleanValue holds the value of the \"boolean_value\" field.",
-                        "type": "boolean"
-                    },
-                    "created_at": {
-                        "description": "CreatedAt holds the value of the \"created_at\" field.",
-                        "type": "string"
-                    },
-                    "description": {
-                        "description": "Description holds the value of the \"description\" field.",
-                        "type": "string"
-                    },
-                    "edges": {
-                        "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the ItemFieldQuery when eager-loading is set.",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/ent.ItemFieldEdges"
-                            }
-                        ]
-                    },
-                    "id": {
-                        "description": "ID of the ent.",
-                        "type": "string"
-                    },
-                    "name": {
-                        "description": "Name holds the value of the \"name\" field.",
-                        "type": "string"
-                    },
-                    "number_value": {
-                        "description": "NumberValue holds the value of the \"number_value\" field.",
-                        "type": "integer"
-                    },
-                    "text_value": {
-                        "description": "TextValue holds the value of the \"text_value\" field.",
-                        "type": "string"
-                    },
-                    "time_value": {
-                        "description": "TimeValue holds the value of the \"time_value\" field.",
-                        "type": "string"
-                    },
-                    "type": {
-                        "description": "Type holds the value of the \"type\" field.",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/itemfield.Type"
-                            }
-                        ]
-                    },
-                    "updated_at": {
-                        "description": "UpdatedAt holds the value of the \"updated_at\" field.",
-                        "type": "string"
-                    }
-                }
-            },
-            "ent.ItemFieldEdges": {
-                "type": "object",
-                "properties": {
-                    "item": {
-                        "description": "Item holds the value of the item edge.",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/ent.Item"
                             }
                         ]
                     }
@@ -3654,75 +4218,7 @@
                         "description": "Location holds the value of the location edge.",
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/ent.Location"
-                            }
-                        ]
-                    }
-                }
-            },
-            "ent.Location": {
-                "type": "object",
-                "properties": {
-                    "created_at": {
-                        "description": "CreatedAt holds the value of the \"created_at\" field.",
-                        "type": "string"
-                    },
-                    "description": {
-                        "description": "Description holds the value of the \"description\" field.",
-                        "type": "string"
-                    },
-                    "edges": {
-                        "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the LocationQuery when eager-loading is set.",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/ent.LocationEdges"
-                            }
-                        ]
-                    },
-                    "id": {
-                        "description": "ID of the ent.",
-                        "type": "string"
-                    },
-                    "name": {
-                        "description": "Name holds the value of the \"name\" field.",
-                        "type": "string"
-                    },
-                    "updated_at": {
-                        "description": "UpdatedAt holds the value of the \"updated_at\" field.",
-                        "type": "string"
-                    }
-                }
-            },
-            "ent.LocationEdges": {
-                "type": "object",
-                "properties": {
-                    "children": {
-                        "description": "Children holds the value of the children edge.",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ent.Location"
-                        }
-                    },
-                    "group": {
-                        "description": "Group holds the value of the group edge.",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/ent.Group"
-                            }
-                        ]
-                    },
-                    "items": {
-                        "description": "Items holds the value of the items edge.",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ent.Item"
-                        }
-                    },
-                    "parent": {
-                        "description": "Parent holds the value of the parent edge.",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/ent.Location"
+                                "$ref": "#/components/schemas/ent.Entity"
                             }
                         ]
                     }
@@ -3755,12 +4251,12 @@
                             }
                         ]
                     },
-                    "id": {
-                        "description": "ID of the ent.",
+                    "entity_id": {
+                        "description": "EntityID holds the value of the \"entity_id\" field.",
                         "type": "string"
                     },
-                    "item_id": {
-                        "description": "ItemID holds the value of the \"item_id\" field.",
+                    "id": {
+                        "description": "ID of the ent.",
                         "type": "string"
                     },
                     "name": {
@@ -3780,11 +4276,11 @@
             "ent.MaintenanceEntryEdges": {
                 "type": "object",
                 "properties": {
-                    "item": {
-                        "description": "Item holds the value of the item edge.",
+                    "entity": {
+                        "description": "Entity holds the value of the entity edge.",
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/ent.Item"
+                                "$ref": "#/components/schemas/ent.Entity"
                             }
                         ]
                     }
@@ -3892,6 +4388,13 @@
             "ent.TagEdges": {
                 "type": "object",
                 "properties": {
+                    "entities": {
+                        "description": "Entities holds the value of the entities edge.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ent.Entity"
+                        }
+                    },
                     "group": {
                         "description": "Group holds the value of the group edge.",
                         "allOf": [
@@ -3899,13 +4402,6 @@
                                 "$ref": "#/components/schemas/ent.Group"
                             }
                         ]
-                    },
-                    "items": {
-                        "description": "Items holds the value of the items edge.",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ent.Item"
-                        }
                     }
                 }
             },
@@ -4058,7 +4554,7 @@
                     }
                 }
             },
-            "itemfield.Type": {
+            "entityfield.Type": {
                 "type": "string",
                 "enum": [
                     "text",
@@ -4118,6 +4614,122 @@
                     },
                     "copyPrefix": {
                         "type": "string"
+                    }
+                }
+            },
+            "repo.EntityAttachment": {
+                "type": "object",
+                "properties": {
+                    "createdAt": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "mimeType": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "primary": {
+                        "type": "boolean"
+                    },
+                    "thumbnail": {
+                        "$ref": "#/components/schemas/ent.Attachment"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    }
+                }
+            },
+            "repo.EntityAttachmentUpdate": {
+                "type": "object",
+                "properties": {
+                    "primary": {
+                        "type": "boolean"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    }
+                }
+            },
+            "repo.EntityType": {
+                "type": "object",
+                "properties": {
+                    "color": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "icon": {
+                        "type": "string"
+                    },
+                    "isLocation": {
+                        "type": "boolean"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "repo.EntityTypeCreate": {
+                "type": "object",
+                "required": [
+                    "isLocation",
+                    "name"
+                ],
+                "properties": {
+                    "color": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "icon": {
+                        "type": "string"
+                    },
+                    "isLocation": {
+                        "type": "boolean"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "repo.EntityTypeDelete": {
+                "type": "object",
+                "properties": {
+                    "replacementId": {
+                        "$ref": "#/components/schemas/uuid.NullUUID"
+                    }
+                }
+            },
+            "repo.EntityTypeUpdate": {
+                "type": "object",
+                "properties": {
+                    "color": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "icon": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1
                     }
                 }
             },
@@ -4192,61 +4804,19 @@
                     }
                 }
             },
-            "repo.ItemAttachment": {
-                "type": "object",
-                "properties": {
-                    "createdAt": {
-                        "type": "string"
-                    },
-                    "id": {
-                        "type": "string"
-                    },
-                    "mimeType": {
-                        "type": "string"
-                    },
-                    "path": {
-                        "type": "string"
-                    },
-                    "primary": {
-                        "type": "boolean"
-                    },
-                    "thumbnail": {
-                        "$ref": "#/components/schemas/ent.Attachment"
-                    },
-                    "title": {
-                        "type": "string"
-                    },
-                    "type": {
-                        "type": "string"
-                    },
-                    "updatedAt": {
-                        "type": "string"
-                    }
-                }
-            },
-            "repo.ItemAttachmentUpdate": {
-                "type": "object",
-                "properties": {
-                    "primary": {
-                        "type": "boolean"
-                    },
-                    "title": {
-                        "type": "string"
-                    },
-                    "type": {
-                        "type": "string"
-                    }
-                }
-            },
             "repo.ItemCreate": {
                 "type": "object",
                 "required": [
+                    "entityType",
                     "name"
                 ],
                 "properties": {
                     "description": {
                         "type": "string",
                         "maxLength": 1000
+                    },
+                    "entityType": {
+                        "type": "string"
                     },
                     "locationId": {
                         "description": "Edges",
@@ -4308,13 +4878,16 @@
                     "attachments": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/repo.ItemAttachment"
+                            "$ref": "#/components/schemas/repo.EntityAttachment"
                         }
                     },
                     "createdAt": {
                         "type": "string"
                     },
                     "description": {
+                        "type": "string"
+                    },
+                    "entityType": {
                         "type": "string"
                     },
                     "fields": {
@@ -4478,6 +5051,9 @@
                         "type": "string"
                     },
                     "description": {
+                        "type": "string"
+                    },
+                    "entityType": {
                         "type": "string"
                     },
                     "id": {
@@ -4808,16 +5384,21 @@
                 "type": "string",
                 "enum": [
                     "location",
+                    "item",
+                    "location",
                     "item"
                 ],
                 "x-enum-varnames": [
                     "ItemTypeLocation",
-                    "ItemTypeItem"
+                    "ItemTypeItem",
+                    "EntityTypeLocation",
+                    "EntityTypeItem"
                 ]
             },
             "repo.ItemUpdate": {
                 "type": "object",
                 "required": [
+                    "entityType",
                     "name"
                 ],
                 "properties": {
@@ -4830,6 +5411,9 @@
                     "description": {
                         "type": "string",
                         "maxLength": 1000
+                    },
+                    "entityType": {
+                        "type": "string"
                     },
                     "fields": {
                         "type": "array",
@@ -4926,8 +5510,14 @@
             },
             "repo.LocationCreate": {
                 "type": "object",
+                "required": [
+                    "entityType"
+                ],
                 "properties": {
                     "description": {
+                        "type": "string"
+                    },
+                    "entityType": {
                         "type": "string"
                     },
                     "name": {
@@ -4952,6 +5542,9 @@
                         "type": "string"
                     },
                     "description": {
+                        "type": "string"
+                    },
+                    "entityType": {
                         "type": "string"
                     },
                     "id": {
@@ -4980,6 +5573,9 @@
                     "description": {
                         "type": "string"
                     },
+                    "entityType": {
+                        "type": "string"
+                    },
                     "id": {
                         "type": "string"
                     },
@@ -5003,6 +5599,9 @@
                     "description": {
                         "type": "string"
                     },
+                    "entityType": {
+                        "type": "string"
+                    },
                     "id": {
                         "type": "string"
                     },
@@ -5016,8 +5615,14 @@
             },
             "repo.LocationUpdate": {
                 "type": "object",
+                "required": [
+                    "entityType"
+                ],
                 "properties": {
                     "description": {
+                        "type": "string"
+                    },
+                    "entityType": {
                         "type": "string"
                     },
                     "id": {
@@ -5521,6 +6126,18 @@
                     "RoleUser",
                     "RoleOwner"
                 ]
+            },
+            "uuid.NullUUID": {
+                "type": "object",
+                "properties": {
+                    "uuid": {
+                        "type": "string"
+                    },
+                    "valid": {
+                        "description": "Valid is true if UUID is not NULL",
+                        "type": "boolean"
+                    }
+                }
             },
             "v1.APISummary": {
                 "type": "object",

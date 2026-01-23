@@ -11,11 +11,11 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
@@ -105,34 +105,19 @@ func (_c *GroupCreate) AddUsers(v ...*User) *GroupCreate {
 	return _c.AddUserIDs(ids...)
 }
 
-// AddLocationIDs adds the "locations" edge to the Location entity by IDs.
-func (_c *GroupCreate) AddLocationIDs(ids ...uuid.UUID) *GroupCreate {
-	_c.mutation.AddLocationIDs(ids...)
+// AddEntityIDs adds the "entities" edge to the Entity entity by IDs.
+func (_c *GroupCreate) AddEntityIDs(ids ...uuid.UUID) *GroupCreate {
+	_c.mutation.AddEntityIDs(ids...)
 	return _c
 }
 
-// AddLocations adds the "locations" edges to the Location entity.
-func (_c *GroupCreate) AddLocations(v ...*Location) *GroupCreate {
+// AddEntities adds the "entities" edges to the Entity entity.
+func (_c *GroupCreate) AddEntities(v ...*Entity) *GroupCreate {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddLocationIDs(ids...)
-}
-
-// AddItemIDs adds the "items" edge to the Item entity by IDs.
-func (_c *GroupCreate) AddItemIDs(ids ...uuid.UUID) *GroupCreate {
-	_c.mutation.AddItemIDs(ids...)
-	return _c
-}
-
-// AddItems adds the "items" edges to the Item entity.
-func (_c *GroupCreate) AddItems(v ...*Item) *GroupCreate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _c.AddItemIDs(ids...)
+	return _c.AddEntityIDs(ids...)
 }
 
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
@@ -178,6 +163,21 @@ func (_c *GroupCreate) AddNotifiers(v ...*Notifier) *GroupCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddNotifierIDs(ids...)
+}
+
+// AddEntityTypeIDs adds the "entity_types" edge to the EntityType entity by IDs.
+func (_c *GroupCreate) AddEntityTypeIDs(ids ...uuid.UUID) *GroupCreate {
+	_c.mutation.AddEntityTypeIDs(ids...)
+	return _c
+}
+
+// AddEntityTypes adds the "entity_types" edges to the EntityType entity.
+func (_c *GroupCreate) AddEntityTypes(v ...*EntityType) *GroupCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddEntityTypeIDs(ids...)
 }
 
 // AddItemTemplateIDs adds the "item_templates" edge to the ItemTemplate entity by IDs.
@@ -334,31 +334,15 @@ func (_c *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.LocationsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.EntitiesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   group.LocationsTable,
-			Columns: []string{group.LocationsColumn},
+			Table:   group.EntitiesTable,
+			Columns: []string{group.EntitiesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(location.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := _c.mutation.ItemsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.ItemsTable,
-			Columns: []string{group.ItemsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -407,6 +391,22 @@ func (_c *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(notifier.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.EntityTypesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.EntityTypesTable,
+			Columns: []string{group.EntityTypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

@@ -1536,21 +1536,21 @@ func HasLocationWith(preds ...predicate.Entity) predicate.Entity {
 	})
 }
 
-// HasLabel applies the HasEdge predicate on the "label" edge.
-func HasLabel() predicate.Entity {
+// HasTag applies the HasEdge predicate on the "tag" edge.
+func HasTag() predicate.Entity {
 	return predicate.Entity(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, LabelTable, LabelPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, true, TagTable, TagPrimaryKey...),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasLabelWith applies the HasEdge predicate on the "label" edge with a given conditions (other predicates).
-func HasLabelWith(preds ...predicate.Label) predicate.Entity {
+// HasTagWith applies the HasEdge predicate on the "tag" edge with a given conditions (other predicates).
+func HasTagWith(preds ...predicate.Tag) predicate.Entity {
 	return predicate.Entity(func(s *sql.Selector) {
-		step := newLabelStep()
+		step := newTagStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
