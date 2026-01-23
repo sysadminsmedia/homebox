@@ -94,6 +94,7 @@
                 "open_new_tab": "Otwórz w nowej karcie"
             },
             "create_modal": {
+                "clear_template": "Wyczyść szablon",
                 "delete_photo": "Usuń zdjęcie",
                 "item_description": "Opis przedmiotu",
                 "item_name": "Nazwa przedmiotu",
@@ -132,41 +133,57 @@
                 "title": "Importuj produkt"
             },
             "selector": {
+                "clear": "Wyczyść wybór pozycji",
                 "no_results": "Brak rezultatów",
                 "placeholder": "Wybierz…",
-                "search_placeholder": "Wpisz, aby wyszukać…"
+                "search_placeholder": "Wpisz, aby wyszukać…",
+                "searching": "Szukam…"
             },
             "view": {
+                "change_details": {
+                    "failed_to_update_item": "Nie udało się zaktualizować danych przedmiotu",
+                    "title": "Zmień dane przedmiotu"
+                },
                 "selectable": {
                     "card": "Karta",
                     "items": "Przedmioty",
                     "no_items": "Brak przedmiotów do wyświetlenia",
+                    "select_all": "Zaznacz wszystko",
+                    "select_card": "Zaznacz kartę",
+                    "select_row": "Zaznacz wiersz",
                     "table": "Tabela"
                 },
                 "table": {
+                    "dropdown": {
+                        "actions": "Akcje",
+                        "change_location": "Zmień lokalizację",
+                        "change_location_success": "Oznaczenie lokalizacji zmienione",
+                        "create_maintenance_item": "Utwórz wpis konserwacyjny dla pozycji",
+                        "create_maintenance_selected": "Utwórz wpis konserwacyjny dla wybranych elementów",
+                        "create_maintenance_success": "Utworzono wpis(y) dot. konserwacji",
+                        "delete_confirmation": "Czy na pewno chcesz usunąć wybrane przedmioty? Tej czynności nie można cofnąć.",
+                        "delete_item": "Usuń przedmiot",
+                        "delete_selected": "Usuń zaznaczone przedmioty",
+                        "download_csv": "Pobierz tabelę jako CSV",
+                        "download_json": "Pobierz tabelę jako JSON",
+                        "duplicate_item": "Duplikuj pozycję",
+                        "duplicate_selected": "Powiel wybrane przedmioty",
+                        "error_deleting": "Bląd usuwania przedmiotu",
+                        "error_duplicating": "Problem podczas duplikowania pozycji",
+                        "open_menu": "Otwórz menu",
+                        "open_multi_tab_warning": "Ze względów bezpieczeństwa przeglądarki domyślnie nie zezwalają na jednoczesne otwieranie wielu kart. Aby to zmienić, postępuj zgodnie z dokumentacją:",
+                        "toggle_expand": "Włącz/wyłącz rozwiń",
+                        "view_item": "Pokaż przedmiot",
+                        "view_items": "Pokaż przedmioty"
+                    },
                     "headers": "Nagłówki",
                     "page": "Strona",
+                    "quick_actions": "Aktywuj Szybkie Akcje i Zaznaczenie",
                     "rows_per_page": "Ilość wierszy na stronę",
+                    "selected_rows": "Zaznaczono {selected} z {total} wierszy.",
                     "table_settings": "Ustawienia Tabeli",
                     "view_item": "Zobacz przedmiot"
                 }
-            }
-        },
-        "label": {
-            "create_modal": {
-                "label_color": "Kolor etykiety",
-                "label_description": "Opis etykiety",
-                "label_name": "Nazwa etykiety",
-                "title": "Stwórz nową etykietę",
-                "toast": {
-                    "already_creating": "Etykieta jest w trakcie tworzenia",
-                    "create_failed": "Nie udało się utworzyć etykiety",
-                    "create_success": "Etykieta utworzona",
-                    "label_name_too_long": "Etykieta nie może być dłuższa niż 50 znaków"
-                }
-            },
-            "selector": {
-                "select_labels": "Wybierz Etykiety"
             }
         },
         "location": {
@@ -181,18 +198,79 @@
                 }
             },
             "selector": {
+                "clear": "Wyczyść wybór lokalizacji",
                 "no_location_found": "Nie znaleziono żadnej lokalizacji",
                 "parent_location": "Nadrzędna lokalizacja",
                 "search_location": "Szukaj Lokalizacji",
                 "select_location": "Wybierz lokalizację"
             },
             "tree": {
-                "no_locations": "Brak dostępnych lokalizacji. Dodaj nowe lokalizacje za pomocą przycisku\n '<span class=\"link-primary\">Utwórz lokalizację</span>' na pasku nawigacyjnym."
+                "no_locations": "Brak dostępnych lokalizacji. Kliknij przycisk Utwórz, aby dodać nową lokalizację."
             }
         },
         "quick_menu": {
             "no_results": "Nie znaleziono wyników.",
             "shortcut_hint": "Użyj klawiszy numerycznych, aby szybko wybrać akcję."
+        },
+        "template": {
+            "apply_template": "Zastosuj szablon",
+            "card": {
+                "delete": "Usuń szablon",
+                "duplicate": "Duplikuj szablon",
+                "edit": "Edytuj szablon"
+            },
+            "confirm_delete": "Usuń ten szablon?",
+            "create_modal": {
+                "title": "Utwórz szablon"
+            },
+            "detail": {
+                "default_values": "Wartości domyślne",
+                "updated": "Zaktualizowane"
+            },
+            "edit_modal": {
+                "title": "Edytuj szablon"
+            },
+            "empty_value": "(puste)",
+            "form": {
+                "custom_fields": "Pola niestandardowe",
+                "default_item_values": "Domyślne wartości pozycji",
+                "default_location": "Lokalizacja domyślna",
+                "default_value": "Wartość domyślna",
+                "field_name": "Nazwa pola",
+                "item_description": "Opis przedmiotu",
+                "item_name": "Nazwa przedmiotu",
+                "lifetime_warranty": "Dożywotnia gwarancja",
+                "location": "Lokalizacja",
+                "manufacturer": "Producent",
+                "model_number": "Model",
+                "no_custom_fields": "Brak niestandardowych pól.",
+                "template_description": "Opis szablonu",
+                "template_name": "Nazwa szablonu"
+            },
+            "hide_defaults": "Ukryj wartości domyślne",
+            "save_as_template": "Zapisz jako szablon",
+            "selector": {
+                "clear": "Wyczyść wybór szablonu",
+                "label": "Szablon (opcjonalnie)",
+                "not_found": "Nie znaleziono szablonu",
+                "search": "Szukaj szablonu...",
+                "select": "Wybierz szablon..."
+            },
+            "show_defaults": "Pokaż wartości domyślne",
+            "toast": {
+                "applied": "Zastosowano szablon „{name}”",
+                "create_failed": "Nie udało się utworzyć szablonu",
+                "created": "Utworzono szablon",
+                "delete_failed": "Nie można usunąć szablonu",
+                "deleted": "Szablon usunięty",
+                "duplicate_failed": "Nie udało się zduplikować szablonu",
+                "duplicated": "Szablon zduplikowany jako \"{name}\"",
+                "load_failed": "Nie udało się załadować szczegółów szablonu",
+                "saved_as_template": "Element zapisany jako szablon \"{name}\"",
+                "update_failed": "Nie udało się zaktualizować szablonu",
+                "updated": "Szablon został zaktualizowany"
+            },
+            "using_template": "Korzystanie z szablonu: {name}"
         }
     },
     "errors": {
@@ -218,19 +296,20 @@
         "follow_dev": "Śledź dewelopera",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"'>' Wersja: { version } Build: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' Wersja: { version } Build: { build } '</a>'"
         },
         "github": "Projekt na GitHubie",
         "insured": "Ubezpieczony",
         "items": "Przedmioty",
         "join_discord": "Dołącz do Discorda",
-        "labels": "Etykiety",
         "loading": "Wczytywanie…",
         "locations": "Lokalizacje",
         "maintenance": "Konserwacja",
         "name": "Nazwa",
         "navigate": "Nawiguj",
+        "no": "Nie",
         "password": "Hasło",
+        "preview": "Podgląd",
         "quantity": "Ilość",
         "read_docs": "Przeczytaj dokumentację",
         "return_home": "Powrót do strony głównej",
@@ -243,15 +322,14 @@
         "updating": "Aktualizacja",
         "value": "Wartość",
         "version": "Wersja:{version}",
-        "welcome": "Witaj, {username}"
+        "welcome": "Witaj, {username}",
+        "yes": "Tak"
     },
     "home": {
-        "labels": "Etykiety",
         "quick_statistics": "Szybkie statystyki",
         "recently_added": "Ostatnio dodane",
         "storage_locations": "Miejsca przechowywania",
         "total_items": "Łączna liczba produktów",
-        "total_labels": "Łączna liczba etykiet",
         "total_locations": "Łączna liczba lokalizacji",
         "total_value": "Łączna wartość"
     },
@@ -260,6 +338,7 @@
         "dont_join_group": "Nie chcesz dołączyć do grupy?",
         "joining_group": "Dołączasz do istniejącej grupy!",
         "login": "Zaloguj się",
+        "or": "lub",
         "register": "Zarejestruj się",
         "remember_me": "Zapamiętaj mnie",
         "set_email": "Jaki jest Twój adres e-mail?",
@@ -271,6 +350,14 @@
             "invalid_email": "Nieprawidłowy adres e-mail",
             "invalid_email_password": "Nieprawidłowy adres e-mail lub hasło",
             "login_success": "Zalogowano pomyślnie",
+            "oidc_access_denied": "Odmowa dostępu: Twoje konto nie ma wymaganej roli/członkostwa w grupie",
+            "oidc_auth_failed": "Błąd uwierzytelnienia OIDC",
+            "oidc_invalid_response": "Otrzymano nieprawidłową odpowiedź OIDC",
+            "oidc_provider_error": "Dostawca OIDC zwrócił błąd",
+            "oidc_security_error": "Błąd bezpieczeństwa OIDC - możliwy atak CSRF",
+            "oidc_session_expired": "Sesja OIDC wygasła",
+            "oidc_token_expired": "Token OIDC wygasł",
+            "oidc_token_invalid": "Podpis tokena OIDC jest nieprawidłowy",
             "problem_registering": "Problem z rejestracją użytkownika",
             "user_registered": "Użytkownik zarejestrowany"
         }
@@ -292,7 +379,16 @@
         "details": "Szczegóły",
         "drag_and_drop": "Przeciągnij i upuść pliki tutaj lub kliknij, aby wybrać pliki",
         "duplicate": {
-            "prefix": "Kopia z "
+            "copy_attachments": "Kopiuj załączniki",
+            "copy_custom_fields": "Kopiuj pola niestandardowe",
+            "copy_maintenance": "Kopiuj konserwację",
+            "custom_prefix": "Kopiuj prefiks",
+            "enable_custom_prefix": "Włącz niestandardowy prefiks",
+            "override_instructions": "Aby zastąpić te ustawienia, przytrzymaj klawisz Shift podczas klikania przycisku duplikowania.",
+            "prefix": "Kopia z ",
+            "prefix_instructions": "Ten prefiks zostanie dodany na początku nazwy duplikatu. Dodaj spację na końcu prefiksu, aby dodać spację między prefiksem a nazwą elementu.",
+            "temporary_title": "Ustawienia tymczasowe",
+            "title": "Duplikuj ustawienia"
         },
         "edit": {
             "edit_attachment_dialog": {
@@ -302,7 +398,8 @@
                 "primary_photo_sub": "Ta opcja jest dostępna tylko dla zdjęć. Tylko jedno zdjęcie może być zdjęciem głównym. Po wybraniu tej opcji, bieżące zdjęcie główne (jeśli takie istnieje) zostanie odznaczone.",
                 "select_type": "Wybierz typ",
                 "title": "Edycja załącznika"
-            }
+            },
+            "view_image": "Zobacz obraz"
         },
         "edit_details": "Edytuj szczegóły",
         "field_selector": "Selektor pól",
@@ -319,7 +416,6 @@
         "manufacturer": "Producent",
         "model_number": "Model",
         "name": "Nazwa",
-        "negate_labels": "Neguj wybrane etykiety",
         "next_page": "Następna strona",
         "no_attachments": "Nie znaleziono załączników",
         "no_results": "Nie znaleziono przedmiotów",
@@ -386,18 +482,6 @@
         "warranty": "Gwarancja",
         "warranty_details": "Szczegóły gwarancji",
         "warranty_expires": "Gwarancja wygasa"
-    },
-    "labels": {
-        "label_delete_confirm": "Czy na pewno chcesz usunąć tę etykietę? Tej czynności nie można cofnąć.",
-        "no_results": "Nie znaleziono etykiet",
-        "toast": {
-            "failed_delete_label": "Nie udało się usunąć etykiety",
-            "failed_load_label": "Nie udało się załadować etykiety",
-            "failed_update_label": "Nie udało się zaktualizować etykiety",
-            "label_deleted": "Etykieta usunięta",
-            "label_updated": "Etykieta zaktualizowana"
-        },
-        "update_label": "Aktualizuj etykietę"
     },
     "languages": {
         "bs-BA": "Bośniacki (Bośnia i Hercegowina)",
@@ -489,7 +573,6 @@
     },
     "menu": {
         "create_item": "Przedmiot / Zasób",
-        "create_label": "Etykieta",
         "create_location": "Lokalizacja",
         "home": "Strona główna",
         "locations": "Lokalizacje",
@@ -497,7 +580,13 @@
         "profile": "Profil",
         "scanner": "Skaner",
         "search": "Wyszukaj",
-        "tools": "Narzędzia"
+        "templates": "Szablony"
+    },
+    "pages": {
+        "templates": {
+            "no_templates": "Brak szablonów.",
+            "title": "Szablony"
+        }
     },
     "profile": {
         "active": "Aktywny",
@@ -511,11 +600,11 @@
         "display_legacy_header": "{ currentValue, select, true {Wyłącz starszy nagłówek} false {Włącz starszy nagłówek} other {Brak wartości}}",
         "enabled": "Włączone",
         "example": "Przykład",
-        "gen_invite": "Wygeneruj link z zaproszeniem",
         "group_settings": "Ustawienia grupy",
         "group_settings_sub": "Ustawienia grupy udostępnione. Może być konieczne odświeżenie strony, aby niektóre ustawienia zostały zastosowane.",
         "inactive": "Nieaktywny",
         "language": "Język",
+        "legacy_image_fit": "{ currentValue, select, true {Wyłącz dopasowanie starszej wersji: Dopasuj obraz za pomocą pasków} false {Włącz dopasowanie starszej wersji: Wypełnij obraz za pomocą kadrowania} other {Nie trafiono}}",
         "new_password": "Nowe hasło",
         "no_notifiers": "Nie skonfigurowano powiadomień",
         "no_override": "Bez nadpisania",
@@ -554,8 +643,8 @@
             "bordered_labels": "Etykiety obramowane",
             "generate_page": "Wygeneruj stronę",
             "input_placeholder": "Wpisz",
-            "instruction_1": "Generator etykiet Homebox to narzędzie, które pomoże Ci drukować etykiety do twojej kolekcji. Są to etykiety do\ndruku z wyprzedzeniem, dzięki czemu możesz wydrukować wiele etykiet i mieć je gotowe do użycia",
-            "instruction_2": "W związku z tym etykiety te działają poprzez drukowanie kodu QR URL i informacji o AssetID na etykiecie. \nJeśli wyłączyłeś/aś AssetID w ustawieniach Homebox, nadal możesz korzystać z tego narzędzia, ale AssetID nie będzie odnosić się do żadnego elementu",
+            "instruction_1": "Generator etykiet HomeBox to narzędzie, które pomoże Ci drukować etykiety do twojej kolekcji. Są to etykiety do\n druku z wyprzedzeniem, dzięki czemu możesz wydrukować wiele etykiet i mieć je gotowe do użycia",
+            "instruction_2": "W związku z tym etykiety te działają poprzez drukowanie kodu QR URL i informacji o AssetID na etykiecie. \nJeśli wyłączyłeś/aś AssetID w ustawieniach HomeBox, nadal możesz korzystać z tego narzędzia, ale AssetID nie będzie odnosić się do żadnego elementu",
             "instruction_3": "Ta funkcja jest na wczesnym etapie rozwoju i może ulec zmianie w przyszłych wersjach. Jeśli masz jakieś uwagi, prześlij je\nw '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'dyskusji na GitHubie'</a>'",
             "label_height": "Wysokość etykiety",
             "label_width": "Szerokość etykiety",
@@ -567,6 +656,13 @@
             "page_top_padding": "Wypełnienie górnej części strony",
             "page_width": "Szerokość strony",
             "qr_code_example": "Przykład kodu QR",
+            "replace_homebox_behavior": "Zastąp zachowanie tekstu „HomeBox”",
+            "replace_homebox_behavior_always_replace": "Zawsze wymieniaj „HomeBox”",
+            "replace_homebox_behavior_item_no_location": "Zastąp „HomeBox”, gdy element nie ma lokalizacji",
+            "replace_homebox_behavior_item_no_name": "Zastąp „HomeBox”, gdy element nie ma nazwy",
+            "replace_homebox_behavior_item_no_name_no_location": "Zastąp „HomeBox”, gdy element nie ma nazwy ani lokalizacji",
+            "replace_homebox_behavior_show_homebox": "Pokaż \"HomeBox\"",
+            "replace_homebox_text": "Wstawiany tekst",
             "tip_1": "Ustawienia domyślne są skonfigurowane dla\n'<a href=\"https://www.avery.com/templates/5260\">'arkuszy etykiet Avery 5260'</a>'. Jeśli używasz innego arkusza,\nmusisz dostosować ustawienia do swojego arkusza.",
             "tip_2": "Jeśli dostosowujesz arkusz, jego wymiary są podane w calach. Podczas tworzenia arkusza 5260 zauważyłem, że\nwymiary użyte w ich szablonie nie odpowiadały wymiarom potrzebnym do wydrukowania w polach.\n'<b>'Przygotuj się na metodę prób i błędów.'</b>'",
             "tip_3": "Podczas drukowania pamiętaj o:\n'<ol><li>'Ustaw marginesy na 0 lub Brak'</li><li>'Ustaw skalowanie na 100%'</li><li>'Wyłącz drukowanie dwustronne'</li><li>'Wydrukuj stronę testową przed wydrukowaniem wielu stron'</li></ol>'",
@@ -606,12 +702,22 @@
             "set_primary_photo_button": "Ustaw główne zdjęcie",
             "set_primary_photo_confirm": "Czy na pewno chcesz ustawić zdjęcia główne? To może chwilę potrwać i nie można tego cofnąć.",
             "set_primary_photo_sub": "W wersji v0.10.0 Homebox pole głównego obrazu zostało dodane do załączników typu zdjęcie. Ta akcja ustawi pole głównego obrazu do pierwszego zdjęcia w załącznikach z bazy danych, jeżeli nie jest już ustawione. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Zobacz GitHub PR #576'</a>'",
+            "wipe_inventory": "Wyczyść inwentarz",
+            "wipe_inventory_button": "Wyczyść inwentarz",
+            "wipe_inventory_confirm": "Czy na pewno chcesz wyczyścić całe zapasy? Spowoduje to usunięcie wszystkich elementów i nie będzie można ich cofnąć.",
+            "wipe_inventory_locations": "Wyczyść również wszystkie lokalizacje",
+            "wipe_inventory_maintenance": "Wyczyść również wszystkie zapisy konserwacji",
+            "wipe_inventory_note": "Uwaga: tylko właściciele grup mogą wykonać tę czynność.",
+            "wipe_inventory_sub": "Trwale usuwa wszystkie pozycje w Twoim magazynie. Ta czynność jest nieodwracalna i spowoduje usunięcie wszystkich danych przedmiotu, w tym załączników i zdjęć.",
             "zero_datetimes": "Wyzeruj daty i godziny przedmiotów",
             "zero_datetimes_button": "Wyzeruj daty i godziny przedmiotów",
             "zero_datetimes_confirm": "Czy na pewno chcesz zresetować wszystkie wartości daty i godziny? Może to chwilę potrwać i nie można tego cofnąć.",
             "zero_datetimes_sub": "Resetuje wartość czasu dla wszystkich pól daty i godziny w Twoim inwentarzu, ustawiając ją na początek dnia. Jest to rozwiązanie problemu, który pojawił się we wczesnej fazie rozwoju aplikacji, powodując zapisywanie wartości czasu wraz z datą, co skutkowało nieprawidłowym wyświetlaniem wartości w polach daty. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Zobacz szczegóły w GitHub Issue #236'</a>'"
         },
         "actions_sub": "Zastosuj akcje zbiorczo do swojego inwentarza. Są to działania nieodwracalne. '<b>'Bądź ostrożny.'</b>",
+        "demo_mode_error": {
+            "wipe_inventory": "Zapasy, etykiety, lokalizacje i rejestry konserwacji nie mogą zostać wyczyszczone, gdy HomeBox jest w trybie demonstracyjnym."
+        },
         "import_export": "Import/eksport",
         "import_export_set": {
             "export": "Eksportuj inwentarz",
@@ -639,7 +745,9 @@
             "failed_ensure_ids": "Nie udało się sprawdzić identyfikatorów zasobów.",
             "failed_ensure_import_refs": "Nie udało się zapewnić import_ref.",
             "failed_set_primary_photos": "Nie udało się ustawić głównych zdjęć.",
-            "failed_zero_datetimes": "Nie udało się zresetować wartości daty i godziny."
+            "failed_wipe_inventory": "Nie udało się wyczyścić inwentarza.",
+            "failed_zero_datetimes": "Nie udało się zresetować wartości daty i godziny.",
+            "wipe_inventory_success": "Pomyślnie wyczyszczono zasoby. Usunięto: { results }"
         }
     }
 }

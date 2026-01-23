@@ -59,9 +59,10 @@ type (
 	}
 )
 
-func (r *NotifierRepository) GetByUser(ctx context.Context, userID uuid.UUID) ([]NotifierOut, error) {
+func (r *NotifierRepository) GetByUser(ctx context.Context, userID uuid.UUID, tenantID uuid.UUID) ([]NotifierOut, error) {
 	notifier, err := r.db.Notifier.Query().
 		Where(notifier.UserID(userID)).
+		Where(notifier.GroupID(tenantID)).
 		Order(ent.Asc(notifier.FieldName)).
 		All(ctx)
 

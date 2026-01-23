@@ -10,7 +10,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 )
 
@@ -27,7 +27,7 @@ type (
 		TextValue string     `json:"textValue"`
 	}
 
-	TemplateLabelSummary struct {
+	TemplateTagSummary struct {
 		ID   uuid.UUID `json:"id"`
 		Name string    `json:"name"`
 	}
@@ -43,18 +43,18 @@ type (
 		Notes       string `json:"notes"       validate:"max=1000"`
 
 		// Default values for items
-		DefaultQuantity         *int    `json:"defaultQuantity,omitempty" extensions:"x-nullable"`
+		DefaultQuantity         *int    `json:"defaultQuantity,omitempty"        extensions:"x-nullable"`
 		DefaultInsured          bool    `json:"defaultInsured"`
-		DefaultName             *string `json:"defaultName,omitempty"   extensions:"x-nullable"          validate:"omitempty,max=255"`
-		DefaultDescription      *string `json:"defaultDescription,omitempty"   extensions:"x-nullable"   validate:"omitempty,max=1000"`
-		DefaultManufacturer     *string `json:"defaultManufacturer,omitempty" extensions:"x-nullable"    validate:"omitempty,max=255"`
-		DefaultModelNumber      *string `json:"defaultModelNumber,omitempty"  extensions:"x-nullable"    validate:"omitempty,max=255"`
+		DefaultName             *string `json:"defaultName,omitempty"            validate:"omitempty,max=255"  extensions:"x-nullable"`
+		DefaultDescription      *string `json:"defaultDescription,omitempty"     validate:"omitempty,max=1000" extensions:"x-nullable"`
+		DefaultManufacturer     *string `json:"defaultManufacturer,omitempty"    validate:"omitempty,max=255"  extensions:"x-nullable"`
+		DefaultModelNumber      *string `json:"defaultModelNumber,omitempty"     validate:"omitempty,max=255"  extensions:"x-nullable"`
 		DefaultLifetimeWarranty bool    `json:"defaultLifetimeWarranty"`
-		DefaultWarrantyDetails  *string `json:"defaultWarrantyDetails,omitempty" extensions:"x-nullable" validate:"omitempty,max=1000"`
+		DefaultWarrantyDetails  *string `json:"defaultWarrantyDetails,omitempty" validate:"omitempty,max=1000" extensions:"x-nullable"`
 
-		// Default location and labels
-		DefaultLocationID *uuid.UUID   `json:"defaultLocationId,omitempty" extensions:"x-nullable"`
-		DefaultLabelIDs   *[]uuid.UUID `json:"defaultLabelIds,omitempty" extensions:"x-nullable"`
+		// Default location and tags
+		DefaultLocationID uuid.UUID    `json:"defaultLocationId,omitempty" extensions:"x-nullable"`
+		DefaultTagIDs     *[]uuid.UUID `json:"defaultTagIds,omitempty"   extensions:"x-nullable"`
 
 		// Metadata flags
 		IncludeWarrantyFields bool `json:"includeWarrantyFields"`
@@ -72,18 +72,18 @@ type (
 		Notes       string    `json:"notes"       validate:"max=1000"`
 
 		// Default values for items
-		DefaultQuantity         *int    `json:"defaultQuantity,omitempty" extensions:"x-nullable"`
+		DefaultQuantity         *int    `json:"defaultQuantity,omitempty"        extensions:"x-nullable"`
 		DefaultInsured          bool    `json:"defaultInsured"`
-		DefaultName             *string `json:"defaultName,omitempty"   extensions:"x-nullable"          validate:"omitempty,max=255"`
-		DefaultDescription      *string `json:"defaultDescription,omitempty"   extensions:"x-nullable"   validate:"omitempty,max=1000"`
-		DefaultManufacturer     *string `json:"defaultManufacturer,omitempty" extensions:"x-nullable"    validate:"omitempty,max=255"`
-		DefaultModelNumber      *string `json:"defaultModelNumber,omitempty"  extensions:"x-nullable"    validate:"omitempty,max=255"`
+		DefaultName             *string `json:"defaultName,omitempty"            validate:"omitempty,max=255"  extensions:"x-nullable"`
+		DefaultDescription      *string `json:"defaultDescription,omitempty"     validate:"omitempty,max=1000" extensions:"x-nullable"`
+		DefaultManufacturer     *string `json:"defaultManufacturer,omitempty"    validate:"omitempty,max=255"  extensions:"x-nullable"`
+		DefaultModelNumber      *string `json:"defaultModelNumber,omitempty"     validate:"omitempty,max=255"  extensions:"x-nullable"`
 		DefaultLifetimeWarranty bool    `json:"defaultLifetimeWarranty"`
-		DefaultWarrantyDetails  *string `json:"defaultWarrantyDetails,omitempty" extensions:"x-nullable" validate:"omitempty,max=1000"`
+		DefaultWarrantyDetails  *string `json:"defaultWarrantyDetails,omitempty" validate:"omitempty,max=1000" extensions:"x-nullable"`
 
-		// Default location and labels
-		DefaultLocationID *uuid.UUID   `json:"defaultLocationId,omitempty" extensions:"x-nullable"`
-		DefaultLabelIDs   *[]uuid.UUID `json:"defaultLabelIds,omitempty" extensions:"x-nullable"`
+		// Default location and tags
+		DefaultLocationID uuid.UUID    `json:"defaultLocationId,omitempty" extensions:"x-nullable"`
+		DefaultTagIDs     *[]uuid.UUID `json:"defaultTagIds,omitempty"   extensions:"x-nullable"`
 
 		// Metadata flags
 		IncludeWarrantyFields bool `json:"includeWarrantyFields"`
@@ -120,9 +120,9 @@ type (
 		DefaultLifetimeWarranty bool   `json:"defaultLifetimeWarranty"`
 		DefaultWarrantyDetails  string `json:"defaultWarrantyDetails"`
 
-		// Default location and labels
+		// Default location and tags
 		DefaultLocation *TemplateLocationSummary `json:"defaultLocation"`
-		DefaultLabels   []TemplateLabelSummary   `json:"defaultLabels"`
+		DefaultTags     []TemplateTagSummary   `json:"defaultTags"`
 
 		// Metadata flags
 		IncludeWarrantyFields bool `json:"includeWarrantyFields"`
@@ -177,15 +177,15 @@ func (r *ItemTemplatesRepository) mapTemplateOut(ctx context.Context, template *
 		}
 	}
 
-	// Fetch labels from database using stored IDs
-	labels := make([]TemplateLabelSummary, 0)
-	if len(template.DefaultLabelIds) > 0 {
-		labelEntities, err := r.db.Label.Query().
-			Where(label.IDIn(template.DefaultLabelIds...)).
+	// Fetch tags from database using stored IDs
+	tags := make([]TemplateTagSummary, 0)
+	if len(template.DefaultTagIds) > 0 {
+		tagEntities, err := r.db.Tag.Query().
+			Where(tag.IDIn(template.DefaultTagIds...)).
 			All(ctx)
 		if err == nil {
-			for _, l := range labelEntities {
-				labels = append(labels, TemplateLabelSummary{
+			for _, l := range tagEntities {
+				tags = append(tags, TemplateTagSummary{
 					ID:   l.ID,
 					Name: l.Name,
 				})
@@ -209,7 +209,7 @@ func (r *ItemTemplatesRepository) mapTemplateOut(ctx context.Context, template *
 		DefaultLifetimeWarranty: template.DefaultLifetimeWarranty,
 		DefaultWarrantyDetails:  template.DefaultWarrantyDetails,
 		DefaultLocation:         location,
-		DefaultLabels:           labels,
+		DefaultTags:             tags,
 		IncludeWarrantyFields:   template.IncludeWarrantyFields,
 		IncludePurchaseFields:   template.IncludePurchaseFields,
 		IncludeSoldFields:       template.IncludeSoldFields,
@@ -262,6 +262,7 @@ func (r *ItemTemplatesRepository) GetOne(ctx context.Context, gid uuid.UUID, id 
 
 // Create creates a new template
 func (r *ItemTemplatesRepository) Create(ctx context.Context, gid uuid.UUID, data ItemTemplateCreate) (ItemTemplateOut, error) {
+	// Set up create builder
 	q := r.db.ItemTemplate.Create().
 		SetName(data.Name).
 		SetDescription(data.Description).
@@ -277,12 +278,15 @@ func (r *ItemTemplatesRepository) Create(ctx context.Context, gid uuid.UUID, dat
 		SetIncludeWarrantyFields(data.IncludeWarrantyFields).
 		SetIncludePurchaseFields(data.IncludePurchaseFields).
 		SetIncludeSoldFields(data.IncludeSoldFields).
-		SetGroupID(gid).
-		SetNillableLocationID(data.DefaultLocationID)
+		SetGroupID(gid)
 
-	// Set default label IDs (stored as JSON)
-	if data.DefaultLabelIDs != nil && len(*data.DefaultLabelIDs) > 0 {
-		q.SetDefaultLabelIds(*data.DefaultLabelIDs)
+	// If a default location was provided (uuid != Nil) set it, otherwise leave empty
+	if data.DefaultLocationID != uuid.Nil {
+		q.SetLocationID(data.DefaultLocationID)
+	}
+	// Set default tag IDs (stored as JSON)
+	if data.DefaultTagIDs != nil && len(*data.DefaultTagIDs) > 0 {
+		q.SetDefaultTagIds(*data.DefaultTagIDs)
 	}
 
 	template, err := q.Save(ctx)
@@ -340,18 +344,18 @@ func (r *ItemTemplatesRepository) Update(ctx context.Context, gid uuid.UUID, dat
 		SetIncludePurchaseFields(data.IncludePurchaseFields).
 		SetIncludeSoldFields(data.IncludeSoldFields)
 
-	// Update location
-	if data.DefaultLocationID != nil {
-		updateQ.SetLocationID(*data.DefaultLocationID)
+	// Update location: set when provided (not uuid.Nil), otherwise clear
+	if data.DefaultLocationID != uuid.Nil {
+		updateQ.SetLocationID(data.DefaultLocationID)
 	} else {
 		updateQ.ClearLocation()
 	}
 
-	// Update default label IDs (stored as JSON)
-	if data.DefaultLabelIDs != nil && len(*data.DefaultLabelIDs) > 0 {
-		updateQ.SetDefaultLabelIds(*data.DefaultLabelIDs)
+	// Update default tag IDs (stored as JSON)
+	if data.DefaultTagIDs != nil && len(*data.DefaultTagIDs) > 0 {
+		updateQ.SetDefaultTagIds(*data.DefaultTagIDs)
 	} else {
-		updateQ.ClearDefaultLabelIds()
+		updateQ.ClearDefaultTagIds()
 	}
 
 	_, err = updateQ.Save(ctx)

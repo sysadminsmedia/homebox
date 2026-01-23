@@ -31,4 +31,14 @@ export class ActionsAPI extends BaseAPI {
       url: route("/actions/create-missing-thumbnails"),
     });
   }
+
+  wipeInventory(options?: { wipeTags?: boolean; wipeLocations?: boolean; wipeMaintenance?: boolean }) {
+    return this.http.post<
+      { wipeTags?: boolean; wipeLocations?: boolean; wipeMaintenance?: boolean },
+      ActionAmountResult
+    >({
+      url: route("/actions/wipe-inventory"),
+      body: options || {},
+    });
+  }
 }

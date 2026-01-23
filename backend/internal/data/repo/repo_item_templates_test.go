@@ -249,7 +249,7 @@ func TestItemTemplatesRepository_CreateWithLocation(t *testing.T) {
 
 	// Create template with location
 	data := templateFactory()
-	data.DefaultLocationID = &loc.ID
+	data.DefaultLocationID = loc.ID
 
 	template, err := tRepos.ItemTemplates.Create(context.Background(), tGroup.ID, data)
 	require.NoError(t, err)
@@ -263,34 +263,34 @@ func TestItemTemplatesRepository_CreateWithLocation(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func TestItemTemplatesRepository_CreateWithLabels(t *testing.T) {
-	// Create some labels
-	label1, err := tRepos.Labels.Create(context.Background(), tGroup.ID, LabelCreate{
+func TestItemTemplatesRepository_CreateWithTags(t *testing.T) {
+	// Create some tags
+	tag1, err := tRepos.Tags.Create(context.Background(), tGroup.ID, TagCreate{
 		Name:        fk.Str(10),
 		Description: fk.Str(50),
 	})
 	require.NoError(t, err)
 
-	label2, err := tRepos.Labels.Create(context.Background(), tGroup.ID, LabelCreate{
+	tag2, err := tRepos.Tags.Create(context.Background(), tGroup.ID, TagCreate{
 		Name:        fk.Str(10),
 		Description: fk.Str(50),
 	})
 	require.NoError(t, err)
 
 	t.Cleanup(func() {
-		_ = tRepos.Labels.delete(context.Background(), label1.ID)
-		_ = tRepos.Labels.delete(context.Background(), label2.ID)
+		_ = tRepos.Tags.delete(context.Background(), tag1.ID)
+		_ = tRepos.Tags.delete(context.Background(), tag2.ID)
 	})
 
-	// Create template with labels
+	// Create template with tags
 	data := templateFactory()
-	labelIDs := []uuid.UUID{label1.ID, label2.ID}
-	data.DefaultLabelIDs = &labelIDs
+	tagIDs := []uuid.UUID{tag1.ID, tag2.ID}
+	data.DefaultTagIDs = &tagIDs
 
 	template, err := tRepos.ItemTemplates.Create(context.Background(), tGroup.ID, data)
 	require.NoError(t, err)
 
-	assert.Len(t, template.DefaultLabels, 2)
+	assert.Len(t, template.DefaultTags, 2)
 
 	// Cleanup
 	err = tRepos.ItemTemplates.Delete(context.Background(), tGroup.ID, template.ID)
@@ -311,7 +311,7 @@ func TestItemTemplatesRepository_UpdateRemoveLocation(t *testing.T) {
 
 	// Create template with location
 	data := templateFactory()
-	data.DefaultLocationID = &loc.ID
+	data.DefaultLocationID = loc.ID
 
 	template, err := tRepos.ItemTemplates.Create(context.Background(), tGroup.ID, data)
 	require.NoError(t, err)
@@ -323,7 +323,7 @@ func TestItemTemplatesRepository_UpdateRemoveLocation(t *testing.T) {
 		ID:                template.ID,
 		Name:              template.Name,
 		DefaultQuantity:   &qty,
-		DefaultLocationID: nil, // Remove location
+		DefaultLocationID: uuid.Nil, // Remove location
 	}
 
 	updated, err := tRepos.ItemTemplates.Update(context.Background(), tGroup.ID, updateData)

@@ -53,8 +53,8 @@ type ItemTemplate struct {
 	IncludePurchaseFields bool `json:"include_purchase_fields,omitempty"`
 	// Whether to include sold fields in items created from this template
 	IncludeSoldFields bool `json:"include_sold_fields,omitempty"`
-	// Default label IDs for items created from this template
-	DefaultLabelIds []uuid.UUID `json:"default_label_ids,omitempty"`
+	// Default tag IDs for items created from this template
+	DefaultTagIds []uuid.UUID `json:"default_tag_ids,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ItemTemplateQuery when eager-loading is set.
 	Edges                  ItemTemplateEdges `json:"edges"`
@@ -112,7 +112,7 @@ func (*ItemTemplate) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case itemtemplate.FieldDefaultLabelIds:
+		case itemtemplate.FieldDefaultTagIds:
 			values[i] = new([]byte)
 		case itemtemplate.FieldDefaultInsured, itemtemplate.FieldDefaultLifetimeWarranty, itemtemplate.FieldIncludeWarrantyFields, itemtemplate.FieldIncludePurchaseFields, itemtemplate.FieldIncludeSoldFields:
 			values[i] = new(sql.NullBool)
@@ -245,12 +245,12 @@ func (_m *ItemTemplate) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.IncludeSoldFields = value.Bool
 			}
-		case itemtemplate.FieldDefaultLabelIds:
+		case itemtemplate.FieldDefaultTagIds:
 			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field default_label_ids", values[i])
+				return fmt.Errorf("unexpected type %T for field default_tag_ids", values[i])
 			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &_m.DefaultLabelIds); err != nil {
-					return fmt.Errorf("unmarshal field default_label_ids: %w", err)
+				if err := json.Unmarshal(*value, &_m.DefaultTagIds); err != nil {
+					return fmt.Errorf("unmarshal field default_tag_ids: %w", err)
 				}
 			}
 		case itemtemplate.ForeignKeys[0]:
@@ -366,8 +366,8 @@ func (_m *ItemTemplate) String() string {
 	builder.WriteString("include_sold_fields=")
 	builder.WriteString(fmt.Sprintf("%v", _m.IncludeSoldFields))
 	builder.WriteString(", ")
-	builder.WriteString("default_label_ids=")
-	builder.WriteString(fmt.Sprintf("%v", _m.DefaultLabelIds))
+	builder.WriteString("default_tag_ids=")
+	builder.WriteString(fmt.Sprintf("%v", _m.DefaultTagIds))
 	builder.WriteByte(')')
 	return builder.String()
 }

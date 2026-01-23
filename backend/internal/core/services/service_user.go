@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -43,7 +44,7 @@ type (
 )
 
 // RegisterUser creates a new user and group in the data with the provided data. It also bootstraps the user's group
-// with default Labels and Locations.
+// with default Tags and Locations.
 func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration) (repo.UserOut, error) {
 	log.Debug().
 		Str("name", data.Name).
@@ -64,7 +65,7 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 	case "":
 		log.Debug().Msg("creating new group")
 		creatingGroup = true
-		group, err = svc.repos.Groups.GroupCreate(ctx, "Home")
+		group, err = svc.repos.Groups.GroupCreate(ctx, fmt.Sprintf("%ss' Home", data.Name), uuid.Nil)
 		if err != nil {
 			log.Err(err).Msg("Failed to create group")
 			return repo.UserOut{}, err
@@ -76,17 +77,29 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 			log.Err(err).Msg("Failed to get invitation token")
 			return repo.UserOut{}, err
 		}
+
+		if token.ExpiresAt.Before(time.Now()) {
+			return repo.UserOut{}, errors.New("invitation expired")
+		}
+		if token.Uses <= 0 {
+			return repo.UserOut{}, errors.New("invitation used up")
+		}
+
 		group = token.Group
 	}
 
-	hashed, _ := hasher.HashPassword(data.Password)
+	hashed, err := hasher.HashPassword(data.Password)
+	if err != nil {
+		log.Err(err).Msg("Failed to hash password")
+		return repo.UserOut{}, err
+	}
 	usrCreate := repo.UserCreate{
-		Name:        data.Name,
-		Email:       data.Email,
-		Password:    &hashed,
-		IsSuperuser: false,
-		GroupID:     group.ID,
-		IsOwner:     creatingGroup,
+		Name:           data.Name,
+		Email:          data.Email,
+		Password:       &hashed,
+		IsSuperuser:    false,
+		DefaultGroupID: group.ID,
+		IsOwner:        creatingGroup,
 	}
 
 	usr, err := svc.repos.Users.Create(ctx, usrCreate)
@@ -95,11 +108,11 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 	}
 	log.Debug().Msg("user created")
 
-	// Create the default labels and locations for the group.
+	// Create the default tags and locations for the group.
 	if creatingGroup {
-		log.Debug().Msg("creating default labels")
-		for _, label := range defaultLabels() {
-			_, err := svc.repos.Labels.Create(ctx, usr.GroupID, label)
+		log.Debug().Msg("creating default tags")
+		for _, tag := range defaultTags() {
+			_, err := svc.repos.Tags.Create(ctx, usr.DefaultGroupID, tag)
 			if err != nil {
 				return repo.UserOut{}, err
 			}
@@ -113,7 +126,7 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 
 		log.Debug().Msg("creating default locations")
 		for _, location := range defaultLocations() {
-			_, err := svc.repos.Locations.Create(ctx, usr.GroupID, location)
+			_, err := svc.repos.Locations.Create(ctx, usr.DefaultGroupID, location)
 			if err != nil {
 				return repo.UserOut{}, err
 			}
@@ -123,7 +136,7 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 	// Decrement the invitation token if it was used.
 	if token.ID != uuid.Nil {
 		log.Debug().Msg("decrementing invitation token")
-		err = svc.repos.Groups.InvitationUpdate(ctx, token.ID, token.Uses-1)
+		err = svc.repos.Groups.InvitationDecrement(ctx, token.ID)
 		if err != nil {
 			log.Err(err).Msg("Failed to update invitation token")
 			return repo.UserOut{}, err
@@ -286,19 +299,19 @@ func (svc *UserService) LoginOIDC(ctx context.Context, issuer, subject, email, n
 
 // registerOIDCUser creates a new user for OIDC authentication with issuer+subject identity.
 func (svc *UserService) registerOIDCUser(ctx context.Context, issuer, subject, email, name string) (repo.UserOut, error) {
-	group, err := svc.repos.Groups.GroupCreate(ctx, "Home")
+	group, err := svc.repos.Groups.GroupCreate(ctx, "Home", uuid.Nil)
 	if err != nil {
 		log.Err(err).Msg("Failed to create group for OIDC user")
 		return repo.UserOut{}, err
 	}
 
 	usrCreate := repo.UserCreate{
-		Name:        name,
-		Email:       email,
-		Password:    nil,
-		IsSuperuser: false,
-		GroupID:     group.ID,
-		IsOwner:     true,
+		Name:           name,
+		Email:          email,
+		Password:       nil,
+		IsSuperuser:    false,
+		DefaultGroupID: group.ID,
+		IsOwner:        true,
 	}
 
 	entUser, err := svc.repos.Users.CreateWithOIDC(ctx, usrCreate, issuer, subject)
@@ -306,11 +319,11 @@ func (svc *UserService) registerOIDCUser(ctx context.Context, issuer, subject, e
 		return repo.UserOut{}, err
 	}
 
-	log.Debug().Str("issuer", issuer).Str("subject", subject).Msg("creating default labels for OIDC user")
-	for _, label := range defaultLabels() {
-		_, err := svc.repos.Labels.Create(ctx, group.ID, label)
+	log.Debug().Str("issuer", issuer).Str("subject", subject).Msg("creating default tags for OIDC user")
+	for _, tag := range defaultTags() {
+		_, err := svc.repos.Tags.Create(ctx, group.ID, tag)
 		if err != nil {
-			log.Err(err).Msg("Failed to create default label")
+			log.Err(err).Msg("Failed to create default tag")
 		}
 	}
 
@@ -374,4 +387,33 @@ func (svc *UserService) ChangePassword(ctx Context, current string, new string) 
 	}
 
 	return true
+}
+
+// EnsureUserPassword ensures that the user with the given email has the specified password. If the password does not match, it updates the user's password to the new value.
+// WARNING: This method bypasses normal checks, it should only be used for demos and/or superuser level administrative processes.
+func (svc *UserService) EnsureUserPassword(ctx context.Context, email, password string) error {
+	usr, err := svc.repos.Users.GetOneEmailNoEdges(ctx, email)
+	if err != nil {
+		return err
+	}
+	match := false
+	if usr.PasswordHash != "" {
+		match, _ = hasher.CheckPasswordHash(password, usr.PasswordHash)
+	}
+	if !match {
+		hash, herr := hasher.HashPassword(password)
+		if herr != nil {
+			return herr
+		}
+		if cerr := svc.repos.Users.ChangePassword(ctx, usr.ID, hash); cerr != nil {
+			return cerr
+		}
+	}
+	return nil
+}
+
+// ExistsByEmail returns true if a user with the given email exists.
+func (svc *UserService) ExistsByEmail(ctx context.Context, email string) bool {
+	_, err := svc.repos.Users.GetOneEmailNoEdges(ctx, email)
+	return err == nil
 }

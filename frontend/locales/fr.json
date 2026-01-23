@@ -2,13 +2,13 @@
     "components": {
         "app": {
             "create_modal": {
-                "createAndAddAnother": "Utilisez {shiftKey} + {enterKey} pour en créer et en ajouter un autre.",
+                "createAndAddAnother": "Utilisez {shiftKey} + {enterKey} pour créer et ajouter un autre.",
                 "enter": "Entrée",
                 "shift": "Maj"
             },
             "import_dialog": {
-                "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref\n est présente dans le fichier CSV, alors l’élément sera mis à jour avec celle-ci.",
-                "description": "Importer un fichier CSV contenant vos articles, étiquettes, et emplacements. Se reporter à la documentation\n pour plus d’informations sur le format requis.",
+                "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé.\nSi une valeur pour import_ref est présente dans le fichier CSV, alors l’élément sera mis à jour avec celle-ci.",
+                "description": "Importer un fichier CSV contenant vos articles, étiquettes, et emplacements. \nSe reporter à la documentation pour plus d’informations sur le format requis.",
                 "title": "Importer un fichier CSV",
                 "toast": {
                     "import_failed": "Échec de l'importation. Veuillez réessayer plus tard.",
@@ -22,6 +22,45 @@
                 "latest_version": "Dernière version",
                 "new_version_available": "Nouvelle version disponible",
                 "new_version_available_link": "Cliquez ici pour consulter les notes de version"
+            }
+        },
+        "collection": {
+            "create_modal": {
+                "name_label": "Nom de la collection",
+                "title": "Créer une collection",
+                "toast": {
+                    "already_creating": "Déjà en train de créer une collection",
+                    "create_failed": "Échec de création de collection",
+                    "create_success": "Collection créée",
+                    "please_enter_name": "Veuillez entrer un nom de collection"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Veuillez choisir une date et une heure d'expiration.",
+                    "invalid_expiry_past": "La date d'expiration doit-être supérieure à l'heure actuelle."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Code d'invitation à la collection",
+                "invites_should_look_like": "Les invitations devront ressembler cela :",
+                "join": "Joindre collection",
+                "no_invite_code_create_one": "Pas de code d'invitation ? Créer une nouvelle collection à la place",
+                "title": "Joindre une collection",
+                "toast": {
+                    "already_joining": "Déjà en train de joindre une collection",
+                    "join_failed": "Impossible de rejoindre la collection",
+                    "please_enter_valid_join_code": "Veuillez entrer un code d'invitation à la collection valide"
+                }
+            },
+            "selector": {
+                "collection_options": "Options de collection",
+                "create_collection": "Créer une nouvelle collection",
+                "join_collection": "Rejoindre une collection existante",
+                "no_collection_found": "Aucune collection trouvée",
+                "search_collections": "Rechercher des collections...",
+                "select_collection": "Sélectionner collection",
+                "your_collections": "Vos collections"
             }
         },
         "color_selector": {
@@ -94,6 +133,7 @@
                 "open_new_tab": "Ouvrir dans un nouvel onglet"
             },
             "create_modal": {
+                "clear_template": "Effacer modèle",
                 "delete_photo": "Supprimer la photo",
                 "item_description": "Description de l'article",
                 "item_name": "Nom de l'article",
@@ -132,42 +172,61 @@
                 "title": "Importer un produit"
             },
             "selector": {
+                "clear": "Effacer les éléments sélectionnés",
                 "no_results": "Aucun résultat trouvé",
                 "placeholder": "Sélectionner…",
                 "search_placeholder": "Tapez pour rechercher…",
                 "searching": "Recherche en cours…"
             },
             "view": {
+                "change_details": {
+                    "add_tags": "Ajouter un tag",
+                    "failed_to_update_item": "Échec lors de la mise à jour de l'élément",
+                    "remove_tags": "Supprimer les tags",
+                    "title": "Changer les détails de l'article"
+                },
                 "selectable": {
                     "card": "Carte",
                     "items": "Articles",
                     "no_items": "Aucun article à afficher",
+                    "select_all": "Tout sélectionner",
+                    "select_card": "Sélectionner la carte",
+                    "select_row": "Sélectionner ligne",
                     "table": "Tableau"
                 },
                 "table": {
+                    "dropdown": {
+                        "actions": "Interventions",
+                        "change_location": "Changer de lieu",
+                        "change_location_success": "Lieu changé",
+                        "change_tags": "Modifier les tags",
+                        "change_tags_success": "Tags modifiés",
+                        "create_maintenance_item": "Créer une maintenance pour l'article",
+                        "create_maintenance_selected": "Créer une entrée maintenance pour les articles sélectionnés",
+                        "create_maintenance_success": "Entrées maintenance créées",
+                        "delete_confirmation": "Êtes-vous sûr de vouloir supprimer tous les articles sélectionnés ? Cette action ne peut être annulée.",
+                        "delete_item": "Supprimer l'élément",
+                        "delete_selected": "Supprimer les éléments sélectionnés",
+                        "download_csv": "Télécharger le tableau (CSV)",
+                        "download_json": "Télécharger la table au format JSON",
+                        "duplicate_item": "Dupliquer cet élément",
+                        "duplicate_selected": "Dupliquer les articles sélectionnés",
+                        "error_deleting": "Erreur lors de la suppression de l'article",
+                        "error_duplicating": "Erreur lors de la duplication de l'élément",
+                        "open_menu": "Ouvrir le menu",
+                        "open_multi_tab_warning": "Pour des raisons de sécurité, les navigateurs ne permettent pas, par défaut, d'ouvrir plusieurs onglets à la fois, consultez la documentation pour modifier ce paramètre :",
+                        "toggle_expand": "Voir plus",
+                        "view_item": "Afficher article",
+                        "view_items": "Afficher les articles"
+                    },
                     "headers": "En-têtes",
                     "page": "Page",
+                    "quick_actions": "Activer les sélections et actions rapides",
                     "rows_per_page": "Lignes par page",
+                    "selected_rows": "{selected} sur {total} lignes sélectionnées.",
                     "table_settings": "Paramètres du Tableau",
                     "view_item": "Afficher l'élément"
                 }
-            }
-        },
-        "label": {
-            "create_modal": {
-                "label_color": "Couleur de l'étiquette",
-                "label_description": "Description de l'étiquette",
-                "label_name": "Nom de l'étiquette",
-                "title": "Créer une étiquette",
-                "toast": {
-                    "already_creating": "Déjà en train de créer une étiquette",
-                    "create_failed": "Impossible de créer l'étiquette",
-                    "create_success": "Étiquette créée",
-                    "label_name_too_long": "Le nom de l'étiquette ne peut pas dépasser 50 caractères"
-                }
-            },
-            "selector": {
-                "select_labels": "Sélectionnez les étiquettes"
             }
         },
         "location": {
@@ -182,18 +241,96 @@
                 }
             },
             "selector": {
+                "clear": "Effacer les emplacements sélectionnés",
                 "no_location_found": "Aucun emplacement trouvé",
                 "parent_location": "Emplacement parent",
                 "search_location": "Rechercher des emplacements",
                 "select_location": "Choisir un emplacement"
             },
             "tree": {
-                "no_locations": "Aucun emplacement disponible. Créez votre premier emplacement avec\nle bouton '<span class=\"link-primary\">'Créer'</span>' dans la barre de navigation."
+                "no_locations": "Aucun emplacement disponible. Utilisez le bouton Créer pour ajouter un nouvel emplacement."
             }
         },
         "quick_menu": {
             "no_results": "Aucun résultat trouvé.",
             "shortcut_hint": "Utilisez les touches numériques pour sélectionner rapidement une action."
+        },
+        "tag": {
+            "create_modal": {
+                "tag_color": "Couleur du tag",
+                "tag_description": "Description du tag",
+                "tag_name": "Nom du tag",
+                "title": "Créer un tag",
+                "toast": {
+                    "already_creating": "Wtag déjà en cours de création",
+                    "create_failed": "Impossible de créer un tag",
+                    "create_success": "Tag créé",
+                    "tag_name_too_long": "Le nom du tag est limité à 50 caractères"
+                }
+            },
+            "selector": {
+                "select_tags": "Sélectionnez des tags"
+            }
+        },
+        "template": {
+            "apply_template": "Appliquer un modèle",
+            "card": {
+                "delete": "Supprimer le modèle",
+                "duplicate": "Dupliquer le modèle",
+                "edit": "Modifier le modèle"
+            },
+            "confirm_delete": "Supprimer ce modèle ?",
+            "create_modal": {
+                "title": "Créer un modèle"
+            },
+            "detail": {
+                "default_values": "Valeurs par défaut",
+                "updated": "Mis à jour"
+            },
+            "edit_modal": {
+                "title": "Modifier modèle"
+            },
+            "empty_value": "(vide)",
+            "form": {
+                "custom_fields": "Champs personnalisés",
+                "default_item_values": "Valeurs article par défaut",
+                "default_location": "Emplacement Par Défaut",
+                "default_value": "Valeur par défaut",
+                "field_name": "Nom du champ",
+                "item_description": "Description de l'article",
+                "item_name": "Nom de l'article",
+                "lifetime_warranty": "Garantie à vie",
+                "location": "Emplacement",
+                "manufacturer": "Fabricant",
+                "model_number": "Numéro de modèle",
+                "no_custom_fields": "Aucun champ personnalisé.",
+                "template_description": "Description du modèle",
+                "template_name": "Nom du modèle"
+            },
+            "hide_defaults": "Cacher les modèles par défaut",
+            "save_as_template": "Enregistrer comme modèle",
+            "selector": {
+                "clear": "Effacer les modèles sélectionnés",
+                "label": "Modèle (Optionnel)",
+                "not_found": "Aucun modèle trouvé",
+                "search": "Chercher un modèle...",
+                "select": "Sélectionner un modèle..."
+            },
+            "show_defaults": "Afficher les valeurs par défaut",
+            "toast": {
+                "applied": "Modèle \"{name}\" a été appliqué",
+                "create_failed": "Echec lors de la création du modèle",
+                "created": "Modèle créé",
+                "delete_failed": "Échec lors de la suppression du modèle",
+                "deleted": "Modèle supprimé",
+                "duplicate_failed": "Échec lors de la duplication du modèle",
+                "duplicated": "Modèle dupliqué sous le nom \"{name}\"",
+                "load_failed": "Le chargement des détails du modèle a échoué",
+                "saved_as_template": "Article sauvegardé comme modèle sous le nom \"{name}\"",
+                "update_failed": "Échec lors de la mise à jour du modèle",
+                "updated": "Modèle mis à jour"
+            },
+            "using_template": "Utilisation du modèle : {name}"
         }
     },
     "errors": {
@@ -202,7 +339,7 @@
     "global": {
         "add": "Ajouter",
         "archived": "Archivé",
-        "build": "Commit : { build }",
+        "build": "Build : { build }",
         "cancel": "Annuler",
         "confirm": "Confirmer",
         "create": "Créer",
@@ -219,19 +356,20 @@
         "follow_dev": "Suivre le développeur",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Version : { version } Commit : { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' Version: { version } Build: { build } '</a>'"
         },
         "github": "Projet GitHub",
         "insured": "Assuré",
         "items": "Articles",
         "join_discord": "Rejoindre le Discord",
-        "labels": "Étiquettes",
         "loading": "Chargement…",
         "locations": "Emplacements",
         "maintenance": "Maintenance",
         "name": "Nom",
         "navigate": "Naviguer",
+        "no": "Non",
         "password": "Mot de passe",
+        "preview": "Aperçu",
         "quantity": "Quantité",
         "read_docs": "Lire la documentation",
         "return_home": "Retour à l'accueil",
@@ -239,21 +377,23 @@
         "search": "Rechercher",
         "sign_out": "Se déconnecter",
         "submit": "Soumettre",
+        "tags": "Balises",
         "unknown": "Inconnu",
         "update": "Mettre à jour",
         "updating": "Mise à jour en cours",
         "value": "Valeur",
         "version": "Version : { version }",
-        "welcome": "Bienvenue, { username }"
+        "welcome": "Bienvenue, { username }",
+        "yes": "Oui"
     },
     "home": {
-        "labels": "Étiquettes",
         "quick_statistics": "Statistiques rapides",
         "recently_added": "Ajoutés récemment",
         "storage_locations": "Emplacements de stockage",
+        "tags": "Balises",
         "total_items": "Total d'objets",
-        "total_labels": "Total d'étiquettes",
         "total_locations": "Total d'emplacements",
+        "total_tags": "Nombre total de balises",
         "total_value": "Valeur totale"
     },
     "index": {
@@ -261,6 +401,7 @@
         "dont_join_group": "Vous ne voulez pas joindre un groupe ?",
         "joining_group": "Vous rejoignez un groupe existant !",
         "login": "Se connecter",
+        "or": "ou",
         "register": "S'enregistrer",
         "remember_me": "Se souvenir de moi",
         "set_email": "Quel est votre courriel ?",
@@ -272,6 +413,14 @@
             "invalid_email": "Adresse e-mail non valide",
             "invalid_email_password": "E-mail ou mot de passe invalide",
             "login_success": "Connexion réussie",
+            "oidc_access_denied": "Accès refusé : votre compte n'appartient pas au rôle ou au groupe requis",
+            "oidc_auth_failed": "Échec de l'authentification",
+            "oidc_invalid_response": "Réponse OIDC invalide reçue",
+            "oidc_provider_error": "Le fournisseur d'identité a renvoyé une erreur",
+            "oidc_security_error": "Erreur de sécurité OIDC - Attaque de falsification de requête inter-sites possible (CSRF)",
+            "oidc_session_expired": "La session OIDC a expiré",
+            "oidc_token_expired": "Le jeton d'authentification OIDC a expiré",
+            "oidc_token_invalid": "Signature du jeton OIDC invalide",
             "problem_registering": "Problème d'enregistrement d'utilisateur",
             "user_registered": "Utilisateur enregistré"
         }
@@ -330,7 +479,6 @@
         "manufacturer": "Fabricant",
         "model_number": "Numéro de modèle",
         "name": "Nom",
-        "negate_labels": "Négliger les étiquettes sélectionnées",
         "next_page": "Page suivante",
         "no_attachments": "Aucune pièce jointe trouvée",
         "no_results": "Aucun élément trouvé",
@@ -397,18 +545,6 @@
         "warranty": "Garantie",
         "warranty_details": "Détails de la garantie",
         "warranty_expires": "Expiration de la garantie"
-    },
-    "labels": {
-        "label_delete_confirm": "Êtes-vous certain de vouloir supprimer cette étiquette ? Cette action ne peut pas être annulée.",
-        "no_results": "Aucune étiquette trouvée",
-        "toast": {
-            "failed_delete_label": "Échec de la suppression de l'étiquette",
-            "failed_load_label": "Échec du chargement de l'étiquette",
-            "failed_update_label": "Échec de la mise à jour de l'étiquette",
-            "label_deleted": "Étiquette supprimée",
-            "label_updated": "Étiquette mise à jour"
-        },
-        "update_label": "Mettre à jour l'étiquette"
     },
     "languages": {
         "bs-BA": "Bosnie (Bosnie-Herzégovine)",
@@ -499,8 +635,8 @@
         "total_entries": "Nombre d'entrées"
     },
     "menu": {
+        "collection": "Collection",
         "create_item": "Article / Ressource",
-        "create_label": "Étiquette",
         "create_location": "Emplacement",
         "home": "Accueil",
         "locations": "Emplacements",
@@ -508,7 +644,13 @@
         "profile": "Profil",
         "scanner": "Numériser",
         "search": "Recherche",
-        "tools": "Outils"
+        "templates": "Modèles"
+    },
+    "pages": {
+        "templates": {
+            "no_templates": "Aucun modèle créé",
+            "title": "Modèles"
+        }
     },
     "profile": {
         "active": "Actif",
@@ -519,14 +661,14 @@
         "delete_account_confirm": "Êtes-vous certain de vouloir supprimer votre compte ? Si vous êtes le dernier membre de votre groupe, toutes vos données seront supprimées. Cette action est irréversible.",
         "delete_account_sub": "Supprimer le compte et toutes ses données. Aucune récupération possible.",
         "delete_notifier_confirm": "Êtes-vous certain de vouloir supprimer ce notificateur ?",
-        "display_legacy_header": "{ currentValue, select, true {Désactiver le \"Legacy Header\"} false {Activer le \"Legacy Header\"} other {Not Hit}}",
+        "display_legacy_header": "{ currentValue, select, true {Disable Legacy Header} false {Enable Legacy Header} other {Not Hit}}",
         "enabled": "Activé",
         "example": "Exemple",
-        "gen_invite": "Générer un lien d’invitation",
         "group_settings": "Paramètres du groupe",
         "group_settings_sub": "Paramètres du groupe partagé. Il peut être nécessaire de recharger la page pour qu’ils deviennent effectifs.",
         "inactive": "Inactif",
         "language": "Langue",
+        "legacy_image_fit": "{ currentValue, select, true {Disable Legacy Fit: Fit Image with Bars} false {Enable Legacy Fit: Fill Image with Crop} other {Not Hit}}",
         "new_password": "Nouveau mot de passe",
         "no_notifiers": "Aucun notificateur configuré",
         "no_override": "Aucun remplacement",
@@ -599,6 +741,13 @@
         "title": "Numériser",
         "unsupported": "L’API <i>Media Stream</i> n’est pas prise en charge sans HTTPS"
     },
+    "tags": {
+        "no_results": "Aucune étiquette d'Hébergement n'a été trouvée",
+        "tag_delete_confirm": "Êtes-vous sûr de vouloir supprimer ? Cette action ne peut pas être annulée.",
+        "toast": {
+            "failed_delete_tag": "Échec lors de la suppression de balise"
+        }
+    },
     "tools": {
         "actions": "Actions d’inventaire",
         "actions_set": {
@@ -617,12 +766,22 @@
             "set_primary_photo_button": "Définir la photo principale",
             "set_primary_photo_confirm": "Êtes-vous certain de vouloir définir les photos principales ? Cela peut prendre du temps et est irréversible.",
             "set_primary_photo_sub": "Dans la version v0.10.0 d'Homebox, le champ d'image principal à été ajouté aux pièces jointes de type photo. Cette action définira en tant qu'image principale toute première image en pièce jointe déjà présente en base de donnée, si le champ n'est pas déjà défini. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Voir GitHub PR #576'</a>'",
+            "wipe_inventory": "Effacer l'inventaire",
+            "wipe_inventory_button": "Effacer l'inventaire",
+            "wipe_inventory_confirm": "Êtes-vous sur de vouloir supprimer l'intégralité de l'inventaire ? Cette action supprimera tous les articles et est irréversible.",
+            "wipe_inventory_locations": "Effacer également tous les emplacements",
+            "wipe_inventory_maintenance": "Effacer également toutes les tâches de maintenance",
+            "wipe_inventory_note": "Note : Seuls les propriétaires du groupes peuvent exécuter cette action.",
+            "wipe_inventory_sub": "Supprimer définitivement tous les articles de votre inventaire. Cette action est irréversible et va supprimer toutes les données ainsi que les pièces jointes et photos.",
             "zero_datetimes": "Remettre à zéro les dates et heures",
             "zero_datetimes_button": "Remettre à zéro les dates et heures",
             "zero_datetimes_confirm": "Êtes-vous certain de vouloir réinitialiser toutes les valeurs de date et d'heure ? Cela peut prendre du temps et est irréversible.",
             "zero_datetimes_sub": "Réinitialise la valeur de tous les champs date/heure de votre inventaire à la date de début. Il s'agit de corriger une anomalie introduite au début du développement du site qui entraînait le stockage de la valeur temporelle avec l'heure, ce qui provoquait des problèmes avec les champs de date affichant des valeurs précises. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Voir le rapport 236 de Github pour plus de détails.'</a> '"
         },
         "actions_sub": "Appliquer des actions en masse à votre inventaire. Ces actions sont irréversibles. '<b>'Soyez vigilant.'</b>'",
+        "demo_mode_error": {
+            "wipe_inventory": "L'inventaire, les étiquettes, les emplacements et les enregistrements de maintenance ne peuvent pas être effacés lorsque Homebox est en mode démo."
+        },
         "import_export": "Importer/Exporter",
         "import_export_set": {
             "export": "Exporter l'inventaire",
@@ -650,7 +809,9 @@
             "failed_ensure_ids": "Échec de la vérification des ID de ressources.",
             "failed_ensure_import_refs": "Échec de la vérifications des références d'importation.",
             "failed_set_primary_photos": "Échec de la définition des photos principales.",
-            "failed_zero_datetimes": "Échec de la réinitialisation des valeurs de date et d'heure."
+            "failed_wipe_inventory": "Échec de l'effacement de l'inventaire.",
+            "failed_zero_datetimes": "Échec de la réinitialisation des valeurs de date et d'heure.",
+            "wipe_inventory_success": "Inventaire effacé avec succès. {results} articles ont été effacés."
         }
     }
 }

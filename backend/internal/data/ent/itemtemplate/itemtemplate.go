@@ -47,8 +47,8 @@ const (
 	FieldIncludePurchaseFields = "include_purchase_fields"
 	// FieldIncludeSoldFields holds the string denoting the include_sold_fields field in the database.
 	FieldIncludeSoldFields = "include_sold_fields"
-	// FieldDefaultLabelIds holds the string denoting the default_label_ids field in the database.
-	FieldDefaultLabelIds = "default_label_ids"
+	// FieldDefaultTagIds holds the string denoting the default_tag_ids field in the database.
+	FieldDefaultTagIds = "default_tag_ids"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
 	// EdgeFields holds the string denoting the fields edge name in mutations.
@@ -99,7 +99,7 @@ var Columns = []string{
 	FieldIncludeWarrantyFields,
 	FieldIncludePurchaseFields,
 	FieldIncludeSoldFields,
-	FieldDefaultLabelIds,
+	FieldDefaultTagIds,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "item_templates"

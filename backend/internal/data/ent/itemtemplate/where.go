@@ -896,14 +896,14 @@ func IncludeSoldFieldsNEQ(v bool) predicate.ItemTemplate {
 	return predicate.ItemTemplate(sql.FieldNEQ(FieldIncludeSoldFields, v))
 }
 
-// DefaultLabelIdsIsNil applies the IsNil predicate on the "default_label_ids" field.
-func DefaultLabelIdsIsNil() predicate.ItemTemplate {
-	return predicate.ItemTemplate(sql.FieldIsNull(FieldDefaultLabelIds))
+// DefaultTagIdsIsNil applies the IsNil predicate on the "default_tag_ids" field.
+func DefaultTagIdsIsNil() predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldIsNull(FieldDefaultTagIds))
 }
 
-// DefaultLabelIdsNotNil applies the NotNil predicate on the "default_label_ids" field.
-func DefaultLabelIdsNotNil() predicate.ItemTemplate {
-	return predicate.ItemTemplate(sql.FieldNotNull(FieldDefaultLabelIds))
+// DefaultTagIdsNotNil applies the NotNil predicate on the "default_tag_ids" field.
+func DefaultTagIdsNotNil() predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldNotNull(FieldDefaultTagIds))
 }
 
 // HasGroup applies the HasEdge predicate on the "group" edge.

@@ -16,6 +16,11 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemfield"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
@@ -39,8 +44,8 @@ type (
 		Search           string       `json:"search"`
 		AssetID          AssetID      `json:"assetId"`
 		LocationIDs      []uuid.UUID  `json:"locationIds"`
-		LabelIDs         []uuid.UUID  `json:"labelIds"`
-		NegateLabels     bool         `json:"negateLabels"`
+		TagIDs           []uuid.UUID  `json:"tagIds"`
+		NegateTags       bool         `json:"negateTags"`
 		OnlyWithoutPhoto bool         `json:"onlyWithoutPhoto"`
 		OnlyWithPhoto    bool         `json:"onlyWithPhoto"`
 		ParentItemIDs    []uuid.UUID  `json:"parentIds"`
@@ -78,7 +83,7 @@ type (
 
 		// Edges
 		LocationID uuid.UUID   `json:"locationId"`
-		LabelIDs   []uuid.UUID `json:"labelIds"`
+		TagIDs     []uuid.UUID `json:"tagIds"`
 	}
 
 	ItemUpdate struct {
@@ -95,7 +100,7 @@ type (
 
 		// Edges
 		LocationID uuid.UUID   `json:"locationId"`
-		LabelIDs   []uuid.UUID `json:"labelIds"`
+		TagIDs     []uuid.UUID `json:"tagIds"`
 
 		// Identifications
 		SerialNumber string `json:"serialNumber"`
@@ -128,7 +133,7 @@ type (
 		Quantity   *int        `json:"quantity,omitempty" extensions:"x-nullable,x-omitempty"`
 		ImportRef  *string     `json:"-,omitempty"        extensions:"x-nullable,x-omitempty"`
 		LocationID uuid.UUID   `json:"locationId"         extensions:"x-nullable,x-omitempty"`
-		LabelIDs   []uuid.UUID `json:"labelIds"           extensions:"x-nullable,x-omitempty"`
+		TagIDs     []uuid.UUID `json:"tagIds"           extensions:"x-nullable,x-omitempty"`
 	}
 
 	ItemSummary struct {
@@ -148,7 +153,7 @@ type (
 
 		// Edges
 		Location *LocationSummary `json:"location,omitempty" extensions:"x-nullable,x-omitempty"`
-		Labels   []LabelSummary   `json:"labels"`
+		Tags     []TagSummary     `json:"tags"`
 
 		ImageID     *uuid.UUID `json:"imageId,omitempty"     extensions:"x-nullable,x-omitempty"`
 		ThumbnailId *uuid.UUID `json:"thumbnailId,omitempty" extensions:"x-nullable,x-omitempty"`
@@ -200,9 +205,9 @@ func mapItemSummary(item *ent.Entity) ItemSummary {
 		location = &loc
 	}
 
-	labels := make([]LabelSummary, len(item.Edges.Label))
-	if item.Edges.Label != nil {
-		labels = mapEach(item.Edges.Label, mapLabelSummary)
+	tags := make([]TagSummary, len(item.Edges.Tag))
+	if item.Edges.Tag != nil {
+		tags = mapEach(item.Edges.Tag, mapTagSummary)
 	}
 
 	var imageID *uuid.UUID
@@ -245,7 +250,7 @@ func mapItemSummary(item *ent.Entity) ItemSummary {
 
 		// Edges
 		Location: location,
-		Labels:   labels,
+		Tags:     tags,
 
 		// Warranty
 		Insured:     item.Insured,
@@ -339,7 +344,7 @@ func (e *ItemsRepository) getOneTx(ctx context.Context, tx *ent.Tx, where ...pre
 
 	return mapItemOutErr(q.
 		WithFields().
-		WithLabel().
+		WithTag().
 		WithLocation().
 		WithGroup().
 		WithParent().
@@ -424,24 +429,24 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 	// of filters is OR'd together.
 	//
 	// The goal is to allow matches like where the item has
-	//  - one of the selected labels AND
+	//  - one of the selected tags AND
 	//  - one of the selected locations AND
 	//  - one of the selected fields key/value matches
 	var andPredicates []predicate.Entity
 	{
-		if len(q.LabelIDs) > 0 {
-			labelPredicates := make([]predicate.Entity, 0, len(q.LabelIDs))
-			for _, l := range q.LabelIDs {
-				if !q.NegateLabels {
-					labelPredicates = append(labelPredicates, entity.HasLabelWith(label.ID(l)))
+		if len(q.TagIDs) > 0 {
+			tagPredicates := make([]predicate.Entity, 0, len(q.TagIDs))
+			for _, l := range q.TagIDs {
+				if !q.NegateTags {
+					tagPredicates = append(tagPredicates, entity.HasTagWith(tag.ID(l)))
 				} else {
-					labelPredicates = append(labelPredicates, entity.Not(entity.HasLabelWith(label.ID(l))))
+					tagPredicates = append(tagPredicates, entity.Not(entity.HasTagWith(tag.ID(l))))
 				}
 			}
-			if !q.NegateLabels {
-				andPredicates = append(andPredicates, entity.Or(labelPredicates...))
+			if !q.NegateTags {
+				andPredicates = append(andPredicates, entity.Or(tagPredicates...))
 			} else {
-				andPredicates = append(andPredicates, entity.And(labelPredicates...))
+				andPredicates = append(andPredicates, entity.And(tagPredicates...))
 			}
 		}
 
@@ -516,7 +521,7 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 	}
 
 	qb = qb.
-		WithLabel().
+		WithTag().
 		WithLocation().
 		WithType().
 		WithAttachments(func(aq *ent.AttachmentQuery) {
@@ -563,7 +568,7 @@ func (e *ItemsRepository) QueryByAssetID(ctx context.Context, gid uuid.UUID, ass
 
 	items, err := mapItemsSummaryErr(
 		qb.Order(ent.Asc(entity.FieldName)).
-			WithLabel().
+			WithTag().
 			WithLocation().
 			WithType().
 			All(ctx),
@@ -580,11 +585,11 @@ func (e *ItemsRepository) QueryByAssetID(ctx context.Context, gid uuid.UUID, ass
 	}, nil
 }
 
-// GetAll returns all the items in the database with the Labels and Locations eager loaded.
+// GetAll returns all the items in the database with the Tags and Locations eager loaded.
 func (e *ItemsRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]ItemOut, error) {
 	return mapItemsOutErr(e.db.Entity.Query().
-		Where(entity.HasGroupWith(group.ID(gid)), entity.HasTypeWith(entitytype.IsLocationEQ(false))).
-		WithLabel().
+		Where(entity.HasGroupWith(group.ID(gid))).
+		WithTag().
 		WithLocation().
 		WithFields().
 		WithType().
@@ -658,8 +663,8 @@ func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCr
 		q.SetParentID(data.ParentID)
 	}
 
-	if len(data.LabelIDs) > 0 {
-		q.AddLabelIDs(data.LabelIDs...)
+	if len(data.TagIDs) > 0 {
+		q.AddTagIDs(data.TagIDs...)
 	}
 
 	result, err := q.Save(ctx)
@@ -677,7 +682,7 @@ type ItemCreateFromTemplate struct {
 	Description      string
 	Quantity         int
 	LocationID       uuid.UUID
-	LabelIDs         []uuid.UUID
+	TagIDs           []uuid.UUID
 	Insured          bool
 	Manufacturer     string
 	ModelNumber      string
@@ -724,8 +729,8 @@ func (e *ItemsRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID,
 		SetLifetimeWarranty(data.LifetimeWarranty).
 		SetWarrantyDetails(data.WarrantyDetails)
 
-	if len(data.LabelIDs) > 0 {
-		itemBuilder.AddLabelIDs(data.LabelIDs...)
+	if len(data.TagIDs) > 0 {
+		itemBuilder.AddTagIDs(data.TagIDs...)
 	}
 
 	_, err = itemBuilder.Save(ctx)
@@ -774,7 +779,7 @@ func (e *ItemsRepository) Delete(ctx context.Context, id uuid.UUID) error {
 
 	// Delete all attachments (and their files) before deleting the item
 	for _, att := range itm.Edges.Attachments {
-		err := e.attachments.Delete(ctx, gid, id, att.ID)
+		err := e.attachments.Delete(ctx, gid, att.ID)
 		if err != nil {
 			log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during item deletion")
 			// Continue with other attachments even if one fails
@@ -805,7 +810,7 @@ func (e *ItemsRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) 
 
 	// Delete all attachments (and their files) before deleting the item
 	for _, att := range itm.Edges.Attachments {
-		err := e.attachments.Delete(ctx, gid, id, att.ID)
+		err := e.attachments.Delete(ctx, gid, att.ID)
 		if err != nil {
 			log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during item deletion")
 			// Continue with other attachments even if one fails
@@ -824,6 +829,88 @@ func (e *ItemsRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) 
 
 	e.publishMutationEvent(gid)
 	return err
+}
+
+func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wipeTags bool, wipeLocations bool, wipeMaintenance bool) (int, error) {
+	deleted := 0
+
+	// Wipe maintenance records if requested
+	// IMPORTANT: Must delete maintenance records BEFORE items since they are linked to items
+	if wipeMaintenance {
+		maintenanceCount, err := e.db.MaintenanceEntry.Delete().
+			Where(maintenanceentry.HasItemWith(item.HasGroupWith(group.ID(gid)))).
+			Exec(ctx)
+		if err != nil {
+			log.Err(err).Msg("failed to delete maintenance entries during wipe inventory")
+		} else {
+			log.Info().Int("count", maintenanceCount).Msg("deleted maintenance entries during wipe inventory")
+			deleted += maintenanceCount
+		}
+	}
+
+	// Get all items for the group
+	items, err := e.db.Item.Query().
+		Where(item.HasGroupWith(group.ID(gid))).
+		WithAttachments().
+		All(ctx)
+	if err != nil {
+		return 0, err
+	}
+
+	// Delete each item with its attachments
+	// Note: We manually delete attachments and items instead of calling DeleteByGroup
+	// to continue processing remaining items even if some deletions fail
+	for _, itm := range items {
+		// Delete all attachments first
+		for _, att := range itm.Edges.Attachments {
+			err := e.attachments.Delete(ctx, gid, att.ID)
+			if err != nil {
+				log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during wipe inventory")
+				// Continue with other attachments even if one fails
+			}
+		}
+
+		// Delete the item
+		_, err = e.db.Item.
+			Delete().
+			Where(
+				item.ID(itm.ID),
+				item.HasGroupWith(group.ID(gid)),
+			).Exec(ctx)
+		if err != nil {
+			log.Err(err).Str("item_id", itm.ID.String()).Msg("failed to delete item during wipe inventory")
+			// Skip to next item without incrementing counter
+			continue
+		}
+
+		// Only increment counter if deletion succeeded
+		deleted++
+	}
+
+	// Wipe tags if requested
+	if wipeTags {
+		tagCount, err := e.db.Tag.Delete().Where(tag.HasGroupWith(group.ID(gid))).Exec(ctx)
+		if err != nil {
+			log.Err(err).Msg("failed to delete tags during wipe inventory")
+		} else {
+			log.Info().Int("count", tagCount).Msg("deleted tags during wipe inventory")
+			deleted += tagCount
+		}
+	}
+
+	// Wipe locations if requested
+	if wipeLocations {
+		locationCount, err := e.db.Location.Delete().Where(location.HasGroupWith(group.ID(gid))).Exec(ctx)
+		if err != nil {
+			log.Err(err).Msg("failed to delete locations during wipe inventory")
+		} else {
+			log.Info().Int("count", locationCount).Msg("deleted locations during wipe inventory")
+			deleted += locationCount
+		}
+	}
+
+	e.publishMutationEvent(gid)
+	return deleted, nil
 }
 
 func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data ItemUpdate) (ItemOut, error) {
@@ -852,23 +939,23 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 		SetTypeID(data.EntityType).
 		SetSyncChildEntitiesLocations(data.SyncChildItemsLocations)
 
-	currentLabels, err := e.db.Entity.Query().Where(entity.ID(data.ID), entity.HasTypeWith(entitytype.IsLocationEQ(false))).QueryLabel().All(ctx)
+	currentTags, err := e.db.Entity.Query().Where(entity.ID(data.ID)).QueryTag().All(ctx)
 	if err != nil {
 		return ItemOut{}, err
 	}
 
-	set := newIDSet(currentLabels)
+	set := newIDSet(currentTags)
 
-	for _, l := range data.LabelIDs {
+	for _, l := range data.TagIDs {
 		if set.Contains(l) {
 			set.Remove(l)
 			continue
 		}
-		q.AddLabelIDs(l)
+		q.AddTagIDs(l)
 	}
 
 	if set.Len() > 0 {
-		q.RemoveLabelIDs(set.Slice()...)
+		q.RemoveTagIDs(set.Slice()...)
 	}
 
 	if data.ParentID != uuid.Nil {
@@ -1025,26 +1112,26 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 		return err
 	}
 
-	if data.LabelIDs != nil {
-		currentLabels, err := tx.Entity.Query().Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).QueryLabel().All(ctx)
+	if data.TagIDs != nil {
+		currentTags, err := tx.Entity.Query().Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).QueryTag().All(ctx)
 		if err != nil {
 			return err
 		}
-		set := newIDSet(currentLabels)
+		set := newIDSet(currentTags)
 
-		addLabels := []uuid.UUID{}
-		for _, l := range data.LabelIDs {
+		addTags := []uuid.UUID{}
+		for _, l := range data.TagIDs {
 			if set.Contains(l) {
 				set.Remove(l)
 			} else {
-				addLabels = append(addLabels, l)
+				addTags = append(addTags, l)
 			}
 		}
 
-		if len(addLabels) > 0 {
+		if len(addTags) > 0 {
 			if err := tx.Entity.Update().
 				Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).
-				AddLabelIDs(addLabels...).
+				AddTagIDs(addTags...).
 				Exec(ctx); err != nil {
 				return err
 			}
@@ -1052,7 +1139,7 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 		if set.Len() > 0 {
 			if err := tx.Entity.Update().
 				Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).
-				RemoveLabelIDs(set.Slice()...).
+				RemoveTagIDs(set.Slice()...).
 				Exec(ctx); err != nil {
 				return err
 			}
@@ -1344,13 +1431,13 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opti
 		itemBuilder.SetParentID(originalItem.Parent.ID)
 	}
 
-	// Add labels
-	if len(originalItem.Labels) > 0 {
-		labelIDs := make([]uuid.UUID, len(originalItem.Labels))
-		for i, label := range originalItem.Labels {
-			labelIDs[i] = label.ID
+	// Add tags
+	if len(originalItem.Tags) > 0 {
+		tagIDs := make([]uuid.UUID, len(originalItem.Tags))
+		for i, tag := range originalItem.Tags {
+			tagIDs[i] = tag.ID
 		}
-		itemBuilder.AddLabelIDs(labelIDs...)
+		itemBuilder.AddTagIDs(tagIDs...)
 	}
 
 	_, err = itemBuilder.Save(ctx)

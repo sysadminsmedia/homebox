@@ -18,24 +18,24 @@ type Tx struct {
 	AuthRoles *AuthRolesClient
 	// AuthTokens is the client for interacting with the AuthTokens builders.
 	AuthTokens *AuthTokensClient
-	// Entity is the client for interacting with the Entity builders.
-	Entity *EntityClient
-	// EntityField is the client for interacting with the EntityField builders.
-	EntityField *EntityFieldClient
-	// EntityType is the client for interacting with the EntityType builders.
-	EntityType *EntityTypeClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// GroupInvitationToken is the client for interacting with the GroupInvitationToken builders.
 	GroupInvitationToken *GroupInvitationTokenClient
+	// Item is the client for interacting with the Item builders.
+	Item *ItemClient
+	// ItemField is the client for interacting with the ItemField builders.
+	ItemField *ItemFieldClient
 	// ItemTemplate is the client for interacting with the ItemTemplate builders.
 	ItemTemplate *ItemTemplateClient
-	// Label is the client for interacting with the Label builders.
-	Label *LabelClient
+	// Location is the client for interacting with the Location builders.
+	Location *LocationClient
 	// MaintenanceEntry is the client for interacting with the MaintenanceEntry builders.
 	MaintenanceEntry *MaintenanceEntryClient
 	// Notifier is the client for interacting with the Notifier builders.
 	Notifier *NotifierClient
+	// Tag is the client for interacting with the Tag builders.
+	Tag *TagClient
 	// TemplateField is the client for interacting with the TemplateField builders.
 	TemplateField *TemplateFieldClient
 	// User is the client for interacting with the User builders.
@@ -174,15 +174,15 @@ func (tx *Tx) init() {
 	tx.Attachment = NewAttachmentClient(tx.config)
 	tx.AuthRoles = NewAuthRolesClient(tx.config)
 	tx.AuthTokens = NewAuthTokensClient(tx.config)
-	tx.Entity = NewEntityClient(tx.config)
-	tx.EntityField = NewEntityFieldClient(tx.config)
-	tx.EntityType = NewEntityTypeClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
 	tx.GroupInvitationToken = NewGroupInvitationTokenClient(tx.config)
+	tx.Item = NewItemClient(tx.config)
+	tx.ItemField = NewItemFieldClient(tx.config)
 	tx.ItemTemplate = NewItemTemplateClient(tx.config)
-	tx.Label = NewLabelClient(tx.config)
+	tx.Location = NewLocationClient(tx.config)
 	tx.MaintenanceEntry = NewMaintenanceEntryClient(tx.config)
 	tx.Notifier = NewNotifierClient(tx.config)
+	tx.Tag = NewTagClient(tx.config)
 	tx.TemplateField = NewTemplateFieldClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }

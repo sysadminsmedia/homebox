@@ -6,6 +6,7 @@ export default [
             {text: 'Installation', link: '/en/installation'},
             {text: 'Configure', link: '/en/configure'},
             {text: 'Storage', link: '/en/configure/storage'},
+            {text: 'OIDC', link: '/en/configure/oidc'},
             {text: 'Upgrade Guide', link: '/en/upgrade'},
             {text: 'Migration Guide', link: '/en/migration'},
         ]
@@ -20,7 +21,8 @@ export default [
     {
         text: 'Advanced',
         items: [
-            {text: 'Import CSV', link: '/en/import-csv'},
+            {text: 'Import CSV', link: '/en/advanced/import-csv'},
+            {text: 'External Label Service', link: '/en/advanced/external-label-service'},
         ]
     },
     {

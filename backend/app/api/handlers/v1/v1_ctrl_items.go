@@ -28,7 +28,7 @@ import (
 //	@Param		q			query		string		false	"search string"
 //	@Param		page		query		int			false	"page number"
 //	@Param		pageSize	query		int			false	"items per page"
-//	@Param		labels		query		[]string	false	"label Ids"		collectionFormat(multi)
+//	@Param		tags		query		[]string	false	"tags Ids"		collectionFormat(multi)
 //	@Param		locations	query		[]string	false	"location Ids"	collectionFormat(multi)
 //	@Param		parentIds	query		[]string	false	"parent Ids"	collectionFormat(multi)
 //	@Success	200			{object}	repo.PaginationResult[repo.ItemSummary]{}
@@ -60,8 +60,8 @@ func (ctrl *V1Controller) HandleItemsGetAll() errchain.HandlerFunc {
 			PageSize:         queryIntOrNegativeOne(params.Get("pageSize")),
 			Search:           params.Get("q"),
 			LocationIDs:      queryUUIDList(params, "locations"),
-			LabelIDs:         queryUUIDList(params, "labels"),
-			NegateLabels:     queryBool(params.Get("negateLabels")),
+			TagIDs:           queryUUIDList(params, "tags"),
+			NegateTags:       queryBool(params.Get("negateTags")),
 			OnlyWithoutPhoto: queryBool(params.Get("onlyWithoutPhoto")),
 			OnlyWithPhoto:    queryBool(params.Get("onlyWithPhoto")),
 			ParentItemIDs:    queryUUIDList(params, "parentIds"),
@@ -348,9 +348,9 @@ func (ctrl *V1Controller) HandleItemsImport() errchain.HandlerFunc {
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
-		user := services.UseUserCtx(r.Context())
+		tenant := services.UseTenantCtx(r.Context())
 
-		_, err = ctrl.svc.Items.CsvImport(r.Context(), user.GroupID, file)
+		_, err = ctrl.svc.Items.CsvImport(r.Context(), tenant, file)
 		if err != nil {
 			log.Err(err).Msg("failed to import items")
 			return validate.NewRequestError(err, http.StatusInternalServerError)

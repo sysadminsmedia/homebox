@@ -4,7 +4,7 @@
   import { toast } from "@/components/ui/sonner";
   import type { ItemAttachment, ItemField, ItemOut, ItemUpdate } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
-  import { useLabelStore } from "~~/stores/labels";
+  import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
   import MdiLoading from "~icons/mdi/loading";
   import MdiDelete from "~icons/mdi/delete";
@@ -27,7 +27,7 @@
   import FormCheckbox from "~/components/Form/Checkbox.vue";
   import LocationSelector from "~/components/Location/Selector.vue";
   import ItemSelector from "~/components/Item/Selector.vue";
-  import LabelSelector from "~/components/Label/Selector.vue";
+  import TagSelector from "~/components/Tag/Selector.vue";
   import BaseCard from "@/components/Base/Card.vue";
   import { Card } from "~/components/ui/card";
   import DropZone from "~/components/global/DropZone.vue";
@@ -49,8 +49,8 @@
   const locationStore = useLocationStore();
   const locations = computed(() => locationStore.allLocations);
 
-  const labelStore = useLabelStore();
-  const labels = computed(() => labelStore.labels);
+  const tagStore = useTagStore();
+  const tags = computed(() => tagStore.tags);
 
   const {
     data: nullableItem,
@@ -79,13 +79,13 @@
     return data;
   });
 
-  const item = ref<ItemOut & { labelIds: string[] }>(null as never);
+  const item = ref<ItemOut & { tagIds: string[] }>(null as never);
 
   watchEffect(() => {
     if (nullableItem.value) {
       item.value = {
         ...nullableItem.value,
-        labelIds: nullableItem.value.labels.map(l => l.id) ?? [],
+        tagIds: nullableItem.value.tags.map(l => l.id) ?? [],
       };
     }
   });
@@ -98,7 +98,7 @@
 
   const saving = ref(false);
 
-  async function saveItem() {
+  async function saveItem(redirect: boolean) {
     if (!item.value.location?.id) {
       toast.error(t("items.toast.failed_save_no_location"));
       return;
@@ -121,7 +121,7 @@
     const payload: ItemUpdate = {
       ...item.value,
       locationId: item.value.location?.id,
-      labelIds: item.value.labelIds,
+      tagIds: item.value.tagIds,
       parentId: parent.value ? parent.value.id : null,
       assetId: item.value.assetId,
       purchasePrice,
@@ -139,7 +139,9 @@
     }
 
     toast.success(t("items.toast.item_saved"));
-    navigateTo("/item/" + itemId.value);
+    if (redirect) {
+      navigateTo("/item/" + itemId.value);
+    }
   }
 
   type NonNullableStringKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends string ? K : never]: any }>;
@@ -339,6 +341,8 @@
 
     toast.success(t("items.toast.attachment_uploaded"));
 
+    await saveItem(false);
+
     item.value.attachments = data.attachments;
   }
 
@@ -432,13 +436,13 @@
     // Cmd + S
     if (e.metaKey && e.key === "s") {
       e.preventDefault();
-      await saveItem();
+      await saveItem(!e.shiftKey);
     }
 
     // Ctrl + S
     if (e.ctrlKey && e.key === "s") {
       e.preventDefault();
-      await saveItem();
+      await saveItem(!e.shiftKey);
     }
   }
 
@@ -482,7 +486,7 @@
     const payload: ItemUpdate = {
       ...item.value,
       locationId: item.value.location?.id,
-      labelIds: item.value.labelIds,
+      tagIds: item.value.tagIds,
       parentId: parent.value ? parent.value.id : null,
       assetId: item.value.assetId,
     };
@@ -573,7 +577,7 @@
             <TooltipContent>{{ $t("items.show_advanced_view_options") }}</TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <Button size="sm" :disabled="saving" @click="saveItem">
+        <Button size="sm" :disabled="saving" @click="saveItem(true)">
           <MdiLoading v-if="saving" class="animate-spin" />
           <MdiContentSaveOutline v-else />
           {{ $t("global.save") }}
@@ -600,7 +604,7 @@
               <Label class="px-1">{{ $t("items.sync_child_locations") }}</Label>
               <Switch v-model="item.syncChildItemsLocations" @update:model-value="syncChildItemsLocations()" />
             </div>
-            <LabelSelector v-model="item.labelIds" :labels="labels" />
+            <TagSelector v-model="item.tagIds" :tags="tags" />
           </div>
 
           <div class="border-t sm:p-0">

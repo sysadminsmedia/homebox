@@ -7,12 +7,16 @@ describe("first time user workflow (register, login, join group)", () => {
   test("user should be able to update group", async () => {
     const { client } = await factories.client.singleUse();
 
+    const { data: user } = await client.user.self();
     const name = faker.person.firstName();
 
-    const { response, data: group } = await client.group.update({
-      name,
-      currency: "eur",
-    });
+    const { response, data: group } = await client.group.update(
+      {
+        name,
+        currency: "eur",
+      },
+      user.item.defaultGroupId
+    );
 
     expect(response.status).toBe(200);
     expect(group.name).toBe(name);
@@ -21,7 +25,8 @@ describe("first time user workflow (register, login, join group)", () => {
   test("user should be able to get own group", async () => {
     const { client } = await factories.client.singleUse();
 
-    const { response, data: group } = await client.group.get();
+    const { data: user } = await client.user.self();
+    const { response, data: group } = await client.group.get(user.item.defaultGroupId);
 
     expect(response.status).toBe(200);
     expect(group.name).toBeTruthy();
@@ -57,7 +62,7 @@ describe("first time user workflow (register, login, join group)", () => {
     const client2 = factories.client.user(loginData.token);
     const { data: user2 } = await client2.user.self();
 
-    user2.item.groupName = user1.item.groupName;
+    expect(user2.item.defaultGroupId).toBe(user1.item.defaultGroupId);
 
     // Cleanup User 2
     const { response: deleteResp } = await client2.user.delete();

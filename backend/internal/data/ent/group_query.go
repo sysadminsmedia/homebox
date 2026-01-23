@@ -13,14 +13,14 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -32,11 +32,11 @@ type GroupQuery struct {
 	inters               []Interceptor
 	predicates           []predicate.Group
 	withUsers            *UserQuery
-	withEntities         *EntityQuery
-	withLabels           *LabelQuery
+	withLocations        *LocationQuery
+	withItems            *ItemQuery
+	withTags             *TagQuery
 	withInvitationTokens *GroupInvitationTokenQuery
 	withNotifiers        *NotifierQuery
-	withEntityTypes      *EntityTypeQuery
 	withItemTemplates    *ItemTemplateQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -88,7 +88,7 @@ func (_q *GroupQuery) QueryUsers() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(group.Table, group.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, group.UsersTable, group.UsersColumn),
+			sqlgraph.Edge(sqlgraph.M2M, true, group.UsersTable, group.UsersPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -96,9 +96,9 @@ func (_q *GroupQuery) QueryUsers() *UserQuery {
 	return query
 }
 
-// QueryEntities chains the current query on the "entities" edge.
-func (_q *GroupQuery) QueryEntities() *EntityQuery {
-	query := (&EntityClient{config: _q.config}).Query()
+// QueryLocations chains the current query on the "locations" edge.
+func (_q *GroupQuery) QueryLocations() *LocationQuery {
+	query := (&LocationClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -109,8 +109,8 @@ func (_q *GroupQuery) QueryEntities() *EntityQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(group.Table, group.FieldID, selector),
-			sqlgraph.To(entity.Table, entity.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, group.EntitiesTable, group.EntitiesColumn),
+			sqlgraph.To(location.Table, location.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.LocationsTable, group.LocationsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -118,9 +118,9 @@ func (_q *GroupQuery) QueryEntities() *EntityQuery {
 	return query
 }
 
-// QueryLabels chains the current query on the "labels" edge.
-func (_q *GroupQuery) QueryLabels() *LabelQuery {
-	query := (&LabelClient{config: _q.config}).Query()
+// QueryItems chains the current query on the "items" edge.
+func (_q *GroupQuery) QueryItems() *ItemQuery {
+	query := (&ItemClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -131,8 +131,30 @@ func (_q *GroupQuery) QueryLabels() *LabelQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(group.Table, group.FieldID, selector),
-			sqlgraph.To(label.Table, label.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, group.LabelsTable, group.LabelsColumn),
+			sqlgraph.To(item.Table, item.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.ItemsTable, group.ItemsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryTags chains the current query on the "tags" edge.
+func (_q *GroupQuery) QueryTags() *TagQuery {
+	query := (&TagClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(tag.Table, tag.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.TagsTable, group.TagsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -177,28 +199,6 @@ func (_q *GroupQuery) QueryNotifiers() *NotifierQuery {
 			sqlgraph.From(group.Table, group.FieldID, selector),
 			sqlgraph.To(notifier.Table, notifier.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, group.NotifiersTable, group.NotifiersColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryEntityTypes chains the current query on the "entity_types" edge.
-func (_q *GroupQuery) QueryEntityTypes() *EntityTypeQuery {
-	query := (&EntityTypeClient{config: _q.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := _q.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := _q.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(group.Table, group.FieldID, selector),
-			sqlgraph.To(entitytype.Table, entitytype.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, group.EntityTypesTable, group.EntityTypesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -421,11 +421,11 @@ func (_q *GroupQuery) Clone() *GroupQuery {
 		inters:               append([]Interceptor{}, _q.inters...),
 		predicates:           append([]predicate.Group{}, _q.predicates...),
 		withUsers:            _q.withUsers.Clone(),
-		withEntities:         _q.withEntities.Clone(),
-		withLabels:           _q.withLabels.Clone(),
+		withLocations:        _q.withLocations.Clone(),
+		withItems:            _q.withItems.Clone(),
+		withTags:             _q.withTags.Clone(),
 		withInvitationTokens: _q.withInvitationTokens.Clone(),
 		withNotifiers:        _q.withNotifiers.Clone(),
-		withEntityTypes:      _q.withEntityTypes.Clone(),
 		withItemTemplates:    _q.withItemTemplates.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
@@ -444,25 +444,36 @@ func (_q *GroupQuery) WithUsers(opts ...func(*UserQuery)) *GroupQuery {
 	return _q
 }
 
-// WithEntities tells the query-builder to eager-load the nodes that are connected to
-// the "entities" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *GroupQuery) WithEntities(opts ...func(*EntityQuery)) *GroupQuery {
-	query := (&EntityClient{config: _q.config}).Query()
+// WithLocations tells the query-builder to eager-load the nodes that are connected to
+// the "locations" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *GroupQuery) WithLocations(opts ...func(*LocationQuery)) *GroupQuery {
+	query := (&LocationClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withEntities = query
+	_q.withLocations = query
 	return _q
 }
 
-// WithLabels tells the query-builder to eager-load the nodes that are connected to
-// the "labels" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *GroupQuery) WithLabels(opts ...func(*LabelQuery)) *GroupQuery {
-	query := (&LabelClient{config: _q.config}).Query()
+// WithItems tells the query-builder to eager-load the nodes that are connected to
+// the "items" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *GroupQuery) WithItems(opts ...func(*ItemQuery)) *GroupQuery {
+	query := (&ItemClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withLabels = query
+	_q.withItems = query
+	return _q
+}
+
+// WithTags tells the query-builder to eager-load the nodes that are connected to
+// the "tags" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *GroupQuery) WithTags(opts ...func(*TagQuery)) *GroupQuery {
+	query := (&TagClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withTags = query
 	return _q
 }
 
@@ -485,17 +496,6 @@ func (_q *GroupQuery) WithNotifiers(opts ...func(*NotifierQuery)) *GroupQuery {
 		opt(query)
 	}
 	_q.withNotifiers = query
-	return _q
-}
-
-// WithEntityTypes tells the query-builder to eager-load the nodes that are connected to
-// the "entity_types" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *GroupQuery) WithEntityTypes(opts ...func(*EntityTypeQuery)) *GroupQuery {
-	query := (&EntityTypeClient{config: _q.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	_q.withEntityTypes = query
 	return _q
 }
 
@@ -590,11 +590,11 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 		_spec       = _q.querySpec()
 		loadedTypes = [7]bool{
 			_q.withUsers != nil,
-			_q.withEntities != nil,
-			_q.withLabels != nil,
+			_q.withLocations != nil,
+			_q.withItems != nil,
+			_q.withTags != nil,
 			_q.withInvitationTokens != nil,
 			_q.withNotifiers != nil,
-			_q.withEntityTypes != nil,
 			_q.withItemTemplates != nil,
 		}
 	)
@@ -623,17 +623,24 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 			return nil, err
 		}
 	}
-	if query := _q.withEntities; query != nil {
-		if err := _q.loadEntities(ctx, query, nodes,
-			func(n *Group) { n.Edges.Entities = []*Entity{} },
-			func(n *Group, e *Entity) { n.Edges.Entities = append(n.Edges.Entities, e) }); err != nil {
+	if query := _q.withLocations; query != nil {
+		if err := _q.loadLocations(ctx, query, nodes,
+			func(n *Group) { n.Edges.Locations = []*Location{} },
+			func(n *Group, e *Location) { n.Edges.Locations = append(n.Edges.Locations, e) }); err != nil {
 			return nil, err
 		}
 	}
-	if query := _q.withLabels; query != nil {
-		if err := _q.loadLabels(ctx, query, nodes,
-			func(n *Group) { n.Edges.Labels = []*Label{} },
-			func(n *Group, e *Label) { n.Edges.Labels = append(n.Edges.Labels, e) }); err != nil {
+	if query := _q.withItems; query != nil {
+		if err := _q.loadItems(ctx, query, nodes,
+			func(n *Group) { n.Edges.Items = []*Item{} },
+			func(n *Group, e *Item) { n.Edges.Items = append(n.Edges.Items, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withTags; query != nil {
+		if err := _q.loadTags(ctx, query, nodes,
+			func(n *Group) { n.Edges.Tags = []*Tag{} },
+			func(n *Group, e *Tag) { n.Edges.Tags = append(n.Edges.Tags, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -653,13 +660,6 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 			return nil, err
 		}
 	}
-	if query := _q.withEntityTypes; query != nil {
-		if err := _q.loadEntityTypes(ctx, query, nodes,
-			func(n *Group) { n.Edges.EntityTypes = []*EntityType{} },
-			func(n *Group, e *EntityType) { n.Edges.EntityTypes = append(n.Edges.EntityTypes, e) }); err != nil {
-			return nil, err
-		}
-	}
 	if query := _q.withItemTemplates; query != nil {
 		if err := _q.loadItemTemplates(ctx, query, nodes,
 			func(n *Group) { n.Edges.ItemTemplates = []*ItemTemplate{} },
@@ -671,6 +671,67 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 }
 
 func (_q *GroupQuery) loadUsers(ctx context.Context, query *UserQuery, nodes []*Group, init func(*Group), assign func(*Group, *User)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[uuid.UUID]*Group)
+	nids := make(map[uuid.UUID]map[*Group]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(group.UsersTable)
+		s.Join(joinT).On(s.C(user.FieldID), joinT.C(group.UsersPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(group.UsersPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(group.UsersPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(uuid.UUID)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := *values[0].(*uuid.UUID)
+				inValue := *values[1].(*uuid.UUID)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Group]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*User](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "users" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (_q *GroupQuery) loadLocations(ctx context.Context, query *LocationQuery, nodes []*Group, init func(*Group), assign func(*Group, *Location)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[uuid.UUID]*Group)
 	for i := range nodes {
@@ -681,27 +742,27 @@ func (_q *GroupQuery) loadUsers(ctx context.Context, query *UserQuery, nodes []*
 		}
 	}
 	query.withFKs = true
-	query.Where(predicate.User(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(group.UsersColumn), fks...))
+	query.Where(predicate.Location(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(group.LocationsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.group_users
+		fk := n.group_locations
 		if fk == nil {
-			return fmt.Errorf(`foreign-key "group_users" is nil for node %v`, n.ID)
+			return fmt.Errorf(`foreign-key "group_locations" is nil for node %v`, n.ID)
 		}
 		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "group_users" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "group_locations" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
 	return nil
 }
-func (_q *GroupQuery) loadEntities(ctx context.Context, query *EntityQuery, nodes []*Group, init func(*Group), assign func(*Group, *Entity)) error {
+func (_q *GroupQuery) loadItems(ctx context.Context, query *ItemQuery, nodes []*Group, init func(*Group), assign func(*Group, *Item)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[uuid.UUID]*Group)
 	for i := range nodes {
@@ -712,27 +773,27 @@ func (_q *GroupQuery) loadEntities(ctx context.Context, query *EntityQuery, node
 		}
 	}
 	query.withFKs = true
-	query.Where(predicate.Entity(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(group.EntitiesColumn), fks...))
+	query.Where(predicate.Item(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(group.ItemsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.group_entities
+		fk := n.group_items
 		if fk == nil {
-			return fmt.Errorf(`foreign-key "group_entities" is nil for node %v`, n.ID)
+			return fmt.Errorf(`foreign-key "group_items" is nil for node %v`, n.ID)
 		}
 		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "group_entities" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "group_items" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
 	return nil
 }
-func (_q *GroupQuery) loadLabels(ctx context.Context, query *LabelQuery, nodes []*Group, init func(*Group), assign func(*Group, *Label)) error {
+func (_q *GroupQuery) loadTags(ctx context.Context, query *TagQuery, nodes []*Group, init func(*Group), assign func(*Group, *Tag)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[uuid.UUID]*Group)
 	for i := range nodes {
@@ -743,21 +804,21 @@ func (_q *GroupQuery) loadLabels(ctx context.Context, query *LabelQuery, nodes [
 		}
 	}
 	query.withFKs = true
-	query.Where(predicate.Label(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(group.LabelsColumn), fks...))
+	query.Where(predicate.Tag(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(group.TagsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.group_labels
+		fk := n.group_tags
 		if fk == nil {
-			return fmt.Errorf(`foreign-key "group_labels" is nil for node %v`, n.ID)
+			return fmt.Errorf(`foreign-key "group_tags" is nil for node %v`, n.ID)
 		}
 		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "group_labels" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "group_tags" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -819,37 +880,6 @@ func (_q *GroupQuery) loadNotifiers(ctx context.Context, query *NotifierQuery, n
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "group_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
-func (_q *GroupQuery) loadEntityTypes(ctx context.Context, query *EntityTypeQuery, nodes []*Group, init func(*Group), assign func(*Group, *EntityType)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uuid.UUID]*Group)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	query.withFKs = true
-	query.Where(predicate.EntityType(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(group.EntityTypesColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.group_entity_types
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "group_entity_types" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "group_entity_types" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

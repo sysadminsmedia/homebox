@@ -164,7 +164,7 @@ func TestItemsRepository_AccentInsensitiveSearch(t *testing.T) {
 			if tc.shouldMatch {
 				// If it should match, then either the original query should match
 				// or the normalized query should match when applied to the stored data
-				assert.NotEqual(t, "", normalizedSearch, "Normalized search should not be empty")
+				assert.NotEmpty(t, normalizedSearch, "Normalized search should not be empty")
 
 				// The key insight is that we're searching with both the original and normalized queries
 				// So "electrónica" will be found when searching for "electronica" because:

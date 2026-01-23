@@ -72,11 +72,6 @@
                 }
             }
         },
-        "label": {
-            "create_modal": {
-                "title": "新增標籤"
-            }
-        },
         "location": {
             "create_modal": {
                 "title": "新增地點"
@@ -94,7 +89,6 @@
         "github": "GitHub項目",
         "items": "項目",
         "join_discord": "加入Discord",
-        "labels": "標籤",
         "locations": "地點",
         "name": "名字",
         "password": "密碼",
@@ -126,7 +120,6 @@
         "first": "第一項",
         "include_archive": "包括存檔項目",
         "last": "最後一項",
-        "negate_labels": "取消選定的標籤",
         "next_page": "下一頁",
         "no_results": "沒有找到項目",
         "options": "選項",
@@ -151,7 +144,6 @@
         "delete_account": "刪除帳戶",
         "delete_account_sub": "刪除您的帳戶及其所有相關資料。此操作無法撤回。",
         "enabled": "啟用",
-        "gen_invite": "產生邀請連結",
         "group_settings": "群組設定",
         "group_settings_sub": "共享群組設定。您可能需要刷新瀏覽器才能套用設定。",
         "inactive": "不活躍",

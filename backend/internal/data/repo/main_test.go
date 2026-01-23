@@ -2,6 +2,8 @@ package repo
 
 import (
 	"context"
+	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"log"
 	"os"
 	"testing"
@@ -30,7 +32,7 @@ func bootstrap() {
 		ctx = context.Background()
 	)
 
-	tGroup, err = tRepos.Groups.GroupCreate(ctx, "test-group")
+	tGroup, err = tRepos.Groups.GroupCreate(ctx, "test-group", uuid.Nil)
 	if err != nil {
 		log.Fatal(err)
 	}

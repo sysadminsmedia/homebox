@@ -117,7 +117,7 @@ func (Entity) Edges() []ent.Edge {
 		edge.To("location", Entity.Type).
 			Unique().
 			From("entity"),
-		edge.From("label", Label.Type).
+		edge.From("tag", Tag.Type).
 			Ref("entities"),
 		edge.From("type", EntityType.Type).
 			Ref("entities").

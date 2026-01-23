@@ -10,13 +10,13 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 )
 
-// Entity is the model entity for the Entity schema.
-type Entity struct {
+// Item is the model entity for the Item schema.
+type Item struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
@@ -40,8 +40,8 @@ type Entity struct {
 	Archived bool `json:"archived,omitempty"`
 	// AssetID holds the value of the "asset_id" field.
 	AssetID int `json:"asset_id,omitempty"`
-	// SyncChildEntitiesLocations holds the value of the "sync_child_entities_locations" field.
-	SyncChildEntitiesLocations bool `json:"sync_child_entities_locations,omitempty"`
+	// SyncChildItemsLocations holds the value of the "sync_child_items_locations" field.
+	SyncChildItemsLocations bool `json:"sync_child_items_locations,omitempty"`
 	// SerialNumber holds the value of the "serial_number" field.
 	SerialNumber string `json:"serial_number,omitempty"`
 	// ModelNumber holds the value of the "model_number" field.
@@ -69,45 +69,40 @@ type Entity struct {
 	// SoldNotes holds the value of the "sold_notes" field.
 	SoldNotes string `json:"sold_notes,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the EntityQuery when eager-loading is set.
-	Edges                EntityEdges `json:"edges"`
-	entity_parent        *uuid.UUID
-	entity_location      *uuid.UUID
-	entity_type_entities *uuid.UUID
-	group_entities       *uuid.UUID
-	selectValues         sql.SelectValues
+	// The values are being populated by the ItemQuery when eager-loading is set.
+	Edges          ItemEdges `json:"edges"`
+	group_items    *uuid.UUID
+	item_children  *uuid.UUID
+	location_items *uuid.UUID
+	selectValues   sql.SelectValues
 }
 
-// EntityEdges holds the relations/edges for other nodes in the graph.
-type EntityEdges struct {
+// ItemEdges holds the relations/edges for other nodes in the graph.
+type ItemEdges struct {
 	// Group holds the value of the group edge.
 	Group *Group `json:"group,omitempty"`
-	// Children holds the value of the children edge.
-	Children []*Entity `json:"children,omitempty"`
 	// Parent holds the value of the parent edge.
-	Parent *Entity `json:"parent,omitempty"`
-	// Entity holds the value of the entity edge.
-	Entity []*Entity `json:"entity,omitempty"`
+	Parent *Item `json:"parent,omitempty"`
+	// Children holds the value of the children edge.
+	Children []*Item `json:"children,omitempty"`
+	// Tag holds the value of the tag edge.
+	Tag []*Tag `json:"tag,omitempty"`
 	// Location holds the value of the location edge.
-	Location *Entity `json:"location,omitempty"`
-	// Label holds the value of the label edge.
-	Label []*Label `json:"label,omitempty"`
-	// Type holds the value of the type edge.
-	Type *EntityType `json:"type,omitempty"`
+	Location *Location `json:"location,omitempty"`
 	// Fields holds the value of the fields edge.
-	Fields []*EntityField `json:"fields,omitempty"`
+	Fields []*ItemField `json:"fields,omitempty"`
 	// MaintenanceEntries holds the value of the maintenance_entries edge.
 	MaintenanceEntries []*MaintenanceEntry `json:"maintenance_entries,omitempty"`
 	// Attachments holds the value of the attachments edge.
 	Attachments []*Attachment `json:"attachments,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [10]bool
+	loadedTypes [8]bool
 }
 
 // GroupOrErr returns the Group value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e EntityEdges) GroupOrErr() (*Group, error) {
+func (e ItemEdges) GroupOrErr() (*Group, error) {
 	if e.Group != nil {
 		return e.Group, nil
 	} else if e.loadedTypes[0] {
@@ -116,70 +111,50 @@ func (e EntityEdges) GroupOrErr() (*Group, error) {
 	return nil, &NotLoadedError{edge: "group"}
 }
 
+// ParentOrErr returns the Parent value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e ItemEdges) ParentOrErr() (*Item, error) {
+	if e.Parent != nil {
+		return e.Parent, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: item.Label}
+	}
+	return nil, &NotLoadedError{edge: "parent"}
+}
+
 // ChildrenOrErr returns the Children value or an error if the edge
 // was not loaded in eager-loading.
-func (e EntityEdges) ChildrenOrErr() ([]*Entity, error) {
-	if e.loadedTypes[1] {
+func (e ItemEdges) ChildrenOrErr() ([]*Item, error) {
+	if e.loadedTypes[2] {
 		return e.Children, nil
 	}
 	return nil, &NotLoadedError{edge: "children"}
 }
 
-// ParentOrErr returns the Parent value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e EntityEdges) ParentOrErr() (*Entity, error) {
-	if e.Parent != nil {
-		return e.Parent, nil
-	} else if e.loadedTypes[2] {
-		return nil, &NotFoundError{label: entity.Label}
-	}
-	return nil, &NotLoadedError{edge: "parent"}
-}
-
-// EntityOrErr returns the Entity value or an error if the edge
+// TagOrErr returns the Tag value or an error if the edge
 // was not loaded in eager-loading.
-func (e EntityEdges) EntityOrErr() ([]*Entity, error) {
+func (e ItemEdges) TagOrErr() ([]*Tag, error) {
 	if e.loadedTypes[3] {
-		return e.Entity, nil
+		return e.Tag, nil
 	}
-	return nil, &NotLoadedError{edge: "entity"}
+	return nil, &NotLoadedError{edge: "tag"}
 }
 
 // LocationOrErr returns the Location value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e EntityEdges) LocationOrErr() (*Entity, error) {
+func (e ItemEdges) LocationOrErr() (*Location, error) {
 	if e.Location != nil {
 		return e.Location, nil
 	} else if e.loadedTypes[4] {
-		return nil, &NotFoundError{label: entity.Label}
+		return nil, &NotFoundError{label: location.Label}
 	}
 	return nil, &NotLoadedError{edge: "location"}
 }
 
-// LabelOrErr returns the Label value or an error if the edge
-// was not loaded in eager-loading.
-func (e EntityEdges) LabelOrErr() ([]*Label, error) {
-	if e.loadedTypes[5] {
-		return e.Label, nil
-	}
-	return nil, &NotLoadedError{edge: "label"}
-}
-
-// TypeOrErr returns the Type value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e EntityEdges) TypeOrErr() (*EntityType, error) {
-	if e.Type != nil {
-		return e.Type, nil
-	} else if e.loadedTypes[6] {
-		return nil, &NotFoundError{label: entitytype.Label}
-	}
-	return nil, &NotLoadedError{edge: "type"}
-}
-
 // FieldsOrErr returns the Fields value or an error if the edge
 // was not loaded in eager-loading.
-func (e EntityEdges) FieldsOrErr() ([]*EntityField, error) {
-	if e.loadedTypes[7] {
+func (e ItemEdges) FieldsOrErr() ([]*ItemField, error) {
+	if e.loadedTypes[5] {
 		return e.Fields, nil
 	}
 	return nil, &NotLoadedError{edge: "fields"}
@@ -187,8 +162,8 @@ func (e EntityEdges) FieldsOrErr() ([]*EntityField, error) {
 
 // MaintenanceEntriesOrErr returns the MaintenanceEntries value or an error if the edge
 // was not loaded in eager-loading.
-func (e EntityEdges) MaintenanceEntriesOrErr() ([]*MaintenanceEntry, error) {
-	if e.loadedTypes[8] {
+func (e ItemEdges) MaintenanceEntriesOrErr() ([]*MaintenanceEntry, error) {
+	if e.loadedTypes[6] {
 		return e.MaintenanceEntries, nil
 	}
 	return nil, &NotLoadedError{edge: "maintenance_entries"}
@@ -196,37 +171,35 @@ func (e EntityEdges) MaintenanceEntriesOrErr() ([]*MaintenanceEntry, error) {
 
 // AttachmentsOrErr returns the Attachments value or an error if the edge
 // was not loaded in eager-loading.
-func (e EntityEdges) AttachmentsOrErr() ([]*Attachment, error) {
-	if e.loadedTypes[9] {
+func (e ItemEdges) AttachmentsOrErr() ([]*Attachment, error) {
+	if e.loadedTypes[7] {
 		return e.Attachments, nil
 	}
 	return nil, &NotLoadedError{edge: "attachments"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*Entity) scanValues(columns []string) ([]any, error) {
+func (*Item) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case entity.FieldInsured, entity.FieldArchived, entity.FieldSyncChildEntitiesLocations, entity.FieldLifetimeWarranty:
+		case item.FieldInsured, item.FieldArchived, item.FieldSyncChildItemsLocations, item.FieldLifetimeWarranty:
 			values[i] = new(sql.NullBool)
-		case entity.FieldPurchasePrice, entity.FieldSoldPrice:
+		case item.FieldPurchasePrice, item.FieldSoldPrice:
 			values[i] = new(sql.NullFloat64)
-		case entity.FieldQuantity, entity.FieldAssetID:
+		case item.FieldQuantity, item.FieldAssetID:
 			values[i] = new(sql.NullInt64)
-		case entity.FieldName, entity.FieldDescription, entity.FieldImportRef, entity.FieldNotes, entity.FieldSerialNumber, entity.FieldModelNumber, entity.FieldManufacturer, entity.FieldWarrantyDetails, entity.FieldPurchaseFrom, entity.FieldSoldTo, entity.FieldSoldNotes:
+		case item.FieldName, item.FieldDescription, item.FieldImportRef, item.FieldNotes, item.FieldSerialNumber, item.FieldModelNumber, item.FieldManufacturer, item.FieldWarrantyDetails, item.FieldPurchaseFrom, item.FieldSoldTo, item.FieldSoldNotes:
 			values[i] = new(sql.NullString)
-		case entity.FieldCreatedAt, entity.FieldUpdatedAt, entity.FieldWarrantyExpires, entity.FieldPurchaseTime, entity.FieldSoldTime:
+		case item.FieldCreatedAt, item.FieldUpdatedAt, item.FieldWarrantyExpires, item.FieldPurchaseTime, item.FieldSoldTime:
 			values[i] = new(sql.NullTime)
-		case entity.FieldID:
+		case item.FieldID:
 			values[i] = new(uuid.UUID)
-		case entity.ForeignKeys[0]: // entity_parent
+		case item.ForeignKeys[0]: // group_items
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
-		case entity.ForeignKeys[1]: // entity_location
+		case item.ForeignKeys[1]: // item_children
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
-		case entity.ForeignKeys[2]: // entity_type_entities
-			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
-		case entity.ForeignKeys[3]: // group_entities
+		case item.ForeignKeys[2]: // location_items
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -236,190 +209,183 @@ func (*Entity) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the Entity fields.
-func (_m *Entity) assignValues(columns []string, values []any) error {
+// to the Item fields.
+func (_m *Item) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case entity.FieldID:
+		case item.FieldID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
 				_m.ID = *value
 			}
-		case entity.FieldCreatedAt:
+		case item.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				_m.CreatedAt = value.Time
 			}
-		case entity.FieldUpdatedAt:
+		case item.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				_m.UpdatedAt = value.Time
 			}
-		case entity.FieldName:
+		case item.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				_m.Name = value.String
 			}
-		case entity.FieldDescription:
+		case item.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
 				_m.Description = value.String
 			}
-		case entity.FieldImportRef:
+		case item.FieldImportRef:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field import_ref", values[i])
 			} else if value.Valid {
 				_m.ImportRef = value.String
 			}
-		case entity.FieldNotes:
+		case item.FieldNotes:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field notes", values[i])
 			} else if value.Valid {
 				_m.Notes = value.String
 			}
-		case entity.FieldQuantity:
+		case item.FieldQuantity:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field quantity", values[i])
 			} else if value.Valid {
 				_m.Quantity = int(value.Int64)
 			}
-		case entity.FieldInsured:
+		case item.FieldInsured:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field insured", values[i])
 			} else if value.Valid {
 				_m.Insured = value.Bool
 			}
-		case entity.FieldArchived:
+		case item.FieldArchived:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field archived", values[i])
 			} else if value.Valid {
 				_m.Archived = value.Bool
 			}
-		case entity.FieldAssetID:
+		case item.FieldAssetID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field asset_id", values[i])
 			} else if value.Valid {
 				_m.AssetID = int(value.Int64)
 			}
-		case entity.FieldSyncChildEntitiesLocations:
+		case item.FieldSyncChildItemsLocations:
 			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field sync_child_entities_locations", values[i])
+				return fmt.Errorf("unexpected type %T for field sync_child_items_locations", values[i])
 			} else if value.Valid {
-				_m.SyncChildEntitiesLocations = value.Bool
+				_m.SyncChildItemsLocations = value.Bool
 			}
-		case entity.FieldSerialNumber:
+		case item.FieldSerialNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field serial_number", values[i])
 			} else if value.Valid {
 				_m.SerialNumber = value.String
 			}
-		case entity.FieldModelNumber:
+		case item.FieldModelNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field model_number", values[i])
 			} else if value.Valid {
 				_m.ModelNumber = value.String
 			}
-		case entity.FieldManufacturer:
+		case item.FieldManufacturer:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field manufacturer", values[i])
 			} else if value.Valid {
 				_m.Manufacturer = value.String
 			}
-		case entity.FieldLifetimeWarranty:
+		case item.FieldLifetimeWarranty:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field lifetime_warranty", values[i])
 			} else if value.Valid {
 				_m.LifetimeWarranty = value.Bool
 			}
-		case entity.FieldWarrantyExpires:
+		case item.FieldWarrantyExpires:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field warranty_expires", values[i])
 			} else if value.Valid {
 				_m.WarrantyExpires = value.Time
 			}
-		case entity.FieldWarrantyDetails:
+		case item.FieldWarrantyDetails:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field warranty_details", values[i])
 			} else if value.Valid {
 				_m.WarrantyDetails = value.String
 			}
-		case entity.FieldPurchaseTime:
+		case item.FieldPurchaseTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field purchase_time", values[i])
 			} else if value.Valid {
 				_m.PurchaseTime = value.Time
 			}
-		case entity.FieldPurchaseFrom:
+		case item.FieldPurchaseFrom:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field purchase_from", values[i])
 			} else if value.Valid {
 				_m.PurchaseFrom = value.String
 			}
-		case entity.FieldPurchasePrice:
+		case item.FieldPurchasePrice:
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
 				return fmt.Errorf("unexpected type %T for field purchase_price", values[i])
 			} else if value.Valid {
 				_m.PurchasePrice = value.Float64
 			}
-		case entity.FieldSoldTime:
+		case item.FieldSoldTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field sold_time", values[i])
 			} else if value.Valid {
 				_m.SoldTime = value.Time
 			}
-		case entity.FieldSoldTo:
+		case item.FieldSoldTo:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field sold_to", values[i])
 			} else if value.Valid {
 				_m.SoldTo = value.String
 			}
-		case entity.FieldSoldPrice:
+		case item.FieldSoldPrice:
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
 				return fmt.Errorf("unexpected type %T for field sold_price", values[i])
 			} else if value.Valid {
 				_m.SoldPrice = value.Float64
 			}
-		case entity.FieldSoldNotes:
+		case item.FieldSoldNotes:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field sold_notes", values[i])
 			} else if value.Valid {
 				_m.SoldNotes = value.String
 			}
-		case entity.ForeignKeys[0]:
+		case item.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
-				return fmt.Errorf("unexpected type %T for field entity_parent", values[i])
+				return fmt.Errorf("unexpected type %T for field group_items", values[i])
 			} else if value.Valid {
-				_m.entity_parent = new(uuid.UUID)
-				*_m.entity_parent = *value.S.(*uuid.UUID)
+				_m.group_items = new(uuid.UUID)
+				*_m.group_items = *value.S.(*uuid.UUID)
 			}
-		case entity.ForeignKeys[1]:
+		case item.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
-				return fmt.Errorf("unexpected type %T for field entity_location", values[i])
+				return fmt.Errorf("unexpected type %T for field item_children", values[i])
 			} else if value.Valid {
-				_m.entity_location = new(uuid.UUID)
-				*_m.entity_location = *value.S.(*uuid.UUID)
+				_m.item_children = new(uuid.UUID)
+				*_m.item_children = *value.S.(*uuid.UUID)
 			}
-		case entity.ForeignKeys[2]:
+		case item.ForeignKeys[2]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
-				return fmt.Errorf("unexpected type %T for field entity_type_entities", values[i])
+				return fmt.Errorf("unexpected type %T for field location_items", values[i])
 			} else if value.Valid {
-				_m.entity_type_entities = new(uuid.UUID)
-				*_m.entity_type_entities = *value.S.(*uuid.UUID)
-			}
-		case entity.ForeignKeys[3]:
-			if value, ok := values[i].(*sql.NullScanner); !ok {
-				return fmt.Errorf("unexpected type %T for field group_entities", values[i])
-			} else if value.Valid {
-				_m.group_entities = new(uuid.UUID)
-				*_m.group_entities = *value.S.(*uuid.UUID)
+				_m.location_items = new(uuid.UUID)
+				*_m.location_items = *value.S.(*uuid.UUID)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -428,84 +394,74 @@ func (_m *Entity) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the Entity.
+// Value returns the ent.Value that was dynamically selected and assigned to the Item.
 // This includes values selected through modifiers, order, etc.
-func (_m *Entity) Value(name string) (ent.Value, error) {
+func (_m *Item) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// QueryGroup queries the "group" edge of the Entity entity.
-func (_m *Entity) QueryGroup() *GroupQuery {
-	return NewEntityClient(_m.config).QueryGroup(_m)
+// QueryGroup queries the "group" edge of the Item entity.
+func (_m *Item) QueryGroup() *GroupQuery {
+	return NewItemClient(_m.config).QueryGroup(_m)
 }
 
-// QueryChildren queries the "children" edge of the Entity entity.
-func (_m *Entity) QueryChildren() *EntityQuery {
-	return NewEntityClient(_m.config).QueryChildren(_m)
+// QueryParent queries the "parent" edge of the Item entity.
+func (_m *Item) QueryParent() *ItemQuery {
+	return NewItemClient(_m.config).QueryParent(_m)
 }
 
-// QueryParent queries the "parent" edge of the Entity entity.
-func (_m *Entity) QueryParent() *EntityQuery {
-	return NewEntityClient(_m.config).QueryParent(_m)
+// QueryChildren queries the "children" edge of the Item entity.
+func (_m *Item) QueryChildren() *ItemQuery {
+	return NewItemClient(_m.config).QueryChildren(_m)
 }
 
-// QueryEntity queries the "entity" edge of the Entity entity.
-func (_m *Entity) QueryEntity() *EntityQuery {
-	return NewEntityClient(_m.config).QueryEntity(_m)
+// QueryTag queries the "tag" edge of the Item entity.
+func (_m *Item) QueryTag() *TagQuery {
+	return NewItemClient(_m.config).QueryTag(_m)
 }
 
-// QueryLocation queries the "location" edge of the Entity entity.
-func (_m *Entity) QueryLocation() *EntityQuery {
-	return NewEntityClient(_m.config).QueryLocation(_m)
+// QueryLocation queries the "location" edge of the Item entity.
+func (_m *Item) QueryLocation() *LocationQuery {
+	return NewItemClient(_m.config).QueryLocation(_m)
 }
 
-// QueryLabel queries the "label" edge of the Entity entity.
-func (_m *Entity) QueryLabel() *LabelQuery {
-	return NewEntityClient(_m.config).QueryLabel(_m)
+// QueryFields queries the "fields" edge of the Item entity.
+func (_m *Item) QueryFields() *ItemFieldQuery {
+	return NewItemClient(_m.config).QueryFields(_m)
 }
 
-// QueryType queries the "type" edge of the Entity entity.
-func (_m *Entity) QueryType() *EntityTypeQuery {
-	return NewEntityClient(_m.config).QueryType(_m)
+// QueryMaintenanceEntries queries the "maintenance_entries" edge of the Item entity.
+func (_m *Item) QueryMaintenanceEntries() *MaintenanceEntryQuery {
+	return NewItemClient(_m.config).QueryMaintenanceEntries(_m)
 }
 
-// QueryFields queries the "fields" edge of the Entity entity.
-func (_m *Entity) QueryFields() *EntityFieldQuery {
-	return NewEntityClient(_m.config).QueryFields(_m)
+// QueryAttachments queries the "attachments" edge of the Item entity.
+func (_m *Item) QueryAttachments() *AttachmentQuery {
+	return NewItemClient(_m.config).QueryAttachments(_m)
 }
 
-// QueryMaintenanceEntries queries the "maintenance_entries" edge of the Entity entity.
-func (_m *Entity) QueryMaintenanceEntries() *MaintenanceEntryQuery {
-	return NewEntityClient(_m.config).QueryMaintenanceEntries(_m)
-}
-
-// QueryAttachments queries the "attachments" edge of the Entity entity.
-func (_m *Entity) QueryAttachments() *AttachmentQuery {
-	return NewEntityClient(_m.config).QueryAttachments(_m)
-}
-
-// Update returns a builder for updating this Entity.
-// Note that you need to call Entity.Unwrap() before calling this method if this Entity
+// Update returns a builder for updating this Item.
+// Note that you need to call Item.Unwrap() before calling this method if this Item
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (_m *Entity) Update() *EntityUpdateOne {
-	return NewEntityClient(_m.config).UpdateOne(_m)
+func (_m *Item) Update() *ItemUpdateOne {
+	return NewItemClient(_m.config).UpdateOne(_m)
 }
 
-// Unwrap unwraps the Entity entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the Item entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (_m *Entity) Unwrap() *Entity {
+func (_m *Item) Unwrap() *Item {
 	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: Entity is not a transactional entity")
+		panic("ent: Item is not a transactional entity")
 	}
 	_m.config.driver = _tx.drv
 	return _m
 }
 
 // String implements the fmt.Stringer.
-func (_m *Entity) String() string {
+func (_m *Item) String() string {
 	var builder strings.Builder
-	builder.WriteString("Entity(")
+	builder.WriteString("Item(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("created_at=")
 	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
@@ -537,8 +493,8 @@ func (_m *Entity) String() string {
 	builder.WriteString("asset_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.AssetID))
 	builder.WriteString(", ")
-	builder.WriteString("sync_child_entities_locations=")
-	builder.WriteString(fmt.Sprintf("%v", _m.SyncChildEntitiesLocations))
+	builder.WriteString("sync_child_items_locations=")
+	builder.WriteString(fmt.Sprintf("%v", _m.SyncChildItemsLocations))
 	builder.WriteString(", ")
 	builder.WriteString("serial_number=")
 	builder.WriteString(_m.SerialNumber)
@@ -582,5 +538,5 @@ func (_m *Entity) String() string {
 	return builder.String()
 }
 
-// Entities is a parsable slice of Entity.
-type Entities []*Entity
+// Items is a parsable slice of Item.
+type Items []*Item

@@ -4,6 +4,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
+	conf "github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/textutils"
 )
 
@@ -24,7 +25,7 @@ func AccentInsensitiveContains(field string, searchValue string) predicate.Entit
 		dialect := s.Dialect()
 
 		switch dialect {
-		case "sqlite3":
+		case conf.DriverSqlite3:
 			// For SQLite, we'll create a custom normalization function using REPLACE
 			// to handle common accented characters
 			normalizeFunc := buildSQLiteNormalizeExpression(s.C(field))
@@ -32,7 +33,7 @@ func AccentInsensitiveContains(field string, searchValue string) predicate.Entit
 				"LOWER("+normalizeFunc+") LIKE ?",
 				"%"+normalizedSearch+"%",
 			))
-		case "postgres":
+		case conf.DriverPostgres:
 			// For PostgreSQL, use REPLACE-based normalization to avoid unaccent dependency
 			normalizeFunc := buildGenericNormalizeExpression(s.C(field))
 			// Use sql.P() for proper PostgreSQL parameter binding ($1, $2, etc.)

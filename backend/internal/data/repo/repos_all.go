@@ -13,7 +13,7 @@ type AllRepos struct {
 	AuthTokens  *TokenRepository
 	Groups      *GroupRepository
 	Locations   *LocationRepository
-	Labels      *LabelRepository
+	Tags      	*TagRepository
 	Items       *ItemsRepository
 	Attachments *AttachmentRepo
 	MaintEntry  *MaintenanceEntryRepository
@@ -30,9 +30,9 @@ func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubC
 		AuthTokens:  &TokenRepository{db},
 		Groups:      NewGroupRepository(db),
 		Locations:   &LocationRepository{db, bus},
-		Labels:      &LabelRepository{db, bus},
+		Tags:      	 &TagRepository{db, bus},
 		Items:       &ItemsRepository{db, bus},
-		Attachments: &AttachmentRepo{db, storage, pubSubConn, thumbnail},
+		Attachments: attachments,
 		MaintEntry:  &MaintenanceEntryRepository{db},
 		Notifiers:   NewNotifierRepository(db),
 		EntityType:  &EntityTypeRepository{db, bus},

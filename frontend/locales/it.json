@@ -24,6 +24,32 @@
                 "new_version_available_link": "Clicca qui per visualizzare le note di rilascio"
             }
         },
+        "collection": {
+            "create_modal": {
+                "name_label": "Nome Raccolta",
+                "title": "Crea Raccolta",
+                "toast": {
+                    "already_creating": "Creazione raccolta già in corso",
+                    "create_failed": "Impossibile creare raccolta",
+                    "create_success": "Raccolta creata",
+                    "please_enter_name": "Immettere un none per la raccolta"
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Codice di Invito alla Raccolta",
+                "join": "Unisciti alla Raccolta",
+                "title": "Unisciti alla Raccolta"
+            },
+            "selector": {
+                "collection_options": "Opzioni Raccolta",
+                "create_collection": "Crea Nuova Raccolta",
+                "join_collection": "Unisciti alla Raccolta Esistente",
+                "no_collection_found": "Nessuna raccolta trovata",
+                "search_collections": "Cerca Raccolte...",
+                "select_collection": "Seleziona Raccolta",
+                "your_collections": "Le Tue Raccolte"
+            }
+        },
         "color_selector": {
             "clear": "Pulisci il colore",
             "color": "Colore",
@@ -94,6 +120,7 @@
                 "open_new_tab": "Apri in una nuova scheda"
             },
             "create_modal": {
+                "clear_template": "Resetta Template",
                 "delete_photo": "Elimina foto",
                 "item_description": "Descrizione Articolo",
                 "item_name": "Nome articolo",
@@ -124,6 +151,7 @@
             },
             "product_import": {
                 "barcode": "Codice a barre del prodotto",
+                "db_source": "DB sorgente",
                 "error_exception": "Si è verificato un errore durante il recupero del codice a barre dell'articolo: ",
                 "error_invalid_barcode": "Il codice a barre fornito non è valido",
                 "error_not_found": "Nessun prodotto trovato con il codice a barre fornito.",
@@ -131,41 +159,61 @@
                 "title": "Importa prodotto"
             },
             "selector": {
+                "clear": "Annulla Selezione Articoli",
                 "no_results": "Nessun risultato trovato",
                 "placeholder": "Seleziona…",
-                "search_placeholder": "Scrivi per cercare…"
+                "search_placeholder": "Scrivi per cercare…",
+                "searching": "Ricerca in corso…"
             },
             "view": {
+                "change_details": {
+                    "add_tags": "Aggiungi Etichette",
+                    "failed_to_update_item": "Aggiornamento oggetto fallito",
+                    "remove_tags": "Rimuovi Etichette",
+                    "title": "Modifica Dettagli Articolo"
+                },
                 "selectable": {
                     "card": "Scheda",
                     "items": "Articoli",
                     "no_items": "Nessun Articolo da Visualizzare",
+                    "select_all": "Seleziona tutto",
+                    "select_card": "Seleziona Card",
+                    "select_row": "Seleziona Riga",
                     "table": "Tabella"
                 },
                 "table": {
+                    "dropdown": {
+                        "actions": "Azioni",
+                        "change_location": "Cambia posizione",
+                        "change_location_success": "Posizione cambiata",
+                        "change_tags": "Cambia Etichette",
+                        "change_tags_success": "Etichette Cambiate",
+                        "create_maintenance_item": "Inserisci Manutenzione per l'elemento",
+                        "create_maintenance_selected": "Inserisci in Manutenzione gli elementi selezionati",
+                        "create_maintenance_success": "Manutenzione creata",
+                        "delete_confirmation": "Sei sicuro di voler eliminare gli elementi selezionati? Questa operazione è irreversibile.",
+                        "delete_item": "Elimina Oggetto",
+                        "delete_selected": "Elimina Oggetti Selezionati",
+                        "download_csv": "Scarica Tabella come CSV",
+                        "download_json": "Scarica Tabella come JSON",
+                        "duplicate_item": "Duplica Oggetto",
+                        "duplicate_selected": "Duplica Oggetti Selezionati",
+                        "error_deleting": "Errore durante l'eliminazione dell'Oggetto",
+                        "error_duplicating": "Errore durante la duplicazione dell'oggetto",
+                        "open_menu": "Apri menu",
+                        "open_multi_tab_warning": "Per ragioni di sicurezza, i browsers non permettono di aprire schede multiple in un colpo solo, per modificare questa configurazione utilizza la seguente documentazione",
+                        "toggle_expand": "Apri/Chiudi Espandi",
+                        "view_item": "Visualizza Oggetto",
+                        "view_items": "Visualizza Oggetti"
+                    },
                     "headers": "Intestazioni",
                     "page": "Pagina",
+                    "quick_actions": "Abilita Selezione & Azioni Rapide",
                     "rows_per_page": "Righe per pagina",
+                    "selected_rows": "{selected} di {total} riga/righe selezionate.",
                     "table_settings": "Impostazioni Tabella",
                     "view_item": "Visualizzare articolo"
                 }
-            }
-        },
-        "label": {
-            "create_modal": {
-                "label_color": "Colore Etichetta",
-                "label_description": "Descrizione Etichetta",
-                "label_name": "Nome Etichetta",
-                "title": "Crea Etichetta",
-                "toast": {
-                    "already_creating": "Creazione di un'etichetta già in corso",
-                    "create_failed": "Impossibile creare l'etichetta",
-                    "create_success": "Etichetta creata",
-                    "label_name_too_long": "Il nome non deve contenere più di 50 caratteri"
-                }
-            },
-            "selector": {
-                "select_labels": "Seleziona etichette"
             }
         },
         "location": {
@@ -180,18 +228,96 @@
                 }
             },
             "selector": {
+                "clear": "Rimuovi Selezione Posizione",
                 "no_location_found": "Nessusa posizione trovata",
                 "parent_location": "Ubicazione padre",
                 "search_location": "Cerca posizioni",
                 "select_location": "Seleziona una posizione"
             },
             "tree": {
-                "no_locations": "Nessuna posizione disponibile. Aggiungi nuove posizioni mediante il pulsante\n'<span class=\"link-primary\">'Crea'</span>' nella barra di navigazione."
+                "no_locations": "Nessuna posizione disponibile. Aggiungi nuove posizioni mediante il pulsante '<span class=\"link-primary\">'Crea'</span>' nella barra di navigazione."
             }
         },
         "quick_menu": {
             "no_results": "Non sono stati trovati risultati.",
             "shortcut_hint": "Utilizzare i tasti numerici per selezionare rapidamente un'azione."
+        },
+        "tag": {
+            "create_modal": {
+                "tag_color": "Colore Etichetta",
+                "tag_description": "Descrizione Etichetta",
+                "tag_name": "Nome Etichetta",
+                "title": "Crea Etichetta",
+                "toast": {
+                    "already_creating": "Creazione dell'etichetta già in corso",
+                    "create_failed": "Non è stato possibile creare l'etichetta",
+                    "create_success": "Etichetta creata",
+                    "tag_name_too_long": "Il nome dell'etichetta non deve superare i 50 caratteri"
+                }
+            },
+            "selector": {
+                "select_tags": "Seleziona Etichette"
+            }
+        },
+        "template": {
+            "apply_template": "Applica un template",
+            "card": {
+                "delete": "Cancella Template",
+                "duplicate": "Duplica Template",
+                "edit": "Modifica template"
+            },
+            "confirm_delete": "Vuoi cancellare questo template?",
+            "create_modal": {
+                "title": "Crea Template"
+            },
+            "detail": {
+                "default_values": "Valori di default",
+                "updated": "Aggiornato"
+            },
+            "edit_modal": {
+                "title": "Modifica Template"
+            },
+            "empty_value": "(vuoto)",
+            "form": {
+                "custom_fields": "Campi personalizzati",
+                "default_item_values": "Valori di default per l'oggetto",
+                "default_location": "Posizione di default",
+                "default_value": "Valore di default",
+                "field_name": "Nome del campo",
+                "item_description": "Descrizione dell'oggetto",
+                "item_name": "Nome dell'oggetto",
+                "lifetime_warranty": "Garanzia a vita",
+                "location": "Posizione",
+                "manufacturer": "Produttore",
+                "model_number": "Codice Modello",
+                "no_custom_fields": "Nessun campo personalizzato.",
+                "template_description": "Descrizione Template",
+                "template_name": "Nome Template"
+            },
+            "hide_defaults": "Nascondi campi/valori di default",
+            "save_as_template": "Salva come Template",
+            "selector": {
+                "clear": "Rimuovi Selezione Template",
+                "label": "Template (Opzionale)",
+                "not_found": "Nessun template trovato",
+                "search": "Ricerca templates...",
+                "select": "Seleziona template..."
+            },
+            "show_defaults": "Mostra predefiniti",
+            "toast": {
+                "applied": "Template \"{name}\" applicato",
+                "create_failed": "Impossibile creare template",
+                "created": "Template creato",
+                "delete_failed": "Impossibile cancellare il template",
+                "deleted": "Template cancellato",
+                "duplicate_failed": "Impossibile duplicare il template",
+                "duplicated": "Template duplicato come \"{name}\"",
+                "load_failed": "Impossibile caricare i dettagli del template",
+                "saved_as_template": "Articolo salvato come template \"{name}\"",
+                "update_failed": "Impossibile caricare il template",
+                "updated": "Template aggiornato"
+            },
+            "using_template": "Template in uso: {name}"
         }
     },
     "errors": {
@@ -223,13 +349,13 @@
         "insured": "Assicurato",
         "items": "Articoli",
         "join_discord": "Unisciti a Discord",
-        "labels": "Etichette",
         "loading": "Caricamento…",
         "locations": "Posizioni",
         "maintenance": "Manutenzione",
         "name": "Nome",
         "navigate": "Naviga",
         "password": "Password",
+        "preview": "Anteprima",
         "quantity": "Quantità",
         "read_docs": "Leggi la Documentazione",
         "return_home": "Ritorna alla Home",
@@ -245,12 +371,10 @@
         "welcome": "Benvenuto, { username }"
     },
     "home": {
-        "labels": "Etichette",
         "quick_statistics": "Statistiche rapide",
         "recently_added": "Aggiunti di recente",
         "storage_locations": "Ubicazioni di magazzino",
         "total_items": "Articoli totali",
-        "total_labels": "Etichette totali",
         "total_locations": "Ubicazioni totali",
         "total_value": "Valore totale"
     },
@@ -259,6 +383,7 @@
         "dont_join_group": "Non vuoi unirti a un gruppo?",
         "joining_group": "Stai unendoti a un gruppo esistente!",
         "login": "Accedi",
+        "or": "o",
         "register": "Registrati",
         "remember_me": "Ricordami",
         "set_email": "Qual è la tua email?",
@@ -270,6 +395,14 @@
             "invalid_email": "Indirizzo e-mail non valido",
             "invalid_email_password": "Email o password non valida",
             "login_success": "Loggato con successo",
+            "oidc_access_denied": "Accesso negato: il tuo account non ha il ruoto o non appartiene al gruppo richiesto",
+            "oidc_auth_failed": "OIDC autenticazione fallita",
+            "oidc_invalid_response": "Ricevuta risposta OIDC non valida",
+            "oidc_provider_error": "Il provider OIDC ha ritornato un errore",
+            "oidc_security_error": "OIDC errore di sicurezza - Possibile attacco CSRF",
+            "oidc_session_expired": "Sessione OIDC scaduta",
+            "oidc_token_expired": "Token OIDC scaduto",
+            "oidc_token_invalid": "Firma token OIDC non valida",
             "problem_registering": "Problema durante la registrazione dell'utente",
             "user_registered": "Utente registrato"
         }
@@ -293,10 +426,14 @@
         "duplicate": {
             "copy_attachments": "Copia allegati",
             "copy_custom_fields": "Copia Campi Personalizzati",
+            "copy_maintenance": "Copia Manutenzione",
             "custom_prefix": "Copia Prefisso",
             "enable_custom_prefix": "Abilita prefisso personalizzato",
+            "override_instructions": "Tieni premuto il tasto \"shift\" quando effettui un click sul pulsante \"duplica\" per sovrascrivere le impostazioni.",
             "prefix": "Copia di ",
-            "temporary_title": "Impostazioni temporanee"
+            "prefix_instructions": "Questo prefisso verrà aggiunto all'inizio del nome dell'elemento duplicato. Includi uno spazio alla fine del prefisso per aggiungere uno spazio tra il prefisso e il nome dell'elemento.",
+            "temporary_title": "Impostazioni temporanee",
+            "title": "Duplica Impostazioni"
         },
         "edit": {
             "edit_attachment_dialog": {
@@ -306,7 +443,8 @@
                 "primary_photo_sub": "Questa opzione è disponibile solo per le foto. Solo una foto può essere principale. Se selezioni questa opzione, l'attuale foto principale, se presente, sarà deselezionata.",
                 "select_type": "Seleziona un tipo",
                 "title": "Modifica allegato"
-            }
+            },
+            "view_image": "Visualizza Immagine"
         },
         "edit_details": "Modifica dettagli",
         "field_selector": "Selezione in base ai campi",
@@ -323,7 +461,6 @@
         "manufacturer": "Marca",
         "model_number": "Numero modello",
         "name": "Nome",
-        "negate_labels": "Negare Etichette Selezionate",
         "next_page": "Pagina Successiva",
         "no_attachments": "Nessun allegato trovato",
         "no_results": "Nessun Articolo Trovato",
@@ -361,16 +498,35 @@
         "tips": "Suggerimenti",
         "tips_sub": "Suggerimenti per la Ricerca",
         "toast": {
-            "quantity_cannot_negative": "La quantità non può essere negativa"
+            "asset_not_found": "Asset non trovato",
+            "attachment_deleted": "Allegato cancellato",
+            "attachment_updated": "Allegato aggiornato",
+            "attachment_uploaded": "Allegato caricato",
+            "child_items_location_no_longer_synced": "Le posizioni degli elementi contenuti non saranno più sincronizzate con questo elemento.",
+            "child_items_location_synced": "Le posizioni degli elementi contenuti sono sincronizzate con questo elemento.",
+            "child_location_desync": "La modifica della posizione lo desincronizzerà dalla posizione dell'elemento che lo contiene.",
+            "error_loading_parent_data": "Qualcosa e' andato storto durantre il caricamento dei dati dell'elemento padre",
+            "failed_adjust_quantity": "Impossibile modificare la quantita'",
+            "failed_delete_attachment": "Impossibile cancellare l'allegato",
+            "failed_delete_item": "Impossibile cancellare l'elemento",
+            "failed_duplicate_item": "Impossibile duplicare l'elemento",
+            "failed_load_asset": "Impossibile caricare l'asset",
+            "failed_load_item": "Impossibile caricare l'elemento",
+            "failed_load_items": "Impossibile caricare gli elementi",
+            "failed_save": "Impossibile salvare l'elemento",
+            "failed_save_no_location": "Impossibile salvare l'elemento: non e' stata selezionata alcuna posizione",
+            "failed_search_items": "Impossibile cercare gli elementi",
+            "failed_update_attachment": "Impossibile aggiornare l'allegato",
+            "failed_upload_attachment": "Impossibile caricare l'allegato",
+            "item_deleted": "Elemento cancellato",
+            "item_saved": "Elemento salvato",
+            "quantity_cannot_negative": "La quantità non può essere negativa",
+            "sync_child_location": "Il contenitore selezionato ha sincronizzato le posizioni dei suoi elementi interni. La posizione è stata aggiornata."
         },
         "updated_at": "Aggiornato Il",
         "warranty": "Garanzia",
         "warranty_details": "Dettagli garanzia",
         "warranty_expires": "La garanzia scade il"
-    },
-    "labels": {
-        "no_results": "Nessuna etichetta trovata",
-        "update_label": "Aggiorna etichetta"
     },
     "languages": {
         "bs-BA": "Bosniaco (Bosnia ed Erzegovina)",
@@ -414,7 +570,15 @@
         "child_locations": "Ubicazione figlia",
         "collapse_tree": "Contrai albero",
         "expand_tree": "Espandi albero",
+        "location_items_delete_confirm": "Sei sicuro di voler eliminare questa posizione e tutti i relativi elementi? Questa azione non può essere annullata.",
         "no_results": "Nessuna posizione trovata",
+        "toast": {
+            "failed_delete_location": "Impossibile cancellare la posizione",
+            "failed_load_location": "Impossibile caricare la posizione",
+            "failed_update_location": "Impossibile aggiornare la posizione",
+            "location_deleted": "Posizione cancellata",
+            "location_updated": "Posizione aggiornata"
+        },
         "update_location": "Aggiorna ubicazione"
     },
     "maintenance": {
@@ -454,7 +618,6 @@
     },
     "menu": {
         "create_item": "Articolo / Asset",
-        "create_label": "Etichetta",
         "create_location": "Ubicazione",
         "home": "Home",
         "locations": "Posizioni",
@@ -462,7 +625,13 @@
         "profile": "Profilo",
         "scanner": "Scanner",
         "search": "Cerca",
-        "tools": "Strumenti"
+        "templates": "Modelli"
+    },
+    "pages": {
+        "templates": {
+            "no_templates": "Ancora nessun modello.",
+            "title": "Modelli"
+        }
     },
     "profile": {
         "active": "Attivo",
@@ -470,11 +639,12 @@
         "currency_format": "Formato Valuta",
         "current_password": "Password Corrente",
         "delete_account": "Elimina Account",
+        "delete_account_confirm": "Sei sicuro di voler eliminare il tuo account? Se sei l’ultimo membro del tuo gruppo, tutti i tuoi dati verranno cancellati. Questa azione non può essere annullata.",
         "delete_account_sub": "Elimina il tuo account e tutti i dati associati. Questa operazione non può essere annullata.",
+        "delete_notifier_confirm": "Sei sicuro di voler eliminare questo promemoria?",
         "display_legacy_header": "{ currentValue, select, true {Disable Legacy Header} false {Enable Legacy Header} other {Not Hit}}",
         "enabled": "Abilitato",
         "example": "Esempio",
-        "gen_invite": "Genera Link di Invito",
         "group_settings": "Impostazioni Gruppo",
         "group_settings_sub": "Impostazioni Gruppo Condivise. Potrebbe essere necessario aggiornare il browser affinché alcune impostazioni vengano applicate.",
         "inactive": "Inattivo",
@@ -489,6 +659,20 @@
         "test": "Test",
         "theme_settings": "Impostazioni Tema",
         "theme_settings_sub": "Le impostazioni del tema sono memorizzate nella memoria locale del tuo browser. Puoi cambiare il tema \nin qualsiasi momento. Se hai problemi a impostare il tuo tema, prova a ricaricare la pagina.",
+        "toast": {
+            "account_deleted": "Il tuo account e' stato cancellato.",
+            "failed_change_password": "Impossibile cambiare password.",
+            "failed_create_notifier": "Impossibile creare il promemoria.",
+            "failed_delete_account": "Impossibile cancellare l'account.",
+            "failed_delete_notifier": "Impossibile cancellare il promemoria.",
+            "failed_get_currencies": "Impossibile ottenere le valute",
+            "failed_test_notifier": "Impossibile testare il promemoria.",
+            "failed_update_group": "Impossibile aggiornare il gruppo",
+            "failed_update_notifier": "Impossibile aggiornare il promemoria.",
+            "group_updated": "Gruppo aggiornato",
+            "notifier_test_success": "Promemoria testato con successo.",
+            "password_changed": "Password cambiata con successo."
+        },
         "update_group": "Aggiorna Gruppo",
         "update_language": "Aggiorna Lingua",
         "url": "URL",
@@ -497,16 +681,38 @@
     },
     "reports": {
         "label_generator": {
+            "asset_end": "Fine Asset",
+            "asset_start": "Inizio Asset",
+            "base_url": "URL base",
+            "bordered_labels": "Etichette con bordo",
+            "generate_page": "Genera Pagina",
+            "input_placeholder": "Scrivi qui",
+            "instruction_1": "Il Generatore di Etichette di Homebox è uno strumento che ti aiuta a stampare le etichette per il tuo inventario Homebox. Sono pensate come etichette da\nstampare in anticipo, così potrai stamparne molte e averle pronte da applicare",
+            "instruction_2": "Queste etichette funzionano stampando un codice QR con un URL e le informazioni dell’AssetID sull’etichetta. Se hai disabilitato\n gli AssetID nelle impostazioni di Homebox, puoi comunque usare questo strumento, ma gli AssetID non faranno riferimento a nessun elemento",
+            "instruction_3": "Questa funzione è nelle fasi iniziali di sviluppo e potrebbe cambiare nelle versioni future. Se hai suggerimenti,\n ti invitiamo a condividerli nella '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">Discussione GitHub</a>'",
+            "label_height": "Altezza dell'etichetta",
+            "label_width": "Larghezza dell'etichetta",
+            "measure_type": "Tipo di misurazione",
+            "page_bottom_padding": "Margine inferiore della pagina",
             "page_height": "Altezza della pagina",
             "page_left_padding": "Spaziatura Sinistra",
             "page_right_padding": "Spaziatura Destra",
             "page_top_padding": "Spaziatura in alto",
             "page_width": "Larghezza pagina",
             "qr_code_example": "Esempio di codice QR",
-            "tip_1": "Le impostazioni predefinite qui sono configurate per i\n'<a href=\"https://www.avery.com/templates/5260\">'fogli di etichette ''Avery 5260 '</a>'. Se stai utilizzando un foglio differente,\n devi modificare le impostazioni affinchè corrispondano al tuo foglio."
+            "tip_1": "Le impostazioni predefinite qui sono configurate per i\n'<a href=\"https://www.avery.com/templates/5260\">'fogli di etichette ''Avery 5260 '</a>'. Se stai utilizzando un foglio differente,\n devi modificare le impostazioni affinchè corrispondano al tuo foglio.",
+            "tip_2": "Se stai personalizzando il tuo foglio, le dimensioni sono espresse in pollici. Quando ho creato il foglio 5260, ho notato che le\n dimensioni indicate nel loro modello non corrispondevano a quelle necessarie per stampare correttamente all’interno dei riquadri.\n '<b>'Preparati a qualche tentativo ed errore.'</b>'",
+            "tip_3": "Quando stampi, assicurati di:\n<ol><li>Impostare i margini su 0 o Nessuno</li><li>Impostare la scala al 100%</li><li>Disattivare la stampa fronte/retro</li><li>Stampare una pagina di prova prima di stampare più pagine</li></ol>",
+            "tips": "Suggerimenti",
+            "title": "Generatore di etichette",
+            "toast": {
+                "page_too_small_card": "La dimensione della pagina è troppo piccola per il formato della scheda"
+            }
         }
     },
     "scanner": {
+        "barcode_detected_message": "Codice a barre del prodotto rilevato",
+        "barcode_fetch_data": "Recupera dati del prodotto",
         "error": "Si è verificato un errore durante la scansione",
         "invalid_url": "URL del codice a barre non valido",
         "no_sources": "Nessuna sorgente video disponibile",
@@ -518,17 +724,24 @@
     "tools": {
         "actions": "Azioni Inventario",
         "actions_set": {
+            "create_missing_thumbnails": "Crea miniature mancanti",
+            "create_missing_thumbnails_button": "Crea miniature",
+            "create_missing_thumbnails_confirm": "Sei sicuro di voler creare le miniature mancanti? Questa operazione potrebbe richiedere un po' di tempo e non può essere messa in pausa.",
+            "create_missing_thumbnails_sub": "Crea miniature per tutti gli allegati supportati dalla configurazione corrente. Questo è utile per gli allegati caricati prima del rilascio della versione v0.20.0 di Homebox. Non sovrascriverà le miniature esistenti, ma creerà nuove miniature solo per gli allegati che non ne hanno una. Tieni presente che le miniature vengono generate in background e l’operazione potrebbe richiedere del tempo.",
             "ensure_ids": "Verifica ID delle risorse",
             "ensure_ids_button": "Verifica ID delle risorse",
+            "ensure_ids_confirm": "Sei sicuro di voler assegnare un ID a tutti gli asset? Questa operazione potrebbe richiedere tempo e non può essere annullata.",
             "ensure_ids_sub": "Garantisce che tutti gli articoli nel tuo inventario abbiano un campo asset_id valido. Questo viene fatto trovando il campo asset_id corrente più alto nel database e applicando il valore successivo a ogni articolo che ha un campo asset_id non impostato. Questo viene fatto per il campo created_at.",
             "ensure_import_refs": "Verifica riferimenti di importazione",
             "ensure_import_refs_button": "Verifica riferimenti di importazione",
             "ensure_import_refs_sub": "Verifica che tutti gli articoli nel tuo inventario abbiano un campo import_ref valido. Questo viene fatto generando in modo casuale una stringa di 8 caratteri per ogni articolo che ha un campo import_ref non impostato.",
             "set_primary_photo": "Imposta foto principale",
             "set_primary_photo_button": "Imposta immagine principale",
+            "set_primary_photo_confirm": "Sei sicuro di voler impostare le foto principali? Questa operazione potrebbe richiedere tempo e non può essere annullata.",
             "set_primary_photo_sub": "Nella versione v0.10.0 di Homebox, il campo immagine principale è stato aggiunto agli allegati di tipo foto. Questa azione imposterà il campo immagine principale alla prima immagine nella matrice allegati nel database, se non è già impostato. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Vedi GitHub PR #576'</a>'",
             "zero_datetimes": "Azzera Data e Orario articolo",
             "zero_datetimes_button": "Azzera Date e Ora articolo",
+            "zero_datetimes_confirm": "Sei sicuro di voler reimpostare tutti i valori di data e ora? Questa operazione potrebbe richiedere tempo e non può essere annullata.",
             "zero_datetimes_sub": "Reimposta il valore dell'ora per tutti i campi data e ora dell'inventario all'inizio della data. Questo è per correggere un bug che è stato introdotto all'inizio dello sviluppo del sito che ha causato il valore di orario memorizzato con il tempo che ha causato problemi con i campi data visualizzazione dei valori esatti. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Vedi Github Issue #236 per maggiori dettagli.'</a>'"
         },
         "actions_sub": "Applica Azioni massive al tuo inventario. Questo sono azioni irreversibili. '<b>'Presta attenzione.'</b>'",
@@ -539,6 +752,7 @@
             "export_sub": "Esporta il formato CSV standard per Homebox. Questo esporterà tutti gli articoli del tuo inventario.",
             "import": "Importa Inventario",
             "import_button": "Importa Inventario",
+            "import_ref_confirm": "Sei sicuro di voler garantire che tutti gli asset abbiano un import_ref? Questa operazione potrebbe richiedere tempo e non può essere annullata.",
             "import_sub": "Importa il formato CSV standard per Homebox. Senza una colonna '<code>'HB.import_ref'</code>' questo '<b>'non'</b>' sovrascriverà gli articoli esistenti nel tuo inventario, aggiungerà solamente nuovi articoli. Le righe con una colonna '<code>'HB.import_ref'</code>' saranno unite agli articoli esistenti con lo stesso import_ref, se presente."
         },
         "import_export_sub": "Importa ed esporta il tuo inventario da e verso un file CSV. Questo è utile per migrare il tuo inventario verso una nuova istanza di Homebox.",
@@ -551,6 +765,14 @@
             "bill_of_materials_button": "Genera BOM",
             "bill_of_materials_sub": "Genera un file CSV (Valori Separati dalla Virgola) che può essere importato in un foglio di calcolo. Questo è un sommario del tuo inventario con informazioni di base su articoli e prezzi."
         },
-        "reports_sub": "Genera diversi report per il tuo inventario."
+        "reports_sub": "Genera diversi report per il tuo inventario.",
+        "toast": {
+            "asset_success": "{ results } assets sono stati aggiornati.",
+            "failed_create_missing_thumbnails": "Impossibile creare le miniature mancanti.",
+            "failed_ensure_ids": "Impossibile garantire gli ID degli asset.",
+            "failed_ensure_import_refs": "Impossibile garantire i riferimenti di importazione.",
+            "failed_set_primary_photos": "Impossibile configurare le foto pricipali.",
+            "failed_zero_datetimes": "Impossibile reimpostare i valori di data e ora."
+        }
     }
 }

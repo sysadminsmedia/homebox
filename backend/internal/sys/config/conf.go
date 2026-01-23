@@ -80,13 +80,13 @@ type LabelMakerConf struct {
 }
 
 type OIDCConf struct {
-	Enabled            bool          `yaml:"enabled"             conf:"default:false"`
+	Enabled            bool          `yaml:"enabled"              conf:"default:false"`
 	IssuerURL          string        `yaml:"issuer_url"`
 	ClientID           string        `yaml:"client_id"`
 	ClientSecret       string        `yaml:"client_secret"`
 	Scope              string        `yaml:"scope"                conf:"default:openid profile email"`
 	AllowedGroups      string        `yaml:"allowed_groups"`
-	AutoRedirect       bool          `yaml:"auto_redirect"                conf:"default:false"`
+	AutoRedirect       bool          `yaml:"auto_redirect"        conf:"default:false"`
 	VerifyEmail        bool          `yaml:"verify_email"         conf:"default:false"`
 	GroupClaim         string        `yaml:"group_claim"          conf:"default:groups"`
 	EmailClaim         string        `yaml:"email_claim"          conf:"default:email"`
