@@ -458,23 +458,6 @@ func parseHeaders(headerStr string) map[string]string {
 	return headers
 }
 
-// parseEndpoint splits an endpoint into host and path components.
-// For example: "oneuptime.com/otlp" returns ("oneuptime.com", "/otlp")
-// For "localhost:8080" returns ("localhost:8080", "")
-func parseEndpoint(endpoint string) (host, path string) {
-	// Remove any protocol prefix if present (shouldn't be there but handle it anyway)
-	endpoint = strings.TrimPrefix(endpoint, "http://")
-	endpoint = strings.TrimPrefix(endpoint, "https://")
-
-	// Find the first slash to split host and path
-	if idx := strings.Index(endpoint, "/"); idx != -1 {
-		return endpoint[:idx], endpoint[idx:]
-	}
-
-	// No path component
-	return endpoint, ""
-}
-
 // getEnvironment returns the current deployment environment.
 func getEnvironment() string {
 	return "production"
