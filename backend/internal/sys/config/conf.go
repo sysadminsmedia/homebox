@@ -31,6 +31,7 @@ type Config struct {
 	LabelMaker LabelMakerConf `yaml:"labelmaker"`
 	Thumbnail  Thumbnail      `yaml:"thumbnail"`
 	Barcode    BarcodeAPIConf `yaml:"barcode"`
+	Auth       AuthConfig     `yaml:"auth"`
 }
 
 type Options struct {
@@ -99,6 +100,18 @@ type OIDCConf struct {
 
 type BarcodeAPIConf struct {
 	TokenBarcodespider string `yaml:"token_barcodespider"`
+}
+
+type AuthConfig struct {
+	RateLimit AuthRateLimit `yaml:"rate_limit"`
+}
+
+type AuthRateLimit struct {
+	Enabled     bool          `yaml:"enabled"       conf:"default:true"`
+	Window      time.Duration `yaml:"window"        conf:"default:1m"`
+	MaxAttempts int           `yaml:"max_attempts"  conf:"default:5"`
+	BaseBackoff time.Duration `yaml:"base_backoff"  conf:"default:10s"`
+	MaxBackoff  time.Duration `yaml:"max_backoff"   conf:"default:5m"`
 }
 
 // New parses the CLI/Config file and returns a Config struct. If the file argument is an empty string, the

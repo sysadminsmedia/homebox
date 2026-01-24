@@ -34,7 +34,13 @@ func init() { // nolint: gochecknoinits
 	disableHas := os.Getenv("UNSAFE_DISABLE_PASSWORD_PROJECTION") == "yes_i_am_sure"
 
 	if disableHas {
-		fmt.Println("WARNING: Password protection is disabled. This is unsafe in production.")
+		// Print a big ol warning in red
+		fmt.Println("\\[\\033[0;31m\\]", "=======================================================================")
+		fmt.Println("\\[\\033[0;31m\\]", "WARNING: Password protection is disabled. This is unsafe in production.")
+		fmt.Println("\\[\\033[0;31m\\]", "You should never, ever use this in production. It is only for development and testing purposes.")
+		fmt.Println("\\[\\033[0;31m\\]", "DO NOT USE THIS IN PRODUCTION!")
+		fmt.Println("\\[\\033[0;31m\\]", "Remove UNSAFE_DISABLE_PASSWORD_PROJECTION to disable this warning.")
+		fmt.Println("\\[\\033[0;31m\\]", "=======================================================================")
 		enabled = false
 	}
 }

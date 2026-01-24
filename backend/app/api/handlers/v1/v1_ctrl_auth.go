@@ -196,6 +196,7 @@ func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Set HTTP only cookie
@@ -207,6 +208,7 @@ func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Set Fake Session cookie
@@ -218,6 +220,7 @@ func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: false,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Set attachment token cookie (accessible to frontend, not HttpOnly)
@@ -230,6 +233,7 @@ func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string
 			Secure:   ctrl.cookieSecure,
 			HttpOnly: false,
 			Path:     "/",
+			SameSite: http.SameSiteLaxMode,
 		})
 	}
 }
@@ -243,6 +247,7 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	http.SetCookie(w, &http.Cookie{
@@ -253,6 +258,7 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Set Fake Session cookie
@@ -264,6 +270,7 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: false,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Unset attachment token cookie
@@ -275,6 +282,7 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: false,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 }
 

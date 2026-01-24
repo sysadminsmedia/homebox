@@ -30,6 +30,14 @@ type (
 	}
 )
 
+func sanitizeAttachmentName(name string) string {
+	name = filepath.Base(name)
+	name = strings.ReplaceAll(name, "..", "")
+	name = strings.ReplaceAll(name, "/", "")
+	name = strings.ReplaceAll(name, "\\", "")
+	return name
+}
+
 // HandleItemAttachmentCreate godocs
 //
 //	@Summary	Create Item Attachment
@@ -76,6 +84,8 @@ func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 		if !errs.Nil() {
 			return server.JSON(w, http.StatusUnprocessableEntity, errs)
 		}
+
+		attachmentName = sanitizeAttachmentName(attachmentName)
 
 		attachmentType := r.FormValue("type")
 		if attachmentType == "" {

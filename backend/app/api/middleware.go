@@ -3,16 +3,22 @@ package main
 import (
 	"context"
 	"errors"
+	"net"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
+	"sync"
+	"time"
 
-	"github.com/google/uuid"
-	"github.com/hay-kot/httpkit/errchain"
 	v1 "github.com/sysadminsmedia/homebox/backend/app/api/handlers/v1"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
+
+	"github.com/google/uuid"
+	"github.com/hay-kot/httpkit/errchain"
 )
 
 type tokenHasKey struct {
@@ -202,4 +208,155 @@ func (a *app) mwTenant(next errchain.Handler) errchain.Handler {
 		r = r.WithContext(services.SetTenantCtx(ctx, tenantID))
 		return next.ServeHTTP(w, r)
 	})
+}
+
+// authRateLimiter tracks authentication attempts per client and applies a backoff when limits are exceeded.
+type authRateLimiter struct {
+	cfg   config.AuthRateLimit
+	mu    sync.Mutex
+	state map[string]*authAttempt
+	nowFn func() time.Time
+}
+
+// authAttempt struct represents the state of authentication attempts for a client.
+type authAttempt struct {
+	attempts    int
+	lastAttempt time.Time
+	lockedUntil time.Time
+}
+
+// newAuthRateLimiter creates a new authRateLimiter instance.
+func newAuthRateLimiter(cfg config.AuthRateLimit) *authRateLimiter {
+	// Sanity defaults to avoid zero values creating odd behavior.
+	if cfg.MaxAttempts <= 0 {
+		cfg.MaxAttempts = 5
+	}
+	if cfg.BaseBackoff <= 0 {
+		cfg.BaseBackoff = 2 * time.Second
+	}
+	if cfg.MaxBackoff <= 0 {
+		cfg.MaxBackoff = 2 * time.Minute
+	}
+	if cfg.Window <= 0 {
+		cfg.Window = time.Minute
+	}
+
+	return &authRateLimiter{
+		cfg:   cfg,
+		state: make(map[string]*authAttempt),
+		nowFn: time.Now,
+	}
+}
+
+// mwAuthRateLimit enforces request throttling for authentication endpoints with an exponential backoff.
+func (a *app) mwAuthRateLimit(next errchain.Handler) errchain.Handler {
+	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+		limiter := a.authLimiter
+		if limiter == nil || !limiter.cfg.Enabled {
+			return next.ServeHTTP(w, r)
+		}
+
+		key := limiter.keyForRequest(r)
+		now := limiter.nowFn()
+
+		if retryAfter, allowed := limiter.shouldAllow(key, now); !allowed {
+			seconds := int(retryAfter.Round(time.Second).Seconds())
+			if seconds < 0 {
+				seconds = 0
+			}
+			w.Header().Set("Retry-After", strconv.Itoa(seconds))
+			return validate.NewRequestError(errors.New("too many authentication attempts"), http.StatusTooManyRequests)
+		}
+
+		err := next.ServeHTTP(w, r)
+		limiter.record(key, now, err == nil)
+		return err
+	})
+}
+
+// shouldAllow checks if the client should be allowed to authenticate based on the configured rate limit.
+func (l *authRateLimiter) shouldAllow(key string, now time.Time) (time.Duration, bool) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	attempt, ok := l.state[key]
+	if !ok {
+		return 0, true
+	}
+
+	if now.Sub(attempt.lastAttempt) > l.cfg.Window {
+		delete(l.state, key)
+		return 0, true
+	}
+
+	if now.Before(attempt.lockedUntil) {
+		return time.Until(attempt.lockedUntil), false
+	}
+
+	return 0, true
+}
+
+// record updates the authentication attempt state for the given client.
+func (l *authRateLimiter) record(key string, now time.Time, success bool) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	if success {
+		delete(l.state, key)
+		return
+	}
+
+	attempt, ok := l.state[key]
+	if !ok {
+		l.state[key] = &authAttempt{attempts: 1, lastAttempt: now}
+		return
+	}
+
+	if now.Sub(attempt.lastAttempt) > l.cfg.Window {
+		attempt.attempts = 0
+		attempt.lockedUntil = time.Time{}
+	}
+
+	attempt.attempts++
+	attempt.lastAttempt = now
+
+	if attempt.attempts > l.cfg.MaxAttempts {
+		over := attempt.attempts - l.cfg.MaxAttempts
+		delay := l.cfg.BaseBackoff
+		for i := 1; i < over; i++ {
+			delay *= 2
+			if delay >= l.cfg.MaxBackoff {
+				delay = l.cfg.MaxBackoff
+				break
+			}
+		}
+		if delay > l.cfg.MaxBackoff {
+			delay = l.cfg.MaxBackoff
+		}
+		attempt.lockedUntil = now.Add(delay)
+	}
+}
+
+// keyForRequest returns a unique key for the given request.
+func (l *authRateLimiter) keyForRequest(r *http.Request) string {
+	return l.clientIP(r) + "|" + r.URL.Path
+}
+
+// clientIP returns the client IP address for the given request.
+func (l *authRateLimiter) clientIP(r *http.Request) string {
+	if ip := r.Header.Get("X-Real-IP"); ip != "" {
+		return ip
+	}
+
+	if ip := r.Header.Get("X-Forwarded-For"); ip != "" {
+		parts := strings.Split(ip, ",")
+		return strings.TrimSpace(parts[0])
+	}
+
+	host, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err == nil {
+		return host
+	}
+
+	return r.RemoteAddr
 }
