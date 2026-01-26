@@ -1,4 +1,48 @@
 {
+    "collection": {
+        "copy_invite": "Copiar Link de Invitación",
+        "create_invite": "Crear Invitación",
+        "delete_collection": "Eliminar Colección",
+        "delete_confirm": "¿Seguro que deseas eliminar esta colección? Esta acción no se puede deshacer.",
+        "deleted_collection": "Colección eliminada.",
+        "expires_at": "Expira",
+        "invite_token": "Token",
+        "invite_token_hidden": "Ya no es visible",
+        "invite_token_warning": "Los tokens de invitación solo se muestran una vez. Copia el enlace ahora; no podrás volver a ver este token después de salir o actualizar esta página.",
+        "invites": "Invitaciones",
+        "invites_delete_confirm": "¿Seguro que quieres eliminar esta invitación?",
+        "leave_collection": "Abandonar Colección",
+        "leave_confirm": "¿Seguro que quieres salir de esta colección?",
+        "left_collection": "Has abandonado la colección.",
+        "manage_collection": "Gestionar Colección",
+        "members": {
+            "cannot_remove_last": "No se puede eliminar al último miembro.",
+            "email": "Email",
+            "empty": "Todavía no hay miembros en esta colección.",
+            "member": "Miembro",
+            "name": "Nombre",
+            "owner": "Propietario",
+            "remove_confirm": "¿Seguro que quieres eliminar a este miembro?",
+            "removed": "Miembro eliminado",
+            "role": "Rol"
+        },
+        "no_collections": {
+            "create": "Crear una nueva colección",
+            "join": "Unirse a una colección existente",
+            "message": "Parece que no formas parte de ninguna colección. Crea una nueva colección para tus cosas o únete a una a la que te hayan invitado.",
+            "title": "Colecciones No Encontradas"
+        },
+        "no_invites": "Sin invitaciones",
+        "remaining_uses": "Usos restantes",
+        "tabs": {
+            "invites": "Invitaciones",
+            "members": "Miembros",
+            "notifiers": "Notificadores",
+            "settings": "Ajustes",
+            "tools": "Herramientas"
+        },
+        "uses": "Usos"
+    },
     "components": {
         "app": {
             "create_modal": {
@@ -22,6 +66,47 @@
                 "latest_version": "Última versión",
                 "new_version_available": "Nueva versión disponible",
                 "new_version_available_link": "Haz click aquí para ver las notas de la versión"
+            }
+        },
+        "collection": {
+            "create_modal": {
+                "name_label": "Nombre de la Colección",
+                "title": "Crear Colección",
+                "toast": {
+                    "already_creating": "Ya se está creando una colección",
+                    "create_failed": "No se pudo crear la colección",
+                    "create_success": "Colección creada",
+                    "please_enter_name": "Introduzca un nombre para la colección"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Por favor, elige una fecha y hora de vencimiento.",
+                    "invalid_expiry_past": "La fecha de vencimiento debe ser en el futuro.",
+                    "invalid_uses": "Los usos deben ser un número entre 1 y 100."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Código de Invitación de Colección",
+                "invites_should_look_like": "Las invitaciones deberían verse así:",
+                "join": "Unirse a Colección",
+                "no_invite_code_create_one": "¿Sin código de invitación? Crea una nueva colección en su lugar",
+                "title": "Unirse a una Colección",
+                "toast": {
+                    "already_joining": "Ya te estás uniendo a una colección",
+                    "join_failed": "No se pudo unir a la colección",
+                    "join_success": "Unido a la colección",
+                    "please_enter_valid_join_code": "Por favor, introduce un código de invitación de colección válido"
+                }
+            },
+            "selector": {
+                "collection_options": "Opciones de Colecciones",
+                "create_collection": "Crear Nueva Colección",
+                "join_collection": "Unirse a Colección Existente",
+                "no_collection_found": "No se ha encontrado ninguna colección",
+                "search_collections": "Buscar Colecciones...",
+                "select_collection": "Seleccionar Colección",
+                "your_collections": "Tus Colecciones"
             }
         },
         "color_selector": {
@@ -133,6 +218,7 @@
                 "title": "Importar producto"
             },
             "selector": {
+                "clear": "Deseleccionar Elementos",
                 "no_results": "Resultados No Encontrados",
                 "placeholder": "Seleccionar…",
                 "search_placeholder": "Escribe para buscar…",
@@ -140,9 +226,9 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "Añadir etiquetas",
+                    "add_tags": "Añadir Etiquetas",
                     "failed_to_update_item": "No se pudo actualizar el artículo",
-                    "remove_labels": "Eliminar etiquetas",
+                    "remove_tags": "Eliminar Etiquetas",
                     "title": "Cambiar detalles del artículo"
                 },
                 "selectable": {
@@ -157,10 +243,10 @@
                 "table": {
                     "dropdown": {
                         "actions": "Acciones",
-                        "change_labels": "Cambiar etiquetas",
-                        "change_labels_success": "Etiquetas cambiadas",
                         "change_location": "Cambiar ubicación",
                         "change_location_success": "Ubicación cambiada",
+                        "change_tags": "Cambiar Etiquetas",
+                        "change_tags_success": "Etiquetas Cambiadas",
                         "create_maintenance_item": "Crear entrada de mantenimiento para el elemento",
                         "create_maintenance_selected": "Crear entrada de mantenimiento para los elementos seleccionados",
                         "create_maintenance_success": "Entradas de mantenimiento creadas",
@@ -189,23 +275,6 @@
                 }
             }
         },
-        "label": {
-            "create_modal": {
-                "label_color": "Color de Etiqueta",
-                "label_description": "Descripción de la etiqueta",
-                "label_name": "Nombre de la Etiqueta",
-                "title": "Crear Etiqueta",
-                "toast": {
-                    "already_creating": "Ya se está creando una etiqueta",
-                    "create_failed": "No se ha podido crear la etiqueta",
-                    "create_success": "Etiqueta creada",
-                    "label_name_too_long": "El nombre de la etiqueta no debe tener más de 50 caracteres"
-                }
-            },
-            "selector": {
-                "select_labels": "Seleccionar Etiquetas"
-            }
-        },
         "location": {
             "create_modal": {
                 "location_description": "Descripción de la Ubicación",
@@ -218,18 +287,36 @@
                 }
             },
             "selector": {
+                "clear": "Deseleccionar Ubicaciones",
                 "no_location_found": "Ubicación no encontrada",
                 "parent_location": "Ubicación Padre",
                 "search_location": "Buscar Ubicaciones",
                 "select_location": "Elegir una Ubicación"
             },
             "tree": {
-                "no_locations": "No hay ubicaciones disponibles. Añade nuevas ubicaciones mediante el botón de\n'<span class=\"link-primary\">'Crear'</span>' en la barra de navegación."
+                "no_locations": "No hay ubicaciones disponibles. Utiliza el botón Crear para añadir una nueva ubicación."
             }
         },
         "quick_menu": {
             "no_results": "Sin resultados.",
             "shortcut_hint": "Usa las teclas numéricas para seleccionar rápidamente una acción."
+        },
+        "tag": {
+            "create_modal": {
+                "tag_color": "Color de la Etiqueta",
+                "tag_description": "Descripción de la Etiqueta",
+                "tag_name": "Nombre de la Etiqueta",
+                "title": "Crear Etiqueta",
+                "toast": {
+                    "already_creating": "Ya se está creando una etiqueta",
+                    "create_failed": "No se ha podido crear la etiqueta",
+                    "create_success": "Etiqueta creada",
+                    "tag_name_too_long": "El nombre de la etiqueta no debe tener más de 50 caracteres"
+                }
+            },
+            "selector": {
+                "select_tags": "Seleccionar Etiquetas"
+            }
         },
         "template": {
             "apply_template": "Aplicar una plantilla",
@@ -269,10 +356,11 @@
             "hide_defaults": "Ocultar valores predeterminados",
             "save_as_template": "Guardar como Plantilla",
             "selector": {
+                "clear": "Deseleccionar Plantillas",
                 "label": "Plantilla (Opcional)",
                 "not_found": "No se ha encontrado ninguna plantilla",
-                "search": "Buscar plantillas…",
-                "select": "Seleccionar plantilla…"
+                "search": "Buscar plantillas...",
+                "select": "Seleccionar plantilla..."
             },
             "show_defaults": "Mostrar valores predeterminados",
             "toast": {
@@ -314,13 +402,12 @@
         "follow_dev": "Seguir al Desarrollador",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Versión: { version } Compilación: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' Versión: { version } Compilación: { build } '</a>'"
         },
         "github": "Proyecto GitHub",
         "insured": "Asegurado",
         "items": "Elementos",
         "join_discord": "Únete al Discord",
-        "labels": "Etiquetas",
         "loading": "Cargando…",
         "locations": "Ubicaciones",
         "maintenance": "Mantenimiento",
@@ -336,6 +423,7 @@
         "search": "Buscar",
         "sign_out": "Cerrar Sesión",
         "submit": "Enviar",
+        "tags": "Etiquetas",
         "unknown": "Desconocido",
         "update": "Actualizar",
         "updating": "Actualizando",
@@ -345,13 +433,13 @@
         "yes": "Sí"
     },
     "home": {
-        "labels": "Etiquetas",
         "quick_statistics": "Estadísticas rápidas",
         "recently_added": "Añadidos Recientemente",
         "storage_locations": "Ubicaciones de almacenamiento",
+        "tags": "Etiquetas",
         "total_items": "Artículos Totales",
-        "total_labels": "Etiquetas Totales",
         "total_locations": "Ubicaciones Totales",
+        "total_tags": "Etiquetas Totales",
         "total_value": "Valor Total"
     },
     "index": {
@@ -437,7 +525,7 @@
         "manufacturer": "Fabricante",
         "model_number": "Número de Modelo",
         "name": "Nombre",
-        "negate_labels": "Negar Etiquetas Seleccionadas",
+        "negate_tags": "Negar Etiquetas Seleccionadas",
         "next_page": "Siguiente Página",
         "no_attachments": "No se encontraron adjuntos",
         "no_results": "No se Encontraron Elementos",
@@ -504,18 +592,6 @@
         "warranty": "Garantía",
         "warranty_details": "Detalles de Garantía",
         "warranty_expires": "Expiración Garantía"
-    },
-    "labels": {
-        "label_delete_confirm": "¿Estás seguro de que quieres eliminar esta etiqueta? Esta acción no se puede deshacer.",
-        "no_results": "Etiquetas No Encontradas",
-        "toast": {
-            "failed_delete_label": "Error al eliminar la etiqueta",
-            "failed_load_label": "Error al cargar la etiqueta",
-            "failed_update_label": "Error al actualizar la etiqueta",
-            "label_deleted": "Etiqueta eliminada",
-            "label_updated": "Etiqueta actualizada"
-        },
-        "update_label": "Actualizar Etiqueta"
     },
     "languages": {
         "bs-BA": "Bosnio (Bosnia y Herzegovina)",
@@ -606,17 +682,17 @@
         "total_entries": "Total de Entradas"
     },
     "menu": {
+        "collection": "Colección",
         "create_item": "Artículo / Activo",
-        "create_label": "Etiqueta",
         "create_location": "Ubicación",
+        "create_tag": "Etiqueta",
         "home": "Inicio",
         "locations": "Ubicaciones",
         "maintenance": "Mantenimiento",
         "profile": "Perfil",
         "scanner": "Escáner",
         "search": "Buscar",
-        "templates": "Plantillas",
-        "tools": "Herramientas"
+        "templates": "Plantillas"
     },
     "pages": {
         "templates": {
@@ -636,12 +712,17 @@
         "display_legacy_header": "{ currentValue, select, true {Desactivar Encabezado Heredado} false {Activar Encabezado Heredado} other {Not Hit}}",
         "enabled": "Habilitado",
         "example": "Ejemplo",
-        "gen_invite": "Generar Enlace de Invitación",
         "group_settings": "Ajustes de Grupo",
         "group_settings_sub": "Configuración de Grupo Compartido. Es posible que tengas que actualizar tu navegador para que se apliquen algunos ajustes.",
         "inactive": "Inactivo",
         "language": "Idioma",
         "legacy_image_fit": "{ currentValue, select, true {Disable Legacy Fit: Fit Image with Bars} false {Enable Legacy Fit: Fill Image with Crop} other {Not Hit}}",
+        "moved_notice_body": "Las notificaciones, invitaciones y configuraciones de divisa se han trasladado a las páginas de colección.",
+        "moved_notice_description": "Ahora estos ajustes se gestionan por colección.",
+        "moved_notice_link_invites": "Invitaciones de colección",
+        "moved_notice_link_notifiers": "Notificadores de la colección",
+        "moved_notice_link_settings": "Configuración de la divisa de la colección",
+        "moved_notice_title": "¿Buscas notificaciones, invitaciones o ajustes de divisa?",
         "new_password": "Nueva Contraseña",
         "no_notifiers": "No hay notificadores configurados",
         "no_override": "No reemplazar",
@@ -680,8 +761,8 @@
             "bordered_labels": "Etiquetas con bordes",
             "generate_page": "Generar Página",
             "input_placeholder": "Escribe aquí",
-            "instruction_1": "El Generador de Etiquetas Homebox es una herramienta que para ayudarte a imprimir etiquetas para tu inventario Homebox. Están pensadas para\n ser etiquetas de impresión anticipada para que puedas imprimir muchas etiquetas y tenerlas listas para usarlas",
-            "instruction_2": "Como tal, estas etiquetas funcionan imprimiendo un código QR de URL e información ID de Activo en una etiqueta. Si has desactivado\n ID de Activo en la configuración de tu Homebox, puedes seguir utilizando esta herramienta, pero los IDs de Activo no harán referencia a ningún elemento",
+            "instruction_1": "El Generador de Etiquetas HomeBox es una herramienta que para ayudarte a imprimir etiquetas para tu inventario HomeBox. Están pensadas para\n ser etiquetas de impresión anticipada para que puedas imprimir muchas etiquetas y tenerlas listas para usarlas",
+            "instruction_2": "Como tal, estas etiquetas funcionan imprimiendo un código QR de URL e información ID de Activo en una etiqueta. Si has desactivado\n ID de Activo en la configuración de tu HomeBox, puedes seguir utilizando esta herramienta, pero los IDs de Activo no harán referencia a ningún elemento",
             "instruction_3": "Esta función se encuentra en las primeras etapas de desarrollo y puede cambiar en futuras versiones. Si tienes algún comentario, indícalo\n en la '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'Discusión de GitHub'</a>'",
             "label_height": "Altura de la Etiqueta",
             "label_width": "Ancho de la Etiqueta",
@@ -693,6 +774,13 @@
             "page_top_padding": "Margen Superior de Página",
             "page_width": "Ancho de Página",
             "qr_code_example": "Ejemplo de Código QR",
+            "replace_homebox_behavior": "Reemplazar el comportamiento del texto «HomeBox»",
+            "replace_homebox_behavior_always_replace": "Reemplazar Siempre \"HomeBox\"",
+            "replace_homebox_behavior_item_no_location": "Reemplazar «HomeBox» cuando el elemento no tiene ubicación",
+            "replace_homebox_behavior_item_no_name": "Reemplazar «HomeBox» cuando el elemento no tiene nombre",
+            "replace_homebox_behavior_item_no_name_no_location": "Reemplazar «HomeBox» cuando el elemento no tiene nombre ni ubicación",
+            "replace_homebox_behavior_show_homebox": "Mostrar \"HomeBox\"",
+            "replace_homebox_text": "Texto de reemplazado",
             "tip_1": "Los valores predeterminados están configurados para\n '<a href=\"https://www.avery.com/templates/5260\">'hojas de etiquetas Avery 5260'</a>'. Si utilizas un tipo de hoja diferente,\n tendrás que ajustar la configuración para que coincida con tu hoja.",
             "tip_2": "Si estás personalizando tu hoja las dimensiones están en pulgadas. Cuando estaba creando la hoja de etiquetas 5260, descubrí que\n las dimensiones usadas en su plantilla no coincidían con las necesarias para imprimir dentro de las casillas.\n '<b>'Prepárate para algo de prueba y error.'</b>'",
             "tip_3": "Al imprimir, asegúrate de:\n '<ol><li>'Establecer los márgenes en 0 o Ninguno'</li><li>'Establecer la escala al 100%'</li><li>'Desactivar impresión a doble cara'</li><li>'Imprimir una página de prueba antes de imprimir varias páginas'</li></ol>'",
@@ -714,6 +802,18 @@
         "title": "Escaner",
         "unsupported": "La API Media Stream no se puede utilizar sin HTTPS"
     },
+    "tags": {
+        "no_results": "No se han encontrado etiquetas",
+        "tag_delete_confirm": "¿Estás seguro de que deseas eliminar esta etiqueta? Esta acción no se puede deshacer.",
+        "toast": {
+            "failed_delete_tag": "No se ha podido eliminar la etiqueta",
+            "failed_load_tag": "No se ha podido cargar la etiqueta",
+            "failed_update_tag": "No se ha podido actualizar la etiqueta",
+            "tag_deleted": "Etiqueta eliminada",
+            "tag_updated": "Etiqueta actualizada"
+        },
+        "update_tag": "Actualizar Etiqueta"
+    },
     "tools": {
         "actions": "Acciones de Inventario",
         "actions_set": {
@@ -732,12 +832,23 @@
             "set_primary_photo_button": "Establecer Foto Principal",
             "set_primary_photo_confirm": "¿Estás seguro de que quieres configurar las fotos principales? Esto puede tardar un tiempo y no se puede deshacer.",
             "set_primary_photo_sub": "En la versión v0.10.0 de Homebox, se añadió el indicador de imagen principal a los ficheros adjuntos de tipo foto. Esta acción establecerá la primera imagen de cada artículo como su imagen principal, si no hay una imagen principal ya definida. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Ver PR #576 en GitHub'</a>'",
+            "wipe_inventory": "Vaciar Inventario",
+            "wipe_inventory_button": "Vaciar Inventario",
+            "wipe_inventory_confirm": "¿Estás seguro de que quieres borrar todo tu inventario? Esto eliminará todos los artículos y no se podrá deshacer.",
+            "wipe_inventory_locations": "Eliminar también todas las ubicaciones",
+            "wipe_inventory_maintenance": "Eliminar también todos los registros de mantenimiento",
+            "wipe_inventory_note": "Nota: Solo los propietarios del grupo pueden realizar esta acción.",
+            "wipe_inventory_sub": "Elimina de forma permanente todos los elementos de tu inventario. Esta acción es irreversible y eliminará todos los datos de los elementos, incluidos los archivos adjuntos y las fotos.",
+            "wipe_inventory_tags": "Eliminar también todas las etiquetas",
             "zero_datetimes": "Poner a cero las horas de los artículos",
             "zero_datetimes_button": "Poner a cero las horas de los artículos",
             "zero_datetimes_confirm": "¿Estás seguro de que deseas restablecer todos los valores de fecha y hora? Esto puede tardar un tiempo y no se puede deshacer.",
             "zero_datetimes_sub": "Restablece el valor de la hora para todos los campos de fecha/hora en tu inventario al principio de esa fecha. Esto se hace para corregir un error que se introdujo al principio del desarrollo de la aplicación, que causó que el valor de la hora se almacenase con la fecha, lo cual produjo problemas al mostrar valores precisos del campo. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Ver el issue #236 de GitHub para más detalles.'</a>'"
         },
         "actions_sub": "Aplica Acciones a tu inventario de forma masiva. Estas acciones son irreversibles. '<b>'Ten Cuidado.'</b>'",
+        "demo_mode_error": {
+            "wipe_inventory": "El inventario, las etiquetas, las ubicaciones y los registros de mantenimiento no se pueden borrar mientras Homebox esté en modo demostración. Asegúrate de que no se encuentra en modo demostración y vuelve a intentarlo."
+        },
         "import_export": "Importar/Exportar",
         "import_export_set": {
             "export": "Exportar Inventario",
@@ -765,7 +876,9 @@
             "failed_ensure_ids": "Error al asegurar los ID de los activos.",
             "failed_ensure_import_refs": "Error al asegurar las ref. de importación.",
             "failed_set_primary_photos": "No se han podido establecer las fotos principales.",
-            "failed_zero_datetimes": "Error al restablecer los valores de fecha y hora."
+            "failed_wipe_inventory": "No se pudo vaciar el inventario.",
+            "failed_zero_datetimes": "Error al restablecer los valores de fecha y hora.",
+            "wipe_inventory_success": "Inventario borrado correctamente. { results } elementos eliminados."
         }
     }
 }

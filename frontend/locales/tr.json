@@ -139,9 +139,7 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "Etiket Ekle",
                     "failed_to_update_item": "Ürün güncellemesi başarısız oldu",
-                    "remove_labels": "Etiket Sil",
                     "title": "Ürün detaylarını değiştir"
                 },
                 "selectable": {
@@ -156,8 +154,6 @@
                 "table": {
                     "dropdown": {
                         "actions": "Eylemler",
-                        "change_labels": "Etiket Değiştir",
-                        "change_labels_success": "Etiket Değişti",
                         "change_location": "Bölge Değiştir",
                         "change_location_success": "Bölge Değişti",
                         "create_maintenance_item": "Ürün için Bakım Girişi Oluştur",
@@ -186,23 +182,6 @@
                     "table_settings": "Tablo Ayarları",
                     "view_item": "Ürünü Göster"
                 }
-            }
-        },
-        "label": {
-            "create_modal": {
-                "label_color": "Etiket Rengi",
-                "label_description": "Etiket Açıklaması",
-                "label_name": "Etiket Adı",
-                "title": "Etiket oluştur",
-                "toast": {
-                    "already_creating": "Zaten bir etiket oluşturuluyor",
-                    "create_failed": "Etiket oluşturulamadı",
-                    "create_success": "Etiket oluşturuldu",
-                    "label_name_too_long": "Etiket adı 50 karakterden uzun olmamalıdır"
-                }
-            },
-            "selector": {
-                "select_labels": "Etiketleri Seçin"
             }
         },
         "location": {
@@ -260,7 +239,6 @@
         "insured": "Sigortalı",
         "items": "Öğeler",
         "join_discord": "Discord'a Katılın",
-        "labels": "Etiketler",
         "loading": "Yükleniyor…",
         "locations": "Konumlar",
         "maintenance": "Bakım",
@@ -283,12 +261,10 @@
         "welcome": "Hoşgeldin, { username }"
     },
     "home": {
-        "labels": "Etiket",
         "quick_statistics": "Hızlı İstatistikler",
         "recently_added": "Yakında Eklendi",
         "storage_locations": "Saklama Konumları",
         "total_items": "Toplam Ürün",
-        "total_labels": "Toplam Etiket",
         "total_locations": "Toplam Konum",
         "total_value": "Toplam Değer"
     },
@@ -366,7 +342,6 @@
         "manufacturer": "Üretici",
         "model_number": "Model Numarası",
         "name": "İsim",
-        "negate_labels": "Seçili Etiketleri Yoksay",
         "next_page": "Sonraki Sayfa",
         "no_attachments": "Ek bulunamadı",
         "no_results": "Öğe Bulunamadı",
@@ -432,18 +407,6 @@
         "warranty": "Garanti",
         "warranty_details": "Garanti Bilgileri",
         "warranty_expires": "Garanti Bitiş Tarihi"
-    },
-    "labels": {
-        "label_delete_confirm": "Bu etiketi silmek istediğinizden emin misiniz? Bu eylem geri alınamaz.",
-        "no_results": "Etiket Bulunamadı",
-        "toast": {
-            "failed_delete_label": "Etiket silinemedi",
-            "failed_load_label": "Etiket yüklenemedi",
-            "failed_update_label": "Etiket güncellenemedi",
-            "label_deleted": "Etiket silindi",
-            "label_updated": "Etiket güncellendi"
-        },
-        "update_label": "Etiket Güncelle"
     },
     "languages": {
         "bs-BA": "Boşnakça",
@@ -535,15 +498,13 @@
     },
     "menu": {
         "create_item": "Öğe / Varlık",
-        "create_label": "Etiket",
         "create_location": "Konum",
         "home": "Ev",
         "locations": "Konumlar",
         "maintenance": "Bakım",
         "profile": "Profil",
         "scanner": "Tarayıcı",
-        "search": "Ara",
-        "tools": "Araçlar"
+        "search": "Ara"
     },
     "profile": {
         "active": "Aktif",
@@ -557,7 +518,6 @@
         "display_legacy_header": "{ currentValue, select, true {Eski Başlığı Devre Dışı Bırak} false {Eski Başlığı Etkinleştir} other {Vurulmadı}}",
         "enabled": "Etkinleştirildi",
         "example": "Örnek",
-        "gen_invite": "Davet Bağlantısı Oluştur",
         "group_settings": "Grup Ayarları",
         "group_settings_sub": "Paylaşılan Grup Ayarları. Bazı ayarların uygulanabilmesi için tarayıcınızı yenilemeniz gerekebilir.",
         "inactive": "Etkin Değil",

@@ -148,7 +148,6 @@
         "email": "Email",
         "insured": "Osigurano",
         "items": "Predmeti",
-        "labels": "Etikete",
         "locations": "Lokacije",
         "maintenance": "Održavanje",
         "name": "Ime",
@@ -174,7 +173,6 @@
     "profile": {
         "enabled": "Uključeno",
         "example": "Primjer",
-        "gen_invite": "Generiši link pozivnicu",
         "group_settings": "Postavke grupe",
         "test": "Test"
     },

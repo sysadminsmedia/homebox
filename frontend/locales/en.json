@@ -133,11 +133,11 @@
                 "title": "Import product"
             },
             "selector": {
+                "clear": "Clear Item Selection",
                 "no_results": "No Results Found",
                 "placeholder": "Select…",
                 "search_placeholder": "Type to search…",
-                "searching": "Searching…",
-                "clear": "Clear Item Selection"
+                "searching": "Searching…"
             },
             "view": {
                 "change_details": {
@@ -219,11 +219,11 @@
                 }
             },
             "selector": {
+                "clear": "Clear Location Selection",
                 "no_location_found": "No location found",
                 "parent_location": "Parent Location",
                 "search_location": "Search Locations",
-                "select_location": "Select a Location",
-                "clear": "Clear Location Selection"
+                "select_location": "Select a Location"
             },
             "tree": {
                 "no_locations": "No locations available. Use the Create button to add a new location."
@@ -271,11 +271,11 @@
             "hide_defaults": "Hide defaults",
             "save_as_template": "Save as Template",
             "selector": {
+                "clear": "Clear Template Selection",
                 "label": "Template (Optional)",
                 "not_found": "No template found",
                 "search": "Search templates...",
-                "select": "Select template...",
-                "clear": "Clear Template Selection"
+                "select": "Select template..."
             },
             "show_defaults": "Show defaults",
             "toast": {
@@ -358,7 +358,7 @@
         "follow_dev": "Follow the Developer",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Version: { version } Build: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' Version: { version } Build: { build } '</a>'"
         },
         "github": "GitHub Project",
         "insured": "Insured",

@@ -15,36 +15,82 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
         with:
           script: |
-            const { owner, repo } = context.repo;
-            const issue_number = context.issue.number;
-            const actor = context.payload.sender.login;
-            
-            // 1. Get user permission level
-            const { data: perms } = await github.rest.repos.getCollaboratorPermissionLevel({
-              owner,
-              repo,
-              username: actor
-            });
+            try {
+              const { owner, repo } = context.repo;
+              const issue_number = context.issue.number;
+              const actor = context.payload.sender.login;
+              const issue = context.payload.issue;
 
-            const isMember = ['admin', 'write'].includes(perms.permission);
-            const body = context.payload.issue.body || "";
+              core.startGroup('Issue Gatekeeper: Initialization');
+              core.info(`Repo: ${owner}/${repo}`);
+              core.info(`Issue #: ${issue_number}`);
+              core.info(`Actor: ${actor}`);
+              core.info(`Issue created_at: ${issue.created_at}`);
+              core.info(`Initial labels: ${(issue.labels || []).map(l => l.name).join(', ') || '(none)'}`);
+              core.endGroup();
+              
+              // 1. Get user permission level
+              core.startGroup('Permission Check');
+              const { data: perms } = await github.rest.repos.getCollaboratorPermissionLevel({ owner, repo, username: actor });
+              const isMember = ['admin', 'write'].includes(perms.permission);
+              core.info(`Permission: ${perms.permission}`);
+              core.info(`Is member: ${isMember}`);
+              core.endGroup();
 
-            // 2. Check if they used the internal template (or if the issue is blank)
-            // We detect this by checking for our specific template string or the 'internal' label
-            const usedInternal = context.payload.issue.labels.some(l => l.name === 'internal');
+              const labels = (issue.labels || []).map(l => l.name);
 
-            if (usedInternal && !isMember) {
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number,
-                body: `@${actor}, the "Internal" template is restricted to project members. Please use one of the standard bug or feature templates for this repository.`
-              });
-            
-              await github.rest.issues.update({
-                owner,
-                repo,
-                issue_number,
-                state: 'closed'
-              });
+              // Restrict use of the internal template to members (existing rule)
+              core.startGroup('Internal Template Restriction');
+              const usedInternal = labels.includes('internal');
+              core.info(`Used 'internal' label: ${usedInternal}`);
+              if (usedInternal && !isMember) {
+                const reason = `you are not a maintainer of this project`;
+                core.info(`Closing: ${reason}`);
+                await github.rest.issues.createComment({ owner, repo, issue_number, body: `@${actor}, ${reason}. The \"Internal\" template is restricted to project members. Please use one of the standard bug or feature templates for this repository.` });
+                await github.rest.issues.update({ owner, repo, issue_number, state: 'closed' });
+                core.endGroup();
+                return;
+              }
+              core.endGroup();
+
+              // 2. Enforce label rules based on creation date
+              core.startGroup('Label Rule Enforcement');
+              const isBug = labels.includes('🕷️ bug');
+              const hasInternal = usedInternal; // same as labels.includes('internal')
+              const hasNoLabels = labels.length === 0;
+              core.info(`isBug: ${isBug}`);
+              core.info(`hasInternal: ${hasInternal}`);
+              core.info(`hasNoLabels: ${hasNoLabels}`);
+
+              const createdAt = new Date(issue.created_at);
+              // Fixed threshold: First of January 2026 (UTC)
+              const threshold = new Date(Date.UTC(2026, 0, 1));
+              const afterThreshold = createdAt >= threshold;
+              core.info(`Threshold (UTC): ${threshold.toISOString()}`);
+              core.info(`createdAt (UTC): ${createdAt.toISOString()}`);
+              core.info(`afterThreshold: ${afterThreshold}`);
+
+              // Rule: Anything other than '🕷️ bug' must have 'internal' if created on/after 2026-01-01.
+              // Also: No labels or missing 'internal' (when not bug) => close with message to use standard template.
+              const violatesRule = afterThreshold && (!isBug && !hasInternal || hasNoLabels);
+              core.info(`violatesRule: ${violatesRule}`);
+
+              if (violatesRule) {
+                const reason = hasNoLabels
+                  ? `this issue has no labels`
+                  : `for non-\`🕷️ bug\` issues the required \`internal\` label is missing`;
+                core.info(`Closing due to violation: ${reason}`);
+
+                await github.rest.issues.createComment({ owner, repo, issue_number, body: `@${actor}, ${reason}. Please use one of the standard issue templates (bug or feature discussion).` });
+                await github.rest.issues.update({ owner, repo, issue_number, state: 'closed' });
+              } else {
+                core.info('No violations detected. Leaving issue open.');
+              }
+              core.endGroup();
+            } catch (error) {
+              core.startGroup('Error Handling');
+              core.error(`Issue Gatekeeper encountered an error: ${error?.message || error}`);
+              core.error(`Stack: ${error?.stack || 'no stack'}`);
+              core.endGroup();
+              throw error; // Surface the error to fail the workflow if needed
             }

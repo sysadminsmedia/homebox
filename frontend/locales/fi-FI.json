@@ -1,17 +1,39 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "Paina {shiftKey} + {enterKey} luodaksesi ja lisätäksesi toisen.",
+                "enter": "Syötä",
+                "shift": "Vaihto"
+            },
             "import_dialog": {
                 "change_warning": "Olemassa olevien import_refs-tiedostojen tuonnin käyttäytyminen on muuttunut. Jos CSV-tiedostossa on import_ref, \nkohde päivitetään CSV-tiedoston arvoilla.",
                 "description": "Tuo CSV-tiedosto, joka sisältää kohteesi, tarrasi ja sijaintisi. Katso lisätietoja dokumentaatiosta \nvaadittu muoto.",
-                "title": "Tuo CSV-tiedosto"
+                "title": "Tuo CSV-tiedosto",
+                "toast": {
+                    "import_failed": "Tuonti epäonnistui, yritä uudelleen.",
+                    "import_success": "Tuonti onnistui!",
+                    "please_select_file": "Valitse tuotava tiedosto"
+                }
             },
             "outdated": {
                 "current_version": "Nykyinen versio",
-                "dismiss": "Hylätä",
+                "dismiss": "Hylkää",
                 "latest_version": "Uusin versio",
                 "new_version_available": "Uusi Versio Saatavilla",
                 "new_version_available_link": "Klikkaa tästä nähdäksesi julkaisutiedot"
+            }
+        },
+        "color_selector": {
+            "clear": "Poista väri",
+            "color": "Väri",
+            "no_color": "Ei väriä",
+            "no_color_selected": "Väriä ei valittu",
+            "randomize": "Satunnainen väri"
+        },
+        "form": {
+            "password": {
+                "toggle_show": "Näytä salasana"
             }
         },
         "global": {
@@ -23,7 +45,7 @@
             },
             "date_time": {
                 "ago": "{0} sitten",
-                "days": "päivä",
+                "days": "päivää",
                 "hour": "tunti",
                 "hours": "tuntia",
                 "in": "vuonna {0}",
@@ -39,10 +61,10 @@
                 "next-year": "ensi vuonna",
                 "second": "sekunti",
                 "seconds": "sekuntia",
-                "tomorrow": "huominen",
+                "tomorrow": "huomenna",
                 "week": "viikko",
                 "weeks": "viikkoa",
-                "years": "vuotiaat",
+                "years": "vuotta",
                 "yesterday": "eilen"
             },
             "label_maker": {
@@ -51,7 +73,12 @@
                 "download": "Lataa Tarra",
                 "print": "Tulosta tarra",
                 "server_print": "Tulosta palvelimella",
-                "titles": "Tarra"
+                "titles": "Tarrat",
+                "toast": {
+                    "load_status_failed": "Tilan lataus epäonnistui",
+                    "print_failed": "Etiketin tulostaminen epäonnistui",
+                    "print_success": "Etiketti tulostettu"
+                }
             },
             "page_qr_code": {
                 "page_url": "Sivun URL",
@@ -62,46 +89,116 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "Lataa",
+                "open_new_tab": "Avaa uudessa välilehdessä"
+            },
             "create_modal": {
+                "clear_template": "Tyhjennä mallipohja",
+                "delete_photo": "Poista kuva",
                 "item_description": "Kohteen Kuvaus",
                 "item_name": "Tuotteen Nimi",
                 "item_photo": "Kohteen Kuva 📷",
                 "item_quantity": "Tuotteen Määrä",
+                "parent_item": "Ylätason kohde",
+                "product_tooltip_input_barcode": "Täytä automaattisesti manuaalisesti annetusta viivakoodista",
+                "product_tooltip_scan_barcode": "Täytä automaattisesti viivakoodista kuvasta",
+                "rotate_photo": "Käännä kuva",
+                "set_as_primary_photo": "Aseta {isPrimary, select, true {non} false {} other {}}ensisijaiseksi kuvaksi",
                 "title": "Luo Kohde",
-                "upload_photos": "Lataa Valokuvia"
+                "toast": {
+                    "already_creating": "Luodaan jo tuotetta",
+                    "create_failed": "Kohdetta ei voitu luoda",
+                    "create_success": "Tuote luotu",
+                    "failed_load_parent": "Ylemmän tason tuotteen lataaminen epäonnistui - valitse manuaalisesti",
+                    "no_canvas_support": "Selaimesi ei tue sisältöä",
+                    "please_select_location": "Ole hyvä ja valitse sijainti",
+                    "rotate_failed": "Kuvan kiertäminen epäonnistui: { error }",
+                    "rotate_process_failed": "Kierretyn kuvan käsittely epäonnistui",
+                    "some_photos_failed": "{count, plural, =0 {Ei ladattavia kuvia.} =1 {1 kuva epäonnistui lataamisessa.} other {Joidenkin kuvien lataaminen epäonnistui.}}",
+                    "upload_failed": "Kuvan lähettäminen epäonnistui: { photoName }",
+                    "upload_success": "{count, plural, =0 {Ei ladattuja kuvia.} =1 {Kuva ladattu onnistuneesti.} other {Kaikki kuvat ladattu onnistuneesti.}}",
+                    "uploading_photos": "{count, plural, =0 {Ei ladattavia kuvia} =1 {Ladataan 1 kuva…} other {Ladataan {count} kuvaa…}}"
+                },
+                "upload_photos": "Lataa Valokuvia",
+                "uploaded": "Ladattu kuva"
+            },
+            "product_import": {
+                "barcode": "Tuotteen viivakoodi",
+                "db_source": "Tietokannan lähde",
+                "error_exception": "Poikkeus tapahtui noudettaessa tuotteen viivakoodia: ",
+                "error_invalid_barcode": "Annettu virheellinen viivakoodi",
+                "error_not_found": "Annetulla viivakoodilla ei löytynyt tuotetta.",
+                "search_item": "Hae tuotetta",
+                "title": "Tuo tuote"
+            },
+            "selector": {
+                "clear": "Tyhjennä nimikkeen valinta",
+                "no_results": "Tuloksia ei löytynyt",
+                "placeholder": "Valitse",
+                "search_placeholder": "Kirjoita hakusana",
+                "searching": "Etsitään…"
             },
             "view": {
+                "change_details": {
+                    "failed_to_update_item": "<g id=\"1\">Päivitys epäonnistui</g>",
+                    "title": "Muuta nimikkeen tietoja"
+                },
                 "selectable": {
                     "card": "Kortti",
                     "items": "Erä",
                     "no_items": "Ei näytettäviä kohteita",
+                    "select_all": "Valitse kaikki",
+                    "select_card": "Valitse kortti",
+                    "select_row": "Valitse rivi",
                     "table": "Taulukko"
                 },
                 "table": {
+                    "dropdown": {
+                        "actions": "Toiminnot",
+                        "change_location": "Vaihda sijaintia",
+                        "change_location_success": "Sijainti muutettu",
+                        "create_maintenance_item": "Luo ylläpitomerkintä nimikkeelle",
+                        "create_maintenance_selected": "Luo ylläpitomerkintä valituille kohteille",
+                        "create_maintenance_success": "Ylläpitosyötteet luotu",
+                        "delete_confirmation": "Haluatko varmasti poistaa valitut kohteet? Tätä toimintoa ei voi kumota.",
+                        "delete_item": "Poista tuote",
+                        "delete_selected": "Poista valitut kohteet",
+                        "download_csv": "Lataa taulukko CSV-tiedostona",
+                        "download_json": "Lataa taulukko JSON-muodossa",
+                        "duplicate_item": "Monista nimike",
+                        "duplicate_selected": "Monista valitut kohteet",
+                        "error_deleting": "Virhe kohteen poistamisessa",
+                        "error_duplicating": "Virhe kohteen monistamisessa",
+                        "open_menu": "Avaa valikko",
+                        "open_multi_tab_warning": "Turvallisuussyistä selaimet eivät salli useiden välilehtien avaamista kerralla oletuksena. Jos haluat muuttaa tätä, noudata ohjeita:",
+                        "toggle_expand": "Laajenna",
+                        "view_item": "Näytä kohde",
+                        "view_items": "Näytä kohteet"
+                    },
                     "headers": "Otsikko",
                     "page": "Sivu",
+                    "quick_actions": "Ota pikatoiminnot ja valinta käyttöön",
                     "rows_per_page": "Rivejä sivua kohti",
-                    "table_settings": "Taulukon Asetukset"
+                    "selected_rows": "{selected}/{total} riviä valittu.",
+                    "table_settings": "Taulukon Asetukset",
+                    "view_item": "Näytä tuote"
                 }
-            }
-        },
-        "label": {
-            "create_modal": {
-                "label_description": "Etiketin Kuvaus",
-                "label_name": "Etiketin Nimi",
-                "title": "Luo Tarra"
-            },
-            "selector": {
-                "select_labels": "Valitse Tarrat"
             }
         },
         "location": {
             "create_modal": {
                 "location_description": "Sijainnin Kuvaus",
                 "location_name": "Sijainnin Nimi",
-                "title": "Luo Sijainti"
+                "title": "Luo Sijainti",
+                "toast": {
+                    "already_creating": "Luodaan jo sijaintia",
+                    "create_failed": "Sijaintia ei voitu luoda",
+                    "create_success": "Sijainti luotu"
+                }
             },
             "selector": {
+                "clear": "Tyhjennä sijainnin valinta",
                 "no_location_found": "Sijaintia ei löytynyt",
                 "parent_location": "Vanhemman Sijainti",
                 "search_location": "Etsi Sijainnit",
@@ -114,7 +211,70 @@
         "quick_menu": {
             "no_results": "Tuloksia ei löytynyt.",
             "shortcut_hint": "Valitse toiminto nopeasti numeronäppäimillä."
+        },
+        "template": {
+            "apply_template": "Käytä mallipohjaa",
+            "card": {
+                "delete": "Poista malli",
+                "duplicate": "Monista mallipohja",
+                "edit": "Muokkaa mallipohjaa"
+            },
+            "confirm_delete": "Poista mallipohja?",
+            "create_modal": {
+                "title": "Luo mallipohja"
+            },
+            "detail": {
+                "default_values": "Oletusarvot",
+                "updated": "Päivitetty"
+            },
+            "edit_modal": {
+                "title": "Muokkaa mallipohjaa"
+            },
+            "empty_value": "(tyhjä)",
+            "form": {
+                "custom_fields": "Mukautetut Kentät",
+                "default_item_values": "Tuotteen oletusarvot",
+                "default_location": "Oletussijainti",
+                "default_value": "Oletusarvo",
+                "field_name": "Kentän nimi",
+                "item_description": "Kohteen Kuvaus",
+                "item_name": "Tuotteen Nimi",
+                "lifetime_warranty": "Elinikäinen Takuu",
+                "location": "Paikka",
+                "manufacturer": "Valmistaja",
+                "model_number": "Mallinumero",
+                "no_custom_fields": "Ei mukautettavia kenttiä.",
+                "template_description": "Mallin kuvaus",
+                "template_name": "Mallipohjan nimi"
+            },
+            "hide_defaults": "Piilota oletukset",
+            "save_as_template": "Tallenna mallipohjaksi",
+            "selector": {
+                "clear": "Tyhjennä mallipohjan valinta",
+                "label": "Mallipohja (valinnainen)",
+                "not_found": "Mallia ei löytynyt",
+                "search": "Hae malleja",
+                "select": "Valitse malli..."
+            },
+            "show_defaults": "Näytä oletusarvot",
+            "toast": {
+                "applied": "Mallipohja \"{name}\" käytössä",
+                "create_failed": "Mallipohjan luominen epäonnistui",
+                "created": "Mallipohja luotu",
+                "delete_failed": "Mallipohjan poistaminen epäonnistui",
+                "deleted": "Mallipohja poistettu",
+                "duplicate_failed": "Mallipohjan monistaminen epäonnistui",
+                "duplicated": "Mallipohja monistettu nimellä \"{name}\"",
+                "load_failed": "Mallipohjan tietojen lataaminen epäonnistui",
+                "saved_as_template": "Tuote tallennettu mallipohjana \"{name}\"",
+                "update_failed": "Mallipohjan päivittäminen epäonnistui",
+                "updated": "Mallipohja on päivitetty."
+            },
+            "using_template": "Mallipohja: {name}"
         }
+    },
+    "errors": {
+        "api_failure": "Taustasovelluksen API-kutsu epäonnistui: "
     },
     "global": {
         "add": "Lisätä",
@@ -122,10 +282,13 @@
         "build": "Koontikansio: { build }",
         "cancel": "Peruuttaa",
         "confirm": "Vahvistaa",
-        "create": "Luoda",
+        "create": "Luo Uusi",
         "create_and_add": "Luo ja lisää toinen",
+        "create_subitem": "Luo alikohde",
         "created": "Luotu",
         "delete": "Poistaa",
+        "delete_confirm": "Oletko varma, että haluat poistaa tämän kohteen? ",
+        "demo_instance": "Tämä on DEMO",
         "details": "Tiedot",
         "duplicate": "Kaksoiskappale",
         "edit": "Muokkaa",
@@ -133,36 +296,40 @@
         "follow_dev": "Seuraa kehittäjää",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Versio: { version } Rakenna: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' Versio: { version } Rakenna: { build } '</a>'"
         },
         "github": "GitHub Projekti",
         "insured": "Vakuuttaa",
         "items": "Erä",
         "join_discord": "Liity Discord",
-        "labels": "Tarra",
+        "loading": "Lataa…",
         "locations": "Sijainti",
         "maintenance": "Huolto",
         "name": "Nimi",
         "navigate": "Navigoida",
+        "no": "Ei",
         "password": "Salasana",
+        "preview": "Esikatselu",
         "quantity": "Määrä",
         "read_docs": "Lue dokumentit",
+        "return_home": "Palaa etusivulle",
         "save": "Tallentaa",
         "search": "Etsiä",
         "sign_out": "Kirjaudu Ulos",
         "submit": "Lähettää",
+        "unknown": "Tuntematon",
         "update": "Päivitys",
+        "updating": "Päivitetään",
         "value": "Arvo",
         "version": "Versio: { version }",
-        "welcome": "Tervetuloa, { username }"
+        "welcome": "Tervetuloa, { username }",
+        "yes": "Kyllä"
     },
     "home": {
-        "labels": "Tarra",
         "quick_statistics": "Nopeat Tilastot",
         "recently_added": "Äskettäin Lisätty",
         "storage_locations": "Varastointipaikat",
         "total_items": "Erät Yhteensä",
-        "total_labels": "Tarrat Yhteensä",
         "total_locations": "Toimipaikat Yhteensä",
         "total_value": "Kokonaisarvo"
     },
@@ -171,32 +338,76 @@
         "dont_join_group": "Etkö halua liittyä ryhmään?",
         "joining_group": "Liityt olemassa olevaan ryhmään!",
         "login": "Kirjautuminen",
+        "or": "tai",
         "register": "Rekisteröidä",
         "remember_me": "Muista Minut",
         "set_email": "Mikä on sähköpostisi?",
         "set_name": "Mikä sinun nimesi on?",
         "set_password": "Aseta salasana",
-        "tagline": "Seuraa, Järjestä ja hallitse asioitasi."
+        "tagline": "Seuraa, Järjestä ja hallitse asioitasi.",
+        "title": "Järjestä ja luetteloi tavarasi",
+        "toast": {
+            "invalid_email": "Virheellinen sähköpostiosoite",
+            "invalid_email_password": "Virheellinen sähköpostiosoite tai salasana.",
+            "login_success": "Kirjautuminen onnistui",
+            "oidc_access_denied": "Käyttö estetty: tililläsi ei ole vaadittua roolia/ryhmän jäsenyyttä",
+            "oidc_auth_failed": "OIDC Todennus epäonnistui",
+            "oidc_invalid_response": "Virheellinen OIDC-vastaus vastaanotettu",
+            "oidc_provider_error": "OIDC-palveluntarjoaja palautti virheen",
+            "oidc_security_error": "OIDC-turvallisuusvirhe - mahdollinen CSRF-hyökkäys",
+            "oidc_session_expired": "OIDC-istunto on vanhentunut",
+            "oidc_token_expired": "OIDC Token on vanhentunut",
+            "oidc_token_invalid": "OIDC-tunnuksen allekirjoitus on virheellinen",
+            "problem_registering": "Ongelmia käyttäjän rekisteröinnissä",
+            "user_registered": "Käyttäjä rekisteröity"
+        }
     },
     "items": {
-        "add": "Lisätä",
+        "add": "Lisää",
         "advanced": "Edistyksellinen",
         "archived": "Arkistoitu",
         "asset_id": "Omaisuuserän ID",
+        "associated_with_multiple": "Tämä omaisuustunnus liittyy useisiin nimikkeisiin",
         "attachment": "Liite",
         "attachments": "Liitteet",
         "changes_persisted_immediately": "Liitteiden muutokset tallennetaan välittömästi",
         "created_at": "Luotu Osoitteessa",
         "custom_fields": "Mukautetut Kentät",
+        "delete_attachment_confirm": "Haluatko varmasti poistaa tämän liitteen?",
+        "delete_item_confirm": "Oletko varma, että haluat poistaa tämän kohteen?",
         "description": "Kuvaus",
         "details": "Tiedot",
         "drag_and_drop": "Vedä ja pudota tiedostoja tähän tai valitse tiedostot napsauttamalla",
+        "duplicate": {
+            "copy_attachments": "Kopioi liitteet",
+            "copy_custom_fields": "Kopioi lisäkentät",
+            "copy_maintenance": "Kopioi huolto",
+            "custom_prefix": "Kopioi etuliite",
+            "enable_custom_prefix": "Ota mukautettu etuliite käyttöön",
+            "override_instructions": "Pidä vaihtonäppäintä painettuna, kun napsautat kaksoiskappale-painiketta ohittaaksesi nämä asetukset.",
+            "prefix": "Kopio: ",
+            "prefix_instructions": "Tämä etuliite lisätään päällekkäisen tuotteen nimen alkuun. Lisää välilyönti liitteen loppuun, jotta etuliite erotetaan nimestä.",
+            "temporary_title": "Väliaikaiset asetukset",
+            "title": "Kopioi asetukset"
+        },
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "Liitteen otsikko",
+                "attachment_type": "Liitteen tyyppi",
+                "primary_photo": "Ensisijainen kuva",
+                "primary_photo_sub": "Tämä vaihtoehto on käytettävissä vain valokuvissa",
+                "select_type": "Valitse tyyppi",
+                "title": "Liitteen muokkaus"
+            },
+            "view_image": "Näytä kuva"
+        },
         "edit_details": "Muokkaa Tietoja",
         "field_selector": "Kentän Valitsin",
         "field_value": "Kentän Arvo",
         "first": "Ensimmäinen",
         "include_archive": "Sisällytä Arkistoidut Kohteet",
         "insured": "Vakuuttaa",
+        "invalid_asset_id": "Virheellinen omaisuustunnus",
         "last": "Viimeinen",
         "lifetime_warranty": "Elinikäinen Takuu",
         "location": "Paikka",
@@ -205,8 +416,8 @@
         "manufacturer": "Valmistaja",
         "model_number": "Mallinumero",
         "name": "Nimi",
-        "negate_labels": "Poista Valitut Nimilaput",
         "next_page": "Seuraava Sivu",
+        "no_attachments": "Liitteitä ei löytynyt",
         "no_results": "Kohteita Ei Löytynyt",
         "notes": "Huomautus",
         "only_with_photo": "Vain tuotteet, joissa on valokuva",
@@ -228,25 +439,26 @@
         "receipts": "Kuitin",
         "reset_search": "Haku nollataan",
         "results": "{ total } Tulokset",
+        "select_field": "Valitse kenttä",
         "serial_number": "Sarjanumero",
         "show_advanced_view_options": "Näytä näkymän lisäasetukset",
         "sold_at": "Myyty klo",
         "sold_details": "Myydyt Tiedot",
         "sold_price": "Myyty Hinta",
         "sold_to": "Myyty",
+        "sync_child_locations": "Synkronoi alikohteiden sijainnit",
         "tip_1": "Sijainti-ja etikettisuodattimet käyttävät \" tai \" - toimintoa. Jos valitaan useampi kuin yksi, vain yksi on\n tarvitaan ottelu.",
         "tip_2": "\"#\"- Etuliitteellä tehdyt haut kyselevät omaisuuserän tunnusta (esimerkki \"#000-001\")",
         "tip_3": "Kenttäsuodattimet käyttävät \" tai \" - toimintoa. Jos valitaan useampi kuin yksi, tarvitaan vain yksi\n ottelu.",
         "tips": "Vihje",
         "tips_sub": "Etsi Vinkkejä",
+        "toast": {
+            "asset_not_found": "Omaisuuserää ei löytynyt."
+        },
         "updated_at": "Päivitetty Osoitteessa",
         "warranty": "Takuu",
         "warranty_details": "Takuun Tiedot",
         "warranty_expires": "Takuu Päättyy"
-    },
-    "labels": {
-        "no_results": "Tarroja Ei Löytynyt",
-        "update_label": "Päivitä Nimiö"
     },
     "languages": {
         "ca": "Katalaani",
@@ -325,16 +537,14 @@
         "total_entries": "Merkinnät Yhteensä"
     },
     "menu": {
-        "create_item": "Erä / Saamiset",
-        "create_label": "Etiketti",
+        "create_item": "Tuote",
         "create_location": "Paikka",
         "home": "Koti",
         "locations": "Paikat",
         "maintenance": "Kunnossapito",
         "profile": "Profiili",
         "scanner": "Skanneri",
-        "search": "Etsi",
-        "tools": "Työkalu"
+        "search": "Etsi"
     },
     "profile": {
         "active": "Aktiiviset",
@@ -345,7 +555,6 @@
         "delete_account_sub": "Poista tilisi ja kaikki siihen liittyvät tiedot. Tätä ei voi perua.",
         "enabled": "Käyttöön",
         "example": "Esimerkiksi",
-        "gen_invite": "Luo Kutsulinkki",
         "group_settings": "Ryhmän Asetukset",
         "group_settings_sub": "Jaetun Ryhmän Asetukset. Sinun on ehkä päivitettävä selaimesi, jotta joitain asetuksia voidaan soveltaa.",
         "inactive": "Aktiivinen",

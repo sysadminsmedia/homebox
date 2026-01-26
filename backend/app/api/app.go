@@ -18,6 +18,7 @@ type app struct {
 	services *services.AllServices
 	bus      *eventbus.EventBus
 	otel     *otel.Provider
+	authLimiter *authRateLimiter
 }
 
 func new(conf *config.Config) *app {
@@ -32,6 +33,8 @@ func new(conf *config.Config) *app {
 		Password: s.conf.Mailer.Password,
 		From:     s.conf.Mailer.From,
 	}
+
+	s.authLimiter = newAuthRateLimiter(s.conf.Auth.RateLimit)
 
 	return s
 }

@@ -139,9 +139,7 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "Tilføj etiketter",
                     "failed_to_update_item": "Kunne ikke opdatere elementet",
-                    "remove_labels": "Fjern Etiketter",
                     "title": "Skift elementoplysninger"
                 },
                 "selectable": {
@@ -156,8 +154,6 @@
                 "table": {
                     "dropdown": {
                         "actions": "Handlinger",
-                        "change_labels": "Skift etiketter",
-                        "change_labels_success": "Etiketter ændret",
                         "change_location": "Skift placering",
                         "change_location_success": "Placering ændret",
                         "create_maintenance_item": "Opret vedligeholdelsespost for vare",
@@ -186,23 +182,6 @@
                     "table_settings": "Tabel Indstillinger",
                     "view_item": "Se vare"
                 }
-            }
-        },
-        "label": {
-            "create_modal": {
-                "label_color": "Etiketfarve",
-                "label_description": "Etiketbeskrivelse",
-                "label_name": "Etiketnavn",
-                "title": "Opret label",
-                "toast": {
-                    "already_creating": "Allerede oprettet en etiket",
-                    "create_failed": "Kunne ikke oprette etiket",
-                    "create_success": "Etiket oprettet",
-                    "label_name_too_long": "Etiketnavnet må ikke være længere end 50 tegn"
-                }
-            },
-            "selector": {
-                "select_labels": "Vælg Etiketter"
             }
         },
         "location": {
@@ -260,7 +239,6 @@
         "insured": "Forsikret",
         "items": "Genstande",
         "join_discord": "Deltag i vores Discord",
-        "labels": "Etiketter",
         "loading": "Indlæser…",
         "locations": "Lokationer",
         "maintenance": "Opretholdelse",
@@ -283,12 +261,10 @@
         "welcome": "Velkommen, { username }"
     },
     "home": {
-        "labels": "Etiketter",
         "quick_statistics": "Hurtige Statistikker",
         "recently_added": "Nyligt Tilføjet",
         "storage_locations": "Opbevaringslokationer",
         "total_items": "Totale Genstande",
-        "total_labels": "Totale Etiketter",
         "total_locations": "Totale Lokationer",
         "total_value": "Total Værdi"
     },
@@ -366,7 +342,6 @@
         "manufacturer": "Producent",
         "model_number": "Modelnummer",
         "name": "Navn",
-        "negate_labels": "Ophæv valgte etiketter",
         "next_page": "Næste side",
         "no_attachments": "Ingen vedhæftede filer fundet",
         "no_results": "Ingen elementer fundet",
@@ -433,18 +408,6 @@
         "warranty": "Garanti",
         "warranty_details": "Oplysninger om garanti",
         "warranty_expires": "Garantien udløber"
-    },
-    "labels": {
-        "label_delete_confirm": "Er du sikker på, at du vil slette denne etiket? Denne handling kan ikke fortrydes.",
-        "no_results": "Ingen etiketter fundet",
-        "toast": {
-            "failed_delete_label": "Etiketten kunne ikke slettes",
-            "failed_load_label": "Etiketten kunne ikke indlæses",
-            "failed_update_label": "Etiketten kunne ikke opdateres",
-            "label_deleted": "Etiket slettet",
-            "label_updated": "Etiket opdateret"
-        },
-        "update_label": "Opdater etiket"
     },
     "languages": {
         "bs-BA": "Bosnisk (Bosnien-Hercegovina)",
@@ -536,15 +499,13 @@
     },
     "menu": {
         "create_item": "Vare/aktiv",
-        "create_label": "Label",
         "create_location": "Lokalitet",
         "home": "Hjem",
         "locations": "Lokationer",
         "maintenance": "Opretholdelse",
         "profile": "Profil",
         "scanner": "Skanner",
-        "search": "Søg",
-        "tools": "Værktøjer"
+        "search": "Søg"
     },
     "profile": {
         "active": "Aktiv",
@@ -558,7 +519,6 @@
         "display_legacy_header": "{ currentValue, select, true {Deaktiver Legacy Header} false {Aktiver Legacy Header} other {Ikke ramt}}",
         "enabled": "Aktiveret",
         "example": "Eksempel",
-        "gen_invite": "Generer invitationslink",
         "group_settings": "Gruppe indstillinger",
         "group_settings_sub": "Indstillinger for delt gruppe. Det kan være nødvendigt at genindlæse din browser før nogle indstillinger træder i kraft.",
         "inactive": "Inaktiv",
