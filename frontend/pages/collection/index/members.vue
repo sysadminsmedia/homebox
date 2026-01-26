@@ -12,6 +12,9 @@
   });
 
   const { t } = useI18n();
+
+  useHead({ title: `HomeBox | ${t("collection.tabs.members")}` });
+
   const api = useUserApi();
   const auth = useAuthContext();
   const confirm = useConfirm();

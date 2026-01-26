@@ -124,7 +124,7 @@
     middleware: ["auth"],
   });
   useHead({
-    title: "HomeBox | " + t("menu.tools"),
+    title: "HomeBox | " + t("collection.tabs.tools"),
   });
 
   const { openDialog } = useDialog();
