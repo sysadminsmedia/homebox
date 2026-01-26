@@ -27,12 +27,10 @@ jobs:
             });
 
             const isMember = ['admin', 'write'].includes(perms.permission);
-            const body = context.payload.issue.body || "";
+            const labels = (context.payload.issue.labels || []).map(l => l.name);
 
-            // 2. Check if they used the internal template (or if the issue is blank)
-            // We detect this by checking for our specific template string or the 'internal' label
-            const usedInternal = context.payload.issue.labels.some(l => l.name === 'internal');
-
+            // Restrict use of the internal template to members (existing rule)
+            const usedInternal = labels.includes('internal');
             if (usedInternal && !isMember) {
               await github.rest.issues.createComment({
                 owner,
@@ -40,11 +38,34 @@ jobs:
                 issue_number,
                 body: `@${actor}, the "Internal" template is restricted to project members. Please use one of the standard bug or feature templates for this repository.`
               });
-            
-              await github.rest.issues.update({
+              await github.rest.issues.update({ owner, repo, issue_number, state: 'closed' });
+              return;
+            }
+
+            // 2. Enforce label rules based on creation date
+            const isBug = labels.includes('🕷️ bug');
+            const hasInternal = usedInternal; // same as labels.includes('internal')
+            const hasNoLabels = labels.length === 0;
+
+            const createdAt = new Date(context.payload.issue.created_at);
+            // Fixed threshold: First of January 2026 (UTC)
+            const threshold = new Date(Date.UTC(2026, 0, 1));
+            const afterThreshold = createdAt >= threshold;
+
+            // Rule: Anything other than '🕷️ bug' must have 'internal' if created on/after 2026-01-01.
+            // Also: No labels or missing 'internal' (when not bug) => close with message to use standard template.
+            const violatesRule = afterThreshold && (!isBug && !hasInternal || hasNoLabels);
+
+            if (violatesRule) {
+              const reason = hasNoLabels
+                ? `this issue has no labels`
+                : `for non-\`🕷️ bug\` issues the required \`internal\` label is missing`;
+
+              await github.rest.issues.createComment({
                 owner,
                 repo,
                 issue_number,
-                state: 'closed'
+                body: `@${actor}, ${reason}. Please use one of the standard issue templates (bug or feature discussion).`
               });
+              await github.rest.issues.update({ owner, repo, issue_number, state: 'closed' });
             }
