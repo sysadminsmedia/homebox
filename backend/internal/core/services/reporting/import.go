@@ -51,7 +51,7 @@ func readRawCsv(r io.Reader) ([][]string, error) {
 	// We read up to 4KB which should be more than enough for any header row
 	firstLineBuffer := make([]byte, separatorDetectionBufferSize)
 	n, err := io.ReadFull(r, firstLineBuffer)
-	if err != nil && err != io.ErrUnexpectedEOF && err != io.EOF {
+	if err != nil && !errors.Is(err, io.ErrUnexpectedEOF) && !errors.Is(err, io.EOF) {
 		return nil, err
 	}
 	firstLineBuffer = firstLineBuffer[:n]

@@ -6,16 +6,18 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/otel"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/mailer"
 )
 
 type app struct {
-	conf        *config.Config
-	mailer      mailer.Mailer
-	db          *ent.Client
-	repos       *repo.AllRepos
-	services    *services.AllServices
-	bus         *eventbus.EventBus
+	conf     *config.Config
+	mailer   mailer.Mailer
+	db       *ent.Client
+	repos    *repo.AllRepos
+	services *services.AllServices
+	bus      *eventbus.EventBus
+	otel     *otel.Provider
 	authLimiter *authRateLimiter
 }
 

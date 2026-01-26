@@ -1790,6 +1790,8 @@ definitions:
         type: string
       oidc:
         $ref: '#/definitions/v1.OIDCStatus'
+      telemetry:
+        $ref: '#/definitions/v1.TelemetryStatus'
       title:
         type: string
       versions:
@@ -1906,6 +1908,11 @@ definitions:
         type: boolean
       buttonText:
         type: string
+      enabled:
+        type: boolean
+    type: object
+  v1.TelemetryStatus:
+    properties:
       enabled:
         type: boolean
     type: object

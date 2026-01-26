@@ -13,9 +13,9 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -84,7 +84,7 @@ type (
 		TotalUsers        int     `json:"totalUsers"`
 		TotalItems        int     `json:"totalItems"`
 		TotalLocations    int     `json:"totalLocations"`
-		TotalTags       int     `json:"totalTags"`
+		TotalTags         int     `json:"totalTags"`
 		TotalItemPrice    float64 `json:"totalItemPrice"`
 		TotalWithWarranty int     `json:"totalWithWarranty"`
 	}

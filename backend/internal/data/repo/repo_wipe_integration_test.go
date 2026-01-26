@@ -46,7 +46,7 @@ func TestWipeInventory_Integration(t *testing.T) {
 		Name:        "Test Laptop",
 		Description: "Work laptop",
 		LocationID:  loc1.ID,
-		TagIDs:    []uuid.UUID{tag1.ID},
+		TagIDs:      []uuid.UUID{tag1.ID},
 	})
 	require.NoError(t, err)
 
@@ -54,7 +54,7 @@ func TestWipeInventory_Integration(t *testing.T) {
 		Name:        "Test Drill",
 		Description: "Power drill",
 		LocationID:  loc2.ID,
-		TagIDs:    []uuid.UUID{tag2.ID},
+		TagIDs:      []uuid.UUID{tag2.ID},
 	})
 	require.NoError(t, err)
 
@@ -62,7 +62,7 @@ func TestWipeInventory_Integration(t *testing.T) {
 		Name:        "Test Monitor",
 		Description: "Computer monitor",
 		LocationID:  loc1.ID,
-		TagIDs:    []uuid.UUID{tag1.ID},
+		TagIDs:      []uuid.UUID{tag1.ID},
 	})
 	require.NoError(t, err)
 
@@ -153,7 +153,7 @@ func TestWipeInventory_SelectiveWipe(t *testing.T) {
 		Name:        "Test Computer",
 		Description: "Desktop computer",
 		LocationID:  loc.ID,
-		TagIDs:    []uuid.UUID{tag.ID},
+		TagIDs:      []uuid.UUID{tag.ID},
 	})
 	require.NoError(t, err)
 

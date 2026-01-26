@@ -209,6 +209,11 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		// Reporting Services
 		r.Get("/reporting/bill-of-materials", chain.ToHandlerFunc(v1Ctrl.HandleBillOfMaterialsExport(), userMW...))
 
+		// OpenTelemetry proxy endpoint for frontend telemetry (requires auth)
+		if a.otel != nil && a.otel.IsEnabled() && a.conf.Otel.ProxyEnabled {
+			r.Post("/telemetry", a.otel.ProxyHandler())
+		}
+
 		r.NotFound(http.NotFound)
 	})
 
