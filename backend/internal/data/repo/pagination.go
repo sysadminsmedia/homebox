@@ -11,7 +11,7 @@ func calculateOffset(page, pageSize int) int {
 	offset := (page - 1) * pageSize
 	if offset < 0 {
 		return 0
-	} else {
-		return offset
 	}
+
+	return offset
 }

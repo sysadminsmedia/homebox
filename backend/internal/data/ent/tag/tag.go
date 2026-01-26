@@ -27,8 +27,8 @@ const (
 	FieldColor = "color"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
-	// EdgeItems holds the string denoting the items edge name in mutations.
-	EdgeItems = "items"
+	// EdgeEntities holds the string denoting the entities edge name in mutations.
+	EdgeEntities = "entities"
 	// Table holds the table name of the tag in the database.
 	Table = "tags"
 	// GroupTable is the table that holds the group relation/edge.
@@ -38,11 +38,11 @@ const (
 	GroupInverseTable = "groups"
 	// GroupColumn is the table column denoting the group relation/edge.
 	GroupColumn = "group_tags"
-	// ItemsTable is the table that holds the items relation/edge. The primary key declared below.
-	ItemsTable = "tag_items"
-	// ItemsInverseTable is the table name for the Item entity.
-	// It exists in this package in order to avoid circular dependency with the "item" package.
-	ItemsInverseTable = "items"
+	// EntitiesTable is the table that holds the entities relation/edge. The primary key declared below.
+	EntitiesTable = "tag_entities"
+	// EntitiesInverseTable is the table name for the Entity entity.
+	// It exists in this package in order to avoid circular dependency with the "entity" package.
+	EntitiesInverseTable = "entities"
 )
 
 // Columns holds all SQL columns for tag fields.
@@ -62,9 +62,9 @@ var ForeignKeys = []string{
 }
 
 var (
-	// ItemsPrimaryKey and ItemsColumn2 are the table columns denoting the
-	// primary key for the items relation (M2M).
-	ItemsPrimaryKey = []string{"tag_id", "item_id"}
+	// EntitiesPrimaryKey and EntitiesColumn2 are the table columns denoting the
+	// primary key for the entities relation (M2M).
+	EntitiesPrimaryKey = []string{"tag_id", "entity_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -139,17 +139,17 @@ func ByGroupField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByItemsCount orders the results by items count.
-func ByItemsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByEntitiesCount orders the results by entities count.
+func ByEntitiesCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newItemsStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newEntitiesStep(), opts...)
 	}
 }
 
-// ByItems orders the results by items terms.
-func ByItems(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByEntities orders the results by entities terms.
+func ByEntities(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newItemsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newEntitiesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newGroupStep() *sqlgraph.Step {
@@ -159,10 +159,10 @@ func newGroupStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, GroupTable, GroupColumn),
 	)
 }
-func newItemsStep() *sqlgraph.Step {
+func newEntitiesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(ItemsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, ItemsTable, ItemsPrimaryKey...),
+		sqlgraph.To(EntitiesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, EntitiesTable, EntitiesPrimaryKey...),
 	)
 }

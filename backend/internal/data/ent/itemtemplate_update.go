@@ -13,9 +13,9 @@ import (
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 )
@@ -328,13 +328,13 @@ func (_u *ItemTemplateUpdate) AddFields(v ...*TemplateField) *ItemTemplateUpdate
 	return _u.AddFieldIDs(ids...)
 }
 
-// SetLocationID sets the "location" edge to the Location entity by ID.
+// SetLocationID sets the "location" edge to the Entity entity by ID.
 func (_u *ItemTemplateUpdate) SetLocationID(id uuid.UUID) *ItemTemplateUpdate {
 	_u.mutation.SetLocationID(id)
 	return _u
 }
 
-// SetNillableLocationID sets the "location" edge to the Location entity by ID if the given value is not nil.
+// SetNillableLocationID sets the "location" edge to the Entity entity by ID if the given value is not nil.
 func (_u *ItemTemplateUpdate) SetNillableLocationID(id *uuid.UUID) *ItemTemplateUpdate {
 	if id != nil {
 		_u = _u.SetLocationID(*id)
@@ -342,8 +342,8 @@ func (_u *ItemTemplateUpdate) SetNillableLocationID(id *uuid.UUID) *ItemTemplate
 	return _u
 }
 
-// SetLocation sets the "location" edge to the Location entity.
-func (_u *ItemTemplateUpdate) SetLocation(v *Location) *ItemTemplateUpdate {
+// SetLocation sets the "location" edge to the Entity entity.
+func (_u *ItemTemplateUpdate) SetLocation(v *Entity) *ItemTemplateUpdate {
 	return _u.SetLocationID(v.ID)
 }
 
@@ -379,7 +379,7 @@ func (_u *ItemTemplateUpdate) RemoveFields(v ...*TemplateField) *ItemTemplateUpd
 	return _u.RemoveFieldIDs(ids...)
 }
 
-// ClearLocation clears the "location" edge to the Location entity.
+// ClearLocation clears the "location" edge to the Entity entity.
 func (_u *ItemTemplateUpdate) ClearLocation() *ItemTemplateUpdate {
 	_u.mutation.ClearLocation()
 	return _u
@@ -643,7 +643,7 @@ func (_u *ItemTemplateUpdate) sqlSave(ctx context.Context) (_node int, err error
 			Columns: []string{itemtemplate.LocationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(location.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -656,7 +656,7 @@ func (_u *ItemTemplateUpdate) sqlSave(ctx context.Context) (_node int, err error
 			Columns: []string{itemtemplate.LocationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(location.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -979,13 +979,13 @@ func (_u *ItemTemplateUpdateOne) AddFields(v ...*TemplateField) *ItemTemplateUpd
 	return _u.AddFieldIDs(ids...)
 }
 
-// SetLocationID sets the "location" edge to the Location entity by ID.
+// SetLocationID sets the "location" edge to the Entity entity by ID.
 func (_u *ItemTemplateUpdateOne) SetLocationID(id uuid.UUID) *ItemTemplateUpdateOne {
 	_u.mutation.SetLocationID(id)
 	return _u
 }
 
-// SetNillableLocationID sets the "location" edge to the Location entity by ID if the given value is not nil.
+// SetNillableLocationID sets the "location" edge to the Entity entity by ID if the given value is not nil.
 func (_u *ItemTemplateUpdateOne) SetNillableLocationID(id *uuid.UUID) *ItemTemplateUpdateOne {
 	if id != nil {
 		_u = _u.SetLocationID(*id)
@@ -993,8 +993,8 @@ func (_u *ItemTemplateUpdateOne) SetNillableLocationID(id *uuid.UUID) *ItemTempl
 	return _u
 }
 
-// SetLocation sets the "location" edge to the Location entity.
-func (_u *ItemTemplateUpdateOne) SetLocation(v *Location) *ItemTemplateUpdateOne {
+// SetLocation sets the "location" edge to the Entity entity.
+func (_u *ItemTemplateUpdateOne) SetLocation(v *Entity) *ItemTemplateUpdateOne {
 	return _u.SetLocationID(v.ID)
 }
 
@@ -1030,7 +1030,7 @@ func (_u *ItemTemplateUpdateOne) RemoveFields(v ...*TemplateField) *ItemTemplate
 	return _u.RemoveFieldIDs(ids...)
 }
 
-// ClearLocation clears the "location" edge to the Location entity.
+// ClearLocation clears the "location" edge to the Entity entity.
 func (_u *ItemTemplateUpdateOne) ClearLocation() *ItemTemplateUpdateOne {
 	_u.mutation.ClearLocation()
 	return _u
@@ -1324,7 +1324,7 @@ func (_u *ItemTemplateUpdateOne) sqlSave(ctx context.Context) (_node *ItemTempla
 			Columns: []string{itemtemplate.LocationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(location.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1337,7 +1337,7 @@ func (_u *ItemTemplateUpdateOne) sqlSave(ctx context.Context) (_node *ItemTempla
 			Columns: []string{itemtemplate.LocationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(location.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

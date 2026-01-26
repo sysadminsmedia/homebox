@@ -36,16 +36,16 @@ type Group struct {
 type GroupEdges struct {
 	// Users holds the value of the users edge.
 	Users []*User `json:"users,omitempty"`
-	// Locations holds the value of the locations edge.
-	Locations []*Location `json:"locations,omitempty"`
-	// Items holds the value of the items edge.
-	Items []*Item `json:"items,omitempty"`
+	// Entities holds the value of the entities edge.
+	Entities []*Entity `json:"entities,omitempty"`
 	// Tags holds the value of the tags edge.
 	Tags []*Tag `json:"tags,omitempty"`
 	// InvitationTokens holds the value of the invitation_tokens edge.
 	InvitationTokens []*GroupInvitationToken `json:"invitation_tokens,omitempty"`
 	// Notifiers holds the value of the notifiers edge.
 	Notifiers []*Notifier `json:"notifiers,omitempty"`
+	// EntityTypes holds the value of the entity_types edge.
+	EntityTypes []*EntityType `json:"entity_types,omitempty"`
 	// ItemTemplates holds the value of the item_templates edge.
 	ItemTemplates []*ItemTemplate `json:"item_templates,omitempty"`
 	// loadedTypes holds the information for reporting if a
@@ -62,28 +62,19 @@ func (e GroupEdges) UsersOrErr() ([]*User, error) {
 	return nil, &NotLoadedError{edge: "users"}
 }
 
-// LocationsOrErr returns the Locations value or an error if the edge
+// EntitiesOrErr returns the Entities value or an error if the edge
 // was not loaded in eager-loading.
-func (e GroupEdges) LocationsOrErr() ([]*Location, error) {
+func (e GroupEdges) EntitiesOrErr() ([]*Entity, error) {
 	if e.loadedTypes[1] {
-		return e.Locations, nil
+		return e.Entities, nil
 	}
-	return nil, &NotLoadedError{edge: "locations"}
-}
-
-// ItemsOrErr returns the Items value or an error if the edge
-// was not loaded in eager-loading.
-func (e GroupEdges) ItemsOrErr() ([]*Item, error) {
-	if e.loadedTypes[2] {
-		return e.Items, nil
-	}
-	return nil, &NotLoadedError{edge: "items"}
+	return nil, &NotLoadedError{edge: "entities"}
 }
 
 // TagsOrErr returns the Tags value or an error if the edge
 // was not loaded in eager-loading.
 func (e GroupEdges) TagsOrErr() ([]*Tag, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[2] {
 		return e.Tags, nil
 	}
 	return nil, &NotLoadedError{edge: "tags"}
@@ -92,7 +83,7 @@ func (e GroupEdges) TagsOrErr() ([]*Tag, error) {
 // InvitationTokensOrErr returns the InvitationTokens value or an error if the edge
 // was not loaded in eager-loading.
 func (e GroupEdges) InvitationTokensOrErr() ([]*GroupInvitationToken, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[3] {
 		return e.InvitationTokens, nil
 	}
 	return nil, &NotLoadedError{edge: "invitation_tokens"}
@@ -101,10 +92,19 @@ func (e GroupEdges) InvitationTokensOrErr() ([]*GroupInvitationToken, error) {
 // NotifiersOrErr returns the Notifiers value or an error if the edge
 // was not loaded in eager-loading.
 func (e GroupEdges) NotifiersOrErr() ([]*Notifier, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[4] {
 		return e.Notifiers, nil
 	}
 	return nil, &NotLoadedError{edge: "notifiers"}
+}
+
+// EntityTypesOrErr returns the EntityTypes value or an error if the edge
+// was not loaded in eager-loading.
+func (e GroupEdges) EntityTypesOrErr() ([]*EntityType, error) {
+	if e.loadedTypes[5] {
+		return e.EntityTypes, nil
+	}
+	return nil, &NotLoadedError{edge: "entity_types"}
 }
 
 // ItemTemplatesOrErr returns the ItemTemplates value or an error if the edge
@@ -190,14 +190,9 @@ func (_m *Group) QueryUsers() *UserQuery {
 	return NewGroupClient(_m.config).QueryUsers(_m)
 }
 
-// QueryLocations queries the "locations" edge of the Group entity.
-func (_m *Group) QueryLocations() *LocationQuery {
-	return NewGroupClient(_m.config).QueryLocations(_m)
-}
-
-// QueryItems queries the "items" edge of the Group entity.
-func (_m *Group) QueryItems() *ItemQuery {
-	return NewGroupClient(_m.config).QueryItems(_m)
+// QueryEntities queries the "entities" edge of the Group entity.
+func (_m *Group) QueryEntities() *EntityQuery {
+	return NewGroupClient(_m.config).QueryEntities(_m)
 }
 
 // QueryTags queries the "tags" edge of the Group entity.
@@ -213,6 +208,11 @@ func (_m *Group) QueryInvitationTokens() *GroupInvitationTokenQuery {
 // QueryNotifiers queries the "notifiers" edge of the Group entity.
 func (_m *Group) QueryNotifiers() *NotifierQuery {
 	return NewGroupClient(_m.config).QueryNotifiers(_m)
+}
+
+// QueryEntityTypes queries the "entity_types" edge of the Group entity.
+func (_m *Group) QueryEntityTypes() *EntityTypeQuery {
+	return NewGroupClient(_m.config).QueryEntityTypes(_m)
 }
 
 // QueryItemTemplates queries the "item_templates" edge of the Group entity.

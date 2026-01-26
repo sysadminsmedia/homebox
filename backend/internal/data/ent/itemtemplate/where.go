@@ -964,7 +964,7 @@ func HasLocation() predicate.ItemTemplate {
 }
 
 // HasLocationWith applies the HasEdge predicate on the "location" edge with a given conditions (other predicates).
-func HasLocationWith(preds ...predicate.Location) predicate.ItemTemplate {
+func HasLocationWith(preds ...predicate.Entity) predicate.ItemTemplate {
 	return predicate.ItemTemplate(func(s *sql.Selector) {
 		step := newLocationStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {

@@ -328,7 +328,7 @@ func TestItemsRepository_DeleteWithAttachments(t *testing.T) {
 	attachment, err := tRepos.Attachments.Create(
 		context.Background(),
 		item.ID,
-		ItemCreateAttachment{
+		EntityCreateAttachment{
 			Title:   "test-attachment.txt",
 			Content: strings.NewReader("test content for attachment deletion"),
 		},
@@ -370,7 +370,7 @@ func TestItemsRepository_DeleteByGroupWithAttachments(t *testing.T) {
 	attachment, err := tRepos.Attachments.Create(
 		context.Background(),
 		item.ID,
-		ItemCreateAttachment{
+		EntityCreateAttachment{
 			Title:   "test-attachment-by-group.txt",
 			Content: strings.NewReader("test content for attachment deletion by group"),
 		},
@@ -550,4 +550,3 @@ func TestItemsRepository_WipeInventory_OnlyItems(t *testing.T) {
 	_ = tRepos.Tags.DeleteByGroup(context.Background(), tGroup.ID, tag.ID)
 	_ = tRepos.Locations.delete(context.Background(), loc.ID)
 }
-

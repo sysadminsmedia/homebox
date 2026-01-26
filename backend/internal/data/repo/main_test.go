@@ -2,11 +2,12 @@ package repo
 
 import (
 	"context"
-	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"log"
 	"os"
 	"testing"
+
+	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
