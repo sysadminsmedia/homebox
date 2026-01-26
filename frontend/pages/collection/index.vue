@@ -20,6 +20,8 @@
 
   const { t } = useI18n();
 
+  useHead({ title: `HomeBox | ${t("menu.collection")}` });
+
   const route = useRoute();
   const api = useUserApi();
   const auth = useAuthContext();

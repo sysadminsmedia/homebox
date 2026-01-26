@@ -21,7 +21,7 @@
 
   const { t } = useI18n();
 
-  useHead({ title: `HomeBox | ${t("collection.invites") || t("invites")}` });
+  useHead({ title: `HomeBox | ${t("collection.tabs.invites")}` });
 
   const api = useUserApi();
   const { openDialog } = useDialog();
