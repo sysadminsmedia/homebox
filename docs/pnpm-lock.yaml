@@ -50,9 +50,6 @@ importers:
       starlight-github-alerts:
         specifier: ^0.1.1
         version: 0.1.1(@astrojs/starlight@0.36.3(astro@5.16.8(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.3)(typescript@5.9.3)))
-      starlight-openapi:
-        specifier: ^0.21.1
-        version: 0.21.1(@astrojs/markdown-remark@6.3.10)(@astrojs/starlight@0.36.3(astro@5.16.8(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.3)(typescript@5.9.3)))(astro@5.16.8(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.3)(typescript@5.9.3))(openapi-types@12.1.3)
       starlight-sidebar-topics:
         specifier: ^0.6.2
         version: 0.6.2(@astrojs/starlight@0.36.3(astro@5.16.8(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.3)(typescript@5.9.3)))
@@ -75,6 +72,9 @@ importers:
       rollup-plugin-visualizer:
         specifier: ^6.0.5
         version: 6.0.5(rollup@4.53.3)
+      starlight-openapi:
+        specifier: ^0.22.0
+        version: 0.22.0(@astrojs/markdown-remark@6.3.10)(@astrojs/starlight@0.36.3(astro@5.16.8(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.3)(typescript@5.9.3)))(astro@5.16.8(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.3)(typescript@5.9.3))(openapi-types@12.1.3)
       wrangler:
         specifier: ^4.58.0
         version: 4.58.0(@cloudflare/workers-types@4.20260109.0)
@@ -198,8 +198,8 @@ packages:
   '@astrojs/underscore-redirects@1.0.0':
     resolution: {integrity: sha512-qZxHwVnmb5FXuvRsaIGaqWgnftjCuMY+GSbaVZdBmE4j8AfgPqKPxYp8SUERyJcjpKCEmO4wD6ybuGH8A2kVRQ==}
 
-  '@babel/code-frame@7.27.1':
-    resolution: {integrity: sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg==}
+  '@babel/code-frame@7.28.6':
+    resolution: {integrity: sha512-JYgintcMjRiCvS8mMECzaEn+m3PfoQiyqukOMCCVQtoJGYJw8j/8LBJEiqkHLkfwCcs74E3pbAUFNg7d9VNJ+Q==}
     engines: {node: '>=6.9.0'}
 
   '@babel/helper-string-parser@7.27.1':
@@ -2848,8 +2848,8 @@ packages:
     peerDependencies:
       '@astrojs/starlight': '>=0.35.0'
 
-  starlight-openapi@0.21.1:
-    resolution: {integrity: sha512-hHefUWQuLz26Fc8B0XOrdxOnOmJkKzyAssqEfDSZTC76GH05eT5/fCuJ76lq9N3uEjHmCKb6vWPlr7EbLbJQEg==}
+  starlight-openapi@0.22.0:
+    resolution: {integrity: sha512-4H/fywAoTcvKbcv+xBr9LdrjMc5geDOSnydvzpiOxjxkHvI6g+7uPhWNCejnJPyZUd/MC1MI23tvYug85d/WzA==}
     engines: {node: '>=18.17.1'}
     peerDependencies:
       '@astrojs/markdown-remark': '>=6.0.1'
@@ -3558,7 +3558,7 @@ snapshots:
 
   '@astrojs/underscore-redirects@1.0.0': {}
 
-  '@babel/code-frame@7.27.1':
+  '@babel/code-frame@7.28.6':
     dependencies:
       '@babel/helper-validator-identifier': 7.28.5
       js-tokens: 4.0.0
@@ -4229,7 +4229,7 @@ snapshots:
 
   '@readme/better-ajv-errors@2.4.0(ajv@8.17.1)':
     dependencies:
-      '@babel/code-frame': 7.27.1
+      '@babel/code-frame': 7.28.6
       '@babel/runtime': 7.28.4
       '@humanwhocodes/momoa': 2.0.4
       ajv: 8.17.1
@@ -6593,7 +6593,7 @@ snapshots:
       '@astrojs/starlight': 0.36.3(astro@5.16.8(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.3)(typescript@5.9.3))
       unist-util-visit: 5.0.0
 
-  starlight-openapi@0.21.1(@astrojs/markdown-remark@6.3.10)(@astrojs/starlight@0.36.3(astro@5.16.8(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.3)(typescript@5.9.3)))(astro@5.16.8(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.3)(typescript@5.9.3))(openapi-types@12.1.3):
+  starlight-openapi@0.22.0(@astrojs/markdown-remark@6.3.10)(@astrojs/starlight@0.36.3(astro@5.16.8(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.3)(typescript@5.9.3)))(astro@5.16.8(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.3)(typescript@5.9.3))(openapi-types@12.1.3):
     dependencies:
       '@astrojs/markdown-remark': 6.3.10
       '@astrojs/starlight': 0.36.3(astro@5.16.8(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.3)(typescript@5.9.3))

@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightThemeNova from 'starlight-theme-nova';
 import starlightChangelogs, { makeChangelogsSidebarLinks } from 'starlight-changelogs';
-import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi';
+import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi'
 import starlightGitHubAlerts from 'starlight-github-alerts';
 import icon from 'astro-icon';
 import starlightSidebarTopics from 'starlight-sidebar-topics';
@@ -163,8 +163,9 @@ export default defineConfig({
                             label: { en: 'API Reference' },
                             // TODO: the api link is broken bc this links to /en/api/ not /api/
                             link: '/api/',
+                            id: "api",
                             icon: 'forward-slash',
-                            items: openAPISidebarGroups,
+                            items: [...openAPISidebarGroups],
                         },
                         {
                             label: { en: 'Demo' },
@@ -178,6 +179,9 @@ export default defineConfig({
                         },
                     ],
                     {
+                        topics: {
+                            api: ["/en/api", "/en/api/**/*"]
+                        },
                         exclude: ['**/*'],
                     }
                 ),
