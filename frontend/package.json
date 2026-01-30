@@ -44,7 +44,7 @@
     "vue-tsc": "3.0.6"
   },
   "dependencies": {
-    "@mdit/plugin-img-size": "^0.22.4",
+    "@mdit/plugin-img-size": "^0.22.5",
     "@nuxtjs/color-mode": "^3.5.2",
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@pinia/nuxt": "^0.11.3",
@@ -69,7 +69,7 @@
     "markdown-it": "^14.1.0",
     "pinia": "^3.0.4",
     "postcss": "^8.5.6",
-    "reka-ui": "^2.7.0",
+    "reka-ui": "^2.8.0",
     "semver": "^7.7.3",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^3.4.19",
