@@ -371,7 +371,7 @@ astro-theme-toggle {
 }
 
 /* DARK MODE - API DOCS */
-:root[data-theme="dark"] .panel {
+:root[data-theme="dark"] div.panel {
   background-color: var(--sl-color-gray-1);
   border: 1px solid var(--sl-color-gray-1);
 }
