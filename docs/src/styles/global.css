@@ -376,7 +376,7 @@ astro-theme-toggle {
   border: 1px solid var(--sl-color-gray-1);
 }
 
-:root[data-theme="dark"] details summary, details ul li input {
+:root[data-theme="dark"] div > details > summary, details ul li input {
   background-color: var(--sl-color-gray-1);
   color: var(--sl-color-gray-6);
 }
