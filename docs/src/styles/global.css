@@ -363,3 +363,24 @@ astro-theme-toggle {
 :root[data-theme="dark"] .sl-changelogs-version-list-icon {
   color: hsl(75 14% 10%) !important;
 }
+
+/* DARK MODE - File Tree */
+:root[data-theme="dark"] starlight-file-tree{
+  background: var(--sl-color-gray-1);
+  border: 1px solid var(--sl-color-gray-1);
+}
+
+/* DARK MODE - API DOCS */
+:root[data-theme="dark"] .panel {
+  background-color: var(--sl-color-gray-1);
+  border: 1px solid var(--sl-color-gray-1);
+}
+
+:root[data-theme="dark"] details summary, details ul li input {
+  background-color: var(--sl-color-gray-1);
+  color: var(--sl-color-gray-6);
+}
+
+:root[data-theme="dark"] .required {
+  color: var(--color-red-300);
+}
