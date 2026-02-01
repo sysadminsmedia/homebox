@@ -57,7 +57,7 @@ jobs:
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           name: frontend-static
-          path: backend/app/api/static/
+          path: backend/app/api/static/public/
 
 
       - name: Install Syft
@@ -123,9 +123,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Create release if it doesn't exist
-          gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file CHANGELOG.md --draft=false || true
-          
           # Upload all archives
           gh release upload "$GITHUB_REF_NAME" dist/*.tar.gz --clobber || true
           gh release upload "$GITHUB_REF_NAME" dist/*.zip --clobber || true
