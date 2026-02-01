@@ -59,10 +59,6 @@ jobs:
           name: frontend-static
           path: backend/app/api/static/
 
-      - name: Install CoSign
-        working-directory: backend
-        run: |
-          go install github.com/sigstore/cosign/cmd/cosign@latest
 
       - name: Install Syft
         working-directory: backend
@@ -76,12 +72,9 @@ jobs:
           workdir: "backend"
           distribution: goreleaser
           version: "~> v2"
-          args: release --clean --split ${{ !startsWith(github.ref, 'refs/tags/') && '--snapshot' || '' }}
+          args: release --clean --skip=publish --config .goreleaser.${{ matrix.goarch }}.yaml ${{ !startsWith(github.ref, 'refs/tags/') && '--snapshot' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
-          COSIGN_YES: "true"
-          GOARCH: ${{ matrix.goarch }}
 
       - name: Upload GoReleaser Artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -89,7 +82,6 @@ jobs:
           name: goreleaser-${{ matrix.goarch }}
           path: backend/dist
           retention-days: 1
-
 
   goreleaser-merge:
     name: Merge and Publish Release
@@ -107,52 +99,50 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Download All GoReleaser Artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          path: dist
+          pattern: goreleaser-*
+          merge-multiple: true
+
       - name: Set up Go
         uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c
         with:
           go-version: "1.25"
-          cache-dependency-path: backend/go.mod
 
-      - name: Download All GoReleaser Artifacts
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
-        with:
-          path: backend/dist
-          pattern: goreleaser-*
-          merge-multiple: true
-
-      - name: Install CoSign
-        working-directory: backend
+      - name: Combine checksums
+        working-directory: dist
         run: |
-          go install github.com/sigstore/cosign/cmd/cosign@latest
+          # Combine all architecture-specific checksums into one file
+          cat checksums-*.txt | sort > checksums.txt
+          rm checksums-*.txt
 
-      - name: Install Syft
-        working-directory: backend
-        run: |
-          go install github.com/anchore/syft/cmd/syft@latest
-
-      - name: Run GoReleaser Continue
-        id: releaser
-        uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a
-        with:
-          workdir: "backend"
-          distribution: goreleaser
-          version: "~> v2"
-          args: continue --merge ${{ !startsWith(github.ref, 'refs/tags/') && '--skip=publish' || '' }}
+      - name: Upload to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
-          COSIGN_YES: "true"
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create release if it doesn't exist
+          gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file CHANGELOG.md --draft=false || true
+          
+          # Upload all archives
+          gh release upload "$GITHUB_REF_NAME" dist/*.tar.gz --clobber || true
+          gh release upload "$GITHUB_REF_NAME" dist/*.zip --clobber || true
+          
+          # Upload checksums
+          gh release upload "$GITHUB_REF_NAME" dist/checksums.txt --clobber
+          
+          # Upload SBOMs
+          gh release upload "$GITHUB_REF_NAME" dist/*.sbom.json --clobber || true
 
       - name: Generate binary hashes
         id: binary
         if: startsWith(github.ref, 'refs/tags/')
-        env:
-          ARTIFACTS: "${{ steps.releaser.outputs.artifacts }}"
         run: |
           set -euo pipefail
-          
-          checksum_file=$(echo "$ARTIFACTS" | jq -r '.[] | select (.type=="Checksum") | .path')
-          echo "hashes=$(cat $checksum_file | base64 -w0)" >> "$GITHUB_OUTPUT"
+          # The checksums.txt already contains hashes for all binary archives
+          echo "hashes=$(cat dist/checksums.txt | base64 -w0)" >> "$GITHUB_OUTPUT"
 
   binary-provenance:
     if: startsWith(github.ref, 'refs/tags/')
@@ -184,6 +174,7 @@ jobs:
           gh -R "$GITHUB_REPOSITORY" release download "$GITHUB_REF_NAME" -p "*.tar.gz"
           gh -R "$GITHUB_REPOSITORY" release download "$GITHUB_REF_NAME" -p "*.zip"
           gh -R "$GITHUB_REPOSITORY" release download "$GITHUB_REF_NAME" -p "$PROVENANCE"
+
       - name: Verify assets
         env:
           CHECKSUMS: ${{ needs.goreleaser-merge.outputs.hashes }}
