@@ -205,7 +205,10 @@
               <span
                 v-html="
                   DOMPurify.sanitize(
-                    $t('global.footer.version_link', { version: status.build.version, build: status.build.commit })
+                    $t('global.footer.version_link', {
+                      version: status.build.version.replace(/^v/, ''),
+                      build: status.build.commit,
+                    })
                   )
                 "
               />
