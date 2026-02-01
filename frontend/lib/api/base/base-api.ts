@@ -78,7 +78,12 @@ export class BaseAPI {
   authURL(url: string): string {
     if (this.attachmentToken) {
       const { selectedId } = useCollections();
-      return route(url, { access_token: this.attachmentToken, tenant: selectedId.value });
+      return route(
+        url,
+        selectedId.value
+          ? { access_token: this.attachmentToken, tenant: selectedId.value }
+          : { access_token: this.attachmentToken }
+      );
     }
     return url;
   }
