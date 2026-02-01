@@ -1,5 +1,7 @@
 version: 2
 
+project_name: homebox
+
 # Architecture-specific config for amd64
 # Make sure to check the documentation at https://goreleaser.com
 before:
@@ -23,6 +25,11 @@ builds:
       - -X main.version={{.Version}}
       - -X main.commit={{.Commit}}
       - -X main.date={{.Date}}
+    tags:
+      - >-
+        {{- if eq .Arch "riscv64" }}nodynamic
+        {{- else if eq .Os "freebsd" }}nodynamic
+        {{ end }}
 
 archives:
   - formats: [ 'tar.gz' ]
