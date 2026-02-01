@@ -360,7 +360,7 @@ func (ctrl *V1Controller) HandleItemsExport() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		ctx := services.NewContext(r.Context())
 
-		csvData, err := ctrl.svc.Items.ExportCSV(r.Context(), ctx.GID, GetHBURL(r.Header.Get("Referer"), ctrl.url))
+		csvData, err := ctrl.svc.Items.ExportCSV(r.Context(), ctx.GID, GetHBURL(r, &ctrl.config.Options, ctrl.url))
 		if err != nil {
 			log.Err(err).Msg("failed to export items")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
