@@ -6,9 +6,95 @@ on:
     tags: [ 'v*.*.*' ]
 
 jobs:
-  goreleaser:
-    name: goreleaser
+  build-frontend:
+    name: Build Frontend
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+
+      - name: Build Frontend
+        working-directory: frontend
+        run: |
+          pnpm install
+          pnpm run build
+
+      - name: Upload Frontend Artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: frontend-static
+          path: frontend/.output/public
+          retention-days: 1
+
+  goreleaser:
+    name: goreleaser-${{ matrix.goarch }}
+    runs-on: ubuntu-latest
+    needs: [ build-frontend ]
+    strategy:
+      matrix:
+        goarch: [ amd64, arm64, riscv64 ]
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c
+        with:
+          go-version: "1.25"
+          cache-dependency-path: backend/go.mod
+
+      - name: Download Frontend Artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: frontend-static
+          path: backend/app/api/static/
+
+      - name: Install CoSign
+        working-directory: backend
+        run: |
+          go install github.com/sigstore/cosign/cmd/cosign@latest
+
+      - name: Install Syft
+        working-directory: backend
+        run: |
+          go install github.com/anchore/syft/cmd/syft@latest
+
+      - name: Run GoReleaser
+        id: releaser
+        uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a
+        with:
+          workdir: "backend"
+          distribution: goreleaser
+          version: "~> v2"
+          args: release --clean --split ${{ !startsWith(github.ref, 'refs/tags/') && '--snapshot' || '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
+          COSIGN_YES: "true"
+          GOARCH: ${{ matrix.goarch }}
+
+      - name: Upload GoReleaser Artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: goreleaser-${{ matrix.goarch }}
+          path: backend/dist
+          retention-days: 1
+
+
+  goreleaser-merge:
+    name: Merge and Publish Release
+    runs-on: ubuntu-latest
+    needs: [ goreleaser ]
     outputs:
       hashes: ${{ steps.binary.outputs.hashes }}
     permissions:
@@ -27,14 +113,12 @@ jobs:
           go-version: "1.25"
           cache-dependency-path: backend/go.mod
 
-      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
-
-      - name: Build Frontend and Copy to Backend
-        working-directory: frontend
-        run: |
-          pnpm install
-          pnpm run build
-          cp -r ./.output/public ../backend/app/api/static/
+      - name: Download All GoReleaser Artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          path: backend/dist
+          pattern: goreleaser-*
+          merge-multiple: true
 
       - name: Install CoSign
         working-directory: backend
@@ -46,23 +130,22 @@ jobs:
         run: |
           go install github.com/anchore/syft/cmd/syft@latest
 
-      - name: Run GoReleaser
+      - name: Run GoReleaser Continue
         id: releaser
-        if: startsWith(github.ref, 'refs/tags/')
         uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a
         with:
           workdir: "backend"
           distribution: goreleaser
           version: "~> v2"
-          args: release --clean
+          args: continue --merge ${{ !startsWith(github.ref, 'refs/tags/') && '--skip=publish' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
           COSIGN_YES: "true"
 
       - name: Generate binary hashes
-        if: startsWith(github.ref, 'refs/tags/')
         id: binary
+        if: startsWith(github.ref, 'refs/tags/')
         env:
           ARTIFACTS: "${{ steps.releaser.outputs.artifacts }}"
         run: |
@@ -71,34 +154,21 @@ jobs:
           checksum_file=$(echo "$ARTIFACTS" | jq -r '.[] | select (.type=="Checksum") | .path')
           echo "hashes=$(cat $checksum_file | base64 -w0)" >> "$GITHUB_OUTPUT"
 
-      - name: Run GoReleaser No Release
-        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
-        uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a
-        with:
-          workdir: "backend"
-          distribution: goreleaser
-          version: "~> v2"
-          args: release --clean --snapshot --skip=publish
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
-          COSIGN_YES: "true"
-
   binary-provenance:
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [ goreleaser ]
+    needs: [ goreleaser-merge ]
     permissions:
       actions: read # To read the workflow path.
       id-token: write # To sign the provenance.
       contents: write # To add assets to a release.
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@f7dd8c54c2067bafc12ca7a55595d5ee9b75204a
     with:
-      base64-subjects: "${{ needs.goreleaser.outputs.hashes }}"
+      base64-subjects: "${{ needs.goreleaser-merge.outputs.hashes }}"
       upload-assets: true # upload to a new release
 
   verification-with-slsa-verifier:
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [goreleaser, binary-provenance]
+    needs: [goreleaser-merge, binary-provenance]
     runs-on: ubuntu-latest
     permissions: read-all
     steps:
@@ -116,7 +186,7 @@ jobs:
           gh -R "$GITHUB_REPOSITORY" release download "$GITHUB_REF_NAME" -p "$PROVENANCE"
       - name: Verify assets
         env:
-          CHECKSUMS: ${{ needs.goreleaser.outputs.hashes }}
+          CHECKSUMS: ${{ needs.goreleaser-merge.outputs.hashes }}
           PROVENANCE: "${{ needs.binary-provenance.outputs.provenance-name }}"
         run: |
           set -euo pipefail
