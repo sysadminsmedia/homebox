@@ -58,6 +58,7 @@
     "@vueuse/router": "^13.9.0",
     "@zxing/library": "^0.21.3",
     "autoprefixer": "^10.4.23",
+    "centrifuge": "^5.5.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",

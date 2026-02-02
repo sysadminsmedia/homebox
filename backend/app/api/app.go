@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services/centrifuge"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
@@ -16,6 +17,7 @@ type app struct {
 	repos       *repo.AllRepos
 	services    *services.AllServices
 	bus         *eventbus.EventBus
+	broker      *centrifuge.Broker
 	authLimiter *authRateLimiter
 }
 

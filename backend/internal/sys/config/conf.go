@@ -104,6 +104,7 @@ type BarcodeAPIConf struct {
 
 type AuthConfig struct {
 	RateLimit AuthRateLimit `yaml:"rate_limit"`
+	JwtSecret string        `yaml:"jwt_secret"`
 }
 
 type AuthRateLimit struct {

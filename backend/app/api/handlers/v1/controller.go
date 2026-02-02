@@ -2,21 +2,18 @@
 package v1
 
 import (
-	"encoding/json"
 	"net/http"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/server"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/app/api/providers"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services/centrifuge"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
-
-	"github.com/olahol/melody"
 )
 
 type Results[T any] struct {
@@ -65,6 +62,12 @@ func WithURL(url string) func(*V1Controller) {
 	}
 }
 
+func WithCentrifugeBroker(broker *centrifuge.Broker) func(*V1Controller) {
+	return func(ctrl *V1Controller) {
+		ctrl.broker = broker
+	}
+}
+
 type V1Controller struct {
 	cookieSecure      bool
 	repo              *repo.AllRepos
@@ -76,6 +79,7 @@ type V1Controller struct {
 	url               string
 	config            *config.Config
 	oidcProvider      *providers.OIDCProvider
+	broker            *centrifuge.Broker
 }
 
 type (
@@ -182,70 +186,53 @@ func (ctrl *V1Controller) HandleCurrency() errchain.HandlerFunc {
 	}
 }
 
-func (ctrl *V1Controller) HandleCacheWS() errchain.HandlerFunc {
-	type eventMsg struct {
-		Event string `json:"event"`
+// HandleWSEvents godoc
+//
+//	@Summary	WebSocket Events
+//	@Tags		Base
+//	@Router		/v1/ws/events [GET]
+func (ctrl *V1Controller) HandleWSEvents() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if ctrl.broker == nil {
+			_ = server.JSON(w, http.StatusServiceUnavailable, map[string]string{
+				"error": "websocket service not available",
+			})
+			return
+		}
+
+		ctrl.broker.HTTPHandler().ServeHTTP(w, r)
 	}
+}
 
-	m := melody.New()
-
-	m.HandleConnect(func(s *melody.Session) {
-		auth := services.NewContext(s.Request.Context())
-		s.Set("gid", auth.GID)
-	})
-
-	factory := func(e string) func(data any) {
-		return func(data any) {
-			eventData, ok := data.(eventbus.GroupMutationEvent)
-			if !ok {
-				log.Log().Msgf("invalid event data: %v", data)
-				return
-			}
-
-			msg := &eventMsg{Event: e}
-
-			jsonBytes, err := json.Marshal(msg)
-			if err != nil {
-				log.Log().Msgf("error marshling event data %v: %v", data, err)
-				return
-			}
-
-			_ = m.BroadcastFilter(jsonBytes, func(s *melody.Session) bool {
-				groupIDStr, ok := s.Get("gid")
-				if !ok {
-					return false
-				}
-
-				GID := groupIDStr.(uuid.UUID)
-				return GID == eventData.GID
+// HandleWSToken godoc
+//
+//	@Summary	WebSocket Token
+//	@Tags		Base
+//	@Produce	json
+//	@Success	200	{object}	map[string]string
+//	@Router		/v1/ws/token [GET]
+func (ctrl *V1Controller) HandleWSToken() errchain.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		if ctrl.broker == nil {
+			return server.JSON(w, http.StatusServiceUnavailable, map[string]string{
+				"error": "websocket service not available",
 			})
 		}
-	}
 
-	ctrl.bus.Subscribe(eventbus.EventTagMutation, factory("tag.mutation"))
-	ctrl.bus.Subscribe(eventbus.EventLocationMutation, factory("location.mutation"))
-	ctrl.bus.Subscribe(eventbus.EventItemMutation, factory("item.mutation"))
+		// Get user and tenant from context (set by middleware)
+		ctx := services.NewContext(r.Context())
 
-	// Persistent asynchronous ticker that keeps all websocket connections alive with periodic pings.
-	go func() {
-		const interval = 10 * time.Second
-
-		ping := time.NewTicker(interval)
-		defer ping.Stop()
-
-		for range ping.C {
-			msg := &eventMsg{Event: "ping"}
-
-			pingBytes, err := json.Marshal(msg)
-			if err != nil {
-				log.Log().Msgf("error marshaling ping: %v", err)
-			} else {
-				_ = m.Broadcast(pingBytes)
-			}
+		// Generate token with 10 minute expiration
+		token, err := ctrl.broker.GenerateToken(ctx.User.ID, ctx.GID, 10*time.Minute)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to generate centrifuge token")
+			return server.JSON(w, http.StatusInternalServerError, map[string]string{
+				"error": "failed to generate token",
+			})
 		}
-	}()
 
-	return func(w http.ResponseWriter, r *http.Request) error {
-		return m.HandleRequest(w, r)
+		return server.JSON(w, http.StatusOK, map[string]string{
+			"token": token,
+		})
 	}
 }

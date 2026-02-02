@@ -20,12 +20,14 @@ import (
 	"github.com/rs/zerolog/pkgerrors"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/currencies"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services/centrifuge"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
 	"go.balki.me/anyhttp"
 
 	_ "github.com/lib/pq"
@@ -170,6 +172,22 @@ func run(cfg *config.Config) error {
 	}
 
 	app.bus = eventbus.New()
+
+	// Initialize Centrifuge broker
+	centrifugeSecret := cfg.Auth.JwtSecret
+	if centrifugeSecret == "" {
+		log.Warn().Msg("no jwt secret provided, generating random secret")
+		token := hasher.GenerateToken()
+		centrifugeSecret = token.Raw
+	}
+
+	broker, err := centrifuge.New(centrifugeSecret, app.bus)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to create websocket broker")
+		return err
+	}
+	app.broker = broker
+
 	app.db = c
 	app.repos = repo.New(c, app.bus, cfg.Storage, cfg.Database.PubSubConnString, cfg.Thumbnail)
 	app.services = services.New(

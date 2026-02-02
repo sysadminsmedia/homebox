@@ -57,6 +57,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		v1.WithRegistration(a.conf.Options.AllowRegistration),
 		v1.WithDemoStatus(a.conf.Demo), // Disable Password Change in Demo Mode
 		v1.WithURL(fmt.Sprintf("%s:%s", a.conf.Web.Host, a.conf.Web.Port)),
+		v1.WithCentrifugeBroker(a.broker),
 	)
 
 	r.Route(prefix+"/v1", func(r chi.Router) {
@@ -86,7 +87,8 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 			a.mwRoles(RoleModeOr, authroles.RoleUser.String()),
 		}
 
-		r.Get("/ws/events", chain.ToHandlerFunc(v1Ctrl.HandleCacheWS(), userMW...))
+		r.Handle("/ws/events", v1Ctrl.HandleWSEvents())
+		r.Get("/ws/token", chain.ToHandlerFunc(v1Ctrl.HandleWSToken(), userMW...))
 
 		// User management endpoints
 		r.Get("/users/self", chain.ToHandlerFunc(v1Ctrl.HandleUserSelf(), userMW...))
