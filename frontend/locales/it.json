@@ -201,7 +201,7 @@
                         "error_deleting": "Errore durante l'eliminazione dell'Oggetto",
                         "error_duplicating": "Errore durante la duplicazione dell'oggetto",
                         "open_menu": "Apri menu",
-                        "open_multi_tab_warning": "Per ragioni di sicurezza, i browsers non permettono di aprire schede multiple in un colpo solo, per modificare questa configurazione utilizza la seguente documentazione",
+                        "open_multi_tab_warning": "Per ragioni di sicurezza, i browsers non permettono di aprire schede multiple in un colpo solo, per modificare questa configurazione utilizza la seguente documentazione:",
                         "toggle_expand": "Apri/Chiudi Espandi",
                         "view_item": "Visualizza Oggetto",
                         "view_items": "Visualizza Oggetti"

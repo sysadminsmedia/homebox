@@ -104,7 +104,7 @@
                 "create_collection": "Nieuwe collectie maken",
                 "join_collection": "Deelnemen aan bestaande collectie",
                 "no_collection_found": "Geen collectie gevonden",
-                "search_collections": "Collecties zoeken...",
+                "search_collections": "Collecties zoeken…",
                 "select_collection": "Collectie selecteren",
                 "your_collections": "Uw collecties"
             }
@@ -226,9 +226,9 @@
             },
             "view": {
                 "change_details": {
-                    "add_tags": "Labels toevoegen",
+                    "add_tags": "Tags toevoegen",
                     "failed_to_update_item": "Bijwerken van item mislukt",
-                    "remove_tags": "Labels verwijderen",
+                    "remove_tags": "Tags verwijderen",
                     "title": "Itemgegevens wijzigen"
                 },
                 "selectable": {
@@ -245,8 +245,8 @@
                         "actions": "Acties",
                         "change_location": "Locatie wijzigen",
                         "change_location_success": "Locatie gewijzigd",
-                        "change_tags": "Labels wijzigen",
-                        "change_tags_success": "Labels veranderd",
+                        "change_tags": "Tags wijzigen",
+                        "change_tags_success": "Tags aangepast",
                         "create_maintenance_item": "Onderhoudsinvoer aanmaken voor item",
                         "create_maintenance_selected": "Onderhoudsinvoer aanmaken voor geselecteerde items",
                         "create_maintenance_success": "Onderhoudsinvoeren aangemaakt",
@@ -303,19 +303,19 @@
         },
         "tag": {
             "create_modal": {
-                "tag_color": "Label Kleur",
-                "tag_description": "Labelbeschrijving",
-                "tag_name": "tag naam",
-                "title": "Label Aanmaken",
+                "tag_color": "Tag kleur",
+                "tag_description": "Tagbeschrijving",
+                "tag_name": "Tag naam",
+                "title": "Tag aanmaken",
                 "toast": {
-                    "already_creating": "Een label wordt al aangemaakt",
+                    "already_creating": "Een tag wordt al aangemaakt",
                     "create_failed": "Kan tag niet aanmaken",
                     "create_success": "Tag aangemaakt",
-                    "tag_name_too_long": "Labelnaam mag niet langer zijn dan 50 tekens"
+                    "tag_name_too_long": "Tagnaam mag niet langer zijn dan 50 tekens"
                 }
             },
             "selector": {
-                "select_tags": "Label selecteren"
+                "select_tags": "Tag selecteren"
             }
         },
         "template": {
@@ -359,8 +359,8 @@
                 "clear": "Wis Template Selectie",
                 "label": "Template (Optioneel)",
                 "not_found": "Geen template gevonden",
-                "search": "Templates zoeken...",
-                "select": "Template selecteren..."
+                "search": "Templates zoeken…",
+                "select": "Template selecteren…"
             },
             "show_defaults": "Standaard weergeven",
             "toast": {
@@ -423,7 +423,7 @@
         "search": "Zoeken",
         "sign_out": "Log uit",
         "submit": "Indienen",
-        "tags": "Labels",
+        "tags": "Tags",
         "unknown": "Onbekend",
         "update": "Bijwerken",
         "updating": "Aan het updaten",
@@ -436,10 +436,10 @@
         "quick_statistics": "Snelle statistieken",
         "recently_added": "Recent toegevoegd",
         "storage_locations": "Opslaglocaties",
-        "tags": "Labels",
+        "tags": "Tags",
         "total_items": "Totale items",
         "total_locations": "Totaal aantal locaties",
-        "total_tags": "Totaal aantal labels",
+        "total_tags": "Totaal aantal tags",
         "total_value": "Totale Waarde"
     },
     "index": {
@@ -453,7 +453,7 @@
         "set_email": "Wat is je mailadres?",
         "set_name": "Wat is je naam?",
         "set_password": "Stel je wachtwoord in",
-        "tagline": "Volg, Organiseer en beheer je dingen.",
+        "tagline": "Volg, organiseer en beheer je spullen.",
         "title": "Organiseer en tag je spullen",
         "toast": {
             "invalid_email": "Ongeldig e-mailadres",
@@ -557,7 +557,7 @@
         "sold_price": "Verkoopprijs",
         "sold_to": "Verkocht Aan",
         "sync_child_locations": "Locaties van onderliggende items synchroniseren",
-        "tip_1": "Locatie- en labelfilters gebruiken de 'OF' -werking. Als er meer dan een is geselecteerd,\nis er maar een nodig voor een overeenkomst.",
+        "tip_1": "Locatie- en tagfilters gebruiken de 'OF' -werking. Als er meer dan een is geselecteerd,\nis er maar een nodig voor een overeenkomst.",
         "tip_2": "Zoekopdrachten voorafgegaan door '#'' zullen om een object-ID vragen (bijvoorbeeld '#000-001')",
         "tip_3": "Veldfilters gebruiken de 'OF' -bewerking. Indien meer dan 1 is geselecteerd\nzal er maar 1 nodig zijn voor een match.",
         "tips": "Tips",
@@ -685,7 +685,7 @@
         "collection": "Collectie",
         "create_item": "Artikel / Object",
         "create_location": "Locatie",
-        "create_tag": "Label",
+        "create_tag": "Tag",
         "home": "Home",
         "locations": "Locaties",
         "maintenance": "Onderhoud",
@@ -803,16 +803,16 @@
         "unsupported": "Mediastream-API wordt niet ondersteund zonder HTTPS"
     },
     "tags": {
-        "no_results": "Geen labels gevonden",
-        "tag_delete_confirm": "Bent u zeker dat u dit label wil verwijderen? Deze actie kan niet ongedaan gemaakt worden.",
+        "no_results": "Geen tags gevonden",
+        "tag_delete_confirm": "Bent u zeker dat u deze tag wil verwijderen? Deze actie kan niet ongedaan gemaakt worden.",
         "toast": {
-            "failed_delete_tag": "Label verwijderen mislukt",
-            "failed_load_tag": "Label laden mislukt",
-            "failed_update_tag": "Bijwerken label mislukt",
-            "tag_deleted": "Label verwijderd",
-            "tag_updated": "Label bijgewerkt"
+            "failed_delete_tag": "Tag verwijderen mislukt",
+            "failed_load_tag": "Tag laden mislukt",
+            "failed_update_tag": "Bijwerken tag mislukt",
+            "tag_deleted": "Tag verwijderd",
+            "tag_updated": "Tag bijgewerkt"
         },
-        "update_tag": "Label bijwerken"
+        "update_tag": "Tag bijwerken"
     },
     "tools": {
         "actions": "Acties inventariseren",
@@ -839,7 +839,7 @@
             "wipe_inventory_maintenance": "Ook alle onderhoudsdossiers wissen",
             "wipe_inventory_note": "Opmerking: alleen groepseigenaren kunnen deze actie uitvoeren.",
             "wipe_inventory_sub": "Verwijdert permanent alle items in je inventaris. Deze actie kan niet ongedaan gemaakt worden en verwijdert alle itemgegevens, inclusief bijlagen en foto's.",
-            "wipe_inventory_tags": "Ook alle labels wissen",
+            "wipe_inventory_tags": "Ook alle tags wissen",
             "zero_datetimes": "Nul item Datum Tijden",
             "zero_datetimes_button": "Nul item Datum Tijden",
             "zero_datetimes_confirm": "Weet u zeker dat u alle datum- en tijdwaarden opnieuw wilt instellen? Dit kan even duren en kan niet ongedaan worden gemaakt.",
@@ -847,7 +847,7 @@
         },
         "actions_sub": "Acties in bulk toepassen op je inventaris. Deze zijn onomkeerbaar '<b>'Wees voorzichtig.'</b>'",
         "demo_mode_error": {
-            "wipe_inventory": "Inventaris, labels, locaties en onderhoudsrecords kunnen niet worden gewist terwijl Homebox zich in de demomodus bevindt. Zorg ervoor dat u niet in de demomodus bent en probeer het opnieuw."
+            "wipe_inventory": "Inventaris, tags, locaties en onderhoudsrecords kunnen niet worden gewist terwijl Homebox zich in de demomodus bevindt. Zorg ervoor dat u niet in de demomodus bent en probeer het opnieuw."
         },
         "import_export": "Importeer/Exporteer",
         "import_export_set": {

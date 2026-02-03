@@ -1,4 +1,48 @@
 {
+    "collection": {
+        "copy_invite": "Copy Invite Link",
+        "create_invite": "Create Invite",
+        "delete_collection": "Delete Collection",
+        "delete_confirm": "Are you sure you want to delete this collection? This action cannot be undone.",
+        "deleted_collection": "Collection deleted.",
+        "expires_at": "Expires",
+        "invite_token": "Token",
+        "invite_token_hidden": "No longer visible",
+        "invite_token_warning": "Invite tokens are only shown once. Copy the link now; you will not be able to view this token again after leaving or refreshing this page.",
+        "invites": "Invites",
+        "invites_delete_confirm": "Are you sure you want to delete this invite?",
+        "leave_collection": "Leave Collection",
+        "leave_confirm": "Are you sure you want to leave this collection?",
+        "left_collection": "You have left the collection.",
+        "manage_collection": "Manage Collection",
+        "members": {
+            "cannot_remove_last": "You cannot remove the last member.",
+            "email": "Email",
+            "empty": "No members in this collection yet.",
+            "member": "Member",
+            "name": "Name",
+            "owner": "Owner",
+            "remove_confirm": "Are you sure you want to remove this member?",
+            "removed": "Member removed",
+            "role": "Role"
+        },
+        "no_collections": {
+            "create": "Create a new collection",
+            "join": "Join an existing collection",
+            "message": "It looks like you're not part of a collection. Create a new collection for your things, or join one you've been invited to.",
+            "title": "No Collections Found"
+        },
+        "no_invites": "No invites",
+        "remaining_uses": "Remaining uses",
+        "tabs": {
+            "invites": "Invites",
+            "members": "Members",
+            "notifiers": "Notifiers",
+            "settings": "Settings",
+            "tools": "Tools"
+        },
+        "uses": "Uses"
+    },
     "components": {
         "app": {
             "create_modal": {
@@ -22,6 +66,47 @@
                 "latest_version": "Latest Version",
                 "new_version_available": "New Version Available",
                 "new_version_available_link": "Click here to view the release notes"
+            }
+        },
+        "collection": {
+            "create_modal": {
+                "name_label": "Collection Name",
+                "title": "Create Collection",
+                "toast": {
+                    "already_creating": "Already creating a collection",
+                    "create_failed": "Failed to create collection",
+                    "create_success": "Collection created",
+                    "please_enter_name": "Please enter a collection name"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Please choose an expiration date and time.",
+                    "invalid_expiry_past": "Expiration date must be in the future.",
+                    "invalid_uses": "Uses must be a number between 1 and 100."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Collection Invite Code",
+                "invites_should_look_like": "Invites should look like:",
+                "join": "Join Collection",
+                "no_invite_code_create_one": "No invite code? Create a new collection instead",
+                "title": "Join Collection",
+                "toast": {
+                    "already_joining": "Already joining a collection",
+                    "join_failed": "Failed to join collection",
+                    "join_success": "Collection joined",
+                    "please_enter_valid_join_code": "Please enter a valid collection invite code"
+                }
+            },
+            "selector": {
+                "collection_options": "Collection Options",
+                "create_collection": "Create New Collection",
+                "join_collection": "Join Existing Collection",
+                "no_collection_found": "No collection found",
+                "search_collections": "Search Collections…",
+                "select_collection": "Select Collection",
+                "your_collections": "Your Collections"
             }
         },
         "color_selector": {
@@ -158,10 +243,10 @@
                 "table": {
                     "dropdown": {
                         "actions": "Actions",
-                        "change_tags": "Change Tags",
-                        "change_tags_success": "Tags Changed",
                         "change_location": "Change Location",
                         "change_location_success": "Location Changed",
+                        "change_tags": "Change Tags",
+                        "change_tags_success": "Tags Changed",
                         "create_maintenance_item": "Create Maintenance Entry for Item",
                         "create_maintenance_selected": "Create Maintenance Entry for Selected Items",
                         "create_maintenance_success": "Maintenance Entrys Created",
@@ -190,23 +275,6 @@
                 }
             }
         },
-        "tag": {
-            "create_modal": {
-                "tag_color": "Tag Color",
-                "tag_description": "Tag Description",
-                "tag_name": "Tag Name",
-                "title": "Create Tag",
-                "toast": {
-                    "already_creating": "Already creating a tag",
-                    "create_failed": "Couldn't create tag",
-                    "create_success": "Tag created",
-                    "tag_name_too_long": "Tag name must not be longer than 50 characters"
-                }
-            },
-            "selector": {
-                "select_tags": "Select Tags"
-            }
-        },
         "location": {
             "create_modal": {
                 "location_description": "Location Description",
@@ -232,6 +300,23 @@
         "quick_menu": {
             "no_results": "No results found.",
             "shortcut_hint": "Use the number keys to quickly select an action."
+        },
+        "tag": {
+            "create_modal": {
+                "tag_color": "Tag Color",
+                "tag_description": "Tag Description",
+                "tag_name": "Tag Name",
+                "title": "Create Tag",
+                "toast": {
+                    "already_creating": "Already creating a tag",
+                    "create_failed": "Couldn't create tag",
+                    "create_success": "Tag created",
+                    "tag_name_too_long": "Tag name must not be longer than 50 characters"
+                }
+            },
+            "selector": {
+                "select_tags": "Select Tags"
+            }
         },
         "template": {
             "apply_template": "Apply a template",
@@ -274,8 +359,8 @@
                 "clear": "Clear Template Selection",
                 "label": "Template (Optional)",
                 "not_found": "No template found",
-                "search": "Search templates...",
-                "select": "Select template..."
+                "search": "Search templates…",
+                "select": "Select template…"
             },
             "show_defaults": "Show defaults",
             "toast": {
@@ -292,47 +377,6 @@
                 "updated": "Template updated"
             },
             "using_template": "Using template: {name}"
-        },
-        "collection": {
-            "selector": {
-                "select_collection": "Select Collection",
-                "create_collection": "Create New Collection",
-                "join_collection": "Join Existing Collection",
-                "no_collection_found": "No collection found",
-                "your_collections": "Your Collections",
-                "collection_options": "Collection Options",
-                "search_collections": "Search Collections..."
-            },
-            "create_modal": {
-                "title": "Create Collection",
-                "name_label": "Collection Name",
-                "toast": {
-                    "already_creating": "Already creating a collection",
-                    "create_failed": "Failed to create collection",
-                    "create_success": "Collection created",
-                    "please_enter_name": "Please enter a collection name"
-                }
-            },
-            "join_modal": {
-                "title": "Join Collection",
-                "invite_code_label": "Collection Invite Code",
-                "join": "Join Collection",
-                "no_invite_code_create_one": "No invite code? Create a new collection instead",
-                "invites_should_look_like": "Invites should look like:",
-                "toast": {
-                    "already_joining": "Already joining a collection",
-                    "join_failed": "Failed to join collection",
-                    "join_success": "Collection joined",
-                    "please_enter_valid_join_code": "Please enter a valid collection invite code"
-                }
-            },
-            "invite_create_modal": {
-                "toast": {
-                    "invalid_uses": "Uses must be a number between 1 and 100.",
-                    "invalid_expiry_missing": "Please choose an expiration date and time.",
-                    "invalid_expiry_past": "Expiration date must be in the future."
-                }
-            }
         }
     },
     "errors": {
@@ -364,7 +408,6 @@
         "insured": "Insured",
         "items": "Items",
         "join_discord": "Join the Discord",
-        "tags": "Tags",
         "loading": "Loading…",
         "locations": "Locations",
         "maintenance": "Maintenance",
@@ -380,6 +423,7 @@
         "search": "Search",
         "sign_out": "Sign Out",
         "submit": "Submit",
+        "tags": "Tags",
         "unknown": "Unknown",
         "update": "Update",
         "updating": "Updating",
@@ -389,13 +433,13 @@
         "yes": "Yes"
     },
     "home": {
-        "tags": "Tags",
         "quick_statistics": "Quick Statistics",
         "recently_added": "Recently Added",
         "storage_locations": "Storage Locations",
+        "tags": "Tags",
         "total_items": "Total Items",
-        "total_tags": "Total Tags",
         "total_locations": "Total Locations",
+        "total_tags": "Total Tags",
         "total_value": "Total Value"
     },
     "index": {
@@ -549,18 +593,6 @@
         "warranty_details": "Warranty Details",
         "warranty_expires": "Warranty Expires"
     },
-    "tags": {
-        "tag_delete_confirm": "Are you sure you want to delete this tag? This action cannot be undone.",
-        "no_results": "No Tags Found",
-        "toast": {
-            "failed_delete_tag": "Failed to delete tag",
-            "failed_load_tag": "Failed to load tag",
-            "failed_update_tag": "Failed to update tag",
-            "tag_deleted": "Tag deleted",
-            "tag_updated": "Tag updated"
-        },
-        "update_tag": "Update Tag"
-    },
     "languages": {
         "bs-BA": "Bosnian (Bosnia and Herzegovina)",
         "ca": "Catalan",
@@ -650,17 +682,17 @@
         "total_entries": "Total Entries"
     },
     "menu": {
+        "collection": "Collection",
         "create_item": "Item / Asset",
-        "create_tag": "Tag",
         "create_location": "Location",
+        "create_tag": "Tag",
         "home": "Home",
         "locations": "Locations",
         "maintenance": "Maintenance",
         "profile": "Profile",
         "scanner": "Scanner",
         "search": "Search",
-        "templates": "Templates",
-        "collection": "Collection"
+        "templates": "Templates"
     },
     "pages": {
         "templates": {
@@ -685,6 +717,12 @@
         "inactive": "Inactive",
         "language": "Language",
         "legacy_image_fit": "{ currentValue, select, true {Disable Legacy Fit: Fit Image with Bars} false {Enable Legacy Fit: Fill Image with Crop} other {Not Hit}}",
+        "moved_notice_body": "Notifiers, invites, and currency settings have been moved to the collection pages.",
+        "moved_notice_description": "These settings are now managed per collection.",
+        "moved_notice_link_invites": "Collection invites",
+        "moved_notice_link_notifiers": "Collection notifiers",
+        "moved_notice_link_settings": "Collection currency settings",
+        "moved_notice_title": "Looking for notifiers, invites, or currency settings?",
         "new_password": "New Password",
         "no_notifiers": "No notifiers configured",
         "no_override": "No override",
@@ -713,13 +751,7 @@
         "update_language": "Update Language",
         "url": "URL",
         "user_profile": "User Profile",
-        "user_profile_sub": "Invite users, and manage your account.",
-        "moved_notice_title": "Looking for notifiers, invites, or currency settings?",
-        "moved_notice_description": "These settings are now managed per collection.",
-        "moved_notice_body": "Notifiers, invites, and currency settings have been moved to the collection pages.",
-        "moved_notice_link_settings": "Collection currency settings",
-        "moved_notice_link_notifiers": "Collection notifiers",
-        "moved_notice_link_invites": "Collection invites"
+        "user_profile_sub": "Invite users, and manage your account."
     },
     "reports": {
         "label_generator": {
@@ -727,13 +759,6 @@
             "asset_start": "Asset Start",
             "base_url": "Base URL",
             "bordered_labels": "Bordered Labels",
-            "replace_homebox_behavior": "Replace \"HomeBox\" text behavior",
-            "replace_homebox_behavior_show_homebox": "Show \"HomeBox\"",
-            "replace_homebox_behavior_item_no_name_no_location": "Replace \"HomeBox\" when item has no name and no location",
-            "replace_homebox_behavior_item_no_name": "Replace \"HomeBox\" when item has no name",
-            "replace_homebox_behavior_item_no_location": "Replace \"HomeBox\" when item has no location",
-            "replace_homebox_behavior_always_replace": "Always Replace \"HomeBox\"",
-            "replace_homebox_text": "Replacement text",
             "generate_page": "Generate Page",
             "input_placeholder": "Type here",
             "instruction_1": "The HomeBox Label Generator is a tool to help you print labels for your HomeBox inventory. These are intended to\n be print-ahead labels so you can print many labels and have them ready to apply",
@@ -749,6 +774,13 @@
             "page_top_padding": "Page Top Padding",
             "page_width": "Page Width",
             "qr_code_example": "QR Code Example",
+            "replace_homebox_behavior": "Replace \"HomeBox\" text behavior",
+            "replace_homebox_behavior_always_replace": "Always Replace \"HomeBox\"",
+            "replace_homebox_behavior_item_no_location": "Replace \"HomeBox\" when item has no location",
+            "replace_homebox_behavior_item_no_name": "Replace \"HomeBox\" when item has no name",
+            "replace_homebox_behavior_item_no_name_no_location": "Replace \"HomeBox\" when item has no name and no location",
+            "replace_homebox_behavior_show_homebox": "Show \"HomeBox\"",
+            "replace_homebox_text": "Replacement text",
             "tip_1": "The defaults here are setup for the\n '<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 label sheets'</a>'. If you're using a different sheet,\n you'll need to adjust the settings to match your sheet.",
             "tip_2": "If you're customizing your sheet the dimensions are in inches. When building the 5260 sheet, I found that the\n dimensions used in their template, did not match what was needed to print within the boxes.\n '<b>'Be prepared for some trial and error.'</b>'",
             "tip_3": "When printing be sure to:\n '<ol><li>'Set the margins to 0 or None'</li><li>'Set the scaling to 100%'</li><li>'Disable double-sided printing'</li><li>'Print a test page before printing multiple pages'</li></ol>'",
@@ -769,6 +801,18 @@
         "select_video_source": "Pick a video source",
         "title": "Scanner",
         "unsupported": "Media Stream API is not supported without HTTPS"
+    },
+    "tags": {
+        "no_results": "No Tags Found",
+        "tag_delete_confirm": "Are you sure you want to delete this tag? This action cannot be undone.",
+        "toast": {
+            "failed_delete_tag": "Failed to delete tag",
+            "failed_load_tag": "Failed to load tag",
+            "failed_update_tag": "Failed to update tag",
+            "tag_deleted": "Tag deleted",
+            "tag_updated": "Tag updated"
+        },
+        "update_tag": "Update Tag"
     },
     "tools": {
         "actions": "Inventory Actions",
@@ -791,11 +835,11 @@
             "wipe_inventory": "Wipe Inventory",
             "wipe_inventory_button": "Wipe Inventory",
             "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
-            "wipe_inventory_tags": "Also wipe all tags",
             "wipe_inventory_locations": "Also wipe all locations",
             "wipe_inventory_maintenance": "Also wipe all maintenance records",
             "wipe_inventory_note": "Note: Only group owners can perform this action.",
             "wipe_inventory_sub": "Permanently deletes all items in your inventory. This action is irreversible and will remove all item data including attachments and photos.",
+            "wipe_inventory_tags": "Also wipe all tags",
             "zero_datetimes": "Zero Item Date Times",
             "zero_datetimes_button": "Zero Item Date Times",
             "zero_datetimes_confirm": "Are you sure you want to reset all date and time values? This can take a while and cannot be undone.",
@@ -835,50 +879,6 @@
             "failed_wipe_inventory": "Failed to wipe inventory.",
             "failed_zero_datetimes": "Failed to reset date and time values.",
             "wipe_inventory_success": "Successfully wiped inventory. { results } items deleted."
-        }
-    },
-    "collection": {
-        "manage_collection": "Manage Collection",
-        "no_collections": {
-            "title": "No Collections Found",
-            "message": "It looks like you're not part of a collection. Create a new collection for your things, or join one you've been invited to.",
-            "create": "Create a new collection",
-            "join": "Join an existing collection"
-        },
-        "tabs": {
-            "members": "Members",
-            "invites": "Invites",
-            "settings": "Settings",
-            "notifiers": "Notifiers",
-            "tools": "Tools"
-        },
-        "leave_collection": "Leave Collection",
-        "delete_collection": "Delete Collection",
-        "leave_confirm": "Are you sure you want to leave this collection?",
-        "delete_confirm": "Are you sure you want to delete this collection? This action cannot be undone.",
-        "left_collection": "You have left the collection.",
-        "deleted_collection": "Collection deleted.",
-        "invites": "Invites",
-        "no_invites": "No invites",
-        "invite_token": "Token",
-        "expires_at": "Expires",
-        "uses": "Uses",
-        "invite_token_warning": "Invite tokens are only shown once. Copy the link now; you will not be able to view this token again after leaving or refreshing this page.",
-        "invite_token_hidden": "No longer visible",
-        "invites_delete_confirm": "Are you sure you want to delete this invite?",
-        "create_invite": "Create Invite",
-        "copy_invite": "Copy Invite Link",
-        "remaining_uses": "Remaining uses",
-        "members": {
-            "cannot_remove_last": "You cannot remove the last member.",
-            "removed": "Member removed",
-            "remove_confirm": "Are you sure you want to remove this member?",
-            "empty": "No members in this collection yet.",
-            "name": "Name",
-            "email": "Email",
-            "role": "Role",
-            "owner": "Owner",
-            "member": "Member"
         }
     }
 }
