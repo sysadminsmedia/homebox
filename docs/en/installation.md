@@ -103,3 +103,18 @@ You can learn more about Docker by [reading the official Docker documentation.](
 2. Extract the archive.
 3. Run the `homebox` executable.
 4. The web interface will be accessible on port 7745 by default. Access the page by navigating to `http://local.ip.address:7745/` (replace with the right ip address)
+
+## Reverse Proxy
+
+If you use a reverse proxy, you will need to ensure websockets are properly proxied in addition to setting the `HBOX_OPTIONS_TRUST_PROXY` environment variable to `true`
+For example, if you use Nginx you will need to add the following config options in the `location` block that proxies at least `/api/v1/ws`:
+
+```nginx
+proxy_http_version 1.1;
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection "upgrade";
+proxy_connect_timeout 3600;
+proxy_read_timeout 3600;
+proxy_send_timeout 3600;
+send_timeout 3600;
+```
