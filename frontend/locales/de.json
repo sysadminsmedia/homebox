@@ -2,21 +2,35 @@
     "collection": {
         "copy_invite": "Einladungslink kopieren",
         "create_invite": "Einladung erstellen",
+        "delete_collection": "Sammlung löschen",
+        "delete_confirm": "Wollen Sie diese Sammlung wirklich löschen? Diese Aktion ist endgültig.",
+        "deleted_collection": "Sammlung gelöscht.",
         "expires_at": "Läuft ab",
         "invite_token": "Token",
         "invite_token_hidden": "Nicht mehr sichtbar",
         "invite_token_warning": "Einladungs-Token werden nur einmalig angezeigt. Kopiere den Link jetzt. Sie werden diesen Token nicht mehr einsehen können, nachdem Sie die Seite verlassen oder neugeladen haben.",
         "invites": "Einladungen",
         "invites_delete_confirm": "Sind Sie sicher, dass Sie diese Einladung löschen möchten?",
+        "leave_collection": "Sammlung verlassen",
+        "leave_confirm": "Wollen Sie diese Sammlung wirklich verlassen?",
+        "left_collection": "Sie haben die Sammlung verlassen.",
+        "manage_collection": "Sammlung verwalten",
         "members": {
             "cannot_remove_last": "Sie können das letzte Mitglied nicht entfernen.",
             "email": "E-Mail",
+            "empty": "Diese Sammlung hat noch keine Mitglieder.",
             "member": "Mitglied",
             "name": "Name",
             "owner": "Besitzer",
             "remove_confirm": "Sind Sie sicher, dass Sie dieses Mitglied entfernen möchten?",
-            "removed": "Mitglied entfernt!",
+            "removed": "Mitglied entfernt",
             "role": "Rolle"
+        },
+        "no_collections": {
+            "create": "Eine neue Sammlung erstellen",
+            "join": "Einer bestehenden Sammlung beitreten",
+            "message": "Sie scheinen kein Mitglied einer Sammlung zu sein. Erstellen Sie eine neue Sammlung für Ihre Dinge, oder treten Sie einer bei, zu der Sie eingeladen wurden.",
+            "title": "Keine Sammlungen gefunden"
         },
         "no_invites": "Keine Einladungen",
         "remaining_uses": "Verbleibende Nutzungen",
@@ -26,7 +40,8 @@
             "notifiers": "Benachrichtigungen",
             "settings": "Einstellungen",
             "tools": "Werkzeuge"
-        }
+        },
+        "uses": "Nutzungen"
     },
     "components": {
         "app": {
@@ -67,22 +82,29 @@
             "invite_create_modal": {
                 "toast": {
                     "invalid_expiry_missing": "Bitte eine Start-/Enddatum und eine Start-/Endzeit wählen.",
-                    "invalid_expiry_past": "Ablaufdatum muss in der Zukunft liegen."
+                    "invalid_expiry_past": "Ablaufdatum muss in der Zukunft liegen.",
+                    "invalid_uses": "Nutzungen muss eine Zahl zwischen 1 und 100 sein."
                 }
             },
             "join_modal": {
                 "invite_code_label": "Einladungscode für die Sammlung",
                 "invites_should_look_like": "Einladungen sollten wie folgt aussehen:",
+                "join": "Sammlung beitreten",
                 "no_invite_code_create_one": "Kein Einladungscode? Stattdessen eine neue Sammlung erstellen",
+                "title": "Sammlung beitreten",
                 "toast": {
+                    "already_joining": "Beitritt einer Sammlung läuft bereits",
+                    "join_failed": "Beitritt der Sammlung fehlgeschlagen",
+                    "join_success": "Einer Sammlung beigetreten",
                     "please_enter_valid_join_code": "Bitte geben Sie einen gültigen Einladungscode für die Sammlung ein"
                 }
             },
             "selector": {
                 "collection_options": "Sammlungsoptionen",
                 "create_collection": "Neue Sammlung erstellen",
+                "join_collection": "Bestehender Sammlung beitreten",
                 "no_collection_found": "Keine Sammlung gefunden",
-                "search_collections": "Durchsuche Sammlungen...",
+                "search_collections": "Sammlungen durchsuchen…",
                 "select_collection": "Kollektion auswählen",
                 "your_collections": "Deine Sammlungen"
             }
@@ -337,8 +359,8 @@
                 "clear": "Vorlagenauswahl aufheben",
                 "label": "Vorlage (optional)",
                 "not_found": "Keine Vorlage gefunden",
-                "search": "Vorlagen suchen...",
-                "select": "Vorlage auswählen..."
+                "search": "Vorlage suchen…",
+                "select": "Vorlage auswählen…"
             },
             "show_defaults": "Standardwerte anzeigen",
             "toast": {
@@ -503,6 +525,7 @@
         "manufacturer": "Hersteller",
         "model_number": "Modellnummer",
         "name": "Name",
+        "negate_tags": "Tag-Auswahl umkehren",
         "next_page": "Nächste Seite",
         "no_attachments": "Kein Anhang gefunden",
         "no_results": "Keine Artikel gefunden",
@@ -534,7 +557,7 @@
         "sold_price": "Verkaufspreis",
         "sold_to": "Verkauft an",
         "sync_child_locations": "Lagerorte von untergeordneten Artikeln synchronisieren",
-        "tip_1": "Lagerort- und Labelfilter verwenden die 'ODER'-Operation. Wenn mehr als eines ausgewählt ist, wird\n nur eines für eine Übereinstimmung benötigt.",
+        "tip_1": "Lagerort- und Tag-Filter verwenden die 'ODER'-Operation. Wenn mehrere ausgewählt sind, wird\n nur eines für Übereinstimmungen benötigt.",
         "tip_2": "Suchen, die mit '#' beginnen, fragen nach einer Asset-ID (Beispiel '#000-001')",
         "tip_3": "Feldfilter verwenden die 'ODER'-Operation. Wenn mehr als eines ausgewählt ist, wird nur eines\n für eine Übereinstimmung benötigt.",
         "tips": "Tipps",
@@ -659,6 +682,7 @@
         "total_entries": "Gesamteinträge"
     },
     "menu": {
+        "collection": "Sammlung",
         "create_item": "Artikel / Asset",
         "create_location": "Lagerort",
         "create_tag": "Tag",
@@ -695,6 +719,8 @@
         "legacy_image_fit": "{ currentValue, select, true {Legacy-Anpassung deaktivieren: Bild mit Balken anpassen} false {Legacy-Anpassung aktivieren: Bild mit Zuschneiden füllen} other {Nicht getroffen}}",
         "moved_notice_body": "Benachrichtigungen, Einladungen und Währungseinstellungen wurden auf die Sammlungsseiten verschoben.",
         "moved_notice_description": "Diese Einstellungen werden nun pro Sammlung verwaltet.",
+        "moved_notice_link_invites": "Sammlungseinladungen",
+        "moved_notice_link_notifiers": "Sammlungsbenachrichtigungen",
         "moved_notice_link_settings": "Währungseinstellungen der Sammlung",
         "moved_notice_title": "Suchen Sie nach Benachrichtigungs-, Einladungs- oder Währungseinstellungen?",
         "new_password": "Neues Passwort",
@@ -813,6 +839,7 @@
             "wipe_inventory_maintenance": "Auch alle Wartungen löschen",
             "wipe_inventory_note": "Hinweis: Nur Gruppenbesitzer können diese Aktion ausführen.",
             "wipe_inventory_sub": "Löscht dauerhaft alle Artikel in Ihrem Inventar. Diese Aktion ist irreversibel und entfernt alle Artikeldaten, einschließlich Anhänge und Fotos.",
+            "wipe_inventory_tags": "Auch alle Tags löschen",
             "zero_datetimes": "Leeren der Datum & Zeiten der Artikel",
             "zero_datetimes_button": "Artikel-Datum/Zeit zurücksetzen",
             "zero_datetimes_confirm": "Möchten Sie wirklich alle Datums- und Zeitwerte zurücksetzen? Dies kann einige Zeit dauern und kann nicht rückgängig gemacht werden.",
@@ -820,7 +847,7 @@
         },
         "actions_sub": "Aktionen in großen Mengen auf das Inventar anwenden. Diese Aktionen sind unumkehrbar. '<b>'Sei vorsichtig.'</b>'",
         "demo_mode_error": {
-            "wipe_inventory": "Inventar, Etiketten, Standorte und Wartungsmeldungen können nicht gelöscht werden, solange sich Homebox im Demo-Modus befindet. Bitte stellen Sie sicher, dass Sie sich nicht im Demo-Modus befinden, und versuchen Sie es erneut."
+            "wipe_inventory": "Inventar, Tags, Standorte und Wartungsmeldungen können nicht gelöscht werden, solange sich Homebox im Demo-Modus befindet. Bitte stellen Sie sicher, dass Sie sich nicht im Demo-Modus befinden, und versuchen Sie es erneut."
         },
         "import_export": "Import/Export",
         "import_export_set": {

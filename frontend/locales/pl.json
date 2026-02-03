@@ -1,4 +1,48 @@
 {
+    "collection": {
+        "copy_invite": "Skopiuj link z zaproszeniem",
+        "create_invite": "Utwórz zaproszenie",
+        "delete_collection": "Usuń kolekcję",
+        "delete_confirm": "Czy na pewno chcesz usunąć tą kolekcję? Tej akcji nie można cofnąć.",
+        "deleted_collection": "Kolekcja usunięta.",
+        "expires_at": "Traci ważność",
+        "invite_token": "Token",
+        "invite_token_hidden": "Już niewidoczne",
+        "invite_token_warning": "Tokeny zaproszeń są wyświetlane tylko raz. Skopiuj link teraz; nie będziesz mógł ponownie zobaczyć tego tokena po opuszczeniu lub odświeżeniu tej strony.",
+        "invites": "Zaproszenia",
+        "invites_delete_confirm": "Czy na pewno chcesz usunąć to zaproszenie?",
+        "leave_collection": "Opuść kolekcję",
+        "leave_confirm": "Czy na pewno chcesz opuścić tą kolekcję?",
+        "left_collection": "Opuściłeś kolekcję.",
+        "manage_collection": "Zarządzaj kolekcją",
+        "members": {
+            "cannot_remove_last": "Nie możesz usunąć ostatniego członka.",
+            "email": "E-mail",
+            "empty": "Brak członków w tej kolekcji.",
+            "member": "Członek",
+            "name": "Nazwa",
+            "owner": "Właściciel",
+            "remove_confirm": "Jesteś pewien, że chcesz usunąć tego członka?",
+            "removed": "Usunięto członka",
+            "role": "Rola"
+        },
+        "no_collections": {
+            "create": "Utwórz nową kolekcję",
+            "join": "Dołącz do istniejącej kolekcji",
+            "message": "Wygląda na to, że nie należysz do żadnej kolekcji. Utwórz nową kolekcję dla swoich rzeczy lub dołącz do tej, do której zostałeś zaproszony.",
+            "title": "Nie znaleziono kolekcji"
+        },
+        "no_invites": "Brak zaproszeń",
+        "remaining_uses": "Pozostałe zastosowania",
+        "tabs": {
+            "invites": "Zaproszenia",
+            "members": "Członkowie",
+            "notifiers": "Powiadomienia",
+            "settings": "Ustawienia",
+            "tools": "Narzędzia"
+        },
+        "uses": "Zastosowanie"
+    },
     "components": {
         "app": {
             "create_modal": {
@@ -22,6 +66,47 @@
                 "latest_version": "Najnowsza wersja",
                 "new_version_available": "Dostępna jest nowa wersja",
                 "new_version_available_link": "Kliknij tutaj, aby wyświetlić informacje o wydaniu"
+            }
+        },
+        "collection": {
+            "create_modal": {
+                "name_label": "Nazwa kolekcji",
+                "title": "Utwórz kolekcję",
+                "toast": {
+                    "already_creating": "Lokalizacja jest w trakcie tworzenia",
+                    "create_failed": "Nie udało się utworzyć kolekcji",
+                    "create_success": "Kolekcja utworzona",
+                    "please_enter_name": "Podaj nazwę kolekcji"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Wybierz datę utraty ważności.",
+                    "invalid_expiry_past": "Data wygaśnięcia musi być w przyszłości.",
+                    "invalid_uses": "Zastosowania muszą być liczbą od 1 do 100."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Kod zaproszenia do kolekcji",
+                "invites_should_look_like": "Zaproszenia powinny wyglądać następująco:",
+                "join": "Dołącz do kolekcji",
+                "no_invite_code_create_one": "Nie masz kodu zaproszenia? Utwórz nową kolekcję",
+                "title": "Dołącz do kolekcji",
+                "toast": {
+                    "already_joining": "Już dołączam do kolekcji",
+                    "join_failed": "Nie udało się dołączyć do kolekcji",
+                    "join_success": "Dołączono do kolekcji",
+                    "please_enter_valid_join_code": "Wprowadź prawidłowy kod zaproszenia do dołączenia"
+                }
+            },
+            "selector": {
+                "collection_options": "Opcje kolekcji",
+                "create_collection": "Utwórz nową kolekcję",
+                "join_collection": "Dołącz do istniejącej kolekcji",
+                "no_collection_found": "Nie znaleziono kolekcji",
+                "search_collections": "Wyszukaj kolekcje…",
+                "select_collection": "Wybierz kolekcję",
+                "your_collections": "Twoje kolekcje"
             }
         },
         "color_selector": {
@@ -141,7 +226,9 @@
             },
             "view": {
                 "change_details": {
+                    "add_tags": "Dodaj tagi",
                     "failed_to_update_item": "Nie udało się zaktualizować danych przedmiotu",
+                    "remove_tags": "Usuń tagi",
                     "title": "Zmień dane przedmiotu"
                 },
                 "selectable": {
@@ -158,6 +245,8 @@
                         "actions": "Akcje",
                         "change_location": "Zmień lokalizację",
                         "change_location_success": "Oznaczenie lokalizacji zmienione",
+                        "change_tags": "Zmień tagi",
+                        "change_tags_success": "Tagi zmieniono",
                         "create_maintenance_item": "Utwórz wpis konserwacyjny dla pozycji",
                         "create_maintenance_selected": "Utwórz wpis konserwacyjny dla wybranych elementów",
                         "create_maintenance_success": "Utworzono wpis(y) dot. konserwacji",
@@ -212,6 +301,23 @@
             "no_results": "Nie znaleziono wyników.",
             "shortcut_hint": "Użyj klawiszy numerycznych, aby szybko wybrać akcję."
         },
+        "tag": {
+            "create_modal": {
+                "tag_color": "Kolor tagu",
+                "tag_description": "Opis tagu",
+                "tag_name": "Nazwa tagu",
+                "title": "Utwórz tag",
+                "toast": {
+                    "already_creating": "Tag w trakcie tworzenia",
+                    "create_failed": "Nie udało się utworzyć tagu",
+                    "create_success": "Utworzono tag",
+                    "tag_name_too_long": "Nazwa tagu nie może być dłuższa niż 50 znaków"
+                }
+            },
+            "selector": {
+                "select_tags": "Wybierz tagi"
+            }
+        },
         "template": {
             "apply_template": "Zastosuj szablon",
             "card": {
@@ -253,8 +359,8 @@
                 "clear": "Wyczyść wybór szablonu",
                 "label": "Szablon (opcjonalnie)",
                 "not_found": "Nie znaleziono szablonu",
-                "search": "Szukaj szablonu...",
-                "select": "Wybierz szablon..."
+                "search": "Szukaj szablonu…",
+                "select": "Wybierz szablon…"
             },
             "show_defaults": "Pokaż wartości domyślne",
             "toast": {
@@ -317,6 +423,7 @@
         "search": "Wyszukaj",
         "sign_out": "Wyloguj się",
         "submit": "Wyślij",
+        "tags": "Tagi",
         "unknown": "Nieznany",
         "update": "Aktualizuj",
         "updating": "Aktualizacja",
@@ -329,8 +436,10 @@
         "quick_statistics": "Szybkie statystyki",
         "recently_added": "Ostatnio dodane",
         "storage_locations": "Miejsca przechowywania",
+        "tags": "Tagi",
         "total_items": "Łączna liczba produktów",
         "total_locations": "Łączna liczba lokalizacji",
+        "total_tags": "Łącznie tagów",
         "total_value": "Łączna wartość"
     },
     "index": {
@@ -416,6 +525,7 @@
         "manufacturer": "Producent",
         "model_number": "Model",
         "name": "Nazwa",
+        "negate_tags": "Neguj wybrane tagi",
         "next_page": "Następna strona",
         "no_attachments": "Nie znaleziono załączników",
         "no_results": "Nie znaleziono przedmiotów",
@@ -447,7 +557,7 @@
         "sold_price": "Cena sprzedaży",
         "sold_to": "Sprzedane do",
         "sync_child_locations": "Synchronizuj lokalizacje przedmiotów podrzędnych",
-        "tip_1": "Filtry lokalizacji i etykiet używają operacji 'LUB'. Jeśli wybrano więcej niż jeden, wystarczy jeden, \naby uzyskać dopasowanie.",
+        "tip_1": "Filtry lokalizacji i tagów używają operacji 'LUB'. Jeśli wybrano więcej niż jeden, wystarczy jeden, \naby uzyskać dopasowanie.",
         "tip_2": "Wyszukiwania poprzedzone prefiksem \"#\" będą wysyłać zapytanie o identyfikator zasobu (na przykład \"#000-001\")",
         "tip_3": "Filtry pól używają operacji 'LUB'. Jeśli wybrano więcej niż jeden, wystarczy jeden, \naby uzyskać dopasowanie.",
         "tips": "Wskazówki",
@@ -572,8 +682,10 @@
         "total_entries": "Suma wpisów"
     },
     "menu": {
+        "collection": "Kolekcja",
         "create_item": "Przedmiot / Zasób",
         "create_location": "Lokalizacja",
+        "create_tag": "Tag",
         "home": "Strona główna",
         "locations": "Lokalizacje",
         "maintenance": "Konserwacja",
@@ -605,6 +717,12 @@
         "inactive": "Nieaktywny",
         "language": "Język",
         "legacy_image_fit": "{ currentValue, select, true {Wyłącz dopasowanie starszej wersji: Dopasuj obraz za pomocą pasków} false {Włącz dopasowanie starszej wersji: Wypełnij obraz za pomocą kadrowania} other {Nie trafiono}}",
+        "moved_notice_body": "Ustawienia powiadomień, zaproszeń i walut zostały przeniesione na strony kolekcji.",
+        "moved_notice_description": "Te ustawienia są teraz zarządzane według kolekcji.",
+        "moved_notice_link_invites": "Zaproszenia do kolekcji",
+        "moved_notice_link_notifiers": "Powiadomienia kolekcji",
+        "moved_notice_link_settings": "Ustawienia waluty kolekcji",
+        "moved_notice_title": "Szukasz ustawień dla powiadomień, zaproszeń lub waluty?",
         "new_password": "Nowe hasło",
         "no_notifiers": "Nie skonfigurowano powiadomień",
         "no_override": "Bez nadpisania",
@@ -684,6 +802,18 @@
         "title": "Skaner",
         "unsupported": "Media Stream API nie jest obsługiwany bez HTTPS"
     },
+    "tags": {
+        "no_results": "Nie znaleziono żadnych tagów",
+        "tag_delete_confirm": "Czy na pewno chcesz usunąć ten tag? Tej czynności nie można cofnąć.",
+        "toast": {
+            "failed_delete_tag": "Nie udało się usunąć tagu",
+            "failed_load_tag": "Nie udało się wczytać tagu",
+            "failed_update_tag": "Nie udało się uaktualnić tagu",
+            "tag_deleted": "Tag usunięty",
+            "tag_updated": "Tag zaktualizowany"
+        },
+        "update_tag": "Aktualizuj Tag"
+    },
     "tools": {
         "actions": "Akcje na zasobach",
         "actions_set": {
@@ -709,6 +839,7 @@
             "wipe_inventory_maintenance": "Wyczyść również wszystkie zapisy konserwacji",
             "wipe_inventory_note": "Uwaga: tylko właściciele grup mogą wykonać tę czynność.",
             "wipe_inventory_sub": "Trwale usuwa wszystkie pozycje w Twoim magazynie. Ta czynność jest nieodwracalna i spowoduje usunięcie wszystkich danych przedmiotu, w tym załączników i zdjęć.",
+            "wipe_inventory_tags": "Wyczyść również wszystkie tagi",
             "zero_datetimes": "Wyzeruj daty i godziny przedmiotów",
             "zero_datetimes_button": "Wyzeruj daty i godziny przedmiotów",
             "zero_datetimes_confirm": "Czy na pewno chcesz zresetować wszystkie wartości daty i godziny? Może to chwilę potrwać i nie można tego cofnąć.",
@@ -716,7 +847,7 @@
         },
         "actions_sub": "Zastosuj akcje zbiorczo do swojego inwentarza. Są to działania nieodwracalne. '<b>'Bądź ostrożny.'</b>",
         "demo_mode_error": {
-            "wipe_inventory": "Zapasy, etykiety, lokalizacje i rejestry konserwacji nie mogą zostać wyczyszczone, gdy HomeBox jest w trybie demonstracyjnym."
+            "wipe_inventory": "Zapasy, tagi, lokalizacje i rejestry konserwacji nie mogą zostać wyczyszczone, gdy HomeBox jest w trybie demonstracyjnym."
         },
         "import_export": "Import/eksport",
         "import_export_set": {

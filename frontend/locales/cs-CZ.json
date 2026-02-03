@@ -104,7 +104,7 @@
                 "create_collection": "Vytvořit novou sbírku",
                 "join_collection": "Připojit k existující sbírce",
                 "no_collection_found": "Nebyla nalezena žádná sbírka",
-                "search_collections": "Hledat sbírky...",
+                "search_collections": "Hledat sbírky…",
                 "select_collection": "Vybrat sbírku",
                 "your_collections": "Vaše sbírky"
             }
@@ -158,7 +158,7 @@
                 "download": "Stáhnout štítek",
                 "print": "Vytisknout štítek",
                 "server_print": "Tisk na serveru",
-                "titles": "Štítky",
+                "titles": "Etikety",
                 "toast": {
                     "load_status_failed": "Nepodařilo se načíst stav",
                     "print_failed": "Nepodařilo se vytisknout štítek",
@@ -359,8 +359,8 @@
                 "clear": "Vymazat výběr šablon",
                 "label": "Šablona (volitelné)",
                 "not_found": "Nenalezena žádná šablona",
-                "search": "Vyhledávání šablon...",
-                "select": "Vyberte šablonu..."
+                "search": "Vyhledávání šablon…",
+                "select": "Vyberte šablonu…"
             },
             "show_defaults": "Zobrazit výchozí hodnoty",
             "toast": {

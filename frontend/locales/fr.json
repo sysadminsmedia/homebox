@@ -1,4 +1,10 @@
 {
+    "collection": {
+        "manage_collection": "Gérer la collection",
+        "no_collections": {
+            "title": "Aucune collection trouvée"
+        }
+    },
     "components": {
         "app": {
             "create_modal": {
@@ -38,7 +44,8 @@
             "invite_create_modal": {
                 "toast": {
                     "invalid_expiry_missing": "Veuillez choisir une date et une heure d'expiration.",
-                    "invalid_expiry_past": "La date d'expiration doit-être supérieure à l'heure actuelle."
+                    "invalid_expiry_past": "La date d'expiration doit-être supérieure à l'heure actuelle.",
+                    "invalid_uses": "Le nombre d'utilisations doit être compris entre 1 et 100."
                 }
             },
             "join_modal": {
@@ -58,7 +65,7 @@
                 "create_collection": "Créer une nouvelle collection",
                 "join_collection": "Rejoindre une collection existante",
                 "no_collection_found": "Aucune collection trouvée",
-                "search_collections": "Rechercher des collections...",
+                "search_collections": "Rechercher des collections…",
                 "select_collection": "Sélectionner collection",
                 "your_collections": "Vos collections"
             }
@@ -638,6 +645,7 @@
         "collection": "Collection",
         "create_item": "Article / Ressource",
         "create_location": "Emplacement",
+        "create_tag": "Étiquette",
         "home": "Accueil",
         "locations": "Emplacements",
         "maintenance": "Maintenance",
@@ -669,6 +677,12 @@
         "inactive": "Inactif",
         "language": "Langue",
         "legacy_image_fit": "{ currentValue, select, true {Disable Legacy Fit: Fit Image with Bars} false {Enable Legacy Fit: Fill Image with Crop} other {Not Hit}}",
+        "moved_notice_body": "Les notifications, les invitations et les paramètres de devise ont été déplacés vers les pages de collection.",
+        "moved_notice_description": "Ces paramètres sont désormais gérés par collection.",
+        "moved_notice_link_invites": "Collection d'invites",
+        "moved_notice_link_notifiers": "Collection de notifications",
+        "moved_notice_link_settings": "Collection de paramètres de devise",
+        "moved_notice_title": "Vous recherchez des paramètres des notifications, des invitations ou de devise ?",
         "new_password": "Nouveau mot de passe",
         "no_notifiers": "Aucun notificateur configuré",
         "no_override": "Aucun remplacement",
@@ -720,6 +734,13 @@
             "page_top_padding": "Marge du haut de la page",
             "page_width": "Largeur de la page",
             "qr_code_example": "Exemple de QR code",
+            "replace_homebox_behavior": "Remplacer le comportement du texte « HomeBox »",
+            "replace_homebox_behavior_always_replace": "Toujours remplacez « HomeBox »",
+            "replace_homebox_behavior_item_no_location": "Remplacez « HomeBox » lorsque l'élément n'a pas d'emplacement",
+            "replace_homebox_behavior_item_no_name": "Remplacez « HomeBox » lorsque l'élément n'a pas de nom",
+            "replace_homebox_behavior_item_no_name_no_location": "Remplacez « HomeBox » lorsque l'élément n'a ni nom ni emplacement",
+            "replace_homebox_behavior_show_homebox": "Afficher \"HomeBox\"",
+            "replace_homebox_text": "Texte de remplacement",
             "tip_1": "Ces valeurs par défaut sont configurées pour les\n '<a href=\"https://www.avery.com/templates/5260\">' étiquettes Avery 5260 '</a>'. Si vous utilisez des étiquettes différentes,\n vous devrez ajuster les paramètres correspondre à vos étiquettes.",
             "tip_2": "Si vous personnalisez votre étiquette, les dimensions sont en pouces. Lors de la conception des étiquettes 5260, j'ai remarqué que les\n dimensions utilisées dans leur template ne correspondaient pas à ce qui était nécessaire pour imprimer à l'intérieur des boîtes.\n '<b>'Soyez prêts à faire de l'essai-erreur.'</b>'",
             "tip_3": "Lors de l'impression, assurez-vous de:\n '<ol><li>'Définir les marges à 0 ou Aucune'</li><li>'Définir la mise à l'échelle à 100%'</li><li>'Désactiver l'impression recto-verso'</li><li>'Imprimer une page de test avant d'imprimer plusieurs pages'</li></ol>'",
@@ -745,8 +766,13 @@
         "no_results": "Aucune étiquette d'Hébergement n'a été trouvée",
         "tag_delete_confirm": "Êtes-vous sûr de vouloir supprimer ? Cette action ne peut pas être annulée.",
         "toast": {
-            "failed_delete_tag": "Échec lors de la suppression de balise"
-        }
+            "failed_delete_tag": "Échec lors de la suppression de balise",
+            "failed_load_tag": "Échec du chargement de l'étiquette",
+            "failed_update_tag": "Échec de la mise à jour de l'étiquette",
+            "tag_deleted": "Étiquette supprimée",
+            "tag_updated": "Étiquette mise à jour"
+        },
+        "update_tag": "Mettre à jour l'étiquette"
     },
     "tools": {
         "actions": "Actions d’inventaire",
@@ -773,6 +799,7 @@
             "wipe_inventory_maintenance": "Effacer également toutes les tâches de maintenance",
             "wipe_inventory_note": "Note : Seuls les propriétaires du groupes peuvent exécuter cette action.",
             "wipe_inventory_sub": "Supprimer définitivement tous les articles de votre inventaire. Cette action est irréversible et va supprimer toutes les données ainsi que les pièces jointes et photos.",
+            "wipe_inventory_tags": "Effacer également toutes les étiquettes",
             "zero_datetimes": "Remettre à zéro les dates et heures",
             "zero_datetimes_button": "Remettre à zéro les dates et heures",
             "zero_datetimes_confirm": "Êtes-vous certain de vouloir réinitialiser toutes les valeurs de date et d'heure ? Cela peut prendre du temps et est irréversible.",

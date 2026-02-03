@@ -114,7 +114,7 @@
                     "please_select_location": "ロケーションを選択",
                     "rotate_failed": "画像の回転ができませんでした。エラー内容: { error }",
                     "rotate_process_failed": "画像回転の処理でエラーが発生しました",
-                    "some_photos_failed": "{count, plural, = 0 {アップロード可能な画像がありません} = 1 {画像のアップロードに失敗しました} other {一部の画像のアップロードに失敗しました}}",
+                    "some_photos_failed": "{count, plural, = 0 {アップロードする写真がありません。} = 1 {1枚の写真をアップロードできませんでした。} other {一部の写真をアップロードできませんでした。}}",
                     "upload_failed": "画像のアップロードに失敗しました ({ photoName })",
                     "upload_success": "{count, plural, = 0 {画像はアップロードされていません} = 1 {画像をアップロードしました} other {すべての画像をアップロードしました}}",
                     "uploading_photos": "{count, plural, = 0 {アップロード可能な画像がありません} = 1 {画像をアップロードしています} other {{count}枚の画像をアップロードしています…}}"
