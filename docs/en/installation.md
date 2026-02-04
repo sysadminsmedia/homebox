@@ -106,15 +106,22 @@ You can learn more about Docker by [reading the official Docker documentation.](
 
 ## Reverse Proxy
 
-If you use a reverse proxy, you will need to ensure websockets are properly proxied in addition to setting the `HBOX_OPTIONS_TRUST_PROXY` environment variable to `true`
-For example, if you use Nginx you will need to add the following config options in the `location` block that proxies at least `/api/v1/ws`:
+If you use a reverse proxy, there are a few things that need to be in place:
+
+::: warning
+Only set `HBOX_OPTIONS_TRUST_PROXY=true` when Homebox is behind a trusted reverse proxy. This setting makes the application trust proxy headers (X-Forwarded-Proto, X-Forwarded-For) which can be spoofed by clients if not protected by a reverse proxy.
+:::
+
+1. Set the `HBOX_OPTIONS_TRUST_PROXY` environment variable to `true`.
+2. Ensure the `Host` HTTP header is configured (e.g. `proxy_set_header Host $host;` for nginx).
+3. Ensure websockets are proxied properly (e.g. for nginx, add the following config in the `location` block).
+
+::: tip
+Setting websocket-specific configuration should be limited to the location that serves websockets (`/api/v1/ws`) to prevent potential issues with other site URLs.
+:::
 
 ```nginx
 proxy_http_version 1.1;
 proxy_set_header Upgrade $http_upgrade;
 proxy_set_header Connection "upgrade";
-proxy_connect_timeout 3600;
-proxy_read_timeout 3600;
-proxy_send_timeout 3600;
-send_timeout 3600;
 ```
