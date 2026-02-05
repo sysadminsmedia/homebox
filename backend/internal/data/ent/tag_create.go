@@ -11,8 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 )
 
@@ -110,19 +110,19 @@ func (_c *TagCreate) SetGroup(v *Group) *TagCreate {
 	return _c.SetGroupID(v.ID)
 }
 
-// AddItemIDs adds the "items" edge to the Item entity by IDs.
-func (_c *TagCreate) AddItemIDs(ids ...uuid.UUID) *TagCreate {
-	_c.mutation.AddItemIDs(ids...)
+// AddEntityIDs adds the "entities" edge to the Entity entity by IDs.
+func (_c *TagCreate) AddEntityIDs(ids ...uuid.UUID) *TagCreate {
+	_c.mutation.AddEntityIDs(ids...)
 	return _c
 }
 
-// AddItems adds the "items" edges to the Item entity.
-func (_c *TagCreate) AddItems(v ...*Item) *TagCreate {
+// AddEntities adds the "entities" edges to the Entity entity.
+func (_c *TagCreate) AddEntities(v ...*Entity) *TagCreate {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddItemIDs(ids...)
+	return _c.AddEntityIDs(ids...)
 }
 
 // Mutation returns the TagMutation object of the builder.
@@ -275,15 +275,15 @@ func (_c *TagCreate) createSpec() (*Tag, *sqlgraph.CreateSpec) {
 		_node.group_tags = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.ItemsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.EntitiesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   tag.ItemsTable,
-			Columns: tag.ItemsPrimaryKey,
+			Table:   tag.EntitiesTable,
+			Columns: tag.EntitiesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

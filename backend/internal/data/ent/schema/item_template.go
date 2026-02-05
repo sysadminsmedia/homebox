@@ -105,7 +105,7 @@ func (ItemTemplate) Edges() []ent.Edge {
 	return []ent.Edge{
 		owned("fields", TemplateField.Type),
 		// Default location for items created from this template
-		edge.To("location", Location.Type).
+		edge.To("location", Entity.Type).
 			Unique(),
 	}
 }

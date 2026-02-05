@@ -32,6 +32,6 @@ func (Tag) Fields() []ent.Field {
 // Edges of the Tag.
 func (Tag) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("items", Item.Type),
+		edge.To("entities", Entity.Type),
 	}
 }

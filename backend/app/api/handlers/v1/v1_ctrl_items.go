@@ -22,7 +22,7 @@ import (
 
 // HandleItemsGetAll godoc
 //
-//	@Summary	Query All Items
+//	@Summary	(Deprecated) Query All Items
 //	@Tags		Items
 //	@Produce	json
 //	@Param		q			query		string		false	"search string"
@@ -34,6 +34,7 @@ import (
 //	@Success	200			{object}	repo.PaginationResult[repo.ItemSummary]{}
 //	@Router		/v1/items [GET]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleItemsGetAll() errchain.HandlerFunc {
 	extractQuery := func(r *http.Request) repo.ItemQuery {
 		params := r.URL.Query()
@@ -112,13 +113,14 @@ func (ctrl *V1Controller) HandleItemsGetAll() errchain.HandlerFunc {
 
 // HandleItemFullPath godoc
 //
-//	@Summary	Get the full path of an item
+//	@Summary	(Deprecated) Get the full path of an item
 //	@Tags		Items
 //	@Produce	json
 //	@Param		id	path		string	true	"Item ID"
 //	@Success	200	{object}	[]repo.ItemPath
 //	@Router		/v1/items/{id}/path [GET]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleItemFullPath() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) ([]repo.ItemPath, error) {
 		auth := services.NewContext(r.Context())
@@ -154,13 +156,15 @@ func (ctrl *V1Controller) HandleItemFullPath() errchain.HandlerFunc {
 
 // HandleItemsCreate godoc
 //
-//	@Summary	Create Item
-//	@Tags		Items
-//	@Produce	json
-//	@Param		payload	body		repo.ItemCreate	true	"Item Data"
-//	@Success	201		{object}	repo.ItemSummary
-//	@Router		/v1/items [POST]
-//	@Security	Bearer
+//		@Summary	Create Item
+//		@Tags		Items
+//	 @Accept     json
+//		@Produce	json
+//		@Param		payload	body		repo.ItemCreate	true	"Item Data"
+//		@Success	201		{object}	repo.ItemSummary
+//		@Router		/v1/items [POST]
+//		@Security	Bearer
+//		@Deprecated
 func (ctrl *V1Controller) HandleItemsCreate() errchain.HandlerFunc {
 	fn := func(r *http.Request, body repo.ItemCreate) (repo.ItemOut, error) {
 		return ctrl.svc.Items.Create(services.NewContext(r.Context()), body)
@@ -171,13 +175,14 @@ func (ctrl *V1Controller) HandleItemsCreate() errchain.HandlerFunc {
 
 // HandleItemGet godocs
 //
-//	@Summary	Get Item
+//	@Summary	(Deprecated) Get Item
 //	@Tags		Items
 //	@Produce	json
 //	@Param		id	path		string	true	"Item ID"
 //	@Success	200	{object}	repo.ItemOut
 //	@Router		/v1/items/{id} [GET]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleItemGet() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) (repo.ItemOut, error) {
 		auth := services.NewContext(r.Context())
@@ -190,13 +195,14 @@ func (ctrl *V1Controller) HandleItemGet() errchain.HandlerFunc {
 
 // HandleItemDelete godocs
 //
-//	@Summary	Delete Item
+//	@Summary	(Deprecated) Delete Item
 //	@Tags		Items
 //	@Produce	json
 //	@Param		id	path	string	true	"Item ID"
 //	@Success	204
 //	@Router		/v1/items/{id} [DELETE]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleItemDelete() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) (any, error) {
 		auth := services.NewContext(r.Context())
@@ -209,7 +215,7 @@ func (ctrl *V1Controller) HandleItemDelete() errchain.HandlerFunc {
 
 // HandleItemUpdate godocs
 //
-//	@Summary	Update Item
+//	@Summary	(Deprecated) Update Item
 //	@Tags		Items
 //	@Produce	json
 //	@Param		id		path		string			true	"Item ID"
@@ -217,6 +223,7 @@ func (ctrl *V1Controller) HandleItemDelete() errchain.HandlerFunc {
 //	@Success	200		{object}	repo.ItemOut
 //	@Router		/v1/items/{id} [PUT]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleItemUpdate() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID, body repo.ItemUpdate) (repo.ItemOut, error) {
 		auth := services.NewContext(r.Context())
@@ -230,7 +237,7 @@ func (ctrl *V1Controller) HandleItemUpdate() errchain.HandlerFunc {
 
 // HandleItemPatch godocs
 //
-//	@Summary	Update Item
+//	@Summary	(Deprecated) Update Item
 //	@Tags		Items
 //	@Produce	json
 //	@Param		id		path		string			true	"Item ID"
@@ -238,6 +245,7 @@ func (ctrl *V1Controller) HandleItemUpdate() errchain.HandlerFunc {
 //	@Success	200		{object}	repo.ItemOut
 //	@Router		/v1/items/{id} [Patch]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleItemPatch() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID, body repo.ItemPatch) (repo.ItemOut, error) {
 		auth := services.NewContext(r.Context())
@@ -275,13 +283,14 @@ func (ctrl *V1Controller) HandleItemDuplicate() errchain.HandlerFunc {
 
 // HandleGetAllCustomFieldNames godocs
 //
-//	@Summary	Get All Custom Field Names
+//	@Summary	(Deprecated) Get All Custom Field Names
 //	@Tags		Items
 //	@Produce	json
 //	@Success	200
 //	@Router		/v1/items/fields [GET]
 //	@Success	200	{object}	[]string
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleGetAllCustomFieldNames() errchain.HandlerFunc {
 	fn := func(r *http.Request) ([]string, error) {
 		auth := services.NewContext(r.Context())
@@ -293,13 +302,14 @@ func (ctrl *V1Controller) HandleGetAllCustomFieldNames() errchain.HandlerFunc {
 
 // HandleGetAllCustomFieldValues godocs
 //
-//	@Summary	Get All Custom Field Values
+//	@Summary	(Deprecated) Get All Custom Field Values
 //	@Tags		Items
 //	@Produce	json
 //	@Success	200
 //	@Router		/v1/items/fields/values [GET]
 //	@Success	200	{object}	[]string
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleGetAllCustomFieldValues() errchain.HandlerFunc {
 	type query struct {
 		Field string `schema:"field" validate:"required"`
@@ -315,14 +325,15 @@ func (ctrl *V1Controller) HandleGetAllCustomFieldValues() errchain.HandlerFunc {
 
 // HandleItemsImport godocs
 //
-//	@Summary	Import Items
-//	@Tags		Items
-//	@Accept		multipart/form-data
-//	@Produce	json
-//	@Success	204
-//	@Param		csv	formData	file	true	"Image to upload"
-//	@Router		/v1/items/import [Post]
-//	@Security	Bearer
+//	@Summary  (Deprecated) Import Items
+//	@Tags     Items
+//	@Accept   multipart/form-data
+//	@Produce  json
+//	@Success  204
+//	@Param    csv formData file true "Image to upload"
+//	@Router   /v1/items/import [Post]
+//	@Security Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleItemsImport() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		err := r.ParseMultipartForm(ctrl.maxUploadSize << 20)
@@ -351,11 +362,12 @@ func (ctrl *V1Controller) HandleItemsImport() errchain.HandlerFunc {
 
 // HandleItemsExport godocs
 //
-//	@Summary	Export Items
+//	@Summary	(Deprecated) Export Items
 //	@Tags		Items
 //	@Success	200	{string}	string	"text/csv"
 //	@Router		/v1/items/export [GET]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleItemsExport() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		ctx := services.NewContext(r.Context())

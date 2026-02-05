@@ -6,8 +6,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+
+	"github.com/google/uuid"
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/currencies"

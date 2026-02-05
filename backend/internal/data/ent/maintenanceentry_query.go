@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 )
@@ -24,7 +24,7 @@ type MaintenanceEntryQuery struct {
 	order      []maintenanceentry.OrderOption
 	inters     []Interceptor
 	predicates []predicate.MaintenanceEntry
-	withItem   *ItemQuery
+	withEntity *EntityQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -61,9 +61,9 @@ func (_q *MaintenanceEntryQuery) Order(o ...maintenanceentry.OrderOption) *Maint
 	return _q
 }
 
-// QueryItem chains the current query on the "item" edge.
-func (_q *MaintenanceEntryQuery) QueryItem() *ItemQuery {
-	query := (&ItemClient{config: _q.config}).Query()
+// QueryEntity chains the current query on the "entity" edge.
+func (_q *MaintenanceEntryQuery) QueryEntity() *EntityQuery {
+	query := (&EntityClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -74,8 +74,8 @@ func (_q *MaintenanceEntryQuery) QueryItem() *ItemQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(maintenanceentry.Table, maintenanceentry.FieldID, selector),
-			sqlgraph.To(item.Table, item.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, maintenanceentry.ItemTable, maintenanceentry.ItemColumn),
+			sqlgraph.To(entity.Table, entity.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, maintenanceentry.EntityTable, maintenanceentry.EntityColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -275,21 +275,21 @@ func (_q *MaintenanceEntryQuery) Clone() *MaintenanceEntryQuery {
 		order:      append([]maintenanceentry.OrderOption{}, _q.order...),
 		inters:     append([]Interceptor{}, _q.inters...),
 		predicates: append([]predicate.MaintenanceEntry{}, _q.predicates...),
-		withItem:   _q.withItem.Clone(),
+		withEntity: _q.withEntity.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
 	}
 }
 
-// WithItem tells the query-builder to eager-load the nodes that are connected to
-// the "item" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *MaintenanceEntryQuery) WithItem(opts ...func(*ItemQuery)) *MaintenanceEntryQuery {
-	query := (&ItemClient{config: _q.config}).Query()
+// WithEntity tells the query-builder to eager-load the nodes that are connected to
+// the "entity" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *MaintenanceEntryQuery) WithEntity(opts ...func(*EntityQuery)) *MaintenanceEntryQuery {
+	query := (&EntityClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withItem = query
+	_q.withEntity = query
 	return _q
 }
 
@@ -372,7 +372,7 @@ func (_q *MaintenanceEntryQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 		nodes       = []*MaintenanceEntry{}
 		_spec       = _q.querySpec()
 		loadedTypes = [1]bool{
-			_q.withItem != nil,
+			_q.withEntity != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -393,20 +393,20 @@ func (_q *MaintenanceEntryQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := _q.withItem; query != nil {
-		if err := _q.loadItem(ctx, query, nodes, nil,
-			func(n *MaintenanceEntry, e *Item) { n.Edges.Item = e }); err != nil {
+	if query := _q.withEntity; query != nil {
+		if err := _q.loadEntity(ctx, query, nodes, nil,
+			func(n *MaintenanceEntry, e *Entity) { n.Edges.Entity = e }); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
 }
 
-func (_q *MaintenanceEntryQuery) loadItem(ctx context.Context, query *ItemQuery, nodes []*MaintenanceEntry, init func(*MaintenanceEntry), assign func(*MaintenanceEntry, *Item)) error {
+func (_q *MaintenanceEntryQuery) loadEntity(ctx context.Context, query *EntityQuery, nodes []*MaintenanceEntry, init func(*MaintenanceEntry), assign func(*MaintenanceEntry, *Entity)) error {
 	ids := make([]uuid.UUID, 0, len(nodes))
 	nodeids := make(map[uuid.UUID][]*MaintenanceEntry)
 	for i := range nodes {
-		fk := nodes[i].ItemID
+		fk := nodes[i].EntityID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -415,7 +415,7 @@ func (_q *MaintenanceEntryQuery) loadItem(ctx context.Context, query *ItemQuery,
 	if len(ids) == 0 {
 		return nil
 	}
-	query.Where(item.IDIn(ids...))
+	query.Where(entity.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
@@ -423,7 +423,7 @@ func (_q *MaintenanceEntryQuery) loadItem(ctx context.Context, query *ItemQuery,
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "item_id" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "entity_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -457,8 +457,8 @@ func (_q *MaintenanceEntryQuery) querySpec() *sqlgraph.QuerySpec {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
-		if _q.withItem != nil {
-			_spec.Node.AddColumnOnce(maintenanceentry.FieldItemID)
+		if _q.withEntity != nil {
+			_spec.Node.AddColumnOnce(maintenanceentry.FieldEntityID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

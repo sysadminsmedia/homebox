@@ -87,10 +87,10 @@ func CheckPasswordHash(password, hash string) (bool, bool) {
 		if err == nil {
 			// If bcrypt hash matches, return true and indicate rehashing
 			return true, true
-		} else {
-			// If both fail, return false and indicate no rehashing
-			return false, false
 		}
+
+		// If both fail, return false and indicate no rehashing
+		return false, false
 	}
 	return match, false
 }

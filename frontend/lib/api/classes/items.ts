@@ -1,7 +1,7 @@
 import { BaseAPI, route } from "../base";
 import { parseDate } from "../base/base-api";
 import type {
-  ItemAttachmentUpdate,
+  EntityAttachmentUpdate,
   ItemCreate,
   ItemOut,
   ItemPatch,
@@ -53,8 +53,8 @@ export class AttachmentsAPI extends BaseAPI {
     return this.http.delete<void>({ url: route(`/items/${id}/attachments/${attachmentId}`) });
   }
 
-  update(id: string, attachmentId: string, data: ItemAttachmentUpdate) {
-    return this.http.put<ItemAttachmentUpdate, ItemOut>({
+  update(id: string, attachmentId: string, data: EntityAttachmentUpdate) {
+    return this.http.put<EntityAttachmentUpdate, ItemOut>({
       url: route(`/items/${id}/attachments/${attachmentId}`),
       body: data,
     });

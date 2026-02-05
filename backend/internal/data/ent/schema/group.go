@@ -44,11 +44,11 @@ func (Group) Edges() []ent.Edge {
 	return []ent.Edge{
 		// Use edge.From + Ref("groups") to model M:M between users and groups via junction table
 		edge.From("users", User.Type).Ref("groups"),
-		owned("locations", Location.Type),
-		owned("items", Item.Type),
+		owned("entities", Entity.Type),
 		owned("tags", Tag.Type),
 		owned("invitation_tokens", GroupInvitationToken.Type),
 		owned("notifiers", Notifier.Type),
+		owned("entity_types", EntityType.Type),
 		owned("item_templates", ItemTemplate.Type),
 		// $scaffold_edge
 	}

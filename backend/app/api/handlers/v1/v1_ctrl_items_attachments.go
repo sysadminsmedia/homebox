@@ -53,6 +53,7 @@ func sanitizeAttachmentName(name string) string {
 //	@Failure	422		{object}	validate.ErrorResponse
 //	@Router		/v1/items/{id}/attachments [POST]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		err := r.ParseMultipartForm(ctrl.maxUploadSize << 20)
@@ -140,6 +141,7 @@ func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 //	@Success	200				{object}	ItemAttachmentToken
 //	@Router		/v1/items/{id}/attachments/{attachment_id} [GET]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleItemAttachmentGet() errchain.HandlerFunc {
 	return ctrl.handleItemAttachmentsHandler
 }
@@ -153,6 +155,7 @@ func (ctrl *V1Controller) HandleItemAttachmentGet() errchain.HandlerFunc {
 //	@Success	204
 //	@Router		/v1/items/{id}/attachments/{attachment_id} [DELETE]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleItemAttachmentDelete() errchain.HandlerFunc {
 	return ctrl.handleItemAttachmentsHandler
 }
@@ -163,10 +166,11 @@ func (ctrl *V1Controller) HandleItemAttachmentDelete() errchain.HandlerFunc {
 //	@Tags		Items Attachments
 //	@Param		id				path		string						true	"Item ID"
 //	@Param		attachment_id	path		string						true	"Attachment ID"
-//	@Param		payload			body		repo.ItemAttachmentUpdate	true	"Attachment Update"
+//	@Param		payload			body		repo.EntityAttachmentUpdate	true	"Attachment Update"
 //	@Success	200				{object}	repo.ItemOut
 //	@Router		/v1/items/{id}/attachments/{attachment_id} [PUT]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleItemAttachmentUpdate() errchain.HandlerFunc {
 	return ctrl.handleItemAttachmentsHandler
 }
@@ -232,7 +236,7 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 
 	// Update Attachment Handler
 	case http.MethodPut:
-		var attachment repo.ItemAttachmentUpdate
+		var attachment repo.EntityAttachmentUpdate
 		err = server.Decode(r, &attachment)
 		if err != nil {
 			log.Err(err).Msg("failed to decode attachment")

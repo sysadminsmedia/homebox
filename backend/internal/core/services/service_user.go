@@ -118,6 +118,13 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 			}
 		}
 
+		// TODO: Fix this correctly
+		log.Debug().Msg("creating default entity types")
+		err := svc.repos.EntityType.CreateDefaultEntityTypes(ctx, usr.DefaultGroupID)
+		if err != nil {
+			return repo.UserOut{}, err
+		}
+
 		log.Debug().Msg("creating default locations")
 		for _, location := range defaultLocations() {
 			_, err := svc.repos.Locations.Create(ctx, usr.DefaultGroupID, location)

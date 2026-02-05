@@ -28,9 +28,9 @@ func generateOrPrint(ctrl *V1Controller, w http.ResponseWriter, r *http.Request,
 
 		_, err = w.Write([]byte("Printed!"))
 		return err
-	} else {
-		return labelmaker.GenerateLabel(w, &params, ctrl.config)
 	}
+
+	return labelmaker.GenerateLabel(w, &params, ctrl.config)
 }
 
 // HandleGetLocationLabel godoc

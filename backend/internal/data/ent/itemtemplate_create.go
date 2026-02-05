@@ -11,9 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 )
 
@@ -286,13 +286,13 @@ func (_c *ItemTemplateCreate) AddFields(v ...*TemplateField) *ItemTemplateCreate
 	return _c.AddFieldIDs(ids...)
 }
 
-// SetLocationID sets the "location" edge to the Location entity by ID.
+// SetLocationID sets the "location" edge to the Entity entity by ID.
 func (_c *ItemTemplateCreate) SetLocationID(id uuid.UUID) *ItemTemplateCreate {
 	_c.mutation.SetLocationID(id)
 	return _c
 }
 
-// SetNillableLocationID sets the "location" edge to the Location entity by ID if the given value is not nil.
+// SetNillableLocationID sets the "location" edge to the Entity entity by ID if the given value is not nil.
 func (_c *ItemTemplateCreate) SetNillableLocationID(id *uuid.UUID) *ItemTemplateCreate {
 	if id != nil {
 		_c = _c.SetLocationID(*id)
@@ -300,8 +300,8 @@ func (_c *ItemTemplateCreate) SetNillableLocationID(id *uuid.UUID) *ItemTemplate
 	return _c
 }
 
-// SetLocation sets the "location" edge to the Location entity.
-func (_c *ItemTemplateCreate) SetLocation(v *Location) *ItemTemplateCreate {
+// SetLocation sets the "location" edge to the Entity entity.
+func (_c *ItemTemplateCreate) SetLocation(v *Entity) *ItemTemplateCreate {
 	return _c.SetLocationID(v.ID)
 }
 
@@ -594,7 +594,7 @@ func (_c *ItemTemplateCreate) createSpec() (*ItemTemplate, *sqlgraph.CreateSpec)
 			Columns: []string{itemtemplate.LocationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(location.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
