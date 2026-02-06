@@ -193,11 +193,13 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 	stats.PriceAtStart = orDefault(maybeStart, 0)
 	stats.PriceAtEnd = orDefault(maybeEnd, 0)
 
-	var v []struct {
+	type itemPriceEntry struct {
 		Name          string    `json:"name"`
 		CreatedAt     time.Time `json:"created_at"`
 		PurchasePrice float64   `json:"purchase_price"`
 	}
+
+	var v []itemPriceEntry
 
 	// Get Created Date and Price of all items between start and end
 	err = r.db.Item.Query().
@@ -218,11 +220,7 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 		return nil, err
 	}
 
-	stats.Entries = lo.Map(v, func(vv struct {
-		Name          string    `json:"name"`
-		CreatedAt     time.Time `json:"created_at"`
-		PurchasePrice float64   `json:"purchase_price"`
-	}, _ int) ValueOverTimeEntry {
+	stats.Entries = lo.Map(v, func(vv itemPriceEntry, _ int) ValueOverTimeEntry {
 		return ValueOverTimeEntry{
 			Date:  vv.CreatedAt,
 			Value: vv.PurchasePrice,
