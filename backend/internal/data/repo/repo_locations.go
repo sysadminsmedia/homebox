@@ -446,10 +446,7 @@ func ConvertLocationsToTree(locations []FlatTreeItem) []TreeItem {
 		}
 	}
 
-	roots := make([]TreeItem, 0, len(rootIds))
-	for _, id := range rootIds {
-		roots = append(roots, *locationMap[id])
-	}
-
-	return roots
+	return lo.Map(rootIds, func(id uuid.UUID, _ int) TreeItem {
+		return *locationMap[id]
+	})
 }

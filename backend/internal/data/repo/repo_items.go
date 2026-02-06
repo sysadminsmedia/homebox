@@ -197,10 +197,10 @@ func mapItemSummary(item *ent.Item) ItemSummary {
 		location = &loc
 	}
 
-	tags := make([]TagSummary, len(item.Edges.Tag))
-	if item.Edges.Tag != nil {
-		tags = mapEach(item.Edges.Tag, mapTagSummary)
-	}
+	tags := lo.TernaryF(item.Edges.Tag != nil,
+		func() []TagSummary { return mapEach(item.Edges.Tag, mapTagSummary) },
+		func() []TagSummary { return make([]TagSummary, 0) },
+	)
 
 	var imageID *uuid.UUID
 	var thumbnailID *uuid.UUID
@@ -258,15 +258,15 @@ func mapFields(fields []*ent.ItemField) []ItemField {
 }
 
 func mapItemOut(item *ent.Item) ItemOut {
-	var attachments []ItemAttachment
-	if item.Edges.Attachments != nil {
-		attachments = mapEach(item.Edges.Attachments, ToItemAttachment)
-	}
+	attachments := lo.TernaryF(item.Edges.Attachments != nil,
+		func() []ItemAttachment { return mapEach(item.Edges.Attachments, ToItemAttachment) },
+		func() []ItemAttachment { return nil },
+	)
 
-	var fields []ItemField
-	if item.Edges.Fields != nil {
-		fields = mapFields(item.Edges.Fields)
-	}
+	fields := lo.TernaryF(item.Edges.Fields != nil,
+		func() []ItemField { return mapFields(item.Edges.Fields) },
+		func() []ItemField { return nil },
+	)
 
 	var parent *ItemSummary
 	if item.Edges.Parent != nil {

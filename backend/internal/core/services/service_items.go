@@ -119,9 +119,9 @@ func (svc *ItemService) CsvImport(ctx context.Context, gid uuid.UUID, data io.Re
 			return 0, err
 		}
 
-		for _, tag := range tags {
-			tagMap[tag.Name] = tag.ID
-		}
+		tagMap = lo.SliceToMap(tags, func(tag repo.TagSummary) (string, uuid.UUID) {
+			return tag.Name, tag.ID
+		})
 	}
 
 	// ========================================

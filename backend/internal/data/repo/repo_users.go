@@ -60,32 +60,19 @@ var (
 )
 
 func mapUserOut(user *ent.User) UserOut {
-	var passwordHash string
-	if user.Password != nil {
-		passwordHash = *user.Password
-	}
-
-	groupIDs := lo.Map(user.Edges.Groups, func(g *ent.Group, _ int) uuid.UUID {
-		return g.ID
-	})
-
-	// Get the default group ID, handling the optional pointer
-	defaultGroupID := uuid.Nil
-	if user.DefaultGroupID != nil {
-		defaultGroupID = *user.DefaultGroupID
-	}
-
 	return UserOut{
-		ID:             user.ID,
-		Name:           user.Name,
-		Email:          user.Email,
-		IsSuperuser:    user.IsSuperuser,
-		DefaultGroupID: defaultGroupID,
-		GroupIDs:       groupIDs,
-		PasswordHash:   passwordHash,
-		IsOwner:        user.Role == "owner",
-		OidcIssuer:     user.OidcIssuer,
-		OidcSubject:    user.OidcSubject,
+		ID:          user.ID,
+		Name:        user.Name,
+		Email:       user.Email,
+		IsSuperuser: user.IsSuperuser,
+		DefaultGroupID: lo.FromPtrOr(user.DefaultGroupID, uuid.Nil),
+		GroupIDs: lo.Map(user.Edges.Groups, func(g *ent.Group, _ int) uuid.UUID {
+			return g.ID
+		}),
+		PasswordHash: lo.FromPtrOr(user.Password, ""),
+		IsOwner:      user.Role == "owner",
+		OidcIssuer:   user.OidcIssuer,
+		OidcSubject:  user.OidcSubject,
 	}
 }
 

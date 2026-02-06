@@ -370,12 +370,6 @@ func (r *ItemTemplatesRepository) Update(ctx context.Context, gid uuid.UUID, dat
 		return ItemTemplateOut{}, err
 	}
 
-	// Create a map of existing field IDs for quick lookup
-	existingFieldMap := make(map[uuid.UUID]bool)
-	for _, field := range existingFields {
-		existingFieldMap[field.ID] = true
-	}
-
 	// Track which fields are being updated
 	updatedFieldIDs := make(map[uuid.UUID]bool)
 

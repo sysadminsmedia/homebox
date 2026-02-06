@@ -11,6 +11,8 @@ import (
 	"slices"
 	"strings"
 	"sync"
+
+	"github.com/samber/lo"
 )
 
 //go:embed currencies.json
@@ -85,13 +87,10 @@ type CurrencyRegistry struct {
 }
 
 func NewCurrencyService(currencies []Currency) *CurrencyRegistry {
-	registry := make(map[string]Currency, len(currencies))
-	for i := range currencies {
-		// Clamp decimals to safe range before adding to registry
-		currency := currencies[i]
-		currency.Decimals = clampDecimals(currency.Decimals, currency.Code)
-		registry[currency.Code] = currency
-	}
+	registry := lo.SliceToMap(currencies, func(c Currency) (string, Currency) {
+		c.Decimals = clampDecimals(c.Decimals, c.Code)
+		return c.Code, c
+	})
 
 	return &CurrencyRegistry{
 		registry: registry,
@@ -102,10 +101,7 @@ func (cs *CurrencyRegistry) Slice() []Currency {
 	cs.mu.RLock()
 	defer cs.mu.RUnlock()
 
-	out := make([]Currency, 0, len(cs.registry))
-	for key := range cs.registry {
-		out = append(out, cs.registry[key])
-	}
+	out := lo.Values(cs.registry)
 
 	slices.SortFunc(out, func(a, b Currency) int {
 		if a.Name < b.Name {
@@ -127,6 +123,5 @@ func (cs *CurrencyRegistry) IsSupported(code string) bool {
 
 	cs.mu.RLock()
 	defer cs.mu.RUnlock()
-	_, ok := cs.registry[upper]
-	return ok
+	return lo.HasKey(cs.registry, upper)
 }

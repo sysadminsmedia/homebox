@@ -14,6 +14,7 @@ import (
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/server"
 	"github.com/rs/zerolog/log"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
@@ -39,19 +40,16 @@ func (ctrl *V1Controller) HandleItemsGetAll() errchain.HandlerFunc {
 		params := r.URL.Query()
 
 		filterFieldItems := func(raw []string) []repo.FieldQuery {
-			var items []repo.FieldQuery
-
-			for _, v := range raw {
+			return lo.FilterMap(raw, func(v string, _ int) (repo.FieldQuery, bool) {
 				parts := strings.SplitN(v, "=", 2)
-				if len(parts) == 2 {
-					items = append(items, repo.FieldQuery{
-						Name:  parts[0],
-						Value: parts[1],
-					})
+				if len(parts) != 2 {
+					return repo.FieldQuery{}, false
 				}
-			}
-
-			return items
+				return repo.FieldQuery{
+					Name:  parts[0],
+					Value: parts[1],
+				}, true
+			})
 		}
 
 		v := repo.ItemQuery{
