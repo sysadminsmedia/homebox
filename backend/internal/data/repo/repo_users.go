@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
@@ -64,10 +65,9 @@ func mapUserOut(user *ent.User) UserOut {
 		passwordHash = *user.Password
 	}
 
-	groupIDs := make([]uuid.UUID, len(user.Edges.Groups))
-	for i, g := range user.Edges.Groups {
-		groupIDs[i] = g.ID
-	}
+	groupIDs := lo.Map(user.Edges.Groups, func(g *ent.Group, _ int) uuid.UUID {
+		return g.ID
+	})
 
 	// Get the default group ID, handling the optional pointer
 	defaultGroupID := uuid.Nil

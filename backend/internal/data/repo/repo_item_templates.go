@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
@@ -145,11 +146,9 @@ func mapTemplateField(field *ent.TemplateField) TemplateField {
 }
 
 func mapTemplateFieldSlice(fields []*ent.TemplateField) []TemplateField {
-	result := make([]TemplateField, len(fields))
-	for i, field := range fields {
-		result[i] = mapTemplateField(field)
-	}
-	return result
+	return lo.Map(fields, func(field *ent.TemplateField, _ int) TemplateField {
+		return mapTemplateField(field)
+	})
 }
 
 func mapTemplateSummary(template *ent.ItemTemplate) ItemTemplateSummary {
@@ -184,12 +183,12 @@ func (r *ItemTemplatesRepository) mapTemplateOut(ctx context.Context, template *
 			Where(tag.IDIn(template.DefaultTagIds...)).
 			All(ctx)
 		if err == nil {
-			for _, l := range tagEntities {
-				tags = append(tags, TemplateTagSummary{
+			tags = lo.Map(tagEntities, func(l *ent.Tag, _ int) TemplateTagSummary {
+				return TemplateTagSummary{
 					ID:   l.ID,
 					Name: l.Name,
-				})
-			}
+				}
+			})
 		}
 	}
 
@@ -234,10 +233,9 @@ func (r *ItemTemplatesRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]
 		return nil, err
 	}
 
-	result := make([]ItemTemplateSummary, len(templates))
-	for i, template := range templates {
-		result[i] = mapTemplateSummary(template)
-	}
+	result := lo.Map(templates, func(template *ent.ItemTemplate, _ int) ItemTemplateSummary {
+		return mapTemplateSummary(template)
+	})
 
 	return result, nil
 }

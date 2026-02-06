@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
@@ -204,19 +205,12 @@ func mapItemSummary(item *ent.Item) ItemSummary {
 	var imageID *uuid.UUID
 	var thumbnailID *uuid.UUID
 	if item.Edges.Attachments != nil {
-		for _, a := range item.Edges.Attachments {
-			if a.Primary && a.Type == attachment.TypePhoto {
-				imageID = &a.ID
-				if a.Edges.Thumbnail != nil {
-					if a.Edges.Thumbnail.ID != uuid.Nil {
-						thumbnailID = &a.Edges.Thumbnail.ID
-					} else {
-						thumbnailID = nil
-					}
-				} else {
-					thumbnailID = nil
-				}
-				break
+		if a, ok := lo.Find(item.Edges.Attachments, func(a *ent.Attachment) bool {
+			return a.Primary && a.Type == attachment.TypePhoto
+		}); ok {
+			imageID = &a.ID
+			if a.Edges.Thumbnail != nil && a.Edges.Thumbnail.ID != uuid.Nil {
+				thumbnailID = &a.Edges.Thumbnail.ID
 			}
 		}
 	}
@@ -250,9 +244,8 @@ var (
 )
 
 func mapFields(fields []*ent.ItemField) []ItemField {
-	result := make([]ItemField, len(fields))
-	for i, f := range fields {
-		result[i] = ItemField{
+	return lo.Map(fields, func(f *ent.ItemField, _ int) ItemField {
+		return ItemField{
 			ID:           f.ID,
 			Type:         f.Type.String(),
 			Name:         f.Name,
@@ -261,8 +254,7 @@ func mapFields(fields []*ent.ItemField) []ItemField {
 			BooleanValue: f.BooleanValue,
 			// TimeValue:    f.TimeValue,
 		}
-	}
-	return result
+	})
 }
 
 func mapItemOut(item *ent.Item) ItemOut {
@@ -418,17 +410,16 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 	var andPredicates []predicate.Item
 	{
 		if len(q.TagIDs) > 0 {
-			tagPredicates := make([]predicate.Item, 0, len(q.TagIDs))
-			for _, l := range q.TagIDs {
-				if !q.NegateTags {
-					tagPredicates = append(tagPredicates, item.HasTagWith(tag.ID(l)))
-				} else {
-					tagPredicates = append(tagPredicates, item.Not(item.HasTagWith(tag.ID(l))))
-				}
-			}
+			var tagPredicates []predicate.Item
 			if !q.NegateTags {
+				tagPredicates = lo.Map(q.TagIDs, func(l uuid.UUID, _ int) predicate.Item {
+					return item.HasTagWith(tag.ID(l))
+				})
 				andPredicates = append(andPredicates, item.Or(tagPredicates...))
 			} else {
+				tagPredicates = lo.Map(q.TagIDs, func(l uuid.UUID, _ int) predicate.Item {
+					return item.Not(item.HasTagWith(tag.ID(l)))
+				})
 				andPredicates = append(andPredicates, item.And(tagPredicates...))
 			}
 		}
@@ -455,24 +446,22 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 		}
 
 		if len(q.LocationIDs) > 0 {
-			locationPredicates := make([]predicate.Item, 0, len(q.LocationIDs))
-			for _, l := range q.LocationIDs {
-				locationPredicates = append(locationPredicates, item.HasLocationWith(location.ID(l)))
-			}
+			locationPredicates := lo.Map(q.LocationIDs, func(l uuid.UUID, _ int) predicate.Item {
+				return item.HasLocationWith(location.ID(l))
+			})
 
 			andPredicates = append(andPredicates, item.Or(locationPredicates...))
 		}
 
 		if len(q.Fields) > 0 {
-			fieldPredicates := make([]predicate.Item, 0, len(q.Fields))
-			for _, f := range q.Fields {
-				fieldPredicates = append(fieldPredicates, item.HasFieldsWith(
+			fieldPredicates := lo.Map(q.Fields, func(f FieldQuery, _ int) predicate.Item {
+				return item.HasFieldsWith(
 					itemfield.And(
 						itemfield.Name(f.Name),
 						itemfield.TextValue(f.Value),
 					),
-				))
-			}
+				)
+			})
 
 			andPredicates = append(andPredicates, item.Or(fieldPredicates...))
 		}
@@ -1177,10 +1166,9 @@ func (e *ItemsRepository) GetAllCustomFieldValues(ctx context.Context, gid uuid.
 		return nil, fmt.Errorf("failed to get field values: %w", err)
 	}
 
-	valueStrings := make([]string, len(values))
-	for i, f := range values {
-		valueStrings[i] = f.Value
-	}
+	valueStrings := lo.Map(values, func(f st, _ int) string {
+		return f.Value
+	})
 
 	return valueStrings, nil
 }
@@ -1204,10 +1192,9 @@ func (e *ItemsRepository) GetAllCustomFieldNames(ctx context.Context, gid uuid.U
 		return nil, fmt.Errorf("failed to get custom fields: %w", err)
 	}
 
-	fieldNames := make([]string, len(fields))
-	for i, f := range fields {
-		fieldNames[i] = f.Name
-	}
+	fieldNames := lo.Map(fields, func(f st, _ int) string {
+		return f.Name
+	})
 
 	return fieldNames, nil
 }
@@ -1404,10 +1391,9 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opti
 
 	// Add tags
 	if len(originalItem.Tags) > 0 {
-		tagIDs := make([]uuid.UUID, len(originalItem.Tags))
-		for i, tag := range originalItem.Tags {
-			tagIDs[i] = tag.ID
-		}
+		tagIDs := lo.Map(originalItem.Tags, func(tag TagSummary, _ int) uuid.UUID {
+			return tag.ID
+		})
 		itemBuilder.AddTagIDs(tagIDs...)
 	}
 

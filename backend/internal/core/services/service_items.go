@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 )
@@ -280,14 +281,13 @@ func (svc *ItemService) CsvImport(ctx context.Context, gid uuid.UUID, data io.Re
 			panic("item ID is nil on import - this should never happen")
 		}
 
-		fields := make([]repo.ItemField, len(row.Fields))
-		for i := range row.Fields {
-			fields[i] = repo.ItemField{
-				Name:      row.Fields[i].Name,
+		fields := lo.Map(row.Fields, func(f reporting.ExportItemFields, _ int) repo.ItemField {
+			return repo.ItemField{
+				Name:      f.Name,
 				Type:      "text",
-				TextValue: row.Fields[i].Value,
+				TextValue: f.Value,
 			}
-		}
+		})
 
 		updateItem := repo.ItemUpdate{
 			ID:         item.ID,

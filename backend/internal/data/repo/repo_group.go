@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
@@ -217,14 +218,16 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 		return nil, err
 	}
 
-	stats.Entries = make([]ValueOverTimeEntry, len(v))
-
-	for i, vv := range v {
-		stats.Entries[i] = ValueOverTimeEntry{
+	stats.Entries = lo.Map(v, func(vv struct {
+		Name          string    `json:"name"`
+		CreatedAt     time.Time `json:"created_at"`
+		PurchasePrice float64   `json:"purchase_price"`
+	}, _ int) ValueOverTimeEntry {
+		return ValueOverTimeEntry{
 			Date:  vv.CreatedAt,
 			Value: vv.PurchasePrice,
 		}
-	}
+	})
 
 	return &stats, nil
 }
