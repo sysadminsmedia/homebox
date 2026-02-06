@@ -17,6 +17,10 @@ import (
 func registerRecurringTasks(app *app, cfg *config.Config, runner *graceful.Runner) {
 	runner.AddFunc("eventbus", app.bus.Run)
 
+	if app.broker != nil {
+		runner.AddFunc("centrifuge", app.broker.Run)
+	}
+
 	runner.AddFunc("seed_database", func(ctx context.Context) error {
 		if cfg.Demo {
 			log.Info().Msg("Running in demo mode, creating demo data")
