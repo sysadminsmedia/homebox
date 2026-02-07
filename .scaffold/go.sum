@@ -8,7 +8,7 @@ github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 h1:Jamvg5psRI
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
 github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
-github.com/sysadminsmedia/homebox/backend v0.0.0-20251228172914-2a6773d1d610 h1:kNLtnxaPaOryBUZ7RgUHPQVWxIExXYR/q9pYCbum5Vk=
-github.com/sysadminsmedia/homebox/backend v0.0.0-20251228172914-2a6773d1d610/go.mod h1:9zHHw5TNttw5Kn4Wks+SxwXmJPz6PgGNbnB4BtF1Z4c=
+github.com/sysadminsmedia/homebox/backend v0.0.0-20260205022116-745fac6438b1 h1:A7TT5wp8hfU/2k/n/toPky4H3dv3Jhza0x3nriiK10E=
+github.com/sysadminsmedia/homebox/backend v0.0.0-20260205022116-745fac6438b1/go.mod h1:70G3l97IfOTqHgM4G2fCTsR/kY087J6k/d1iS3D3D3g=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=

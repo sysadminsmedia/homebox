@@ -1,4 +1,3 @@
-// Package reporting provides a way to import CSV files into the database.
 package reporting
 
 import (
@@ -7,6 +6,8 @@ import (
 	"errors"
 	"io"
 	"strings"
+
+	"github.com/samber/lo"
 )
 
 var (
@@ -51,7 +52,7 @@ func readRawCsv(r io.Reader) ([][]string, error) {
 	// We read up to 4KB which should be more than enough for any header row
 	firstLineBuffer := make([]byte, separatorDetectionBufferSize)
 	n, err := io.ReadFull(r, firstLineBuffer)
-	if err != nil && err != io.ErrUnexpectedEOF && err != io.EOF {
+	if err != nil && !errors.Is(err, io.ErrUnexpectedEOF) && !errors.Is(err, io.EOF) {
 		return nil, err
 	}
 	firstLineBuffer = firstLineBuffer[:n]
@@ -89,10 +90,10 @@ func parseHeaders(headers []string) (hbHeaders map[string]int, fieldHeaders []st
 	}
 
 	required := []string{"HB.location", "HB.name"}
-	for _, h := range required {
-		if _, ok := hbHeaders[h]; !ok {
-			return nil, nil, ErrMissingRequiredHeaders
-		}
+	if !lo.EveryBy(required, func(h string) bool {
+		return lo.HasKey(hbHeaders, h)
+	}) {
+		return nil, nil, ErrMissingRequiredHeaders
 	}
 
 	if len(hbHeaders) == 0 {

@@ -550,4 +550,3 @@ func TestItemsRepository_WipeInventory_OnlyItems(t *testing.T) {
 	_ = tRepos.Tags.DeleteByGroup(context.Background(), tGroup.ID, tag.ID)
 	_ = tRepos.Locations.delete(context.Background(), loc.ID)
 }
-

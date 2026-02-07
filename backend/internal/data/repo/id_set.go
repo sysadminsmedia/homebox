@@ -2,6 +2,7 @@ package repo
 
 import (
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/set"
 )
 
@@ -12,10 +13,9 @@ type HasID interface {
 }
 
 func newIDSet[T HasID](entities []T) set.Set[uuid.UUID] {
-	uuids := make([]uuid.UUID, 0, len(entities))
-	for _, e := range entities {
-		uuids = append(uuids, e.GetID())
-	}
+	uuids := lo.Map(entities, func(e T, _ int) uuid.UUID {
+		return e.GetID()
+	})
 
 	return set.New(uuids...)
 }

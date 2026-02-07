@@ -11,6 +11,7 @@ import (
 	"github.com/containrrr/shoutrrr"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
@@ -54,10 +55,9 @@ func (svc *BackgroundService) SendNotifiersToday(ctx context.Context) error {
 			return err
 		}
 
-		urls := make([]string, len(notifiers))
-		for i := range notifiers {
-			urls[i] = notifiers[i].URL
-		}
+		urls := lo.Map(notifiers, func(n repo.NotifierOut, _ int) string {
+			return n.URL
+		})
 
 		bldr := strings.Builder{}
 
