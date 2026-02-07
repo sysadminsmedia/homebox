@@ -11,6 +11,7 @@ import (
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/server"
 	"github.com/rs/zerolog/log"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
@@ -94,11 +95,10 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 		panic("no auth providers provided")
 	}
 
-	providers := make(map[string]AuthProvider)
-	for _, p := range ps {
+	providers := lo.SliceToMap(ps, func(p AuthProvider) (string, AuthProvider) {
 		log.Info().Str("name", p.Name()).Msg("registering auth provider")
-		providers[p.Name()] = p
-	}
+		return p.Name(), p
+	})
 
 	return func(w http.ResponseWriter, r *http.Request) error {
 		// Extract provider query
@@ -196,6 +196,7 @@ func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Set HTTP only cookie
@@ -207,6 +208,7 @@ func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Set Fake Session cookie
@@ -218,6 +220,7 @@ func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: false,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Set attachment token cookie (accessible to frontend, not HttpOnly)
@@ -230,6 +233,7 @@ func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string
 			Secure:   ctrl.cookieSecure,
 			HttpOnly: false,
 			Path:     "/",
+			SameSite: http.SameSiteLaxMode,
 		})
 	}
 }
@@ -243,6 +247,7 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	http.SetCookie(w, &http.Cookie{
@@ -253,6 +258,7 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Set Fake Session cookie
@@ -264,6 +270,7 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: false,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Unset attachment token cookie
@@ -275,6 +282,7 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: false,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 }
 

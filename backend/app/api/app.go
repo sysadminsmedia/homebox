@@ -10,12 +10,13 @@ import (
 )
 
 type app struct {
-	conf     *config.Config
-	mailer   mailer.Mailer
-	db       *ent.Client
-	repos    *repo.AllRepos
-	services *services.AllServices
-	bus      *eventbus.EventBus
+	conf        *config.Config
+	mailer      mailer.Mailer
+	db          *ent.Client
+	repos       *repo.AllRepos
+	services    *services.AllServices
+	bus         *eventbus.EventBus
+	authLimiter *authRateLimiter
 }
 
 func new(conf *config.Config) *app {
@@ -30,6 +31,8 @@ func new(conf *config.Config) *app {
 		Password: s.conf.Mailer.Password,
 		From:     s.conf.Mailer.From,
 	}
+
+	s.authLimiter = newAuthRateLimiter(s.conf.Auth.RateLimit)
 
 	return s
 }

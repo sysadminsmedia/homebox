@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 )
@@ -99,7 +100,7 @@ func serializeLocation[T ~[]string](location T) string {
 //
 //  1. If the item does not exist, it is created.
 //  2. If the item has a ImportRef and it exists it is skipped
-//  3. Locations and Labels are created if they do not exist.
+//  3. Locations and Tags are created if they do not exist.
 func (svc *ItemService) CsvImport(ctx context.Context, gid uuid.UUID, data io.Reader) (int, error) {
 	sheet := reporting.IOSheet{}
 
@@ -109,18 +110,18 @@ func (svc *ItemService) CsvImport(ctx context.Context, gid uuid.UUID, data io.Re
 	}
 
 	// ========================================
-	// Labels
+	// Tags
 
-	labelMap := make(map[string]uuid.UUID)
+	var tagMap map[string]uuid.UUID
 	{
-		labels, err := svc.repo.Labels.GetAll(ctx, gid)
+		tags, err := svc.repo.Tags.GetAll(ctx, gid)
 		if err != nil {
 			return 0, err
 		}
 
-		for _, label := range labels {
-			labelMap[label.Name] = label.ID
-		}
+		tagMap = lo.SliceToMap(tags, func(tag repo.TagSummary) (string, uuid.UUID) {
+			return tag.Name, tag.ID
+		})
 	}
 
 	// ========================================
@@ -184,23 +185,23 @@ func (svc *ItemService) CsvImport(ctx context.Context, gid uuid.UUID, data io.Re
 		}
 
 		// ========================================
-		// Pre-Create Labels as necessary
-		labelIds := make([]uuid.UUID, len(row.LabelStr))
+		// Pre-Create tags as necessary
+		tagIds := make([]uuid.UUID, len(row.TagStr))
 
-		for j := range row.LabelStr {
-			label := row.LabelStr[j]
+		for j := range row.TagStr {
+			tag := row.TagStr[j]
 
-			id, ok := labelMap[label]
+			id, ok := tagMap[tag]
 			if !ok {
-				newLabel, err := svc.repo.Labels.Create(ctx, gid, repo.LabelCreate{Name: label})
+				newTag, err := svc.repo.Tags.Create(ctx, gid, repo.TagCreate{Name: tag})
 				if err != nil {
 					return 0, err
 				}
-				id = newLabel.ID
+				id = newTag.ID
 			}
 
-			labelIds[j] = id
-			labelMap[label] = id
+			tagIds[j] = id
+			tagMap[tag] = id
 		}
 
 		// ========================================
@@ -262,7 +263,7 @@ func (svc *ItemService) CsvImport(ctx context.Context, gid uuid.UUID, data io.Re
 				Description: row.Description,
 				AssetID:     effAID,
 				LocationID:  locationID,
-				LabelIDs:    labelIds,
+				TagIDs:      tagIds,
 			}
 
 			item, err = svc.repo.Items.Create(ctx, gid, newItem)
@@ -280,18 +281,17 @@ func (svc *ItemService) CsvImport(ctx context.Context, gid uuid.UUID, data io.Re
 			panic("item ID is nil on import - this should never happen")
 		}
 
-		fields := make([]repo.ItemField, len(row.Fields))
-		for i := range row.Fields {
-			fields[i] = repo.ItemField{
-				Name:      row.Fields[i].Name,
+		fields := lo.Map(row.Fields, func(f reporting.ExportItemFields, _ int) repo.ItemField {
+			return repo.ItemField{
+				Name:      f.Name,
 				Type:      "text",
-				TextValue: row.Fields[i].Value,
+				TextValue: f.Value,
 			}
-		}
+		})
 
 		updateItem := repo.ItemUpdate{
 			ID:         item.ID,
-			LabelIDs:   labelIds,
+			TagIDs:     tagIds,
 			LocationID: locationID,
 
 			Name:        row.Name,

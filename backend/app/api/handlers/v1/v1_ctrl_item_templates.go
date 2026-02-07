@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
@@ -106,7 +107,7 @@ type ItemTemplateCreateItemRequest struct {
 	Name        string      `json:"name"        validate:"required,min=1,max=255"`
 	Description string      `json:"description" validate:"max=1000"`
 	LocationID  uuid.UUID   `json:"locationId"  validate:"required"`
-	LabelIDs    []uuid.UUID `json:"labelIds"`
+	TagIDs      []uuid.UUID `json:"tagIds"`
 	Quantity    *int        `json:"quantity"`
 }
 
@@ -135,14 +136,13 @@ func (ctrl *V1Controller) HandleItemTemplatesCreateItem() errchain.HandlerFunc {
 		}
 
 		// Build custom fields from template
-		fields := make([]repo.ItemField, len(template.Fields))
-		for i, f := range template.Fields {
-			fields[i] = repo.ItemField{
+		fields := lo.Map(template.Fields, func(f repo.TemplateField, _ int) repo.ItemField {
+			return repo.ItemField{
 				Type:      f.Type,
 				Name:      f.Name,
 				TextValue: f.TextValue,
 			}
-		}
+		})
 
 		// Create item with all template data in a single transaction
 		return ctrl.repo.Items.CreateFromTemplate(r.Context(), auth.GID, repo.ItemCreateFromTemplate{
@@ -150,7 +150,7 @@ func (ctrl *V1Controller) HandleItemTemplatesCreateItem() errchain.HandlerFunc {
 			Description:      body.Description,
 			Quantity:         quantity,
 			LocationID:       body.LocationID,
-			LabelIDs:         body.LabelIDs,
+			TagIDs:           body.TagIDs,
 			Insured:          template.DefaultInsured,
 			Manufacturer:     template.DefaultManufacturer,
 			ModelNumber:      template.DefaultModelNumber,

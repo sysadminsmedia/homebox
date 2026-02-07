@@ -8,6 +8,7 @@
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
   import { Checkbox } from "@/components/ui/checkbox";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
   const { t } = useI18n();
 
@@ -22,6 +23,17 @@
   const api = useUserApi();
 
   const bordered = ref(false);
+  const labelBlankLine = "_______________";
+
+  // Behavior constants for HomeBox text replacement
+  const BEHAVIOR_SHOW = "show";
+  const BEHAVIOR_ALWAYS_REPLACE = "always_replace";
+  const BEHAVIOR_ITEM_NO_NAME_NO_LOCATION = "item_no_name_no_location";
+  const BEHAVIOR_ITEM_NO_NAME = "item_no_name";
+  const BEHAVIOR_ITEM_NO_LOCATION = "item_no_location";
+
+  const replaceHomeboxBehavior = ref(BEHAVIOR_SHOW);
+  const replaceHomeboxText = ref(labelBlankLine);
 
   const displayProperties = reactive({
     baseURL: window.location.origin,
@@ -210,8 +222,8 @@
     return {
       url: getQRCodeUrl(assetID),
       assetID: item?.assetId ?? assetID,
-      name: item?.name ?? "_______________",
-      location: item?.location?.name ?? "_______________",
+      name: item?.name ?? labelBlankLine,
+      location: item?.location?.name ?? labelBlankLine,
     };
   }
 
@@ -248,6 +260,31 @@
       }
     }
     return items;
+  });
+
+  const getHomeBoxLineText = computed(() => {
+    return (item: LabelData): string | null => {
+      if (replaceHomeboxBehavior.value === BEHAVIOR_SHOW) {
+        return "HomeBox";
+      }
+      if (replaceHomeboxBehavior.value === BEHAVIOR_ALWAYS_REPLACE) {
+        return replaceHomeboxText.value;
+      }
+      if (
+        replaceHomeboxBehavior.value === BEHAVIOR_ITEM_NO_NAME_NO_LOCATION &&
+        item.name === labelBlankLine &&
+        item.location === labelBlankLine
+      ) {
+        return replaceHomeboxText.value;
+      }
+      if (replaceHomeboxBehavior.value === BEHAVIOR_ITEM_NO_NAME && item.name === labelBlankLine) {
+        return replaceHomeboxText.value;
+      }
+      if (replaceHomeboxBehavior.value === BEHAVIOR_ITEM_NO_LOCATION && item.location === labelBlankLine) {
+        return replaceHomeboxText.value;
+      }
+      return null;
+    };
   });
 
   type Row = {
@@ -372,6 +409,45 @@
             class="w-full max-w-xs"
           />
         </div>
+        <div class="flex w-full max-w-xs flex-col">
+          <Label for="select-replaceHomeboxBehavior">
+            {{ $t("reports.label_generator.replace_homebox_behavior") }}
+          </Label>
+          <Select id="select-replaceHomeboxBehavior" v-model="replaceHomeboxBehavior" class="w-full max-w-xs">
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem :value="BEHAVIOR_SHOW">
+                {{ $t("reports.label_generator.replace_homebox_behavior_show_homebox") }}
+              </SelectItem>
+              <SelectItem :value="BEHAVIOR_ITEM_NO_NAME_NO_LOCATION">
+                {{ $t("reports.label_generator.replace_homebox_behavior_item_no_name_no_location") }}
+              </SelectItem>
+              <SelectItem :value="BEHAVIOR_ITEM_NO_NAME">
+                {{ $t("reports.label_generator.replace_homebox_behavior_item_no_name") }}
+              </SelectItem>
+              <SelectItem :value="BEHAVIOR_ITEM_NO_LOCATION">
+                {{ $t("reports.label_generator.replace_homebox_behavior_item_no_location") }}
+              </SelectItem>
+              <SelectItem :value="BEHAVIOR_ALWAYS_REPLACE">
+                {{ $t("reports.label_generator.replace_homebox_behavior_always_replace") }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div v-if="replaceHomeboxBehavior !== BEHAVIOR_SHOW" class="flex w-full max-w-xs flex-col">
+          <Label for="input-replaceHomeboxText">
+            {{ $t("reports.label_generator.replace_homebox_text") }}
+          </Label>
+          <Input
+            id="input-replaceHomeboxText"
+            v-model="replaceHomeboxText"
+            type="text"
+            :placeholder="$t('reports.label_generator.input_placeholder')"
+            class="w-full max-w-xs"
+          />
+        </div>
       </div>
       <div class="max-w-xs">
         <div class="flex items-center gap-2 py-4">
@@ -439,7 +515,13 @@
           </div>
           <div class="ml-2 flex flex-col justify-center">
             <div class="font-bold">{{ item.assetID }}</div>
-            <div class="text-xs font-light italic">HomeBox</div>
+            <div
+              v-if="getHomeBoxLineText(item)"
+              class="text-xs"
+              :class="{ 'font-light italic': getHomeBoxLineText(item) !== labelBlankLine }"
+            >
+              {{ getHomeBoxLineText(item) }}
+            </div>
             <div class="overflow-hidden text-wrap text-xs">{{ item.name }}</div>
             <div class="text-xs">{{ item.location }}</div>
           </div>

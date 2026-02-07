@@ -1,0 +1,57 @@
+version: 2
+
+project_name: homebox
+
+# Architecture-specific config for arm64
+# Make sure to check the documentation at https://goreleaser.com
+before:
+  hooks:
+    - go generate ./...
+builds:
+  - main: ./app/api
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+      - freebsd
+    goarch:
+      - arm64
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
+    tags:
+      - >-
+        {{- if eq .Arch "riscv64" }}nodynamic
+        {{- else if eq .Os "freebsd" }}nodynamic
+        {{ end }}
+
+archives:
+  - formats: [ 'tar.gz' ]
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    format_overrides:
+    - goos: windows
+      formats: [ 'zip' ]
+sboms:
+  - artifacts: archive
+checksum:
+  name_template: 'checksums-arm64.txt'
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+changelog:
+  disable: true
+release:
+  disable: true
+
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj

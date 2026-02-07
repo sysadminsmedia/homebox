@@ -24,6 +24,32 @@
                 "new_version_available_link": "Clicca qui per visualizzare le note di rilascio"
             }
         },
+        "collection": {
+            "create_modal": {
+                "name_label": "Nome Raccolta",
+                "title": "Crea Raccolta",
+                "toast": {
+                    "already_creating": "Creazione raccolta già in corso",
+                    "create_failed": "Impossibile creare raccolta",
+                    "create_success": "Raccolta creata",
+                    "please_enter_name": "Immettere un none per la raccolta"
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Codice di Invito alla Raccolta",
+                "join": "Unisciti alla Raccolta",
+                "title": "Unisciti alla Raccolta"
+            },
+            "selector": {
+                "collection_options": "Opzioni Raccolta",
+                "create_collection": "Crea Nuova Raccolta",
+                "join_collection": "Unisciti alla Raccolta Esistente",
+                "no_collection_found": "Nessuna raccolta trovata",
+                "search_collections": "Cerca Raccolte...",
+                "select_collection": "Seleziona Raccolta",
+                "your_collections": "Le Tue Raccolte"
+            }
+        },
         "color_selector": {
             "clear": "Pulisci il colore",
             "color": "Colore",
@@ -94,6 +120,7 @@
                 "open_new_tab": "Apri in una nuova scheda"
             },
             "create_modal": {
+                "clear_template": "Resetta Template",
                 "delete_photo": "Elimina foto",
                 "item_description": "Descrizione Articolo",
                 "item_name": "Nome articolo",
@@ -132,6 +159,7 @@
                 "title": "Importa prodotto"
             },
             "selector": {
+                "clear": "Annulla Selezione Articoli",
                 "no_results": "Nessun risultato trovato",
                 "placeholder": "Seleziona…",
                 "search_placeholder": "Scrivi per cercare…",
@@ -139,10 +167,10 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "Aggiungi Etichette",
+                    "add_tags": "Aggiungi Etichette",
                     "failed_to_update_item": "Aggiornamento oggetto fallito",
-                    "remove_labels": "Rimuovi Etichette",
-                    "title": "Modifica Dettaglio Oggetto"
+                    "remove_tags": "Rimuovi Etichette",
+                    "title": "Modifica Dettagli Articolo"
                 },
                 "selectable": {
                     "card": "Scheda",
@@ -156,13 +184,13 @@
                 "table": {
                     "dropdown": {
                         "actions": "Azioni",
-                        "change_labels": "Cambia etichette",
-                        "change_labels_success": "Etichette cambiate",
                         "change_location": "Cambia posizione",
                         "change_location_success": "Posizione cambiata",
+                        "change_tags": "Cambia Etichette",
+                        "change_tags_success": "Etichette Cambiate",
                         "create_maintenance_item": "Inserisci Manutenzione per l'elemento",
                         "create_maintenance_selected": "Inserisci in Manutenzione gli elementi selezionati",
-                        "create_maintenance_success": "Record di Manutenzione creato",
+                        "create_maintenance_success": "Manutenzione creata",
                         "delete_confirmation": "Sei sicuro di voler eliminare gli elementi selezionati? Questa operazione è irreversibile.",
                         "delete_item": "Elimina Oggetto",
                         "delete_selected": "Elimina Oggetti Selezionati",
@@ -173,7 +201,7 @@
                         "error_deleting": "Errore durante l'eliminazione dell'Oggetto",
                         "error_duplicating": "Errore durante la duplicazione dell'oggetto",
                         "open_menu": "Apri menu",
-                        "open_multi_tab_warning": "Per ragioni di sicurezza, i browsers non permettono di aprire schede multiple in un colpo solo, per modificare questa configurazione utilizza la seguente documentazione",
+                        "open_multi_tab_warning": "Per ragioni di sicurezza, i browsers non permettono di aprire schede multiple in un colpo solo, per modificare questa configurazione utilizza la seguente documentazione:",
                         "toggle_expand": "Apri/Chiudi Espandi",
                         "view_item": "Visualizza Oggetto",
                         "view_items": "Visualizza Oggetti"
@@ -188,23 +216,6 @@
                 }
             }
         },
-        "label": {
-            "create_modal": {
-                "label_color": "Colore Etichetta",
-                "label_description": "Descrizione Etichetta",
-                "label_name": "Nome Etichetta",
-                "title": "Crea Etichetta",
-                "toast": {
-                    "already_creating": "Creazione di un'etichetta già in corso",
-                    "create_failed": "Impossibile creare l'etichetta",
-                    "create_success": "Etichetta creata",
-                    "label_name_too_long": "Il nome non deve contenere più di 50 caratteri"
-                }
-            },
-            "selector": {
-                "select_labels": "Seleziona etichette"
-            }
-        },
         "location": {
             "create_modal": {
                 "location_description": "Descrizione ubicazione",
@@ -217,18 +228,96 @@
                 }
             },
             "selector": {
+                "clear": "Rimuovi Selezione Posizione",
                 "no_location_found": "Nessusa posizione trovata",
                 "parent_location": "Ubicazione padre",
                 "search_location": "Cerca posizioni",
                 "select_location": "Seleziona una posizione"
             },
             "tree": {
-                "no_locations": "Nessuna posizione disponibile. Aggiungi nuove posizioni mediante il pulsante\n'<span class=\"link-primary\">'Crea'</span>' nella barra di navigazione."
+                "no_locations": "Nessuna posizione disponibile. Aggiungi nuove posizioni mediante il pulsante '<span class=\"link-primary\">'Crea'</span>' nella barra di navigazione."
             }
         },
         "quick_menu": {
             "no_results": "Non sono stati trovati risultati.",
             "shortcut_hint": "Utilizzare i tasti numerici per selezionare rapidamente un'azione."
+        },
+        "tag": {
+            "create_modal": {
+                "tag_color": "Colore Etichetta",
+                "tag_description": "Descrizione Etichetta",
+                "tag_name": "Nome Etichetta",
+                "title": "Crea Etichetta",
+                "toast": {
+                    "already_creating": "Creazione dell'etichetta già in corso",
+                    "create_failed": "Non è stato possibile creare l'etichetta",
+                    "create_success": "Etichetta creata",
+                    "tag_name_too_long": "Il nome dell'etichetta non deve superare i 50 caratteri"
+                }
+            },
+            "selector": {
+                "select_tags": "Seleziona Etichette"
+            }
+        },
+        "template": {
+            "apply_template": "Applica un template",
+            "card": {
+                "delete": "Cancella Template",
+                "duplicate": "Duplica Template",
+                "edit": "Modifica template"
+            },
+            "confirm_delete": "Vuoi cancellare questo template?",
+            "create_modal": {
+                "title": "Crea Template"
+            },
+            "detail": {
+                "default_values": "Valori di default",
+                "updated": "Aggiornato"
+            },
+            "edit_modal": {
+                "title": "Modifica Template"
+            },
+            "empty_value": "(vuoto)",
+            "form": {
+                "custom_fields": "Campi personalizzati",
+                "default_item_values": "Valori di default per l'oggetto",
+                "default_location": "Posizione di default",
+                "default_value": "Valore di default",
+                "field_name": "Nome del campo",
+                "item_description": "Descrizione dell'oggetto",
+                "item_name": "Nome dell'oggetto",
+                "lifetime_warranty": "Garanzia a vita",
+                "location": "Posizione",
+                "manufacturer": "Produttore",
+                "model_number": "Codice Modello",
+                "no_custom_fields": "Nessun campo personalizzato.",
+                "template_description": "Descrizione Template",
+                "template_name": "Nome Template"
+            },
+            "hide_defaults": "Nascondi campi/valori di default",
+            "save_as_template": "Salva come Template",
+            "selector": {
+                "clear": "Rimuovi Selezione Template",
+                "label": "Template (Opzionale)",
+                "not_found": "Nessun template trovato",
+                "search": "Ricerca templates...",
+                "select": "Seleziona template..."
+            },
+            "show_defaults": "Mostra predefiniti",
+            "toast": {
+                "applied": "Template \"{name}\" applicato",
+                "create_failed": "Impossibile creare template",
+                "created": "Template creato",
+                "delete_failed": "Impossibile cancellare il template",
+                "deleted": "Template cancellato",
+                "duplicate_failed": "Impossibile duplicare il template",
+                "duplicated": "Template duplicato come \"{name}\"",
+                "load_failed": "Impossibile caricare i dettagli del template",
+                "saved_as_template": "Articolo salvato come template \"{name}\"",
+                "update_failed": "Impossibile caricare il template",
+                "updated": "Template aggiornato"
+            },
+            "using_template": "Template in uso: {name}"
         }
     },
     "errors": {
@@ -260,7 +349,6 @@
         "insured": "Assicurato",
         "items": "Articoli",
         "join_discord": "Unisciti a Discord",
-        "labels": "Etichette",
         "loading": "Caricamento…",
         "locations": "Posizioni",
         "maintenance": "Manutenzione",
@@ -283,12 +371,10 @@
         "welcome": "Benvenuto, { username }"
     },
     "home": {
-        "labels": "Etichette",
         "quick_statistics": "Statistiche rapide",
         "recently_added": "Aggiunti di recente",
         "storage_locations": "Ubicazioni di magazzino",
         "total_items": "Articoli totali",
-        "total_labels": "Etichette totali",
         "total_locations": "Ubicazioni totali",
         "total_value": "Valore totale"
     },
@@ -297,6 +383,7 @@
         "dont_join_group": "Non vuoi unirti a un gruppo?",
         "joining_group": "Stai unendoti a un gruppo esistente!",
         "login": "Accedi",
+        "or": "o",
         "register": "Registrati",
         "remember_me": "Ricordami",
         "set_email": "Qual è la tua email?",
@@ -308,6 +395,14 @@
             "invalid_email": "Indirizzo e-mail non valido",
             "invalid_email_password": "Email o password non valida",
             "login_success": "Loggato con successo",
+            "oidc_access_denied": "Accesso negato: il tuo account non ha il ruoto o non appartiene al gruppo richiesto",
+            "oidc_auth_failed": "OIDC autenticazione fallita",
+            "oidc_invalid_response": "Ricevuta risposta OIDC non valida",
+            "oidc_provider_error": "Il provider OIDC ha ritornato un errore",
+            "oidc_security_error": "OIDC errore di sicurezza - Possibile attacco CSRF",
+            "oidc_session_expired": "Sessione OIDC scaduta",
+            "oidc_token_expired": "Token OIDC scaduto",
+            "oidc_token_invalid": "Firma token OIDC non valida",
             "problem_registering": "Problema durante la registrazione dell'utente",
             "user_registered": "Utente registrato"
         }
@@ -366,7 +461,6 @@
         "manufacturer": "Marca",
         "model_number": "Numero modello",
         "name": "Nome",
-        "negate_labels": "Negare Etichette Selezionate",
         "next_page": "Pagina Successiva",
         "no_attachments": "Nessun allegato trovato",
         "no_results": "Nessun Articolo Trovato",
@@ -433,18 +527,6 @@
         "warranty": "Garanzia",
         "warranty_details": "Dettagli garanzia",
         "warranty_expires": "La garanzia scade il"
-    },
-    "labels": {
-        "label_delete_confirm": "Sei sicuro di voler eliminare questa etichetta? Questa azione non può essere annullata.",
-        "no_results": "Nessuna etichetta trovata",
-        "toast": {
-            "failed_delete_label": "Impossibile cancellare l'etichetta",
-            "failed_load_label": "Impossibile caricare l'etichetta",
-            "failed_update_label": "Impossibile aggiornare l'etichetta",
-            "label_deleted": "Etichetta cancellata",
-            "label_updated": "Etichetta aggiornata"
-        },
-        "update_label": "Aggiorna etichetta"
     },
     "languages": {
         "bs-BA": "Bosniaco (Bosnia ed Erzegovina)",
@@ -536,7 +618,6 @@
     },
     "menu": {
         "create_item": "Articolo / Asset",
-        "create_label": "Etichetta",
         "create_location": "Ubicazione",
         "home": "Home",
         "locations": "Posizioni",
@@ -544,7 +625,13 @@
         "profile": "Profilo",
         "scanner": "Scanner",
         "search": "Cerca",
-        "tools": "Strumenti"
+        "templates": "Modelli"
+    },
+    "pages": {
+        "templates": {
+            "no_templates": "Ancora nessun modello.",
+            "title": "Modelli"
+        }
     },
     "profile": {
         "active": "Attivo",
@@ -558,7 +645,6 @@
         "display_legacy_header": "{ currentValue, select, true {Disable Legacy Header} false {Enable Legacy Header} other {Not Hit}}",
         "enabled": "Abilitato",
         "example": "Esempio",
-        "gen_invite": "Genera Link di Invito",
         "group_settings": "Impostazioni Gruppo",
         "group_settings_sub": "Impostazioni Gruppo Condivise. Potrebbe essere necessario aggiornare il browser affinché alcune impostazioni vengano applicate.",
         "inactive": "Inattivo",

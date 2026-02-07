@@ -32,16 +32,6 @@ builds:
         {{- else if eq .Os "freebsd" }}nodynamic
         {{ end }}
 
-signs:
-  - cmd: cosign
-    signature: "${artifact}.sigstore.json"
-    args:
-      - sign-blob
-      - "--bundle=${signature}"
-      - "${artifact}"
-      - "--yes"
-    artifacts: checksum
-    output: true
 archives:
   - formats: [ 'tar.gz' ]
     # this name template makes the OS and Arch compatible with the results of uname.
@@ -57,9 +47,6 @@ archives:
       formats: [ 'zip' ]
 sboms:
   - artifacts: archive
-release:
-  extra_files:
-    - glob: dist/*.sig
 checksum:
   name_template: 'checksums.txt'
 snapshot:

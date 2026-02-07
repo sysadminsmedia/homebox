@@ -16,10 +16,10 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -115,19 +115,19 @@ func (_u *GroupUpdate) AddItems(v ...*Item) *GroupUpdate {
 	return _u.AddItemIDs(ids...)
 }
 
-// AddLabelIDs adds the "labels" edge to the Label entity by IDs.
-func (_u *GroupUpdate) AddLabelIDs(ids ...uuid.UUID) *GroupUpdate {
-	_u.mutation.AddLabelIDs(ids...)
+// AddTagIDs adds the "tags" edge to the Tag entity by IDs.
+func (_u *GroupUpdate) AddTagIDs(ids ...uuid.UUID) *GroupUpdate {
+	_u.mutation.AddTagIDs(ids...)
 	return _u
 }
 
-// AddLabels adds the "labels" edges to the Label entity.
-func (_u *GroupUpdate) AddLabels(v ...*Label) *GroupUpdate {
+// AddTags adds the "tags" edges to the Tag entity.
+func (_u *GroupUpdate) AddTags(v ...*Tag) *GroupUpdate {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddLabelIDs(ids...)
+	return _u.AddTagIDs(ids...)
 }
 
 // AddInvitationTokenIDs adds the "invitation_tokens" edge to the GroupInvitationToken entity by IDs.
@@ -243,25 +243,25 @@ func (_u *GroupUpdate) RemoveItems(v ...*Item) *GroupUpdate {
 	return _u.RemoveItemIDs(ids...)
 }
 
-// ClearLabels clears all "labels" edges to the Label entity.
-func (_u *GroupUpdate) ClearLabels() *GroupUpdate {
-	_u.mutation.ClearLabels()
+// ClearTags clears all "tags" edges to the Tag entity.
+func (_u *GroupUpdate) ClearTags() *GroupUpdate {
+	_u.mutation.ClearTags()
 	return _u
 }
 
-// RemoveLabelIDs removes the "labels" edge to Label entities by IDs.
-func (_u *GroupUpdate) RemoveLabelIDs(ids ...uuid.UUID) *GroupUpdate {
-	_u.mutation.RemoveLabelIDs(ids...)
+// RemoveTagIDs removes the "tags" edge to Tag entities by IDs.
+func (_u *GroupUpdate) RemoveTagIDs(ids ...uuid.UUID) *GroupUpdate {
+	_u.mutation.RemoveTagIDs(ids...)
 	return _u
 }
 
-// RemoveLabels removes "labels" edges to Label entities.
-func (_u *GroupUpdate) RemoveLabels(v ...*Label) *GroupUpdate {
+// RemoveTags removes "tags" edges to Tag entities.
+func (_u *GroupUpdate) RemoveTags(v ...*Tag) *GroupUpdate {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveLabelIDs(ids...)
+	return _u.RemoveTagIDs(ids...)
 }
 
 // ClearInvitationTokens clears all "invitation_tokens" edges to the GroupInvitationToken entity.
@@ -396,10 +396,10 @@ func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
 			Table:   group.UsersTable,
-			Columns: []string{group.UsersColumn},
+			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
@@ -409,10 +409,10 @@ func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if nodes := _u.mutation.RemovedUsersIDs(); len(nodes) > 0 && !_u.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
 			Table:   group.UsersTable,
-			Columns: []string{group.UsersColumn},
+			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
@@ -425,10 +425,10 @@ func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if nodes := _u.mutation.UsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
 			Table:   group.UsersTable,
-			Columns: []string{group.UsersColumn},
+			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
@@ -529,28 +529,28 @@ func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.LabelsCleared() {
+	if _u.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   group.LabelsTable,
-			Columns: []string{group.LabelsColumn},
+			Table:   group.TagsTable,
+			Columns: []string{group.TagsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedLabelsIDs(); len(nodes) > 0 && !_u.mutation.LabelsCleared() {
+	if nodes := _u.mutation.RemovedTagsIDs(); len(nodes) > 0 && !_u.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   group.LabelsTable,
-			Columns: []string{group.LabelsColumn},
+			Table:   group.TagsTable,
+			Columns: []string{group.TagsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -558,15 +558,15 @@ func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.LabelsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TagsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   group.LabelsTable,
-			Columns: []string{group.LabelsColumn},
+			Table:   group.TagsTable,
+			Columns: []string{group.TagsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -808,19 +808,19 @@ func (_u *GroupUpdateOne) AddItems(v ...*Item) *GroupUpdateOne {
 	return _u.AddItemIDs(ids...)
 }
 
-// AddLabelIDs adds the "labels" edge to the Label entity by IDs.
-func (_u *GroupUpdateOne) AddLabelIDs(ids ...uuid.UUID) *GroupUpdateOne {
-	_u.mutation.AddLabelIDs(ids...)
+// AddTagIDs adds the "tags" edge to the Tag entity by IDs.
+func (_u *GroupUpdateOne) AddTagIDs(ids ...uuid.UUID) *GroupUpdateOne {
+	_u.mutation.AddTagIDs(ids...)
 	return _u
 }
 
-// AddLabels adds the "labels" edges to the Label entity.
-func (_u *GroupUpdateOne) AddLabels(v ...*Label) *GroupUpdateOne {
+// AddTags adds the "tags" edges to the Tag entity.
+func (_u *GroupUpdateOne) AddTags(v ...*Tag) *GroupUpdateOne {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddLabelIDs(ids...)
+	return _u.AddTagIDs(ids...)
 }
 
 // AddInvitationTokenIDs adds the "invitation_tokens" edge to the GroupInvitationToken entity by IDs.
@@ -936,25 +936,25 @@ func (_u *GroupUpdateOne) RemoveItems(v ...*Item) *GroupUpdateOne {
 	return _u.RemoveItemIDs(ids...)
 }
 
-// ClearLabels clears all "labels" edges to the Label entity.
-func (_u *GroupUpdateOne) ClearLabels() *GroupUpdateOne {
-	_u.mutation.ClearLabels()
+// ClearTags clears all "tags" edges to the Tag entity.
+func (_u *GroupUpdateOne) ClearTags() *GroupUpdateOne {
+	_u.mutation.ClearTags()
 	return _u
 }
 
-// RemoveLabelIDs removes the "labels" edge to Label entities by IDs.
-func (_u *GroupUpdateOne) RemoveLabelIDs(ids ...uuid.UUID) *GroupUpdateOne {
-	_u.mutation.RemoveLabelIDs(ids...)
+// RemoveTagIDs removes the "tags" edge to Tag entities by IDs.
+func (_u *GroupUpdateOne) RemoveTagIDs(ids ...uuid.UUID) *GroupUpdateOne {
+	_u.mutation.RemoveTagIDs(ids...)
 	return _u
 }
 
-// RemoveLabels removes "labels" edges to Label entities.
-func (_u *GroupUpdateOne) RemoveLabels(v ...*Label) *GroupUpdateOne {
+// RemoveTags removes "tags" edges to Tag entities.
+func (_u *GroupUpdateOne) RemoveTags(v ...*Tag) *GroupUpdateOne {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveLabelIDs(ids...)
+	return _u.RemoveTagIDs(ids...)
 }
 
 // ClearInvitationTokens clears all "invitation_tokens" edges to the GroupInvitationToken entity.
@@ -1119,10 +1119,10 @@ func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error)
 	}
 	if _u.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
 			Table:   group.UsersTable,
-			Columns: []string{group.UsersColumn},
+			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
@@ -1132,10 +1132,10 @@ func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error)
 	}
 	if nodes := _u.mutation.RemovedUsersIDs(); len(nodes) > 0 && !_u.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
 			Table:   group.UsersTable,
-			Columns: []string{group.UsersColumn},
+			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
@@ -1148,10 +1148,10 @@ func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error)
 	}
 	if nodes := _u.mutation.UsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
 			Table:   group.UsersTable,
-			Columns: []string{group.UsersColumn},
+			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
@@ -1252,28 +1252,28 @@ func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.LabelsCleared() {
+	if _u.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   group.LabelsTable,
-			Columns: []string{group.LabelsColumn},
+			Table:   group.TagsTable,
+			Columns: []string{group.TagsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedLabelsIDs(); len(nodes) > 0 && !_u.mutation.LabelsCleared() {
+	if nodes := _u.mutation.RemovedTagsIDs(); len(nodes) > 0 && !_u.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   group.LabelsTable,
-			Columns: []string{group.LabelsColumn},
+			Table:   group.TagsTable,
+			Columns: []string{group.TagsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -1281,15 +1281,15 @@ func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.LabelsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TagsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   group.LabelsTable,
-			Columns: []string{group.LabelsColumn},
+			Table:   group.TagsTable,
+			Columns: []string{group.TagsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

@@ -2,12 +2,13 @@ package services
 
 import (
 	"context"
+	"io"
+
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
-	"io"
 )
 
 func (svc *ItemService) AttachmentPath(ctx context.Context, gid uuid.UUID, attachmentID uuid.UUID) (*ent.Attachment, error) {
@@ -56,9 +57,9 @@ func (svc *ItemService) AttachmentAdd(ctx Context, itemID uuid.UUID, filename st
 	return svc.repo.Items.GetOneByGroup(ctx, ctx.GID, itemID)
 }
 
-func (svc *ItemService) AttachmentDelete(ctx context.Context, gid uuid.UUID, id uuid.UUID, attachmentID uuid.UUID) error {
+func (svc *ItemService) AttachmentDelete(ctx context.Context, gid uuid.UUID, attachmentID uuid.UUID) error {
 	// Delete the attachment
-	err := svc.repo.Attachments.Delete(ctx, gid, id, attachmentID)
+	err := svc.repo.Attachments.Delete(ctx, gid, attachmentID)
 	if err != nil {
 		return err
 	}

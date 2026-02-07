@@ -42,10 +42,11 @@ func (Group) Edges() []ent.Edge {
 	}
 
 	return []ent.Edge{
-		owned("users", User.Type),
+		// Use edge.From + Ref("groups") to model M:M between users and groups via junction table
+		edge.From("users", User.Type).Ref("groups"),
 		owned("locations", Location.Type),
 		owned("items", Item.Type),
-		owned("labels", Label.Type),
+		owned("tags", Tag.Type),
 		owned("invitation_tokens", GroupInvitationToken.Type),
 		owned("notifiers", Notifier.Type),
 		owned("item_templates", ItemTemplate.Type),
@@ -72,14 +73,14 @@ func (g GroupMixin) Fields() []ent.Field {
 }
 
 func (g GroupMixin) Edges() []ent.Edge {
-	edge := edge.From("group", Group.Type).
+	e := edge.From("group", Group.Type).
 		Ref(g.ref).
 		Unique().
 		Required()
 
 	if g.field != "" {
-		edge = edge.Field(g.field)
+		e = e.Field(g.field)
 	}
 
-	return []ent.Edge{edge}
+	return []ent.Edge{e}
 }

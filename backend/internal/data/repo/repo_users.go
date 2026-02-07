@@ -4,7 +4,9 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -17,12 +19,12 @@ type (
 	// in the database. It should to create users from an API unless the user has
 	// rights to create SuperUsers. For regular user in data use the UserIn struct.
 	UserCreate struct {
-		Name        string    `json:"name"`
-		Email       string    `json:"email"`
-		Password    *string   `json:"password"`
-		IsSuperuser bool      `json:"isSuperuser"`
-		GroupID     uuid.UUID `json:"groupID"`
-		IsOwner     bool      `json:"isOwner"`
+		Name           string    `json:"name"`
+		Email          string    `json:"email"`
+		Password       *string   `json:"password"`
+		IsSuperuser    bool      `json:"isSuperUser"`
+		DefaultGroupID uuid.UUID `json:"defaultGroupID"`
+		IsOwner        bool      `json:"isOwner"`
 	}
 
 	UserUpdate struct {
@@ -31,61 +33,82 @@ type (
 	}
 
 	UserOut struct {
-		ID           uuid.UUID `json:"id"`
-		Name         string    `json:"name"`
-		Email        string    `json:"email"`
-		IsSuperuser  bool      `json:"isSuperuser"`
-		GroupID      uuid.UUID `json:"groupId"`
-		GroupName    string    `json:"groupName"`
-		PasswordHash string    `json:"-"`
-		IsOwner      bool      `json:"isOwner"`
-		OidcIssuer   *string   `json:"oidcIssuer"`
-		OidcSubject  *string   `json:"oidcSubject"`
+		ID             uuid.UUID   `json:"id"`
+		Name           string      `json:"name"`
+		Email          string      `json:"email"`
+		IsSuperuser    bool        `json:"isSuperuser"`
+		DefaultGroupID uuid.UUID   `json:"defaultGroupId"`
+		GroupIDs       []uuid.UUID `json:"groupIds"`
+		PasswordHash   string      `json:"-"`
+		IsOwner        bool        `json:"isOwner"`
+		OidcIssuer     *string     `json:"oidcIssuer"`
+		OidcSubject    *string     `json:"oidcSubject"`
+	}
+
+	UserSummary struct {
+		Name    string    `json:"name"`
+		Email   string    `json:"email"`
+		IsOwner bool      `json:"isOwner"`
+		ID      uuid.UUID `json:"id"`
 	}
 )
 
 var (
-	mapUserOutErr  = mapTErrFunc(mapUserOut)
-	mapUsersOutErr = mapTEachErrFunc(mapUserOut)
+	mapUserOutErr      = mapTErrFunc(mapUserOut)
+	mapUsersOutErr     = mapTEachErrFunc(mapUserOut)
+	mapUsersSummaryErr = mapTEachErrFunc(mapUserSummary)
 )
 
 func mapUserOut(user *ent.User) UserOut {
-	var passwordHash string
-	if user.Password != nil {
-		passwordHash = *user.Password
-	}
-
 	return UserOut{
-		ID:           user.ID,
-		Name:         user.Name,
-		Email:        user.Email,
-		IsSuperuser:  user.IsSuperuser,
-		GroupID:      user.Edges.Group.ID,
-		GroupName:    user.Edges.Group.Name,
-		PasswordHash: passwordHash,
+		ID:             user.ID,
+		Name:           user.Name,
+		Email:          user.Email,
+		IsSuperuser:    user.IsSuperuser,
+		DefaultGroupID: lo.FromPtrOr(user.DefaultGroupID, uuid.Nil),
+		GroupIDs: lo.Map(user.Edges.Groups, func(g *ent.Group, _ int) uuid.UUID {
+			return g.ID
+		}),
+		PasswordHash: lo.FromPtrOr(user.Password, ""),
 		IsOwner:      user.Role == "owner",
 		OidcIssuer:   user.OidcIssuer,
 		OidcSubject:  user.OidcSubject,
 	}
 }
 
+func mapUserSummary(user *ent.User) UserSummary {
+	return UserSummary{
+		Name:    user.Name,
+		Email:   user.Email,
+		IsOwner: user.Role == "owner",
+		ID:      user.ID,
+	}
+}
+
 func (r *UserRepository) GetOneID(ctx context.Context, id uuid.UUID) (UserOut, error) {
 	return mapUserOutErr(r.db.User.Query().
 		Where(user.ID(id)).
-		WithGroup().
+		WithGroups().
 		Only(ctx))
 }
 
 func (r *UserRepository) GetOneEmail(ctx context.Context, email string) (UserOut, error) {
 	return mapUserOutErr(r.db.User.Query().
 		Where(user.EmailEqualFold(email)).
-		WithGroup().
+		WithGroups().
+		Only(ctx),
+	)
+}
+
+func (r *UserRepository) GetOneEmailNoEdges(ctx context.Context, email string) (UserOut, error) {
+	return mapUserOutErr(r.db.User.Query().
+		Where(user.EmailEqualFold(email)).
 		Only(ctx),
 	)
 }
 
 func (r *UserRepository) GetAll(ctx context.Context) ([]UserOut, error) {
-	return mapUsersOutErr(r.db.User.Query().WithGroup().All(ctx))
+	return mapUsersOutErr(r.db.User.Query().WithGroups().All(ctx))
 }
 
 func (r *UserRepository) Create(ctx context.Context, usr UserCreate) (UserOut, error) {
@@ -99,8 +122,9 @@ func (r *UserRepository) Create(ctx context.Context, usr UserCreate) (UserOut, e
 		SetName(usr.Name).
 		SetEmail(usr.Email).
 		SetIsSuperuser(usr.IsSuperuser).
-		SetGroupID(usr.GroupID).
-		SetRole(role)
+		SetDefaultGroupID(usr.DefaultGroupID).
+		SetRole(role).
+		AddGroupIDs(usr.DefaultGroupID)
 
 	// Only set password if provided (non-nil)
 	if usr.Password != nil {
@@ -126,10 +150,11 @@ func (r *UserRepository) CreateWithOIDC(ctx context.Context, usr UserCreate, iss
 		SetName(usr.Name).
 		SetEmail(usr.Email).
 		SetIsSuperuser(usr.IsSuperuser).
-		SetGroupID(usr.GroupID).
+		SetDefaultGroupID(usr.DefaultGroupID).
 		SetRole(role).
 		SetOidcIssuer(issuer).
-		SetOidcSubject(subject)
+		SetOidcSubject(subject).
+		AddGroupIDs(usr.DefaultGroupID)
 
 	if usr.Password != nil {
 		createQuery = createQuery.SetPassword(*usr.Password)
@@ -151,6 +176,10 @@ func (r *UserRepository) Update(ctx context.Context, id uuid.UUID, data UserUpda
 
 	_, err := q.Save(ctx)
 	return err
+}
+
+func (r *UserRepository) UpdateDefaultGroup(ctx context.Context, id uuid.UUID, groupID uuid.UUID) error {
+	return r.db.User.UpdateOneID(id).SetDefaultGroupID(groupID).Exec(ctx)
 }
 
 func (r *UserRepository) Delete(ctx context.Context, id uuid.UUID) error {
@@ -183,6 +212,12 @@ func (r *UserRepository) SetOIDCIdentity(ctx context.Context, uid uuid.UUID, iss
 func (r *UserRepository) GetOneOIDC(ctx context.Context, issuer, subject string) (UserOut, error) {
 	return mapUserOutErr(r.db.User.Query().
 		Where(user.OidcIssuerEQ(issuer), user.OidcSubjectEQ(subject)).
-		WithGroup().
+		WithGroups().
 		Only(ctx))
+}
+
+func (r *UserRepository) GetUsersByGroupID(ctx context.Context, gid uuid.UUID) ([]UserSummary, error) {
+	return mapUsersSummaryErr(r.db.User.Query().
+		Where(user.HasGroupsWith(group.ID(gid))).
+		All(ctx))
 }

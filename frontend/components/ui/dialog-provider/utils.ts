@@ -1,14 +1,23 @@
 import { computed, type ComputedRef } from "vue";
 import { createContext } from "reka-ui";
 import { useMagicKeys, useActiveElement } from "@vueuse/core";
-import type { BarcodeProduct, ItemSummary, MaintenanceEntry, MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
+import type {
+  BarcodeProduct,
+  GroupInvitation,
+  ItemSummary,
+  MaintenanceEntry,
+  MaintenanceEntryWithDetails,
+} from "~~/lib/api/types/data-contracts";
 
 export enum DialogID {
   AttachmentEdit = "attachment-edit",
   ChangePassword = "changePassword",
   CreateItem = "create-item",
   CreateLocation = "create-location",
-  CreateLabel = "create-label",
+  CreateTag = "create-tag",
+  CreateCollection = "create-collection",
+  CreateGroupInvite = "create-group-invite",
+  JoinCollection = "join-collection",
   CreateNotifier = "create-notifier",
   CreateTemplate = "create-template",
   DuplicateSettings = "duplicate-settings",
@@ -22,7 +31,7 @@ export enum DialogID {
   QuickMenu = "quick-menu",
   Scanner = "scanner",
   PageQRCode = "page-qr-code",
-  UpdateLabel = "update-label",
+  UpdateTag = "update-tag",
   UpdateLocation = "update-location",
   UpdateTemplate = "update-template",
   ItemChangeDetails = "item-table-updater",
@@ -60,9 +69,11 @@ export type DialogParamsMap = {
   [DialogID.ItemChangeDetails]: {
     items: ItemSummary[];
     changeLocation?: boolean;
-    addLabels?: boolean;
-    removeLabels?: boolean;
+    addTags?: boolean;
+    removeTags?: boolean;
   };
+  [DialogID.CreateCollection]?: { redirectTo?: string };
+  [DialogID.JoinCollection]?: { redirectTo?: string };
 };
 
 /**
@@ -72,7 +83,8 @@ export type DialogResultMap = {
   [DialogID.ItemImage]?: { action: "delete"; id: string };
   [DialogID.EditMaintenance]?: boolean;
   [DialogID.ItemChangeDetails]?: boolean;
-  [DialogID.WipeInventory]?: { wipeLabels: boolean; wipeLocations: boolean; wipeMaintenance: boolean };
+  [DialogID.WipeInventory]?: { wipeTags: boolean; wipeLocations: boolean; wipeMaintenance: boolean };
+  [DialogID.CreateGroupInvite]?: GroupInvitation;
 };
 
 /** Helpers to split IDs by requirement */

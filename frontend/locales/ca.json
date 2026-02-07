@@ -23,7 +23,22 @@
                 "new_version_available_link": "Fes clic aquí per veure les notes de la versió"
             }
         },
+        "color_selector": {
+            "clear": "Netejar color",
+            "color": "Color"
+        },
+        "form": {
+            "password": {
+                "toggle_show": "Alternar visibilitat de la contrasenya"
+            }
+        },
         "global": {
+            "copy_text": {
+                "documentation": "documentació",
+                "failed_to_copy": "No s'ha pogut copiar el text al porta-retalls",
+                "https_required": "perquè es requereix HTTPS",
+                "learn_more": "Més informació a la nostra"
+            },
             "date_time": {
                 "ago": "fa {0}",
                 "days": "dies",
@@ -49,14 +64,19 @@
                 "yesterday": "ahir"
             },
             "label_maker": {
+                "browser_print": "Imprimeix des del navegador",
+                "print": "Imprimir etiqueta",
                 "server_print": "Imprimeix al servidor",
                 "titles": "Etiquetes",
                 "toast": {
-                    "load_status_failed": "Fallat en carregar l'estat"
+                    "load_status_failed": "Fallat en carregar l'estat",
+                    "print_failed": "No s'ha pogut imprimir l'etiqueta",
+                    "print_success": "Etiqueta impresa"
                 }
             },
             "page_qr_code": {
-                "page_url": "URL de la pàgina"
+                "page_url": "URL de la pàgina",
+                "qr_tooltip": "Mostra el codi QR"
             },
             "password_score": {
                 "password_strength": "Força de la contrasenya"
@@ -66,6 +86,10 @@
             "create_modal": {
                 "item_description": "Descripció de l'article",
                 "item_name": "Nom de l'article",
+                "item_photo": "Foto de l'article 📷",
+                "item_quantity": "Quantitat de l'article",
+                "parent_item": "Article pare",
+                "product_tooltip_input_barcode": "Omplir automàticament amb un codi de barres proporcionat manualment",
                 "title": "Crea un article"
             },
             "view": {
@@ -79,13 +103,6 @@
                     "page": "Pàgina",
                     "rows_per_page": "Files per pàgina"
                 }
-            }
-        },
-        "label": {
-            "create_modal": {
-                "label_description": "Descripció de l'etiqueta",
-                "label_name": "Nom de l'etiqueta",
-                "title": "Crea una etiqueta"
             }
         },
         "location": {
@@ -118,7 +135,6 @@
         "github": "Projecte de GitHub",
         "items": "Articles",
         "join_discord": "Uniu-vos a Discord",
-        "labels": "Etiquetes",
         "locations": "Ubicacions",
         "maintenance": "Manteniment",
         "name": "Nom",
@@ -134,12 +150,10 @@
         "welcome": "Us donem la benvinguda, { username }"
     },
     "home": {
-        "labels": "Etiquetes",
         "quick_statistics": "Estadístiques ràpides",
         "recently_added": "Afegit recentment",
         "storage_locations": "Ubicacions d'emmagatzematge",
         "total_items": "Articles totals",
-        "total_labels": "Total d'etiquetes",
         "total_locations": "Ubicacions totals",
         "total_value": "Valor total"
     },
@@ -182,7 +196,6 @@
         "manufacturer": "Fabricant",
         "model_number": "Número de model",
         "name": "Nom",
-        "negate_labels": "Nega les etiquetes seleccionades",
         "next_page": "Pàgina següent",
         "no_results": "No s'ha trobat cap element",
         "notes": "Notes",
@@ -218,10 +231,6 @@
         "warranty": "Garantia",
         "warranty_details": "Detalls de la garantia",
         "warranty_expires": "La garantia caduca"
-    },
-    "labels": {
-        "no_results": "No s'han trobat etiquetes",
-        "update_label": "Actualitza l'etiqueta"
     },
     "languages": {
         "ca": "Català",
@@ -292,14 +301,12 @@
     },
     "menu": {
         "create_item": "Article / Actiu",
-        "create_label": "Etiqueta",
         "create_location": "Ubicació",
         "home": "Inici",
         "locations": "Ubicacions",
         "maintenance": "Manteniment",
         "profile": "Perfil",
-        "search": "Cerca",
-        "tools": "Eines"
+        "search": "Cerca"
     },
     "profile": {
         "active": "Actiu",
@@ -310,7 +317,6 @@
         "delete_account_sub": "Elimina el compte i totes les dades associades. Aquesta acció no es pot desfer.",
         "enabled": "Habilitat",
         "example": "Exemple",
-        "gen_invite": "Genera un enllaç d'invitació",
         "group_settings": "Configuració del grup",
         "group_settings_sub": "Configuració del grup compartit. És possible que hàgiu d'actualitzar la pàgina per aplicar la configuració.",
         "inactive": "Inactiu",

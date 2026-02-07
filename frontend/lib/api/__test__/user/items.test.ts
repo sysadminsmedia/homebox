@@ -36,7 +36,7 @@ describe("user should be able to create an item and add an attachment", () => {
     const { response, data: item } = await api.items.create({
       parentId: null,
       name: "test-item",
-      labelIds: [],
+      tagIds: [],
       description: "test-description",
       quantity: 2,
       locationId: location.id,
@@ -71,7 +71,7 @@ describe("user should be able to create an item and add an attachment", () => {
     const { response, data: item } = await api.items.create({
       parentId: null,
       name: faker.vehicle.model(),
-      labelIds: [],
+      tagIds: [],
       description: faker.lorem.paragraph(1),
       quantity: 2,
       locationId: location.id,
@@ -90,7 +90,7 @@ describe("user should be able to create an item and add an attachment", () => {
       parentId: null,
       ...item,
       locationId: item.location?.id || null,
-      labelIds: item.labels.map(l => l.id),
+      tagIds: item.tags.map(l => l.id),
       fields,
     };
 
@@ -126,7 +126,7 @@ describe("user should be able to create an item and add an attachment", () => {
     const { response, data: item } = await api.items.create({
       parentId: null,
       name: faker.vehicle.model(),
-      labelIds: [],
+      tagIds: [],
       description: faker.lorem.paragraph(1),
       quantity: 2,
       locationId: location.id,
@@ -178,7 +178,7 @@ describe("user should be able to create an item and add an attachment", () => {
 
     const { response, data: item } = await api.items.create({
       name: faker.vehicle.model(),
-      labelIds: [],
+      tagIds: [],
       description: faker.lorem.paragraph(1),
       quantity: 2,
       locationId: lastLocationId,
@@ -203,7 +203,7 @@ describe("user should be able to create an item and add an attachment", () => {
 
     const { response: parentResponse, data: parent } = await api.items.create({
       name: "parent-item",
-      labelIds: [],
+      tagIds: [],
       description: "test-description",
       quantity: 2,
       locationId: parentLocation.id,
@@ -213,7 +213,7 @@ describe("user should be able to create an item and add an attachment", () => {
 
     const { response: child1Response, data: child1Item } = await api.items.create({
       name: "child1-item",
-      labelIds: [],
+      tagIds: [],
       description: "test-description",
       quantity: 2,
       locationId: childsLocation.id,
@@ -223,14 +223,14 @@ describe("user should be able to create an item and add an attachment", () => {
       parentId: parent.id,
       ...child1Item,
       locationId: child1Item.location?.id,
-      labelIds: [],
+      tagIds: [],
     };
     const { response: child1UpdatedResponse } = await api.items.update(child1Item.id, child1ItemUpdate as ItemUpdate);
     expect(child1UpdatedResponse.status).toBe(200);
 
     const { response: child2Response, data: child2Item } = await api.items.create({
       name: "child2-item",
-      labelIds: [],
+      tagIds: [],
       description: "test-description",
       quantity: 2,
       locationId: childsLocation.id,
@@ -240,7 +240,7 @@ describe("user should be able to create an item and add an attachment", () => {
       parentId: parent.id,
       ...child2Item,
       locationId: child2Item.location?.id,
-      labelIds: [],
+      tagIds: [],
     };
     const { response: child2UpdatedResponse } = await api.items.update(child2Item.id, child2ItemUpdate as ItemUpdate);
     expect(child2UpdatedResponse.status).toBe(200);
@@ -249,7 +249,7 @@ describe("user should be able to create an item and add an attachment", () => {
       parentId: null,
       ...parent,
       locationId: parentLocation.id,
-      labelIds: [],
+      tagIds: [],
       syncChildItemsLocations: true,
     };
     const { response: updateResponse } = await api.items.update(parent.id, itemUpdate);

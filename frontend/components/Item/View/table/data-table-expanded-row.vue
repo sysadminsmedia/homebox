@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { computed } from "vue";
   import type { ItemSummary } from "~/lib/api/types/data-contracts";
-  import LabelChip from "@/components/Label/Chip.vue";
+  import TagChip from "@/components/Tag/Chip.vue";
   import Badge from "~/components/ui/badge/Badge.vue";
 
   const props = defineProps<{
@@ -35,7 +35,7 @@
         </NuxtLink>
       </Badge>
       <div class="flex flex-wrap gap-2">
-        <LabelChip v-for="label in item.labels" :key="label.id" :label="label" size="sm" />
+        <TagChip v-for="tag in item.tags" :key="tag.id" :tag="tag" size="sm" />
       </div>
       <p class="whitespace-pre-line break-words text-sm text-muted-foreground">
         {{ item.description || $t("components.item.no_description") }}

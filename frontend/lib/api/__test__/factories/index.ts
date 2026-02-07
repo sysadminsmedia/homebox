@@ -5,7 +5,7 @@ import { PublicApi } from "../../public";
 import type {
   ItemField,
   ItemTemplateCreate,
-  LabelCreate,
+  TagCreate,
   LocationCreate,
   UserRegistration,
 } from "../../types/data-contracts";
@@ -47,7 +47,7 @@ function location(parentId: string | null = null): LocationCreate {
   };
 }
 
-function label(): LabelCreate {
+function tag(): TagCreate {
   return {
     name: faker.lorem.word(),
     description: faker.lorem.sentence(),
@@ -69,7 +69,7 @@ function template(): ItemTemplateCreate {
     defaultLifetimeWarranty: false,
     defaultWarrantyDetails: "",
     defaultLocationId: null,
-    defaultLabelIds: null,
+    defaultTagIds: null,
     includeWarrantyFields: false,
     includePurchaseFields: false,
     includeSoldFields: false,
@@ -113,7 +113,7 @@ async function userSingleUse(): Promise<TestUser> {
 export const factories = {
   user,
   location,
-  label,
+  tag,
   template,
   itemField,
   client: {

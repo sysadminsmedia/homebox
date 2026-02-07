@@ -112,7 +112,7 @@ func (Item) Edges() []ent.Edge {
 		edge.To("children", Item.Type).
 			From("parent").
 			Unique(),
-		edge.From("label", Label.Type).
+		edge.From("tag", Tag.Type).
 			Ref("items"),
 		edge.From("location", Location.Type).
 			Ref("items").

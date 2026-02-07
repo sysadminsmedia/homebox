@@ -20,11 +20,11 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemfield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
@@ -46,10 +46,10 @@ const (
 	TypeItem                 = "Item"
 	TypeItemField            = "ItemField"
 	TypeItemTemplate         = "ItemTemplate"
-	TypeLabel                = "Label"
 	TypeLocation             = "Location"
 	TypeMaintenanceEntry     = "MaintenanceEntry"
 	TypeNotifier             = "Notifier"
+	TypeTag                  = "Tag"
 	TypeTemplateField        = "TemplateField"
 	TypeUser                 = "User"
 )
@@ -1869,9 +1869,9 @@ type GroupMutation struct {
 	items                    map[uuid.UUID]struct{}
 	removeditems             map[uuid.UUID]struct{}
 	cleareditems             bool
-	labels                   map[uuid.UUID]struct{}
-	removedlabels            map[uuid.UUID]struct{}
-	clearedlabels            bool
+	tags                     map[uuid.UUID]struct{}
+	removedtags              map[uuid.UUID]struct{}
+	clearedtags              bool
 	invitation_tokens        map[uuid.UUID]struct{}
 	removedinvitation_tokens map[uuid.UUID]struct{}
 	clearedinvitation_tokens bool
@@ -2296,58 +2296,58 @@ func (m *GroupMutation) ResetItems() {
 	m.removeditems = nil
 }
 
-// AddLabelIDs adds the "labels" edge to the Label entity by ids.
-func (m *GroupMutation) AddLabelIDs(ids ...uuid.UUID) {
-	if m.labels == nil {
-		m.labels = make(map[uuid.UUID]struct{})
+// AddTagIDs adds the "tags" edge to the Tag entity by ids.
+func (m *GroupMutation) AddTagIDs(ids ...uuid.UUID) {
+	if m.tags == nil {
+		m.tags = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
-		m.labels[ids[i]] = struct{}{}
+		m.tags[ids[i]] = struct{}{}
 	}
 }
 
-// ClearLabels clears the "labels" edge to the Label entity.
-func (m *GroupMutation) ClearLabels() {
-	m.clearedlabels = true
+// ClearTags clears the "tags" edge to the Tag entity.
+func (m *GroupMutation) ClearTags() {
+	m.clearedtags = true
 }
 
-// LabelsCleared reports if the "labels" edge to the Label entity was cleared.
-func (m *GroupMutation) LabelsCleared() bool {
-	return m.clearedlabels
+// TagsCleared reports if the "tags" edge to the Tag entity was cleared.
+func (m *GroupMutation) TagsCleared() bool {
+	return m.clearedtags
 }
 
-// RemoveLabelIDs removes the "labels" edge to the Label entity by IDs.
-func (m *GroupMutation) RemoveLabelIDs(ids ...uuid.UUID) {
-	if m.removedlabels == nil {
-		m.removedlabels = make(map[uuid.UUID]struct{})
+// RemoveTagIDs removes the "tags" edge to the Tag entity by IDs.
+func (m *GroupMutation) RemoveTagIDs(ids ...uuid.UUID) {
+	if m.removedtags == nil {
+		m.removedtags = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
-		delete(m.labels, ids[i])
-		m.removedlabels[ids[i]] = struct{}{}
+		delete(m.tags, ids[i])
+		m.removedtags[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedLabels returns the removed IDs of the "labels" edge to the Label entity.
-func (m *GroupMutation) RemovedLabelsIDs() (ids []uuid.UUID) {
-	for id := range m.removedlabels {
+// RemovedTags returns the removed IDs of the "tags" edge to the Tag entity.
+func (m *GroupMutation) RemovedTagsIDs() (ids []uuid.UUID) {
+	for id := range m.removedtags {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// LabelsIDs returns the "labels" edge IDs in the mutation.
-func (m *GroupMutation) LabelsIDs() (ids []uuid.UUID) {
-	for id := range m.labels {
+// TagsIDs returns the "tags" edge IDs in the mutation.
+func (m *GroupMutation) TagsIDs() (ids []uuid.UUID) {
+	for id := range m.tags {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetLabels resets all changes to the "labels" edge.
-func (m *GroupMutation) ResetLabels() {
-	m.labels = nil
-	m.clearedlabels = false
-	m.removedlabels = nil
+// ResetTags resets all changes to the "tags" edge.
+func (m *GroupMutation) ResetTags() {
+	m.tags = nil
+	m.clearedtags = false
+	m.removedtags = nil
 }
 
 // AddInvitationTokenIDs adds the "invitation_tokens" edge to the GroupInvitationToken entity by ids.
@@ -2706,8 +2706,8 @@ func (m *GroupMutation) AddedEdges() []string {
 	if m.items != nil {
 		edges = append(edges, group.EdgeItems)
 	}
-	if m.labels != nil {
-		edges = append(edges, group.EdgeLabels)
+	if m.tags != nil {
+		edges = append(edges, group.EdgeTags)
 	}
 	if m.invitation_tokens != nil {
 		edges = append(edges, group.EdgeInvitationTokens)
@@ -2743,9 +2743,9 @@ func (m *GroupMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case group.EdgeLabels:
-		ids := make([]ent.Value, 0, len(m.labels))
-		for id := range m.labels {
+	case group.EdgeTags:
+		ids := make([]ent.Value, 0, len(m.tags))
+		for id := range m.tags {
 			ids = append(ids, id)
 		}
 		return ids
@@ -2783,8 +2783,8 @@ func (m *GroupMutation) RemovedEdges() []string {
 	if m.removeditems != nil {
 		edges = append(edges, group.EdgeItems)
 	}
-	if m.removedlabels != nil {
-		edges = append(edges, group.EdgeLabels)
+	if m.removedtags != nil {
+		edges = append(edges, group.EdgeTags)
 	}
 	if m.removedinvitation_tokens != nil {
 		edges = append(edges, group.EdgeInvitationTokens)
@@ -2820,9 +2820,9 @@ func (m *GroupMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case group.EdgeLabels:
-		ids := make([]ent.Value, 0, len(m.removedlabels))
-		for id := range m.removedlabels {
+	case group.EdgeTags:
+		ids := make([]ent.Value, 0, len(m.removedtags))
+		for id := range m.removedtags {
 			ids = append(ids, id)
 		}
 		return ids
@@ -2860,8 +2860,8 @@ func (m *GroupMutation) ClearedEdges() []string {
 	if m.cleareditems {
 		edges = append(edges, group.EdgeItems)
 	}
-	if m.clearedlabels {
-		edges = append(edges, group.EdgeLabels)
+	if m.clearedtags {
+		edges = append(edges, group.EdgeTags)
 	}
 	if m.clearedinvitation_tokens {
 		edges = append(edges, group.EdgeInvitationTokens)
@@ -2885,8 +2885,8 @@ func (m *GroupMutation) EdgeCleared(name string) bool {
 		return m.clearedlocations
 	case group.EdgeItems:
 		return m.cleareditems
-	case group.EdgeLabels:
-		return m.clearedlabels
+	case group.EdgeTags:
+		return m.clearedtags
 	case group.EdgeInvitationTokens:
 		return m.clearedinvitation_tokens
 	case group.EdgeNotifiers:
@@ -2918,8 +2918,8 @@ func (m *GroupMutation) ResetEdge(name string) error {
 	case group.EdgeItems:
 		m.ResetItems()
 		return nil
-	case group.EdgeLabels:
-		m.ResetLabels()
+	case group.EdgeTags:
+		m.ResetTags()
 		return nil
 	case group.EdgeInvitationTokens:
 		m.ResetInvitationTokens()
@@ -3627,9 +3627,9 @@ type ItemMutation struct {
 	children                   map[uuid.UUID]struct{}
 	removedchildren            map[uuid.UUID]struct{}
 	clearedchildren            bool
-	label                      map[uuid.UUID]struct{}
-	removedlabel               map[uuid.UUID]struct{}
-	clearedlabel               bool
+	tag                        map[uuid.UUID]struct{}
+	removedtag                 map[uuid.UUID]struct{}
+	clearedtag                 bool
 	location                   *uuid.UUID
 	clearedlocation            bool
 	fields                     map[uuid.UUID]struct{}
@@ -4995,58 +4995,58 @@ func (m *ItemMutation) ResetChildren() {
 	m.removedchildren = nil
 }
 
-// AddLabelIDs adds the "label" edge to the Label entity by ids.
-func (m *ItemMutation) AddLabelIDs(ids ...uuid.UUID) {
-	if m.label == nil {
-		m.label = make(map[uuid.UUID]struct{})
+// AddTagIDs adds the "tag" edge to the Tag entity by ids.
+func (m *ItemMutation) AddTagIDs(ids ...uuid.UUID) {
+	if m.tag == nil {
+		m.tag = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
-		m.label[ids[i]] = struct{}{}
+		m.tag[ids[i]] = struct{}{}
 	}
 }
 
-// ClearLabel clears the "label" edge to the Label entity.
-func (m *ItemMutation) ClearLabel() {
-	m.clearedlabel = true
+// ClearTag clears the "tag" edge to the Tag entity.
+func (m *ItemMutation) ClearTag() {
+	m.clearedtag = true
 }
 
-// LabelCleared reports if the "label" edge to the Label entity was cleared.
-func (m *ItemMutation) LabelCleared() bool {
-	return m.clearedlabel
+// TagCleared reports if the "tag" edge to the Tag entity was cleared.
+func (m *ItemMutation) TagCleared() bool {
+	return m.clearedtag
 }
 
-// RemoveLabelIDs removes the "label" edge to the Label entity by IDs.
-func (m *ItemMutation) RemoveLabelIDs(ids ...uuid.UUID) {
-	if m.removedlabel == nil {
-		m.removedlabel = make(map[uuid.UUID]struct{})
+// RemoveTagIDs removes the "tag" edge to the Tag entity by IDs.
+func (m *ItemMutation) RemoveTagIDs(ids ...uuid.UUID) {
+	if m.removedtag == nil {
+		m.removedtag = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
-		delete(m.label, ids[i])
-		m.removedlabel[ids[i]] = struct{}{}
+		delete(m.tag, ids[i])
+		m.removedtag[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedLabel returns the removed IDs of the "label" edge to the Label entity.
-func (m *ItemMutation) RemovedLabelIDs() (ids []uuid.UUID) {
-	for id := range m.removedlabel {
+// RemovedTag returns the removed IDs of the "tag" edge to the Tag entity.
+func (m *ItemMutation) RemovedTagIDs() (ids []uuid.UUID) {
+	for id := range m.removedtag {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// LabelIDs returns the "label" edge IDs in the mutation.
-func (m *ItemMutation) LabelIDs() (ids []uuid.UUID) {
-	for id := range m.label {
+// TagIDs returns the "tag" edge IDs in the mutation.
+func (m *ItemMutation) TagIDs() (ids []uuid.UUID) {
+	for id := range m.tag {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetLabel resets all changes to the "label" edge.
-func (m *ItemMutation) ResetLabel() {
-	m.label = nil
-	m.clearedlabel = false
-	m.removedlabel = nil
+// ResetTag resets all changes to the "tag" edge.
+func (m *ItemMutation) ResetTag() {
+	m.tag = nil
+	m.clearedtag = false
+	m.removedtag = nil
 }
 
 // SetLocationID sets the "location" edge to the Location entity by id.
@@ -5916,8 +5916,8 @@ func (m *ItemMutation) AddedEdges() []string {
 	if m.children != nil {
 		edges = append(edges, item.EdgeChildren)
 	}
-	if m.label != nil {
-		edges = append(edges, item.EdgeLabel)
+	if m.tag != nil {
+		edges = append(edges, item.EdgeTag)
 	}
 	if m.location != nil {
 		edges = append(edges, item.EdgeLocation)
@@ -5952,9 +5952,9 @@ func (m *ItemMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case item.EdgeLabel:
-		ids := make([]ent.Value, 0, len(m.label))
-		for id := range m.label {
+	case item.EdgeTag:
+		ids := make([]ent.Value, 0, len(m.tag))
+		for id := range m.tag {
 			ids = append(ids, id)
 		}
 		return ids
@@ -5990,8 +5990,8 @@ func (m *ItemMutation) RemovedEdges() []string {
 	if m.removedchildren != nil {
 		edges = append(edges, item.EdgeChildren)
 	}
-	if m.removedlabel != nil {
-		edges = append(edges, item.EdgeLabel)
+	if m.removedtag != nil {
+		edges = append(edges, item.EdgeTag)
 	}
 	if m.removedfields != nil {
 		edges = append(edges, item.EdgeFields)
@@ -6015,9 +6015,9 @@ func (m *ItemMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case item.EdgeLabel:
-		ids := make([]ent.Value, 0, len(m.removedlabel))
-		for id := range m.removedlabel {
+	case item.EdgeTag:
+		ids := make([]ent.Value, 0, len(m.removedtag))
+		for id := range m.removedtag {
 			ids = append(ids, id)
 		}
 		return ids
@@ -6055,8 +6055,8 @@ func (m *ItemMutation) ClearedEdges() []string {
 	if m.clearedchildren {
 		edges = append(edges, item.EdgeChildren)
 	}
-	if m.clearedlabel {
-		edges = append(edges, item.EdgeLabel)
+	if m.clearedtag {
+		edges = append(edges, item.EdgeTag)
 	}
 	if m.clearedlocation {
 		edges = append(edges, item.EdgeLocation)
@@ -6083,8 +6083,8 @@ func (m *ItemMutation) EdgeCleared(name string) bool {
 		return m.clearedparent
 	case item.EdgeChildren:
 		return m.clearedchildren
-	case item.EdgeLabel:
-		return m.clearedlabel
+	case item.EdgeTag:
+		return m.clearedtag
 	case item.EdgeLocation:
 		return m.clearedlocation
 	case item.EdgeFields:
@@ -6127,8 +6127,8 @@ func (m *ItemMutation) ResetEdge(name string) error {
 	case item.EdgeChildren:
 		m.ResetChildren()
 		return nil
-	case item.EdgeLabel:
-		m.ResetLabel()
+	case item.EdgeTag:
+		m.ResetTag()
 		return nil
 	case item.EdgeLocation:
 		m.ResetLocation()
@@ -7097,8 +7097,8 @@ type ItemTemplateMutation struct {
 	include_warranty_fields   *bool
 	include_purchase_fields   *bool
 	include_sold_fields       *bool
-	default_label_ids         *[]uuid.UUID
-	appenddefault_label_ids   []uuid.UUID
+	default_tag_ids           *[]uuid.UUID
+	appenddefault_tag_ids     []uuid.UUID
 	clearedFields             map[string]struct{}
 	group                     *uuid.UUID
 	clearedgroup              bool
@@ -7903,69 +7903,69 @@ func (m *ItemTemplateMutation) ResetIncludeSoldFields() {
 	m.include_sold_fields = nil
 }
 
-// SetDefaultLabelIds sets the "default_label_ids" field.
-func (m *ItemTemplateMutation) SetDefaultLabelIds(u []uuid.UUID) {
-	m.default_label_ids = &u
-	m.appenddefault_label_ids = nil
+// SetDefaultTagIds sets the "default_tag_ids" field.
+func (m *ItemTemplateMutation) SetDefaultTagIds(u []uuid.UUID) {
+	m.default_tag_ids = &u
+	m.appenddefault_tag_ids = nil
 }
 
-// DefaultLabelIds returns the value of the "default_label_ids" field in the mutation.
-func (m *ItemTemplateMutation) DefaultLabelIds() (r []uuid.UUID, exists bool) {
-	v := m.default_label_ids
+// DefaultTagIds returns the value of the "default_tag_ids" field in the mutation.
+func (m *ItemTemplateMutation) DefaultTagIds() (r []uuid.UUID, exists bool) {
+	v := m.default_tag_ids
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldDefaultLabelIds returns the old "default_label_ids" field's value of the ItemTemplate entity.
+// OldDefaultTagIds returns the old "default_tag_ids" field's value of the ItemTemplate entity.
 // If the ItemTemplate object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ItemTemplateMutation) OldDefaultLabelIds(ctx context.Context) (v []uuid.UUID, err error) {
+func (m *ItemTemplateMutation) OldDefaultTagIds(ctx context.Context) (v []uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDefaultLabelIds is only allowed on UpdateOne operations")
+		return v, errors.New("OldDefaultTagIds is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDefaultLabelIds requires an ID field in the mutation")
+		return v, errors.New("OldDefaultTagIds requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDefaultLabelIds: %w", err)
+		return v, fmt.Errorf("querying old value for OldDefaultTagIds: %w", err)
 	}
-	return oldValue.DefaultLabelIds, nil
+	return oldValue.DefaultTagIds, nil
 }
 
-// AppendDefaultLabelIds adds u to the "default_label_ids" field.
-func (m *ItemTemplateMutation) AppendDefaultLabelIds(u []uuid.UUID) {
-	m.appenddefault_label_ids = append(m.appenddefault_label_ids, u...)
+// AppendDefaultTagIds adds u to the "default_tag_ids" field.
+func (m *ItemTemplateMutation) AppendDefaultTagIds(u []uuid.UUID) {
+	m.appenddefault_tag_ids = append(m.appenddefault_tag_ids, u...)
 }
 
-// AppendedDefaultLabelIds returns the list of values that were appended to the "default_label_ids" field in this mutation.
-func (m *ItemTemplateMutation) AppendedDefaultLabelIds() ([]uuid.UUID, bool) {
-	if len(m.appenddefault_label_ids) == 0 {
+// AppendedDefaultTagIds returns the list of values that were appended to the "default_tag_ids" field in this mutation.
+func (m *ItemTemplateMutation) AppendedDefaultTagIds() ([]uuid.UUID, bool) {
+	if len(m.appenddefault_tag_ids) == 0 {
 		return nil, false
 	}
-	return m.appenddefault_label_ids, true
+	return m.appenddefault_tag_ids, true
 }
 
-// ClearDefaultLabelIds clears the value of the "default_label_ids" field.
-func (m *ItemTemplateMutation) ClearDefaultLabelIds() {
-	m.default_label_ids = nil
-	m.appenddefault_label_ids = nil
-	m.clearedFields[itemtemplate.FieldDefaultLabelIds] = struct{}{}
+// ClearDefaultTagIds clears the value of the "default_tag_ids" field.
+func (m *ItemTemplateMutation) ClearDefaultTagIds() {
+	m.default_tag_ids = nil
+	m.appenddefault_tag_ids = nil
+	m.clearedFields[itemtemplate.FieldDefaultTagIds] = struct{}{}
 }
 
-// DefaultLabelIdsCleared returns if the "default_label_ids" field was cleared in this mutation.
-func (m *ItemTemplateMutation) DefaultLabelIdsCleared() bool {
-	_, ok := m.clearedFields[itemtemplate.FieldDefaultLabelIds]
+// DefaultTagIdsCleared returns if the "default_tag_ids" field was cleared in this mutation.
+func (m *ItemTemplateMutation) DefaultTagIdsCleared() bool {
+	_, ok := m.clearedFields[itemtemplate.FieldDefaultTagIds]
 	return ok
 }
 
-// ResetDefaultLabelIds resets all changes to the "default_label_ids" field.
-func (m *ItemTemplateMutation) ResetDefaultLabelIds() {
-	m.default_label_ids = nil
-	m.appenddefault_label_ids = nil
-	delete(m.clearedFields, itemtemplate.FieldDefaultLabelIds)
+// ResetDefaultTagIds resets all changes to the "default_tag_ids" field.
+func (m *ItemTemplateMutation) ResetDefaultTagIds() {
+	m.default_tag_ids = nil
+	m.appenddefault_tag_ids = nil
+	delete(m.clearedFields, itemtemplate.FieldDefaultTagIds)
 }
 
 // SetGroupID sets the "group" edge to the Group entity by id.
@@ -8183,8 +8183,8 @@ func (m *ItemTemplateMutation) Fields() []string {
 	if m.include_sold_fields != nil {
 		fields = append(fields, itemtemplate.FieldIncludeSoldFields)
 	}
-	if m.default_label_ids != nil {
-		fields = append(fields, itemtemplate.FieldDefaultLabelIds)
+	if m.default_tag_ids != nil {
+		fields = append(fields, itemtemplate.FieldDefaultTagIds)
 	}
 	return fields
 }
@@ -8226,8 +8226,8 @@ func (m *ItemTemplateMutation) Field(name string) (ent.Value, bool) {
 		return m.IncludePurchaseFields()
 	case itemtemplate.FieldIncludeSoldFields:
 		return m.IncludeSoldFields()
-	case itemtemplate.FieldDefaultLabelIds:
-		return m.DefaultLabelIds()
+	case itemtemplate.FieldDefaultTagIds:
+		return m.DefaultTagIds()
 	}
 	return nil, false
 }
@@ -8269,8 +8269,8 @@ func (m *ItemTemplateMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldIncludePurchaseFields(ctx)
 	case itemtemplate.FieldIncludeSoldFields:
 		return m.OldIncludeSoldFields(ctx)
-	case itemtemplate.FieldDefaultLabelIds:
-		return m.OldDefaultLabelIds(ctx)
+	case itemtemplate.FieldDefaultTagIds:
+		return m.OldDefaultTagIds(ctx)
 	}
 	return nil, fmt.Errorf("unknown ItemTemplate field %s", name)
 }
@@ -8392,12 +8392,12 @@ func (m *ItemTemplateMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetIncludeSoldFields(v)
 		return nil
-	case itemtemplate.FieldDefaultLabelIds:
+	case itemtemplate.FieldDefaultTagIds:
 		v, ok := value.([]uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetDefaultLabelIds(v)
+		m.SetDefaultTagIds(v)
 		return nil
 	}
 	return fmt.Errorf("unknown ItemTemplate field %s", name)
@@ -8465,8 +8465,8 @@ func (m *ItemTemplateMutation) ClearedFields() []string {
 	if m.FieldCleared(itemtemplate.FieldDefaultWarrantyDetails) {
 		fields = append(fields, itemtemplate.FieldDefaultWarrantyDetails)
 	}
-	if m.FieldCleared(itemtemplate.FieldDefaultLabelIds) {
-		fields = append(fields, itemtemplate.FieldDefaultLabelIds)
+	if m.FieldCleared(itemtemplate.FieldDefaultTagIds) {
+		fields = append(fields, itemtemplate.FieldDefaultTagIds)
 	}
 	return fields
 }
@@ -8503,8 +8503,8 @@ func (m *ItemTemplateMutation) ClearField(name string) error {
 	case itemtemplate.FieldDefaultWarrantyDetails:
 		m.ClearDefaultWarrantyDetails()
 		return nil
-	case itemtemplate.FieldDefaultLabelIds:
-		m.ClearDefaultLabelIds()
+	case itemtemplate.FieldDefaultTagIds:
+		m.ClearDefaultTagIds()
 		return nil
 	}
 	return fmt.Errorf("unknown ItemTemplate nullable field %s", name)
@@ -8562,8 +8562,8 @@ func (m *ItemTemplateMutation) ResetField(name string) error {
 	case itemtemplate.FieldIncludeSoldFields:
 		m.ResetIncludeSoldFields()
 		return nil
-	case itemtemplate.FieldDefaultLabelIds:
-		m.ResetDefaultLabelIds()
+	case itemtemplate.FieldDefaultTagIds:
+		m.ResetDefaultTagIds()
 		return nil
 	}
 	return fmt.Errorf("unknown ItemTemplate field %s", name)
@@ -8687,747 +8687,6 @@ func (m *ItemTemplateMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown ItemTemplate edge %s", name)
-}
-
-// LabelMutation represents an operation that mutates the Label nodes in the graph.
-type LabelMutation struct {
-	config
-	op            Op
-	typ           string
-	id            *uuid.UUID
-	created_at    *time.Time
-	updated_at    *time.Time
-	name          *string
-	description   *string
-	color         *string
-	clearedFields map[string]struct{}
-	group         *uuid.UUID
-	clearedgroup  bool
-	items         map[uuid.UUID]struct{}
-	removeditems  map[uuid.UUID]struct{}
-	cleareditems  bool
-	done          bool
-	oldValue      func(context.Context) (*Label, error)
-	predicates    []predicate.Label
-}
-
-var _ ent.Mutation = (*LabelMutation)(nil)
-
-// labelOption allows management of the mutation configuration using functional options.
-type labelOption func(*LabelMutation)
-
-// newLabelMutation creates new mutation for the Label entity.
-func newLabelMutation(c config, op Op, opts ...labelOption) *LabelMutation {
-	m := &LabelMutation{
-		config:        c,
-		op:            op,
-		typ:           TypeLabel,
-		clearedFields: make(map[string]struct{}),
-	}
-	for _, opt := range opts {
-		opt(m)
-	}
-	return m
-}
-
-// withLabelID sets the ID field of the mutation.
-func withLabelID(id uuid.UUID) labelOption {
-	return func(m *LabelMutation) {
-		var (
-			err   error
-			once  sync.Once
-			value *Label
-		)
-		m.oldValue = func(ctx context.Context) (*Label, error) {
-			once.Do(func() {
-				if m.done {
-					err = errors.New("querying old values post mutation is not allowed")
-				} else {
-					value, err = m.Client().Label.Get(ctx, id)
-				}
-			})
-			return value, err
-		}
-		m.id = &id
-	}
-}
-
-// withLabel sets the old Label of the mutation.
-func withLabel(node *Label) labelOption {
-	return func(m *LabelMutation) {
-		m.oldValue = func(context.Context) (*Label, error) {
-			return node, nil
-		}
-		m.id = &node.ID
-	}
-}
-
-// Client returns a new `ent.Client` from the mutation. If the mutation was
-// executed in a transaction (ent.Tx), a transactional client is returned.
-func (m LabelMutation) Client() *Client {
-	client := &Client{config: m.config}
-	client.init()
-	return client
-}
-
-// Tx returns an `ent.Tx` for mutations that were executed in transactions;
-// it returns an error otherwise.
-func (m LabelMutation) Tx() (*Tx, error) {
-	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, errors.New("ent: mutation is not running in a transaction")
-	}
-	tx := &Tx{config: m.config}
-	tx.init()
-	return tx, nil
-}
-
-// SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of Label entities.
-func (m *LabelMutation) SetID(id uuid.UUID) {
-	m.id = &id
-}
-
-// ID returns the ID value in the mutation. Note that the ID is only available
-// if it was provided to the builder or after it was returned from the database.
-func (m *LabelMutation) ID() (id uuid.UUID, exists bool) {
-	if m.id == nil {
-		return
-	}
-	return *m.id, true
-}
-
-// IDs queries the database and returns the entity ids that match the mutation's predicate.
-// That means, if the mutation is applied within a transaction with an isolation level such
-// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
-// or updated by the mutation.
-func (m *LabelMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	switch {
-	case m.op.Is(OpUpdateOne | OpDeleteOne):
-		id, exists := m.ID()
-		if exists {
-			return []uuid.UUID{id}, nil
-		}
-		fallthrough
-	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().Label.Query().Where(m.predicates...).IDs(ctx)
-	default:
-		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
-	}
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (m *LabelMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
-}
-
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *LabelMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedAt returns the old "created_at" field's value of the Label entity.
-// If the Label object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LabelMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
-	}
-	return oldValue.CreatedAt, nil
-}
-
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *LabelMutation) ResetCreatedAt() {
-	m.created_at = nil
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (m *LabelMutation) SetUpdatedAt(t time.Time) {
-	m.updated_at = &t
-}
-
-// UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *LabelMutation) UpdatedAt() (r time.Time, exists bool) {
-	v := m.updated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdatedAt returns the old "updated_at" field's value of the Label entity.
-// If the Label object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LabelMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
-	}
-	return oldValue.UpdatedAt, nil
-}
-
-// ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *LabelMutation) ResetUpdatedAt() {
-	m.updated_at = nil
-}
-
-// SetName sets the "name" field.
-func (m *LabelMutation) SetName(s string) {
-	m.name = &s
-}
-
-// Name returns the value of the "name" field in the mutation.
-func (m *LabelMutation) Name() (r string, exists bool) {
-	v := m.name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldName returns the old "name" field's value of the Label entity.
-// If the Label object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LabelMutation) OldName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldName is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldName: %w", err)
-	}
-	return oldValue.Name, nil
-}
-
-// ResetName resets all changes to the "name" field.
-func (m *LabelMutation) ResetName() {
-	m.name = nil
-}
-
-// SetDescription sets the "description" field.
-func (m *LabelMutation) SetDescription(s string) {
-	m.description = &s
-}
-
-// Description returns the value of the "description" field in the mutation.
-func (m *LabelMutation) Description() (r string, exists bool) {
-	v := m.description
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDescription returns the old "description" field's value of the Label entity.
-// If the Label object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LabelMutation) OldDescription(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDescription requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
-	}
-	return oldValue.Description, nil
-}
-
-// ClearDescription clears the value of the "description" field.
-func (m *LabelMutation) ClearDescription() {
-	m.description = nil
-	m.clearedFields[label.FieldDescription] = struct{}{}
-}
-
-// DescriptionCleared returns if the "description" field was cleared in this mutation.
-func (m *LabelMutation) DescriptionCleared() bool {
-	_, ok := m.clearedFields[label.FieldDescription]
-	return ok
-}
-
-// ResetDescription resets all changes to the "description" field.
-func (m *LabelMutation) ResetDescription() {
-	m.description = nil
-	delete(m.clearedFields, label.FieldDescription)
-}
-
-// SetColor sets the "color" field.
-func (m *LabelMutation) SetColor(s string) {
-	m.color = &s
-}
-
-// Color returns the value of the "color" field in the mutation.
-func (m *LabelMutation) Color() (r string, exists bool) {
-	v := m.color
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldColor returns the old "color" field's value of the Label entity.
-// If the Label object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LabelMutation) OldColor(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldColor is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldColor requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldColor: %w", err)
-	}
-	return oldValue.Color, nil
-}
-
-// ClearColor clears the value of the "color" field.
-func (m *LabelMutation) ClearColor() {
-	m.color = nil
-	m.clearedFields[label.FieldColor] = struct{}{}
-}
-
-// ColorCleared returns if the "color" field was cleared in this mutation.
-func (m *LabelMutation) ColorCleared() bool {
-	_, ok := m.clearedFields[label.FieldColor]
-	return ok
-}
-
-// ResetColor resets all changes to the "color" field.
-func (m *LabelMutation) ResetColor() {
-	m.color = nil
-	delete(m.clearedFields, label.FieldColor)
-}
-
-// SetGroupID sets the "group" edge to the Group entity by id.
-func (m *LabelMutation) SetGroupID(id uuid.UUID) {
-	m.group = &id
-}
-
-// ClearGroup clears the "group" edge to the Group entity.
-func (m *LabelMutation) ClearGroup() {
-	m.clearedgroup = true
-}
-
-// GroupCleared reports if the "group" edge to the Group entity was cleared.
-func (m *LabelMutation) GroupCleared() bool {
-	return m.clearedgroup
-}
-
-// GroupID returns the "group" edge ID in the mutation.
-func (m *LabelMutation) GroupID() (id uuid.UUID, exists bool) {
-	if m.group != nil {
-		return *m.group, true
-	}
-	return
-}
-
-// GroupIDs returns the "group" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// GroupID instead. It exists only for internal usage by the builders.
-func (m *LabelMutation) GroupIDs() (ids []uuid.UUID) {
-	if id := m.group; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetGroup resets all changes to the "group" edge.
-func (m *LabelMutation) ResetGroup() {
-	m.group = nil
-	m.clearedgroup = false
-}
-
-// AddItemIDs adds the "items" edge to the Item entity by ids.
-func (m *LabelMutation) AddItemIDs(ids ...uuid.UUID) {
-	if m.items == nil {
-		m.items = make(map[uuid.UUID]struct{})
-	}
-	for i := range ids {
-		m.items[ids[i]] = struct{}{}
-	}
-}
-
-// ClearItems clears the "items" edge to the Item entity.
-func (m *LabelMutation) ClearItems() {
-	m.cleareditems = true
-}
-
-// ItemsCleared reports if the "items" edge to the Item entity was cleared.
-func (m *LabelMutation) ItemsCleared() bool {
-	return m.cleareditems
-}
-
-// RemoveItemIDs removes the "items" edge to the Item entity by IDs.
-func (m *LabelMutation) RemoveItemIDs(ids ...uuid.UUID) {
-	if m.removeditems == nil {
-		m.removeditems = make(map[uuid.UUID]struct{})
-	}
-	for i := range ids {
-		delete(m.items, ids[i])
-		m.removeditems[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedItems returns the removed IDs of the "items" edge to the Item entity.
-func (m *LabelMutation) RemovedItemsIDs() (ids []uuid.UUID) {
-	for id := range m.removeditems {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ItemsIDs returns the "items" edge IDs in the mutation.
-func (m *LabelMutation) ItemsIDs() (ids []uuid.UUID) {
-	for id := range m.items {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetItems resets all changes to the "items" edge.
-func (m *LabelMutation) ResetItems() {
-	m.items = nil
-	m.cleareditems = false
-	m.removeditems = nil
-}
-
-// Where appends a list predicates to the LabelMutation builder.
-func (m *LabelMutation) Where(ps ...predicate.Label) {
-	m.predicates = append(m.predicates, ps...)
-}
-
-// WhereP appends storage-level predicates to the LabelMutation builder. Using this method,
-// users can use type-assertion to append predicates that do not depend on any generated package.
-func (m *LabelMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.Label, len(ps))
-	for i := range ps {
-		p[i] = ps[i]
-	}
-	m.Where(p...)
-}
-
-// Op returns the operation name.
-func (m *LabelMutation) Op() Op {
-	return m.op
-}
-
-// SetOp allows setting the mutation operation.
-func (m *LabelMutation) SetOp(op Op) {
-	m.op = op
-}
-
-// Type returns the node type of this mutation (Label).
-func (m *LabelMutation) Type() string {
-	return m.typ
-}
-
-// Fields returns all fields that were changed during this mutation. Note that in
-// order to get all numeric fields that were incremented/decremented, call
-// AddedFields().
-func (m *LabelMutation) Fields() []string {
-	fields := make([]string, 0, 5)
-	if m.created_at != nil {
-		fields = append(fields, label.FieldCreatedAt)
-	}
-	if m.updated_at != nil {
-		fields = append(fields, label.FieldUpdatedAt)
-	}
-	if m.name != nil {
-		fields = append(fields, label.FieldName)
-	}
-	if m.description != nil {
-		fields = append(fields, label.FieldDescription)
-	}
-	if m.color != nil {
-		fields = append(fields, label.FieldColor)
-	}
-	return fields
-}
-
-// Field returns the value of a field with the given name. The second boolean
-// return value indicates that this field was not set, or was not defined in the
-// schema.
-func (m *LabelMutation) Field(name string) (ent.Value, bool) {
-	switch name {
-	case label.FieldCreatedAt:
-		return m.CreatedAt()
-	case label.FieldUpdatedAt:
-		return m.UpdatedAt()
-	case label.FieldName:
-		return m.Name()
-	case label.FieldDescription:
-		return m.Description()
-	case label.FieldColor:
-		return m.Color()
-	}
-	return nil, false
-}
-
-// OldField returns the old value of the field from the database. An error is
-// returned if the mutation operation is not UpdateOne, or the query to the
-// database failed.
-func (m *LabelMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	switch name {
-	case label.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case label.FieldUpdatedAt:
-		return m.OldUpdatedAt(ctx)
-	case label.FieldName:
-		return m.OldName(ctx)
-	case label.FieldDescription:
-		return m.OldDescription(ctx)
-	case label.FieldColor:
-		return m.OldColor(ctx)
-	}
-	return nil, fmt.Errorf("unknown Label field %s", name)
-}
-
-// SetField sets the value of a field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *LabelMutation) SetField(name string, value ent.Value) error {
-	switch name {
-	case label.FieldCreatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedAt(v)
-		return nil
-	case label.FieldUpdatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdatedAt(v)
-		return nil
-	case label.FieldName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetName(v)
-		return nil
-	case label.FieldDescription:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDescription(v)
-		return nil
-	case label.FieldColor:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetColor(v)
-		return nil
-	}
-	return fmt.Errorf("unknown Label field %s", name)
-}
-
-// AddedFields returns all numeric fields that were incremented/decremented during
-// this mutation.
-func (m *LabelMutation) AddedFields() []string {
-	return nil
-}
-
-// AddedField returns the numeric value that was incremented/decremented on a field
-// with the given name. The second boolean return value indicates that this field
-// was not set, or was not defined in the schema.
-func (m *LabelMutation) AddedField(name string) (ent.Value, bool) {
-	return nil, false
-}
-
-// AddField adds the value to the field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *LabelMutation) AddField(name string, value ent.Value) error {
-	switch name {
-	}
-	return fmt.Errorf("unknown Label numeric field %s", name)
-}
-
-// ClearedFields returns all nullable fields that were cleared during this
-// mutation.
-func (m *LabelMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(label.FieldDescription) {
-		fields = append(fields, label.FieldDescription)
-	}
-	if m.FieldCleared(label.FieldColor) {
-		fields = append(fields, label.FieldColor)
-	}
-	return fields
-}
-
-// FieldCleared returns a boolean indicating if a field with the given name was
-// cleared in this mutation.
-func (m *LabelMutation) FieldCleared(name string) bool {
-	_, ok := m.clearedFields[name]
-	return ok
-}
-
-// ClearField clears the value of the field with the given name. It returns an
-// error if the field is not defined in the schema.
-func (m *LabelMutation) ClearField(name string) error {
-	switch name {
-	case label.FieldDescription:
-		m.ClearDescription()
-		return nil
-	case label.FieldColor:
-		m.ClearColor()
-		return nil
-	}
-	return fmt.Errorf("unknown Label nullable field %s", name)
-}
-
-// ResetField resets all changes in the mutation for the field with the given name.
-// It returns an error if the field is not defined in the schema.
-func (m *LabelMutation) ResetField(name string) error {
-	switch name {
-	case label.FieldCreatedAt:
-		m.ResetCreatedAt()
-		return nil
-	case label.FieldUpdatedAt:
-		m.ResetUpdatedAt()
-		return nil
-	case label.FieldName:
-		m.ResetName()
-		return nil
-	case label.FieldDescription:
-		m.ResetDescription()
-		return nil
-	case label.FieldColor:
-		m.ResetColor()
-		return nil
-	}
-	return fmt.Errorf("unknown Label field %s", name)
-}
-
-// AddedEdges returns all edge names that were set/added in this mutation.
-func (m *LabelMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.group != nil {
-		edges = append(edges, label.EdgeGroup)
-	}
-	if m.items != nil {
-		edges = append(edges, label.EdgeItems)
-	}
-	return edges
-}
-
-// AddedIDs returns all IDs (to other nodes) that were added for the given edge
-// name in this mutation.
-func (m *LabelMutation) AddedIDs(name string) []ent.Value {
-	switch name {
-	case label.EdgeGroup:
-		if id := m.group; id != nil {
-			return []ent.Value{*id}
-		}
-	case label.EdgeItems:
-		ids := make([]ent.Value, 0, len(m.items))
-		for id := range m.items {
-			ids = append(ids, id)
-		}
-		return ids
-	}
-	return nil
-}
-
-// RemovedEdges returns all edge names that were removed in this mutation.
-func (m *LabelMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.removeditems != nil {
-		edges = append(edges, label.EdgeItems)
-	}
-	return edges
-}
-
-// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
-// the given name in this mutation.
-func (m *LabelMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	case label.EdgeItems:
-		ids := make([]ent.Value, 0, len(m.removeditems))
-		for id := range m.removeditems {
-			ids = append(ids, id)
-		}
-		return ids
-	}
-	return nil
-}
-
-// ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *LabelMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.clearedgroup {
-		edges = append(edges, label.EdgeGroup)
-	}
-	if m.cleareditems {
-		edges = append(edges, label.EdgeItems)
-	}
-	return edges
-}
-
-// EdgeCleared returns a boolean which indicates if the edge with the given name
-// was cleared in this mutation.
-func (m *LabelMutation) EdgeCleared(name string) bool {
-	switch name {
-	case label.EdgeGroup:
-		return m.clearedgroup
-	case label.EdgeItems:
-		return m.cleareditems
-	}
-	return false
-}
-
-// ClearEdge clears the value of the edge with the given name. It returns an error
-// if that edge is not defined in the schema.
-func (m *LabelMutation) ClearEdge(name string) error {
-	switch name {
-	case label.EdgeGroup:
-		m.ClearGroup()
-		return nil
-	}
-	return fmt.Errorf("unknown Label unique edge %s", name)
-}
-
-// ResetEdge resets all changes to the edge with the given name in this mutation.
-// It returns an error if the edge is not defined in the schema.
-func (m *LabelMutation) ResetEdge(name string) error {
-	switch name {
-	case label.EdgeGroup:
-		m.ResetGroup()
-		return nil
-	case label.EdgeItems:
-		m.ResetItems()
-		return nil
-	}
-	return fmt.Errorf("unknown Label edge %s", name)
 }
 
 // LocationMutation represents an operation that mutates the Location nodes in the graph.
@@ -11856,6 +11115,747 @@ func (m *NotifierMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Notifier edge %s", name)
 }
 
+// TagMutation represents an operation that mutates the Tag nodes in the graph.
+type TagMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uuid.UUID
+	created_at    *time.Time
+	updated_at    *time.Time
+	name          *string
+	description   *string
+	color         *string
+	clearedFields map[string]struct{}
+	group         *uuid.UUID
+	clearedgroup  bool
+	items         map[uuid.UUID]struct{}
+	removeditems  map[uuid.UUID]struct{}
+	cleareditems  bool
+	done          bool
+	oldValue      func(context.Context) (*Tag, error)
+	predicates    []predicate.Tag
+}
+
+var _ ent.Mutation = (*TagMutation)(nil)
+
+// tagOption allows management of the mutation configuration using functional options.
+type tagOption func(*TagMutation)
+
+// newTagMutation creates new mutation for the Tag entity.
+func newTagMutation(c config, op Op, opts ...tagOption) *TagMutation {
+	m := &TagMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeTag,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withTagID sets the ID field of the mutation.
+func withTagID(id uuid.UUID) tagOption {
+	return func(m *TagMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Tag
+		)
+		m.oldValue = func(ctx context.Context) (*Tag, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Tag.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withTag sets the old Tag of the mutation.
+func withTag(node *Tag) tagOption {
+	return func(m *TagMutation) {
+		m.oldValue = func(context.Context) (*Tag, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m TagMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m TagMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Tag entities.
+func (m *TagMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *TagMutation) ID() (id uuid.UUID, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *TagMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uuid.UUID{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Tag.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *TagMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *TagMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Tag entity.
+// If the Tag object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TagMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *TagMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *TagMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *TagMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Tag entity.
+// If the Tag object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TagMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *TagMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetName sets the "name" field.
+func (m *TagMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *TagMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Tag entity.
+// If the Tag object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TagMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *TagMutation) ResetName() {
+	m.name = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *TagMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *TagMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the Tag entity.
+// If the Tag object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TagMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *TagMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[tag.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *TagMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[tag.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *TagMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, tag.FieldDescription)
+}
+
+// SetColor sets the "color" field.
+func (m *TagMutation) SetColor(s string) {
+	m.color = &s
+}
+
+// Color returns the value of the "color" field in the mutation.
+func (m *TagMutation) Color() (r string, exists bool) {
+	v := m.color
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldColor returns the old "color" field's value of the Tag entity.
+// If the Tag object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TagMutation) OldColor(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldColor is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldColor requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldColor: %w", err)
+	}
+	return oldValue.Color, nil
+}
+
+// ClearColor clears the value of the "color" field.
+func (m *TagMutation) ClearColor() {
+	m.color = nil
+	m.clearedFields[tag.FieldColor] = struct{}{}
+}
+
+// ColorCleared returns if the "color" field was cleared in this mutation.
+func (m *TagMutation) ColorCleared() bool {
+	_, ok := m.clearedFields[tag.FieldColor]
+	return ok
+}
+
+// ResetColor resets all changes to the "color" field.
+func (m *TagMutation) ResetColor() {
+	m.color = nil
+	delete(m.clearedFields, tag.FieldColor)
+}
+
+// SetGroupID sets the "group" edge to the Group entity by id.
+func (m *TagMutation) SetGroupID(id uuid.UUID) {
+	m.group = &id
+}
+
+// ClearGroup clears the "group" edge to the Group entity.
+func (m *TagMutation) ClearGroup() {
+	m.clearedgroup = true
+}
+
+// GroupCleared reports if the "group" edge to the Group entity was cleared.
+func (m *TagMutation) GroupCleared() bool {
+	return m.clearedgroup
+}
+
+// GroupID returns the "group" edge ID in the mutation.
+func (m *TagMutation) GroupID() (id uuid.UUID, exists bool) {
+	if m.group != nil {
+		return *m.group, true
+	}
+	return
+}
+
+// GroupIDs returns the "group" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// GroupID instead. It exists only for internal usage by the builders.
+func (m *TagMutation) GroupIDs() (ids []uuid.UUID) {
+	if id := m.group; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetGroup resets all changes to the "group" edge.
+func (m *TagMutation) ResetGroup() {
+	m.group = nil
+	m.clearedgroup = false
+}
+
+// AddItemIDs adds the "items" edge to the Item entity by ids.
+func (m *TagMutation) AddItemIDs(ids ...uuid.UUID) {
+	if m.items == nil {
+		m.items = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		m.items[ids[i]] = struct{}{}
+	}
+}
+
+// ClearItems clears the "items" edge to the Item entity.
+func (m *TagMutation) ClearItems() {
+	m.cleareditems = true
+}
+
+// ItemsCleared reports if the "items" edge to the Item entity was cleared.
+func (m *TagMutation) ItemsCleared() bool {
+	return m.cleareditems
+}
+
+// RemoveItemIDs removes the "items" edge to the Item entity by IDs.
+func (m *TagMutation) RemoveItemIDs(ids ...uuid.UUID) {
+	if m.removeditems == nil {
+		m.removeditems = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		delete(m.items, ids[i])
+		m.removeditems[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedItems returns the removed IDs of the "items" edge to the Item entity.
+func (m *TagMutation) RemovedItemsIDs() (ids []uuid.UUID) {
+	for id := range m.removeditems {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ItemsIDs returns the "items" edge IDs in the mutation.
+func (m *TagMutation) ItemsIDs() (ids []uuid.UUID) {
+	for id := range m.items {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetItems resets all changes to the "items" edge.
+func (m *TagMutation) ResetItems() {
+	m.items = nil
+	m.cleareditems = false
+	m.removeditems = nil
+}
+
+// Where appends a list predicates to the TagMutation builder.
+func (m *TagMutation) Where(ps ...predicate.Tag) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the TagMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *TagMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Tag, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *TagMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *TagMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Tag).
+func (m *TagMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *TagMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.created_at != nil {
+		fields = append(fields, tag.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, tag.FieldUpdatedAt)
+	}
+	if m.name != nil {
+		fields = append(fields, tag.FieldName)
+	}
+	if m.description != nil {
+		fields = append(fields, tag.FieldDescription)
+	}
+	if m.color != nil {
+		fields = append(fields, tag.FieldColor)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *TagMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case tag.FieldCreatedAt:
+		return m.CreatedAt()
+	case tag.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case tag.FieldName:
+		return m.Name()
+	case tag.FieldDescription:
+		return m.Description()
+	case tag.FieldColor:
+		return m.Color()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *TagMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case tag.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case tag.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case tag.FieldName:
+		return m.OldName(ctx)
+	case tag.FieldDescription:
+		return m.OldDescription(ctx)
+	case tag.FieldColor:
+		return m.OldColor(ctx)
+	}
+	return nil, fmt.Errorf("unknown Tag field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TagMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case tag.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case tag.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case tag.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case tag.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case tag.FieldColor:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetColor(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Tag field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *TagMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *TagMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TagMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Tag numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *TagMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(tag.FieldDescription) {
+		fields = append(fields, tag.FieldDescription)
+	}
+	if m.FieldCleared(tag.FieldColor) {
+		fields = append(fields, tag.FieldColor)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *TagMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *TagMutation) ClearField(name string) error {
+	switch name {
+	case tag.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case tag.FieldColor:
+		m.ClearColor()
+		return nil
+	}
+	return fmt.Errorf("unknown Tag nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *TagMutation) ResetField(name string) error {
+	switch name {
+	case tag.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case tag.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case tag.FieldName:
+		m.ResetName()
+		return nil
+	case tag.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case tag.FieldColor:
+		m.ResetColor()
+		return nil
+	}
+	return fmt.Errorf("unknown Tag field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *TagMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.group != nil {
+		edges = append(edges, tag.EdgeGroup)
+	}
+	if m.items != nil {
+		edges = append(edges, tag.EdgeItems)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *TagMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case tag.EdgeGroup:
+		if id := m.group; id != nil {
+			return []ent.Value{*id}
+		}
+	case tag.EdgeItems:
+		ids := make([]ent.Value, 0, len(m.items))
+		for id := range m.items {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *TagMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.removeditems != nil {
+		edges = append(edges, tag.EdgeItems)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *TagMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case tag.EdgeItems:
+		ids := make([]ent.Value, 0, len(m.removeditems))
+		for id := range m.removeditems {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *TagMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedgroup {
+		edges = append(edges, tag.EdgeGroup)
+	}
+	if m.cleareditems {
+		edges = append(edges, tag.EdgeItems)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *TagMutation) EdgeCleared(name string) bool {
+	switch name {
+	case tag.EdgeGroup:
+		return m.clearedgroup
+	case tag.EdgeItems:
+		return m.cleareditems
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *TagMutation) ClearEdge(name string) error {
+	switch name {
+	case tag.EdgeGroup:
+		m.ClearGroup()
+		return nil
+	}
+	return fmt.Errorf("unknown Tag unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *TagMutation) ResetEdge(name string) error {
+	switch name {
+	case tag.EdgeGroup:
+		m.ResetGroup()
+		return nil
+	case tag.EdgeItems:
+		m.ResetItems()
+		return nil
+	}
+	return fmt.Errorf("unknown Tag edge %s", name)
+}
+
 // TemplateFieldMutation represents an operation that mutates the TemplateField nodes in the graph.
 type TemplateFieldMutation struct {
 	config
@@ -12583,9 +12583,11 @@ type UserMutation struct {
 	activated_on       *time.Time
 	oidc_issuer        *string
 	oidc_subject       *string
+	default_group_id   *uuid.UUID
 	clearedFields      map[string]struct{}
-	group              *uuid.UUID
-	clearedgroup       bool
+	groups             map[uuid.UUID]struct{}
+	removedgroups      map[uuid.UUID]struct{}
+	clearedgroups      bool
 	auth_tokens        map[uuid.UUID]struct{}
 	removedauth_tokens map[uuid.UUID]struct{}
 	clearedauth_tokens bool
@@ -13149,43 +13151,107 @@ func (m *UserMutation) ResetOidcSubject() {
 	delete(m.clearedFields, user.FieldOidcSubject)
 }
 
-// SetGroupID sets the "group" edge to the Group entity by id.
-func (m *UserMutation) SetGroupID(id uuid.UUID) {
-	m.group = &id
+// SetDefaultGroupID sets the "default_group_id" field.
+func (m *UserMutation) SetDefaultGroupID(u uuid.UUID) {
+	m.default_group_id = &u
 }
 
-// ClearGroup clears the "group" edge to the Group entity.
-func (m *UserMutation) ClearGroup() {
-	m.clearedgroup = true
+// DefaultGroupID returns the value of the "default_group_id" field in the mutation.
+func (m *UserMutation) DefaultGroupID() (r uuid.UUID, exists bool) {
+	v := m.default_group_id
+	if v == nil {
+		return
+	}
+	return *v, true
 }
 
-// GroupCleared reports if the "group" edge to the Group entity was cleared.
-func (m *UserMutation) GroupCleared() bool {
-	return m.clearedgroup
+// OldDefaultGroupID returns the old "default_group_id" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldDefaultGroupID(ctx context.Context) (v *uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDefaultGroupID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDefaultGroupID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDefaultGroupID: %w", err)
+	}
+	return oldValue.DefaultGroupID, nil
 }
 
-// GroupID returns the "group" edge ID in the mutation.
-func (m *UserMutation) GroupID() (id uuid.UUID, exists bool) {
-	if m.group != nil {
-		return *m.group, true
+// ClearDefaultGroupID clears the value of the "default_group_id" field.
+func (m *UserMutation) ClearDefaultGroupID() {
+	m.default_group_id = nil
+	m.clearedFields[user.FieldDefaultGroupID] = struct{}{}
+}
+
+// DefaultGroupIDCleared returns if the "default_group_id" field was cleared in this mutation.
+func (m *UserMutation) DefaultGroupIDCleared() bool {
+	_, ok := m.clearedFields[user.FieldDefaultGroupID]
+	return ok
+}
+
+// ResetDefaultGroupID resets all changes to the "default_group_id" field.
+func (m *UserMutation) ResetDefaultGroupID() {
+	m.default_group_id = nil
+	delete(m.clearedFields, user.FieldDefaultGroupID)
+}
+
+// AddGroupIDs adds the "groups" edge to the Group entity by ids.
+func (m *UserMutation) AddGroupIDs(ids ...uuid.UUID) {
+	if m.groups == nil {
+		m.groups = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		m.groups[ids[i]] = struct{}{}
+	}
+}
+
+// ClearGroups clears the "groups" edge to the Group entity.
+func (m *UserMutation) ClearGroups() {
+	m.clearedgroups = true
+}
+
+// GroupsCleared reports if the "groups" edge to the Group entity was cleared.
+func (m *UserMutation) GroupsCleared() bool {
+	return m.clearedgroups
+}
+
+// RemoveGroupIDs removes the "groups" edge to the Group entity by IDs.
+func (m *UserMutation) RemoveGroupIDs(ids ...uuid.UUID) {
+	if m.removedgroups == nil {
+		m.removedgroups = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		delete(m.groups, ids[i])
+		m.removedgroups[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedGroups returns the removed IDs of the "groups" edge to the Group entity.
+func (m *UserMutation) RemovedGroupsIDs() (ids []uuid.UUID) {
+	for id := range m.removedgroups {
+		ids = append(ids, id)
 	}
 	return
 }
 
-// GroupIDs returns the "group" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// GroupID instead. It exists only for internal usage by the builders.
-func (m *UserMutation) GroupIDs() (ids []uuid.UUID) {
-	if id := m.group; id != nil {
-		ids = append(ids, *id)
+// GroupsIDs returns the "groups" edge IDs in the mutation.
+func (m *UserMutation) GroupsIDs() (ids []uuid.UUID) {
+	for id := range m.groups {
+		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetGroup resets all changes to the "group" edge.
-func (m *UserMutation) ResetGroup() {
-	m.group = nil
-	m.clearedgroup = false
+// ResetGroups resets all changes to the "groups" edge.
+func (m *UserMutation) ResetGroups() {
+	m.groups = nil
+	m.clearedgroups = false
+	m.removedgroups = nil
 }
 
 // AddAuthTokenIDs adds the "auth_tokens" edge to the AuthTokens entity by ids.
@@ -13330,7 +13396,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -13364,6 +13430,9 @@ func (m *UserMutation) Fields() []string {
 	if m.oidc_subject != nil {
 		fields = append(fields, user.FieldOidcSubject)
 	}
+	if m.default_group_id != nil {
+		fields = append(fields, user.FieldDefaultGroupID)
+	}
 	return fields
 }
 
@@ -13394,6 +13463,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.OidcIssuer()
 	case user.FieldOidcSubject:
 		return m.OidcSubject()
+	case user.FieldDefaultGroupID:
+		return m.DefaultGroupID()
 	}
 	return nil, false
 }
@@ -13425,6 +13496,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldOidcIssuer(ctx)
 	case user.FieldOidcSubject:
 		return m.OldOidcSubject(ctx)
+	case user.FieldDefaultGroupID:
+		return m.OldDefaultGroupID(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -13511,6 +13584,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetOidcSubject(v)
 		return nil
+	case user.FieldDefaultGroupID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDefaultGroupID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -13553,6 +13633,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldOidcSubject) {
 		fields = append(fields, user.FieldOidcSubject)
 	}
+	if m.FieldCleared(user.FieldDefaultGroupID) {
+		fields = append(fields, user.FieldDefaultGroupID)
+	}
 	return fields
 }
 
@@ -13578,6 +13661,9 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldOidcSubject:
 		m.ClearOidcSubject()
+		return nil
+	case user.FieldDefaultGroupID:
+		m.ClearDefaultGroupID()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -13620,6 +13706,9 @@ func (m *UserMutation) ResetField(name string) error {
 	case user.FieldOidcSubject:
 		m.ResetOidcSubject()
 		return nil
+	case user.FieldDefaultGroupID:
+		m.ResetDefaultGroupID()
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -13627,8 +13716,8 @@ func (m *UserMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
 	edges := make([]string, 0, 3)
-	if m.group != nil {
-		edges = append(edges, user.EdgeGroup)
+	if m.groups != nil {
+		edges = append(edges, user.EdgeGroups)
 	}
 	if m.auth_tokens != nil {
 		edges = append(edges, user.EdgeAuthTokens)
@@ -13643,10 +13732,12 @@ func (m *UserMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *UserMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case user.EdgeGroup:
-		if id := m.group; id != nil {
-			return []ent.Value{*id}
+	case user.EdgeGroups:
+		ids := make([]ent.Value, 0, len(m.groups))
+		for id := range m.groups {
+			ids = append(ids, id)
 		}
+		return ids
 	case user.EdgeAuthTokens:
 		ids := make([]ent.Value, 0, len(m.auth_tokens))
 		for id := range m.auth_tokens {
@@ -13666,6 +13757,9 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 3)
+	if m.removedgroups != nil {
+		edges = append(edges, user.EdgeGroups)
+	}
 	if m.removedauth_tokens != nil {
 		edges = append(edges, user.EdgeAuthTokens)
 	}
@@ -13679,6 +13773,12 @@ func (m *UserMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
+	case user.EdgeGroups:
+		ids := make([]ent.Value, 0, len(m.removedgroups))
+		for id := range m.removedgroups {
+			ids = append(ids, id)
+		}
+		return ids
 	case user.EdgeAuthTokens:
 		ids := make([]ent.Value, 0, len(m.removedauth_tokens))
 		for id := range m.removedauth_tokens {
@@ -13698,8 +13798,8 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 3)
-	if m.clearedgroup {
-		edges = append(edges, user.EdgeGroup)
+	if m.clearedgroups {
+		edges = append(edges, user.EdgeGroups)
 	}
 	if m.clearedauth_tokens {
 		edges = append(edges, user.EdgeAuthTokens)
@@ -13714,8 +13814,8 @@ func (m *UserMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *UserMutation) EdgeCleared(name string) bool {
 	switch name {
-	case user.EdgeGroup:
-		return m.clearedgroup
+	case user.EdgeGroups:
+		return m.clearedgroups
 	case user.EdgeAuthTokens:
 		return m.clearedauth_tokens
 	case user.EdgeNotifiers:
@@ -13728,9 +13828,6 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *UserMutation) ClearEdge(name string) error {
 	switch name {
-	case user.EdgeGroup:
-		m.ClearGroup()
-		return nil
 	}
 	return fmt.Errorf("unknown User unique edge %s", name)
 }
@@ -13739,8 +13836,8 @@ func (m *UserMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *UserMutation) ResetEdge(name string) error {
 	switch name {
-	case user.EdgeGroup:
-		m.ResetGroup()
+	case user.EdgeGroups:
+		m.ResetGroups()
 		return nil
 	case user.EdgeAuthTokens:
 		m.ResetAuthTokens()

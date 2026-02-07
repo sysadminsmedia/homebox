@@ -99,7 +99,7 @@ func (ctrl *V1Controller) HandleCreateMissingThumbnails() errchain.HandlerFunc {
 
 // WipeInventoryOptions represents the options for wiping inventory
 type WipeInventoryOptions struct {
-	WipeLabels      bool `json:"wipeLabels"`
+	WipeTags        bool `json:"wipeTags"`
 	WipeLocations   bool `json:"wipeLocations"`
 	WipeMaintenance bool `json:"wipeMaintenance"`
 }
@@ -119,41 +119,41 @@ func (ctrl *V1Controller) HandleWipeInventory() errchain.HandlerFunc {
 		if ctrl.isDemo {
 			return validate.NewRequestError(errors.New("wipe inventory is not allowed in demo mode"), http.StatusForbidden)
 		}
-		
+
 		ctx := services.NewContext(r.Context())
-		
+
 		// Check if user is owner
 		if !ctx.User.IsOwner {
 			return validate.NewRequestError(errors.New("only group owners can wipe inventory"), http.StatusForbidden)
 		}
-		
+
 		// Parse options from request body
 		var options WipeInventoryOptions
 		if err := server.Decode(r, &options); err != nil {
 			// If no body provided, use default (false for all)
 			options = WipeInventoryOptions{
-				WipeLabels:      false,
+				WipeTags:        false,
 				WipeLocations:   false,
 				WipeMaintenance: false,
 			}
 		}
-		
-		totalCompleted, err := ctrl.repo.Items.WipeInventory(ctx, ctx.GID, options.WipeLabels, options.WipeLocations, options.WipeMaintenance)
+
+		totalCompleted, err := ctrl.repo.Items.WipeInventory(ctx, ctx.GID, options.WipeTags, options.WipeLocations, options.WipeMaintenance)
 		if err != nil {
 			log.Err(err).Str("action_ref", "wipe inventory").Msg("failed to run action")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
-		
+
 		// Publish mutation events for wiped resources
 		if ctrl.bus != nil {
-			if options.WipeLabels {
-				ctrl.bus.Publish(eventbus.EventLabelMutation, eventbus.GroupMutationEvent{GID: ctx.GID})
+			if options.WipeTags {
+				ctrl.bus.Publish(eventbus.EventTagMutation, eventbus.GroupMutationEvent{GID: ctx.GID})
 			}
 			if options.WipeLocations {
 				ctrl.bus.Publish(eventbus.EventLocationMutation, eventbus.GroupMutationEvent{GID: ctx.GID})
 			}
 		}
-		
+
 		return server.JSON(w, http.StatusOK, ActionAmountResult{Completed: totalCompleted})
 	}
 }

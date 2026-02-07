@@ -15,9 +15,9 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -135,19 +135,19 @@ func (_c *GroupCreate) AddItems(v ...*Item) *GroupCreate {
 	return _c.AddItemIDs(ids...)
 }
 
-// AddLabelIDs adds the "labels" edge to the Label entity by IDs.
-func (_c *GroupCreate) AddLabelIDs(ids ...uuid.UUID) *GroupCreate {
-	_c.mutation.AddLabelIDs(ids...)
+// AddTagIDs adds the "tags" edge to the Tag entity by IDs.
+func (_c *GroupCreate) AddTagIDs(ids ...uuid.UUID) *GroupCreate {
+	_c.mutation.AddTagIDs(ids...)
 	return _c
 }
 
-// AddLabels adds the "labels" edges to the Label entity.
-func (_c *GroupCreate) AddLabels(v ...*Label) *GroupCreate {
+// AddTags adds the "tags" edges to the Tag entity.
+func (_c *GroupCreate) AddTags(v ...*Tag) *GroupCreate {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddLabelIDs(ids...)
+	return _c.AddTagIDs(ids...)
 }
 
 // AddInvitationTokenIDs adds the "invitation_tokens" edge to the GroupInvitationToken entity by IDs.
@@ -320,10 +320,10 @@ func (_c *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	}
 	if nodes := _c.mutation.UsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
 			Table:   group.UsersTable,
-			Columns: []string{group.UsersColumn},
+			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
@@ -366,15 +366,15 @@ func (_c *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.LabelsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.TagsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   group.LabelsTable,
-			Columns: []string{group.LabelsColumn},
+			Table:   group.TagsTable,
+			Columns: []string{group.TagsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

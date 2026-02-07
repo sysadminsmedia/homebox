@@ -5,6 +5,7 @@
   import { useLocationStore } from "~~/stores/locations";
   import MdiLoading from "~icons/mdi/loading";
   import MdiPackageVariant from "~icons/mdi/package-variant";
+  import MdiPlus from "~icons/mdi/plus";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiDelete from "~icons/mdi/delete";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -95,6 +96,10 @@
     updateData.name = location.value?.name || "";
     updateData.description = location.value?.description || "";
     openDialog(DialogID.UpdateLocation);
+  }
+
+  function openCreateItem() {
+    openDialog(DialogID.CreateItem);
   }
 
   async function update() {
@@ -217,15 +222,25 @@
                 </div>
               </div>
             </div>
-            <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-3">
+            <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-2">
               <LabelMaker :id="location.id" type="location" />
-              <Button @click="openUpdate">
-                <MdiPencil name="mdi-pencil" />
-                {{ $t("global.edit") }}
+              <Button class="w-9 md:w-auto" @click="openCreateItem">
+                <MdiPlus name="mdi-plus" />
+                <span class="hidden md:inline">
+                  {{ $t("components.item.create_modal.title") }}
+                </span>
               </Button>
-              <Button variant="destructive" @click="confirmDelete()">
+              <Button class="w-9 md:w-auto" @click="openUpdate">
+                <MdiPencil name="mdi-pencil" />
+                <span class="hidden md:inline">
+                  {{ $t("global.edit") }}
+                </span>
+              </Button>
+              <Button variant="destructive" class="w-9 md:w-auto" @click="confirmDelete()">
                 <MdiDelete name="mdi-delete" />
-                {{ $t("global.delete") }}
+                <span class="hidden md:inline">
+                  {{ $t("global.delete") }}
+                </span>
               </Button>
             </div>
           </div>

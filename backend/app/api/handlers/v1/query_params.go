@@ -5,18 +5,14 @@ import (
 	"strconv"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 )
 
 func queryUUIDList(params url.Values, key string) []uuid.UUID {
-	var ids []uuid.UUID
-	for _, id := range params[key] {
+	return lo.FilterMap(params[key], func(id string, _ int) (uuid.UUID, bool) {
 		uid, err := uuid.Parse(id)
-		if err != nil {
-			continue
-		}
-		ids = append(ids, uid)
-	}
-	return ids
+		return uid, err == nil
+	})
 }
 
 func queryIntOrNegativeOne(s string) int {

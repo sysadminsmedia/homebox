@@ -31,6 +31,7 @@ type Config struct {
 	LabelMaker LabelMakerConf `yaml:"labelmaker"`
 	Thumbnail  Thumbnail      `yaml:"thumbnail"`
 	Barcode    BarcodeAPIConf `yaml:"barcode"`
+	Auth       AuthConfig     `yaml:"auth"`
 }
 
 type Options struct {
@@ -65,14 +66,14 @@ type WebConfig struct {
 }
 
 type LabelMakerConf struct {
-	Width                 int64          `yaml:"width"     conf:"default:526"`
-	Height                int64          `yaml:"height"    conf:"default:200"`
-	Padding               int64          `yaml:"padding"   conf:"default:32"`
-	Margin                int64          `yaml:"margin"    conf:"default:32"`
-	FontSize              float64        `yaml:"font_size" conf:"default:32.0"`
+	Width                 int64          `yaml:"width"                 conf:"default:526"`
+	Height                int64          `yaml:"height"                conf:"default:200"`
+	Padding               int64          `yaml:"padding"               conf:"default:32"`
+	Margin                int64          `yaml:"margin"                conf:"default:32"`
+	FontSize              float64        `yaml:"font_size"             conf:"default:32.0"`
 	PrintCommand          *string        `yaml:"string"`
 	AdditionalInformation *string        `yaml:"string"`
-	DynamicLength         bool           `yaml:"bool"      conf:"default:true"`
+	DynamicLength         bool           `yaml:"bool"                  conf:"default:true"`
 	LabelServiceUrl       *string        `yaml:"label_service_url"`
 	LabelServiceTimeout   *time.Duration `yaml:"label_service_timeout"`
 	RegularFontPath       *string        `yaml:"regular_font_path"`
@@ -80,13 +81,13 @@ type LabelMakerConf struct {
 }
 
 type OIDCConf struct {
-	Enabled            bool          `yaml:"enabled"             conf:"default:false"`
+	Enabled            bool          `yaml:"enabled"              conf:"default:false"`
 	IssuerURL          string        `yaml:"issuer_url"`
 	ClientID           string        `yaml:"client_id"`
 	ClientSecret       string        `yaml:"client_secret"`
 	Scope              string        `yaml:"scope"                conf:"default:openid profile email"`
 	AllowedGroups      string        `yaml:"allowed_groups"`
-	AutoRedirect       bool          `yaml:"auto_redirect"                conf:"default:false"`
+	AutoRedirect       bool          `yaml:"auto_redirect"        conf:"default:false"`
 	VerifyEmail        bool          `yaml:"verify_email"         conf:"default:false"`
 	GroupClaim         string        `yaml:"group_claim"          conf:"default:groups"`
 	EmailClaim         string        `yaml:"email_claim"          conf:"default:email"`
@@ -99,6 +100,18 @@ type OIDCConf struct {
 
 type BarcodeAPIConf struct {
 	TokenBarcodespider string `yaml:"token_barcodespider"`
+}
+
+type AuthConfig struct {
+	RateLimit AuthRateLimit `yaml:"rate_limit"`
+}
+
+type AuthRateLimit struct {
+	Enabled     bool          `yaml:"enabled"      conf:"default:true"`
+	Window      time.Duration `yaml:"window"       conf:"default:1m"`
+	MaxAttempts int           `yaml:"max_attempts" conf:"default:5"`
+	BaseBackoff time.Duration `yaml:"base_backoff" conf:"default:10s"`
+	MaxBackoff  time.Duration `yaml:"max_backoff"  conf:"default:5m"`
 }
 
 // New parses the CLI/Config file and returns a Config struct. If the file argument is an empty string, the

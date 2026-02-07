@@ -16,10 +16,10 @@ import (
 func TestAttachmentRepo_Create(t *testing.T) {
 	item := useItems(t, 1)[0]
 
-	ids := []uuid.UUID{item.ID}
+	var ids []uuid.UUID
 	t.Cleanup(func() {
 		for _, id := range ids {
-			_ = tRepos.Attachments.Delete(context.Background(), tGroup.ID, item.ID, id)
+			_ = tRepos.Attachments.Delete(context.Background(), tGroup.ID, id)
 		}
 	})
 
@@ -87,7 +87,7 @@ func useAttachments(t *testing.T, n int) []*ent.Attachment {
 	ids := make([]uuid.UUID, 0, n)
 	t.Cleanup(func() {
 		for _, id := range ids {
-			_ = tRepos.Attachments.Delete(context.Background(), tGroup.ID, item.ID, id)
+			_ = tRepos.Attachments.Delete(context.Background(), tGroup.ID, id)
 		}
 	})
 
@@ -123,9 +123,8 @@ func TestAttachmentRepo_Update(t *testing.T) {
 
 func TestAttachmentRepo_Delete(t *testing.T) {
 	entity := useAttachments(t, 1)[0]
-	item := useItems(t, 1)[0]
 
-	err := tRepos.Attachments.Delete(context.Background(), tGroup.ID, item.ID, entity.ID)
+	err := tRepos.Attachments.Delete(context.Background(), tGroup.ID, entity.ID)
 	require.NoError(t, err)
 
 	_, err = tRepos.Attachments.Get(context.Background(), tGroup.ID, entity.ID)
@@ -168,8 +167,8 @@ func TestAttachmentRepo_UpdateNonPhotoDoesNotAffectPrimaryPhoto(t *testing.T) {
 
 	// Cleanup
 	t.Cleanup(func() {
-		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, item.ID, photoAttachment.ID)
-		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, item.ID, manualAttachment.ID)
+		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, photoAttachment.ID)
+		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, manualAttachment.ID)
 	})
 
 	// Verify photo is primary initially
@@ -206,7 +205,7 @@ func TestAttachmentRepo_AddingPDFAfterPhotoKeepsPhotoAsPrimary(t *testing.T) {
 
 	// Cleanup
 	t.Cleanup(func() {
-		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, item.ID, photoAttachment.ID)
+		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, photoAttachment.ID)
 	})
 
 	// Verify photo becomes primary automatically (since it's the first photo)
@@ -220,7 +219,7 @@ func TestAttachmentRepo_AddingPDFAfterPhotoKeepsPhotoAsPrimary(t *testing.T) {
 
 	// Add to cleanup
 	t.Cleanup(func() {
-		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, item.ID, pdfAttachment.ID)
+		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, pdfAttachment.ID)
 	})
 
 	// Step 3: Verify photo is still primary after adding PDF
@@ -255,8 +254,8 @@ func TestAttachmentRepo_SettingPhotoPrimaryStillWorks(t *testing.T) {
 
 	// Cleanup
 	t.Cleanup(func() {
-		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, item.ID, photo1.ID)
-		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, item.ID, photo2.ID)
+		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, photo1.ID)
+		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, photo2.ID)
 	})
 
 	// First photo should be primary (since it was created first)
@@ -290,25 +289,25 @@ func TestAttachmentRepo_PathNormalization(t *testing.T) {
 			PrefixPath: ".data",
 		},
 	}
-	
+
 	testGUID := uuid.MustParse("eb6bf410-a1a8-478d-a803-ca3948368a0c")
 	testHash := "f295eb01-18a9-4631-a797-70bd9623edd4.png"
-	
+
 	// Test path() method - should always return forward slashes
 	relativePath := repo.path(testGUID, testHash)
 	assert.Equal(t, "eb6bf410-a1a8-478d-a803-ca3948368a0c/documents/f295eb01-18a9-4631-a797-70bd9623edd4.png", relativePath)
 	assert.NotContains(t, relativePath, "\\", "path() should not contain backslashes")
-	
+
 	// Test fullPath() with forward slash input (from database)
 	fullPath := repo.fullPath("eb6bf410-a1a8-478d-a803-ca3948368a0c/documents/f295eb01-18a9-4631-a797-70bd9623edd4.png")
 	assert.Equal(t, ".data/eb6bf410-a1a8-478d-a803-ca3948368a0c/documents/f295eb01-18a9-4631-a797-70bd9623edd4.png", fullPath)
 	assert.NotContains(t, fullPath, "\\", "fullPath() should not contain backslashes")
-	
+
 	// Test fullPath() with backslash input (legacy Windows paths from old database)
 	fullPathWithBackslash := repo.fullPath("eb6bf410-a1a8-478d-a803-ca3948368a0c\\documents\\f295eb01-18a9-4631-a797-70bd9623edd4.png")
 	assert.Equal(t, ".data/eb6bf410-a1a8-478d-a803-ca3948368a0c/documents/f295eb01-18a9-4631-a797-70bd9623edd4.png", fullPathWithBackslash)
 	assert.NotContains(t, fullPathWithBackslash, "\\", "fullPath() should normalize backslashes to forward slashes")
-	
+
 	// Test with Windows-style prefix path
 	repoWindows := &AttachmentRepo{
 		storage: config.Storage{
@@ -317,7 +316,7 @@ func TestAttachmentRepo_PathNormalization(t *testing.T) {
 	}
 	fullPathWindows := repoWindows.fullPath("eb6bf410-a1a8-478d-a803-ca3948368a0c/documents/f295eb01-18a9-4631-a797-70bd9623edd4.png")
 	assert.NotContains(t, fullPathWindows, "\\", "fullPath() should normalize Windows paths")
-	
+
 	// Test empty prefix
 	repoNoPrefix := &AttachmentRepo{
 		storage: config.Storage{
@@ -326,7 +325,7 @@ func TestAttachmentRepo_PathNormalization(t *testing.T) {
 	}
 	fullPathNoPrefix := repoNoPrefix.fullPath("eb6bf410-a1a8-478d-a803-ca3948368a0c/documents/f295eb01-18a9-4631-a797-70bd9623edd4.png")
 	assert.Equal(t, "eb6bf410-a1a8-478d-a803-ca3948368a0c/documents/f295eb01-18a9-4631-a797-70bd9623edd4.png", fullPathNoPrefix)
-	
+
 	// Test with single slash prefix (like in tests)
 	repoSlashPrefix := &AttachmentRepo{
 		storage: config.Storage{

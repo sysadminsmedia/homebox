@@ -1,4 +1,48 @@
 {
+    "collection": {
+        "copy_invite": "复制邀请链接",
+        "create_invite": "创建邀请",
+        "delete_collection": "删除集合",
+        "delete_confirm": "确定删除此集合吗？此操作无法撤销。",
+        "deleted_collection": "集合已删除。",
+        "expires_at": "失效时间",
+        "invite_token": "令牌",
+        "invite_token_hidden": "不再可见",
+        "invite_token_warning": "邀请令牌仅显示一次。立刻复制链接；如果离开或者刷新这个页面，你将无法再次看到这个令牌。",
+        "invites": "邀请",
+        "invites_delete_confirm": "您确定要删除此邀请？",
+        "leave_collection": "离开集合",
+        "leave_confirm": "您确定要离开该集合吗？",
+        "left_collection": "您已离开集合。",
+        "manage_collection": "管理集合",
+        "members": {
+            "cannot_remove_last": "您不能删除最后一个成员。",
+            "email": "邮箱",
+            "empty": "此集合中还没有成员。",
+            "member": "成员",
+            "name": "名称",
+            "owner": "所有者",
+            "remove_confirm": "您确定要移除这个成员吗？",
+            "removed": "成员已经移除",
+            "role": "角色"
+        },
+        "no_collections": {
+            "create": "创建新集合",
+            "join": "加入现有集合",
+            "message": "您似乎不属于任何集合。为你的物品创建一个新的集合，或者加入一个已邀请您的集合。",
+            "title": "未找到集合"
+        },
+        "no_invites": "没有邀请",
+        "remaining_uses": "剩余可用次数",
+        "tabs": {
+            "invites": "邀请",
+            "members": "成员",
+            "notifiers": "通知器",
+            "settings": "设置",
+            "tools": "工具"
+        },
+        "uses": "可用次数"
+    },
     "components": {
         "app": {
             "create_modal": {
@@ -22,6 +66,47 @@
                 "latest_version": "最新版本",
                 "new_version_available": "有新版本发布了",
                 "new_version_available_link": "点击这里了解新版本更新内容"
+            }
+        },
+        "collection": {
+            "create_modal": {
+                "name_label": "集合名称",
+                "title": "创建集合",
+                "toast": {
+                    "already_creating": "已经有一个正在创建的集合",
+                    "create_failed": "创建集合失败",
+                    "create_success": "集合已创建",
+                    "please_enter_name": "请输入集合名称"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "请选择失效日期和时间。",
+                    "invalid_expiry_past": "失效日期必须是未来日期。",
+                    "invalid_uses": "可用次数必须是1到100之间的数字。"
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "集合邀请码",
+                "invites_should_look_like": "邀请应如下所示：",
+                "join": "加入集合",
+                "no_invite_code_create_one": "没有邀请码？改为创建新集合",
+                "title": "加入集合",
+                "toast": {
+                    "already_joining": "已经有一个正在加入的集合",
+                    "join_failed": "加入集合失败",
+                    "join_success": "已加入集合",
+                    "please_enter_valid_join_code": "请输入有效的收藏夹邀请码"
+                }
+            },
+            "selector": {
+                "collection_options": "集合选项",
+                "create_collection": "创建新集合",
+                "join_collection": "加入现有集合",
+                "no_collection_found": "没有找到集合",
+                "search_collections": "搜索集合...",
+                "select_collection": "选择集合",
+                "your_collections": "你的集合"
             }
         },
         "color_selector": {
@@ -94,6 +179,7 @@
                 "open_new_tab": "在新标签页中打开"
             },
             "create_modal": {
+                "clear_template": "清空模板",
                 "delete_photo": "删除照片",
                 "item_description": "物品描述",
                 "item_name": "物品名称",
@@ -132,6 +218,7 @@
                 "title": "导入产品"
             },
             "selector": {
+                "clear": "清空已选项目",
                 "no_results": "返回为空",
                 "placeholder": "选择…",
                 "search_placeholder": "输入以搜索…",
@@ -139,9 +226,9 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "添加标签",
+                    "add_tags": "添加标签",
                     "failed_to_update_item": "更新项目失败",
-                    "remove_labels": "删除标签",
+                    "remove_tags": "删除标签",
                     "title": "更改项目详细信息"
                 },
                 "selectable": {
@@ -156,10 +243,10 @@
                 "table": {
                     "dropdown": {
                         "actions": "动作",
-                        "change_labels": "更改标签",
-                        "change_labels_success": "标签已更改",
                         "change_location": "更改位置",
                         "change_location_success": "位置已更改",
+                        "change_tags": "更改标签",
+                        "change_tags_success": "标签已更改",
                         "create_maintenance_item": "为物品创建维护项目",
                         "create_maintenance_selected": "为所选物品创建维护项目",
                         "create_maintenance_success": "已创建维护项目",
@@ -188,23 +275,6 @@
                 }
             }
         },
-        "label": {
-            "create_modal": {
-                "label_color": "标签颜色",
-                "label_description": "标签说明",
-                "label_name": "标签名称",
-                "title": "创建标签",
-                "toast": {
-                    "already_creating": "正在创建标签",
-                    "create_failed": "无法创建标签",
-                    "create_success": "标签已创建",
-                    "label_name_too_long": "标签名称不能超过50个字符"
-                }
-            },
-            "selector": {
-                "select_labels": "选择标签"
-            }
-        },
         "location": {
             "create_modal": {
                 "location_description": "位置描述",
@@ -217,18 +287,96 @@
                 }
             },
             "selector": {
+                "clear": "清除位置选择",
                 "no_location_found": "未找到位置",
                 "parent_location": "父位置",
                 "search_location": "搜索位置",
                 "select_location": "选择一个位置"
             },
             "tree": {
-                "no_locations": "没有可用的位置。请添加新的位置\n'<span class=\"link-primary\">'创建'</span>' 按钮在导航栏上."
+                "no_locations": "没有可用的位置。点击创建按钮新增位置。"
             }
         },
         "quick_menu": {
             "no_results": "未找到结果。",
             "shortcut_hint": "使用数字键快速选择一个操作。"
+        },
+        "tag": {
+            "create_modal": {
+                "tag_color": "标签颜色",
+                "tag_description": "标签描述",
+                "tag_name": "标签名",
+                "title": "创建标签",
+                "toast": {
+                    "already_creating": "已经创建了一个标签",
+                    "create_failed": "无法创建标签",
+                    "create_success": "标签已经创建",
+                    "tag_name_too_long": "标签名称长度不得超过50个字符"
+                }
+            },
+            "selector": {
+                "select_tags": "选择标签"
+            }
+        },
+        "template": {
+            "apply_template": "应用模板",
+            "card": {
+                "delete": "删除模板",
+                "duplicate": "复制模板",
+                "edit": "编辑模板"
+            },
+            "confirm_delete": "删除此模板？",
+            "create_modal": {
+                "title": "创建模板"
+            },
+            "detail": {
+                "default_values": "默认值",
+                "updated": "更新于"
+            },
+            "edit_modal": {
+                "title": "编辑模板"
+            },
+            "empty_value": "(空)",
+            "form": {
+                "custom_fields": "自定义字段",
+                "default_item_values": "物品默认值",
+                "default_location": "默认位置",
+                "default_value": "默认值",
+                "field_name": "字段名称",
+                "item_description": "物品描述",
+                "item_name": "物品名称",
+                "lifetime_warranty": "包含终身保修",
+                "location": "位置",
+                "manufacturer": "制造商",
+                "model_number": "型号",
+                "no_custom_fields": "无自定义字段。",
+                "template_description": "模板描述",
+                "template_name": "模板名称"
+            },
+            "hide_defaults": "隐藏默认值",
+            "save_as_template": "另存为模板",
+            "selector": {
+                "clear": "清除已选模板",
+                "label": "模板（可选）",
+                "not_found": "未找到模板",
+                "search": "搜索模板...",
+                "select": "选择模板…"
+            },
+            "show_defaults": "显示默认值",
+            "toast": {
+                "applied": "模板“{name}”已应用",
+                "create_failed": "无法创建模板",
+                "created": "模板已创建",
+                "delete_failed": "删除模板失败",
+                "deleted": "模板已删除",
+                "duplicate_failed": "复制模板失败",
+                "duplicated": "模板复制为“{name}”",
+                "load_failed": "加载模板详细信息失败",
+                "saved_as_template": "物品已保存为模板“{name}”",
+                "update_failed": "更新模板失败",
+                "updated": "模板已更新"
+            },
+            "using_template": "使用模板： {name}"
         }
     },
     "errors": {
@@ -254,18 +402,18 @@
         "follow_dev": "关注开发者",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API接口'</a>'",
-            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' 版本号: { version } 构建号: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' 版本号: { version } 构建号: { build } '</a>'"
         },
         "github": "Github项目",
         "insured": "已投保",
         "items": "物品",
         "join_discord": "加入Discord讨论",
-        "labels": "标签",
         "loading": "加载中…",
         "locations": "位置",
         "maintenance": "维护",
         "name": "名称",
         "navigate": "导航",
+        "no": "否",
         "password": "密码",
         "preview": "预览",
         "quantity": "数量",
@@ -275,21 +423,23 @@
         "search": "搜索",
         "sign_out": "登出",
         "submit": "提交",
+        "tags": "标签",
         "unknown": "未知",
         "update": "更新",
         "updating": "更新中",
         "value": "值",
         "version": "版本：{version}",
-        "welcome": "欢迎，{username}"
+        "welcome": "欢迎，{username}",
+        "yes": "是"
     },
     "home": {
-        "labels": "标签",
         "quick_statistics": "快速统计",
         "recently_added": "最近加入",
         "storage_locations": "存放位置",
+        "tags": "标签",
         "total_items": "项目总量",
-        "total_labels": "标签总量",
         "total_locations": "位置数量",
+        "total_tags": "所有标签",
         "total_value": "价值总和"
     },
     "index": {
@@ -297,6 +447,7 @@
         "dont_join_group": "不想加入群组？",
         "joining_group": "您正在加入现有群组！",
         "login": "登录",
+        "or": "或",
         "register": "注册",
         "remember_me": "记住我",
         "set_email": "您的电子邮箱是什么？",
@@ -308,6 +459,14 @@
             "invalid_email": "电子邮件地址无效",
             "invalid_email_password": "电子邮箱或密码无效",
             "login_success": "已成功登录",
+            "oidc_access_denied": "访问被拒绝：您的帐户没有所需的角色/组成员身份",
+            "oidc_auth_failed": "OIDC 认证失败",
+            "oidc_invalid_response": "收到无效的OIDC响应",
+            "oidc_provider_error": "OIDC提供者返回了错误",
+            "oidc_security_error": "OIDC安全错误-可能是CSRF攻击",
+            "oidc_session_expired": "OIDC 会话已过期",
+            "oidc_token_expired": "OIDC Token 已过期",
+            "oidc_token_invalid": "OIDC Token 签名无效",
             "problem_registering": "注册用户时出现问题",
             "user_registered": "用户已注册"
         }
@@ -366,7 +525,7 @@
         "manufacturer": "制造商",
         "model_number": "型号",
         "name": "名称",
-        "negate_labels": "取消选中的标签",
+        "negate_tags": "否定选定的标签",
         "next_page": "下一页",
         "no_attachments": "没有找到附件",
         "no_results": "没有可显示的物品",
@@ -433,18 +592,6 @@
         "warranty": "保修",
         "warranty_details": "保修详情",
         "warranty_expires": "保修持续到"
-    },
-    "labels": {
-        "label_delete_confirm": "确定删除此标签吗？此操作无法撤回。",
-        "no_results": "未找到标签",
-        "toast": {
-            "failed_delete_label": "删除标签失败",
-            "failed_load_label": "加载标签失败",
-            "failed_update_label": "更新标签失败",
-            "label_deleted": "已删除标签",
-            "label_updated": "标签已更新"
-        },
-        "update_label": "更新标签"
     },
     "languages": {
         "bs-BA": "波斯尼亚语（波斯尼亚和黑塞哥维那）",
@@ -536,15 +683,21 @@
     },
     "menu": {
         "create_item": "物品/资产",
-        "create_label": "标签",
         "create_location": "位置",
+        "create_tag": "标签",
         "home": "主页",
         "locations": "位置",
         "maintenance": "维护",
         "profile": "用户",
         "scanner": "扫描仪",
         "search": "搜索",
-        "tools": "工具"
+        "templates": "模板"
+    },
+    "pages": {
+        "templates": {
+            "no_templates": "尚无模板。",
+            "title": "模板"
+        }
     },
     "profile": {
         "active": "启用",
@@ -558,12 +711,17 @@
         "display_legacy_header": "{currentValue, select, true {禁用旧版标头} false {启用旧版标头} other {未命中}}",
         "enabled": "已启用",
         "example": "例子",
-        "gen_invite": "生成邀请链接",
         "group_settings": "组设置",
         "group_settings_sub": "共享组设置。您可能需要刷新浏览器来让某些设置生效。",
         "inactive": "未启用",
         "language": "语言",
         "legacy_image_fit": "{currentValue, select, true {禁用旧版适合：适合条形码的图像} false {启用旧版适合：裁剪以图像} other {未命中}}",
+        "moved_notice_body": "通知器、邀请和货币设置已移至集合页面。",
+        "moved_notice_description": "这些设置现在按集合进行管理。",
+        "moved_notice_link_invites": "集合邀请",
+        "moved_notice_link_notifiers": "集合通知器",
+        "moved_notice_link_settings": "集合币种设置",
+        "moved_notice_title": "正在寻找通知器、邀请或货币设置？",
         "new_password": "新密码",
         "no_notifiers": "尚未配置通知器",
         "no_override": "没有预算",
@@ -602,8 +760,8 @@
             "bordered_labels": "标签边框",
             "generate_page": "生成标签页",
             "input_placeholder": "在此输入",
-            "instruction_1": "Homebox 标签生成器是一款用于帮助您为 Homebox 库存打印标签的工具。旨在用于\n预先打印标签，这样您就可以一次性打印出多张标签，随时备用并贴在物品上",
-            "instruction_2": "因此，这些标签的工作方式是在标签上打印一个 URL 的二维码以及资产ID信息。\n如果您在Homebox设置中禁用了资产ID，您仍然可以使用此工具，但这些资产编号将不会对应任何物品",
+            "instruction_1": "HomeBox 标签生成器是一个帮助您打印 Homebox 库存标签的工具。这些标签是\n预打印的设计，这样您就可以一次性打印出多张标签，并可以随时将它们粘贴到物品上",
+            "instruction_2": "因此，这些标签会打印一个 URL 的二维码以及资产ID信息来完成工作。\n如果您在 HomeBox 设置中禁用了资产ID，您仍然可以使用此工具，但资产编号将不会和任何物品相关",
             "instruction_3": "此功能处于早期开发阶段，可能会在未来版本中发生变化，如果您有反馈，请\n在'<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub讨论'</a>'中提供",
             "label_height": "标签高度",
             "label_width": "标签宽度",
@@ -615,6 +773,13 @@
             "page_top_padding": "顶部页边距",
             "page_width": "页面宽度",
             "qr_code_example": "二维码地址示例",
+            "replace_homebox_behavior": "替换“HomeBox”文本行为",
+            "replace_homebox_behavior_always_replace": "始终替换“HomeBox”",
+            "replace_homebox_behavior_item_no_location": "物品没有位置时替换“HomeBox”",
+            "replace_homebox_behavior_item_no_name": "物品没有名称时替换“HomeBox”",
+            "replace_homebox_behavior_item_no_name_no_location": "物品没有名称和位置时替换“HomeBox”",
+            "replace_homebox_behavior_show_homebox": "显示“HomeBox”",
+            "replace_homebox_text": "替换文本",
             "tip_1": "这里的默认设置是\n '<a href=\"https://www.avery.com/templates/5260\">'Avery 5260标签纸'</a>'的设置，\n 你需要根据你的标签纸调整大小设置。",
             "tip_2": "如果您在自定义纸张尺寸，单位是英寸。在制作 Avery 5260 标签纸时，我发现\n其官方模板中的尺寸并不完全适合实际打印在标签框内，\n'<b>'所以请多尝试和调整来找到最佳设置。'</b>'",
             "tip_3": "打印时，请务必注意：\n '<ol><li>'将边距设置为0或无'</li><li>“将缩放比例设置为100%”</li><li>'禁用双面打印'</li><li>'打印测试页'</li></ol>'",
@@ -636,6 +801,18 @@
         "title": "扫描器",
         "unsupported": "媒体流API只在HTTPS环境下支持"
     },
+    "tags": {
+        "no_results": "未找到标签",
+        "tag_delete_confirm": "您确定要删除此标签吗？此操作无法撤销。",
+        "toast": {
+            "failed_delete_tag": "删除标签失败",
+            "failed_load_tag": "加载标签失败",
+            "failed_update_tag": "更新标签失败",
+            "tag_deleted": "标签已删除",
+            "tag_updated": "标签已更新"
+        },
+        "update_tag": "更新标签"
+    },
     "tools": {
         "actions": "库存操作",
         "actions_set": {
@@ -654,12 +831,23 @@
             "set_primary_photo_button": "设置封面",
             "set_primary_photo_confirm": "您确定要设置封面图片吗？这可能需要一段时间，并且无法撤消。",
             "set_primary_photo_sub": "设置封面在 Homebox v0.10.0 版本中，该列的类型为图片。如果没有设置封面，则会把附件中第一张图片作为封面。 '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'更多请参考 GitHub PR #576'</a>'",
+            "wipe_inventory": "清空库存",
+            "wipe_inventory_button": "清空库存",
+            "wipe_inventory_confirm": "您确定要清空所有库存吗？这将删除所有物品，并且无法撤消。",
+            "wipe_inventory_locations": "同时清空所有位置",
+            "wipe_inventory_maintenance": "同时清空所有维护记录",
+            "wipe_inventory_note": "注意：只有群组所有者才能执行此操作。",
+            "wipe_inventory_sub": "永久删除库存中的所有项目。这个操作将删除包括附件和照片在内的所有物品数据，并且不可逆。",
+            "wipe_inventory_tags": "还要清除所有标签",
             "zero_datetimes": "重置所有项目的日期与时间",
             "zero_datetimes_button": "重置所有项目的日期与时间",
             "zero_datetimes_confirm": "您确定要重置所有日期和时间值吗？这可能需要一段时间，并且无法撤消。",
             "zero_datetimes_sub": "将库存中所有日期时间字段的值重置为开始日期。这是为了修复在网站开发早期出现的一个错误，该错误导致自定义时间值保存时，日期会出现偏移的问题。 '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'详细问题请参考 Github Issue #236 '</a>'"
         },
         "actions_sub": "将操作批量应用于您的库存。这些操作都是不可逆转的，'<b> '三思而后行！'</b>'",
+        "demo_mode_error": {
+            "wipe_inventory": "Homebox 处于演示模式时，无法清空库存、标签、位置和维护记录。请确认你不处于演示模式，然后再次尝试。"
+        },
         "import_export": "导入/导出",
         "import_export_set": {
             "export": "导出库存",
@@ -687,7 +875,9 @@
             "failed_ensure_ids": "无法确认资产ID。",
             "failed_ensure_import_refs": "无法确认导入参考。",
             "failed_set_primary_photos": "无法设置封面。",
-            "failed_zero_datetimes": "无法重置日期和时间值。"
+            "failed_wipe_inventory": "清空库存失败。",
+            "failed_zero_datetimes": "无法重置日期和时间值。",
+            "wipe_inventory_success": "已成功清空库存。{ results }个物品已被删除。"
         }
     }
 }

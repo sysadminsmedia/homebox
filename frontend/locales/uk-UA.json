@@ -144,16 +144,6 @@
                 }
             }
         },
-        "label": {
-            "create_modal": {
-                "label_description": "Опис мітки",
-                "label_name": "Назва мітки",
-                "title": "Створити наліпку"
-            },
-            "selector": {
-                "select_labels": "Виберіть ярлики"
-            }
-        },
         "location": {
             "create_modal": {
                 "location_description": "Опис місця",
@@ -198,7 +188,6 @@
         "insured": "Застрахований",
         "items": "Предмети",
         "join_discord": "Доєднатися до Discord",
-        "labels": "Наліпки",
         "locations": "Локації",
         "maintenance": "Технічне обслуговування",
         "name": "Ім'я",
@@ -216,12 +205,10 @@
         "welcome": "Вітаю, { username }"
     },
     "home": {
-        "labels": "Мітки",
         "quick_statistics": "Швидка статистика",
         "recently_added": "Нещодавно додано",
         "storage_locations": "Місця зберігання",
         "total_items": "Всього елементів",
-        "total_labels": "Всього міток",
         "total_locations": "Загальна кількість місць",
         "total_value": "Загальна вартість"
     },
@@ -264,7 +251,6 @@
         "manufacturer": "Виробник",
         "model_number": "Номер моделі",
         "name": "Назва",
-        "negate_labels": "Відмінити обрані мітки",
         "next_page": "Наступна сторінка",
         "no_results": "Предметів нема",
         "notes": "Примітки",
@@ -302,10 +288,6 @@
         "warranty": "Гарантія",
         "warranty_details": "Деталі гарантії",
         "warranty_expires": "Гарантія закінчується"
-    },
-    "labels": {
-        "no_results": "Мітки не знайдено",
-        "update_label": "Оновити мітку"
     },
     "languages": {
         "ca": "Каталонська",
@@ -385,15 +367,13 @@
     },
     "menu": {
         "create_item": "Елемент / Актив",
-        "create_label": "Мітка",
         "create_location": "Місце",
         "home": "Головна",
         "locations": "Локації",
         "maintenance": "Обслуговування",
         "profile": "Профіль",
         "scanner": "Сканер",
-        "search": "Пошук",
-        "tools": "Інструменти"
+        "search": "Пошук"
     },
     "profile": {
         "active": "Активний",
@@ -404,7 +384,6 @@
         "delete_account_sub": "Видалити акаунт і всі пов'язані дані. Це невідворотна дія.",
         "enabled": "Включено",
         "example": "Приклад",
-        "gen_invite": "Створити посилання для запрошення",
         "group_settings": "Налаштування групи",
         "group_settings_sub": "Налаштування спільної групи. Можливо, вам доведеться оновити сторінку для збереження параметрів.",
         "inactive": "Неактивний",
