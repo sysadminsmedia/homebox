@@ -757,20 +757,20 @@ func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, d
 	// Use a buffer to store content for blake3 key derivation and storage
 	// While buffering, we compute MD5 and blake3 hashes in parallel for efficiency
 	buf := new(bytes.Buffer)
-	
+
 	// Create hash writers
 	blake3Hasher := blake3.New()
 	md5Hasher := md5.New()
-	
+
 	// Use MultiWriter to write to buffer and both hashers simultaneously
 	multiWriter := io.MultiWriter(buf, blake3Hasher, md5Hasher)
-	
+
 	_, err := io.Copy(multiWriter, doc.Content)
 	if err != nil {
 		log.Err(err).Msg("failed to read file content")
 		return UploadResult{}, err
 	}
-	
+
 	// Now the buffer contains all the data, and streaming hashes are computed
 	contentBytes := buf.Bytes()
 
@@ -790,7 +790,7 @@ func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, d
 			log.Err(err).Msg("failed to close bucket")
 		}
 	}(bucket)
-	
+
 	contentType := http.DetectContentType(contentBytes[:min(512, len(contentBytes))])
 	options := &blob.WriterOptions{
 		ContentType: contentType,

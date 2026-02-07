@@ -2,6 +2,7 @@ package reporting
 
 import (
 	"github.com/gocarina/gocsv"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
@@ -23,9 +24,8 @@ type BillOfMaterialsEntry struct {
 // BillOfMaterialsCSV returns a byte slice of the Bill of Materials for a given GID in CSV format
 // See BillOfMaterialsEntry for the format of the output
 func BillOfMaterialsCSV(entities []repo.ItemOut) ([]byte, error) {
-	bomEntries := make([]BillOfMaterialsEntry, len(entities))
-	for i, entity := range entities {
-		bomEntries[i] = BillOfMaterialsEntry{
+	bomEntries := lo.Map(entities, func(entity repo.ItemOut, _ int) BillOfMaterialsEntry {
+		return BillOfMaterialsEntry{
 			PurchaseDate: entity.PurchaseTime,
 			Name:         entity.Name,
 			Description:  entity.Description,
@@ -36,7 +36,7 @@ func BillOfMaterialsCSV(entities []repo.ItemOut) ([]byte, error) {
 			Price:        entity.PurchasePrice,
 			TotalPrice:   entity.PurchasePrice * float64(entity.Quantity),
 		}
-	}
+	})
 
 	return gocsv.MarshalBytes(&bomEntries)
 }

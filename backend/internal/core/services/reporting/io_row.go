@@ -3,6 +3,7 @@ package reporting
 import (
 	"strings"
 
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
@@ -86,11 +87,7 @@ func (csf LocationString) String() string {
 }
 
 func fromPathSlice(s []repo.ItemPath) LocationString {
-	v := make(LocationString, len(s))
-
-	for i := range s {
-		v[i] = s[i].Name
-	}
-
-	return v
+	return lo.Map(s, func(p repo.ItemPath, _ int) string {
+		return p.Name
+	})
 }

@@ -9,13 +9,14 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -84,7 +85,7 @@ type (
 		TotalUsers        int     `json:"totalUsers"`
 		TotalItems        int     `json:"totalItems"`
 		TotalLocations    int     `json:"totalLocations"`
-		TotalTags       int     `json:"totalTags"`
+		TotalTags         int     `json:"totalTags"`
 		TotalItemPrice    float64 `json:"totalItemPrice"`
 		TotalWithWarranty int     `json:"totalWithWarranty"`
 	}
@@ -192,11 +193,13 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 	stats.PriceAtStart = orDefault(maybeStart, 0)
 	stats.PriceAtEnd = orDefault(maybeEnd, 0)
 
-	var v []struct {
+	type itemPriceEntry struct {
 		Name          string    `json:"name"`
 		CreatedAt     time.Time `json:"created_at"`
 		PurchasePrice float64   `json:"purchase_price"`
 	}
+
+	var v []itemPriceEntry
 
 	// Get Created Date and Price of all items between start and end
 	err = r.db.Item.Query().
@@ -217,14 +220,12 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 		return nil, err
 	}
 
-	stats.Entries = make([]ValueOverTimeEntry, len(v))
-
-	for i, vv := range v {
-		stats.Entries[i] = ValueOverTimeEntry{
+	stats.Entries = lo.Map(v, func(vv itemPriceEntry, _ int) ValueOverTimeEntry {
+		return ValueOverTimeEntry{
 			Date:  vv.CreatedAt,
 			Value: vv.PurchasePrice,
 		}
-	}
+	})
 
 	return &stats, nil
 }
