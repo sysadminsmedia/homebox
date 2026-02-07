@@ -61,10 +61,10 @@ var (
 
 func mapUserOut(user *ent.User) UserOut {
 	return UserOut{
-		ID:          user.ID,
-		Name:        user.Name,
-		Email:       user.Email,
-		IsSuperuser: user.IsSuperuser,
+		ID:             user.ID,
+		Name:           user.Name,
+		Email:          user.Email,
+		IsSuperuser:    user.IsSuperuser,
 		DefaultGroupID: lo.FromPtrOr(user.DefaultGroupID, uuid.Nil),
 		GroupIDs: lo.Map(user.Edges.Groups, func(g *ent.Group, _ int) uuid.UUID {
 			return g.ID

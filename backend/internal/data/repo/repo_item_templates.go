@@ -55,7 +55,7 @@ type (
 
 		// Default location and tags
 		DefaultLocationID uuid.UUID    `json:"defaultLocationId,omitempty" extensions:"x-nullable"`
-		DefaultTagIDs     *[]uuid.UUID `json:"defaultTagIds,omitempty"   extensions:"x-nullable"`
+		DefaultTagIDs     *[]uuid.UUID `json:"defaultTagIds,omitempty"     extensions:"x-nullable"`
 
 		// Metadata flags
 		IncludeWarrantyFields bool `json:"includeWarrantyFields"`
@@ -84,7 +84,7 @@ type (
 
 		// Default location and tags
 		DefaultLocationID uuid.UUID    `json:"defaultLocationId,omitempty" extensions:"x-nullable"`
-		DefaultTagIDs     *[]uuid.UUID `json:"defaultTagIds,omitempty"   extensions:"x-nullable"`
+		DefaultTagIDs     *[]uuid.UUID `json:"defaultTagIds,omitempty"     extensions:"x-nullable"`
 
 		// Metadata flags
 		IncludeWarrantyFields bool `json:"includeWarrantyFields"`
@@ -123,7 +123,7 @@ type (
 
 		// Default location and tags
 		DefaultLocation *TemplateLocationSummary `json:"defaultLocation"`
-		DefaultTags     []TemplateTagSummary   `json:"defaultTags"`
+		DefaultTags     []TemplateTagSummary     `json:"defaultTags"`
 
 		// Metadata flags
 		IncludeWarrantyFields bool `json:"includeWarrantyFields"`

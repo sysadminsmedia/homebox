@@ -112,7 +112,7 @@ func (svc *ItemService) CsvImport(ctx context.Context, gid uuid.UUID, data io.Re
 	// ========================================
 	// Tags
 
-	tagMap := make(map[string]uuid.UUID)
+	var tagMap map[string]uuid.UUID
 	{
 		tags, err := svc.repo.Tags.GetAll(ctx, gid)
 		if err != nil {
