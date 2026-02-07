@@ -313,6 +313,11 @@ astro-theme-toggle {
   background-color: hsl(75 14% 12%);
 }
 
+:root[data-theme="dark"] div.copy > button{
+  color: hsl(60 15% 85%) !important;
+  background-color: hsl(75 14% 12%) !important;
+}
+
 /* Inline code */
 :root[data-theme="dark"] :not(pre) > code {
   background-color: hsl(75 14% 18%) !important;
