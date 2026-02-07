@@ -99,7 +99,7 @@ func (ctrl *V1Controller) HandleCreateMissingThumbnails() errchain.HandlerFunc {
 
 // WipeInventoryOptions represents the options for wiping inventory
 type WipeInventoryOptions struct {
-	WipeTags      bool `json:"wipeTags"`
+	WipeTags        bool `json:"wipeTags"`
 	WipeLocations   bool `json:"wipeLocations"`
 	WipeMaintenance bool `json:"wipeMaintenance"`
 }
@@ -132,7 +132,7 @@ func (ctrl *V1Controller) HandleWipeInventory() errchain.HandlerFunc {
 		if err := server.Decode(r, &options); err != nil {
 			// If no body provided, use default (false for all)
 			options = WipeInventoryOptions{
-				WipeTags:      false,
+				WipeTags:        false,
 				WipeLocations:   false,
 				WipeMaintenance: false,
 			}

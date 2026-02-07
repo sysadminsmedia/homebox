@@ -1,5 +1,7 @@
 package repo
 
+import "github.com/samber/lo"
+
 // mapTErrFunc is a factory function that returns a mapper function that
 // wraps the given mapper function but first will check for an error and
 // return the error if present.
@@ -18,12 +20,9 @@ func mapTErrFunc[T any, Y any](fn func(T) Y) func(T, error) (Y, error) {
 
 func mapTEachFunc[T any, Y any](fn func(T) Y) func([]T) []Y {
 	return func(items []T) []Y {
-		result := make([]Y, len(items))
-		for i, item := range items {
-			result[i] = fn(item)
-		}
-
-		return result
+		return lo.Map(items, func(item T, _ int) Y {
+			return fn(item)
+		})
 	}
 }
 
@@ -33,19 +32,14 @@ func mapTEachErrFunc[T any, Y any](fn func(T) Y) func([]T, error) ([]Y, error) {
 			return nil, err
 		}
 
-		result := make([]Y, len(items))
-		for i, item := range items {
-			result[i] = fn(item)
-		}
-
-		return result, nil
+		return lo.Map(items, func(item T, _ int) Y {
+			return fn(item)
+		}), nil
 	}
 }
 
 func mapEach[T any, U any](items []T, fn func(T) U) []U {
-	result := make([]U, len(items))
-	for i, item := range items {
-		result[i] = fn(item)
-	}
-	return result
+	return lo.Map(items, func(item T, _ int) U {
+		return fn(item)
+	})
 }

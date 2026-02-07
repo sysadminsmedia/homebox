@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
+	"github.com/samber/lo/mutable"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
@@ -72,10 +74,9 @@ func mapLocationOut(location *ent.Location) LocationOut {
 		parent = &p
 	}
 
-	children := make([]LocationSummary, 0, len(location.Edges.Children))
-	for _, c := range location.Edges.Children {
-		children = append(children, mapLocationSummary(c))
-	}
+	children := lo.Map(location.Edges.Children, func(c *ent.Location, _ int) LocationSummary {
+		return mapLocationSummary(c)
+	})
 
 	return LocationOut{
 		Parent:   parent,
@@ -315,10 +316,7 @@ func (r *LocationRepository) PathForLoc(ctx context.Context, gid, locID uuid.UUI
 	}
 
 	// Reverse the order of the locations so that the root is last
-	for i := len(locations)/2 - 1; i >= 0; i-- {
-		opp := len(locations) - 1 - i
-		locations[i], locations[opp] = locations[opp], locations[i]
-	}
+	mutable.Reverse(locations)
 
 	return locations, nil
 }
@@ -449,10 +447,7 @@ func ConvertLocationsToTree(locations []FlatTreeItem) []TreeItem {
 		}
 	}
 
-	roots := make([]TreeItem, 0, len(rootIds))
-	for _, id := range rootIds {
-		roots = append(roots, *locationMap[id])
-	}
-
-	return roots
+	return lo.Map(rootIds, func(id uuid.UUID, _ int) TreeItem {
+		return *locationMap[id]
+	})
 }

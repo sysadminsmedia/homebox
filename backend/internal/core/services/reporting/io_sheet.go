@@ -11,6 +11,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
@@ -60,10 +61,9 @@ func csvTagAlternatives(tag string) []string {
 		return nil
 	}
 	parts := strings.Split(tag, "|")
-	for i := range parts {
-		parts[i] = strings.TrimSpace(parts[i])
-	}
-	return parts
+	return lo.Map(parts, func(s string, _ int) string {
+		return strings.TrimSpace(s)
+	})
 }
 
 // findColumnForTag tries to find a column index for a csv tag. The tag may
@@ -220,24 +220,19 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, gid uuid.
 
 		locString := fromPathSlice(locPaths)
 
-		tagString := make([]string, len(item.Tags))
-
-		for i, l := range item.Tags {
-			tagString[i] = l.Name
-		}
+		tagString := lo.Map(item.Tags, func(l repo.TagSummary, _ int) string {
+			return l.Name
+		})
 
 		url := generateItemURL(item, hbURL)
 
-		customFields := make([]ExportItemFields, len(item.Fields))
-
-		for i, f := range item.Fields {
+		customFields := lo.Map(item.Fields, func(f repo.ItemField, _ int) ExportItemFields {
 			extraHeaders[f.Name] = struct{}{}
-
-			customFields[i] = ExportItemFields{
+			return ExportItemFields{
 				Name:  f.Name,
 				Value: f.TextValue,
 			}
-		}
+		})
 
 		s.Rows[i] = ExportCSVRow{
 			// fill struct
@@ -276,11 +271,7 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, gid uuid.
 	}
 
 	// Extract and sort additional headers for deterministic output
-	customHeaders := make([]string, 0, len(extraHeaders))
-
-	for k := range extraHeaders {
-		customHeaders = append(customHeaders, k)
-	}
+	customHeaders := lo.Keys(extraHeaders)
 
 	sort.Strings(customHeaders)
 

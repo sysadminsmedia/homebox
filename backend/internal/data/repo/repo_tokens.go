@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
@@ -62,12 +63,11 @@ func (r *TokenRepository) GetRoles(ctx context.Context, token string) (*set.Set[
 		return nil, err
 	}
 
-	roleSet := set.Make[string](len(roles))
+	roleStrings := lo.Map(roles, func(role *ent.AuthRoles, _ int) string {
+		return role.Role.String()
+	})
 
-	for _, role := range roles {
-		roleSet.Insert(role.Role.String())
-	}
-
+	roleSet := set.New(roleStrings...)
 	return &roleSet, nil
 }
 

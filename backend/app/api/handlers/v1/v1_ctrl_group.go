@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
@@ -178,13 +179,9 @@ func (ctrl *V1Controller) HandleGroupDelete() errchain.HandlerFunc {
 		// If the group being deleted is the user's default group, reassign to another group
 		if currentUser.DefaultGroupID == auth.GID {
 			// Find another group the user is a member of
-			var newDefaultGroupID uuid.UUID
-			for _, gid := range currentUser.GroupIDs {
-				if gid != auth.GID {
-					newDefaultGroupID = gid
-					break
-				}
-			}
+			newDefaultGroupID, _ := lo.Find(currentUser.GroupIDs, func(gid uuid.UUID) bool {
+				return gid != auth.GID
+			})
 
 			// Update the user's default group
 			if err := ctrl.repo.Users.UpdateDefaultGroup(auth, auth.UID, newDefaultGroupID); err != nil {
