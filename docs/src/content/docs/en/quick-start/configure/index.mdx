@@ -1,9 +1,12 @@
 ---
 title: General
 ---
+import {Tabs, TabItem} from "@astrojs/starlight/components";
 
 ## Env Variables & Configuration
 
+<Tabs>
+    <TabItem label="Environment Variables">
 | Variable                                | Default                                                                                        | Description                                                                                                                                                                               |
 |-----------------------------------------|------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | HBOX_MODE                               | `development`                                                                                  | application mode used for runtime behavior  can be one of: `development`, `production`                                                                                                    |
@@ -33,7 +36,7 @@ title: General
 | HBOX_DATABASE_SSL_CERT                  |                                                                                                | sets the sslcert for a postgres connection (should be a path)                                                                                                                             |
 | HBOX_DATABASE_SSL_KEY                   |                                                                                                | sets the sslkey for a postgres connection (should be a path)                                                                                                                              |
 | HBOX_DATABASE_SSL_ROOT_CERT             |                                                                                                | sets the sslrootcert for a postgres connection (should be a path)                                                                                                                         |
-| HBOX_DATABASE_PUB_SUB_CONN_STRING       | mem://\{\{ .Topic \}\}                                                                             | connection string for pub/sub messaging                                                                                                                                                   |
+| HBOX_DATABASE_PUB_SUB_CONN_STRING       | mem://\{\{ .Topic \}\}                                                                         | connection string for pub/sub messaging                                                                                                                                                   |
 | HBOX_OPTIONS_ALLOW_REGISTRATION         | true                                                                                           | allow users to register themselves                                                                                                                                                        |
 | HBOX_OPTIONS_AUTO_INCREMENT_ASSET_ID    | true                                                                                           | auto-increments the asset_id field for new items                                                                                                                                          |
 | HBOX_OPTIONS_CURRENCY_CONFIG            |                                                                                                | json configuration file containing additional currencies                                                                                                                                  |
@@ -81,6 +84,8 @@ title: General
 | HBOX_THUMBNAIL_WIDTH                    | 500                                                                                            | width for generated thumbnails in pixels                                                                                                                                                  |
 | HBOX_THUMBNAIL_HEIGHT                   | 500                                                                                            | height for generated thumbnails in pixels                                                                                                                                                 |
 | HBOX_BARCODE_TOKEN_BARCODESPIDER        |                                                                                                | API token for BarcodeSpider.com service used for barcode product lookups. If not set, barcode product lookups will not be performed.                                                      |
+    </TabItem>
+    <TabItem label="CLI Options">
 
 ```sh
 Usage: homebox [options...] [arguments...]
@@ -164,6 +169,9 @@ OPTIONS
       --web-read-timeout                    <duration>  (default: 10s)
       --web-write-timeout                   <duration>  (default: 10s)
 ```
+
+    </TabItem>
+</Tabs>
 
 ### HBOX_WEB_HOST examples
 | Value                       | Notes                                                      |
