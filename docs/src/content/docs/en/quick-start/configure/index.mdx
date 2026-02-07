@@ -71,7 +71,14 @@ title: General
 | HBOX_BARCODE_TOKEN_BARCODESPIDER        |                                                                                                | API token for BarcodeSpider.com service used for barcode product lookups. If not set, barcode product lookups will not be performed.                                                      |
 
 ```sh
-Options:
+Usage: homebox [options...] [arguments...]
+
+OPTIONS
+      --auth-rate-limit-base-backoff        <duration>  (default: 10s)
+      --auth-rate-limit-enabled             <bool>      (default: true)
+      --auth-rate-limit-max-attempts        <int>       (default: 5)
+      --auth-rate-limit-max-backoff         <duration>  (default: 5m)
+      --auth-rate-limit-window              <duration>  (default: 1m)
       --barcode-token-barcodespider         <string>
       --database-database                   <string>
       --database-driver                     <string>    (default: sqlite3)
@@ -88,7 +95,7 @@ Options:
       --debug-enabled                       <bool>      (default: false)
       --debug-port                          <string>    (default: 4000)
       --demo                                <bool>
-  -h, --help                                            display this help message
+  -h, --help                                                                                                                                                       display this help message
       --label-maker-additional-information  <string>
       --label-maker-bold-font-path          <string>
       --label-maker-dynamic-length          <bool>      (default: true)
