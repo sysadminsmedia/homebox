@@ -2,7 +2,7 @@
 title: OIDC SSO
 ---
 
-HomeBox supports OpenID Connect (OIDC) authentication, allowing users to login using external identity providers like Keycloak, Authentik, Authelia, Google, Microsoft, etc.
+HomeBox supports OpenID Connect (OIDC) authentication, allowing users to log in using external identity providers like Keycloak, Authentik, Authelia, Google, Microsoft, etc.
 
 > [!NOTE]
 > When configuring OIDC, always refer to the documentation provided by your identity provider for specific details and requirements.
@@ -34,10 +34,10 @@ HomeBox supports OpenID Connect (OIDC) authentication, allowing users to login u
 - **Email Verification**: Set `HBOX_OIDC_VERIFY_EMAIL=true` to require email verification from the OIDC provider before login.
 
 ## Security Considerations
-- Store `HBOX_OIDC_CLIENT_SECRET` in a securely, (e.g. environment variable manager or secret management tool).
+- Store `HBOX_OIDC_CLIENT_SECRET` in a securely, (e.g., environment variable manager or secret management tool).
 - Use HTTPS for production deployments.
 - Configure proper redirects in your OIDC provider, we don't recommend the use of wildcards.
 - Consider setting `HBOX_OIDC_ALLOWED_GROUPS` to restrict access to certain groups.
 
 > [!NOTE]
-> If you’re deploying without docker you can use command line arguments to configure HomeBox. Run `homebox --help` for more information.
+> If you’re deploying without docker containers, you can use command line arguments to configure HomeBox. Run `homebox --help` for more information.

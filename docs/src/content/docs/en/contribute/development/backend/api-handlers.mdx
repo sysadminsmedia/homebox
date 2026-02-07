@@ -139,7 +139,7 @@ Always scope queries to `auth.GID` for multi-tenancy. Never query data without c
 
 Here are the most common handler patterns you'll use:
 
-### GET - List All Items
+### GET – List All Items
 
 Use `adapters.Command` when there's no request body or query parameters:
 
@@ -171,7 +171,7 @@ r.Get("/labels", chain.ToHandlerFunc(v1Ctrl.HandleLabelsGetAll(), userMW...))
   </TabItem>
 </Tabs>
 
-### GET - With Query Parameters
+### GET – With Query Parameters
 
 Use `adapters.Query` when you need to parse query parameters:
 
@@ -206,7 +206,7 @@ type LocationQuery struct {
   </TabItem>
 </Tabs>
 
-### GET - Single Item by ID
+### GET – Single Item by ID
 
 Use `adapters.CommandID` to extract a UUID from the URL path:
 
@@ -234,7 +234,7 @@ func (ctrl *V1Controller) HandleItemGet() errchain.HandlerFunc {
 The first argument to `adapters.CommandID()` is the path parameter name (in this case "id"), which must match your route definition.
 </Aside>
 
-### POST - Create New Item
+### POST – Create New Item
 
 Use `adapters.Action` to decode the request body:
 
@@ -261,7 +261,7 @@ func (ctrl *V1Controller) HandleItemsCreate() errchain.HandlerFunc {
 Notice that POST handlers return `http.StatusCreated` (201) instead of `http.StatusOK` (200). This follows REST conventions.
 </Aside>
 
-### PUT - Update Existing Item
+### PUT – Update Existing Item
 
 Use `adapters.ActionID` to extract an ID and decode the body:
 
@@ -422,10 +422,10 @@ func (ctrl *V1Controller) HandleItemGet() errchain.HandlerFunc {
 ### Common Swagger Directives
 
 - **@Summary** - One-line description of what the endpoint does
-- **@Tags** - Logical grouping for the API docs (e.g., "Items", "Labels")
-- **@Produce** - Response content type (almost always `json`)
-- **@Param** - Document each parameter (path, query, body, etc.)
-- **@Success** - Success response with status code and response type
+- **@Tags** – Logical grouping for the API docs (e.g., "Items," "Labels")
+- **@Produce** – Response content type (almost always `json`)
+- **@Param** – Document each parameter (path, query, body, etc.)
+- **@Success** – Success response with status code and response type
 - **@Failure** - Error response (optional but recommended)
 - **@Router** - API route and HTTP method
 - **@Security** - Security scheme (use `Bearer` for authenticated endpoints)
@@ -573,11 +573,11 @@ Follow these rules to maintain consistency and prevent bugs:
 </Aside>
 
 1. **Use the adapter pattern** - Use `adapters.Command`, `adapters.Action`, etc. instead of manual request handling
-2. **ALWAYS add Swagger comments** - Required for API documentation and TypeScript type generation
+2. **ALWAYS add Swagger comments** – Required for API documentation and TypeScript type generation
 3. **Run `task generate` after handler changes** - Updates API documentation and frontend types
 4. **Always use `services.NewContext`** - Extracts the authenticated user from request context
 5. **Use `auth.GID` for multi-tenancy** - Always scope queries to the user's group
-6. **Handle errors properly** - Return errors directly (adapters handle conversion) or use `validate.NewRequestError()`
+6. **Handle errors properly** – Return errors directly (adapters handle conversion) or use `validate.NewRequestError()`
 7. **Return correct HTTP status codes**:
    - `200 OK` - Successful GET/PUT operations
    - `201 Created` - Successful POST operations

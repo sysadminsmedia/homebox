@@ -22,7 +22,7 @@ Custom fields are appended to the main details section of your item.
 
 ## Managing Asset IDs
 
-Homebox provides the option to auto-set asset IDs, this is the default behavior. These can be used for tracking assets
+Homebox provides the option to auto-set asset IDs; this is the default behavior. These can be used for tracking assets
 with printable tags or labels. You can disable this behavior via a command line flag or ENV variable.
 See [configuration](/en/quick-start/configure/#env-variables--configuration) for more details.
 
@@ -30,7 +30,7 @@ Example ID: `000-001`
 
 To search for an Asset ID: type `#` in the search bar followed by the ID you're searching for, e.g. `#000-001`.
 
-Asset IDs are partially managed by Homebox, but have a flexible implementation to allow for unique use cases.
+Asset IDs are partially managed by Homebox but have a flexible implementation to allow for unique use cases.
 IDs are non-unique at the database level, so there is nothing stopping a user from manually setting duplicate IDs for
 various items. There are two recommended approaches to managing Asset IDs:
 
@@ -72,7 +72,7 @@ Homebox has a built-in QR code reader that can be used to scan QR codes for your
 
 <Icon name="fluent-emoji-flat:label" is:inline="true"/>  v0.18.0
 
-Homebox also has a built-in one off label generator for those with proper label makers. This can be accessed via the "Labels" button on the right hand side under the main details on the item page. Locations can also be printed in the same way, although the labels button is located next to the edit icon.
+Homebox also has a built-in one-off-label generator for those with proper label makers. This can be accessed via the "Labels" button on the right-hand side under the main details on the item page. Locations can also be printed in the same way, although the labels button is located next to the edit icon.
 
 ## Scheduled Maintenance Notifications
 
@@ -98,7 +98,7 @@ As of `v0.9.0`, there is limited support for complex scheduling of maintenance e
 > regularly and should be up to date. However, this option is available if you need to add a currency that isn't
 > already supported.
 
-Homebox allows you to add additional currencies to your instance by specify a JSON file containing the currencies you want to add.
+Homebox allows you to add additional currencies to your instance by specifying a JSON file containing the currencies you want to add.
 
 **Environment Variable:** `HBOX_OPTIONS_CURRENCY_CONFIG`
 
@@ -117,7 +117,7 @@ Homebox allows you to add additional currencies to your instance by specify a JS
 
 ## Copy to Clipboard
 
-The copy to clipboard functionality requires a secure context (HTTPS or localhost) to work due to browser security restrictions. If you're accessing Homebox through HTTP, the copy button will not function.
+The copy-to-clipboard functionality requires a secure context (HTTPS or localhost) to work due to browser security restrictions. If you're accessing Homebox through HTTP, the copy button will not function.
 
 To enable this feature:
 - Use HTTPS by setting up a reverse proxy (like Nginx or Caddy)
@@ -128,5 +128,5 @@ To enable this feature:
 By default browsers prevent opening multiple tabs with one click, to allow for the `View Items` button to work you therefore need to enable a setting usually called `Allow pop-ups and redirects` or similar for the domain you're using Homebox on.
 
 - Chrome: [Block or allow pop-ups in Chrome](https://support.google.com/chrome/answer/95472?hl=en-GB&co=GENIE.Platform%3DDesktop#zippy=%2Callow-pop-ups-and-redirects-from-a-site)
-- Firefox: [Pop-up blocker settings, exceptions and troubleshooting](https://support.mozilla.org/en-US/kb/pop-blocker-settings-exceptions-troubleshooting)
+- Firefox: [Pop-up blocker settings, exceptions, and troubleshooting](https://support.mozilla.org/en-US/kb/pop-blocker-settings-exceptions-troubleshooting)
 - Safari: [Block pop-up ads and windows in Safari](https://support.apple.com/en-gb/102524)

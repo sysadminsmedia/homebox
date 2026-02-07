@@ -14,7 +14,7 @@ There are two main ways to run Homebox.
 > The application can be configured using environment variables. You can find a list of all the available options in the [configuration](/en/quick-start/configure/) section.
 
 > [!TIP]
-> We highly recommend using Docker for production deployments. It's easy to setup and it's secure by default. We also
+> We highly recommend using Docker for production deployments. It's easy to set up, and it's secure by default. We also
 > provide a couple of images with additional security. Additionally, it's the primary way we run Homebox demos and testing.
 
 ----
@@ -22,16 +22,16 @@ There are two main ways to run Homebox.
 ## Docker
 The following instructions assume you have Docker installed on your machine.
 
-The official image is `ghcr.io/sysadminsmedia/homebox:latest`. For each image there are 3 tags, respectively the regular
+The official image is `ghcr.io/sysadminsmedia/homebox:latest`. For each image there are three tags, respectively the regular
 tag, the `$tag-rootless` and `$tag-hardened`. The rootless tag is a regular image but with the user `homebox` created.
 The hardened tag is a distroless image and contains no shells or utilities.
 
 > [!WARNING]
-> If you want to use MQTT you must use the regular or rootless image. The hardened image does not contain the MQTT
+> If you want to use MQTT, you must use the regular or rootless image. The hardened image does not contain the MQTT
 > client.
 
 ### Docker Run
-Great for testing the application, but not recommended for production deployments. Checkout the docker compose example below for a production deployment.
+Great for testing the application, but not recommended for production deployments. Check out the docker compose example below for a production deployment.
 
 <Tabs>
     <TabItem label="Regular">
@@ -173,7 +173,7 @@ We supply a wide range of binaries for different platforms and CPU architectures
 
 ### macOS
 1. Download the latest version from the [releases page](https://github.com/sysadminsmedia/homebox/releases). (Use
-`homebox_Darwin_x86_64.tar.gz` for Intel-based macs and `homebox_Darwin_arm64.tar.gz` for Apple Silicon)
+`homebox_Darwin_x86_64.tar.gz` for Intel-based Macs and `homebox_Darwin_arm64.tar.gz` for Apple Silicon)
 2. Extract the archive and run `./homebox` from a terminal.
 3. The web interface will be available at `http://localhost:7745` by default. Access the page by navigating to
 `http://server.local.ip.address:7745/` (replace with the right ip address)

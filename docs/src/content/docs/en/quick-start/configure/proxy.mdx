@@ -182,7 +182,7 @@ All configurations above support WebSocket connections to the `/api/v1/ws/events
 ### WebSocket Connection Fails
 - Verify the proxy properly forwards the `Upgrade` header
 - Check that `Connection: Upgrade` header is being forwarded
-- Ensure long-lived connections aren't being closed by timeouts
+- Ensure timeouts aren't closing long-lived connections
 
 ### Incorrect User IP or HTTPS Detection
 - Confirm `HBOX_OPTIONS_TRUST_PROXY=true` is set

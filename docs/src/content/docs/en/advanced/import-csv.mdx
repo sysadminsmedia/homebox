@@ -8,7 +8,7 @@ to import any large number of items and provides the most flexibility when it co
 ### Current Limitations
 - Imports only support importing items, locations, and labels
 - Imports and Exports do not support attachments. Attachments must be uploaded after import
-- CSV Exports do not support nested path exports (e.g. Home / Office / Desk) and will only export the Items direct parent, (though imports do support nested paths)
+- CSV Exports do not support nested path exports (e.g., Home / Office / Desk) and will only export the Items direct parent (though imports do support nested paths)
 - Cannot specify item-to-item relationships (e.g. `Item A` is a child of `Item B`)
 
 > [!NOTE]
@@ -16,7 +16,7 @@ to import any large number of items and provides the most flexibility when it co
 > while TSV files use tabs. The file extension does not matter.
 
 ## CSV Reference
-Below are the supported columns. They are case-sensitive, can be in any ordered or can be omitted unless otherwise specified.
+Below are the supported columns. They are case-sensitive, can be in any ordered, or can be omitted unless otherwise specified.
 
 ### Special Syntax Columns
 `HB.import_ref`
@@ -42,7 +42,7 @@ This is the location of the item that will be created. These are deduplicated an
 Supports Path Separators for nested locations (e.g. `Home / Office / Desk`)
 
 `HB.label`
-List of labels to apply to the item separated by a ; can be existing or new labels.
+List of labels to apply to the item separated by a comma can be an existing or new label.
 
 `HB.field.{field_name}` (e.g. `HB.field.Serial Number`)
 This is a special column that allows you to add custom fields to the item. The column name must start with `HB.field.`
