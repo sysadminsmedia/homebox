@@ -1,0 +1,55 @@
+---
+title: Database
+---
+
+By default, Homebox will use an SQLite database. This allows for quick setup and works great for smaller installations.
+However, you can configure Homebox to use a PostgreSQL database instead. We highly recommend this for larger installations,
+as it will allow you to scale Homebox horizontally.
+
+> [!WARNING]
+> PostgreSQL is **HIGHLY** recommended if you're using a complex character set language such as Russian, Chinese, etc.
+> (basically any language that requires non-ASCII characters) as SQLite has very poor search support for these languages.
+
+## SQLite
+This is the default; generally speaking, there is no need to change anything here. We've already configured it with our
+recommended settings.
+
+## PostgreSQL
+If you’re using docker compose, you can add the following to your `compose.yml` file to get a PostgreSQL database started:
+```yaml title="compose.yml"
+postgres:
+  image: postgres:17-alpine
+  restart: unless-stopped
+  volumes:
+    - postgres:/var/lib/postgresql/data
+  environment:
+    POSTGRES_PASSWORD: your_secure_password
+    POSTGRES_USER: homebox
+    POSTGRES_DB: homebox
+...
+volumes:
+...
+  postgres:
+```
+
+> [!NOTE]
+> You should change the `POSTGRES_PASSWORD` environment variable to a secure password. You can also change the `POSTGRES_USER`
+> and `POSTGRES_DB` environment variables to whatever you like.
+>
+> You may also note that we did not specify a `ports` section, we don't need it as it will automatically be exposed to the Homebox compose network.
+
+Once you have postgres added to your compose file or have made an existing instance accessible to Homebox,
+you'll need to add some environment variables to the Homebox service:
+- `HBOX_DATABASE_DRIVER=postgres`
+- `HBOX_DATABASE_HOST=postgres` (or whatever you named the postgres service in your compose file)
+- `HBOX_DATABASE_PORT=5432` (or whatever port you configured postgres to use)
+- `HBOX_DATABASE_USER=homebox` (or whatever you set the `POSTGRES_USER` environment variable to)
+- `HBOX_DATABASE_PASSWORD=your_secure_password` (or whatever you set the `POSTGRES_PASSWORD` environment variable to)
+- `HBOX_DATABASE_DATABASE=homebox` (or whatever you set the `POSTGRES_DB` environment variable to)
+
+Optionally, you can also add the following environment variable to the Homebox service:
+- `HBOX_DATABASE_SSLMODE=disable` (disable SSL encryption)
+  - Valid options include: `disable`, `require`, `verify-ca`, `verify-full`, the default is `require`
+- `HBOX_DATABASE_SSL_ROOT_CERT=path/to/root.crt` (path to the root certificate file)
+- `HBOX_DATABASE_SSL_CERT=path/to/server.crt` (path to the server certificate file)
+- `HBOX_DATABASE_SSL_KEY=path/to/server.key` (path to the server key file)

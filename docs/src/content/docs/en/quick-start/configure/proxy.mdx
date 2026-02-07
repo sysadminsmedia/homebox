@@ -1,0 +1,195 @@
+---
+title: Proxying
+---
+
+# Proxying Homebox
+> [!WARNING]
+> When running Homebox behind a reverse proxy, you must set `HBOX_OPTIONS_TRUST_PROXY` to `true` in your application environment variables/configuration.
+> This ensures that the application correctly processes forwarded headers (X-Forwarded-For, X-Forwarded-Proto, etc.) from your proxy.
+> Without this, labels and some other functionality may not work properly.
+
+---
+
+## Nginx
+
+Nginx requires proper configuration to handle WebSocket upgrades and forward appropriate headers to Homebox.
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    location / {
+        proxy_pass http://localhost:7745;
+        proxy_http_version 1.1;
+
+        # WebSocket support
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        # Essential proxy headers
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Timeouts for long-lived WebSocket connections
+        proxy_read_timeout 86400;
+    }
+}
+```
+
+### HTTPS Example
+```nginx
+server {
+    listen 443 ssl http2;
+    server_name your-domain.com;
+
+    ssl_certificate /path/to/cert.pem;
+    ssl_certificate_key /path/to/key.pem;
+
+    location / {
+        proxy_pass http://localhost:7745;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 86400;
+    }
+}
+```
+
+---
+
+## Traefik
+
+Traefik handles WebSocket connections automatically. Here's a configuration using labels (Docker Compose) and YAML.
+
+### Docker Compose Labels
+```yaml
+services:
+  homebox:
+    image: ghcr.io/hay-kot/homebox:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homebox.rule=Host(`your-domain.com`)"
+      - "traefik.http.routers.homebox.entrypoints=web"
+      - "traefik.http.services.homebox.loadbalancer.server.port=7745"
+      - "traefik.http.routers.homebox.middlewares=forward-headers"
+      - "traefik.http.middlewares.forward-headers.headers.customrequestheaders.X-Forwarded-Proto=http"
+```
+
+### YAML Configuration
+```yaml
+http:
+  routers:
+    homebox:
+      rule: "Host(`your-domain.com`)"
+      service: homebox
+      entryPoints:
+        - web
+      middlewares:
+        - forward-headers
+
+  services:
+    homebox:
+      loadBalancer:
+        servers:
+          - url: "http://localhost:7745"
+
+  middlewares:
+    forward-headers:
+      headers:
+        customRequestHeaders:
+          X-Forwarded-Proto: "http"
+```
+
+### HTTPS with Let's Encrypt
+```yaml
+http:
+  routers:
+    homebox:
+      rule: "Host(`your-domain.com`)"
+      service: homebox
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: letsencrypt
+
+  services:
+    homebox:
+      loadBalancer:
+        servers:
+          - url: "http://localhost:7745"
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: your-email@example.com
+      storage: /data/acme.json
+      httpChallenge:
+        entryPoint: web
+```
+
+---
+
+## Caddy
+
+Caddy automatically handles WebSocket upgrades and HTTPS with Let's Encrypt certificates.
+
+```caddy
+your-domain.com {
+    reverse_proxy localhost:7745 {
+        header_uri X-Forwarded-Proto {scheme}
+        header_uri X-Forwarded-For {remote_host}
+        header_uri X-Real-IP {remote_host}
+    }
+}
+```
+
+### Caddyfile with Custom Configuration
+```caddy
+your-domain.com {
+    encode gzip
+
+    reverse_proxy localhost:7745 {
+        header_up X-Forwarded-Proto {scheme}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Real-IP {remote_host}
+        header_upstream Host {host}
+    }
+}
+```
+
+---
+
+## WebSocket Support
+
+All configurations above support WebSocket connections to the `/api/v1/ws/events` endpoint. Key requirements for WebSocket support:
+
+- **Nginx**: `proxy_set_header Upgrade` and `proxy_set_header Connection "upgrade"`
+- **Apache2**: WebSocket rewrite rules with `RewriteCond %{HTTP:Upgrade}`
+- **Traefik**: Automatic support (no special configuration needed)
+- **Caddy**: Automatic support (no special configuration needed)
+
+---
+
+## Troubleshooting
+
+### WebSocket Connection Fails
+- Verify the proxy properly forwards the `Upgrade` header
+- Check that `Connection: Upgrade` header is being forwarded
+- Ensure timeouts aren't closing long-lived connections
+
+### Incorrect User IP or HTTPS Detection
+- Confirm `HBOX_OPTIONS_TRUST_PROXY=true` is set
+- Verify the proxy sends `X-Forwarded-For` and `X-Forwarded-Proto` headers
+- Check firewall rules allow connections between proxy and Homebox
+
+### 502 Bad Gateway
+- Ensure Homebox is running on port 7745 (or your configured port)
+- Verify the proxy can reach the Homebox container/service
+- Check proxy logs for connection errors
