@@ -43,7 +43,6 @@ export default defineConfig({
             logo: {
                 src: './src/assets/lilbox.svg',
             },
-            favicon: './src/assets/favicon.svg',
             editLink: {
                 baseUrl: 'https://github.com/sysadminsmedia/homebox/edit/main/docs/',
             },
