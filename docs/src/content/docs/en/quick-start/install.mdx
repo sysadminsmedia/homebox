@@ -38,7 +38,7 @@ Great for testing the application, but not recommended for production deployment
         ```bash
         # Run the container
         docker run -d --name homebox --restart unless-stopped \
-        --public 3100:7745 --env HBOX_OPTIONS_ALLOW_ANALYTICS=false \
+        --pupblish 3100:7745 --env HBOX_OPTIONS_ALLOW_ANALYTICS=false \
         --volume /path/to/data/folder:/data \
         ghcr.io/sysadminsmedia/homebox:latest
         ```
@@ -51,7 +51,7 @@ Great for testing the application, but not recommended for production deployment
         # --------
         # Run the container
         docker run -d --name homebox --restart unless-stopped \
-        --public 3100:7745 --env HBOX_OPTIONS_ALLOW_ANALYTICS=false \
+        --publish 3100:7745 --env HBOX_OPTIONS_ALLOW_ANALYTICS=false \
         --volume /path/to/data/folder:/data \
         ghcr.io/sysadminsmedia/homebox:latest-rootless
         ```
@@ -64,7 +64,7 @@ Great for testing the application, but not recommended for production deployment
         # --------
         # Run the container
         docker run -d --name homebox --restart unless-stopped \
-        --public 3100:7745 --env HBOX_OPTIONS_ALLOW_ANALYTICS=false \
+        --publish 3100:7745 --env HBOX_OPTIONS_ALLOW_ANALYTICS=false \
         --volume /path/to/data/folder:/data \
         ghcr.io/sysadminsmedia/homebox:latest-hardened
         ```

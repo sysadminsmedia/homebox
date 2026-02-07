@@ -64,59 +64,6 @@ server {
 
 ---
 
-## Apache2
-
-Apache2 requires `mod_proxy` and `mod_rewrite` modules. Enable them with:
-```bash
-a2enmod proxy proxy_http rewrite
-systemctl restart apache2
-```
-
-```apache
-<VirtualHost *:80>
-    ServerName your-domain.com
-
-    ProxyPreserveHost On
-    ProxyPass / http://localhost:7745/
-    ProxyPassReverse / http://localhost:7745/
-
-    # WebSocket support
-    RewriteEngine On
-    RewriteCond %{HTTP:Upgrade} websocket [NC]
-    RewriteCond %{HTTP:Connection} upgrade [NC]
-    RewriteRule ^/?(.*) "ws://localhost:7745/$1" [P,L]
-
-    # Forward proxy headers
-    RequestHeader set X-Forwarded-Proto "http"
-    RequestHeader set X-Forwarded-For "%{REMOTE_ADDR}s"
-</VirtualHost>
-```
-
-### HTTPS Example
-```apache
-<VirtualHost *:443>
-    ServerName your-domain.com
-
-    SSLEngine on
-    SSLCertificateFile /path/to/cert.pem
-    SSLCertificateKeyFile /path/to/key.pem
-
-    ProxyPreserveHost On
-    ProxyPass / http://localhost:7745/
-    ProxyPassReverse / http://localhost:7745/
-
-    RewriteEngine On
-    RewriteCond %{HTTP:Upgrade} websocket [NC]
-    RewriteCond %{HTTP:Connection} upgrade [NC]
-    RewriteRule ^/?(.*) "ws://localhost:7745/$1" [P,L]
-
-    RequestHeader set X-Forwarded-Proto "https"
-    RequestHeader set X-Forwarded-For "%{REMOTE_ADDR}s"
-</VirtualHost>
-```
-
----
-
 ## Traefik
 
 Traefik handles WebSocket connections automatically. Here's a configuration using labels (Docker Compose) and YAML.
@@ -209,9 +156,9 @@ your-domain.com {
     encode gzip
 
     reverse_proxy localhost:7745 {
-        header_uri X-Forwarded-Proto {scheme}
-        header_uri X-Forwarded-For {remote_host}
-        header_uri X-Real-IP {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Real-IP {remote_host}
         header_upstream Host {host}
     }
 }
