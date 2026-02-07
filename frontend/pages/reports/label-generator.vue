@@ -23,6 +23,7 @@
   const api = useUserApi();
 
   const bordered = ref(false);
+  const printLocationRow = ref(true);
   const labelBlankLine = "_______________";
 
   // Behavior constants for HomeBox text replacement
@@ -39,6 +40,7 @@
     baseURL: window.location.origin,
     assetRange: 1,
     assetRangeMax: 91,
+    skipLabels: 0,
     measure: "in",
     gapY: 0.25,
     columns: 3,
@@ -130,6 +132,8 @@
     label: string;
     ref: keyof typeof displayProperties;
     type?: "number" | "text";
+    min?: number;
+    step?: number;
   }
 
   const propertyInputs = computed<InputDef[]>(() => {
@@ -141,6 +145,12 @@
       {
         label: t("reports.label_generator.asset_end"),
         ref: "assetRangeMax",
+      },
+      {
+        label: t("reports.label_generator.skip_first_labels"),
+        ref: "skipLabels",
+        min: 0,
+        step: 1,
       },
       {
         label: t("reports.label_generator.measure_type"),
@@ -288,7 +298,7 @@
   });
 
   type Row = {
-    items: LabelData[];
+    items: Array<LabelData | null>;
   };
 
   type Page = {
@@ -336,8 +346,26 @@
     const calc: Page[] = [];
 
     const perPage = out.value.rows * out.value.cols;
+    const maxSkipLabels = Math.max(0, perPage - 1);
 
-    const itemsCopy = [...items.value];
+    const skipLabelsRaw = Number(displayProperties.skipLabels);
+    const skipLabels = Number.isFinite(skipLabelsRaw)
+      ? Math.min(maxSkipLabels, Math.max(0, Math.floor(skipLabelsRaw)))
+      : 0;
+    if (Number(displayProperties.skipLabels) !== skipLabels) {
+      displayProperties.skipLabels = skipLabels;
+    }
+
+    const sourceItems = items.value;
+    if (sourceItems.length === 0) {
+      pages.value = [];
+      return;
+    }
+
+    const itemsCopy: Array<LabelData | null> = [...sourceItems];
+    if (skipLabels > 0) {
+      itemsCopy.unshift(...Array.from({ length: skipLabels }, () => null));
+    }
 
     while (itemsCopy.length > 0) {
       const page: Page = {
@@ -346,7 +374,7 @@
 
       for (let i = 0; i < perPage; i++) {
         const item = itemsCopy.shift();
-        if (!item) {
+        if (typeof item === "undefined") {
           break;
         }
 
@@ -356,7 +384,7 @@
           });
         }
 
-        page.rows[page.rows.length - 1]!.items.push(item);
+        page.rows[page.rows.length - 1]!.items.push(item ?? null);
       }
 
       calc.push(page);
@@ -404,7 +432,9 @@
             :id="`input-${prop.ref}`"
             v-model="displayProperties[prop.ref]"
             :type="prop.type ? prop.type : 'number'"
-            step="0.01"
+            :min="prop.min"
+            :max="prop.ref === 'skipLabels' ? Math.max(0, out.rows * out.cols - 1) : undefined"
+            :step="prop.type === 'text' ? undefined : (prop.step ?? 0.01)"
             :placeholder="$t('reports.label_generator.input_placeholder')"
             class="w-full max-w-xs"
           />
@@ -456,6 +486,12 @@
             {{ $t("reports.label_generator.bordered_labels") }}
           </Label>
         </div>
+        <div class="flex items-center gap-2 py-4">
+          <Checkbox id="printLocationRow" v-model="printLocationRow" />
+          <Label class="cursor-pointer" for="printLocationRow">
+            {{ $t("reports.label_generator.print_location_row") }}
+          </Label>
+        </div>
       </div>
 
       <div>
@@ -495,36 +531,38 @@
           :key="idx"
           class="flex border-2"
           :class="{
-            'border-black': bordered,
-            'border-transparent': !bordered,
+            'border-black': bordered && !!item,
+            'border-transparent': !bordered || !item,
           }"
           :style="{
             height: `${out.card.height}${out.measure}`,
             width: `${out.card.width}${out.measure}`,
           }"
         >
-          <div class="flex items-center">
-            <img
-              :src="item.url"
-              :style="{
-                minWidth: `${out.card.height * 0.9}${out.measure}`,
-                width: `${out.card.height * 0.9}${out.measure}`,
-                height: `${out.card.height * 0.9}${out.measure}`,
-              }"
-            />
-          </div>
-          <div class="ml-2 flex flex-col justify-center">
-            <div class="font-bold">{{ item.assetID }}</div>
-            <div
-              v-if="getHomeBoxLineText(item)"
-              class="text-xs"
-              :class="{ 'font-light italic': getHomeBoxLineText(item) !== labelBlankLine }"
-            >
-              {{ getHomeBoxLineText(item) }}
+          <template v-if="item">
+            <div class="flex items-center">
+              <img
+                :src="item.url"
+                :style="{
+                  minWidth: `${out.card.height * 0.9}${out.measure}`,
+                  width: `${out.card.height * 0.9}${out.measure}`,
+                  height: `${out.card.height * 0.9}${out.measure}`,
+                }"
+              />
             </div>
-            <div class="overflow-hidden text-wrap text-xs">{{ item.name }}</div>
-            <div class="text-xs">{{ item.location }}</div>
-          </div>
+            <div class="ml-2 flex flex-col justify-center">
+              <div class="font-bold">{{ item.assetID }}</div>
+              <div
+                v-if="getHomeBoxLineText(item)"
+                class="text-xs"
+                :class="{ 'font-light italic': getHomeBoxLineText(item) !== labelBlankLine }"
+              >
+                {{ getHomeBoxLineText(item) }}
+              </div>
+              <div class="overflow-hidden text-wrap text-xs">{{ item.name }}</div>
+              <div v-if="printLocationRow" class="text-xs">{{ item.location }}</div>
+            </div>
+          </template>
         </div>
       </div>
     </section>
