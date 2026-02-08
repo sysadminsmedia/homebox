@@ -34,7 +34,7 @@
   "devDependencies": {
     "@iconify-json/fluent-emoji-flat": "^1.2.5",
     "@iconify-json/material-symbols": "^1.2.54",
-    "@iconify-json/simple-icons": "^1.2.69",
+    "@iconify-json/simple-icons": "^1.2.70",
     "rollup-plugin-visualizer": "^6.0.5",
     "starlight-openapi": "^0.22.0",
     "wrangler": "^4.63.0"

@@ -94,6 +94,10 @@
   --sl-color-bg-nav: hsl(77 8% 17%);
 }
 
+:root[data-theme="light"] .nova-search-button:hover {
+  background-color: hsl(0, 0%, 95%);
+}
+
 /* Mobile TOC should have light background in light mode, not dark nav bg */
 :root:not([data-theme="dark"]) mobile-starlight-toc nav {
   background-color: hsl(0 0% 100%) !important;
@@ -366,7 +370,19 @@ astro-theme-toggle {
 /* DARK MODE - Changelog */
 
 :root[data-theme="dark"] .sl-changelogs-version-list-icon {
-  color: hsl(75 14% 10%) !important;
+  color: var(--sl-color-gray-6) !important;
+}
+
+:root[data-theme="dark"] starlight-changelogs-versions-list > form > input {
+  background-color: hsl(75 14% 10%) !important;
+}
+:root[data-theme="dark"] starlight-changelogs-versions-list > form > input::placeholder {
+  color: var(--sl-color-gray-5) !important;
+}
+
+/* DARK MODE - Pagination Links */
+:root[data-theme="dark"] .nova-pagination-link {
+  color: var(--sl-color-gray-6);
 }
 
 /* DARK MODE - File Tree */
@@ -388,4 +404,13 @@ astro-theme-toggle {
 
 :root[data-theme="dark"] .required {
   color: var(--color-red-300);
+}
+
+/* DARK MODE - Search */
+:root[data-theme="dark"] #starlight__search .pagefind-ui__result-excerpt {
+  color: var(--sl-color-gray-6);
+}
+
+:root[data-theme="dark"] .pagefind-ui__message {
+  color: var(--sl-color-gray-6);
 }
