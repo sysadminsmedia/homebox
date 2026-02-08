@@ -61,7 +61,7 @@ export default defineConfig({
                     {
                         base: 'en/api',
                         schema:
-                            'https://raw.githubusercontent.com/sysadminsmedia/homebox/refs/heads/main/docs/en/api/openapi-3.0.json',
+                            'https://raw.githubusercontent.com/sysadminsmedia/homebox/refs/heads/main/docs/public/api/openapi-3.0.json',
                     },
                 ]),
                 starlightSidebarTopics(
