@@ -1,0 +1,85 @@
+---
+title: Overview
+---
+
+import { FileTree } from '@astrojs/starlight/components';
+
+Homebox is a complex application with a lot of moving parts. This page will give you an overview of the
+backend codebase structure to help you get started with development. We hope that this document will help you understand the
+architecture of the backend and help you get started with development.
+
+## Task Commands To Know
+There are several invaluable Task commands that you'll need to know to get started with development. A few of them you'll
+need to run everytime before submitting a PR.
+
+- `task generate` - generates OpenAPI docs and JS types (run this EVERY time before submitting a PR)
+- `task go:lint` - runs linters (run this EVERY time before submitting a PR)
+- `task go:run` - runs the backend server locally with sqlite
+- `task go:run:postgres` - runs the backend server locally with postgres
+- `task go:test` - runs backend tests
+
+## File Structure
+<FileTree>
+    - backend
+      - app
+        - api
+          - handlers contains request handlers
+            - ...
+          - providers contains a couple special handlers for docs, OIDC, etc.
+            - ...
+          - static frontend stuff (auto-gen)
+            - ...
+          - app.go
+          - bgrunner.go tasks that run in background
+          - demo.go demo related code
+          - logger.go zero logger config
+          - main.go primary app startup
+          - middleware.go HTTP middleware
+          - recurring.go constant running tasks
+          - routes.go HTTP routes definitions
+          - setup.go setup functions
+        - tools
+          - ...
+      - internal
+        - core
+          - currencies
+            - ...
+          - services
+            - ...
+        - data
+          - ent
+            - schema definition of ORM schema
+              - user.go
+              - ...
+            - ... the rest is auto-gen
+          - migrations goose migrations (both required)
+            - postgres
+              - 20220929052825_init.sql
+              - 20241226183416_sync_children.go
+              - ...
+            - sqlite3
+              - 20220929052825_init.sql
+              - 20241226183416_sync_children.go
+              - ...
+          - repo contains actual database interaction logic
+            - repo_users.go
+            - repo_users_test.go
+            - ...
+          - types special defined types
+            - date.go
+      - pkgs contains internal packages
+        - hasher
+          - password.go
+          - ...
+        - ...
+      - .goreleaser.yaml
+      - go.mod
+      - go.sum
+</FileTree>
+
+## Architecture & Implementation
+
+For detailed guides on specific backend components, see:
+
+- [API Handlers](/en/contribute/development/backend/api-handlers) – How HTTP requests are processed
+- [Data Layer & Ent](/en/contribute/development/backend/database) - Database and ORM usage

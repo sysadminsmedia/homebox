@@ -26,10 +26,10 @@ tasks:
       - swag init --dir={{ .API }},{{ .INTERNAL }}/core/services,{{ .INTERNAL }}/data/repo --parseDependency
       - npx -y -p swagger2openapi swagger2openapi --outfile ./docs/openapi-3.json ./docs/swagger.json
       - npx -y -p swagger2openapi swagger2openapi --yaml --outfile ./docs/openapi-3.yaml ./docs/swagger.json
-      - cp -r ./docs/swagger.json ../../../../docs/en/api/swagger-2.0.json
-      - cp -r ./docs/swagger.yaml ../../../../docs/en/api/swagger-2.0.yaml
-      - cp -r ./docs/openapi-3.json ../../../../docs/en/api/openapi-3.0.json
-      - cp -r ./docs/openapi-3.yaml ../../../../docs/en/api/openapi-3.0.yaml
+      - cp -r ./docs/swagger.json ../../../../docs/public/api/swagger-2.0.json
+      - cp -r ./docs/swagger.yaml ../../../../docs/public/api/swagger-2.0.yaml
+      - cp -r ./docs/openapi-3.json ../../../../docs/public/api/openapi-3.0.json
+      - cp -r ./docs/openapi-3.yaml ../../../../docs/public/api/openapi-3.0.yaml
     sources:
       - "./backend/app/api/**/*"
       - "./backend/internal/data/**"

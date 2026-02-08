@@ -1,0 +1,96 @@
+---
+title: Storage
+---
+Homebox supports multiple storage backends for flexibility in deployment models.
+
+## Local Storage
+
+By default, homebox uses local storage at the `.data` folder relative path to the binary, or `/data` in the docker
+container.
+You can change the storage path by setting the `HBOX_STORAGE_CONN_STRING` to `file:///full/path/you/want`. The
+`HBOX_STORAGE_PREFIX_PATH`
+can be used to set a "prefix" for the storage. This "prefix" comes after the path in the connection string.
+
+> [!WARNING]
+> The local storage path must be writable by the user running homebox. Hombox will automatically create the default
+> directory if it does not exist. If you change the storage path, you must ensure that the directory exists and is
+> writable by the user running homebox.
+
+## S3 Storage
+Homebox supports any S3-compatible storage backend.
+
+### Authentication
+To authenticate with S3, you will need to set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables.
+Optionally, you can also set `AWS_SESSION_TOKEN` if you are using temporary credentials.
+
+### AWS S3
+
+You can use S3 storage by setting the `HBOX_STORAGE_CONN_STRING` to `s3://my-bucket?region=region-name`.
+
+In this case, the `HBOX_STORAGE_PREFIX_PATH` can be used to set a "prefix" for the storage. This "prefix" comes after
+the bucket name in the connection string.
+
+### S3-Compatible Storage
+
+You can also use S3-compatible storage by setting the `HBOX_STORAGE_CONN_STRING` to
+`s3://my-bucket?endpoint=http://my-s3-compatible-endpoint.tld&disable_https=true&use_path_style=true`.
+
+This allows you to connect to S3-compatible services like MinIO, DigitalOcean Spaces, or any other service that supports
+the S3 API. Configure the `disable_https`, `use_path_style`, and `endpoint` parameters as needed for your specific
+service.
+
+#### Tested S3-Compatible Storage
+
+| Service       | Working | Connection String                                                                                               |
+|---------------|---------|-----------------------------------------------------------------------------------------------------------------|
+| MinIO         | Yes     | `s3://my-bucket?endpoint=http://minio:9000&disable_https=true&use_path_style=true`                              |
+| Cloudflare R2 | Yes     | `s3://my-bucket?endpoint=https://<account-id>.r2.cloudflarestorage.com&disable_https=false&use_path_style=true` |
+| Backblaze B2  | Yes     | `s3://my-bucket?endpoint=https://s3.us-west-004.backblazeb2.com&disable_https=false&use_path_style=true`        |
+
+> [!NOTE]
+> If you know of any other S3-compatible storage that works with Homebox, please let us know or create a pull request to update the table.
+
+### Extra Connection Parameters
+
+Additionally, the parameters in the URL can be used to configure specific S3 settings:
+
+- `region`: The AWS region where the bucket is located.
+- `endpoint`: The custom endpoint for S3-compatible storage services.
+- `use_path_style`: Whether to force path-style access (set to `true` or `false`).
+- `disable_https`: Whether to disable SSL (set to `true` or `false`).
+- `sseType`: The server-side encryption type (e.g., `AES256` or `aws:kms` or `aws:kms:dsse`).
+- `kmskeyid`: The KMS key ID for server-side encryption.
+- `fips`: Whether to use FIPS endpoints (set to `true` or `false`).
+- `dualstack`: Whether to use dual-stack endpoints (set to `true` or `false`).
+- `accelerate`: Whether to use S3 Transfer Acceleration (set to `true` or `false`).
+- `request_checksum_calculation`: If checksum calculations should be made (set to `when_supported` or `when_required`)
+- `response_checksum_validation`: If checksums should be validated (set to `when_supported` or `when_required`)
+- `hostname_immutable`: Make the hostname immutable, only works if endpoint is also set (set to `true` or `false`).
+- `rate_limiter_capacity`: A integer value configures the capacity of a token bucket used in client-side rate limits.
+If no value is set, the client-side rate limiting is disabled. See https://aws.github.io/aws-sdk-go-v2/docs/configuring-sdk/retries-timeouts/#client-side-rate-limiting.
+
+## Google Cloud Storage
+
+### Authentication
+To authenticate with Google Cloud Storage, you will need to set the `GOOGLE_APPLICATION_CREDENTIALS` environment
+variable to the path of your service account key file.
+This file should be in JSON format and contain the necessary credentials to access your Google Cloud Storage bucket and
+must be made available to the application if running docker via read-only volume mounts.
+
+### Using Google Cloud Storage
+You can use Google Cloud Storage by setting the `HBOX_STORAGE_CONN_STRING` to `gcs://my-bucket`.
+
+## Azure Blob Storage
+
+### Authentication
+To authenticate with Azure blob storage, you will need to set the `AZURE_STORAGE_ACCOUNT` and `AZURE_STORAGE_KEY`
+environment variables. Optionally, you can also set `AZURE_STORAGE_SAS_TOKEN` if you are using a Shared Access
+Signature (SAS) for authentication.
+
+### Using Azure Blob Storage
+You can use Azure Blob Storage by setting the `HBOX_STORAGE_CONN_STRING` to `azblob://my-container`.
+
+### Local Azure Storage Emulator
+If you want to use the local Azure Storage Emulator, you can set the `HBOX_STORAGE_CONN_STRING` to
+`azblob://my-container?protocol=http&domain=localhost:10001`. This will allow you to use the emulator for development
+and testing purposes.
