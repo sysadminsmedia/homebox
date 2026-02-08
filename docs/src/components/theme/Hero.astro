@@ -1,0 +1,213 @@
+---
+import { Image } from 'astro:assets';
+import { PAGE_TITLE_ID } from './constants';
+import LinkButton from './LinkButton.astro';
+import SiteTitle from './SiteTitle.astro';
+
+type StarlightAction = {
+  attrs?: Record<string, any>;
+  icon?: { name?: string; html?: string };
+  link?: string | URL;
+  text?: string;
+  variant?: 'primary' | 'secondary' | 'minimal';
+};
+
+type StarlightHero = {
+  title?: string;
+  tagline?: string;
+  image?: any;
+  actions?: StarlightAction[];
+};
+
+type StarlightRouteEntryData = {
+  title?: string;
+  hero?: StarlightHero;
+};
+
+const data = (Astro.locals.starlightRoute?.entry?.data as StarlightRouteEntryData) || {};
+const { title = data.title, tagline, image, actions = [] } = (data.hero || {}) as StarlightHero;
+
+const imageAttrs = {
+  loading: 'eager' as const,
+  decoding: 'async' as const,
+  width: 400,
+  height: 400,
+  alt: image?.alt || '',
+};
+
+let heroImage: any | undefined;
+let rawHtml: string | undefined;
+
+if (image) {
+  if ('file' in image) {
+    heroImage = image.file;
+  } else if ('dark' in image) {
+    heroImage = image.dark;
+  } else if ('html' in image) {
+    rawHtml = image.html;
+  }
+}
+---
+
+<div class="hero-container">
+  <div class="hero-grid md:mx-12">
+    <div class="hero-content">
+      <div class="hero-header">
+        <h1 id={PAGE_TITLE_ID} data-page-title class="hero-title">
+          {title === 'HomeBox' && <SiteTitle theme="light" height="var(--hero-logo-height)" />}
+          {title !== 'HomeBox' && <span set:html={title} />}
+        </h1>
+        {tagline && <p class="hero-tagline" set:html={tagline} />}
+      </div>
+
+      {actions.length > 0 && (
+        <div class="hero-actions">
+          {actions.map(({ attrs: { class: className, ...attrs } = {}, icon, link: href, text, variant }) => (
+            <LinkButton href={href ?? '#'} variant={variant} icon={icon?.name as any} class={className} {...attrs}>
+              {text}
+              {icon?.html && <Fragment set:html={icon.html} />}
+            </LinkButton>
+          ))}
+        </div>
+      )}
+    </div>
+
+    {heroImage && <Image src={heroImage} {...imageAttrs} class="hero-image" />}
+    {rawHtml && <div class="hero-html" set:html={rawHtml} />}
+  </div>
+</div>
+
+<style>
+  .hero-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    padding-bottom: 0;
+    --hero-logo-height: 2.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .hero-container {
+      --hero-logo-height: 3rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-container {
+      --hero-logo-height: 3.75rem;
+    }
+  }
+
+  .hero-grid {
+    display: grid;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .hero-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .hero-content {
+      text-align: left;
+      justify-content: center;
+    }
+  }
+
+  .hero-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: center;
+  }
+
+  @media (min-width: 768px) {
+    .hero-header {
+      align-items: flex-start;
+    }
+  }
+
+  .hero-title {
+    font-size: 2.25rem;
+    line-height: 1.1;
+    font-weight: 700;
+    color: var(--color-foreground);
+    max-width: 20ch;
+    letter-spacing: -0.02em;
+  }
+
+  @media (min-width: 640px) {
+    .hero-title {
+      font-size: 3rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-title {
+      font-size: 3.75rem;
+    }
+  }
+
+  .hero-tagline {
+    font-size: 1.125rem;
+    color: var(--color-muted-foreground);
+    max-width: 45ch;
+    line-height: 1.625;
+  }
+
+  @media (min-width: 768px) {
+    .hero-tagline {
+      font-size: 1.25rem;
+    }
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  @media (min-width: 768px) {
+    .hero-actions {
+      justify-content: flex-start;
+    }
+  }
+
+  .hero-image {
+    margin-left: auto;
+    margin-right: auto;
+    width: min(90%, 24rem);
+    object-fit: contain;
+    filter: drop-shadow(0 20px 25px rgb(0 0 0 / 0.1));
+  }
+
+  @media (min-width: 768px) {
+    .hero-image {
+      width: 100%;
+    }
+  }
+
+  .hero-html {
+    margin-left: auto;
+    margin-right: auto;
+    width: min(90%, 24rem);
+  }
+
+  @media (min-width: 768px) {
+    .hero-html {
+      width: 100%;
+    }
+  }
+</style>

@@ -1,0 +1,36 @@
+---
+import { Icon } from '@astrojs/starlight/components'
+import type { StarlightIcon } from '@astrojs/starlight/types'
+
+interface Props {
+  icon: StarlightIcon
+}
+
+const { icon } = Astro.props
+
+const svgClasses =
+  'inline-block h-5 w-5 text-current transition-transform duration-150'
+---
+
+
+{icon === 'right-arrow' ? (
+  <svg
+    class={svgClasses + ' ml-2 -mr-1 group-hover:translate-x-0.5'}
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+  >
+    <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z" fill="currentColor" />
+  </svg>
+) : icon === 'left-arrow' ? (
+  <svg
+    class={svgClasses + ' mr-2 -ml-1 group-hover:-translate-x-0.5'}
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+  >
+    <path d="M15.41 7.41L10.83 12l4.58 4.59L14 18l-6-6 6-6z" fill="currentColor" />
+  </svg>
+) : (
+  <Icon name={icon} size="1.25rem" />
+)}

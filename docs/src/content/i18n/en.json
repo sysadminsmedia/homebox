@@ -1,0 +1,11 @@
+{
+  "starlightChangelogs.compare.label": "All versions forward",
+  "starlightChangelogs.compare.title": "All versions since {{version}}",
+  "starlightChangelogs.pagination.next": "Older versions",
+  "starlightChangelogs.pagination.prev": "Newer versions",
+  "starlightChangelogs.version.date": "{{date, datetime(dateStyle: medium)}}",
+  "starlightChangelogs.version.find": "Find a version",
+  "starlightChangelogs.version.open": "View on {{provider}}",
+  "starlightChangelogs.version.title": "Version {{version}}",
+  "starlightChangelogs.versions.all": "All versions"
+}

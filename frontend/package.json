@@ -79,5 +79,6 @@
     "vue": "3.5.20",
     "vue-router": "^4.6.4",
     "vue-sonner": "^2.0.9"
-  }
+  },
+  "packageManager": "pnpm@11.0.0-dev.1005+sha512.91f84a392eea348ea4852a182912d2520273a4336f933b78cc44bc931eb999923c097e9433a9b355adc1f725725ea99082fc9f032a559df832632e764c92c798"
 }

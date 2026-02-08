@@ -1,0 +1,420 @@
+@layer base, starlight, nova, theme, components, utilities;
+
+@import '@astrojs/starlight-tailwind';
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+
+/* atkinson-hyperlegible-next-latin-wght-normal */
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url(@fontsource-variable/atkinson-hyperlegible-next/files/atkinson-hyperlegible-next-latin-wght-normal.woff2) format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+/* atkinson-hyperlegible-mono-latin-wght-normal */
+@font-face {
+  font-family: 'Atkinson Hyperlegible Mono Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url(@fontsource-variable/atkinson-hyperlegible-mono/files/atkinson-hyperlegible-mono-latin-wght-normal.woff2) format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+@theme {
+  /* Fonts */
+  --font-sans: 'Atkinson Hyperlegible Next Variable';
+  --font-mono: 'Atkinson Hyperlegible Mono Variable';
+
+  /* HomeBox Theme Colors - Light mode */
+  --color-background: hsl(0 0% 100%);
+  --color-background-accent: hsl(0 0% 81%);
+  --color-foreground: hsl(0 0% 20%);
+  --color-primary: hsl(139 16% 43%);
+  --color-primary-foreground: hsl(139 100% 89%);
+  --color-secondary: hsl(77 8% 17%);
+  --color-secondary-foreground: hsl(76 18% 83%);
+  --color-accent: hsl(97 37% 93%);
+  --color-accent-foreground: hsl(97 31% 19%);
+  --color-muted: hsl(0 0% 90%);
+  --color-muted-foreground: hsl(0 0% 40%);
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(0 0% 20%);
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(0 0% 20%);
+  --color-destructive: hsl(0 91% 71%);
+  --color-destructive-foreground: hsl(0 100% 14%);
+  --color-input: hsl(0 0% 81%);
+  --color-border: hsl(0 0% 81%);
+  --color-ring: hsl(139 16% 43%);
+  --color-sidebar: hsl(0 0% 96%);
+  --color-sidebar-foreground: hsl(0 0% 20%);
+  --color-sidebar-primary: hsl(139 16% 43%);
+  --color-sidebar-primary-foreground: hsl(139 100% 89%);
+  --color-sidebar-accent: hsl(0 0% 90%);
+  --color-sidebar-accent-foreground: hsl(0 0% 20%);
+  --color-sidebar-border: hsl(0 0% 81%);
+  --color-sidebar-ring: hsl(0 0% 81%);
+  --color-header: hsl(77 8% 17%);
+  --color-header-foreground: hsl(60 15% 95%);
+
+  /* Starlight gray palette - aligned with frontend */
+  --color-gray-100: hsl(60 3% 96%);
+  --color-gray-200: hsl(60 4% 93%);
+  --color-gray-300: hsl(70 4% 75%);
+  --color-gray-400: hsl(72 5% 53%);
+  --color-gray-500: hsl(75 6% 34%);
+  --color-gray-700: hsl(75 10% 21%);
+  --color-gray-800: hsl(75 14% 14%);
+  --color-gray-900: hsl(75 18% 8%);
+
+  /* Starlight accent palette - using primary green */
+  --color-accent-200: hsl(139 16% 75%);
+  --color-accent-600: hsl(139 16% 43%);
+  --color-accent-900: hsl(139 16% 25%);
+  --color-accent-950: hsl(139 16% 15%);
+
+  --radius: 0.5rem;
+}
+
+/* GLOBAL OVERRIDES FOR STARLIGHT COMPONENTS */
+@media(min-width: 800px) {
+  :root {
+    --sl-content-width: 96%;
+  }
+}
+
+/* LIGHT MODE - STARLIGHT OVERRIDES (Header should be dark (secondary color) in light mode) */
+
+:root {
+  --sl-color-bg-nav: hsl(77 8% 17%);
+}
+
+:root[data-theme="light"] .nova-search-button:hover {
+  background-color: hsl(0, 0%, 95%);
+}
+
+/* Mobile TOC should have light background in light mode, not dark nav bg */
+:root:not([data-theme="dark"]) mobile-starlight-toc nav {
+  background-color: hsl(0 0% 100%) !important;
+}
+
+:root:not([data-theme="dark"]) mobile-starlight-toc .toggle {
+  background-color: hsl(0 0% 100%) !important;
+  color: hsl(0 0% 20%) !important;
+  border-color: hsl(0 0% 81%) !important;
+}
+
+:root:not([data-theme="dark"]) mobile-starlight-toc .dropdown {
+  background-color: hsl(0 0% 100%) !important;
+  border-color: hsl(0 0% 70%) !important;
+}
+
+/* Dark mode */
+:root[data-theme="dark"] {
+  --color-background: hsl(75 14% 10%);
+  --color-background-accent: hsl(75 10% 18%);
+  --color-foreground: hsl(60 20% 95%);
+  --color-primary: hsl(139 25% 60%);
+  --color-primary-foreground: hsl(139 16% 10%);
+  --color-secondary: hsl(76 18% 90%);
+  --color-secondary-foreground: hsl(77 8% 17%);
+  --color-accent: hsl(97 20% 25%);
+  --color-accent-foreground: hsl(97 30% 90%);
+  --color-muted: hsl(75 10% 18%);
+  --color-muted-foreground: hsl(60 10% 80%);
+  --color-card: hsl(75 14% 12%);
+  --color-card-foreground: hsl(60 20% 95%);
+  --color-popover: hsl(75 14% 12%);
+  --color-popover-foreground: hsl(60 20% 95%);
+  --color-destructive: hsl(0 72% 51%);
+  --color-destructive-foreground: hsl(0 100% 95%);
+  --color-input: hsl(75 10% 25%);
+  --color-border: hsl(75 10% 25%);
+  --color-ring: hsl(139 25% 60%);
+  --color-sidebar: hsl(75 14% 8%);
+  --color-sidebar-foreground: hsl(60 20% 95%);
+  --color-sidebar-primary: hsl(139 25% 60%);
+  --color-sidebar-primary-foreground: hsl(139 16% 10%);
+  --color-sidebar-accent: hsl(75 10% 18%);
+  --color-sidebar-accent-foreground: hsl(60 20% 95%);
+  --color-sidebar-border: hsl(75 10% 25%);
+  --color-sidebar-ring: hsl(75 10% 25%);
+  --color-header: hsl(75 14% 8%);
+  --color-header-foreground: hsl(60 20% 95%);
+
+  --color-gray-100: hsl(75 18% 8%);
+  --color-gray-200: hsl(75 14% 14%);
+  --color-gray-300: hsl(75 10% 21%);
+  --color-gray-400: hsl(75 6% 45%);
+  --color-gray-500: hsl(72 5% 65%);
+  --color-gray-700: hsl(70 6% 85%);
+  --color-gray-800: hsl(60 10% 92%);
+  --color-gray-900: hsl(60 15% 97%);
+}
+
+/* HEADER TEXT STYLING (for both modes) */
+
+.header,
+.header a,
+.header button,
+.header select,
+.header svg,
+.header label {
+  color: hsl(60 15% 95%) !important;
+}
+
+.header select,
+.header starlight-theme-select select {
+  background-color: rgba(255 255 255 / 0.12) !important;
+  border-color: rgba(255 255 255 / 0.2) !important;
+  color: hsl(60 15% 95%) !important;
+}
+
+.header select:hover,
+.header starlight-theme-select select:hover {
+  background-color: rgba(255 255 255 / 0.2) !important;
+}
+
+.header site-search kbd {
+  background-color: rgba(255 255 255 / 0.2) !important;
+  color: hsl(60 15% 95%) !important;
+  border-color: rgba(255 255 255 / 0.3) !important;
+}
+
+/* Dark mode - better contrast for search kbd */
+:root[data-theme="dark"] site-search kbd {
+  background-color: rgba(0 0 0 / 0.3) !important;
+  color: hsl(60 20% 95%) !important;
+}
+
+/* Light mode - theme select needs better visibility on dark header */
+:root:not([data-theme="dark"]) .header select,
+:root:not([data-theme="dark"]) .header starlight-theme-select select {
+  background-color: rgba(255 255 255 / 0.15) !important;
+  border-color: rgba(255 255 255 / 0.3) !important;
+}
+
+:root:not([data-theme="dark"]) .header select:hover,
+:root:not([data-theme="dark"]) .header starlight-theme-select select:hover {
+  background-color: rgba(255 255 255 / 0.25) !important;
+  border-color: rgba(255 255 255 / 0.4) !important;
+}
+
+/* LIGHT MODE SPECIFIC FIXES */
+
+/* LIGHT MODE - SIDEBAR */
+
+/* Sidebar links hover */
+:root:not([data-theme="dark"]) .sidebar-content a:hover {
+  background-color: hsl(139 16% 90%) !important;
+  color: hsl(139 16% 30%) !important;
+}
+
+/* Sidebar group buttons (like "Getting Started") - solid hover background */
+:root:not([data-theme="dark"]) .sidebar-content details > summary:hover {
+  background-color: hsl(139 16% 90%) !important;
+}
+
+/* Header theme switcher */
+astro-theme-toggle {
+  color: #F4F4F4;
+}
+
+/* Mobile header buttons */
+@media (max-width: calc(-0.1px + 50rem)) {
+  .nova-search-button, nova-mobile-menu-toggle {
+    color: #F4F4F4;
+  }
+}
+
+/* DARK MODE - ROOT VARIABLES */
+
+:root[data-theme="dark"] {
+  /* Override Starlight dark mode colors */
+  --sl-color-bg: hsl(75 14% 10%);
+  --sl-color-bg-nav: hsl(75 14% 8%);
+  --sl-color-bg-sidebar: hsl(75 14% 8%);
+  --sl-color-bg-inline-code: hsl(75 14% 18%);
+  
+  --sl-color-hairline: hsl(75 10% 22%);
+  --sl-color-hairline-light: hsl(75 10% 18%);
+  --sl-color-hairline-shade: hsl(75 10% 15%);
+  
+  --sl-color-text: hsl(60 20% 95%);
+  --sl-color-text-accent: hsl(139 25% 70%);
+  
+  --sl-color-white: hsl(60 20% 95%);
+  --sl-color-black: hsl(75 14% 8%);
+  
+  --sl-color-accent-low: hsl(139 20% 18%);
+  --sl-color-accent: hsl(139 25% 55%);
+  --sl-color-accent-high: hsl(139 30% 80%);
+}
+
+/* DARK MODE - SIDEBAR */
+
+:root[data-theme="dark"] .sidebar-pane {
+  background-color: hsl(75 14% 8%) !important;
+}
+
+:root[data-theme="dark"] #starlight__sidebar {
+  background-color: hsl(75 14% 8%) !important;
+}
+
+:root[data-theme="dark"] .sidebar-content {
+  background-color: hsl(75 14% 8%) !important;
+}
+
+/* Sidebar text in dark mode - make it lighter */
+:root[data-theme="dark"] .sidebar-content a {
+  color: hsl(60 10% 75%) !important;
+}
+
+/* Active page in sidebar - accent text, NO background change to avoid same-color issue */
+:root[data-theme="dark"] .sidebar-content a[aria-current="page"] {
+  color: hsl(139 30% 65%) !important;
+  font-weight: 600;
+  background-color: transparent !important;
+}
+
+/* Sidebar links hover in dark mode */
+:root[data-theme="dark"] .sidebar-content a:hover {
+  background-color: hsl(75 10% 15%) !important;
+  color: hsl(60 15% 90%) !important;
+}
+
+/* Sidebar group buttons hover in dark mode */
+:root[data-theme="dark"] .sidebar-content details > summary:hover {
+  background-color: hsl(75 10% 15%) !important;
+}
+
+/* DARK MODE - CODE BLOCKS */
+
+:root[data-theme="dark"] .expressive-code,
+:root[data-theme="dark"] .expressive-code .frame {
+  background-color: hsl(75 14% 12%) !important;
+  border-color: hsl(75 10% 18%) !important;
+}
+
+:root[data-theme="dark"] .expressive-code pre {
+  background-color: hsl(75 14% 12%) !important;
+}
+
+:root[data-theme="dark"] .expressive-code .header,
+:root[data-theme="dark"] .expressive-code figcaption {
+  background-color: hsl(75 14% 14%) !important;
+  border-color: hsl(75 10% 20%) !important;
+  color: hsl(60 15% 85%) !important;
+}
+
+:root[data-theme="dark"] .expressive-code .title {
+  color: hsl(60 15% 85%) !important;
+  background-color: hsl(75 14% 12%);
+}
+
+:root[data-theme="dark"] div.copy > button{
+  color: hsl(60 15% 85%) !important;
+  background-color: hsl(75 14% 12%) !important;
+}
+
+/* Inline code */
+:root[data-theme="dark"] :not(pre) > code {
+  background-color: hsl(75 14% 18%) !important;
+}
+
+/* DARK MODE - STEPS COMPONENT */
+
+:root[data-theme="dark"] .sl-steps > li::before {
+  background-color: hsl(139 25% 50%) !important;
+  color: hsl(75 14% 8%) !important;
+}
+
+/* DARK MODE - MOBILE TOC */
+
+:root[data-theme="dark"] mobile-starlight-toc {
+  background-color: hsl(75 14% 10%) !important;
+}
+
+:root[data-theme="dark"] mobile-starlight-toc > summary {
+  background-color: hsl(75 14% 10%) !important;
+  border-color: hsl(75 10% 20%) !important;
+}
+
+:root[data-theme="dark"] mobile-starlight-toc .toggle {
+  background-color: hsl(75 14% 8%) !important;
+  color: hsl(60 20% 95%) !important;
+  border-color: hsl(75 10% 25%) !important;
+}
+
+:root[data-theme="dark"] mobile-starlight-toc > nav {
+  background-color: hsl(75 14% 10%) !important;
+  border-color: hsl(75 10% 30%) !important;
+}
+
+:root[data-theme="dark"] mobile-starlight-toc .dropdown {
+  background-color: hsl(75 14% 8%) !important;
+  border-color: hsl(75 10% 35%) !important;
+}
+
+/* DARK MODE - RIGHT SIDEBAR / TOC */
+
+:root[data-theme="dark"] .right-sidebar {
+  background-color: hsl(75 14% 10%) !important;
+}
+
+/* DARK MODE - Changelog */
+
+:root[data-theme="dark"] .sl-changelogs-version-list-icon {
+  color: var(--sl-color-gray-6) !important;
+}
+
+:root[data-theme="dark"] starlight-changelogs-versions-list > form > input {
+  background-color: hsl(75 14% 10%) !important;
+}
+:root[data-theme="dark"] starlight-changelogs-versions-list > form > input::placeholder {
+  color: var(--sl-color-gray-5) !important;
+}
+
+/* DARK MODE - Pagination Links */
+:root[data-theme="dark"] .nova-pagination-link {
+  color: var(--sl-color-gray-6);
+}
+
+/* DARK MODE - File Tree */
+:root[data-theme="dark"] starlight-file-tree{
+  background: var(--sl-color-gray-1);
+  border: 1px solid var(--sl-color-gray-1);
+}
+
+/* DARK MODE - API DOCS */
+:root[data-theme="dark"] div.panel {
+  background-color: var(--sl-color-gray-1);
+  border: 1px solid var(--sl-color-gray-1);
+}
+
+:root[data-theme="dark"] div > details > summary, :root[data-theme="dark"]  details ul li input {
+  background-color: var(--sl-color-gray-1);
+  color: var(--sl-color-gray-6);
+}
+
+:root[data-theme="dark"] .required {
+  color: var(--color-red-300);
+}
+
+/* DARK MODE - Search */
+:root[data-theme="dark"] #starlight__search .pagefind-ui__result-excerpt {
+  color: var(--sl-color-gray-6);
+}
+
+:root[data-theme="dark"] .pagefind-ui__message {
+  color: var(--sl-color-gray-6);
+}
+
+:root[data-theme="dark"] #starlight__search .pagefind-ui__search-input::placeholder {
+  color: var(--sl-color-gray-6);
+}

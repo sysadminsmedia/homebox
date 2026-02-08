@@ -1,0 +1,43 @@
+{
+  "name": "homebox-docs",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "docs:dev": "astro dev",
+    "docs:build": "astro build",
+    "docs:preview": "astro preview"
+  },
+  "dependencies": {
+    "@aria-ui/core": "^0.0.22",
+    "@astrojs/cloudflare": "^12.6.12",
+    "@astrojs/starlight": "^0.36.3",
+    "@astrojs/starlight-tailwind": "^4.0.2",
+    "@fontsource-variable/atkinson-hyperlegible-mono": "^5.2.5",
+    "@fontsource-variable/atkinson-hyperlegible-next": "^5.2.6",
+    "@tailwindcss/vite": "^4.1.18",
+    "astro": "^5.17.1",
+    "astro-icon": "^1.1.5",
+    "astro-theme-toggle": "^0.8.0",
+    "sharp": "^0.34.5",
+    "starlight-auto-drafts": "^0.2.1",
+    "starlight-changelogs": "^0.3.0",
+    "starlight-github-alerts": "^0.1.1",
+    "starlight-sidebar-topics": "^0.6.2",
+    "starlight-theme-nova": "^0.10.0",
+    "tailwindcss": "^4.1.18"
+  },
+  "devDependencies": {
+    "@iconify-json/fluent-emoji-flat": "^1.2.5",
+    "@iconify-json/material-symbols": "^1.2.54",
+    "@iconify-json/simple-icons": "^1.2.70",
+    "rollup-plugin-visualizer": "^6.0.5",
+    "starlight-openapi": "^0.22.0",
+    "wrangler": "^4.63.0"
+  },
+  "packageManager": "pnpm@10.9.0+sha512.0486e394640d3c1fb3c9d43d49cf92879ff74f8516959c235308f5a8f62e2e19528a65cdc2a3058f587cde71eba3d5b56327c8c33a97e4c4051ca48a10ca2d5f"
+}
