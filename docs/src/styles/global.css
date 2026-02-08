@@ -414,3 +414,7 @@ astro-theme-toggle {
 :root[data-theme="dark"] .pagefind-ui__message {
   color: var(--sl-color-gray-6);
 }
+
+:root[data-theme="dark"] #starlight__search .pagefind-ui__search-input::placeholder {
+  color: var(--sl-color-gray-6);
+}
