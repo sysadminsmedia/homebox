@@ -16,15 +16,15 @@
   },
   "devDependencies": {
     "@eslint/compat": "^1.4.1",
-    "@faker-js/faker": "^10.2.0",
+    "@faker-js/faker": "^10.3.0",
     "@iconify-json/mdi": "^1.2.3",
     "@intlify/unplugin-vue-i18n": "^6.0.8",
-    "@nuxt/eslint": "^1.13.0",
-    "@playwright/test": "^1.58.0",
+    "@nuxt/eslint": "^1.14.0",
+    "@playwright/test": "^1.58.2",
     "@types/markdown-it": "^14.1.2",
     "@types/semver": "^7.7.1",
-    "@vite-pwa/nuxt": "^1.1.0",
-    "@vue/runtime-core": "^3.5.27",
+    "@vite-pwa/nuxt": "^1.1.1",
+    "@vue/runtime-core": "^3.5.28",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
@@ -57,7 +57,7 @@
     "@vueuse/nuxt": "^13.9.0",
     "@vueuse/router": "^13.9.0",
     "@zxing/library": "^0.21.3",
-    "autoprefixer": "^10.4.23",
+    "autoprefixer": "^10.4.24",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -70,7 +70,7 @@
     "pinia": "^3.0.4",
     "postcss": "^8.5.6",
     "reka-ui": "2.7.0",
-    "semver": "^7.7.3",
+    "semver": "^7.7.4",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^3.4.19",
     "tailwindcss-animate": "^1.0.7",
@@ -80,5 +80,5 @@
     "vue-router": "^4.6.4",
     "vue-sonner": "^2.0.9"
   },
-  "packageManager": "pnpm@11.0.0-dev.1005+sha512.91f84a392eea348ea4852a182912d2520273a4336f933b78cc44bc931eb999923c097e9433a9b355adc1f725725ea99082fc9f032a559df832632e764c92c798"
+  "packageManager": "pnpm@10.28.0"
 }
