@@ -100,7 +100,7 @@
       </BaseCard>
 
       <DialogFooter>
-        <Button type="import" :disabled="selectedRow === -1" @click="createItem">
+        <Button type="button" :disabled="selectedRow === -1" @click="createItem">
           {{ $t("components.item.product_import.import_selected") }}
         </Button>
       </DialogFooter>
