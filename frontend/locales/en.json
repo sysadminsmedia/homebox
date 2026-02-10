@@ -123,6 +123,7 @@
         },
         "global": {
             "copy_text": {
+                "continue": "Continue",
                 "documentation": "documentation",
                 "failed_to_copy": "Failed to copy text to clipboard",
                 "https_required": "because HTTPS is required",
@@ -214,6 +215,7 @@
                 "error_exception": "Exception occured while retrieving item barcode: ",
                 "error_invalid_barcode": "Invalid barcode provided",
                 "error_not_found": "No product found with given barcode.",
+                "import_selected": "Import selected",
                 "search_item": "Search product",
                 "title": "Import product"
             },
@@ -300,6 +302,11 @@
         "quick_menu": {
             "no_results": "No results found.",
             "shortcut_hint": "Use the number keys to quickly select an action."
+        },
+        "search": {
+            "filter": {
+                "search_placeholder": "Search…"
+            }
         },
         "tag": {
             "create_modal": {
@@ -511,6 +518,7 @@
             "view_image": "View Image"
         },
         "edit_details": "Edit Details",
+        "field": "Field",
         "field_selector": "Field Selector",
         "field_value": "Field Value",
         "first": "First",
@@ -550,7 +558,9 @@
         "reset_search": "Reset Search",
         "results": "{ total } Results",
         "select_field": "Select a field",
+        "select_value": "Select a value",
         "serial_number": "Serial Number",
+        "show_empty": "Show Empty",
         "show_advanced_view_options": "Show Advanced View Options",
         "sold_at": "Sold At",
         "sold_details": "Sold Details",
