@@ -54,7 +54,7 @@ You can also try the demo instances of Homebox:
 
 ## Quick Start
 
-[Configuration & Docker Compose](https://homebox.software/en/quick-start.html)
+[Configuration & Docker Compose](https://homebox.software/en/quick-start/)
 
 ```bash
 # If using the rootless or hardened image, ensure data 
@@ -78,7 +78,7 @@ docker run -d \
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-To get started with code based contributions, please see our [contributing guide](https://homebox.software/en/contribute/get-started.html).
+To get started with code based contributions, please see our [contributing guide](https://homebox.software/en/contribute/).
 
 If you are not a coder and can't help translate, you can still contribute financially. Financial contributions help us maintain the project and keep demos running.
 
