@@ -183,7 +183,11 @@ export class ItemsApi extends BaseAPI {
     });
   }
 
-  exportURL() {
+  exportURL(tenant?: string) {
+    if (tenant) {
+      return route("/items/export", { tenant });
+    }
+
     return route("/items/export");
   }
 }

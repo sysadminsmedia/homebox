@@ -119,6 +119,7 @@
   import DetailAction from "@/components/DetailAction.vue";
 
   const { t } = useI18n();
+  const prefs = useViewPreferences();
 
   definePageMeta({
     middleware: ["auth"],
@@ -138,12 +139,12 @@
   });
 
   const getBillOfMaterials = () => {
-    const url = api.reports.billOfMaterialsURL();
+    const url = api.reports.billOfMaterialsURL(prefs.value.collectionId ?? undefined);
     window.open(url, "_blank");
   };
 
   const getExportCSV = () => {
-    const url = api.items.exportURL();
+    const url = api.items.exportURL(prefs.value.collectionId ?? undefined);
     window.open(url, "_blank");
   };
 
