@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="/docs/public/lilbox.svg" height="200"/>
+  <img src="/docs/src/assets/lilbox.svg" height="200"/>
 </div>
 
 <h1 align="center" style="margin-top: -10px;"> HomeBox </h1>
