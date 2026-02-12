@@ -19,6 +19,9 @@ export enum UserRole {
 
 export enum TemplatefieldType {
   TypeText = "text",
+  TypeNumber = "number",
+  TypeBoolean = "boolean",
+  TypeTime = "time",
 }
 
 export enum MaintenanceFilterStatus {
@@ -477,6 +480,8 @@ export interface EntTagEdges {
 }
 
 export interface EntTemplateField {
+  /** BooleanValue holds the value of the "boolean_value" field. */
+  boolean_value: boolean;
   /** CreatedAt holds the value of the "created_at" field. */
   created_at: string;
   /** Description holds the value of the "description" field. */
@@ -490,8 +495,12 @@ export interface EntTemplateField {
   id: string;
   /** Name holds the value of the "name" field. */
   name: string;
+  /** NumberValue holds the value of the "number_value" field. */
+  number_value: number;
   /** TextValue holds the value of the "text_value" field. */
   text_value: string;
+  /** TimeValue holds the value of the "time_value" field. */
+  time_value: string;
   /** Type holds the value of the "type" field. */
   type: TemplatefieldType;
   /** UpdatedAt holds the value of the "updated_at" field. */
