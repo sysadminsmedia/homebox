@@ -55,8 +55,6 @@ tasks:
     cmds:
       - task: swag
       - task: typescript-types
-      - cp ./backend/app/api/static/docs/swagger.json docs/en/api/openapi-2.0.json
-      - cp ./backend/app/api/static/docs/swagger.yaml docs/en/api/openapi-2.0.yaml
 
   go:run:
     env:

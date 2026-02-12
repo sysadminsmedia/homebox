@@ -11868,6 +11868,10 @@ type TemplateFieldMutation struct {
 	description          *string
 	_type                *templatefield.Type
 	text_value           *string
+	number_value         *int
+	addnumber_value      *int
+	boolean_value        *bool
+	time_value           *time.Time
 	clearedFields        map[string]struct{}
 	item_template        *uuid.UUID
 	cleareditem_template bool
@@ -12222,6 +12226,148 @@ func (m *TemplateFieldMutation) ResetTextValue() {
 	delete(m.clearedFields, templatefield.FieldTextValue)
 }
 
+// SetNumberValue sets the "number_value" field.
+func (m *TemplateFieldMutation) SetNumberValue(i int) {
+	m.number_value = &i
+	m.addnumber_value = nil
+}
+
+// NumberValue returns the value of the "number_value" field in the mutation.
+func (m *TemplateFieldMutation) NumberValue() (r int, exists bool) {
+	v := m.number_value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNumberValue returns the old "number_value" field's value of the TemplateField entity.
+// If the TemplateField object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateFieldMutation) OldNumberValue(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNumberValue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNumberValue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNumberValue: %w", err)
+	}
+	return oldValue.NumberValue, nil
+}
+
+// AddNumberValue adds i to the "number_value" field.
+func (m *TemplateFieldMutation) AddNumberValue(i int) {
+	if m.addnumber_value != nil {
+		*m.addnumber_value += i
+	} else {
+		m.addnumber_value = &i
+	}
+}
+
+// AddedNumberValue returns the value that was added to the "number_value" field in this mutation.
+func (m *TemplateFieldMutation) AddedNumberValue() (r int, exists bool) {
+	v := m.addnumber_value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearNumberValue clears the value of the "number_value" field.
+func (m *TemplateFieldMutation) ClearNumberValue() {
+	m.number_value = nil
+	m.addnumber_value = nil
+	m.clearedFields[templatefield.FieldNumberValue] = struct{}{}
+}
+
+// NumberValueCleared returns if the "number_value" field was cleared in this mutation.
+func (m *TemplateFieldMutation) NumberValueCleared() bool {
+	_, ok := m.clearedFields[templatefield.FieldNumberValue]
+	return ok
+}
+
+// ResetNumberValue resets all changes to the "number_value" field.
+func (m *TemplateFieldMutation) ResetNumberValue() {
+	m.number_value = nil
+	m.addnumber_value = nil
+	delete(m.clearedFields, templatefield.FieldNumberValue)
+}
+
+// SetBooleanValue sets the "boolean_value" field.
+func (m *TemplateFieldMutation) SetBooleanValue(b bool) {
+	m.boolean_value = &b
+}
+
+// BooleanValue returns the value of the "boolean_value" field in the mutation.
+func (m *TemplateFieldMutation) BooleanValue() (r bool, exists bool) {
+	v := m.boolean_value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBooleanValue returns the old "boolean_value" field's value of the TemplateField entity.
+// If the TemplateField object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateFieldMutation) OldBooleanValue(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBooleanValue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBooleanValue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBooleanValue: %w", err)
+	}
+	return oldValue.BooleanValue, nil
+}
+
+// ResetBooleanValue resets all changes to the "boolean_value" field.
+func (m *TemplateFieldMutation) ResetBooleanValue() {
+	m.boolean_value = nil
+}
+
+// SetTimeValue sets the "time_value" field.
+func (m *TemplateFieldMutation) SetTimeValue(t time.Time) {
+	m.time_value = &t
+}
+
+// TimeValue returns the value of the "time_value" field in the mutation.
+func (m *TemplateFieldMutation) TimeValue() (r time.Time, exists bool) {
+	v := m.time_value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTimeValue returns the old "time_value" field's value of the TemplateField entity.
+// If the TemplateField object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateFieldMutation) OldTimeValue(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTimeValue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTimeValue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTimeValue: %w", err)
+	}
+	return oldValue.TimeValue, nil
+}
+
+// ResetTimeValue resets all changes to the "time_value" field.
+func (m *TemplateFieldMutation) ResetTimeValue() {
+	m.time_value = nil
+}
+
 // SetItemTemplateID sets the "item_template" edge to the ItemTemplate entity by id.
 func (m *TemplateFieldMutation) SetItemTemplateID(id uuid.UUID) {
 	m.item_template = &id
@@ -12295,7 +12441,7 @@ func (m *TemplateFieldMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TemplateFieldMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 9)
 	if m.created_at != nil {
 		fields = append(fields, templatefield.FieldCreatedAt)
 	}
@@ -12313,6 +12459,15 @@ func (m *TemplateFieldMutation) Fields() []string {
 	}
 	if m.text_value != nil {
 		fields = append(fields, templatefield.FieldTextValue)
+	}
+	if m.number_value != nil {
+		fields = append(fields, templatefield.FieldNumberValue)
+	}
+	if m.boolean_value != nil {
+		fields = append(fields, templatefield.FieldBooleanValue)
+	}
+	if m.time_value != nil {
+		fields = append(fields, templatefield.FieldTimeValue)
 	}
 	return fields
 }
@@ -12334,6 +12489,12 @@ func (m *TemplateFieldMutation) Field(name string) (ent.Value, bool) {
 		return m.GetType()
 	case templatefield.FieldTextValue:
 		return m.TextValue()
+	case templatefield.FieldNumberValue:
+		return m.NumberValue()
+	case templatefield.FieldBooleanValue:
+		return m.BooleanValue()
+	case templatefield.FieldTimeValue:
+		return m.TimeValue()
 	}
 	return nil, false
 }
@@ -12355,6 +12516,12 @@ func (m *TemplateFieldMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldType(ctx)
 	case templatefield.FieldTextValue:
 		return m.OldTextValue(ctx)
+	case templatefield.FieldNumberValue:
+		return m.OldNumberValue(ctx)
+	case templatefield.FieldBooleanValue:
+		return m.OldBooleanValue(ctx)
+	case templatefield.FieldTimeValue:
+		return m.OldTimeValue(ctx)
 	}
 	return nil, fmt.Errorf("unknown TemplateField field %s", name)
 }
@@ -12406,6 +12573,27 @@ func (m *TemplateFieldMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTextValue(v)
 		return nil
+	case templatefield.FieldNumberValue:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNumberValue(v)
+		return nil
+	case templatefield.FieldBooleanValue:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBooleanValue(v)
+		return nil
+	case templatefield.FieldTimeValue:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTimeValue(v)
+		return nil
 	}
 	return fmt.Errorf("unknown TemplateField field %s", name)
 }
@@ -12413,13 +12601,21 @@ func (m *TemplateFieldMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *TemplateFieldMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addnumber_value != nil {
+		fields = append(fields, templatefield.FieldNumberValue)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *TemplateFieldMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case templatefield.FieldNumberValue:
+		return m.AddedNumberValue()
+	}
 	return nil, false
 }
 
@@ -12428,6 +12624,13 @@ func (m *TemplateFieldMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *TemplateFieldMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case templatefield.FieldNumberValue:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddNumberValue(v)
+		return nil
 	}
 	return fmt.Errorf("unknown TemplateField numeric field %s", name)
 }
@@ -12441,6 +12644,9 @@ func (m *TemplateFieldMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(templatefield.FieldTextValue) {
 		fields = append(fields, templatefield.FieldTextValue)
+	}
+	if m.FieldCleared(templatefield.FieldNumberValue) {
+		fields = append(fields, templatefield.FieldNumberValue)
 	}
 	return fields
 }
@@ -12461,6 +12667,9 @@ func (m *TemplateFieldMutation) ClearField(name string) error {
 		return nil
 	case templatefield.FieldTextValue:
 		m.ClearTextValue()
+		return nil
+	case templatefield.FieldNumberValue:
+		m.ClearNumberValue()
 		return nil
 	}
 	return fmt.Errorf("unknown TemplateField nullable field %s", name)
@@ -12487,6 +12696,15 @@ func (m *TemplateFieldMutation) ResetField(name string) error {
 		return nil
 	case templatefield.FieldTextValue:
 		m.ResetTextValue()
+		return nil
+	case templatefield.FieldNumberValue:
+		m.ResetNumberValue()
+		return nil
+	case templatefield.FieldBooleanValue:
+		m.ResetBooleanValue()
+		return nil
+	case templatefield.FieldTimeValue:
+		m.ResetTimeValue()
 		return nil
 	}
 	return fmt.Errorf("unknown TemplateField field %s", name)
