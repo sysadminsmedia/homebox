@@ -957,8 +957,14 @@
   * {
     @apply border-border;
   }
-  body {
+  html, body {
     @apply bg-background text-foreground;
+    width: 100%;
+    overflow-x: hidden;
+  }
+  body {
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
   }
 }
 
