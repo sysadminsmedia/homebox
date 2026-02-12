@@ -104,6 +104,61 @@ func (_u *TemplateFieldUpdate) ClearTextValue() *TemplateFieldUpdate {
 	return _u
 }
 
+// SetNumberValue sets the "number_value" field.
+func (_u *TemplateFieldUpdate) SetNumberValue(v int) *TemplateFieldUpdate {
+	_u.mutation.ResetNumberValue()
+	_u.mutation.SetNumberValue(v)
+	return _u
+}
+
+// SetNillableNumberValue sets the "number_value" field if the given value is not nil.
+func (_u *TemplateFieldUpdate) SetNillableNumberValue(v *int) *TemplateFieldUpdate {
+	if v != nil {
+		_u.SetNumberValue(*v)
+	}
+	return _u
+}
+
+// AddNumberValue adds value to the "number_value" field.
+func (_u *TemplateFieldUpdate) AddNumberValue(v int) *TemplateFieldUpdate {
+	_u.mutation.AddNumberValue(v)
+	return _u
+}
+
+// ClearNumberValue clears the value of the "number_value" field.
+func (_u *TemplateFieldUpdate) ClearNumberValue() *TemplateFieldUpdate {
+	_u.mutation.ClearNumberValue()
+	return _u
+}
+
+// SetBooleanValue sets the "boolean_value" field.
+func (_u *TemplateFieldUpdate) SetBooleanValue(v bool) *TemplateFieldUpdate {
+	_u.mutation.SetBooleanValue(v)
+	return _u
+}
+
+// SetNillableBooleanValue sets the "boolean_value" field if the given value is not nil.
+func (_u *TemplateFieldUpdate) SetNillableBooleanValue(v *bool) *TemplateFieldUpdate {
+	if v != nil {
+		_u.SetBooleanValue(*v)
+	}
+	return _u
+}
+
+// SetTimeValue sets the "time_value" field.
+func (_u *TemplateFieldUpdate) SetTimeValue(v time.Time) *TemplateFieldUpdate {
+	_u.mutation.SetTimeValue(v)
+	return _u
+}
+
+// SetNillableTimeValue sets the "time_value" field if the given value is not nil.
+func (_u *TemplateFieldUpdate) SetNillableTimeValue(v *time.Time) *TemplateFieldUpdate {
+	if v != nil {
+		_u.SetTimeValue(*v)
+	}
+	return _u
+}
+
 // SetItemTemplateID sets the "item_template" edge to the ItemTemplate entity by ID.
 func (_u *TemplateFieldUpdate) SetItemTemplateID(id uuid.UUID) *TemplateFieldUpdate {
 	_u.mutation.SetItemTemplateID(id)
@@ -228,6 +283,21 @@ func (_u *TemplateFieldUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	if _u.mutation.TextValueCleared() {
 		_spec.ClearField(templatefield.FieldTextValue, field.TypeString)
 	}
+	if value, ok := _u.mutation.NumberValue(); ok {
+		_spec.SetField(templatefield.FieldNumberValue, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedNumberValue(); ok {
+		_spec.AddField(templatefield.FieldNumberValue, field.TypeInt, value)
+	}
+	if _u.mutation.NumberValueCleared() {
+		_spec.ClearField(templatefield.FieldNumberValue, field.TypeInt)
+	}
+	if value, ok := _u.mutation.BooleanValue(); ok {
+		_spec.SetField(templatefield.FieldBooleanValue, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.TimeValue(); ok {
+		_spec.SetField(templatefield.FieldTimeValue, field.TypeTime, value)
+	}
 	if _u.mutation.ItemTemplateCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -348,6 +418,61 @@ func (_u *TemplateFieldUpdateOne) SetNillableTextValue(v *string) *TemplateField
 // ClearTextValue clears the value of the "text_value" field.
 func (_u *TemplateFieldUpdateOne) ClearTextValue() *TemplateFieldUpdateOne {
 	_u.mutation.ClearTextValue()
+	return _u
+}
+
+// SetNumberValue sets the "number_value" field.
+func (_u *TemplateFieldUpdateOne) SetNumberValue(v int) *TemplateFieldUpdateOne {
+	_u.mutation.ResetNumberValue()
+	_u.mutation.SetNumberValue(v)
+	return _u
+}
+
+// SetNillableNumberValue sets the "number_value" field if the given value is not nil.
+func (_u *TemplateFieldUpdateOne) SetNillableNumberValue(v *int) *TemplateFieldUpdateOne {
+	if v != nil {
+		_u.SetNumberValue(*v)
+	}
+	return _u
+}
+
+// AddNumberValue adds value to the "number_value" field.
+func (_u *TemplateFieldUpdateOne) AddNumberValue(v int) *TemplateFieldUpdateOne {
+	_u.mutation.AddNumberValue(v)
+	return _u
+}
+
+// ClearNumberValue clears the value of the "number_value" field.
+func (_u *TemplateFieldUpdateOne) ClearNumberValue() *TemplateFieldUpdateOne {
+	_u.mutation.ClearNumberValue()
+	return _u
+}
+
+// SetBooleanValue sets the "boolean_value" field.
+func (_u *TemplateFieldUpdateOne) SetBooleanValue(v bool) *TemplateFieldUpdateOne {
+	_u.mutation.SetBooleanValue(v)
+	return _u
+}
+
+// SetNillableBooleanValue sets the "boolean_value" field if the given value is not nil.
+func (_u *TemplateFieldUpdateOne) SetNillableBooleanValue(v *bool) *TemplateFieldUpdateOne {
+	if v != nil {
+		_u.SetBooleanValue(*v)
+	}
+	return _u
+}
+
+// SetTimeValue sets the "time_value" field.
+func (_u *TemplateFieldUpdateOne) SetTimeValue(v time.Time) *TemplateFieldUpdateOne {
+	_u.mutation.SetTimeValue(v)
+	return _u
+}
+
+// SetNillableTimeValue sets the "time_value" field if the given value is not nil.
+func (_u *TemplateFieldUpdateOne) SetNillableTimeValue(v *time.Time) *TemplateFieldUpdateOne {
+	if v != nil {
+		_u.SetTimeValue(*v)
+	}
 	return _u
 }
 
@@ -504,6 +629,21 @@ func (_u *TemplateFieldUpdateOne) sqlSave(ctx context.Context) (_node *TemplateF
 	}
 	if _u.mutation.TextValueCleared() {
 		_spec.ClearField(templatefield.FieldTextValue, field.TypeString)
+	}
+	if value, ok := _u.mutation.NumberValue(); ok {
+		_spec.SetField(templatefield.FieldNumberValue, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedNumberValue(); ok {
+		_spec.AddField(templatefield.FieldNumberValue, field.TypeInt, value)
+	}
+	if _u.mutation.NumberValueCleared() {
+		_spec.ClearField(templatefield.FieldNumberValue, field.TypeInt)
+	}
+	if value, ok := _u.mutation.BooleanValue(); ok {
+		_spec.SetField(templatefield.FieldBooleanValue, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.TimeValue(); ok {
+		_spec.SetField(templatefield.FieldTimeValue, field.TypeTime, value)
 	}
 	if _u.mutation.ItemTemplateCleared() {
 		edge := &sqlgraph.EdgeSpec{

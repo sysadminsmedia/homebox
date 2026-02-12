@@ -640,6 +640,14 @@ func init() {
 	templatefieldDescTextValue := templatefieldFields[1].Descriptor()
 	// templatefield.TextValueValidator is a validator for the "text_value" field. It is called by the builders before save.
 	templatefield.TextValueValidator = templatefieldDescTextValue.Validators[0].(func(string) error)
+	// templatefieldDescBooleanValue is the schema descriptor for boolean_value field.
+	templatefieldDescBooleanValue := templatefieldFields[3].Descriptor()
+	// templatefield.DefaultBooleanValue holds the default value on creation for the boolean_value field.
+	templatefield.DefaultBooleanValue = templatefieldDescBooleanValue.Default.(bool)
+	// templatefieldDescTimeValue is the schema descriptor for time_value field.
+	templatefieldDescTimeValue := templatefieldFields[4].Descriptor()
+	// templatefield.DefaultTimeValue holds the default value on creation for the time_value field.
+	templatefield.DefaultTimeValue = templatefieldDescTimeValue.Default.(func() time.Time)
 	// templatefieldDescID is the schema descriptor for id field.
 	templatefieldDescID := templatefieldMixinFields0[0].Descriptor()
 	// templatefield.DefaultID holds the default value on creation for the id field.
