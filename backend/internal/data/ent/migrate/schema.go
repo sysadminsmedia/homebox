@@ -436,8 +436,11 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Size: 255},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"text"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"text", "number", "boolean", "time"}},
 		{Name: "text_value", Type: field.TypeString, Nullable: true, Size: 500},
+		{Name: "number_value", Type: field.TypeInt, Nullable: true},
+		{Name: "boolean_value", Type: field.TypeBool, Default: false},
+		{Name: "time_value", Type: field.TypeTime},
 		{Name: "item_template_fields", Type: field.TypeUUID, Nullable: true},
 	}
 	// TemplateFieldsTable holds the schema information for the "template_fields" table.
@@ -448,7 +451,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "template_fields_item_templates_fields",
-				Columns:    []*schema.Column{TemplateFieldsColumns[7]},
+				Columns:    []*schema.Column{TemplateFieldsColumns[10]},
 				RefColumns: []*schema.Column{ItemTemplatesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
