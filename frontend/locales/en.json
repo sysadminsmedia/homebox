@@ -768,8 +768,10 @@
         "label_generator": {
             "asset_end": "Asset End",
             "asset_start": "Asset Start",
+            "skip_first_labels": "Skip First Labels",
             "base_url": "Base URL",
             "bordered_labels": "Bordered Labels",
+            "print_location_row": "Print Location Row",
             "generate_page": "Generate Page",
             "input_placeholder": "Type here",
             "instruction_1": "The HomeBox Label Generator is a tool to help you print labels for your HomeBox inventory. These are intended to\n be print-ahead labels so you can print many labels and have them ready to apply",
