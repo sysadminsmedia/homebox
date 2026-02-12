@@ -150,6 +150,7 @@ export default defineConfig({
                             label: { en: 'Changelogs' },
                             link: '/changelog/',
                             icon: 'information',
+                            id: "changelog",
                             items: makeChangelogsSidebarLinks([
                                 {
                                     label: 'Changelogs',
@@ -179,7 +180,8 @@ export default defineConfig({
                     ],
                     {
                         topics: {
-                            api: ["/en/api", "/en/api/**/*"]
+                            api: ["/*/api", "/*/api/**/*"],
+                            changelog: ["/*/changelog", "/*/changelog/**/*"],
                         },
                         exclude: ['**/*'],
                     }
