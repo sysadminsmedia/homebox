@@ -776,7 +776,7 @@
             <div class="mt-2 flex flex-wrap items-center justify-between gap-4">
               <Label class="flex cursor-pointer items-center gap-2">
                 <Switch v-model="preferences.showEmpty" />
-                Show Empty
+                {{ $t("items.show_empty") }}
               </Label>
               <div class="space-x-1">
                 <CopyText :text="currentUrl" :icon-size="16" />

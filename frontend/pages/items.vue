@@ -481,7 +481,7 @@
         <p>{{ $t("items.custom_fields") }}</p>
         <div v-for="(f, idx) in fieldTuples" :key="idx" class="flex flex-wrap gap-2">
           <div class="flex w-full flex-col gap-1 md:w-auto md:grow">
-            <Label> Field </Label>
+            <Label> {{ $t("items.field") }} </Label>
             <Select v-model="fieldTuples[idx]![0]" @update:model-value="fetchValues(f[0])">
               <SelectTrigger>
                 <SelectValue :placeholder="$t('items.select_field')" />
@@ -495,7 +495,7 @@
             <Label> {{ $t("items.field_value") }} </Label>
             <Select v-model="fieldTuples[idx]![1]">
               <SelectTrigger>
-                <SelectValue placeholder="Select a value" />
+                <SelectValue :placeholder="$t('items.select_value')" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem v-for="value in fieldValuesCache[f[0]]" :key="value" :value="value">
