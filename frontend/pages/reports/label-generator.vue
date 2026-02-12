@@ -389,7 +389,7 @@
         <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_3'))" />
       </ul>
       <div class="flex flex-wrap gap-2">
-        <NuxtLink href="/tools">{{ $t("menu.tools") }}</NuxtLink>
+        <NuxtLink href="/collection/tools">{{ $t("collection.tabs.tools") }}</NuxtLink>
         <NuxtLink href="/home">{{ $t("menu.home") }}</NuxtLink>
       </div>
     </div>
