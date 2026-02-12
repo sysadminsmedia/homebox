@@ -7,8 +7,8 @@
         :aria-expanded="open"
         :size="sidebar.state.value === 'collapsed' ? 'icon' : undefined"
         :class="sidebar.state.value === 'collapsed' ? 'size-10' : 'w-full justify-between drop-shadow-md'"
-        aria-label="Collections"
-        title="Collections"
+        :aria-label="t('components.collection.selector.select_collection')"
+        :title="t('components.collection.selector.select_collection')"
       >
         <template v-if="sidebar.state.value === 'collapsed'">
           <MdiHomeGroup class="size-5" />
