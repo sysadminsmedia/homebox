@@ -40,7 +40,7 @@
       <Separator />
 
       <BaseCard>
-        <Table class="w-full">
+        <Table class="w-full whitespace-nowrap">
           <TableHeader>
             <TableRow>
               <TableHead
