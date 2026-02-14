@@ -494,7 +494,7 @@
     const { error } = await api.items.update(itemId.value, payload);
 
     if (error) {
-      toast.error("Failed to save item");
+      toast.error(t("items.toast.failed_save"));
       return;
     }
 

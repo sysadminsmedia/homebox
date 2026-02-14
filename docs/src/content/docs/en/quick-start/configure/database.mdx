@@ -43,12 +43,12 @@ you'll need to add some environment variables to the Homebox service:
 - `HBOX_DATABASE_DRIVER=postgres`
 - `HBOX_DATABASE_HOST=postgres` (or whatever you named the postgres service in your compose file)
 - `HBOX_DATABASE_PORT=5432` (or whatever port you configured postgres to use)
-- `HBOX_DATABASE_USER=homebox` (or whatever you set the `POSTGRES_USER` environment variable to)
+- `HBOX_DATABASE_USERNAME=homebox` (or whatever you set the `POSTGRES_USER` environment variable to)
 - `HBOX_DATABASE_PASSWORD=your_secure_password` (or whatever you set the `POSTGRES_PASSWORD` environment variable to)
 - `HBOX_DATABASE_DATABASE=homebox` (or whatever you set the `POSTGRES_DB` environment variable to)
 
 Optionally, you can also add the following environment variable to the Homebox service:
-- `HBOX_DATABASE_SSLMODE=disable` (disable SSL encryption)
+- `HBOX_DATABASE_SSL_MODE=disable` (disable SSL encryption)
   - Valid options include: `disable`, `require`, `verify-ca`, `verify-full`, the default is `require`
 - `HBOX_DATABASE_SSL_ROOT_CERT=path/to/root.crt` (path to the root certificate file)
 - `HBOX_DATABASE_SSL_CERT=path/to/server.crt` (path to the server certificate file)
