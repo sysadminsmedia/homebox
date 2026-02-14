@@ -67,6 +67,12 @@ func getScheme(r *http.Request, trustProxy bool) string {
 // stripPathFromURL removes the path from a URL.
 // ex. https://example.com/tools -> https://example.com
 func stripPathFromURL(rawURL string) string {
+	// Validate that the URL has a scheme; if not, return empty string
+	if !strings.Contains(rawURL, "://") {
+		log.Warn().Str("url", rawURL).Msg("URL missing scheme")
+		return ""
+	}
+
 	parsedURL, err := url.Parse(rawURL)
 	if err != nil {
 		log.Err(err).Msg("failed to parse URL")

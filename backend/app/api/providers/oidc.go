@@ -55,12 +55,40 @@ func NewOIDCProvider(service *services.UserService, config *config.OIDCConf, opt
 		return nil, fmt.Errorf("OIDC issuer URL is required when OIDC is enabled (set HBOX_OIDC_ISSUER_URL)")
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), config.RequestTimeout)
-	defer cancel()
+	// Attempt to create OIDC provider with retry logic for Docker Compose environments
+	// Retries up to 4 times with exponential backoff delays
+	var provider *oidc.Provider
+	var err error
+	maxRetries := 4
+	delays := []time.Duration{0, 500 * time.Millisecond, 2 * time.Second, 5 * time.Second}
 
-	provider, err := oidc.NewProvider(ctx, config.IssuerURL)
+	for attempt := 1; attempt <= maxRetries; attempt++ {
+		ctx, cancel := context.WithTimeout(context.Background(), config.RequestTimeout)
+		provider, err = oidc.NewProvider(ctx, config.IssuerURL)
+		cancel()
+
+		if err == nil {
+			// Success on this attempt
+			if attempt > 1 {
+				log.Info().Int("attempt", attempt).Msg("OIDC provider initialized successfully after retry")
+			}
+			break
+		}
+
+		// Log the error and prepare for retry if we have more attempts
+		if attempt < maxRetries {
+			delay := delays[attempt-1]
+			log.Warn().
+				Err(err).
+				Int("attempt", attempt).
+				Dur("retrying_in", delay).
+				Msg("failed to create OIDC provider, retrying...")
+			time.Sleep(delay)
+		}
+	}
+
 	if err != nil {
-		return nil, fmt.Errorf("failed to create OIDC provider from issuer URL: %w", err)
+		return nil, fmt.Errorf("failed to create OIDC provider from issuer URL after %d attempts: %w", maxRetries, err)
 	}
 
 	// Create ID token verifier
