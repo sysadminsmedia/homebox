@@ -31,7 +31,7 @@
         "code": "EUR",
         "local": "Andorra",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -87,7 +87,7 @@
         "code": "EUR",
         "local": "Austria",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -143,7 +143,7 @@
         "code": "EUR",
         "local": "Belgium",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -388,7 +388,7 @@
         "code": "EUR",
         "local": "Croatia",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -416,7 +416,7 @@
         "code": "EUR",
         "local": "Cyprus",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -500,7 +500,7 @@
         "code": "EUR",
         "local": "Estonia",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -556,21 +556,21 @@
         "code": "EUR",
         "local": "Finland",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
         "code": "EUR",
         "local": "France",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
         "code": "EUR",
         "local": "French Guiana",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -584,7 +584,7 @@
         "code": "EUR",
         "local": "French Southern and Antarctic Lands",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -612,7 +612,7 @@
         "code": "EUR",
         "local": "Germany",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -633,7 +633,7 @@
         "code": "EUR",
         "local": "Greece",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -654,7 +654,7 @@
         "code": "EUR",
         "local": "Guadeloupe",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -773,7 +773,7 @@
         "code": "EUR",
         "local": "Ireland",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -801,7 +801,7 @@
         "code": "EUR",
         "local": "Italy",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -878,7 +878,7 @@
         "code": "EUR",
         "local": "Kosovo",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -906,7 +906,7 @@
         "code": "EUR",
         "local": "Latvia",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -955,14 +955,14 @@
         "code": "EUR",
         "local": "Lithuania",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Luxembourg",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -1011,7 +1011,7 @@
         "code": "EUR",
         "local": "Malta",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -1025,7 +1025,7 @@
         "code": "EUR",
         "local": "Martinique",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -1046,7 +1046,7 @@
         "code": "EUR",
         "local": "Mayotte",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -1074,7 +1074,7 @@
         "code": "EUR",
         "local": "Monaco",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -1088,7 +1088,7 @@
         "code": "EUR",
         "local": "Montenegro",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -1151,7 +1151,7 @@
         "code": "EUR",
         "local": "Netherlands",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -1333,7 +1333,7 @@
         "code": "EUR",
         "local": "Portugal",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -1382,14 +1382,14 @@
         "code": "EUR",
         "local": "Réunion",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Saint Barthélemy",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -1424,14 +1424,14 @@
         "code": "EUR",
         "local": "Saint Martin",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Saint Pierre and Miquelon",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -1452,7 +1452,7 @@
         "code": "EUR",
         "local": "San Marino",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -1508,14 +1508,14 @@
         "code": "EUR",
         "local": "Slovakia",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Slovenia",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -1564,7 +1564,7 @@
         "code": "EUR",
         "local": "Spain",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -1802,7 +1802,7 @@
         "code": "EUR",
         "local": "Vatican City",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     },
     {
@@ -1872,7 +1872,7 @@
         "code": "EUR",
         "local": "Åland Islands",
         "symbol": "€",
-        "name": "Euro",
+        "name": "euro",
         "decimals": 2
     }
 ]
