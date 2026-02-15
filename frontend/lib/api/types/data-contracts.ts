@@ -464,6 +464,8 @@ export interface EntTag {
    * The values are being populated by the TagQuery when eager-loading is set.
    */
   edges: EntTagEdges;
+  /** Icon holds the value of the "icon" field. */
+  icon: string;
   /** ID of the ent. */
   id: string;
   /** Name holds the value of the "name" field. */
@@ -473,10 +475,14 @@ export interface EntTag {
 }
 
 export interface EntTagEdges {
+  /** Children holds the value of the children edge. */
+  children: EntTag[];
   /** Group holds the value of the group edge. */
   group: EntGroup;
   /** Items holds the value of the items edge. */
   items: EntItem[];
+  /** Parent holds the value of the parent edge. */
+  parent: EntTag;
 }
 
 export interface EntTemplateField {
@@ -994,14 +1000,18 @@ export interface TagCreate {
    * @maxLength 255
    */
   name: string;
+  parentId?: string | null;
 }
 
 export interface TagOut {
+  children: TagSummary[];
   color: string;
   createdAt: Date | string;
   description: string;
   id: string;
   name: string;
+  parent: TagSummary;
+  parentId?: string | null;
   updatedAt: Date | string;
 }
 
@@ -1011,6 +1021,7 @@ export interface TagSummary {
   description: string;
   id: string;
   name: string;
+  parentId?: string | null;
   updatedAt: Date | string;
 }
 

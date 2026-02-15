@@ -29,10 +29,13 @@ type Tag struct {
 	Description string `json:"description,omitempty"`
 	// Color holds the value of the "color" field.
 	Color string `json:"color,omitempty"`
+	// Icon holds the value of the "icon" field.
+	Icon string `json:"icon,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TagQuery when eager-loading is set.
 	Edges        TagEdges `json:"edges"`
 	group_tags   *uuid.UUID
+	tag_children *uuid.UUID
 	selectValues sql.SelectValues
 }
 
@@ -42,9 +45,13 @@ type TagEdges struct {
 	Group *Group `json:"group,omitempty"`
 	// Items holds the value of the items edge.
 	Items []*Item `json:"items,omitempty"`
+	// Parent holds the value of the parent edge.
+	Parent *Tag `json:"parent,omitempty"`
+	// Children holds the value of the children edge.
+	Children []*Tag `json:"children,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [4]bool
 }
 
 // GroupOrErr returns the Group value or an error if the edge
@@ -67,18 +74,40 @@ func (e TagEdges) ItemsOrErr() ([]*Item, error) {
 	return nil, &NotLoadedError{edge: "items"}
 }
 
+// ParentOrErr returns the Parent value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TagEdges) ParentOrErr() (*Tag, error) {
+	if e.Parent != nil {
+		return e.Parent, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: tag.Label}
+	}
+	return nil, &NotLoadedError{edge: "parent"}
+}
+
+// ChildrenOrErr returns the Children value or an error if the edge
+// was not loaded in eager-loading.
+func (e TagEdges) ChildrenOrErr() ([]*Tag, error) {
+	if e.loadedTypes[3] {
+		return e.Children, nil
+	}
+	return nil, &NotLoadedError{edge: "children"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Tag) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case tag.FieldName, tag.FieldDescription, tag.FieldColor:
+		case tag.FieldName, tag.FieldDescription, tag.FieldColor, tag.FieldIcon:
 			values[i] = new(sql.NullString)
 		case tag.FieldCreatedAt, tag.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		case tag.FieldID:
 			values[i] = new(uuid.UUID)
 		case tag.ForeignKeys[0]: // group_tags
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
+		case tag.ForeignKeys[1]: // tag_children
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -131,12 +160,25 @@ func (_m *Tag) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Color = value.String
 			}
+		case tag.FieldIcon:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field icon", values[i])
+			} else if value.Valid {
+				_m.Icon = value.String
+			}
 		case tag.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field group_tags", values[i])
 			} else if value.Valid {
 				_m.group_tags = new(uuid.UUID)
 				*_m.group_tags = *value.S.(*uuid.UUID)
+			}
+		case tag.ForeignKeys[1]:
+			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field tag_children", values[i])
+			} else if value.Valid {
+				_m.tag_children = new(uuid.UUID)
+				*_m.tag_children = *value.S.(*uuid.UUID)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -159,6 +201,16 @@ func (_m *Tag) QueryGroup() *GroupQuery {
 // QueryItems queries the "items" edge of the Tag entity.
 func (_m *Tag) QueryItems() *ItemQuery {
 	return NewTagClient(_m.config).QueryItems(_m)
+}
+
+// QueryParent queries the "parent" edge of the Tag entity.
+func (_m *Tag) QueryParent() *TagQuery {
+	return NewTagClient(_m.config).QueryParent(_m)
+}
+
+// QueryChildren queries the "children" edge of the Tag entity.
+func (_m *Tag) QueryChildren() *TagQuery {
+	return NewTagClient(_m.config).QueryChildren(_m)
 }
 
 // Update returns a builder for updating this Tag.
@@ -198,6 +250,9 @@ func (_m *Tag) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("color=")
 	builder.WriteString(_m.Color)
+	builder.WriteString(", ")
+	builder.WriteString("icon=")
+	builder.WriteString(_m.Icon)
 	builder.WriteByte(')')
 	return builder.String()
 }

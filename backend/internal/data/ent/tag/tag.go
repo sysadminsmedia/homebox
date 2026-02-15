@@ -25,10 +25,16 @@ const (
 	FieldDescription = "description"
 	// FieldColor holds the string denoting the color field in the database.
 	FieldColor = "color"
+	// FieldIcon holds the string denoting the icon field in the database.
+	FieldIcon = "icon"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
 	// EdgeItems holds the string denoting the items edge name in mutations.
 	EdgeItems = "items"
+	// EdgeParent holds the string denoting the parent edge name in mutations.
+	EdgeParent = "parent"
+	// EdgeChildren holds the string denoting the children edge name in mutations.
+	EdgeChildren = "children"
 	// Table holds the table name of the tag in the database.
 	Table = "tags"
 	// GroupTable is the table that holds the group relation/edge.
@@ -43,6 +49,14 @@ const (
 	// ItemsInverseTable is the table name for the Item entity.
 	// It exists in this package in order to avoid circular dependency with the "item" package.
 	ItemsInverseTable = "items"
+	// ParentTable is the table that holds the parent relation/edge.
+	ParentTable = "tags"
+	// ParentColumn is the table column denoting the parent relation/edge.
+	ParentColumn = "tag_children"
+	// ChildrenTable is the table that holds the children relation/edge.
+	ChildrenTable = "tags"
+	// ChildrenColumn is the table column denoting the children relation/edge.
+	ChildrenColumn = "tag_children"
 )
 
 // Columns holds all SQL columns for tag fields.
@@ -53,12 +67,14 @@ var Columns = []string{
 	FieldName,
 	FieldDescription,
 	FieldColor,
+	FieldIcon,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "tags"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"group_tags",
+	"tag_children",
 }
 
 var (
@@ -95,6 +111,8 @@ var (
 	DescriptionValidator func(string) error
 	// ColorValidator is a validator for the "color" field. It is called by the builders before save.
 	ColorValidator func(string) error
+	// IconValidator is a validator for the "icon" field. It is called by the builders before save.
+	IconValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
@@ -132,6 +150,11 @@ func ByColor(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldColor, opts...).ToFunc()
 }
 
+// ByIcon orders the results by the icon field.
+func ByIcon(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIcon, opts...).ToFunc()
+}
+
 // ByGroupField orders the results by group field.
 func ByGroupField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -152,6 +175,27 @@ func ByItems(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newItemsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByParentField orders the results by parent field.
+func ByParentField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newParentStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByChildrenCount orders the results by children count.
+func ByChildrenCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newChildrenStep(), opts...)
+	}
+}
+
+// ByChildren orders the results by children terms.
+func ByChildren(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newChildrenStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newGroupStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -164,5 +208,19 @@ func newItemsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ItemsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, false, ItemsTable, ItemsPrimaryKey...),
+	)
+}
+func newParentStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, ParentTable, ParentColumn),
+	)
+}
+func newChildrenStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
 	)
 }

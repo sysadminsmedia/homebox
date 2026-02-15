@@ -85,6 +85,20 @@ func (_c *TagCreate) SetNillableColor(v *string) *TagCreate {
 	return _c
 }
 
+// SetIcon sets the "icon" field.
+func (_c *TagCreate) SetIcon(v string) *TagCreate {
+	_c.mutation.SetIcon(v)
+	return _c
+}
+
+// SetNillableIcon sets the "icon" field if the given value is not nil.
+func (_c *TagCreate) SetNillableIcon(v *string) *TagCreate {
+	if v != nil {
+		_c.SetIcon(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *TagCreate) SetID(v uuid.UUID) *TagCreate {
 	_c.mutation.SetID(v)
@@ -123,6 +137,40 @@ func (_c *TagCreate) AddItems(v ...*Item) *TagCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddItemIDs(ids...)
+}
+
+// SetParentID sets the "parent" edge to the Tag entity by ID.
+func (_c *TagCreate) SetParentID(id uuid.UUID) *TagCreate {
+	_c.mutation.SetParentID(id)
+	return _c
+}
+
+// SetNillableParentID sets the "parent" edge to the Tag entity by ID if the given value is not nil.
+func (_c *TagCreate) SetNillableParentID(id *uuid.UUID) *TagCreate {
+	if id != nil {
+		_c = _c.SetParentID(*id)
+	}
+	return _c
+}
+
+// SetParent sets the "parent" edge to the Tag entity.
+func (_c *TagCreate) SetParent(v *Tag) *TagCreate {
+	return _c.SetParentID(v.ID)
+}
+
+// AddChildIDs adds the "children" edge to the Tag entity by IDs.
+func (_c *TagCreate) AddChildIDs(ids ...uuid.UUID) *TagCreate {
+	_c.mutation.AddChildIDs(ids...)
+	return _c
+}
+
+// AddChildren adds the "children" edges to the Tag entity.
+func (_c *TagCreate) AddChildren(v ...*Tag) *TagCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddChildIDs(ids...)
 }
 
 // Mutation returns the TagMutation object of the builder.
@@ -200,6 +248,11 @@ func (_c *TagCreate) check() error {
 			return &ValidationError{Name: "color", err: fmt.Errorf(`ent: validator failed for field "Tag.color": %w`, err)}
 		}
 	}
+	if v, ok := _c.mutation.Icon(); ok {
+		if err := tag.IconValidator(v); err != nil {
+			return &ValidationError{Name: "icon", err: fmt.Errorf(`ent: validator failed for field "Tag.icon": %w`, err)}
+		}
+	}
 	if len(_c.mutation.GroupIDs()) == 0 {
 		return &ValidationError{Name: "group", err: errors.New(`ent: missing required edge "Tag.group"`)}
 	}
@@ -258,6 +311,10 @@ func (_c *TagCreate) createSpec() (*Tag, *sqlgraph.CreateSpec) {
 		_spec.SetField(tag.FieldColor, field.TypeString, value)
 		_node.Color = value
 	}
+	if value, ok := _c.mutation.Icon(); ok {
+		_spec.SetField(tag.FieldIcon, field.TypeString, value)
+		_node.Icon = value
+	}
 	if nodes := _c.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -284,6 +341,39 @@ func (_c *TagCreate) createSpec() (*Tag, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tag.ParentTable,
+			Columns: []string{tag.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.tag_children = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tag.ChildrenTable,
+			Columns: []string{tag.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
