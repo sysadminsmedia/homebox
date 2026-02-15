@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
@@ -13,12 +14,18 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 )
 
+// TagRepository provides data access operations for tag entities.
+// It supports hierarchical tag structures with parent-child relationships
+// and enforces multi-tenant isolation through group membership.
 type TagRepository struct {
 	db  *ent.Client
 	bus *eventbus.EventBus
 }
 
 type (
+	// TagCreate represents the input data required to create a new tag.
+	// Tags can optionally have a parent to form hierarchical structures
+	// with a maximum depth of 5 levels.
 	TagCreate struct {
 		Name        string    `json:"name"        validate:"required,min=1,max=255"`
 		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable"`
@@ -27,6 +34,9 @@ type (
 		Icon        string    `json:"icon"        validate:"max=255"`
 	}
 
+	// TagUpdate represents the input data for updating an existing tag.
+	// All fields can be modified, including moving the tag to a different
+	// parent (while maintaining hierarchy constraints and preventing cycles).
 	TagUpdate struct {
 		ID          uuid.UUID `json:"id"`
 		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable"`
@@ -36,6 +46,8 @@ type (
 		Icon        string    `json:"icon"        validate:"max=255"`
 	}
 
+	// TagSummary provides a lightweight representation of a tag without
+	// its relationships. Used in lists and as nested references.
 	TagSummary struct {
 		ID          uuid.UUID `json:"id"`
 		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable"`
@@ -47,6 +59,9 @@ type (
 		UpdatedAt   time.Time `json:"updatedAt"`
 	}
 
+	// TagOut represents a complete tag with its parent and children relationships.
+	// The Parent field is nil for root-level tags. Children is always initialized
+	// (empty slice if the tag has no children).
 	TagOut struct {
 		TagSummary
 		Parent   *TagSummary  `json:"parent,omitempty" extensions:"x-nullable"`
@@ -55,14 +70,9 @@ type (
 )
 
 func mapTagSummary(tag *ent.Tag) TagSummary {
-	var parentID uuid.UUID
-	if tag.Edges.Parent != nil {
-		parentID = tag.Edges.Parent.ID
-	}
-
 	return TagSummary{
 		ID:          tag.ID,
-		ParentID:    parentID,
+		ParentID:    lo.Ternary(tag.Edges.Parent != nil, tag.Edges.Parent.ID, uuid.Nil),
 		Name:        tag.Name,
 		Description: tag.Description,
 		Color:       tag.Color,
@@ -78,20 +88,20 @@ var (
 )
 
 func mapTagOut(tag *ent.Tag) TagOut {
-	var parent *TagSummary
-	if tag.Edges.Parent != nil {
-		p := mapTagSummary(tag.Edges.Parent)
-		parent = &p
-	}
+	parent := lo.TernaryF(
+		tag.Edges.Parent != nil,
+		func() *TagSummary {
+			p := mapTagSummary(tag.Edges.Parent)
+			return &p
+		},
+		func() *TagSummary { return nil },
+	)
 
-	children := make([]TagSummary, 0)
-	if tag.Edges.Children != nil {
-		for _, c := range tag.Edges.Children {
-			summary := mapTagSummary(c)
-			summary.ParentID = tag.ID
-			children = append(children, summary)
-		}
-	}
+	children := lo.Map(tag.Edges.Children, func(c *ent.Tag, _ int) TagSummary {
+		summary := mapTagSummary(c)
+		summary.ParentID = tag.ID
+		return summary
+	})
 
 	return TagOut{
 		TagSummary: mapTagSummary(tag),
@@ -116,14 +126,22 @@ func (r *TagRepository) getOne(ctx context.Context, where ...predicate.Tag) (Tag
 	)
 }
 
+// GetOne retrieves a single tag by ID, ensuring it belongs to the specified group.
+// Returns the tag with its parent and children relationships fully populated.
+// Returns an error if the tag doesn't exist or doesn't belong to the group.
 func (r *TagRepository) GetOne(ctx context.Context, gid uuid.UUID, id uuid.UUID) (TagOut, error) {
 	return r.getOne(ctx, tag.ID(id), tag.HasGroupWith(group.ID(gid)))
 }
 
+// GetOneByGroup retrieves a single tag by ID with group validation.
+// This is an alias for GetOne, maintained for API consistency with other repositories.
 func (r *TagRepository) GetOneByGroup(ctx context.Context, gid, id uuid.UUID) (TagOut, error) {
 	return r.getOne(ctx, tag.ID(id), tag.HasGroupWith(group.ID(gid)))
 }
 
+// GetAll retrieves all tags belonging to the specified group, ordered by name.
+// Tags are returned as summaries (without parent/children relationships loaded).
+// Parent edges are loaded to populate ParentID fields in the summaries.
 func (r *TagRepository) GetAll(ctx context.Context, groupID uuid.UUID) ([]TagSummary, error) {
 	return mapTagsOut(r.db.Tag.Query().
 		Where(tag.HasGroupWith(group.ID(groupID))).
@@ -134,6 +152,9 @@ func (r *TagRepository) GetAll(ctx context.Context, groupID uuid.UUID) ([]TagSum
 	)
 }
 
+// getSubtreeDepth calculates the maximum depth of the subtree rooted at the given tag ID.
+// Uses a recursive CTE to traverse the entire subtree and find the deepest level.
+// Returns 1 for a tag with no children, and increases by 1 for each level.
 func (r *TagRepository) getSubtreeDepth(ctx context.Context, id uuid.UUID) (int, error) {
 	query := `
 		WITH RECURSIVE tag_tree(id, depth) AS (
@@ -167,6 +188,10 @@ func (r *TagRepository) getSubtreeDepth(ctx context.Context, id uuid.UUID) (int,
 	return 0, nil
 }
 
+// checkDepth calculates how many levels deep the given parent tag is from the root.
+// Uses a recursive CTE to traverse up the tree from the parent to the root.
+// Returns 0 for root-level tags (parentID is uuid.Nil).
+// Returns the number of levels from root to the given parent tag.
 func (r *TagRepository) checkDepth(ctx context.Context, parentID uuid.UUID) (int, error) {
 	if parentID == uuid.Nil {
 		return 0, nil
@@ -201,9 +226,10 @@ func (r *TagRepository) checkDepth(ctx context.Context, parentID uuid.UUID) (int
 	return 0, nil
 }
 
-// checkCycle checks if targetID is an ancestor of startID.
-// This is used when moving startID to be a child of targetID.
-// If targetID is already a child/descendant of startID, then making startID a child of targetID creates a cycle.
+// checkCycle checks if setting movingID's parent to proposedParentID would create a cycle.
+// Returns true if proposedParentID is a descendant of movingID (or if they are the same tag).
+// Uses a recursive CTE to traverse all descendants of movingID.
+// This prevents circular parent-child relationships in the tag hierarchy.
 func (r *TagRepository) checkCycle(ctx context.Context, movingID, proposedParentID uuid.UUID) (bool, error) {
 	if movingID == proposedParentID {
 		return true, nil
@@ -234,8 +260,30 @@ func (r *TagRepository) checkCycle(ctx context.Context, movingID, proposedParent
 	return false, nil
 }
 
+// Create creates a new tag in the specified group.
+// If ParentID is provided, validates that:
+//   - The parent tag exists and belongs to the same group
+//   - Adding this tag would not exceed the maximum depth of 5 levels
+//
+// Returns the created tag with all relationships fully populated.
+// Publishes a tag mutation event on successful creation.
 func (r *TagRepository) Create(ctx context.Context, groupID uuid.UUID, data TagCreate) (TagOut, error) {
 	if data.ParentID != uuid.Nil {
+		// Verify parent tag belongs to the same group
+		parentTag, err := r.db.Tag.Query().
+			Where(tag.ID(data.ParentID)).
+			WithGroup().
+			Only(ctx)
+		if err != nil {
+			if ent.IsNotFound(err) {
+				return TagOut{}, fmt.Errorf("parent tag not found or does not belong to this group")
+			}
+			return TagOut{}, err
+		}
+		if parentTag.Edges.Group == nil || parentTag.Edges.Group.ID != groupID {
+			return TagOut{}, fmt.Errorf("parent tag not found or does not belong to this group")
+		}
+
 		parentDepth, err := r.checkDepth(ctx, data.ParentID)
 		if err != nil {
 			return TagOut{}, err
@@ -272,12 +320,27 @@ func (r *TagRepository) Create(ctx context.Context, groupID uuid.UUID, data TagC
 	return freshTag, nil
 }
 
-func (r *TagRepository) update(ctx context.Context, data TagUpdate, where ...predicate.Tag) (int, error) {
+func (r *TagRepository) update(ctx context.Context, groupID uuid.UUID, data TagUpdate, where ...predicate.Tag) (int, error) {
 	if len(where) == 0 {
 		panic("empty where not supported empty")
 	}
 
 	if data.ParentID != uuid.Nil {
+		// Verify parent tag belongs to the same group
+		parentTag, err := r.db.Tag.Query().
+			Where(tag.ID(data.ParentID)).
+			WithGroup().
+			Only(ctx)
+		if err != nil {
+			if ent.IsNotFound(err) {
+				return 0, fmt.Errorf("parent tag not found or does not belong to this group")
+			}
+			return 0, err
+		}
+		if parentTag.Edges.Group == nil || parentTag.Edges.Group.ID != groupID {
+			return 0, fmt.Errorf("parent tag not found or does not belong to this group")
+		}
+
 		// 1. Check Cycle using CTE
 		isCycle, err := r.checkCycle(ctx, data.ID, data.ParentID)
 		if err != nil {
@@ -321,8 +384,18 @@ func (r *TagRepository) update(ctx context.Context, data TagUpdate, where ...pre
 	return q.Save(ctx)
 }
 
+// UpdateByGroup updates an existing tag within the specified group.
+// Validates that the tag exists and belongs to the group before updating.
+// If ParentID is changed, additionally validates:
+//   - The new parent tag exists and belongs to the same group
+//   - The change would not create a cycle in the hierarchy
+//   - The resulting tree would not exceed the maximum depth of 5 levels
+//
+// Returns an error if the tag is not found, belongs to a different group,
+// or if the update would violate hierarchy constraints.
+// Publishes a tag mutation event on successful update.
 func (r *TagRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data TagUpdate) (TagOut, error) {
-	affected, err := r.update(ctx, data, tag.ID(data.ID), tag.HasGroupWith(group.ID(gid)))
+	affected, err := r.update(ctx, gid, data, tag.ID(data.ID), tag.HasGroupWith(group.ID(gid)))
 	if err != nil {
 		return TagOut{}, err
 	}
@@ -341,6 +414,11 @@ func (r *TagRepository) delete(ctx context.Context, id uuid.UUID) error {
 	return r.db.Tag.DeleteOneID(id).Exec(ctx)
 }
 
+// DeleteByGroup deletes a tag from the specified group.
+// Only deletes the tag if it exists and belongs to the group.
+// Note: Child tags are not automatically deleted - they become root-level tags
+// if their parent is deleted (depending on database cascade settings).
+// Publishes a tag mutation event on successful deletion.
 func (r *TagRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) error {
 	_, err := r.db.Tag.Delete().
 		Where(
