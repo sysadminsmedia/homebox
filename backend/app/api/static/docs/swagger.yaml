@@ -1610,6 +1610,9 @@ definitions:
       description:
         maxLength: 1000
         type: string
+      icon:
+        maxLength: 255
+        type: string
       name:
         maxLength: 255
         minLength: 1
@@ -1632,12 +1635,16 @@ definitions:
         type: string
       description:
         type: string
+      icon:
+        type: string
       id:
         type: string
       name:
         type: string
       parent:
-        $ref: '#/definitions/repo.TagSummary'
+        allOf:
+        - $ref: '#/definitions/repo.TagSummary'
+        x-nullable: true
       parentId:
         type: string
         x-nullable: true
@@ -1651,6 +1658,8 @@ definitions:
       createdAt:
         type: string
       description:
+        type: string
+      icon:
         type: string
       id:
         type: string

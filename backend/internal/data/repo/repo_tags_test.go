@@ -42,7 +42,7 @@ func TestTagRepository_Get(t *testing.T) {
 	tag := tags[0]
 
 	// Get by ID
-	foundLoc, err := tRepos.Tags.GetOne(context.Background(), tag.ID)
+	foundLoc, err := tRepos.Tags.GetOne(context.Background(), tGroup.ID, tag.ID)
 	require.NoError(t, err)
 	assert.Equal(t, tag.ID, foundLoc.ID)
 }
@@ -60,7 +60,7 @@ func TestTagRepository_Create(t *testing.T) {
 	require.NoError(t, err)
 
 	// Get by ID
-	foundLoc, err := tRepos.Tags.GetOne(context.Background(), loc.ID)
+	foundLoc, err := tRepos.Tags.GetOne(context.Background(), tGroup.ID, loc.ID)
 	require.NoError(t, err)
 	assert.Equal(t, loc.ID, foundLoc.ID)
 
@@ -81,7 +81,7 @@ func TestTagsRepository_Update(t *testing.T) {
 	update, err := tRepos.Tags.UpdateByGroup(context.Background(), tGroup.ID, updateData)
 	require.NoError(t, err)
 
-	foundLoc, err := tRepos.Tags.GetOne(context.Background(), loc.ID)
+	foundLoc, err := tRepos.Tags.GetOne(context.Background(), tGroup.ID, loc.ID)
 	require.NoError(t, err)
 
 	assert.Equal(t, update.ID, foundLoc.ID)
@@ -99,7 +99,7 @@ func TestTagRepository_Delete(t *testing.T) {
 	err = tRepos.Tags.delete(context.Background(), loc.ID)
 	require.NoError(t, err)
 
-	_, err = tRepos.Tags.GetOne(context.Background(), loc.ID)
+	_, err = tRepos.Tags.GetOne(context.Background(), tGroup.ID, loc.ID)
 	require.Error(t, err)
 }
 
@@ -116,13 +116,13 @@ func TestTagRepository_ParentChild(t *testing.T) {
 	assert.Equal(t, parentTag.ID, childTag.Parent.ID)
 
 	// Fetch parent and check children
-	foundParent, err := tRepos.Tags.GetOne(context.Background(), parentTag.ID)
+	foundParent, err := tRepos.Tags.GetOne(context.Background(), tGroup.ID, parentTag.ID)
 	require.NoError(t, err)
 	assert.Len(t, foundParent.Children, 1)
 	assert.Equal(t, childTag.ID, foundParent.Children[0].ID)
 
 	// Fetch child and check parent
-	foundChild, err := tRepos.Tags.GetOne(context.Background(), childTag.ID)
+	foundChild, err := tRepos.Tags.GetOne(context.Background(), tGroup.ID, childTag.ID)
 	require.NoError(t, err)
 	assert.NotNil(t, foundChild.Parent)
 	assert.Equal(t, parentTag.ID, foundChild.Parent.ID)
@@ -139,7 +139,7 @@ func TestTagRepository_ParentChild(t *testing.T) {
 	assert.Nil(t, updatedChild.Parent)
 
 	// Fetch parent again, should have no children
-	foundParent, err = tRepos.Tags.GetOne(context.Background(), parentTag.ID)
+	foundParent, err = tRepos.Tags.GetOne(context.Background(), tGroup.ID, parentTag.ID)
 	require.NoError(t, err)
 	assert.Len(t, foundParent.Children, 0)
 }
@@ -276,7 +276,7 @@ func TestTagRepository_Create_NoParent(t *testing.T) {
 	assert.Equal(t, uuid.Nil, createdTag.ParentID)
 
 	// Verify persistence
-	foundTag, err := tRepos.Tags.GetOne(context.Background(), createdTag.ID)
+	foundTag, err := tRepos.Tags.GetOne(context.Background(), tGroup.ID, createdTag.ID)
 	require.NoError(t, err)
 	assert.Nil(t, foundTag.Parent)
 	assert.Equal(t, uuid.Nil, foundTag.ParentID)
@@ -312,7 +312,7 @@ func TestTagRepository_Update_RemoveParent(t *testing.T) {
 	assert.Equal(t, uuid.Nil, updatedChild.ParentID)
 
 	// 4. Verify persistence
-	foundChild, err := tRepos.Tags.GetOne(context.Background(), child.ID)
+	foundChild, err := tRepos.Tags.GetOne(context.Background(), tGroup.ID, child.ID)
 	require.NoError(t, err)
 	assert.Nil(t, foundChild.Parent)
 	assert.Equal(t, uuid.Nil, foundChild.ParentID)

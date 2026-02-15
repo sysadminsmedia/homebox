@@ -5277,6 +5277,10 @@
                         "type": "string",
                         "maxLength": 1000
                     },
+                    "icon": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
                     "name": {
                         "type": "string",
                         "maxLength": 255,
@@ -5306,6 +5310,9 @@
                     "description": {
                         "type": "string"
                     },
+                    "icon": {
+                        "type": "string"
+                    },
                     "id": {
                         "type": "string"
                     },
@@ -5313,7 +5320,12 @@
                         "type": "string"
                     },
                     "parent": {
-                        "$ref": "#/components/schemas/repo.TagSummary"
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/repo.TagSummary"
+                            }
+                        ],
+                        "nullable": true
                     },
                     "parentId": {
                         "type": "string",
@@ -5334,6 +5346,9 @@
                         "type": "string"
                     },
                     "description": {
+                        "type": "string"
+                    },
+                    "icon": {
                         "type": "string"
                     },
                     "id": {

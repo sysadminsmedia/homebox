@@ -5080,6 +5080,10 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 1000
                 },
+                "icon": {
+                    "type": "string",
+                    "maxLength": 255
+                },
                 "name": {
                     "type": "string",
                     "maxLength": 255,
@@ -5109,6 +5113,9 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "icon": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -5116,7 +5123,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "parent": {
-                    "$ref": "#/definitions/repo.TagSummary"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/repo.TagSummary"
+                        }
+                    ],
+                    "x-nullable": true
                 },
                 "parentId": {
                     "type": "string",
@@ -5137,6 +5149,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "description": {
+                    "type": "string"
+                },
+                "icon": {
                     "type": "string"
                 },
                 "id": {

@@ -49,7 +49,7 @@ type (
 
 	TagOut struct {
 		TagSummary
-		Parent   *TagSummary  `json:"parent,omitempty"`
+		Parent   *TagSummary  `json:"parent,omitempty" extensions:"x-nullable"`
 		Children []TagSummary `json:"children"`
 	}
 )
@@ -87,7 +87,9 @@ func mapTagOut(tag *ent.Tag) TagOut {
 	children := make([]TagSummary, 0)
 	if tag.Edges.Children != nil {
 		for _, c := range tag.Edges.Children {
-			children = append(children, mapTagSummary(c))
+			summary := mapTagSummary(c)
+			summary.ParentID = tag.ID
+			children = append(children, summary)
 		}
 	}
 
@@ -114,12 +116,12 @@ func (r *TagRepository) getOne(ctx context.Context, where ...predicate.Tag) (Tag
 	)
 }
 
-func (r *TagRepository) GetOne(ctx context.Context, id uuid.UUID) (TagOut, error) {
-	return r.getOne(ctx, tag.ID(id))
+func (r *TagRepository) GetOne(ctx context.Context, gid uuid.UUID, id uuid.UUID) (TagOut, error) {
+	return r.getOne(ctx, tag.ID(id), tag.HasGroupWith(group.ID(gid)))
 }
 
-func (r *TagRepository) GetOneByGroup(ctx context.Context, gid, ld uuid.UUID) (TagOut, error) {
-	return r.getOne(ctx, tag.ID(ld), tag.HasGroupWith(group.ID(gid)))
+func (r *TagRepository) GetOneByGroup(ctx context.Context, gid, id uuid.UUID) (TagOut, error) {
+	return r.getOne(ctx, tag.ID(id), tag.HasGroupWith(group.ID(gid)))
 }
 
 func (r *TagRepository) GetAll(ctx context.Context, groupID uuid.UUID) ([]TagSummary, error) {
@@ -260,13 +262,14 @@ func (r *TagRepository) Create(ctx context.Context, groupID uuid.UUID, data TagC
 		return TagOut{}, err
 	}
 
-	if data.ParentID != uuid.Nil {
-		createdTag.Edges.Parent = &ent.Tag{ID: data.ParentID}
+	// Re-fetch the tag to get fully populated edges (Parent, Children)
+	freshTag, err := r.getOne(ctx, tag.ID(createdTag.ID), tag.HasGroupWith(group.ID(groupID)))
+	if err != nil {
+		return TagOut{}, err
 	}
 
-	createdTag.Edges.Group = &ent.Group{ID: groupID} // bootstrap group ID
 	r.publishMutationEvent(groupID)
-	return mapTagOut(createdTag), err
+	return freshTag, nil
 }
 
 func (r *TagRepository) update(ctx context.Context, data TagUpdate, where ...predicate.Tag) (int, error) {
@@ -319,13 +322,17 @@ func (r *TagRepository) update(ctx context.Context, data TagUpdate, where ...pre
 }
 
 func (r *TagRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data TagUpdate) (TagOut, error) {
-	_, err := r.update(ctx, data, tag.ID(data.ID), tag.HasGroupWith(group.ID(gid)))
+	affected, err := r.update(ctx, data, tag.ID(data.ID), tag.HasGroupWith(group.ID(gid)))
 	if err != nil {
 		return TagOut{}, err
 	}
 
+	if affected == 0 {
+		return TagOut{}, fmt.Errorf("tag not found or does not belong to group")
+	}
+
 	r.publishMutationEvent(gid)
-	return r.GetOne(ctx, data.ID)
+	return r.GetOne(ctx, gid, data.ID)
 }
 
 // delete removes the tag from the database. This should only be used when

@@ -5078,6 +5078,10 @@
                     "type": "string",
                     "maxLength": 1000
                 },
+                "icon": {
+                    "type": "string",
+                    "maxLength": 255
+                },
                 "name": {
                     "type": "string",
                     "maxLength": 255,
@@ -5107,6 +5111,9 @@
                 "description": {
                     "type": "string"
                 },
+                "icon": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -5114,7 +5121,12 @@
                     "type": "string"
                 },
                 "parent": {
-                    "$ref": "#/definitions/repo.TagSummary"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/repo.TagSummary"
+                        }
+                    ],
+                    "x-nullable": true
                 },
                 "parentId": {
                     "type": "string",
@@ -5135,6 +5147,9 @@
                     "type": "string"
                 },
                 "description": {
+                    "type": "string"
+                },
+                "icon": {
                     "type": "string"
                 },
                 "id": {

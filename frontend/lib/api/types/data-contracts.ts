@@ -995,6 +995,8 @@ export interface TagCreate {
   color: string;
   /** @maxLength 1000 */
   description: string;
+  /** @maxLength 255 */
+  icon: string;
   /**
    * @minLength 1
    * @maxLength 255
@@ -1008,9 +1010,10 @@ export interface TagOut {
   color: string;
   createdAt: Date | string;
   description: string;
+  icon: string;
   id: string;
   name: string;
-  parent: TagSummary;
+  parent?: TagSummary | null;
   parentId?: string | null;
   updatedAt: Date | string;
 }
@@ -1019,6 +1022,7 @@ export interface TagSummary {
   color: string;
   createdAt: Date | string;
   description: string;
+  icon: string;
   id: string;
   name: string;
   parentId?: string | null;
