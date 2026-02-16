@@ -70,9 +70,14 @@ type (
 )
 
 func mapTagSummary(tag *ent.Tag) TagSummary {
+	parentID := uuid.Nil
+	if tag.Edges.Parent != nil {
+		parentID = tag.Edges.Parent.ID
+	}
+
 	return TagSummary{
 		ID:          tag.ID,
-		ParentID:    lo.Ternary(tag.Edges.Parent != nil, tag.Edges.Parent.ID, uuid.Nil),
+		ParentID:    parentID,
 		Name:        tag.Name,
 		Description: tag.Description,
 		Color:       tag.Color,
@@ -97,11 +102,14 @@ func mapTagOut(tag *ent.Tag) TagOut {
 		func() *TagSummary { return nil },
 	)
 
-	children := lo.Map(tag.Edges.Children, func(c *ent.Tag, _ int) TagSummary {
-		summary := mapTagSummary(c)
-		summary.ParentID = tag.ID
-		return summary
-	})
+	children := []TagSummary{}
+	if tag.Edges.Children != nil {
+		children = lo.Map(tag.Edges.Children, func(c *ent.Tag, _ int) TagSummary {
+			summary := mapTagSummary(c)
+			summary.ParentID = tag.ID
+			return summary
+		})
+	}
 
 	return TagOut{
 		TagSummary: mapTagSummary(tag),
