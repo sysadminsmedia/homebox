@@ -40,6 +40,7 @@
   });
 
   const locationTreeId = "locationTree";
+  const showItemsKey = "showItems";
 
   const treeState = useTreeState(locationTreeId);
   const showItems = ref(true);
@@ -58,16 +59,34 @@
         treeState.value[key] = data[key];
       }
     }
+
+    if (query && query[showItemsKey] !== undefined) {
+      showItems.value = query[showItemsKey] === "true";
+    }
   });
 
   watch(
     treeState,
     () => {
       // Push the current state to the URL
-      route.replace({ query: { [locationTreeId]: JSON.stringify(treeState.value) } });
+      route.replace({
+        query: {
+          [locationTreeId]: JSON.stringify(treeState.value),
+          [showItemsKey]: showItems.value.toString(),
+        },
+      });
     },
     { deep: true }
   );
+
+  watch(showItems, () => {
+    route.replace({
+      query: {
+        [locationTreeId]: JSON.stringify(treeState.value),
+        [showItemsKey]: showItems.value.toString(),
+      },
+    });
+  });
 
   function closeAll() {
     for (const key in treeState.value) {
