@@ -159,7 +159,7 @@
     <BaseCard>
       <div class="p-2">
         <LocationTreeRoot
-          v-if="tree && Array.isArray(tree) && tree.length > 0"
+          v-if="tree && Array.isArray(tree)"
           :locs="tree"
           :tree-id="locationTreeId"
           :show-items="showItems"
