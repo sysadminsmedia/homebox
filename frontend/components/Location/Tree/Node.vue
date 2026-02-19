@@ -19,24 +19,25 @@
     return props.item.type === "location" ? `/location/${props.item.id}` : `/item/${props.item.id}`;
   });
 
-  const hasChildren = computed(() => {
-    return props.item.children.length > 0;
-  });
-
   const state = useTreeState(props.treeId);
 
   const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
 
-  const sortedChildren = computed(() => {
+  const filteredChildren = computed(() => {
     const children = props.item.children ?? [];
-    let filtered = [...children];
 
-    if (!props.showItems) {
-      filtered = filtered.filter(child => child.type === "location");
+    if (props.showItems) {
+      return children;
     }
 
-    return filtered.sort((a, b) => collator.compare(a.name, b.name));
+    return children.filter(child => child.type === "location");
   });
+
+  const sortedChildren = computed(() => {
+    return [...filteredChildren.value].sort((a, b) => collator.compare(a.name, b.name));
+  });
+
+  const hasChildren = computed(() => filteredChildren.value.length > 0);
 
   const openRef = computed({
     get() {
