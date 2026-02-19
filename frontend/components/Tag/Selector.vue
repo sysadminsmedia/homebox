@@ -5,9 +5,10 @@
     </Label>
 
     <TagsInput
-      v-model="modelValue"
-      class="w-full gap-0 px-0"
+      :model-value="modelValue"
       :display-value="v => props.tags.find(t => t.id === v)?.name ?? 'Loading...'"
+      class="w-full gap-0 px-0"
+      @update:model-value="v => onTagsInputUpdate(v as string[])"
     >
       <div class="flex flex-wrap items-center gap-2 overflow-hidden px-3">
         <TagsInputItem v-for="item in modelValue" :key="item" :value="item" class="h-auto overflow-hidden text-wrap">
@@ -51,9 +52,7 @@
                         if (ev.detail.value === 'create-item') {
                           void createAndAdd(searchTerm);
                         } else {
-                          if (!modelValue.includes(ev.detail.value)) {
-                            modelValue = [...modelValue, ev.detail.value];
-                          }
+                          addTagWithAncestors(ev.detail.value);
                         }
                         searchTerm = '';
                       }
@@ -120,6 +119,66 @@
   const open = ref(false);
   const searchTerm = ref("");
 
+  const NULL_UUID = "00000000-0000-0000-0000-000000000000";
+
+  function isValidId(id: string | null | undefined): boolean {
+    return !!id && id !== NULL_UUID;
+  }
+
+  function getAncestorIds(tagId: string): string[] {
+    const ancestors: string[] = [];
+    let current = props.tags.find(t => t.id === tagId);
+    while (current && isValidId(current.parentId)) {
+      const parentId = current.parentId!;
+      ancestors.push(parentId);
+      current = props.tags.find(t => t.id === parentId);
+    }
+    return ancestors;
+  }
+
+  function getDescendantIds(tagId: string): string[] {
+    const descendants: string[] = [];
+    const visited = new Set<string>();
+    const queue = [tagId];
+    while (queue.length > 0) {
+      const currentId = queue.shift()!;
+      if (visited.has(currentId)) continue;
+      visited.add(currentId);
+      for (const tag of props.tags) {
+        if (tag.parentId === currentId && isValidId(tag.id) && !visited.has(tag.id)) {
+          descendants.push(tag.id);
+          queue.push(tag.id);
+        }
+      }
+    }
+    return descendants;
+  }
+
+  function addTagWithAncestors(tagId: string) {
+    if (!isValidId(tagId)) return;
+    const toAdd = [tagId, ...getAncestorIds(tagId)];
+    const current = new Set(modelValue.value);
+    for (const id of toAdd) {
+      current.add(id);
+    }
+    modelValue.value = [...current];
+  }
+
+  function onTagsInputUpdate(newVal: string[]) {
+    const removed = modelValue.value.filter(id => !newVal.includes(id));
+    if (removed.length === 0) {
+      modelValue.value = newVal;
+      return;
+    }
+    const toRemove = new Set<string>(removed);
+    for (const id of removed) {
+      for (const descendant of getDescendantIds(id)) {
+        toRemove.add(descendant);
+      }
+    }
+    modelValue.value = modelValue.value.filter(id => !toRemove.has(id));
+  }
+
   const filteredTags = computed(() => {
     const filtered = fuzzysort
       .go(searchTerm.value, props.tags, { key: "name", all: true })
@@ -151,6 +210,7 @@
       name,
       color,
       description: "",
+      icon: "",
     });
 
     if (error) {
