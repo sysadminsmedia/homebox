@@ -217,6 +217,7 @@ type authRateLimiter struct {
 	state       map[string]*authAttempt
 	nowFn       func() time.Time
 	stopCleanup chan struct{}
+	stopOnce    sync.Once
 }
 
 // authAttempt struct represents the state of authentication attempts for a client.
@@ -294,7 +295,9 @@ func (l *authRateLimiter) cleanup() {
 
 // Stop gracefully stops the cleanup goroutine.
 func (l *authRateLimiter) Stop() {
-	close(l.stopCleanup)
+	l.stopOnce.Do(func() {
+		close(l.stopCleanup)
+	})
 }
 
 // mwAuthRateLimit enforces request throttling for authentication endpoints with an exponential backoff.
@@ -417,6 +420,7 @@ type simpleRateLimiter struct {
 	rate        int           // requests allowed
 	window      time.Duration // time window
 	stopCleanup chan struct{}
+	stopOnce    sync.Once
 }
 
 type rateLimiterEntry struct {
@@ -478,7 +482,9 @@ func (rl *simpleRateLimiter) cleanup() {
 
 // Stop gracefully stops the cleanup goroutine.
 func (rl *simpleRateLimiter) Stop() {
-	close(rl.stopCleanup)
+	rl.stopOnce.Do(func() {
+		close(rl.stopCleanup)
+	})
 }
 
 // allow checks if the request should be allowed based on the rate limit.

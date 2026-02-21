@@ -18,6 +18,11 @@ func ValidateNotifierURL(notifierURL string, cfg *config.NotifierConf) error {
 		return nil
 	}
 
+	// Defensively guard against nil cfg
+	if cfg == nil {
+		return fmt.Errorf("notifier configuration is nil, cannot validate URL")
+	}
+
 	// Extract the actual URL from the generic:// wrapper
 	actualURL, err := extractGenericURL(notifierURL)
 	if err != nil {
