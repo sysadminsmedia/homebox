@@ -11,9 +11,10 @@ import (
 	"github.com/containrrr/shoutrrr"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
-	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
 
 type Latest struct {
@@ -21,8 +22,9 @@ type Latest struct {
 	Date    string `json:"date"`
 }
 type BackgroundService struct {
-	repos  *repo.AllRepos
-	latest Latest
+	repos          *repo.AllRepos
+	latest         Latest
+	notifierConfig *config.NotifierConf
 }
 
 func (svc *BackgroundService) SendNotifiersToday(ctx context.Context) error {
@@ -50,14 +52,18 @@ func (svc *BackgroundService) SendNotifiersToday(ctx context.Context) error {
 			continue
 		}
 
-		notifiers, err := svc.repos.Notifiers.GetByGroup(ctx, group.ID)
+		notifiers, err := svc.repos.Notifiers.GetActiveByGroup(ctx, group.ID)
 		if err != nil {
 			return err
 		}
 
-		urls := lo.Map(notifiers, func(n repo.NotifierOut, _ int) string {
-			return n.URL
-		})
+		if len(notifiers) == 0 {
+			log.Debug().
+				Str("group_name", group.Name).
+				Str("group_id", group.ID.String()).
+				Msg("No active notifiers configured")
+			continue
+		}
 
 		bldr := strings.Builder{}
 
@@ -73,8 +79,19 @@ func (svc *BackgroundService) SendNotifiersToday(ctx context.Context) error {
 		}
 
 		var sendErrs []error
-		for i := range urls {
-			err := shoutrrr.Send(urls[i], bldr.String())
+		for i := range notifiers {
+			// Validate notifier URL before sending
+			if err := validate.ValidateNotifierURL(notifiers[i].URL, svc.notifierConfig); err != nil {
+				log.Error().
+					Err(err).
+					Str("notifier_id", notifiers[i].ID.String()).
+					Str("notifier_name", notifiers[i].Name).
+					Msg("notifier URL failed validation, skipping")
+				sendErrs = append(sendErrs, fmt.Errorf("notifier %s failed validation: %w", notifiers[i].Name, err))
+				continue
+			}
+
+			err := shoutrrr.Send(notifiers[i].URL, bldr.String())
 
 			if err != nil {
 				sendErrs = append(sendErrs, err)

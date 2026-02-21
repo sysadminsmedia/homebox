@@ -32,6 +32,7 @@ type Config struct {
 	Thumbnail  Thumbnail      `yaml:"thumbnail"`
 	Barcode    BarcodeAPIConf `yaml:"barcode"`
 	Auth       AuthConfig     `yaml:"auth"`
+	Notifier   NotifierConf   `yaml:"notifier"`
 }
 
 type Options struct {

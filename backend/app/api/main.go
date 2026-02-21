@@ -176,6 +176,7 @@ func run(cfg *config.Config) error {
 		app.repos,
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),
 		services.WithCurrencies(currencies),
+		services.WithNotifierConfig(&cfg.Notifier),
 	)
 
 	// =========================================================================
