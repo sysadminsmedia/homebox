@@ -1,0 +1,317 @@
+---
+title: Notifiers
+---
+
+## Overview
+
+Homebox supports sending notifications for scheduled maintenance reminders using [Shoutrrr](https://containrrr.dev/shoutrrr/), which provides integrations with many popular notification services like Discord, Slack, Telegram, and more.
+
+## Supported Services
+
+Homebox supports all notification services provided by Shoutrrr, including:
+
+- **Bark** - iOS notification app
+- **Discord** - Popular chat platform
+- **Email (SMTP)** - Standard email notifications
+- **Gotify** - Self-hosted notification server
+- **Google Chat** - Google Workspace chat
+- **IFTTT** - If This Then That automation
+- **Join** - Android notification service
+- **Mattermost** - Open-source team collaboration
+- **Matrix** - Decentralized communication protocol
+- **Ntfy** - Simple HTTP-based notification service
+- **OpsGenie** - Incident management platform
+- **Pushbullet** - Cross-platform notifications
+- **Pushover** - Push notifications for iOS and Android
+- **RocketChat** - Open-source team chat
+- **Slack** - Team collaboration platform
+- **Teams** - Microsoft Teams
+- **Telegram** - Messaging platform
+- **Zulip** - Team chat platform
+- **Generic Webhook** - Custom HTTP endpoints
+
+For detailed configuration for each service, see the [Shoutrrr documentation](https://containrrr.dev/shoutrrr/v0.8/services/overview/).
+
+## Configuring Notifiers
+### Common Examples
+
+#### Discord
+
+```
+discord://webhook_token@webhook_id
+```
+
+To get these values:
+1. In Discord, go to Server Settings → Integrations → Webhooks
+2. Create or edit a webhook
+3. Copy the webhook URL: `https://discord.com/api/webhooks/WEBHOOK_ID/WEBHOOK_TOKEN`
+4. Format as: `discord://WEBHOOK_TOKEN@WEBHOOK_ID`
+
+#### Slack
+
+```
+slack://token@channel
+```
+
+Or for webhook URLs:
+```
+slack://webhook_token@webhook_token_b/webhook_token_c
+```
+
+#### Telegram
+
+```
+telegram://bot_token@telegram?chats=chat_id
+```
+
+#### Email (SMTP)
+
+```
+smtp://username:password@host:port/?from=sender@example.com&to=recipient@example.com
+```
+
+#### Ntfy
+
+```
+ntfy://ntfy.sh/your-topic
+```
+
+For self-hosted ntfy:
+```
+ntfy://your-ntfy.domain.com/your-topic
+```
+
+#### Generic Webhook
+
+For custom HTTP webhooks:
+
+```
+generic://https://your-webhook-endpoint.com/path
+```
+
+Or explicitly specify HTTP method:
+```
+generic+https://your-webhook-endpoint.com/path
+generic+http://your-webhook-endpoint.com/path
+```
+
+## Security Considerations for Generic Webhooks
+
+Generic webhooks allow Homebox to make HTTP requests to arbitrary URLs. To prevent Server-Side Request Forgery (SSRF) attacks and protect your internal network, Homebox provides several configuration options to restrict where generic notifiers can send requests.
+
+:::caution[Security Notice]
+Generic webhooks (`generic://`, `generic+https://`, `generic+http://`) can be used to make requests to any accessible network endpoint. Configure the security settings below to protect your internal infrastructure.
+:::
+
+### Configuration Options
+
+All security options apply only to generic webhook notifiers. Other notification services (Discord, Slack, etc.) are not affected by these settings.
+
+#### Allow List (Recommended)
+
+The most secure approach is to use an allow list. When configured, **only** the specified networks are allowed, and all block rules are bypassed.
+
+```bash
+HBOX_NOTIFIER_ALLOW_NETS="192.168.1.0/24,10.0.50.0/24"
+```
+
+**Use Case:** You have specific internal webhook endpoints at known IP ranges and want to only allow those.
+
+#### Block Localhost
+
+Prevents generic notifiers from making requests to localhost/loopback addresses (127.0.0.1, ::1).
+
+```bash
+HBOX_NOTIFIER_BLOCK_LOCALHOST=true
+```
+
+**Default:** `false`
+
+**Use Case:** Prevent access to services running on the same host as Homebox (e.g., admin panels, development servers).
+
+#### Block Local Networks (RFC1918)
+
+Prevents generic notifiers from making requests to private network ranges:
+- 10.0.0.0/8
+- 172.16.0.0/12
+- 192.168.0.0/16
+
+```bash
+HBOX_NOTIFIER_BLOCK_LOCAL_NETS=true
+```
+
+**Default:** `false`
+
+**Use Case:** Block access to all internal network services to prevent SSRF attacks against internal infrastructure.
+
+#### Block Bogon Networks
+
+Prevents generic notifiers from making requests to reserved/special-use IP ranges including:
+- Link-local addresses (169.254.0.0/16)
+- Multicast addresses
+- Broadcast addresses
+- Reserved IP ranges
+- Documentation/test networks
+
+```bash
+HBOX_NOTIFIER_BLOCK_BOGON_NETS=true
+```
+
+**Default:** `true` (enabled by default)
+
+**Use Case:** Prevent access to special-use addresses that should never be accessed in production.
+
+#### Block Cloud Metadata Endpoints
+
+Prevents generic notifiers from accessing cloud provider metadata endpoints:
+- 169.254.169.254 (AWS, Azure, GCP, Oracle Cloud)
+- 169.254.169.253 (AWS IMDSv2)
+- fd00:ec2::254 (AWS IPv6)
+
+```bash
+HBOX_NOTIFIER_BLOCK_CLOUD_METADATA=true
+```
+
+**Default:** `true` (enabled by default)
+
+**Use Case:** Critical security measure when running Homebox in cloud environments. Prevents attackers from accessing cloud metadata that often contains sensitive credentials and configuration.
+
+#### Block Specific Networks
+
+Allows you to block specific network ranges using CIDR notation. This provides fine-grained control without needing to enable the blanket `BLOCK_LOCAL_NETS` or `BLOCK_BOGON_NETS` options.
+
+```bash
+HBOX_NOTIFIER_BLOCK_NETS="192.168.1.0/24,172.16.0.0/12,10.10.0.0/16"
+```
+
+**Default:** (empty, no networks blocked)
+
+**Use Case:** Selectively block specific internal subnets while allowing others. For example:
+- Block development/staging environments while allowing production webhook endpoints
+- Block specific office networks that shouldn't be accessible
+- Enforce organizational security policies that restrict certain network ranges
+
+**Examples:**
+
+Block a single IP:
+```bash
+HBOX_NOTIFIER_BLOCK_NETS="192.168.1.100/32"
+```
+
+Block multiple networks:
+```bash
+HBOX_NOTIFIER_BLOCK_NETS="192.168.0.0/16,172.16.0.0/12,10.10.0.0/16"
+```
+
+**Note:** `HBOX_NOTIFIER_ALLOW_NETS` takes precedence over `HBOX_NOTIFIER_BLOCK_NETS`. If an IP is in the allow list, it will not be blocked even if it matches a network in the block list.
+
+### Recommended Security Configurations
+
+#### Public Internet Deployment
+
+For Homebox instances accessible from the internet, use strict security settings:
+
+```bash
+HBOX_NOTIFIER_BLOCK_LOCALHOST=true
+HBOX_NOTIFIER_BLOCK_LOCAL_NETS=true
+HBOX_NOTIFIER_BLOCK_BOGON_NETS=true
+HBOX_NOTIFIER_BLOCK_CLOUD_METADATA=true
+```
+
+#### Internal Network with Specific Webhooks
+
+For internal deployments where you want to allow specific webhook endpoints:
+
+```bash
+HBOX_NOTIFIER_ALLOW_NETS="192.168.1.100/32,10.0.20.0/24"
+```
+
+Note: When using the allow list, all block rules are bypassed. Only the specified networks will be permitted.
+
+#### Selective Network Blocking
+
+For environments where you want to block specific networks without blocking all private networks:
+
+```bash
+HBOX_NOTIFIER_BLOCK_NETS="192.168.1.0/24,10.10.0.0/16"
+HBOX_NOTIFIER_BLOCK_LOCALHOST=true
+HBOX_NOTIFIER_BLOCK_BOGON_NETS=true
+HBOX_NOTIFIER_BLOCK_CLOUD_METADATA=true
+```
+
+**Use Case:** You want to allow webhooks to most of your internal network (e.g., 10.0.0.0/8), but block specific subnets like development (10.10.0.0/16) or guest networks (192.168.1.0/24).
+
+#### Development Environment
+
+For development environments where you need more flexibility:
+
+```bash
+HBOX_NOTIFIER_BLOCK_LOCALHOST=false
+HBOX_NOTIFIER_BLOCK_LOCAL_NETS=false
+HBOX_NOTIFIER_BLOCK_BOGON_NETS=true
+HBOX_NOTIFIER_BLOCK_CLOUD_METADATA=true
+```
+
+## How Notifications Work
+
+### Scheduled Maintenance Reminders
+
+When you create maintenance entries with scheduled dates, Homebox will:
+
+1. Check daily for maintenance scheduled for today
+2. For each group with scheduled maintenance, collect all active notifiers
+3. Send a notification listing all maintenance items due today
+4. Only active notifiers will receive notifications
+
+### Message Format
+
+Notifications are sent in the following format:
+
+```
+Homebox Maintenance for (YYYY-MM-DD):
+ - Maintenance Item 1
+ - Maintenance Item 2
+ - Maintenance Item 3
+```
+
+## Troubleshooting
+
+### Test Button Fails
+
+If the test button fails:
+
+1. **Check the URL format** - Each service has specific URL format requirements. Refer to the [Shoutrrr documentation](https://containrrr.dev/shoutrrr/v0.8/services/overview/).
+2. **Verify credentials** - Ensure tokens, API keys, and passwords are correct
+3. **Check security settings** - For generic webhooks, ensure your URL isn't blocked by security configuration
+4. **Review logs** - Check Homebox logs for specific error messages
+
+### Notifications Not Being Sent
+
+If scheduled notifications aren't being sent:
+
+1. **Verify the notifier is active** - Toggle the "Active" switch in the notifier configuration
+2. **Check maintenance schedule** - Ensure maintenance items have scheduled dates set
+3. **Verify date** - Notifications are sent on the scheduled date at the configured time
+4. **Check logs** - Review Homebox logs for error messages during notification attempts
+
+### Generic Webhook Blocked
+
+If your generic webhook is being blocked by security settings:
+
+1. **Check the resolved IP** - The target hostname resolves to an IP that's in a blocked range
+2. **Review security configuration** - Adjust block settings or use the allow list
+3. **Use allow list** - The most reliable way to permit specific endpoints
+
+Example error messages:
+- "localhost addresses are blocked"
+- "private network addresses (RFC1918) are blocked"
+- "bogon/reserved network addresses are blocked"
+- "cloud metadata endpoints are blocked"
+- "IP X.X.X.X is not in the allowed networks"
+
+
+
+
+
+
+

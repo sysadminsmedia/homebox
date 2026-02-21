@@ -212,10 +212,12 @@ func (a *app) mwTenant(next errchain.Handler) errchain.Handler {
 
 // authRateLimiter tracks authentication attempts per client and applies a backoff when limits are exceeded.
 type authRateLimiter struct {
-	cfg   config.AuthRateLimit
-	mu    sync.Mutex
-	state map[string]*authAttempt
-	nowFn func() time.Time
+	cfg         config.AuthRateLimit
+	mu          sync.Mutex
+	state       map[string]*authAttempt
+	nowFn       func() time.Time
+	stopCleanup chan struct{}
+	stopOnce    sync.Once
 }
 
 // authAttempt struct represents the state of authentication attempts for a client.
@@ -241,11 +243,61 @@ func newAuthRateLimiter(cfg config.AuthRateLimit) *authRateLimiter {
 		cfg.Window = time.Minute
 	}
 
-	return &authRateLimiter{
-		cfg:   cfg,
-		state: make(map[string]*authAttempt),
-		nowFn: time.Now,
+	limiter := &authRateLimiter{
+		cfg:         cfg,
+		state:       make(map[string]*authAttempt),
+		nowFn:       time.Now,
+		stopCleanup: make(chan struct{}),
 	}
+
+	// Start background cleanup goroutine
+	go limiter.cleanupLoop()
+
+	return limiter
+}
+
+// cleanupLoop periodically removes stale entries from the state map.
+func (l *authRateLimiter) cleanupLoop() {
+	// Run cleanup every window period (or at least every 5 minutes)
+	cleanupInterval := l.cfg.Window
+	if cleanupInterval > 5*time.Minute {
+		cleanupInterval = 5 * time.Minute
+	}
+
+	ticker := time.NewTicker(cleanupInterval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			l.cleanup()
+		case <-l.stopCleanup:
+			return
+		}
+	}
+}
+
+// cleanup removes stale entries that are outside the window.
+func (l *authRateLimiter) cleanup() {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	now := l.nowFn()
+	for key, attempt := range l.state {
+		// Remove entries that are:
+		// 1. Outside the window AND
+		// 2. No longer locked (or lock has expired)
+		if now.Sub(attempt.lastAttempt) > l.cfg.Window && now.After(attempt.lockedUntil) {
+			delete(l.state, key)
+		}
+	}
+}
+
+// Stop gracefully stops the cleanup goroutine.
+func (l *authRateLimiter) Stop() {
+	l.stopOnce.Do(func() {
+		close(l.stopCleanup)
+	})
 }
 
 // mwAuthRateLimit enforces request throttling for authentication endpoints with an exponential backoff.
@@ -359,4 +411,146 @@ func (l *authRateLimiter) clientIP(r *http.Request) string {
 	}
 
 	return r.RemoteAddr
+}
+
+// simpleRateLimiter provides token bucket rate limiting per client IP.
+type simpleRateLimiter struct {
+	mu          sync.Mutex
+	limiters    map[string]*rateLimiterEntry
+	rate        int           // requests allowed
+	window      time.Duration // time window
+	stopCleanup chan struct{}
+	stopOnce    sync.Once
+}
+
+type rateLimiterEntry struct {
+	tokens     int
+	lastRefill time.Time
+}
+
+// newSimpleRateLimiter creates a new rate limiter with the specified rate and window.
+func newSimpleRateLimiter(rate int, window time.Duration) *simpleRateLimiter {
+	rl := &simpleRateLimiter{
+		limiters:    make(map[string]*rateLimiterEntry),
+		rate:        rate,
+		window:      window,
+		stopCleanup: make(chan struct{}),
+	}
+
+	// Start background cleanup goroutine
+	go rl.cleanupLoop()
+
+	return rl
+}
+
+// cleanupLoop periodically removes stale entries from the limiters map.
+func (rl *simpleRateLimiter) cleanupLoop() {
+	// Run cleanup every 2x the window period (or at least every 5 minutes)
+	cleanupInterval := rl.window * 2
+	if cleanupInterval < 5*time.Minute {
+		cleanupInterval = 5 * time.Minute
+	}
+
+	ticker := time.NewTicker(cleanupInterval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			rl.cleanup()
+		case <-rl.stopCleanup:
+			return
+		}
+	}
+}
+
+// cleanup removes stale entries that haven't been accessed recently.
+func (rl *simpleRateLimiter) cleanup() {
+	rl.mu.Lock()
+	defer rl.mu.Unlock()
+
+	now := time.Now()
+	// Remove entries that haven't been accessed in 2x the window period
+	staleThreshold := rl.window * 2
+
+	for key, entry := range rl.limiters {
+		if now.Sub(entry.lastRefill) > staleThreshold {
+			delete(rl.limiters, key)
+		}
+	}
+}
+
+// Stop gracefully stops the cleanup goroutine.
+func (rl *simpleRateLimiter) Stop() {
+	rl.stopOnce.Do(func() {
+		close(rl.stopCleanup)
+	})
+}
+
+// allow checks if the request should be allowed based on the rate limit.
+func (rl *simpleRateLimiter) allow(clientIP string) bool {
+	rl.mu.Lock()
+	defer rl.mu.Unlock()
+
+	now := time.Now()
+	entry, exists := rl.limiters[clientIP]
+
+	if !exists {
+		// First request from this IP
+		rl.limiters[clientIP] = &rateLimiterEntry{
+			tokens:     rl.rate - 1,
+			lastRefill: now,
+		}
+		return true
+	}
+
+	// Refill tokens based on elapsed time
+	elapsed := now.Sub(entry.lastRefill)
+	if elapsed >= rl.window {
+		// Full refill
+		entry.tokens = rl.rate - 1
+		entry.lastRefill = now
+		return true
+	}
+
+	// Check if tokens are available
+	if entry.tokens > 0 {
+		entry.tokens--
+		return true
+	}
+
+	return false
+}
+
+// getClientIP extracts the client IP from the request.
+func (rl *simpleRateLimiter) getClientIP(r *http.Request) string {
+	if ip := r.Header.Get("X-Real-IP"); ip != "" {
+		return ip
+	}
+
+	if ip := r.Header.Get("X-Forwarded-For"); ip != "" {
+		parts := strings.Split(ip, ",")
+		return strings.TrimSpace(parts[0])
+	}
+
+	host, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err == nil {
+		return host
+	}
+
+	return r.RemoteAddr
+}
+
+// middleware wraps the rate limiter as an errchain middleware.
+func (rl *simpleRateLimiter) middleware(next errchain.Handler) errchain.Handler {
+	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+		clientIP := rl.getClientIP(r)
+
+		if !rl.allow(clientIP) {
+			w.Header().Set("Retry-After", strconv.Itoa(int(rl.window.Seconds())))
+			return validate.NewRequestError(errors.New("rate limit exceeded"), http.StatusTooManyRequests)
+		}
+
+		return next.ServeHTTP(w, r)
+	})
 }

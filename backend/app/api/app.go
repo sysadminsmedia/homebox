@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
@@ -10,13 +12,14 @@ import (
 )
 
 type app struct {
-	conf        *config.Config
-	mailer      mailer.Mailer
-	db          *ent.Client
-	repos       *repo.AllRepos
-	services    *services.AllServices
-	bus         *eventbus.EventBus
-	authLimiter *authRateLimiter
+	conf                *config.Config
+	mailer              mailer.Mailer
+	db                  *ent.Client
+	repos               *repo.AllRepos
+	services            *services.AllServices
+	bus                 *eventbus.EventBus
+	authLimiter         *authRateLimiter
+	notifierTestLimiter *simpleRateLimiter
 }
 
 func new(conf *config.Config) *app {
@@ -33,6 +36,7 @@ func new(conf *config.Config) *app {
 	}
 
 	s.authLimiter = newAuthRateLimiter(s.conf.Auth.RateLimit)
+	s.notifierTestLimiter = newSimpleRateLimiter(10, time.Minute) // 10 requests per minute
 
 	return s
 }

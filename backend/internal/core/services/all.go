@@ -4,6 +4,7 @@ package services
 import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/currencies"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 )
 
 type AllServices struct {
@@ -19,6 +20,7 @@ type OptionsFunc func(*options)
 type options struct {
 	autoIncrementAssetID bool
 	currencies           []currencies.Currency
+	notifierConfig       *config.NotifierConf
 }
 
 func WithAutoIncrementAssetID(v bool) func(*options) {
@@ -30,6 +32,23 @@ func WithAutoIncrementAssetID(v bool) func(*options) {
 func WithCurrencies(v []currencies.Currency) func(*options) {
 	return func(o *options) {
 		o.currencies = v
+	}
+}
+
+func WithNotifierConfig(v *config.NotifierConf) func(*options) {
+	return func(o *options) {
+		if v != nil {
+			o.notifierConfig = v
+		}
+	}
+}
+
+// defaultNotifierConf returns a NotifierConf with safe defaults matching the conf tags.
+// This ensures SSRF protections are enabled when WithNotifierConfig is not provided.
+func defaultNotifierConf() *config.NotifierConf {
+	return &config.NotifierConf{
+		BlockBogonNets:     true, // default:true per conf tag
+		BlockCloudMetadata: true, // default:true per conf tag
 	}
 }
 
@@ -48,6 +67,7 @@ func New(repos *repo.AllRepos, opts ...OptionsFunc) *AllServices {
 	options := &options{
 		autoIncrementAssetID: true,
 		currencies:           defaultCurrencies,
+		notifierConfig:       defaultNotifierConf(),
 	}
 
 	for _, opt := range opts {
@@ -61,7 +81,11 @@ func New(repos *repo.AllRepos, opts ...OptionsFunc) *AllServices {
 			repo:                 repos,
 			autoIncrementAssetID: options.autoIncrementAssetID,
 		},
-		BackgroundService: &BackgroundService{repos, Latest{}},
-		Currencies:        currencies.NewCurrencyService(options.currencies),
+		BackgroundService: &BackgroundService{
+			repos:          repos,
+			latest:         Latest{},
+			notifierConfig: options.notifierConfig,
+		},
+		Currencies: currencies.NewCurrencyService(options.currencies),
 	}
 }
