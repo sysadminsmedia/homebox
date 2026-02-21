@@ -598,14 +598,14 @@
         "code": "GMD",
         "local": "Gambia",
         "symbol": "D",
-        "name": "dalasi",
+        "name": "Dalasi",
         "decimals": 2
     },
     {
         "code": "GEL",
         "local": "Georgia",
         "symbol": "₾",
-        "name": "lari",
+        "name": "Lari",
         "decimals": 2
     },
     {
@@ -640,7 +640,7 @@
         "code": "DKK",
         "local": "Greenland",
         "symbol": "kr.",
-        "name": "krone",
+        "name": "Krone",
         "decimals": 2
     },
     {
@@ -1214,7 +1214,7 @@
         "code": "MKD",
         "local": "North Macedonia",
         "symbol": "den",
-        "name": "denar",
+        "name": "Denar",
         "decimals": 2
     },
     {
@@ -1592,7 +1592,7 @@
         "code": "NOK",
         "local": "Svalbard and Jan Mayen",
         "symbol": "kr",
-        "name": "krone",
+        "name": "Krone",
         "decimals": 2
     },
     {
