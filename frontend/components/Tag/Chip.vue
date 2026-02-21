@@ -14,6 +14,10 @@
       type: String as () => sizes,
       default: "md",
     },
+    hideIcon: {
+      type: Boolean,
+      default: false,
+    },
   });
 </script>
 
@@ -32,16 +36,18 @@
     "
     :to="`/tag/${tag.id}`"
   >
-    <div class="relative">
-      <MdiTagOutline class="invisible" /><!-- hack to ensure the size is correct -->
+    <template v-if="!hideIcon">
+      <div class="relative">
+        <MdiTagOutline class="invisible" /><!-- hack to ensure the size is correct -->
 
-      <div
-        class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover/tag-chip:rotate-90"
-      >
-        <MdiTagOutline class="group-hover/tag-chip:hidden" />
-        <MdiArrowUp class="hidden group-hover/tag-chip:block" />
+        <div
+          class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover/tag-chip:rotate-90"
+        >
+          <MdiTagOutline class="group-hover/tag-chip:hidden" />
+          <MdiArrowUp class="hidden group-hover/tag-chip:block" />
+        </div>
       </div>
-    </div>
+    </template>
     {{ tag.name }}
   </NuxtLink>
 </template>

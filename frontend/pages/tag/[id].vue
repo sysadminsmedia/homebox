@@ -21,6 +21,10 @@
   import PageQRCode from "~/components/global/PageQRCode.vue";
   import Markdown from "~/components/global/Markdown.vue";
   import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
+  import TagSingleSelector from "~/components/Tag/SingleSelector.vue";
+  import TagChip from "~/components/Tag/Chip.vue";
+  import type { TagOut } from "~~/lib/api/types/data-contracts";
+  import { useTagStore } from "~/stores/tags";
 
   definePageMeta({
     middleware: ["auth"],
@@ -29,6 +33,8 @@
   const { t } = useI18n();
 
   const { openDialog, closeDialog } = useDialog();
+
+  const tagStore = useTagStore();
 
   const route = useRoute();
   const api = useUserApi();
@@ -69,18 +75,98 @@
     name: "",
     description: "",
     color: "",
+    parentTag: null as TagOut | null,
   });
+
+  function wouldCreateCircular(potentialParent: TagOut, currentTagId: string): boolean {
+    let current: TagOut | undefined = potentialParent;
+    const visited = new Set<string>();
+
+    while (current) {
+      if (current.id === currentTagId) {
+        return true;
+      }
+      if (visited.has(current.id)) {
+        break;
+      }
+      visited.add(current.id);
+
+      if (current.parentId) {
+        current = tagStore.tags.find(t => t.id === current?.parentId);
+      } else {
+        break;
+      }
+    }
+    return false;
+  }
+
+  const availableParentTags = computed(() => {
+    return tagStore.tags.filter(t => {
+      if (t.id === tagId.value) {
+        return false;
+      }
+      if (wouldCreateCircular(t, tagId.value)) {
+        return false;
+      }
+      return true;
+    });
+  });
+
+  onMounted(async () => {
+    await tagStore.ensureAllTagsFetched();
+  });
+
+  function getBreadcrumbPath() {
+    if (!tag.value || !tag.value.parentId) {
+      return [];
+    }
+
+    const path: TagOut[] = [];
+    let currentId: string | null = tag.value.parentId;
+    const maxDepth = 5;
+    let depth = 0;
+
+    while (currentId && depth < maxDepth) {
+      const current = tagStore.tags.find(t => t.id === currentId);
+      if (current) {
+        path.unshift(current);
+        currentId = current.parentId || null;
+      } else {
+        break;
+      }
+      depth++;
+    }
+
+    return path;
+  }
 
   function openUpdate() {
     updateData.name = tag.value?.name || "";
     updateData.description = tag.value?.description || "";
     updateData.color = "";
+    if (tag.value?.parent) {
+      const parent = tagStore.tags.find(t => t.id === tag.value?.parentId);
+      updateData.parentTag = parent || null;
+    } else {
+      updateData.parentTag = null;
+    }
     openDialog(DialogID.UpdateTag);
   }
 
   async function update() {
+    if (!updateData.name || updateData.name.trim().length === 0) {
+      toast.error(t("components.tag.create_modal.toast.tag_name_too_long"));
+      return;
+    }
+
     updating.value = true;
-    const { error, data } = await api.tags.update(tagId.value, updateData);
+    const { error, data } = await api.tags.update(tagId.value, {
+      name: updateData.name,
+      description: updateData.description,
+      color: updateData.color,
+      icon: "",
+      parentId: updateData.parentTag?.id,
+    });
 
     if (error) {
       updating.value = false;
@@ -90,6 +176,7 @@
 
     toast.success(t("tags.toast.tag_updated"));
     tag.value = data;
+
     closeDialog(DialogID.UpdateTag);
     updating.value = false;
   }
@@ -145,6 +232,11 @@
           :label="$t('components.tag.create_modal.tag_description')"
           :max-length="1000"
         />
+        <TagSingleSelector
+          v-model="updateData.parentTag"
+          :tags="availableParentTags"
+          :name="$t('components.tag.create_modal.tag_parent')"
+        />
         <ColorSelector
           v-model="updateData.color"
           :label="$t('components.tag.create_modal.tag_color')"
@@ -176,6 +268,13 @@
             <MdiPackageVariant class="size-7" />
           </div>
           <div>
+            <div v-if="tag?.parentId" class="flex flex-wrap items-center gap-2">
+              <template v-for="parent in getBreadcrumbPath()" :key="parent.id">
+                <TagChip :tag="parent" size="sm" />
+                <span class="text-foreground/40">/</span>
+              </template>
+              <TagChip :tag="tag" size="sm" hide-icon />
+            </div>
             <h1 class="flex items-center gap-3 pb-1 text-2xl">
               {{ tag ? tag.name : "" }}
               <Badge v-if="items && items.totalPrice" variant="secondary" class="ml-2">

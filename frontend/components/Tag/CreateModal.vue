@@ -14,6 +14,11 @@
         :label="$t('components.tag.create_modal.tag_description')"
         :max-length="1000"
       />
+      <TagSingleSelector
+        v-model="form.parentTag"
+        :tags="availableTags"
+        :name="$t('components.tag.create_modal.tag_parent')"
+      />
       <ColorSelector v-model="form.color" :label="$t('components.tag.create_modal.tag_color')" :show-hex="true" />
       <div class="mt-4 flex flex-row-reverse">
         <ButtonGroup>
@@ -37,10 +42,14 @@
   import FormTextField from "~/components/Form/TextField.vue";
   import FormTextArea from "~/components/Form/TextArea.vue";
   import { Button, ButtonGroup } from "~/components/ui/button";
+  import TagSingleSelector from "~/components/Tag/SingleSelector.vue";
+  import type { TagOut } from "~~/lib/api/types/data-contracts";
+  import { useTagStore } from "~/stores/tags";
 
   const { t } = useI18n();
 
   const { closeDialog } = useDialog();
+  const tagStore = useTagStore();
 
   useDialogHotkey(DialogID.CreateTag, { code: "Digit2", shift: true });
 
@@ -49,13 +58,23 @@
   const form = reactive({
     name: "",
     description: "",
-    color: "", // Future!
+    color: "",
+    parentTag: null as TagOut | null,
+  });
+
+  onMounted(async () => {
+    await tagStore.ensureAllTagsFetched();
+  });
+
+  const availableTags = computed(() => {
+    return tagStore.tags;
   });
 
   function reset() {
     form.name = "";
     form.description = "";
     form.color = "";
+    form.parentTag = null;
     focused.value = false;
     loading.value = false;
   }
@@ -77,7 +96,13 @@
 
     if (shift?.value) close = false;
 
-    const { error, data } = await api.tags.create(form);
+    const { error, data } = await api.tags.create({
+      name: form.name,
+      description: form.description,
+      color: form.color,
+      icon: "",
+      parentId: form.parentTag?.id,
+    });
 
     if (error) {
       toast.error(t("components.tag.create_modal.toast.create_failed"));
@@ -90,7 +115,7 @@
 
     if (close) {
       closeDialog(DialogID.CreateTag);
-      navigateTo(`/tag/${data.id}`);
+      await navigateTo(`/tag/${data.id}`);
     }
   }
 </script>
