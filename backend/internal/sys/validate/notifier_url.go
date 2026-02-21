@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 )
 
@@ -52,6 +53,11 @@ func ValidateNotifierURL(notifierURL string, cfg *config.NotifierConf) error {
 			for _, allowNet := range cfg.AllowNets {
 				_, ipNet, err := net.ParseCIDR(allowNet)
 				if err != nil {
+					log.Warn().
+						Err(err).
+						Str("cidr", allowNet).
+						Str("config", "AllowNets").
+						Msg("invalid CIDR in notifier AllowNets configuration, skipping")
 					continue // Skip invalid CIDR
 				}
 				if ipNet.Contains(ip) {
@@ -65,6 +71,26 @@ func ValidateNotifierURL(notifierURL string, cfg *config.NotifierConf) error {
 		}
 		// If explicitly allowed, skip other checks
 		return nil
+	}
+
+	// Check BlockNets - block specific networks if configured
+	if len(cfg.BlockNets) > 0 {
+		for _, ip := range ips {
+			for _, blockNet := range cfg.BlockNets {
+				_, ipNet, err := net.ParseCIDR(blockNet)
+				if err != nil {
+					log.Warn().
+						Err(err).
+						Str("cidr", blockNet).
+						Str("config", "BlockNets").
+						Msg("invalid CIDR in notifier BlockNets configuration, skipping")
+					continue // Skip invalid CIDR
+				}
+				if ipNet.Contains(ip) {
+					return fmt.Errorf("IP %s is in a blocked network (%s)", ip.String(), blockNet)
+				}
+			}
+		}
 	}
 
 	for _, ip := range ips {
@@ -118,25 +144,12 @@ func isLocalhost(ip net.IP) bool {
 	return ip.IsLoopback()
 }
 
-// isPrivateNetwork checks if an IP is in RFC1918 private address space
+// isPrivateNetwork checks if an IP is in private address space.
+// This uses the standard library's IsPrivate() which covers:
+// - IPv4: RFC1918 (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16)
+// - IPv6: Unique Local Addresses (fc00::/7)
 func isPrivateNetwork(ip net.IP) bool {
-	privateNetworks := []string{
-		"10.0.0.0/8",
-		"172.16.0.0/12",
-		"192.168.0.0/16",
-	}
-
-	for _, cidr := range privateNetworks {
-		_, ipNet, err := net.ParseCIDR(cidr)
-		if err != nil {
-			continue
-		}
-		if ipNet.Contains(ip) {
-			return true
-		}
-	}
-
-	return false
+	return ip.IsPrivate()
 }
 
 // isBogonNetwork checks if an IP is in reserved/bogon address space
@@ -176,6 +189,11 @@ func isBogonNetwork(ip net.IP) bool {
 		for _, cidr := range ipv4BogonNetworks {
 			_, ipNet, err := net.ParseCIDR(cidr)
 			if err != nil {
+				log.Warn().
+					Err(err).
+					Str("cidr", cidr).
+					Str("check", "IPv4BogonNetworks").
+					Msg("invalid CIDR in hardcoded bogon networks")
 				continue
 			}
 			if ipNet.Contains(ip) {
@@ -187,6 +205,11 @@ func isBogonNetwork(ip net.IP) bool {
 		for _, cidr := range ipv6BogonNetworks {
 			_, ipNet, err := net.ParseCIDR(cidr)
 			if err != nil {
+				log.Warn().
+					Err(err).
+					Str("cidr", cidr).
+					Str("check", "IPv6BogonNetworks").
+					Msg("invalid CIDR in hardcoded bogon networks")
 				continue
 			}
 			if ipNet.Contains(ip) {
@@ -209,6 +232,11 @@ func isCloudMetadata(ip net.IP) bool {
 	for _, cidr := range metadataAddresses {
 		_, ipNet, err := net.ParseCIDR(cidr)
 		if err != nil {
+			log.Warn().
+				Err(err).
+				Str("cidr", cidr).
+				Str("check", "CloudMetadata").
+				Msg("invalid CIDR in hardcoded cloud metadata addresses")
 			continue
 		}
 		if ipNet.Contains(ip) {

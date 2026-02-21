@@ -37,7 +37,18 @@ func WithCurrencies(v []currencies.Currency) func(*options) {
 
 func WithNotifierConfig(v *config.NotifierConf) func(*options) {
 	return func(o *options) {
-		o.notifierConfig = v
+		if v != nil {
+			o.notifierConfig = v
+		}
+	}
+}
+
+// defaultNotifierConf returns a NotifierConf with safe defaults matching the conf tags.
+// This ensures SSRF protections are enabled when WithNotifierConfig is not provided.
+func defaultNotifierConf() *config.NotifierConf {
+	return &config.NotifierConf{
+		BlockBogonNets:     true, // default:true per conf tag
+		BlockCloudMetadata: true, // default:true per conf tag
 	}
 }
 
@@ -56,7 +67,7 @@ func New(repos *repo.AllRepos, opts ...OptionsFunc) *AllServices {
 	options := &options{
 		autoIncrementAssetID: true,
 		currencies:           defaultCurrencies,
-		notifierConfig:       &config.NotifierConf{}, // Default empty config
+		notifierConfig:       defaultNotifierConf(),
 	}
 
 	for _, opt := range opts {

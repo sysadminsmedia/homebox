@@ -176,6 +176,35 @@ HBOX_NOTIFIER_BLOCK_CLOUD_METADATA=true
 
 **Use Case:** Critical security measure when running Homebox in cloud environments. Prevents attackers from accessing cloud metadata that often contains sensitive credentials and configuration.
 
+#### Block Specific Networks
+
+Allows you to block specific network ranges using CIDR notation. This provides fine-grained control without needing to enable the blanket `BLOCK_LOCAL_NETS` or `BLOCK_BOGON_NETS` options.
+
+```bash
+HBOX_NOTIFIER_BLOCK_NETS="192.168.1.0/24,172.16.0.0/12,10.10.0.0/16"
+```
+
+**Default:** (empty, no networks blocked)
+
+**Use Case:** Selectively block specific internal subnets while allowing others. For example:
+- Block development/staging environments while allowing production webhook endpoints
+- Block specific office networks that shouldn't be accessible
+- Enforce organizational security policies that restrict certain network ranges
+
+**Examples:**
+
+Block a single IP:
+```bash
+HBOX_NOTIFIER_BLOCK_NETS="192.168.1.100/32"
+```
+
+Block multiple networks:
+```bash
+HBOX_NOTIFIER_BLOCK_NETS="192.168.0.0/16,172.16.0.0/12,10.10.0.0/16"
+```
+
+**Note:** `HBOX_NOTIFIER_ALLOW_NETS` takes precedence over `HBOX_NOTIFIER_BLOCK_NETS`. If an IP is in the allow list, it will not be blocked even if it matches a network in the block list.
+
 ### Recommended Security Configurations
 
 #### Public Internet Deployment
@@ -198,6 +227,19 @@ HBOX_NOTIFIER_ALLOW_NETS="192.168.1.100/32,10.0.20.0/24"
 ```
 
 Note: When using the allow list, all block rules are bypassed. Only the specified networks will be permitted.
+
+#### Selective Network Blocking
+
+For environments where you want to block specific networks without blocking all private networks:
+
+```bash
+HBOX_NOTIFIER_BLOCK_NETS="192.168.1.0/24,10.10.0.0/16"
+HBOX_NOTIFIER_BLOCK_LOCALHOST=true
+HBOX_NOTIFIER_BLOCK_BOGON_NETS=true
+HBOX_NOTIFIER_BLOCK_CLOUD_METADATA=true
+```
+
+**Use Case:** You want to allow webhooks to most of your internal network (e.g., 10.0.0.0/8), but block specific subnets like development (10.10.0.0/16) or guest networks (192.168.1.0/24).
 
 #### Development Environment
 
@@ -266,18 +308,6 @@ Example error messages:
 - "bogon/reserved network addresses are blocked"
 - "cloud metadata endpoints are blocked"
 - "IP X.X.X.X is not in the allowed networks"
-
-## API
-
-Notifiers can be managed programmatically via the Homebox API:
-
-- `GET /api/v1/notifiers` - List all notifiers
-- `POST /api/v1/notifiers` - Create a new notifier
-- `PUT /api/v1/notifiers/{id}` - Update a notifier
-- `DELETE /api/v1/notifiers/{id}` - Delete a notifier
-- `POST /api/v1/notifiers/test` - Test a notifier URL
-
-See the API documentation for detailed schemas and authentication requirements.
 
 
 

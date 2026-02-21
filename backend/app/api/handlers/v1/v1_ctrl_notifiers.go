@@ -45,7 +45,7 @@ func (ctrl *V1Controller) HandleCreateNotifier() errchain.HandlerFunc {
 
 		// Validate notifier URL against block/allow lists
 		if err := ctrl.validateNotifierURL(in.URL); err != nil {
-			return repo.NotifierOut{}, err
+			return repo.NotifierOut{}, validate.NewRequestError(err, http.StatusBadRequest)
 		}
 
 		return ctrl.repo.Notifiers.Create(auth, auth.GID, auth.UID, in)
@@ -87,7 +87,7 @@ func (ctrl *V1Controller) HandleUpdateNotifier() errchain.HandlerFunc {
 		// Validate notifier URL against block/allow lists if URL is being updated
 		if in.URL != nil {
 			if err := ctrl.validateNotifierURL(*in.URL); err != nil {
-				return repo.NotifierOut{}, err
+				return repo.NotifierOut{}, validate.NewRequestError(err, http.StatusBadRequest)
 			}
 		}
 
@@ -114,7 +114,7 @@ func (ctrl *V1Controller) HandlerNotifierTest() errchain.HandlerFunc {
 	fn := func(r *http.Request, q body) (any, error) {
 		// Validate notifier URL against block/allow lists
 		if err := ctrl.validateNotifierURL(q.URL); err != nil {
-			return nil, err
+			return nil, validate.NewRequestError(err, http.StatusBadRequest)
 		}
 
 		err := shoutrrr.Send(q.URL, "Test message from Homebox")
