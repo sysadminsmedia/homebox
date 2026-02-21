@@ -123,6 +123,7 @@
         },
         "global": {
             "copy_text": {
+                "continue": "Doorgaan",
                 "documentation": "documentatie",
                 "failed_to_copy": "Kopiëren van tekst naar klembord mislukt",
                 "https_required": "omdat https vereist is",
@@ -156,7 +157,7 @@
                 "browser_print": "Print vanuit de browser",
                 "confirm_description": "Weet u zeker dat u dit label wilt afdrukken?",
                 "download": "Download Label",
-                "print": "Print verzendlabel",
+                "print": "Print label",
                 "server_print": "Afdrukken op server",
                 "titles": "Labels",
                 "toast": {
@@ -214,6 +215,7 @@
                 "error_exception": "Er is een uitzondering opgetreden tijdens het ophalen van de streepjescode van het item: ",
                 "error_invalid_barcode": "Ongeldige barcode opgegeven",
                 "error_not_found": "Geen product gevonden met opgegeven barcode.",
+                "import_selected": "Selectie importeren",
                 "search_item": "Zoek product",
                 "title": "Importeer product"
             },
@@ -300,6 +302,11 @@
         "quick_menu": {
             "no_results": "Geen resultaten gevonden.",
             "shortcut_hint": "Gebruik de numerieke toetsen om snel een actie te selecteren."
+        },
+        "search": {
+            "filter": {
+                "search_placeholder": "Zoek…"
+            }
         },
         "tag": {
             "create_modal": {
@@ -511,6 +518,7 @@
             "view_image": "Afbeelding bekijken"
         },
         "edit_details": "Details bewerken",
+        "field": "Veld",
         "field_selector": "Veld selectie",
         "field_value": "Veldwaarde",
         "first": "Eerst",
@@ -550,8 +558,10 @@
         "reset_search": "Reset Zoeken",
         "results": "{ total } Resultaten",
         "select_field": "Selecteer een veld",
+        "select_value": "Een waarde selecteren",
         "serial_number": "Serienummer",
         "show_advanced_view_options": "Geavanceerde Opties Weergeven",
+        "show_empty": "Toon lege",
         "sold_at": "Verkocht bij",
         "sold_details": "Verkochte details",
         "sold_price": "Verkoopprijs",
@@ -766,13 +776,14 @@
             "instruction_3": "Deze functie bevindt zich in een vroege ontwikkelingsfase en kan in toekomstige releases veranderen. Als je feedback hebt, geef\n deze dan op in de '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub-discussie'</a>'",
             "label_height": "Label hoogte",
             "label_width": "Label breedte",
-            "measure_type": "Meting type",
+            "measure_type": "Afmeting type",
             "page_bottom_padding": "Padding onderkant pagina",
             "page_height": "Pagina hoogte",
             "page_left_padding": "Padding links",
             "page_right_padding": "Padding rechts",
             "page_top_padding": "Top padding",
             "page_width": "Pagina breedte",
+            "print_location_row": "Print locatie rij",
             "qr_code_example": "Voorbeeld QR Code",
             "replace_homebox_behavior": "Vervang \"HomeBox\" tekstgedrag",
             "replace_homebox_behavior_always_replace": "Vervang \"HomeBox\" altijd",
@@ -781,6 +792,7 @@
             "replace_homebox_behavior_item_no_name_no_location": "Vervang \"HomeBox\" wanneer het item geen naam en geen locatie heeft",
             "replace_homebox_behavior_show_homebox": "Toon \"HomeBox\"",
             "replace_homebox_text": "Vervangende tekst",
+            "skip_first_labels": "Eerste labels overslaan",
             "tip_1": "De standaardinstellingen hier zijn ingesteld voor de\n '<a href=\"https://www.avery.com/templates/5260\">'Avery 5260-labelbladen'</a>'. Als je een ander vel gebruikt,\nmoet je de instellingen aanpassen aan jouw type vel.",
             "tip_2": "Als je het vel aanpast zijn de afmetingen in inch. Bij het maken van een 5260 vel, heb ik ontdekt dat de\nafmetingen in hun template niet overeen komen om te printen in de vakken.\n'<b>'Hou rekening met wat trial en error.'</b>'",
             "tip_3": "Let op bij het afdrukken:\n'<ol><li>'Stel de marges in op 0 of Geen'</li><li>'Zet de schaal op 100%'</li><li>'Dubbelzijdig afdrukken uitschakelen'</li><li>'Druk een testpagina af voordat u meerdere pagina's afdrukt'</li></ol>'",

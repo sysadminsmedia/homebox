@@ -37,7 +37,7 @@
         "tabs": {
             "invites": "Pozvánky",
             "members": "Členové",
-            "notifiers": "Oznamovatelé",
+            "notifiers": "Oznámení",
             "settings": "Nastavení",
             "tools": "Nástroje"
         },
@@ -123,6 +123,7 @@
         },
         "global": {
             "copy_text": {
+                "continue": "Pokračovat",
                 "documentation": "Dokumentace",
                 "failed_to_copy": "Kopírování textu do schránky se nezdařilo",
                 "https_required": "protože je vyžadován protokol HTTPS",
@@ -214,6 +215,7 @@
                 "error_exception": "Při načítání čárového kódu položky došlo k výjimce: ",
                 "error_invalid_barcode": "Byl zadán neplatný čárový kód",
                 "error_not_found": "Žádný produkt s daným čárovým kódem nebyl nalezen.",
+                "import_selected": "Vybraný import",
                 "search_item": "Vyhledat produkt",
                 "title": "Importovat produkt"
             },
@@ -300,6 +302,11 @@
         "quick_menu": {
             "no_results": "Nebyly nalezeny žádné výsledky.",
             "shortcut_hint": "Pomocí číselných tlačítek rychle vyberte akci."
+        },
+        "search": {
+            "filter": {
+                "search_placeholder": "Hledat…"
+            }
         },
         "tag": {
             "create_modal": {
@@ -511,6 +518,7 @@
             "view_image": "Zobrazit obrázek"
         },
         "edit_details": "Upravit detaily",
+        "field": "Kolonka",
         "field_selector": "Výběr pole",
         "field_value": "Hodnota pole",
         "first": "První",
@@ -550,8 +558,10 @@
         "reset_search": "Obnovit vyhledávání",
         "results": "{ total } výsledků",
         "select_field": "Zvolte pole",
+        "select_value": "Vyberte hodnotu",
         "serial_number": "Sériové číslo",
         "show_advanced_view_options": "Zobrazit pokročilé možnosti zobrazení",
+        "show_empty": "Zobrazit prázdné",
         "sold_at": "Prodáno",
         "sold_details": "Detaily prodeje",
         "sold_price": "Cena prodeje",
@@ -635,8 +645,10 @@
         "child_locations": "Podřazené lokace",
         "collapse_tree": "Zabalit strom",
         "expand_tree": "Rozbalit strom",
+        "hide_items": "Skrýt položky",
         "location_items_delete_confirm": "Opravdu chcete odstranit tuto lokaci a všechny její položky? Tuto akci nelze vrátit zpět.",
         "no_results": "Žádné lokace nebyly nalezeny",
+        "show_items": "Zobrazit položky",
         "toast": {
             "failed_delete_location": "Nepodařilo se odstranit lokaci",
             "failed_load_location": "Nepodařilo se načíst lokaci",
@@ -717,17 +729,17 @@
         "inactive": "Neaktivní",
         "language": "Jazyk",
         "legacy_image_fit": "{ currentValue, select, true {Zakázat starší přizpůsobení: přizpůsobit obrázek s pruhy} false {Povolit starší přizpůsobení: vyplnit obrázek oříznutím} other {Not Hit}}",
-        "moved_notice_body": "Oznamovatelé, pozvánky a nastavení měny byly přesunuty na stránky sbírky.",
+        "moved_notice_body": "Oznámení, pozvánky a nastavení měny byly přesunuty na stránky sbírky.",
         "moved_notice_description": "Tato nastavení jsou nyní spravována podle sbírky.",
         "moved_notice_link_invites": "Pozvánky do sbírky",
-        "moved_notice_link_notifiers": "Oznamovatelé sbírky",
+        "moved_notice_link_notifiers": "Oznámení sbírky",
         "moved_notice_link_settings": "Nastavení měny sbírky",
         "moved_notice_title": "Hledáš oznamovatele, pozvánky nebo nastavení měny?",
         "new_password": "Nové heslo",
-        "no_notifiers": "Nejsou nakonfigurováni žádní oznamovatelé",
+        "no_notifiers": "Nejsou nakonfigurována žádná oznámení",
         "no_override": "Žádné přepsání",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Oznamovatel",
-        "notifiers": "Oznamovatelé",
+        "notifiers": "Oznámení",
         "notifiers_sub": "Dostávejte oznámení o nadcházejících údržbách",
         "override_locale": "Přepsat datum a jazyk měny",
         "test": "Zkouška",
@@ -773,6 +785,7 @@
             "page_right_padding": "Odsazení stránky vpravo",
             "page_top_padding": "Odsazení stránky zvrchu",
             "page_width": "Šířka stránky",
+            "print_location_row": "Vytisknout řádek s umístěním",
             "qr_code_example": "Příklad kódu QR",
             "replace_homebox_behavior": "Nahradit chování textu \"HomeBox\"",
             "replace_homebox_behavior_always_replace": "Vždy nahradit „HomeBox“",
@@ -781,6 +794,7 @@
             "replace_homebox_behavior_item_no_name_no_location": "Nahraďte „HomeBox“, pokud položka nemá název a umístění",
             "replace_homebox_behavior_show_homebox": "Zobrazit \"HomeBox\"",
             "replace_homebox_text": "Text nahrazení",
+            "skip_first_labels": "Přeskočit první štítky",
             "tip_1": "Výchozí nastavení jsou zde nastavena pro\n '<a href=\"https://www.avery.com/templates/5260\">'archy štítků Avery 5260'</a>'. Pokud používáte jiný arch, musíte\n nastavení upravit tak, aby odpovídalo vašemu archu.",
             "tip_2": "Pokud si list přizpůsobujete, rozměry jsou uvedeny v palcích. Při sestavování archu 5260 jsem zjistil,\n že rozměry použité v jejich šabloně neodpovídají tomu, co bylo potřeba vytisknout v rámci políček.\n '<b>'Připravte se na to, že budete muset použít metodu pokusů a omylů.'</b>'",
             "tip_3": "Při tisku nezapomeňte:\n'<ol><li>'Nastavit okraje na 0 nebo Žádné'</li><li>'Nastavit měřítko na 100%'</li><li>Zakázat oboustranný tisk'</li><li>'Před tiskem více stránek vytiskněte zkušební stránku'</li></ol>'",

@@ -1,4 +1,7 @@
 {
+    "collection": {
+        "invite_token": "Token"
+    },
     "components": {
         "app": {
             "create_modal": {
@@ -125,7 +128,7 @@
                 "parent_location": "Locație Părinte"
             },
             "tree": {
-                "no_locations": "Nu există locații disponibile. Adaugă o locație nouă folosind butonul\n<span class=\"link-primary\">'Crează'</span> din bara de navigație."
+                "no_locations": "Nu există locații disponibile. Folosește butonul 'Crează' pentru a adăuga o locație nouă."
             }
         }
     },

@@ -94,7 +94,7 @@
                 "title": "Sammlung beitreten",
                 "toast": {
                     "already_joining": "Beitritt einer Sammlung läuft bereits",
-                    "join_failed": "Beitritt der Sammlung fehlgeschlagen",
+                    "join_failed": "Beitritt zur Sammlung fehlgeschlagen",
                     "join_success": "Einer Sammlung beigetreten",
                     "please_enter_valid_join_code": "Bitte geben Sie einen gültigen Einladungscode für die Sammlung ein"
                 }
@@ -105,7 +105,7 @@
                 "join_collection": "Bestehender Sammlung beitreten",
                 "no_collection_found": "Keine Sammlung gefunden",
                 "search_collections": "Sammlungen durchsuchen…",
-                "select_collection": "Kollektion auswählen",
+                "select_collection": "Sammlung auswählen",
                 "your_collections": "Deine Sammlungen"
             }
         },
@@ -226,9 +226,9 @@
             },
             "view": {
                 "change_details": {
-                    "add_tags": "Tags hinzufügen",
+                    "add_tags": "Label hinzufügen",
                     "failed_to_update_item": "Artikel konnte nicht aktualisiert werden",
-                    "remove_tags": "Tags entfernen",
+                    "remove_tags": "Label entfernen",
                     "title": "Artikeldetails ändern"
                 },
                 "selectable": {
@@ -245,8 +245,8 @@
                         "actions": "Aktionen",
                         "change_location": "Lagerort ändern",
                         "change_location_success": "Lagerort geändert",
-                        "change_tags": "Tags ändern",
-                        "change_tags_success": "Tags geändert",
+                        "change_tags": "Label ändern",
+                        "change_tags_success": "Label geändert",
                         "create_maintenance_item": "Wartungsposten für Artikel erstellen",
                         "create_maintenance_selected": "Wartungsposten für ausgewählte Artikel erstellen",
                         "create_maintenance_success": "Wartungseinträge erstellt",
@@ -303,19 +303,19 @@
         },
         "tag": {
             "create_modal": {
-                "tag_color": "Tag-Farbe",
-                "tag_description": "Tag-Beschreibung",
-                "tag_name": "Tag-Name",
-                "title": "Tag erstellen",
+                "tag_color": "Label-Farbe",
+                "tag_description": "Label-Beschreibung",
+                "tag_name": "Label-Name",
+                "title": "Label erstellen",
                 "toast": {
-                    "already_creating": "Es wird bereits ein Tag erstellt",
-                    "create_failed": "Tag konnte nicht erstellt werden",
-                    "create_success": "Tag erstellt",
-                    "tag_name_too_long": "Tag-Name darf nicht länger als 50 Zeichen sein"
+                    "already_creating": "Es wird bereits ein Label erstellt",
+                    "create_failed": "Label konnte nicht erstellt werden",
+                    "create_success": "Label erstellt",
+                    "tag_name_too_long": "Label-Name darf nicht länger als 50 Zeichen sein"
                 }
             },
             "selector": {
-                "select_tags": "Tags auswählen"
+                "select_tags": "Label auswählen"
             }
         },
         "template": {
