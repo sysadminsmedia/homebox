@@ -70,7 +70,7 @@ jobs:
           branch=${{ github.event.pull_request.number || github.ref_name }}
           echo "BRANCH=${branch//\//-}" >> $GITHUB_ENV
           echo "DOCKERNAMES=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}" >> $GITHUB_ENV
-          if [[ "${{ github.event_name }}" != "schedule" ]] || [[ "${{ github.ref }}" != refs/tags/* ]]; then
+          if [[ "${{ github.event_name }}" != "schedule" ]] && [[ "${{ github.ref }}" != refs/tags/* ]]; then
             echo "DOCKERNAMES=${{ env.GHCR_REPO }}" >> $GITHUB_ENV
           fi
 

@@ -39,10 +39,10 @@ jobs:
   build:
     runs-on: ${{ matrix.runner }}
     permissions:
-      contents: read     # Allows access to repository contents (read-only)
-      packages: write    # Allows pushing to GHCR
-      id-token: write    # Allows identity token write access for authentication
-      attestations: write  # Needed for signing and attestation (if required)
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
 
     strategy:
       fail-fast: false
@@ -54,6 +54,12 @@ jobs:
             runner: ubuntu-24.04-arm
 
     steps:
+      - name: Enable Debug Logs
+        run: echo "##[debug]Enabling debug logging"
+        env:
+          ACTIONS_RUNNER_DEBUG: true
+          ACTIONS_STEP_DEBUG: true
+
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
@@ -64,7 +70,7 @@ jobs:
           branch=${{ github.event.pull_request.number || github.ref_name }}
           echo "BRANCH=${branch//\//-}" >> $GITHUB_ENV
           echo "DOCKERNAMES=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}" >> $GITHUB_ENV
-          if [[ "${{ github.event_name }}" != "schedule" ]] || [[ "${{ github.ref }}" != refs/tags/* ]]; then
+          if [[ "${{ github.event_name }}" != "schedule" ]] && [[ "${{ github.ref }}" != refs/tags/* ]]; then
             echo "DOCKERNAMES=${{ env.GHCR_REPO }}" >> $GITHUB_ENV
           fi
               
@@ -107,20 +113,22 @@ jobs:
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435
         with:
           driver-opts: |
-            image=ghcr.io/sysadminsmedia/buildkit:latest
+            image=ghcr.io/sysadminsmedia/buildkit:master
 
       - name: Build and push by digest
         id: build
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83
         with:
+          context: . # Explicitly specify the build context
+          file: ./Dockerfile # Explicitly specify the Dockerfile
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,"name=${{ env.DOCKERNAMES }}",push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }}
           cache-from: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }}
-          cache-to: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR}}-${{ env.BRANCH }},mode=max,ignore-error=true
+          cache-to: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }},mode=max,ignore-error=true
           build-args: |
             VERSION=${{ github.ref_name }}
-            COMMIT=${{ github.sha	}}
+            COMMIT=${{ github.sha }}
           provenance: mode=max
           sbom: true
           annotations: ${{ steps.meta.outputs.annotations }}
@@ -132,7 +140,7 @@ jobs:
           subject-name: ${{ env.GHCR_REPO }}
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
-
+                              
       - name: Export digest
         run: |
           mkdir -p /tmp/digests
@@ -151,10 +159,10 @@ jobs:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
-      contents: read     # Allows access to repository contents (read-only)
-      packages: write    # Allows pushing to GHCR
-      id-token: write    # Allows identity token write access for authentication
-      attestations: write  # Needed for signing and attestation (if required)
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
     needs:
       - build
 
