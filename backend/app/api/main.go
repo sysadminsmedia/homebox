@@ -28,7 +28,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
 	"go.balki.me/anyhttp"
 
-	_ "github.com/lib/pq"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/postgres"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/sqlite3"
 	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
@@ -137,6 +137,12 @@ func run(cfg *config.Config) error {
 			err,
 		)
 	}
+	defer func(c *ent.Client) {
+		err := c.Close()
+		if err != nil {
+			log.Error().Err(err).Msg("failed to close database connection")
+		}
+	}(c)
 
 	migrationsFs, err := migrations.Migrations(strings.ToLower(cfg.Database.Driver))
 	if err != nil {

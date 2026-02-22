@@ -9,11 +9,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/currencies"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/faker"
 )
 
