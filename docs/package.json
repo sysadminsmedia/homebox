@@ -19,8 +19,8 @@
     "@astrojs/starlight-tailwind": "^4.0.2",
     "@fontsource-variable/atkinson-hyperlegible-mono": "^5.2.5",
     "@fontsource-variable/atkinson-hyperlegible-next": "^5.2.6",
-    "@tailwindcss/vite": "^4.1.18",
-    "astro": "^5.17.1",
+    "@tailwindcss/vite": "^4.2.0",
+    "astro": "^5.17.3",
     "astro-icon": "^1.1.5",
     "astro-theme-toggle": "^0.8.0",
     "sharp": "^0.34.5",
@@ -29,12 +29,12 @@
     "starlight-github-alerts": "^0.1.1",
     "starlight-sidebar-topics": "^0.6.2",
     "starlight-theme-nova": "^0.10.0",
-    "tailwindcss": "^4.1.18"
+    "tailwindcss": "^4.2.0"
   },
   "devDependencies": {
     "@iconify-json/fluent-emoji-flat": "^1.2.5",
-    "@iconify-json/material-symbols": "^1.2.54",
-    "@iconify-json/simple-icons": "^1.2.70",
+    "@iconify-json/material-symbols": "^1.2.57",
+    "@iconify-json/simple-icons": "^1.2.71",
     "rollup-plugin-visualizer": "^6.0.5",
     "starlight-openapi": "^0.22.0",
     "wrangler": "^4.67.0"
