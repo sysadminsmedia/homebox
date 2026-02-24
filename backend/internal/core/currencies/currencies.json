@@ -326,7 +326,7 @@
         "local": "Chile",
         "symbol": "$",
         "name": "Chilean peso",
-        "decimals": 2
+        "decimals": 0
     },
     {
         "code": "CNY",
