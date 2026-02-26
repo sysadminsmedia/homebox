@@ -36,7 +36,7 @@ func new(conf *config.Config) *app {
 	}
 
 	s.authLimiter = newAuthRateLimiter(s.conf.Auth.RateLimit)
-	s.notifierTestLimiter = newSimpleRateLimiter(10, time.Minute) // 10 requests per minute
+	s.notifierTestLimiter = newSimpleRateLimiter(10, time.Minute, s.conf.Options.TrustProxy) // 10 requests per minute
 
 	return s
 }

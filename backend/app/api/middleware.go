@@ -308,7 +308,7 @@ func (a *app) mwAuthRateLimit(next errchain.Handler) errchain.Handler {
 			return next.ServeHTTP(w, r)
 		}
 
-		key := limiter.keyForRequest(r)
+		key := limiter.keyForRequest(r, a.conf.Options.TrustProxy)
 		now := limiter.nowFn()
 
 		if retryAfter, allowed := limiter.shouldAllow(key, now); !allowed {
@@ -389,22 +389,19 @@ func (l *authRateLimiter) record(key string, now time.Time, success bool) {
 	}
 }
 
-// keyForRequest returns a unique key for the given request.
-func (l *authRateLimiter) keyForRequest(r *http.Request) string {
-	return l.clientIP(r) + "|" + r.URL.Path
-}
+// extractClientIP extracts the client IP from the request.
+// It only uses proxy headers (X-Real-IP, X-Forwarded-For) if trustProxy is enabled.
+func extractClientIP(r *http.Request, trustProxy bool) string {
+	if trustProxy {
+		if ip := r.Header.Get("X-Real-IP"); ip != "" {
+			return ip
+		}
 
-// clientIP returns the client IP address for the given request.
-func (l *authRateLimiter) clientIP(r *http.Request) string {
-	if ip := r.Header.Get("X-Real-IP"); ip != "" {
-		return ip
+		if ip := r.Header.Get("X-Forwarded-For"); ip != "" {
+			parts := strings.Split(ip, ",")
+			return strings.TrimSpace(parts[0])
+		}
 	}
-
-	if ip := r.Header.Get("X-Forwarded-For"); ip != "" {
-		parts := strings.Split(ip, ",")
-		return strings.TrimSpace(parts[0])
-	}
-
 	host, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err == nil {
 		return host
@@ -413,12 +410,24 @@ func (l *authRateLimiter) clientIP(r *http.Request) string {
 	return r.RemoteAddr
 }
 
+// keyForRequest returns a unique key for the given request.
+func (l *authRateLimiter) keyForRequest(r *http.Request, trustProxy bool) string {
+	return extractClientIP(r, trustProxy) + "|" + r.URL.Path
+}
+
+// clientIP returns the client IP address for the given request.
+// It only uses proxy headers (X-Real-IP, X-Forwarded-For) if TrustProxy is enabled.
+func (l *authRateLimiter) clientIP(r *http.Request, trustProxy bool) string {
+	return extractClientIP(r, trustProxy)
+}
+
 // simpleRateLimiter provides token bucket rate limiting per client IP.
 type simpleRateLimiter struct {
 	mu          sync.Mutex
 	limiters    map[string]*rateLimiterEntry
 	rate        int           // requests allowed
 	window      time.Duration // time window
+	trustProxy  bool          // whether to trust proxy headers
 	stopCleanup chan struct{}
 	stopOnce    sync.Once
 }
@@ -429,11 +438,12 @@ type rateLimiterEntry struct {
 }
 
 // newSimpleRateLimiter creates a new rate limiter with the specified rate and window.
-func newSimpleRateLimiter(rate int, window time.Duration) *simpleRateLimiter {
+func newSimpleRateLimiter(rate int, window time.Duration, trustProxy bool) *simpleRateLimiter {
 	rl := &simpleRateLimiter{
 		limiters:    make(map[string]*rateLimiterEntry),
 		rate:        rate,
 		window:      window,
+		trustProxy:  trustProxy,
 		stopCleanup: make(chan struct{}),
 	}
 
@@ -523,28 +533,15 @@ func (rl *simpleRateLimiter) allow(clientIP string) bool {
 }
 
 // getClientIP extracts the client IP from the request.
-func (rl *simpleRateLimiter) getClientIP(r *http.Request) string {
-	if ip := r.Header.Get("X-Real-IP"); ip != "" {
-		return ip
-	}
-
-	if ip := r.Header.Get("X-Forwarded-For"); ip != "" {
-		parts := strings.Split(ip, ",")
-		return strings.TrimSpace(parts[0])
-	}
-
-	host, _, err := net.SplitHostPort(r.RemoteAddr)
-	if err == nil {
-		return host
-	}
-
-	return r.RemoteAddr
+// It only uses proxy headers (X-Real-IP, X-Forwarded-For) if trustProxy is enabled.
+func (rl *simpleRateLimiter) getClientIP(r *http.Request, trustProxy bool) string {
+	return extractClientIP(r, trustProxy)
 }
 
 // middleware wraps the rate limiter as an errchain middleware.
 func (rl *simpleRateLimiter) middleware(next errchain.Handler) errchain.Handler {
 	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-		clientIP := rl.getClientIP(r)
+		clientIP := rl.getClientIP(r, rl.trustProxy)
 
 		if !rl.allow(clientIP) {
 			w.Header().Set("Retry-After", strconv.Itoa(int(rl.window.Seconds())))
