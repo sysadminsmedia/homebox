@@ -313,6 +313,7 @@
                 "tag_color": "Tag Color",
                 "tag_description": "Tag Description",
                 "tag_name": "Tag Name",
+                "tag_parent": "Parent Tag",
                 "title": "Create Tag",
                 "toast": {
                     "already_creating": "Already creating a tag",
@@ -322,7 +323,9 @@
                 }
             },
             "selector": {
-                "select_tags": "Select Tags"
+                "select_tags": "Select Tags",
+                "no_tags_found": "No tags found",
+                "clear": "Clear"
             }
         },
         "template": {

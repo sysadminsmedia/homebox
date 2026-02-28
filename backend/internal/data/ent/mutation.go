@@ -11118,23 +11118,29 @@ func (m *NotifierMutation) ResetEdge(name string) error {
 // TagMutation represents an operation that mutates the Tag nodes in the graph.
 type TagMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *uuid.UUID
-	created_at    *time.Time
-	updated_at    *time.Time
-	name          *string
-	description   *string
-	color         *string
-	clearedFields map[string]struct{}
-	group         *uuid.UUID
-	clearedgroup  bool
-	items         map[uuid.UUID]struct{}
-	removeditems  map[uuid.UUID]struct{}
-	cleareditems  bool
-	done          bool
-	oldValue      func(context.Context) (*Tag, error)
-	predicates    []predicate.Tag
+	op              Op
+	typ             string
+	id              *uuid.UUID
+	created_at      *time.Time
+	updated_at      *time.Time
+	name            *string
+	description     *string
+	color           *string
+	icon            *string
+	clearedFields   map[string]struct{}
+	group           *uuid.UUID
+	clearedgroup    bool
+	items           map[uuid.UUID]struct{}
+	removeditems    map[uuid.UUID]struct{}
+	cleareditems    bool
+	parent          *uuid.UUID
+	clearedparent   bool
+	children        map[uuid.UUID]struct{}
+	removedchildren map[uuid.UUID]struct{}
+	clearedchildren bool
+	done            bool
+	oldValue        func(context.Context) (*Tag, error)
+	predicates      []predicate.Tag
 }
 
 var _ ent.Mutation = (*TagMutation)(nil)
@@ -11447,6 +11453,55 @@ func (m *TagMutation) ResetColor() {
 	delete(m.clearedFields, tag.FieldColor)
 }
 
+// SetIcon sets the "icon" field.
+func (m *TagMutation) SetIcon(s string) {
+	m.icon = &s
+}
+
+// Icon returns the value of the "icon" field in the mutation.
+func (m *TagMutation) Icon() (r string, exists bool) {
+	v := m.icon
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIcon returns the old "icon" field's value of the Tag entity.
+// If the Tag object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TagMutation) OldIcon(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIcon is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIcon requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIcon: %w", err)
+	}
+	return oldValue.Icon, nil
+}
+
+// ClearIcon clears the value of the "icon" field.
+func (m *TagMutation) ClearIcon() {
+	m.icon = nil
+	m.clearedFields[tag.FieldIcon] = struct{}{}
+}
+
+// IconCleared returns if the "icon" field was cleared in this mutation.
+func (m *TagMutation) IconCleared() bool {
+	_, ok := m.clearedFields[tag.FieldIcon]
+	return ok
+}
+
+// ResetIcon resets all changes to the "icon" field.
+func (m *TagMutation) ResetIcon() {
+	m.icon = nil
+	delete(m.clearedFields, tag.FieldIcon)
+}
+
 // SetGroupID sets the "group" edge to the Group entity by id.
 func (m *TagMutation) SetGroupID(id uuid.UUID) {
 	m.group = &id
@@ -11540,6 +11595,99 @@ func (m *TagMutation) ResetItems() {
 	m.removeditems = nil
 }
 
+// SetParentID sets the "parent" edge to the Tag entity by id.
+func (m *TagMutation) SetParentID(id uuid.UUID) {
+	m.parent = &id
+}
+
+// ClearParent clears the "parent" edge to the Tag entity.
+func (m *TagMutation) ClearParent() {
+	m.clearedparent = true
+}
+
+// ParentCleared reports if the "parent" edge to the Tag entity was cleared.
+func (m *TagMutation) ParentCleared() bool {
+	return m.clearedparent
+}
+
+// ParentID returns the "parent" edge ID in the mutation.
+func (m *TagMutation) ParentID() (id uuid.UUID, exists bool) {
+	if m.parent != nil {
+		return *m.parent, true
+	}
+	return
+}
+
+// ParentIDs returns the "parent" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ParentID instead. It exists only for internal usage by the builders.
+func (m *TagMutation) ParentIDs() (ids []uuid.UUID) {
+	if id := m.parent; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetParent resets all changes to the "parent" edge.
+func (m *TagMutation) ResetParent() {
+	m.parent = nil
+	m.clearedparent = false
+}
+
+// AddChildIDs adds the "children" edge to the Tag entity by ids.
+func (m *TagMutation) AddChildIDs(ids ...uuid.UUID) {
+	if m.children == nil {
+		m.children = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		m.children[ids[i]] = struct{}{}
+	}
+}
+
+// ClearChildren clears the "children" edge to the Tag entity.
+func (m *TagMutation) ClearChildren() {
+	m.clearedchildren = true
+}
+
+// ChildrenCleared reports if the "children" edge to the Tag entity was cleared.
+func (m *TagMutation) ChildrenCleared() bool {
+	return m.clearedchildren
+}
+
+// RemoveChildIDs removes the "children" edge to the Tag entity by IDs.
+func (m *TagMutation) RemoveChildIDs(ids ...uuid.UUID) {
+	if m.removedchildren == nil {
+		m.removedchildren = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		delete(m.children, ids[i])
+		m.removedchildren[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedChildren returns the removed IDs of the "children" edge to the Tag entity.
+func (m *TagMutation) RemovedChildrenIDs() (ids []uuid.UUID) {
+	for id := range m.removedchildren {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ChildrenIDs returns the "children" edge IDs in the mutation.
+func (m *TagMutation) ChildrenIDs() (ids []uuid.UUID) {
+	for id := range m.children {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetChildren resets all changes to the "children" edge.
+func (m *TagMutation) ResetChildren() {
+	m.children = nil
+	m.clearedchildren = false
+	m.removedchildren = nil
+}
+
 // Where appends a list predicates to the TagMutation builder.
 func (m *TagMutation) Where(ps ...predicate.Tag) {
 	m.predicates = append(m.predicates, ps...)
@@ -11574,7 +11722,7 @@ func (m *TagMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TagMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.created_at != nil {
 		fields = append(fields, tag.FieldCreatedAt)
 	}
@@ -11589,6 +11737,9 @@ func (m *TagMutation) Fields() []string {
 	}
 	if m.color != nil {
 		fields = append(fields, tag.FieldColor)
+	}
+	if m.icon != nil {
+		fields = append(fields, tag.FieldIcon)
 	}
 	return fields
 }
@@ -11608,6 +11759,8 @@ func (m *TagMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case tag.FieldColor:
 		return m.Color()
+	case tag.FieldIcon:
+		return m.Icon()
 	}
 	return nil, false
 }
@@ -11627,6 +11780,8 @@ func (m *TagMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldDescription(ctx)
 	case tag.FieldColor:
 		return m.OldColor(ctx)
+	case tag.FieldIcon:
+		return m.OldIcon(ctx)
 	}
 	return nil, fmt.Errorf("unknown Tag field %s", name)
 }
@@ -11671,6 +11826,13 @@ func (m *TagMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetColor(v)
 		return nil
+	case tag.FieldIcon:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIcon(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Tag field %s", name)
 }
@@ -11707,6 +11869,9 @@ func (m *TagMutation) ClearedFields() []string {
 	if m.FieldCleared(tag.FieldColor) {
 		fields = append(fields, tag.FieldColor)
 	}
+	if m.FieldCleared(tag.FieldIcon) {
+		fields = append(fields, tag.FieldIcon)
+	}
 	return fields
 }
 
@@ -11726,6 +11891,9 @@ func (m *TagMutation) ClearField(name string) error {
 		return nil
 	case tag.FieldColor:
 		m.ClearColor()
+		return nil
+	case tag.FieldIcon:
+		m.ClearIcon()
 		return nil
 	}
 	return fmt.Errorf("unknown Tag nullable field %s", name)
@@ -11750,18 +11918,27 @@ func (m *TagMutation) ResetField(name string) error {
 	case tag.FieldColor:
 		m.ResetColor()
 		return nil
+	case tag.FieldIcon:
+		m.ResetIcon()
+		return nil
 	}
 	return fmt.Errorf("unknown Tag field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TagMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 4)
 	if m.group != nil {
 		edges = append(edges, tag.EdgeGroup)
 	}
 	if m.items != nil {
 		edges = append(edges, tag.EdgeItems)
+	}
+	if m.parent != nil {
+		edges = append(edges, tag.EdgeParent)
+	}
+	if m.children != nil {
+		edges = append(edges, tag.EdgeChildren)
 	}
 	return edges
 }
@@ -11780,15 +11957,28 @@ func (m *TagMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case tag.EdgeParent:
+		if id := m.parent; id != nil {
+			return []ent.Value{*id}
+		}
+	case tag.EdgeChildren:
+		ids := make([]ent.Value, 0, len(m.children))
+		for id := range m.children {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TagMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 4)
 	if m.removeditems != nil {
 		edges = append(edges, tag.EdgeItems)
+	}
+	if m.removedchildren != nil {
+		edges = append(edges, tag.EdgeChildren)
 	}
 	return edges
 }
@@ -11803,18 +11993,30 @@ func (m *TagMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case tag.EdgeChildren:
+		ids := make([]ent.Value, 0, len(m.removedchildren))
+		for id := range m.removedchildren {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TagMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 4)
 	if m.clearedgroup {
 		edges = append(edges, tag.EdgeGroup)
 	}
 	if m.cleareditems {
 		edges = append(edges, tag.EdgeItems)
+	}
+	if m.clearedparent {
+		edges = append(edges, tag.EdgeParent)
+	}
+	if m.clearedchildren {
+		edges = append(edges, tag.EdgeChildren)
 	}
 	return edges
 }
@@ -11827,6 +12029,10 @@ func (m *TagMutation) EdgeCleared(name string) bool {
 		return m.clearedgroup
 	case tag.EdgeItems:
 		return m.cleareditems
+	case tag.EdgeParent:
+		return m.clearedparent
+	case tag.EdgeChildren:
+		return m.clearedchildren
 	}
 	return false
 }
@@ -11837,6 +12043,9 @@ func (m *TagMutation) ClearEdge(name string) error {
 	switch name {
 	case tag.EdgeGroup:
 		m.ClearGroup()
+		return nil
+	case tag.EdgeParent:
+		m.ClearParent()
 		return nil
 	}
 	return fmt.Errorf("unknown Tag unique edge %s", name)
@@ -11851,6 +12060,12 @@ func (m *TagMutation) ResetEdge(name string) error {
 		return nil
 	case tag.EdgeItems:
 		m.ResetItems()
+		return nil
+	case tag.EdgeParent:
+		m.ResetParent()
+		return nil
+	case tag.EdgeChildren:
+		m.ResetChildren()
 		return nil
 	}
 	return fmt.Errorf("unknown Tag edge %s", name)
