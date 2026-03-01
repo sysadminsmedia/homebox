@@ -20,6 +20,7 @@
       :placeholder="placeholder"
       :type="type"
       :required="required"
+      :min="min"
       class="w-full"
     />
   </div>
@@ -43,6 +44,7 @@
       :placeholder="placeholder"
       :type="type"
       :required="required"
+      :min="min"
       class="col-span-3 mt-2 w-full"
     />
   </div>
@@ -88,6 +90,11 @@
     minLength: {
       type: Number,
       default: -1,
+      required: false,
+    },
+    min: {
+      type: Number,
+      default: undefined,
       required: false,
     },
   });

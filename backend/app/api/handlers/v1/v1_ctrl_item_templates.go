@@ -108,7 +108,7 @@ type ItemTemplateCreateItemRequest struct {
 	Description string      `json:"description" validate:"max=1000"`
 	LocationID  uuid.UUID   `json:"locationId"  validate:"required"`
 	TagIDs      []uuid.UUID `json:"tagIds"`
-	Quantity    *int        `json:"quantity"`
+	Quantity    *int        `json:"quantity"    validate:"omitempty,min=0"`
 }
 
 // HandleItemTemplatesCreateItem godoc

@@ -161,6 +161,7 @@
     type: "number";
     label: string;
     ref: NonNullableNumberKeys<ItemOut> | NonNullableStringKeys<ItemOut>;
+    min?: number;
   };
 
   interface BoolFormField {
@@ -189,6 +190,7 @@
       type: "number",
       label: "items.quantity",
       ref: "quantity",
+      min: 0,
     },
     {
       type: "markdown",
@@ -639,6 +641,7 @@
                   v-model.number="item[field.ref]"
                   type="number"
                   :label="$t(field.label)"
+                  :min="field.min"
                   inline
                 />
                 <FormDatePicker
@@ -800,6 +803,7 @@
                   v-model.number="item[field.ref]"
                   type="number"
                   :label="$t(field.label)"
+                  :min="field.min"
                   inline
                 />
                 <FormDatePicker
@@ -847,6 +851,7 @@
                   v-model.number="item[field.ref]"
                   type="number"
                   :label="$t(field.label)"
+                  :min="field.min"
                   inline
                 />
                 <FormDatePicker
@@ -894,6 +899,7 @@
                   v-model.number="item[field.ref]"
                   type="number"
                   :label="$t(field.label)"
+                  :min="field.min"
                   inline
                 />
                 <FormDatePicker
