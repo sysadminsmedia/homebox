@@ -67,3 +67,5 @@ frontend/test-results/
 frontend/playwright-report/
 frontend/blob-report/
 frontend/playwright/.cache/
+__pycache__/
+*.pyc
