@@ -140,7 +140,7 @@
     }
     return (
       item.value.attachments.reduce((acc, cur) => {
-        if (cur.type === "photo") {
+        if (cur.type === "photo" && cur.mimeType?.startsWith("image/")) {
           const photo: Photo = {
             originalSrc: api.authURL(`/items/${item.value!.id}/attachments/${cur.id}`),
             originalType: cur.mimeType,
@@ -170,7 +170,7 @@
 
     return item.value.attachments.reduce(
       (acc, attachment) => {
-        if (attachment.type === "photo") {
+        if (attachment.type === "photo" && attachment.mimeType?.startsWith("image/")) {
           return acc;
         }
         if (attachment.type === "warranty") {

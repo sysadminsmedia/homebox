@@ -273,9 +273,13 @@ func isSafeInlineType(mimeType string) bool {
 		"image/bmp":       true,
 		"image/tiff":      true,
 		"image/avif":      true,
-		"image/ico":       true,
-		"image/x-icon":    true,
-		"application/pdf": true, // PDFs are generally safe with proper CSP
+		"image/ico":    true,
+		"image/x-icon": true,
+		// Note: application/pdf is intentionally excluded – serving PDFs with
+		// Content-Disposition: inline combined with sandbox CSP and X-Frame-Options: DENY
+		// causes browsers (especially Safari) to hang when the PDF is loaded in an <img>
+		// element context.  Forcing Content-Disposition: attachment ensures the file is
+		// downloaded rather than rendered inline, preventing the browser freeze.
 	}
 
 	// Check exact match
