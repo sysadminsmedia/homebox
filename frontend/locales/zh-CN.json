@@ -641,12 +641,15 @@
     "languages.da-DK": "丹麦语",
     "languages.ro-RO": "罗马尼亚语",
     "languages.sk-SK": "斯洛伐克语",
+    "languages.sr-RS": "塞尔维亚语（塞尔维亚）",
     "locations": {
         "child_locations": "子位置",
         "collapse_tree": "折叠树",
         "expand_tree": "展开树",
+        "hide_items": "隐藏物品",
         "location_items_delete_confirm": "确定要删除此位置及其中所有物品吗？此操作无法撤销。",
         "no_results": "找不到位置",
+        "show_items": "显示物品",
         "toast": {
             "failed_delete_location": "无法删除位置",
             "failed_load_location": "无法加载位置",

@@ -123,6 +123,7 @@
         },
         "global": {
             "copy_text": {
+                "continue": "Fortsetzen",
                 "documentation": "Dokumentation",
                 "failed_to_copy": "Text konnte nicht in die Zwischenablage kopiert werden",
                 "https_required": "weil HTTPS erforderlich ist",
@@ -214,6 +215,7 @@
                 "error_exception": "Beim Abrufen des Artikel-Barcodes ist ein Problem aufgetreten: ",
                 "error_invalid_barcode": "Ungültiger Barcode angegeben",
                 "error_not_found": "Kein Produkt mit dem angegebenen Barcode gefunden.",
+                "import_selected": "Auswahl importieren",
                 "search_item": "Produkt suchen",
                 "title": "Produkt importieren"
             },
@@ -300,6 +302,11 @@
         "quick_menu": {
             "no_results": "Keine Ergebnisse gefunden.",
             "shortcut_hint": "Verwenden Sie die Zifferntasten, um schnell eine Aktion auszuwählen."
+        },
+        "search": {
+            "filter": {
+                "search_placeholder": "Suchen…"
+            }
         },
         "tag": {
             "create_modal": {
@@ -511,6 +518,7 @@
             "view_image": "Bild anzeigen"
         },
         "edit_details": "Details bearbeiten",
+        "field": "Bereich",
         "field_selector": "Feldauswahl",
         "field_value": "Feldwert",
         "first": "Erste",
@@ -550,8 +558,10 @@
         "reset_search": "Suche zurücksetzen",
         "results": "{ total } Ergebnisse",
         "select_field": "Ein Feld auswählen",
+        "select_value": "Wähle einen Wert",
         "serial_number": "Seriennummer",
         "show_advanced_view_options": "Erweiterte Angzeigeoptionen anzeigen",
+        "show_empty": "Leere anzeigen",
         "sold_at": "Verkauft am",
         "sold_details": "Verkaufsdetails",
         "sold_price": "Verkaufspreis",
@@ -631,12 +641,15 @@
     "languages.ro-RO": "Rumänisch",
     "languages.sk-SK": "Slowakisch",
     "languages.sq-AL": "Albanisch",
+    "languages.sr-RS": "Serbisch (Serbien)",
     "locations": {
         "child_locations": "Unter-Lagerorte",
         "collapse_tree": "Baum einklappen",
         "expand_tree": "Baum ausklappen",
+        "hide_items": "Einträge ausblenden",
         "location_items_delete_confirm": "Möchten Sie diesen Lagerort und alle darin enthaltenen Artikel wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
         "no_results": "Keine Lagerorte gefunden",
+        "show_items": "Einträge einblenden",
         "toast": {
             "failed_delete_location": "Lagerort konnte nicht gelöscht werden",
             "failed_load_location": "Lagerort konnte nicht geladen werden",
@@ -781,6 +794,7 @@
             "replace_homebox_behavior_item_no_name_no_location": "Ersetzen Sie \"HomeBox\", wenn das Element keinen Namen und keinen Standort hat",
             "replace_homebox_behavior_show_homebox": "\"HomeBox\" anzeigen",
             "replace_homebox_text": "Ersatztext",
+            "skip_first_labels": "Erste Labels überspringen",
             "tip_1": "Die Standardeinstellungen hier sind für die\n'<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 Etikettenbögen'</a>'. Wenn Sie einen anderen Bogen verwenden,\nmüssen Sie die Einstellungen an Ihr Blatt anpassen.",
             "tip_2": "Wenn Sie Ihr Blatt anpassen, werden die Abmessungen in Zoll angegeben. Beim Erstellen des 5260-Blattes habe ich festgestellt, dass die\nin deren Vorlage verwendeten Abmessungen nicht mit den für den Druck in den Feldern erforderlichen Abmessungen übereinstimmen.\n'<b>'Seien Sie auf einige Versuche und Irrtümer gefasst.'</b>'",
             "tip_3": "Achten Sie beim Drucken auf Folgendes:\n'<ol><li>'Setzen Sie die Ränder auf 0 oder Keine'</li><li>'Setzen Sie die Skalierung auf 100 %'</li><li>'Deaktivieren Sie den beidseitigen Druck'</li><li>'Drucken Sie eine Testseite, bevor Sie mehrere Seiten drucken'</li></ol>'",

@@ -123,6 +123,7 @@
         },
         "global": {
             "copy_text": {
+                "continue": "Kontynuuj",
                 "documentation": "dokumentacja",
                 "failed_to_copy": "Nie udało się skopiować tekstu do schowka",
                 "https_required": "ponieważ wymagany jest HTTPS",
@@ -214,6 +215,7 @@
                 "error_exception": "Wystąpił wyjątek podczas pobierania kodu kreskowego pozycji: ",
                 "error_invalid_barcode": "Podano nieprawidłowy kod kreskowy",
                 "error_not_found": "Nie znaleziono produktu z podanym kodem kreskowym.",
+                "import_selected": "Importuj wybrane",
                 "search_item": "Wyszukaj produkt",
                 "title": "Importuj produkt"
             },
@@ -300,6 +302,11 @@
         "quick_menu": {
             "no_results": "Nie znaleziono wyników.",
             "shortcut_hint": "Użyj klawiszy numerycznych, aby szybko wybrać akcję."
+        },
+        "search": {
+            "filter": {
+                "search_placeholder": "Szukaj…"
+            }
         },
         "tag": {
             "create_modal": {
@@ -511,6 +518,7 @@
             "view_image": "Zobacz obraz"
         },
         "edit_details": "Edytuj szczegóły",
+        "field": "Pole",
         "field_selector": "Selektor pól",
         "field_value": "Wartość pola",
         "first": "Pierwszy",
@@ -550,8 +558,10 @@
         "reset_search": "Zresetuj wyszukiwanie",
         "results": "{ total } wyników",
         "select_field": "Wybierz pole",
+        "select_value": "Wybierz wartość",
         "serial_number": "Numer seryjny",
         "show_advanced_view_options": "Pokaż ustawienia zaawansowane",
+        "show_empty": "Pokaż pusty",
         "sold_at": "Sprzedane w",
         "sold_details": "Szczegóły sprzedaży",
         "sold_price": "Cena sprzedaży",
@@ -635,8 +645,10 @@
         "child_locations": "Podlokalizacje",
         "collapse_tree": "Zwiń drzewo",
         "expand_tree": "Rozwiń Drzewo",
+        "hide_items": "Ukryj przedmioty",
         "location_items_delete_confirm": "Czy na pewno chcesz usunąć tę lokalizację i wszystkie jej przedmioty? Tej czynności nie można cofnąć.",
         "no_results": "Nie znaleziono lokalizacji",
+        "show_items": "Pokaż przedmioty",
         "toast": {
             "failed_delete_location": "Nie udało się usunąć lokalizacji",
             "failed_load_location": "Nie udało się załadować lokalizacji",

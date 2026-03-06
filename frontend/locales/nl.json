@@ -52,7 +52,7 @@
             },
             "import_dialog": {
                 "change_warning": "Gedrag voor importeren met bestaande import_refs is veranderd. Als een import_refs reeds bestaat in het CSV bestand, het\nobject zal worden aangepast met de waardes van het CSV bestand.",
-                "description": "Importeer een CSV bestand met je objecten, labels en locaties. Zie documentatie voor meer informatie m.b.t.\n vereist format.",
+                "description": "Importeer een CSV bestand met je items, tags en locaties. Zie documentatie voor meer informatie m.b.t.\n vereist format.",
                 "title": "Importeer CSV bestand",
                 "toast": {
                     "import_failed": "Importeren mislukt. Probeer later nog eens.",
@@ -641,12 +641,15 @@
     "languages.ro-RO": "Roemeens",
     "languages.sk-SK": "Slowaaks",
     "languages.sq-AL": "Albanees",
+    "languages.sr-RS": "Servisch (Servië)",
     "locations": {
         "child_locations": "Sublocaties",
         "collapse_tree": "Structuur invouwen",
         "expand_tree": "Boomstructuur uitvouwen",
+        "hide_items": "Verberg items",
         "location_items_delete_confirm": "Weet u zeker dat u deze locatie en alle bijbehorende items wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
         "no_results": "Geen locaties gevonden",
+        "show_items": "Toon items",
         "toast": {
             "failed_delete_location": "Locatie verwijderen mislukt",
             "failed_load_location": "Locatie laden mislukt",
