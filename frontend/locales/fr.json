@@ -1,9 +1,47 @@
 {
     "collection": {
+        "copy_invite": "Copier le lien d'invitation",
+        "create_invite": "Créer un invité",
+        "delete_collection": "Supprimer cette collection",
+        "delete_confirm": "Êtes-vous certain de vouloir supprimer cette collection ? Cette action est irréversible.",
+        "deleted_collection": "Collection supprimée.",
+        "expires_at": "Expiration",
+        "invite_token": "Jeton",
+        "invite_token_hidden": "N'est plus visible",
+        "invite_token_warning": "Les jetons d'invitation ne sont affichés qu'une seule fois ! Copier le lien maintenant ; vous ne pourrez pas revoir ce jeton de nouveau après avoir quitté ou après avoir rafraichi cette page .",
+        "invites": "Inviter",
+        "invites_delete_confirm": "Êtes-vous certain de vouloir supprimer cette invitation ?",
+        "leave_collection": "Quitter cette collection",
+        "leave_confirm": "Êtes-vous certain de vouloir quitter cette collection ?",
+        "left_collection": "Vous avez quitter cette collection.",
         "manage_collection": "Gérer la collection",
+        "members": {
+            "cannot_remove_last": "Vous ne pouvez supprimer le dernier membre.",
+            "email": "Courriel",
+            "empty": "Il n'y a actuellement aucun membre dans cette collection.",
+            "member": "Membre",
+            "name": "Nom",
+            "owner": "Propriétaire",
+            "remove_confirm": "Êtes-vous certain de vouloir retirer ce membre ?",
+            "removed": "Membre retiré",
+            "role": "Rôle"
+        },
         "no_collections": {
+            "create": "Créer une nouvelle collection",
+            "join": "Joindre une collection existante",
+            "message": "Il semble que vous n'ayez aucune collection. Créez une nouvelle collection pour vos effets ou rejoignez une collection à laquelle vous avez été invité.",
             "title": "Aucune collection trouvée"
-        }
+        },
+        "no_invites": "Aucun inviter",
+        "remaining_uses": "Utilisations restantes",
+        "tabs": {
+            "invites": "Invitations",
+            "members": "Membres",
+            "notifiers": "Notifiants",
+            "settings": "Paramètres",
+            "tools": "Outils"
+        },
+        "uses": "Utilisés"
     },
     "components": {
         "app": {
@@ -35,10 +73,10 @@
                 "name_label": "Nom de la collection",
                 "title": "Créer une collection",
                 "toast": {
-                    "already_creating": "Déjà en train de créer une collection",
-                    "create_failed": "Échec de création de collection",
+                    "already_creating": "Déja en cours de création d'une collection",
+                    "create_failed": "Échec de création de la collection",
                     "create_success": "Collection créée",
-                    "please_enter_name": "Veuillez entrer un nom de collection"
+                    "please_enter_name": "Veuillez entrer un nom pour la collection"
                 }
             },
             "invite_create_modal": {
@@ -50,18 +88,19 @@
             },
             "join_modal": {
                 "invite_code_label": "Code d'invitation à la collection",
-                "invites_should_look_like": "Les invitations devront ressembler cela :",
-                "join": "Joindre collection",
-                "no_invite_code_create_one": "Pas de code d'invitation ? Créer une nouvelle collection à la place",
+                "invites_should_look_like": "Les invitations ressembleront à cela :",
+                "join": "Joindre la collection",
+                "no_invite_code_create_one": "Aucun code d'invitation ? Créer une nouvelle collection",
                 "title": "Joindre une collection",
                 "toast": {
                     "already_joining": "Déjà en train de joindre une collection",
                     "join_failed": "Impossible de rejoindre la collection",
-                    "please_enter_valid_join_code": "Veuillez entrer un code d'invitation à la collection valide"
+                    "join_success": "Collection rejointe",
+                    "please_enter_valid_join_code": "Veuillez entrer un code d'invitation valide"
                 }
             },
             "selector": {
-                "collection_options": "Options de collection",
+                "collection_options": "Options de la collection",
                 "create_collection": "Créer une nouvelle collection",
                 "join_collection": "Rejoindre une collection existante",
                 "no_collection_found": "Aucune collection trouvée",
@@ -187,9 +226,9 @@
             },
             "view": {
                 "change_details": {
-                    "add_tags": "Ajouter un tag",
+                    "add_tags": "Ajouter une étiquette",
                     "failed_to_update_item": "Échec lors de la mise à jour de l'élément",
-                    "remove_tags": "Supprimer les tags",
+                    "remove_tags": "Supprimer les étiquettes",
                     "title": "Changer les détails de l'article"
                 },
                 "selectable": {
@@ -206,8 +245,8 @@
                         "actions": "Interventions",
                         "change_location": "Changer de lieu",
                         "change_location_success": "Lieu changé",
-                        "change_tags": "Modifier les tags",
-                        "change_tags_success": "Tags modifiés",
+                        "change_tags": "Modifier les étiquettes",
+                        "change_tags_success": "Étiquettes modifiées",
                         "create_maintenance_item": "Créer une maintenance pour l'article",
                         "create_maintenance_selected": "Créer une entrée maintenance pour les articles sélectionnés",
                         "create_maintenance_success": "Entrées maintenance créées",
@@ -264,19 +303,19 @@
         },
         "tag": {
             "create_modal": {
-                "tag_color": "Couleur du tag",
-                "tag_description": "Description du tag",
-                "tag_name": "Nom du tag",
-                "title": "Créer un tag",
+                "tag_color": "Couleur de l'étiquette",
+                "tag_description": "Description de l'étiquette",
+                "tag_name": "Nom de l'étiquette",
+                "title": "Créer une étiquette",
                 "toast": {
-                    "already_creating": "Wtag déjà en cours de création",
-                    "create_failed": "Impossible de créer un tag",
-                    "create_success": "Tag créé",
-                    "tag_name_too_long": "Le nom du tag est limité à 50 caractères"
+                    "already_creating": "Étiquette déjà en cours de création",
+                    "create_failed": "Impossible de créer l'étiquette",
+                    "create_success": "Étiquette créer",
+                    "tag_name_too_long": "Le nom des étiquettes est limité à 50 caractères"
                 }
             },
             "selector": {
-                "select_tags": "Sélectionnez des tags"
+                "select_tags": "Sélectionnez des étiquettes"
             }
         },
         "template": {
@@ -320,8 +359,8 @@
                 "clear": "Effacer les modèles sélectionnés",
                 "label": "Modèle (Optionnel)",
                 "not_found": "Aucun modèle trouvé",
-                "search": "Chercher un modèle...",
-                "select": "Sélectionner un modèle..."
+                "search": "Chercher un modèle...…",
+                "select": "Sélectionner un modèle...…"
             },
             "show_defaults": "Afficher les valeurs par défaut",
             "toast": {
@@ -341,7 +380,7 @@
         }
     },
     "errors": {
-        "api_failure": "L'appel vers l'API du back-end a échoué "
+        "api_failure": "L'appel vers l'API du back-end a échoué : "
     },
     "global": {
         "add": "Ajouter",
@@ -371,7 +410,7 @@
         "join_discord": "Rejoindre le Discord",
         "loading": "Chargement…",
         "locations": "Emplacements",
-        "maintenance": "Maintenance",
+        "maintenance": "Entretien",
         "name": "Nom",
         "navigate": "Naviguer",
         "no": "Non",
@@ -486,6 +525,7 @@
         "manufacturer": "Fabricant",
         "model_number": "Numéro de modèle",
         "name": "Nom",
+        "negate_tags": "Ignorer les balises sélectionnées",
         "next_page": "Page suivante",
         "no_attachments": "Aucune pièce jointe trouvée",
         "no_results": "Aucun élément trouvé",
@@ -517,7 +557,7 @@
         "sold_price": "Prix de vente",
         "sold_to": "Vendu à",
         "sync_child_locations": "Synchroniser les emplacements des articles enfants",
-        "tip_1": "Les filtres d’emplacement et d’étiquette utilisent l’opérateur « OU ».\nUn seul des filtres n’a besoin de correspondre pour retourner un résultat.",
+        "tip_1": "Les filtres d’emplacement et d’étiquette utilisent l’opérateur « OU ». Si plus d'un opérateur est\nsélectionné, un seul ne sera utilisé pour afficher un résultat correspondant.",
         "tip_2": "Les recherches préfixées par '#'' rechercheront un ID de ressource (exemple '#000-001')",
         "tip_3": "Les filtres de champ utilisent l’opérateur « OU ».\nUn seul des filtres n’a besoin de correspondre pour retourner un résultat.",
         "tips": "Conseils",
@@ -648,7 +688,7 @@
         "create_tag": "Étiquette",
         "home": "Accueil",
         "locations": "Emplacements",
-        "maintenance": "Maintenance",
+        "maintenance": "Entretien",
         "profile": "Profil",
         "scanner": "Numériser",
         "search": "Recherche",
@@ -656,7 +696,7 @@
     },
     "pages": {
         "templates": {
-            "no_templates": "Aucun modèle créé",
+            "no_templates": "Aucun modèle existant.",
             "title": "Modèles"
         }
     },
@@ -679,10 +719,10 @@
         "legacy_image_fit": "{ currentValue, select, true {Disable Legacy Fit: Fit Image with Bars} false {Enable Legacy Fit: Fill Image with Crop} other {Not Hit}}",
         "moved_notice_body": "Les notifications, les invitations et les paramètres de devise ont été déplacés vers les pages de collection.",
         "moved_notice_description": "Ces paramètres sont désormais gérés par collection.",
-        "moved_notice_link_invites": "Collection d'invites",
-        "moved_notice_link_notifiers": "Collection de notifications",
-        "moved_notice_link_settings": "Collection de paramètres de devise",
-        "moved_notice_title": "Vous recherchez des paramètres des notifications, des invitations ou de devise ?",
+        "moved_notice_link_invites": "Invitations pour cette collection",
+        "moved_notice_link_notifiers": "Notification pour la collection",
+        "moved_notice_link_settings": "Paramètres de devise monétaire pour la collection",
+        "moved_notice_title": "Vous recherchez les paramètres de notification, d'invitation ou de devise monétaire ?",
         "new_password": "Nouveau mot de passe",
         "no_notifiers": "Aucun notificateur configuré",
         "no_override": "Aucun remplacement",
@@ -721,8 +761,8 @@
             "bordered_labels": "Étiquettes avec bords",
             "generate_page": "Générer page",
             "input_placeholder": "Tapez ici",
-            "instruction_1": "Le générateur d'étiquettes Homebox est un outil pour vous aider à imprimer des étiquettes pour votre inventaire Homebox. Celles-ci sont destinées à\n être des étiquettes pré-imprimées vous permettant d'en imprimer beaucoup à l'avance et de les avoir prêtes à être appliquées",
-            "instruction_2": "En tant que telles, ces étiquettes fonctionnent en imprimant un code QR d'URL et des informations d'ID de Ressource sur une étiquette. Si vous avez désactivé\n les ID de Ressource dans vos paramètres Homebox, vous pouvez quand même utiliser cet outil, mais les ID de Ressource ne référenceront aucun article",
+            "instruction_1": "Le générateur d'étiquettes de HomeBox est un outil pour vous aider à imprimer des étiquettes pour votre inventaire. Ces étiquette générés d'avance\nvous permettre d'en imprimer plusieurs afin qu'elles soit prêtes à être utilisées pour identifier vos items",
+            "instruction_2": "Servent à imprimer un code QR contenant le lien URL et les identifiants des ressources sur une étiquette. Si vous avez désactivé\n les ID de ressource dans vos paramètres HomeBox, vous pouvez quand même utiliser cet outil, mais les ID de Ressource ne référenceront aucun article",
             "instruction_3": "Cette fonctionnalité en est aux premiers stades de développement et peut changer dans les versions futures, si vous avez du feedback, veuillez\n le fournir dans la '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\"> 'Discussion GitHub'</a>'",
             "label_height": "Hauteur de l'étiquette",
             "label_width": "Largeur de l’étiquette",
@@ -807,7 +847,7 @@
         },
         "actions_sub": "Appliquer des actions en masse à votre inventaire. Ces actions sont irréversibles. '<b>'Soyez vigilant.'</b>'",
         "demo_mode_error": {
-            "wipe_inventory": "L'inventaire, les étiquettes, les emplacements et les enregistrements de maintenance ne peuvent pas être effacés lorsque Homebox est en mode démo."
+            "wipe_inventory": "L'inventaire, les étiquettes, les emplacements et les entretiens ne peuvent pas être effacés lorsque HomeBox est en mode démonstration. Veuillez vérifier que vous n'êtes pas en mode démo et réessayer."
         },
         "import_export": "Importer/Exporter",
         "import_export_set": {

@@ -1,14 +1,40 @@
 {
     "collection": {
+        "copy_invite": "Meghívólink másolása",
+        "create_invite": "Meghívás",
+        "delete_collection": "Gyűjtemény törlése",
+        "delete_confirm": "Biztosan törölni akarja ezt a gyűjteményt? A műveletet végleges, nem visszavonható.",
+        "deleted_collection": "Gyűjtemény törölve.",
+        "expires_at": "Lejárat",
         "invite_token": "Token",
+        "invite_token_hidden": "Nem látható",
+        "invite_token_warning": "A meghívótokenek csak egyszer jelennek meg. Másold ki a linket most, az oldal elhagyása vagy frissítése után nem fogod tudni újra megtekinteni ezt a tokent.",
+        "invites": "Meghívók",
+        "invites_delete_confirm": "Biztosan törölni szeretné ezt a meghívót?",
+        "leave_collection": "Gyűjtemény elhagyása",
+        "leave_confirm": "Biztosan ki akar lépni a gyűjteményből?",
+        "left_collection": "Elhagyta a gyűjteményt.",
+        "manage_collection": "Gyűjtemények kezelése",
         "members": {
+            "cannot_remove_last": "Nem törölheti az utolsó tagot.",
             "email": "Email",
+            "empty": "A gyűjteményben nincsenek tagok jelenleg.",
             "member": "Tag",
             "name": "Név",
             "owner": "Tulajdonos",
+            "remove_confirm": "Biztosan törölni akarja ezt a tagot?",
+            "removed": "Tag eltávolítva",
             "role": "Szerepkör"
         },
+        "no_collections": {
+            "create": "Új gyűjtemény létrehozása",
+            "join": "Csatlakozás egy meglévő gyűjteményhez",
+            "message": "Úgy tűnik, nem vagy része egyetlen gyűjteménynek sem. Hozz létre egy új gyűjteményt a dolgaidnak, vagy csatlakozz egy olyanhoz, amelybe meghívtak.",
+            "title": "Nem található gyűjtemény"
+        },
+        "no_invites": "Nincsenek meghívók",
         "tabs": {
+            "invites": "Meghívások",
             "members": "Tagok",
             "settings": "Beállítások",
             "tools": "Eszközök"
@@ -37,6 +63,22 @@
                 "latest_version": "Legújabb verzió",
                 "new_version_available": "Új verzió érhető el",
                 "new_version_available_link": "Kattints ide az újdonságok megtekintéséhez"
+            }
+        },
+        "collection": {
+            "create_modal": {
+                "name_label": "Gyűjtemény neve",
+                "title": "Gyűjtemény létrehozása",
+                "toast": {
+                    "create_failed": "Sikertelen a gyűjtemény létrehozása",
+                    "create_success": "Gyűjtemény létrehozva",
+                    "please_enter_name": "Kérem adja meg a gyűjtemény nevét"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Kérem válassza ki a lejárat dátumát és időpontját."
+                }
             }
         },
         "color_selector": {

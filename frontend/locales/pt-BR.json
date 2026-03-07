@@ -123,6 +123,7 @@
         },
         "global": {
             "copy_text": {
+                "continue": "Prosseguir",
                 "documentation": "documentação",
                 "failed_to_copy": "Falha ao copiar texto para a área de transferência",
                 "https_required": "porque HTTPS é necessário",
@@ -197,7 +198,7 @@
                     "create_success": "Item criado",
                     "failed_load_parent": "Falhou ao carregar item pai - por favor selecione manualmente",
                     "no_canvas_support": "Seu navegador não suporta operações de tela",
-                    "please_select_location": "Por favor, selecione uma localização",
+                    "please_select_location": "Por favor, selecione uma localização.",
                     "rotate_failed": "Falha ao rotacionar imagem: { error }",
                     "rotate_process_failed": "Falhou ao processar imagem rotacionada",
                     "some_photos_failed": "{count, plural, =0 {Nenhuma foto para upload.} =1 {1 imagem falhou no upload.} other {Algumas fotos falharam durante upload.}}",
@@ -214,6 +215,7 @@
                 "error_exception": "Ocorreu uma exceção ao recuperar o código de barras do item: ",
                 "error_invalid_barcode": "Código de barras fornecido inválido",
                 "error_not_found": "Nenhum produto encontrado com o código de barras fornecido.",
+                "import_selected": "Importar selecionados",
                 "search_item": "Pesquisar produto",
                 "title": "Importar Produto"
             },
@@ -300,6 +302,11 @@
         "quick_menu": {
             "no_results": "Nenhum resultado encontrado.",
             "shortcut_hint": "Use as teclas numéricas para selecionar uma ação rapidamente."
+        },
+        "search": {
+            "filter": {
+                "search_placeholder": "Buscar…"
+            }
         },
         "tag": {
             "create_modal": {
@@ -402,7 +409,7 @@
         "follow_dev": "Seguir o desenvolvedor",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' Version: { version } Build: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' Versão: { version } Build: { build } '</a>'"
         },
         "github": "Projeto GitHub",
         "insured": "Segurado",
@@ -511,13 +518,14 @@
             "view_image": "Ver imagem"
         },
         "edit_details": "Detalhes da Edição",
+        "field": "Campo",
         "field_selector": "Seletor de Campo",
         "field_value": "Valor do Campo",
-        "first": "Primeira",
+        "first": "Primeiro",
         "include_archive": "Incluir itens arquivados",
-        "insured": "Segurado",
+        "insured": "Assegurado",
         "invalid_asset_id": "ID de ativo inválido",
-        "last": "Última",
+        "last": "Último",
         "lifetime_warranty": "Garantia Vitalícia",
         "location": "Local",
         "manual": "Manual",
@@ -550,8 +558,10 @@
         "reset_search": "Reiniciar Pesquisa",
         "results": "{ total } Resultados",
         "select_field": "Selecione o campo",
+        "select_value": "Selecione um valor",
         "serial_number": "Número Serial",
         "show_advanced_view_options": "Exibir Opções de Visualização Avançada",
+        "show_empty": "Exibir itens vazios",
         "sold_at": "Vendido Em",
         "sold_details": "Detalhes da Venda",
         "sold_price": "Preço da Venda",
@@ -635,8 +645,10 @@
         "child_locations": "Locais Filhos",
         "collapse_tree": "Ocultar Árvore",
         "expand_tree": "Expandir Árvore",
+        "hide_items": "Ocultar Itens",
         "location_items_delete_confirm": "Tem certeza de que deseja deletar este local e todos os seus itens? Esta ação não pode ser desfeita.",
         "no_results": "Nenhum local encontrado",
+        "show_items": "Exibir Itens",
         "toast": {
             "failed_delete_location": "Falha ao deletar localização",
             "failed_load_location": "Falhou ao carregar localização",
@@ -773,6 +785,7 @@
             "page_right_padding": "Espaçamento Direito da Página",
             "page_top_padding": "Espaçamento Superior da Página",
             "page_width": "Largura da Página",
+            "print_location_row": "Imprimir linha de localização",
             "qr_code_example": "Exemplo de QR Code",
             "replace_homebox_behavior": "Substituir o comportamento do texto \"HomeBox\"",
             "replace_homebox_behavior_always_replace": "Sempre substituir \"HomeBox\"",
@@ -781,6 +794,7 @@
             "replace_homebox_behavior_item_no_name_no_location": "Substituir \"HomeBox\" quando o item não tiver nome nem localização",
             "replace_homebox_behavior_show_homebox": "Mostrar \"HomeBox\"",
             "replace_homebox_text": "Texto substituto",
+            "skip_first_labels": "Ignorar os primeiros rótulos",
             "tip_1": "Os padrões aqui são configurados para as\n'<a href=\"https://www.avery.com/templates/5260\">'Folhas de etiquetas Avery 5260'</a>'. Se estiver usando uma folha diferente,\nserá necessário ajustar as configurações para corresponder à sua folha.",
             "tip_2": "Se você estiver personalizando sua planilha, as dimensões estão em polegadas. Ao criar a planilha 5260, descobri que as\ndimensões usadas no modelo não correspondiam ao que era necessário para imprimir dentro das caixas.\n'<b>'Esteja preparado para algumas tentativas e erros.'</b>'",
             "tip_3": "Ao imprimir, certifique-se de:\n'<ol><li>'Definir as margens como 0 ou Nenhuma'</li><li>'Definir a escala como 100%'</li><li>'Desativar a impressão frente e verso'</li><li>'Imprimir uma página de teste antes de imprimir várias páginas'</li></ol>'",
