@@ -10,28 +10,24 @@
         <span class="ml-2 w-0 flex-1 truncate"> {{ attachment.title }}</span>
       </div>
       <div class="ml-4 flex shrink-0 gap-2">
-        <TooltipProvider :delay-duration="0">
+        <!-- <TooltipProvider :delay-duration="0">
           <Tooltip>
-            <TooltipTrigger as-child>
-              <a
-                :class="buttonVariants({ size: 'icon' })"
-                :href="attachmentURL(attachment.id)"
-                :download="attachment.title"
-              >
-                <MdiDownload />
-              </a>
-            </TooltipTrigger>
+            <TooltipTrigger as-child> -->
+        <a :class="buttonVariants({ size: 'icon' })" :href="attachmentURL(attachment.id)" :download="attachment.title">
+          <MdiDownload />
+        </a>
+        <!-- </TooltipTrigger>
             <TooltipContent> {{ $t("components.item.attachments_list.download") }} </TooltipContent>
           </Tooltip>
           <Tooltip>
-            <TooltipTrigger as-child>
-              <a :class="buttonVariants({ size: 'icon' })" :href="attachmentURL(attachment.id)" target="_blank">
-                <MdiOpenInNew />
-              </a>
-            </TooltipTrigger>
+            <TooltipTrigger as-child> -->
+        <a :class="buttonVariants({ size: 'icon' })" :href="attachmentURL(attachment.id)" target="_blank">
+          <MdiOpenInNew />
+        </a>
+        <!-- </TooltipTrigger>
             <TooltipContent> {{ $t("components.item.attachments_list.open_new_tab") }} </TooltipContent>
           </Tooltip>
-        </TooltipProvider>
+        </TooltipProvider> -->
       </div>
     </li>
   </ul>
@@ -43,7 +39,7 @@
   import MdiDownload from "~icons/mdi/download";
   import MdiOpenInNew from "~icons/mdi/open-in-new";
   import { buttonVariants } from "@/components/ui/button";
-  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+  // import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
   const props = defineProps({
     attachments: {
