@@ -84,6 +84,12 @@ import {Tabs, TabItem} from "@astrojs/starlight/components";
 | HBOX_THUMBNAIL_WIDTH                    | 500                                                                                            | width for generated thumbnails in pixels                                                                                                                                                  |
 | HBOX_THUMBNAIL_HEIGHT                   | 500                                                                                            | height for generated thumbnails in pixels                                                                                                                                                 |
 | HBOX_BARCODE_TOKEN_BARCODESPIDER        |                                                                                                | API token for BarcodeSpider.com service used for barcode product lookups. If not set, barcode product lookups will not be performed.                                                      |
+| HBOX_NOTIFIER_ALLOW_NETS                |                                                                                                | comma-separated list of CIDR networks to allow for generic notifiers (e.g., `192.168.1.0/24,10.0.0.0/8`). If set, only these networks will be allowed and all block rules are bypassed.   |
+| HBOX_NOTIFIER_BLOCK_NETS                |                                                                                                | comma-separated list of CIDR networks to block for generic notifiers (e.g., `192.168.1.0/24,10.0.0.0/8`). Provides fine-grained blocking without enabling blanket rules.                  |
+| HBOX_NOTIFIER_BLOCK_LOCALHOST           | false                                                                                          | block generic notifiers from sending to localhost/loopback addresses (127.0.0.1, ::1)                                                                                                     |
+| HBOX_NOTIFIER_BLOCK_LOCAL_NETS          | false                                                                                          | block generic notifiers from sending to RFC1918 private networks (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16)                                                                             |
+| HBOX_NOTIFIER_BLOCK_BOGON_NETS          | true                                                                                           | block generic notifiers from sending to bogon/reserved networks (link-local, multicast, broadcast, etc.)                                                                                  |
+| HBOX_NOTIFIER_BLOCK_CLOUD_METADATA      | true                                                                                           | block generic notifiers from sending to cloud metadata endpoints (169.254.169.254, fd00:ec2::254)                                                                                         |
     </TabItem>
     <TabItem label="CLI Options">
 
@@ -133,6 +139,12 @@ OPTIONS
       --mailer-port                         <int>
       --mailer-username                     <string>
       --mode                                <string>    (default: development)
+      --notifier-allow-nets                 <string>
+      --notifier-block-nets                 <string>
+      --notifier-block-bogon-nets           <bool>      (default: true)
+      --notifier-block-cloud-metadata       <bool>      (default: true)
+      --notifier-block-local-nets           <bool>      (default: false)
+      --notifier-block-localhost            <bool>      (default: false)
       --oidc-allowed-groups                 <string>
       --oidc-auto-redirect                  <bool>      (default: false)
       --oidc-button-text                    <string>    (default: Sign in with OIDC)
