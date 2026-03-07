@@ -413,7 +413,9 @@ var (
 		{Name: "name", Type: field.TypeString, Size: 255},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
 		{Name: "color", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "icon", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "group_tags", Type: field.TypeUUID},
+		{Name: "tag_children", Type: field.TypeUUID, Nullable: true},
 	}
 	// TagsTable holds the schema information for the "tags" table.
 	TagsTable = &schema.Table{
@@ -423,9 +425,15 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "tags_groups_tags",
-				Columns:    []*schema.Column{TagsColumns[6]},
+				Columns:    []*schema.Column{TagsColumns[7]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "tags_tags_children",
+				Columns:    []*schema.Column{TagsColumns[8]},
+				RefColumns: []*schema.Column{TagsColumns[0]},
+				OnDelete:   schema.SetNull,
 			},
 		},
 	}
@@ -575,6 +583,7 @@ func init() {
 	NotifiersTable.ForeignKeys[0].RefTable = GroupsTable
 	NotifiersTable.ForeignKeys[1].RefTable = UsersTable
 	TagsTable.ForeignKeys[0].RefTable = GroupsTable
+	TagsTable.ForeignKeys[1].RefTable = TagsTable
 	TemplateFieldsTable.ForeignKeys[0].RefTable = ItemTemplatesTable
 	TagItemsTable.ForeignKeys[0].RefTable = TagsTable
 	TagItemsTable.ForeignKeys[1].RefTable = ItemsTable
