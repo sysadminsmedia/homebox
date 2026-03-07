@@ -171,8 +171,8 @@ type (
 		WarrantyDetails  string     `json:"warrantyDetails"`
 
 		// Purchase
-		PurchaseTime          types.Date `json:"purchaseTime"`
-		PurchaseFrom          string     `json:"purchaseFrom"`
+		PurchaseTime types.Date `json:"purchaseTime"`
+		PurchaseFrom string     `json:"purchaseFrom"`
 
 		// Sold
 		SoldTime  types.Date `json:"soldTime"`
@@ -286,8 +286,8 @@ func mapItemOut(item *ent.Item) ItemOut {
 		Manufacturer: item.Manufacturer,
 
 		// Purchase
-		PurchaseTime:          types.DateFromTime(item.PurchaseTime),
-		PurchaseFrom:          item.PurchaseFrom,
+		PurchaseTime: types.DateFromTime(item.PurchaseTime),
+		PurchaseFrom: item.PurchaseFrom,
 
 		// Sold
 		SoldTime:  types.DateFromTime(item.SoldTime),
