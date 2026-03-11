@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
@@ -27,6 +28,9 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
 	"go.balki.me/anyhttp"
+
+	"entgo.io/ent/dialect"
+	entsql "entgo.io/ent/dialect/sql"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/postgres"
@@ -121,11 +125,19 @@ func run(cfg *config.Config) error {
 	}
 
 	sqlDriver := strings.ToLower(cfg.Database.Driver)
-	if sqlDriver == config.DriverPostgres {
-		sqlDriver = "pgx"
+	var driverName string
+	switch sqlDriver {
+	case config.DriverPostgres:
+		driverName = "pgx"
+		sqlDriver = dialect.Postgres
+	case config.DriverSqlite3, "sqlite":
+		driverName = "sqlite3"
+		sqlDriver = dialect.SQLite
+	default:
+		return fmt.Errorf("unsupported driver: %s", sqlDriver)
 	}
 
-	c, err := ent.Open(sqlDriver, databaseURL)
+	db, err := sql.Open(driverName, databaseURL)
 	if err != nil {
 		log.Error().
 			Err(err).
@@ -142,12 +154,27 @@ func run(cfg *config.Config) error {
 			err,
 		)
 	}
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			log.Error().Err(err).Msg("failed to close database connection")
+		}
+	}(db)
+
+	drv := entsql.OpenDB(sqlDriver, db)
+	c := ent.NewClient(ent.Driver(drv))
 	defer func(c *ent.Client) {
 		err := c.Close()
 		if err != nil {
 			log.Error().Err(err).Msg("failed to close database connection")
 		}
 	}(c)
+	defer func(drv *entsql.Driver) {
+		err := drv.Close()
+		if err != nil {
+			log.Error().Err(err).Msg("failed to close database connection")
+		}
+	}(drv)
 
 	migrationsFs, err := migrations.Migrations(strings.ToLower(cfg.Database.Driver))
 	if err != nil {

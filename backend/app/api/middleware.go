@@ -415,12 +415,6 @@ func (l *authRateLimiter) keyForRequest(r *http.Request, trustProxy bool) string
 	return extractClientIP(r, trustProxy) + "|" + r.URL.Path
 }
 
-// clientIP returns the client IP address for the given request.
-// It only uses proxy headers (X-Real-IP, X-Forwarded-For) if TrustProxy is enabled.
-func (l *authRateLimiter) clientIP(r *http.Request, trustProxy bool) string {
-	return extractClientIP(r, trustProxy)
-}
-
 // simpleRateLimiter provides token bucket rate limiting per client IP.
 type simpleRateLimiter struct {
 	mu          sync.Mutex
