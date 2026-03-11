@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -9,148 +11,338 @@ import (
 )
 
 func TestSimpleRateLimiter(t *testing.T) {
-	// Create a rate limiter that allows 3 requests per 10 seconds
-	limiter := newSimpleRateLimiter(3, 10*time.Second, false)
-	clientIP := "192.168.1.1"
-
-	// First 3 requests should succeed
-	for i := 0; i < 3; i++ {
-		if !limiter.allow(clientIP) {
-			t.Errorf("Request %d should have been allowed", i+1)
-		}
+	type testCase struct {
+		name       string
+		trustProxy bool
+		setupReq   func(*http.Request, string)
 	}
 
-	// 4th request should be blocked
-	if limiter.allow(clientIP) {
-		t.Error("4th request should have been blocked")
+	tests := []testCase{
+		{
+			name:       "DirectConnection",
+			trustProxy: false,
+			setupReq:   func(r *http.Request, ip string) { r.RemoteAddr = ip + ":1234" },
+		},
+		{
+			name:       "ProxyXRealIP",
+			trustProxy: true,
+			setupReq: func(r *http.Request, ip string) {
+				r.RemoteAddr = "10.0.0.1:1234" // Proxy IP
+				r.Header.Set("X-Real-IP", ip)
+			},
+		},
+		{
+			name:       "ProxyXForwardedFor",
+			trustProxy: true,
+			setupReq: func(r *http.Request, ip string) {
+				r.RemoteAddr = "10.0.0.1:1234" // Proxy IP
+				r.Header.Set("X-Forwarded-For", ip+", 10.0.0.2")
+			},
+		},
 	}
 
-	// Different client should not be affected
-	otherClient := "192.168.1.2"
-	if !limiter.allow(otherClient) {
-		t.Error("Different client should be allowed")
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			// Create a rate limiter that allows 3 requests per 10 seconds
+			limiter := newSimpleRateLimiter(3, 10*time.Second, tc.trustProxy)
+			clientIP := "192.168.1.1"
+
+			// Helper to get IP
+			getIP := func(ip string) string {
+				req := httptest.NewRequest("GET", "/", nil)
+				tc.setupReq(req, ip)
+				return limiter.getClientIP(req, limiter.trustProxy)
+			}
+
+			// First 3 requests should succeed
+			for i := 0; i < 3; i++ {
+				ip := getIP(clientIP)
+				if !limiter.allow(ip) {
+					t.Errorf("Request %d should have been allowed", i+1)
+				}
+			}
+
+			// 4th request should be blocked
+			ip := getIP(clientIP)
+			if limiter.allow(ip) {
+				t.Error("4th request should have been blocked")
+			}
+
+			// Different client should not be affected
+			otherClient := "192.168.1.2"
+			otherIP := getIP(otherClient)
+			// Check if we are really testing a different IP
+			if otherIP == ip {
+				// This might happen if setupReq implementation is wrong or trustProxy logic is broken
+				t.Fatalf("Test setup error: otherClient IP resolved to same as clientIP: %s", otherIP)
+			}
+
+			if !limiter.allow(otherIP) {
+				t.Error("Different client should be allowed")
+			}
+		})
 	}
 }
 
 func TestSimpleRateLimiterRefill(t *testing.T) {
-	// Create a rate limiter that allows 2 requests per 100ms
-	limiter := newSimpleRateLimiter(2, 100*time.Millisecond, false)
-	clientIP := "192.168.1.1"
-
-	// Use up the tokens
-	if !limiter.allow(clientIP) {
-		t.Error("First request should be allowed")
-	}
-	if !limiter.allow(clientIP) {
-		t.Error("Second request should be allowed")
-	}
-	if limiter.allow(clientIP) {
-		t.Error("Third request should be blocked")
+	type testCase struct {
+		name       string
+		trustProxy bool
+		setupReq   func(*http.Request, string)
 	}
 
-	// Wait for refill
-	time.Sleep(150 * time.Millisecond)
+	tests := []testCase{
+		{
+			name:       "DirectConnection",
+			trustProxy: false,
+			setupReq:   func(r *http.Request, ip string) { r.RemoteAddr = ip + ":1234" },
+		},
+		{
+			name:       "ProxyXRealIP",
+			trustProxy: true,
+			setupReq: func(r *http.Request, ip string) {
+				r.RemoteAddr = "10.0.0.1:1234" // Proxy IP
+				r.Header.Set("X-Real-IP", ip)
+			},
+		},
+	}
 
-	// Should be allowed again after refill
-	if !limiter.allow(clientIP) {
-		t.Error("Request after refill should be allowed")
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			// Create a rate limiter that allows 2 requests per 100ms
+			limiter := newSimpleRateLimiter(2, 100*time.Millisecond, tc.trustProxy)
+			clientIP := "192.168.1.1"
+
+			// Helper to get IP
+			getIP := func(ip string) string {
+				req := httptest.NewRequest("GET", "/", nil)
+				tc.setupReq(req, ip)
+				return limiter.getClientIP(req, limiter.trustProxy)
+			}
+
+			ip := getIP(clientIP)
+
+			// Use up the tokens
+			if !limiter.allow(ip) {
+				t.Error("First request should be allowed")
+			}
+			if !limiter.allow(ip) {
+				t.Error("Second request should be allowed")
+			}
+			if limiter.allow(ip) {
+				t.Error("Third request should be blocked")
+			}
+
+			// Wait for refill
+			time.Sleep(150 * time.Millisecond)
+
+			// Should be allowed again after refill
+			if !limiter.allow(ip) {
+				t.Error("Request after refill should be allowed")
+			}
+		})
 	}
 }
 
 func TestSimpleRateLimiterConcurrent(t *testing.T) {
-	limiter := newSimpleRateLimiter(10, time.Second, false)
-	clientIP := "192.168.1.1"
+	type testCase struct {
+		name       string
+		trustProxy bool
+		setupReq   func(*http.Request, string)
+	}
 
-	var allowed int32
-	done := make(chan bool)
+	tests := []testCase{
+		{
+			name:       "DirectConnection",
+			trustProxy: false,
+			setupReq:   func(r *http.Request, ip string) { r.RemoteAddr = ip + ":1234" },
+		},
+		{
+			name:       "ProxyXRealIP",
+			trustProxy: true,
+			setupReq: func(r *http.Request, ip string) {
+				r.RemoteAddr = "10.0.0.1:1234" // Proxy IP
+				r.Header.Set("X-Real-IP", ip)
+			},
+		},
+	}
 
-	// Spawn multiple goroutines trying to access the limiter
-	for i := 0; i < 20; i++ {
-		go func() {
-			if limiter.allow(clientIP) {
-				atomic.AddInt32(&allowed, 1)
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			limiter := newSimpleRateLimiter(10, time.Second, tc.trustProxy)
+			clientIP := "192.168.1.1"
+
+			// Helper to get IP
+			getIP := func(ip string) string {
+				req := httptest.NewRequest("GET", "/", nil)
+				tc.setupReq(req, ip)
+				return limiter.getClientIP(req, limiter.trustProxy)
 			}
-			done <- true
-		}()
-	}
 
-	// Wait for all goroutines
-	for i := 0; i < 20; i++ {
-		<-done
-	}
+			ip := getIP(clientIP)
 
-	// Should allow exactly 10 requests
-	allowedCount := atomic.LoadInt32(&allowed)
-	if allowedCount != 10 {
-		t.Errorf("Expected 10 allowed requests, got %d", allowedCount)
+			var allowed int32
+			done := make(chan bool)
+
+			// Spawn multiple goroutines trying to access the limiter
+			for i := 0; i < 20; i++ {
+				go func() {
+					if limiter.allow(ip) {
+						atomic.AddInt32(&allowed, 1)
+					}
+					done <- true
+				}()
+			}
+
+			// Wait for all goroutines
+			for i := 0; i < 20; i++ {
+				<-done
+			}
+
+			// Should allow exactly 10 requests
+			allowedCount := atomic.LoadInt32(&allowed)
+			if allowedCount != 10 {
+				t.Errorf("Expected 10 allowed requests, got %d", allowedCount)
+			}
+		})
 	}
 }
 
 func TestSimpleRateLimiterCleanup(t *testing.T) {
-	// Create a rate limiter with a short window
-	limiter := newSimpleRateLimiter(5, 100*time.Millisecond, false)
-	defer limiter.Stop()
-
-	// Add entries for multiple IPs
-	ips := []string{"192.168.1.1", "192.168.1.2", "192.168.1.3", "192.168.1.4", "192.168.1.5"}
-	for _, ip := range ips {
-		limiter.allow(ip)
+	type testCase struct {
+		name       string
+		trustProxy bool
+		setupReq   func(*http.Request, string)
 	}
 
-	// Verify entries exist
-	limiter.mu.Lock()
-	initialCount := len(limiter.limiters)
-	limiter.mu.Unlock()
-
-	if initialCount != len(ips) {
-		t.Errorf("Expected %d entries, got %d", len(ips), initialCount)
+	tests := []testCase{
+		{
+			name:       "DirectConnection",
+			trustProxy: false,
+			setupReq:   func(r *http.Request, ip string) { r.RemoteAddr = ip + ":1234" },
+		},
+		{
+			name:       "ProxyXRealIP",
+			trustProxy: true,
+			setupReq: func(r *http.Request, ip string) {
+				r.RemoteAddr = "10.0.0.1:1234" // Proxy IP
+				r.Header.Set("X-Real-IP", ip)
+			},
+		},
 	}
 
-	// Wait for stale threshold (2x window = 200ms + buffer)
-	time.Sleep(250 * time.Millisecond)
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			// Create a rate limiter with a short window
+			limiter := newSimpleRateLimiter(5, 100*time.Millisecond, tc.trustProxy)
+			defer limiter.Stop()
 
-	// Trigger cleanup manually
-	limiter.cleanup()
+			// Helper to get IP
+			getIP := func(ip string) string {
+				req := httptest.NewRequest("GET", "/", nil)
+				tc.setupReq(req, ip)
+				return limiter.getClientIP(req, limiter.trustProxy)
+			}
 
-	// Verify stale entries are removed
-	limiter.mu.Lock()
-	finalCount := len(limiter.limiters)
-	limiter.mu.Unlock()
+			// Add entries for multiple IPs
+			ips := []string{"192.168.1.1", "192.168.1.2", "192.168.1.3", "192.168.1.4", "192.168.1.5"}
+			for _, ip := range ips {
+				limiter.allow(getIP(ip))
+			}
 
-	if finalCount != 0 {
-		t.Errorf("Expected 0 entries after cleanup, got %d", finalCount)
+			// Verify entries exist
+			limiter.mu.Lock()
+			initialCount := len(limiter.limiters)
+			limiter.mu.Unlock()
+
+			if initialCount != len(ips) {
+				t.Errorf("Expected %d entries, got %d", len(ips), initialCount)
+			}
+
+			// Wait for stale threshold (2x window = 200ms + buffer)
+			time.Sleep(250 * time.Millisecond)
+
+			// Trigger cleanup manually
+			limiter.cleanup()
+
+			// Verify stale entries are removed
+			limiter.mu.Lock()
+			finalCount := len(limiter.limiters)
+			limiter.mu.Unlock()
+
+			if finalCount != 0 {
+				t.Errorf("Expected 0 entries after cleanup, got %d", finalCount)
+			}
+		})
 	}
 }
 
 func TestSimpleRateLimiterCleanupPreservesActive(t *testing.T) {
-	limiter := newSimpleRateLimiter(5, 100*time.Millisecond, false)
-	defer limiter.Stop()
-
-	activeIP := "192.168.1.1"
-	staleIP := "192.168.1.2"
-
-	// Create a stale entry
-	limiter.allow(staleIP)
-
-	// Wait for it to become stale
-	time.Sleep(250 * time.Millisecond)
-
-	// Create an active entry
-	limiter.allow(activeIP)
-
-	// Trigger cleanup
-	limiter.cleanup()
-
-	// Verify active entry is preserved and stale is removed
-	limiter.mu.Lock()
-	defer limiter.mu.Unlock()
-
-	if _, exists := limiter.limiters[activeIP]; !exists {
-		t.Error("Active entry should be preserved")
+	type testCase struct {
+		name       string
+		trustProxy bool
+		setupReq   func(*http.Request, string)
 	}
 
-	if _, exists := limiter.limiters[staleIP]; exists {
-		t.Error("Stale entry should be removed")
+	tests := []testCase{
+		{
+			name:       "DirectConnection",
+			trustProxy: false,
+			setupReq:   func(r *http.Request, ip string) { r.RemoteAddr = ip + ":1234" },
+		},
+		{
+			name:       "ProxyXRealIP",
+			trustProxy: true,
+			setupReq: func(r *http.Request, ip string) {
+				r.RemoteAddr = "10.0.0.1:1234" // Proxy IP
+				r.Header.Set("X-Real-IP", ip)
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			limiter := newSimpleRateLimiter(5, 100*time.Millisecond, tc.trustProxy)
+			defer limiter.Stop()
+
+			// Helper to get IP
+			getIP := func(ip string) string {
+				req := httptest.NewRequest("GET", "/", nil)
+				tc.setupReq(req, ip)
+				return limiter.getClientIP(req, limiter.trustProxy)
+			}
+
+			activeIP := "192.168.1.1"
+			staleIP := "192.168.1.2"
+
+			// Create a stale entry
+			limiter.allow(getIP(staleIP))
+
+			// Wait for it to become stale
+			time.Sleep(250 * time.Millisecond)
+
+			// Create an active entry
+			limiter.allow(getIP(activeIP))
+
+			// Trigger cleanup
+			limiter.cleanup()
+
+			// Verify active entry is preserved and stale is removed
+			limiter.mu.Lock()
+			defer limiter.mu.Unlock()
+
+			// Check using the resolved IP keys
+			activeKey := getIP(activeIP)
+			staleKey := getIP(staleIP)
+
+			if _, exists := limiter.limiters[activeKey]; !exists {
+				t.Error("Active entry should be preserved")
+			}
+
+			if _, exists := limiter.limiters[staleKey]; exists {
+				t.Error("Stale entry should be removed")
+			}
+		})
 	}
 }
 

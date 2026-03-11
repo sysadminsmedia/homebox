@@ -154,12 +154,6 @@ func run(cfg *config.Config) error {
 			err,
 		)
 	}
-	defer func(db *sql.DB) {
-		err := db.Close()
-		if err != nil {
-			log.Error().Err(err).Msg("failed to close database connection")
-		}
-	}(db)
 
 	drv := entsql.OpenDB(sqlDriver, db)
 	c := ent.NewClient(ent.Driver(drv))
@@ -169,12 +163,6 @@ func run(cfg *config.Config) error {
 			log.Error().Err(err).Msg("failed to close database connection")
 		}
 	}(c)
-	defer func(drv *entsql.Driver) {
-		err := drv.Close()
-		if err != nil {
-			log.Error().Err(err).Msg("failed to close database connection")
-		}
-	}(drv)
 
 	migrationsFs, err := migrations.Migrations(strings.ToLower(cfg.Database.Driver))
 	if err != nil {
