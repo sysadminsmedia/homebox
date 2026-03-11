@@ -193,8 +193,7 @@ var mapItemsSummaryErr = mapTEachErrFunc(mapItemSummary)
 func mapItemSummary(item *ent.Item) ItemSummary {
 	var location *LocationSummary
 	if item.Edges.Location != nil {
-		loc := mapLocationSummary(item.Edges.Location)
-		location = &loc
+		location = new(mapLocationSummary(item.Edges.Location))
 	}
 
 	tags := lo.Ternary(item.Edges.Tag != nil, mapEach(item.Edges.Tag, mapTagSummary), []TagSummary{})
@@ -267,8 +266,7 @@ func mapItemOut(item *ent.Item) ItemOut {
 
 	var parent *ItemSummary
 	if item.Edges.Parent != nil {
-		v := mapItemSummary(item.Edges.Parent)
-		parent = &v
+		parent = new(mapItemSummary(item.Edges.Parent))
 	}
 
 	return ItemOut{

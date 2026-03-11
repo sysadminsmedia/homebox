@@ -10,7 +10,7 @@ import (
 
 func TestSimpleRateLimiter(t *testing.T) {
 	// Create a rate limiter that allows 3 requests per 10 seconds
-	limiter := newSimpleRateLimiter(3, 10*time.Second)
+	limiter := newSimpleRateLimiter(3, 10*time.Second, false)
 	clientIP := "192.168.1.1"
 
 	// First 3 requests should succeed
@@ -34,7 +34,7 @@ func TestSimpleRateLimiter(t *testing.T) {
 
 func TestSimpleRateLimiterRefill(t *testing.T) {
 	// Create a rate limiter that allows 2 requests per 100ms
-	limiter := newSimpleRateLimiter(2, 100*time.Millisecond)
+	limiter := newSimpleRateLimiter(2, 100*time.Millisecond, false)
 	clientIP := "192.168.1.1"
 
 	// Use up the tokens
@@ -58,7 +58,7 @@ func TestSimpleRateLimiterRefill(t *testing.T) {
 }
 
 func TestSimpleRateLimiterConcurrent(t *testing.T) {
-	limiter := newSimpleRateLimiter(10, time.Second)
+	limiter := newSimpleRateLimiter(10, time.Second, false)
 	clientIP := "192.168.1.1"
 
 	var allowed int32
@@ -88,7 +88,7 @@ func TestSimpleRateLimiterConcurrent(t *testing.T) {
 
 func TestSimpleRateLimiterCleanup(t *testing.T) {
 	// Create a rate limiter with a short window
-	limiter := newSimpleRateLimiter(5, 100*time.Millisecond)
+	limiter := newSimpleRateLimiter(5, 100*time.Millisecond, false)
 	defer limiter.Stop()
 
 	// Add entries for multiple IPs
@@ -123,7 +123,7 @@ func TestSimpleRateLimiterCleanup(t *testing.T) {
 }
 
 func TestSimpleRateLimiterCleanupPreservesActive(t *testing.T) {
-	limiter := newSimpleRateLimiter(5, 100*time.Millisecond)
+	limiter := newSimpleRateLimiter(5, 100*time.Millisecond, false)
 	defer limiter.Stop()
 
 	activeIP := "192.168.1.1"
@@ -155,7 +155,7 @@ func TestSimpleRateLimiterCleanupPreservesActive(t *testing.T) {
 }
 
 func TestSimpleRateLimiterStop(t *testing.T) {
-	limiter := newSimpleRateLimiter(5, time.Second)
+	limiter := newSimpleRateLimiter(5, time.Second, false)
 
 	// Stop the limiter
 	limiter.Stop()
