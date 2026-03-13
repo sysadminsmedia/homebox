@@ -10,6 +10,8 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 )
 
+const proxyRemoteAddr = "10.0.0.1:1234"
+
 func TestSimpleRateLimiter(t *testing.T) {
 	type testCase struct {
 		name       string
@@ -27,7 +29,7 @@ func TestSimpleRateLimiter(t *testing.T) {
 			name:       "ProxyXRealIP",
 			trustProxy: true,
 			setupReq: func(r *http.Request, ip string) {
-				r.RemoteAddr = "10.0.0.1:1234" // Proxy IP
+				r.RemoteAddr = proxyRemoteAddr // Proxy IP
 				r.Header.Set("X-Real-IP", ip)
 			},
 		},
@@ -35,7 +37,7 @@ func TestSimpleRateLimiter(t *testing.T) {
 			name:       "ProxyXForwardedFor",
 			trustProxy: true,
 			setupReq: func(r *http.Request, ip string) {
-				r.RemoteAddr = "10.0.0.1:1234" // Proxy IP
+				r.RemoteAddr = proxyRemoteAddr // Proxy IP
 				r.Header.Set("X-Forwarded-For", ip+", 10.0.0.2")
 			},
 		},
@@ -45,6 +47,7 @@ func TestSimpleRateLimiter(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// Create a rate limiter that allows 3 requests per 10 seconds
 			limiter := newSimpleRateLimiter(3, 10*time.Second, tc.trustProxy)
+			t.Cleanup(func() { limiter.Stop() })
 			clientIP := "192.168.1.1"
 
 			// Helper to get IP
@@ -101,7 +104,7 @@ func TestSimpleRateLimiterRefill(t *testing.T) {
 			name:       "ProxyXRealIP",
 			trustProxy: true,
 			setupReq: func(r *http.Request, ip string) {
-				r.RemoteAddr = "10.0.0.1:1234" // Proxy IP
+				r.RemoteAddr = proxyRemoteAddr // Proxy IP
 				r.Header.Set("X-Real-IP", ip)
 			},
 		},
@@ -111,6 +114,7 @@ func TestSimpleRateLimiterRefill(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// Create a rate limiter that allows 2 requests per 100ms
 			limiter := newSimpleRateLimiter(2, 100*time.Millisecond, tc.trustProxy)
+			t.Cleanup(func() { limiter.Stop() })
 			clientIP := "192.168.1.1"
 
 			// Helper to get IP
@@ -161,7 +165,7 @@ func TestSimpleRateLimiterConcurrent(t *testing.T) {
 			name:       "ProxyXRealIP",
 			trustProxy: true,
 			setupReq: func(r *http.Request, ip string) {
-				r.RemoteAddr = "10.0.0.1:1234" // Proxy IP
+				r.RemoteAddr = proxyRemoteAddr // Proxy IP
 				r.Header.Set("X-Real-IP", ip)
 			},
 		},
@@ -170,6 +174,7 @@ func TestSimpleRateLimiterConcurrent(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			limiter := newSimpleRateLimiter(10, time.Second, tc.trustProxy)
+			t.Cleanup(func() { limiter.Stop() })
 			clientIP := "192.168.1.1"
 
 			// Helper to get IP
@@ -225,7 +230,7 @@ func TestSimpleRateLimiterCleanup(t *testing.T) {
 			name:       "ProxyXRealIP",
 			trustProxy: true,
 			setupReq: func(r *http.Request, ip string) {
-				r.RemoteAddr = "10.0.0.1:1234" // Proxy IP
+				r.RemoteAddr = proxyRemoteAddr // Proxy IP
 				r.Header.Set("X-Real-IP", ip)
 			},
 		},
@@ -294,7 +299,7 @@ func TestSimpleRateLimiterCleanupPreservesActive(t *testing.T) {
 			name:       "ProxyXRealIP",
 			trustProxy: true,
 			setupReq: func(r *http.Request, ip string) {
-				r.RemoteAddr = "10.0.0.1:1234" // Proxy IP
+				r.RemoteAddr = proxyRemoteAddr // Proxy IP
 				r.Header.Set("X-Real-IP", ip)
 			},
 		},
