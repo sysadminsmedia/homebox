@@ -44,7 +44,7 @@ type (
 		Notes       string `json:"notes"       validate:"max=1000"`
 
 		// Default values for items
-		DefaultQuantity         *int    `json:"defaultQuantity,omitempty"        extensions:"x-nullable"`
+		DefaultQuantity         *int    `json:"defaultQuantity,omitempty"        validate:"omitempty,min=0"   extensions:"x-nullable"`
 		DefaultInsured          bool    `json:"defaultInsured"`
 		DefaultName             *string `json:"defaultName,omitempty"            validate:"omitempty,max=255"  extensions:"x-nullable"`
 		DefaultDescription      *string `json:"defaultDescription,omitempty"     validate:"omitempty,max=1000" extensions:"x-nullable"`
@@ -73,7 +73,7 @@ type (
 		Notes       string    `json:"notes"       validate:"max=1000"`
 
 		// Default values for items
-		DefaultQuantity         *int    `json:"defaultQuantity,omitempty"        extensions:"x-nullable"`
+		DefaultQuantity         *int    `json:"defaultQuantity,omitempty"        validate:"omitempty,min=0"   extensions:"x-nullable"`
 		DefaultInsured          bool    `json:"defaultInsured"`
 		DefaultName             *string `json:"defaultName,omitempty"            validate:"omitempty,max=255"  extensions:"x-nullable"`
 		DefaultDescription      *string `json:"defaultDescription,omitempty"     validate:"omitempty,max=1000" extensions:"x-nullable"`
