@@ -61,7 +61,7 @@ func TestLocationRepositoryGetAllWithCount(t *testing.T) {
 	item, err := tRepos.Items.Create(ctx, tGroup.ID, ItemCreate{
 		Name:        fk.Str(10),
 		Description: fk.Str(100),
-		Quantity:    fk.Num(1, 10),
+		Quantity:    float64(fk.Num(1, 10)),
 		LocationID:  result.ID,
 	})
 
@@ -73,6 +73,36 @@ func TestLocationRepositoryGetAllWithCount(t *testing.T) {
 	for _, loc := range results {
 		if loc.ID == result.ID {
 			assert.Equal(t, item.Quantity, loc.ItemCount)
+		}
+	}
+}
+
+func TestLocationRepositoryGetAllWithCount_FractionalQuantities(t *testing.T) {
+	ctx := context.Background()
+	result := useLocations(t, 1)[0]
+
+	_, err := tRepos.Items.Create(ctx, tGroup.ID, ItemCreate{
+		Name:        fk.Str(10),
+		Description: fk.Str(100),
+		Quantity:    1.25,
+		LocationID:  result.ID,
+	})
+	require.NoError(t, err)
+
+	_, err = tRepos.Items.Create(ctx, tGroup.ID, ItemCreate{
+		Name:        fk.Str(10),
+		Description: fk.Str(100),
+		Quantity:    2.5,
+		LocationID:  result.ID,
+	})
+	require.NoError(t, err)
+
+	results, err := tRepos.Locations.GetAll(context.Background(), tGroup.ID, LocationQuery{})
+	require.NoError(t, err)
+
+	for _, loc := range results {
+		if loc.ID == result.ID {
+			assert.InDelta(t, 3.75, loc.ItemCount, 0.000001)
 		}
 	}
 }

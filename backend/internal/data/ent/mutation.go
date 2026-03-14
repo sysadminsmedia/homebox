@@ -3597,8 +3597,8 @@ type ItemMutation struct {
 	description                *string
 	import_ref                 *string
 	notes                      *string
-	quantity                   *int
-	addquantity                *int
+	quantity                   *float64
+	addquantity                *float64
 	insured                    *bool
 	archived                   *bool
 	asset_id                   *int
@@ -4006,13 +4006,13 @@ func (m *ItemMutation) ResetNotes() {
 }
 
 // SetQuantity sets the "quantity" field.
-func (m *ItemMutation) SetQuantity(i int) {
-	m.quantity = &i
+func (m *ItemMutation) SetQuantity(f float64) {
+	m.quantity = &f
 	m.addquantity = nil
 }
 
 // Quantity returns the value of the "quantity" field in the mutation.
-func (m *ItemMutation) Quantity() (r int, exists bool) {
+func (m *ItemMutation) Quantity() (r float64, exists bool) {
 	v := m.quantity
 	if v == nil {
 		return
@@ -4023,7 +4023,7 @@ func (m *ItemMutation) Quantity() (r int, exists bool) {
 // OldQuantity returns the old "quantity" field's value of the Item entity.
 // If the Item object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ItemMutation) OldQuantity(ctx context.Context) (v int, err error) {
+func (m *ItemMutation) OldQuantity(ctx context.Context) (v float64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldQuantity is only allowed on UpdateOne operations")
 	}
@@ -4037,17 +4037,17 @@ func (m *ItemMutation) OldQuantity(ctx context.Context) (v int, err error) {
 	return oldValue.Quantity, nil
 }
 
-// AddQuantity adds i to the "quantity" field.
-func (m *ItemMutation) AddQuantity(i int) {
+// AddQuantity adds f to the "quantity" field.
+func (m *ItemMutation) AddQuantity(f float64) {
 	if m.addquantity != nil {
-		*m.addquantity += i
+		*m.addquantity += f
 	} else {
-		m.addquantity = &i
+		m.addquantity = &f
 	}
 }
 
 // AddedQuantity returns the value that was added to the "quantity" field in this mutation.
-func (m *ItemMutation) AddedQuantity() (r int, exists bool) {
+func (m *ItemMutation) AddedQuantity() (r float64, exists bool) {
 	v := m.addquantity
 	if v == nil {
 		return
@@ -5522,7 +5522,7 @@ func (m *ItemMutation) SetField(name string, value ent.Value) error {
 		m.SetNotes(v)
 		return nil
 	case item.FieldQuantity:
-		v, ok := value.(int)
+		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -5693,7 +5693,7 @@ func (m *ItemMutation) AddedField(name string) (ent.Value, bool) {
 func (m *ItemMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	case item.FieldQuantity:
-		v, ok := value.(int)
+		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -7085,8 +7085,8 @@ type ItemTemplateMutation struct {
 	name                      *string
 	description               *string
 	notes                     *string
-	default_quantity          *int
-	adddefault_quantity       *int
+	default_quantity          *float64
+	adddefault_quantity       *float64
 	default_insured           *bool
 	default_name              *string
 	default_description       *string
@@ -7423,13 +7423,13 @@ func (m *ItemTemplateMutation) ResetNotes() {
 }
 
 // SetDefaultQuantity sets the "default_quantity" field.
-func (m *ItemTemplateMutation) SetDefaultQuantity(i int) {
-	m.default_quantity = &i
+func (m *ItemTemplateMutation) SetDefaultQuantity(f float64) {
+	m.default_quantity = &f
 	m.adddefault_quantity = nil
 }
 
 // DefaultQuantity returns the value of the "default_quantity" field in the mutation.
-func (m *ItemTemplateMutation) DefaultQuantity() (r int, exists bool) {
+func (m *ItemTemplateMutation) DefaultQuantity() (r float64, exists bool) {
 	v := m.default_quantity
 	if v == nil {
 		return
@@ -7440,7 +7440,7 @@ func (m *ItemTemplateMutation) DefaultQuantity() (r int, exists bool) {
 // OldDefaultQuantity returns the old "default_quantity" field's value of the ItemTemplate entity.
 // If the ItemTemplate object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ItemTemplateMutation) OldDefaultQuantity(ctx context.Context) (v int, err error) {
+func (m *ItemTemplateMutation) OldDefaultQuantity(ctx context.Context) (v float64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDefaultQuantity is only allowed on UpdateOne operations")
 	}
@@ -7454,17 +7454,17 @@ func (m *ItemTemplateMutation) OldDefaultQuantity(ctx context.Context) (v int, e
 	return oldValue.DefaultQuantity, nil
 }
 
-// AddDefaultQuantity adds i to the "default_quantity" field.
-func (m *ItemTemplateMutation) AddDefaultQuantity(i int) {
+// AddDefaultQuantity adds f to the "default_quantity" field.
+func (m *ItemTemplateMutation) AddDefaultQuantity(f float64) {
 	if m.adddefault_quantity != nil {
-		*m.adddefault_quantity += i
+		*m.adddefault_quantity += f
 	} else {
-		m.adddefault_quantity = &i
+		m.adddefault_quantity = &f
 	}
 }
 
 // AddedDefaultQuantity returns the value that was added to the "default_quantity" field in this mutation.
-func (m *ItemTemplateMutation) AddedDefaultQuantity() (r int, exists bool) {
+func (m *ItemTemplateMutation) AddedDefaultQuantity() (r float64, exists bool) {
 	v := m.adddefault_quantity
 	if v == nil {
 		return
@@ -8316,7 +8316,7 @@ func (m *ItemTemplateMutation) SetField(name string, value ent.Value) error {
 		m.SetNotes(v)
 		return nil
 	case itemtemplate.FieldDefaultQuantity:
-		v, ok := value.(int)
+		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -8430,7 +8430,7 @@ func (m *ItemTemplateMutation) AddedField(name string) (ent.Value, bool) {
 func (m *ItemTemplateMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	case itemtemplate.FieldDefaultQuantity:
-		v, ok := value.(int)
+		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

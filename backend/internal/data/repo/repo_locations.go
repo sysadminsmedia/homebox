@@ -44,7 +44,7 @@ type (
 
 	LocationOutCount struct {
 		LocationSummary
-		ItemCount int `json:"itemCount"`
+		ItemCount float64 `json:"itemCount"`
 	}
 
 	LocationOut struct {
@@ -142,7 +142,7 @@ func (r *LocationRepository) GetAll(ctx context.Context, gid uuid.UUID, filter L
 	for rows.Next() {
 		var ct LocationOutCount
 
-		var maybeCount *int
+		var maybeCount *float64
 
 		err := rows.Scan(&ct.ID, &ct.Name, &ct.Description, &ct.CreatedAt, &ct.UpdatedAt, &maybeCount)
 		if err != nil {

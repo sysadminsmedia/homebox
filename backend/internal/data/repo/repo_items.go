@@ -71,7 +71,7 @@ type (
 		ImportRef   string    `json:"-"`
 		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable"`
 		Name        string    `json:"name"        validate:"required,min=1,max=255"`
-		Quantity    int       `json:"quantity"`
+		Quantity    float64   `json:"quantity"`
 		Description string    `json:"description" validate:"max=1000"`
 		AssetID     AssetID   `json:"-"`
 
@@ -86,7 +86,7 @@ type (
 		AssetID                 AssetID   `json:"assetId"                 swaggertype:"string"`
 		Name                    string    `json:"name"                    validate:"required,min=1,max=255"`
 		Description             string    `json:"description"             validate:"max=1000"`
-		Quantity                int       `json:"quantity"`
+		Quantity                float64   `json:"quantity"`
 		Insured                 bool      `json:"insured"`
 		Archived                bool      `json:"archived"`
 		SyncChildItemsLocations bool      `json:"syncChildItemsLocations"`
@@ -123,7 +123,7 @@ type (
 
 	ItemPatch struct {
 		ID         uuid.UUID   `json:"id"`
-		Quantity   *int        `json:"quantity,omitempty" extensions:"x-nullable,x-omitempty"`
+		Quantity   *float64    `json:"quantity,omitempty" extensions:"x-nullable,x-omitempty"`
 		ImportRef  *string     `json:"-"                  extensions:"x-nullable,x-omitempty"`
 		LocationID uuid.UUID   `json:"locationId"         extensions:"x-nullable,x-omitempty"`
 		TagIDs     []uuid.UUID `json:"tagIds"             extensions:"x-nullable,x-omitempty"`
@@ -135,7 +135,7 @@ type (
 		AssetID     AssetID   `json:"assetId,string"`
 		Name        string    `json:"name"`
 		Description string    `json:"description"`
-		Quantity    int       `json:"quantity"`
+		Quantity    float64   `json:"quantity"`
 		Insured     bool      `json:"insured"`
 		Archived    bool      `json:"archived"`
 		CreatedAt   time.Time `json:"createdAt"`
@@ -642,7 +642,7 @@ func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCr
 type ItemCreateFromTemplate struct {
 	Name             string
 	Description      string
-	Quantity         int
+	Quantity         float64
 	LocationID       uuid.UUID
 	TagIDs           []uuid.UUID
 	Insured          bool
