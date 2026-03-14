@@ -1,0 +1,60 @@
+---
+import {
+    sectionGridClass,
+    fieldWideClass,
+    fieldClass,
+    checkboxFieldClass,
+    fieldLabelClass,
+    controlClass,
+} from './constants';
+---
+
+<div class={sectionGridClass}>
+    <label class={checkboxFieldClass}>
+        <input type="checkbox" data-field="oidcEnabled"/>
+        Enable OIDC (`HBOX_OIDC_ENABLED=true`)
+    </label>
+
+    <label data-oidc-row class={fieldWideClass} style="display: none;">
+        Issuer URL (`HBOX_OIDC_ISSUER_URL`)
+        <input type="text" data-field="oidcIssuerUrl" value="https://auth.example.com/realms/homebox"
+               class={controlClass}/>
+    </label>
+
+    <label data-oidc-row class={fieldClass} style="display: none;">
+        Client ID (`HBOX_OIDC_CLIENT_ID`)
+        <input type="text" data-field="oidcClientId" value="homebox" class={controlClass}/>
+    </label>
+
+    <label data-oidc-row class={fieldClass} style="display: none;">
+        Client secret (`HBOX_OIDC_CLIENT_SECRET`)
+        <input type="text" data-field="oidcClientSecret" value="replace_me" class={controlClass}/>
+    </label>
+
+    <label data-oidc-row class={fieldWideClass} style="display: none;">
+        Scope (`HBOX_OIDC_SCOPE`)
+        <input type="text" data-field="oidcScope" value="openid profile email" class={controlClass}/>
+    </label>
+
+    <label data-oidc-row class={fieldWideClass} style="display: none;">
+        Allowed groups (`HBOX_OIDC_ALLOWED_GROUPS`)
+        <input type="text" data-field="oidcAllowedGroups" value="" placeholder="admins,developers"
+               class={controlClass}/>
+    </label>
+
+    <label data-oidc-row class={checkboxFieldClass} style="display: none;">
+        <input type="checkbox" data-field="oidcAutoRedirect"/>
+        Auto-redirect (`HBOX_OIDC_AUTO_REDIRECT=true`)
+    </label>
+
+    <label data-oidc-row class={checkboxFieldClass} style="display: none;">
+        <input type="checkbox" data-field="oidcVerifyEmail"/>
+        Verify email (`HBOX_OIDC_VERIFY_EMAIL=true`)
+    </label>
+
+    <label data-oidc-row class={checkboxFieldClass} style="display: none;">
+        <input type="checkbox" data-field="allowLocalLogin" checked/>
+        Allow local login (`HBOX_OPTIONS_ALLOW_LOCAL_LOGIN=true`)
+    </label>
+</div>
+

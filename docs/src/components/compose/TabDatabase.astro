@@ -1,0 +1,75 @@
+---
+import {
+    sectionGridClass,
+    fieldClass,
+    fieldWideClass,
+    fieldLabelClass,
+    controlClass,
+} from './constants';
+---
+
+<div class={sectionGridClass}>
+    <div class={fieldClass}>
+        <label for="compose-database-type" class={fieldLabelClass}>Database</label>
+        <select id="compose-database-type" data-field="databaseType" class={controlClass}>
+            <option value="postgres" selected>Postgres</option>
+            <option value="sqlite">Sqlite</option>
+        </select>
+    </div>
+
+    <div data-db-postgres-row class={fieldClass} style="display: none;">
+        <label for="compose-postgres-database" class={fieldLabelClass}>PostgreSQL database</label>
+        <input id="compose-postgres-database" type="text" data-field="postgresDatabase" value="homebox"
+               class={controlClass}/>
+    </div>
+
+    <div data-db-postgres-row class={fieldClass} style="display: none;">
+        <label for="compose-postgres-user" class={fieldLabelClass}>PostgreSQL user</label>
+        <input id="compose-postgres-user" type="text" data-field="postgresUser" value="homebox"
+               class={controlClass}/>
+    </div>
+
+    <div data-db-postgres-row class={fieldClass} style="display: none;">
+        <label for="compose-postgres-password" class={fieldLabelClass}>PostgreSQL password</label>
+        <input
+                id="compose-postgres-password"
+                type="text"
+                data-field="postgresPassword"
+                value="your_secure_password"
+                class={controlClass}
+        />
+    </div>
+
+    <div data-db-postgres-row class={fieldClass} style="display: none;">
+        <label for="compose-postgres-storage-type" class={fieldLabelClass}>PostgreSQL storage</label>
+        <select id="compose-postgres-storage-type" data-field="postgresStorageType" class={controlClass}>
+            <option value="volume" selected>Named volume</option>
+            <option value="bind">Bind mount</option>
+        </select>
+    </div>
+
+    <div data-db-postgres-bind-row class={fieldClass} style="display: none;">
+        <label for="compose-postgres-bind-path" class={fieldLabelClass}>PostgreSQL bind mount path</label>
+        <input
+                id="compose-postgres-bind-path"
+                type="text"
+                data-field="postgresBindPath"
+                value="/path/to/postgres/data"
+                class={controlClass}
+        />
+    </div>
+
+    <div data-db-sqlite-row class={fieldWideClass} style="display: none;">
+        <label for="compose-sqlite-path" class={fieldLabelClass}>SQLite path
+            (`HBOX_DATABASE_SQLITE_PATH`)</label>
+        <input
+                id="compose-sqlite-path"
+                type="text"
+                data-field="sqlitePath"
+                value=""
+                placeholder="Leave blank to use Homebox defaults, or set a custom SQLite path"
+                class={controlClass}
+        />
+    </div>
+</div>
+
