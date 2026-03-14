@@ -77,9 +77,7 @@ func (svc *ItemService) EnsureImportRef(ctx context.Context, gid uuid.UUID) (int
 
 	finished := 0
 	for _, itemID := range ids {
-		ref := uuid.New().String()[0:8]
-
-		err = svc.repo.Items.Patch(ctx, gid, itemID, repo.ItemPatch{ImportRef: &ref})
+		err = svc.repo.Items.Patch(ctx, gid, itemID, repo.ItemPatch{ImportRef: new(uuid.New().String()[0:8])})
 		if err != nil {
 			return 0, err
 		}

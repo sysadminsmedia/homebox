@@ -67,8 +67,7 @@ func (r *TokenRepository) GetRoles(ctx context.Context, token string) (*set.Set[
 		return role.Role.String()
 	})
 
-	roleSet := set.New(roleStrings...)
-	return &roleSet, nil
+	return new(set.New(roleStrings...)), nil
 }
 
 // CreateToken Creates a token for a user
