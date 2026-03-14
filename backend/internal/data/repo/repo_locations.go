@@ -70,8 +70,7 @@ var mapLocationOutErr = mapTErrFunc(mapLocationOut)
 func mapLocationOut(location *ent.Location) LocationOut {
 	var parent *LocationSummary
 	if location.Edges.Parent != nil {
-		p := mapLocationSummary(location.Edges.Parent)
-		parent = &p
+		parent = new(mapLocationSummary(location.Edges.Parent))
 	}
 
 	children := lo.Map(location.Edges.Children, func(c *ent.Location, _ int) LocationSummary {

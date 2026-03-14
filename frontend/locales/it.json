@@ -1,4 +1,45 @@
 {
+    "collection": {
+        "copy_invite": "Copia Link d'Invito",
+        "create_invite": "Crea Invito",
+        "delete_collection": "Cancella Collezione",
+        "delete_confirm": "Sei sicuro di voler cancellare questa collezione? Quest'azione non può essere annullata.",
+        "deleted_collection": "Collezione cancellata.",
+        "expires_at": "Scadenza",
+        "invite_token": "Token",
+        "invite_token_hidden": "Non più visibile",
+        "invite_token_warning": "I token d'invito sono mostrati solo una volta. Copia il link adesso; non sarà possibile vedere di nuovo questo token dopo aver lasciato o ricaricato questa pagina.",
+        "invites": "Inviti",
+        "invites_delete_confirm": "Sei sicuro di voler cancellare questo invito?",
+        "manage_collection": "Gestisci Raccolta",
+        "members": {
+            "cannot_remove_last": "Non puoi rimuovere l'ultimo membro.",
+            "email": "Email",
+            "empty": "Non ci sono ancora membri in questa raccolta.",
+            "member": "Membri",
+            "name": "Nome",
+            "owner": "Proprietario",
+            "remove_confirm": "Sei sicuro di voler rimuovere questo membro?",
+            "removed": "Membro rimosso",
+            "role": "Ruolo"
+        },
+        "no_collections": {
+            "create": "Crea una nuova raccolta",
+            "join": "Aggiungi a una collezione esistente",
+            "message": "Sembra che tu non faccia parte di una raccolta. Crea una nuova raccolta per i tuoi oggetti, o unisciti a una raccolta a cui sei stato invitato.",
+            "title": "Nessuna Raccolta Trovata"
+        },
+        "no_invites": "Nessun Invito",
+        "remaining_uses": "Utilizzi rimasti",
+        "tabs": {
+            "invites": "Inviti",
+            "members": "Membri",
+            "notifiers": "Notifiche",
+            "settings": "Impostazioni",
+            "tools": "Strumenti"
+        },
+        "uses": "Usi"
+    },
     "components": {
         "app": {
             "create_modal": {
@@ -7,7 +48,7 @@
                 "shift": "Shift"
             },
             "import_dialog": {
-                "change_warning": "Il comportamento per le importazioni con import_ref esistenti è cambiato. Se un import_ref è presente nel file CSV,\n l'articolo verrà aggiornato con i valori presenti nel file CSV.",
+                "change_warning": "Il comportamento per le importazioni con import_ref esistenti è cambiato. \nSe un import_ref è presente nel file CSV, l'articolo verrà aggiornato con i valori presenti nel file CSV.",
                 "description": "Importa un file CSV contenente gli articoli, le etichette e le posizioni. Vedi la documentazione per ulteriori informazioni sul \nformato richiesto.",
                 "title": "Importa File CSV",
                 "toast": {
@@ -35,9 +76,18 @@
                     "please_enter_name": "Immettere un none per la raccolta"
                 }
             },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Seleziona una data e un'orario di scadenza.",
+                    "invalid_expiry_past": "La data di scadenza deve essere nel futuro.",
+                    "invalid_uses": "Gli utilizzi devono essere un numero compreso tra 1 e 100."
+                }
+            },
             "join_modal": {
                 "invite_code_label": "Codice di Invito alla Raccolta",
+                "invites_should_look_like": "Gli inviti dovrebbero avere il seguente aspetto:",
                 "join": "Unisciti alla Raccolta",
+                "no_invite_code_create_one": "Non hai un codice invito? Crea una nuova raccolta",
                 "title": "Unisciti alla Raccolta"
             },
             "selector": {

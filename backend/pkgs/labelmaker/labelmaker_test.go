@@ -53,10 +53,9 @@ func TestLoadFont_WithCustomFontPath(t *testing.T) {
 }
 
 func TestLoadFont_WithNonExistentFontPath(t *testing.T) {
-	nonExistentPath := "/non/existent/path/font.ttf"
 	cfg := &config.Config{
 		LabelMaker: config.LabelMakerConf{
-			RegularFontPath: &nonExistentPath,
+			RegularFontPath: new("/non/existent/path/font.ttf"),
 		},
 	}
 
@@ -92,10 +91,9 @@ func TestLoadFont_BoldFontWithCustomPath(t *testing.T) {
 }
 
 func TestLoadFont_EmptyStringPath(t *testing.T) {
-	emptyPath := ""
 	cfg := &config.Config{
 		LabelMaker: config.LabelMakerConf{
-			RegularFontPath: &emptyPath,
+			RegularFontPath: new(""),
 		},
 	}
 

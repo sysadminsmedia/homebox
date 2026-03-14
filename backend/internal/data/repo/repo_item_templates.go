@@ -136,9 +136,8 @@ type (
 )
 
 func mapTemplateField(field *ent.TemplateField) TemplateField {
-	id := field.ID
 	return TemplateField{
-		ID:        &id,
+		ID:        new(field.ID),
 		Type:      string(field.Type),
 		Name:      field.Name,
 		TextValue: field.TextValue,

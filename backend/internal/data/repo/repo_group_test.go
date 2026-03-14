@@ -23,11 +23,10 @@ func Test_Group_Create(t *testing.T) {
 
 func Test_Group_Create_WithUser(t *testing.T) {
 	// Create a test user first
-	password := "password123"
 	user, err := tRepos.Users.Create(context.Background(), UserCreate{
 		Name:           "test_user",
 		Email:          "test_group_user@example.com",
-		Password:       &password,
+		Password:       new("password123"),
 		DefaultGroupID: tGroup.ID,
 	})
 	require.NoError(t, err)

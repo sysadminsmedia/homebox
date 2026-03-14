@@ -8,6 +8,7 @@ import (
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
 )
 
@@ -41,6 +42,12 @@ func (ctrl *V1Controller) HandleGetUserNotifiers() errchain.HandlerFunc {
 func (ctrl *V1Controller) HandleCreateNotifier() errchain.HandlerFunc {
 	fn := func(r *http.Request, in repo.NotifierCreate) (repo.NotifierOut, error) {
 		auth := services.NewContext(r.Context())
+
+		// Validate notifier URL against block/allow lists
+		if err := ctrl.validateNotifierURL(in.URL); err != nil {
+			return repo.NotifierOut{}, validate.NewRequestError(err, http.StatusBadRequest)
+		}
+
 		return ctrl.repo.Notifiers.Create(auth, auth.GID, auth.UID, in)
 	}
 
@@ -76,6 +83,14 @@ func (ctrl *V1Controller) HandleDeleteNotifier() errchain.HandlerFunc {
 func (ctrl *V1Controller) HandleUpdateNotifier() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID, in repo.NotifierUpdate) (repo.NotifierOut, error) {
 		auth := services.NewContext(r.Context())
+
+		// Validate notifier URL against block/allow lists if URL is being updated
+		if in.URL != nil {
+			if err := ctrl.validateNotifierURL(*in.URL); err != nil {
+				return repo.NotifierOut{}, validate.NewRequestError(err, http.StatusBadRequest)
+			}
+		}
+
 		return ctrl.repo.Notifiers.Update(auth, auth.UID, ID, in)
 	}
 
@@ -97,9 +112,19 @@ func (ctrl *V1Controller) HandlerNotifierTest() errchain.HandlerFunc {
 	}
 
 	fn := func(r *http.Request, q body) (any, error) {
+		// Validate notifier URL against block/allow lists
+		if err := ctrl.validateNotifierURL(q.URL); err != nil {
+			return nil, validate.NewRequestError(err, http.StatusBadRequest)
+		}
+
 		err := shoutrrr.Send(q.URL, "Test message from Homebox")
 		return nil, err
 	}
 
 	return adapters.Action(fn, http.StatusOK)
+}
+
+// validateNotifierURL validates a notifier URL against the configured block/allow lists
+func (ctrl *V1Controller) validateNotifierURL(url string) error {
+	return validate.ValidateNotifierURL(url, &ctrl.config.Notifier)
 }

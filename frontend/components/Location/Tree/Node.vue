@@ -9,25 +9,35 @@
   type Props = {
     treeId: string;
     item: TreeItem;
+    showItems?: boolean;
   };
-  const props = withDefaults(defineProps<Props>(), {});
+  const props = withDefaults(defineProps<Props>(), {
+    showItems: true,
+  });
 
   const link = computed(() => {
     return props.item.type === "location" ? `/location/${props.item.id}` : `/item/${props.item.id}`;
-  });
-
-  const hasChildren = computed(() => {
-    return props.item.children.length > 0;
   });
 
   const state = useTreeState(props.treeId);
 
   const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
 
-  const sortedChildren = computed(() => {
+  const filteredChildren = computed(() => {
     const children = props.item.children ?? [];
-    return [...children].sort((a, b) => collator.compare(a.name, b.name));
+
+    if (props.showItems) {
+      return children;
+    }
+
+    return children.filter(child => child.type === "location");
   });
+
+  const sortedChildren = computed(() => {
+    return [...filteredChildren.value].sort((a, b) => collator.compare(a.name, b.name));
+  });
+
+  const hasChildren = computed(() => filteredChildren.value.length > 0);
 
   const openRef = computed({
     get() {
@@ -73,7 +83,13 @@
       <NuxtLink class="text-lg hover:underline" :to="link" @click.stop>{{ item.name }} </NuxtLink>
     </div>
     <div v-if="openRef" class="ml-4">
-      <LocationTreeNode v-for="child in sortedChildren" :key="child.id" :item="child" :tree-id="treeId" />
+      <LocationTreeNode
+        v-for="child in sortedChildren"
+        :key="child.id"
+        :item="child"
+        :tree-id="treeId"
+        :show-items="showItems"
+      />
     </div>
   </div>
 </template>
