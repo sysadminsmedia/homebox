@@ -87,7 +87,7 @@ func Notes(v string) predicate.Item {
 }
 
 // Quantity applies equality check predicate on the "quantity" field. It's identical to QuantityEQ.
-func Quantity(v int) predicate.Item {
+func Quantity(v float64) predicate.Item {
 	return predicate.Item(sql.FieldEQ(FieldQuantity, v))
 }
 
@@ -547,42 +547,42 @@ func NotesContainsFold(v string) predicate.Item {
 }
 
 // QuantityEQ applies the EQ predicate on the "quantity" field.
-func QuantityEQ(v int) predicate.Item {
+func QuantityEQ(v float64) predicate.Item {
 	return predicate.Item(sql.FieldEQ(FieldQuantity, v))
 }
 
 // QuantityNEQ applies the NEQ predicate on the "quantity" field.
-func QuantityNEQ(v int) predicate.Item {
+func QuantityNEQ(v float64) predicate.Item {
 	return predicate.Item(sql.FieldNEQ(FieldQuantity, v))
 }
 
 // QuantityIn applies the In predicate on the "quantity" field.
-func QuantityIn(vs ...int) predicate.Item {
+func QuantityIn(vs ...float64) predicate.Item {
 	return predicate.Item(sql.FieldIn(FieldQuantity, vs...))
 }
 
 // QuantityNotIn applies the NotIn predicate on the "quantity" field.
-func QuantityNotIn(vs ...int) predicate.Item {
+func QuantityNotIn(vs ...float64) predicate.Item {
 	return predicate.Item(sql.FieldNotIn(FieldQuantity, vs...))
 }
 
 // QuantityGT applies the GT predicate on the "quantity" field.
-func QuantityGT(v int) predicate.Item {
+func QuantityGT(v float64) predicate.Item {
 	return predicate.Item(sql.FieldGT(FieldQuantity, v))
 }
 
 // QuantityGTE applies the GTE predicate on the "quantity" field.
-func QuantityGTE(v int) predicate.Item {
+func QuantityGTE(v float64) predicate.Item {
 	return predicate.Item(sql.FieldGTE(FieldQuantity, v))
 }
 
 // QuantityLT applies the LT predicate on the "quantity" field.
-func QuantityLT(v int) predicate.Item {
+func QuantityLT(v float64) predicate.Item {
 	return predicate.Item(sql.FieldLT(FieldQuantity, v))
 }
 
 // QuantityLTE applies the LTE predicate on the "quantity" field.
-func QuantityLTE(v int) predicate.Item {
+func QuantityLTE(v float64) predicate.Item {
 	return predicate.Item(sql.FieldLTE(FieldQuantity, v))
 }
 

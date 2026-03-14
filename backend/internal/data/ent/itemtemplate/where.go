@@ -82,7 +82,7 @@ func Notes(v string) predicate.ItemTemplate {
 }
 
 // DefaultQuantity applies equality check predicate on the "default_quantity" field. It's identical to DefaultQuantityEQ.
-func DefaultQuantity(v int) predicate.ItemTemplate {
+func DefaultQuantity(v float64) predicate.ItemTemplate {
 	return predicate.ItemTemplate(sql.FieldEQ(FieldDefaultQuantity, v))
 }
 
@@ -432,42 +432,42 @@ func NotesContainsFold(v string) predicate.ItemTemplate {
 }
 
 // DefaultQuantityEQ applies the EQ predicate on the "default_quantity" field.
-func DefaultQuantityEQ(v int) predicate.ItemTemplate {
+func DefaultQuantityEQ(v float64) predicate.ItemTemplate {
 	return predicate.ItemTemplate(sql.FieldEQ(FieldDefaultQuantity, v))
 }
 
 // DefaultQuantityNEQ applies the NEQ predicate on the "default_quantity" field.
-func DefaultQuantityNEQ(v int) predicate.ItemTemplate {
+func DefaultQuantityNEQ(v float64) predicate.ItemTemplate {
 	return predicate.ItemTemplate(sql.FieldNEQ(FieldDefaultQuantity, v))
 }
 
 // DefaultQuantityIn applies the In predicate on the "default_quantity" field.
-func DefaultQuantityIn(vs ...int) predicate.ItemTemplate {
+func DefaultQuantityIn(vs ...float64) predicate.ItemTemplate {
 	return predicate.ItemTemplate(sql.FieldIn(FieldDefaultQuantity, vs...))
 }
 
 // DefaultQuantityNotIn applies the NotIn predicate on the "default_quantity" field.
-func DefaultQuantityNotIn(vs ...int) predicate.ItemTemplate {
+func DefaultQuantityNotIn(vs ...float64) predicate.ItemTemplate {
 	return predicate.ItemTemplate(sql.FieldNotIn(FieldDefaultQuantity, vs...))
 }
 
 // DefaultQuantityGT applies the GT predicate on the "default_quantity" field.
-func DefaultQuantityGT(v int) predicate.ItemTemplate {
+func DefaultQuantityGT(v float64) predicate.ItemTemplate {
 	return predicate.ItemTemplate(sql.FieldGT(FieldDefaultQuantity, v))
 }
 
 // DefaultQuantityGTE applies the GTE predicate on the "default_quantity" field.
-func DefaultQuantityGTE(v int) predicate.ItemTemplate {
+func DefaultQuantityGTE(v float64) predicate.ItemTemplate {
 	return predicate.ItemTemplate(sql.FieldGTE(FieldDefaultQuantity, v))
 }
 
 // DefaultQuantityLT applies the LT predicate on the "default_quantity" field.
-func DefaultQuantityLT(v int) predicate.ItemTemplate {
+func DefaultQuantityLT(v float64) predicate.ItemTemplate {
 	return predicate.ItemTemplate(sql.FieldLT(FieldDefaultQuantity, v))
 }
 
 // DefaultQuantityLTE applies the LTE predicate on the "default_quantity" field.
-func DefaultQuantityLTE(v int) predicate.ItemTemplate {
+func DefaultQuantityLTE(v float64) predicate.ItemTemplate {
 	return predicate.ItemTemplate(sql.FieldLTE(FieldDefaultQuantity, v))
 }
 

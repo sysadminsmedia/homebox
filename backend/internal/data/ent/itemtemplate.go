@@ -32,7 +32,7 @@ type ItemTemplate struct {
 	// Notes holds the value of the "notes" field.
 	Notes string `json:"notes,omitempty"`
 	// DefaultQuantity holds the value of the "default_quantity" field.
-	DefaultQuantity int `json:"default_quantity,omitempty"`
+	DefaultQuantity float64 `json:"default_quantity,omitempty"`
 	// DefaultInsured holds the value of the "default_insured" field.
 	DefaultInsured bool `json:"default_insured,omitempty"`
 	// Default name template for items (can use placeholders)
@@ -117,7 +117,7 @@ func (*ItemTemplate) scanValues(columns []string) ([]any, error) {
 		case itemtemplate.FieldDefaultInsured, itemtemplate.FieldDefaultLifetimeWarranty, itemtemplate.FieldIncludeWarrantyFields, itemtemplate.FieldIncludePurchaseFields, itemtemplate.FieldIncludeSoldFields:
 			values[i] = new(sql.NullBool)
 		case itemtemplate.FieldDefaultQuantity:
-			values[i] = new(sql.NullInt64)
+			values[i] = new(sql.NullFloat64)
 		case itemtemplate.FieldName, itemtemplate.FieldDescription, itemtemplate.FieldNotes, itemtemplate.FieldDefaultName, itemtemplate.FieldDefaultDescription, itemtemplate.FieldDefaultManufacturer, itemtemplate.FieldDefaultModelNumber, itemtemplate.FieldDefaultWarrantyDetails:
 			values[i] = new(sql.NullString)
 		case itemtemplate.FieldCreatedAt, itemtemplate.FieldUpdatedAt:
@@ -180,10 +180,10 @@ func (_m *ItemTemplate) assignValues(columns []string, values []any) error {
 				_m.Notes = value.String
 			}
 		case itemtemplate.FieldDefaultQuantity:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
 				return fmt.Errorf("unexpected type %T for field default_quantity", values[i])
 			} else if value.Valid {
-				_m.DefaultQuantity = int(value.Int64)
+				_m.DefaultQuantity = value.Float64
 			}
 		case itemtemplate.FieldDefaultInsured:
 			if value, ok := values[i].(*sql.NullBool); !ok {

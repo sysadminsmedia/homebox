@@ -128,6 +128,28 @@ func TestItemsRepository_Create(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestItemsRepository_Create_WithFractionalQuantity(t *testing.T) {
+	location, err := tRepos.Locations.Create(context.Background(), tGroup.ID, locationFactory())
+	require.NoError(t, err)
+
+	itm := itemFactory()
+	itm.LocationID = location.ID
+	itm.Quantity = 1.25
+
+	result, err := tRepos.Items.Create(context.Background(), tGroup.ID, itm)
+	require.NoError(t, err)
+	assert.NotEmpty(t, result.ID)
+	assert.InDelta(t, 1.25, result.Quantity, 0.000001)
+
+	fetched, err := tRepos.Items.GetOne(context.Background(), result.ID)
+	require.NoError(t, err)
+	assert.InDelta(t, 1.25, fetched.Quantity, 0.000001)
+
+	// Cleanup - Also deletes item
+	err = tRepos.Locations.delete(context.Background(), location.ID)
+	require.NoError(t, err)
+}
+
 func TestItemsRepository_Create_Location(t *testing.T) {
 	location, err := tRepos.Locations.Create(context.Background(), tGroup.ID, locationFactory())
 	require.NoError(t, err)
@@ -273,6 +295,25 @@ func TestItemsRepository_Update(t *testing.T) {
 	// assert.Equal(t, updateData.WarrantyExpires, got.WarrantyExpires)
 	assert.Equal(t, updateData.WarrantyDetails, got.WarrantyDetails)
 	assert.Equal(t, updateData.LifetimeWarranty, got.LifetimeWarranty)
+}
+
+func TestItemsRepository_Update_WithFractionalQuantity(t *testing.T) {
+	entity := useItems(t, 1)[0]
+
+	updateData := ItemUpdate{
+		ID:         entity.ID,
+		Name:       entity.Name,
+		LocationID: entity.Location.ID,
+		Quantity:   2.75,
+	}
+
+	updatedEntity, err := tRepos.Items.UpdateByGroup(context.Background(), tGroup.ID, updateData)
+	require.NoError(t, err)
+
+	got, err := tRepos.Items.GetOne(context.Background(), updatedEntity.ID)
+	require.NoError(t, err)
+
+	assert.InDelta(t, 2.75, got.Quantity, 0.000001)
 }
 
 func TestItemRepository_GetAllCustomFields(t *testing.T) {

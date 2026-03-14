@@ -43,7 +43,7 @@ func (Item) Fields() []ent.Field {
 		field.String("notes").
 			MaxLen(1000).
 			Optional(),
-		field.Int("quantity").
+		field.Float("quantity").
 			Default(1),
 		field.Bool("insured").
 			Default(false),
