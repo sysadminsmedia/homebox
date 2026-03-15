@@ -3555,6 +3555,8 @@ components:
           type: string
         oidc:
           $ref: "#/components/schemas/v1.OIDCStatus"
+        telemetry:
+          $ref: "#/components/schemas/v1.TelemetryStatus"
         title:
           type: string
         versions:
@@ -3671,6 +3673,11 @@ components:
           type: boolean
         buttonText:
           type: string
+        enabled:
+          type: boolean
+    v1.TelemetryStatus:
+      type: object
+      properties:
         enabled:
           type: boolean
     v1.TokenResponse:

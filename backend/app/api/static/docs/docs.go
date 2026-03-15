@@ -5370,6 +5370,9 @@ const docTemplate = `{
                 "oidc": {
                     "$ref": "#/definitions/v1.OIDCStatus"
                 },
+                "telemetry": {
+                    "$ref": "#/definitions/v1.TelemetryStatus"
+                },
                 "title": {
                     "type": "string"
                 },
@@ -5546,6 +5549,14 @@ const docTemplate = `{
                 "buttonText": {
                     "type": "string"
                 },
+                "enabled": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "v1.TelemetryStatus": {
+            "type": "object",
+            "properties": {
                 "enabled": {
                     "type": "boolean"
                 }
