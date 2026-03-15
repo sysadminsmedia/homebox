@@ -20,6 +20,7 @@
         :name="$t('components.tag.create_modal.tag_parent')"
       />
       <ColorSelector v-model="form.color" :label="$t('components.tag.create_modal.tag_color')" :show-hex="true" />
+      <IconSelector v-model="form.icon" :label="$t('components.tag.create_modal.tag_icon')" />
       <div class="mt-4 flex flex-row-reverse">
         <ButtonGroup>
           <Button :disabled="loading" type="submit">{{ $t("global.create") }}</Button>
@@ -39,6 +40,7 @@
   import BaseModal from "@/components/App/CreateModal.vue";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
   import ColorSelector from "@/components/Form/ColorSelector.vue";
+  import IconSelector from "@/components/Form/IconSelector.vue";
   import FormTextField from "~/components/Form/TextField.vue";
   import FormTextArea from "~/components/Form/TextArea.vue";
   import { Button, ButtonGroup } from "~/components/ui/button";
@@ -59,6 +61,7 @@
     name: "",
     description: "",
     color: "",
+    icon: "",
     parentTag: null as TagOut | null,
   });
 
@@ -74,6 +77,7 @@
     form.name = "";
     form.description = "";
     form.color = "";
+    form.icon = "";
     form.parentTag = null;
     focused.value = false;
     loading.value = false;
@@ -100,7 +104,7 @@
       name: form.name,
       description: form.description,
       color: form.color,
-      icon: "",
+      icon: form.icon,
       parentId: form.parentTag?.id,
     });
 

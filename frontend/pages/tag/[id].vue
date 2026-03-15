@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
-  import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiDelete from "~icons/mdi/delete";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -11,7 +10,9 @@
   import { Badge } from "@/components/ui/badge";
   import { Separator } from "@/components/ui/separator";
   import ColorSelector from "@/components/Form/ColorSelector.vue";
+  import IconSelector from "@/components/Form/IconSelector.vue";
   import { getContrastTextColor } from "~/lib/utils";
+  import { getIconComponent } from "~/lib/icons";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
   import FormTextField from "~/components/Form/TextField.vue";
   import FormTextArea from "~/components/Form/TextArea.vue";
@@ -75,6 +76,7 @@
     name: "",
     description: "",
     color: "",
+    icon: "",
     parentTag: null as TagOut | null,
   });
 
@@ -112,6 +114,10 @@
     });
   });
 
+  const tagIcon = computed(() => {
+    return getIconComponent(tag.value?.icon);
+  });
+
   onMounted(async () => {
     await tagStore.ensureAllTagsFetched();
   });
@@ -144,6 +150,7 @@
     updateData.name = tag.value?.name || "";
     updateData.description = tag.value?.description || "";
     updateData.color = "";
+    updateData.icon = tag.value?.icon || "";
     if (tag.value?.parent) {
       const parent = tagStore.tags.find(t => t.id === tag.value?.parentId);
       updateData.parentTag = parent || null;
@@ -164,7 +171,7 @@
       name: updateData.name,
       description: updateData.description,
       color: updateData.color,
-      icon: "",
+      icon: updateData.icon,
       parentId: updateData.parentTag?.id,
     });
 
@@ -243,6 +250,7 @@
           :show-hex="true"
           :starting-color="tag.color"
         />
+        <IconSelector v-model="updateData.icon" :label="$t('components.tag.create_modal.tag_icon')" />
         <DialogFooter>
           <Button type="submit" :loading="updating"> {{ $t("global.update") }} </Button>
         </DialogFooter>
@@ -265,7 +273,7 @@
                 : { backgroundColor: 'hsl(var(--secondary))', color: 'hsl(var(--secondary-foreground))' }
             "
           >
-            <MdiPackageVariant class="size-7" />
+            <component :is="tagIcon" class="size-7" />
           </div>
           <div>
             <div v-if="tag?.parentId" class="flex flex-wrap items-center gap-2">
