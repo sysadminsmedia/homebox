@@ -65,7 +65,10 @@
                     :class="{ border: props.tags.find(t => t.id === tag.value)?.color }"
                     :style="{ backgroundColor: props.tags.find(t => t.id === tag.value)?.color }"
                   />
-                  {{ tag.label }}
+                  <div class="flex flex-col gap-1">
+                    <span>{{ tag.label }}</span>
+                    <span v-if="tag.ancestors" class="text-xs italic text-muted-foreground">{{ tag.ancestors }}</span>
+                  </div>
                 </CommandItem>
               </CommandGroup>
             </CommandList>
@@ -120,13 +123,34 @@
   const open = ref(false);
   const searchTerm = ref("");
 
+  const getTagAncestors = (tagId: string): string => {
+    const tag = props.tags.find(t => t.id === tagId);
+    if (!tag) return "";
+
+    const ancestors: string[] = [];
+    let currentId: string | null | undefined = tag.parentId;
+
+    while (currentId) {
+      const parent = props.tags.find(t => t.id === currentId);
+      if (!parent) break;
+      ancestors.unshift(parent.name);
+      currentId = parent.parentId;
+    }
+
+    return ancestors.length > 0 ? ancestors.join(" > ") : "";
+  };
+
   const filteredTags = computed(() => {
     const filtered = fuzzysort
       .go(searchTerm.value, props.tags, { key: "name", all: true })
-      .map(l => ({
-        value: l.obj.id,
-        label: l.obj.name,
-      }))
+      .map(l => {
+        const ancestors = getTagAncestors(l.obj.id);
+        return {
+          value: l.obj.id,
+          label: l.obj.name,
+          ancestors: ancestors,
+        };
+      })
       .filter(i => !modelValue.value.includes(i.value));
 
     // Only show "Create" option if search term is not empty and no exact match exists
@@ -135,7 +159,7 @@
       const hasExactMatch = props.tags.some(tag => tag.name.toLowerCase() === trimmedSearchTerm.toLowerCase());
 
       if (!hasExactMatch) {
-        filtered.push({ value: "create-item", label: `${t("global.create")} ${searchTerm.value}` });
+        filtered.push({ value: "create-item", label: `${t("global.create")} ${searchTerm.value}`, ancestors: "" });
       }
     }
 
