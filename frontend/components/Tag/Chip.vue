@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import type { TagOut, TagSummary } from "~~/lib/api/types/data-contracts";
   import MdiArrowUp from "~icons/mdi/arrow-up";
-  import MdiTagOutline from "~icons/mdi/tag-outline";
   import { getContrastTextColor } from "~/lib/utils";
+  import { getIconComponent } from "~/lib/icons";
 
   export type sizes = "sm" | "md" | "lg" | "xl";
-  defineProps({
+  const props = defineProps({
     tag: {
       type: Object as () => TagOut | TagSummary,
       required: true,
@@ -22,6 +22,10 @@
       type: Boolean,
       default: false,
     },
+  });
+
+  const chipIcon = computed(() => {
+    return getIconComponent(props.tag.icon);
   });
 </script>
 
@@ -44,12 +48,12 @@
   >
     <template v-if="!hideIcon">
       <div class="relative">
-        <MdiTagOutline class="invisible" /><!-- hack to ensure the size is correct -->
+        <component :is="chipIcon" class="invisible" /><!-- hack to ensure the size is correct -->
 
         <div
           class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover/tag-chip:rotate-90"
         >
-          <MdiTagOutline class="group-hover/tag-chip:hidden" />
+          <component :is="chipIcon" class="group-hover/tag-chip:hidden" />
           <MdiArrowUp class="hidden group-hover/tag-chip:block" />
         </div>
       </div>

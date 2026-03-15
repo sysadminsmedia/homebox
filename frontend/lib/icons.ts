@@ -14,7 +14,7 @@ import MdiPlug from "~icons/mdi/plug";
 import MdiCloset from "~icons/mdi/closet";
 import MdiMicrowave from "~icons/mdi/microwave";
 import MdiCoffee from "~icons/mdi/coffee";
-import MdiPackageVariant from "~icons/mdi/package-variant";
+import MdiTagOutline from "~icons/mdi/tag-outline";
 
 export type IconName =
   | "home"
@@ -62,4 +62,4 @@ export function getIconComponent(iconName: string | undefined): any {
   return icon ? icon.component : defaultIcon;
 }
 
-export const defaultIcon = MdiPackageVariant;
+export const defaultIcon = MdiTagOutline;
