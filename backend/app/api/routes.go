@@ -211,7 +211,10 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 
 		// OpenTelemetry proxy endpoint for frontend telemetry (requires auth)
 		if a.otel != nil && a.otel.IsEnabled() && a.conf.Otel.ProxyEnabled {
-			r.Post("/telemetry", a.otel.ProxyHandler())
+			r.Post("/telemetry", chain.ToHandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+				a.otel.ProxyHandler().ServeHTTP(w, r)
+				return nil
+			}, userMW...))
 		}
 
 		r.NotFound(http.NotFound)

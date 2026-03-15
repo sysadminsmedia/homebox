@@ -46,8 +46,8 @@ func (p *Provider) OpenDatabase(driverName, dataSourceName string) (*sql.DB, err
 		return nil, fmt.Errorf("failed to open instrumented database: %w", err)
 	}
 
-	// Register stats for metrics (ignoring error as it's non-fatal)
-	_ = otelsql.RegisterDBStatsMetrics(db,
+	// Register stats for metrics (ignoring registration handle and error as non-fatal)
+	_, _ = otelsql.RegisterDBStatsMetrics(db,
 		otelsql.WithAttributes(
 			semconv.DBSystemKey.String(dbSystem),
 		),
@@ -73,7 +73,7 @@ func getDBSystem(driverName string) string {
 	switch driverName {
 	case "sqlite3":
 		return "sqlite"
-	case "postgres", "postgresql":
+	case "postgres", "postgresql", "pgx":
 		return "postgresql"
 	case "mysql":
 		return "mysql"
@@ -87,7 +87,7 @@ func mapDialect(driverName string) string {
 	switch driverName {
 	case "sqlite3":
 		return dialect.SQLite
-	case "postgres", "postgresql":
+	case "postgres", "postgresql", "pgx":
 		return dialect.Postgres
 	case "mysql":
 		return dialect.MySQL
@@ -98,7 +98,7 @@ func mapDialect(driverName string) string {
 
 // WrapEntDriver wraps an existing Ent driver with tracing.
 // This is useful when you have an existing driver and want to add tracing.
-func (p *Provider) WrapEntDriver(drv *entsql.Driver, driverName string) *entsql.Driver {
+func (p *Provider) WrapEntDriver(drv *entsql.Driver, _ string) *entsql.Driver {
 	if p == nil || !p.IsEnabled() || p.cfg == nil || !p.cfg.EnableDatabaseTracing {
 		return drv
 	}

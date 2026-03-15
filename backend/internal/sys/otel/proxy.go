@@ -5,8 +5,10 @@ import (
 	"context"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"strings"
 	"time"
@@ -59,6 +61,21 @@ type TelemetryPayload struct {
 // This prevents denial-of-service attacks through excessively large payloads.
 const MaxTelemetryPayloadSize = 1024 * 1024 // 1MB
 
+const (
+	traceIDLengthBytes = 16
+	spanIDLengthBytes  = 8
+	nanosPerMilli      = int64(1_000_000)
+)
+
+// telemetryValidationError marks malformed telemetry that should return HTTP 400.
+type telemetryValidationError struct {
+	msg string
+}
+
+func (e *telemetryValidationError) Error() string {
+	return e.msg
+}
+
 // ProxyHandler handles telemetry data from the frontend.
 // This forwards frontend telemetry data to the configured OTLP endpoint,
 // allowing for distributed tracing across the full stack.
@@ -75,19 +92,27 @@ func (p *Provider) ProxyHandler() http.HandlerFunc {
 			return
 		}
 
-		// Read and parse the payload with size limit
-		body, err := io.ReadAll(io.LimitReader(r.Body, MaxTelemetryPayloadSize))
-		if err != nil {
-			log.Error().Err(err).Msg("failed to read telemetry payload")
-			http.Error(w, "Failed to read request body", http.StatusBadRequest)
-			return
-		}
+		// Enforce a hard request body limit and parse the payload.
+		r.Body = http.MaxBytesReader(w, r.Body, MaxTelemetryPayloadSize)
+
+		// Keep explicit body close for readability and symmetric cleanup.
 		defer func(Body io.ReadCloser) {
 			err := Body.Close()
 			if err != nil {
 				log.Error().Err(err).Msg("failed to close telemetry payload body")
 			}
 		}(r.Body)
+
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			if _, ok := errors.AsType[*http.MaxBytesError](err); ok {
+				http.Error(w, "Request body too large", http.StatusRequestEntityTooLarge)
+				return
+			}
+			log.Error().Err(err).Msg("failed to read telemetry payload")
+			http.Error(w, "Failed to read request body", http.StatusBadRequest)
+			return
+		}
 
 		var payload TelemetryPayload
 		if err := json.Unmarshal(body, &payload); err != nil {
@@ -98,6 +123,11 @@ func (p *Provider) ProxyHandler() http.HandlerFunc {
 
 		// Forward the spans to the OTLP endpoint
 		if err := p.forwardToOTLP(r.Context(), payload); err != nil {
+			if validationErr, ok := errors.AsType[*telemetryValidationError](err); ok {
+				http.Error(w, "Invalid telemetry payload: "+validationErr.Error(), http.StatusBadRequest)
+				return
+			}
+
 			log.Error().Err(err).Msg("failed to forward telemetry to OTLP endpoint")
 			http.Error(w, "Failed to forward telemetry", http.StatusInternalServerError)
 			return
@@ -262,6 +292,10 @@ func (p *Provider) createProxyClient(_ context.Context) (otlpClient, error) {
 
 // convertToOTLPSpans converts frontend spans to OTLP protobuf format
 func (p *Provider) convertToOTLPSpans(payload TelemetryPayload) ([]*tracepb.ResourceSpans, error) {
+	if len(payload.Spans) == 0 {
+		return nil, &telemetryValidationError{msg: "payload contains no spans"}
+	}
+
 	// Group spans by resource (in our case, all frontend spans share the same resource)
 	serviceName := p.cfg.ServiceName + "-frontend"
 
@@ -277,17 +311,12 @@ func (p *Provider) convertToOTLPSpans(payload TelemetryPayload) ([]*tracepb.Reso
 
 	// Convert all spans
 	otlpSpans := make([]*tracepb.Span, 0, len(payload.Spans))
-	for _, frontendSpan := range payload.Spans {
+	for i, frontendSpan := range payload.Spans {
 		otlpSpan, err := convertSpanToProto(frontendSpan)
 		if err != nil {
-			log.Warn().Err(err).Str("span", frontendSpan.Name).Msg("failed to convert span, skipping")
-			continue
+			return nil, &telemetryValidationError{msg: fmt.Sprintf("span[%d] (%q): %v", i, frontendSpan.Name, err)}
 		}
 		otlpSpans = append(otlpSpans, otlpSpan)
-	}
-
-	if len(otlpSpans) == 0 {
-		return nil, fmt.Errorf("no valid spans to export")
 	}
 
 	// Create the resource spans structure
@@ -313,25 +342,39 @@ func (p *Provider) convertToOTLPSpans(payload TelemetryPayload) ([]*tracepb.Reso
 
 // convertSpanToProto converts a single frontend span to OTLP protobuf format
 func convertSpanToProto(frontendSpan FrontendSpan) (*tracepb.Span, error) {
-	// Parse trace ID
-	traceID, err := hex.DecodeString(frontendSpan.TraceID)
+	traceID, err := decodeHexID(frontendSpan.TraceID, traceIDLengthBytes, "trace ID")
 	if err != nil {
-		return nil, fmt.Errorf("invalid trace ID: %w", err)
+		return nil, err
 	}
 
-	// Parse span ID
-	spanID, err := hex.DecodeString(frontendSpan.SpanID)
+	spanID, err := decodeHexID(frontendSpan.SpanID, spanIDLengthBytes, "span ID")
 	if err != nil {
-		return nil, fmt.Errorf("invalid span ID: %w", err)
+		return nil, err
 	}
 
 	// Parse parent span ID if present
 	var parentSpanID []byte
 	if frontendSpan.ParentSpanID != "" {
-		parentSpanID, err = hex.DecodeString(frontendSpan.ParentSpanID)
+		parentSpanID, err = decodeHexID(frontendSpan.ParentSpanID, spanIDLengthBytes, "parent span ID")
 		if err != nil {
-			return nil, fmt.Errorf("invalid parent span ID: %w", err)
+			return nil, err
 		}
+	}
+
+	if frontendSpan.StartTime < 0 || frontendSpan.EndTime < 0 {
+		return nil, fmt.Errorf("invalid timestamps: start and end time must be non-negative")
+	}
+	if frontendSpan.EndTime < frontendSpan.StartTime {
+		return nil, fmt.Errorf("invalid timestamps: end time must be greater than or equal to start time")
+	}
+
+	startTimeUnixNano, err := millisToNanos(frontendSpan.StartTime, "startTime")
+	if err != nil {
+		return nil, err
+	}
+	endTimeUnixNano, err := millisToNanos(frontendSpan.EndTime, "endTime")
+	if err != nil {
+		return nil, err
 	}
 
 	// Convert span kind
@@ -356,12 +399,17 @@ func convertSpanToProto(frontendSpan FrontendSpan) (*tracepb.Span, error) {
 	// Convert events
 	events := make([]*tracepb.Span_Event, 0, len(frontendSpan.Events))
 	for _, event := range frontendSpan.Events {
+		eventTimeUnixNano, err := millisToNanos(event.Time, "event.time")
+		if err != nil {
+			return nil, err
+		}
+
 		eventAttrs := make([]*commonpb.KeyValue, 0, len(event.Attributes))
 		for k, v := range event.Attributes {
 			eventAttrs = append(eventAttrs, convertAttributeToProto(k, v))
 		}
 		events = append(events, &tracepb.Span_Event{
-			TimeUnixNano: uint64(event.Time * 1000000), // Convert milliseconds to nanoseconds
+			TimeUnixNano: eventTimeUnixNano,
 			Name:         event.Name,
 			Attributes:   eventAttrs,
 		})
@@ -388,12 +436,33 @@ func convertSpanToProto(frontendSpan FrontendSpan) (*tracepb.Span, error) {
 		ParentSpanId:      parentSpanID,
 		Name:              frontendSpan.Name,
 		Kind:              spanKind,
-		StartTimeUnixNano: uint64(frontendSpan.StartTime * 1000000), // Convert milliseconds to nanoseconds
-		EndTimeUnixNano:   uint64(frontendSpan.EndTime * 1000000),   // Convert milliseconds to nanoseconds
+		StartTimeUnixNano: startTimeUnixNano,
+		EndTimeUnixNano:   endTimeUnixNano,
 		Attributes:        attrs,
 		Events:            events,
 		Status:            status,
 	}, nil
+}
+
+func decodeHexID(raw string, expectedLen int, label string) ([]byte, error) {
+	decoded, err := hex.DecodeString(raw)
+	if err != nil {
+		return nil, fmt.Errorf("invalid %s: %w", label, err)
+	}
+	if len(decoded) != expectedLen {
+		return nil, fmt.Errorf("invalid %s length: got %d bytes, want %d", label, len(decoded), expectedLen)
+	}
+	return decoded, nil
+}
+
+func millisToNanos(ms int64, field string) (uint64, error) {
+	if ms < 0 {
+		return 0, fmt.Errorf("invalid %s: must be non-negative", field)
+	}
+	if ms > math.MaxInt64/nanosPerMilli {
+		return 0, fmt.Errorf("invalid %s: value overflows nanosecond conversion", field)
+	}
+	return uint64(ms * nanosPerMilli), nil
 }
 
 // convertAttributeToProto converts an attribute to OTLP protobuf format
