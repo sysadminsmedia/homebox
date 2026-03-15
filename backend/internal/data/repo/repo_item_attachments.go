@@ -870,27 +870,30 @@ func (r *AttachmentRepo) processThumbnailFromImage(ctx context.Context, groupId 
 
 	bounds := img.Bounds()
 
-	span.AddEvent("applying EXIF orientation")
+	_, exifSpan := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.processThumbnailFromImage.exif")
 	// Apply EXIF orientation if needed
 	if orientation > 1 {
 		img = utils.ApplyOrientation(img, orientation)
 		bounds = img.Bounds()
 	}
+	exifSpan.End()
 
-	span.AddEvent("resizing image")
+	_, resizeSpan := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.processThumbnailFromImage.resize")
 	newWidth, newHeight := calculateThumbnailDimensions(bounds.Dx(), bounds.Dy(), r.thumbnail.Width, r.thumbnail.Height)
 	dst := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
 	draw.CatmullRom.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
+	resizeSpan.End()
 
-	span.AddEvent("encoding thumbnail as webp")
+	_, encodeSpan := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.processThumbnailFromImage.encode")
 	buf := new(bytes.Buffer)
 	err := webp.Encode(buf, dst, webp.Options{Quality: 80, Lossless: false})
 	if err != nil {
 		return UploadResult{}, err
 	}
 	contentBytes := buf.Bytes()
-	log.Debug().Msg("uploading thumbnail file")
+	encodeSpan.End()
 
+	log.Debug().Msg("uploading thumbnail file")
 	// Get the group for uploading the thumbnail
 	group, err := r.db.Group.Get(ctx, groupId)
 	if err != nil {
