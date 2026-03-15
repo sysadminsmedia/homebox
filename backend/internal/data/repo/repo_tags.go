@@ -160,6 +160,55 @@ func (r *TagRepository) GetAll(ctx context.Context, groupID uuid.UUID) ([]TagSum
 	)
 }
 
+// GetDescendantTagIDs retrieves all descendant tag IDs for the given parent tag IDs.
+// Returns all tags that are direct or indirect children of any of the provided tag IDs.
+// Uses recursive in-memory traversal since Ent doesn't support recursive CTEs directly.
+func (r *TagRepository) GetDescendantTagIDs(ctx context.Context, tagIDs []uuid.UUID) ([]uuid.UUID, error) {
+	if len(tagIDs) == 0 {
+		return []uuid.UUID{}, nil
+	}
+
+	// Start with the provided tag IDs
+	result := make(map[uuid.UUID]bool)
+	for _, id := range tagIDs {
+		result[id] = true
+	}
+
+	// Queue of parent IDs to process
+	queue := make([]uuid.UUID, len(tagIDs))
+	copy(queue, tagIDs)
+
+	for len(queue) > 0 {
+		// Get next parent ID
+		parentID := queue[0]
+		queue = queue[1:]
+
+		// Get all direct children of this parent
+		children, err := r.db.Tag.Query().
+			Where(tag.HasParentWith(tag.ID(parentID))).
+			All(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		// Add children to result and queue
+		for _, child := range children {
+			if !result[child.ID] {
+				result[child.ID] = true
+				queue = append(queue, child.ID)
+			}
+		}
+	}
+
+	// Convert map to slice
+	descendantIDs := make([]uuid.UUID, 0, len(result))
+	for id := range result {
+		descendantIDs = append(descendantIDs, id)
+	}
+
+	return descendantIDs, nil
+}
+
 // getSubtreeDepth calculates the maximum depth of the subtree rooted at the given tag ID.
 // Uses a recursive CTE to traverse the entire subtree and find the deepest level.
 // Returns 1 for a tag with no children, and increases by 1 for each level.
