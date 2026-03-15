@@ -22,7 +22,7 @@ func NewZerologOTelHook(lp otellog.LoggerProvider, name string) *ZerologOTelHook
 }
 
 // Run implements zerolog.Hook and emits an OTel log Record with severity and message.
-func (h *ZerologOTelHook) Run(_ *zerolog.Event, level zerolog.Level, msg string) {
+func (h *ZerologOTelHook) Run(e *zerolog.Event, level zerolog.Level, msg string) {
 	if h == nil || h.logger == nil {
 		return
 	}
@@ -34,8 +34,14 @@ func (h *ZerologOTelHook) Run(_ *zerolog.Event, level zerolog.Level, msg string)
 	rec.SetSeverityText(level.String())
 	rec.SetBody(otellog.StringValue(msg))
 
-	// Emit with background context; if you have a request context, prefer passing it.
-	h.logger.Emit(context.Background(), rec)
+	ctx := context.Background()
+	if e != nil {
+		if eventCtx := e.GetCtx(); eventCtx != nil {
+			ctx = eventCtx
+		}
+	}
+
+	h.logger.Emit(ctx, rec)
 }
 
 // mapZerologLevel converts zerolog levels to OTel log severities.

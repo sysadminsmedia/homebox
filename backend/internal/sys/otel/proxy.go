@@ -258,7 +258,13 @@ func (p *Provider) createProxyClient(_ context.Context) (otlpClient, error) {
 		if p.cfg.Insecure {
 			scheme = "http"
 		}
-		url := fmt.Sprintf("%s://%s/v1/traces", scheme, p.cfg.Endpoint)
+
+		urlPath := "/v1/traces"
+		if trimmedPrefix := strings.Trim(p.cfg.PathPrefix, " /"); trimmedPrefix != "" {
+			urlPath = "/" + trimmedPrefix + urlPath
+		}
+
+		url := fmt.Sprintf("%s://%s%s", scheme, p.cfg.Endpoint, urlPath)
 
 		return &httpClient{
 			client:  &http.Client{Timeout: 30 * time.Second},

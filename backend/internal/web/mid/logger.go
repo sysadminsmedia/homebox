@@ -33,12 +33,12 @@ func Logger(l zerolog.Logger) func(http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			reqID := r.Context().Value(middleware.RequestIDKey).(string)
 
-			l.Info().Str("method", r.Method).Str("path", r.URL.Path).Str("rid", reqID).Msg("request received")
+			l.Info().Ctx(r.Context()).Str("method", r.Method).Str("path", r.URL.Path).Str("rid", reqID).Msg("request received")
 
 			s := &spy{ResponseWriter: w}
 			h.ServeHTTP(s, r)
 
-			l.Info().Str("method", r.Method).Str("path", r.URL.Path).Int("status", s.status).Str("rid", reqID).Msg("request finished")
+			l.Info().Ctx(r.Context()).Str("method", r.Method).Str("path", r.URL.Path).Int("status", s.status).Str("rid", reqID).Msg("request finished")
 		})
 	}
 }

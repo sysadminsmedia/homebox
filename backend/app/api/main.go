@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
@@ -152,7 +151,7 @@ func run(cfg *config.Config) error {
 		return fmt.Errorf("unsupported driver: %s", sqlDriver)
 	}
 
-	db, err := sql.Open(driverName, databaseURL)
+	db, err := otelProvider.OpenDatabase(driverName, databaseURL)
 	if err != nil {
 		log.Error().
 			Err(err).

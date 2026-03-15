@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
 	"github.com/XSAM/otelsql"
+	"github.com/rs/zerolog/log"
 	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 )
 
@@ -46,12 +47,18 @@ func (p *Provider) OpenDatabase(driverName, dataSourceName string) (*sql.DB, err
 		return nil, fmt.Errorf("failed to open instrumented database: %w", err)
 	}
 
-	// Register stats for metrics (ignoring registration handle and error as non-fatal)
-	_, _ = otelsql.RegisterDBStatsMetrics(db,
-		otelsql.WithAttributes(
-			semconv.DBSystemKey.String(dbSystem),
-		),
-	)
+	if p.cfg.EnableMetrics {
+		// DB stats metrics are best-effort; startup should proceed even if registration fails.
+		_, metricsErr := otelsql.RegisterDBStatsMetrics(db,
+			otelsql.WithAttributes(
+				semconv.DBSystemKey.String(dbSystem),
+			),
+			otelsql.WithMeterProvider(p.MeterProvider()),
+		)
+		if metricsErr != nil {
+			log.Warn().Err(metricsErr).Str("driver", driverName).Msg("failed to register database stats metrics")
+		}
+	}
 
 	return db, nil
 }
