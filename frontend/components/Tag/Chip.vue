@@ -14,16 +14,26 @@
       type: String as () => sizes,
       default: "md",
     },
+    hideIcon: {
+      type: Boolean,
+      default: false,
+    },
+    ancestors: {
+      type: Boolean,
+      default: false,
+    },
   });
 </script>
 
 <template>
   <NuxtLink
-    class="group/tag-chip flex gap-2 rounded-full shadow transition duration-300 hover:bg-accent/50"
+    class="group/tag-chip flex gap-2 rounded-full border shadow transition duration-300 hover:bg-accent/50"
     :class="{
       'p-4 py-1 text-base': size === 'lg',
       'p-3 py-1 text-sm': size !== 'sm' && size !== 'lg',
       'p-2 py-0.5 text-xs': size === 'sm',
+      'border-dashed italic': ancestors,
+      'border-transparent': !ancestors,
     }"
     :style="
       tag.color
@@ -32,16 +42,18 @@
     "
     :to="`/tag/${tag.id}`"
   >
-    <div class="relative">
-      <MdiTagOutline class="invisible" /><!-- hack to ensure the size is correct -->
+    <template v-if="!hideIcon">
+      <div class="relative">
+        <MdiTagOutline class="invisible" /><!-- hack to ensure the size is correct -->
 
-      <div
-        class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover/tag-chip:rotate-90"
-      >
-        <MdiTagOutline class="group-hover/tag-chip:hidden" />
-        <MdiArrowUp class="hidden group-hover/tag-chip:block" />
+        <div
+          class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover/tag-chip:rotate-90"
+        >
+          <MdiTagOutline class="group-hover/tag-chip:hidden" />
+          <MdiArrowUp class="hidden group-hover/tag-chip:block" />
+        </div>
       </div>
-    </div>
+    </template>
     {{ tag.name }}
   </NuxtLink>
 </template>

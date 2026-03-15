@@ -22,13 +22,15 @@ import (
 // TagQuery is the builder for querying Tag entities.
 type TagQuery struct {
 	config
-	ctx        *QueryContext
-	order      []tag.OrderOption
-	inters     []Interceptor
-	predicates []predicate.Tag
-	withGroup  *GroupQuery
-	withItems  *ItemQuery
-	withFKs    bool
+	ctx          *QueryContext
+	order        []tag.OrderOption
+	inters       []Interceptor
+	predicates   []predicate.Tag
+	withGroup    *GroupQuery
+	withItems    *ItemQuery
+	withParent   *TagQuery
+	withChildren *TagQuery
+	withFKs      bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -102,6 +104,50 @@ func (_q *TagQuery) QueryItems() *ItemQuery {
 			sqlgraph.From(tag.Table, tag.FieldID, selector),
 			sqlgraph.To(item.Table, item.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, tag.ItemsTable, tag.ItemsPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryParent chains the current query on the "parent" edge.
+func (_q *TagQuery) QueryParent() *TagQuery {
+	query := (&TagClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tag.Table, tag.FieldID, selector),
+			sqlgraph.To(tag.Table, tag.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, tag.ParentTable, tag.ParentColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryChildren chains the current query on the "children" edge.
+func (_q *TagQuery) QueryChildren() *TagQuery {
+	query := (&TagClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tag.Table, tag.FieldID, selector),
+			sqlgraph.To(tag.Table, tag.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, tag.ChildrenTable, tag.ChildrenColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -296,13 +342,15 @@ func (_q *TagQuery) Clone() *TagQuery {
 		return nil
 	}
 	return &TagQuery{
-		config:     _q.config,
-		ctx:        _q.ctx.Clone(),
-		order:      append([]tag.OrderOption{}, _q.order...),
-		inters:     append([]Interceptor{}, _q.inters...),
-		predicates: append([]predicate.Tag{}, _q.predicates...),
-		withGroup:  _q.withGroup.Clone(),
-		withItems:  _q.withItems.Clone(),
+		config:       _q.config,
+		ctx:          _q.ctx.Clone(),
+		order:        append([]tag.OrderOption{}, _q.order...),
+		inters:       append([]Interceptor{}, _q.inters...),
+		predicates:   append([]predicate.Tag{}, _q.predicates...),
+		withGroup:    _q.withGroup.Clone(),
+		withItems:    _q.withItems.Clone(),
+		withParent:   _q.withParent.Clone(),
+		withChildren: _q.withChildren.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -328,6 +376,28 @@ func (_q *TagQuery) WithItems(opts ...func(*ItemQuery)) *TagQuery {
 		opt(query)
 	}
 	_q.withItems = query
+	return _q
+}
+
+// WithParent tells the query-builder to eager-load the nodes that are connected to
+// the "parent" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *TagQuery) WithParent(opts ...func(*TagQuery)) *TagQuery {
+	query := (&TagClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withParent = query
+	return _q
+}
+
+// WithChildren tells the query-builder to eager-load the nodes that are connected to
+// the "children" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *TagQuery) WithChildren(opts ...func(*TagQuery)) *TagQuery {
+	query := (&TagClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withChildren = query
 	return _q
 }
 
@@ -410,12 +480,14 @@ func (_q *TagQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tag, err
 		nodes       = []*Tag{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [4]bool{
 			_q.withGroup != nil,
 			_q.withItems != nil,
+			_q.withParent != nil,
+			_q.withChildren != nil,
 		}
 	)
-	if _q.withGroup != nil {
+	if _q.withGroup != nil || _q.withParent != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -449,6 +521,19 @@ func (_q *TagQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tag, err
 		if err := _q.loadItems(ctx, query, nodes,
 			func(n *Tag) { n.Edges.Items = []*Item{} },
 			func(n *Tag, e *Item) { n.Edges.Items = append(n.Edges.Items, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withParent; query != nil {
+		if err := _q.loadParent(ctx, query, nodes, nil,
+			func(n *Tag, e *Tag) { n.Edges.Parent = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withChildren; query != nil {
+		if err := _q.loadChildren(ctx, query, nodes,
+			func(n *Tag) { n.Edges.Children = []*Tag{} },
+			func(n *Tag, e *Tag) { n.Edges.Children = append(n.Edges.Children, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -545,6 +630,69 @@ func (_q *TagQuery) loadItems(ctx context.Context, query *ItemQuery, nodes []*Ta
 		for kn := range nodes {
 			assign(kn, n)
 		}
+	}
+	return nil
+}
+func (_q *TagQuery) loadParent(ctx context.Context, query *TagQuery, nodes []*Tag, init func(*Tag), assign func(*Tag, *Tag)) error {
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*Tag)
+	for i := range nodes {
+		if nodes[i].tag_children == nil {
+			continue
+		}
+		fk := *nodes[i].tag_children
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(tag.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "tag_children" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (_q *TagQuery) loadChildren(ctx context.Context, query *TagQuery, nodes []*Tag, init func(*Tag), assign func(*Tag, *Tag)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Tag)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Tag(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(tag.ChildrenColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.tag_children
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "tag_children" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "tag_children" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }
