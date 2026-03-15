@@ -23,7 +23,22 @@
                 "new_version_available_link": "Fes clic aquí per veure les notes de la versió"
             }
         },
+        "color_selector": {
+            "clear": "Netejar color",
+            "color": "Color"
+        },
+        "form": {
+            "password": {
+                "toggle_show": "Alternar visibilitat de la contrasenya"
+            }
+        },
         "global": {
+            "copy_text": {
+                "documentation": "documentació",
+                "failed_to_copy": "No s'ha pogut copiar el text al porta-retalls",
+                "https_required": "perquè es requereix HTTPS",
+                "learn_more": "Més informació a la nostra"
+            },
             "date_time": {
                 "ago": "fa {0}",
                 "days": "dies",
@@ -49,14 +64,19 @@
                 "yesterday": "ahir"
             },
             "label_maker": {
+                "browser_print": "Imprimeix des del navegador",
+                "print": "Imprimir etiqueta",
                 "server_print": "Imprimeix al servidor",
                 "titles": "Etiquetes",
                 "toast": {
-                    "load_status_failed": "Fallat en carregar l'estat"
+                    "load_status_failed": "Fallat en carregar l'estat",
+                    "print_failed": "No s'ha pogut imprimir l'etiqueta",
+                    "print_success": "Etiqueta impresa"
                 }
             },
             "page_qr_code": {
-                "page_url": "URL de la pàgina"
+                "page_url": "URL de la pàgina",
+                "qr_tooltip": "Mostra el codi QR"
             },
             "password_score": {
                 "password_strength": "Força de la contrasenya"
@@ -66,6 +86,10 @@
             "create_modal": {
                 "item_description": "Descripció de l'article",
                 "item_name": "Nom de l'article",
+                "item_photo": "Foto de l'article 📷",
+                "item_quantity": "Quantitat de l'article",
+                "parent_item": "Article pare",
+                "product_tooltip_input_barcode": "Omplir automàticament amb un codi de barres proporcionat manualment",
                 "title": "Crea un article"
             },
             "view": {

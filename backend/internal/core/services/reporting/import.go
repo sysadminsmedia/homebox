@@ -1,4 +1,3 @@
-// Package reporting provides a way to import CSV files into the database.
 package reporting
 
 import (
@@ -7,6 +6,8 @@ import (
 	"errors"
 	"io"
 	"strings"
+
+	"github.com/samber/lo"
 )
 
 var (
@@ -89,10 +90,10 @@ func parseHeaders(headers []string) (hbHeaders map[string]int, fieldHeaders []st
 	}
 
 	required := []string{"HB.location", "HB.name"}
-	for _, h := range required {
-		if _, ok := hbHeaders[h]; !ok {
-			return nil, nil, ErrMissingRequiredHeaders
-		}
+	if !lo.EveryBy(required, func(h string) bool {
+		return lo.HasKey(hbHeaders, h)
+	}) {
+		return nil, nil, ErrMissingRequiredHeaders
 	}
 
 	if len(hbHeaders) == 0 {

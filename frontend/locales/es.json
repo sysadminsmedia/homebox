@@ -104,7 +104,7 @@
                 "create_collection": "Crear Nueva Colección",
                 "join_collection": "Unirse a Colección Existente",
                 "no_collection_found": "No se ha encontrado ninguna colección",
-                "search_collections": "Buscar Colecciones...",
+                "search_collections": "Buscar Colecciones…",
                 "select_collection": "Seleccionar Colección",
                 "your_collections": "Tus Colecciones"
             }
@@ -359,8 +359,8 @@
                 "clear": "Deseleccionar Plantillas",
                 "label": "Plantilla (Opcional)",
                 "not_found": "No se ha encontrado ninguna plantilla",
-                "search": "Buscar plantillas...",
-                "select": "Seleccionar plantilla..."
+                "search": "Buscar plantillas…",
+                "select": "Seleccionar plantilla…"
             },
             "show_defaults": "Mostrar valores predeterminados",
             "toast": {

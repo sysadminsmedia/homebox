@@ -94,6 +94,7 @@
                 "open_new_tab": "Yeni sekmede aç"
             },
             "create_modal": {
+                "clear_template": "Şablonu Temizle",
                 "delete_photo": "Fotoğrafı sil",
                 "item_description": "Ürün Açıklaması",
                 "item_name": "Ürün Adı",
@@ -132,6 +133,7 @@
                 "title": "Ürünü içe aktar"
             },
             "selector": {
+                "clear": "Öğe Seçimini Temizle",
                 "no_results": "Sonuç Bulunamadı",
                 "placeholder": "Seç…",
                 "search_placeholder": "Aramak için yazın…",
@@ -139,7 +141,9 @@
             },
             "view": {
                 "change_details": {
+                    "add_tags": "Etiketler Ekle",
                     "failed_to_update_item": "Ürün güncellemesi başarısız oldu",
+                    "remove_tags": "Etiketleri Kaldır",
                     "title": "Ürün detaylarını değiştir"
                 },
                 "selectable": {

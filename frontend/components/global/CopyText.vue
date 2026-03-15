@@ -50,7 +50,7 @@
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
-        <AlertDialogAction>Continue</AlertDialogAction>
+        <AlertDialogAction>{{ $t("components.global.copy_text.continue") }}</AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>

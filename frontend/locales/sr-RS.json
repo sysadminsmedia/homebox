@@ -1,0 +1,16 @@
+{
+    "collection": {
+        "copy_invite": "kopiraj link poziva",
+        "create_invite": "napravi poziv",
+        "delete_collection": "izbrisi kolekciju",
+        "delete_confirm": "dali ste sigurni da zelite da izbrisete kolekciju? ovaj akcija ne moza da se ponistiti",
+        "deleted_collection": "kolekcija ponistena",
+        "expires_at": "istice",
+        "invite_token": "token",
+        "invite_token_hidden": "vise nije vidljivo",
+        "invite_token_warning": "poziv tokeni samo se pokazu jedanput. zacuvaj link sad; kasnije nije mocuge da se pojavi open kad izadjes iz stranice ili ako obnovis stranicu",
+        "invites": "poziva",
+        "invites_delete_confirm": "dali ste sigurni da zelite da izbrisete ovaj poziv?",
+        "leave_collection": "ostavi kolekciju"
+    }
+}

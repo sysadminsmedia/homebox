@@ -215,8 +215,18 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 		}(bucket)
 
 		// Set the Content-Disposition header for RFC6266 compliance
-		disposition := "inline; filename*=UTF-8''" + url.QueryEscape(doc.Title)
+		disposition := "attachment"
+		if isSafeInlineType(doc.MimeType) {
+			disposition = "inline"
+		}
+		disposition += "; filename*=UTF-8''" + url.QueryEscape(doc.Title)
 		w.Header().Set("Content-Disposition", disposition)
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		w.Header().Set("X-Frame-Options", "DENY")
+		w.Header().Set("X-Download-Options", "noopen")
+		// Set strict CSP for all attachments to prevent any script execution
+		// Even for "safe" types, we want to ensure no inline scripts can execute
+		w.Header().Set("Content-Security-Policy", "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; sandbox;")
 		http.ServeContent(w, r, doc.Title, doc.CreatedAt, file)
 		return nil
 
@@ -250,4 +260,47 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 	}
 
 	return nil
+}
+
+// isSafeInlineType returns true if the MIME type is safe to display inline
+func isSafeInlineType(mimeType string) bool {
+	safeMimeTypes := map[string]bool{
+		"image/jpeg":      true,
+		"image/jpg":       true,
+		"image/png":       true,
+		"image/gif":       true,
+		"image/webp":      true,
+		"image/bmp":       true,
+		"image/tiff":      true,
+		"image/avif":      true,
+		"image/ico":       true,
+		"image/x-icon":    true,
+		"application/pdf": true, // PDFs are generally safe with proper CSP
+	}
+
+	// Check exact match
+	if safeMimeTypes[strings.ToLower(mimeType)] {
+		return true
+	}
+
+	// Block any text/html, application/javascript, image/svg+xml explicitly
+	dangerousTypes := []string{
+		"text/html",
+		"text/xml",
+		"application/xhtml",
+		"application/xml",
+		"application/javascript",
+		"text/javascript",
+		"image/svg+xml",
+		"image/svg",
+	}
+
+	lowerMime := strings.ToLower(mimeType)
+	for _, dangerous := range dangerousTypes {
+		if strings.Contains(lowerMime, dangerous) {
+			return false
+		}
+	}
+
+	return false
 }

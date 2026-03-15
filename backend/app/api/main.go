@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
@@ -31,7 +32,10 @@ import (
 	"github.com/rs/zerolog/pkgerrors"
 	"go.balki.me/anyhttp"
 
-	_ "github.com/lib/pq"
+	"entgo.io/ent/dialect"
+	entsql "entgo.io/ent/dialect/sql"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/postgres"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/sqlite3"
 	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
@@ -135,48 +139,45 @@ func run(cfg *config.Config) error {
 		return err
 	}
 
-	// Open database with optional OpenTelemetry instrumentation
-	var c *ent.Client
-	if otelProvider.DatabaseTracingEnabled() {
-		entDriver, err := otelProvider.OpenEntDriver(strings.ToLower(cfg.Database.Driver), databaseURL)
-		if err != nil {
-			log.Error().
-				Err(err).
-				Str("driver", strings.ToLower(cfg.Database.Driver)).
-				Msg("failed to open instrumented database connection")
-			return fmt.Errorf("failed to open instrumented database connection: %w", err)
-		}
-		c = ent.NewClient(ent.Driver(entDriver))
-	} else {
-		c, err = ent.Open(strings.ToLower(cfg.Database.Driver), databaseURL)
-		if err != nil {
-			log.Error().
-				Err(err).
-				Str("driver", strings.ToLower(cfg.Database.Driver)).
-				Str("host", cfg.Database.Host).
-				Str("port", cfg.Database.Port).
-				Str("database", cfg.Database.Database).
-				Msg("failed opening connection to {driver} database at {host}:{port}/{database}")
-			return fmt.Errorf("failed opening connection to %s database at %s:%s/%s: %w",
-				strings.ToLower(cfg.Database.Driver),
-				cfg.Database.Host,
-				cfg.Database.Port,
-				cfg.Database.Database,
-				err,
-			)
-		}
+	sqlDriver := strings.ToLower(cfg.Database.Driver)
+	var driverName string
+	switch sqlDriver {
+	case config.DriverPostgres:
+		driverName = "pgx"
+		sqlDriver = dialect.Postgres
+	case config.DriverSqlite3, "sqlite":
+		driverName = "sqlite3"
+		sqlDriver = dialect.SQLite
+	default:
+		return fmt.Errorf("unsupported driver: %s", sqlDriver)
 	}
 
-	// Ensure database is closed if we return early before runner starts
-	// This flag will be set to true once the runner takes over cleanup responsibility
-	dbCleanupHandled := false
-	defer func() {
-		if !dbCleanupHandled {
-			if err := c.Close(); err != nil {
-				log.Error().Err(err).Msg("failed to close database connection during cleanup")
-			}
+	db, err := sql.Open(driverName, databaseURL)
+	if err != nil {
+		log.Error().
+			Err(err).
+			Str("driver", strings.ToLower(cfg.Database.Driver)).
+			Str("host", cfg.Database.Host).
+			Str("port", cfg.Database.Port).
+			Str("database", cfg.Database.Database).
+			Msg("failed opening connection to {driver} database at {host}:{port}/{database}")
+		return fmt.Errorf("failed opening connection to %s database at %s:%s/%s: %w",
+			strings.ToLower(cfg.Database.Driver),
+			cfg.Database.Host,
+			cfg.Database.Port,
+			cfg.Database.Database,
+			err,
+		)
+	}
+
+	drv := entsql.OpenDB(sqlDriver, db)
+	c := ent.NewClient(ent.Driver(drv))
+	defer func(c *ent.Client) {
+		err := c.Close()
+		if err != nil {
+			log.Error().Err(err).Msg("failed to close database connection")
 		}
-	}()
+	}(c)
 
 	migrationsFs, err := migrations.Migrations(strings.ToLower(cfg.Database.Driver))
 	if err != nil {
@@ -216,6 +217,7 @@ func run(cfg *config.Config) error {
 		app.repos,
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),
 		services.WithCurrencies(currencyData),
+		services.WithNotifierConfig(&cfg.Notifier),
 	)
 
 	// =========================================================================
@@ -251,13 +253,6 @@ func run(cfg *config.Config) error {
 	app.mountRoutes(router, chain, app.repos)
 
 	runner := graceful.NewRunner()
-
-	// Add database shutdown
-	runner.AddFunc("database-shutdown", func(ctx context.Context) error {
-		<-ctx.Done()
-		log.Info().Msg("closing database connection")
-		return c.Close()
-	})
 
 	// Add OpenTelemetry shutdown
 	if otelProvider.IsEnabled() {
@@ -335,7 +330,5 @@ func run(cfg *config.Config) error {
 		}))
 	}
 
-	// Mark that database cleanup is now handled by the runner's shutdown func
-	dbCleanupHandled = true
 	return runner.Start(context.Background())
 }
