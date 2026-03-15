@@ -101,12 +101,11 @@ class BackendProxyExporter implements SpanExporter {
 
   private convertSpan(span: ReadableSpan): object {
     const spanContext = span.spanContext();
-    // Get parent span ID from the span context if available
-    const parentSpanContext = (span as unknown as { parentSpanId?: string }).parentSpanId;
+    const parentSpanContext = span.parentSpanContext;
     return {
       traceId: spanContext.traceId,
       spanId: spanContext.spanId,
-      parentSpanId: parentSpanContext || undefined,
+      parentSpanId: parentSpanContext?.spanId,
       name: span.name,
       kind: this.spanKindToString(span.kind),
       startTime: span.startTime[0] * 1000 + Math.floor(span.startTime[1] / 1000000),

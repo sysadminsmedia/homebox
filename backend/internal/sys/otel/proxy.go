@@ -17,6 +17,7 @@ import (
 	resourcepb "go.opentelemetry.io/proto/otlp/resource/v1"
 	tracepb "go.opentelemetry.io/proto/otlp/trace/v1"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/proto"
 )
@@ -239,6 +240,8 @@ func (p *Provider) createProxyClient(_ context.Context) (otlpClient, error) {
 		dialOpts := []grpc.DialOption{}
 		if p.cfg.Insecure {
 			dialOpts = append(dialOpts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		} else {
+			dialOpts = append(dialOpts, grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")))
 		}
 
 		conn, err := grpc.NewClient(p.cfg.Endpoint, dialOpts...)

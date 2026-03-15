@@ -47,7 +47,7 @@ func (p *Provider) OpenDatabase(driverName, dataSourceName string) (*sql.DB, err
 	}
 
 	// Register stats for metrics (ignoring error as it's non-fatal)
-	_, _ = otelsql.RegisterDBStatsMetrics(db,
+	_ = otelsql.RegisterDBStatsMetrics(db,
 		otelsql.WithAttributes(
 			semconv.DBSystemKey.String(dbSystem),
 		),

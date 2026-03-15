@@ -233,7 +233,6 @@ func run(cfg *config.Config) error {
 			otelchi.Middleware(cfg.Otel.ServiceName, otelchi.WithChiRoutes(router)),
 			otelchimetric.NewResponseSizeBytes(otelChiBaseCfg),
 			otelchimetric.NewRequestInFlight(otelChiBaseCfg),
-			otelchimetric.NewResponseSizeBytes(otelChiBaseCfg),
 		)
 	}
 
