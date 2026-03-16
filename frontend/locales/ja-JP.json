@@ -1,4 +1,10 @@
 {
+    "collection": {
+        "copy_invite": "招待リンクをコピー",
+        "delete_collection": "コレクション削除",
+        "delete_confirm": "このコレクションを削除しますか？取り消しはできません。",
+        "deleted_collection": "コレクションを削除しました。"
+    },
     "components": {
         "app": {
             "create_modal": {
