@@ -202,7 +202,7 @@ export default defineConfig({
                 useThemedSelectionColors: true,
                 minSyntaxHighlightingColorContrast: 5.0, // Ensure the minimum contrast is at least .5 units higher than WCAG 2.2 AA
                 shiki: { // We set the languages we actually use to try to reduce bundle sizes
-                    bundledLangs: ['bash', 'typescript', 'javascript', 'json', 'yaml', 'go', 'systemd', 'vue', 'vue-html', 'astro', 'css', 'sql'],
+                    bundledLangs: ['bash', 'typescript', 'javascript', 'json', 'yaml', 'yml', 'go', 'systemd', 'vue', 'vue-html', 'astro', 'css', 'sql'],
                 }
             }
         }),
