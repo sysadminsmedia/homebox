@@ -14,6 +14,7 @@ const (
 	EventLabelMutation    Event = "label.mutation"
 	EventLocationMutation Event = "location.mutation"
 	EventItemMutation     Event = "item.mutation"
+	EventUserMutation     Event = "user.mutation"
 )
 
 type GroupMutationEvent struct {
@@ -40,6 +41,7 @@ func New() *EventBus {
 			EventLabelMutation:    {},
 			EventLocationMutation: {},
 			EventItemMutation:     {},
+			EventUserMutation:     {},
 		},
 	}
 }

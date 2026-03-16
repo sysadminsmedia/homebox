@@ -9,6 +9,7 @@ import (
 	"github.com/hay-kot/httpkit/server"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
@@ -165,6 +166,8 @@ func (ctrl *V1Controller) HandleUserSelfSettingsUpdate() errchain.HandlerFunc {
 		if err := ctrl.svc.User.SetSettings(r.Context(), actor.ID, settings); err != nil {
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
+
+		ctrl.bus.Publish(eventbus.EventUserMutation, eventbus.GroupMutationEvent{GID: actor.GroupID})
 
 		newSettings, err := ctrl.svc.User.GetSettings(r.Context(), actor.ID)
 		if err != nil {
