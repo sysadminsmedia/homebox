@@ -116,14 +116,14 @@ func (_u *ItemUpdate) ClearNotes() *ItemUpdate {
 }
 
 // SetQuantity sets the "quantity" field.
-func (_u *ItemUpdate) SetQuantity(v int) *ItemUpdate {
+func (_u *ItemUpdate) SetQuantity(v float64) *ItemUpdate {
 	_u.mutation.ResetQuantity()
 	_u.mutation.SetQuantity(v)
 	return _u
 }
 
 // SetNillableQuantity sets the "quantity" field if the given value is not nil.
-func (_u *ItemUpdate) SetNillableQuantity(v *int) *ItemUpdate {
+func (_u *ItemUpdate) SetNillableQuantity(v *float64) *ItemUpdate {
 	if v != nil {
 		_u.SetQuantity(*v)
 	}
@@ -131,7 +131,7 @@ func (_u *ItemUpdate) SetNillableQuantity(v *int) *ItemUpdate {
 }
 
 // AddQuantity adds value to the "quantity" field.
-func (_u *ItemUpdate) AddQuantity(v int) *ItemUpdate {
+func (_u *ItemUpdate) AddQuantity(v float64) *ItemUpdate {
 	_u.mutation.AddQuantity(v)
 	return _u
 }
@@ -833,10 +833,10 @@ func (_u *ItemUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(item.FieldNotes, field.TypeString)
 	}
 	if value, ok := _u.mutation.Quantity(); ok {
-		_spec.SetField(item.FieldQuantity, field.TypeInt, value)
+		_spec.SetField(item.FieldQuantity, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.AddedQuantity(); ok {
-		_spec.AddField(item.FieldQuantity, field.TypeInt, value)
+		_spec.AddField(item.FieldQuantity, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.Insured(); ok {
 		_spec.SetField(item.FieldInsured, field.TypeBool, value)
@@ -1341,14 +1341,14 @@ func (_u *ItemUpdateOne) ClearNotes() *ItemUpdateOne {
 }
 
 // SetQuantity sets the "quantity" field.
-func (_u *ItemUpdateOne) SetQuantity(v int) *ItemUpdateOne {
+func (_u *ItemUpdateOne) SetQuantity(v float64) *ItemUpdateOne {
 	_u.mutation.ResetQuantity()
 	_u.mutation.SetQuantity(v)
 	return _u
 }
 
 // SetNillableQuantity sets the "quantity" field if the given value is not nil.
-func (_u *ItemUpdateOne) SetNillableQuantity(v *int) *ItemUpdateOne {
+func (_u *ItemUpdateOne) SetNillableQuantity(v *float64) *ItemUpdateOne {
 	if v != nil {
 		_u.SetQuantity(*v)
 	}
@@ -1356,7 +1356,7 @@ func (_u *ItemUpdateOne) SetNillableQuantity(v *int) *ItemUpdateOne {
 }
 
 // AddQuantity adds value to the "quantity" field.
-func (_u *ItemUpdateOne) AddQuantity(v int) *ItemUpdateOne {
+func (_u *ItemUpdateOne) AddQuantity(v float64) *ItemUpdateOne {
 	_u.mutation.AddQuantity(v)
 	return _u
 }
@@ -2088,10 +2088,10 @@ func (_u *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) {
 		_spec.ClearField(item.FieldNotes, field.TypeString)
 	}
 	if value, ok := _u.mutation.Quantity(); ok {
-		_spec.SetField(item.FieldQuantity, field.TypeInt, value)
+		_spec.SetField(item.FieldQuantity, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.AddedQuantity(); ok {
-		_spec.AddField(item.FieldQuantity, field.TypeInt, value)
+		_spec.AddField(item.FieldQuantity, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.Insured(); ok {
 		_spec.SetField(item.FieldInsured, field.TypeBool, value)

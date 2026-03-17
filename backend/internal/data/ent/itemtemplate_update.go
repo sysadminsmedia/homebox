@@ -94,14 +94,14 @@ func (_u *ItemTemplateUpdate) ClearNotes() *ItemTemplateUpdate {
 }
 
 // SetDefaultQuantity sets the "default_quantity" field.
-func (_u *ItemTemplateUpdate) SetDefaultQuantity(v int) *ItemTemplateUpdate {
+func (_u *ItemTemplateUpdate) SetDefaultQuantity(v float64) *ItemTemplateUpdate {
 	_u.mutation.ResetDefaultQuantity()
 	_u.mutation.SetDefaultQuantity(v)
 	return _u
 }
 
 // SetNillableDefaultQuantity sets the "default_quantity" field if the given value is not nil.
-func (_u *ItemTemplateUpdate) SetNillableDefaultQuantity(v *int) *ItemTemplateUpdate {
+func (_u *ItemTemplateUpdate) SetNillableDefaultQuantity(v *float64) *ItemTemplateUpdate {
 	if v != nil {
 		_u.SetDefaultQuantity(*v)
 	}
@@ -109,7 +109,7 @@ func (_u *ItemTemplateUpdate) SetNillableDefaultQuantity(v *int) *ItemTemplateUp
 }
 
 // AddDefaultQuantity adds value to the "default_quantity" field.
-func (_u *ItemTemplateUpdate) AddDefaultQuantity(v int) *ItemTemplateUpdate {
+func (_u *ItemTemplateUpdate) AddDefaultQuantity(v float64) *ItemTemplateUpdate {
 	_u.mutation.AddDefaultQuantity(v)
 	return _u
 }
@@ -500,10 +500,10 @@ func (_u *ItemTemplateUpdate) sqlSave(ctx context.Context) (_node int, err error
 		_spec.ClearField(itemtemplate.FieldNotes, field.TypeString)
 	}
 	if value, ok := _u.mutation.DefaultQuantity(); ok {
-		_spec.SetField(itemtemplate.FieldDefaultQuantity, field.TypeInt, value)
+		_spec.SetField(itemtemplate.FieldDefaultQuantity, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.AddedDefaultQuantity(); ok {
-		_spec.AddField(itemtemplate.FieldDefaultQuantity, field.TypeInt, value)
+		_spec.AddField(itemtemplate.FieldDefaultQuantity, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.DefaultInsured(); ok {
 		_spec.SetField(itemtemplate.FieldDefaultInsured, field.TypeBool, value)
@@ -745,14 +745,14 @@ func (_u *ItemTemplateUpdateOne) ClearNotes() *ItemTemplateUpdateOne {
 }
 
 // SetDefaultQuantity sets the "default_quantity" field.
-func (_u *ItemTemplateUpdateOne) SetDefaultQuantity(v int) *ItemTemplateUpdateOne {
+func (_u *ItemTemplateUpdateOne) SetDefaultQuantity(v float64) *ItemTemplateUpdateOne {
 	_u.mutation.ResetDefaultQuantity()
 	_u.mutation.SetDefaultQuantity(v)
 	return _u
 }
 
 // SetNillableDefaultQuantity sets the "default_quantity" field if the given value is not nil.
-func (_u *ItemTemplateUpdateOne) SetNillableDefaultQuantity(v *int) *ItemTemplateUpdateOne {
+func (_u *ItemTemplateUpdateOne) SetNillableDefaultQuantity(v *float64) *ItemTemplateUpdateOne {
 	if v != nil {
 		_u.SetDefaultQuantity(*v)
 	}
@@ -760,7 +760,7 @@ func (_u *ItemTemplateUpdateOne) SetNillableDefaultQuantity(v *int) *ItemTemplat
 }
 
 // AddDefaultQuantity adds value to the "default_quantity" field.
-func (_u *ItemTemplateUpdateOne) AddDefaultQuantity(v int) *ItemTemplateUpdateOne {
+func (_u *ItemTemplateUpdateOne) AddDefaultQuantity(v float64) *ItemTemplateUpdateOne {
 	_u.mutation.AddDefaultQuantity(v)
 	return _u
 }
@@ -1181,10 +1181,10 @@ func (_u *ItemTemplateUpdateOne) sqlSave(ctx context.Context) (_node *ItemTempla
 		_spec.ClearField(itemtemplate.FieldNotes, field.TypeString)
 	}
 	if value, ok := _u.mutation.DefaultQuantity(); ok {
-		_spec.SetField(itemtemplate.FieldDefaultQuantity, field.TypeInt, value)
+		_spec.SetField(itemtemplate.FieldDefaultQuantity, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.AddedDefaultQuantity(); ok {
-		_spec.AddField(itemtemplate.FieldDefaultQuantity, field.TypeInt, value)
+		_spec.AddField(itemtemplate.FieldDefaultQuantity, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.DefaultInsured(); ok {
 		_spec.SetField(itemtemplate.FieldDefaultInsured, field.TypeBool, value)

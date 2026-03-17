@@ -104,13 +104,13 @@ func (_c *ItemCreate) SetNillableNotes(v *string) *ItemCreate {
 }
 
 // SetQuantity sets the "quantity" field.
-func (_c *ItemCreate) SetQuantity(v int) *ItemCreate {
+func (_c *ItemCreate) SetQuantity(v float64) *ItemCreate {
 	_c.mutation.SetQuantity(v)
 	return _c
 }
 
 // SetNillableQuantity sets the "quantity" field if the given value is not nil.
-func (_c *ItemCreate) SetNillableQuantity(v *int) *ItemCreate {
+func (_c *ItemCreate) SetNillableQuantity(v *float64) *ItemCreate {
 	if v != nil {
 		_c.SetQuantity(*v)
 	}
@@ -717,7 +717,7 @@ func (_c *ItemCreate) createSpec() (*Item, *sqlgraph.CreateSpec) {
 		_node.Notes = value
 	}
 	if value, ok := _c.mutation.Quantity(); ok {
-		_spec.SetField(item.FieldQuantity, field.TypeInt, value)
+		_spec.SetField(item.FieldQuantity, field.TypeFloat64, value)
 		_node.Quantity = value
 	}
 	if value, ok := _c.mutation.Insured(); ok {

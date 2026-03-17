@@ -21,11 +21,11 @@ type ExportCSVRow struct {
 	Archived  bool           `csv:"HB.archived"`
 	URL       string         `csv:"HB.url"`
 
-	Name        string `csv:"HB.name"`
-	Quantity    int    `csv:"HB.quantity"`
-	Description string `csv:"HB.description"`
-	Insured     bool   `csv:"HB.insured"`
-	Notes       string `csv:"HB.notes"`
+	Name        string  `csv:"HB.name"`
+	Quantity    float64 `csv:"HB.quantity"`
+	Description string  `csv:"HB.description"`
+	Insured     bool    `csv:"HB.insured"`
+	Notes       string  `csv:"HB.notes"`
 
 	PurchasePrice float64    `csv:"HB.purchase_price"`
 	PurchaseFrom  string     `csv:"HB.purchase_from"`

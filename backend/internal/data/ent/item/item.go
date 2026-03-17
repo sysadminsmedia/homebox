@@ -205,7 +205,7 @@ var (
 	// NotesValidator is a validator for the "notes" field. It is called by the builders before save.
 	NotesValidator func(string) error
 	// DefaultQuantity holds the default value on creation for the "quantity" field.
-	DefaultQuantity int
+	DefaultQuantity float64
 	// DefaultInsured holds the default value on creation for the "insured" field.
 	DefaultInsured bool
 	// DefaultArchived holds the default value on creation for the "archived" field.
