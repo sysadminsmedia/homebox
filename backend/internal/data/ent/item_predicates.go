@@ -61,102 +61,71 @@ func buildSQLiteNormalizeExpression(fieldExpr string) string {
 	return buildGenericNormalizeExpression(fieldExpr)
 }
 
-// buildGenericNormalizeExpression creates a database-agnostic expression to normalize common accented characters
+type accentPair struct {
+	from string
+	to   string
+}
+
+var accentReplacements = []accentPair{
+	// Spanish
+	{"á", "a"}, {"é", "e"}, {"í", "i"}, {"ó", "o"}, {"ú", "u"}, {"ñ", "n"},
+	{"Á", "A"}, {"É", "E"}, {"Í", "I"}, {"Ó", "O"}, {"Ú", "U"}, {"Ñ", "N"},
+
+	// French
+	{"è", "e"}, {"ê", "e"}, {"à", "a"}, {"ç", "c"},
+	{"È", "E"}, {"Ê", "E"}, {"À", "A"}, {"Ç", "C"},
+
+	// German / Portuguese
+	{"ä", "a"}, {"ö", "o"}, {"ü", "u"}, {"ã", "a"}, {"õ", "o"},
+	{"Ä", "A"}, {"Ö", "O"}, {"Ü", "U"}, {"Ã", "A"}, {"Õ", "O"},
+
+	// Greek lowercase
+	{"α", "a"}, {"β", "v"}, {"γ", "g"}, {"δ", "d"}, {"ε", "e"},
+	{"ζ", "z"}, {"η", "i"}, {"θ", "th"}, {"ι", "i"}, {"κ", "k"},
+	{"λ", "l"}, {"μ", "m"}, {"ν", "n"}, {"ξ", "x"}, {"ο", "o"},
+	{"π", "p"}, {"ρ", "r"}, {"σ", "s"}, {"ς", "s"}, {"τ", "t"},
+	{"υ", "y"}, {"φ", "f"}, {"χ", "ch"}, {"ψ", "ps"}, {"ω", "o"},
+
+	// Greek accented lowercase
+	{"ά", "a"}, {"έ", "e"}, {"ή", "i"}, {"ί", "i"}, {"ϊ", "i"}, {"ΐ", "i"},
+	{"ό", "o"}, {"ώ", "o"}, {"ύ", "y"}, {"ϋ", "y"}, {"ΰ", "y"},
+
+	// Greek uppercase
+	{"Α", "A"}, {"Β", "V"}, {"Γ", "G"}, {"Δ", "D"}, {"Ε", "E"},
+	{"Ζ", "Z"}, {"Η", "I"}, {"Θ", "TH"}, {"Ι", "I"}, {"Κ", "K"},
+	{"Λ", "L"}, {"Μ", "M"}, {"Ν", "N"}, {"Ξ", "X"}, {"Ο", "O"},
+	{"Π", "P"}, {"Ρ", "R"}, {"Σ", "S"}, {"Τ", "T"}, {"Υ", "Y"},
+	{"Φ", "F"}, {"Χ", "CH"}, {"Ψ", "PS"}, {"Ω", "O"},
+
+	// Greek accented uppercase
+	{"Ά", "A"}, {"Έ", "E"}, {"Ή", "I"}, {"Ί", "I"}, {"Ϊ", "I"},
+	{"Ό", "O"}, {"Ώ", "O"}, {"Ύ", "Y"}, {"Ϋ", "Y"},
+}
+
 func buildGenericNormalizeExpression(fieldExpr string) string {
-	// Chain REPLACE functions to handle the most common accented characters
-	// Focused on the most frequently used accents in Spanish, French, and Portuguese
-	// Ordered by frequency of use for better performance
 	normalized := fieldExpr
 
-	// Most common accented characters ordered by frequency and any other language-specific characters.
-	replacements := []struct {
-		from, to string
-	}{
-		// Spanish - most common
-		{"á", "a"}, {"é", "e"}, {"í", "i"}, {"ó", "o"}, {"ú", "u"}, {"ñ", "n"},
-		{"Á", "A"}, {"É", "E"}, {"Í", "I"}, {"Ó", "O"}, {"Ú", "U"}, {"Ñ", "N"},
-
-		// French - most common
-		{"è", "e"}, {"ê", "e"}, {"à", "a"}, {"ç", "c"},
-		{"È", "E"}, {"Ê", "E"}, {"À", "A"}, {"Ç", "C"},
-
-		// German umlauts and Portuguese - common
-		{"ä", "a"}, {"ö", "o"}, {"ü", "u"}, {"ã", "a"}, {"õ", "o"},
-		{"Ä", "A"}, {"Ö", "O"}, {"Ü", "U"}, {"Ã", "A"}, {"Õ", "O"},
-
-		// Greek alphabet (small characters)
-		{"α", "a"}, {"β", "v"}, {"γ", "g"}, {"δ", "d"}, {"ε", "e"},
-		{"ζ", "z"}, {"η", "i"}, {"θ", "th"}, {"ι", "i"}, {"κ", "k"},
-		{"λ", "l"}, {"μ", "m"}, {"ν", "n"}, {"ξ", "x"}, {"ο", "o"},
-		{"π", "p"}, {"ρ", "r"}, {"σ", "s"}, {"ς", "s"}, {"τ", "t"},
-		{"υ", "y"}, {"φ", "f"}, {"χ", "ch"}, {"ψ", "ps"}, {"ω", "o"},
-
-		// Greek accented small characters
-		{"ά", "a"}, {"έ", "e"}, {"ή", "i"}, {"ί", "i"}, {"ϊ", "i"}, {"ΐ", "i"},
-		{"ό", "o"}, {"ώ", "o"}, {"ύ", "y"}, {"ϋ", "y"}, {"ΰ", "y"},
-
-		// Greek alphabet (capital characters)
-		{"Α", "A"}, {"Β", "V"}, {"Γ", "G"}, {"Δ", "D"}, {"Ε", "E"},
-		{"Ζ", "Z"}, {"Η", "I"}, {"Θ", "TH"}, {"Ι", "I"}, {"Κ", "K"},
-		{"Λ", "L"}, {"Μ", "M"}, {"Ν", "N"}, {"Ξ", "X"}, {"Ο", "O"},
-		{"Π", "P"}, {"Ρ", "R"}, {"Σ", "S"}, {"Τ", "T"}, {"Υ", "Y"},
-		{"Φ", "F"}, {"Χ", "CH"}, {"Ψ", "PS"}, {"Ω", "O"},
-
-		// Greek accented capital characters
-		{"Ά", "A"}, {"Έ", "E"}, {"Ή", "I"}, {"Ί", "I"}, {"Ϊ", "I"},
-		{"Ό", "O"}, {"Ώ", "O"}, {"Ύ", "Y"}, {"Ϋ", "Y"},
+	for _, r := range accentReplacements {
+		normalized = "REPLACE(" + normalized + ", '" + r.from + "', '" + r.to + "')"
 	}
-
-	for _, accent := range replacements {
-		normalized = "REPLACE(" + normalized + ", '" + accent.from + "', '" + accent.to + "')"
-	}
-
 	return normalized
+}
+
+var accentReplacer = strings.NewReplacer(flattenReplacements(accentReplacements)...)
+
+func flattenReplacements(pairs []accentPair) []string {
+	out := make([]string, 0, len(pairs)*2)
+	for _, p := range pairs {
+		out = append(out, p.from, p.to)
+	}
+	return out
 }
 
 func NormalizeString(input string) string {
 	if input == "" {
 		return ""
 	}
-
-	replacer := strings.NewReplacer(
-		// Spanish
-		"á", "a", "é", "e", "í", "i", "ó", "o", "ú", "u", "ñ", "n",
-		"Á", "A", "É", "E", "Í", "I", "Ó", "O", "Ú", "U", "Ñ", "N",
-
-		// French
-		"è", "e", "ê", "e", "à", "a", "ç", "c",
-		"È", "E", "Ê", "E", "À", "A", "Ç", "C",
-
-		// German / Portuguese
-		"ä", "a", "ö", "o", "ü", "u", "ã", "a", "õ", "o",
-		"Ä", "A", "Ö", "O", "Ü", "U", "Ã", "A", "Õ", "O",
-
-		// Greek lowercase
-		"α", "a", "β", "v", "γ", "g", "δ", "d", "ε", "e",
-		"ζ", "z", "η", "i", "θ", "th", "ι", "i", "κ", "k",
-		"λ", "l", "μ", "m", "ν", "n", "ξ", "x", "ο", "o",
-		"π", "p", "ρ", "r", "σ", "s", "ς", "s", "τ", "t",
-		"υ", "y", "φ", "f", "χ", "ch", "ψ", "ps", "ω", "o",
-
-		// Greek accented lowercase
-		"ά", "a", "έ", "e", "ή", "i", "ί", "i", "ϊ", "i", "ΐ", "i",
-		"ό", "o", "ώ", "o", "ύ", "y", "ϋ", "y", "ΰ", "y",
-
-		// Greek uppercase
-		"Α", "A", "Β", "V", "Γ", "G", "Δ", "D", "Ε", "E",
-		"Ζ", "Z", "Η", "I", "Θ", "TH", "Ι", "I", "Κ", "K",
-		"Λ", "L", "Μ", "M", "Ν", "N", "Ξ", "X", "Ο", "O",
-		"Π", "P", "Ρ", "R", "Σ", "S", "Τ", "T", "Υ", "Y",
-		"Φ", "F", "Χ", "CH", "Ψ", "PS", "Ω", "O",
-
-		// Greek accented uppercase
-		"Ά", "A", "Έ", "E", "Ή", "I", "Ί", "I", "Ϊ", "I",
-		"Ό", "O", "Ώ", "O", "Ύ", "Y", "Ϋ", "Y",
-	)
-
-	normalized := replacer.Replace(input)
-	return strings.ToLower(normalized)
+	return strings.ToLower(accentReplacer.Replace(input))
 }
 
 // ItemNameAccentInsensitiveContains creates an accent-insensitive search predicate for the item name field.
