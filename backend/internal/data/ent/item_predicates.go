@@ -5,7 +5,8 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	conf "github.com/sysadminsmedia/homebox/backend/internal/sys/config"
-	"github.com/sysadminsmedia/homebox/backend/pkgs/textutils"
+	// "github.com/sysadminsmedia/homebox/backend/pkgs/textutils"
+	"strings"
 )
 
 // AccentInsensitiveContains creates a predicate that performs accent-insensitive text search.
@@ -19,7 +20,8 @@ func AccentInsensitiveContains(field string, searchValue string) predicate.Item 
 	}
 
 	// Normalize the search value
-	normalizedSearch := textutils.NormalizeSearchQuery(searchValue)
+	// normalizedSearch := textutils.NormalizeSearchQuery(searchValue)
+	normalizedSearch := NormalizeString(searchValue)
 
 	return predicate.Item(func(s *sql.Selector) {
 		dialect := s.Dialect()
@@ -66,8 +68,8 @@ func buildGenericNormalizeExpression(fieldExpr string) string {
 	// Ordered by frequency of use for better performance
 	normalized := fieldExpr
 
-	// Most common accented characters ordered by frequency
-	commonAccents := []struct {
+	// Most common accented characters ordered by frequency and any other language-specific characters.
+	replacements := []struct {
 		from, to string
 	}{
 		// Spanish - most common
@@ -105,11 +107,56 @@ func buildGenericNormalizeExpression(fieldExpr string) string {
 		{"Ό", "O"}, {"Ώ", "O"}, {"Ύ", "Y"}, {"Ϋ", "Y"},
 	}
 
-	for _, accent := range commonAccents {
+	for _, accent := range replacements {
 		normalized = "REPLACE(" + normalized + ", '" + accent.from + "', '" + accent.to + "')"
 	}
 
 	return normalized
+}
+
+func NormalizeString(input string) string {
+	if input == "" {
+		return ""
+	}
+
+	replacer := strings.NewReplacer(
+		// Spanish
+		"á", "a", "é", "e", "í", "i", "ó", "o", "ú", "u", "ñ", "n",
+		"Á", "A", "É", "E", "Í", "I", "Ó", "O", "Ú", "U", "Ñ", "N",
+
+		// French
+		"è", "e", "ê", "e", "à", "a", "ç", "c",
+		"È", "E", "Ê", "E", "À", "A", "Ç", "C",
+
+		// German / Portuguese
+		"ä", "a", "ö", "o", "ü", "u", "ã", "a", "õ", "o",
+		"Ä", "A", "Ö", "O", "Ü", "U", "Ã", "A", "Õ", "O",
+
+		// Greek lowercase
+		"α", "a", "β", "v", "γ", "g", "δ", "d", "ε", "e",
+		"ζ", "z", "η", "i", "θ", "th", "ι", "i", "κ", "k",
+		"λ", "l", "μ", "m", "ν", "n", "ξ", "x", "ο", "o",
+		"π", "p", "ρ", "r", "σ", "s", "ς", "s", "τ", "t",
+		"υ", "y", "φ", "f", "χ", "ch", "ψ", "ps", "ω", "o",
+
+		// Greek accented lowercase
+		"ά", "a", "έ", "e", "ή", "i", "ί", "i", "ϊ", "i", "ΐ", "i",
+		"ό", "o", "ώ", "o", "ύ", "y", "ϋ", "y", "ΰ", "y",
+
+		// Greek uppercase
+		"Α", "A", "Β", "V", "Γ", "G", "Δ", "D", "Ε", "E",
+		"Ζ", "Z", "Η", "I", "Θ", "TH", "Ι", "I", "Κ", "K",
+		"Λ", "L", "Μ", "M", "Ν", "N", "Ξ", "X", "Ο", "O",
+		"Π", "P", "Ρ", "R", "Σ", "S", "Τ", "T", "Υ", "Y",
+		"Φ", "F", "Χ", "CH", "Ψ", "PS", "Ω", "O",
+
+		// Greek accented uppercase
+		"Ά", "A", "Έ", "E", "Ή", "I", "Ί", "I", "Ϊ", "I",
+		"Ό", "O", "Ώ", "O", "Ύ", "Y", "Ϋ", "Y",
+	)
+
+	normalized := replacer.Replace(input)
+	return strings.ToLower(normalized)
 }
 
 // ItemNameAccentInsensitiveContains creates an accent-insensitive search predicate for the item name field.

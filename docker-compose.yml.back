@@ -1,0 +1,19 @@
+services:
+  homebox:
+    image: homebox
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - COMMIT=head
+        - BUILD_TIME=0001-01-01T00:00:00Z
+      x-bake:
+        platforms:
+            - linux/amd64
+            - linux/arm64
+            - linux/arm
+    environment:
+      - HBOX_DEBUG=true
+      - HBOX_LOGGER_LEVEL=-1
+    ports:
+      - 3100:7745
