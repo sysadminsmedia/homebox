@@ -8,96 +8,96 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func labelFactory() LabelCreate {
-	return LabelCreate{
+func tagFactory() TagCreate {
+	return TagCreate{
 		Name:        fk.Str(10),
 		Description: fk.Str(100),
 	}
 }
 
-func useLabels(t *testing.T, len int) []LabelOut {
+func useTags(t *testing.T, len int) []TagOut {
 	t.Helper()
 
-	labels := make([]LabelOut, len)
+	tags := make([]TagOut, len)
 	for i := 0; i < len; i++ {
-		itm := labelFactory()
+		itm := tagFactory()
 
-		item, err := tRepos.Labels.Create(context.Background(), tGroup.ID, itm)
+		item, err := tRepos.Tags.Create(context.Background(), tGroup.ID, itm)
 		require.NoError(t, err)
-		labels[i] = item
+		tags[i] = item
 	}
 
 	t.Cleanup(func() {
-		for _, item := range labels {
-			_ = tRepos.Labels.delete(context.Background(), item.ID)
+		for _, item := range tags {
+			_ = tRepos.Tags.delete(context.Background(), item.ID)
 		}
 	})
 
-	return labels
+	return tags
 }
 
-func TestLabelRepository_Get(t *testing.T) {
-	labels := useLabels(t, 1)
-	label := labels[0]
+func TestTagRepository_Get(t *testing.T) {
+	tags := useTags(t, 1)
+	tag := tags[0]
 
 	// Get by ID
-	foundLoc, err := tRepos.Labels.GetOne(context.Background(), label.ID)
+	foundLoc, err := tRepos.Tags.GetOne(context.Background(), tag.ID)
 	require.NoError(t, err)
-	assert.Equal(t, label.ID, foundLoc.ID)
+	assert.Equal(t, tag.ID, foundLoc.ID)
 }
 
-func TestLabelRepositoryGetAll(t *testing.T) {
-	useLabels(t, 10)
+func TestTagRepositoryGetAll(t *testing.T) {
+	useTags(t, 10)
 
-	all, err := tRepos.Labels.GetAll(context.Background(), tGroup.ID)
+	all, err := tRepos.Tags.GetAll(context.Background(), tGroup.ID)
 	require.NoError(t, err)
 	assert.Len(t, all, 10)
 }
 
-func TestLabelRepository_Create(t *testing.T) {
-	loc, err := tRepos.Labels.Create(context.Background(), tGroup.ID, labelFactory())
+func TestTagRepository_Create(t *testing.T) {
+	loc, err := tRepos.Tags.Create(context.Background(), tGroup.ID, tagFactory())
 	require.NoError(t, err)
 
 	// Get by ID
-	foundLoc, err := tRepos.Labels.GetOne(context.Background(), loc.ID)
+	foundLoc, err := tRepos.Tags.GetOne(context.Background(), loc.ID)
 	require.NoError(t, err)
 	assert.Equal(t, loc.ID, foundLoc.ID)
 
-	err = tRepos.Labels.delete(context.Background(), loc.ID)
+	err = tRepos.Tags.delete(context.Background(), loc.ID)
 	require.NoError(t, err)
 }
 
-func TestLabelRepository_Update(t *testing.T) {
-	loc, err := tRepos.Labels.Create(context.Background(), tGroup.ID, labelFactory())
+func TestTagsRepository_Update(t *testing.T) {
+	loc, err := tRepos.Tags.Create(context.Background(), tGroup.ID, tagFactory())
 	require.NoError(t, err)
 
-	updateData := LabelUpdate{
+	updateData := TagUpdate{
 		ID:          loc.ID,
 		Name:        fk.Str(10),
 		Description: fk.Str(100),
 	}
 
-	update, err := tRepos.Labels.UpdateByGroup(context.Background(), tGroup.ID, updateData)
+	update, err := tRepos.Tags.UpdateByGroup(context.Background(), tGroup.ID, updateData)
 	require.NoError(t, err)
 
-	foundLoc, err := tRepos.Labels.GetOne(context.Background(), loc.ID)
+	foundLoc, err := tRepos.Tags.GetOne(context.Background(), loc.ID)
 	require.NoError(t, err)
 
 	assert.Equal(t, update.ID, foundLoc.ID)
 	assert.Equal(t, update.Name, foundLoc.Name)
 	assert.Equal(t, update.Description, foundLoc.Description)
 
-	err = tRepos.Labels.delete(context.Background(), loc.ID)
+	err = tRepos.Tags.delete(context.Background(), loc.ID)
 	require.NoError(t, err)
 }
 
-func TestLabelRepository_Delete(t *testing.T) {
-	loc, err := tRepos.Labels.Create(context.Background(), tGroup.ID, labelFactory())
+func TestTagRepository_Delete(t *testing.T) {
+	loc, err := tRepos.Tags.Create(context.Background(), tGroup.ID, tagFactory())
 	require.NoError(t, err)
 
-	err = tRepos.Labels.delete(context.Background(), loc.ID)
+	err = tRepos.Tags.delete(context.Background(), loc.ID)
 	require.NoError(t, err)
 
-	_, err = tRepos.Labels.GetOne(context.Background(), loc.ID)
+	_, err = tRepos.Tags.GetOne(context.Background(), loc.ID)
 	require.Error(t, err)
 }

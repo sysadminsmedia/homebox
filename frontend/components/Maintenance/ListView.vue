@@ -203,7 +203,7 @@
                       <Currency :amount="e.cost" />
                     </Badge>
                   </TooltipTrigger>
-                  <TooltipContent> Cost </TooltipContent>
+                  <TooltipContent> {{ $t("maintenance.modal.cost") }} </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </div>

@@ -33,7 +33,7 @@ export class Requests {
   }
 
   private callResponseInterceptors(response: Response, request?: RequestInit) {
-    this.responseInterceptors.forEach(i => i(response, request));
+    this.responseInterceptors.forEach(i => i(response.clone(), request));
   }
 
   private url(rest: string): string {

@@ -26,6 +26,7 @@ export type LocationViewPreferences = {
   legacyImageFit: boolean;
   language?: string;
   overrideFormatLocale?: string;
+  collectionId?: string | null;
   duplicateSettings: DuplicateSettings;
   shownMultiTabWarning: boolean;
   quickActions: {
@@ -33,38 +34,39 @@ export type LocationViewPreferences = {
   };
 };
 
+const results = useLocalStorage(
+  "homebox/preferences/location",
+  {
+    showDetails: true,
+    showEmpty: true,
+    editorAdvancedView: false,
+    itemDisplayView: "card",
+    theme: "homebox",
+    itemsPerTablePage: 10,
+    collectionId: null,
+    displayLegacyHeader: false,
+    legacyImageFit: false,
+    language: null,
+    overrideFormatLocale: null,
+    duplicateSettings: {
+      copyMaintenance: false,
+      copyAttachments: true,
+      copyCustomFields: true,
+      copyPrefixOverride: null,
+    },
+    shownMultiTabWarning: false,
+    quickActions: {
+      enabled: true,
+    },
+  },
+  { mergeDefaults: true }
+);
+
 /**
  * useViewPreferences loads the view preferences from local storage and hydrates
  * them. These are reactive and will update the local storage when changed.
  */
 export function useViewPreferences(): Ref<LocationViewPreferences> {
-  const results = useLocalStorage(
-    "homebox/preferences/location",
-    {
-      showDetails: true,
-      showEmpty: true,
-      editorAdvancedView: false,
-      itemDisplayView: "card",
-      theme: "homebox",
-      itemsPerTablePage: 10,
-      displayLegacyHeader: false,
-      legacyImageFit: false,
-      language: null,
-      overrideFormatLocale: null,
-      duplicateSettings: {
-        copyMaintenance: false,
-        copyAttachments: true,
-        copyCustomFields: true,
-        copyPrefixOverride: null,
-      },
-      shownMultiTabWarning: false,
-      quickActions: {
-        enabled: true,
-      },
-    },
-    { mergeDefaults: true }
-  );
-
   // casting is required because the type returned is removable, however since we
   // use `mergeDefaults` the result _should_ always be present.
   return results as unknown as Ref<LocationViewPreferences>;

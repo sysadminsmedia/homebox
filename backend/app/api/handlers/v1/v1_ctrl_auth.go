@@ -11,6 +11,7 @@ import (
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/server"
 	"github.com/rs/zerolog/log"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
@@ -94,11 +95,10 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 		panic("no auth providers provided")
 	}
 
-	providers := make(map[string]AuthProvider)
-	for _, p := range ps {
+	providers := lo.SliceToMap(ps, func(p AuthProvider) (string, AuthProvider) {
 		log.Info().Str("name", p.Name()).Msg("registering auth provider")
-		providers[p.Name()] = p
-	}
+		return p.Name(), p
+	})
 
 	return func(w http.ResponseWriter, r *http.Request) error {
 		// Extract provider query
@@ -124,7 +124,7 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 			return validate.NewUnauthorizedError()
 		}
 
-		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, true)
+		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, true, newToken.AttachmentToken)
 		return server.JSON(w, http.StatusOK, TokenResponse{
 			Token:           "Bearer " + newToken.Raw,
 			ExpiresAt:       newToken.ExpiresAt,
@@ -178,7 +178,7 @@ func (ctrl *V1Controller) HandleAuthRefresh() errchain.HandlerFunc {
 			return validate.NewUnauthorizedError()
 		}
 
-		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, false)
+		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, false, newToken.AttachmentToken)
 		return server.JSON(w, http.StatusOK, newToken)
 	}
 }
@@ -187,7 +187,7 @@ func noPort(host string) string {
 	return strings.Split(host, ":")[0]
 }
 
-func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string, expires time.Time, remember bool) {
+func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string, expires time.Time, remember bool, attachmentToken string) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     cookieNameRemember,
 		Value:    strconv.FormatBool(remember),
@@ -196,6 +196,7 @@ func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Set HTTP only cookie
@@ -207,6 +208,7 @@ func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Set Fake Session cookie
@@ -218,7 +220,22 @@ func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: false,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
+
+	// Set attachment token cookie (accessible to frontend, not HttpOnly)
+	if attachmentToken != "" {
+		http.SetCookie(w, &http.Cookie{
+			Name:     "hb.auth.attachment_token",
+			Value:    attachmentToken,
+			Expires:  expires,
+			Domain:   domain,
+			Secure:   ctrl.cookieSecure,
+			HttpOnly: false,
+			Path:     "/",
+			SameSite: http.SameSiteLaxMode,
+		})
+	}
 }
 
 func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
@@ -230,6 +247,7 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	http.SetCookie(w, &http.Cookie{
@@ -240,6 +258,7 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Set Fake Session cookie
@@ -251,6 +270,19 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: false,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
+	})
+
+	// Unset attachment token cookie
+	http.SetCookie(w, &http.Cookie{
+		Name:     "hb.auth.attachment_token",
+		Value:    "",
+		Expires:  time.Unix(0, 0),
+		Domain:   domain,
+		Secure:   ctrl.cookieSecure,
+		HttpOnly: false,
+		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 }
 
@@ -310,7 +342,7 @@ func (ctrl *V1Controller) HandleOIDCCallback() errchain.HandlerFunc {
 		}
 
 		// Set cookies and redirect to home
-		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, true)
+		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, true, newToken.AttachmentToken)
 		http.Redirect(w, r, "/home", http.StatusFound)
 		return nil
 	}

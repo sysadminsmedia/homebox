@@ -8,30 +8,30 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 )
 
-type LabelRepository struct {
+type TagRepository struct {
 	db  *ent.Client
 	bus *eventbus.EventBus
 }
 
 type (
-	LabelCreate struct {
+	TagCreate struct {
 		Name        string `json:"name"        validate:"required,min=1,max=255"`
 		Description string `json:"description" validate:"max=1000"`
 		Color       string `json:"color"`
 	}
 
-	LabelUpdate struct {
+	TagUpdate struct {
 		ID          uuid.UUID `json:"id"`
 		Name        string    `json:"name"        validate:"required,min=1,max=255"`
 		Description string    `json:"description" validate:"max=1000"`
 		Color       string    `json:"color"`
 	}
 
-	LabelSummary struct {
+	TagSummary struct {
 		ID          uuid.UUID `json:"id"`
 		Name        string    `json:"name"`
 		Description string    `json:"description"`
@@ -40,86 +40,86 @@ type (
 		UpdatedAt   time.Time `json:"updatedAt"`
 	}
 
-	LabelOut struct {
-		LabelSummary
+	TagOut struct {
+		TagSummary
 	}
 )
 
-func mapLabelSummary(label *ent.Label) LabelSummary {
-	return LabelSummary{
-		ID:          label.ID,
-		Name:        label.Name,
-		Description: label.Description,
-		Color:       label.Color,
-		CreatedAt:   label.CreatedAt,
-		UpdatedAt:   label.UpdatedAt,
+func mapTagSummary(tag *ent.Tag) TagSummary {
+	return TagSummary{
+		ID:          tag.ID,
+		Name:        tag.Name,
+		Description: tag.Description,
+		Color:       tag.Color,
+		CreatedAt:   tag.CreatedAt,
+		UpdatedAt:   tag.UpdatedAt,
 	}
 }
 
 var (
-	mapLabelOutErr = mapTErrFunc(mapLabelOut)
-	mapLabelsOut   = mapTEachErrFunc(mapLabelSummary)
+	mapTagOutErr = mapTErrFunc(mapTagOut)
+	mapTagsOut   = mapTEachErrFunc(mapTagSummary)
 )
 
-func mapLabelOut(label *ent.Label) LabelOut {
-	return LabelOut{
-		LabelSummary: mapLabelSummary(label),
+func mapTagOut(tag *ent.Tag) TagOut {
+	return TagOut{
+		TagSummary: mapTagSummary(tag),
 	}
 }
 
-func (r *LabelRepository) publishMutationEvent(gid uuid.UUID) {
+func (r *TagRepository) publishMutationEvent(gid uuid.UUID) {
 	if r.bus != nil {
-		r.bus.Publish(eventbus.EventLabelMutation, eventbus.GroupMutationEvent{GID: gid})
+		r.bus.Publish(eventbus.EventTagMutation, eventbus.GroupMutationEvent{GID: gid})
 	}
 }
 
-func (r *LabelRepository) getOne(ctx context.Context, where ...predicate.Label) (LabelOut, error) {
-	return mapLabelOutErr(r.db.Label.Query().
+func (r *TagRepository) getOne(ctx context.Context, where ...predicate.Tag) (TagOut, error) {
+	return mapTagOutErr(r.db.Tag.Query().
 		Where(where...).
 		WithGroup().
 		Only(ctx),
 	)
 }
 
-func (r *LabelRepository) GetOne(ctx context.Context, id uuid.UUID) (LabelOut, error) {
-	return r.getOne(ctx, label.ID(id))
+func (r *TagRepository) GetOne(ctx context.Context, id uuid.UUID) (TagOut, error) {
+	return r.getOne(ctx, tag.ID(id))
 }
 
-func (r *LabelRepository) GetOneByGroup(ctx context.Context, gid, ld uuid.UUID) (LabelOut, error) {
-	return r.getOne(ctx, label.ID(ld), label.HasGroupWith(group.ID(gid)))
+func (r *TagRepository) GetOneByGroup(ctx context.Context, gid, ld uuid.UUID) (TagOut, error) {
+	return r.getOne(ctx, tag.ID(ld), tag.HasGroupWith(group.ID(gid)))
 }
 
-func (r *LabelRepository) GetAll(ctx context.Context, groupID uuid.UUID) ([]LabelSummary, error) {
-	return mapLabelsOut(r.db.Label.Query().
-		Where(label.HasGroupWith(group.ID(groupID))).
-		Order(ent.Asc(label.FieldName)).
+func (r *TagRepository) GetAll(ctx context.Context, groupID uuid.UUID) ([]TagSummary, error) {
+	return mapTagsOut(r.db.Tag.Query().
+		Where(tag.HasGroupWith(group.ID(groupID))).
+		Order(ent.Asc(tag.FieldName)).
 		WithGroup().
 		All(ctx),
 	)
 }
 
-func (r *LabelRepository) Create(ctx context.Context, groupID uuid.UUID, data LabelCreate) (LabelOut, error) {
-	label, err := r.db.Label.Create().
+func (r *TagRepository) Create(ctx context.Context, groupID uuid.UUID, data TagCreate) (TagOut, error) {
+	tag, err := r.db.Tag.Create().
 		SetName(data.Name).
 		SetDescription(data.Description).
 		SetColor(data.Color).
 		SetGroupID(groupID).
 		Save(ctx)
 	if err != nil {
-		return LabelOut{}, err
+		return TagOut{}, err
 	}
 
-	label.Edges.Group = &ent.Group{ID: groupID} // bootstrap group ID
+	tag.Edges.Group = &ent.Group{ID: groupID} // bootstrap group ID
 	r.publishMutationEvent(groupID)
-	return mapLabelOut(label), err
+	return mapTagOut(tag), err
 }
 
-func (r *LabelRepository) update(ctx context.Context, data LabelUpdate, where ...predicate.Label) (int, error) {
+func (r *TagRepository) update(ctx context.Context, data TagUpdate, where ...predicate.Tag) (int, error) {
 	if len(where) == 0 {
 		panic("empty where not supported empty")
 	}
 
-	return r.db.Label.Update().
+	return r.db.Tag.Update().
 		Where(where...).
 		SetName(data.Name).
 		SetDescription(data.Description).
@@ -127,27 +127,27 @@ func (r *LabelRepository) update(ctx context.Context, data LabelUpdate, where ..
 		Save(ctx)
 }
 
-func (r *LabelRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data LabelUpdate) (LabelOut, error) {
-	_, err := r.update(ctx, data, label.ID(data.ID), label.HasGroupWith(group.ID(gid)))
+func (r *TagRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data TagUpdate) (TagOut, error) {
+	_, err := r.update(ctx, data, tag.ID(data.ID), tag.HasGroupWith(group.ID(gid)))
 	if err != nil {
-		return LabelOut{}, err
+		return TagOut{}, err
 	}
 
 	r.publishMutationEvent(gid)
 	return r.GetOne(ctx, data.ID)
 }
 
-// delete removes the label from the database. This should only be used when
-// the label's ownership is already confirmed/validated.
-func (r *LabelRepository) delete(ctx context.Context, id uuid.UUID) error {
-	return r.db.Label.DeleteOneID(id).Exec(ctx)
+// delete removes the tag from the database. This should only be used when
+// the tag's ownership is already confirmed/validated.
+func (r *TagRepository) delete(ctx context.Context, id uuid.UUID) error {
+	return r.db.Tag.DeleteOneID(id).Exec(ctx)
 }
 
-func (r *LabelRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) error {
-	_, err := r.db.Label.Delete().
+func (r *TagRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) error {
+	_, err := r.db.Tag.Delete().
 		Where(
-			label.ID(id),
-			label.HasGroupWith(group.ID(gid)),
+			tag.ID(id),
+			tag.HasGroupWith(group.ID(gid)),
 		).Exec(ctx)
 	if err != nil {
 		return err

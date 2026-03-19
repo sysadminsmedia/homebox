@@ -1,10 +1,64 @@
 {
+    "collection": {
+        "copy_invite": "複製邀請連結",
+        "create_invite": "製作邀請函",
+        "delete_collection": "刪除收藏",
+        "delete_confirm": "是否確定刪除此收藏？此作業將無法復原。",
+        "deleted_collection": "收藏已刪除。",
+        "expires_at": "過期",
+        "invite_token": "Token",
+        "invite_token_hidden": "已無法檢視",
+        "invite_token_warning": "邀請Token只會顯示一次，請馬上複製；若離開此頁面或重新整理Token將無法再次檢視。",
+        "invites": "邀請",
+        "invites_delete_confirm": "是否確認刪除此邀請？",
+        "leave_collection": "離開收藏",
+        "leave_confirm": "是否確認離開收藏？",
+        "left_collection": "你已離開該收藏。",
+        "manage_collection": "管理收藏",
+        "members": {
+            "cannot_remove_last": "無法將最後一位成員移除。",
+            "email": "電子郵件",
+            "empty": "此收藏內尚無成員。",
+            "member": "成員",
+            "name": "名稱",
+            "owner": "擁有者",
+            "remove_confirm": "是否確認要移除此成員？",
+            "removed": "成員已移除",
+            "role": "身分組"
+        },
+        "no_collections": {
+            "create": "建立新收藏",
+            "join": "加入收藏",
+            "message": "你不是本收藏的一部分。建立一個屬於你新的收藏，或加入受邀的收藏。",
+            "title": "找不到收藏"
+        },
+        "no_invites": "無邀請",
+        "remaining_uses": "剩餘使用次數",
+        "tabs": {
+            "invites": "邀請",
+            "members": "成員",
+            "notifiers": "通知",
+            "settings": "設定",
+            "tools": "工具"
+        },
+        "uses": "使用"
+    },
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "使用{shiftKey}+{enterKey}以儲存並新增另一個。",
+                "enter": "Enter",
+                "shift": "Shift"
+            },
             "import_dialog": {
                 "change_warning": "現有 import_refs 的導入行為已變更。如果 CSV 檔案中存在 import_ref，則\n項目將使用 CSV 檔案中的值進行更新。",
                 "description": "匯入包含您的商品、標籤和位置的 CSV 檔案。有關所需格式的更多信息\n，請參閱文件。",
-                "title": "匯入CSV檔案"
+                "title": "匯入CSV檔案",
+                "toast": {
+                    "import_failed": "匯入失敗。請稍後再試。",
+                    "import_success": "匯入成功！",
+                    "please_select_file": "請選擇要匯入的檔案。"
+                }
             },
             "outdated": {
                 "current_version": "當前版本",
@@ -14,8 +68,62 @@
                 "new_version_available_link": "按此處查看發行說明"
             }
         },
+        "collection": {
+            "create_modal": {
+                "name_label": "收藏名稱",
+                "title": "建立收藏",
+                "toast": {
+                    "already_creating": "建立收藏中",
+                    "create_failed": "建立收藏失敗",
+                    "create_success": "已建立收藏",
+                    "please_enter_name": "請輸入收藏名稱"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "請選擇過期日時。",
+                    "invalid_expiry_past": "過期日期必須為未來。",
+                    "invalid_uses": "使用值必須為1～100。"
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "收藏邀請碼",
+                "invites_should_look_like": "邀請碼需符合：",
+                "join": "加入收藏",
+                "no_invite_code_create_one": "沒有邀請碼？建立一個新的邀請碼",
+                "title": "加入收藏",
+                "toast": {
+                    "already_joining": "已曾經加入收藏",
+                    "join_failed": "加入收藏失敗",
+                    "join_success": "已加入收藏",
+                    "please_enter_valid_join_code": "請輸入正確的邀請碼"
+                }
+            },
+            "selector": {
+                "collection_options": "收藏選項",
+                "create_collection": "建立新收藏",
+                "join_collection": "加入存在收藏",
+                "no_collection_found": "無收藏結果",
+                "search_collections": "搜尋收藏…",
+                "select_collection": "選擇收藏",
+                "your_collections": "你的收藏"
+            }
+        },
+        "color_selector": {
+            "clear": "清除色彩",
+            "color": "色彩",
+            "no_color": "無色",
+            "no_color_selected": "色彩未選取",
+            "randomize": "隨機色彩"
+        },
+        "form": {
+            "password": {
+                "toggle_show": "開啟/關閉密碼顯示"
+            }
+        },
         "global": {
             "copy_text": {
+                "continue": "繼續",
                 "documentation": "文件",
                 "failed_to_copy": "無法將文字複製到剪貼簿",
                 "https_required": "因爲HTTPS是必需的",
@@ -49,7 +157,14 @@
                 "browser_print": "從瀏覽器列印",
                 "confirm_description": "您確定要列印此標籤嗎？",
                 "download": "下載標籤",
-                "titles": "標籤"
+                "print": "列印標籤",
+                "server_print": "使用伺服器列印",
+                "titles": "標籤",
+                "toast": {
+                    "load_status_failed": "取得狀態失敗",
+                    "print_failed": "列印標籤失敗",
+                    "print_success": "已列印標籤"
+                }
             },
             "page_qr_code": {
                 "page_url": "頁面網址",
@@ -60,111 +175,725 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "下載",
+                "open_new_tab": "在新分頁開啟"
+            },
             "create_modal": {
-                "title": "新增項目"
+                "clear_template": "清除模板",
+                "delete_photo": "刪除圖片",
+                "item_description": "物品描述",
+                "item_name": "物品名稱",
+                "item_photo": "物品圖片📷",
+                "item_quantity": "物品數量",
+                "parent_item": "母物品",
+                "product_tooltip_input_barcode": "使用條碼自動輸入",
+                "product_tooltip_scan_barcode": "使用📷掃描條碼自動輸入",
+                "rotate_photo": "旋轉圖片",
+                "set_as_primary_photo": "設定為 { isPrimary, select, true {non-} false {} other {}}主圖片",
+                "title": "新增項目",
+                "toast": {
+                    "already_creating": "已正在建立物品",
+                    "create_failed": "無法建立物品",
+                    "create_success": "物品已建立",
+                    "failed_load_parent": "載入母物品失敗，請手動選擇母物品",
+                    "no_canvas_support": "你的瀏覽器不支援美化功能",
+                    "please_select_location": "請選擇一個位置。",
+                    "rotate_failed": "旋轉圖片失敗：{ error }",
+                    "rotate_process_failed": "圖片旋轉處理失敗",
+                    "some_photos_failed": "{count, plural, =0 {無圖片可供上傳。} =1 {1張圖片上傳失敗。} other {某些圖片上傳失敗。}}",
+                    "upload_failed": "圖片{ photoName }上傳失敗",
+                    "upload_success": "{count, plural, =0 {無圖片上傳。} =1 {圖片上傳成功。} other {所有圖片上傳成功。}}",
+                    "uploading_photos": "{count, plural, =0 {無圖片上傳} =1 {正在上傳1張圖片…} other {正在上傳 {count} 張圖片…}}"
+                },
+                "upload_photos": "上傳圖片",
+                "uploaded": "已上傳圖片"
+            },
+            "product_import": {
+                "barcode": "商品條碼",
+                "db_source": "資料庫來源",
+                "error_exception": "取得物品條碼時發生錯誤： ",
+                "error_invalid_barcode": "提供了無效條碼",
+                "error_not_found": "未找到和提供的條碼相應之物品。",
+                "import_selected": "匯入已選",
+                "search_item": "搜尋物品",
+                "title": "匯入物品"
+            },
+            "selector": {
+                "clear": "清除已選物品",
+                "no_results": "無結果",
+                "placeholder": "請選擇…",
+                "search_placeholder": "輸入以搜尋…",
+                "searching": "搜尋中…"
             },
             "view": {
+                "change_details": {
+                    "add_tags": "新增標籤",
+                    "failed_to_update_item": "更新物品失敗",
+                    "remove_tags": "移除標籤",
+                    "title": "修改物品詳細資訊"
+                },
                 "selectable": {
                     "card": "卡牌風",
                     "items": "項目",
                     "no_items": "沒有可顯示的項目",
+                    "select_all": "全選",
+                    "select_card": "選擇卡片",
+                    "select_row": "選擇列",
                     "table": "表格"
+                },
+                "table": {
+                    "dropdown": {
+                        "actions": "功能",
+                        "change_location": "修改位置",
+                        "change_location_success": "位置已修改",
+                        "change_tags": "修改標籤",
+                        "change_tags_success": "標籤已修改",
+                        "create_maintenance_item": "為物品新增維修紀錄",
+                        "create_maintenance_selected": "為選擇的物品新增維修紀錄",
+                        "create_maintenance_success": "維修紀錄已新增",
+                        "delete_confirmation": "是否確認刪除已選擇的物品？此作業將無法復原。",
+                        "delete_item": "刪除物品",
+                        "delete_selected": "刪除選取物品",
+                        "download_csv": "下載CSV表單",
+                        "download_json": "下載JSON表單",
+                        "duplicate_item": "複製物品",
+                        "duplicate_selected": "複製選取物品",
+                        "error_deleting": "刪除物品時錯誤",
+                        "error_duplicating": "複製物品時錯誤",
+                        "open_menu": "開啟選單",
+                        "open_multi_tab_warning": "為了安全，預設禁止瀏覽器同時開啟多個分頁，若要修改此設定請參考官方文件：",
+                        "toggle_expand": "開啟/關閉展開",
+                        "view_item": "檢視物品",
+                        "view_items": "檢視物品"
+                    },
+                    "headers": "標頭",
+                    "page": "頁",
+                    "quick_actions": "啟用快速功能和選取",
+                    "rows_per_page": "列/頁",
+                    "selected_rows": "{total}中{selected}已選擇。",
+                    "table_settings": "表單選項",
+                    "view_item": "檢視物品"
                 }
-            }
-        },
-        "label": {
-            "create_modal": {
-                "title": "新增標籤"
             }
         },
         "location": {
             "create_modal": {
-                "title": "新增地點"
+                "location_description": "位置描述",
+                "location_name": "位置名稱",
+                "title": "新增地點",
+                "toast": {
+                    "already_creating": "已正在建立位置",
+                    "create_failed": "無法建立位置",
+                    "create_success": "位置已建立"
+                }
+            },
+            "selector": {
+                "clear": "清除選取位置",
+                "no_location_found": "未找到位置",
+                "parent_location": "母位置",
+                "search_location": "搜尋位置",
+                "select_location": "選擇一個位置"
+            },
+            "tree": {
+                "no_locations": "無可用位置。點選「建立」以建立新位置。"
             }
+        },
+        "quick_menu": {
+            "no_results": "無結果。",
+            "shortcut_hint": "使用數字鍵以快速操作。"
+        },
+        "search": {
+            "filter": {
+                "search_placeholder": "搜尋…"
+            }
+        },
+        "tag": {
+            "create_modal": {
+                "tag_color": "標籤顏色",
+                "tag_description": "標籤描述",
+                "tag_name": "標籤名稱",
+                "title": "建立標籤",
+                "toast": {
+                    "already_creating": "已正在建立標籤",
+                    "create_failed": "無法建立標籤",
+                    "create_success": "標籤已建立",
+                    "tag_name_too_long": "標籤名稱不得超過50個字元"
+                }
+            },
+            "selector": {
+                "select_tags": "選擇標籤"
+            }
+        },
+        "template": {
+            "apply_template": "套用範本",
+            "card": {
+                "delete": "刪除範本",
+                "duplicate": "複製範本",
+                "edit": "編輯範本"
+            },
+            "confirm_delete": "是否刪除此範本？",
+            "create_modal": {
+                "title": "建立範本"
+            },
+            "detail": {
+                "default_values": "預設值",
+                "updated": "已更新"
+            },
+            "edit_modal": {
+                "title": "編輯範本"
+            },
+            "empty_value": "(空)",
+            "form": {
+                "custom_fields": "自訂欄位",
+                "default_item_values": "預設物品值",
+                "default_location": "預設位置",
+                "default_value": "預設數值",
+                "field_name": "欄位名稱",
+                "item_description": "物品描述",
+                "item_name": "物品名稱",
+                "lifetime_warranty": "終身保固",
+                "location": "位置",
+                "manufacturer": "製造商",
+                "model_number": "型號",
+                "no_custom_fields": "無自訂欄位。",
+                "template_description": "範本描述",
+                "template_name": "範本名稱"
+            },
+            "hide_defaults": "隱藏預設",
+            "save_as_template": "儲存為範本",
+            "selector": {
+                "clear": "反選範本",
+                "label": "範本(自選)",
+                "not_found": "未找到範本",
+                "search": "搜尋範本…",
+                "select": "選擇範本…"
+            },
+            "show_defaults": "顯示預設",
+            "toast": {
+                "applied": "已套用「{name}」範本",
+                "create_failed": "建立範本失敗",
+                "created": "已建立範本",
+                "delete_failed": "刪除範本失敗",
+                "deleted": "已刪除範本",
+                "duplicate_failed": "複製範本失敗",
+                "duplicated": "已複製範本為「{name}」",
+                "load_failed": "讀取範本失敗",
+                "saved_as_template": "物品已另存為範本「{name}」",
+                "update_failed": "更新範本失敗",
+                "updated": "已更新範本"
+            },
+            "using_template": "正在使用「{name}」範本"
         }
     },
+    "errors": {
+        "api_failure": "後台API指令失敗： "
+    },
     "global": {
-        "build": "建立{ build }",
+        "add": "新增",
+        "archived": "封存",
+        "build": "組建：{ build }",
+        "cancel": "取消",
         "confirm": "確認",
         "create": "新增",
-        "create_and_add": "創建並添加另一個",
+        "create_and_add": "建立並新增下一個",
+        "create_subitem": "建立附屬品",
         "created": "已建立",
-        "email": "電子信箱",
-        "follow_dev": "關注開發者",
-        "github": "GitHub項目",
-        "items": "項目",
+        "delete": "刪除",
+        "delete_confirm": "是否確認刪除此物品？ ",
+        "demo_instance": "這是一個示範實例",
+        "details": "詳細資料",
+        "duplicate": "再製",
+        "edit": "編輯",
+        "email": "電子郵件",
+        "follow_dev": "追蹤開發人員",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API接口'</a>'",
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' 版本: { version } 組建: { build } '</a>'"
+        },
+        "github": "GitHub專案",
+        "insured": "已投保",
+        "items": "物品",
         "join_discord": "加入Discord",
-        "labels": "標籤",
-        "locations": "地點",
-        "name": "名字",
+        "loading": "讀取中…",
+        "locations": "位置",
+        "maintenance": "維修",
+        "name": "名稱",
+        "navigate": "瀏覽",
+        "no": "否",
         "password": "密碼",
-        "read_docs": "閱讀文件",
+        "preview": "預覽",
+        "quantity": "數量",
+        "read_docs": "參閱說明",
+        "return_home": "回到首頁",
+        "save": "儲存",
         "search": "搜尋",
         "sign_out": "登出",
-        "submit": "提交",
+        "submit": "送出",
+        "tags": "標籤",
+        "unknown": "未知",
+        "update": "更新",
+        "updating": "更新中",
+        "value": "值",
         "version": "版本:{ version }",
-        "welcome": "歡迎，{ username }"
+        "welcome": "您好，{ username }",
+        "yes": "是"
+    },
+    "home": {
+        "quick_statistics": "快速總覽",
+        "recently_added": "最近新增",
+        "storage_locations": "存放位置",
+        "tags": "標籤",
+        "total_items": "所有物品",
+        "total_locations": "所有位置",
+        "total_tags": "所有標籤",
+        "total_value": "所有價值"
     },
     "index": {
-        "disabled_registration": "已禁用註冊",
+        "disabled_registration": "註冊已停用",
         "dont_join_group": "不想加入群組？",
-        "joining_group": "您正在加入現有群組！",
+        "joining_group": "您已加入群組！",
         "login": "登入",
+        "or": "或",
         "register": "註冊",
         "remember_me": "記住帳號",
-        "set_email": "你的電子郵件是什麼？",
-        "set_name": "你叫什麼名字？",
-        "set_password": "設定您的密碼",
-        "tagline": "追蹤、組織和管理您的物品。"
+        "set_email": "你的電子郵件？",
+        "set_name": "你的名字？",
+        "set_password": "設定密碼",
+        "tagline": "追蹤、整理和管理你的物品。",
+        "title": "整理並將你的物品打上標籤",
+        "toast": {
+            "invalid_email": "無效的電子郵件",
+            "invalid_email_password": "無效的電子郵件或密碼",
+            "login_success": "登入成功",
+            "oidc_access_denied": "拒絕存取：帳號所在身份組無權存取",
+            "oidc_auth_failed": "OIDC認證失敗",
+            "oidc_invalid_response": "收到無效OIDC回應",
+            "oidc_provider_error": "OIDC提供者回應錯誤",
+            "oidc_security_error": "OIDC安全性錯誤 - 可能正遭受CSRF攻擊",
+            "oidc_session_expired": "OIDC 工作階段逾時",
+            "oidc_token_expired": "OIDC token 過期",
+            "oidc_token_invalid": "無效的OIDC token簽名",
+            "problem_registering": "註冊時發生錯誤",
+            "user_registered": "已註冊使用者"
+        }
     },
     "items": {
-        "add": "添加",
-        "created_at": "創建於",
+        "add": "新增",
+        "advanced": "進階",
+        "archived": "封存",
+        "asset_id": "資產ID",
+        "associated_with_multiple": "此資產ID與多個物品有關聯",
+        "attachment": "附件",
+        "attachments": "附件",
+        "changes_persisted_immediately": "附件變更將立即儲存",
+        "created_at": "建立於",
         "custom_fields": "自訂欄位",
-        "field_selector": "欄位選擇器",
+        "delete_attachment_confirm": "是否確認刪除此附件？",
+        "delete_item_confirm": "是否確認刪除此物品？",
+        "description": "描述",
+        "details": "細節描述",
+        "drag_and_drop": "拖放或點此選擇檔案",
+        "duplicate": {
+            "copy_attachments": "複製附件",
+            "copy_custom_fields": "複製自訂欄位",
+            "copy_maintenance": "複製維修紀錄",
+            "custom_prefix": "複製前綴",
+            "enable_custom_prefix": "啟用自訂前綴",
+            "override_instructions": "按住Shift並點選複製以覆寫設定。",
+            "prefix": "複製 ",
+            "prefix_instructions": "複製後的物品名稱前將加入此前綴。前綴包含空格。",
+            "temporary_title": "臨時設定",
+            "title": "複製設定"
+        },
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "附件標題",
+                "attachment_type": "附件類型",
+                "primary_photo": "主要圖片",
+                "primary_photo_sub": "此選項僅適用於圖片，僅可使用圖片作為主要圖片。若勾選此選項則此圖片將作為主要圖片使用，將取消其他主要圖片。",
+                "select_type": "選擇類型",
+                "title": "編輯附件"
+            },
+            "view_image": "檢視圖片"
+        },
+        "edit_details": "編輯詳細資料",
+        "field": "欄位",
+        "field_selector": "欄位選擇",
         "field_value": "欄位值",
         "first": "第一項",
-        "include_archive": "包括存檔項目",
+        "include_archive": "包含已封存物品",
+        "insured": "已投保",
+        "invalid_asset_id": "無效的資產ID",
         "last": "最後一項",
-        "negate_labels": "取消選定的標籤",
+        "lifetime_warranty": "終身保固",
+        "location": "位置",
+        "manual": "說明書",
+        "manuals": "說明書",
+        "manufacturer": "製造商",
+        "model_number": "型號",
+        "name": "名稱",
+        "negate_tags": "移除選取標籤",
         "next_page": "下一頁",
-        "no_results": "沒有找到項目",
+        "no_attachments": "未找到附件",
+        "no_results": "未找到物品",
+        "notes": "備註",
+        "only_with_photo": "僅包含圖片物品",
+        "only_without_photo": "僅未包含圖片物品",
         "options": "選項",
         "order_by": "排序",
         "pages": "第{ page } 頁(共{ totalPages })",
+        "parent_item": "母物品",
+        "photo": "圖片",
+        "photos": "圖片",
         "prev_page": "上一頁",
-        "query_id": "查詢資產ID號碼:{ id }",
-        "reset_search": "重置搜尋",
-        "results": "{ total }結果",
-        "tip_1": "位置和標籤過濾器使用“OR”運算。如果選擇了多個，則一次配對\n只會使用一個。",
-        "tip_2": "以「#」為前綴的搜尋將查詢資產 ID（例如「#000-001」）",
-        "tip_3": "字段過濾器使用“OR”運算。如果選擇了多個，則一次配對只需要選擇\n一個。",
-        "tips": "提示",
+        "purchase_date": "購買日期",
+        "purchase_details": "購入資訊",
+        "purchase_price": "購入金額",
+        "purchased_from": "購入來源",
+        "quantity": "數量",
+        "query_id": "查詢資產ID：{ id }",
+        "receipt": "發票收據",
+        "receipts": "發票收據",
+        "reset_search": "清除搜尋",
+        "results": "{ total }個結果",
+        "select_field": "選擇欄位",
+        "select_value": "選擇值",
+        "serial_number": "序號",
+        "show_advanced_view_options": "顯示進階顯示選項",
+        "show_empty": "顯示空白",
+        "sold_at": "售出價格",
+        "sold_details": "售出資訊",
+        "sold_price": "售出價格",
+        "sold_to": "受買人",
+        "sync_child_locations": "同步化子物品位置",
+        "tip_1": "位置/標籤篩選時使用「OR」進行運算，條件多選時任一條件符合\n即視為符合。",
+        "tip_2": "以「#」開頭搜尋時將搜尋資產 ID（例「#000-001」）",
+        "tip_3": "欄位篩選時使用「OR」進行運算，條件多選時任一條件符合\n即視為符合。",
+        "tips": "小技巧",
         "tips_sub": "搜尋技巧",
-        "updated_at": "更新於"
+        "toast": {
+            "asset_not_found": "未找到資產",
+            "attachment_deleted": "已刪除附件",
+            "attachment_updated": "已更新附件",
+            "attachment_uploaded": "已上傳附件",
+            "child_items_location_no_longer_synced": "子物品位置將不會與此物品同步。",
+            "child_items_location_synced": "子物件位置已和此物品同步",
+            "child_location_desync": "修改位置將取消和母物品同步",
+            "error_loading_parent_data": "母物品讀取時發生錯誤",
+            "failed_adjust_quantity": "數量修改失敗",
+            "failed_delete_attachment": "附件刪除失敗",
+            "failed_delete_item": "物品刪除失敗",
+            "failed_duplicate_item": "物品複製失敗",
+            "failed_load_asset": "資產載入失敗",
+            "failed_load_item": "物品載入失敗",
+            "failed_load_items": "物品載入失敗",
+            "failed_save": "物品儲存失敗",
+            "failed_save_no_location": "物品儲存失敗：未選擇位置",
+            "failed_search_items": "物品搜尋失敗",
+            "failed_update_attachment": "上傳附件失敗",
+            "failed_upload_attachment": "上傳附件失敗",
+            "item_deleted": "已刪除物品",
+            "item_saved": "已儲存物品",
+            "quantity_cannot_negative": "數量不可為負數",
+            "sync_child_location": "母子物品已同步，位置已同步更新。"
+        },
+        "updated_at": "更新於",
+        "warranty": "保固",
+        "warranty_details": "保固資訊",
+        "warranty_expires": "保固到期"
+    },
+    "languages": {
+        "bs-BA": "波士尼亞語（波士尼亞與赫塞哥維納）",
+        "ca": "加泰隆尼亞語",
+        "cs-CZ": "捷克語",
+        "da-DK": "丹麥文",
+        "de": "德語",
+        "en": "英文",
+        "es": "西班牙文",
+        "fi-FI": "芬蘭語",
+        "fr": "法文",
+        "hu": "匈牙利文",
+        "id-ID": "印尼文",
+        "it": "義大利文",
+        "ja-JP": "日文",
+        "ko-KR": "韓文",
+        "lb-LU": "盧森堡語（盧森堡）",
+        "lt-LT": "立陶宛語（立陶宛）",
+        "nb-NO": "挪威語（書面挪威語）",
+        "nl": "荷蘭語",
+        "pl": "波蘭語",
+        "pt-BR": "葡萄牙語（巴西）",
+        "pt-PT": "葡萄牙語（葡萄牙）",
+        "ro-RO": "羅馬尼亞語",
+        "ru": "俄文",
+        "sk-SK": "斯洛伐克語",
+        "sl": "斯洛維尼亞語",
+        "sq-AL": "阿爾巴尼亞語",
+        "sv": "瑞典語",
+        "ta-IN": "坦米爾語",
+        "th-TH": "泰文",
+        "tr": "土耳其文",
+        "uk-UA": "烏克蘭文",
+        "vi-VN": "越南文",
+        "zh-CN": "中文（簡體）",
+        "zh-HK": "中文（香港）",
+        "zh-MO": "中文（澳門）",
+        "zh-TW": "繁體中文"
+    },
+    "languages.sr-RS": "塞爾維亞語（塞爾維亞）",
+    "locations": {
+        "child_locations": "子位置",
+        "collapse_tree": "折疊樹狀圖",
+        "expand_tree": "展開樹狀圖",
+        "hide_items": "隱藏物品",
+        "location_items_delete_confirm": "是否確認刪除此位置和所有包含的物品？此作業無法復原。",
+        "no_results": "未找到位置",
+        "show_items": "顯示物品",
+        "toast": {
+            "failed_delete_location": "位置刪除失敗",
+            "failed_load_location": "讀取位置失敗",
+            "failed_update_location": "更新位置失敗",
+            "location_deleted": "已刪除位置",
+            "location_updated": "已更新位置"
+        },
+        "update_location": "更新位置資訊"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "兩者",
+            "completed": "完成",
+            "scheduled": "預約"
+        },
+        "list": {
+            "complete": "完成",
+            "create_first": "新增資料",
+            "delete": "刪除",
+            "duplicate": "複製",
+            "edit": "編輯",
+            "new": "新增"
+        },
+        "modal": {
+            "completed_date": "完成日期",
+            "cost": "維修費用",
+            "delete_confirmation": "是否確認刪除此紀錄？",
+            "edit_action": "更新",
+            "edit_title": "編輯維修資料",
+            "entry_name": "維修資料名稱",
+            "new_action": "建立",
+            "new_title": "建立新維修紀錄",
+            "notes": "備註",
+            "scheduled_date": "預約日期"
+        },
+        "monthly_average": "月平均",
+        "toast": {
+            "failed_to_create": "建立紀錄失敗",
+            "failed_to_delete": "刪除紀錄失敗",
+            "failed_to_update": "更新紀錄失敗"
+        },
+        "total_cost": "總金額",
+        "total_entries": "紀錄數"
+    },
+    "menu": {
+        "collection": "收藏",
+        "create_item": "物品/資產",
+        "create_location": "位置",
+        "create_tag": "標籤",
+        "home": "家中",
+        "locations": "位置",
+        "maintenance": "維修紀錄",
+        "profile": "個人資料",
+        "scanner": "掃描",
+        "search": "搜尋",
+        "templates": "範本"
+    },
+    "pages": {
+        "templates": {
+            "no_templates": "尚無範本。",
+            "title": "範本"
+        }
     },
     "profile": {
-        "active": "活躍",
+        "active": "有效",
         "change_password": "變更密碼",
         "currency_format": "貨幣格式",
-        "current_password": "當前密碼",
+        "current_password": "目前密碼",
         "delete_account": "刪除帳戶",
-        "delete_account_sub": "刪除您的帳戶及其所有相關資料。此操作無法撤回。",
+        "delete_account_confirm": "是否確認刪除帳戶？若你為群組最後一位成員則群組所有資料將被刪除！此作業無法復原。",
+        "delete_account_sub": "刪除你的帳戶和所有相關資料。此作業無法復原。",
+        "delete_notifier_confirm": "是否確認刪除此通知？",
+        "display_legacy_header": "{ currentValue, select, true {停用傳統標頭} false {啟用傳統標頭} other {Not Hit}}",
         "enabled": "啟用",
-        "gen_invite": "產生邀請連結",
+        "example": "範例",
         "group_settings": "群組設定",
-        "group_settings_sub": "共享群組設定。您可能需要刷新瀏覽器才能套用設定。",
-        "inactive": "不活躍",
+        "group_settings_sub": "共享群組設定。一些設定需要重新整理後才會生效。",
+        "inactive": "停用",
+        "language": "語言",
+        "legacy_image_fit": "{ currentValue, select, true {停用傳統填滿：使用半透明填滿} false {啟用傳統填滿：圖片材切填滿} other {Not Hit}}",
+        "moved_notice_body": "通知、邀請和貨幣設定已移動至收藏頁面。",
+        "moved_notice_description": "這些設定將會針對每個收藏集分別設定。",
+        "moved_notice_link_invites": "收藏集邀請",
+        "moved_notice_link_notifiers": "收藏集通知",
+        "moved_notice_link_settings": "收藏集幣值設定",
+        "moved_notice_title": "正在尋找通知、邀請或幣值設定嗎？",
         "new_password": "新密碼",
-        "notifier_modal": "通知 { type, select, true {Edit} false {Create} other {Other}}",
-        "notifiers": "通知者",
-        "notifiers_sub": "獲取即將到來的維護提醒的通知",
+        "no_notifiers": "無已設定通知",
+        "no_override": "預設",
+        "notifier_modal": "通知 { type, select, true {編輯} false {建立} other {其他}}",
+        "notifiers": "通知",
+        "notifiers_sub": "接收即將到來的維修提醒",
+        "override_locale": "日期和幣值語言設定",
         "test": "測試",
         "theme_settings": "主題設定",
-        "theme_settings_sub": "主題設定儲存在瀏覽器的本機儲存中。您可以隨時變更主題。如果你是\n 設定主題時遇到問題，請嘗試刷新瀏覽器。",
+        "theme_settings_sub": "主題設定將儲存於本機瀏覽器中，且您可以隨時更換主題。\n若設定主題時發生問題，請嘗試重新整理頁面。",
+        "toast": {
+            "account_deleted": "已刪除你的帳號。",
+            "failed_change_password": "無法變更密碼。",
+            "failed_create_notifier": "通知建立失敗。",
+            "failed_delete_account": "帳號刪除失敗。",
+            "failed_delete_notifier": "通知刪除失敗。",
+            "failed_get_currencies": "取得貨幣資訊失敗",
+            "failed_test_notifier": "通知測試傳送失敗。",
+            "failed_update_group": "群組更新失敗",
+            "failed_update_notifier": "通知更新失敗。",
+            "group_updated": "已更新群組",
+            "notifier_test_success": "推播通知已成功測試。",
+            "password_changed": "密碼修改成功。"
+        },
         "update_group": "更新群組",
+        "update_language": "更新語言",
         "url": "網址",
         "user_profile": "使用者資料",
         "user_profile_sub": "邀請使用者並管理您的帳戶。"
+    },
+    "reports": {
+        "label_generator": {
+            "asset_end": "結束Asset ID",
+            "asset_start": "開始Asset ID",
+            "base_url": "HomeBox網址",
+            "bordered_labels": "外框線",
+            "generate_page": "印刷預覽",
+            "input_placeholder": "在此輸入",
+            "instruction_1": "HomeBox標籤產生器可協助您為HomeBox物品列印標籤。\n且可以次性列印多個物品標籤，並直接貼於您的物品上",
+            "instruction_2": "標籤產生器將於標籤上列印網址QR Code和Asset ID。 \n若HomeBox設定中停用AssetID，此工具仍然可以使用但所產生的Asset ID將不會對應到任何項目",
+            "instruction_3": "此功能目前仍在開發階段，未來可能會有所調整。\n若您有任何建議，歡迎於 '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub討論'</a>'提出",
+            "label_height": "標籤高度",
+            "label_width": "標籤寬度",
+            "measure_type": "測量單位",
+            "page_bottom_padding": "下白邊",
+            "page_height": "紙材高度",
+            "page_left_padding": "左白邊",
+            "page_right_padding": "右白邊",
+            "page_top_padding": "上白邊",
+            "page_width": "紙材寬度",
+            "print_location_row": "顯示位置",
+            "qr_code_example": "QR Code範例",
+            "replace_homebox_behavior": "取代「HomeBox」字樣方式",
+            "replace_homebox_behavior_always_replace": "永遠取代「HomeBox」為自訂字樣",
+            "replace_homebox_behavior_item_no_location": "當物品無位置時取代「HomeBox」為自訂文字",
+            "replace_homebox_behavior_item_no_name": "當物品無名稱時取代「HomeBox」為自訂文字",
+            "replace_homebox_behavior_item_no_name_no_location": "當物品無名稱和位置時取代「HomeBox」為自訂文字",
+            "replace_homebox_behavior_show_homebox": "顯示「HomeBox」",
+            "replace_homebox_text": "自訂文字",
+            "skip_first_labels": "略過起始標籤數",
+            "tip_1": "此功能預設使用<a href=\"https://www.avery.com/templates/5260\">Avery 5260標籤紙</a>。\n若您使用不同標籤紙，\n請調整以下設定以符合您的標籤尺寸。",
+            "tip_2": "調整設定時，請注意預設單位為英寸（in）。\n在設定 Avery 5260 標籤紙時我們發現使用官方建議尺寸，實際列印仍無法完全對齊標籤格，\n<b>因此建議預留一些測試與調整的空間。</b>",
+            "tip_3": "列印時請注意：\n'<ol><li>'將白邊設定為「0」或「無」'</li><li>'將放大倍率設定為100%'</li><li>'停用雙面列印'</li><li>'先列印一張測試確認後再列印多張'</li></ol>'",
+            "tips": "小技巧",
+            "title": "標籤產生器",
+            "toast": {
+                "page_too_small_card": "頁面大小小於單個標籤大小，無法生成預覽"
+            }
+        }
+    },
+    "scanner": {
+        "barcode_detected_message": "條碼掃描成功",
+        "barcode_fetch_data": "取得物品資訊",
+        "error": "掃描時發生錯誤",
+        "invalid_url": "無效的條碼網址",
+        "no_sources": "未偵測到影像輸入裝置",
+        "permission_denied": "無法存取相機，請於瀏覽器設定中允許存取相機",
+        "select_video_source": "請選擇影像輸入裝置",
+        "title": "掃描",
+        "unsupported": "不支援非HTTPS協議使用媒體串流API"
+    },
+    "tags": {
+        "no_results": "找不到標籤",
+        "tag_delete_confirm": "是否確認刪除此標籤？此作業無法復原。",
+        "toast": {
+            "failed_delete_tag": "刪除標籤失敗",
+            "failed_load_tag": "讀取標籤失敗",
+            "failed_update_tag": "標籤上傳失敗",
+            "tag_deleted": "已刪除標籤",
+            "tag_updated": "已上傳標籤"
+        },
+        "update_tag": "更新標籤"
+    },
+    "tools": {
+        "actions": "收藏選項",
+        "actions_set": {
+            "create_missing_thumbnails": "建立遺失縮圖",
+            "create_missing_thumbnails_button": "建立縮圖",
+            "create_missing_thumbnails_confirm": "是否確認要建立遺失縮圖？此作業需要數分鐘完成且無法暫停。",
+            "create_missing_thumbnails_sub": "為目前支援的所有附件建立縮圖。此功能適用於HomeBox v0.20.0版本之前上傳的附件，且將不會覆寫現有的縮圖僅為無縮圖的附件產生縮圖。請注意，縮圖會在背景建立且需要一些時間完成。",
+            "ensure_ids": "驗證Asset ID",
+            "ensure_ids_button": "驗證",
+            "ensure_ids_confirm": "確認是否驗證所有物品Asset ID？此作業可能需要一段時間，且Asset ID變更後無法復原。",
+            "ensure_ids_sub": "此功能用以確保每一件物品皆包含一個有效的Asset ID。系統將尋找目前最大的Asset ID並依序填入目前尚未擁有Asset ID的物品，填寫順序將由物品創立時間而定。",
+            "ensure_import_refs": "驗證匯入參照",
+            "ensure_import_refs_button": "驗證",
+            "ensure_import_refs_sub": "此功能用以確保每一件物品皆包含一個有效的import_ref（匯入參照）。若物品為包含一個有效的import_ref則系統將填入隨機生成的一個8個字元字串。",
+            "set_primary_photo": "自動設定主要圖片",
+            "set_primary_photo_button": "自動設定",
+            "set_primary_photo_confirm": "是否確認執行自動設定主要圖片？此作業將無法復原。",
+            "set_primary_photo_sub": "Homebox v0.10.0 (2023年10月10日發行)版本中加入主要圖片功能。此功能可用於v0.10.0之前建立且無縮圖的物品，系統將自動使用物品中最早上傳圖片作為物品縮圖。‘<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">’詳細請見GitHub PR #576'</a>'",
+            "wipe_inventory": "清除所有收藏",
+            "wipe_inventory_button": "清除所有收藏",
+            "wipe_inventory_confirm": "是否確認清除所有收藏？此作業將刪除所有物品且無法復原。",
+            "wipe_inventory_locations": "當然所有的位置也將清除",
+            "wipe_inventory_maintenance": "還有所有的維修紀錄",
+            "wipe_inventory_note": "補充：僅有群組擁有者可執行此作業。",
+            "wipe_inventory_sub": "永久移除所有物品和收藏。此作業無法復原且將一並移除所有物品資料、附件和照片。",
+            "wipe_inventory_tags": "也會清除所有標籤",
+            "zero_datetimes": "重設物品建立時間",
+            "zero_datetimes_button": "重設",
+            "zero_datetimes_confirm": "是否確認重設所有物品建立時間？此作業可能需要一段時間，且無法復原。",
+            "zero_datetimes_sub": "重設所有物品的時間並設為最初日期。此功能用以修復早期版本錯誤，該錯誤會在儲存日期時同時包含時間，導致日期欄位不正確顯示。'<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'詳細請見GitHub Issue #236'</a>'"
+        },
+        "actions_sub": "以下功能將影響整個收藏集內所有物品，'<b>'且無法復原請小心使用！'</b>'",
+        "demo_mode_error": {
+            "wipe_inventory": "收藏、標籤、位置和維修紀錄無法清除且您目前正在使用示範模式。請確認並非示範環境下再次操作。"
+        },
+        "import_export": "匯入/匯出（CSV格式）",
+        "import_export_set": {
+            "export": "匯出收藏",
+            "export_button": "匯出",
+            "export_sub": "匯出HomeBox專用之標準CSV格式文件。此作業將匯出'<br>'所有'</br>'於收藏集中的物品。",
+            "import": "匯入（CSV格式）",
+            "import_button": "匯入",
+            "import_ref_confirm": "是否確認執行驗證所有物品包含有效import_ref值？此作業可能需要一段時間，且無法復原。",
+            "import_sub": "匯入HomeBox專用之標準CSV格式文件。若匯入物品中未包含'<code>'HB.import_ref'</code>'值則'<b>'不會'</b>'覆寫任何已存在的物品，僅會新增為新物品。\n若匯入物品中包含'<code>'HB.import_ref'</code>'且和現有物品重複時，相同物品將會被合併；若無重複則僅會新增為新物品。"
+        },
+        "import_export_sub": "將收藏集匯入或匯出為CSV檔案，方便您轉移HomeBox資料。",
+        "reports": "統計資料",
+        "reports_set": {
+            "asset_labels": "資產標籤產生器",
+            "asset_labels_button": "標籤產生器",
+            "asset_labels_sub": "為指定範圍的Asset ID製作可直接列印標籤的PDF。部分標籤號碼（大於最大Asset ID後）不會指定物品，因此可以預先列印並在收到物品並建立物品後再貼至物品上。",
+            "bill_of_materials": "BOM表（材料表）",
+            "bill_of_materials_button": "製作BOM表",
+            "bill_of_materials_sub": "製作CSV格式檔案，該檔案可以匯入其他表單類型程式。檔案中統整收藏集中物品和價格資訊。"
+        },
+        "reports_sub": "製作收藏物品的各種報表。",
+        "toast": {
+            "asset_success": "{ results }資產已經更新。",
+            "failed_create_missing_thumbnails": "自動建立縮圖失敗。",
+            "failed_ensure_ids": "Asset ID驗證失敗。",
+            "failed_ensure_import_refs": "驗證import refs失敗。",
+            "failed_set_primary_photos": "設定主要圖片失敗。",
+            "failed_wipe_inventory": "清除收藏集失敗。",
+            "failed_zero_datetimes": "重設物品建立時間失敗。",
+            "wipe_inventory_success": "已成功清除收藏集。已刪除{ results }個物品。"
+        }
     }
 }

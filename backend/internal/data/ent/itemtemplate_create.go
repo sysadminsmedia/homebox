@@ -240,9 +240,9 @@ func (_c *ItemTemplateCreate) SetNillableIncludeSoldFields(v *bool) *ItemTemplat
 	return _c
 }
 
-// SetDefaultLabelIds sets the "default_label_ids" field.
-func (_c *ItemTemplateCreate) SetDefaultLabelIds(v []uuid.UUID) *ItemTemplateCreate {
-	_c.mutation.SetDefaultLabelIds(v)
+// SetDefaultTagIds sets the "default_tag_ids" field.
+func (_c *ItemTemplateCreate) SetDefaultTagIds(v []uuid.UUID) *ItemTemplateCreate {
+	_c.mutation.SetDefaultTagIds(v)
 	return _c
 }
 
@@ -549,9 +549,9 @@ func (_c *ItemTemplateCreate) createSpec() (*ItemTemplate, *sqlgraph.CreateSpec)
 		_spec.SetField(itemtemplate.FieldIncludeSoldFields, field.TypeBool, value)
 		_node.IncludeSoldFields = value
 	}
-	if value, ok := _c.mutation.DefaultLabelIds(); ok {
-		_spec.SetField(itemtemplate.FieldDefaultLabelIds, field.TypeJSON, value)
-		_node.DefaultLabelIds = value
+	if value, ok := _c.mutation.DefaultTagIds(); ok {
+		_spec.SetField(itemtemplate.FieldDefaultTagIds, field.TypeJSON, value)
+		_node.DefaultTagIds = value
 	}
 	if nodes := _c.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

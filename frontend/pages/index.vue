@@ -33,6 +33,12 @@
         const ctx = useAuthContext();
         if (ctx.isAuthorized()) {
           return "/home";
+        } else {
+          console.log("Logged out, clearing collectionId preference");
+          const prefs = useViewPreferences();
+          if (prefs.value.collectionId) {
+            prefs.value.collectionId = null;
+          }
         }
       },
     ],
@@ -209,8 +215,8 @@
 </script>
 
 <template>
-  <div class="flex min-h-screen flex-col">
-    <div class="absolute top-0 -z-10 min-w-full fill-primary">
+  <div class="relative flex min-h-screen flex-col">
+    <div class="pointer-events-none absolute top-0 z-0 min-w-full fill-primary">
       <div class="flex min-h-[20vh] flex-col bg-primary" />
       <svg
         class="fill-primary drop-shadow-xl"
@@ -224,7 +230,7 @@
         />
       </svg>
     </div>
-    <div>
+    <div class="relative z-10">
       <header
         class="mx-auto p-4 sm:flex sm:items-end sm:p-6 lg:p-14"
         :class="{

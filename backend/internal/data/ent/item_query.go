@@ -17,10 +17,10 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemfield"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 )
 
 // ItemQuery is the builder for querying Item entities.
@@ -33,7 +33,7 @@ type ItemQuery struct {
 	withGroup              *GroupQuery
 	withParent             *ItemQuery
 	withChildren           *ItemQuery
-	withLabel              *LabelQuery
+	withTag                *TagQuery
 	withLocation           *LocationQuery
 	withFields             *ItemFieldQuery
 	withMaintenanceEntries *MaintenanceEntryQuery
@@ -141,9 +141,9 @@ func (_q *ItemQuery) QueryChildren() *ItemQuery {
 	return query
 }
 
-// QueryLabel chains the current query on the "label" edge.
-func (_q *ItemQuery) QueryLabel() *LabelQuery {
-	query := (&LabelClient{config: _q.config}).Query()
+// QueryTag chains the current query on the "tag" edge.
+func (_q *ItemQuery) QueryTag() *TagQuery {
+	query := (&TagClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -154,8 +154,8 @@ func (_q *ItemQuery) QueryLabel() *LabelQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(item.Table, item.FieldID, selector),
-			sqlgraph.To(label.Table, label.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, item.LabelTable, item.LabelPrimaryKey...),
+			sqlgraph.To(tag.Table, tag.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, item.TagTable, item.TagPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -446,7 +446,7 @@ func (_q *ItemQuery) Clone() *ItemQuery {
 		withGroup:              _q.withGroup.Clone(),
 		withParent:             _q.withParent.Clone(),
 		withChildren:           _q.withChildren.Clone(),
-		withLabel:              _q.withLabel.Clone(),
+		withTag:                _q.withTag.Clone(),
 		withLocation:           _q.withLocation.Clone(),
 		withFields:             _q.withFields.Clone(),
 		withMaintenanceEntries: _q.withMaintenanceEntries.Clone(),
@@ -490,14 +490,14 @@ func (_q *ItemQuery) WithChildren(opts ...func(*ItemQuery)) *ItemQuery {
 	return _q
 }
 
-// WithLabel tells the query-builder to eager-load the nodes that are connected to
-// the "label" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *ItemQuery) WithLabel(opts ...func(*LabelQuery)) *ItemQuery {
-	query := (&LabelClient{config: _q.config}).Query()
+// WithTag tells the query-builder to eager-load the nodes that are connected to
+// the "tag" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *ItemQuery) WithTag(opts ...func(*TagQuery)) *ItemQuery {
+	query := (&TagClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withLabel = query
+	_q.withTag = query
 	return _q
 }
 
@@ -628,7 +628,7 @@ func (_q *ItemQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Item, e
 			_q.withGroup != nil,
 			_q.withParent != nil,
 			_q.withChildren != nil,
-			_q.withLabel != nil,
+			_q.withTag != nil,
 			_q.withLocation != nil,
 			_q.withFields != nil,
 			_q.withMaintenanceEntries != nil,
@@ -678,10 +678,10 @@ func (_q *ItemQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Item, e
 			return nil, err
 		}
 	}
-	if query := _q.withLabel; query != nil {
-		if err := _q.loadLabel(ctx, query, nodes,
-			func(n *Item) { n.Edges.Label = []*Label{} },
-			func(n *Item, e *Label) { n.Edges.Label = append(n.Edges.Label, e) }); err != nil {
+	if query := _q.withTag; query != nil {
+		if err := _q.loadTag(ctx, query, nodes,
+			func(n *Item) { n.Edges.Tag = []*Tag{} },
+			func(n *Item, e *Tag) { n.Edges.Tag = append(n.Edges.Tag, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -810,7 +810,7 @@ func (_q *ItemQuery) loadChildren(ctx context.Context, query *ItemQuery, nodes [
 	}
 	return nil
 }
-func (_q *ItemQuery) loadLabel(ctx context.Context, query *LabelQuery, nodes []*Item, init func(*Item), assign func(*Item, *Label)) error {
+func (_q *ItemQuery) loadTag(ctx context.Context, query *TagQuery, nodes []*Item, init func(*Item), assign func(*Item, *Tag)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
 	byID := make(map[uuid.UUID]*Item)
 	nids := make(map[uuid.UUID]map[*Item]struct{})
@@ -822,11 +822,11 @@ func (_q *ItemQuery) loadLabel(ctx context.Context, query *LabelQuery, nodes []*
 		}
 	}
 	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(item.LabelTable)
-		s.Join(joinT).On(s.C(label.FieldID), joinT.C(item.LabelPrimaryKey[0]))
-		s.Where(sql.InValues(joinT.C(item.LabelPrimaryKey[1]), edgeIDs...))
+		joinT := sql.Table(item.TagTable)
+		s.Join(joinT).On(s.C(tag.FieldID), joinT.C(item.TagPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(item.TagPrimaryKey[1]), edgeIDs...))
 		columns := s.SelectedColumns()
-		s.Select(joinT.C(item.LabelPrimaryKey[1]))
+		s.Select(joinT.C(item.TagPrimaryKey[1]))
 		s.AppendSelect(columns...)
 		s.SetDistinct(false)
 	})
@@ -856,14 +856,14 @@ func (_q *ItemQuery) loadLabel(ctx context.Context, query *LabelQuery, nodes []*
 			}
 		})
 	})
-	neighbors, err := withInterceptors[[]*Label](ctx, query, qr, query.inters)
+	neighbors, err := withInterceptors[[]*Tag](ctx, query, qr, query.inters)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
 		nodes, ok := nids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected "label" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected "tag" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)

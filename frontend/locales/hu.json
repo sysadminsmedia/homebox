@@ -1,4 +1,46 @@
 {
+    "collection": {
+        "copy_invite": "Meghívólink másolása",
+        "create_invite": "Meghívás",
+        "delete_collection": "Gyűjtemény törlése",
+        "delete_confirm": "Biztosan törölni akarja ezt a gyűjteményt? A műveletet végleges, nem visszavonható.",
+        "deleted_collection": "Gyűjtemény törölve.",
+        "expires_at": "Lejárat",
+        "invite_token": "Token",
+        "invite_token_hidden": "Nem látható",
+        "invite_token_warning": "A meghívótokenek csak egyszer jelennek meg. Másold ki a linket most, az oldal elhagyása vagy frissítése után nem fogod tudni újra megtekinteni ezt a tokent.",
+        "invites": "Meghívók",
+        "invites_delete_confirm": "Biztosan törölni szeretné ezt a meghívót?",
+        "leave_collection": "Gyűjtemény elhagyása",
+        "leave_confirm": "Biztosan ki akar lépni a gyűjteményből?",
+        "left_collection": "Elhagyta a gyűjteményt.",
+        "manage_collection": "Gyűjtemények kezelése",
+        "members": {
+            "cannot_remove_last": "Nem törölheti az utolsó tagot.",
+            "email": "Email",
+            "empty": "A gyűjteményben nincsenek tagok jelenleg.",
+            "member": "Tag",
+            "name": "Név",
+            "owner": "Tulajdonos",
+            "remove_confirm": "Biztosan törölni akarja ezt a tagot?",
+            "removed": "Tag eltávolítva",
+            "role": "Szerepkör"
+        },
+        "no_collections": {
+            "create": "Új gyűjtemény létrehozása",
+            "join": "Csatlakozás egy meglévő gyűjteményhez",
+            "message": "Úgy tűnik, nem vagy része egyetlen gyűjteménynek sem. Hozz létre egy új gyűjteményt a dolgaidnak, vagy csatlakozz egy olyanhoz, amelybe meghívtak.",
+            "title": "Nem található gyűjtemény"
+        },
+        "no_invites": "Nincsenek meghívók",
+        "tabs": {
+            "invites": "Meghívások",
+            "members": "Tagok",
+            "notifiers": "Értesítők",
+            "settings": "Beállítások",
+            "tools": "Eszközök"
+        }
+    },
     "components": {
         "app": {
             "create_modal": {
@@ -22,6 +64,33 @@
                 "latest_version": "Legújabb verzió",
                 "new_version_available": "Új verzió érhető el",
                 "new_version_available_link": "Kattints ide az újdonságok megtekintéséhez"
+            }
+        },
+        "collection": {
+            "create_modal": {
+                "name_label": "Gyűjtemény neve",
+                "title": "Gyűjtemény létrehozása",
+                "toast": {
+                    "create_failed": "Sikertelen a gyűjtemény létrehozása",
+                    "create_success": "Gyűjtemény létrehozva",
+                    "please_enter_name": "Kérem adja meg a gyűjtemény nevét"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Kérem válassza ki a lejárat dátumát és időpontját.",
+                    "invalid_expiry_past": "A lejárat dátumának a jövőben kell lennie."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Gyűjtemény meghívókód",
+                "invites_should_look_like": "A meghívókódnak így kell kinéznie:",
+                "join": "Csatlakozás gyűjteményhez",
+                "no_invite_code_create_one": "Nincs meghívókódod? Készíts inkább egy új gyűjteményt",
+                "toast": {
+                    "join_failed": "Nem sikerült csatlakozni a gyűjteményhez",
+                    "join_success": "Csatlakozva a gyűjteményhez"
+                }
             }
         },
         "color_selector": {
@@ -132,41 +201,42 @@
                 "title": "Termék importálása"
             },
             "selector": {
+                "clear": "Tételkiválasztás törlése",
                 "no_results": "Nincs Találat",
                 "placeholder": "Válassz…",
-                "search_placeholder": "Kezdj gépelni a kereséshez…"
+                "search_placeholder": "Kezdj gépelni a kereséshez…",
+                "searching": "Keresés…"
             },
             "view": {
+                "change_details": {
+                    "failed_to_update_item": "Tétel frissítése sikertelen"
+                },
                 "selectable": {
                     "card": "Kártya",
                     "items": "Tételek",
                     "no_items": "Nincs megjeleníthető elem",
+                    "select_all": "Mind kiválasztása",
                     "table": "Táblázat"
                 },
                 "table": {
+                    "dropdown": {
+                        "actions": "Műveletek",
+                        "delete_item": "Tétel törlése",
+                        "delete_selected": "Kiválasztott tételek törlése",
+                        "download_csv": "Táblázat letöltése CSV-ként",
+                        "download_json": "Táblázat letöltése JSON-ként",
+                        "error_deleting": "Hiba a tétel törlésekor",
+                        "toggle_expand": "Kibontás",
+                        "view_item": "Tétel megtekintése",
+                        "view_items": "Tételek megtekintése"
+                    },
                     "headers": "Fejlécek",
                     "page": "Oldal",
                     "rows_per_page": "Sorok oldalanként",
+                    "selected_rows": "Az összes {total} sorból {selected} kiválasztva.",
                     "table_settings": "Táblázatbeállítások",
                     "view_item": "Elem megtekintése"
                 }
-            }
-        },
-        "label": {
-            "create_modal": {
-                "label_color": "Címke színe",
-                "label_description": "Címke leírása",
-                "label_name": "Címke neve",
-                "title": "Címke létrehozása",
-                "toast": {
-                    "already_creating": "Címke létrehozása már folyamatban",
-                    "create_failed": "Sikertelen címke létrehozás",
-                    "create_success": "Címke létrehozva",
-                    "label_name_too_long": "A címke neve nem lehet hosszabb 50 karakternél"
-                }
-            },
-            "selector": {
-                "select_labels": "Címkék kiválasztása"
             }
         },
         "location": {
@@ -193,6 +263,40 @@
         "quick_menu": {
             "no_results": "Nincs találat.",
             "shortcut_hint": "Használd a számgombokat egy művelet gyors kiválasztásához."
+        },
+        "template": {
+            "apply_template": "Sablon alkalmazása",
+            "card": {
+                "delete": "Sablon törlése",
+                "edit": "Sablon szerkesztése"
+            },
+            "confirm_delete": "Biztosan törlöd ezt a sablont?",
+            "create_modal": {
+                "title": "Sablon létrehozása"
+            },
+            "detail": {
+                "updated": "Frissítve"
+            },
+            "edit_modal": {
+                "title": "Sablon szerkesztése"
+            },
+            "form": {
+                "custom_fields": "Egyedi mezők",
+                "item_description": "Tétel leírása",
+                "item_name": "Tétel neve",
+                "manufacturer": "Gyártó",
+                "template_name": "Sablon neve"
+            },
+            "save_as_template": "Mentés mint sablon",
+            "toast": {
+                "applied": "\"{name}\" sablon alkalmazva",
+                "create_failed": "A sablon létrehozása nem sikerült",
+                "created": "Sablon létrehozva",
+                "delete_failed": "A sablon törlése nem sikerült",
+                "deleted": "Sablon törölve",
+                "load_failed": "Nem sikerült betölteni a sablon részleteit",
+                "updated": "Sablon frissítve"
+            }
         }
     },
     "errors": {
@@ -224,13 +328,14 @@
         "insured": "Biztosítva",
         "items": "Tételek",
         "join_discord": "Csatlakozz a Discordhoz",
-        "labels": "Címkék",
         "loading": "Betöltés…",
         "locations": "Helyek",
         "maintenance": "Karbantartás",
         "name": "Név",
         "navigate": "Navigáció",
+        "no": "Nem",
         "password": "Jelszó",
+        "preview": "Előnézet",
         "quantity": "Mennyiség",
         "read_docs": "Olvasd el a dokumentációt",
         "return_home": "Vissza a kezdőlapra",
@@ -243,15 +348,14 @@
         "updating": "Frissítés",
         "value": "Érték",
         "version": "Verzió: { version }",
-        "welcome": "Üdv, { username }"
+        "welcome": "Üdv, { username }",
+        "yes": "Igen"
     },
     "home": {
-        "labels": "Címkék",
         "quick_statistics": "Gyors statisztika",
         "recently_added": "Nemrég hozzáadott",
         "storage_locations": "Tárolási helyek",
         "total_items": "Összes tétel",
-        "total_labels": "Összes címke",
         "total_locations": "Összes hely",
         "total_value": "Teljes érték"
     },
@@ -260,6 +364,7 @@
         "dont_join_group": "Nem szeretnél csatlakozni egy csoporthoz?",
         "joining_group": "Meglévő csoporthoz csatlakozol!",
         "login": "Bejelentkezés",
+        "or": "vagy",
         "register": "Regisztráció",
         "remember_me": "Emlékezzen rám!",
         "set_email": "Mi az email címed?",
@@ -291,6 +396,13 @@
         "description": "Leírás",
         "details": "Részletek",
         "drag_and_drop": "Húzd ide a fájlokat, vagy kattints a fájlok kiválasztásához",
+        "duplicate": {
+            "copy_attachments": "Mellékletek másolása",
+            "copy_custom_fields": "Egyedi mezők másolása",
+            "copy_maintenance": "Karbantartások másolása",
+            "custom_prefix": "Előtag másolása",
+            "enable_custom_prefix": "Egyedi előtag használata"
+        },
         "edit": {
             "edit_attachment_dialog": {
                 "attachment_title": "Melléklet Cím",
@@ -299,7 +411,8 @@
                 "primary_photo_sub": "Ez a lehetőség csak fényképeknél érhető el. Csak egy fotó lehet elsődleges. Ha kiválasztod ezt a műveletet, a jelenlegi elsődleges fotó elveszti ezt a jellegét.",
                 "select_type": "Válassz típust",
                 "title": "Melléklet szerkesztése"
-            }
+            },
+            "view_image": "Kép megtekintése"
         },
         "edit_details": "Részletek szerkesztése",
         "field_selector": "Mezőválasztó",
@@ -316,7 +429,6 @@
         "manufacturer": "Gyártó",
         "model_number": "Modellszám",
         "name": "Név",
-        "negate_labels": "Címkeválasztás negálása",
         "next_page": "Következő oldal",
         "no_attachments": "Nem található melléklet",
         "no_results": "Egy elem sem található",
@@ -384,18 +496,6 @@
         "warranty_details": "Garancia részletei",
         "warranty_expires": "Garancia vége"
     },
-    "labels": {
-        "label_delete_confirm": "Biztos vagy benne, hogy törölni szeretnéd ezt a címkét? A művelet nem visszafordítható.",
-        "no_results": "Nem található címke",
-        "toast": {
-            "failed_delete_label": "Címke törlése sikertelen",
-            "failed_load_label": "Címke betöltése sikertelen",
-            "failed_update_label": "Címke frissítése sikertelen",
-            "label_deleted": "Címke törölve",
-            "label_updated": "Címke frissítve"
-        },
-        "update_label": "Címke módosítása"
-    },
     "languages": {
         "ca": "Katalán",
         "cs-CZ": "Cseh",
@@ -432,6 +532,7 @@
     "languages.ro-RO": "Román",
     "languages.sk-SK": "Szlovák",
     "languages.sq-AL": "Albán",
+    "languages.sr-RS": "Szerb",
     "locations": {
         "child_locations": "Tartalmazott helyek",
         "collapse_tree": "Fanézet becsukása",
@@ -484,15 +585,19 @@
     },
     "menu": {
         "create_item": "Tétel / Eszköz",
-        "create_label": "Címke",
         "create_location": "Hely",
         "home": "Kezdőlap",
         "locations": "Helyek",
         "maintenance": "Karbantartás",
         "profile": "Profil",
         "scanner": "Szkenner",
-        "search": "Keresés",
-        "tools": "Eszközök"
+        "search": "Keresés"
+    },
+    "pages": {
+        "templates": {
+            "no_templates": "Nincsenek még sablonok.",
+            "title": "Sablonok"
+        }
     },
     "profile": {
         "active": "Aktív",
@@ -506,11 +611,14 @@
         "display_legacy_header": "{ currentValue, select, true {Legacy fejléc letiltása} false {Legacy fejléc engedélyezése} other {Nincs találat}}",
         "enabled": "Engedélyezve",
         "example": "Példa",
-        "gen_invite": "Meghívó link létrehozása",
         "group_settings": "Csoport beállításai",
         "group_settings_sub": "Ezek a csoport közös beállításai. Lehet hogy frissítened kell az oldalt a böngésződben a beállítások megváltoztatása után.",
         "inactive": "Inaktív",
         "language": "Nyelv",
+        "moved_notice_description": "Ezeket a beállításokat már a gyűjteményekben kezeljük.",
+        "moved_notice_link_invites": "Gyűjtemény meghívók",
+        "moved_notice_link_notifiers": "Gyűjtemény értesítői",
+        "moved_notice_title": "Az értesítőket, meghívókat, vagy a pénznem beállításokat keresed?",
         "new_password": "Új jelszó",
         "no_notifiers": "Nincs értesítő beállítva",
         "no_override": "Nincs felülírás",
@@ -562,6 +670,7 @@
             "page_top_padding": "Oldal felső margója",
             "page_width": "Oldalszélesség",
             "qr_code_example": "QR-kód példa",
+            "replace_homebox_text": "Helyettesítő szöveg",
             "tip_1": "Az alapértelmezett beállítások\n'<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 címkeívek'</a>'nek felelnek meg. Ha más íveket használsz,\n módosítanod kell a beállításokat, hogy a laphoz igazodjanak.",
             "tip_2": "Ha a lapot testre szabod, a méretek hüvelykben vannak megadva. A 5260 ívek létrehozásakor feltűnt,\n hogy a hivatalosan megadott méretek nem azonosak a megfelelő szövegdoboz méretekkel.\n'<b>'Szükséged lehet néhány próbálkozásra a megfelelő méretek megtalálásához.'</b>'",
             "tip_3": "Nyomtatáskor ügyelj a következőkre:\n '<ol><li>'Állítsd a margókat 0-ra vagy Nincsre'</li><li>'Állítsd a skálázást 100% -ra'</li><li>'Tiltsd le a kétoldalas nyomtatást'</li><li>'Több oldal nyomtatása előtt nyomtass tesztoldalt'</li></ol>'",

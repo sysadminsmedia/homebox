@@ -3,6 +3,7 @@
   import { useTreeState } from "~~/components/Location/Tree/tree-state";
   import MdiCollapseAllOutline from "~icons/mdi/collapse-all-outline";
   import MdiExpandAllOutline from "~icons/mdi/expand-all-outline";
+  import MdiPackageVariant from "~icons/mdi/package-variant";
 
   import { Button, ButtonGroup } from "@/components/ui/button";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -39,8 +40,10 @@
   });
 
   const locationTreeId = "locationTree";
+  const showItemsKey = "showItems";
 
   const treeState = useTreeState(locationTreeId);
+  const showItems = ref(true);
 
   const route = useRouter();
 
@@ -56,16 +59,34 @@
         treeState.value[key] = data[key];
       }
     }
+
+    if (query && query[showItemsKey] !== undefined) {
+      showItems.value = query[showItemsKey] === "true";
+    }
   });
 
   watch(
     treeState,
     () => {
       // Push the current state to the URL
-      route.replace({ query: { [locationTreeId]: JSON.stringify(treeState.value) } });
+      route.replace({
+        query: {
+          [locationTreeId]: JSON.stringify(treeState.value),
+          [showItemsKey]: showItems.value.toString(),
+        },
+      });
     },
     { deep: true }
   );
+
+  watch(showItems, () => {
+    route.replace({
+      query: {
+        [locationTreeId]: JSON.stringify(treeState.value),
+        [showItemsKey]: showItems.value.toString(),
+      },
+    });
+  });
 
   function closeAll() {
     for (const key in treeState.value) {
@@ -108,12 +129,27 @@
             </Tooltip>
             <Tooltip>
               <TooltipTrigger>
-                <Button size="icon" variant="outline" data-pos="end" @click="closeAll">
+                <Button size="icon" variant="outline" data-pos="middle" @click="closeAll">
                   <MdiCollapseAllOutline />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
                 <p>{{ $t("locations.collapse_tree") }}</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button
+                  size="icon"
+                  :variant="showItems ? 'default' : 'outline'"
+                  data-pos="end"
+                  @click="showItems = !showItems"
+                >
+                  <MdiPackageVariant />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{{ showItems ? $t("locations.hide_items") : $t("locations.show_items") }}</p>
               </TooltipContent>
             </Tooltip>
           </ButtonGroup>
@@ -122,7 +158,12 @@
     </div>
     <BaseCard>
       <div class="p-2">
-        <LocationTreeRoot v-if="tree" :locs="tree" :tree-id="locationTreeId" />
+        <LocationTreeRoot
+          v-if="tree && Array.isArray(tree)"
+          :locs="tree"
+          :tree-id="locationTreeId"
+          :show-items="showItems"
+        />
       </div>
     </BaseCard>
   </BaseContainer>

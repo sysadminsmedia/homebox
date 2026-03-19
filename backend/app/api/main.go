@@ -8,27 +8,33 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/pressly/goose/v3"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
-
-	"github.com/hay-kot/httpkit/errchain"
-	"github.com/hay-kot/httpkit/graceful"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
-	"github.com/rs/zerolog/pkgerrors"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/currencies"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/otel"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/hay-kot/httpkit/errchain"
+	"github.com/hay-kot/httpkit/graceful"
+	"github.com/pressly/goose/v3"
+	"github.com/riandyrn/otelchi"
+	otelchimetric "github.com/riandyrn/otelchi/metric"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/pkgerrors"
 	"go.balki.me/anyhttp"
 
-	_ "github.com/lib/pq"
+	"entgo.io/ent/dialect"
+	entsql "entgo.io/ent/dialect/sql"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/postgres"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/sqlite3"
 	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
@@ -50,8 +56,8 @@ var (
 
 func build() string {
 	short := commit
-	if len(short) > 7 {
-		short = short[:7]
+	if len(commit) > 7 {
+		short = commit[:7]
 	}
 
 	return fmt.Sprintf("%s, commit %s, built at %s", version, short, buildTime)
@@ -102,13 +108,25 @@ func run(cfg *config.Config) error {
 	app.setupLogger()
 
 	// =========================================================================
+	// Initialize OpenTelemetry
+	otelProvider, err := otel.NewProvider(context.Background(), &cfg.Otel, version)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to initialize OpenTelemetry")
+		return fmt.Errorf("failed to initialize OpenTelemetry: %w", err)
+	}
+	app.otel = otelProvider
+
+	// Wire zerolog to OTel logs if enabled
+	app.setupOtelZerologBridge()
+
+	// =========================================================================
 	// Initialize Database & Repos
-	err := setupStorageDir(cfg)
+	err = setupStorageDir(cfg)
 	if err != nil {
 		return err
 	}
 
-	if strings.ToLower(cfg.Database.Driver) == "postgres" {
+	if strings.ToLower(cfg.Database.Driver) == config.DriverPostgres {
 		if !validatePostgresSSLMode(cfg.Database.SslMode) {
 			log.Error().Str("sslmode", cfg.Database.SslMode).Msg("invalid sslmode")
 			return fmt.Errorf("invalid sslmode: %s", cfg.Database.SslMode)
@@ -120,7 +138,20 @@ func run(cfg *config.Config) error {
 		return err
 	}
 
-	c, err := ent.Open(strings.ToLower(cfg.Database.Driver), databaseURL)
+	sqlDriver := strings.ToLower(cfg.Database.Driver)
+	var driverName string
+	switch sqlDriver {
+	case config.DriverPostgres:
+		driverName = "pgx"
+		sqlDriver = dialect.Postgres
+	case config.DriverSqlite3, "sqlite":
+		driverName = "sqlite3"
+		sqlDriver = dialect.SQLite
+	default:
+		return fmt.Errorf("unsupported driver: %s", sqlDriver)
+	}
+
+	db, err := otelProvider.OpenDatabase(driverName, databaseURL)
 	if err != nil {
 		log.Error().
 			Err(err).
@@ -137,6 +168,15 @@ func run(cfg *config.Config) error {
 			err,
 		)
 	}
+
+	drv := entsql.OpenDB(sqlDriver, db)
+	c := ent.NewClient(ent.Driver(drv))
+	defer func(c *ent.Client) {
+		err := c.Close()
+		if err != nil {
+			log.Error().Err(err).Msg("failed to close database connection")
+		}
+	}(c)
 
 	migrationsFs, err := migrations.Migrations(strings.ToLower(cfg.Database.Driver))
 	if err != nil {
@@ -161,7 +201,7 @@ func run(cfg *config.Config) error {
 		return err
 	}
 
-	currencies, err := currencies.CollectionCurrencies(collectFuncs...)
+	currencyData, err := currencies.CollectionCurrencies(collectFuncs...)
 	if err != nil {
 		log.Error().
 			Err(err).
@@ -175,7 +215,8 @@ func run(cfg *config.Config) error {
 	app.services = services.New(
 		app.repos,
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),
-		services.WithCurrencies(currencies),
+		services.WithCurrencies(currencyData),
+		services.WithNotifierConfig(&cfg.Notifier),
 	)
 
 	// =========================================================================
@@ -184,10 +225,23 @@ func run(cfg *config.Config) error {
 	logger := log.With().Caller().Logger()
 
 	router := chi.NewMux()
+
+	if otelProvider.IsEnabled() && cfg.Otel.EnableHTTPTracing {
+		otelChiBaseCfg := otelchimetric.NewBaseConfig(cfg.Otel.ServiceName, otelchimetric.WithMeterProvider(otelProvider.MeterProvider()))
+		router.Use(
+			otelchi.Middleware(cfg.Otel.ServiceName, otelchi.WithChiRoutes(router)),
+			otelchimetric.NewResponseSizeBytes(otelChiBaseCfg),
+			otelchimetric.NewRequestInFlight(otelChiBaseCfg),
+		)
+	}
+
 	router.Use(
 		middleware.RequestID,
 		middleware.RealIP,
 		mid.Logger(logger),
+		mid.SecurityHeaders(),
+		// Restrict the max body size to the upload limit + 1MB (for overhead)
+		mid.MaxBodySize(cfg.Web.MaxUploadSize+1),
 		middleware.Recoverer,
 		middleware.StripSlashes,
 	)
@@ -197,6 +251,16 @@ func run(cfg *config.Config) error {
 	app.mountRoutes(router, chain, app.repos)
 
 	runner := graceful.NewRunner()
+
+	// Add OpenTelemetry shutdown
+	if otelProvider.IsEnabled() {
+		runner.AddFunc("otel-shutdown", func(ctx context.Context) error {
+			<-ctx.Done()
+			shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			return otelProvider.Shutdown(shutdownCtx)
+		})
+	}
 
 	runner.AddFunc("server", func(ctx context.Context) error {
 		httpserver := http.Server{
@@ -214,6 +278,11 @@ func run(cfg *config.Config) error {
 
 		listener, addrType, addrCfg, err := anyhttp.GetListener(cfg.Web.Host)
 		if err == nil {
+			defer func() {
+				if err := listener.Close(); err != nil {
+					log.Error().Err(err).Msg("failed to close listener")
+				}
+			}()
 			switch addrType {
 			case anyhttp.SystemdFD:
 				sysdCfg := addrCfg.(*anyhttp.SysdConfig)

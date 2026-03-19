@@ -4,18 +4,18 @@ import (
 	"context"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func userFactory() UserCreate {
-	password := fk.Str(10)
 	return UserCreate{
-		Name:        fk.Str(10),
-		Email:       fk.Email(),
-		Password:    &password,
-		IsSuperuser: fk.Bool(),
-		GroupID:     tGroup.ID,
+		Name:           fk.Str(10),
+		Email:          fk.Email(),
+		Password:       new(fk.Str(10)),
+		IsSuperuser:    fk.Bool(),
+		DefaultGroupID: tGroup.ID,
 	}
 }
 
@@ -87,7 +87,8 @@ func TestUserRepo_GetAll(t *testing.T) {
 				assert.Equal(t, usr.Email, usr2.Email)
 
 				// Check groups are loaded
-				assert.NotNil(t, usr2.GroupID)
+				assert.NotEqual(t, uuid.Nil, usr2.DefaultGroupID)
+				assert.NotEmpty(t, usr2.GroupIDs)
 			}
 		}
 	}

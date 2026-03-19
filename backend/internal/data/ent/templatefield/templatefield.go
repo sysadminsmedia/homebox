@@ -28,6 +28,12 @@ const (
 	FieldType = "type"
 	// FieldTextValue holds the string denoting the text_value field in the database.
 	FieldTextValue = "text_value"
+	// FieldNumberValue holds the string denoting the number_value field in the database.
+	FieldNumberValue = "number_value"
+	// FieldBooleanValue holds the string denoting the boolean_value field in the database.
+	FieldBooleanValue = "boolean_value"
+	// FieldTimeValue holds the string denoting the time_value field in the database.
+	FieldTimeValue = "time_value"
 	// EdgeItemTemplate holds the string denoting the item_template edge name in mutations.
 	EdgeItemTemplate = "item_template"
 	// Table holds the table name of the templatefield in the database.
@@ -50,6 +56,9 @@ var Columns = []string{
 	FieldDescription,
 	FieldType,
 	FieldTextValue,
+	FieldNumberValue,
+	FieldBooleanValue,
+	FieldTimeValue,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "template_fields"
@@ -86,6 +95,10 @@ var (
 	DescriptionValidator func(string) error
 	// TextValueValidator is a validator for the "text_value" field. It is called by the builders before save.
 	TextValueValidator func(string) error
+	// DefaultBooleanValue holds the default value on creation for the "boolean_value" field.
+	DefaultBooleanValue bool
+	// DefaultTimeValue holds the default value on creation for the "time_value" field.
+	DefaultTimeValue func() time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
@@ -95,7 +108,10 @@ type Type string
 
 // Type values.
 const (
-	TypeText Type = "text"
+	TypeText    Type = "text"
+	TypeNumber  Type = "number"
+	TypeBoolean Type = "boolean"
+	TypeTime    Type = "time"
 )
 
 func (_type Type) String() string {
@@ -105,7 +121,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeText:
+	case TypeText, TypeNumber, TypeBoolean, TypeTime:
 		return nil
 	default:
 		return fmt.Errorf("templatefield: invalid enum value for type field: %q", _type)
@@ -148,6 +164,21 @@ func ByType(opts ...sql.OrderTermOption) OrderOption {
 // ByTextValue orders the results by the text_value field.
 func ByTextValue(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTextValue, opts...).ToFunc()
+}
+
+// ByNumberValue orders the results by the number_value field.
+func ByNumberValue(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNumberValue, opts...).ToFunc()
+}
+
+// ByBooleanValue orders the results by the boolean_value field.
+func ByBooleanValue(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBooleanValue, opts...).ToFunc()
+}
+
+// ByTimeValue orders the results by the time_value field.
+func ByTimeValue(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTimeValue, opts...).ToFunc()
 }
 
 // ByItemTemplateField orders the results by item_template field.

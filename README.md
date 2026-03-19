@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="/docs/public/lilbox.svg" height="200"/>
+  <img src="/docs/src/assets/lilbox.svg" height="200"/>
 </div>
 
 <h1 align="center" style="margin-top: -10px;"> HomeBox </h1>
@@ -20,6 +20,9 @@
     <img src="https://img.shields.io/reddit/subreddit-subscribers/homebox"/>
     <img src="https://img.shields.io/mastodon/follow/110749314839831923?domain=infosec.exchange"/>
     <img src="https://img.shields.io/lemmy/homebox%40lemmy.world?label=lemmy"/>
+</p>
+<p align="center" style="width: 100%;">
+  <a href="https://www.pikapods.com/pods?run=homebox"><img src="https://www.pikapods.com/static/run-button.svg"/></a>
 </p>
 
 ## What is HomeBox
@@ -51,7 +54,7 @@ You can also try the demo instances of Homebox:
 
 ## Quick Start
 
-[Configuration & Docker Compose](https://homebox.software/en/quick-start.html)
+[Configuration & Docker Compose](https://homebox.software/en/quick-start/)
 
 ```bash
 # If using the rootless or hardened image, ensure data 
@@ -75,7 +78,7 @@ docker run -d \
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-To get started with code based contributions, please see our [contributing guide](https://homebox.software/en/contribute/get-started.html).
+To get started with code based contributions, please see our [contributing guide](https://homebox.software/en/contribute/).
 
 If you are not a coder and can't help translate, you can still contribute financially. Financial contributions help us maintain the project and keep demos running.
 

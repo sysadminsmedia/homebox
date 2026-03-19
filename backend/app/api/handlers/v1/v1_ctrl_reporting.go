@@ -1,9 +1,13 @@
 package v1
 
 import (
+	"errors"
+	"net/http"
+
+	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
-	"net/http"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
 
 // HandleBillOfMaterialsExport godoc
@@ -16,9 +20,13 @@ import (
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleBillOfMaterialsExport() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		actor := services.UseUserCtx(r.Context())
+		tenant := services.UseTenantCtx(r.Context())
 
-		csv, err := ctrl.svc.Items.ExportBillOfMaterialsCSV(r.Context(), actor.GroupID)
+		if tenant == uuid.Nil {
+			return validate.NewRequestError(errors.New("tenant required"), http.StatusBadRequest)
+		}
+
+		csv, err := ctrl.svc.Items.ExportBillOfMaterialsCSV(r.Context(), tenant)
 		if err != nil {
 			return err
 		}

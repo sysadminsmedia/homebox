@@ -2,8 +2,8 @@
 FROM public.ecr.aws/docker/library/node:22-alpine AS frontend-dependencies
 WORKDIR /app
 
-# Install pnpm globally (caching layer)
-RUN npm install -g pnpm
+# Install pnpm 10 (latest stable, works reliably in Alpine)
+RUN npm install -g pnpm@10
 
 # Copy package.json and lockfile to leverage caching
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
@@ -13,8 +13,8 @@ RUN pnpm install --frozen-lockfile
 FROM public.ecr.aws/docker/library/node:22-alpine AS frontend-builder
 WORKDIR /app
 
-# Install pnpm globally again (it can reuse the cache if not changed)
-RUN npm install -g pnpm
+# Install pnpm 10 (latest stable)
+RUN npm install -g pnpm@10
 
 # Copy over source files and node_modules from dependencies stage
 COPY frontend . 
@@ -73,7 +73,7 @@ ENV HBOX_STORAGE_PREFIX_PATH=data
 ENV HBOX_DATABASE_SQLITE_PATH=/data/homebox.db?_pragma=busy_timeout=2000&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite
 
 # Install necessary runtime dependencies
-RUN apk --no-cache add ca-certificates wget && \
+RUN apk --no-cache add ca-certificates wget mosquitto-clients && \
     if [ "$TARGETARCH" != "arm" ] || [ "$TARGETARCH" != "riscv64" ]; then apk --no-cache add libwebp libavif libheif libjxl; fi
 
 # Create application directory and copy over built Go binary

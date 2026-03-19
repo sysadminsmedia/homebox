@@ -24,10 +24,10 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemfield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
@@ -53,14 +53,14 @@ type Client struct {
 	ItemField *ItemFieldClient
 	// ItemTemplate is the client for interacting with the ItemTemplate builders.
 	ItemTemplate *ItemTemplateClient
-	// Label is the client for interacting with the Label builders.
-	Label *LabelClient
 	// Location is the client for interacting with the Location builders.
 	Location *LocationClient
 	// MaintenanceEntry is the client for interacting with the MaintenanceEntry builders.
 	MaintenanceEntry *MaintenanceEntryClient
 	// Notifier is the client for interacting with the Notifier builders.
 	Notifier *NotifierClient
+	// Tag is the client for interacting with the Tag builders.
+	Tag *TagClient
 	// TemplateField is the client for interacting with the TemplateField builders.
 	TemplateField *TemplateFieldClient
 	// User is the client for interacting with the User builders.
@@ -84,10 +84,10 @@ func (c *Client) init() {
 	c.Item = NewItemClient(c.config)
 	c.ItemField = NewItemFieldClient(c.config)
 	c.ItemTemplate = NewItemTemplateClient(c.config)
-	c.Label = NewLabelClient(c.config)
 	c.Location = NewLocationClient(c.config)
 	c.MaintenanceEntry = NewMaintenanceEntryClient(c.config)
 	c.Notifier = NewNotifierClient(c.config)
+	c.Tag = NewTagClient(c.config)
 	c.TemplateField = NewTemplateFieldClient(c.config)
 	c.User = NewUserClient(c.config)
 }
@@ -190,10 +190,10 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Item:                 NewItemClient(cfg),
 		ItemField:            NewItemFieldClient(cfg),
 		ItemTemplate:         NewItemTemplateClient(cfg),
-		Label:                NewLabelClient(cfg),
 		Location:             NewLocationClient(cfg),
 		MaintenanceEntry:     NewMaintenanceEntryClient(cfg),
 		Notifier:             NewNotifierClient(cfg),
+		Tag:                  NewTagClient(cfg),
 		TemplateField:        NewTemplateFieldClient(cfg),
 		User:                 NewUserClient(cfg),
 	}, nil
@@ -223,10 +223,10 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Item:                 NewItemClient(cfg),
 		ItemField:            NewItemFieldClient(cfg),
 		ItemTemplate:         NewItemTemplateClient(cfg),
-		Label:                NewLabelClient(cfg),
 		Location:             NewLocationClient(cfg),
 		MaintenanceEntry:     NewMaintenanceEntryClient(cfg),
 		Notifier:             NewNotifierClient(cfg),
+		Tag:                  NewTagClient(cfg),
 		TemplateField:        NewTemplateFieldClient(cfg),
 		User:                 NewUserClient(cfg),
 	}, nil
@@ -259,8 +259,8 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Attachment, c.AuthRoles, c.AuthTokens, c.Group, c.GroupInvitationToken,
-		c.Item, c.ItemField, c.ItemTemplate, c.Label, c.Location, c.MaintenanceEntry,
-		c.Notifier, c.TemplateField, c.User,
+		c.Item, c.ItemField, c.ItemTemplate, c.Location, c.MaintenanceEntry,
+		c.Notifier, c.Tag, c.TemplateField, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -271,8 +271,8 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Attachment, c.AuthRoles, c.AuthTokens, c.Group, c.GroupInvitationToken,
-		c.Item, c.ItemField, c.ItemTemplate, c.Label, c.Location, c.MaintenanceEntry,
-		c.Notifier, c.TemplateField, c.User,
+		c.Item, c.ItemField, c.ItemTemplate, c.Location, c.MaintenanceEntry,
+		c.Notifier, c.Tag, c.TemplateField, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -297,14 +297,14 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.ItemField.mutate(ctx, m)
 	case *ItemTemplateMutation:
 		return c.ItemTemplate.mutate(ctx, m)
-	case *LabelMutation:
-		return c.Label.mutate(ctx, m)
 	case *LocationMutation:
 		return c.Location.mutate(ctx, m)
 	case *MaintenanceEntryMutation:
 		return c.MaintenanceEntry.mutate(ctx, m)
 	case *NotifierMutation:
 		return c.Notifier.mutate(ctx, m)
+	case *TagMutation:
+		return c.Tag.mutate(ctx, m)
 	case *TemplateFieldMutation:
 		return c.TemplateField.mutate(ctx, m)
 	case *UserMutation:
@@ -909,7 +909,7 @@ func (c *GroupClient) QueryUsers(_m *Group) *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(group.Table, group.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, group.UsersTable, group.UsersColumn),
+			sqlgraph.Edge(sqlgraph.M2M, true, group.UsersTable, group.UsersPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -949,15 +949,15 @@ func (c *GroupClient) QueryItems(_m *Group) *ItemQuery {
 	return query
 }
 
-// QueryLabels queries the labels edge of a Group.
-func (c *GroupClient) QueryLabels(_m *Group) *LabelQuery {
-	query := (&LabelClient{config: c.config}).Query()
+// QueryTags queries the tags edge of a Group.
+func (c *GroupClient) QueryTags(_m *Group) *TagQuery {
+	query := (&TagClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(group.Table, group.FieldID, id),
-			sqlgraph.To(label.Table, label.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, group.LabelsTable, group.LabelsColumn),
+			sqlgraph.To(tag.Table, tag.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.TagsTable, group.TagsColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1343,15 +1343,15 @@ func (c *ItemClient) QueryChildren(_m *Item) *ItemQuery {
 	return query
 }
 
-// QueryLabel queries the label edge of a Item.
-func (c *ItemClient) QueryLabel(_m *Item) *LabelQuery {
-	query := (&LabelClient{config: c.config}).Query()
+// QueryTag queries the tag edge of a Item.
+func (c *ItemClient) QueryTag(_m *Item) *TagQuery {
+	query := (&TagClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(item.Table, item.FieldID, id),
-			sqlgraph.To(label.Table, label.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, item.LabelTable, item.LabelPrimaryKey...),
+			sqlgraph.To(tag.Table, tag.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, item.TagTable, item.TagPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1775,171 +1775,6 @@ func (c *ItemTemplateClient) mutate(ctx context.Context, m *ItemTemplateMutation
 		return (&ItemTemplateDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown ItemTemplate mutation op: %q", m.Op())
-	}
-}
-
-// LabelClient is a client for the Label schema.
-type LabelClient struct {
-	config
-}
-
-// NewLabelClient returns a client for the Label from the given config.
-func NewLabelClient(c config) *LabelClient {
-	return &LabelClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `label.Hooks(f(g(h())))`.
-func (c *LabelClient) Use(hooks ...Hook) {
-	c.hooks.Label = append(c.hooks.Label, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `label.Intercept(f(g(h())))`.
-func (c *LabelClient) Intercept(interceptors ...Interceptor) {
-	c.inters.Label = append(c.inters.Label, interceptors...)
-}
-
-// Create returns a builder for creating a Label entity.
-func (c *LabelClient) Create() *LabelCreate {
-	mutation := newLabelMutation(c.config, OpCreate)
-	return &LabelCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Label entities.
-func (c *LabelClient) CreateBulk(builders ...*LabelCreate) *LabelCreateBulk {
-	return &LabelCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *LabelClient) MapCreateBulk(slice any, setFunc func(*LabelCreate, int)) *LabelCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &LabelCreateBulk{err: fmt.Errorf("calling to LabelClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*LabelCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &LabelCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Label.
-func (c *LabelClient) Update() *LabelUpdate {
-	mutation := newLabelMutation(c.config, OpUpdate)
-	return &LabelUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *LabelClient) UpdateOne(_m *Label) *LabelUpdateOne {
-	mutation := newLabelMutation(c.config, OpUpdateOne, withLabel(_m))
-	return &LabelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *LabelClient) UpdateOneID(id uuid.UUID) *LabelUpdateOne {
-	mutation := newLabelMutation(c.config, OpUpdateOne, withLabelID(id))
-	return &LabelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Label.
-func (c *LabelClient) Delete() *LabelDelete {
-	mutation := newLabelMutation(c.config, OpDelete)
-	return &LabelDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *LabelClient) DeleteOne(_m *Label) *LabelDeleteOne {
-	return c.DeleteOneID(_m.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *LabelClient) DeleteOneID(id uuid.UUID) *LabelDeleteOne {
-	builder := c.Delete().Where(label.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &LabelDeleteOne{builder}
-}
-
-// Query returns a query builder for Label.
-func (c *LabelClient) Query() *LabelQuery {
-	return &LabelQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeLabel},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a Label entity by its id.
-func (c *LabelClient) Get(ctx context.Context, id uuid.UUID) (*Label, error) {
-	return c.Query().Where(label.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *LabelClient) GetX(ctx context.Context, id uuid.UUID) *Label {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryGroup queries the group edge of a Label.
-func (c *LabelClient) QueryGroup(_m *Label) *GroupQuery {
-	query := (&GroupClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(label.Table, label.FieldID, id),
-			sqlgraph.To(group.Table, group.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, label.GroupTable, label.GroupColumn),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryItems queries the items edge of a Label.
-func (c *LabelClient) QueryItems(_m *Label) *ItemQuery {
-	query := (&ItemClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(label.Table, label.FieldID, id),
-			sqlgraph.To(item.Table, item.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, label.ItemsTable, label.ItemsPrimaryKey...),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *LabelClient) Hooks() []Hook {
-	return c.hooks.Label
-}
-
-// Interceptors returns the client interceptors.
-func (c *LabelClient) Interceptors() []Interceptor {
-	return c.inters.Label
-}
-
-func (c *LabelClient) mutate(ctx context.Context, m *LabelMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&LabelCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&LabelUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&LabelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&LabelDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown Label mutation op: %q", m.Op())
 	}
 }
 
@@ -2454,6 +2289,171 @@ func (c *NotifierClient) mutate(ctx context.Context, m *NotifierMutation) (Value
 	}
 }
 
+// TagClient is a client for the Tag schema.
+type TagClient struct {
+	config
+}
+
+// NewTagClient returns a client for the Tag from the given config.
+func NewTagClient(c config) *TagClient {
+	return &TagClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `tag.Hooks(f(g(h())))`.
+func (c *TagClient) Use(hooks ...Hook) {
+	c.hooks.Tag = append(c.hooks.Tag, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `tag.Intercept(f(g(h())))`.
+func (c *TagClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Tag = append(c.inters.Tag, interceptors...)
+}
+
+// Create returns a builder for creating a Tag entity.
+func (c *TagClient) Create() *TagCreate {
+	mutation := newTagMutation(c.config, OpCreate)
+	return &TagCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Tag entities.
+func (c *TagClient) CreateBulk(builders ...*TagCreate) *TagCreateBulk {
+	return &TagCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *TagClient) MapCreateBulk(slice any, setFunc func(*TagCreate, int)) *TagCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &TagCreateBulk{err: fmt.Errorf("calling to TagClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*TagCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &TagCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Tag.
+func (c *TagClient) Update() *TagUpdate {
+	mutation := newTagMutation(c.config, OpUpdate)
+	return &TagUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TagClient) UpdateOne(_m *Tag) *TagUpdateOne {
+	mutation := newTagMutation(c.config, OpUpdateOne, withTag(_m))
+	return &TagUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TagClient) UpdateOneID(id uuid.UUID) *TagUpdateOne {
+	mutation := newTagMutation(c.config, OpUpdateOne, withTagID(id))
+	return &TagUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Tag.
+func (c *TagClient) Delete() *TagDelete {
+	mutation := newTagMutation(c.config, OpDelete)
+	return &TagDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TagClient) DeleteOne(_m *Tag) *TagDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *TagClient) DeleteOneID(id uuid.UUID) *TagDeleteOne {
+	builder := c.Delete().Where(tag.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TagDeleteOne{builder}
+}
+
+// Query returns a query builder for Tag.
+func (c *TagClient) Query() *TagQuery {
+	return &TagQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeTag},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Tag entity by its id.
+func (c *TagClient) Get(ctx context.Context, id uuid.UUID) (*Tag, error) {
+	return c.Query().Where(tag.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TagClient) GetX(ctx context.Context, id uuid.UUID) *Tag {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryGroup queries the group edge of a Tag.
+func (c *TagClient) QueryGroup(_m *Tag) *GroupQuery {
+	query := (&GroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tag.Table, tag.FieldID, id),
+			sqlgraph.To(group.Table, group.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, tag.GroupTable, tag.GroupColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryItems queries the items edge of a Tag.
+func (c *TagClient) QueryItems(_m *Tag) *ItemQuery {
+	query := (&ItemClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tag.Table, tag.FieldID, id),
+			sqlgraph.To(item.Table, item.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, tag.ItemsTable, tag.ItemsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *TagClient) Hooks() []Hook {
+	return c.hooks.Tag
+}
+
+// Interceptors returns the client interceptors.
+func (c *TagClient) Interceptors() []Interceptor {
+	return c.inters.Tag
+}
+
+func (c *TagClient) mutate(ctx context.Context, m *TagMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&TagCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&TagUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&TagUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&TagDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Tag mutation op: %q", m.Op())
+	}
+}
+
 // TemplateFieldClient is a client for the TemplateField schema.
 type TemplateFieldClient struct {
 	config
@@ -2711,15 +2711,15 @@ func (c *UserClient) GetX(ctx context.Context, id uuid.UUID) *User {
 	return obj
 }
 
-// QueryGroup queries the group edge of a User.
-func (c *UserClient) QueryGroup(_m *User) *GroupQuery {
+// QueryGroups queries the groups edge of a User.
+func (c *UserClient) QueryGroups(_m *User) *GroupQuery {
 	query := (&GroupClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(group.Table, group.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, user.GroupTable, user.GroupColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.GroupsTable, user.GroupsPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -2788,12 +2788,12 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 type (
 	hooks struct {
 		Attachment, AuthRoles, AuthTokens, Group, GroupInvitationToken, Item, ItemField,
-		ItemTemplate, Label, Location, MaintenanceEntry, Notifier, TemplateField,
+		ItemTemplate, Location, MaintenanceEntry, Notifier, Tag, TemplateField,
 		User []ent.Hook
 	}
 	inters struct {
 		Attachment, AuthRoles, AuthTokens, Group, GroupInvitationToken, Item, ItemField,
-		ItemTemplate, Label, Location, MaintenanceEntry, Notifier, TemplateField,
+		ItemTemplate, Location, MaintenanceEntry, Notifier, Tag, TemplateField,
 		User []ent.Interceptor
 	}
 )

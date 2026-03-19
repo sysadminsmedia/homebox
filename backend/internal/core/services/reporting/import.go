@@ -1,4 +1,3 @@
-// Package reporting provides a way to import CSV files into the database.
 package reporting
 
 import (
@@ -7,6 +6,8 @@ import (
 	"errors"
 	"io"
 	"strings"
+
+	"github.com/samber/lo"
 )
 
 var (
@@ -39,23 +40,32 @@ func determineSeparator(data []byte) (rune, error) {
 	}
 }
 
+// separatorDetectionBufferSize is the buffer size for reading CSV headers
+// to detect the separator (comma vs tab)
+const separatorDetectionBufferSize = 4096
+
 // readRawCsv reads a CSV file and returns the raw data as a 2D string array
 // It determines the separator used in the CSV file and returns an error if
 // it could not be determined
 func readRawCsv(r io.Reader) ([][]string, error) {
-	data, err := io.ReadAll(r)
+	// Buffer for reading the first line to detect separator
+	// We read up to 4KB which should be more than enough for any header row
+	firstLineBuffer := make([]byte, separatorDetectionBufferSize)
+	n, err := io.ReadFull(r, firstLineBuffer)
+	if err != nil && !errors.Is(err, io.ErrUnexpectedEOF) && !errors.Is(err, io.EOF) {
+		return nil, err
+	}
+	firstLineBuffer = firstLineBuffer[:n]
+
+	// Determine separator from first line
+	sep, err := determineSeparator(firstLineBuffer)
 	if err != nil {
 		return nil, err
 	}
 
-	reader := csv.NewReader(bytes.NewReader(data))
-
-	// Determine separator
-	sep, err := determineSeparator(data)
-	if err != nil {
-		return nil, err
-	}
-
+	// Create a multi-reader combining what we already read and the rest
+	combinedReader := io.MultiReader(bytes.NewReader(firstLineBuffer), r)
+	reader := csv.NewReader(combinedReader)
 	reader.Comma = sep
 
 	return reader.ReadAll()
@@ -80,10 +90,10 @@ func parseHeaders(headers []string) (hbHeaders map[string]int, fieldHeaders []st
 	}
 
 	required := []string{"HB.location", "HB.name"}
-	for _, h := range required {
-		if _, ok := hbHeaders[h]; !ok {
-			return nil, nil, ErrMissingRequiredHeaders
-		}
+	if !lo.EveryBy(required, func(h string) bool {
+		return lo.HasKey(hbHeaders, h)
+	}) {
+		return nil, nil, ErrMissingRequiredHeaders
 	}
 
 	if len(hbHeaders) == 0 {
