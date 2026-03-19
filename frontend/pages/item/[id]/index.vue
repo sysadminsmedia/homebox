@@ -134,6 +134,10 @@
     originalType?: string;
   };
 
+  const itemTags = computed(() => {
+    return useTagStore().withAncestors(item.value?.tags || []);
+  });
+
   const photos = computed<Photo[]>(() => {
     if (!item.value) {
       return [];
@@ -684,7 +688,7 @@
                 {{ item ? item.name : "" }}
               </h1>
               <div class="flex flex-wrap gap-2 pb-1">
-                <TagChip v-for="tag in item?.tags || []" :key="tag.id" :tag="tag" size="sm" />
+                <TagChip v-for="tag in itemTags" :key="tag.id" :tag="tag" size="sm" :ancestors="tag.ancestors" />
               </div>
               <div class="flex flex-wrap gap-1 text-wrap text-xs">
                 <div>
