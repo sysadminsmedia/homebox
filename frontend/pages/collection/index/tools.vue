@@ -154,9 +154,9 @@
     window.open(url, "_blank");
   };
 
-  // Opens a new tab to download a PDF report of all items in the inventory
+  // Opens a new tab to download a PDF report of items in the current collection
   const getExportPDF = () => {
-    const url = api.items.exportAllPDFURL();
+    const url = api.items.exportAllPDFURL({ tenant: prefs.value.collectionId ?? undefined });
     window.open(url, "_blank");
   };
 

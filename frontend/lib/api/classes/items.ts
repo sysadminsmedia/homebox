@@ -204,12 +204,14 @@ export class ItemsApi extends BaseAPI {
     return route(`/items/${id}/export/pdf`, params);
   }
 
-  // exportAllPDFURL returns a URL to download a PDF of all items in the inventory.
-  exportAllPDFURL(options: { theme?: string; photos?: boolean; owner?: string } = {}): string {
+  // exportAllPDFURL returns a URL to download a PDF of all items.
+  // Optionally filter by tenant (collection ID) to match the current view.
+  exportAllPDFURL(options: { theme?: string; photos?: boolean; owner?: string; tenant?: string } = {}): string {
     const params: Record<string, string> = {};
     if (options.theme) params.theme = options.theme;
     if (options.photos === false) params.photos = "false";
     if (options.owner) params.owner = options.owner;
+    if (options.tenant) params.tenant = options.tenant;
     return route("/items/export/pdf", params);
   }
 

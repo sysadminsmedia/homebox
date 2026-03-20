@@ -5,16 +5,23 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"path/filepath"
 	"strings"
 	"time"
 
-	"github.com/go-pdf/fpdf"
+	"codeberg.org/go-pdf/fpdf"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 
 	"gocloud.dev/blob"
+)
+
+const (
+	// MaxImageBytes is the maximum size for embedded images (10 MB).
+	// Images larger than this are skipped to prevent excessive memory usage.
+	MaxImageBytes = 10 * 1024 * 1024
 )
 
 // PDFTheme defines the color scheme and styling for PDF exports.
@@ -145,7 +152,11 @@ func (svc *PDFExportService) ExportSingleItem(
 func (svc *PDFExportService) ExportMultipleItems(
 	ctx context.Context, groupID uuid.UUID, itemIDs []uuid.UUID, opts PDFExportOptions,
 ) ([]byte, string, error) {
-	// Fetch all requested items
+	// Fetch all requested items individually.
+	// NOTE: This is an N+1 query pattern. A batch-fetch method (e.g., GetManyByGroup)
+	// would be more efficient but does not currently exist in the repository layer.
+	// This is acceptable for typical export sizes but should be optimized if exports
+	// of hundreds of items become common.
 	var items []repo.ItemOut
 	for _, id := range itemIDs {
 		item, err := svc.repo.Items.GetOneByGroup(ctx, groupID, id)
@@ -391,6 +402,11 @@ func (svc *PDFExportService) addItemPages(
 				imgBytes, imgType, err := svc.readAttachment(ctx, att)
 				if err != nil {
 					log.Warn().Err(err).Msg("failed to read primary photo for PDF")
+					break
+				}
+				// Skip images that exceed the size limit to prevent excessive memory usage
+				if len(imgBytes) > MaxImageBytes {
+					log.Warn().Int("bytes", len(imgBytes)).Msg("primary photo exceeds max image size, skipping embed")
 					break
 				}
 				// Register the image and place it on the right side of the page
@@ -723,6 +739,11 @@ func (svc *PDFExportService) drawPhotoGrid(
 			log.Warn().Err(err).Str("attachment", att.ID.String()).Msg("failed to read attachment for photo grid")
 			continue
 		}
+		// Skip images that exceed the size limit to prevent excessive memory usage
+		if len(imgBytes) > MaxImageBytes {
+			log.Warn().Str("attachment", att.ID.String()).Int("bytes", len(imgBytes)).Msg("image exceeds max size, skipping")
+			continue
+		}
 
 		imgName := fmt.Sprintf("grid_%s", att.ID.String())
 		pdf.RegisterImageOptionsReader(imgName, fpdf.ImageOptions{ImageType: imgType}, bytes.NewReader(imgBytes))
@@ -751,6 +772,13 @@ func (svc *PDFExportService) drawPhotoGrid(
 // readAttachment reads the binary content of an attachment from blob storage.
 // Returns the bytes, detected image type (for fpdf), and any error.
 func (svc *PDFExportService) readAttachment(ctx context.Context, att repo.ItemAttachment) ([]byte, string, error) {
+	// Defensive path traversal check: ensure the attachment path does not
+	// contain ".." components that could escape the expected storage directory.
+	cleanPath := filepath.ToSlash(filepath.Clean(att.Path))
+	if strings.Contains(cleanPath, "..") {
+		return nil, "", fmt.Errorf("invalid attachment path (directory traversal detected): %s", att.Path)
+	}
+
 	// Open the blob storage bucket using the configured connection string
 	bucket, err := blob.OpenBucket(ctx, svc.repo.Attachments.GetConnString())
 	if err != nil {
@@ -770,15 +798,28 @@ func (svc *PDFExportService) readAttachment(ctx context.Context, att repo.ItemAt
 		return nil, "", fmt.Errorf("failed to read attachment data: %w", err)
 	}
 
-	// Determine image type from MIME type for fpdf registration
-	imgType := "jpg" // default
+	// Determine image type from MIME type for fpdf registration.
+	// fpdf natively supports jpg, png, and gif. For unsupported formats
+	// (webp, heic, avif), we log a warning and skip the image since fpdf
+	// cannot embed them without a conversion step.
 	mime := strings.ToLower(att.MimeType)
+	var imgType string
 	switch {
+	case strings.Contains(mime, "jpeg"), strings.Contains(mime, "jpg"):
+		imgType = "jpg"
 	case strings.Contains(mime, "png"):
 		imgType = "png"
 	case strings.Contains(mime, "gif"):
 		imgType = "gif"
-	case strings.Contains(mime, "jpeg"), strings.Contains(mime, "jpg"):
+	case strings.Contains(mime, "webp"),
+		strings.Contains(mime, "heic"), strings.Contains(mime, "heif"),
+		strings.Contains(mime, "avif"):
+		log.Warn().Str("mimeType", att.MimeType).Str("attachmentID", att.ID.String()).
+			Msg("unsupported image format for PDF embed, skipping")
+		return nil, "", fmt.Errorf("unsupported image format for PDF: %s", att.MimeType)
+	default:
+		log.Warn().Str("mimeType", att.MimeType).Str("attachmentID", att.ID.String()).
+			Msg("unknown MIME type for PDF image embed, defaulting to jpg")
 		imgType = "jpg"
 	}
 

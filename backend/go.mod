@@ -3,6 +3,7 @@ module github.com/sysadminsmedia/homebox/backend
 go 1.26.0
 
 require (
+	codeberg.org/go-pdf/fpdf v0.11.1
 	entgo.io/ent v0.14.5
 	github.com/XSAM/otelsql v0.41.0
 	github.com/ardanlabs/conf/v3 v3.11.0
@@ -14,7 +15,6 @@ require (
 	github.com/gen2brain/jpegxl v0.4.5
 	github.com/gen2brain/webp v0.5.5
 	github.com/go-chi/chi/v5 v5.2.5
-	github.com/go-pdf/fpdf v0.9.0
 	github.com/go-playground/validator/v10 v10.30.1
 	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0

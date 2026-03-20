@@ -3,6 +3,7 @@ package v1
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
@@ -12,6 +13,25 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
+
+const (
+	// maxPDFExportItems caps the number of items in a single PDF export
+	// to prevent excessive memory usage and request timeouts.
+	maxPDFExportItems = 500
+)
+
+// sanitizeFilename removes or escapes characters that could cause issues
+// in HTTP Content-Disposition headers (e.g., header injection via quotes,
+// newlines, or semicolons in user-controlled asset IDs).
+func sanitizeFilename(name string) string {
+	replacer := strings.NewReplacer(
+		"\"", "'",
+		"\n", "",
+		"\r", "",
+		";", "_",
+	)
+	return replacer.Replace(name)
+}
 
 // HandleItemExportPDF godoc
 //
@@ -52,7 +72,7 @@ func (ctrl *V1Controller) HandleItemExportPDF() errchain.HandlerFunc {
 
 		// Set response headers for PDF file download
 		w.Header().Set("Content-Type", "application/pdf")
-		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
+		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", sanitizeFilename(filename)))
 		w.Header().Set("Content-Length", fmt.Sprintf("%d", len(pdfBytes)))
 
 		_, err = w.Write(pdfBytes)
@@ -119,7 +139,7 @@ func (ctrl *V1Controller) HandleItemsExportPDF() errchain.HandlerFunc {
 
 		// Set response headers for PDF file download
 		w.Header().Set("Content-Type", "application/pdf")
-		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
+		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", sanitizeFilename(filename)))
 		w.Header().Set("Content-Length", fmt.Sprintf("%d", len(pdfBytes)))
 
 		_, err = w.Write(pdfBytes)
@@ -159,6 +179,14 @@ func (ctrl *V1Controller) HandleItemsExportAllPDF() errchain.HandlerFunc {
 			)
 		}
 
+		// Enforce item limit to prevent excessive memory usage and timeouts
+		if len(allItems.Items) > maxPDFExportItems {
+			return validate.NewRequestError(
+				fmt.Errorf("too many items to export (%d); maximum is %d — use bulk export with specific item IDs instead", len(allItems.Items), maxPDFExportItems),
+				http.StatusBadRequest,
+			)
+		}
+
 		// Collect all item IDs from the query result
 		itemIDs := make([]uuid.UUID, len(allItems.Items))
 		for i, item := range allItems.Items {
@@ -182,7 +210,7 @@ func (ctrl *V1Controller) HandleItemsExportAllPDF() errchain.HandlerFunc {
 
 		// Set response headers for PDF file download
 		w.Header().Set("Content-Type", "application/pdf")
-		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
+		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", sanitizeFilename(filename)))
 		w.Header().Set("Content-Length", fmt.Sprintf("%d", len(pdfBytes)))
 
 		_, err = w.Write(pdfBytes)
