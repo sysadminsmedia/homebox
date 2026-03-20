@@ -651,6 +651,9 @@ definitions:
         description: |-
           Edges holds the relations/edges for other nodes in the graph.
           The values are being populated by the TagQuery when eager-loading is set.
+      icon:
+        description: Icon holds the value of the "icon" field.
+        type: string
       id:
         description: ID of the ent.
         type: string
@@ -663,6 +666,11 @@ definitions:
     type: object
   ent.TagEdges:
     properties:
+      children:
+        description: Children holds the value of the children edge.
+        items:
+          $ref: '#/definitions/ent.Tag'
+        type: array
       group:
         allOf:
         - $ref: '#/definitions/ent.Group'
@@ -672,6 +680,10 @@ definitions:
         items:
           $ref: '#/definitions/ent.Item'
         type: array
+      parent:
+        allOf:
+        - $ref: '#/definitions/ent.Tag'
+        description: Parent holds the value of the parent edge.
     type: object
   ent.TemplateField:
     properties:
@@ -1598,25 +1610,44 @@ definitions:
       description:
         maxLength: 1000
         type: string
+      icon:
+        maxLength: 255
+        type: string
       name:
         maxLength: 255
         minLength: 1
         type: string
+      parentId:
+        type: string
+        x-nullable: true
     required:
     - name
     type: object
   repo.TagOut:
     properties:
+      children:
+        items:
+          $ref: '#/definitions/repo.TagSummary'
+        type: array
       color:
         type: string
       createdAt:
         type: string
       description:
         type: string
+      icon:
+        type: string
       id:
         type: string
       name:
         type: string
+      parent:
+        allOf:
+        - $ref: '#/definitions/repo.TagSummary'
+        x-nullable: true
+      parentId:
+        type: string
+        x-nullable: true
       updatedAt:
         type: string
     type: object
@@ -1628,10 +1659,15 @@ definitions:
         type: string
       description:
         type: string
+      icon:
+        type: string
       id:
         type: string
       name:
         type: string
+      parentId:
+        type: string
+        x-nullable: true
       updatedAt:
         type: string
     type: object

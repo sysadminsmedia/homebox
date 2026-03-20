@@ -8,6 +8,10 @@
     item: ItemSummary;
   }>();
 
+  const itemTags = computed(() => {
+    return useTagStore().withAncestors(props.item.tags);
+  });
+
   const api = useUserApi();
 
   const imageUrl = computed(() => {
@@ -35,7 +39,7 @@
         </NuxtLink>
       </Badge>
       <div class="flex flex-wrap gap-2">
-        <TagChip v-for="tag in item.tags" :key="tag.id" :tag="tag" size="sm" />
+        <TagChip v-for="tag in itemTags" :key="tag.id" :tag="tag" size="sm" :ancestors="tag.ancestors" />
       </div>
       <p class="whitespace-pre-line break-words text-sm text-muted-foreground">
         {{ item.description || $t("components.item.no_description") }}

@@ -2399,6 +2399,9 @@ components:
             The values are being populated by the TagQuery when eager-loading is set.
           allOf:
             - $ref: "#/components/schemas/ent.TagEdges"
+        icon:
+          description: Icon holds the value of the "icon" field.
+          type: string
         id:
           description: ID of the ent.
           type: string
@@ -2411,6 +2414,11 @@ components:
     ent.TagEdges:
       type: object
       properties:
+        children:
+          description: Children holds the value of the children edge.
+          type: array
+          items:
+            $ref: "#/components/schemas/ent.Tag"
         group:
           description: Group holds the value of the group edge.
           allOf:
@@ -2420,6 +2428,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ent.Item"
+        parent:
+          description: Parent holds the value of the parent edge.
+          allOf:
+            - $ref: "#/components/schemas/ent.Tag"
     ent.TemplateField:
       type: object
       properties:
@@ -3350,23 +3362,42 @@ components:
         description:
           type: string
           maxLength: 1000
+        icon:
+          type: string
+          maxLength: 255
         name:
           type: string
           maxLength: 255
           minLength: 1
+        parentId:
+          type: string
+          nullable: true
     repo.TagOut:
       type: object
       properties:
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/repo.TagSummary"
         color:
           type: string
         createdAt:
           type: string
         description:
           type: string
+        icon:
+          type: string
         id:
           type: string
         name:
           type: string
+        parent:
+          allOf:
+            - $ref: "#/components/schemas/repo.TagSummary"
+          nullable: true
+        parentId:
+          type: string
+          nullable: true
         updatedAt:
           type: string
     repo.TagSummary:
@@ -3378,10 +3409,15 @@ components:
           type: string
         description:
           type: string
+        icon:
+          type: string
         id:
           type: string
         name:
           type: string
+        parentId:
+          type: string
+          nullable: true
         updatedAt:
           type: string
     repo.TemplateField:
