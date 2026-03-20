@@ -3,6 +3,7 @@ module github.com/sysadminsmedia/homebox/backend
 go 1.26.0
 
 require (
+	codeberg.org/go-pdf/fpdf v0.11.1
 	entgo.io/ent v0.14.5
 	github.com/XSAM/otelsql v0.41.0
 	github.com/ardanlabs/conf/v3 v3.11.0
