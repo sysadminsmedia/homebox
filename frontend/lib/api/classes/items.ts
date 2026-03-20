@@ -190,4 +190,64 @@ export class ItemsApi extends BaseAPI {
 
     return route("/items/export");
   }
+
+  // exportPDFURL returns a URL to download a single item's PDF export.
+  // The URL can be opened in a new tab/window to trigger the download.
+  exportPDFURL(
+    id: string,
+    options: { theme?: string; photos?: boolean; owner?: string } = {}
+  ): string {
+    const params: Record<string, string> = {};
+    if (options.theme) params.theme = options.theme;
+    if (options.photos === false) params.photos = "false";
+    if (options.owner) params.owner = options.owner;
+    return route(`/items/${id}/export/pdf`, params);
+  }
+
+  // exportAllPDFURL returns a URL to download a PDF of all items in the inventory.
+  exportAllPDFURL(options: { theme?: string; photos?: boolean; owner?: string } = {}): string {
+    const params: Record<string, string> = {};
+    if (options.theme) params.theme = options.theme;
+    if (options.photos === false) params.photos = "false";
+    if (options.owner) params.owner = options.owner;
+    return route("/items/export/pdf", params);
+  }
+
+  // exportBulkPDF triggers a POST request to download a PDF for multiple selected items.
+  // Returns a Blob that can be used to trigger a file download in the browser.
+  // Auth is handled by same-origin cookies (same mechanism as window.open for GET exports).
+  async exportBulkPDF(
+    itemIds: string[],
+    options: { theme?: string; photos?: boolean; owner?: string } = {}
+  ): Promise<{ data: Blob | null; error: boolean }> {
+    const params: Record<string, string> = {};
+    if (options.theme) params.theme = options.theme;
+    if (options.photos === false) params.photos = "false";
+    if (options.owner) params.owner = options.owner;
+
+    const url = route("/items/export/pdf", params);
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ itemIds }),
+      });
+
+      if (!response.ok) {
+        return { data: null, error: true };
+      }
+
+      const blob = await response.blob();
+      return { data: blob, error: false };
+    } catch {
+      return { data: null, error: true };
+    }
+  }
+
+  // getPDFThemes fetches the available PDF theme options from the server.
+  getPDFThemes() {
+    return this.http.get<Record<string, string>>({ url: route("/items/export/pdf/themes") });
+  }
 }

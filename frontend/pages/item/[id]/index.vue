@@ -11,6 +11,7 @@
   import MdiPlusBoxMultipleOutline from "~icons/mdi/plus-box-multiple-outline";
   import MdiContentSaveEdit from "~icons/mdi/content-save-edit";
   import MdiDotsVertical from "~icons/mdi/dots-vertical";
+  import MdiFilePdfBox from "~icons/mdi/file-pdf-box";
   import { Separator } from "@/components/ui/separator";
   import {
     DropdownMenu,
@@ -567,6 +568,12 @@
     navigateTo("/home");
   }
 
+  // Export the current item as a PDF report — opens in a new tab for download
+  function exportPDF() {
+    const url = api.items.exportPDFURL(itemId.value);
+    window.open(url, "_blank");
+  }
+
   async function saveAsTemplate() {
     if (!item.value) {
       return;
@@ -725,6 +732,10 @@
                   <DropdownMenuItem @click="saveAsTemplate">
                     <MdiContentSaveEdit class="mr-2 size-4" />
                     {{ $t("components.template.save_as_template") }}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem @click="exportPDF">
+                    <MdiFilePdfBox class="mr-2 size-4" />
+                    {{ $t("global.export_pdf") }}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem class="text-destructive focus:text-destructive" @click="deleteItem">

@@ -145,6 +145,10 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Post("/items", chain.ToHandlerFunc(v1Ctrl.HandleItemsCreate(), userMW...))
 		r.Post("/items/import", chain.ToHandlerFunc(v1Ctrl.HandleItemsImport(), userMW...))
 		r.Get("/items/export", chain.ToHandlerFunc(v1Ctrl.HandleItemsExport(), userMW...))
+		// PDF export endpoints — single item, bulk selection, full inventory, and theme listing
+		r.Get("/items/export/pdf", chain.ToHandlerFunc(v1Ctrl.HandleItemsExportAllPDF(), userMW...))
+		r.Post("/items/export/pdf", chain.ToHandlerFunc(v1Ctrl.HandleItemsExportPDF(), userMW...))
+		r.Get("/items/export/pdf/themes", chain.ToHandlerFunc(v1Ctrl.HandlePDFThemes(), userMW...))
 		r.Get("/items/fields", chain.ToHandlerFunc(v1Ctrl.HandleGetAllCustomFieldNames(), userMW...))
 		r.Get("/items/fields/values", chain.ToHandlerFunc(v1Ctrl.HandleGetAllCustomFieldValues(), userMW...))
 
@@ -154,6 +158,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Patch("/items/{id}", chain.ToHandlerFunc(v1Ctrl.HandleItemPatch(), userMW...))
 		r.Delete("/items/{id}", chain.ToHandlerFunc(v1Ctrl.HandleItemDelete(), userMW...))
 		r.Post("/items/{id}/duplicate", chain.ToHandlerFunc(v1Ctrl.HandleItemDuplicate(), userMW...))
+		r.Get("/items/{id}/export/pdf", chain.ToHandlerFunc(v1Ctrl.HandleItemExportPDF(), userMW...))
 
 		// Item attachment endpoints
 		r.Post("/items/{id}/attachments", chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentCreate(), userMW...))

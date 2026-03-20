@@ -48,6 +48,12 @@
             {{ $t("tools.import_export_set.export_sub") }}
             <template #button> {{ $t("tools.import_export_set.export_button") }} </template>
           </DetailAction>
+          <!-- PDF export — generates an insurance-grade PDF report of the full inventory -->
+          <DetailAction @action="getExportPDF()">
+            <template #title>{{ $t("tools.import_export_set.export_pdf") }}</template>
+            {{ $t("tools.import_export_set.export_pdf_sub") }}
+            <template #button> {{ $t("tools.import_export_set.export_pdf_button") }} </template>
+          </DetailAction>
         </div>
       </BaseCard>
       <BaseCard>
@@ -145,6 +151,12 @@
 
   const getExportCSV = () => {
     const url = api.items.exportURL(prefs.value.collectionId ?? undefined);
+    window.open(url, "_blank");
+  };
+
+  // Opens a new tab to download a PDF report of all items in the inventory
+  const getExportPDF = () => {
+    const url = api.items.exportAllPDFURL();
     window.open(url, "_blank");
   };
 
