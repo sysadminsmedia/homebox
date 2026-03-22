@@ -729,7 +729,7 @@ const docTemplate = `{
                             "type": "string"
                         },
                         "collectionFormat": "multi",
-                        "description": "Tags Ids",
+                        "description": "Tag Ids to filter the results by",
                         "name": "tags",
                         "in": "query"
                     },
@@ -749,7 +749,7 @@ const docTemplate = `{
                             "type": "string"
                         },
                         "collectionFormat": "multi",
-                        "description": "Location Ids",
+                        "description": "Location Ids to filter the results by",
                         "name": "locations",
                         "in": "query"
                     },
@@ -759,7 +759,7 @@ const docTemplate = `{
                             "type": "string"
                         },
                         "collectionFormat": "multi",
-                        "description": "Parent Ids",
+                        "description": "Parent Ids to filter the results by",
                         "name": "parentIds",
                         "in": "query"
                     },
@@ -777,19 +777,19 @@ const docTemplate = `{
                     },
                     {
                         "type": "boolean",
-                        "description": "Includes items in the results that have been archived",
+                        "description": "Include items in the results that have been archived",
                         "name": "includeArchived",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Field to be order by",
+                        "description": "Field to order the results by",
                         "name": "orderBy",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Direction to ordered the results by",
+                        "description": "Direction to order the results by",
                         "name": "orderByDirection",
                         "in": "query"
                     }

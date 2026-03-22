@@ -29,15 +29,15 @@ import (
 //	@Param		q					query	string		false	"Search string"
 //	@Param		page				query	int			false	"Page number"
 //	@Param		pageSize			query	int			false	"Items per page"
-//	@Param		tags				query	[]string	false	"Tags Ids"												collectionFormat(multi)
+//	@Param		tags				query	[]string	false	"Tag Ids to filter the results by"												collectionFormat(multi)
 //	@Param		negateTags			query	[]string	false	"Exclude tags specified in the query parameter"			collectionFormat(multi)
-//	@Param		locations			query	[]string	false	"Location Ids"											collectionFormat(multi)
-//	@Param		parentIds			query	[]string	false	"Parent Ids"											collectionFormat(multi)
+//	@Param		locations			query	[]string	false	"Location Ids to filter the results by"					collectionFormat(multi)
+//	@Param		parentIds			query	[]string	false	"Parent Ids to filter the results by"					collectionFormat(multi)
 //	@Param		onlyWithPhoto		query	bool		false	"Only return items that have a photo"
 //	@Param		onlyWithoutPhoto	query	bool		false	"Only return items that don't have a photo"
-//	@Param		includeArchived		query	bool		false	"Includes items in the results that have been archived"
-//	@Param		orderBy				query	string		false	"Field to be order by"
-//	@Param		orderByDirection	query	string		false	"Direction to ordered the results by"
+//	@Param		includeArchived		query	bool		false	"Include items in the results that have been archived"
+//	@Param		orderBy				query	string		false	"Field to order the results by"
+//	@Param		orderByDirection	query	string		false	"Direction to order the results by"
 //	@Success	200					{object}	repo.PaginationResult[repo.ItemSummary]{}
 //	@Router		/v1/items [GET]
 //	@Security	Bearer

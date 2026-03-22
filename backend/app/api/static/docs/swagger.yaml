@@ -2424,7 +2424,7 @@ paths:
         name: pageSize
         type: integer
       - collectionFormat: multi
-        description: Tags Ids
+        description: Tag Ids to filter the results by
         in: query
         items:
           type: string
@@ -2438,14 +2438,14 @@ paths:
         name: negateTags
         type: array
       - collectionFormat: multi
-        description: Location Ids
+        description: Location Ids to filter the results by
         in: query
         items:
           type: string
         name: locations
         type: array
       - collectionFormat: multi
-        description: Parent Ids
+        description: Parent Ids to filter the results by
         in: query
         items:
           type: string
@@ -2459,15 +2459,15 @@ paths:
         in: query
         name: onlyWithoutPhoto
         type: boolean
-      - description: Includes items in the results that have been archived
+      - description: Include items in the results that have been archived
         in: query
         name: includeArchived
         type: boolean
-      - description: Field to be order by
+      - description: Field to order the results by
         in: query
         name: orderBy
         type: string
-      - description: Direction to ordered the results by
+      - description: Direction to order the results by
         in: query
         name: orderByDirection
         type: string

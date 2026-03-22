@@ -739,7 +739,7 @@
                         }
                     },
                     {
-                        "description": "Tags Ids",
+                        "description": "Tag Ids to filter the results by",
                         "name": "tags",
                         "in": "query",
                         "explode": true,
@@ -763,7 +763,7 @@
                         }
                     },
                     {
-                        "description": "Location Ids",
+                        "description": "Location Ids to filter the results by",
                         "name": "locations",
                         "in": "query",
                         "explode": true,
@@ -775,7 +775,7 @@
                         }
                     },
                     {
-                        "description": "Parent Ids",
+                        "description": "Parent Ids to filter the results by",
                         "name": "parentIds",
                         "in": "query",
                         "explode": true,
@@ -803,7 +803,7 @@
                         }
                     },
                     {
-                        "description": "Includes items in the results that have been archived",
+                        "description": "Include items in the results that have been archived",
                         "name": "includeArchived",
                         "in": "query",
                         "schema": {
@@ -811,7 +811,7 @@
                         }
                     },
                     {
-                        "description": "Field to be order by",
+                        "description": "Field to order the results by",
                         "name": "orderBy",
                         "in": "query",
                         "schema": {
@@ -819,7 +819,7 @@
                         }
                     },
                     {
-                        "description": "Direction to ordered the results by",
+                        "description": "Direction to order the results by",
                         "name": "orderByDirection",
                         "in": "query",
                         "schema": {

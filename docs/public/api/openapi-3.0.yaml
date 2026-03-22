@@ -431,7 +431,7 @@ paths:
           in: query
           schema:
             type: integer
-        - description: Tags Ids
+        - description: Tag Ids to filter the results by
           name: tags
           in: query
           explode: true
@@ -447,7 +447,7 @@ paths:
             type: array
             items:
               type: string
-        - description: Location Ids
+        - description: Location Ids to filter the results by
           name: locations
           in: query
           explode: true
@@ -455,7 +455,7 @@ paths:
             type: array
             items:
               type: string
-        - description: Parent Ids
+        - description: Parent Ids to filter the results by
           name: parentIds
           in: query
           explode: true
@@ -473,17 +473,17 @@ paths:
           in: query
           schema:
             type: boolean
-        - description: Includes items in the results that have been archived
+        - description: Include items in the results that have been archived
           name: includeArchived
           in: query
           schema:
             type: boolean
-        - description: Field to be order by
+        - description: Field to order the results by
           name: orderBy
           in: query
           schema:
             type: string
-        - description: Direction to ordered the results by
+        - description: Direction to order the results by
           name: orderByDirection
           in: query
           schema:
