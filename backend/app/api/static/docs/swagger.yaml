@@ -2411,39 +2411,66 @@ paths:
   /v1/items:
     get:
       parameters:
-      - description: search string
+      - description: Search string
         in: query
         name: q
         type: string
-      - description: page number
+      - description: Page number
         in: query
         name: page
         type: integer
-      - description: items per page
+      - description: Items per page
         in: query
         name: pageSize
         type: integer
       - collectionFormat: multi
-        description: tags Ids
+        description: Tags Ids
         in: query
         items:
           type: string
         name: tags
         type: array
       - collectionFormat: multi
-        description: location Ids
+        description: Exclude tags specified in the query parameter
+        in: query
+        items:
+          type: string
+        name: negateTags
+        type: array
+      - collectionFormat: multi
+        description: Location Ids
         in: query
         items:
           type: string
         name: locations
         type: array
       - collectionFormat: multi
-        description: parent Ids
+        description: Parent Ids
         in: query
         items:
           type: string
         name: parentIds
         type: array
+      - description: Only return items that have a photo
+        in: query
+        name: onlyWithPhoto
+        type: boolean
+      - description: Only return items that don't have a photo
+        in: query
+        name: onlyWithoutPhoto
+        type: boolean
+      - description: Includes items in the results that have been archived
+        in: query
+        name: includeArchived
+        type: boolean
+      - description: Field to be order by
+        in: query
+        name: orderBy
+        type: string
+      - description: Direction to ordered the results by
+        in: query
+        name: orderByDirection
+        type: string
       produces:
       - application/json
       responses:

@@ -707,19 +707,19 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "search string",
+                        "description": "Search string",
                         "name": "q",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "page number",
+                        "description": "Page number",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "items per page",
+                        "description": "Items per page",
                         "name": "pageSize",
                         "in": "query"
                     },
@@ -729,7 +729,7 @@ const docTemplate = `{
                             "type": "string"
                         },
                         "collectionFormat": "multi",
-                        "description": "tags Ids",
+                        "description": "Tags Ids",
                         "name": "tags",
                         "in": "query"
                     },
@@ -739,7 +739,17 @@ const docTemplate = `{
                             "type": "string"
                         },
                         "collectionFormat": "multi",
-                        "description": "location Ids",
+                        "description": "Exclude tags specified in the query parameter",
+                        "name": "negateTags",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "description": "Location Ids",
                         "name": "locations",
                         "in": "query"
                     },
@@ -749,8 +759,38 @@ const docTemplate = `{
                             "type": "string"
                         },
                         "collectionFormat": "multi",
-                        "description": "parent Ids",
+                        "description": "Parent Ids",
                         "name": "parentIds",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Only return items that have a photo",
+                        "name": "onlyWithPhoto",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Only return items that don't have a photo",
+                        "name": "onlyWithoutPhoto",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Includes items in the results that have been archived",
+                        "name": "includeArchived",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Field to be order by",
+                        "name": "orderBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Direction to ordered the results by",
+                        "name": "orderByDirection",
                         "in": "query"
                     }
                 ],
