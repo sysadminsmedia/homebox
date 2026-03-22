@@ -2430,13 +2430,10 @@ paths:
           type: string
         name: tags
         type: array
-      - collectionFormat: multi
-        description: Exclude tags specified in the query parameter
+      - description: Exclude tags specified in the query parameter
         in: query
-        items:
-          type: string
         name: negateTags
-        type: array
+        type: boolean
       - collectionFormat: multi
         description: Location Ids to filter the results by
         in: query

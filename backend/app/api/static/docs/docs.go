@@ -734,11 +734,7 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
+                        "type": "boolean",
                         "description": "Exclude tags specified in the query parameter",
                         "name": "negateTags",
                         "in": "query"

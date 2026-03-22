@@ -442,11 +442,8 @@ paths:
         - description: Exclude tags specified in the query parameter
           name: negateTags
           in: query
-          explode: true
           schema:
-            type: array
-            items:
-              type: string
+            type: boolean
         - description: Location Ids to filter the results by
           name: locations
           in: query

@@ -29,8 +29,8 @@ import (
 //	@Param		q					query	string		false	"Search string"
 //	@Param		page				query	int			false	"Page number"
 //	@Param		pageSize			query	int			false	"Items per page"
-//	@Param		tags				query	[]string	false	"Tag Ids to filter the results by"												collectionFormat(multi)
-//	@Param		negateTags			query	[]string	false	"Exclude tags specified in the query parameter"			collectionFormat(multi)
+//	@Param		tags				query	[]string	false	"Tag Ids to filter the results by"						collectionFormat(multi)
+//	@Param		negateTags			query	bool		false	"Exclude tags specified in the query parameter"
 //	@Param		locations			query	[]string	false	"Location Ids to filter the results by"					collectionFormat(multi)
 //	@Param		parentIds			query	[]string	false	"Parent Ids to filter the results by"					collectionFormat(multi)
 //	@Param		onlyWithPhoto		query	bool		false	"Only return items that have a photo"

@@ -754,12 +754,8 @@
                         "description": "Exclude tags specified in the query parameter",
                         "name": "negateTags",
                         "in": "query",
-                        "explode": true,
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
+                            "type": "boolean"
                         }
                     },
                     {
