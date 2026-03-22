@@ -289,7 +289,9 @@
         "only_with_photo": "Samo elementi s fotografijo",
         "only_without_photo": "Samo predmeti brez fotografije",
         "options": "Možnosti",
-        "order_by": "Razvrsti po",
+        "order": {
+            "order_by": "Razvrsti po"
+        },
         "pages": "Stran { page } od { totalPages }",
         "parent_item": "Matični produkt",
         "photo": "Fotografija",

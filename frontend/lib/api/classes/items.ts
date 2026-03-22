@@ -18,6 +18,7 @@ import type { Requests } from "~~/lib/requests";
 
 export type ItemsQuery = {
   orderBy?: string;
+  orderByDirection?: string;
   includeArchived?: boolean;
   page?: number;
   pageSize?: number;

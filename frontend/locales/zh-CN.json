@@ -541,7 +541,9 @@
         "only_with_photo": "只包含带有照片的物品",
         "only_without_photo": "只包含不带照片的物品",
         "options": "选项",
-        "order_by": "排序方式",
+        "order": {
+            "order_by": "排序方式"
+        },
         "pages": "第{page}页，共{totalPages}页",
         "parent_item": "父物品",
         "photo": "照片",

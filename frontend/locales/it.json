@@ -518,7 +518,9 @@
         "only_with_photo": "Solo articoli con foto",
         "only_without_photo": "Solo articoli senza foto",
         "options": "Opzioni",
-        "order_by": "Ordina Per",
+        "order": {
+            "order_by": "Ordina Per"
+        },
         "pages": "Pagina { page } di { totalPages }",
         "parent_item": "Articolo principale",
         "photo": "Foto",

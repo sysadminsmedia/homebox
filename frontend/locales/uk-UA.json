@@ -257,7 +257,9 @@
         "only_with_photo": "Тільки товари з фотографією",
         "only_without_photo": "Тільки товари без фотографії",
         "options": "Налаштування",
-        "order_by": "Відсортувати за",
+        "order": {
+            "order_by": "Відсортувати за"
+        },
         "pages": "Сторінка { page } з { totalPages }",
         "parent_item": "Батьківський елемент",
         "photo": "Фото",

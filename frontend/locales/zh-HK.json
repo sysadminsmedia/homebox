@@ -79,7 +79,9 @@
         "next_page": "下一頁",
         "no_results": "沒有找到項目",
         "options": "選項",
-        "order_by": "排序",
+        "order": {
+            "order_by": "排序"
+        },
         "pages": "第{ page } 頁(共{ totalPages })",
         "prev_page": "上一頁",
         "query_id": "查詢資產ID號碼:{ id }",

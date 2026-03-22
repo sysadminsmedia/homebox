@@ -88,6 +88,7 @@
   const onlyWithoutPhoto = useOptionalRouteQuery("onlyWithoutPhoto", false);
   const onlyWithPhoto = useOptionalRouteQuery("onlyWithPhoto", false);
   const orderBy = useOptionalRouteQuery("orderBy", "name");
+  const orderByDirection = useOptionalRouteQuery("orderByDirection", "asc");
   const qLoc = useOptionalRouteQuery("loc", []);
   const qTag = useOptionalRouteQuery("tag", []);
 
@@ -231,6 +232,12 @@
     }
   });
 
+  watch(orderByDirection, (newV, oldV) => {
+    if (newV !== oldV) {
+      search();
+    }
+  });
+
   watch(
     () => useRoute().query.q,
     (newV, oldV) => {
@@ -278,6 +285,7 @@
       onlyWithoutPhoto: onlyWithoutPhoto.value,
       onlyWithPhoto: onlyWithPhoto.value,
       orderBy: orderBy.value,
+      orderByDirection: orderByDirection.value,
       page: page.value,
       q: query.value,
       loc: locIDs.value,
@@ -318,6 +326,7 @@
       page: page.value,
       pageSize: pageSize.value,
       orderBy: orderBy.value,
+      orderByDirection: orderByDirection.value,
       fields,
     });
 
@@ -436,23 +445,35 @@
               <div class="grow" />
               <span class="text-right"> {{ $t("items.only_with_photo") }} </span>
             </Label>
+            <Separator class="my-1" />
             <Label class="flex cursor-pointer flex-col gap-2">
-              <span class="text-right">
-                <span class="text-right"> {{ $t("items.order_by") }} </span>
-              </span>
+              <span class="text-left">{{ $t("items.order.order_by") }} </span>
 
               <Select v-model="orderBy">
                 <SelectTrigger>
-                  <SelectValue :placeholder="$t('items.order_by')" />
+                  <SelectValue :placeholder="$t('items.order.order_by')" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="name"> {{ $t("items.name") }} </SelectItem>
                   <SelectItem value="createdAt"> {{ $t("items.created_at") }} </SelectItem>
                   <SelectItem value="updatedAt"> {{ $t("items.updated_at") }} </SelectItem>
+                  <SelectItem value="purchasePrice"> {{ $t("items.purchase_price") }} </SelectItem>
+                  <SelectItem value="quantity"> {{ $t("items.quantity") }} </SelectItem>
                 </SelectContent>
               </Select>
             </Label>
-            <Separator />
+            <Label class="flex cursor-pointer flex-col gap-2">
+              <Select v-model="orderByDirection">
+                <SelectTrigger>
+                  <SelectValue :placeholder="$t('items.order.direction')" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="asc"> {{ $t("items.order.ascending") }} </SelectItem>
+                  <SelectItem value="desc"> {{ $t("items.order.descending") }} </SelectItem>
+                </SelectContent>
+              </Select>
+            </Label>
+            <Separator class="my-1" />
             <Button @click="reset"> {{ $t("items.reset_search") }} </Button>
           </PopoverContent>
         </Popover>

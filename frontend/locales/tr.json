@@ -353,7 +353,9 @@
         "only_with_photo": "Sadece fotoğraflı öğeler",
         "only_without_photo": "Sadece fotoğrafsız öğeler",
         "options": "Seçenekler",
-        "order_by": "Sıralama ölçütü",
+        "order": {
+            "order_by": "Sıralama ölçütü"
+        },
         "pages": "Sayfa { page }/{ totalPages }",
         "parent_item": "Ana Öğe",
         "photo": "Fotoğraf",

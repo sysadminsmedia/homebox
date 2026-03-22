@@ -487,7 +487,9 @@
         "only_with_photo": "Endast artiklar med foto",
         "only_without_photo": "Endast artiklar utan foto",
         "options": "Alternativ",
-        "order_by": "Ordning via",
+        "order": {
+            "order_by": "Ordning via"
+        },
         "pages": "Sida { page } av { totalPages }",
         "parent_item": "Överordnat objekt",
         "photo": "Foto",

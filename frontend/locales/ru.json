@@ -540,7 +540,9 @@
         "only_with_photo": "Только элементы с фото",
         "only_without_photo": "Только элементы без фото",
         "options": "Параметры",
-        "order_by": "Сортировка по",
+        "order": {
+            "order_by": "Сортировка по"
+        },
         "pages": "Страница {page} из {totalPages}",
         "parent_item": "Родительский элемент",
         "photo": "Фото",

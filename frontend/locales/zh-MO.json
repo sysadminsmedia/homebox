@@ -175,7 +175,9 @@
         "only_with_photo": "仅限附带图片的目标",
         "only_without_photo": "仅限无图片的目标",
         "options": "選項",
-        "order_by": "排序",
+        "order": {
+            "order_by": "排序"
+        },
         "pages": "第{ page } 頁(共{ totalPages })",
         "parent_item": "父项目",
         "photo": "照片",

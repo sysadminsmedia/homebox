@@ -545,7 +545,12 @@
         "only_with_photo": "Only items with photo",
         "only_without_photo": "Only items without photo",
         "options": "Options",
-        "order_by": "Order By",
+        "order": {
+            "ascending": "Ascending",
+            "descending": "Descending",
+            "order_by": "Order By",
+            "direction": "Direction"
+        },
         "pages": "Page { page } of { totalPages }",
         "parent_item": "Parent Item",
         "photo": "Photo",

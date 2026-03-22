@@ -533,7 +533,9 @@
         "only_with_photo": "Uniquement les articles avec photo",
         "only_without_photo": "Uniquement les articles sans photo",
         "options": "Options",
-        "order_by": "Trier par",
+        "order": {
+            "order_by": "Trier par"
+        },
         "pages": "Page { page } sur { totalPages }",
         "parent_item": "Objet parent",
         "photo": "Photo",

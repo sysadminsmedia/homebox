@@ -541,7 +541,9 @@
         "only_with_photo": "Nur Artikel mit Foto",
         "only_without_photo": "Nur Artikel ohne Foto",
         "options": "Optionen",
-        "order_by": "Sortieren nach",
+        "order": {
+            "order_by": "Sortieren nach"
+        },
         "pages": "Seite { page } von { totalPages }",
         "parent_item": "Übergeordneter Artikel",
         "photo": "Foto",

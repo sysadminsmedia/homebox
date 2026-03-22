@@ -200,7 +200,9 @@
         "no_results": "No s'ha trobat cap element",
         "notes": "Notes",
         "options": "Opcions",
-        "order_by": "Ordena per",
+        "order": {
+            "order_by": "Ordena per"
+        },
         "pages": "Pàgina { page } de { totalPages }",
         "parent_item": "Article pare",
         "photo": "Foto",

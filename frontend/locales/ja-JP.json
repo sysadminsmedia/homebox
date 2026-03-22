@@ -310,7 +310,9 @@
         "only_with_photo": "写真付きのアイテムのみ",
         "only_without_photo": "写真のないアイテムのみ",
         "options": "オプション",
-        "order_by": "並べ替え",
+        "order": {
+            "order_by": "並べ替え"
+        },
         "pages": "{ page } / { totalPages } ページ",
         "parent_item": "関連するアイテム",
         "photo": "画像",
