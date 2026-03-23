@@ -230,6 +230,7 @@
 
   import MdiHome from "~icons/mdi/home";
   import MdiFileTree from "~icons/mdi/file-tree";
+  import MdiTagMultiple from "~icons/mdi/tag-multiple";
   import MdiMagnify from "~icons/mdi/magnify";
   import MdiQrcodeScan from "~icons/mdi/qrcode-scan";
   import MdiAccount from "~icons/mdi/account";
@@ -400,36 +401,43 @@
       to: "/locations",
     },
     {
-      icon: MdiMagnify,
+      icon: MdiTagMultiple,
       id: 2,
+      active: computed(() => route.path === "/tags"),
+      name: computed(() => t("global.tags")),
+      to: "/tags",
+    },
+    {
+      icon: MdiMagnify,
+      id: 3,
       active: computed(() => route.path === "/items"),
       name: computed(() => t("menu.search")),
       to: "/items",
     },
     {
       icon: MdiFileDocumentMultiple,
-      id: 3,
+      id: 4,
       active: computed(() => route.path === "/templates"),
       name: computed(() => t("menu.templates")),
       to: "/templates",
     },
     {
       icon: MdiWrench,
-      id: 4,
+      id: 5,
       active: computed(() => route.path === "/maintenance"),
       name: computed(() => t("menu.maintenance")),
       to: "/maintenance",
     },
     {
       icon: MdiAccount,
-      id: 5,
+      id: 6,
       active: computed(() => route.path === "/profile"),
       name: computed(() => t("menu.profile")),
       to: "/profile",
     },
     {
       icon: MdiCog,
-      id: 6,
+      id: 7,
       active: computed(() => route.path.includes("/collection")),
       name: computed(() => t("menu.collection")),
       to: "/collection/members",
