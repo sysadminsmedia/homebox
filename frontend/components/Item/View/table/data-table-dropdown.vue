@@ -15,6 +15,7 @@
   import { toast } from "~/components/ui/sonner";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
+import { formatValueAsCsvField } from "~/lib/utils";
 
   const { t } = useI18n();
   const api = useUserApi();
@@ -59,28 +60,16 @@
     items.forEach(item => window.open(`/item/${item}`, "_blank"));
   };
 
-  const escapeCsvField = (value: unknown): string => {
-    let str = String(value ?? "");
-    // Mitigate formula injection
-    if (/^[=+\-@]/.test(str)) {
-      str = "'" + str;
-    }
-    // Escape double quotes
-    str = str.replace(/"/g, '""');
-    // Wrap in double quotes
-    return `"${str}"`;
-  };
-
   const downloadCsv = (items: Row<ItemSummary>[], columns: Column<ItemSummary>[]) => {
     // get enabled columns
     const enabledColumns = columns.filter(c => c.id !== undefined && c.getIsVisible() && c.getCanHide()).map(c => c.id);
 
     // create CSV header (escaped)
-    const header = enabledColumns.map(escapeCsvField).join(",");
+    const header = enabledColumns.map(formatValueAsCsvField).join(",");
 
     // map each item to a row matching enabled columns order, escaping each field
     const rows = items.map(item =>
-      enabledColumns.map(col => escapeCsvField(item.original[col as keyof ItemSummary])).join(",")
+      enabledColumns.map(col => formatValueAsCsvField(item.original[col as keyof ItemSummary])).join(",")
     );
 
     const csv = [header, ...rows].join("\n");
