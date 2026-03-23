@@ -2,31 +2,33 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
 	"strings"
 	"time"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/pressly/goose/v3"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
-
-	"github.com/hay-kot/httpkit/errchain"
-	"github.com/hay-kot/httpkit/graceful"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
-	"github.com/rs/zerolog/pkgerrors"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/currencies"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/otel"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/hay-kot/httpkit/errchain"
+	"github.com/hay-kot/httpkit/graceful"
+	"github.com/pressly/goose/v3"
+	"github.com/riandyrn/otelchi"
+	otelchimetric "github.com/riandyrn/otelchi/metric"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/pkgerrors"
 	"go.balki.me/anyhttp"
 
 	"entgo.io/ent/dialect"
@@ -54,8 +56,8 @@ var (
 
 func build() string {
 	short := commit
-	if len(short) > 7 {
-		short = short[:7]
+	if len(commit) > 7 {
+		short = commit[:7]
 	}
 
 	return fmt.Sprintf("%s, commit %s, built at %s", version, short, buildTime)
@@ -106,8 +108,20 @@ func run(cfg *config.Config) error {
 	app.setupLogger()
 
 	// =========================================================================
+	// Initialize OpenTelemetry
+	otelProvider, err := otel.NewProvider(context.Background(), &cfg.Otel, version)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to initialize OpenTelemetry")
+		return fmt.Errorf("failed to initialize OpenTelemetry: %w", err)
+	}
+	app.otel = otelProvider
+
+	// Wire zerolog to OTel logs if enabled
+	app.setupOtelZerologBridge()
+
+	// =========================================================================
 	// Initialize Database & Repos
-	err := setupStorageDir(cfg)
+	err = setupStorageDir(cfg)
 	if err != nil {
 		return err
 	}
@@ -137,7 +151,7 @@ func run(cfg *config.Config) error {
 		return fmt.Errorf("unsupported driver: %s", sqlDriver)
 	}
 
-	db, err := sql.Open(driverName, databaseURL)
+	db, err := otelProvider.OpenDatabase(driverName, databaseURL)
 	if err != nil {
 		log.Error().
 			Err(err).
@@ -187,7 +201,7 @@ func run(cfg *config.Config) error {
 		return err
 	}
 
-	currencies, err := currencies.CollectionCurrencies(collectFuncs...)
+	currencyData, err := currencies.CollectionCurrencies(collectFuncs...)
 	if err != nil {
 		log.Error().
 			Err(err).
@@ -201,7 +215,7 @@ func run(cfg *config.Config) error {
 	app.services = services.New(
 		app.repos,
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),
-		services.WithCurrencies(currencies),
+		services.WithCurrencies(currencyData),
 		services.WithNotifierConfig(&cfg.Notifier),
 	)
 
@@ -211,6 +225,16 @@ func run(cfg *config.Config) error {
 	logger := log.With().Caller().Logger()
 
 	router := chi.NewMux()
+
+	if otelProvider.IsEnabled() && cfg.Otel.EnableHTTPTracing {
+		otelChiBaseCfg := otelchimetric.NewBaseConfig(cfg.Otel.ServiceName, otelchimetric.WithMeterProvider(otelProvider.MeterProvider()))
+		router.Use(
+			otelchi.Middleware(cfg.Otel.ServiceName, otelchi.WithChiRoutes(router)),
+			otelchimetric.NewResponseSizeBytes(otelChiBaseCfg),
+			otelchimetric.NewRequestInFlight(otelChiBaseCfg),
+		)
+	}
+
 	router.Use(
 		middleware.RequestID,
 		middleware.RealIP,
@@ -228,6 +252,16 @@ func run(cfg *config.Config) error {
 
 	runner := graceful.NewRunner()
 
+	// Add OpenTelemetry shutdown
+	if otelProvider.IsEnabled() {
+		runner.AddFunc("otel-shutdown", func(ctx context.Context) error {
+			<-ctx.Done()
+			shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			return otelProvider.Shutdown(shutdownCtx)
+		})
+	}
+
 	runner.AddFunc("server", func(ctx context.Context) error {
 		httpserver := http.Server{
 			Addr:         fmt.Sprintf("%s:%s", cfg.Web.Host, cfg.Web.Port),
@@ -244,6 +278,11 @@ func run(cfg *config.Config) error {
 
 		listener, addrType, addrCfg, err := anyhttp.GetListener(cfg.Web.Host)
 		if err == nil {
+			defer func() {
+				if err := listener.Close(); err != nil {
+					log.Error().Err(err).Msg("failed to close listener")
+				}
+			}()
 			switch addrType {
 			case anyhttp.SystemdFD:
 				sysdCfg := addrCfg.(*anyhttp.SysdConfig)

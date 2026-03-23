@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { TagOut } from "~~/lib/api/types/data-contracts";
+import type { TagOut, TagSummary } from "~~/lib/api/types/data-contracts";
 
 export const useTagStore = defineStore("tags", {
   state: () => ({
@@ -36,6 +36,42 @@ export const useTagStore = defineStore("tags", {
 
       this.allTags = result.data;
       return result;
+    },
+    getAncestors(tags: string[]) {
+      if (this.allTags === null) {
+        return [];
+      }
+
+      // recursively find all ancestors of all input tags
+      const toCheck = [this.allTags.filter(t => tags.includes(t.id))];
+      const ancestors: TagOut[] = [];
+
+      while (toCheck.length > 0) {
+        const next = toCheck.pop();
+        if (next === undefined) {
+          break;
+        }
+        for (const tag of next) {
+          if (ancestors.includes(tag)) {
+            continue;
+          }
+          ancestors.push(tag);
+          toCheck.push(this.allTags.filter(t => t.id === tag.parentId));
+        }
+      }
+
+      // filter out tags from ancestors
+      return ancestors.filter(t => !tags.includes(t.id));
+    },
+    withAncestors(tags: TagOut[] | TagSummary[]) {
+      if (!tags) {
+        return [];
+      }
+      const ancestors = this.getAncestors(tags.map(t => t.id)).map(t => ({ ...t, ancestors: true }));
+
+      return [...tags.map(t => ({ ...t, ancestors: false })), ...ancestors].sort((a, b) =>
+        a.name.localeCompare(b.name)
+      );
     },
   },
 });

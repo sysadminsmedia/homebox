@@ -786,6 +786,7 @@
             "page_right_padding": "Seitenabstand rechts",
             "page_top_padding": "Abstand am Seitenanfang",
             "page_width": "Seitenbreite",
+            "print_location_row": "Druckort Zeile",
             "qr_code_example": "QR-Code Beispiel",
             "replace_homebox_behavior": "Textverhalten „HomeBox“ ersetzen",
             "replace_homebox_behavior_always_replace": "\"HomeBox\" immer ersetzen",

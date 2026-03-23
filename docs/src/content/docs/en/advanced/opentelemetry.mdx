@@ -1,6 +1,6 @@
 ---
 title: OpenTelemetry
-draft: true
+draft: false
 ---
 
 OpenTelemetry is an open-source observability framework for cloud-native software, providing a set of APIs, libraries,
@@ -15,7 +15,7 @@ and behavior of their Homebox applications, which can be invaluable for diagnosi
 ## Configuration
 | Variable                          | Default                 | Description                                                                                                                                                                    |
 |-----------------------------------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| HBOX_OTEL_ENABLED                 | `false`                 | If Opentelemtry should be enabled or not                                                                                                                                       |
+| HBOX_OTEL_ENABLED                 | `false`                 | If OpenTelemetry should be enabled or not                                                                                                                                      |
 | HBOX_OTEL_SERVICE_NAME            | `homebox`               | This is the name of the service as it will appear in OTEL applications                                                                                                         |
 | HBOX_OTEL_SERVICE_VERSION         | (current build version) | This is the version of the service deployed shown in OTEL applications                                                                                                         |
 | HBOX_OTEL_EXPORTER                | `otlp`                  | This can be `otlp`, `stdout` or `none`                                                                                                                                         |
@@ -23,7 +23,7 @@ and behavior of their Homebox applications, which can be invaluable for diagnosi
 | HBOX_OTEL_PATH_PREFIX             |                         | If your collector is on a sub-directory, it goes here, for example `/otlp`, the `/v1/traces`, `/v1/metrics`, and `/v1/logs` will automatically be appended                     |
 | HBOX_OTEL_PROTOCOL                | `grpc`                  | The protocol to use for the OTLP exporter, can be `grpc` or `http`                                                                                                             |
 | HBOX_OTEL_INSECURE                | `false`                 | If the OTLP exporter should use an insecure connection                                                                                                                         |
-| HBOX_OTEL_HEADERS                 |                         | If you need to add additional headers for authentication you can do so here in a `name=value` fashion, multiple values are seperated by commas (e.g `name1=value,name2=value`) |
+| HBOX_OTEL_HEADERS                 |                         | If you need to add additional headers for authentication you can do so here in a `name=value` fashion, multiple values are separated by commas (e.g `name1=value,name2=value`) |
 | HBOX_OTEL_SAMPLE_RATE             | `1.0`                   | The sampling rate to use for traces, a value between `0.0` and `1.0` where `1.0` means all traces are captured and `0.0` means no traces are captured                          |
 | HBOX_OTEL_ENABLE_METRICS          | `true`                  | If metrics should be exported to OTEL or not                                                                                                                                   |
 | HBOX_OTEL_METRICS_INTERVAL        | `15s`                   | Interval that metrics should be sent to the collector (this does not impact how often measurements are captured)                                                               |
@@ -53,6 +53,46 @@ HBOX_OTEL_PROTOCOL=http
 HBOX_OTEL_INSECURE=false
 HBOX_OTEL_SAMPLE_RATE=1.0
 ```
+
+## Frontend telemetry proxy
+
+Homebox includes an authenticated proxy endpoint for browser-side traces at `/api/v1/telemetry`.
+
+- The endpoint is available only when both `HBOX_OTEL_ENABLED=true` and `HBOX_OTEL_PROXY_ENABLED=true`.
+- The endpoint requires the same authenticated user context as other API routes.
+- Requests must be `POST` JSON payloads that include a `spans` array.
+- Request bodies are limited to `1 MiB`; larger payloads return `413 Request Entity Too Large`.
+- Invalid telemetry payloads return `400 Bad Request` with a validation message.
+- Valid payloads return `202 Accepted`.
+
+### Frontend payload example
+
+```json
+{
+  "resourceAttributes": {
+	"deployment.environment": "prod"
+  },
+  "spans": [
+	{
+	  "traceId": "4bf92f3577b34da6a3ce929d0e0e4736",
+	  "spanId": "00f067aa0ba902b7",
+	  "name": "ui.click",
+	  "kind": "client",
+	  "startTime": 1710000000000,
+	  "endTime": 1710000000150
+	}
+  ]
+}
+```
+
+## Database tracing and metrics
+
+When `HBOX_OTEL_ENABLE_DATABASE_TRACING=true`, Homebox instruments database operations with `otelsql`.
+
+- SQLite (`sqlite3`) and PostgreSQL (`pgx`) connections are traced.
+- SQL spans include query text through SQL commenter support.
+- If `HBOX_OTEL_ENABLE_METRICS=true`, database stats metrics are also exported through the configured meter provider.
+- Metrics registration is best effort; Homebox logs a warning if registration fails but continues startup.
 
 
 

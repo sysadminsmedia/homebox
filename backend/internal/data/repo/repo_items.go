@@ -405,14 +405,26 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 	var andPredicates []predicate.Item
 	{
 		if len(q.TagIDs) > 0 {
+			// Get descendant tags for both positive and negative filtering
+			tagRepo := &TagRepository{e.db, e.bus}
+			descendants, err := tagRepo.GetDescendantTagIDs(ctx, q.TagIDs)
+			if err != nil {
+				log.Warn().Err(err).Msg("failed to get descendant tags, using only direct tags")
+				descendants = q.TagIDs
+			} else if len(descendants) == 0 {
+				descendants = q.TagIDs
+			}
+
 			var tagPredicates []predicate.Item
 			if !q.NegateTags {
-				tagPredicates = lo.Map(q.TagIDs, func(l uuid.UUID, _ int) predicate.Item {
+				// Include items with any of the selected tags or their descendants
+				tagPredicates = lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Item {
 					return item.HasTagWith(tag.ID(l))
 				})
 				andPredicates = append(andPredicates, item.Or(tagPredicates...))
 			} else {
-				tagPredicates = lo.Map(q.TagIDs, func(l uuid.UUID, _ int) predicate.Item {
+				// Exclude items with any of the selected tags or their descendants
+				tagPredicates = lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Item {
 					return item.Not(item.HasTagWith(tag.ID(l)))
 				})
 				andPredicates = append(andPredicates, item.And(tagPredicates...))

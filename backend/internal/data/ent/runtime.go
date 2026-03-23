@@ -593,6 +593,10 @@ func init() {
 	tagDescColor := tagFields[0].Descriptor()
 	// tag.ColorValidator is a validator for the "color" field. It is called by the builders before save.
 	tag.ColorValidator = tagDescColor.Validators[0].(func(string) error)
+	// tagDescIcon is the schema descriptor for icon field.
+	tagDescIcon := tagFields[1].Descriptor()
+	// tag.IconValidator is a validator for the "icon" field. It is called by the builders before save.
+	tag.IconValidator = tagDescIcon.Validators[0].(func(string) error)
 	// tagDescID is the schema descriptor for id field.
 	tagDescID := tagMixinFields0[0].Descriptor()
 	// tag.DefaultID holds the default value on creation for the id field.

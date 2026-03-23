@@ -3762,6 +3762,10 @@ const docTemplate = `{
                         }
                     ]
                 },
+                "icon": {
+                    "description": "Icon holds the value of the \"icon\" field.",
+                    "type": "string"
+                },
                 "id": {
                     "description": "ID of the ent.",
                     "type": "string"
@@ -3779,6 +3783,13 @@ const docTemplate = `{
         "ent.TagEdges": {
             "type": "object",
             "properties": {
+                "children": {
+                    "description": "Children holds the value of the children edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Tag"
+                    }
+                },
                 "group": {
                     "description": "Group holds the value of the group edge.",
                     "allOf": [
@@ -3793,6 +3804,14 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/ent.Item"
                     }
+                },
+                "parent": {
+                    "description": "Parent holds the value of the parent edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Tag"
+                        }
+                    ]
                 }
             }
         },
@@ -5150,16 +5169,30 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 1000
                 },
+                "icon": {
+                    "type": "string",
+                    "maxLength": 255
+                },
                 "name": {
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 1
+                },
+                "parentId": {
+                    "type": "string",
+                    "x-nullable": true
                 }
             }
         },
         "repo.TagOut": {
             "type": "object",
             "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.TagSummary"
+                    }
+                },
                 "color": {
                     "type": "string"
                 },
@@ -5169,11 +5202,26 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "icon": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string"
+                },
+                "parent": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/repo.TagSummary"
+                        }
+                    ],
+                    "x-nullable": true
+                },
+                "parentId": {
+                    "type": "string",
+                    "x-nullable": true
                 },
                 "updatedAt": {
                     "type": "string"
@@ -5192,11 +5240,18 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "icon": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string"
+                },
+                "parentId": {
+                    "type": "string",
+                    "x-nullable": true
                 },
                 "updatedAt": {
                     "type": "string"
@@ -5459,6 +5514,9 @@ const docTemplate = `{
                 "oidc": {
                     "$ref": "#/definitions/v1.OIDCStatus"
                 },
+                "telemetry": {
+                    "$ref": "#/definitions/v1.TelemetryStatus"
+                },
                 "title": {
                     "type": "string"
                 },
@@ -5635,6 +5693,14 @@ const docTemplate = `{
                 "buttonText": {
                     "type": "string"
                 },
+                "enabled": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "v1.TelemetryStatus": {
+            "type": "object",
+            "properties": {
                 "enabled": {
                     "type": "boolean"
                 }
