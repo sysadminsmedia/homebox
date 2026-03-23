@@ -81,7 +81,7 @@ export function formatValueAsCsvField(value: unknown): string {
   }
 
   // Mitigate formula injection
-  if (/^[=+\-@]/.test(str)) {
+  if (/^[\t\r\n ]*[=+\-@]/.test(str)) {
     str = "'" + str;
   }
   // Escape double quotes
