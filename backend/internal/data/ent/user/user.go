@@ -40,10 +40,10 @@ const (
 	FieldOidcSubject = "oidc_subject"
 	// FieldDefaultGroupID holds the string denoting the default_group_id field in the database.
 	FieldDefaultGroupID = "default_group_id"
-	// EdgeGroups holds the string denoting the groups edge name in mutations.
-	EdgeGroups = "groups"
 	// FieldSettings holds the string denoting the settings field in the database.
 	FieldSettings = "settings"
+	// EdgeGroups holds the string denoting the groups edge name in mutations.
+	EdgeGroups = "groups"
 	// EdgeAuthTokens holds the string denoting the auth_tokens edge name in mutations.
 	EdgeAuthTokens = "auth_tokens"
 	// EdgeNotifiers holds the string denoting the notifiers edge name in mutations.

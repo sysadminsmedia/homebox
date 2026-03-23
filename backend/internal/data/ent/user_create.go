@@ -176,6 +176,12 @@ func (_c *UserCreate) SetNillableDefaultGroupID(v *uuid.UUID) *UserCreate {
 	return _c
 }
 
+// SetSettings sets the "settings" field.
+func (_c *UserCreate) SetSettings(v map[string]interface{}) *UserCreate {
+	_c.mutation.SetSettings(v)
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *UserCreate) SetID(v uuid.UUID) *UserCreate {
 	_c.mutation.SetID(v)
@@ -421,6 +427,10 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.DefaultGroupID(); ok {
 		_spec.SetField(user.FieldDefaultGroupID, field.TypeUUID, value)
 		_node.DefaultGroupID = &value
+	}
+	if value, ok := _c.mutation.Settings(); ok {
+		_spec.SetField(user.FieldSettings, field.TypeJSON, value)
+		_node.Settings = value
 	}
 	if nodes := _c.mutation.GroupsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
