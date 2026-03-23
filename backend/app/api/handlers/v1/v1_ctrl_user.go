@@ -154,6 +154,7 @@ func (ctrl *V1Controller) HandleUserSelfSettingsGet() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleUserSelfSettingsUpdate() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
+
 		// Cap body to prevent DOS via large payloads.
 		r.Body = http.MaxBytesReader(w, r.Body, 64*1024)
 		var settings map[string]interface{}
@@ -167,7 +168,8 @@ func (ctrl *V1Controller) HandleUserSelfSettingsUpdate() errchain.HandlerFunc {
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
-		ctrl.bus.Publish(eventbus.EventUserMutation, eventbus.GroupMutationEvent{GID: actor.GroupID})
+		ctx := services.NewContext(r.Context())
+		ctrl.bus.Publish(eventbus.EventUserMutation, eventbus.GroupMutationEvent{GID: ctx.GID})
 
 		newSettings, err := ctrl.svc.User.GetSettings(r.Context(), actor.ID)
 		if err != nil {

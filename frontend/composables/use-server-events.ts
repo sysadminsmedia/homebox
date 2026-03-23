@@ -5,6 +5,7 @@ export enum ServerEvent {
   LocationMutation = "location.mutation",
   ItemMutation = "item.mutation",
   TagMutation = "tag.mutation",
+  UserMutation = "user.mutation",
 }
 
 export type EventMessage = {
@@ -54,6 +55,7 @@ function connect(onmessage: (m: EventMessage) => void) {
   thorttled.set(ServerEvent.LocationMutation, useThrottleFn(onmessage, 1000));
   thorttled.set(ServerEvent.ItemMutation, useThrottleFn(onmessage, 1000));
   thorttled.set(ServerEvent.TagMutation, useThrottleFn(onmessage, 1000));
+  thorttled.set(ServerEvent.UserMutation, useThrottleFn(onmessage, 1000));
 
   ws.onmessage = msg => {
     const pm = JSON.parse(msg.data);

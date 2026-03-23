@@ -62,6 +62,8 @@ require (
 	golang.org/x/image v0.37.0
 	golang.org/x/oauth2 v0.36.0
 	golang.org/x/text v0.35.0
+	google.golang.org/grpc v1.79.3
+	google.golang.org/protobuf v1.36.11
 	modernc.org/sqlite v1.47.0
 )
 
@@ -217,8 +219,6 @@ require (
 	google.golang.org/genproto v0.0.0-20260316180232-0b37fe3546d5 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20260316180232-0b37fe3546d5 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260319201613-d00831a3d3e7 // indirect
-	google.golang.org/grpc v1.79.3 // indirect
-	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	modernc.org/libc v1.70.0 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
