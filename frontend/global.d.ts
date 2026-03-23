@@ -2,13 +2,13 @@
 
 declare module "#app" {
   interface NuxtApp {
-	$otelEnabled: boolean;
+    $otelEnabled: boolean;
   }
 }
 
 declare module "vue" {
   interface ComponentCustomProperties {
-	$otelEnabled: boolean;
+    $otelEnabled: boolean;
   }
 }
 export {};

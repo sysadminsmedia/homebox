@@ -45,40 +45,38 @@ export function getContrastTextColor(bgColor: string): string {
 
 export const camelToSnakeCase = (str: string) => str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
 
-export const getNameOrValue = (value: unknown): string | unknown => {
-  let nameEvaluation: string | false =
-    value !== null
-    && value !== undefined
-    && typeof value === "object" 
-    && "name" in value
-    && typeof value.name === "string"
-    && value.name
+export function getNameOrValue(value: unknown): string | unknown {
+  const nameEvaluation: string | false =
+    value !== null &&
+    value !== undefined &&
+    typeof value === "object" &&
+    "name" in value &&
+    typeof value.name === "string" &&
+    value.name;
 
-  return nameEvaluation ? nameEvaluation : value
+  return nameEvaluation ? nameEvaluation : value;
 }
 
-export const formatArrayAsString = (value: any): string => {
+export function formatArrayAsString(value: unknown): string {
   let str = "";
 
   if (Array.isArray(value)) {
     value.map(item => {
-      str = `${str}${str ? "," : ""}${formatArrayAsString(item)}`
+      str = `${str}${str ? "," : ""}${formatArrayAsString(item)}`;
     });
-  }
-  else {
+  } else {
     str = String(getNameOrValue(value) ?? "");
   }
 
   return str;
 }
 
-export const formatValueAsCsvField = (value: unknown): string => {
+export function formatValueAsCsvField(value: unknown): string {
   let str = "";
 
   if (Array.isArray(value)) {
-    str = formatArrayAsString(value)
-  }
-  else {
+    str = formatArrayAsString(value);
+  } else {
     str = String(getNameOrValue(value) ?? "");
   }
 
@@ -91,4 +89,4 @@ export const formatValueAsCsvField = (value: unknown): string => {
 
   // Wrap in double quotes
   return `"${str}"`;
-};
+}
