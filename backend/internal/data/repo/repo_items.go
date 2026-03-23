@@ -1193,6 +1193,7 @@ func (e *ItemsRepository) GetAllCustomFieldNames(ctx context.Context, gid uuid.U
 		).
 		QueryFields().
 		Unique(true).
+		Order(ent.Asc(itemfield.FieldName)).
 		Select(itemfield.FieldName).
 		Scan(ctx, &fields)
 	if err != nil {
