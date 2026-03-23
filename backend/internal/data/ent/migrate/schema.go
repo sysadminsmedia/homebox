@@ -480,6 +480,7 @@ var (
 		{Name: "oidc_issuer", Type: field.TypeString, Nullable: true},
 		{Name: "oidc_subject", Type: field.TypeString, Nullable: true},
 		{Name: "default_group_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "settings", Type: field.TypeJSON, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{

@@ -32,6 +32,17 @@ export default defineNuxtPlugin(({ vueApp }) => {
   });
   vueApp.use(i18n);
 
+  watch(
+    () => preferences.value.language,
+    language => {
+      if (!language) {
+        return;
+      }
+
+      i18n.global.locale.value = language;
+    }
+  );
+
   return {
     provide: {
       i18nGlobal: i18n.global,

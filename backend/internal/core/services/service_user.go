@@ -383,6 +383,14 @@ func (svc *UserService) ChangePassword(ctx Context, current string, new string) 
 	return true
 }
 
+func (svc *UserService) GetSettings(ctx context.Context, uid uuid.UUID) (map[string]interface{}, error) {
+	return svc.repos.Users.GetSettings(ctx, uid)
+}
+
+func (svc *UserService) SetSettings(ctx context.Context, uid uuid.UUID, settings map[string]interface{}) error {
+	return svc.repos.Users.SetSettings(ctx, uid, settings)
+}
+
 // EnsureUserPassword ensures that the user with the given email has the specified password. If the password does not match, it updates the user's password to the new value.
 // WARNING: This method bypasses normal checks, it should only be used for demos and/or superuser level administrative processes.
 func (svc *UserService) EnsureUserPassword(ctx context.Context, email, password string) error {

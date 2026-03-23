@@ -57,6 +57,8 @@ func (User) Fields() []ent.Field {
 		field.UUID("default_group_id", uuid.UUID{}).
 			Optional().
 			Nillable(),
+		field.JSON("settings", map[string]interface{}{}).
+			Optional(),
 	}
 }
 

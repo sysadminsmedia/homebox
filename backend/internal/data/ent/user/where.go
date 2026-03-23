@@ -686,6 +686,16 @@ func DefaultGroupIDNotNil() predicate.User {
 	return predicate.User(sql.FieldNotNull(FieldDefaultGroupID))
 }
 
+// SettingsIsNil applies the IsNil predicate on the "settings" field.
+func SettingsIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldSettings))
+}
+
+// SettingsNotNil applies the NotNil predicate on the "settings" field.
+func SettingsNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldSettings))
+}
+
 // HasGroups applies the HasEdge predicate on the "groups" edge.
 func HasGroups() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
