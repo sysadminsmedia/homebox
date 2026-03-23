@@ -1,0 +1,610 @@
+---
+title: API Handlers
+---
+
+import { Tabs, TabItem, FileTree, Aside, Steps } from '@astrojs/starlight/components';
+
+API handlers are the HTTP layer of Homebox that processes incoming requests, calls services and repositories, and returns responses to clients. Understanding how to write handlers is fundamental to backend development.
+
+## Architecture Overview
+
+API handlers follow a clean, layered architecture pattern:
+
+```
+HTTP Request
+    ↓
+chi Router
+    ↓
+Middleware Chain (auth, validation, etc)
+    ↓
+Handler (via adapters)
+    ↓
+Service/Repository Layer
+    ↓
+Database
+    ↓
+HTTP Response (JSON)
+```
+
+### Why This Architecture?
+
+- **Separation of Concerns**: Each layer has a single responsibility
+- **Testability**: Services and repositories can be tested independently
+- **Security**: Middleware enforces authentication and authorization
+- **Consistency**: Adapters provide a uniform way to handle requests/responses
+
+## Directory Structure
+
+<FileTree>
+    - backend/
+      - app/
+        - api/
+          - routes.go (route definitions with chi router)
+          - handlers/
+            - v1/
+              - controller.go (V1Controller struct initialization)
+              - partials.go (routeID, routeUUID helpers)
+              - helpers.go (URL helpers)
+              - query_params.go (query parameter parsing)
+              - v1_ctrl_items.go (Item endpoints)
+              - v1_ctrl_items_attachments.go (Attachment endpoints)
+              - v1_ctrl_labels.go (Label endpoints)
+              - v1_ctrl_locations.go (Location endpoints)
+              - v1_ctrl_auth.go (Authentication endpoints)
+              - v1_ctrl_user.go (User endpoints)
+              - v1_ctrl_group.go (Group endpoints)
+              - v1_ctrl_maintenance.go (Maintenance endpoints)
+</FileTree>
+
+## The V1Controller
+
+All API handlers are methods on the `V1Controller` struct. This provides a single entry point for all version 1 API operations.
+
+```go
+type V1Controller struct {
+    cookieSecure      bool
+    repo              *repo.AllRepos          // Direct data access
+    svc               *services.AllServices   // Business logic
+    maxUploadSize     int64                   // For file uploads
+    isDemo            bool                    // Demo mode flag
+    allowRegistration bool                    // Registration enabled
+    bus               *eventbus.EventBus      // Event publishing
+    url               string                  // Base URL
+    config            *config.Config          // App configuration
+    oidcProvider      *providers.OIDCProvider // OIDC integration
+}
+```
+
+The controller is initialized with all dependencies it needs:
+
+```go
+func NewControllerV1(
+    svc *services.AllServices,
+    repos *repo.AllRepos,
+    bus *eventbus.EventBus,
+    config *config.Config,
+    options ...func(*V1Controller),
+) *V1Controller {
+    ctrl := &V1Controller{
+        repo:              repos,
+        svc:               svc,
+        allowRegistration: true,
+        bus:               bus,
+        config:            config,
+    }
+
+    for _, opt := range options {
+        opt(ctrl)
+    }
+
+    return ctrl
+}
+```
+
+## The Adapter Pattern
+
+The adapter pattern is the **primary pattern** used throughout the codebase. Adapters handle request decoding, UUID parsing, and response encoding automatically.
+
+<Aside type="tip">
+Always use adapters instead of manual request handling. This ensures consistency, reduces boilerplate, and prevents common mistakes.
+</Aside>
+
+### Available Adapters
+
+| Adapter              | Use Case                         | Signature                                                 |
+|----------------------|----------------------------------|-----------------------------------------------------------|
+| `adapters.Command`   | No request body, no query params | `func(r *http.Request) (T, error)`                        |
+| `adapters.CommandID` | UUID from path, no body          | `func(r *http.Request, ID uuid.UUID) (T, error)`          |
+| `adapters.Action`    | Request body decoding            | `func(r *http.Request, body T) (Y, error)`                |
+| `adapters.ActionID`  | UUID from path + body            | `func(r *http.Request, ID uuid.UUID, body T) (Y, error)`  |
+| `adapters.Query`     | Query parameter decoding         | `func(r *http.Request, query T) (Y, error)`               |
+| `adapters.QueryID`   | UUID from path + query params    | `func(r *http.Request, ID uuid.UUID, query T) (Y, error)` |
+
+## Authentication & Context
+
+Every handler must use `services.NewContext()` to extract the authenticated user from the request context. The middleware sets this up automatically.
+
+```go
+auth := services.NewContext(r.Context())
+// auth.UID  - Current user's ID
+// auth.GID  - Current user's group ID (for multi-tenancy)
+// auth.User - Full user object
+```
+
+<Aside type="caution">
+Always scope queries to `auth.GID` for multi-tenancy. Never query data without checking group ownership.
+</Aside>
+
+## Standard Handler Patterns
+
+Here are the most common handler patterns you'll use:
+
+### GET – List All Items
+
+Use `adapters.Command` when there's no request body or query parameters:
+
+<Tabs>
+  <TabItem label="Handler Code">
+```go
+// HandleLabelsGetAll godoc
+//
+//	@Summary	Get All Labels
+//	@Tags		Labels
+//	@Produce	json
+//	@Success	200	{object}	[]repo.LabelSummary
+//	@Router		/v1/labels [GET]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleLabelsGetAll() errchain.HandlerFunc {
+    fn := func(r *http.Request) ([]repo.LabelSummary, error) {
+        auth := services.NewContext(r.Context())
+        return ctrl.repo.Labels.GetAll(auth, auth.GID)
+    }
+
+    return adapters.Command(fn, http.StatusOK)
+}
+```
+  </TabItem>
+  <TabItem label="Route Registration">
+```go
+r.Get("/labels", chain.ToHandlerFunc(v1Ctrl.HandleLabelsGetAll(), userMW...))
+```
+  </TabItem>
+</Tabs>
+
+### GET – With Query Parameters
+
+Use `adapters.Query` when you need to parse query parameters:
+
+<Tabs>
+  <TabItem label="Handler Code">
+```go
+// HandleLocationGetAll godoc
+//
+//	@Summary	Get All Locations
+//	@Tags		Locations
+//	@Produce	json
+//	@Param		filterChildren	query		bool	false	"Filter locations with parents"
+//	@Success	200				{object}	[]repo.LocationOutCount
+//	@Router		/v1/locations [GET]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleLocationGetAll() errchain.HandlerFunc {
+    fn := func(r *http.Request, q repo.LocationQuery) ([]repo.LocationOutCount, error) {
+        auth := services.NewContext(r.Context())
+        return ctrl.repo.Locations.GetAll(auth, auth.GID, q)
+    }
+
+    return adapters.Query(fn, http.StatusOK)
+}
+```
+  </TabItem>
+  <TabItem label="Query Struct">
+```go
+type LocationQuery struct {
+    FilterChildren bool
+}
+```
+  </TabItem>
+</Tabs>
+
+### GET – Single Item by ID
+
+Use `adapters.CommandID` to extract a UUID from the URL path:
+
+```go
+// HandleItemGet godocs
+//
+//	@Summary	Get Item
+//	@Tags		Items
+//	@Produce	json
+//	@Param		id	path		string	true	"Item ID"
+//	@Success	200	{object}	repo.ItemOut
+//	@Router		/v1/items/{id} [GET]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleItemGet() errchain.HandlerFunc {
+    fn := func(r *http.Request, ID uuid.UUID) (repo.ItemOut, error) {
+        auth := services.NewContext(r.Context())
+        return ctrl.repo.Items.GetOneByGroup(auth, auth.GID, ID)
+    }
+
+    return adapters.CommandID("id", fn, http.StatusOK)
+}
+```
+
+<Aside type="note">
+The first argument to `adapters.CommandID()` is the path parameter name (in this case "id"), which must match your route definition.
+</Aside>
+
+### POST – Create New Item
+
+Use `adapters.Action` to decode the request body:
+
+```go
+// HandleItemsCreate godoc
+//
+//	@Summary	Create Item
+//	@Tags		Items
+//	@Produce	json
+//	@Param		payload	body		repo.ItemCreate	true	"Item Data"
+//	@Success	201		{object}	repo.ItemOut
+//	@Router		/v1/items [POST]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleItemsCreate() errchain.HandlerFunc {
+    fn := func(r *http.Request, body repo.ItemCreate) (repo.ItemOut, error) {
+        return ctrl.svc.Items.Create(services.NewContext(r.Context()), body)
+    }
+
+    return adapters.Action(fn, http.StatusCreated)
+}
+```
+
+<Aside type="tip">
+Notice that POST handlers return `http.StatusCreated` (201) instead of `http.StatusOK` (200). This follows REST conventions.
+</Aside>
+
+### PUT – Update Existing Item
+
+Use `adapters.ActionID` to extract an ID and decode the body:
+
+```go
+// HandleItemUpdate godocs
+//
+//	@Summary	Update Item
+//	@Tags		Items
+//	@Produce	json
+//	@Param		id		path		string			true	"Item ID"
+//	@Param		payload	body		repo.ItemUpdate	true	"Item Data"
+//	@Success	200		{object}	repo.ItemOut
+//	@Router		/v1/items/{id} [PUT]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleItemUpdate() errchain.HandlerFunc {
+    fn := func(r *http.Request, ID uuid.UUID, body repo.ItemUpdate) (repo.ItemOut, error) {
+        auth := services.NewContext(r.Context())
+        body.ID = ID
+        return ctrl.repo.Items.UpdateByGroup(auth, auth.GID, body)
+    }
+
+    return adapters.ActionID("id", fn, http.StatusOK)
+}
+```
+
+### DELETE - Remove Item
+
+Use `adapters.CommandID` and return `http.StatusNoContent`:
+
+```go
+// HandleLabelDelete godocs
+//
+//	@Summary	Delete Label
+//	@Tags		Labels
+//	@Produce	json
+//	@Param		id	path	string	true	"Label ID"
+//	@Success	204
+//	@Router		/v1/labels/{id} [DELETE]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleLabelDelete() errchain.HandlerFunc {
+    fn := func(r *http.Request, ID uuid.UUID) (any, error) {
+        auth := services.NewContext(r.Context())
+        err := ctrl.repo.Labels.DeleteByGroup(auth, auth.GID, ID)
+        return nil, err
+    }
+
+    return adapters.CommandID("id", fn, http.StatusNoContent)
+}
+```
+
+## Special Cases
+
+### Complex Query Parameters
+
+For queries that don't fit standard adapters, handle them manually inside the handler:
+
+```go
+// HandleItemsGetAll godoc
+//
+//	@Summary	Query All Items
+//	@Tags		Items
+//	@Produce	json
+//	@Param		q			query		string		false	"search string"
+//	@Param		page		query		int			false	"page number"
+//	@Param		pageSize	query		int			false	"items per page"
+//	@Param		labels		query		[]string	false	"label IDs"			collectionFormat(multi)
+//	@Param		locations	query		[]string	false	"location IDs"		collectionFormat(multi)
+//	@Success	200			{object}	repo.PaginationResult[repo.ItemSummary]{}
+//	@Router		/v1/items [GET]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleItemsGetAll() errchain.HandlerFunc {
+    extractQuery := func(r *http.Request) repo.ItemQuery {
+        params := r.URL.Query()
+        return repo.ItemQuery{
+            Page:            queryIntOrNegativeOne(params.Get("page")),
+            PageSize:        queryIntOrNegativeOne(params.Get("pageSize")),
+            Search:          params.Get("q"),
+            LocationIDs:     queryUUIDList(params, "locations"),
+            LabelIDs:        queryUUIDList(params, "labels"),
+            IncludeArchived: queryBool(params.Get("includeArchived")),
+        }
+    }
+
+    return func(w http.ResponseWriter, r *http.Request) error {
+        ctx := services.NewContext(r.Context())
+        items, err := ctrl.repo.Items.QueryByGroup(ctx, ctx.GID, extractQuery(r))
+        if err != nil {
+            return validate.NewRequestError(err, http.StatusInternalServerError)
+        }
+        return server.JSON(w, http.StatusOK, items)
+    }
+}
+```
+
+### File Uploads
+
+File uploads require manual handling since adapters cannot process multipart form data:
+
+```go
+// HandleItemAttachmentCreate godocs
+//
+//	@Summary	Create Item Attachment
+//	@Tags		Items Attachments
+//	@Accept		multipart/form-data
+//	@Produce	json
+//	@Param		id		path		string	true	"Item ID"
+//	@Param		file	formData	file	true	"File attachment"
+//	@Param		type	formData	string	false	"Type of file"
+//	@Param		name	formData	string	true	"name of the file including extension"
+//	@Success	200		{object}	repo.ItemOut
+//	@Failure	422		{object}	validate.ErrorResponse
+//	@Router		/v1/items/{id}/attachments [POST]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) error {
+        err := r.ParseMultipartForm(ctrl.maxUploadSize << 20)
+        if err != nil {
+            return validate.NewRequestError(
+                errors.New("failed to parse multipart form"),
+                http.StatusBadRequest,
+            )
+        }
+
+        file, _, err := r.FormFile("file")
+        if err != nil {
+            // handle error...
+        }
+
+        attachmentName := r.FormValue("name")
+        // ... process and save attachment
+    }
+}
+```
+
+## Swagger Documentation
+
+<Aside type="caution">
+Every handler **MUST** have Swagger documentation comments. These are required for automatic API documentation generation.
+</Aside>
+
+### Swagger Comment Structure
+
+```go
+// HandleItemGet godocs
+//
+//	@Summary	Get Item
+//	@Tags		Items
+//	@Produce	json
+//	@Param		id	path		string	true	"Item ID"
+//	@Success	200	{object}	repo.ItemOut
+//	@Router		/v1/items/{id} [GET]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleItemGet() errchain.HandlerFunc {
+    // ...
+}
+```
+
+### Common Swagger Directives
+
+- **@Summary** - One-line description of what the endpoint does
+- **@Tags** – Logical grouping for the API docs (e.g., "Items," "Labels")
+- **@Produce** – Response content type (almost always `json`)
+- **@Param** – Document each parameter (path, query, body, etc.)
+- **@Success** – Success response with status code and response type
+- **@Failure** - Error response (optional but recommended)
+- **@Router** - API route and HTTP method
+- **@Security** - Security scheme (use `Bearer` for authenticated endpoints)
+
+### After Modifying Swagger
+
+<Aside type="caution">
+After adding or modifying any Swagger comments, you **MUST** run:
+```bash
+task generate
+```
+
+This regenerates the OpenAPI documentation and TypeScript types for the frontend.
+</Aside>
+
+## Response Helpers
+
+Use these helpers from the standard libraries to send responses:
+
+```go
+// From github.com/hay-kot/httpkit/server
+server.JSON(w, http.StatusOK, data)  // Send JSON with status code
+
+// From internal/sys/validate
+validate.NewRequestError(err, http.StatusBadRequest)  // Error response
+validate.NewRouteKeyError("id")                       // Invalid route parameter
+```
+
+## Query Parameter Helpers
+
+These helper functions are available in `query_params.go`:
+
+```go
+// Parse int or return -1 if invalid
+func queryIntOrNegativeOne(s string) int {
+    i, err := strconv.Atoi(s)
+    if err != nil {
+        return -1
+    }
+    return i
+}
+
+// Parse bool or return false if invalid
+func queryBool(s string) bool {
+    b, err := strconv.ParseBool(s)
+    if err != nil {
+        return false
+    }
+    return b
+}
+
+// Parse comma-separated UUID list from query params
+func queryUUIDList(params url.Values, key string) []uuid.UUID {
+    var ids []uuid.UUID
+    for _, id := range params[key] {
+        uid, err := uuid.Parse(id)
+        if err != nil {
+            continue
+        }
+        ids = append(ids, uid)
+    }
+    return ids
+}
+```
+
+## Controller Helpers
+
+Located in `partials.go`:
+
+```go
+// Extract UUID from route parameter "id"
+func (ctrl *V1Controller) routeID(r *http.Request) (uuid.UUID, error) {
+    return ctrl.routeUUID(r, "id")
+}
+
+// Extract UUID from any named route parameter
+func (ctrl *V1Controller) routeUUID(r *http.Request, key string) (uuid.UUID, error) {
+    ID, err := uuid.Parse(chi.URLParam(r, key))
+    if err != nil {
+        return uuid.Nil, validate.NewRouteKeyError(key)
+    }
+    return ID, nil
+}
+```
+
+## Adding a New Endpoint
+
+<Steps>
+
+1. **Create the Handler**
+
+   Create a new file (or add to existing file) in `backend/app/api/handlers/v1/`:
+
+   ```go
+   // HandleMyEntityGet godoc
+   //
+   //	@Summary	Get MyEntity
+   //	@Tags		MyEntity
+   //	@Produce	json
+   //	@Param		id	path		string	true	"MyEntity ID"
+   //	@Success	200	{object}	repo.MyEntityOut
+   //	@Router		/v1/my-entity/{id} [GET]
+   //	@Security	Bearer
+   func (ctrl *V1Controller) HandleMyEntityGet() errchain.HandlerFunc {
+       fn := func(r *http.Request, ID uuid.UUID) (repo.MyEntityOut, error) {
+           auth := services.NewContext(r.Context())
+           return ctrl.repo.MyEntity.GetOneByGroup(auth, auth.GID, ID)
+       }
+
+       return adapters.CommandID("id", fn, http.StatusOK)
+   }
+   ```
+
+2. **Register the Route**
+
+   Add the route in `backend/app/api/routes.go`:
+
+   ```go
+   r.Get("/my-entity/{id}", chain.ToHandlerFunc(v1Ctrl.HandleMyEntityGet(), userMW...))
+   ```
+
+3. **Generate Documentation**
+
+   Regenerate Swagger docs and TypeScript types:
+
+   ```bash
+   task generate
+   ```
+
+4. **Test the Endpoint**
+
+   Build and test locally:
+
+   ```bash
+   task go:build
+   task go:test
+   ```
+
+</Steps>
+
+## Critical Rules
+
+<Aside type="caution">
+Follow these rules to maintain consistency and prevent bugs:
+</Aside>
+
+1. **Use the adapter pattern** - Use `adapters.Command`, `adapters.Action`, etc. instead of manual request handling
+2. **ALWAYS add Swagger comments** – Required for API documentation and TypeScript type generation
+3. **Run `task generate` after handler changes** - Updates API documentation and frontend types
+4. **Always use `services.NewContext`** - Extracts the authenticated user from request context
+5. **Use `auth.GID` for multi-tenancy** - Always scope queries to the user's group
+6. **Handle errors properly** – Return errors directly (adapters handle conversion) or use `validate.NewRequestError()`
+7. **Return correct HTTP status codes**:
+   - `200 OK` - Successful GET/PUT operations
+   - `201 Created` - Successful POST operations
+   - `204 No Content` - Successful DELETE operations
+   - `400 Bad Request` - Invalid input
+   - `404 Not Found` - Resource doesn't exist
+   - `500 Internal Server Error` - Server error
+
+## Common Issues & Solutions
+
+<Aside type="tip">
+Here are solutions to common problems:
+</Aside>
+
+| Problem                   | Solution                                                               |
+|---------------------------|------------------------------------------------------------------------|
+| "Missing Swagger docs"    | Add `@Summary`, `@Tags`, `@Router` comments and run `task generate`    |
+| TypeScript types outdated | Run `task generate` to regenerate types                                |
+| Auth failures             | Ensure route has `userMW...` middleware and `@Security Bearer` comment |
+| Wrong adapter             | Use `Command` for no body, `Action` for body, `Query` for query params |
+| UUID not found            | Check path parameter name matches `adapters.CommandID("id", ...)`      |
+| Compilation errors        | Run `task go:lint` to find issues                                      |
+
+## Next Steps
+
+- Read about [the database](/en/contribute/development/backend/database/) to understand data persistence
+- Explore the services layer to learn about business logic
+- Check existing handlers in `backend/app/api/handlers/v1/` for real-world examples
+- Review the router setup in `backend/app/api/routes.go` for routing patterns
+

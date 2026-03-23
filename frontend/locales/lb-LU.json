@@ -1,1 +1,220 @@
-{}
+{
+    "collection": {
+        "members": {
+            "cannot_remove_last": "Du kanns dee läschte Member net läschen.",
+            "email": "E-Mail"
+        }
+    },
+    "components": {
+        "app": {
+            "create_modal": {
+                "createAndAddAnother": "Dréck {shiftKey} + {enterKey} fir eppes Neies bäi ze setzen.",
+                "enter": "Enter",
+                "shift": "Shift"
+            },
+            "import_dialog": {
+                "title": "Importéier CSV File",
+                "toast": {
+                    "import_failed": "Feeler beim Importéieren. Probéier méi spéit nach eng Kéier.",
+                    "import_success": "Succès beim Importéieren !",
+                    "please_select_file": "Wiel w.e.g. ee Fichier aus."
+                }
+            },
+            "outdated": {
+                "current_version": "Dës Versioun",
+                "dismiss": "Verwerfen",
+                "latest_version": "Läscht Versioun",
+                "new_version_available": "Nei Versioun do",
+                "new_version_available_link": "Klick hei fir d'Release Notes ze kucken"
+            }
+        },
+        "color_selector": {
+            "clear": "Faarw läschen",
+            "color": "Faarw",
+            "no_color": "Keng Faarw",
+            "no_color_selected": "Keng Faarw ausgewielt",
+            "randomize": "Zoufälleg Faarw"
+        },
+        "global": {
+            "copy_text": {
+                "documentation": "Dokumentatioun",
+                "failed_to_copy": "Konnt den Text net op de Clipboard kopéieren",
+                "https_required": "well HTTPS gebraucht gëtt",
+                "learn_more": "Léier méi an eisem"
+            },
+            "date_time": {
+                "ago": "{0} hier",
+                "days": "Deeg",
+                "hour": "Stonn",
+                "hours": "Stonnen",
+                "in": "an {0}",
+                "just-now": "lo just",
+                "last-month": "läschte Mount",
+                "last-week": "läscht Woch",
+                "last-year": "läscht Joer",
+                "minute": "Minutt",
+                "minutes": "Minutten",
+                "months": "Méint",
+                "next-month": "nächste Mount",
+                "next-week": "nächst Woch",
+                "next-year": "nächst Joer",
+                "second": "Sekonn",
+                "seconds": "Sekonnen",
+                "tomorrow": "Mar",
+                "week": "Woch",
+                "weeks": "Wochen",
+                "years": "Joeren",
+                "yesterday": "Gëschter"
+            },
+            "label_maker": {
+                "browser_print": "Aus dem Browser printen",
+                "confirm_description": "Bass de sécher dat s du dës Etiquette printe wëlls ?",
+                "download": "Etikette eroflueden",
+                "print": "Etikette printen",
+                "server_print": "Um Server printen",
+                "titles": "Etiketten",
+                "toast": {
+                    "load_status_failed": "Feeler beim Lueden",
+                    "print_failed": "Feeler beim printe vun der Etikett",
+                    "print_success": "Etikett geprint"
+                }
+            },
+            "page_qr_code": {
+                "page_url": "URL vun der Säit",
+                "qr_tooltip": "QR Code weisen"
+            },
+            "password_score": {
+                "password_strength": "Komplexitéit vum Passwuert"
+            }
+        },
+        "item": {
+            "attachments_list": {
+                "download": "Download",
+                "open_new_tab": "An engen neiem Tab op maachen"
+            },
+            "create_modal": {
+                "clear_template": "Virlag eidel maachen",
+                "delete_photo": "Foto läschen",
+                "item_description": "Artikelbeschreiwung",
+                "item_name": "Artikelnumm",
+                "item_photo": "Artikelphoto 📷",
+                "item_quantity": "Artikelunzuel",
+                "parent_item": "Elteren element",
+                "product_tooltip_input_barcode": "Automatesch fëlle mat manuellem Barcode",
+                "product_tooltip_scan_barcode": "Fëlle mat Barcode vum 📷",
+                "rotate_photo": "Foto dréinen",
+                "set_as_primary_photo": "Setz als { isPrimary, select, true {non-} false {} other {}}Primärfoto",
+                "title": "Artikel erstellen",
+                "toast": {
+                    "already_creating": "Schonn am gaang een Element ze maachen",
+                    "create_failed": "Konnt den Artikel net erstellen",
+                    "create_success": "Artikel erstallt",
+                    "failed_load_parent": "Elterenartikel ass net gelueden - wielt w.e.g. manuell",
+                    "no_canvas_support": "Äre Browser ënnerstëtzt keng Canvas Operatiounen",
+                    "please_select_location": "Wielt w.e.g. eng Plaz.",
+                    "rotate_failed": "Konnt d'Bild net dréinen: { error }",
+                    "rotate_process_failed": "Konnt dat gedréinte Bild net verschaffen",
+                    "some_photos_failed": "{count, plural, =0 {Keng Fotoe fir erop ze lueden.} =1 {1 Fehler beim eroplueden.} other {E puer Fotoen konnten net eropgeluede ginn.}}",
+                    "upload_failed": "Foto net eropgelueden: { photoName }",
+                    "upload_success": "{count, plural, =0 {Keng Fotoenerop gelueden.} =1 {Foto erfollegräich eropgelueden.} other {All Fotoen erfollegräich eropgelueden.}}",
+                    "uploading_photos": "{count, plural, =0 {Keng Fotoe fir erop ze lueden} =1 { 1 Foto eroplueden…} other {{count} Fotoen eroplueden…}}"
+                },
+                "upload_photos": "Fotoen eroplueden",
+                "uploaded": "Foto eropgelueden"
+            },
+            "product_import": {
+                "barcode": "Barcode vum Artikel",
+                "db_source": "DB Quell",
+                "error_invalid_barcode": "Ongëltege Barcode",
+                "error_not_found": "Kee Produit fonnt fir dëse Barcode.",
+                "search_item": "Produit sichen",
+                "title": "Produit importéieren"
+            },
+            "selector": {
+                "clear": "Auswiel vum Element läschen",
+                "no_results": "Et si keng Resultater fonnt ginn",
+                "placeholder": "Wiel…",
+                "search_placeholder": "Tipp fir ze sichen…",
+                "searching": "Sichen…"
+            },
+            "view": {
+                "change_details": {
+                    "add_tags": "Täig bäisetzen",
+                    "failed_to_update_item": "Artikel net aktualiséiert",
+                    "remove_tags": "Tag läschen",
+                    "title": "Detailer vum Artikel änneren"
+                },
+                "selectable": {
+                    "card": "Kaart",
+                    "items": "Artikelen",
+                    "no_items": "Keng Artikelen do fir unzeweisen",
+                    "select_all": "Alles auswielen",
+                    "select_card": "Kaart auswielen",
+                    "select_row": "Rei auswielen",
+                    "table": "Tabell"
+                },
+                "table": {
+                    "dropdown": {
+                        "actions": "Aktiounen",
+                        "change_location": "Plaz änneren",
+                        "change_location_success": "Plaz geännert",
+                        "change_tags": "Tags änneren",
+                        "change_tags_success": "Tags geännert",
+                        "create_maintenance_item": "Neien Maintenance Antrag fir Artikel",
+                        "create_maintenance_selected": "Neien Maintenance Antrag fir ausgewielten Artikelen",
+                        "create_maintenance_success": "Maintenance Anträg gemaach",
+                        "delete_confirmation": "Bass de sécher datt s de déi ausgewielten Artikele läsche wëlls ? Dëst kann net réckgängeg gemaach ginn.",
+                        "delete_item": "Artikel läschen",
+                        "delete_selected": "Ausgewielten Artikel läschen",
+                        "download_csv": "Tabell als CSV eroflueden",
+                        "download_json": "Tabell als JSON eroflueden",
+                        "duplicate_item": "Artikel duplizéieren",
+                        "duplicate_selected": "Ausgewielten Artikel duplizéieren",
+                        "error_deleting": "Feeler beim Läschen vum Artikel",
+                        "error_duplicating": "Fehler beim Duplizéieren vum Artikel",
+                        "open_menu": "Menü opmaachen",
+                        "open_multi_tab_warning": "Aus Sécherheetsgrënn erlaben d'Browser net datt verschidde Tabs gläichzäiteg opgemaach ginn, fir dëst ze änneren befollegt w.e.g. d'Dokumentatioun:",
+                        "view_item": "Artikel uweisen",
+                        "view_items": "Artikelen uweisen"
+                    },
+                    "page": "Säit",
+                    "quick_actions": "Schnell Aktiounen & Auswiel aktivéieren",
+                    "rows_per_page": "Reien pro Säit",
+                    "selected_rows": "{selected} vun {total} Reien ausgewielt.",
+                    "table_settings": "Tabellastellungen",
+                    "view_item": "Artikel uweisen"
+                }
+            }
+        },
+        "location": {
+            "create_modal": {
+                "location_description": "Beschreiwung vun der Plaz",
+                "location_name": "Numm vun der Plaz",
+                "title": "Nei Plaz uleeën"
+            }
+        },
+        "tag": {
+            "create_modal": {
+                "tag_color": "Etikettefaarf",
+                "tag_description": "Etikettbeschreiwung",
+                "tag_name": "Etikettennumm",
+                "title": "Nei Etikett",
+                "toast": {
+                    "already_creating": "Schonn eng Etikett am gaangen gemaach ze ginn",
+                    "create_failed": "Konnt Etikett net maachen",
+                    "create_success": "Etikett gemaach",
+                    "tag_name_too_long": "Den Numm vun der Etikett däerf net méi wéi 50 Zeechen hunn"
+                }
+            },
+            "selector": {
+                "select_tags": "Wiel Etiketten"
+            }
+        }
+    },
+    "tools": {
+        "toast": {
+            "failed_wipe_inventory": "Inventaire net geläscht.",
+            "failed_zero_datetimes": "Konnt den Datum an d'Zäitwäerter net zrécksetzen."
+        }
+    }
+}

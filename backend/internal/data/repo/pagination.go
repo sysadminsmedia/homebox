@@ -1,5 +1,7 @@
 package repo
 
+import "github.com/samber/lo"
+
 type PaginationResult[T any] struct {
 	Page     int `json:"page"`
 	PageSize int `json:"pageSize"`
@@ -9,9 +11,5 @@ type PaginationResult[T any] struct {
 
 func calculateOffset(page, pageSize int) int {
 	offset := (page - 1) * pageSize
-	if offset < 0 {
-		return 0
-	} else {
-		return offset
-	}
+	return lo.Ternary(offset < 0, 0, offset)
 }

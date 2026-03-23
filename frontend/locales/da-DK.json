@@ -1,4 +1,47 @@
 {
+    "collection": {
+        "copy_invite": "Kopier link til invitation",
+        "create_invite": "Opret invitation",
+        "delete_collection": "Slet samling",
+        "delete_confirm": "Er du sikker på at du vil slette denne samling? Denne handling kan ikke fortrydes.",
+        "deleted_collection": "Samling slettet.",
+        "expires_at": "Udløber",
+        "invite_token": "Token",
+        "invite_token_hidden": "Ikke længere synlig",
+        "invite_token_warning": "Invitationstokens bliver kun vist èn gang. Kopier link nu - det er ikke muligt at se denne token igen efter du har forladt eller genopfrisket denne side.",
+        "invites": "Invitationer",
+        "invites_delete_confirm": "Er du sikker på at du vil slette denne invitation?",
+        "leave_collection": "Forlad samling",
+        "leave_confirm": "Er du sikker på at du vil forlade denne samling?",
+        "left_collection": "Du har forladt samlingen.",
+        "manage_collection": "Vedligehold samling",
+        "members": {
+            "cannot_remove_last": "Du kan ikke slette det sidste medlem.",
+            "email": "E-mail",
+            "empty": "Endu ingen medlemmer i denne samling.",
+            "member": "Medlem",
+            "name": "Navn",
+            "owner": "Ejer",
+            "remove_confirm": "Er du sikker på at du vil fjerne dette medlem?",
+            "removed": "Medlem fjernet",
+            "role": "Rolle"
+        },
+        "no_collections": {
+            "create": "Opret en ny samling",
+            "join": "Blev medlem af en eksisterende samling",
+            "message": "Det ser ud som om du ikke er med i en samling. Opret en ny samling til dine genstande, eller blev medlem af en du er blevet inviteret til.",
+            "title": "Ingen samlinger fundet"
+        },
+        "no_invites": "Ingen invitationer",
+        "remaining_uses": "Resterende anvendelser",
+        "tabs": {
+            "invites": "Invitationer",
+            "members": "Medlemmer",
+            "settings": "Indstillinger",
+            "tools": "Værktøjer"
+        },
+        "uses": "Anvendelser"
+    },
     "components": {
         "app": {
             "create_modal": {
@@ -22,6 +65,47 @@
                 "latest_version": "Nyeste version",
                 "new_version_available": "Ny version tilgængelig",
                 "new_version_available_link": "Klik her for at læse udgivelsesnoterne"
+            }
+        },
+        "collection": {
+            "create_modal": {
+                "name_label": "Samlingsnavn",
+                "title": "Opret samling",
+                "toast": {
+                    "already_creating": "Er allerede ved at oprette en samling",
+                    "create_failed": "Kunne ikke oprette samling",
+                    "create_success": "Samling oprettet",
+                    "please_enter_name": "Indtast navn på samling"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Vælg en udløbsdato og tidspunkt.",
+                    "invalid_expiry_past": "Udløbsdatoen skal være i fremtiden.",
+                    "invalid_uses": "Anvendelser skal være et nummer mellem 1 og 100."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Invitationskode til samling",
+                "invites_should_look_like": "Invitationer skal se således ud:",
+                "join": "Deltag i samling",
+                "no_invite_code_create_one": "Ingen invitationskode? Opret en ny samling i stedet",
+                "title": "Tilføj til samling",
+                "toast": {
+                    "already_joining": "Er allerede ved at tilføje til en samling",
+                    "join_failed": "Kunne ikke tilføje til samling",
+                    "join_success": "Tilføjet til samling",
+                    "please_enter_valid_join_code": "Indtast en gyldig samlingsinvitationskode"
+                }
+            },
+            "selector": {
+                "collection_options": "Samlingsmuligheder",
+                "create_collection": "Opret ny samling",
+                "join_collection": "Tilføj til eksisterende samling",
+                "no_collection_found": "Ingen samling fundet",
+                "search_collections": "Søg i samlinger…",
+                "select_collection": "Vælg samling",
+                "your_collections": "Dine samlinger"
             }
         },
         "color_selector": {
@@ -68,10 +152,10 @@
                 "yesterday": "i går"
             },
             "label_maker": {
-                "browser_print": "Print fra Browser",
+                "browser_print": "Print fra browser",
                 "confirm_description": "Er du sikker på du vil printe denne label?",
                 "download": "Hent label",
-                "print": "Print label",
+                "print": "Udskriv label",
                 "server_print": "Print på Server",
                 "titles": "Labels",
                 "toast": {
@@ -82,7 +166,7 @@
             },
             "page_qr_code": {
                 "page_url": "Side URL",
-                "qr_tooltip": "Vis kr-kode"
+                "qr_tooltip": "Vis QR-kode"
             },
             "password_score": {
                 "password_strength": "Adgangskodestyrke"
@@ -94,11 +178,12 @@
                 "open_new_tab": "Åbn i ny fane"
             },
             "create_modal": {
+                "clear_template": "Ryd skabelon",
                 "delete_photo": "Slet billede",
                 "item_description": "Genstandsbeskrivelse",
                 "item_name": "Genstandsnavn",
-                "item_photo": "Vare Foto 📷",
-                "item_quantity": "Vare Antal",
+                "item_photo": "Genstandsfoto 📷",
+                "item_quantity": "Genstandsantal",
                 "parent_item": "Overordnet element",
                 "product_tooltip_input_barcode": "Autoudfyld med en manuelt angivet stregkode",
                 "product_tooltip_scan_barcode": "Fyld automatisk med stregkode fra 📷",
@@ -125,13 +210,14 @@
             "product_import": {
                 "barcode": "Produkts stregkode",
                 "db_source": "DB kilde",
-                "error_exception": "Der opstod en undtagelse under hentning af varens stregkode: ",
+                "error_exception": "Der opstod en fejl under hentning af genstandens stregkode: ",
                 "error_invalid_barcode": "Ugyldig stregkode angivet",
                 "error_not_found": "Intet produkt fundet med den angivne stregkode.",
                 "search_item": "Søg produkt",
                 "title": "Importér produkt"
             },
             "selector": {
+                "clear": "Ryd valgte genstande",
                 "no_results": "Ingen resultater fundet",
                 "placeholder": "Vælg…",
                 "search_placeholder": "Skriv for at søge…",
@@ -139,9 +225,9 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "Tilføj etiketter",
+                    "add_tags": "Tilføj tags",
                     "failed_to_update_item": "Kunne ikke opdatere elementet",
-                    "remove_labels": "Fjern Etiketter",
+                    "remove_tags": "Fjern tags",
                     "title": "Skift elementoplysninger"
                 },
                 "selectable": {
@@ -156,12 +242,12 @@
                 "table": {
                     "dropdown": {
                         "actions": "Handlinger",
-                        "change_labels": "Skift etiketter",
-                        "change_labels_success": "Etiketter ændret",
                         "change_location": "Skift placering",
                         "change_location_success": "Placering ændret",
-                        "create_maintenance_item": "Opret vedligeholdelsespost for vare",
-                        "create_maintenance_selected": "Opret vedligeholdelsespost for valgte varer",
+                        "change_tags": "Rediger tags",
+                        "change_tags_success": "Tags ændret",
+                        "create_maintenance_item": "Opret vedligeholdelsespost for genstand",
+                        "create_maintenance_selected": "Opret vedligeholdelsespost for valgte genstande",
                         "create_maintenance_success": "Vedligeholdelsespost(er) oprettet",
                         "delete_confirmation": "Er du sikker på, at du vil slette det/de valgte element(er)? Denne handling kan ikke fortrydes.",
                         "delete_item": "Slet element",
@@ -184,25 +270,8 @@
                     "rows_per_page": "Rækker per side",
                     "selected_rows": "{selected} af {total} række(r) valgt.",
                     "table_settings": "Tabel Indstillinger",
-                    "view_item": "Se vare"
+                    "view_item": "Se genstand"
                 }
-            }
-        },
-        "label": {
-            "create_modal": {
-                "label_color": "Etiketfarve",
-                "label_description": "Etiketbeskrivelse",
-                "label_name": "Etiketnavn",
-                "title": "Opret label",
-                "toast": {
-                    "already_creating": "Allerede oprettet en etiket",
-                    "create_failed": "Kunne ikke oprette etiket",
-                    "create_success": "Etiket oprettet",
-                    "label_name_too_long": "Etiketnavnet må ikke være længere end 50 tegn"
-                }
-            },
-            "selector": {
-                "select_labels": "Vælg Etiketter"
             }
         },
         "location": {
@@ -217,18 +286,96 @@
                 }
             },
             "selector": {
+                "clear": "Ryd valgte lokationer",
                 "no_location_found": "Ingen placering fundet",
                 "parent_location": "Forældrelokation",
                 "search_location": "Søg efter placeringer",
                 "select_location": "Vælg en placering"
             },
             "tree": {
-                "no_locations": "Ingen tilgængelige placeringer. Tilføj nye placeringer via knappen \n'<span class=\"link-primary\">'Opret'</span>' på navigationslinjen."
+                "no_locations": "Ingen tilgængelige lokationer. Brug Opret knappen for at tilføje en ny lokation."
             }
         },
         "quick_menu": {
             "no_results": "Ingen resultater fundet.",
             "shortcut_hint": "Brug de numeriske taster til hurtigt at vælge en handling."
+        },
+        "tag": {
+            "create_modal": {
+                "tag_color": "Tag-farve",
+                "tag_description": "Tag beskrivelse",
+                "tag_name": "Tag-navn",
+                "title": "Opret tag",
+                "toast": {
+                    "already_creating": "Er allerede ved at oprette et tag",
+                    "create_failed": "Kunne ikke oprette tag",
+                    "create_success": "Tag oprettet",
+                    "tag_name_too_long": "Navn på tag må ikke være længere end 50 tegn"
+                }
+            },
+            "selector": {
+                "select_tags": "Vælg tags"
+            }
+        },
+        "template": {
+            "apply_template": "Anvend en skabelon",
+            "card": {
+                "delete": "Slet skabelon",
+                "duplicate": "Dupliker skabelon",
+                "edit": "Rediger skabelon"
+            },
+            "confirm_delete": "Slet denne skabelon?",
+            "create_modal": {
+                "title": "Opret skabelon"
+            },
+            "detail": {
+                "default_values": "Standardværdier",
+                "updated": "Opdateret"
+            },
+            "edit_modal": {
+                "title": "Rediger skabelon"
+            },
+            "empty_value": "(tom)",
+            "form": {
+                "custom_fields": "Brugerdefinerede felter",
+                "default_item_values": "Standard genstandsværdier",
+                "default_location": "Standardplacering",
+                "default_value": "Standardværdi",
+                "field_name": "Feltnavn",
+                "item_description": "Beskrivelse af genstand",
+                "item_name": "Navn på genstand",
+                "lifetime_warranty": "Livstidsgaranti",
+                "location": "Lokation",
+                "manufacturer": "Producent",
+                "model_number": "Modelnummer",
+                "no_custom_fields": "Ingen brugerdefinerede felter.",
+                "template_description": "Skabelonbeskrivelse",
+                "template_name": "Skabelonnavn"
+            },
+            "hide_defaults": "Skjul standardindstillinger",
+            "save_as_template": "Gem som skabelon",
+            "selector": {
+                "clear": "Ryd valgte skabeloner",
+                "label": "Skabelon (valgfri)",
+                "not_found": "Ingen skabelon fundet",
+                "search": "Søg skabeloner…",
+                "select": "Vælg skabelon…"
+            },
+            "show_defaults": "Vis standardindstillinger",
+            "toast": {
+                "applied": "Skabel \"{name}\" anvendt",
+                "create_failed": "Kunne ikke oprette skabelon",
+                "created": "Skabelon oprettet",
+                "delete_failed": "Kunne ikke slette skabelon",
+                "deleted": "Skabelon slettet",
+                "duplicate_failed": "Kunne ikke duplikere skabelon",
+                "duplicated": "Skabelon duplikeret som \"{name}\"",
+                "load_failed": "Kunne ikke hente skabelondetaljer",
+                "saved_as_template": "Genstand gemt som skabelon \"{name}\"",
+                "update_failed": "Kunne ikke opdatere skabelon",
+                "updated": "Skabelon opdateret"
+            },
+            "using_template": "Bruger skabelon: {name}"
         }
     },
     "errors": {
@@ -254,18 +401,18 @@
         "follow_dev": "Følg udvikleren",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Version: { version } Build: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' Version: { version } Build: { build } '</a>'"
         },
         "github": "GitHub projekt",
         "insured": "Forsikret",
         "items": "Genstande",
         "join_discord": "Deltag i vores Discord",
-        "labels": "Etiketter",
         "loading": "Indlæser…",
         "locations": "Lokationer",
-        "maintenance": "Opretholdelse",
+        "maintenance": "Vedligeholdelse",
         "name": "Navn",
         "navigate": "Naviger",
+        "no": "Nej",
         "password": "Adgangskode",
         "preview": "Forhåndsvisning",
         "quantity": "Mængde",
@@ -275,28 +422,31 @@
         "search": "Søg",
         "sign_out": "Log ud",
         "submit": "Indsend",
+        "tags": "Tags",
         "unknown": "Ukendt",
         "update": "Opdater",
         "updating": "Opdaterer",
         "value": "Værdi",
         "version": "Version: { version }",
-        "welcome": "Velkommen, { username }"
+        "welcome": "Velkommen, { username }",
+        "yes": "Ja"
     },
     "home": {
-        "labels": "Etiketter",
-        "quick_statistics": "Hurtige Statistikker",
-        "recently_added": "Nyligt Tilføjet",
+        "quick_statistics": "Hurtigt overblik",
+        "recently_added": "Tilføjet for nylig",
         "storage_locations": "Opbevaringslokationer",
-        "total_items": "Totale Genstande",
-        "total_labels": "Totale Etiketter",
-        "total_locations": "Totale Lokationer",
-        "total_value": "Total Værdi"
+        "tags": "Tags",
+        "total_items": "Antal genstande",
+        "total_locations": "Antal lokationer",
+        "total_tags": "Antal tags",
+        "total_value": "Samlet værdi"
     },
     "index": {
         "disabled_registration": "Registrering slået fra",
         "dont_join_group": "Ikke lyst til at deltage i en gruppe?",
         "joining_group": "Du deltager i en eksisterende gruppe!",
         "login": "Log ind",
+        "or": "eller",
         "register": "Registrer",
         "remember_me": "Husk mig",
         "set_email": "Hvad er din E-Mail?",
@@ -308,6 +458,14 @@
             "invalid_email": "Ugyldig e-mailadresse",
             "invalid_email_password": "Ugyldig e-mail eller adgangskode",
             "login_success": "Logget ind",
+            "oidc_access_denied": "Adgang forbudt: Din konto har ikke det påkrævede rolle- eller gruppemedlemsskab",
+            "oidc_auth_failed": "OIDC-godkendelse mislykkedes",
+            "oidc_invalid_response": "Ugyldigt OIDC svar modtaget",
+            "oidc_provider_error": "OIDC udbyderen returnerede en fejl",
+            "oidc_security_error": "OIDC sikkerhedsfejl - muligt CSRF angreb",
+            "oidc_session_expired": "OIDC sessionen er udløbet",
+            "oidc_token_expired": "OIDC token er udløbet",
+            "oidc_token_invalid": "OIDC token-signatur er ugyldig",
             "problem_registering": "Problem med at registrere bruger",
             "user_registered": "Bruger registreret"
         }
@@ -317,7 +475,7 @@
         "advanced": "Avanceret",
         "archived": "Arkiveret",
         "asset_id": "Aktiv-id",
-        "associated_with_multiple": "Dette aktiv-id er knyttet til flere varer",
+        "associated_with_multiple": "Dette aktiv-id er knyttet til flere genstande",
         "attachment": "Vedhæftning",
         "attachments": "Vedhæftninger",
         "changes_persisted_immediately": "Ændringer af vedhæftede filer gemmes med det samme",
@@ -359,46 +517,45 @@
         "insured": "Forsikret",
         "invalid_asset_id": "Ugyldigt aktiv-ID",
         "last": "Sidst",
-        "lifetime_warranty": "livstidsgaranti",
+        "lifetime_warranty": "Livstidsgaranti",
         "location": "Lokalitet",
         "manual": "Manuel",
         "manuals": "Manualer",
         "manufacturer": "Producent",
         "model_number": "Modelnummer",
         "name": "Navn",
-        "negate_labels": "Ophæv valgte etiketter",
         "next_page": "Næste side",
         "no_attachments": "Ingen vedhæftede filer fundet",
         "no_results": "Ingen elementer fundet",
         "notes": "Noter",
         "only_with_photo": "Kun elementer med foto",
         "only_without_photo": "Kun elementer uden foto",
-        "options": "Indstillinger",
+        "options": "Muligheder",
         "order_by": "Sorter efter",
         "pages": "Side { page } af { totalPages }",
         "parent_item": "Overordnet element",
         "photo": "Foto",
         "photos": "Fotos",
         "prev_page": "Forrige side",
-        "purchase_date": "Indkøbs dato",
-        "purchase_details": "Købs detaljer",
-        "purchase_price": "Indkøbspris",
+        "purchase_date": "Købsdato",
+        "purchase_details": "Købsdetaljer",
+        "purchase_price": "Købspris",
         "purchased_from": "Købt fra",
         "quantity": "Antal",
         "query_id": "Forespørgsler på aktiv-id-nummer: { id }",
         "receipt": "Kvittering",
         "receipts": "Kvitteringer",
-        "reset_search": "Nulstil Søgning",
-        "results": "{ total } Wyniki",
+        "reset_search": "Nulstil søgning",
+        "results": "{ total } resultater",
         "select_field": "Vælg et felt",
         "serial_number": "Serienummer",
         "show_advanced_view_options": "vis avancerede indstillinger",
-        "sold_at": "Solgt D.",
-        "sold_details": "Salgs detaljer",
-        "sold_price": "Solgt pris",
-        "sold_to": "Sold til",
+        "sold_at": "Salgsdato",
+        "sold_details": "Salgsdetaljer",
+        "sold_price": "Salgspris",
+        "sold_to": "Solgt til",
         "sync_child_locations": "Synkroniser placeringer af underordnede elementer",
-        "tip_1": "Placerings- og etiketfiltre bruger betjeningen 'ELLER'. Hvis mere end én er valgt, kræves der kun én\n til et match.",
+        "tip_1": "Lokations- og tagfiltre bruger 'ELLER' operatoren. Hvis mere end én er valgt, kræves der kun én\n til et match.",
         "tip_2": "Søgninger med præfikset '#'' vil forespørge efter et aktiv-id (eksempel '#000-001')",
         "tip_3": "Feltfiltre bruger handlingen 'ELLER'. Hvis mere end én er valgt, kræves der kun én til en\n kamp.",
         "tips": "Tips",
@@ -429,22 +586,10 @@
             "quantity_cannot_negative": "Mængden må ikke være negativ",
             "sync_child_location": "Den valgte forælder synkroniserer sine børns placeringer med sine egne. Placeringen er blevet opdateret."
         },
-        "updated_at": "Opdateret d.",
+        "updated_at": "Opdateret den",
         "warranty": "Garanti",
         "warranty_details": "Oplysninger om garanti",
-        "warranty_expires": "Garantien udløber"
-    },
-    "labels": {
-        "label_delete_confirm": "Er du sikker på, at du vil slette denne etiket? Denne handling kan ikke fortrydes.",
-        "no_results": "Ingen etiketter fundet",
-        "toast": {
-            "failed_delete_label": "Etiketten kunne ikke slettes",
-            "failed_load_label": "Etiketten kunne ikke indlæses",
-            "failed_update_label": "Etiketten kunne ikke opdateres",
-            "label_deleted": "Etiket slettet",
-            "label_updated": "Etiket opdateret"
-        },
-        "update_label": "Opdater etiket"
+        "warranty_expires": "Garanti udløber"
     },
     "languages": {
         "bs-BA": "Bosnisk (Bosnien-Hercegovina)",
@@ -521,7 +666,7 @@
             "edit_title": "Rediger posten",
             "entry_name": "Postens navn",
             "new_action": "Opret",
-            "new_title": "Ny indgang",
+            "new_title": "Ny post",
             "notes": "Noter",
             "scheduled_date": "Planlagt dato"
         },
@@ -535,37 +680,48 @@
         "total_entries": "Total antal poster"
     },
     "menu": {
-        "create_item": "Vare/aktiv",
-        "create_label": "Label",
+        "collection": "Samling",
+        "create_item": "Genstand / aktiv",
         "create_location": "Lokalitet",
+        "create_tag": "Tag",
         "home": "Hjem",
         "locations": "Lokationer",
-        "maintenance": "Opretholdelse",
+        "maintenance": "Vedligeholdelse",
         "profile": "Profil",
         "scanner": "Skanner",
         "search": "Søg",
-        "tools": "Værktøjer"
+        "templates": "Skabeloner"
+    },
+    "pages": {
+        "templates": {
+            "no_templates": "Endnu ingen skabeloner.",
+            "title": "Skabeloner"
+        }
     },
     "profile": {
         "active": "Aktiv",
-        "change_password": "Ændre adgangskode",
+        "change_password": "Skift adgangskode",
         "currency_format": "Valuta format",
         "current_password": "Aktuel adgangskode",
-        "delete_account": "Slet Konto",
+        "delete_account": "Slet konto",
         "delete_account_confirm": "Er du sikker på, at du vil slette din konto? Hvis du er det sidste medlem i din gruppe, vil alle dine data blive slettet. Denne handling kan ikke fortrydes.",
         "delete_account_sub": "Slet din konto og alle dens tilknyttede data. Dette kan ikke laves om.",
         "delete_notifier_confirm": "Er du sikker på, at du vil slette denne underretter?",
         "display_legacy_header": "{ currentValue, select, true {Deaktiver Legacy Header} false {Aktiver Legacy Header} other {Ikke ramt}}",
         "enabled": "Aktiveret",
         "example": "Eksempel",
-        "gen_invite": "Generer invitationslink",
-        "group_settings": "Gruppe indstillinger",
+        "group_settings": "Gruppeindstillinger",
         "group_settings_sub": "Indstillinger for delt gruppe. Det kan være nødvendigt at genindlæse din browser før nogle indstillinger træder i kraft.",
         "inactive": "Inaktiv",
         "language": "Sprog",
         "legacy_image_fit": "{ currentValue, select, true {Deaktiver Legacy Fit: Tilpas billede med bjælker} false {Aktiver Legacy Fit: Fyld billede med beskæring} other {Ikke ramt}}",
+        "moved_notice_description": "Disse indstillinger håndteres nu per samling.",
+        "moved_notice_link_invites": "Samlingsinvitationer",
+        "moved_notice_link_notifiers": "Samlingsnotifikationer",
+        "moved_notice_link_settings": "Valutaindstillinger for samling",
+        "moved_notice_title": "Leder du efter notifikations-, invitations- eller valutaindstillinger?",
         "new_password": "Ny Adgangskode",
-        "no_notifiers": "Ingen notifikationer konfiguret",
+        "no_notifiers": "Ingen notifikationer konfigureret",
         "no_override": "Ingen tilsidesættelse",
         "notifier_modal": "{ type, select, true {Rediger} false {Opret} other {Andet}} Meddeler",
         "notifiers": "Meddelere",
@@ -588,7 +744,7 @@
             "notifier_test_success": "Underretter-testen er gennemført.",
             "password_changed": "Adgangskoden er ændret."
         },
-        "update_group": "Opdatér Gruppe",
+        "update_group": "Opdatér gruppe",
         "update_language": "Opdater sprogfil",
         "url": "URL",
         "user_profile": "Brugerprofil",
@@ -598,12 +754,12 @@
         "label_generator": {
             "asset_end": "Aktivets slut",
             "asset_start": "Aktivets start",
-            "base_url": "Base URL",
+            "base_url": "Basis-URL",
             "bordered_labels": "Etiketter med kant",
             "generate_page": "Generer side",
             "input_placeholder": "Skriv her",
-            "instruction_1": "Homebox Label Generator er et værktøj, der hjælper dig med at udskrive etiketter til dit Homebox-lager. Disse er beregnet til\nat være etiketter, der kan udskrives på forhånd, så du kan udskrive mange etiketter og have dem klar til påsætning.",
-            "instruction_2": "Disse etiketter fungerer derfor ved at udskrive en URL, QR-kode og AssetID-oplysninger på en etiket. Hvis du har deaktiveret\nAssetID'er i dine Homebox-indstillinger, kan du stadig bruge dette værktøj, men AssetID'erne vil ikke referere til nogen varer.",
+            "instruction_1": "HomeBox Label Generator er et værktøj, der hjælper dig med at udskrive etiketter til dit HomeBox-lager. Disse er beregnet til\n at være etiketter, der kan udskrives på forhånd, så du kan udskrive mange etiketter og have dem klar til påsætning",
+            "instruction_2": "Disse etiketter fungerer derfor ved at udskrive en URL, QR-kode og AssetID-oplysninger på en etiket. Hvis du har deaktiveret\n AssetID'er i dine HomeBox-indstillinger, kan du stadig bruge dette værktøj, men AssetID'erne vil ikke referere til nogen genstande",
             "instruction_3": "Denne funktion er i de tidlige udviklingsfaser og kan ændres i fremtidige udgivelser. Hvis du har feedback, bedes\ndu give den i '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub-diskussionen'</a>'",
             "label_height": "Etikethøjde",
             "label_width": "Etiketbredde",
@@ -615,6 +771,13 @@
             "page_top_padding": "Sidetoppolstring",
             "page_width": "Sidebredde",
             "qr_code_example": "Eksempel på QR-kode",
+            "replace_homebox_behavior": "Erstat \"HomeBox\" tekst",
+            "replace_homebox_behavior_always_replace": "Udskift altid \"HomeBox\"",
+            "replace_homebox_behavior_item_no_location": "Udskift \"HomeBox\" når genstanden ikke har en lokation",
+            "replace_homebox_behavior_item_no_name": "Udskift \"HomeBox\" når genstanden ikke har et navn",
+            "replace_homebox_behavior_item_no_name_no_location": "Udskift \"HomeBox\" når genstanden ikke har navn eller lokation",
+            "replace_homebox_behavior_show_homebox": "Vis \"HomeBox\"",
+            "replace_homebox_text": "Erstatningstekst",
             "tip_1": "Standardindstillingerne her er konfigureret for\n'<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 etiketark'</a>'. Hvis du bruger et andet ark,\nskal du justere indstillingerne, så de passer til dit ark.",
             "tip_2": "Hvis du tilpasser dit ark, er dimensionerne i tommer. Da jeg byggede 5260-arket, opdagede jeg, at de\ndimensioner, der blev brugt i deres skabelon, ikke matchede det, der var nødvendigt for at udskrive i felterne.\n'<b>'Vær forberedt på nogle forsøg og fejl.'</b>'",
             "tip_3": "Ved printning sørg for at:\n'<ol><li>'Indstil margenerne til 0 eller Ingen'</li><li>'Indstil skaleringen til 100%'</li><li>'Deaktiver dobbeltsidet udskrivning'</li><li>'Udskriv en testside, før du udskriver flere sider'</li></ol>'",
@@ -636,26 +799,46 @@
         "title": "Skanner",
         "unsupported": "Media Stream API understøttes ikke uden HTTPS"
     },
+    "tags": {
+        "no_results": "Ingen tags fundet",
+        "tag_delete_confirm": "Er du sikker på at du vil slette dette tag? Denne handling kan ikke fortrydes.",
+        "toast": {
+            "failed_delete_tag": "Kunne ikke slette tag",
+            "failed_load_tag": "Kunne ikke hente tag",
+            "failed_update_tag": "Kunne ikke opdatere tag",
+            "tag_deleted": "Tag slettet",
+            "tag_updated": "Tag opdateret"
+        },
+        "update_tag": "Opdater tag"
+    },
     "tools": {
         "actions": "Handlinger på lagerbeholdning",
         "actions_set": {
             "create_missing_thumbnails": "Opret manglende miniaturebilleder",
             "create_missing_thumbnails_button": "Opret miniaturebilleder",
             "create_missing_thumbnails_confirm": "Er du sikker på, at du vil oprette manglende miniaturebilleder? Dette kan tage et stykke tid og kan ikke sættes på pause.",
-            "create_missing_thumbnails_sub": "Opretter miniaturebilleder for alle vedhæftede filer, der understøttes af den aktuelle konfiguration. Dette er nyttigt for vedhæftede filer, der blev uploadet før v0.20.0-udgivelsen af Homebox. Dette overskriver ikke eksisterende miniaturebilleder, men opretter kun nye for vedhæftede filer, der ikke har et miniaturebillede. Bemærk, at miniaturebillederne oprettes i baggrunden og kan tage et stykke tid at fuldføre.",
+            "create_missing_thumbnails_sub": "Opretter miniaturebilleder for alle vedhæftede filer, der understøttes af den aktuelle konfiguration. Dette er nyttigt for vedhæftede filer, der blev uploadet før v0.20.0-udgivelsen af HomeBox. Dette overskriver ikke eksisterende miniaturebilleder, men opretter kun nye for vedhæftede filer, der ikke har et miniaturebillede. Bemærk, at miniaturebillederne oprettes i baggrunden og kan tage et stykke tid at fuldføre.",
             "ensure_ids": "Sørg for aktiv-id'er",
             "ensure_ids_button": "Sørg for aktiv-id'er",
             "ensure_ids_confirm": "Er du sikker på, at du vil sikre dig, at alle aktiver har et ID? Dette kan tage et stykke tid og kan ikke fortrydes.",
-            "ensure_ids_sub": "Sikrer, at alle varer på lageret har et gyldigt asset_id felt. Dette gøres ved at finde det højeste aktuelle aktiv_id felt i databasen og anvende den næste værdi på hvert element, der har et ikke sat aktiv_id felt. Dette gøres i rækkefølge efter feltet opret_den.",
+            "ensure_ids_sub": "Sikrer at alle genstande på lageret har et gyldigt asset_id felt. Dette gøres ved at finde det højeste aktuelle asset_id felt i databasen og anvende den næste værdi på hvert element, der ikke har sat et asset_id felt. Dette gøres i rækkefølge efter feltet created_at.",
             "ensure_import_refs": "Sørg for importreferencer",
             "ensure_import_refs_button": "Sørg for importreferencer",
-            "ensure_import_refs_sub": "Sikrer, at alle varer på lageret har et gyldigt import_ref felt. Dette gøres ved tilfældigt at generere en streng på 8 tegn for hvert element, der har et uindstillet import_ref felt.",
+            "ensure_import_refs_sub": "Sikrer at alle genstande på lageret har et gyldigt import_ref felt. Dette gøres ved tilfældigt at generere en streng på 8 tegn for hvert element, der ikke har et indstillet import_ref felt.",
             "set_primary_photo": "Indstil primært foto",
             "set_primary_photo_button": "Indstil primært foto",
             "set_primary_photo_confirm": "Er du sikker på, at du vil indstille primære billeder? Dette kan tage et stykke tid og kan ikke fortrydes.",
-            "set_primary_photo_sub": "I version v0.10.0 af Homebox blev det primære billedfelt tilføjet til vedhæftede filer af typen foto. Denne handling indstiller det primære billedfelt til det første billede i matrixen for vedhæftede filer i databasen, hvis det ikke allerede er angivet. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Se GitHub PR #576'</a>'",
-            "zero_datetimes": "Nul Vare Dato Tider",
-            "zero_datetimes_button": "Nul Varedato Tider",
+            "set_primary_photo_sub": "I version v0.10.0 af HomeBox blev det primære billedfelt tilføjet til vedhæftede filer af typen foto. Denne handling indstiller det primære billedfelt til det første billede i matrixen for vedhæftede filer i databasen, hvis det ikke allerede er angivet. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Se GitHub PR #576'</a>'",
+            "wipe_inventory": "Ryd lagerbeholdning",
+            "wipe_inventory_button": "Ryd lagerbeholdning",
+            "wipe_inventory_confirm": "Er du sikker på at du vil rydde hele din lagerbeholdning? Dette vil slette alle genstande og kan ikke fortrydes.",
+            "wipe_inventory_locations": "Slet også alle lokationer",
+            "wipe_inventory_maintenance": "Slet også alle vedligeholdelsesposter",
+            "wipe_inventory_note": "Note: Kun gruppeejere kan udføre denne handling.",
+            "wipe_inventory_sub": "Slet alle genstande permanent fra dit lager. Denne handling er uigenkaldelig og vil slette alle genstande inkl. vedhæftede filer og billeder.",
+            "wipe_inventory_tags": "Slet også alle tags",
+            "zero_datetimes": "Nulstil genstands dato og tid",
+            "zero_datetimes_button": "Nulstil genstands datoer og tider",
             "zero_datetimes_confirm": "Er du sikker på, at du vil nulstille alle dato- og klokkeslætsværdier? Dette kan tage et stykke tid og kan ikke fortrydes.",
             "zero_datetimes_sub": "Nulstiller klokkeslætsværdien for alle dato- og klokkeslætsfelter i lageret til begyndelsen af datoen. Dette er for at rette en fejl, der blev introduceret tidligt i udviklingen af webstedet, der forårsagede, at tidsværdien blev gemt med tiden, hvilket forårsagede problemer med datofelter, der viste nøjagtige værdier. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Se Github-udgave #236 for flere detaljer.'</a>'"
         },
@@ -664,13 +847,13 @@
         "import_export_set": {
             "export": "Eksporter inventar",
             "export_button": "Eksporter inventar",
-            "export_sub": "Eksporterer standard CSV-formatet til Homebox. Dette vil eksportere alle varer i dit lager.",
+            "export_sub": "Eksporterer standard CSV-formatet til HomeBox. Dette vil eksportere alle genstande i dit lager.",
             "import": "Importeret beholdning",
             "import_button": "Importer beholdning",
             "import_ref_confirm": "Er du sikker på, at du vil sikre dig, at alle aktiver har en import_ref? Dette kan tage et stykke tid og kan ikke fortrydes.",
-            "import_sub": "Importerer standard CSV-formatet til Homebox. Uden en '<code>'HB.import_ref'</code>'-kolonne vil dette '<b>'ikke'</b>' overskrive eksisterende genstande i dit lager, kun tilføje nye genstande. Rækker med kolonnen \"<code>HB.import_ref\"</code> flettes ind i eksisterende elementer med samme import_ref, hvis der findes en."
+            "import_sub": "Importerer standard CSV-formatet til HomeBox. Uden en '<code>'HB.import_ref'</code>'-kolonne vil dette '<b>'ikke'</b>' overskrive eksisterende genstande i dit lager, kun tilføje nye genstande. Rækker med kolonnen \"<code>HB.import_ref\"</code> flettes ind i eksisterende elementer med samme import_ref, hvis der findes en."
         },
-        "import_export_sub": "Importér og eksporter din lagerbeholdning til og fra en CSV-fil. Dette er nyttigt til at migrere dit lager til en ny forekomst af Homebox.",
+        "import_export_sub": "Importér og eksporter din lagerbeholdning til og fra en CSV-fil. Dette er nyttigt til at migrere dit lager til en ny forekomst af HomeBox.",
         "reports": "Rapporter",
         "reports_set": {
             "asset_labels": "Etiketter for aktiv-id",
@@ -678,7 +861,7 @@
             "asset_labels_sub": "Genererer en PDF-fil, der kan udskrives, med etiketter til en række aktiv-id'er. Disse er ikke specifikke for din beholdning, så du er i stand til at udskrive etiketter på forhånd og anvende dem på din beholdning, når du modtager dem.",
             "bill_of_materials": "Stykliste",
             "bill_of_materials_button": "Generer stykliste",
-            "bill_of_materials_sub": "Genererer en CSV-fil (kommaseparerede værdier), der kan importeres til et regnearksprogram. Dette er en oversigt over din beholdning med grundlæggende vare- og prisoplysninger."
+            "bill_of_materials_sub": "Genererer en CSV-fil (kommaseparerede værdier), der kan importeres til et regnearksprogram. Dette er en oversigt over din beholdning med grundlæggende genstand- og prisoplysninger."
         },
         "reports_sub": "Generer forskellige rapporter for dit lager.",
         "toast": {
@@ -687,7 +870,9 @@
             "failed_ensure_ids": "Kunne ikke sikre aktiv-ID'er.",
             "failed_ensure_import_refs": "Kunne ikke sikre importreferencer.",
             "failed_set_primary_photos": "Kunne ikke indstille primære billeder.",
-            "failed_zero_datetimes": "Dato- og klokkeslætsværdier kunne ikke nulstilles."
+            "failed_wipe_inventory": "Kunne ikke rydde lageret.",
+            "failed_zero_datetimes": "Dato- og klokkeslætsværdier kunne ikke nulstilles.",
+            "wipe_inventory_success": "Lageret er blevet ryddet. { results } genstande er blevet slettet."
         }
     }
 }

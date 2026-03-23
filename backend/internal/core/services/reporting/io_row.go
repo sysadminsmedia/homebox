@@ -3,6 +3,7 @@ package reporting
 import (
 	"strings"
 
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
@@ -15,7 +16,7 @@ type ExportItemFields struct {
 type ExportCSVRow struct {
 	ImportRef string         `csv:"HB.import_ref"`
 	Location  LocationString `csv:"HB.location"`
-	LabelStr  LabelString    `csv:"HB.labels"`
+	TagStr    TagString      `csv:"HB.tags|HB.labels"`
 	AssetID   repo.AssetID   `csv:"HB.asset_id"`
 	Archived  bool           `csv:"HB.archived"`
 	URL       string         `csv:"HB.url"`
@@ -48,20 +49,20 @@ type ExportCSVRow struct {
 
 // ============================================================================
 
-// LabelString is a string slice that is used to represent a list of labels.
+// TagString is a string slice that is used to represent a list of tags.
 //
-// For example, a list of labels "Important; Work" would be represented as a
-// LabelString with the following values:
+// For example, a list of tags "Important; Work" would be represented as a
+// TagString with the following values:
 //
-//	LabelString{"Important", "Work"}
-type LabelString []string
+//	TagString{"Important", "Work"}
+type TagString []string
 
-func parseLabelString(s string) LabelString {
+func parseTagString(s string) TagString {
 	v, _ := parseSeparatedString(s, ";")
 	return v
 }
 
-func (ls LabelString) String() string {
+func (ls TagString) String() string {
 	return strings.Join(ls, "; ")
 }
 
@@ -86,11 +87,7 @@ func (csf LocationString) String() string {
 }
 
 func fromPathSlice(s []repo.ItemPath) LocationString {
-	v := make(LocationString, len(s))
-
-	for i := range s {
-		v[i] = s[i].Name
-	}
-
-	return v
+	return lo.Map(s, func(p repo.ItemPath, _ int) string {
+		return p.Name
+	})
 }

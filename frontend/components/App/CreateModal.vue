@@ -10,7 +10,7 @@
 
       <slot />
 
-      <DialogFooter>
+      <DialogFooter v-if="!hideFooter">
         <i18n-t
           keypath="components.app.create_modal.createAndAddAnother"
           tag="span"
@@ -55,5 +55,6 @@
   defineProps<{
     dialogId: DialogID;
     title: string;
+    hideFooter?: boolean;
   }>();
 </script>

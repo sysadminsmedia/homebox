@@ -11,7 +11,7 @@ import (
 type Event string
 
 const (
-	EventLabelMutation    Event = "label.mutation"
+	EventTagMutation      Event = "tags.mutation"
 	EventLocationMutation Event = "location.mutation"
 	EventItemMutation     Event = "item.mutation"
 	EventUserMutation     Event = "user.mutation"
@@ -38,7 +38,7 @@ func New() *EventBus {
 	return &EventBus{
 		ch: make(chan eventData, 100),
 		subscribers: map[Event][]func(any){
-			EventLabelMutation:    {},
+			EventTagMutation:      {},
 			EventLocationMutation: {},
 			EventItemMutation:     {},
 			EventUserMutation:     {},

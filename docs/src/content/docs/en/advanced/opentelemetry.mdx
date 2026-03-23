@@ -1,0 +1,62 @@
+---
+title: OpenTelemetry
+draft: true
+---
+
+OpenTelemetry is an open-source observability framework for cloud-native software, providing a set of APIs, libraries,
+agents, and instrumentation to capture distributed traces and metrics from applications. It is a project under the
+Cloud Native Computing Foundation (CNCF) and aims to standardize the way telemetry data is collected and exported across
+different platforms and languages.
+
+We have integrated OpenTelemetry into Homebox as an optional feature to help users monitor and troubleshoot their Homebox
+instances more effectively. By enabling OpenTelemetry, users can collect detailed telemetry data about the performance
+and behavior of their Homebox applications, which can be invaluable for diagnosing issues and optimizing performance.
+
+## Configuration
+| Variable                          | Default                 | Description                                                                                                                                                                    |
+|-----------------------------------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| HBOX_OTEL_ENABLED                 | `false`                 | If Opentelemtry should be enabled or not                                                                                                                                       |
+| HBOX_OTEL_SERVICE_NAME            | `homebox`               | This is the name of the service as it will appear in OTEL applications                                                                                                         |
+| HBOX_OTEL_SERVICE_VERSION         | (current build version) | This is the version of the service deployed shown in OTEL applications                                                                                                         |
+| HBOX_OTEL_EXPORTER                | `otlp`                  | This can be `otlp`, `stdout` or `none`                                                                                                                                         |
+| HBOX_OTEL_ENDPOINT                |                         | This is the OTEL collector endpoint (no `https://` or `http://`, just collector.example.net for example                                                                        |
+| HBOX_OTEL_PATH_PREFIX             |                         | If your collector is on a sub-directory, it goes here, for example `/otlp`, the `/v1/traces`, `/v1/metrics`, and `/v1/logs` will automatically be appended                     |
+| HBOX_OTEL_PROTOCOL                | `grpc`                  | The protocol to use for the OTLP exporter, can be `grpc` or `http`                                                                                                             |
+| HBOX_OTEL_INSECURE                | `false`                 | If the OTLP exporter should use an insecure connection                                                                                                                         |
+| HBOX_OTEL_HEADERS                 |                         | If you need to add additional headers for authentication you can do so here in a `name=value` fashion, multiple values are seperated by commas (e.g `name1=value,name2=value`) |
+| HBOX_OTEL_SAMPLE_RATE             | `1.0`                   | The sampling rate to use for traces, a value between `0.0` and `1.0` where `1.0` means all traces are captured and `0.0` means no traces are captured                          |
+| HBOX_OTEL_ENABLE_METRICS          | `true`                  | If metrics should be exported to OTEL or not                                                                                                                                   |
+| HBOX_OTEL_METRICS_INTERVAL        | `15s`                   | Interval that metrics should be sent to the collector (this does not impact how often measurements are captured)                                                               |
+| HBOX_OTEL_ENABLE_LOGGING          | `true`                  | If logs should be exported to OTEL or not                                                                                                                                      |
+| HBOX_OTEL_ENABLE_DATABASE_TRACING | `true`                  | If database queries should be traced or not                                                                                                                                    |
+| HBOX_OTEL_ENABLE_HTTP_TRACING     | `true`                  | If HTTP requests should be traced or not                                                                                                                                       |
+| HBOX_OTEL_PROXY_ENABLED           | `true`                  | Should the proxy for the front-end requests be enabled (if this is false tracing from the front-end will not be sent)                                                          |
+
+### Example Configurations
+#### Generic OTLP Collector (self-hosted, with authentication)
+```bash
+HBOX_OTEL_ENABLED=true
+HBOX_OTEL_ENDPOINT=localhost:4317
+HBOX_OTEL_HEADERS=Authentication=YOUR_INGESTION_TOKEN
+HBOX_OTEL_PROTOCOL=grpc
+HBOX_OTEL_INSECURE=true
+HBOX_OTEL_SAMPLE_RATE=1.0
+```
+
+#### Generic OTLP Collector (cloud, with prefix and authentication)
+```bash
+HBOX_OTEL_ENABLED=true
+HBOX_OTEL_ENDPOINT=collector.example.net
+HBOX_OTEL_PATH_PREFIX=/otlp
+HBOX_OTEL_HEADERS=Authentication=YOUR_INGESTION_TOKEN
+HBOX_OTEL_PROTOCOL=http
+HBOX_OTEL_INSECURE=false
+HBOX_OTEL_SAMPLE_RATE=1.0
+```
+
+
+
+
+## References
+- [OpenTelemetry](https://opentelemetry.io/)
+

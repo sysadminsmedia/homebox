@@ -114,7 +114,7 @@
                     "please_select_location": "ロケーションを選択",
                     "rotate_failed": "画像の回転ができませんでした。エラー内容: { error }",
                     "rotate_process_failed": "画像回転の処理でエラーが発生しました",
-                    "some_photos_failed": "{count, plural, = 0 {アップロード可能な画像がありません} = 1 {画像のアップロードに失敗しました} other {一部の画像のアップロードに失敗しました}}",
+                    "some_photos_failed": "{count, plural, = 0 {アップロードする写真がありません。} = 1 {1枚の写真をアップロードできませんでした。} other {一部の写真をアップロードできませんでした。}}",
                     "upload_failed": "画像のアップロードに失敗しました ({ photoName })",
                     "upload_success": "{count, plural, = 0 {画像はアップロードされていません} = 1 {画像をアップロードしました} other {すべての画像をアップロードしました}}",
                     "uploading_photos": "{count, plural, = 0 {アップロード可能な画像がありません} = 1 {画像をアップロードしています} other {{count}枚の画像をアップロードしています…}}"
@@ -151,23 +151,6 @@
                     "table_settings": "テーブル表示の設定",
                     "view_item": "アイテムを見る"
                 }
-            }
-        },
-        "label": {
-            "create_modal": {
-                "label_color": "ラベルの色",
-                "label_description": "ラベルの説明",
-                "label_name": "ラベル名",
-                "title": "ラベルの追加",
-                "toast": {
-                    "already_creating": "既に同じラベルがあります",
-                    "create_failed": "ラベルを作成できませんでした",
-                    "create_success": "ラベルを作成しました",
-                    "label_name_too_long": "ラベル名は50文字以内で入力してください"
-                }
-            },
-            "selector": {
-                "select_labels": "ラベルを選択"
             }
         },
         "location": {
@@ -225,7 +208,6 @@
         "insured": "保険適用",
         "items": "アイテム",
         "join_discord": "Discordサーバーへの参加",
-        "labels": "ラベル",
         "loading": "読込中…",
         "locations": "ロケーション",
         "maintenance": "メンテナンス情報",
@@ -247,12 +229,10 @@
         "welcome": "{ username } でログイン中"
     },
     "home": {
-        "labels": "ラベル",
         "quick_statistics": "統計",
         "recently_added": "最近の追加",
         "storage_locations": "ロケーション",
         "total_items": "アイテム数",
-        "total_labels": "合計ラベル数",
         "total_locations": "合計ロケーション数",
         "total_value": "合計金額"
     },
@@ -317,7 +297,6 @@
         "manufacturer": "製造・販売者",
         "model_number": "型番",
         "name": "名称",
-        "negate_labels": "選択されたラベルを除外",
         "next_page": "次の ページ",
         "no_attachments": "添付ファイルはありません",
         "no_results": "一致する項目はありません",
@@ -384,18 +363,6 @@
         "warranty": "保証書",
         "warranty_details": "保証に関する情報",
         "warranty_expires": "保証期間"
-    },
-    "labels": {
-        "label_delete_confirm": "このラベルを削除しますか？元に戻すことはできません。",
-        "no_results": "一致するラベルはありません",
-        "toast": {
-            "failed_delete_label": "ラベルの削除に失敗しました",
-            "failed_load_label": "ラベルの読み込みに失敗しました",
-            "failed_update_label": "ラベルの更新に失敗しました",
-            "label_deleted": "ラベルが削除されました",
-            "label_updated": "ラベル設定が更新されました"
-        },
-        "update_label": "ラベル設定の変更"
     },
     "languages": {
         "bs-BA": "ボスニア語 (Bosnia and Herzegovina)",
@@ -487,15 +454,13 @@
     },
     "menu": {
         "create_item": "アイテム",
-        "create_label": "ラベル",
         "create_location": "場所",
         "home": "ホーム",
         "locations": "ロケーション",
         "maintenance": "メンテナンス情報",
         "profile": "ユーザー設定",
         "scanner": "スキャナー",
-        "search": "検索",
-        "tools": "ツール"
+        "search": "検索"
     },
     "profile": {
         "active": "有効",
@@ -509,7 +474,6 @@
         "display_legacy_header": "{currentValue, select, true {レガシーヘッダーを無効にする} false {レガシーヘッダーを有効にする} other {ヒットしない}}",
         "enabled": "有効",
         "example": "例",
-        "gen_invite": "招待リンクの作成",
         "group_settings": "グループ設定",
         "group_settings_sub": "一部の設定の反映には再読み込みが必要です",
         "inactive": "停止中",

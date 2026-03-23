@@ -1,0 +1,72 @@
+---
+title: Documentation
+---
+
+Homebox uses MDX files for its documentation, which allows us to write content using Markdown syntax while also embedding
+Astro/Vue.js components when needed. This documentation contains the specific information to help you contribute to the
+translation of the documentation. For a more general overview on contributing to documentation, check the [overview](/en/contribute/documentation).
+
+## Translating the docs
+The documentation is stored in the `docs/src/content/docs` folder of the repository. Each language has its own folder
+inside that folder, for example, the English documentation is in `docs/src/content/docs/en`. To add a new language, create
+a new folder inside that folder with the language code. For example, to add Spanish documentation, create a folder called
+`es` inside the `docs/src/content/docs/` folder.
+
+Once you've created the folder, you will need to add the new language to the `docs/astro.config.mjs` file. You can find the
+`locales` property roughly on line 177 of that file.
+
+```js
+locales: {
+    en: {
+        label: 'English',
+    },
+    ...
+},
+```
+
+You'll note that you need to add a property that matches the language code you created for the new folder. And then add a
+subproperty called `label` with the name of the language as it will be displayed in the UI.
+
+> [!NOTE]
+> We highly recommend using the ISO 639-1 language code for the language code. And we recommend using the native name of the language.
+> (e.g. `es` for Español, `fr` for Français, etc.)
+
+Additionally, under the `starlightSidebarTopics` config, in the items section you can add translations to the sidebar menu items.
+
+```js
+starlightSidebarTopics([
+    {
+        label: { en: 'Documentation', es: 'Documentación' },
+        link: '/quick-start/',
+        icon: 'open-book',
+        items: [
+            {
+                label: 'Getting Started',
+                translate: {
+                    es: 'Guía de Iniciación',
+                },
+                items: [
+                    {
+                        label: 'Quick Start',
+                        slug: 'quick-start',
+                    },
+                    ...
+```
+
+This will need to be repeated for all labels
+
+Note that sidebar menu items that are generated from the folder contents will be translated via the `title` attribute of frontmatter.
+
+## Translating UI Elements
+UI elements can be translated by adding a `<lang>.json` file to the `docs/src/content/i18n/` folder. For example,
+to add Spanish translations, create a file called `es.json` in that folder.
+
+From there you can copy the keys from the English file and translate them into the language of your choice.
+
+## What if I don't Translate All the Pages?
+If you don't translate all the pages, the UI will fall back to English, with a warning at the top informing the end reader
+that the page has not been translated yet.
+
+### What if I only translated part of a page?
+Please only submit fully translated pages. Partial translations will result in missing content for the end user, which is not
+desired. We will do our best to avoid accepting partial translations.

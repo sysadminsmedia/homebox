@@ -22,8 +22,8 @@ export type ItemsQuery = {
   page?: number;
   pageSize?: number;
   locations?: string[];
-  labels?: string[];
-  negateLabels?: boolean;
+  tags?: string[];
+  negateTags?: boolean;
   onlyWithoutPhoto?: boolean;
   onlyWithPhoto?: boolean;
   parentIds?: string[];
@@ -183,7 +183,11 @@ export class ItemsApi extends BaseAPI {
     });
   }
 
-  exportURL() {
+  exportURL(tenant?: string) {
+    if (tenant) {
+      return route("/items/export", { tenant });
+    }
+
     return route("/items/export");
   }
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
@@ -28,7 +29,10 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
 	"go.balki.me/anyhttp"
 
-	_ "github.com/lib/pq"
+	"entgo.io/ent/dialect"
+	entsql "entgo.io/ent/dialect/sql"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/postgres"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/sqlite3"
 	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
@@ -120,7 +124,20 @@ func run(cfg *config.Config) error {
 		return err
 	}
 
-	c, err := ent.Open(strings.ToLower(cfg.Database.Driver), databaseURL)
+	sqlDriver := strings.ToLower(cfg.Database.Driver)
+	var driverName string
+	switch sqlDriver {
+	case config.DriverPostgres:
+		driverName = "pgx"
+		sqlDriver = dialect.Postgres
+	case config.DriverSqlite3, "sqlite":
+		driverName = "sqlite3"
+		sqlDriver = dialect.SQLite
+	default:
+		return fmt.Errorf("unsupported driver: %s", sqlDriver)
+	}
+
+	db, err := sql.Open(driverName, databaseURL)
 	if err != nil {
 		log.Error().
 			Err(err).
@@ -137,6 +154,15 @@ func run(cfg *config.Config) error {
 			err,
 		)
 	}
+
+	drv := entsql.OpenDB(sqlDriver, db)
+	c := ent.NewClient(ent.Driver(drv))
+	defer func(c *ent.Client) {
+		err := c.Close()
+		if err != nil {
+			log.Error().Err(err).Msg("failed to close database connection")
+		}
+	}(c)
 
 	migrationsFs, err := migrations.Migrations(strings.ToLower(cfg.Database.Driver))
 	if err != nil {
@@ -176,6 +202,7 @@ func run(cfg *config.Config) error {
 		app.repos,
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),
 		services.WithCurrencies(currencies),
+		services.WithNotifierConfig(&cfg.Notifier),
 	)
 
 	// =========================================================================
@@ -188,6 +215,9 @@ func run(cfg *config.Config) error {
 		middleware.RequestID,
 		middleware.RealIP,
 		mid.Logger(logger),
+		mid.SecurityHeaders(),
+		// Restrict the max body size to the upload limit + 1MB (for overhead)
+		mid.MaxBodySize(cfg.Web.MaxUploadSize+1),
 		middleware.Recoverer,
 		middleware.StripSlashes,
 	)

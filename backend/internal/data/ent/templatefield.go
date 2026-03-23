@@ -31,6 +31,12 @@ type TemplateField struct {
 	Type templatefield.Type `json:"type,omitempty"`
 	// TextValue holds the value of the "text_value" field.
 	TextValue string `json:"text_value,omitempty"`
+	// NumberValue holds the value of the "number_value" field.
+	NumberValue int `json:"number_value,omitempty"`
+	// BooleanValue holds the value of the "boolean_value" field.
+	BooleanValue bool `json:"boolean_value,omitempty"`
+	// TimeValue holds the value of the "time_value" field.
+	TimeValue time.Time `json:"time_value,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TemplateFieldQuery when eager-loading is set.
 	Edges                TemplateFieldEdges `json:"edges"`
@@ -63,9 +69,13 @@ func (*TemplateField) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case templatefield.FieldBooleanValue:
+			values[i] = new(sql.NullBool)
+		case templatefield.FieldNumberValue:
+			values[i] = new(sql.NullInt64)
 		case templatefield.FieldName, templatefield.FieldDescription, templatefield.FieldType, templatefield.FieldTextValue:
 			values[i] = new(sql.NullString)
-		case templatefield.FieldCreatedAt, templatefield.FieldUpdatedAt:
+		case templatefield.FieldCreatedAt, templatefield.FieldUpdatedAt, templatefield.FieldTimeValue:
 			values[i] = new(sql.NullTime)
 		case templatefield.FieldID:
 			values[i] = new(uuid.UUID)
@@ -127,6 +137,24 @@ func (_m *TemplateField) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field text_value", values[i])
 			} else if value.Valid {
 				_m.TextValue = value.String
+			}
+		case templatefield.FieldNumberValue:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field number_value", values[i])
+			} else if value.Valid {
+				_m.NumberValue = int(value.Int64)
+			}
+		case templatefield.FieldBooleanValue:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field boolean_value", values[i])
+			} else if value.Valid {
+				_m.BooleanValue = value.Bool
+			}
+		case templatefield.FieldTimeValue:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field time_value", values[i])
+			} else if value.Valid {
+				_m.TimeValue = value.Time
 			}
 		case templatefield.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
@@ -193,6 +221,15 @@ func (_m *TemplateField) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("text_value=")
 	builder.WriteString(_m.TextValue)
+	builder.WriteString(", ")
+	builder.WriteString("number_value=")
+	builder.WriteString(fmt.Sprintf("%v", _m.NumberValue))
+	builder.WriteString(", ")
+	builder.WriteString("boolean_value=")
+	builder.WriteString(fmt.Sprintf("%v", _m.BooleanValue))
+	builder.WriteString(", ")
+	builder.WriteString("time_value=")
+	builder.WriteString(_m.TimeValue.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

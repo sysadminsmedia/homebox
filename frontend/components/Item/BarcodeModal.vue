@@ -40,7 +40,7 @@
       <Separator />
 
       <BaseCard>
-        <Table class="w-full">
+        <Table class="w-full whitespace-nowrap">
           <TableHeader>
             <TableRow>
               <TableHead
@@ -100,7 +100,9 @@
       </BaseCard>
 
       <DialogFooter>
-        <Button type="import" :disabled="selectedRow === -1" @click="createItem"> Import selected </Button>
+        <Button type="button" :disabled="selectedRow === -1" @click="createItem">
+          {{ $t("components.item.product_import.import_selected") }}
+        </Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>

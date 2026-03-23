@@ -1,7 +1,7 @@
 <template>
   <div class="border-t px-4 py-5 sm:p-0">
     <dl class="sm:divide-y">
-      <div v-for="(detail, i) in details" :key="i" class="group py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+      <div v-for="(detail) in details" :key="detail.name" class="group py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
         <dt class="text-sm font-medium">
           {{ $t(detail.name) }}
         </dt>

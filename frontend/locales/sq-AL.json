@@ -79,13 +79,6 @@
                 }
             }
         },
-        "label": {
-            "create_modal": {
-                "label_description": "Përshkrimi i etiketës",
-                "label_name": "Emri i etiketës",
-                "title": "Krijo etiketë"
-            }
-        },
         "location": {
             "create_modal": {
                 "location_description": "Përshkrimi i vendndodhjes",
@@ -119,7 +112,6 @@
         "github": "Projekt Github",
         "items": "Artikuj",
         "join_discord": "Bashkoju Discord",
-        "labels": "Etiketa",
         "locations": "Vendndodhjet",
         "maintenance": "Mirëmbajtja",
         "name": "Emri",
@@ -136,11 +128,9 @@
         "welcome": "Mirë se erdhe, { username }"
     },
     "home": {
-        "labels": "Etiketa",
         "quick_statistics": "Statistika të shpejta",
         "recently_added": "U shtua së fundmi",
         "storage_locations": "Vendndodhjet e magazinimit",
-        "total_items": "Totali i Artikujve",
-        "total_labels": "Totali i etiketave"
+        "total_items": "Totali i Artikujve"
     }
 }

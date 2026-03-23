@@ -139,9 +139,7 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "Lägg till etiketter",
                     "failed_to_update_item": "Det gick inte att uppdatera",
-                    "remove_labels": "Ta bort etiketter",
                     "title": "Ändra artikeldetaljer"
                 },
                 "selectable": {
@@ -156,8 +154,6 @@
                 "table": {
                     "dropdown": {
                         "actions": "Funktioner",
-                        "change_labels": "Ändra etiketter",
-                        "change_labels_success": "Etiketter ändrade",
                         "change_location": "Ändra plats",
                         "change_location_success": "Plats ändrad",
                         "create_maintenance_item": "Skapa underhållspost för objekt",
@@ -186,23 +182,6 @@
                     "table_settings": "Bordsinställningar",
                     "view_item": "Visa objekt"
                 }
-            }
-        },
-        "label": {
-            "create_modal": {
-                "label_color": "Etikettfärg",
-                "label_description": "Etikettbeskrivning",
-                "label_name": "Etikettnamm",
-                "title": "Skapa etikett",
-                "toast": {
-                    "already_creating": "Skapar redan en etikett",
-                    "create_failed": "Det gick inte att skapa etiketten",
-                    "create_success": "Etikett skapad",
-                    "label_name_too_long": "Etikettnamnet får inte vara längre än 50 tecken"
-                }
-            },
-            "selector": {
-                "select_labels": "Välj etiketter"
             }
         },
         "location": {
@@ -260,7 +239,6 @@
         "insured": "Försäkrad",
         "items": "Föremål",
         "join_discord": "Gå med i Discord",
-        "labels": "Etiketter",
         "loading": "Laddar…",
         "locations": "Platser",
         "maintenance": "Underhåll",
@@ -283,12 +261,10 @@
         "welcome": "Välkommen, { username }"
     },
     "home": {
-        "labels": "Etiketter",
         "quick_statistics": "Snabb statistik",
         "recently_added": "Nyligen tillagda",
         "storage_locations": "Förvaringsplatser",
         "total_items": "Totalt antal objekt",
-        "total_labels": "Totalt antal etiketter",
         "total_locations": "Totalt antal platser",
         "total_value": "Totalt Värde"
     },
@@ -366,7 +342,6 @@
         "manufacturer": "Tillverkare",
         "model_number": "Modellnummer",
         "name": "Namn",
-        "negate_labels": "Negera valda etiketter",
         "next_page": "Nästa sida",
         "no_attachments": "Inga bilagor hittades",
         "no_results": "Inga föremål hittades",
@@ -433,18 +408,6 @@
         "warranty": "Garanti",
         "warranty_details": "Garantidetaljer",
         "warranty_expires": "Garantin upphör"
-    },
-    "labels": {
-        "label_delete_confirm": "Är du säker på att du vill ta bort den här etiketten? Det går inte att ångra den här åtgärden.",
-        "no_results": "Inga etiketter hittades",
-        "toast": {
-            "failed_delete_label": "Det gick inte att ta bort etiketten",
-            "failed_load_label": "Det gick inte att ladda etiketten",
-            "failed_update_label": "Det gick inte att uppdatera etiketten",
-            "label_deleted": "Etikett raderad",
-            "label_updated": "Etikett uppdaterad"
-        },
-        "update_label": "Uppdatera etikett"
     },
     "languages": {
         "bs-BA": "Bosniska (Bosnien och Hercegovina)",
@@ -536,15 +499,13 @@
     },
     "menu": {
         "create_item": "Artikel / Tillgång",
-        "create_label": "Etikett",
         "create_location": "Plats",
         "home": "Hem",
         "locations": "Platser",
         "maintenance": "Underhåll",
         "profile": "Profil",
         "scanner": "Skanner",
-        "search": "Sök",
-        "tools": "Verktyg"
+        "search": "Sök"
     },
     "profile": {
         "active": "Aktiv",
@@ -558,7 +519,6 @@
         "display_legacy_header": "{ currentValue, select, true {Inaktivera äldre sidhuvud} false {Aktivera äldre sidhuvud} other {Inte träff}}",
         "enabled": "Aktiverad",
         "example": "Exempel",
-        "gen_invite": "Skapa inbjudningslänk",
         "group_settings": "Grupp inställningar",
         "group_settings_sub": "Inställningar för delad grupp. Du kan behöva uppdatera din webbläsare för att vissa inställningar ska gälla.",
         "inactive": "Inaktiv",

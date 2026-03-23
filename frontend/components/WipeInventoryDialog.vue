@@ -10,14 +10,9 @@
 
       <div class="space-y-2">
         <div class="flex items-center space-x-2">
-          <input
-            id="wipe-labels-checkbox"
-            v-model="wipeLabels"
-            type="checkbox"
-            class="size-4 rounded border-gray-300"
-          />
-          <label for="wipe-labels-checkbox" class="cursor-pointer text-sm font-medium">
-            {{ $t("tools.actions_set.wipe_inventory_labels") }}
+          <input id="wipe-tags-checkbox" v-model="wipeTags" type="checkbox" class="size-4 rounded border-gray-300" />
+          <label for="wipe-tags-checkbox" class="cursor-pointer text-sm font-medium">
+            {{ $t("tools.actions_set.wipe_inventory_tags") }}
           </label>
         </div>
 
@@ -79,14 +74,14 @@
   const { registerOpenDialogCallback, closeDialog, addAlert, removeAlert } = useDialog();
 
   const dialog = ref(false);
-  const wipeLabels = ref(false);
+  const wipeTags = ref(false);
   const wipeLocations = ref(false);
   const wipeMaintenance = ref(false);
   const isConfirming = ref(false);
 
   registerOpenDialogCallback(DialogID.WipeInventory, () => {
     dialog.value = true;
-    wipeLabels.value = false;
+    wipeTags.value = false;
     wipeLocations.value = false;
     wipeMaintenance.value = false;
     isConfirming.value = false;
@@ -118,7 +113,7 @@
   function confirm() {
     isConfirming.value = true;
     const result = {
-      wipeLabels: wipeLabels.value,
+      wipeTags: wipeTags.value,
       wipeLocations: wipeLocations.value,
       wipeMaintenance: wipeMaintenance.value,
     };

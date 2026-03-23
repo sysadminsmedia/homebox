@@ -105,18 +105,6 @@ func (f ItemTemplateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ItemTemplateMutation", m)
 }
 
-// The LabelFunc type is an adapter to allow the use of ordinary
-// function as Label mutator.
-type LabelFunc func(context.Context, *ent.LabelMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f LabelFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.LabelMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.LabelMutation", m)
-}
-
 // The LocationFunc type is an adapter to allow the use of ordinary
 // function as Location mutator.
 type LocationFunc func(context.Context, *ent.LocationMutation) (ent.Value, error)
@@ -151,6 +139,18 @@ func (f NotifierFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NotifierMutation", m)
+}
+
+// The TagFunc type is an adapter to allow the use of ordinary
+// function as Tag mutator.
+type TagFunc func(context.Context, *ent.TagMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TagFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TagMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TagMutation", m)
 }
 
 // The TemplateFieldFunc type is an adapter to allow the use of ordinary

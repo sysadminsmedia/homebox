@@ -1,5 +1,7 @@
 package repo
 
+import "github.com/samber/lo"
+
 type MapFunc[T any, U any] func(T) U
 
 func (a MapFunc[T, U]) Map(v T) U {
@@ -7,11 +9,9 @@ func (a MapFunc[T, U]) Map(v T) U {
 }
 
 func (a MapFunc[T, U]) MapEach(v []T) []U {
-	result := make([]U, len(v))
-	for i, item := range v {
-		result[i] = a(item)
-	}
-	return result
+	return lo.Map(v, func(item T, _ int) U {
+		return a(item)
+	})
 }
 
 func (a MapFunc[T, U]) MapErr(v T, err error) (U, error) {

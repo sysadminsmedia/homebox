@@ -3,20 +3,20 @@ package reporting
 import (
 	"strconv"
 	"strings"
+
+	"github.com/samber/lo"
 )
 
 func parseSeparatedString(s string, sep string) ([]string, error) {
 	list := strings.Split(s, sep)
 
-	csf := make([]string, 0, len(list))
-	for _, s := range list {
-		trimmed := strings.TrimSpace(s)
-		if trimmed != "" {
-			csf = append(csf, trimmed)
-		}
-	}
+	trimmed := lo.Map(list, func(s string, _ int) string {
+		return strings.TrimSpace(s)
+	})
 
-	return csf, nil
+	return lo.Filter(trimmed, func(s string, _ int) bool {
+		return s != ""
+	}), nil
 }
 
 func parseFloat(s string) float64 {

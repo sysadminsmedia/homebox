@@ -10,25 +10,18 @@ import (
 )
 
 func templateFactory() ItemTemplateCreate {
-	qty := 1
-	name := fk.Str(20)
-	desc := fk.Str(50)
-	mfr := fk.Str(15)
-	model := fk.Str(10)
-	warranty := ""
-
 	return ItemTemplateCreate{
 		Name:                    fk.Str(10),
 		Description:             fk.Str(100),
 		Notes:                   fk.Str(50),
-		DefaultQuantity:         &qty,
+		DefaultQuantity:         new(1),
 		DefaultInsured:          false,
-		DefaultName:             &name,
-		DefaultDescription:      &desc,
-		DefaultManufacturer:     &mfr,
-		DefaultModelNumber:      &model,
+		DefaultName:             new(fk.Str(20)),
+		DefaultDescription:      new(fk.Str(50)),
+		DefaultManufacturer:     new(fk.Str(15)),
+		DefaultModelNumber:      new(fk.Str(10)),
 		DefaultLifetimeWarranty: false,
-		DefaultWarrantyDetails:  &warranty,
+		DefaultWarrantyDetails:  new(""),
 		IncludeWarrantyFields:   false,
 		IncludePurchaseFields:   false,
 		IncludeSoldFields:       false,
@@ -122,26 +115,19 @@ func TestItemTemplatesRepository_Update(t *testing.T) {
 	templates := useTemplates(t, 1)
 	template := templates[0]
 
-	qty := 5
-	defaultName := "Default Item Name"
-	defaultDesc := "Default Item Description"
-	defaultMfr := "Updated Manufacturer"
-	defaultModel := "MODEL-123"
-	defaultWarranty := "Lifetime coverage"
-
 	updateData := ItemTemplateUpdate{
 		ID:                      template.ID,
 		Name:                    "Updated Name",
 		Description:             "Updated Description",
 		Notes:                   "Updated Notes",
-		DefaultQuantity:         &qty,
+		DefaultQuantity:         new(5),
 		DefaultInsured:          true,
-		DefaultName:             &defaultName,
-		DefaultDescription:      &defaultDesc,
-		DefaultManufacturer:     &defaultMfr,
-		DefaultModelNumber:      &defaultModel,
+		DefaultName:             new("Default Item Name"),
+		DefaultDescription:      new("Default Item Description"),
+		DefaultManufacturer:     new("Updated Manufacturer"),
+		DefaultModelNumber:      new("MODEL-123"),
 		DefaultLifetimeWarranty: true,
-		DefaultWarrantyDetails:  &defaultWarranty,
+		DefaultWarrantyDetails:  new("Lifetime coverage"),
 		IncludeWarrantyFields:   true,
 		IncludePurchaseFields:   true,
 		IncludeSoldFields:       false,
@@ -179,12 +165,11 @@ func TestItemTemplatesRepository_UpdateWithFields(t *testing.T) {
 	require.Len(t, template.Fields, 1)
 
 	// Update with new fields
-	qty := template.DefaultQuantity
 	updateData := ItemTemplateUpdate{
 		ID:              template.ID,
 		Name:            template.Name,
 		Description:     template.Description,
-		DefaultQuantity: &qty,
+		DefaultQuantity: new(template.DefaultQuantity),
 		Fields: []TemplateField{
 			{ID: template.Fields[0].ID, Name: "Updated Field", Type: "text", TextValue: "Updated Value"},
 			{Name: "New Field", Type: "text", TextValue: "New Value"},
@@ -263,34 +248,34 @@ func TestItemTemplatesRepository_CreateWithLocation(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func TestItemTemplatesRepository_CreateWithLabels(t *testing.T) {
-	// Create some labels
-	label1, err := tRepos.Labels.Create(context.Background(), tGroup.ID, LabelCreate{
+func TestItemTemplatesRepository_CreateWithTags(t *testing.T) {
+	// Create some tags
+	tag1, err := tRepos.Tags.Create(context.Background(), tGroup.ID, TagCreate{
 		Name:        fk.Str(10),
 		Description: fk.Str(50),
 	})
 	require.NoError(t, err)
 
-	label2, err := tRepos.Labels.Create(context.Background(), tGroup.ID, LabelCreate{
+	tag2, err := tRepos.Tags.Create(context.Background(), tGroup.ID, TagCreate{
 		Name:        fk.Str(10),
 		Description: fk.Str(50),
 	})
 	require.NoError(t, err)
 
 	t.Cleanup(func() {
-		_ = tRepos.Labels.delete(context.Background(), label1.ID)
-		_ = tRepos.Labels.delete(context.Background(), label2.ID)
+		_ = tRepos.Tags.delete(context.Background(), tag1.ID)
+		_ = tRepos.Tags.delete(context.Background(), tag2.ID)
 	})
 
-	// Create template with labels
+	// Create template with tags
 	data := templateFactory()
-	labelIDs := []uuid.UUID{label1.ID, label2.ID}
-	data.DefaultLabelIDs = &labelIDs
+	tagIDs := []uuid.UUID{tag1.ID, tag2.ID}
+	data.DefaultTagIDs = &tagIDs
 
 	template, err := tRepos.ItemTemplates.Create(context.Background(), tGroup.ID, data)
 	require.NoError(t, err)
 
-	assert.Len(t, template.DefaultLabels, 2)
+	assert.Len(t, template.DefaultTags, 2)
 
 	// Cleanup
 	err = tRepos.ItemTemplates.Delete(context.Background(), tGroup.ID, template.ID)
@@ -318,11 +303,10 @@ func TestItemTemplatesRepository_UpdateRemoveLocation(t *testing.T) {
 	require.NotNil(t, template.DefaultLocation)
 
 	// Update to remove location
-	qty := template.DefaultQuantity
 	updateData := ItemTemplateUpdate{
 		ID:                template.ID,
 		Name:              template.Name,
-		DefaultQuantity:   &qty,
+		DefaultQuantity:   new(template.DefaultQuantity),
 		DefaultLocationID: uuid.Nil, // Remove location
 	}
 

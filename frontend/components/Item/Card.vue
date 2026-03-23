@@ -69,7 +69,7 @@
         </TooltipProvider>
         <Markdown class="mb-2 line-clamp-3 text-ellipsis" :source="item.description" />
         <div class="-mr-1 mt-auto flex flex-wrap justify-end gap-2">
-          <LabelChip v-for="label in itemLabels" :key="label.id" :label="label" size="sm" />
+          <TagChip v-for="tag in itemTags" :key="tag.id" :tag="tag" size="sm" />
         </div>
       </div>
     </NuxtLink>
@@ -85,7 +85,7 @@
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
   import { Separator } from "@/components/ui/separator";
   import Markdown from "@/components/global/Markdown.vue";
-  import LabelChip from "@/components/Label/Chip.vue";
+  import TagChip from "@/components/Tag/Chip.vue";
   import type { Row } from "@tanstack/vue-table";
   import { Checkbox } from "@/components/ui/checkbox";
 
@@ -103,8 +103,8 @@
     }
   });
 
-  const itemLabels = computed(() => {
-    return props.item.labels || [];
+  const itemTags = computed(() => {
+    return props.item.tags || [];
   });
 
   const props = defineProps({

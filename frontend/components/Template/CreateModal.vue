@@ -40,7 +40,7 @@
           v-model="form.defaultLocationObject"
           :label="$t('components.template.form.default_location')"
         />
-        <LabelSelector v-model="form.defaultLabelIds" :labels="labels ?? []" />
+        <TagSelector v-model="form.defaultTagIds" :tags="tags ?? []" />
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-2">
             <Switch id="defaultInsured" v-model:checked="form.defaultInsured" />
@@ -105,15 +105,15 @@
   import { Switch } from "@/components/ui/switch";
   import { Label } from "@/components/ui/label";
   import LocationSelector from "~/components/Location/Selector.vue";
-  import LabelSelector from "~/components/Label/Selector.vue";
-  import { useLabelStore } from "~~/stores/labels";
+  import TagSelector from "~/components/Tag/Selector.vue";
+  import { useTagStore } from "~/stores/tags";
   import type { LocationSummary } from "~~/lib/api/types/data-contracts";
 
   const emit = defineEmits<{ created: [] }>();
   const { closeDialog } = useDialog();
 
-  const labelStore = useLabelStore();
-  const labels = computed(() => labelStore.labels);
+  const tagStore = useTagStore();
+  const tags = computed(() => tagStore.tags);
 
   const loading = ref(false);
   const form = reactive({
@@ -130,7 +130,7 @@
     defaultWarrantyDetails: "",
     defaultLocationId: null as string | null,
     defaultLocationObject: null as LocationSummary | null,
-    defaultLabelIds: [] as string[],
+    defaultTagIds: [] as string[],
     includeWarrantyFields: false,
     includePurchaseFields: false,
     includeSoldFields: false,
@@ -158,7 +158,7 @@
       defaultWarrantyDetails: "",
       defaultLocationId: null,
       defaultLocationObject: null,
-      defaultLabelIds: [],
+      defaultTagIds: [],
       includeWarrantyFields: false,
       includePurchaseFields: false,
       includeSoldFields: false,
@@ -189,7 +189,7 @@
       defaultLifetimeWarranty: form.defaultLifetimeWarranty,
       defaultWarrantyDetails: form.defaultWarrantyDetails || null,
       defaultLocationId: form.defaultLocationObject?.id ?? null,
-      defaultLabelIds: form.defaultLabelIds,
+      defaultTagIds: form.defaultTagIds,
       includeWarrantyFields: form.includeWarrantyFields,
       includePurchaseFields: form.includePurchaseFields,
       includeSoldFields: form.includeSoldFields,

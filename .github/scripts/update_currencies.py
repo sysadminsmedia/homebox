@@ -13,7 +13,7 @@ from urllib3.util.retry import Retry
 
 API_URL    = 'https://restcountries.com/v3.1/all?fields=name,common,currencies'
 # Default to a pinned commit for supply-chain security
-DEFAULT_ISO_4217_URL = 'https://raw.githubusercontent.com/datasets/currency-codes/052b3088938ba32028a14e75040c286c5e142145/data/codes-all.csv'
+DEFAULT_ISO_4217_URL = 'https://raw.githubusercontent.com/datasets/currency-codes/refs/heads/main/data/codes-all.csv'
 ISO_4217_URL = os.environ.get('ISO_4217_URL', DEFAULT_ISO_4217_URL)
 SAVE_PATH  = Path('backend/internal/core/currencies/currencies.json')
 TIMEOUT    = 10  # seconds
@@ -152,11 +152,16 @@ def fetch_currencies():
             # Get decimal places using the helper function
             decimals = get_currency_decimals(code, iso_data)
             
+            # Capitalize the first letter of the currency name
+            currency_name = info.get('name', '')
+            if currency_name:
+                currency_name = currency_name[0].upper() + currency_name[1:]
+
             results.append({
                 'code':     code,
                 'local':    country_name,
                 'symbol':   info.get('symbol', ''),
-                'name':     info.get('name', ''),
+                'name':     currency_name,
                 'decimals': decimals
             })
 

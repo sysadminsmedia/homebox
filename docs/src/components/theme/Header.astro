@@ -1,0 +1,12 @@
+---
+const { hasSidebar } = Astro.locals.starlightRoute;
+
+import LanguageSelect from 'starlight-theme-nova/components/LanguageSelect.astro';
+import Default from '@astrojs/starlight/components/Header.astro';
+---
+
+<Default>
+  <Fragment slot="before-title">
+    <!-- Starlight will handle all the layout -->
+  </Fragment>
+</Default>

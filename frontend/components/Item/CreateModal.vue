@@ -106,9 +106,9 @@
                 {{ templateData.defaultLocation.name }}
               </div>
             </div>
-            <div v-if="templateData.defaultLabels && templateData.defaultLabels.length > 0" class="mt-1">
-              <span class="font-medium">{{ $t("global.labels") }}:</span>
-              {{ templateData.defaultLabels.map((l: any) => l.name).join(", ") }}
+            <div v-if="templateData.defaultTags && templateData.defaultTags.length > 0" class="mt-1">
+              <span class="font-medium">{{ $t("global.tags") }}:</span>
+              {{ templateData.defaultTags.map((t: any) => t.name).join(", ") }}
             </div>
             <div v-if="templateData.defaultDescription" class="mt-1">
               <p class="font-medium">{{ $t("components.template.form.item_description") }}:</p>
@@ -153,7 +153,7 @@
         :label="$t('components.item.create_modal.item_description')"
         :max-length="1000"
       />
-      <LabelSelector v-model="form.labels" :labels="labels ?? []" />
+      <TagSelector v-model="form.tags" :tags="tags ?? []" />
       <div class="flex w-full flex-col gap-1.5">
         <Label for="image-create-photo" class="flex w-full px-1">
           {{ $t("components.item.create_modal.item_photo") }}
@@ -274,7 +274,7 @@
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
   import type { ItemCreate, ItemTemplateOut, ItemTemplateSummary, LocationOut } from "~~/lib/api/types/data-contracts";
-  import { useLabelStore } from "~~/stores/labels";
+  import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
   import MdiBarcode from "~icons/mdi/barcode";
   import MdiBarcodeScan from "~icons/mdi/barcode-scan";
@@ -289,7 +289,7 @@
   import MdiClose from "~icons/mdi/close";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
-  import LabelSelector from "~/components/Label/Selector.vue";
+  import TagSelector from "~/components/Tag/Selector.vue";
   import ItemSelector from "~/components/Item/Selector.vue";
   import TemplateSelector from "~/components/Template/Selector.vue";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
@@ -314,8 +314,8 @@
   const locationsStore = useLocationStore();
   const locations = computed(() => locationsStore.allLocations);
 
-  const labelStore = useLabelStore();
-  const labels = computed(() => labelStore.labels);
+  const tagStore = useTagStore();
+  const tags = computed(() => tagStore.tags);
 
   const route = useRoute();
   const router = useRouter();
@@ -325,8 +325,8 @@
   const subItemCreateParam = useRouteQuery("subItemCreate", "n");
   const subItemCreate = ref();
 
-  const labelId = computed(() => {
-    if (route.fullPath.includes("/label/")) {
+  const tagId = computed(() => {
+    if (route.fullPath.includes("/tag/")) {
       return route.params.id;
     }
     return null;
@@ -362,7 +362,7 @@
     quantity: 1,
     description: "",
     color: "",
-    labels: [] as string[],
+    tags: [] as string[],
     photos: [] as PhotoPreview[],
   });
 
@@ -400,9 +400,9 @@
         form.location = found;
       }
     }
-    // Pre-fill labels from template
-    if (data.defaultLabels && data.defaultLabels.length > 0) {
-      form.labels = data.defaultLabels.map(l => l.id);
+    // Pre-fill tags from template
+    if (data.defaultTags && data.defaultTags.length > 0) {
+      form.tags = data.defaultTags.map(l => l.id);
     }
 
     // Save template ID to localStorage for persistence
@@ -440,9 +440,9 @@
         form.location = found;
       }
     }
-    // Pre-fill labels from template
-    if (data.defaultLabels && data.defaultLabels.length > 0) {
-      form.labels = data.defaultLabels.map(l => l.id);
+    // Pre-fill tags from template
+    if (data.defaultTags && data.defaultTags.length > 0) {
+      form.tags = data.defaultTags.map(l => l.id);
     }
   }
 
@@ -554,8 +554,8 @@
         }
       }
 
-      if (labelId.value) {
-        form.labels = labels.value.filter(l => l.id === labelId.value).map(l => l.id);
+      if (tagId.value) {
+        form.tags = tags.value.filter(l => l.id === tagId.value).map(l => l.id);
       }
 
       // Restore last used template if available
@@ -588,7 +588,7 @@
         name: form.name,
         description: form.description,
         locationId: form.location.id as string,
-        labelIds: form.labels,
+        tagIds: form.tags,
         quantity: form.quantity,
       };
 
@@ -603,7 +603,7 @@
         quantity: form.quantity,
         description: form.description,
         locationId: form.location.id as string,
-        labelIds: form.labels,
+        tagIds: form.tags,
       };
 
       const result = await api.items.create(out);
@@ -649,7 +649,7 @@
     form.description = "";
     form.color = "";
     form.photos = [];
-    form.labels = [];
+    form.tags = [];
     selectedTemplate.value = null;
     templateData.value = null;
     showTemplateDetails.value = false;
