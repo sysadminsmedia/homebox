@@ -72,7 +72,7 @@ func TestLocationRepositoryGetAllWithCount(t *testing.T) {
 
 	for _, loc := range results {
 		if loc.ID == result.ID {
-			assert.Equal(t, item.Quantity, loc.ItemCount)
+			assert.InDelta(t, item.Quantity, loc.ItemCount, 0.0001)
 		}
 	}
 }
