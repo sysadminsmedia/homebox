@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"math"
 	"strings"
 	"testing"
 	"time"
@@ -146,6 +147,23 @@ func TestItemsRepository_Create_WithFractionalQuantity(t *testing.T) {
 	assert.InDelta(t, 1.25, fetched.Quantity, 0.000001)
 
 	// Cleanup - Also deletes item
+	err = tRepos.Locations.delete(context.Background(), location.ID)
+	require.NoError(t, err)
+}
+
+func TestItemsRepository_Create_RejectsNonFiniteQuantity(t *testing.T) {
+	location, err := tRepos.Locations.Create(context.Background(), tGroup.ID, locationFactory())
+	require.NoError(t, err)
+
+	itm := itemFactory()
+	itm.LocationID = location.ID
+	itm.Quantity = math.NaN()
+
+	_, err = tRepos.Items.Create(context.Background(), tGroup.ID, itm)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "invalid quantity: must be a finite number")
+
+	// Cleanup
 	err = tRepos.Locations.delete(context.Background(), location.ID)
 	require.NoError(t, err)
 }
@@ -314,6 +332,48 @@ func TestItemsRepository_Update_WithFractionalQuantity(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.InDelta(t, 2.75, got.Quantity, 0.000001)
+}
+
+func TestItemsRepository_Update_RejectsNonFiniteQuantity(t *testing.T) {
+	entity := useItems(t, 1)[0]
+
+	updateData := ItemUpdate{
+		ID:         entity.ID,
+		Name:       entity.Name,
+		LocationID: entity.Location.ID,
+		Quantity:   math.Inf(1),
+	}
+
+	_, err := tRepos.Items.UpdateByGroup(context.Background(), tGroup.ID, updateData)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "invalid quantity: must be a finite number")
+}
+
+func TestItemsRepository_Patch_RejectsNonFiniteQuantity(t *testing.T) {
+	entity := useItems(t, 1)[0]
+
+	quantity := math.Inf(-1)
+	err := tRepos.Items.Patch(context.Background(), tGroup.ID, entity.ID, ItemPatch{Quantity: &quantity})
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "invalid quantity: must be a finite number")
+}
+
+func TestItemsRepository_CreateFromTemplate_RejectsNonFiniteQuantity(t *testing.T) {
+	location, err := tRepos.Locations.Create(context.Background(), tGroup.ID, locationFactory())
+	require.NoError(t, err)
+
+	_, err = tRepos.Items.CreateFromTemplate(context.Background(), tGroup.ID, ItemCreateFromTemplate{
+		Name:        fk.Str(10),
+		Description: fk.Str(20),
+		Quantity:    math.NaN(),
+		LocationID:  location.ID,
+	})
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "invalid quantity: must be a finite number")
+
+	// Cleanup
+	err = tRepos.Locations.delete(context.Background(), location.ID)
+	require.NoError(t, err)
 }
 
 func TestItemRepository_GetAllCustomFields(t *testing.T) {

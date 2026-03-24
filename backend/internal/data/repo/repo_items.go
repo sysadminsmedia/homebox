@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/google/uuid"
@@ -611,7 +612,19 @@ func (e *ItemsRepository) SetAssetID(ctx context.Context, gid uuid.UUID, id uuid
 	return err
 }
 
+func validateQuantity(op string, quantity float64) error {
+	if math.IsNaN(quantity) || math.IsInf(quantity, 0) {
+		return fmt.Errorf("%s: invalid quantity: must be a finite number", op)
+	}
+
+	return nil
+}
+
 func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCreate) (ItemOut, error) {
+	if err := validateQuantity("create item", data.Quantity); err != nil {
+		return ItemOut{}, err
+	}
+
 	q := e.db.Item.Create().
 		SetImportRef(data.ImportRef).
 		SetName(data.Name).
@@ -655,6 +668,10 @@ type ItemCreateFromTemplate struct {
 
 // CreateFromTemplate creates an item with all template data in a single transaction.
 func (e *ItemsRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID, data ItemCreateFromTemplate) (ItemOut, error) {
+	if err := validateQuantity("create item from template", data.Quantity); err != nil {
+		return ItemOut{}, err
+	}
+
 	tx, err := e.db.Tx(ctx)
 	if err != nil {
 		return ItemOut{}, err
@@ -876,6 +893,10 @@ func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wipe
 }
 
 func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data ItemUpdate) (ItemOut, error) {
+	if err := validateQuantity("update item", data.Quantity); err != nil {
+		return ItemOut{}, err
+	}
+
 	q := e.db.Item.Update().Where(item.ID(data.ID), item.HasGroupWith(group.ID(gid))).
 		SetName(data.Name).
 		SetDescription(data.Description).
@@ -1059,6 +1080,10 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 	}
 
 	if data.Quantity != nil {
+		if err := validateQuantity("patch item", *data.Quantity); err != nil {
+			return err
+		}
+
 		q.SetQuantity(*data.Quantity)
 	}
 
