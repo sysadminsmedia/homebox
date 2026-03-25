@@ -52,3 +52,26 @@ export function proxyServiceBlock(state) {
     return '';
 }
 
+/**
+ * Returns a YAML labels block string for the selected proxy type, or an
+ * empty string when no proxy is configured.
+ *
+ * @param {{ proxyType: string, hostname: string }} state
+ * @returns {string}
+ */
+export function getLabels(state) {
+    if (state.proxyType === 'traefik') {
+        return [
+            '    labels:',
+            '      traefik.enable: true',
+            '      traefik.http.routers.homebox-http.rule: Host(`' + state.hostname + '`)',
+            '      traefik.http.routers.homebox-http.entrypoints: web',
+            '      traefik.http.routers.homebox.rule: Host(`' + state.hostname + '`)',
+            '      traefik.http.routers.homebox.entrypoints: websecure',
+            '      traefik.http.routers.homebox.tls: true',
+            '      traefik.http.services.homebox.loadbalancer.passhostheader: true',
+            '      traefik.http.middlewares.treaefik-https-redirect.redirectscheme.scheme: https',
+            '      traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto: https',
+        ].join('\n');
+    }
+}
