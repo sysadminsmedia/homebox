@@ -3257,7 +3257,7 @@ const docTemplate = `{
                 },
                 "quantity": {
                     "description": "Quantity holds the value of the \"quantity\" field.",
-                    "type": "integer"
+                    "type": "number"
                 },
                 "serial_number": {
                     "description": "SerialNumber holds the value of the \"serial_number\" field.",
@@ -3464,7 +3464,7 @@ const docTemplate = `{
                 },
                 "default_quantity": {
                     "description": "DefaultQuantity holds the value of the \"default_quantity\" field.",
-                    "type": "integer"
+                    "type": "number"
                 },
                 "default_tag_ids": {
                     "description": "Default tag IDs for items created from this template",
@@ -4185,7 +4185,7 @@ const docTemplate = `{
                     "x-nullable": true
                 },
                 "quantity": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "tagIds": {
                     "type": "array",
@@ -4304,7 +4304,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "quantity": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "serialNumber": {
                     "type": "string"
@@ -4359,7 +4359,7 @@ const docTemplate = `{
                     "x-omitempty": true
                 },
                 "quantity": {
-                    "type": "integer",
+                    "type": "number",
                     "x-nullable": true,
                     "x-omitempty": true
                 },
@@ -4431,7 +4431,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "quantity": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "soldTime": {
                     "description": "Sale details",
@@ -4492,7 +4492,7 @@ const docTemplate = `{
                 },
                 "defaultQuantity": {
                     "description": "Default values for items",
-                    "type": "integer",
+                    "type": "number",
                     "x-nullable": true
                 },
                 "defaultTagIds": {
@@ -4573,7 +4573,7 @@ const docTemplate = `{
                 },
                 "defaultQuantity": {
                     "description": "Default values for items",
-                    "type": "integer"
+                    "type": "number"
                 },
                 "defaultTags": {
                     "type": "array",
@@ -4677,7 +4677,7 @@ const docTemplate = `{
                 },
                 "defaultQuantity": {
                     "description": "Default values for items",
-                    "type": "integer",
+                    "type": "number",
                     "x-nullable": true
                 },
                 "defaultTagIds": {
@@ -4808,7 +4808,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "quantity": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "serialNumber": {
                     "description": "Identifications",
@@ -4907,7 +4907,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "itemCount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "name": {
                     "type": "string"
@@ -5655,7 +5655,7 @@ const docTemplate = `{
                     "minLength": 1
                 },
                 "quantity": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "tagIds": {
                     "type": "array",

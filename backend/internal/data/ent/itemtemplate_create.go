@@ -87,13 +87,13 @@ func (_c *ItemTemplateCreate) SetNillableNotes(v *string) *ItemTemplateCreate {
 }
 
 // SetDefaultQuantity sets the "default_quantity" field.
-func (_c *ItemTemplateCreate) SetDefaultQuantity(v int) *ItemTemplateCreate {
+func (_c *ItemTemplateCreate) SetDefaultQuantity(v float64) *ItemTemplateCreate {
 	_c.mutation.SetDefaultQuantity(v)
 	return _c
 }
 
 // SetNillableDefaultQuantity sets the "default_quantity" field if the given value is not nil.
-func (_c *ItemTemplateCreate) SetNillableDefaultQuantity(v *int) *ItemTemplateCreate {
+func (_c *ItemTemplateCreate) SetNillableDefaultQuantity(v *float64) *ItemTemplateCreate {
 	if v != nil {
 		_c.SetDefaultQuantity(*v)
 	}
@@ -506,7 +506,7 @@ func (_c *ItemTemplateCreate) createSpec() (*ItemTemplate, *sqlgraph.CreateSpec)
 		_node.Notes = value
 	}
 	if value, ok := _c.mutation.DefaultQuantity(); ok {
-		_spec.SetField(itemtemplate.FieldDefaultQuantity, field.TypeInt, value)
+		_spec.SetField(itemtemplate.FieldDefaultQuantity, field.TypeFloat64, value)
 		_node.DefaultQuantity = value
 	}
 	if value, ok := _c.mutation.DefaultInsured(); ok {

@@ -33,7 +33,7 @@ type Item struct {
 	// Notes holds the value of the "notes" field.
 	Notes string `json:"notes,omitempty"`
 	// Quantity holds the value of the "quantity" field.
-	Quantity int `json:"quantity,omitempty"`
+	Quantity float64 `json:"quantity,omitempty"`
 	// Insured holds the value of the "insured" field.
 	Insured bool `json:"insured,omitempty"`
 	// Archived holds the value of the "archived" field.
@@ -185,9 +185,9 @@ func (*Item) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case item.FieldInsured, item.FieldArchived, item.FieldSyncChildItemsLocations, item.FieldLifetimeWarranty:
 			values[i] = new(sql.NullBool)
-		case item.FieldPurchasePrice, item.FieldSoldPrice:
+		case item.FieldQuantity, item.FieldPurchasePrice, item.FieldSoldPrice:
 			values[i] = new(sql.NullFloat64)
-		case item.FieldQuantity, item.FieldAssetID:
+		case item.FieldAssetID:
 			values[i] = new(sql.NullInt64)
 		case item.FieldName, item.FieldDescription, item.FieldImportRef, item.FieldNotes, item.FieldSerialNumber, item.FieldModelNumber, item.FieldManufacturer, item.FieldWarrantyDetails, item.FieldPurchaseFrom, item.FieldSoldTo, item.FieldSoldNotes:
 			values[i] = new(sql.NullString)
@@ -259,10 +259,10 @@ func (_m *Item) assignValues(columns []string, values []any) error {
 				_m.Notes = value.String
 			}
 		case item.FieldQuantity:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
 				return fmt.Errorf("unexpected type %T for field quantity", values[i])
 			} else if value.Valid {
-				_m.Quantity = int(value.Int64)
+				_m.Quantity = value.Float64
 			}
 		case item.FieldInsured:
 			if value, ok := values[i].(*sql.NullBool); !ok {

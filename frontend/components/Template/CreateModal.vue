@@ -24,7 +24,13 @@
           :max-length="1000"
         />
         <div class="grid grid-cols-2 gap-2">
-          <FormTextField v-model.number="form.defaultQuantity" :label="$t('global.quantity')" type="number" :min="1" />
+          <FormTextField
+            v-model.number="form.defaultQuantity"
+            :label="$t('global.quantity')"
+            type="number"
+            :min="1"
+            step="any"
+          />
           <FormTextField
             v-model="form.defaultModelNumber"
             :label="$t('components.template.form.model_number')"

@@ -177,6 +177,7 @@
               :label="$t('global.quantity')"
               type="number"
               :min="1"
+              step="any"
             />
             <FormTextField
               v-model="updateData.defaultModelNumber"

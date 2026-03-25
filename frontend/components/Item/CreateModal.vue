@@ -147,7 +147,12 @@
         :max-length="255"
         :min-length="1"
       />
-      <FormTextField v-model="form.quantity" :label="$t('components.item.create_modal.item_quantity')" type="number" />
+      <FormTextField
+        v-model.number="form.quantity"
+        :label="$t('components.item.create_modal.item_quantity')"
+        type="number"
+        step="any"
+      />
       <FormTextArea
         v-model="form.description"
         :label="$t('components.item.create_modal.item_description')"

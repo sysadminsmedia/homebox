@@ -638,6 +638,7 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
+                  step="any"
                   :label="$t(field.label)"
                   inline
                 />
@@ -799,6 +800,7 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
+                  step="any"
                   :label="$t(field.label)"
                   inline
                 />
@@ -846,6 +848,7 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
+                  step="any"
                   :label="$t(field.label)"
                   inline
                 />
@@ -893,6 +896,7 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
+                  step="any"
                   :label="$t(field.label)"
                   inline
                 />

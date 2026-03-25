@@ -14,7 +14,7 @@ func templateFactory() ItemTemplateCreate {
 		Name:                    fk.Str(10),
 		Description:             fk.Str(100),
 		Notes:                   fk.Str(50),
-		DefaultQuantity:         new(1),
+		DefaultQuantity:         new(1.0),
 		DefaultInsured:          false,
 		DefaultName:             new(fk.Str(20)),
 		DefaultDescription:      new(fk.Str(50)),
@@ -78,7 +78,7 @@ func TestItemTemplatesRepository_Create(t *testing.T) {
 	assert.NotEqual(t, uuid.Nil, template.ID)
 	assert.Equal(t, data.Name, template.Name)
 	assert.Equal(t, data.Description, template.Description)
-	assert.Equal(t, *data.DefaultQuantity, template.DefaultQuantity)
+	assert.InDelta(t, *data.DefaultQuantity, template.DefaultQuantity, 0.0001)
 	assert.Equal(t, data.DefaultInsured, template.DefaultInsured)
 	assert.Equal(t, *data.DefaultName, template.DefaultName)
 	assert.Equal(t, *data.DefaultDescription, template.DefaultDescription)
@@ -120,7 +120,7 @@ func TestItemTemplatesRepository_Update(t *testing.T) {
 		Name:                    "Updated Name",
 		Description:             "Updated Description",
 		Notes:                   "Updated Notes",
-		DefaultQuantity:         new(5),
+		DefaultQuantity:         new(5.0),
 		DefaultInsured:          true,
 		DefaultName:             new("Default Item Name"),
 		DefaultDescription:      new("Default Item Description"),
@@ -141,7 +141,7 @@ func TestItemTemplatesRepository_Update(t *testing.T) {
 	assert.Equal(t, "Updated Name", updated.Name)
 	assert.Equal(t, "Updated Description", updated.Description)
 	assert.Equal(t, "Updated Notes", updated.Notes)
-	assert.Equal(t, 5, updated.DefaultQuantity)
+	assert.InDelta(t, 5.0, updated.DefaultQuantity, 0.0001)
 	assert.True(t, updated.DefaultInsured)
 	assert.Equal(t, "Default Item Name", updated.DefaultName)
 	assert.Equal(t, "Default Item Description", updated.DefaultDescription)

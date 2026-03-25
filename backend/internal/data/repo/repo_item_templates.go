@@ -44,14 +44,14 @@ type (
 		Notes       string `json:"notes"       validate:"max=1000"`
 
 		// Default values for items
-		DefaultQuantity         *int    `json:"defaultQuantity,omitempty"        extensions:"x-nullable"`
-		DefaultInsured          bool    `json:"defaultInsured"`
-		DefaultName             *string `json:"defaultName,omitempty"            validate:"omitempty,max=255"  extensions:"x-nullable"`
-		DefaultDescription      *string `json:"defaultDescription,omitempty"     validate:"omitempty,max=1000" extensions:"x-nullable"`
-		DefaultManufacturer     *string `json:"defaultManufacturer,omitempty"    validate:"omitempty,max=255"  extensions:"x-nullable"`
-		DefaultModelNumber      *string `json:"defaultModelNumber,omitempty"     validate:"omitempty,max=255"  extensions:"x-nullable"`
-		DefaultLifetimeWarranty bool    `json:"defaultLifetimeWarranty"`
-		DefaultWarrantyDetails  *string `json:"defaultWarrantyDetails,omitempty" validate:"omitempty,max=1000" extensions:"x-nullable"`
+		DefaultQuantity         *float64 `json:"defaultQuantity,omitempty"        extensions:"x-nullable"`
+		DefaultInsured          bool     `json:"defaultInsured"`
+		DefaultName             *string  `json:"defaultName,omitempty"            validate:"omitempty,max=255"  extensions:"x-nullable"`
+		DefaultDescription      *string  `json:"defaultDescription,omitempty"     validate:"omitempty,max=1000" extensions:"x-nullable"`
+		DefaultManufacturer     *string  `json:"defaultManufacturer,omitempty"    validate:"omitempty,max=255"  extensions:"x-nullable"`
+		DefaultModelNumber      *string  `json:"defaultModelNumber,omitempty"     validate:"omitempty,max=255"  extensions:"x-nullable"`
+		DefaultLifetimeWarranty bool     `json:"defaultLifetimeWarranty"`
+		DefaultWarrantyDetails  *string  `json:"defaultWarrantyDetails,omitempty" validate:"omitempty,max=1000" extensions:"x-nullable"`
 
 		// Default location and tags
 		DefaultLocationID uuid.UUID    `json:"defaultLocationId,omitempty" extensions:"x-nullable"`
@@ -73,14 +73,14 @@ type (
 		Notes       string    `json:"notes"       validate:"max=1000"`
 
 		// Default values for items
-		DefaultQuantity         *int    `json:"defaultQuantity,omitempty"        extensions:"x-nullable"`
-		DefaultInsured          bool    `json:"defaultInsured"`
-		DefaultName             *string `json:"defaultName,omitempty"            validate:"omitempty,max=255"  extensions:"x-nullable"`
-		DefaultDescription      *string `json:"defaultDescription,omitempty"     validate:"omitempty,max=1000" extensions:"x-nullable"`
-		DefaultManufacturer     *string `json:"defaultManufacturer,omitempty"    validate:"omitempty,max=255"  extensions:"x-nullable"`
-		DefaultModelNumber      *string `json:"defaultModelNumber,omitempty"     validate:"omitempty,max=255"  extensions:"x-nullable"`
-		DefaultLifetimeWarranty bool    `json:"defaultLifetimeWarranty"`
-		DefaultWarrantyDetails  *string `json:"defaultWarrantyDetails,omitempty" validate:"omitempty,max=1000" extensions:"x-nullable"`
+		DefaultQuantity         *float64 `json:"defaultQuantity,omitempty"        extensions:"x-nullable"`
+		DefaultInsured          bool     `json:"defaultInsured"`
+		DefaultName             *string  `json:"defaultName,omitempty"            validate:"omitempty,max=255"  extensions:"x-nullable"`
+		DefaultDescription      *string  `json:"defaultDescription,omitempty"     validate:"omitempty,max=1000" extensions:"x-nullable"`
+		DefaultManufacturer     *string  `json:"defaultManufacturer,omitempty"    validate:"omitempty,max=255"  extensions:"x-nullable"`
+		DefaultModelNumber      *string  `json:"defaultModelNumber,omitempty"     validate:"omitempty,max=255"  extensions:"x-nullable"`
+		DefaultLifetimeWarranty bool     `json:"defaultLifetimeWarranty"`
+		DefaultWarrantyDetails  *string  `json:"defaultWarrantyDetails,omitempty" validate:"omitempty,max=1000" extensions:"x-nullable"`
 
 		// Default location and tags
 		DefaultLocationID uuid.UUID    `json:"defaultLocationId,omitempty" extensions:"x-nullable"`
@@ -112,14 +112,14 @@ type (
 		UpdatedAt   time.Time `json:"updatedAt"`
 
 		// Default values for items
-		DefaultQuantity         int    `json:"defaultQuantity"`
-		DefaultInsured          bool   `json:"defaultInsured"`
-		DefaultName             string `json:"defaultName"`
-		DefaultDescription      string `json:"defaultDescription"`
-		DefaultManufacturer     string `json:"defaultManufacturer"`
-		DefaultModelNumber      string `json:"defaultModelNumber"`
-		DefaultLifetimeWarranty bool   `json:"defaultLifetimeWarranty"`
-		DefaultWarrantyDetails  string `json:"defaultWarrantyDetails"`
+		DefaultQuantity         float64 `json:"defaultQuantity"`
+		DefaultInsured          bool    `json:"defaultInsured"`
+		DefaultName             string  `json:"defaultName"`
+		DefaultDescription      string  `json:"defaultDescription"`
+		DefaultManufacturer     string  `json:"defaultManufacturer"`
+		DefaultModelNumber      string  `json:"defaultModelNumber"`
+		DefaultLifetimeWarranty bool    `json:"defaultLifetimeWarranty"`
+		DefaultWarrantyDetails  string  `json:"defaultWarrantyDetails"`
 
 		// Default location and tags
 		DefaultLocation *TemplateLocationSummary `json:"defaultLocation"`
