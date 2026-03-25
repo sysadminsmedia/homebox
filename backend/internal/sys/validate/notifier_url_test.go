@@ -33,6 +33,17 @@ func TestValidateNotifierURL(t *testing.T) {
 			expectError: false,
 		},
 		{
+			name: "generic notifier shorthand host/path passes",
+			url:  "generic://example.com/webhook",
+			config: config.NotifierConf{
+				BlockLocalhost:     true,
+				BlockLocalNets:     true,
+				BlockBogonNets:     true,
+				BlockCloudMetadata: true,
+			},
+			expectError: false,
+		},
+		{
 			name: "generic notifier with localhost blocked",
 			url:  "generic://http://localhost:8080/webhook",
 			config: config.NotifierConf{
@@ -326,6 +337,12 @@ func TestExtractGenericURL(t *testing.T) {
 			name:        "generic://",
 			url:         "generic://http://example.com/webhook",
 			expected:    "http://example.com/webhook",
+			expectError: false,
+		},
+		{
+			name:        "generic:// shorthand defaults to https",
+			url:         "generic://example.com/webhook",
+			expected:    "https://example.com/webhook",
 			expectError: false,
 		},
 		{

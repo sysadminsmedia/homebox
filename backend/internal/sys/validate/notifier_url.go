@@ -133,7 +133,18 @@ func isGenericNotifier(notifierURL string) bool {
 // extractGenericURL extracts the actual HTTP(S) URL from a generic notifier URL
 func extractGenericURL(notifierURL string) (string, error) {
 	if strings.HasPrefix(notifierURL, "generic://") {
-		return strings.TrimPrefix(notifierURL, "generic://"), nil
+		rawURL := strings.TrimPrefix(notifierURL, "generic://")
+
+		if rawURL == "" {
+			return "", fmt.Errorf("generic notifier URL is empty")
+		}
+
+		// Support shorthand generic://host/path by defaulting to HTTPS.
+		if strings.HasPrefix(rawURL, "http://") || strings.HasPrefix(rawURL, "https://") {
+			return rawURL, nil
+		}
+
+		return "https://" + rawURL, nil
 	}
 	if strings.HasPrefix(notifierURL, "generic+https://") {
 		return strings.TrimPrefix(notifierURL, "generic+"), nil
