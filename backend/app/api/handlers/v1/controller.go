@@ -10,6 +10,7 @@ import (
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/server"
 	"github.com/rs/zerolog/log"
+	"github.com/sysadminsmedia/homebox/backend/app/api/providers"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
@@ -74,6 +75,7 @@ type V1Controller struct {
 	bus               *eventbus.EventBus
 	url               string
 	config            *config.Config
+	oidcProvider      *providers.OIDCProvider
 }
 
 type (
@@ -95,6 +97,19 @@ type (
 		Demo              bool            `json:"demo"`
 		AllowRegistration bool            `json:"allowRegistration"`
 		LabelPrinting     bool            `json:"labelPrinting"`
+		OIDC              OIDCStatus      `json:"oidc"`
+		Telemetry         TelemetryStatus `json:"telemetry"`
+	}
+
+	OIDCStatus struct {
+		Enabled      bool   `json:"enabled"`
+		ButtonText   string `json:"buttonText,omitempty"`
+		AutoRedirect bool   `json:"autoRedirect,omitempty"`
+		AllowLocal   bool   `json:"allowLocal"`
+	}
+
+	TelemetryStatus struct {
+		Enabled bool `json:"enabled"`
 	}
 )
 
@@ -111,7 +126,21 @@ func NewControllerV1(svc *services.AllServices, repos *repo.AllRepos, bus *event
 		opt(ctrl)
 	}
 
+	ctrl.initOIDCProvider()
+
 	return ctrl
+}
+
+func (ctrl *V1Controller) initOIDCProvider() {
+	if ctrl.config.OIDC.Enabled {
+		oidcProvider, err := providers.NewOIDCProvider(ctrl.svc.User, &ctrl.config.OIDC, &ctrl.config.Options, ctrl.cookieSecure)
+		if err != nil {
+			log.Err(err).Msg("failed to initialize OIDC provider at startup")
+		} else {
+			ctrl.oidcProvider = oidcProvider
+			log.Info().Msg("OIDC provider initialized successfully at startup")
+		}
+	}
 }
 
 // HandleBase godoc
@@ -132,6 +161,15 @@ func (ctrl *V1Controller) HandleBase(ready ReadyFunc, build Build) errchain.Hand
 			Demo:              ctrl.isDemo,
 			AllowRegistration: ctrl.allowRegistration,
 			LabelPrinting:     ctrl.config.LabelMaker.PrintCommand != nil,
+			OIDC: OIDCStatus{
+				Enabled:      ctrl.config.OIDC.Enabled,
+				ButtonText:   ctrl.config.OIDC.ButtonText,
+				AutoRedirect: ctrl.config.OIDC.AutoRedirect,
+				AllowLocal:   ctrl.config.Options.AllowLocalLogin,
+			},
+			Telemetry: TelemetryStatus{
+				Enabled: ctrl.config.Otel.Enabled,
+			},
 		})
 	}
 }
@@ -192,9 +230,10 @@ func (ctrl *V1Controller) HandleCacheWS() errchain.HandlerFunc {
 		}
 	}
 
-	ctrl.bus.Subscribe(eventbus.EventLabelMutation, factory("label.mutation"))
+	ctrl.bus.Subscribe(eventbus.EventTagMutation, factory("tag.mutation"))
 	ctrl.bus.Subscribe(eventbus.EventLocationMutation, factory("location.mutation"))
 	ctrl.bus.Subscribe(eventbus.EventItemMutation, factory("item.mutation"))
+	ctrl.bus.Subscribe(eventbus.EventUserMutation, factory("user.mutation"))
 
 	// Persistent asynchronous ticker that keeps all websocket connections alive with periodic pings.
 	go func() {

@@ -11,6 +11,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
@@ -39,6 +40,53 @@ func (s *IOSheet) indexHeaders() {
 			s.index[h] = i
 		}
 	}
+}
+
+// primaryCSVTag returns the primary header name from a csv struct tag which
+// may contain alternatives separated by '|'. For example: "HB.tags|HB.labels"
+// will return "HB.tags".
+func primaryCSVTag(tag string) string {
+	if tag == "" {
+		return ""
+	}
+	if i := strings.Index(tag, "|"); i >= 0 {
+		return strings.TrimSpace(tag[:i])
+	}
+	return tag
+}
+
+// csvTagAlternatives splits a tag with alternatives separated by '|'.
+func csvTagAlternatives(tag string) []string {
+	if tag == "" {
+		return nil
+	}
+	parts := strings.Split(tag, "|")
+	return lo.Map(parts, func(s string, _ int) string {
+		return strings.TrimSpace(s)
+	})
+}
+
+// findColumnForTag tries to find a column index for a csv tag. The tag may
+// contain multiple alternatives separated by '|'. It will return the first
+// matching column index it finds.
+func (s *IOSheet) findColumnForTag(tag string) (int, bool) {
+	if s.index == nil {
+		s.indexHeaders()
+	}
+
+	// Try primary tag first and then alternatives.
+	alts := csvTagAlternatives(tag)
+	if len(alts) == 0 {
+		return s.GetColumn(tag)
+	}
+
+	for _, t := range alts {
+		if col, ok := s.GetColumn(t); ok {
+			return col, true
+		}
+	}
+
+	return 0, false
 }
 
 func (s *IOSheet) GetColumn(str string) (col int, ok bool) {
@@ -88,7 +136,7 @@ func (s *IOSheet) Read(data io.Reader) error {
 				continue
 			}
 
-			col, ok := s.GetColumn(tag)
+			col, ok := s.findColumnForTag(tag)
 			if !ok {
 				continue
 			}
@@ -114,8 +162,8 @@ func (s *IOSheet) Read(data io.Reader) error {
 				v, _ = repo.ParseAssetID(val)
 			case reflect.TypeOf(LocationString{}):
 				v = parseLocationString(val)
-			case reflect.TypeOf(LabelString{}):
-				v = parseLabelString(val)
+			case reflect.TypeOf(TagString{}):
+				v = parseTagString(val)
 			}
 
 			log.Debug().
@@ -172,29 +220,24 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, gid uuid.
 
 		locString := fromPathSlice(locPaths)
 
-		labelString := make([]string, len(item.Labels))
-
-		for i, l := range item.Labels {
-			labelString[i] = l.Name
-		}
+		tagString := lo.Map(item.Tags, func(l repo.TagSummary, _ int) string {
+			return l.Name
+		})
 
 		url := generateItemURL(item, hbURL)
 
-		customFields := make([]ExportItemFields, len(item.Fields))
-
-		for i, f := range item.Fields {
+		customFields := lo.Map(item.Fields, func(f repo.ItemField, _ int) ExportItemFields {
 			extraHeaders[f.Name] = struct{}{}
-
-			customFields[i] = ExportItemFields{
+			return ExportItemFields{
 				Name:  f.Name,
 				Value: f.TextValue,
 			}
-		}
+		})
 
 		s.Rows[i] = ExportCSVRow{
 			// fill struct
 			Location: locString,
-			LabelStr: labelString,
+			TagStr:   tagString,
 
 			ImportRef:   item.ImportRef,
 			AssetID:     item.AssetID,
@@ -228,17 +271,13 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, gid uuid.
 	}
 
 	// Extract and sort additional headers for deterministic output
-	customHeaders := make([]string, 0, len(extraHeaders))
-
-	for k := range extraHeaders {
-		customHeaders = append(customHeaders, k)
-	}
+	customHeaders := lo.Keys(extraHeaders)
 
 	sort.Strings(customHeaders)
 
 	st := reflect.TypeOf(ExportCSVRow{})
 
-	// Write headers
+	// Write headers (use the primary tag when alternatives are provided)
 	for i := 0; i < st.NumField(); i++ {
 		field := st.Field(i)
 		tag := field.Tag.Get("csv")
@@ -246,7 +285,7 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, gid uuid.
 			continue
 		}
 
-		s.headers = append(s.headers, tag)
+		s.headers = append(s.headers, primaryCSVTag(tag))
 	}
 
 	for _, h := range customHeaders {
@@ -285,7 +324,7 @@ func (s *IOSheet) CSV() ([][]string, error) {
 				continue
 			}
 
-			col, ok := s.GetColumn(tag)
+			col, ok := s.findColumnForTag(tag)
 			if !ok {
 				continue
 			}
@@ -311,8 +350,8 @@ func (s *IOSheet) CSV() ([][]string, error) {
 				v = val.Interface().(repo.AssetID).String()
 			case reflect.TypeOf(LocationString{}):
 				v = val.Interface().(LocationString).String()
-			case reflect.TypeOf(LabelString{}):
-				v = val.Interface().(LabelString).String()
+			case reflect.TypeOf(TagString{}):
+				v = val.Interface().(TagString).String()
 			default:
 				log.Debug().Str("type", field.Type.String()).Msg("unknown type")
 			}

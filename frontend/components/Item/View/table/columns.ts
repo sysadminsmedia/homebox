@@ -13,18 +13,30 @@ import { cn } from "~/lib/utils";
  * Create columns with i18n support.
  * Pass `t` from useI18n() when creating the columns in your component.
  */
-export function makeColumns(t: (key: string) => string, refresh?: () => void): ColumnDef<ItemSummary>[] {
+export function makeColumns({
+  t,
+  refresh,
+  disableSort,
+}: {
+  t: (key: string) => string;
+  refresh?: () => void;
+  disableSort?: boolean;
+}): ColumnDef<ItemSummary>[] {
   const sortable = (column: Column<ItemSummary, unknown>, key: string) => {
     const sortState = column.getIsSorted(); // 'asc' | 'desc' | false
     if (!sortState) {
       // show the neutral up/down icon when not sorted
-      return [t(key), h(ArrowUpDown, { class: "ml-2 h-4 w-4 opacity-40" })];
+      return [t(key), h(ArrowUpDown, { class: cn(["ml-2 h-4 w-4 opacity-40", disableSort && "opacity-0"]) })];
     }
     // show a single arrow that points up for asc (rotate-180) and down for desc
     return [
       t(key),
       h(ArrowDown, {
-        class: cn(["ml-2 h-4 w-4 transition-transform opacity-100", sortState === "asc" ? "rotate-180" : ""]),
+        class: cn([
+          "ml-2 h-4 w-4 transition-transform opacity-100",
+          sortState === "asc" ? "rotate-180" : "",
+          disableSort && "opacity-0",
+        ]),
       }),
     ];
   };
@@ -58,7 +70,7 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           Button,
           {
             variant: "ghost",
-            onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+            onClick: () => !disableSort && column.toggleSorting(column.getIsSorted() === "asc"),
           },
           () => sortable(column, "items.asset_id")
         ),
@@ -72,7 +84,7 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           Button,
           {
             variant: "ghost",
-            onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+            onClick: () => !disableSort && column.toggleSorting(column.getIsSorted() === "asc"),
           },
           () => sortable(column, "items.name")
         ),
@@ -86,7 +98,7 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           Button,
           {
             variant: "ghost",
-            onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+            onClick: () => !disableSort && column.toggleSorting(column.getIsSorted() === "asc"),
           },
           () => sortable(column, "items.quantity")
         ),
@@ -100,7 +112,7 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           Button,
           {
             variant: "ghost",
-            onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+            onClick: () => !disableSort && column.toggleSorting(column.getIsSorted() === "asc"),
           },
           () => sortable(column, "items.insured")
         ),
@@ -121,7 +133,7 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           Button,
           {
             variant: "ghost",
-            onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+            onClick: () => !disableSort && column.toggleSorting(column.getIsSorted() === "asc"),
           },
           () => sortable(column, "items.purchase_price")
         ),
@@ -136,14 +148,14 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           Button,
           {
             variant: "ghost",
-            onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+            onClick: () => !disableSort && column.toggleSorting(column.getIsSorted() === "asc"),
           },
           () => sortable(column, "items.location")
         ),
       cell: ({ row }) => {
         const loc = (row.original as ItemSummary).location as { id: string; name: string } | null;
         if (loc) {
-          return h("NuxtLink", { to: `/location/${loc.id}`, class: "hover:underline text-sm" }, () => loc.name);
+          return h("a", { href: `/location/${loc.id}`, class: "hover:underline text-sm" }, loc.name);
         }
         return h("div", { class: "text-sm text-muted-foreground" }, "");
       },
@@ -156,7 +168,7 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           Button,
           {
             variant: "ghost",
-            onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+            onClick: () => !disableSort && column.toggleSorting(column.getIsSorted() === "asc"),
           },
           () => sortable(column, "items.archived")
         ),
@@ -177,7 +189,7 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           Button,
           {
             variant: "ghost",
-            onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+            onClick: () => !disableSort && column.toggleSorting(column.getIsSorted() === "asc"),
           },
           () => sortable(column, "items.created_at")
         ),
@@ -196,7 +208,7 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           Button,
           {
             variant: "ghost",
-            onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
+            onClick: () => !disableSort && column.toggleSorting(column.getIsSorted() === "asc"),
           },
           () => sortable(column, "items.updated_at")
         ),

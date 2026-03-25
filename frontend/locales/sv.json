@@ -1,4 +1,47 @@
 {
+    "collection": {
+        "copy_invite": "Kopiera inbjudningslänk",
+        "create_invite": "Skapa inbjudan",
+        "delete_collection": "Ta bort samling",
+        "delete_confirm": "Är du säker på att du vill ta bort den här samlingen? Det går inte att ångra den här åtgärden.",
+        "deleted_collection": "Samling borttagen.",
+        "expires_at": "Upphör",
+        "invite_token": "Token",
+        "invite_token_hidden": "Inte längre synlig",
+        "invites": "Inbjudningar",
+        "invites_delete_confirm": "Är du säker på att du vill ta bort detta?",
+        "leave_collection": "Lämna samling",
+        "leave_confirm": "Är du säker på att du vill lämna den här samlingen?",
+        "left_collection": "Du har lämnat samlingen.",
+        "manage_collection": "Hantera samling",
+        "members": {
+            "cannot_remove_last": "Du kan inte ta bort den sista medlemmen.",
+            "email": "Epost",
+            "empty": "Ännu inga medlemmar i denna samling.",
+            "member": "Medlem",
+            "name": "Namn",
+            "owner": "Ägare",
+            "remove_confirm": "Vill du verkligen ta bort den här medlemmen?",
+            "removed": "Medlem borttagen",
+            "role": "Roll"
+        },
+        "no_collections": {
+            "create": "Skapa en ny samling",
+            "join": "Anslut till en existerande samling",
+            "message": "Det ser ut som att du inte är medlem i en samling. Skapa en ny samling för dina saker, eller anslut till en du har blivit inbjuden till.",
+            "title": "Inga samlingar hittades"
+        },
+        "no_invites": "Inga inbjudningar",
+        "remaining_uses": "Kvarvarande användningar",
+        "tabs": {
+            "invites": "Inbjudningar",
+            "members": "Medlemmar",
+            "notifiers": "Notishanterare",
+            "settings": "Inställningar",
+            "tools": "Verktyg"
+        },
+        "uses": "Användningar"
+    },
     "components": {
         "app": {
             "create_modal": {
@@ -8,7 +51,7 @@
             },
             "import_dialog": {
                 "change_warning": "Beteendet för importer med befintliga import_refs har ändrats. Om en import_ref finns i CSV-filen, kommer\nobjektet att uppdateras med värdena i CSV-filen.",
-                "description": "Importera en CSV-fil som innehåller dina föremål, etiketter och platser. Se dokumentationen för mer information om förväntat format.",
+                "description": "Importera en CSV-fil som innehåller dina föremål, etiketter och platser. Se dokumentationen för mer information \nom förväntat format.",
                 "title": "Importera CSV-fil",
                 "toast": {
                     "import_failed": "Import misslyckades. Försök igen senare.",
@@ -24,6 +67,54 @@
                 "new_version_available_link": "Klicka här för att visa versionsanteckningarna"
             }
         },
+        "collection": {
+            "create_modal": {
+                "name_label": "Samlingsnamn",
+                "title": "Skapa samling",
+                "toast": {
+                    "already_creating": "Skapar redan en samling",
+                    "create_failed": "Kunde inte skapa samlingen",
+                    "create_success": "Samling skapad",
+                    "please_enter_name": "Var god ange ett samlingsnamn"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Var god ange ett datum och tid för utgång.",
+                    "invalid_expiry_past": "Utgångsdatum måste vara i framtiden.",
+                    "invalid_uses": "Användningar måste vara ett nummer mellan 1 och 100."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Inbjudningskod till samling",
+                "invites_should_look_like": "Inbjudningar kommer se ut såhär:",
+                "join": "Anslut till samling",
+                "no_invite_code_create_one": "Ingen inbjudningskod? Sapa en ny samling istället",
+                "title": "Anslut till samling",
+                "toast": {
+                    "already_joining": "Ansluter redan till en samling",
+                    "join_failed": "Kunde inte ansluta till samlingen",
+                    "join_success": "Ansluten till samling",
+                    "please_enter_valid_join_code": "Var god ange en giltig inbjudningskod till en samling"
+                }
+            },
+            "selector": {
+                "collection_options": "Samlingsinställningar",
+                "create_collection": "Skapa en ny samling",
+                "join_collection": "Anslut till existerande samling",
+                "no_collection_found": "Ingen samling hittades",
+                "search_collections": "Sök samlingar…",
+                "select_collection": "Välj samling",
+                "your_collections": "Dina samlingar"
+            }
+        },
+        "color_selector": {
+            "clear": "Rensa färg",
+            "color": "Färg",
+            "no_color": "Färglös",
+            "no_color_selected": "Ingen färg vald",
+            "randomize": "Slumpad färg"
+        },
         "form": {
             "password": {
                 "toggle_show": "Visa/dölj lösenord"
@@ -31,6 +122,7 @@
         },
         "global": {
             "copy_text": {
+                "continue": "Fortsätt",
                 "documentation": "dokumentation",
                 "failed_to_copy": "Misslyckades med att kopiera text till urklipp",
                 "https_required": "eftersom https krävs",
@@ -66,7 +158,12 @@
                 "download": "Ladda ner etikett",
                 "print": "Skriv ut etikett",
                 "server_print": "Skriv ut på server",
-                "titles": "Etiketter"
+                "titles": "Etiketter",
+                "toast": {
+                    "load_status_failed": "Misslyckades att ladda status",
+                    "print_failed": "Misslyckades att skriva etikett",
+                    "print_success": "Etikett utskriven"
+                }
             },
             "page_qr_code": {
                 "page_url": "Sidans URL",
@@ -77,65 +174,182 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "Ladda ner",
+                "open_new_tab": "Öppna i ny flik"
+            },
             "create_modal": {
+                "clear_template": "Rensa mall",
+                "delete_photo": "Radera foto",
                 "item_description": "Objektbeskrivning",
                 "item_name": "Objektnamn",
                 "item_photo": "Artikelfoto 📷",
-                "title": "Skapa föremål",
-                "upload_photos": "Ladda upp bilder"
+                "item_quantity": "Artikel mängd",
+                "parent_item": "Föräldrar artikel",
+                "product_tooltip_input_barcode": "Fyll automatisk med manuellt inmatad streckkod",
+                "product_tooltip_scan_barcode": "Auto fyll med streckkod från 📷",
+                "rotate_photo": "Rotera foto",
+                "set_as_primary_photo": "Sätt som { isPrimary, select, true {non-} false {} other {}} primärt foto",
+                "title": "Skapa artikel",
+                "toast": {
+                    "already_creating": "Skapar redan en artikel",
+                    "create_failed": "Kunde inte skapa artikel",
+                    "create_success": "Artikel skapad",
+                    "failed_load_parent": "Det gick inte att ladda det överordnade objektet - välj manuellt",
+                    "no_canvas_support": "Din webbläsare stödjer inte canvas",
+                    "please_select_location": "Välj en plats.",
+                    "rotate_failed": "Misslyckades rotera bild: { error }",
+                    "rotate_process_failed": "Misslyckades hantera roterad bild",
+                    "some_photos_failed": "{count, plural, =0 {Inga foton att ladda upp.} =1 {1 foto kunde inte laddas upp.} other {Vissa foton kunde inte laddas upp.}}",
+                    "upload_failed": "Uppladdning av foto misslyckades : { photoName }",
+                    "upload_success": "{count, plural, =0 {Inga foton uppladdade.} =1 {Foto uppladdat framgångsrikt.} other {Alla foton uppladdade framgångsrikt.}}",
+                    "uploading_photos": "{count, plural, =0 {Inga foton att ladda upp} =1 {Laddar upp 1 foto...} other {Laddar upp {count} foton...}}"
+                },
+                "upload_photos": "Ladda upp bilder",
+                "uploaded": "Uppladdade Foton"
+            },
+            "product_import": {
+                "barcode": "Produktens streckkod",
+                "db_source": "DB källa",
+                "error_exception": "Undantag inträffade vid hämtning av artikelstreckkod: ",
+                "error_invalid_barcode": "Ogiltig streckkod",
+                "error_not_found": "Ingen produkt hittad med angiven streckkod.",
+                "import_selected": "Importera valda",
+                "search_item": "Sök produkt",
+                "title": "Importera produkt"
+            },
+            "selector": {
+                "clear": "Rensa val",
+                "no_results": "Inga resultat hittades",
+                "placeholder": "Välj…",
+                "search_placeholder": "Skriv för att söka…",
+                "searching": "Söker…"
             },
             "view": {
+                "change_details": {
+                    "add_tags": "Lägg till taggar",
+                    "failed_to_update_item": "Det gick inte att uppdatera",
+                    "remove_tags": "Ta bort taggar",
+                    "title": "Ändra artikeldetaljer"
+                },
                 "selectable": {
                     "card": "Kort",
                     "items": "Föremål",
                     "no_items": "Inga föremål att visa",
+                    "select_all": "Välj alla",
+                    "select_card": "Välj kort",
+                    "select_row": "Välj rad",
                     "table": "Tabell"
                 },
                 "table": {
+                    "dropdown": {
+                        "actions": "Funktioner",
+                        "change_location": "Ändra plats",
+                        "change_location_success": "Plats ändrad",
+                        "change_tags": "Ändra taggar",
+                        "change_tags_success": "Taggar ändrade",
+                        "create_maintenance_item": "Skapa underhållspost för objekt",
+                        "create_maintenance_selected": "Skapa underhållspost för valda objekt",
+                        "create_maintenance_success": "Underhållspost (er) skapade",
+                        "delete_confirmation": "Är du säker på att du vill ta bort de valda objekten? Denna åtgärd kan inte ångras.",
+                        "delete_item": "Radera objekt",
+                        "delete_selected": "Radera markerade objekt",
+                        "download_csv": "Ladda ner tabell som CSV",
+                        "download_json": "Ladda ner tabell som JSON",
+                        "duplicate_item": "Duplicera objekt",
+                        "duplicate_selected": "Duplicera markerade objekt",
+                        "error_deleting": "Fel vid radering av objekt",
+                        "error_duplicating": "Fel vid duplicering av objekt",
+                        "open_menu": "Öppna meny",
+                        "open_multi_tab_warning": "Av säkerhetsskäl tillåter webbläsare inte att flera flikar öppnas samtidigt som standard, följ dokumentationen för att ändra detta:",
+                        "toggle_expand": "Växla Expandera",
+                        "view_item": "Visa objekt",
+                        "view_items": "Visa objekt"
+                    },
                     "headers": "Rubriker",
                     "page": "Sida",
+                    "quick_actions": "Aktivera snabbåtgärder och val",
                     "rows_per_page": "Rader per sida",
-                    "table_settings": "Bordsinställningar"
+                    "selected_rows": "{selected} av {total} rader valda.",
+                    "table_settings": "Bordsinställningar",
+                    "view_item": "Visa objekt"
                 }
-            }
-        },
-        "label": {
-            "create_modal": {
-                "label_color": "Etikettfärg",
-                "label_description": "Etikettbeskrivning",
-                "label_name": "Etikettnamm",
-                "title": "Skapa etikett",
-                "toast": {
-                    "already_creating": "Skapar redan en etikett",
-                    "create_failed": "Det gick inte att skapa etiketten",
-                    "create_success": "Etikett skapad",
-                    "label_name_too_long": "Etikettnamnet får inte vara längre än 50 tecken"
-                }
-            },
-            "selector": {
-                "select_labels": "Välj etiketter"
             }
         },
         "location": {
             "create_modal": {
                 "location_description": "Platsbeskrivning",
                 "location_name": "Platsnamn",
-                "title": "Skapa plats"
+                "title": "Skapa plats",
+                "toast": {
+                    "already_creating": "Skapar redan en plats",
+                    "create_failed": "Det gick inte att skapa plats",
+                    "create_success": "Plats skapad"
+                }
             },
             "selector": {
+                "clear": "Rensa platsval",
                 "no_location_found": "Ingen plats hittades",
                 "parent_location": "Överordnad Plats",
                 "search_location": "Sök Platser",
                 "select_location": "Välj en plats"
             },
             "tree": {
-                "no_locations": "Inga platser tillgängliga. Lägg till nya platser via\n '<span class=\"link-primary\">'Skapa'</span>'-knappen i navigationsmenyn."
+                "no_locations": "Inga platser tillgängliga. Lägg till nya platser via Skapa-knappen."
             }
         },
         "quick_menu": {
             "no_results": "Inga resultat hittades.",
             "shortcut_hint": "Använd siffertangenterna för att snabbt välja en åtgärd."
+        },
+        "search": {
+            "filter": {
+                "search_placeholder": "Sök…"
+            }
+        },
+        "tag": {
+            "create_modal": {
+                "tag_color": "Taggfärg",
+                "tag_description": "Taggbeskrivning",
+                "tag_name": "Taggnamn",
+                "title": "Skapa tagg",
+                "toast": {
+                    "already_creating": "Skapar redan en tagg",
+                    "create_failed": "Kunde inte skapa tagg",
+                    "create_success": "Tagg skapad",
+                    "tag_name_too_long": "Taggnamn får inte vara längre än 50 tecken"
+                }
+            },
+            "selector": {
+                "select_tags": "Välj taggar"
+            }
+        },
+        "template": {
+            "apply_template": "Använd en mall",
+            "card": {
+                "delete": "Ta bort mall",
+                "duplicate": "Duplicera mall",
+                "edit": "Ändra mall"
+            },
+            "confirm_delete": "Ta bort denna mall?",
+            "create_modal": {
+                "title": "Skapa mall"
+            },
+            "detail": {
+                "default_values": "Standardvärden",
+                "updated": "Uppdaterad"
+            },
+            "edit_modal": {
+                "title": "Ändra mall"
+            },
+            "empty_value": "(tom)",
+            "form": {
+                "custom_fields": "Anpassade fält"
+            }
         }
+    },
+    "errors": {
+        "api_failure": "Backend API-anrop misslyckades: "
     },
     "global": {
         "add": "Lägg till",
@@ -145,8 +359,11 @@
         "confirm": "Godkänn",
         "create": "Skapa",
         "create_and_add": "Skapa och lägg till en till",
+        "create_subitem": "Skapa underobjekt",
         "created": "Skapad",
         "delete": "Ta bort",
+        "delete_confirm": "Är du säker på att du vill radera detta objekt? ",
+        "demo_instance": "Detta är en demoinstans",
         "details": "Detaljer",
         "duplicate": "Duplicera",
         "edit": "Ändra",
@@ -154,36 +371,38 @@
         "follow_dev": "Följ utvecklaren",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Version: { version } Build: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' Version: { version } Bygge: { build } '</a>'"
         },
         "github": "GitHub-projekt",
         "insured": "Försäkrad",
         "items": "Föremål",
         "join_discord": "Gå med i Discord",
-        "labels": "Etiketter",
+        "loading": "Laddar…",
         "locations": "Platser",
         "maintenance": "Underhåll",
         "name": "Namn",
         "navigate": "Navigera",
         "password": "Lösenord",
+        "preview": "Förhandsvisning",
         "quantity": "Kvantitet",
         "read_docs": "Läs dokumentationen",
+        "return_home": "Till startsidan",
         "save": "Spara",
         "search": "Sök",
         "sign_out": "Logga ut",
         "submit": "Skicka",
+        "unknown": "Okänd",
         "update": "Uppdatera",
+        "updating": "Uppdaterar",
         "value": "Värde",
         "version": "Version: { version }",
         "welcome": "Välkommen, { username }"
     },
     "home": {
-        "labels": "Etiketter",
         "quick_statistics": "Snabb statistik",
         "recently_added": "Nyligen tillagda",
         "storage_locations": "Förvaringsplatser",
         "total_items": "Totalt antal objekt",
-        "total_labels": "Totalt antal etiketter",
         "total_locations": "Totalt antal platser",
         "total_value": "Totalt Värde"
     },
@@ -197,27 +416,62 @@
         "set_email": "Vad är din e-post?",
         "set_name": "Vad heter du?",
         "set_password": "Ställ in ditt lösenord",
-        "tagline": "Spåra, organisera och hantera dina saker."
+        "tagline": "Spåra, organisera och hantera dina saker.",
+        "title": "Organisera och tagga dina saker",
+        "toast": {
+            "invalid_email": "Ogiltig e-postadress",
+            "invalid_email_password": "Ogiltig e-post eller lösenord",
+            "login_success": "Du har loggat in",
+            "problem_registering": "Problem med att registrera användare",
+            "user_registered": "Användare registrerad"
+        }
     },
     "items": {
         "add": "Lägg till",
         "advanced": "Avancerat",
         "archived": "Arkiverad",
         "asset_id": "Tillgångs-ID",
+        "associated_with_multiple": "Detta tillgångs-ID är associerat med flera objekt",
         "attachment": "Bilaga",
         "attachments": "Bilagor",
         "changes_persisted_immediately": "Ändringar av bilagor sparas omedelbart",
         "created_at": "Skapat",
         "custom_fields": "Egna fält",
+        "delete_attachment_confirm": "Är du säker på att du vill radera bilagan?",
+        "delete_item_confirm": "Är du säker på att du vill radera detta objekt?",
         "description": "Beskrivning",
         "details": "Detaljer",
         "drag_and_drop": "Dra och släpp här eller klicka för att välja filer",
+        "duplicate": {
+            "copy_attachments": "Kopiera bilagor",
+            "copy_custom_fields": "Kopiera Anpassade fält",
+            "copy_maintenance": "Kopiera underhåll",
+            "custom_prefix": "Kopiera prefix",
+            "enable_custom_prefix": "Aktivera anpassat prefix",
+            "override_instructions": "Håll ned skift när du klickar på dupliceringsknappen för att åsidosätta dessa inställningar.",
+            "prefix": "Kopia av ",
+            "prefix_instructions": "Detta prefix kommer att läggas till i början av det duplicerade objektets namn. Inkludera ett mellanslag i slutet av prefixet för att skapa mellanrum mellan prefix och objektets namn.",
+            "temporary_title": "Tillfälliga inställningar",
+            "title": "Duplicera inställningar"
+        },
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "Titel på bilaga",
+                "attachment_type": "Typ av bilaga",
+                "primary_photo": "Primärt foto",
+                "primary_photo_sub": "Detta alternativ är endast tillgängligt för foton. Endast ett foto kan vara primärt. Om du väljer detta alternativ kommer det nuvarande fotot att väljas bort.",
+                "select_type": "Välj en typ",
+                "title": "Redigera bilaga"
+            },
+            "view_image": "Visa bild"
+        },
         "edit_details": "Ändra detaljer",
         "field_selector": "Fält alternativ",
         "field_value": "Fält värde",
         "first": "Första",
         "include_archive": "Inkludera arkiverade föremål",
         "insured": "Försäkrad",
+        "invalid_asset_id": "Ogiltigt resurs-ID",
         "last": "Sista",
         "lifetime_warranty": "Livstidsgaranti",
         "location": "Plats",
@@ -226,8 +480,8 @@
         "manufacturer": "Tillverkare",
         "model_number": "Modellnummer",
         "name": "Namn",
-        "negate_labels": "Negera valda etiketter",
         "next_page": "Nästa sida",
+        "no_attachments": "Inga bilagor hittades",
         "no_results": "Inga föremål hittades",
         "notes": "Anteckningar",
         "only_with_photo": "Endast artiklar med foto",
@@ -249,27 +503,52 @@
         "receipts": "Kvitton",
         "reset_search": "Återställ sökning",
         "results": "{ total } Resultat",
+        "select_field": "Välj ett fält",
         "serial_number": "Serienummer",
         "show_advanced_view_options": "Visa avancerade vyalternativ",
         "sold_at": "Såld den",
         "sold_details": "Försäljningsdetaljer",
         "sold_price": "Försäljningspris",
         "sold_to": "Såld till",
-        "tip_1": "Platser och etiketter filter använder 'OR' funktionen. Om fler än en är valda, endast en kommer\nkrävas för en träff.",
+        "sync_child_locations": "Synkronisera underordnade objekts platser",
+        "tip_1": "Plats- och taggfilter använder 'OR' funktionen. Om fler än en är valda, endast en kommer\nkrävas för en träff.",
         "tip_2": "Sökningar med prefixet '#'' kommer att fråga efter ett tillgångs-ID (exempel '#000-001')",
         "tip_3": "Fältfilter använder 'OR' funktion. Om fler än en är valda endast en kommer att bli krävande för en\nträff.",
         "tips": "Tips",
         "tips_sub": "Sök Tips",
+        "toast": {
+            "asset_not_found": "Tillgång hittades inte",
+            "attachment_deleted": "Bilaga borttagen",
+            "attachment_updated": "Bilaga uppdaterad",
+            "attachment_uploaded": "Bilaga uppladdad",
+            "child_items_location_no_longer_synced": "Platser för underordnade objekt synkroniseras inte längre med det här objektet.",
+            "child_items_location_synced": "Platser för underordnade artiklar har synkroniserats med detta objekt",
+            "child_location_desync": "Att ändra plats kommer koppla loss den från överordnad plats",
+            "error_loading_parent_data": "Något gick fel när överordnade data skulle laddas",
+            "failed_adjust_quantity": "Det gick inte att justera antalet",
+            "failed_delete_attachment": "Det gick inte att ta bort bilagan",
+            "failed_delete_item": "Det gick inte att ta bort objekt",
+            "failed_duplicate_item": "Det gick inte att duplicera objektet",
+            "failed_load_asset": "Det gick inte att ladda tillgången",
+            "failed_load_item": "Det gick inte att ladda objektet",
+            "failed_load_items": "Det gick inte att ladda objekt",
+            "failed_save": "Det gick inte att spara objekt",
+            "failed_save_no_location": "Det gick inte att spara objektet: ingen plats vald",
+            "failed_search_items": "Det gick inte att söka objekt",
+            "failed_update_attachment": "Det gick inte att uppdatera bilagan",
+            "failed_upload_attachment": "Det gick inte att ladda upp bilagan",
+            "item_deleted": "Objekt raderat",
+            "item_saved": "Objekt spatat",
+            "quantity_cannot_negative": "Antal kan inte vara negativt",
+            "sync_child_location": "Valt överordnat objekt synkroniserar platsen med sitt eget. Platsen har uppdaterats."
+        },
         "updated_at": "Uppdaterad",
         "warranty": "Garanti",
         "warranty_details": "Garantidetaljer",
         "warranty_expires": "Garantin upphör"
     },
-    "labels": {
-        "no_results": "Inga etiketter hittades",
-        "update_label": "Uppdatera etikett"
-    },
     "languages": {
+        "bs-BA": "Bosniska (Bosnien och Hercegovina)",
         "ca": "Katalanska",
         "cs-CZ": "Tjeckiska",
         "de": "Tyska",
@@ -282,6 +561,8 @@
         "it": "Italienska",
         "ja-JP": "Japanska",
         "ko-KR": "Koreanska",
+        "lb-LU": "Luxemburgiska (Luxemburg)",
+        "lt-LT": "Litauiska (Litauen)",
         "nb-NO": "Norska bokmål",
         "nl": "Nederländska",
         "pl": "Polska",
@@ -294,6 +575,7 @@
         "th-TH": "Thai",
         "tr": "Turkiska",
         "uk-UA": "Ukrainska",
+        "vi-VN": "Vietnamesiska",
         "zh-CN": "Kinesiska (förenklad)",
         "zh-HK": "kinesiska (Hongkong)",
         "zh-MO": "Kinesiska (Macao)",
@@ -307,7 +589,15 @@
         "child_locations": "Underordnade platser",
         "collapse_tree": "Dra ihop träd",
         "expand_tree": "Expandera Träd",
+        "location_items_delete_confirm": "Är du säker på att du vill ta bort den här platsen och alla dess objekt? Denna åtgärd kan inte ångras.",
         "no_results": "Inga platser hittades",
+        "toast": {
+            "failed_delete_location": "Det gick inte att ta bort platsen",
+            "failed_load_location": "Det gick inte att ladda platsen",
+            "failed_update_location": "Det gick inte att uppdatera platsen",
+            "location_deleted": "Platsen borttagen",
+            "location_updated": "Platsen uppdaterad"
+        },
         "update_location": "Uppdatera plats"
     },
     "maintenance": {
@@ -347,15 +637,13 @@
     },
     "menu": {
         "create_item": "Artikel / Tillgång",
-        "create_label": "Etikett",
         "create_location": "Plats",
         "home": "Hem",
         "locations": "Platser",
         "maintenance": "Underhåll",
         "profile": "Profil",
         "scanner": "Skanner",
-        "search": "Sök",
-        "tools": "Verktyg"
+        "search": "Sök"
     },
     "profile": {
         "active": "Aktiv",
@@ -363,32 +651,85 @@
         "currency_format": "Valuta format",
         "current_password": "Nuvarande lösenord",
         "delete_account": "Radera konto",
+        "delete_account_confirm": "Är du säker på att du vill radera ditt konto? Om du är den sista medlemmen i din grupp kommer all dina data att raderas. Detta kan inte ångras.",
         "delete_account_sub": "Ta bort ditt konto och alla tillhörande data. Detta kan inte ångras.",
+        "delete_notifier_confirm": "Är du säker på att du vill ta bort denna notifiering?",
+        "display_legacy_header": "{ currentValue, select, true {Inaktivera äldre sidhuvud} false {Aktivera äldre sidhuvud} other {Inte träff}}",
         "enabled": "Aktiverad",
         "example": "Exempel",
-        "gen_invite": "Skapa inbjudningslänk",
         "group_settings": "Grupp inställningar",
         "group_settings_sub": "Inställningar för delad grupp. Du kan behöva uppdatera din webbläsare för att vissa inställningar ska gälla.",
         "inactive": "Inaktiv",
         "language": "Språk",
+        "legacy_image_fit": "{ currentValue, select, true {Inaktivera äldre passform: Anpassa bild med staplar} false {Aktivera äldre passform: Fyll bild med beskärning} other {Inte träff}}",
         "new_password": "Nytt lösenord",
         "no_notifiers": "Inga notifierare konfigurerade",
+        "no_override": "Ingen åsidosättning",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Anmälare",
         "notifiers": "Notiser",
         "notifiers_sub": "Få aviseringar om kommande underhållspåminnelser",
+        "override_locale": "Åsidosätt datum och valutaspråk",
         "test": "Test",
         "theme_settings": "Temainställningar",
         "theme_settings_sub": "Temainställningar sparas i din webbläsares lokala lagring. Du kan ändra tema när du vill. Om du\nhar problem att ställa in tema, pröva att ladda om din webbläsare.",
+        "toast": {
+            "account_deleted": "Ditt konto har raderats.",
+            "failed_change_password": "Misslyckades ändra lösenord.",
+            "failed_create_notifier": "Det gick inte att skapa avisering.",
+            "failed_delete_account": "Det gick inte att ta bort ditt konto.",
+            "failed_delete_notifier": "Det gick inte att ta bort notifiering.",
+            "failed_get_currencies": "Kunde inte hämta valutor",
+            "failed_test_notifier": "Det gick inte att testa notifieringen.",
+            "failed_update_group": "Misslyckades med att uppdatera grupp",
+            "failed_update_notifier": "Det gick inte att uppdatera notifieringen.",
+            "group_updated": "Grupp uppdaterad",
+            "notifier_test_success": "Aviseringstestet lyckades.",
+            "password_changed": "Lösenordsbytet genomfört."
+        },
         "update_group": "Uppdatera grupp",
         "update_language": "Uppdatera språk",
         "url": "URL",
         "user_profile": "Användarprofil",
         "user_profile_sub": "Bjud in användare och hantera ditt konto."
     },
+    "reports": {
+        "label_generator": {
+            "asset_end": "Tillgångens slutdatum",
+            "asset_start": "Tillgångens start",
+            "base_url": "Bas-URL",
+            "bordered_labels": "Inramade etiketter",
+            "generate_page": "Generera sida",
+            "input_placeholder": "Skriv här",
+            "instruction_1": "HomeBox Label Generator är ett verktyg som hjälper dig att skriva ut etiketter för ditt HomeBox-inventering. Dessa är skapade\nför att skrivas ut i förväg så att de är redo att användas",
+            "instruction_2": "Dessa etiketter fungerar då så att en QR-kod med en URL och ett objekt-ID skrivs ut på etiketten. Om du har stängt av\nObjekt-ID i dina HomeBox.inställningar kan du fortfarande använda verktyget men då kommer Objekt-ID:t inte att hänvisa till något objekt",
+            "instruction_3": "Den här funktionen befinner sig i ett tidigt utvecklingsstadium och kan komma att ändras i framtida versioner. Om du har feedback, vänligen\n ange den i<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub-diskussionen'</a>\"",
+            "label_height": "Etiketthöjd",
+            "label_width": "Etikettbredd",
+            "measure_type": "Måttyp",
+            "page_bottom_padding": "Utfyllnad i sidans botten",
+            "page_height": "Sidhöjd",
+            "page_left_padding": "Sidans vänstra utfyllnad",
+            "page_right_padding": "Sidans högra utfyllnad",
+            "page_top_padding": "Sidans övre utfyllnad",
+            "page_width": "Sidbredd",
+            "qr_code_example": "QR-kod exempel",
+            "tip_1": "Standardvärdena här är inställda för\n'<a href=\"https://www.avery.com/templates/5260\">'Avery 5260-etikettark'</a>'. Om du använder andra ark\nbehöver du ändra inställningarna för att matcha ditt ark.",
+            "tip_2": "Om du anpassar ditt ark är dimensionerna i tum. När vi skapade 5260-arket upptäckte vi\natt dimensionerna i deras dokument inte stämde överens med vad som krävdes för att skriva ut innanför boxen.\n'<b>'Var beredd på att försöka flera gånger.'</b>'",
+            "tip_3": "När du skriver ut, se till att:\n '<ol><li>'Ställa in marginalerna till 0 eller Ingen'</li><li>'Ställ in skalningen på 100%'</li><li>'Inaktivera dubbelsidig utskrift'</li><li>'Skriv ut en testsida innan du skriver ut flera sidor'</li></ol>'",
+            "tips": "Tips",
+            "title": "Etikett Generator",
+            "toast": {
+                "page_too_small_card": "Sidstorleken är för liten för kortstorleken"
+            }
+        }
+    },
     "scanner": {
+        "barcode_detected_message": "produktstreckkod upptäckt",
+        "barcode_fetch_data": "Hämta produktdata",
         "error": "Ett fel uppstod vid skanning",
         "invalid_url": "Ogiltig streckkods-URL",
         "no_sources": "Inga videokällor tillgängliga",
+        "permission_denied": "Kameratillstånd nekas, vänligen tillåt åtkomst till kameran i din webbläsares inställningar",
         "select_video_source": "Välj en videokälla",
         "title": "Skanner",
         "unsupported": "Media Stream API stöds inte utan HTTPS"
@@ -396,17 +737,24 @@
     "tools": {
         "actions": "Lageråtgärder",
         "actions_set": {
+            "create_missing_thumbnails": "Skapa saknade miniatyrer",
+            "create_missing_thumbnails_button": "Skapa miniatyrer",
+            "create_missing_thumbnails_confirm": "Är du säker på att du vill skapa saknade miniatyrer? Detta kan ta en stund och kan inte pausas.",
+            "create_missing_thumbnails_sub": "Skapar miniatyrer för alla bilagor som stöds av den aktuella konfigurationen. Detta är användbart för bilagor som laddades upp före version v0.20.0 av Homebox. Detta kommer ej skriva över existerande miniatyrer utan bara skapa nya för bilagor som saknar miniatyr. Notera att bilagor skapas i bakgrunden och att det kan ta en stund att göra klart.",
             "ensure_ids": "Säkerställ tillgångs-ID",
             "ensure_ids_button": "Säkerställ tillgångs-ID",
+            "ensure_ids_confirm": "Är du säker på att du vill se till att alla tillgångar har ett ID? Detta kan ta en stund och kan inte ångras.",
             "ensure_ids_sub": "Säkerställer att alla saker i din inventering har giltiga asset_id fält. Detta är gjort genom att hitta högsta nuvarande asset_id fält i databasen och tilldela nästa värde till varje sak som inte har ett asset_id värde. Detta görs i ordning av created_at fältet.",
             "ensure_import_refs": "Se till att importera referenser",
             "ensure_import_refs_button": "Se till att importera referenser",
             "ensure_import_refs_sub": "Säkerställer att alla saker i din inventering har ett korrekt import_ref fält. Detta görs genom att slumpmässigt skapa en 8 tecken sträng för varje sak som ej har import_ref fältet tilldelat.",
             "set_primary_photo": "Ställ in primärt foto",
             "set_primary_photo_button": "Ställ in primärt foto",
+            "set_primary_photo_confirm": "Är du säker på att du vill ställa in primära foton? Detta kan ta en stund och kan inte ångras.",
             "set_primary_photo_sub": "I version v0.10.0 av Homebox lades det primära bildfältet till i bilagor av typen foto. Denna åtgärd kommer att sätta primära bild fältet till den första bilden i bifigade filer listan i databasen, om inte det redan är åtgärdat. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Se GitHub PR #576'</a>'",
             "zero_datetimes": "Noll objekt datumtider",
             "zero_datetimes_button": "Noll objekt datumtider",
+            "zero_datetimes_confirm": "Är du säker på att du vill återställa alla datum- och tidsvärden? Detta kan ta en stund och kan inte ångras.",
             "zero_datetimes_sub": "Återstället tidsvärdet för alla datumtidsfält i ditt lager till början av datumet. Detta är för att fixa en bugg som upptäcktes tidigare i utvecklingen på sidan som orsakade tidsvärden att bli sparade med tid, vilket orsakade problem med datum fält att visa korrekta värden. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Se Github Issue #236 för mer information.'</a>'"
         },
         "actions_sub": "Utför åtgärder på dina objekt i bulk. Dessa är oåterkalleliga. '<b>'Var försiktig.'</b>'",
@@ -417,6 +765,7 @@
             "export_sub": "Exporterar standard CSV format för Homebox. Detta kommer exportera alla saker i ditt lager.",
             "import": "Importera lager",
             "import_button": "Importera Lager",
+            "import_ref_confirm": "Är du säker på att du vill se till att alla tillgångar har en import_ref? Detta kan ta en stund och kan inte ångras.",
             "import_sub": "Importerar standard CSV format för Homebox. Utan en '<code>'HB.import_ref'</code>' kolumn, detta kommer '<b>'inte'</b>' att skriva över existerande saker i ditt lager, endast lägga till nya. Rader med en '<code>'HB.import_ref'</code>' kolumn blir sammanfogade i existerande saker med samma import_ref, om det existerar."
         },
         "import_export_sub": "Importera och exportera ditt lager till och från en CSV-fil. Detta är användbart för att migrera din inventering till en ny instans av Homebox.",
@@ -424,11 +773,19 @@
         "reports_set": {
             "asset_labels": "Tillgångs-ID-etiketter",
             "asset_labels_button": "Etikett Generator",
-            "asset_labels_sub": "Genererar en utskrivbar PDF med etiketter för en rad tillgångs-ID. Dessa är inte specifik till ditt lager så du kan skriva ut dessa i förväg och lägga till dom till ditt lager när du får dom.",
+            "asset_labels_sub": "Skapar en utskrivbar PDF med etiketter för en rad tillgångs-ID. Dessa är inte specifikt bundna till ditt lager, varför du kan skriva ut etiketterna i förväg och använda dem i ditt lager i ett senare skede.",
             "bill_of_materials": "Materialförteckning",
             "bill_of_materials_button": "Skapa materialförteckning",
             "bill_of_materials_sub": "Genererar en CSV-fil (kommaseparerade värden) som kan importeras till ett kalkylprogram. Detta är en summering av ditt lager med grund saker och pris information."
         },
-        "reports_sub": "Generera olika rapporter för ditt lager."
+        "reports_sub": "Generera olika rapporter för ditt lager.",
+        "toast": {
+            "asset_success": "{ results } objekt har uppdaterats.",
+            "failed_create_missing_thumbnails": "Det gick inte att skapa saknade miniatyrer.",
+            "failed_ensure_ids": "Det gick inte att säkerställa tillgångs-ID.",
+            "failed_ensure_import_refs": "Det gick inte att säkerställa importreferenser.",
+            "failed_set_primary_photos": "Det gick inte att ställa in primära foton.",
+            "failed_zero_datetimes": "Det gick inte att återställa datum- och tidsvärden."
+        }
     }
 }

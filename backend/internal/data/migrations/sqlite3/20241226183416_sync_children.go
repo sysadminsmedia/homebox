@@ -14,13 +14,12 @@ func init() {
 
 func Up20241226183416(ctx context.Context, tx *sql.Tx) error {
 	// Check if the 'sync_child_items_locations' column exists in the 'items' table
-	columnName := "sync_child_items_locations"
 	query := `
 		SELECT name 
 		FROM pragma_table_info('items') 
 		WHERE name = 'sync_child_items_locations';
 	`
-	err := tx.QueryRowContext(ctx, query).Scan(&columnName)
+	err := tx.QueryRowContext(ctx, query).Scan(new("sync_child_items_locations"))
 	if err != nil {
 		// Column does not exist, proceed with migration
 		_, err = tx.ExecContext(ctx, `

@@ -37,24 +37,31 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     permissions:
-      contents: read     # Allows access to repository contents (read-only)
-      packages: write    # Allows pushing to GHCR
-      id-token: write    # Allows identity token write access for authentication
-      attestations: write  # Needed for signing and attestation (if required)
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
 
     strategy:
       fail-fast: false
       matrix:
-        platform:
-          - linux/amd64
-          - linux/arm64
-          - linux/arm/v7
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-latest
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
 
     steps:
+      - name: Enable Debug Logs
+        run: echo "##[debug]Enabling debug logging"
+        env:
+          ACTIONS_RUNNER_DEBUG: true
+          ACTIONS_STEP_DEBUG: true
+
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
       - name: Prepare
         run: |
@@ -63,60 +70,77 @@ jobs:
           branch=${{ github.event.pull_request.number || github.ref_name }}
           echo "BRANCH=${branch//\//-}" >> $GITHUB_ENV
           echo "DOCKERNAMES=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}" >> $GITHUB_ENV
-          if [[ "${{ github.event_name }}" != "schedule" ]] || [[ "${{ github.ref }}" != refs/tags/* ]]; then
+          if [[ "${{ github.event_name }}" != "schedule" ]] && [[ "${{ github.ref }}" != refs/tags/* ]]; then
             echo "DOCKERNAMES=${{ env.GHCR_REPO }}" >> $GITHUB_ENV
           fi
               
 
       - name: Docker meta
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@c1e51972afc2121e065aed6d45c65596fe445f3f
         with:
           images: |
             name=${{ env.DOCKERHUB_REPO }},enable=${{ github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/') }}
             name=${{ env.GHCR_REPO }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=schedule,pattern=nightly
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1
         if: (github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/'))
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Login to GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392
         with:
-          image: ghcr.io/amitie10g/binfmt:latest
+          image: ghcr.io/sysadminsmedia/binfmt:latest
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435
         with:
           driver-opts: |
-            image=ghcr.io/amitie10g/buildkit:master
+            image=ghcr.io/sysadminsmedia/buildkit:master
 
       - name: Build and push by digest
         id: build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83
         with:
+          context: . # Explicitly specify the build context
+          file: ./Dockerfile # Explicitly specify the Dockerfile
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,"name=${{ env.DOCKERNAMES }}",push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }}
           cache-from: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }}
-          cache-to: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR}}-${{ env.BRANCH }},mode=max,ignore-error=true
+          cache-to: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }},mode=max,ignore-error=true
           build-args: |
             VERSION=${{ github.ref_name }}
-            COMMIT=${{ github.sha	}}
-          provenance: true
+            COMMIT=${{ github.sha }}
+          provenance: mode=max
           sbom: true
           annotations: ${{ steps.meta.outputs.annotations }}
 
+      - name: Attest platform-specific images
+        uses: actions/attest-build-provenance@00014ed6ed5efc5b1ab7f7f34a39eb55d41aa4f8
+        if: github.event_name != 'pull_request'
+        with:
+          subject-name: ${{ env.GHCR_REPO }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true
+                              
       - name: Export digest
         run: |
           mkdir -p /tmp/digests
@@ -124,7 +148,7 @@ jobs:
           touch "/tmp/digests/${digest#sha256:}"
 
       - name: Upload digest
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: digests-${{ env.PLATFORM_PAIR }}
           path: /tmp/digests/*
@@ -135,44 +159,44 @@ jobs:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
-      contents: read     # Allows access to repository contents (read-only)
-      packages: write    # Allows pushing to GHCR
-      id-token: write    # Allows identity token write access for authentication
-      attestations: write  # Needed for signing and attestation (if required)
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
     needs:
       - build
 
     steps:
       - name: Download digests
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           path: /tmp/digests
           pattern: digests-*
           merge-multiple: true
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1
         if: (github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/'))
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Login to GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435
         with:
           driver-opts: |
-            image=ghcr.io/amitie10g/buildkit:master
+            image=ghcr.io/sysadminsmedia/buildkit:master
 
       - name: Docker meta
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@c1e51972afc2121e065aed6d45c65596fe445f3f
         with:
           images: |
             name=${{ env.DOCKERHUB_REPO }},enable=${{ github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/') }}
@@ -189,13 +213,45 @@ jobs:
         id: push-ghcr
         working-directory: /tmp/digests
         run: |
+          set -euo pipefail
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.GHCR_REPO }}@sha256:%s ' *)
+            $(printf '${{ env.GHCR_REPO }}@sha256:%s ' *) 2>&1 | tee /tmp/push-ghcr.out
+          digest=$(grep -oE 'sha256:[a-f0-9]{64}' /tmp/push-ghcr.out | head -n1 || true)
+          if [ -z "$digest" ]; then
+            echo "No digest found in imagetools output:"
+            cat /tmp/push-ghcr.out
+            exit 1
+          fi
+          echo "digest=$digest" >> $GITHUB_OUTPUT
+
+      - name: Attest GHCR images
+        uses: actions/attest-build-provenance@00014ed6ed5efc5b1ab7f7f34a39eb55d41aa4f8
+        if: github.event_name != 'pull_request'
+        with:
+          subject-name: ${{ env.GHCR_REPO }}
+          subject-digest: ${{ steps.push-ghcr.outputs.digest }}
+          push-to-registry: true
 
       - name: Create manifest list and push Dockerhub
         id: push-dockerhub
         working-directory: /tmp/digests
         if: (github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/'))
         run: |
+          set -euo pipefail
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.DOCKERHUB_REPO }}@sha256:%s ' *)
+            $(printf '${{ env.DOCKERHUB_REPO }}@sha256:%s ' *) 2>&1 | tee /tmp/push-dockerhub.out
+          digest=$(grep -oE 'sha256:[a-f0-9]{64}' /tmp/push-dockerhub.out | head -n1 || true)
+          if [ -z "$digest" ]; then
+            echo "No digest found in imagetools output:"
+            cat /tmp/push-dockerhub.out
+            exit 1
+          fi
+          echo "digest=$digest" >> $GITHUB_OUTPUT
+
+      - name: Attest Dockerhub images
+        uses: actions/attest-build-provenance@00014ed6ed5efc5b1ab7f7f34a39eb55d41aa4f8
+        if: (github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/'))
+        with:
+          subject-name: docker.io/${{ env.DOCKERHUB_REPO }}
+          subject-digest: ${{ steps.push-dockerhub.outputs.digest }}
+          push-to-registry: true

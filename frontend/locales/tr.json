@@ -94,19 +94,22 @@
                 "open_new_tab": "Yeni sekmede aç"
             },
             "create_modal": {
+                "clear_template": "Şablonu Temizle",
                 "delete_photo": "Fotoğrafı sil",
                 "item_description": "Ürün Açıklaması",
                 "item_name": "Ürün Adı",
                 "item_photo": "Öğe Fotoğrafı 📷",
                 "item_quantity": "Öğe Miktarı",
                 "parent_item": "Ana Öğe",
+                "product_tooltip_input_barcode": "Elle girilen barkod ile otomatik doldur",
+                "product_tooltip_scan_barcode": "Fotoğrafdaki barkod ile doldur",
                 "rotate_photo": "Fotoğrafı döndür",
                 "set_as_primary_photo": "{isPrimary, select, true {non} false {} other {}}ana fotoğraf olarak ayarla",
                 "title": "Eşya Oluştur",
                 "toast": {
-                    "already_creating": "Zaten bir öğe oluşturuluyor",
-                    "create_failed": "Öğe oluşturulamadı",
-                    "create_success": "Öğe yaratıldı",
+                    "already_creating": "Zaten bir ürün oluşturuluyor",
+                    "create_failed": "Üürn oluşturulamadı",
+                    "create_success": "Ürün yaratıldı",
                     "failed_load_parent": "Ana öğe yüklenemedi - lütfen elle seçin",
                     "no_canvas_support": "Tarayıcınız canvas işlemlerini desteklemiyor",
                     "please_select_location": "Lütfen bir konum seçin.",
@@ -123,46 +126,66 @@
             "product_import": {
                 "barcode": "Ürün barkodu",
                 "db_source": "Veritabanı kaynağı",
+                "error_exception": "Barkoddaki ürün bulunurken bir hata meydana geldi: ",
                 "error_invalid_barcode": "Geçersiz barkod girildi",
                 "error_not_found": "Girilen barkoda ait ürün bulunamadı.",
                 "search_item": "Ürün ara",
                 "title": "Ürünü içe aktar"
             },
             "selector": {
+                "clear": "Öğe Seçimini Temizle",
                 "no_results": "Sonuç Bulunamadı",
                 "placeholder": "Seç…",
-                "search_placeholder": "Aramak için yazın…"
+                "search_placeholder": "Aramak için yazın…",
+                "searching": "Aranıyor…"
             },
             "view": {
+                "change_details": {
+                    "add_tags": "Etiketler Ekle",
+                    "failed_to_update_item": "Ürün güncellemesi başarısız oldu",
+                    "remove_tags": "Etiketleri Kaldır",
+                    "title": "Ürün detaylarını değiştir"
+                },
                 "selectable": {
                     "card": "Kart",
                     "items": "Öğeler",
                     "no_items": "Görüntülenecek Öge Yok",
+                    "select_all": "Hepsini Seç",
+                    "select_card": "Kart Seç",
+                    "select_row": "Satır Seç",
                     "table": "Tablo"
                 },
                 "table": {
+                    "dropdown": {
+                        "actions": "Eylemler",
+                        "change_location": "Bölge Değiştir",
+                        "change_location_success": "Bölge Değişti",
+                        "create_maintenance_item": "Ürün için Bakım Girişi Oluştur",
+                        "create_maintenance_selected": "Seçili Ürünler için Bakım Girişi Oluştur",
+                        "create_maintenance_success": "Bakım Girişi Oluşturuldu",
+                        "delete_confirmation": "Seçili ürünleri silmek istediğine emin misin? Bu işlem geri alınamaz.",
+                        "delete_item": "Ürünü Sil",
+                        "delete_selected": "Seçili Ürünleri Sil",
+                        "download_csv": "Tabloyu CSV Olarak İndir",
+                        "download_json": "Tabloyu JSON Olarak İndir",
+                        "duplicate_item": "Ürünü Çoğalt",
+                        "duplicate_selected": "Seçilen Ürünleri Çoğalt",
+                        "error_deleting": "Ürün Silinirken Hata Oldu",
+                        "error_duplicating": "Ürün Çoğaltılırken Hata Oldu",
+                        "open_menu": "Menüyü aç",
+                        "open_multi_tab_warning": "Güvenlik sebepleri nedeniyle bir browserda birden fazla sekme açılması yasak. Bunu değiştirmek için dokümantasyona bakın:",
+                        "toggle_expand": "Genişletmeyi Aç/Kapat",
+                        "view_item": "Ürünü göster",
+                        "view_items": "Ürünleri göster"
+                    },
                     "headers": "Başlıklar",
                     "page": "Sayfa",
+                    "quick_actions": "Hızlı İşlemleri ve Seçimi Etkinleştir",
                     "rows_per_page": "Sayfa başına satır sayısı",
-                    "table_settings": "Tablo Ayarları"
+                    "selected_rows": "{total} satırda {selected} tanesi seçildi.",
+                    "table_settings": "Tablo Ayarları",
+                    "view_item": "Ürünü Göster"
                 }
-            }
-        },
-        "label": {
-            "create_modal": {
-                "label_color": "Etiket Rengi",
-                "label_description": "Etiket Açıklaması",
-                "label_name": "Etiket Adı",
-                "title": "Etiket oluştur",
-                "toast": {
-                    "already_creating": "Zaten bir etiket oluşturuluyor",
-                    "create_failed": "Etiket oluşturulamadı",
-                    "create_success": "Etiket oluşturuldu",
-                    "label_name_too_long": "Etiket adı 50 karakterden uzun olmamalıdır"
-                }
-            },
-            "selector": {
-                "select_labels": "Etiketleri Seçin"
             }
         },
         "location": {
@@ -220,13 +243,13 @@
         "insured": "Sigortalı",
         "items": "Öğeler",
         "join_discord": "Discord'a Katılın",
-        "labels": "Etiketler",
         "loading": "Yükleniyor…",
         "locations": "Konumlar",
         "maintenance": "Bakım",
         "name": "İsim",
         "navigate": "Gezin",
         "password": "Şifre",
+        "preview": "Önizleme",
         "quantity": "Miktar",
         "read_docs": "Dokümanları okuyun",
         "return_home": "Anasayfaya Dön",
@@ -242,12 +265,10 @@
         "welcome": "Hoşgeldin, { username }"
     },
     "home": {
-        "labels": "Etiket",
         "quick_statistics": "Hızlı İstatistikler",
         "recently_added": "Yakında Eklendi",
         "storage_locations": "Saklama Konumları",
         "total_items": "Toplam Ürün",
-        "total_labels": "Toplam Etiket",
         "total_locations": "Toplam Konum",
         "total_value": "Toplam Değer"
     },
@@ -287,6 +308,18 @@
         "description": "Açıklama",
         "details": "Detaylar",
         "drag_and_drop": "Dosyaları buraya sürükleyip bırakın veya dosyaları seçmek için tıklayın",
+        "duplicate": {
+            "copy_attachments": "Eklentileri Kopyala",
+            "copy_custom_fields": "Özel Alanları Kopyala",
+            "copy_maintenance": "Kopyalama Bakımı",
+            "custom_prefix": "Öneki Kopyala",
+            "enable_custom_prefix": "Öneki etkinleştir",
+            "override_instructions": "Bu ayarları görmezden gelmek için kopyasını oluştur düğmesine basarken Shifte basılı tutun.",
+            "prefix": "Kopyası ",
+            "prefix_instructions": "Bu ön ek kopyalanan kalemin ismine eklenecek. Ön ekin sonuna boşluk ekleyerek ön ek ile kalem ismi arasına bir boşluk ekleyebilirsin.",
+            "temporary_title": "Geçici Ayarlar",
+            "title": "Ayarların Kopyasını Oluştur"
+        },
         "edit": {
             "edit_attachment_dialog": {
                 "attachment_title": "Ek Başlığı",
@@ -295,7 +328,8 @@
                 "primary_photo_sub": "Bu seçenek yalnızca fotoğraflar için kullanılabilir. Yalnızca bir fotoğraf birincil olarak seçilebilir. Bu seçeneği seçerseniz, varsa mevcut ana fotoğraf seçili durumdan kaldırılır.",
                 "select_type": "Tür seçin",
                 "title": "Eki Düzenle"
-            }
+            },
+            "view_image": "Görseli göster"
         },
         "edit_details": "Detayları Düzenle",
         "field_selector": "Alan Seçici",
@@ -312,7 +346,6 @@
         "manufacturer": "Üretici",
         "model_number": "Model Numarası",
         "name": "İsim",
-        "negate_labels": "Seçili Etiketleri Yoksay",
         "next_page": "Sonraki Sayfa",
         "no_attachments": "Ek bulunamadı",
         "no_results": "Öğe Bulunamadı",
@@ -367,6 +400,7 @@
             "failed_load_items": "Öğeler yüklenemedi",
             "failed_save": "Öğe kaydedilemedi",
             "failed_save_no_location": "Öğe kaydedilemedi: konum seçilmedi",
+            "failed_search_items": "Öğe aratılamadı",
             "failed_update_attachment": "Ek güncellenemedi",
             "failed_upload_attachment": "Ek yüklenemedi",
             "item_deleted": "Öğe silindi",
@@ -378,19 +412,8 @@
         "warranty_details": "Garanti Bilgileri",
         "warranty_expires": "Garanti Bitiş Tarihi"
     },
-    "labels": {
-        "label_delete_confirm": "Bu etiketi silmek istediğinizden emin misiniz? Bu eylem geri alınamaz.",
-        "no_results": "Etiket Bulunamadı",
-        "toast": {
-            "failed_delete_label": "Etiket silinemedi",
-            "failed_load_label": "Etiket yüklenemedi",
-            "failed_update_label": "Etiket güncellenemedi",
-            "label_deleted": "Etiket silindi",
-            "label_updated": "Etiket güncellendi"
-        },
-        "update_label": "Etiket Güncelle"
-    },
     "languages": {
+        "bs-BA": "Boşnakça",
         "ca": "Katalanca",
         "cs-CZ": "Çekçe",
         "de": "Almanca",
@@ -418,6 +441,7 @@
         "th-TH": "Tayca",
         "tr": "Türkçe",
         "uk-UA": "Ukraynaca",
+        "vi-VN": "Vietnamca",
         "zh-CN": "Basitleştirilmiş Çince",
         "zh-HK": "Çince (Hong Kong)",
         "zh-MO": "Çince (Macau)",
@@ -478,15 +502,13 @@
     },
     "menu": {
         "create_item": "Öğe / Varlık",
-        "create_label": "Etiket",
         "create_location": "Konum",
         "home": "Ev",
         "locations": "Konumlar",
         "maintenance": "Bakım",
         "profile": "Profil",
         "scanner": "Tarayıcı",
-        "search": "Ara",
-        "tools": "Araçlar"
+        "search": "Ara"
     },
     "profile": {
         "active": "Aktif",
@@ -496,14 +518,15 @@
         "delete_account": "Hesabı Sil",
         "delete_account_confirm": "Hesabınızı silmek istediğinizden emin misiniz? Grubunuzun son üyesiyseniz tüm verileriniz silinir. Bu işlem geri alınamaz.",
         "delete_account_sub": "Hesabınızı ve ona bağlı tüm verileri silin. Bu işlem geri alınamaz.",
+        "delete_notifier_confirm": "Bu uyarıcıyı silmek istediğinizden emin misiniz?",
         "display_legacy_header": "{ currentValue, select, true {Eski Başlığı Devre Dışı Bırak} false {Eski Başlığı Etkinleştir} other {Vurulmadı}}",
         "enabled": "Etkinleştirildi",
         "example": "Örnek",
-        "gen_invite": "Davet Bağlantısı Oluştur",
         "group_settings": "Grup Ayarları",
         "group_settings_sub": "Paylaşılan Grup Ayarları. Bazı ayarların uygulanabilmesi için tarayıcınızı yenilemeniz gerekebilir.",
         "inactive": "Etkin Değil",
         "language": "Dil",
+        "legacy_image_fit": "{ currentValue, select, true {Eski Sığmayı Kapat: Çubuklar ile Sığdır} false {Eski Sığmayı Aç: Resmi Keserek Doldur} other {Vurulmadı}}",
         "new_password": "Yeni Şifre",
         "no_notifiers": "Yapılandırılmış bildirimci yok",
         "no_override": "Geçersiz kılma yok",

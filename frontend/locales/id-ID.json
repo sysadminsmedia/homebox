@@ -1,10 +1,20 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "Gunakan {shiftKey} + {enterKey} untuk membuat dan menambahkan data.",
+                "enter": "Enter",
+                "shift": "Shift"
+            },
             "import_dialog": {
                 "change_warning": "Ada perubahan pada logika impor untuk data dengan import_ref yang sudah ada.  Jika sebuah import_ref ditemukan di file CSV,\ndata tersebut akan diperbarui menggunakan nilai-nilai yang ada di file CSV.",
                 "description": "Impor file CSV yang berisi item, label, dan lokasi Anda. Lihat dokumentasi untuk informasi lebih lanjut mengenai\nformat yang diperlukan.",
-                "title": "Impor CSV"
+                "title": "Impor CSV",
+                "toast": {
+                    "import_failed": "Impor gagal. Silahkan coba kembali beberapa saat lagi.",
+                    "import_success": "Import berhasil!",
+                    "please_select_file": "Silakan pilih file untuk diimpor."
+                }
             },
             "outdated": {
                 "current_version": "Versi Terkini",
@@ -12,6 +22,18 @@
                 "latest_version": "Versi Terbaru",
                 "new_version_available": "Tersedia versi terbaru",
                 "new_version_available_link": "Klik di sini untuk melihat informasi rilis"
+            }
+        },
+        "color_selector": {
+            "clear": "Reset warna",
+            "color": "Warna",
+            "no_color": "Tanpa warna",
+            "no_color_selected": "Tidak ada warna yang dipilih",
+            "randomize": "Acak warna"
+        },
+        "form": {
+            "password": {
+                "toggle_show": "Tampilkan kata sandi"
             }
         },
         "global": {
@@ -46,20 +68,51 @@
                 "yesterday": "kemaren"
             },
             "label_maker": {
-                "download": "Unduh Label"
+                "browser_print": "Cetak dari Browser",
+                "confirm_description": "Anda yakin ingin mencetak label ini?",
+                "download": "Unduh Label",
+                "print": "Cetak Label",
+                "server_print": "Cetak di Server",
+                "titles": "Label",
+                "toast": {
+                    "load_status_failed": "Gagal memuat status",
+                    "print_failed": "Gagal mencetak label",
+                    "print_success": "Label telah  dicetak"
+                }
             },
             "page_qr_code": {
-                "page_url": "Halaman URL"
+                "page_url": "Halaman URL",
+                "qr_tooltip": "Tampilkan kode QR"
             },
             "password_score": {
                 "password_strength": "Kompleksitas kata sandi"
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "Unduh",
+                "open_new_tab": "Buka di tab baru"
+            },
             "create_modal": {
+                "delete_photo": "Hapus foto",
                 "item_description": "Deskripsi item",
                 "item_name": "Nama item",
-                "title": "Buat item"
+                "item_photo": "Foto Item 📷",
+                "item_quantity": "Jumlah Item",
+                "parent_item": "Item Induk",
+                "product_tooltip_input_barcode": "Isi otomatis dengan barcode yang disediakan secara manual",
+                "product_tooltip_scan_barcode": "Isi otomatis dengan barcode dari 📷",
+                "rotate_photo": "Putar foto",
+                "set_as_primary_photo": "Atur sebagai { isPrimary, select, true {non} false {} other {}} foto utama",
+                "title": "Buat item",
+                "toast": {
+                    "already_creating": "Sudah membuat item",
+                    "create_failed": "Tidak dapat membuat item",
+                    "create_success": "Item dibuat",
+                    "failed_load_parent": "Gagal memuat item induk - silakan pilih secara manual",
+                    "no_canvas_support": "Browser Anda tidak mendukung operasi kanvas",
+                    "please_select_location": "Silakan pilih Lokasi."
+                }
             },
             "view": {
                 "selectable": {
@@ -74,69 +127,86 @@
                 }
             }
         },
-        "label": {
-            "create_modal": {
-                "label_description": "Keterangan/Deskripsi",
-                "label_name": "Nama",
-                "title": "Buat label"
-            }
-        },
         "location": {
             "create_modal": {
                 "location_description": "Deskripsi lokasi",
                 "location_name": "Nama lokasi",
-                "title": "Tambah Lokasi"
+                "title": "Tambah Lokasi",
+                "toast": {
+                    "already_creating": "Lokasi telah dibuat",
+                    "create_failed": "Tidak dapat membuat lokasi",
+                    "create_success": "Lokasi telah dibuat"
+                }
             },
             "selector": {
-                "parent_location": "Lokasi Induk"
+                "no_location_found": "Lokasi tidak ditemukan",
+                "parent_location": "Lokasi Induk",
+                "search_location": "Mencari Lokasi",
+                "select_location": "Pilih lokasi"
             },
             "tree": {
-                "no_locations": "Tidak ada lokasi yang tersedia. Tambahkan lokasi melalui tombol\n`<`span class=\"link-primary\"`>`Buat`<`/span`>` menu navigasi."
+                "no_locations": "Tidak ada lokasi yang tersedia. Tambahkan lokasi melalui tombol\n'<span class=\"link-primary\">'Buat'</span>' menu navigasi."
             }
         },
         "quick_menu": {
+            "no_results": "Tidak ada hasil yang ditemukan.",
             "shortcut_hint": "Gunakan tombol angka untuk memilih."
         }
     },
+    "errors": {
+        "api_failure": "Gagal melakukan panggilan pada API: "
+    },
     "global": {
         "add": "Tambah",
-        "build": "Kompilasi: { build }",
+        "archived": "Diarsipkan",
+        "build": "Build: { build }",
+        "cancel": "Batal",
         "confirm": "Konfirmasi",
         "create": "Buat",
         "create_and_add": "Buat dan Tambah Baru",
+        "create_subitem": "Buat Subitem",
         "created": "Behasil dibuat",
         "delete": "Hapus",
+        "delete_confirm": "Anda yakin akan menghapus butir ini? ",
+        "demo_instance": "Ini adalah aplikasi demo",
         "details": "Detail",
         "duplicate": "Duplikat",
         "edit": "Sunting",
         "email": "Email",
         "follow_dev": "Ikuti Pengembang",
-        "github": "Github project",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Versi: { version } Build: { build } '</a>'"
+        },
+        "github": "Proyek GitHub",
+        "insured": "Diasuransikan",
         "items": "Barang",
         "join_discord": "Bergabunglah dengan Discord",
-        "labels": "Label",
+        "loading": "Memuat…",
         "locations": "Lokasi",
         "maintenance": "Perbaikan",
         "name": "Nama",
         "navigate": "Navigasi",
         "password": "Kata Sandi",
+        "quantity": "Jumlah",
         "read_docs": "Baca Dokumen",
+        "return_home": "Kembali ke halaman depan",
         "save": "Simpan",
         "search": "Cari",
         "sign_out": "Keluar",
         "submit": "Kirim",
+        "unknown": "Tidak Diketahui",
         "update": "Perbaharui",
+        "updating": "Memperbaharui",
         "value": "Nilai",
         "version": "Versi:{ version }",
-        "welcome": "Selamay datang, { username }"
+        "welcome": "Selamat datang, { username }"
     },
     "home": {
-        "labels": "Label",
         "quick_statistics": "Ikhtisar Statistik",
         "recently_added": "Baru Ditambahkan",
         "storage_locations": "Lokasi Penyimpanan",
         "total_items": "Jumlah Item",
-        "total_labels": "Total Label",
         "total_locations": "Total Lokasi",
         "total_value": "Total Nilai"
     },
@@ -149,22 +219,45 @@
         "remember_me": "Ingat Saya",
         "set_email": "Apa email Anda?",
         "set_name": "Apa nama anda?",
-        "set_password": "Password Anda",
-        "tagline": "Lacak, Atur, dan Kelola Barang-barangmu."
+        "set_password": "Tentukan kata sandi",
+        "tagline": "Lacak, Atur, dan Kelola Barang-barangmu.",
+        "title": "Atur dan Tandai Barang Anda",
+        "toast": {
+            "invalid_email": "Alamat email tidak valid",
+            "invalid_email_password": "Email atau kata sandi salah",
+            "login_success": "Anda berhasil login",
+            "problem_registering": "Masalah saat mendaftarkan pengguna",
+            "user_registered": "Terdaftar"
+        }
     },
     "items": {
         "add": "Tambah",
         "advanced": "Tingkat Lanjut",
         "archived": "Diarsipkan",
         "asset_id": "ID Aset",
+        "associated_with_multiple": "Id Aset ini terhubung dengan beberapa item",
         "attachment": "Lampiran",
         "attachments": "Lampiran",
         "changes_persisted_immediately": "Perubahan lampiran akan segera disimpan",
         "created_at": "Dibuat Pada",
         "custom_fields": "Informasi Tambahan",
+        "delete_attachment_confirm": "Apa Anda yakin ingin menghapus ini?",
+        "delete_item_confirm": "Anda yakin akan menghapus butir ini?",
         "description": "Deskripsi",
         "details": "Detail",
         "drag_and_drop": "Seret dan lepas file di sini atau klik untuk memilih file",
+        "duplicate": {
+            "copy_attachments": "Salin Lampiran",
+            "copy_custom_fields": "Salin info tambahan",
+            "copy_maintenance": "Salin Pemeliharaan",
+            "custom_prefix": "Salin awalan",
+            "enable_custom_prefix": "Aktifkan Prefiks Kustom",
+            "override_instructions": "Tahan shift saat mengklik tombol duplikat untuk menimpa pengaturan ini.",
+            "prefix": "Salinan dari ",
+            "prefix_instructions": "Awalan ini akan ditambahkan pada awal penamaan item yang diduplikat. Termasuk spasi pada akhir awalan untuk menambahn pemisah antara awalan dan nama item.",
+            "temporary_title": "Pengaturan Sementara",
+            "title": "Duplikasi Pengaturan"
+        },
         "edit_details": "Edit Detail",
         "field_selector": "Selektor",
         "field_value": "Nilai",
@@ -179,7 +272,6 @@
         "manufacturer": "Pabrikan/Produsen",
         "model_number": "Nomor Model",
         "name": "Nama",
-        "negate_labels": "Negasikan Label yang Dipilih",
         "next_page": "Halaman Berikutnya",
         "no_results": "Item tidak ditemukan",
         "notes": "Catatan",
@@ -217,10 +309,6 @@
         "warranty": "Garansi",
         "warranty_details": "Rincian Garansi",
         "warranty_expires": "Garansi Kedaluwarsa"
-    },
-    "labels": {
-        "no_results": "Tidak Ditemukan Label",
-        "update_label": "Perbarui Label"
     },
     "languages": {
         "ca": "Catalan",
@@ -291,14 +379,12 @@
     },
     "menu": {
         "create_item": "Item / Aset",
-        "create_label": "Label",
         "create_location": "Lokasi",
         "home": "Beranda",
         "locations": "Lokasi",
         "maintenance": "Pemeliharaan",
         "profile": "Profil",
-        "search": "Cari",
-        "tools": "Tools"
+        "search": "Cari"
     },
     "profile": {
         "active": "Aktif",
@@ -309,7 +395,6 @@
         "delete_account_sub": "Hapus akun Anda dan semua data terkait.",
         "enabled": "Tersedia",
         "example": "Contoh",
-        "gen_invite": "Buat Tautan Undangan",
         "group_settings": "Pengaturan Grup",
         "group_settings_sub": "Pengaturan Grup Bersama. Anda mungkin perlu me-refresh browser Anda agar beberapa pengaturan diterapkan.",
         "inactive": "Tidak Aktif",

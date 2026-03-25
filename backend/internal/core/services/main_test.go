@@ -2,16 +2,18 @@ package services
 
 import (
 	"context"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"log"
 	"os"
 	"testing"
 
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+
 	"github.com/sysadminsmedia/homebox/backend/internal/core/currencies"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/faker"
 )
 
@@ -33,17 +35,17 @@ func bootstrap() {
 		ctx = context.Background()
 	)
 
-	tGroup, err = tRepos.Groups.GroupCreate(ctx, "test-group")
+	tGroup, err = tRepos.Groups.GroupCreate(ctx, "test-group", uuid.Nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	tUser, err = tRepos.Users.Create(ctx, repo.UserCreate{
-		Name:        fk.Str(10),
-		Email:       fk.Email(),
-		Password:    fk.Str(10),
-		IsSuperuser: fk.Bool(),
-		GroupID:     tGroup.ID,
+		Name:           fk.Str(10),
+		Email:          fk.Email(),
+		Password:       new(fk.Str(10)),
+		IsSuperuser:    fk.Bool(),
+		DefaultGroupID: tGroup.ID,
 	})
 	if err != nil {
 		log.Fatal(err)

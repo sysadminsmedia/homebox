@@ -1,6 +1,6 @@
 <template>
   <BaseModal :dialog-id="DialogID.CreateLocation" :title="$t('components.location.create_modal.title')">
-    <form class="flex flex-col gap-2" @submit.prevent="create()">
+    <form class="flex min-w-0 flex-col gap-2" @submit.prevent="create()">
       <LocationSelector v-model="form.parent" />
       <FormTextField
         ref="locationNameRef"

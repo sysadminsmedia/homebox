@@ -1,0 +1,22 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+    icon?: string;
+    title: string;
+}
+
+const { icon, title } = Astro.props;
+---
+
+<article class="flex flex-col gap-4 p-6 border border-[var(--color-border)] bg-[var(--color-card)] rounded-lg">
+    <p class="flex items-center gap-3 font-semibold text-lg text-[var(--color-card-foreground)]">
+        {icon && (
+            <span class="flex-shrink-0 p-1.5 border border-[var(--color-primary)] bg-[var(--color-primary)]/10 rounded-md">
+                <Icon name={icon} class="text-[var(--color-primary)]" size="1.25em" />
+            </span>
+        )}
+        <span set:html={title} />
+    </p>
+    <div class="text-sm text-[var(--color-muted-foreground)]"><slot /></div>
+</article>

@@ -1,0 +1,39 @@
+---
+title: Auth Rate Limits
+---
+
+Homebox implements a dynamic rate limiter for authentication requests. This rate limiter is based on the IP address of the requester.
+You can configure the rate limiter via the configuration environment variables or command line interface.
+This page describes the available configuration options and how the rate limiting works.
+
+## Configuration Options
+| Variable                          | Default | Description                                                                         |
+|-----------------------------------|---------|-------------------------------------------------------------------------------------|
+| HBOX_AUTH_RATE_LIMIT_ENABLED      | `true`  | Enables or disables the rate limited for authentication requests                    |
+| HBOX_AUTH_RATE_LIMIT_WINDOW       | `1m`    | The time window for which the rate limit is applied                                 |
+| HBOX_AUTH_RATE_LIMIT_MAX_ATTEMPTS | `5`     | The maximum number of failed authentication attempts allowed within the time window |
+| HBOX_AUTH_RATE_LIMIT_BASE_BACKOFF | `10s`   | The base time to wait before retrying an authentication request                     |
+| HBOX_AUTH_RATE_LIMIT_MAX_BACKOFF  | `5m`    | The maximum time to wait before retrying an authentication request                  |
+
+## How Rate Limiting Works
+The rate limiter works by tracking the number of authentication requests made from each IP address within a specified time window.
+If the number of requests exceeds the configured limit, further requests from that IP address will be denied until the time window resets.
+This rate-limiting mechanism is designed to prevent brute force attacks against the authentication endpoint. Additionally,
+the rate limiter is "dynamic" in the sense that it adjusts its rate limit based on the number of failed requests made.
+
+As an example, if the `BASE_BACKOFF` is set to 10 seconds, the `MAX_BACKOFF` is set to 5 minutes, the `WINDOW` is set to
+1 minute, and `MAX_ATTEMPTS` is set to 5 (the defaults):
+
+If all these attempts are made within 1 minute, the following table shows the rate limits applied:
+
+| Attempt | Rate Limit         |
+|---------|--------------------|
+| 1-5     | None               |
+| 6       | Locked 10 seconds  |
+| 7       | Locked 20 seconds  |
+| 8       | Locked 40 seconds  |
+| 9       | Locked 80 seconds  |
+| 10      | Locked 160 seconds |
+| 11+     | Locked 5 minutes   |
+
+As you can see, the rate limit increases exponentially as the number of failed attempts increases until it reaches the maximum limit.

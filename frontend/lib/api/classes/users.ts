@@ -24,4 +24,17 @@ export class UserApi extends BaseAPI {
       },
     });
   }
+
+  public getSettings() {
+    return this.http.get<Result<Record<string, unknown>>>({
+      url: route("/users/self/settings"),
+    });
+  }
+
+  public setSettings(settings: Record<string, unknown>) {
+    return this.http.put<Record<string, unknown>, Result<Record<string, unknown>>>({
+      url: route("/users/self/settings"),
+      body: settings,
+    });
+  }
 }

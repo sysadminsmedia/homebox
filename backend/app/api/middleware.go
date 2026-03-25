@@ -3,15 +3,22 @@ package main
 import (
 	"context"
 	"errors"
+	"net"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
+	"sync"
+	"time"
 
-	"github.com/hay-kot/httpkit/errchain"
 	v1 "github.com/sysadminsmedia/homebox/backend/app/api/handlers/v1"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
+
+	"github.com/google/uuid"
+	"github.com/hay-kot/httpkit/errchain"
 )
 
 type tokenHasKey struct {
@@ -149,6 +156,392 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 		}
 
 		r = r.WithContext(services.SetUserCtx(r.Context(), &usr, requestToken))
+		return next.ServeHTTP(w, r)
+	})
+}
+
+// mwTenant is a middleware that will parse the X-Tenant header and validate the user has access
+// to the requested tenant. If no header is provided, the user's default group is used.
+//
+// WARNING: This middleware _MUST_ be called after mwAuthToken
+func (a *app) mwTenant(next errchain.Handler) errchain.Handler {
+	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+		ctx := r.Context()
+
+		// Get the user from context (set by mwAuthToken)
+		user := services.UseUserCtx(ctx)
+		if user == nil {
+			return validate.NewRequestError(errors.New("user context not found"), http.StatusInternalServerError)
+		}
+
+		tenantID := user.DefaultGroupID
+
+		// Check for X-Tenant header or tenant query parameter
+		tenantHeader := r.Header.Get("X-Tenant")
+		if tenantHeader == "" {
+			tenantHeader = r.URL.Query().Get("tenant")
+		}
+
+		if tenantHeader != "" {
+			parsedTenantID, err := uuid.Parse(tenantHeader)
+			if err != nil {
+				return validate.NewRequestError(errors.New("invalid X-Tenant header format"), http.StatusBadRequest)
+			}
+
+			// Validate user has access to the requested tenant
+			hasAccess := false
+			for _, gid := range user.GroupIDs {
+				if gid == parsedTenantID {
+					hasAccess = true
+					break
+				}
+			}
+
+			if !hasAccess {
+				return validate.NewRequestError(errors.New("user does not have access to the requested tenant"), http.StatusForbidden)
+			}
+
+			tenantID = parsedTenantID
+		}
+
+		// Set the tenant in context
+		r = r.WithContext(services.SetTenantCtx(ctx, tenantID))
+		return next.ServeHTTP(w, r)
+	})
+}
+
+// authRateLimiter tracks authentication attempts per client and applies a backoff when limits are exceeded.
+type authRateLimiter struct {
+	cfg         config.AuthRateLimit
+	mu          sync.Mutex
+	state       map[string]*authAttempt
+	nowFn       func() time.Time
+	stopCleanup chan struct{}
+	stopOnce    sync.Once
+}
+
+// authAttempt struct represents the state of authentication attempts for a client.
+type authAttempt struct {
+	attempts    int
+	lastAttempt time.Time
+	lockedUntil time.Time
+}
+
+// newAuthRateLimiter creates a new authRateLimiter instance.
+func newAuthRateLimiter(cfg config.AuthRateLimit) *authRateLimiter {
+	// Sanity defaults to avoid zero values creating odd behavior.
+	if cfg.MaxAttempts <= 0 {
+		cfg.MaxAttempts = 5
+	}
+	if cfg.BaseBackoff <= 0 {
+		cfg.BaseBackoff = 2 * time.Second
+	}
+	if cfg.MaxBackoff <= 0 {
+		cfg.MaxBackoff = 2 * time.Minute
+	}
+	if cfg.Window <= 0 {
+		cfg.Window = time.Minute
+	}
+
+	limiter := &authRateLimiter{
+		cfg:         cfg,
+		state:       make(map[string]*authAttempt),
+		nowFn:       time.Now,
+		stopCleanup: make(chan struct{}),
+	}
+
+	// Start background cleanup goroutine
+	go limiter.cleanupLoop()
+
+	return limiter
+}
+
+// cleanupLoop periodically removes stale entries from the state map.
+func (l *authRateLimiter) cleanupLoop() {
+	// Run cleanup every window period (or at least every 5 minutes)
+	cleanupInterval := l.cfg.Window
+	if cleanupInterval > 5*time.Minute {
+		cleanupInterval = 5 * time.Minute
+	}
+
+	ticker := time.NewTicker(cleanupInterval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			l.cleanup()
+		case <-l.stopCleanup:
+			return
+		}
+	}
+}
+
+// cleanup removes stale entries that are outside the window.
+func (l *authRateLimiter) cleanup() {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	now := l.nowFn()
+	for key, attempt := range l.state {
+		// Remove entries that are:
+		// 1. Outside the window AND
+		// 2. No longer locked (or lock has expired)
+		if now.Sub(attempt.lastAttempt) > l.cfg.Window && now.After(attempt.lockedUntil) {
+			delete(l.state, key)
+		}
+	}
+}
+
+// Stop gracefully stops the cleanup goroutine.
+func (l *authRateLimiter) Stop() {
+	l.stopOnce.Do(func() {
+		close(l.stopCleanup)
+	})
+}
+
+// mwAuthRateLimit enforces request throttling for authentication endpoints with an exponential backoff.
+func (a *app) mwAuthRateLimit(next errchain.Handler) errchain.Handler {
+	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+		limiter := a.authLimiter
+		if limiter == nil || !limiter.cfg.Enabled {
+			return next.ServeHTTP(w, r)
+		}
+
+		key := limiter.keyForRequest(r, a.conf.Options.TrustProxy)
+		now := limiter.nowFn()
+
+		if retryAfter, allowed := limiter.shouldAllow(key, now); !allowed {
+			seconds := int(retryAfter.Round(time.Second).Seconds())
+			if seconds < 0 {
+				seconds = 0
+			}
+			w.Header().Set("Retry-After", strconv.Itoa(seconds))
+			return validate.NewRequestError(errors.New("too many authentication attempts"), http.StatusTooManyRequests)
+		}
+
+		err := next.ServeHTTP(w, r)
+		limiter.record(key, now, err == nil)
+		return err
+	})
+}
+
+// shouldAllow checks if the client should be allowed to authenticate based on the configured rate limit.
+func (l *authRateLimiter) shouldAllow(key string, now time.Time) (time.Duration, bool) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	attempt, ok := l.state[key]
+	if !ok {
+		return 0, true
+	}
+
+	if now.Sub(attempt.lastAttempt) > l.cfg.Window {
+		delete(l.state, key)
+		return 0, true
+	}
+
+	if now.Before(attempt.lockedUntil) {
+		return time.Until(attempt.lockedUntil), false
+	}
+
+	return 0, true
+}
+
+// record updates the authentication attempt state for the given client.
+func (l *authRateLimiter) record(key string, now time.Time, success bool) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	if success {
+		delete(l.state, key)
+		return
+	}
+
+	attempt, ok := l.state[key]
+	if !ok {
+		l.state[key] = &authAttempt{attempts: 1, lastAttempt: now}
+		return
+	}
+
+	if now.Sub(attempt.lastAttempt) > l.cfg.Window {
+		attempt.attempts = 0
+		attempt.lockedUntil = time.Time{}
+	}
+
+	attempt.attempts++
+	attempt.lastAttempt = now
+
+	if attempt.attempts > l.cfg.MaxAttempts {
+		over := attempt.attempts - l.cfg.MaxAttempts
+		delay := l.cfg.BaseBackoff
+		for i := 1; i < over; i++ {
+			delay *= 2
+			if delay >= l.cfg.MaxBackoff {
+				delay = l.cfg.MaxBackoff
+				break
+			}
+		}
+		if delay > l.cfg.MaxBackoff {
+			delay = l.cfg.MaxBackoff
+		}
+		attempt.lockedUntil = now.Add(delay)
+	}
+}
+
+// extractClientIP extracts the client IP from the request.
+// It only uses proxy headers (X-Real-IP, X-Forwarded-For) if trustProxy is enabled.
+func extractClientIP(r *http.Request, trustProxy bool) string {
+	if trustProxy {
+		if ip := r.Header.Get("X-Real-IP"); ip != "" {
+			return ip
+		}
+
+		if ip := r.Header.Get("X-Forwarded-For"); ip != "" {
+			parts := strings.Split(ip, ",")
+			return strings.TrimSpace(parts[0])
+		}
+	}
+	host, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err == nil {
+		return host
+	}
+
+	return r.RemoteAddr
+}
+
+// keyForRequest returns a unique key for the given request.
+func (l *authRateLimiter) keyForRequest(r *http.Request, trustProxy bool) string {
+	return extractClientIP(r, trustProxy) + "|" + r.URL.Path
+}
+
+// simpleRateLimiter provides token bucket rate limiting per client IP.
+type simpleRateLimiter struct {
+	mu          sync.Mutex
+	limiters    map[string]*rateLimiterEntry
+	rate        int           // requests allowed
+	window      time.Duration // time window
+	trustProxy  bool          // whether to trust proxy headers
+	stopCleanup chan struct{}
+	stopOnce    sync.Once
+}
+
+type rateLimiterEntry struct {
+	tokens     int
+	lastRefill time.Time
+}
+
+// newSimpleRateLimiter creates a new rate limiter with the specified rate and window.
+func newSimpleRateLimiter(rate int, window time.Duration, trustProxy bool) *simpleRateLimiter {
+	rl := &simpleRateLimiter{
+		limiters:    make(map[string]*rateLimiterEntry),
+		rate:        rate,
+		window:      window,
+		trustProxy:  trustProxy,
+		stopCleanup: make(chan struct{}),
+	}
+
+	// Start background cleanup goroutine
+	go rl.cleanupLoop()
+
+	return rl
+}
+
+// cleanupLoop periodically removes stale entries from the limiters map.
+func (rl *simpleRateLimiter) cleanupLoop() {
+	// Run cleanup every 2x the window period (or at least every 5 minutes)
+	cleanupInterval := rl.window * 2
+	if cleanupInterval < 5*time.Minute {
+		cleanupInterval = 5 * time.Minute
+	}
+
+	ticker := time.NewTicker(cleanupInterval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			rl.cleanup()
+		case <-rl.stopCleanup:
+			return
+		}
+	}
+}
+
+// cleanup removes stale entries that haven't been accessed recently.
+func (rl *simpleRateLimiter) cleanup() {
+	rl.mu.Lock()
+	defer rl.mu.Unlock()
+
+	now := time.Now()
+	// Remove entries that haven't been accessed in 2x the window period
+	staleThreshold := rl.window * 2
+
+	for key, entry := range rl.limiters {
+		if now.Sub(entry.lastRefill) > staleThreshold {
+			delete(rl.limiters, key)
+		}
+	}
+}
+
+// Stop gracefully stops the cleanup goroutine.
+func (rl *simpleRateLimiter) Stop() {
+	rl.stopOnce.Do(func() {
+		close(rl.stopCleanup)
+	})
+}
+
+// allow checks if the request should be allowed based on the rate limit.
+func (rl *simpleRateLimiter) allow(clientIP string) bool {
+	rl.mu.Lock()
+	defer rl.mu.Unlock()
+
+	now := time.Now()
+	entry, exists := rl.limiters[clientIP]
+
+	if !exists {
+		// First request from this IP
+		rl.limiters[clientIP] = &rateLimiterEntry{
+			tokens:     rl.rate - 1,
+			lastRefill: now,
+		}
+		return true
+	}
+
+	// Refill tokens based on elapsed time
+	elapsed := now.Sub(entry.lastRefill)
+	if elapsed >= rl.window {
+		// Full refill
+		entry.tokens = rl.rate - 1
+		entry.lastRefill = now
+		return true
+	}
+
+	// Check if tokens are available
+	if entry.tokens > 0 {
+		entry.tokens--
+		return true
+	}
+
+	return false
+}
+
+// getClientIP extracts the client IP from the request.
+// It only uses proxy headers (X-Real-IP, X-Forwarded-For) if trustProxy is enabled.
+func (rl *simpleRateLimiter) getClientIP(r *http.Request, trustProxy bool) string {
+	return extractClientIP(r, trustProxy)
+}
+
+// middleware wraps the rate limiter as an errchain middleware.
+func (rl *simpleRateLimiter) middleware(next errchain.Handler) errchain.Handler {
+	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+		clientIP := rl.getClientIP(r, rl.trustProxy)
+
+		if !rl.allow(clientIP) {
+			w.Header().Set("Retry-After", strconv.Itoa(int(rl.window.Seconds())))
+			return validate.NewRequestError(errors.New("rate limit exceeded"), http.StatusTooManyRequests)
+		}
+
 		return next.ServeHTTP(w, r)
 	})
 }

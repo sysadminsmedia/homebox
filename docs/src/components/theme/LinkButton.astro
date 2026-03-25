@@ -1,0 +1,79 @@
+---
+import type { StarlightIcon } from '@astrojs/starlight/types'
+import type { HTMLAttributes } from 'astro/types'
+import LinkButtonIcon from './LinkButtonIcon.astro'
+
+interface Props extends Omit<HTMLAttributes<'a'>, 'href'> {
+  href: string | URL
+  icon?: StarlightIcon | undefined
+  iconPlacement?: 'start' | 'end' | undefined
+  variant?: 'primary' | 'secondary' | 'minimal'
+}
+
+const {
+  class: className,
+  icon,
+  iconPlacement = 'end',
+  variant = 'primary',
+  ...attrs
+} = Astro.props
+---
+
+<span class="not-content">
+  <a class={['link-button', `variant-${variant}`, className].filter(Boolean).join(' ')} data-icon-placement={iconPlacement} {...attrs}>
+    {icon && iconPlacement === 'start' && <LinkButtonIcon icon={icon} />}
+    <slot />
+    {icon && iconPlacement === 'end' && <LinkButtonIcon icon={icon} />}
+  </a>
+</span>
+
+<style>
+  .link-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 150ms ease-in-out;
+    outline: none;
+  }
+
+  .link-button:focus {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  .variant-primary {
+    background-color: var(--color-primary);
+    color: var(--color-primary-foreground);
+    padding: 0.625rem 1rem;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+  }
+
+  .variant-primary:hover {
+    background-color: hsl(139 16% 38%);
+  }
+
+  .variant-secondary {
+    background-color: var(--color-secondary);
+    color: var(--color-secondary-foreground);
+    padding: 0.625rem 1rem;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+  }
+
+  .variant-secondary:hover {
+    background-color: hsl(77 8% 22%);
+  }
+
+  .variant-minimal {
+    background-color: transparent;
+    color: var(--color-muted-foreground);
+    padding: 0.5rem 0.75rem;
+  }
+
+  .variant-minimal:hover {
+    color: var(--color-foreground);
+    background-color: var(--color-muted);
+  }
+</style>

@@ -2,6 +2,7 @@ package v1
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -10,6 +11,7 @@ import (
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/server"
 	"github.com/rs/zerolog/log"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
@@ -93,17 +95,21 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 		panic("no auth providers provided")
 	}
 
-	providers := make(map[string]AuthProvider)
-	for _, p := range ps {
+	providers := lo.SliceToMap(ps, func(p AuthProvider) (string, AuthProvider) {
 		log.Info().Str("name", p.Name()).Msg("registering auth provider")
-		providers[p.Name()] = p
-	}
+		return p.Name(), p
+	})
 
 	return func(w http.ResponseWriter, r *http.Request) error {
 		// Extract provider query
 		provider := r.URL.Query().Get("provider")
 		if provider == "" {
 			provider = "local"
+		}
+
+		// Block local only when disabled
+		if provider == "local" && !ctrl.config.Options.AllowLocalLogin {
+			return validate.NewRequestError(fmt.Errorf("local login is not enabled"), http.StatusForbidden)
 		}
 
 		// Get the provider
@@ -114,11 +120,11 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 
 		newToken, err := p.Authenticate(w, r)
 		if err != nil {
-			log.Err(err).Msg("failed to authenticate")
-			return server.JSON(w, http.StatusInternalServerError, err.Error())
+			log.Warn().Err(err).Msg("authentication failed")
+			return validate.NewUnauthorizedError()
 		}
 
-		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, true)
+		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, true, newToken.AttachmentToken)
 		return server.JSON(w, http.StatusOK, TokenResponse{
 			Token:           "Bearer " + newToken.Raw,
 			ExpiresAt:       newToken.ExpiresAt,
@@ -172,7 +178,7 @@ func (ctrl *V1Controller) HandleAuthRefresh() errchain.HandlerFunc {
 			return validate.NewUnauthorizedError()
 		}
 
-		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, false)
+		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, false, newToken.AttachmentToken)
 		return server.JSON(w, http.StatusOK, newToken)
 	}
 }
@@ -181,7 +187,7 @@ func noPort(host string) string {
 	return strings.Split(host, ":")[0]
 }
 
-func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string, expires time.Time, remember bool) {
+func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string, expires time.Time, remember bool, attachmentToken string) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     cookieNameRemember,
 		Value:    strconv.FormatBool(remember),
@@ -190,6 +196,7 @@ func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Set HTTP only cookie
@@ -201,6 +208,7 @@ func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Set Fake Session cookie
@@ -212,7 +220,22 @@ func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: false,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
+
+	// Set attachment token cookie (accessible to frontend, not HttpOnly)
+	if attachmentToken != "" {
+		http.SetCookie(w, &http.Cookie{
+			Name:     "hb.auth.attachment_token",
+			Value:    attachmentToken,
+			Expires:  expires,
+			Domain:   domain,
+			Secure:   ctrl.cookieSecure,
+			HttpOnly: false,
+			Path:     "/",
+			SameSite: http.SameSiteLaxMode,
+		})
+	}
 }
 
 func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
@@ -224,6 +247,7 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	http.SetCookie(w, &http.Cookie{
@@ -234,6 +258,7 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Set Fake Session cookie
@@ -245,5 +270,80 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: false,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
+
+	// Unset attachment token cookie
+	http.SetCookie(w, &http.Cookie{
+		Name:     "hb.auth.attachment_token",
+		Value:    "",
+		Expires:  time.Unix(0, 0),
+		Domain:   domain,
+		Secure:   ctrl.cookieSecure,
+		HttpOnly: false,
+		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
+	})
+}
+
+// HandleOIDCLogin godoc
+//
+//	@Summary	OIDC Login Initiation
+//	@Tags		Authentication
+//	@Produce	json
+//	@Success	302
+//	@Router		/v1/users/login/oidc [GET]
+func (ctrl *V1Controller) HandleOIDCLogin() errchain.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		// Forbidden if OIDC is not enabled
+		if !ctrl.config.OIDC.Enabled {
+			return validate.NewRequestError(fmt.Errorf("OIDC is not enabled"), http.StatusForbidden)
+		}
+
+		// Check if OIDC provider is available
+		if ctrl.oidcProvider == nil {
+			log.Error().Msg("OIDC provider not initialized")
+			return validate.NewRequestError(errors.New("OIDC provider not available"), http.StatusInternalServerError)
+		}
+
+		// Initiate OIDC flow
+		_, err := ctrl.oidcProvider.InitiateOIDCFlow(w, r)
+		return err
+	}
+}
+
+// HandleOIDCCallback godoc
+//
+//	@Summary	OIDC Callback Handler
+//	@Tags		Authentication
+//	@Param		code	query	string	true	"Authorization code"
+//	@Param		state	query	string	true	"State parameter"
+//	@Success	302
+//	@Router		/v1/users/login/oidc/callback [GET]
+func (ctrl *V1Controller) HandleOIDCCallback() errchain.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		// Forbidden if OIDC is not enabled
+		if !ctrl.config.OIDC.Enabled {
+			return validate.NewRequestError(fmt.Errorf("OIDC is not enabled"), http.StatusForbidden)
+		}
+
+		// Check if OIDC provider is available
+		if ctrl.oidcProvider == nil {
+			log.Error().Msg("OIDC provider not initialized")
+			return validate.NewRequestError(errors.New("OIDC provider not available"), http.StatusInternalServerError)
+		}
+
+		// Handle callback
+		newToken, err := ctrl.oidcProvider.HandleCallback(w, r)
+		if err != nil {
+			log.Err(err).Msg("OIDC callback failed")
+			http.Redirect(w, r, "/?oidc_error=oidc_auth_failed", http.StatusFound)
+			return nil
+		}
+
+		// Set cookies and redirect to home
+		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, true, newToken.AttachmentToken)
+		http.Redirect(w, r, "/home", http.StatusFound)
+		return nil
+	}
 }

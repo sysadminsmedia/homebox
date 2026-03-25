@@ -2,6 +2,7 @@ package reporting
 
 import (
 	"github.com/gocarina/gocsv"
+	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
@@ -15,7 +16,7 @@ type BillOfMaterialsEntry struct {
 	Manufacturer string     `csv:"Manufacturer"`
 	SerialNumber string     `csv:"Serial Number"`
 	ModelNumber  string     `csv:"Model Number"`
-	Quantity     int        `csv:"Quantity"`
+	Quantity     float64    `csv:"Quantity"`
 	Price        float64    `csv:"Price"`
 	TotalPrice   float64    `csv:"Total Price"`
 }
@@ -23,9 +24,8 @@ type BillOfMaterialsEntry struct {
 // BillOfMaterialsCSV returns a byte slice of the Bill of Materials for a given GID in CSV format
 // See BillOfMaterialsEntry for the format of the output
 func BillOfMaterialsCSV(entities []repo.ItemOut) ([]byte, error) {
-	bomEntries := make([]BillOfMaterialsEntry, len(entities))
-	for i, entity := range entities {
-		bomEntries[i] = BillOfMaterialsEntry{
+	return gocsv.MarshalBytes(new(lo.Map(entities, func(entity repo.ItemOut, _ int) BillOfMaterialsEntry {
+		return BillOfMaterialsEntry{
 			PurchaseDate: entity.PurchaseTime,
 			Name:         entity.Name,
 			Description:  entity.Description,
@@ -34,9 +34,7 @@ func BillOfMaterialsCSV(entities []repo.ItemOut) ([]byte, error) {
 			ModelNumber:  entity.ModelNumber,
 			Quantity:     entity.Quantity,
 			Price:        entity.PurchasePrice,
-			TotalPrice:   entity.PurchasePrice * float64(entity.Quantity),
+			TotalPrice:   entity.PurchasePrice * entity.Quantity,
 		}
-	}
-
-	return gocsv.MarshalBytes(&bomEntries)
+	})))
 }

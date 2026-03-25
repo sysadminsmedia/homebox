@@ -2,7 +2,13 @@ import { faker } from "@faker-js/faker";
 import { expect } from "vitest";
 import { overrideParts } from "../../base/urls";
 import { PublicApi } from "../../public";
-import type { ItemField, LabelCreate, LocationCreate, UserRegistration } from "../../types/data-contracts";
+import type {
+  ItemField,
+  ItemTemplateCreate,
+  TagCreate,
+  LocationCreate,
+  UserRegistration,
+} from "../../types/data-contracts";
 import * as config from "../../../../test/config";
 import { UserClient } from "../../user";
 import { Requests } from "../../../requests";
@@ -41,11 +47,33 @@ function location(parentId: string | null = null): LocationCreate {
   };
 }
 
-function label(): LabelCreate {
+function tag(): TagCreate {
   return {
     name: faker.lorem.word(),
     description: faker.lorem.sentence(),
     color: faker.color.rgb(),
+  };
+}
+
+function template(): ItemTemplateCreate {
+  return {
+    name: faker.lorem.words(2),
+    description: faker.lorem.sentence(),
+    notes: "",
+    defaultQuantity: 1,
+    defaultInsured: false,
+    defaultName: faker.lorem.word(),
+    defaultDescription: faker.lorem.sentence(),
+    defaultManufacturer: faker.company.name(),
+    defaultModelNumber: faker.string.alphanumeric(10),
+    defaultLifetimeWarranty: false,
+    defaultWarrantyDetails: "",
+    defaultLocationId: null,
+    defaultTagIds: null,
+    includeWarrantyFields: false,
+    includePurchaseFields: false,
+    includeSoldFields: false,
+    fields: [],
   };
 }
 
@@ -85,7 +113,8 @@ async function userSingleUse(): Promise<TestUser> {
 export const factories = {
   user,
   location,
-  label,
+  tag,
+  template,
   itemField,
   client: {
     public: publicClient,

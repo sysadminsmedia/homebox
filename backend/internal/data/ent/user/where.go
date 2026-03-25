@@ -96,6 +96,21 @@ func ActivatedOn(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldActivatedOn, v))
 }
 
+// OidcIssuer applies equality check predicate on the "oidc_issuer" field. It's identical to OidcIssuerEQ.
+func OidcIssuer(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldOidcIssuer, v))
+}
+
+// OidcSubject applies equality check predicate on the "oidc_subject" field. It's identical to OidcSubjectEQ.
+func OidcSubject(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldOidcSubject, v))
+}
+
+// DefaultGroupID applies equality check predicate on the "default_group_id" field. It's identical to DefaultGroupIDEQ.
+func DefaultGroupID(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldDefaultGroupID, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
@@ -361,6 +376,16 @@ func PasswordHasSuffix(v string) predicate.User {
 	return predicate.User(sql.FieldHasSuffix(FieldPassword, v))
 }
 
+// PasswordIsNil applies the IsNil predicate on the "password" field.
+func PasswordIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldPassword))
+}
+
+// PasswordNotNil applies the NotNil predicate on the "password" field.
+func PasswordNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldPassword))
+}
+
 // PasswordEqualFold applies the EqualFold predicate on the "password" field.
 func PasswordEqualFold(v string) predicate.User {
 	return predicate.User(sql.FieldEqualFold(FieldPassword, v))
@@ -461,21 +486,231 @@ func ActivatedOnNotNil() predicate.User {
 	return predicate.User(sql.FieldNotNull(FieldActivatedOn))
 }
 
-// HasGroup applies the HasEdge predicate on the "group" edge.
-func HasGroup() predicate.User {
+// OidcIssuerEQ applies the EQ predicate on the "oidc_issuer" field.
+func OidcIssuerEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldOidcIssuer, v))
+}
+
+// OidcIssuerNEQ applies the NEQ predicate on the "oidc_issuer" field.
+func OidcIssuerNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldOidcIssuer, v))
+}
+
+// OidcIssuerIn applies the In predicate on the "oidc_issuer" field.
+func OidcIssuerIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldOidcIssuer, vs...))
+}
+
+// OidcIssuerNotIn applies the NotIn predicate on the "oidc_issuer" field.
+func OidcIssuerNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldOidcIssuer, vs...))
+}
+
+// OidcIssuerGT applies the GT predicate on the "oidc_issuer" field.
+func OidcIssuerGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldOidcIssuer, v))
+}
+
+// OidcIssuerGTE applies the GTE predicate on the "oidc_issuer" field.
+func OidcIssuerGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldOidcIssuer, v))
+}
+
+// OidcIssuerLT applies the LT predicate on the "oidc_issuer" field.
+func OidcIssuerLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldOidcIssuer, v))
+}
+
+// OidcIssuerLTE applies the LTE predicate on the "oidc_issuer" field.
+func OidcIssuerLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldOidcIssuer, v))
+}
+
+// OidcIssuerContains applies the Contains predicate on the "oidc_issuer" field.
+func OidcIssuerContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldOidcIssuer, v))
+}
+
+// OidcIssuerHasPrefix applies the HasPrefix predicate on the "oidc_issuer" field.
+func OidcIssuerHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldOidcIssuer, v))
+}
+
+// OidcIssuerHasSuffix applies the HasSuffix predicate on the "oidc_issuer" field.
+func OidcIssuerHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldOidcIssuer, v))
+}
+
+// OidcIssuerIsNil applies the IsNil predicate on the "oidc_issuer" field.
+func OidcIssuerIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldOidcIssuer))
+}
+
+// OidcIssuerNotNil applies the NotNil predicate on the "oidc_issuer" field.
+func OidcIssuerNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldOidcIssuer))
+}
+
+// OidcIssuerEqualFold applies the EqualFold predicate on the "oidc_issuer" field.
+func OidcIssuerEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldOidcIssuer, v))
+}
+
+// OidcIssuerContainsFold applies the ContainsFold predicate on the "oidc_issuer" field.
+func OidcIssuerContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldOidcIssuer, v))
+}
+
+// OidcSubjectEQ applies the EQ predicate on the "oidc_subject" field.
+func OidcSubjectEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldOidcSubject, v))
+}
+
+// OidcSubjectNEQ applies the NEQ predicate on the "oidc_subject" field.
+func OidcSubjectNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldOidcSubject, v))
+}
+
+// OidcSubjectIn applies the In predicate on the "oidc_subject" field.
+func OidcSubjectIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldOidcSubject, vs...))
+}
+
+// OidcSubjectNotIn applies the NotIn predicate on the "oidc_subject" field.
+func OidcSubjectNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldOidcSubject, vs...))
+}
+
+// OidcSubjectGT applies the GT predicate on the "oidc_subject" field.
+func OidcSubjectGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldOidcSubject, v))
+}
+
+// OidcSubjectGTE applies the GTE predicate on the "oidc_subject" field.
+func OidcSubjectGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldOidcSubject, v))
+}
+
+// OidcSubjectLT applies the LT predicate on the "oidc_subject" field.
+func OidcSubjectLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldOidcSubject, v))
+}
+
+// OidcSubjectLTE applies the LTE predicate on the "oidc_subject" field.
+func OidcSubjectLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldOidcSubject, v))
+}
+
+// OidcSubjectContains applies the Contains predicate on the "oidc_subject" field.
+func OidcSubjectContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldOidcSubject, v))
+}
+
+// OidcSubjectHasPrefix applies the HasPrefix predicate on the "oidc_subject" field.
+func OidcSubjectHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldOidcSubject, v))
+}
+
+// OidcSubjectHasSuffix applies the HasSuffix predicate on the "oidc_subject" field.
+func OidcSubjectHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldOidcSubject, v))
+}
+
+// OidcSubjectIsNil applies the IsNil predicate on the "oidc_subject" field.
+func OidcSubjectIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldOidcSubject))
+}
+
+// OidcSubjectNotNil applies the NotNil predicate on the "oidc_subject" field.
+func OidcSubjectNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldOidcSubject))
+}
+
+// OidcSubjectEqualFold applies the EqualFold predicate on the "oidc_subject" field.
+func OidcSubjectEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldOidcSubject, v))
+}
+
+// OidcSubjectContainsFold applies the ContainsFold predicate on the "oidc_subject" field.
+func OidcSubjectContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldOidcSubject, v))
+}
+
+// DefaultGroupIDEQ applies the EQ predicate on the "default_group_id" field.
+func DefaultGroupIDEQ(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldDefaultGroupID, v))
+}
+
+// DefaultGroupIDNEQ applies the NEQ predicate on the "default_group_id" field.
+func DefaultGroupIDNEQ(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldDefaultGroupID, v))
+}
+
+// DefaultGroupIDIn applies the In predicate on the "default_group_id" field.
+func DefaultGroupIDIn(vs ...uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldIn(FieldDefaultGroupID, vs...))
+}
+
+// DefaultGroupIDNotIn applies the NotIn predicate on the "default_group_id" field.
+func DefaultGroupIDNotIn(vs ...uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldDefaultGroupID, vs...))
+}
+
+// DefaultGroupIDGT applies the GT predicate on the "default_group_id" field.
+func DefaultGroupIDGT(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldGT(FieldDefaultGroupID, v))
+}
+
+// DefaultGroupIDGTE applies the GTE predicate on the "default_group_id" field.
+func DefaultGroupIDGTE(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldDefaultGroupID, v))
+}
+
+// DefaultGroupIDLT applies the LT predicate on the "default_group_id" field.
+func DefaultGroupIDLT(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldLT(FieldDefaultGroupID, v))
+}
+
+// DefaultGroupIDLTE applies the LTE predicate on the "default_group_id" field.
+func DefaultGroupIDLTE(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldDefaultGroupID, v))
+}
+
+// DefaultGroupIDIsNil applies the IsNil predicate on the "default_group_id" field.
+func DefaultGroupIDIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldDefaultGroupID))
+}
+
+// DefaultGroupIDNotNil applies the NotNil predicate on the "default_group_id" field.
+func DefaultGroupIDNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldDefaultGroupID))
+}
+
+// SettingsIsNil applies the IsNil predicate on the "settings" field.
+func SettingsIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldSettings))
+}
+
+// SettingsNotNil applies the NotNil predicate on the "settings" field.
+func SettingsNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldSettings))
+}
+
+// HasGroups applies the HasEdge predicate on the "groups" edge.
+func HasGroups() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, GroupTable, GroupColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, GroupsTable, GroupsPrimaryKey...),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasGroupWith applies the HasEdge predicate on the "group" edge with a given conditions (other predicates).
-func HasGroupWith(preds ...predicate.Group) predicate.User {
+// HasGroupsWith applies the HasEdge predicate on the "groups" edge with a given conditions (other predicates).
+func HasGroupsWith(preds ...predicate.Group) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := newGroupStep()
+		step := newGroupsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

@@ -43,7 +43,7 @@ func (Item) Fields() []ent.Field {
 		field.String("notes").
 			MaxLen(1000).
 			Optional(),
-		field.Int("quantity").
+		field.Float("quantity").
 			Default(1),
 		field.Bool("insured").
 			Default(false),
@@ -112,7 +112,7 @@ func (Item) Edges() []ent.Edge {
 		edge.To("children", Item.Type).
 			From("parent").
 			Unique(),
-		edge.From("label", Label.Type).
+		edge.From("tag", Tag.Type).
 			Ref("items"),
 		edge.From("location", Location.Type).
 			Ref("items").

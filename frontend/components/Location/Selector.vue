@@ -7,8 +7,23 @@
     <Popover v-model:open="open">
       <PopoverTrigger as-child>
         <Button :id="id" variant="outline" role="combobox" :aria-expanded="open" class="w-full justify-between">
-          {{ value && value.name ? value.name : $t("components.location.selector.select_location") }}
-          <ChevronsUpDown class="ml-2 size-4 shrink-0 opacity-50" />
+          <span class="min-w-0 flex-auto truncate text-left">
+            {{ value && value.name ? value.name : $t("components.location.selector.select_location") }}
+          </span>
+
+          <span class="ml-2 flex items-center">
+            <button
+              v-if="value"
+              type="button"
+              class="shrink-0 rounded p-1 hover:bg-primary/20"
+              :aria-label="$t('components.location.selector.clear')"
+              @click.stop.prevent="clearSelection"
+            >
+              <X class="size-4" />
+            </button>
+
+            <ChevronsUpDown class="ml-2 size-4 shrink-0 opacity-50" />
+          </span>
         </Button>
       </PopoverTrigger>
       <PopoverContent class="w-[--reka-popper-anchor-width] p-0">
@@ -46,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-  import { Check, ChevronsUpDown } from "lucide-vue-next";
+  import { Check, ChevronsUpDown, X } from "lucide-vue-next";
   import fuzzysort from "fuzzysort";
   import { Button } from "~/components/ui/button";
   import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "~/components/ui/command";
@@ -76,6 +91,12 @@
     } else {
       value.value = null;
     }
+    open.value = false;
+  }
+
+  function clearSelection() {
+    value.value = null;
+    search.value = "";
     open.value = false;
   }
 

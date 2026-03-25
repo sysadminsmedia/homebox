@@ -1,6 +1,10 @@
 package repo
 
-import "time"
+import (
+	"time"
+
+	"github.com/samber/lo"
+)
 
 func sqliteDateFormat(t time.Time) string {
 	return t.Format("2006-01-02 15:04:05")
@@ -11,8 +15,5 @@ func sqliteDateFormat(t time.Time) string {
 // This is used for nullable or potentially nullable fields (or aggregates) in the database when running
 // queries. If the field is null, the pointer will be nil, so we return the default value instead.
 func orDefault[T any](v *T, def T) T {
-	if v == nil {
-		return def
-	}
-	return *v
+	return lo.FromPtrOr(v, def)
 }

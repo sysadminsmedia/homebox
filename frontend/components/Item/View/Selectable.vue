@@ -18,6 +18,7 @@
     items: ItemSummary[];
     locationFlatTree?: FlatTreeItem[];
     pagination?: Pagination;
+    disableSort?: boolean;
   }>();
 
   const emit = defineEmits<{
@@ -27,8 +28,10 @@
   const preferences = useViewPreferences();
   const { t } = useI18n();
   const columns = computed(() =>
-    makeColumns(t, () => {
-      emit("refresh");
+    makeColumns({
+      t,
+      refresh: () => emit("refresh"),
+      disableSort: props.disableSort,
     })
   );
 

@@ -17,8 +17,6 @@ builds:
       - freebsd
     goarch:
       - amd64
-      - "386"
-      - arm
       - arm64
       - riscv64
     flags:
@@ -28,33 +26,11 @@ builds:
       - -X main.version={{.Version}}
       - -X main.commit={{.Commit}}
       - -X main.date={{.Date}}
-    ignore:
-      - goos: windows
-        goarch: arm
-      - goos: windows
-        goarch: "386"
-      - goos: freebsd
-        goarch: arm
-      - goos: freebsd
-        goarch: "386"
     tags:
       - >-
         {{- if eq .Arch "riscv64" }}nodynamic
-        {{- else if eq .Arch "arm" }}nodynamic
-        {{- else if eq .Arch "386" }}nodynamic
         {{- else if eq .Os "freebsd" }}nodynamic
         {{ end }}
-
-signs:
-  - cmd: cosign
-    stdin: "{{ .Env.COSIGN_PWD }}"
-    args:
-      - "sign-blob"
-      - "--key=cosign.key"
-      - "--output-signature=${signature}"
-      - "${artifact}"
-      - "--yes" # needed on cosign 2.0.0+
-    artifacts: all
 
 archives:
   - formats: [ 'tar.gz' ]
@@ -63,17 +39,14 @@ archives:
       {{ .ProjectName }}_
       {{- title .Os }}_
       {{- if eq .Arch "amd64" }}x86_64
-      {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
     # use zip for windows archives
     format_overrides:
     - goos: windows
       formats: [ 'zip' ]
-    
-release:
-  extra_files:
-    - glob: dist/*.sig
+sboms:
+  - artifacts: archive
 checksum:
   name_template: 'checksums.txt'
 snapshot:

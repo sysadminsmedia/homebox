@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"entgo.io/ent/schema/mixin"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
@@ -18,7 +19,6 @@ type User struct {
 func (User) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixins.BaseMixin{},
-		GroupMixin{ref: "users"},
 	}
 }
 
@@ -34,7 +34,8 @@ func (User) Fields() []ent.Field {
 			Unique(),
 		field.String("password").
 			MaxLen(255).
-			NotEmpty().
+			Nillable().
+			Optional().
 			Sensitive(),
 		field.Bool("is_superuser").
 			Default(false),
@@ -45,12 +46,32 @@ func (User) Fields() []ent.Field {
 			Values("user", "owner"),
 		field.Time("activated_on").
 			Optional(),
+		// OIDC identity mapping fields (issuer + subject)
+		field.String("oidc_issuer").
+			Optional().
+			Nillable(),
+		field.String("oidc_subject").
+			Optional().
+			Nillable(),
+		// default_group_id is the user's primary tenant/group
+		field.UUID("default_group_id", uuid.UUID{}).
+			Optional().
+			Nillable(),
+		field.JSON("settings", map[string]interface{}{}).
+			Optional(),
+	}
+}
+
+func (User) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("oidc_issuer", "oidc_subject").Unique(),
 	}
 }
 
 // Edges of the User.
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
+		edge.To("groups", Group.Type),
 		edge.To("auth_tokens", AuthTokens.Type).
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,
@@ -81,14 +102,14 @@ func (g UserMixin) Fields() []ent.Field {
 }
 
 func (g UserMixin) Edges() []ent.Edge {
-	edge := edge.From("user", User.Type).
+	e := edge.From("user", User.Type).
 		Ref(g.ref).
 		Unique().
 		Required()
 
 	if g.field != "" {
-		edge = edge.Field(g.field)
+		e = e.Field(g.field)
 	}
 
-	return []ent.Edge{edge}
+	return []ent.Edge{e}
 }

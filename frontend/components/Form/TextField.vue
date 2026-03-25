@@ -19,6 +19,9 @@
       v-model="value"
       :placeholder="placeholder"
       :type="type"
+      :min="min"
+      :max="max"
+      :step="step"
       :required="required"
       class="w-full"
     />
@@ -42,6 +45,9 @@
       v-model="value"
       :placeholder="placeholder"
       :type="type"
+      :min="min"
+      :max="max"
+      :step="step"
       :required="required"
       class="col-span-3 mt-2 w-full"
     />
@@ -89,6 +95,18 @@
       type: Number,
       default: -1,
       required: false,
+    },
+    min: {
+      type: [String, Number],
+      default: undefined,
+    },
+    max: {
+      type: [String, Number],
+      default: undefined,
+    },
+    step: {
+      type: [String, Number],
+      default: undefined,
     },
   });
 

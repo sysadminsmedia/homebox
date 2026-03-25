@@ -8,6 +8,7 @@
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
   import { Checkbox } from "@/components/ui/checkbox";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
   const { t } = useI18n();
 
@@ -22,11 +23,24 @@
   const api = useUserApi();
 
   const bordered = ref(false);
+  const printLocationRow = ref(true);
+  const labelBlankLine = "_______________";
+
+  // Behavior constants for HomeBox text replacement
+  const BEHAVIOR_SHOW = "show";
+  const BEHAVIOR_ALWAYS_REPLACE = "always_replace";
+  const BEHAVIOR_ITEM_NO_NAME_NO_LOCATION = "item_no_name_no_location";
+  const BEHAVIOR_ITEM_NO_NAME = "item_no_name";
+  const BEHAVIOR_ITEM_NO_LOCATION = "item_no_location";
+
+  const replaceHomeboxBehavior = ref(BEHAVIOR_SHOW);
+  const replaceHomeboxText = ref(labelBlankLine);
 
   const displayProperties = reactive({
     baseURL: window.location.origin,
     assetRange: 1,
     assetRangeMax: 91,
+    skipLabels: 0,
     measure: "in",
     gapY: 0.25,
     columns: 3,
@@ -118,6 +132,8 @@
     label: string;
     ref: keyof typeof displayProperties;
     type?: "number" | "text";
+    min?: number;
+    step?: number;
   }
 
   const propertyInputs = computed<InputDef[]>(() => {
@@ -129,6 +145,12 @@
       {
         label: t("reports.label_generator.asset_end"),
         ref: "assetRangeMax",
+      },
+      {
+        label: t("reports.label_generator.skip_first_labels"),
+        ref: "skipLabels",
+        min: 0,
+        step: 1,
       },
       {
         label: t("reports.label_generator.measure_type"),
@@ -210,8 +232,8 @@
     return {
       url: getQRCodeUrl(assetID),
       assetID: item?.assetId ?? assetID,
-      name: item?.name ?? "_______________",
-      location: item?.location?.name ?? "_______________",
+      name: item?.name ?? labelBlankLine,
+      location: item?.location?.name ?? labelBlankLine,
     };
   }
 
@@ -250,8 +272,33 @@
     return items;
   });
 
+  const getHomeBoxLineText = computed(() => {
+    return (item: LabelData): string | null => {
+      if (replaceHomeboxBehavior.value === BEHAVIOR_SHOW) {
+        return "HomeBox";
+      }
+      if (replaceHomeboxBehavior.value === BEHAVIOR_ALWAYS_REPLACE) {
+        return replaceHomeboxText.value;
+      }
+      if (
+        replaceHomeboxBehavior.value === BEHAVIOR_ITEM_NO_NAME_NO_LOCATION &&
+        item.name === labelBlankLine &&
+        item.location === labelBlankLine
+      ) {
+        return replaceHomeboxText.value;
+      }
+      if (replaceHomeboxBehavior.value === BEHAVIOR_ITEM_NO_NAME && item.name === labelBlankLine) {
+        return replaceHomeboxText.value;
+      }
+      if (replaceHomeboxBehavior.value === BEHAVIOR_ITEM_NO_LOCATION && item.location === labelBlankLine) {
+        return replaceHomeboxText.value;
+      }
+      return null;
+    };
+  });
+
   type Row = {
-    items: LabelData[];
+    items: Array<LabelData | null>;
   };
 
   type Page = {
@@ -299,8 +346,26 @@
     const calc: Page[] = [];
 
     const perPage = out.value.rows * out.value.cols;
+    const maxSkipLabels = Math.max(0, perPage - 1);
 
-    const itemsCopy = [...items.value];
+    const skipLabelsRaw = Number(displayProperties.skipLabels);
+    const skipLabels = Number.isFinite(skipLabelsRaw)
+      ? Math.min(maxSkipLabels, Math.max(0, Math.floor(skipLabelsRaw)))
+      : 0;
+    if (Number(displayProperties.skipLabels) !== skipLabels) {
+      displayProperties.skipLabels = skipLabels;
+    }
+
+    const sourceItems = items.value;
+    if (sourceItems.length === 0) {
+      pages.value = [];
+      return;
+    }
+
+    const itemsCopy: Array<LabelData | null> = [...sourceItems];
+    if (skipLabels > 0) {
+      itemsCopy.unshift(...Array.from({ length: skipLabels }, () => null));
+    }
 
     while (itemsCopy.length > 0) {
       const page: Page = {
@@ -309,7 +374,7 @@
 
       for (let i = 0; i < perPage; i++) {
         const item = itemsCopy.shift();
-        if (!item) {
+        if (typeof item === "undefined") {
           break;
         }
 
@@ -319,7 +384,7 @@
           });
         }
 
-        page.rows[page.rows.length - 1]!.items.push(item);
+        page.rows[page.rows.length - 1]!.items.push(item ?? null);
       }
 
       calc.push(page);
@@ -352,7 +417,7 @@
         <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_3'))" />
       </ul>
       <div class="flex flex-wrap gap-2">
-        <NuxtLink href="/tools">{{ $t("menu.tools") }}</NuxtLink>
+        <NuxtLink href="/collection/tools">{{ $t("collection.tabs.tools") }}</NuxtLink>
         <NuxtLink href="/home">{{ $t("menu.home") }}</NuxtLink>
       </div>
     </div>
@@ -367,7 +432,48 @@
             :id="`input-${prop.ref}`"
             v-model="displayProperties[prop.ref]"
             :type="prop.type ? prop.type : 'number'"
-            step="0.01"
+            :min="prop.min"
+            :max="prop.ref === 'skipLabels' ? Math.max(0, out.rows * out.cols - 1) : undefined"
+            :step="prop.type === 'text' ? undefined : (prop.step ?? 0.01)"
+            :placeholder="$t('reports.label_generator.input_placeholder')"
+            class="w-full max-w-xs"
+          />
+        </div>
+        <div class="flex w-full max-w-xs flex-col">
+          <Label for="select-replaceHomeboxBehavior">
+            {{ $t("reports.label_generator.replace_homebox_behavior") }}
+          </Label>
+          <Select id="select-replaceHomeboxBehavior" v-model="replaceHomeboxBehavior" class="w-full max-w-xs">
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem :value="BEHAVIOR_SHOW">
+                {{ $t("reports.label_generator.replace_homebox_behavior_show_homebox") }}
+              </SelectItem>
+              <SelectItem :value="BEHAVIOR_ITEM_NO_NAME_NO_LOCATION">
+                {{ $t("reports.label_generator.replace_homebox_behavior_item_no_name_no_location") }}
+              </SelectItem>
+              <SelectItem :value="BEHAVIOR_ITEM_NO_NAME">
+                {{ $t("reports.label_generator.replace_homebox_behavior_item_no_name") }}
+              </SelectItem>
+              <SelectItem :value="BEHAVIOR_ITEM_NO_LOCATION">
+                {{ $t("reports.label_generator.replace_homebox_behavior_item_no_location") }}
+              </SelectItem>
+              <SelectItem :value="BEHAVIOR_ALWAYS_REPLACE">
+                {{ $t("reports.label_generator.replace_homebox_behavior_always_replace") }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div v-if="replaceHomeboxBehavior !== BEHAVIOR_SHOW" class="flex w-full max-w-xs flex-col">
+          <Label for="input-replaceHomeboxText">
+            {{ $t("reports.label_generator.replace_homebox_text") }}
+          </Label>
+          <Input
+            id="input-replaceHomeboxText"
+            v-model="replaceHomeboxText"
+            type="text"
             :placeholder="$t('reports.label_generator.input_placeholder')"
             class="w-full max-w-xs"
           />
@@ -378,6 +484,12 @@
           <Checkbox id="borderedLabels" v-model="bordered" />
           <Label class="cursor-pointer" for="borderedLabels">
             {{ $t("reports.label_generator.bordered_labels") }}
+          </Label>
+        </div>
+        <div class="flex items-center gap-2 py-4">
+          <Checkbox id="printLocationRow" v-model="printLocationRow" />
+          <Label class="cursor-pointer" for="printLocationRow">
+            {{ $t("reports.label_generator.print_location_row") }}
           </Label>
         </div>
       </div>
@@ -419,30 +531,38 @@
           :key="idx"
           class="flex border-2"
           :class="{
-            'border-black': bordered,
-            'border-transparent': !bordered,
+            'border-black': bordered && !!item,
+            'border-transparent': !bordered || !item,
           }"
           :style="{
             height: `${out.card.height}${out.measure}`,
             width: `${out.card.width}${out.measure}`,
           }"
         >
-          <div class="flex items-center">
-            <img
-              :src="item.url"
-              :style="{
-                minWidth: `${out.card.height * 0.9}${out.measure}`,
-                width: `${out.card.height * 0.9}${out.measure}`,
-                height: `${out.card.height * 0.9}${out.measure}`,
-              }"
-            />
-          </div>
-          <div class="ml-2 flex flex-col justify-center">
-            <div class="font-bold">{{ item.assetID }}</div>
-            <div class="text-xs font-light italic">HomeBox</div>
-            <div class="overflow-hidden text-wrap text-xs">{{ item.name }}</div>
-            <div class="text-xs">{{ item.location }}</div>
-          </div>
+          <template v-if="item">
+            <div class="flex items-center">
+              <img
+                :src="item.url"
+                :style="{
+                  minWidth: `${out.card.height * 0.9}${out.measure}`,
+                  width: `${out.card.height * 0.9}${out.measure}`,
+                  height: `${out.card.height * 0.9}${out.measure}`,
+                }"
+              />
+            </div>
+            <div class="ml-2 flex flex-col justify-center">
+              <div class="font-bold">{{ item.assetID }}</div>
+              <div
+                v-if="getHomeBoxLineText(item)"
+                class="text-xs"
+                :class="{ 'font-light italic': getHomeBoxLineText(item) !== labelBlankLine }"
+              >
+                {{ getHomeBoxLineText(item) }}
+              </div>
+              <div class="overflow-hidden text-wrap text-xs">{{ item.name }}</div>
+              <div v-if="printLocationRow" class="text-xs">{{ item.location }}</div>
+            </div>
+          </template>
         </div>
       </div>
     </section>
