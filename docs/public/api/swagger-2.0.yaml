@@ -301,7 +301,7 @@ definitions:
         type: string
       quantity:
         description: Quantity holds the value of the "quantity" field.
-        type: integer
+        type: number
       serial_number:
         description: SerialNumber holds the value of the "serial_number" field.
         type: string
@@ -446,7 +446,7 @@ definitions:
         type: string
       default_quantity:
         description: DefaultQuantity holds the value of the "default_quantity" field.
-        type: integer
+        type: number
       default_tag_ids:
         description: Default tag IDs for items created from this template
         items:
@@ -936,7 +936,7 @@ definitions:
         type: string
         x-nullable: true
       quantity:
-        type: integer
+        type: number
       tagIds:
         items:
           type: string
@@ -1017,7 +1017,7 @@ definitions:
         description: Purchase
         type: string
       quantity:
-        type: integer
+        type: number
       serialNumber:
         type: string
       soldNotes:
@@ -1055,7 +1055,7 @@ definitions:
         x-nullable: true
         x-omitempty: true
       quantity:
-        type: integer
+        type: number
         x-nullable: true
         x-omitempty: true
       tagIds:
@@ -1104,7 +1104,7 @@ definitions:
       purchasePrice:
         type: number
       quantity:
-        type: integer
+        type: number
       soldTime:
         description: Sale details
         type: string
@@ -1147,7 +1147,7 @@ definitions:
         x-nullable: true
       defaultQuantity:
         description: Default values for items
-        type: integer
+        type: number
         x-nullable: true
       defaultTagIds:
         items:
@@ -1205,7 +1205,7 @@ definitions:
         type: string
       defaultQuantity:
         description: Default values for items
-        type: integer
+        type: number
       defaultTags:
         items:
           $ref: '#/definitions/repo.TemplateTagSummary'
@@ -1276,7 +1276,7 @@ definitions:
         x-nullable: true
       defaultQuantity:
         description: Default values for items
-        type: integer
+        type: number
         x-nullable: true
       defaultTagIds:
         items:
@@ -1371,7 +1371,7 @@ definitions:
         description: Purchase
         type: string
       quantity:
-        type: integer
+        type: number
       serialNumber:
         description: Identifications
         type: string
@@ -1440,7 +1440,7 @@ definitions:
       id:
         type: string
       itemCount:
-        type: integer
+        type: number
       name:
         type: string
       updatedAt:
@@ -1935,7 +1935,7 @@ definitions:
         minLength: 1
         type: string
       quantity:
-        type: integer
+        type: number
       tagIds:
         items:
           type: string
@@ -2854,7 +2854,7 @@ paths:
       summary: Import Items
       tags:
       - Items
-  /v1/labelmaker/assets/{id}:
+  /v1/labelmaker/asset/{id}:
     get:
       parameters:
       - description: Asset ID

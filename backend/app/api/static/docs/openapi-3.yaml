@@ -887,7 +887,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/repo.ItemPath"
-  "/v1/labelmaker/assets/{id}":
+  "/v1/labelmaker/asset/{id}":
     get:
       security:
         - Bearer: []
