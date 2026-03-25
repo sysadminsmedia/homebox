@@ -1,5 +1,5 @@
 import { toBool, pushEnv } from './utils.js';
-import { proxyServiceBlock } from './proxyService.js';
+import { getLabels, proxyServiceBlock } from './proxyService.js';
 
 /**
  * Assembles a full compose.yml string from the current designer state.
@@ -91,6 +91,8 @@ export function buildComposeYaml(state) {
         envLines.push(`      - HBOX_OPTIONS_ALLOW_LOCAL_LOGIN=${toBool(state.allowLocalLogin)}`);
     }
 
+    const labels = getLabels(state);
+
     const dependsOn =
         state.databaseType === 'postgres' ? '    depends_on:\n      - postgres\n' : '';
     const sidecarService = proxyServiceBlock(state);
@@ -123,6 +125,7 @@ export function buildComposeYaml(state) {
         homeboxVolumes,
         '    ports:',
         '      - 3100:7745',
+        labels,
         '',
         postgresService.trimEnd(),
         sidecarService.trimEnd(),
