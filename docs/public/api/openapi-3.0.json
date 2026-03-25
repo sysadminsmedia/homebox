@@ -1496,7 +1496,7 @@
                 }
             }
         },
-        "/v1/labelmaker/assets/{id}": {
+        "/v1/labelmaker/asset/{id}": {
             "get": {
                 "security": [
                     {
@@ -3456,7 +3456,7 @@
                     },
                     "quantity": {
                         "description": "Quantity holds the value of the \"quantity\" field.",
-                        "type": "integer"
+                        "type": "number"
                     },
                     "serial_number": {
                         "description": "SerialNumber holds the value of the \"serial_number\" field.",
@@ -3663,7 +3663,7 @@
                     },
                     "default_quantity": {
                         "description": "DefaultQuantity holds the value of the \"default_quantity\" field.",
-                        "type": "integer"
+                        "type": "number"
                     },
                     "default_tag_ids": {
                         "description": "Default tag IDs for items created from this template",
@@ -4384,7 +4384,7 @@
                         "nullable": true
                     },
                     "quantity": {
-                        "type": "integer"
+                        "type": "number"
                     },
                     "tagIds": {
                         "type": "array",
@@ -4503,7 +4503,7 @@
                         "type": "string"
                     },
                     "quantity": {
-                        "type": "integer"
+                        "type": "number"
                     },
                     "serialNumber": {
                         "type": "string"
@@ -4558,7 +4558,7 @@
                         "nullable": true
                     },
                     "quantity": {
-                        "type": "integer",
+                        "type": "number",
                         "x-omitempty": true,
                         "nullable": true
                     },
@@ -4630,7 +4630,7 @@
                         "type": "number"
                     },
                     "quantity": {
-                        "type": "integer"
+                        "type": "number"
                     },
                     "soldTime": {
                         "description": "Sale details",
@@ -4691,7 +4691,7 @@
                     },
                     "defaultQuantity": {
                         "description": "Default values for items",
-                        "type": "integer",
+                        "type": "number",
                         "nullable": true
                     },
                     "defaultTagIds": {
@@ -4772,7 +4772,7 @@
                     },
                     "defaultQuantity": {
                         "description": "Default values for items",
-                        "type": "integer"
+                        "type": "number"
                     },
                     "defaultTags": {
                         "type": "array",
@@ -4876,7 +4876,7 @@
                     },
                     "defaultQuantity": {
                         "description": "Default values for items",
-                        "type": "integer",
+                        "type": "number",
                         "nullable": true
                     },
                     "defaultTagIds": {
@@ -5007,7 +5007,7 @@
                         "type": "string"
                     },
                     "quantity": {
-                        "type": "integer"
+                        "type": "number"
                     },
                     "serialNumber": {
                         "description": "Identifications",
@@ -5106,7 +5106,7 @@
                         "type": "string"
                     },
                     "itemCount": {
-                        "type": "integer"
+                        "type": "number"
                     },
                     "name": {
                         "type": "string"
@@ -5854,7 +5854,7 @@
                         "minLength": 1
                     },
                     "quantity": {
-                        "type": "integer"
+                        "type": "number"
                     },
                     "tagIds": {
                         "type": "array",

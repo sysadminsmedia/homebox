@@ -1399,7 +1399,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/labelmaker/assets/{id}": {
+        "/v1/labelmaker/asset/{id}": {
             "get": {
                 "security": [
                     {

@@ -887,7 +887,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/repo.ItemPath"
-  "/v1/labelmaker/assets/{id}":
+  "/v1/labelmaker/asset/{id}":
     get:
       security:
         - Bearer: []
@@ -2091,7 +2091,7 @@ components:
           type: string
         quantity:
           description: Quantity holds the value of the "quantity" field.
-          type: integer
+          type: number
         serial_number:
           description: SerialNumber holds the value of the "serial_number" field.
           type: string
@@ -2236,7 +2236,7 @@ components:
           type: string
         default_quantity:
           description: DefaultQuantity holds the value of the "default_quantity" field.
-          type: integer
+          type: number
         default_tag_ids:
           description: Default tag IDs for items created from this template
           type: array
@@ -2735,7 +2735,7 @@ components:
           type: string
           nullable: true
         quantity:
-          type: integer
+          type: number
         tagIds:
           type: array
           items:
@@ -2814,7 +2814,7 @@ components:
           description: Purchase
           type: string
         quantity:
-          type: integer
+          type: number
         serialNumber:
           type: string
         soldNotes:
@@ -2852,7 +2852,7 @@ components:
           x-omitempty: true
           nullable: true
         quantity:
-          type: integer
+          type: number
           x-omitempty: true
           nullable: true
         tagIds:
@@ -2901,7 +2901,7 @@ components:
         purchasePrice:
           type: number
         quantity:
-          type: integer
+          type: number
         soldTime:
           description: Sale details
           type: string
@@ -2946,7 +2946,7 @@ components:
           nullable: true
         defaultQuantity:
           description: Default values for items
-          type: integer
+          type: number
           nullable: true
         defaultTagIds:
           type: array
@@ -3002,7 +3002,7 @@ components:
           type: string
         defaultQuantity:
           description: Default values for items
-          type: integer
+          type: number
         defaultTags:
           type: array
           items:
@@ -3075,7 +3075,7 @@ components:
           nullable: true
         defaultQuantity:
           description: Default values for items
-          type: integer
+          type: number
           nullable: true
         defaultTagIds:
           type: array
@@ -3170,7 +3170,7 @@ components:
           description: Purchase
           type: string
         quantity:
-          type: integer
+          type: number
         serialNumber:
           description: Identifications
           type: string
@@ -3237,7 +3237,7 @@ components:
         id:
           type: string
         itemCount:
-          type: integer
+          type: number
         name:
           type: string
         updatedAt:
@@ -3735,7 +3735,7 @@ components:
           maxLength: 255
           minLength: 1
         quantity:
-          type: integer
+          type: number
         tagIds:
           type: array
           items:
