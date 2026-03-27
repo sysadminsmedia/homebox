@@ -355,6 +355,48 @@ func (_c *ItemCreate) SetNillableSoldNotes(v *string) *ItemCreate {
 	return _c
 }
 
+// SetLastInventoryAt sets the "last_inventory_at" field.
+func (_c *ItemCreate) SetLastInventoryAt(v time.Time) *ItemCreate {
+	_c.mutation.SetLastInventoryAt(v)
+	return _c
+}
+
+// SetNillableLastInventoryAt sets the "last_inventory_at" field if the given value is not nil.
+func (_c *ItemCreate) SetNillableLastInventoryAt(v *time.Time) *ItemCreate {
+	if v != nil {
+		_c.SetLastInventoryAt(*v)
+	}
+	return _c
+}
+
+// SetCableLength sets the "cable_length" field.
+func (_c *ItemCreate) SetCableLength(v float64) *ItemCreate {
+	_c.mutation.SetCableLength(v)
+	return _c
+}
+
+// SetNillableCableLength sets the "cable_length" field if the given value is not nil.
+func (_c *ItemCreate) SetNillableCableLength(v *float64) *ItemCreate {
+	if v != nil {
+		_c.SetCableLength(*v)
+	}
+	return _c
+}
+
+// SetCableLengthUnit sets the "cable_length_unit" field.
+func (_c *ItemCreate) SetCableLengthUnit(v item.CableLengthUnit) *ItemCreate {
+	_c.mutation.SetCableLengthUnit(v)
+	return _c
+}
+
+// SetNillableCableLengthUnit sets the "cable_length_unit" field if the given value is not nil.
+func (_c *ItemCreate) SetNillableCableLengthUnit(v *item.CableLengthUnit) *ItemCreate {
+	if v != nil {
+		_c.SetCableLengthUnit(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *ItemCreate) SetID(v uuid.UUID) *ItemCreate {
 	_c.mutation.SetID(v)
@@ -787,6 +829,15 @@ func (_c *ItemCreate) createSpec() (*Item, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.SoldNotes(); ok {
 		_spec.SetField(item.FieldSoldNotes, field.TypeString, value)
 		_node.SoldNotes = value
+	}
+	if value, ok := _c.mutation.LastInventoryAt(); ok {
+		_spec.SetField(item.FieldLastInventoryAt, field.TypeTime, value)
+	}
+	if value, ok := _c.mutation.CableLength(); ok {
+		_spec.SetField(item.FieldCableLength, field.TypeFloat64, value)
+	}
+	if value, ok := _c.mutation.CableLengthUnit(); ok {
+		_spec.SetField(item.FieldCableLengthUnit, field.TypeEnum, value)
 	}
 	if nodes := _c.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

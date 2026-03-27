@@ -13,7 +13,9 @@
 
 export enum UserRole {
   DefaultRole = "user",
+  RoleViewer = "viewer",
   RoleUser = "user",
+  RoleManager = "manager",
   RoleOwner = "owner",
 }
 
@@ -690,6 +692,11 @@ export interface ItemOut {
   updatedAt: Date | string;
   warrantyDetails: string;
   warrantyExpires: Date | string;
+  /** Inventory / Audit */
+  lastInventoryAt?: Date | string | null;
+  /** Cable Details */
+  cableLength?: number | null;
+  cableLengthUnit?: "m" | "ft" | "cm" | null;
 }
 
 export interface ItemPatch {
@@ -1069,6 +1076,7 @@ export interface UserOut {
   isOwner: boolean;
   isSuperuser: boolean;
   name: string;
+  role: UserRole;
   oidcIssuer: string;
   oidcSubject: string;
 }

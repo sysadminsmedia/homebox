@@ -68,6 +68,12 @@ type Item struct {
 	SoldPrice float64 `json:"sold_price,omitempty"`
 	// SoldNotes holds the value of the "sold_notes" field.
 	SoldNotes string `json:"sold_notes,omitempty"`
+	// LastInventoryAt holds the value of the "last_inventory_at" field.
+	LastInventoryAt *time.Time `json:"last_inventory_at,omitempty"`
+	// CableLength holds the value of the "cable_length" field.
+	CableLength *float64 `json:"cable_length,omitempty"`
+	// CableLengthUnit holds the value of the "cable_length_unit" field.
+	CableLengthUnit *item.CableLengthUnit `json:"cable_length_unit,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ItemQuery when eager-loading is set.
 	Edges          ItemEdges `json:"edges"`
@@ -185,13 +191,13 @@ func (*Item) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case item.FieldInsured, item.FieldArchived, item.FieldSyncChildItemsLocations, item.FieldLifetimeWarranty:
 			values[i] = new(sql.NullBool)
-		case item.FieldQuantity, item.FieldPurchasePrice, item.FieldSoldPrice:
+		case item.FieldQuantity, item.FieldPurchasePrice, item.FieldSoldPrice, item.FieldCableLength:
 			values[i] = new(sql.NullFloat64)
 		case item.FieldAssetID:
 			values[i] = new(sql.NullInt64)
-		case item.FieldName, item.FieldDescription, item.FieldImportRef, item.FieldNotes, item.FieldSerialNumber, item.FieldModelNumber, item.FieldManufacturer, item.FieldWarrantyDetails, item.FieldPurchaseFrom, item.FieldSoldTo, item.FieldSoldNotes:
+		case item.FieldName, item.FieldDescription, item.FieldImportRef, item.FieldNotes, item.FieldSerialNumber, item.FieldModelNumber, item.FieldManufacturer, item.FieldWarrantyDetails, item.FieldPurchaseFrom, item.FieldSoldTo, item.FieldSoldNotes, item.FieldCableLengthUnit:
 			values[i] = new(sql.NullString)
-		case item.FieldCreatedAt, item.FieldUpdatedAt, item.FieldWarrantyExpires, item.FieldPurchaseTime, item.FieldSoldTime:
+		case item.FieldCreatedAt, item.FieldUpdatedAt, item.FieldWarrantyExpires, item.FieldPurchaseTime, item.FieldSoldTime, item.FieldLastInventoryAt:
 			values[i] = new(sql.NullTime)
 		case item.FieldID:
 			values[i] = new(uuid.UUID)
@@ -365,6 +371,25 @@ func (_m *Item) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field sold_notes", values[i])
 			} else if value.Valid {
 				_m.SoldNotes = value.String
+			}
+		case item.FieldLastInventoryAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field last_inventory_at", values[i])
+			} else if value.Valid {
+				_m.LastInventoryAt = &value.Time
+			}
+		case item.FieldCableLength:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field cable_length", values[i])
+			} else if value.Valid {
+				_m.CableLength = &value.Float64
+			}
+		case item.FieldCableLengthUnit:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field cable_length_unit", values[i])
+			} else if value.Valid {
+				unit := item.CableLengthUnit(value.String)
+				_m.CableLengthUnit = &unit
 			}
 		case item.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {

@@ -41,6 +41,7 @@ type (
 		GroupIDs       []uuid.UUID `json:"groupIds"`
 		PasswordHash   string      `json:"-"`
 		IsOwner        bool        `json:"isOwner"`
+		Role           user.Role   `json:"role"`
 		OidcIssuer     *string     `json:"oidcIssuer"`
 		OidcSubject    *string     `json:"oidcSubject"`
 	}
@@ -71,6 +72,7 @@ func mapUserOut(user *ent.User) UserOut {
 		}),
 		PasswordHash: lo.FromPtrOr(user.Password, ""),
 		IsOwner:      user.Role == "owner",
+		Role:         user.Role,
 		OidcIssuer:   user.OidcIssuer,
 		OidcSubject:  user.OidcSubject,
 	}

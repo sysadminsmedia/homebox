@@ -916,6 +916,38 @@
             </div>
           </div>
         </Card>
+
+        <Card v-if="preferences.editorAdvancedView" class="overflow-visible shadow-xl">
+          <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-lg font-medium leading-6">{{ $t("items.cable_details") }}</h3>
+          </div>
+          <div class="border-t sm:p-0">
+            <div class="border-b px-4 pb-4 pt-2 sm:px-6">
+              <div class="flex items-end gap-2">
+                <FormTextField
+                  v-model.number="(item as any).cableLength"
+                  type="number"
+                  step="0.01"
+                  :label="$t('items.cable_length')"
+                  inline
+                  class="flex-1"
+                />
+                <div class="mb-1">
+                  <Select v-model="(item as any).cableLengthUnit">
+                    <SelectTrigger class="w-20">
+                      <SelectValue :placeholder="$t('items.cable_unit')" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="m">m</SelectItem>
+                      <SelectItem value="ft">ft</SelectItem>
+                      <SelectItem value="cm">cm</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
       </div>
     </section>
   </div>

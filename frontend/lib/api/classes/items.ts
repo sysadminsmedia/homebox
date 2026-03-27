@@ -173,6 +173,13 @@ export class ItemsApi extends BaseAPI {
     });
   }
 
+  /**
+   * Mark an item as inventoried (updates last_inventory_at to now).
+   */
+  inventoryCheck(id: string) {
+    return this.http.post<void, ItemOut>({ url: route(`/items/${id}/inventory`) });
+  }
+
   import(file: File | Blob) {
     const formData = new FormData();
     formData.append("csv", file);

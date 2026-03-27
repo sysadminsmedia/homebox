@@ -57,6 +57,7 @@
   const route = useRoute();
   const router = useRouter();
   const api = useUserApi();
+  const { isOwner } = usePermissions();
 
   const itemId = computed<string>(() => route.params.id as string);
   const preferences = useViewPreferences();
@@ -730,8 +731,8 @@
                     <MdiContentSaveEdit class="mr-2 size-4" />
                     {{ $t("components.template.save_as_template") }}
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem class="text-destructive focus:text-destructive" @click="deleteItem">
+                  <DropdownMenuSeparator v-if="isOwner" />
+                  <DropdownMenuItem v-if="isOwner" class="text-destructive focus:text-destructive" @click="deleteItem">
                     <MdiDelete class="mr-2 size-4" />
                     {{ $t("global.delete") }}
                   </DropdownMenuItem>

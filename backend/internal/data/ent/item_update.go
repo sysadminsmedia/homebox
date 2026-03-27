@@ -455,6 +455,66 @@ func (_u *ItemUpdate) ClearSoldNotes() *ItemUpdate {
 	return _u
 }
 
+// SetLastInventoryAt sets the "last_inventory_at" field.
+func (_u *ItemUpdate) SetLastInventoryAt(v time.Time) *ItemUpdate {
+	_u.mutation.SetLastInventoryAt(v)
+	return _u
+}
+
+// SetNillableLastInventoryAt sets the "last_inventory_at" field if the given value is not nil.
+func (_u *ItemUpdate) SetNillableLastInventoryAt(v *time.Time) *ItemUpdate {
+	if v != nil {
+		_u.SetLastInventoryAt(*v)
+	}
+	return _u
+}
+
+// ClearLastInventoryAt clears the value of the "last_inventory_at" field.
+func (_u *ItemUpdate) ClearLastInventoryAt() *ItemUpdate {
+	_u.mutation.ClearLastInventoryAt()
+	return _u
+}
+
+// SetCableLength sets the "cable_length" field.
+func (_u *ItemUpdate) SetCableLength(v float64) *ItemUpdate {
+	_u.mutation.SetCableLength(v)
+	return _u
+}
+
+// SetNillableCableLength sets the "cable_length" field if the given value is not nil.
+func (_u *ItemUpdate) SetNillableCableLength(v *float64) *ItemUpdate {
+	if v != nil {
+		_u.SetCableLength(*v)
+	}
+	return _u
+}
+
+// ClearCableLength clears the value of the "cable_length" field.
+func (_u *ItemUpdate) ClearCableLength() *ItemUpdate {
+	_u.mutation.ClearCableLength()
+	return _u
+}
+
+// SetCableLengthUnit sets the "cable_length_unit" field.
+func (_u *ItemUpdate) SetCableLengthUnit(v item.CableLengthUnit) *ItemUpdate {
+	_u.mutation.SetCableLengthUnit(v)
+	return _u
+}
+
+// SetNillableCableLengthUnit sets the "cable_length_unit" field if the given value is not nil.
+func (_u *ItemUpdate) SetNillableCableLengthUnit(v *item.CableLengthUnit) *ItemUpdate {
+	if v != nil {
+		_u.SetCableLengthUnit(*v)
+	}
+	return _u
+}
+
+// ClearCableLengthUnit clears the value of the "cable_length_unit" field.
+func (_u *ItemUpdate) ClearCableLengthUnit() *ItemUpdate {
+	_u.mutation.ClearCableLengthUnit()
+	return _u
+}
+
 // SetGroupID sets the "group" edge to the Group entity by ID.
 func (_u *ItemUpdate) SetGroupID(id uuid.UUID) *ItemUpdate {
 	_u.mutation.SetGroupID(id)
@@ -927,6 +987,27 @@ func (_u *ItemUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.SoldNotesCleared() {
 		_spec.ClearField(item.FieldSoldNotes, field.TypeString)
+	}
+	if value, ok := _u.mutation.LastInventoryAt(); ok {
+		_spec.SetField(item.FieldLastInventoryAt, field.TypeTime, value)
+	}
+	if _u.mutation.LastInventoryAtCleared() {
+		_spec.ClearField(item.FieldLastInventoryAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.CableLength(); ok {
+		_spec.SetField(item.FieldCableLength, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedCableLength(); ok {
+		_spec.AddField(item.FieldCableLength, field.TypeFloat64, value)
+	}
+	if _u.mutation.CableLengthCleared() {
+		_spec.ClearField(item.FieldCableLength, field.TypeFloat64)
+	}
+	if value, ok := _u.mutation.CableLengthUnit(); ok {
+		_spec.SetField(item.FieldCableLengthUnit, field.TypeEnum, value)
+	}
+	if _u.mutation.CableLengthUnitCleared() {
+		_spec.ClearField(item.FieldCableLengthUnit, field.TypeEnum)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1680,6 +1761,66 @@ func (_u *ItemUpdateOne) ClearSoldNotes() *ItemUpdateOne {
 	return _u
 }
 
+// SetLastInventoryAt sets the "last_inventory_at" field.
+func (_u *ItemUpdateOne) SetLastInventoryAt(v time.Time) *ItemUpdateOne {
+	_u.mutation.SetLastInventoryAt(v)
+	return _u
+}
+
+// SetNillableLastInventoryAt sets the "last_inventory_at" field if the given value is not nil.
+func (_u *ItemUpdateOne) SetNillableLastInventoryAt(v *time.Time) *ItemUpdateOne {
+	if v != nil {
+		_u.SetLastInventoryAt(*v)
+	}
+	return _u
+}
+
+// ClearLastInventoryAt clears the value of the "last_inventory_at" field.
+func (_u *ItemUpdateOne) ClearLastInventoryAt() *ItemUpdateOne {
+	_u.mutation.ClearLastInventoryAt()
+	return _u
+}
+
+// SetCableLength sets the "cable_length" field.
+func (_u *ItemUpdateOne) SetCableLength(v float64) *ItemUpdateOne {
+	_u.mutation.SetCableLength(v)
+	return _u
+}
+
+// SetNillableCableLength sets the "cable_length" field if the given value is not nil.
+func (_u *ItemUpdateOne) SetNillableCableLength(v *float64) *ItemUpdateOne {
+	if v != nil {
+		_u.SetCableLength(*v)
+	}
+	return _u
+}
+
+// ClearCableLength clears the value of the "cable_length" field.
+func (_u *ItemUpdateOne) ClearCableLength() *ItemUpdateOne {
+	_u.mutation.ClearCableLength()
+	return _u
+}
+
+// SetCableLengthUnit sets the "cable_length_unit" field.
+func (_u *ItemUpdateOne) SetCableLengthUnit(v item.CableLengthUnit) *ItemUpdateOne {
+	_u.mutation.SetCableLengthUnit(v)
+	return _u
+}
+
+// SetNillableCableLengthUnit sets the "cable_length_unit" field if the given value is not nil.
+func (_u *ItemUpdateOne) SetNillableCableLengthUnit(v *item.CableLengthUnit) *ItemUpdateOne {
+	if v != nil {
+		_u.SetCableLengthUnit(*v)
+	}
+	return _u
+}
+
+// ClearCableLengthUnit clears the value of the "cable_length_unit" field.
+func (_u *ItemUpdateOne) ClearCableLengthUnit() *ItemUpdateOne {
+	_u.mutation.ClearCableLengthUnit()
+	return _u
+}
+
 // SetGroupID sets the "group" edge to the Group entity by ID.
 func (_u *ItemUpdateOne) SetGroupID(id uuid.UUID) *ItemUpdateOne {
 	_u.mutation.SetGroupID(id)
@@ -2182,6 +2323,27 @@ func (_u *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) {
 	}
 	if _u.mutation.SoldNotesCleared() {
 		_spec.ClearField(item.FieldSoldNotes, field.TypeString)
+	}
+	if value, ok := _u.mutation.LastInventoryAt(); ok {
+		_spec.SetField(item.FieldLastInventoryAt, field.TypeTime, value)
+	}
+	if _u.mutation.LastInventoryAtCleared() {
+		_spec.ClearField(item.FieldLastInventoryAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.CableLength(); ok {
+		_spec.SetField(item.FieldCableLength, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedCableLength(); ok {
+		_spec.AddField(item.FieldCableLength, field.TypeFloat64, value)
+	}
+	if _u.mutation.CableLengthCleared() {
+		_spec.ClearField(item.FieldCableLength, field.TypeFloat64)
+	}
+	if value, ok := _u.mutation.CableLengthUnit(); ok {
+		_spec.SetField(item.FieldCableLengthUnit, field.TypeEnum, value)
+	}
+	if _u.mutation.CableLengthUnitCleared() {
+		_spec.ClearField(item.FieldCableLengthUnit, field.TypeEnum)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{

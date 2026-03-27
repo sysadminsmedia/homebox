@@ -39,6 +39,7 @@
 
   const route = useRoute();
   const api = useUserApi();
+  const { isOwner } = usePermissions();
 
   const tagId = computed<string>(() => route.params.id as string);
 
@@ -302,7 +303,7 @@
               <MdiPencil />
               {{ $t("global.edit") }}
             </Button>
-            <Button variant="destructive" @click="confirmDelete()">
+            <Button v-if="isOwner" variant="destructive" @click="confirmDelete()">
               <MdiDelete />
               {{ $t("global.delete") }}
             </Button>

@@ -117,6 +117,13 @@ type (
 		SoldPrice float64    `json:"soldPrice" extensions:"x-nullable,x-omitempty"`
 		SoldNotes string     `json:"soldNotes"`
 
+		// Inventory / Audit
+		LastInventoryAt *time.Time `json:"lastInventoryAt,omitempty"`
+
+		// Cable Details
+		CableLength     *float64 `json:"cableLength,omitempty"`
+		CableLengthUnit *string  `json:"cableLengthUnit,omitempty"`
+
 		// Extras
 		Notes  string      `json:"notes"`
 		Fields []ItemField `json:"fields"`
@@ -180,6 +187,13 @@ type (
 		SoldTo    string     `json:"soldTo"`
 		SoldPrice float64    `json:"soldPrice"`
 		SoldNotes string     `json:"soldNotes"`
+
+		// Inventory / Audit
+		LastInventoryAt *time.Time `json:"lastInventoryAt,omitempty"`
+
+		// Cable Details
+		CableLength     *float64 `json:"cableLength,omitempty"`
+		CableLengthUnit *string  `json:"cableLengthUnit,omitempty"`
 
 		// Extras
 		Notes string `json:"notes"`
@@ -293,6 +307,19 @@ func mapItemOut(item *ent.Item) ItemOut {
 		SoldTo:    item.SoldTo,
 		SoldPrice: item.SoldPrice,
 		SoldNotes: item.SoldNotes,
+
+		// Inventory
+		LastInventoryAt: item.LastInventoryAt,
+
+		// Cable
+		CableLength: item.CableLength,
+		CableLengthUnit: func() *string {
+			if item.CableLengthUnit == nil {
+				return nil
+			}
+			s := string(*item.CableLengthUnit)
+			return &s
+		}(),
 
 		// Extras
 		Notes:       item.Notes,
@@ -931,7 +958,15 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 		SetWarrantyDetails(data.WarrantyDetails).
 		SetQuantity(data.Quantity).
 		SetAssetID(int(data.AssetID)).
-		SetSyncChildItemsLocations(data.SyncChildItemsLocations)
+		SetSyncChildItemsLocations(data.SyncChildItemsLocations).
+		SetNillableLastInventoryAt(data.LastInventoryAt).
+		SetNillableCableLength(data.CableLength)
+
+	if data.CableLengthUnit != nil {
+		q.SetCableLengthUnit(item.CableLengthUnit(*data.CableLengthUnit))
+	} else {
+		q.ClearCableLengthUnit()
+	}
 
 	currentTags, err := e.db.Item.Query().Where(item.ID(data.ID)).QueryTag().All(ctx)
 	if err != nil {

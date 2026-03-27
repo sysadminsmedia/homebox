@@ -3619,6 +3619,10 @@ type ItemMutation struct {
 	sold_price                 *float64
 	addsold_price              *float64
 	sold_notes                 *string
+	last_inventory_at          *time.Time
+	cable_length               *float64
+	addcable_length            *float64
+	cable_length_unit          *item.CableLengthUnit
 	clearedFields              map[string]struct{}
 	group                      *uuid.UUID
 	clearedgroup               bool
@@ -4863,6 +4867,174 @@ func (m *ItemMutation) ResetSoldNotes() {
 	delete(m.clearedFields, item.FieldSoldNotes)
 }
 
+// SetLastInventoryAt sets the "last_inventory_at" field.
+func (m *ItemMutation) SetLastInventoryAt(t time.Time) {
+	m.last_inventory_at = &t
+}
+
+// LastInventoryAt returns the value of the "last_inventory_at" field in the mutation.
+func (m *ItemMutation) LastInventoryAt() (r time.Time, exists bool) {
+	v := m.last_inventory_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastInventoryAt returns the old "last_inventory_at" field's value of the Item entity.
+// If the Item object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ItemMutation) OldLastInventoryAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastInventoryAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastInventoryAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastInventoryAt: %w", err)
+	}
+	return oldValue.LastInventoryAt, nil
+}
+
+// ClearLastInventoryAt clears the value of the "last_inventory_at" field.
+func (m *ItemMutation) ClearLastInventoryAt() {
+	m.last_inventory_at = nil
+	m.clearedFields[item.FieldLastInventoryAt] = struct{}{}
+}
+
+// LastInventoryAtCleared returns if the "last_inventory_at" field was cleared in this mutation.
+func (m *ItemMutation) LastInventoryAtCleared() bool {
+	_, ok := m.clearedFields[item.FieldLastInventoryAt]
+	return ok
+}
+
+// ResetLastInventoryAt resets all changes to the "last_inventory_at" field.
+func (m *ItemMutation) ResetLastInventoryAt() {
+	m.last_inventory_at = nil
+	delete(m.clearedFields, item.FieldLastInventoryAt)
+}
+
+// SetCableLength sets the "cable_length" field.
+func (m *ItemMutation) SetCableLength(f float64) {
+	m.cable_length = &f
+	m.addcable_length = nil
+}
+
+// CableLength returns the value of the "cable_length" field in the mutation.
+func (m *ItemMutation) CableLength() (r float64, exists bool) {
+	v := m.cable_length
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCableLength returns the old "cable_length" field's value of the Item entity.
+// If the Item object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ItemMutation) OldCableLength(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCableLength is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCableLength requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCableLength: %w", err)
+	}
+	return oldValue.CableLength, nil
+}
+
+// AddCableLength adds f to the "cable_length" field.
+func (m *ItemMutation) AddCableLength(f float64) {
+	if m.addcable_length != nil {
+		*m.addcable_length += f
+	} else {
+		m.addcable_length = &f
+	}
+}
+
+// AddedCableLength returns the value that was added to the "cable_length" field in this mutation.
+func (m *ItemMutation) AddedCableLength() (r float64, exists bool) {
+	v := m.addcable_length
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCableLength clears the value of the "cable_length" field.
+func (m *ItemMutation) ClearCableLength() {
+	m.cable_length = nil
+	m.addcable_length = nil
+	m.clearedFields[item.FieldCableLength] = struct{}{}
+}
+
+// CableLengthCleared returns if the "cable_length" field was cleared in this mutation.
+func (m *ItemMutation) CableLengthCleared() bool {
+	_, ok := m.clearedFields[item.FieldCableLength]
+	return ok
+}
+
+// ResetCableLength resets all changes to the "cable_length" field.
+func (m *ItemMutation) ResetCableLength() {
+	m.cable_length = nil
+	m.addcable_length = nil
+	delete(m.clearedFields, item.FieldCableLength)
+}
+
+// SetCableLengthUnit sets the "cable_length_unit" field.
+func (m *ItemMutation) SetCableLengthUnit(clu item.CableLengthUnit) {
+	m.cable_length_unit = &clu
+}
+
+// CableLengthUnit returns the value of the "cable_length_unit" field in the mutation.
+func (m *ItemMutation) CableLengthUnit() (r item.CableLengthUnit, exists bool) {
+	v := m.cable_length_unit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCableLengthUnit returns the old "cable_length_unit" field's value of the Item entity.
+// If the Item object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ItemMutation) OldCableLengthUnit(ctx context.Context) (v item.CableLengthUnit, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCableLengthUnit is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCableLengthUnit requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCableLengthUnit: %w", err)
+	}
+	return oldValue.CableLengthUnit, nil
+}
+
+// ClearCableLengthUnit clears the value of the "cable_length_unit" field.
+func (m *ItemMutation) ClearCableLengthUnit() {
+	m.cable_length_unit = nil
+	m.clearedFields[item.FieldCableLengthUnit] = struct{}{}
+}
+
+// CableLengthUnitCleared returns if the "cable_length_unit" field was cleared in this mutation.
+func (m *ItemMutation) CableLengthUnitCleared() bool {
+	_, ok := m.clearedFields[item.FieldCableLengthUnit]
+	return ok
+}
+
+// ResetCableLengthUnit resets all changes to the "cable_length_unit" field.
+func (m *ItemMutation) ResetCableLengthUnit() {
+	m.cable_length_unit = nil
+	delete(m.clearedFields, item.FieldCableLengthUnit)
+}
+
 // SetGroupID sets the "group" edge to the Group entity by id.
 func (m *ItemMutation) SetGroupID(id uuid.UUID) {
 	m.group = &id
@@ -5357,6 +5529,15 @@ func (m *ItemMutation) Fields() []string {
 	if m.sold_notes != nil {
 		fields = append(fields, item.FieldSoldNotes)
 	}
+	if m.last_inventory_at != nil {
+		fields = append(fields, item.FieldLastInventoryAt)
+	}
+	if m.cable_length != nil {
+		fields = append(fields, item.FieldCableLength)
+	}
+	if m.cable_length_unit != nil {
+		fields = append(fields, item.FieldCableLengthUnit)
+	}
 	return fields
 }
 
@@ -5413,6 +5594,12 @@ func (m *ItemMutation) Field(name string) (ent.Value, bool) {
 		return m.SoldPrice()
 	case item.FieldSoldNotes:
 		return m.SoldNotes()
+	case item.FieldLastInventoryAt:
+		return m.LastInventoryAt()
+	case item.FieldCableLength:
+		return m.CableLength()
+	case item.FieldCableLengthUnit:
+		return m.CableLengthUnit()
 	}
 	return nil, false
 }
@@ -5470,6 +5657,12 @@ func (m *ItemMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldSoldPrice(ctx)
 	case item.FieldSoldNotes:
 		return m.OldSoldNotes(ctx)
+	case item.FieldLastInventoryAt:
+		return m.OldLastInventoryAt(ctx)
+	case item.FieldCableLength:
+		return m.OldCableLength(ctx)
+	case item.FieldCableLengthUnit:
+		return m.OldCableLengthUnit(ctx)
 	}
 	return nil, fmt.Errorf("unknown Item field %s", name)
 }
@@ -5647,6 +5840,27 @@ func (m *ItemMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSoldNotes(v)
 		return nil
+	case item.FieldLastInventoryAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastInventoryAt(v)
+		return nil
+	case item.FieldCableLength:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCableLength(v)
+		return nil
+	case item.FieldCableLengthUnit:
+		v, ok := value.(item.CableLengthUnit)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCableLengthUnit(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Item field %s", name)
 }
@@ -5667,6 +5881,9 @@ func (m *ItemMutation) AddedFields() []string {
 	if m.addsold_price != nil {
 		fields = append(fields, item.FieldSoldPrice)
 	}
+	if m.addcable_length != nil {
+		fields = append(fields, item.FieldCableLength)
+	}
 	return fields
 }
 
@@ -5683,6 +5900,8 @@ func (m *ItemMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedPurchasePrice()
 	case item.FieldSoldPrice:
 		return m.AddedSoldPrice()
+	case item.FieldCableLength:
+		return m.AddedCableLength()
 	}
 	return nil, false
 }
@@ -5719,6 +5938,13 @@ func (m *ItemMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddSoldPrice(v)
+		return nil
+	case item.FieldCableLength:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCableLength(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Item numeric field %s", name)
@@ -5766,6 +5992,15 @@ func (m *ItemMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(item.FieldSoldNotes) {
 		fields = append(fields, item.FieldSoldNotes)
+	}
+	if m.FieldCleared(item.FieldLastInventoryAt) {
+		fields = append(fields, item.FieldLastInventoryAt)
+	}
+	if m.FieldCleared(item.FieldCableLength) {
+		fields = append(fields, item.FieldCableLength)
+	}
+	if m.FieldCleared(item.FieldCableLengthUnit) {
+		fields = append(fields, item.FieldCableLengthUnit)
 	}
 	return fields
 }
@@ -5819,6 +6054,15 @@ func (m *ItemMutation) ClearField(name string) error {
 		return nil
 	case item.FieldSoldNotes:
 		m.ClearSoldNotes()
+		return nil
+	case item.FieldLastInventoryAt:
+		m.ClearLastInventoryAt()
+		return nil
+	case item.FieldCableLength:
+		m.ClearCableLength()
+		return nil
+	case item.FieldCableLengthUnit:
+		m.ClearCableLengthUnit()
 		return nil
 	}
 	return fmt.Errorf("unknown Item nullable field %s", name)
@@ -5899,6 +6143,15 @@ func (m *ItemMutation) ResetField(name string) error {
 		return nil
 	case item.FieldSoldNotes:
 		m.ResetSoldNotes()
+		return nil
+	case item.FieldLastInventoryAt:
+		m.ResetLastInventoryAt()
+		return nil
+	case item.FieldCableLength:
+		m.ResetCableLength()
+		return nil
+	case item.FieldCableLengthUnit:
+		m.ResetCableLengthUnit()
 		return nil
 	}
 	return fmt.Errorf("unknown Item field %s", name)

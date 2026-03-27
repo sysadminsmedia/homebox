@@ -3,6 +3,7 @@
 package item
 
 import (
+	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -63,6 +64,12 @@ const (
 	FieldSoldPrice = "sold_price"
 	// FieldSoldNotes holds the string denoting the sold_notes field in the database.
 	FieldSoldNotes = "sold_notes"
+	// FieldLastInventoryAt holds the string denoting the last_inventory_at field in the database.
+	FieldLastInventoryAt = "last_inventory_at"
+	// FieldCableLength holds the string denoting the cable_length field in the database.
+	FieldCableLength = "cable_length"
+	// FieldCableLengthUnit holds the string denoting the cable_length_unit field in the database.
+	FieldCableLengthUnit = "cable_length_unit"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
 	// EdgeParent holds the string denoting the parent edge name in mutations.
@@ -158,6 +165,9 @@ var Columns = []string{
 	FieldSoldTo,
 	FieldSoldPrice,
 	FieldSoldNotes,
+	FieldLastInventoryAt,
+	FieldCableLength,
+	FieldCableLengthUnit,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "items"
@@ -233,6 +243,30 @@ var (
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
+
+// CableLengthUnit defines the type for the "cable_length_unit" enum field.
+type CableLengthUnit string
+
+// CableLengthUnit values.
+const (
+	CableLengthUnitM  CableLengthUnit = "m"
+	CableLengthUnitFt CableLengthUnit = "ft"
+	CableLengthUnitCm CableLengthUnit = "cm"
+)
+
+func (c CableLengthUnit) String() string {
+	return string(c)
+}
+
+// CableLengthUnitValidator is a validator for the "cable_length_unit" field enum values. It is called by the builders before save.
+func CableLengthUnitValidator(c CableLengthUnit) error {
+	switch c {
+	case CableLengthUnitM, CableLengthUnitFt, CableLengthUnitCm:
+		return nil
+	default:
+		return fmt.Errorf("item: invalid enum value for cable_length_unit field: %q", c)
+	}
+}
 
 // OrderOption defines the ordering options for the Item queries.
 type OrderOption func(*sql.Selector)

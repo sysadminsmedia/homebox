@@ -44,6 +44,7 @@
 
   const route = useRoute();
   const api = useUserApi();
+  const { isOwner } = usePermissions();
 
   const locationId = computed<string>(() => route.params.id as string);
 
@@ -236,7 +237,7 @@
                   {{ $t("global.edit") }}
                 </span>
               </Button>
-              <Button variant="destructive" class="w-9 md:w-auto" @click="confirmDelete()">
+              <Button v-if="isOwner" variant="destructive" class="w-9 md:w-auto" @click="confirmDelete()">
                 <MdiDelete name="mdi-delete" />
                 <span class="hidden md:inline">
                   {{ $t("global.delete") }}

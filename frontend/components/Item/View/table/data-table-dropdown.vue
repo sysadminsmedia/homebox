@@ -21,6 +21,7 @@
   const confirm = useConfirm();
   const preferences = useViewPreferences();
   const { openDialog } = useDialog();
+  const { isOwner } = usePermissions();
 
   const props = defineProps<{
     item?: ItemSummary;
@@ -255,7 +256,7 @@
         }}
       </DropdownMenuItem>
       <!-- delete -->
-      <DropdownMenuItem @click="deleteItems(multi ? multi.items.map(row => row.original.id) : [item!.id])">
+      <DropdownMenuItem v-if="isOwner" @click="deleteItems(multi ? multi.items.map(row => row.original.id) : [item!.id])">
         {{
           multi
             ? t("components.item.view.table.dropdown.delete_selected")

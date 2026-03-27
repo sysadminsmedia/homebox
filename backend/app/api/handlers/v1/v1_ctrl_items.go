@@ -271,6 +271,64 @@ func (ctrl *V1Controller) HandleItemDuplicate() errchain.HandlerFunc {
 	return adapters.ActionID("id", fn, http.StatusCreated)
 }
 
+// HandleItemInventoryCheck godoc
+//
+//	@Summary	Mark Item as Inventoried
+//	@Tags		Items
+//	@Produce	json
+//	@Param		id	path		string		true	"Item ID"
+//	@Success	200	{object}	repo.ItemOut
+//	@Router		/v1/items/{id}/inventory [POST]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleItemInventoryCheck() errchain.HandlerFunc {
+	fn := func(r *http.Request, ID uuid.UUID) (repo.ItemOut, error) {
+		auth := services.NewContext(r.Context())
+
+		// Fetch the current item to preserve all required fields for UpdateByGroup
+		current, err := ctrl.repo.Items.GetOneByGroup(auth, auth.GID, ID)
+		if err != nil {
+			return repo.ItemOut{}, err
+		}
+
+		now := time.Now()
+		update := repo.ItemUpdate{
+			ID:                      current.ID,
+			AssetID:                 current.AssetID,
+			Name:                    current.Name,
+			Description:             current.Description,
+			Quantity:                current.Quantity,
+			Insured:                 current.Insured,
+			Archived:                current.Archived,
+			SyncChildItemsLocations: current.SyncChildItemsLocations,
+			SerialNumber:            current.SerialNumber,
+			ModelNumber:             current.ModelNumber,
+			Manufacturer:            current.Manufacturer,
+			LifetimeWarranty:        current.LifetimeWarranty,
+			WarrantyExpires:         current.WarrantyExpires,
+			WarrantyDetails:         current.WarrantyDetails,
+			PurchaseTime:            current.PurchaseTime,
+			PurchaseFrom:            current.PurchaseFrom,
+			SoldTime:                current.SoldTime,
+			SoldTo:                  current.SoldTo,
+			SoldPrice:               current.SoldPrice,
+			SoldNotes:               current.SoldNotes,
+			Notes:                   current.Notes,
+			Fields:                  current.Fields,
+			LastInventoryAt:         &now,
+			CableLength:             current.CableLength,
+			CableLengthUnit:         current.CableLengthUnit,
+		}
+
+		if current.Location != nil {
+			update.LocationID = current.Location.ID
+		}
+
+		return ctrl.repo.Items.UpdateByGroup(auth, auth.GID, update)
+	}
+
+	return adapters.CommandID("id", fn, http.StatusOK)
+}
+
 // HandleGetAllCustomFieldNames godocs
 //
 //	@Summary	Get All Custom Field Names

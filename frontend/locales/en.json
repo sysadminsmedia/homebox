@@ -605,7 +605,10 @@
         "updated_at": "Updated At",
         "warranty": "Warranty",
         "warranty_details": "Warranty Details",
-        "warranty_expires": "Warranty Expires"
+        "warranty_expires": "Warranty Expires",
+        "cable_details": "Cable Details",
+        "cable_length": "Cable Length",
+        "cable_unit": "Unit"
     },
     "languages": {
         "bs-BA": "Bosnian (Bosnia and Herzegovina)",
@@ -706,6 +709,7 @@
         "home": "Home",
         "locations": "Locations",
         "maintenance": "Maintenance",
+        "inventory": "Inventory",
         "profile": "Profile",
         "scanner": "Scanner",
         "search": "Search",

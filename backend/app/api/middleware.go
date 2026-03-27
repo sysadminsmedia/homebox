@@ -14,6 +14,7 @@ import (
 	v1 "github.com/sysadminsmedia/homebox/backend/app/api/handlers/v1"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	entuser "github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 
@@ -76,6 +77,39 @@ func (a *app) mwRoles(rm RoleMode, required ...string) errchain.Middleware {
 			return next.ServeHTTP(w, r)
 		})
 	}
+}
+
+// mwRequireOwner checks that the authenticated user has the "owner" role.
+// WARNING: Must be called after mwAuthToken.
+func (a *app) mwRequireOwner(next errchain.Handler) errchain.Handler {
+	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+		usr := services.UseUserCtx(r.Context())
+		if usr == nil {
+			return validate.NewRequestError(errors.New("user context not found"), http.StatusInternalServerError)
+		}
+		if usr.Role != entuser.RoleOwner {
+			return validate.NewRequestError(errors.New("Forbidden: owner role required"), http.StatusForbidden)
+		}
+		return next.ServeHTTP(w, r)
+	})
+}
+
+// mwRequireManagerOrAbove checks that the authenticated user has at least "manager" role (manager or owner).
+// Viewer role is blocked.
+// WARNING: Must be called after mwAuthToken.
+func (a *app) mwRequireManagerOrAbove(next errchain.Handler) errchain.Handler {
+	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+		usr := services.UseUserCtx(r.Context())
+		if usr == nil {
+			return validate.NewRequestError(errors.New("user context not found"), http.StatusInternalServerError)
+		}
+		switch usr.Role {
+		case entuser.RoleOwner, entuser.RoleManager:
+			return next.ServeHTTP(w, r)
+		default:
+			return validate.NewRequestError(errors.New("Forbidden: manager or owner role required"), http.StatusForbidden)
+		}
+	})
 }
 
 type KeyFunc func(r *http.Request) (string, error)

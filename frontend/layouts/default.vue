@@ -240,6 +240,7 @@
   import MdiLogout from "~icons/mdi/logout";
   import MdiFileDocumentMultiple from "~icons/mdi/file-document-multiple";
   import MdiChevronRight from "~icons/mdi/chevron-right";
+  import MdiClipboardList from "~icons/mdi/clipboard-list";
 
   import {
     Sidebar,
@@ -427,6 +428,13 @@
       active: computed(() => route.path === "/maintenance"),
       name: computed(() => t("menu.maintenance")),
       to: "/maintenance",
+    },
+    {
+      icon: MdiClipboardList,
+      id: 8,
+      active: computed(() => route.path === "/inventory"),
+      name: computed(() => t("menu.inventory")),
+      to: "/inventory",
     },
     {
       icon: MdiAccount,

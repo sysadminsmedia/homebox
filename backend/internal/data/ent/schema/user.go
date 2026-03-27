@@ -43,7 +43,7 @@ func (User) Fields() []ent.Field {
 			Default(false),
 		field.Enum("role").
 			Default("user").
-			Values("user", "owner"),
+			Values("viewer", "user", "manager", "owner"),
 		field.Time("activated_on").
 			Optional(),
 		// OIDC identity mapping fields (issuer + subject)

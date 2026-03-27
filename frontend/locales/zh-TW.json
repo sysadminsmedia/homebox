@@ -601,7 +601,10 @@
         "updated_at": "更新於",
         "warranty": "保固",
         "warranty_details": "保固資訊",
-        "warranty_expires": "保固到期"
+        "warranty_expires": "保固到期",
+        "cable_details": "線材資訊",
+        "cable_length": "線材長度",
+        "cable_unit": "單位"
     },
     "languages": {
         "bs-BA": "波士尼亞語（波士尼亞與赫塞哥維納）",
@@ -702,6 +705,7 @@
         "home": "家中",
         "locations": "位置",
         "maintenance": "維修紀錄",
+        "inventory": "盤點管理",
         "profile": "個人資料",
         "scanner": "掃描",
         "search": "搜尋",

@@ -96,6 +96,22 @@ func (Item) Fields() []ent.Field {
 		field.String("sold_notes").
 			MaxLen(1000).
 			Optional(),
+
+		// ------------------------------------
+		// Inventory / Audit
+		field.Time("last_inventory_at").
+			Optional().
+			Nillable(),
+
+		// ------------------------------------
+		// Cable Details
+		field.Float("cable_length").
+			Optional().
+			Nillable(),
+		field.Enum("cable_length_unit").
+			Values("m", "ft", "cm").
+			Optional().
+			Nillable(),
 	}
 }
 
