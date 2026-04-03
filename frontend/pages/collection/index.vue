@@ -135,7 +135,7 @@
         return;
       }
 
-      const res = await api.group.removeMember(userId);
+      const res = await api.group.leave();
       if (res.error) {
         const msg = t("errors.api_failure") + String(res.error);
         toast.error(msg);
