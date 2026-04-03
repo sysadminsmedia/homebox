@@ -8,7 +8,7 @@
   import FormTextField from "~/components/Form/TextField.vue";
   import type { CurrenciesCurrency, Group } from "~~/lib/api/types/data-contracts";
   import { fmtCurrencyAsync } from "~/composables/utils";
-  import { getLocaleCode } from "~/composables/use-formatters";
+  import { getLocaleCode, setCurrency } from "~/composables/use-formatters";
 
   definePageMeta({
     middleware: ["auth"],
@@ -114,6 +114,7 @@
       }
 
       group.value = res.data;
+      setCurrency(res.data.currency);
       toast.success(t("profile.toast.group_updated"));
 
       await reloadCollections();
