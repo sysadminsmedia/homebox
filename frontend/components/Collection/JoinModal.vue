@@ -15,7 +15,7 @@
         </span>
         <div>
           <Badge variant="outline"> AYQ4W4K5MT4CZOPB2PZRCZ4PTY </Badge>
-          <Badge variant="outline"> {{ `${domain}?token=AYQ4W4K5MT4CZOPB2PZRCZ4PTY` }} </Badge>
+          <Badge variant="outline"> {{ `${baseUrl}?token=AYQ4W4K5MT4CZOPB2PZRCZ4PTY` }} </Badge>
         </div>
       </div>
 
@@ -54,7 +54,7 @@
   const api = useUserApi();
   const collections = useCollections();
 
-  const domain = window.location.protocol + "//" + window.location.host;
+  const baseUrl = new URL(useAppBase(), `${window.location.protocol}//${window.location.host}`).toString();
 
   const redirectTo = ref("");
   // Holds invite code from dialog params until the watcher applies it on open
