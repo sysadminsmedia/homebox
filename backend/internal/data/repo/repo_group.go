@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -529,6 +530,23 @@ func (r *GroupRepository) GroupLeave(ctx context.Context, groupID, userID, newDe
 	tx, err := r.db.Tx(ctx)
 	if err != nil {
 		return err
+	}
+
+	// Ensure not last member
+	count, err := tx.User.Query().
+		Where(user.HasGroupsWith(group.ID(groupID))).
+		Count(ctx)
+	if err != nil {
+		if err := tx.Rollback(); err != nil {
+			log.Warn().Err(err).Msg("failed to rollback transaction")
+		}
+		return err
+	}
+	if count <= 1 {
+		if err := tx.Rollback(); err != nil {
+			log.Warn().Err(err).Msg("failed to rollback transaction")
+		}
+		return errors.New("cannot leave the group as its last member")
 	}
 
 	// Update default group if needed
