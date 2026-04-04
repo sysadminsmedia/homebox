@@ -8,7 +8,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
-	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
@@ -164,32 +163,7 @@ func (ctrl *V1Controller) HandleGroupCreate() errchain.HandlerFunc {
 func (ctrl *V1Controller) HandleGroupDelete() errchain.HandlerFunc {
 	fn := func(r *http.Request) (any, error) {
 		auth := services.NewContext(r.Context())
-
-		// Get the current user to check their groups
-		currentUser, err := ctrl.repo.Users.GetOneID(auth, auth.UID)
-		if err != nil {
-			return nil, err
-		}
-
-		// Safeguard: prevent deleting if this is the user's only group
-		if len(currentUser.GroupIDs) <= 1 {
-			return nil, validate.NewRequestError(errors.New("cannot delete the only group you are a member of"), http.StatusBadRequest)
-		}
-
-		// If the group being deleted is the user's default group, reassign to another group
-		if currentUser.DefaultGroupID == auth.GID {
-			// Find another group the user is a member of
-			newDefaultGroupID, _ := lo.Find(currentUser.GroupIDs, func(gid uuid.UUID) bool {
-				return gid != auth.GID
-			})
-
-			// Update the user's default group
-			if err := ctrl.repo.Users.UpdateDefaultGroup(auth, auth.UID, newDefaultGroupID); err != nil {
-				return nil, err
-			}
-		}
-
-		err = ctrl.svc.Group.DeleteGroup(auth)
+		err := ctrl.svc.Group.DeleteGroup(auth)
 		return nil, err
 	}
 
@@ -261,22 +235,7 @@ func (ctrl *V1Controller) HandleGroupMemberAdd() errchain.HandlerFunc {
 func (ctrl *V1Controller) HandleGroupMemberRemove() errchain.HandlerFunc {
 	fn := func(r *http.Request, userID uuid.UUID) (any, error) {
 		auth := services.NewContext(r.Context())
-
-		// Safeguard: prevent user from removing themselves
-		if userID == auth.UID {
-			return nil, validate.NewRequestError(errors.New("cannot remove yourself from the group"), http.StatusBadRequest)
-		}
-
-		// Safeguard: prevent removing the last member
-		members, err := ctrl.repo.Users.GetUsersByGroupID(auth, auth.GID)
-		if err != nil {
-			return nil, err
-		}
-		if len(members) <= 1 {
-			return nil, validate.NewRequestError(errors.New("cannot remove the last member from the group"), http.StatusBadRequest)
-		}
-
-		err = ctrl.svc.Group.RemoveMember(auth, userID)
+		err := ctrl.svc.Group.RemoveMember(auth, userID)
 		return nil, err
 	}
 
@@ -296,7 +255,7 @@ func (ctrl *V1Controller) HandleGroupLeave() errchain.HandlerFunc {
 		auth := services.NewContext(r.Context())
 
 		// Allow user to leave their own group
-		err := ctrl.repo.Groups.RemoveMember(auth, auth.GID, auth.UID)
+		err := ctrl.svc.Group.LeaveGroup(auth)
 		if err != nil {
 			return nil, err
 		}

@@ -524,3 +524,36 @@ func (r *GroupRepository) InvitationAccept(ctx context.Context, token []byte, us
 
 	return r.groupMapper.Map(invitation.Edges.Group), nil
 }
+
+func (r *GroupRepository) LeaveGroupTransaction(ctx context.Context, groupID, userID, newDefaultGroupID uuid.UUID) error {
+	tx, err := r.db.Tx(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Update default group if needed
+	if newDefaultGroupID != uuid.Nil {
+		err = tx.User.UpdateOneID(userID).SetDefaultGroupID(newDefaultGroupID).Exec(ctx)
+		if err != nil {
+			if err := tx.Rollback(); err != nil {
+				log.Warn().Err(err).Msg("failed to rollback transaction")
+			}
+			return err
+		}
+	}
+
+	// Remove member
+	err = tx.Group.UpdateOneID(groupID).RemoveUserIDs(userID).Exec(ctx)
+	if err != nil {
+		if err := tx.Rollback(); err != nil {
+			log.Warn().Err(err).Msg("failed to rollback transaction")
+		}
+		return err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+
+	return nil
+}
