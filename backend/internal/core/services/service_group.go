@@ -42,42 +42,6 @@ func (svc *GroupService) validateCanLeaveGroup(ctx Context) (repo.UserOut, error
 	return currentUser, nil
 }
 
-// validateCanRemoveMember Validate whether a member can be removed from a group
-// 1. Prevent user from removing themselves
-// 2. Prevent removing the last member
-func (svc *GroupService) validateCanRemoveMember(ctx Context, userID uuid.UUID) error {
-	// Safeguard: prevent user from removing themselves
-	if userID == ctx.UID {
-		return validate.NewRequestError(errors.New("cannot remove yourself from the group"), http.StatusBadRequest)
-	}
-
-	// Safeguard: prevent removing the last member
-	members, err := svc.repos.Users.GetUsersByGroupID(ctx, ctx.GID)
-	if err != nil {
-		return err
-	}
-	if len(members) <= 1 {
-		return validate.NewRequestError(errors.New("cannot remove the last member from the group"), http.StatusBadRequest)
-	}
-
-	return nil
-}
-
-// validateCanDeleteGroup Prevent deleting user's only group and return user data
-func (svc *GroupService) validateCanDeleteGroup(ctx Context) (repo.UserOut, error) {
-	currentUser, err := svc.repos.Users.GetOneID(ctx, ctx.UID)
-	if err != nil {
-		return repo.UserOut{}, err
-	}
-
-	// Safeguard: prevent deleting if this is the user's only group
-	if len(currentUser.GroupIDs) <= 1 {
-		return repo.UserOut{}, validate.NewRequestError(errors.New("cannot delete the only group you are a member of"), http.StatusBadRequest)
-	}
-
-	return currentUser, nil
-}
-
 func (svc *GroupService) getNewDefaultGroupID(currentUser repo.UserOut, leavingGroupID uuid.UUID) uuid.UUID {
 	if currentUser.DefaultGroupID == leavingGroupID {
 		newDefaultGroupID, _ := lo.Find(currentUser.GroupIDs, func(gid uuid.UUID) bool {
@@ -113,24 +77,6 @@ func (svc *GroupService) CreateGroup(ctx Context, name string) (repo.Group, erro
 }
 
 func (svc *GroupService) DeleteGroup(ctx Context) error {
-	currentUser, err := svc.validateCanDeleteGroup(ctx)
-	if err != nil {
-		return err
-	}
-
-	// If the group being deleted is the user's default group, reassign to another group
-	if currentUser.DefaultGroupID == ctx.GID {
-		// Find another group the user is a member of
-		newDefaultGroupID, _ := lo.Find(currentUser.GroupIDs, func(gid uuid.UUID) bool {
-			return gid != ctx.GID
-		})
-
-		// Update the user's default group
-		if err := svc.repos.Users.UpdateDefaultGroup(ctx, ctx.UID, newDefaultGroupID); err != nil {
-			return err
-		}
-	}
-
 	return svc.repos.Groups.GroupDelete(ctx.Context, ctx.GID)
 }
 
@@ -151,7 +97,7 @@ func (svc *GroupService) NewInvitation(ctx Context, uses int, expiresAt time.Tim
 
 func (svc *GroupService) AddMember(ctx Context, userID uuid.UUID) error {
 	if userID == uuid.Nil {
-		return validate.NewRequestError(errors.New("user ID cannot be empty"), http.StatusBadRequest)
+		return errors.New("user ID cannot be empty")
 	}
 
 	return svc.repos.Groups.AddMember(ctx.Context, ctx.GID, userID)
@@ -159,11 +105,7 @@ func (svc *GroupService) AddMember(ctx Context, userID uuid.UUID) error {
 
 func (svc *GroupService) RemoveMember(ctx Context, userID uuid.UUID) error {
 	if userID == uuid.Nil {
-		return validate.NewRequestError(errors.New("user ID cannot be empty"), http.StatusBadRequest)
-	}
-
-	if err := svc.validateCanRemoveMember(ctx, userID); err != nil {
-		return err
+		return errors.New("user ID cannot be empty")
 	}
 
 	return svc.repos.Groups.RemoveMember(ctx.Context, ctx.GID, userID)
