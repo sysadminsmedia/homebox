@@ -534,8 +534,12 @@ func (r *GroupRepository) GroupLeave(ctx context.Context, groupID, userID, newDe
 	// Update default group if needed
 	if newDefaultGroupID != uuid.Nil {
 		err = tx.User.UpdateOneID(userID).
-			// Ensure user is a member of the group and it is their default group
-			Where(user.HasGroupsWith(group.ID(groupID)), user.DefaultGroupID(groupID)).
+			// Ensure user is a member of the leaving group, replacement group, and leaving group is current default
+			Where(
+				user.HasGroupsWith(group.ID(groupID)),
+				user.HasGroupsWith(group.ID(newDefaultGroupID)),
+				user.DefaultGroupID(groupID),
+			).
 			SetDefaultGroupID(newDefaultGroupID).
 			Exec(ctx)
 		if err != nil {
