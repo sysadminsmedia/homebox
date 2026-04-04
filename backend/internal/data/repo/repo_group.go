@@ -533,7 +533,11 @@ func (r *GroupRepository) GroupLeave(ctx context.Context, groupID, userID, newDe
 
 	// Update default group if needed
 	if newDefaultGroupID != uuid.Nil {
-		err = tx.User.UpdateOneID(userID).SetDefaultGroupID(newDefaultGroupID).Exec(ctx)
+		err = tx.User.UpdateOneID(userID).
+			// Ensure user is a member of the group and it is their default group
+			Where(user.HasGroupsWith(group.ID(groupID)), user.DefaultGroupID(groupID)).
+			SetDefaultGroupID(newDefaultGroupID).
+			Exec(ctx)
 		if err != nil {
 			if err := tx.Rollback(); err != nil {
 				log.Warn().Err(err).Msg("failed to rollback transaction")
@@ -543,7 +547,11 @@ func (r *GroupRepository) GroupLeave(ctx context.Context, groupID, userID, newDe
 	}
 
 	// Remove member
-	err = tx.Group.UpdateOneID(groupID).RemoveUserIDs(userID).Exec(ctx)
+	err = tx.Group.UpdateOneID(groupID).
+		// Ensure user is a member of the group
+		Where(group.HasUsersWith(user.ID(userID))).
+		RemoveUserIDs(userID).
+		Exec(ctx)
 	if err != nil {
 		if err := tx.Rollback(); err != nil {
 			log.Warn().Err(err).Msg("failed to rollback transaction")
