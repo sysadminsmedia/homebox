@@ -201,32 +201,33 @@ func (s *IOSheet) Read(data io.Reader) error {
 }
 
 // ReadItems writes the sheet to a writer.
-func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, gid uuid.UUID, repos *repo.AllRepos, hbURL string) error {
-	s.Rows = make([]ExportCSVRow, len(items))
+func (s *IOSheet) ReadItems(ctx context.Context, entities []repo.EntityOut, gid uuid.UUID, repos *repo.AllRepos, hbURL string) error {
+	s.Rows = make([]ExportCSVRow, len(entities))
 
 	extraHeaders := map[string]struct{}{}
 
-	for i := range items {
-		item := items[i]
+	for i := range entities {
+		item := entities[i]
 
-		// TODO: Support fetching nested locations
-		locID := item.Location.ID
+		// Resolve parent (location) path
+		var locString LocationString
+		if item.Parent != nil {
+			locPaths, err := repos.Entities.PathForEntity(context.Background(), gid, item.Parent.ID)
+			if err != nil {
+				log.Error().Err(err).Msg("could not get entity path")
+				return err
+			}
 
-		locPaths, err := repos.Locations.PathForLoc(context.Background(), gid, locID)
-		if err != nil {
-			log.Error().Err(err).Msg("could not get location path")
-			return err
+			locString = fromPathSlice(locPaths)
 		}
-
-		locString := fromPathSlice(locPaths)
 
 		tagString := lo.Map(item.Tags, func(l repo.TagSummary, _ int) string {
 			return l.Name
 		})
 
-		url := generateItemURL(item, hbURL)
+		url := generateEntityURL(item, hbURL)
 
-		customFields := lo.Map(item.Fields, func(f repo.ItemField, _ int) ExportItemFields {
+		customFields := lo.Map(item.Fields, func(f repo.EntityFieldData, _ int) ExportItemFields {
 			extraHeaders[f.Name] = struct{}{}
 			return ExportItemFields{
 				Name:  f.Name,
@@ -295,10 +296,10 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, gid uuid.
 	return nil
 }
 
-func generateItemURL(item repo.ItemOut, d string) string {
+func generateEntityURL(entity repo.EntityOut, d string) string {
 	url := ""
-	if item.ID != uuid.Nil {
-		url = fmt.Sprintf("%s/item/%s", d, item.ID.String())
+	if entity.ID != uuid.Nil {
+		url = fmt.Sprintf("%s/item/%s", d, entity.ID.String())
 	}
 	return url
 }

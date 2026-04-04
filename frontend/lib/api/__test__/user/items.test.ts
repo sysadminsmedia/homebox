@@ -13,7 +13,7 @@ describe("user should be able to create an item and add an attachment", () => {
    * that can be used to delete the location from the backend server.
    */
   async function useLocation(api: UserClient): Promise<[LocationOut, () => Promise<void>]> {
-    const { response, data } = await api.locations.create({
+    const { response, data } = await api.items.createLocation({
       parentId: null,
       name: `__test__.location.name_${increment}`,
       description: `__test__.location.description_${increment}`,
@@ -22,7 +22,7 @@ describe("user should be able to create an item and add an attachment", () => {
     increment++;
 
     const cleanup = async () => {
-      const { response } = await api.locations.delete(data.id);
+      const { response } = await api.items.deleteLocation(data.id);
       expect(response.status).toBe(204);
     };
 
@@ -39,7 +39,7 @@ describe("user should be able to create an item and add an attachment", () => {
       tagIds: [],
       description: "test-description",
       quantity: 2,
-      locationId: location.id,
+      parentId: location.id,
     });
     expect(response.status).toBe(201);
 
@@ -74,7 +74,7 @@ describe("user should be able to create an item and add an attachment", () => {
       tagIds: [],
       description: faker.lorem.paragraph(1),
       quantity: 2,
-      locationId: location.id,
+      parentId: location.id,
     });
     expect(response.status).toBe(201);
 
@@ -87,9 +87,8 @@ describe("user should be able to create an item and add an attachment", () => {
 
     // Add fields
     const itemUpdate = {
-      parentId: null,
       ...item,
-      locationId: item.location?.id || null,
+      parentId: item.location?.id || item.parent?.id || null,
       tagIds: item.tags.map(l => l.id),
       fields,
     };
@@ -129,7 +128,7 @@ describe("user should be able to create an item and add an attachment", () => {
       tagIds: [],
       description: faker.lorem.paragraph(1),
       quantity: 2,
-      locationId: location.id,
+      parentId: location.id,
     });
     expect(response.status).toBe(201);
 
@@ -166,7 +165,7 @@ describe("user should be able to create an item and add an attachment", () => {
     let lastLocationId = location.id;
     for (let i = 1; i < locations.length; i++) {
       // Skip first one
-      const { response, data: loc } = await api.locations.create({
+      const { response, data: loc } = await api.items.createLocation({
         parentId: lastLocationId,
         name: locations[i]!,
         description: "",
@@ -181,7 +180,7 @@ describe("user should be able to create an item and add an attachment", () => {
       tagIds: [],
       description: faker.lorem.paragraph(1),
       quantity: 2,
-      locationId: lastLocationId,
+      parentId: lastLocationId,
     });
     expect(response.status).toBe(201);
 
@@ -206,7 +205,7 @@ describe("user should be able to create an item and add an attachment", () => {
       tagIds: [],
       description: "test-description",
       quantity: 2,
-      locationId: parentLocation.id,
+      parentId: parentLocation.id,
     });
     expect(parentResponse.status).toBe(201);
     expect(parent.id).toBeTruthy();
@@ -216,13 +215,12 @@ describe("user should be able to create an item and add an attachment", () => {
       tagIds: [],
       description: "test-description",
       quantity: 2,
-      locationId: childsLocation.id,
+      parentId: childsLocation.id,
     });
     expect(child1Response.status).toBe(201);
     const child1ItemUpdate = {
-      parentId: parent.id,
       ...child1Item,
-      locationId: child1Item.location?.id,
+      parentId: parent.id,
       tagIds: [],
     };
     const { response: child1UpdatedResponse } = await api.items.update(child1Item.id, child1ItemUpdate as ItemUpdate);
@@ -233,24 +231,22 @@ describe("user should be able to create an item and add an attachment", () => {
       tagIds: [],
       description: "test-description",
       quantity: 2,
-      locationId: childsLocation.id,
+      parentId: childsLocation.id,
     });
     expect(child2Response.status).toBe(201);
     const child2ItemUpdate = {
-      parentId: parent.id,
       ...child2Item,
-      locationId: child2Item.location?.id,
+      parentId: parent.id,
       tagIds: [],
     };
     const { response: child2UpdatedResponse } = await api.items.update(child2Item.id, child2ItemUpdate as ItemUpdate);
     expect(child2UpdatedResponse.status).toBe(200);
 
     const itemUpdate = {
-      parentId: null,
       ...parent,
-      locationId: parentLocation.id,
+      parentId: parentLocation.id,
       tagIds: [],
-      syncChildItemsLocations: true,
+      syncChildEntityLocations: true,
     };
     const { response: updateResponse } = await api.items.update(parent.id, itemUpdate);
     expect(updateResponse.status).toBe(200);

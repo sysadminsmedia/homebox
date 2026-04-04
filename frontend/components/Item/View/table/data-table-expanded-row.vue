@@ -19,9 +19,9 @@
       return "/no-image.jpg";
     }
     if (props.item.thumbnailId) {
-      return api.authURL(`/items/${props.item.id}/attachments/${props.item.thumbnailId}`);
+      return api.authURL(`/entities/${props.item.id}/attachments/${props.item.thumbnailId}`);
     } else {
-      return api.authURL(`/items/${props.item.id}/attachments/${props.item.imageId}`);
+      return api.authURL(`/entities/${props.item.id}/attachments/${props.item.imageId}`);
     }
   });
 </script>

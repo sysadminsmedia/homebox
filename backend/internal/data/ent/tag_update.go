@@ -12,8 +12,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 )
@@ -122,19 +122,19 @@ func (_u *TagUpdate) SetGroup(v *Group) *TagUpdate {
 	return _u.SetGroupID(v.ID)
 }
 
-// AddItemIDs adds the "items" edge to the Item entity by IDs.
-func (_u *TagUpdate) AddItemIDs(ids ...uuid.UUID) *TagUpdate {
-	_u.mutation.AddItemIDs(ids...)
+// AddEntityIDs adds the "entities" edge to the Entity entity by IDs.
+func (_u *TagUpdate) AddEntityIDs(ids ...uuid.UUID) *TagUpdate {
+	_u.mutation.AddEntityIDs(ids...)
 	return _u
 }
 
-// AddItems adds the "items" edges to the Item entity.
-func (_u *TagUpdate) AddItems(v ...*Item) *TagUpdate {
+// AddEntities adds the "entities" edges to the Entity entity.
+func (_u *TagUpdate) AddEntities(v ...*Entity) *TagUpdate {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddItemIDs(ids...)
+	return _u.AddEntityIDs(ids...)
 }
 
 // SetParentID sets the "parent" edge to the Tag entity by ID.
@@ -182,25 +182,25 @@ func (_u *TagUpdate) ClearGroup() *TagUpdate {
 	return _u
 }
 
-// ClearItems clears all "items" edges to the Item entity.
-func (_u *TagUpdate) ClearItems() *TagUpdate {
-	_u.mutation.ClearItems()
+// ClearEntities clears all "entities" edges to the Entity entity.
+func (_u *TagUpdate) ClearEntities() *TagUpdate {
+	_u.mutation.ClearEntities()
 	return _u
 }
 
-// RemoveItemIDs removes the "items" edge to Item entities by IDs.
-func (_u *TagUpdate) RemoveItemIDs(ids ...uuid.UUID) *TagUpdate {
-	_u.mutation.RemoveItemIDs(ids...)
+// RemoveEntityIDs removes the "entities" edge to Entity entities by IDs.
+func (_u *TagUpdate) RemoveEntityIDs(ids ...uuid.UUID) *TagUpdate {
+	_u.mutation.RemoveEntityIDs(ids...)
 	return _u
 }
 
-// RemoveItems removes "items" edges to Item entities.
-func (_u *TagUpdate) RemoveItems(v ...*Item) *TagUpdate {
+// RemoveEntities removes "entities" edges to Entity entities.
+func (_u *TagUpdate) RemoveEntities(v ...*Entity) *TagUpdate {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveItemIDs(ids...)
+	return _u.RemoveEntityIDs(ids...)
 }
 
 // ClearParent clears the "parent" edge to the Tag entity.
@@ -359,28 +359,28 @@ func (_u *TagUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.ItemsCleared() {
+	if _u.mutation.EntitiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   tag.ItemsTable,
-			Columns: tag.ItemsPrimaryKey,
+			Table:   tag.EntitiesTable,
+			Columns: tag.EntitiesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedItemsIDs(); len(nodes) > 0 && !_u.mutation.ItemsCleared() {
+	if nodes := _u.mutation.RemovedEntitiesIDs(); len(nodes) > 0 && !_u.mutation.EntitiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   tag.ItemsTable,
-			Columns: tag.ItemsPrimaryKey,
+			Table:   tag.EntitiesTable,
+			Columns: tag.EntitiesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -388,15 +388,15 @@ func (_u *TagUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.ItemsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.EntitiesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   tag.ItemsTable,
-			Columns: tag.ItemsPrimaryKey,
+			Table:   tag.EntitiesTable,
+			Columns: tag.EntitiesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -589,19 +589,19 @@ func (_u *TagUpdateOne) SetGroup(v *Group) *TagUpdateOne {
 	return _u.SetGroupID(v.ID)
 }
 
-// AddItemIDs adds the "items" edge to the Item entity by IDs.
-func (_u *TagUpdateOne) AddItemIDs(ids ...uuid.UUID) *TagUpdateOne {
-	_u.mutation.AddItemIDs(ids...)
+// AddEntityIDs adds the "entities" edge to the Entity entity by IDs.
+func (_u *TagUpdateOne) AddEntityIDs(ids ...uuid.UUID) *TagUpdateOne {
+	_u.mutation.AddEntityIDs(ids...)
 	return _u
 }
 
-// AddItems adds the "items" edges to the Item entity.
-func (_u *TagUpdateOne) AddItems(v ...*Item) *TagUpdateOne {
+// AddEntities adds the "entities" edges to the Entity entity.
+func (_u *TagUpdateOne) AddEntities(v ...*Entity) *TagUpdateOne {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddItemIDs(ids...)
+	return _u.AddEntityIDs(ids...)
 }
 
 // SetParentID sets the "parent" edge to the Tag entity by ID.
@@ -649,25 +649,25 @@ func (_u *TagUpdateOne) ClearGroup() *TagUpdateOne {
 	return _u
 }
 
-// ClearItems clears all "items" edges to the Item entity.
-func (_u *TagUpdateOne) ClearItems() *TagUpdateOne {
-	_u.mutation.ClearItems()
+// ClearEntities clears all "entities" edges to the Entity entity.
+func (_u *TagUpdateOne) ClearEntities() *TagUpdateOne {
+	_u.mutation.ClearEntities()
 	return _u
 }
 
-// RemoveItemIDs removes the "items" edge to Item entities by IDs.
-func (_u *TagUpdateOne) RemoveItemIDs(ids ...uuid.UUID) *TagUpdateOne {
-	_u.mutation.RemoveItemIDs(ids...)
+// RemoveEntityIDs removes the "entities" edge to Entity entities by IDs.
+func (_u *TagUpdateOne) RemoveEntityIDs(ids ...uuid.UUID) *TagUpdateOne {
+	_u.mutation.RemoveEntityIDs(ids...)
 	return _u
 }
 
-// RemoveItems removes "items" edges to Item entities.
-func (_u *TagUpdateOne) RemoveItems(v ...*Item) *TagUpdateOne {
+// RemoveEntities removes "entities" edges to Entity entities.
+func (_u *TagUpdateOne) RemoveEntities(v ...*Entity) *TagUpdateOne {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveItemIDs(ids...)
+	return _u.RemoveEntityIDs(ids...)
 }
 
 // ClearParent clears the "parent" edge to the Tag entity.
@@ -856,28 +856,28 @@ func (_u *TagUpdateOne) sqlSave(ctx context.Context) (_node *Tag, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.ItemsCleared() {
+	if _u.mutation.EntitiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   tag.ItemsTable,
-			Columns: tag.ItemsPrimaryKey,
+			Table:   tag.EntitiesTable,
+			Columns: tag.EntitiesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedItemsIDs(); len(nodes) > 0 && !_u.mutation.ItemsCleared() {
+	if nodes := _u.mutation.RemovedEntitiesIDs(); len(nodes) > 0 && !_u.mutation.EntitiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   tag.ItemsTable,
-			Columns: tag.ItemsPrimaryKey,
+			Table:   tag.EntitiesTable,
+			Columns: tag.EntitiesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -885,15 +885,15 @@ func (_u *TagUpdateOne) sqlSave(ctx context.Context) (_node *Tag, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.ItemsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.EntitiesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   tag.ItemsTable,
-			Columns: tag.ItemsPrimaryKey,
+			Table:   tag.EntitiesTable,
+			Columns: tag.EntitiesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

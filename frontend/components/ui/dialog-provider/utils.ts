@@ -35,6 +35,8 @@ export enum DialogID {
   UpdateLocation = "update-location",
   UpdateTemplate = "update-template",
   ItemChangeDetails = "item-table-updater",
+  CreateEntityType = "create-entity-type",
+  UpdateEntityType = "update-entity-type",
   WipeInventory = "wipe-inventory",
 }
 

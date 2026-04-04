@@ -30,7 +30,7 @@ export function useItemSearch(client: UserClient, opts?: SearchOptions) {
 
       const { data, error } = await client.items.getAll({
         q: searchQuery,
-        locations: locIds,
+        parentIds: locIds,
         tags: tagIds,
         includeArchived: includeArchived.value,
       });

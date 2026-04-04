@@ -309,7 +309,7 @@
 
     const { data, error } = await api.items.getAll({
       q: query.value || "",
-      locations: locIDs.value,
+      parentIds: locIDs.value,
       tags: tagIDs.value,
       negateTags: negateTags.value,
       onlyWithoutPhoto: onlyWithoutPhoto.value,

@@ -99,7 +99,7 @@
       };
 
       if (enabled.changeLocation) {
-        patch.locationId = location!.id;
+        patch.parentId = location!.id;
       }
 
       let currentTags = item.tags.map(l => l.id);

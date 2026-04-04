@@ -13,32 +13,31 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 )
 
-func TestItemService_AddAttachment(t *testing.T) {
+func TestEntityService_AddAttachment(t *testing.T) {
 	temp := os.TempDir()
 
-	svc := &ItemService{
+	svc := &EntityService{
 		repo:     tRepos,
 		filepath: temp,
 	}
 
-	loc, err := tRepos.Locations.Create(context.Background(), tGroup.ID, repo.LocationCreate{
-		Description: "test",
-		Name:        "test",
+	loc, err := tRepos.Entities.CreateContainer(context.Background(), tGroup.ID, repo.EntityCreate{
+		Name: "test",
 	})
 	require.NoError(t, err)
 	assert.NotNil(t, loc)
 
-	itmC := repo.ItemCreate{
+	itmC := repo.EntityCreate{
 		Name:        fk.Str(10),
 		Description: fk.Str(10),
-		LocationID:  loc.ID,
+		ParentID:    loc.ID,
 	}
 
-	itm, err := svc.repo.Items.Create(context.Background(), tGroup.ID, itmC)
+	itm, err := svc.repo.Entities.Create(context.Background(), tGroup.ID, itmC)
 	require.NoError(t, err)
 	assert.NotNil(t, itm)
 	t.Cleanup(func() {
-		err := svc.repo.Items.Delete(context.Background(), itm.ID)
+		err := svc.repo.Entities.Delete(context.Background(), itm.ID)
 		require.NoError(t, err)
 	})
 
@@ -62,9 +61,9 @@ func TestItemService_AddAttachment(t *testing.T) {
 	assert.Equal(t, contents, string(bts))
 }
 
-func TestItemService_AddAttachment_InvalidStorage(t *testing.T) {
+func TestEntityService_AddAttachment_InvalidStorage(t *testing.T) {
 	// Create a service with an invalid storage path to simulate the issue
-	svc := &ItemService{
+	svc := &EntityService{
 		repo:     tRepos,
 		filepath: "/nonexistent/path/that/should/not/exist",
 	}
@@ -81,24 +80,23 @@ func TestItemService_AddAttachment_InvalidStorage(t *testing.T) {
 
 	svc.repo = invalidRepos
 
-	loc, err := invalidRepos.Locations.Create(context.Background(), tGroup.ID, repo.LocationCreate{
-		Description: "test",
-		Name:        "test-invalid",
+	loc, err := invalidRepos.Entities.CreateContainer(context.Background(), tGroup.ID, repo.EntityCreate{
+		Name: "test-invalid",
 	})
 	require.NoError(t, err)
 	assert.NotNil(t, loc)
 
-	itmC := repo.ItemCreate{
+	itmC := repo.EntityCreate{
 		Name:        fk.Str(10),
 		Description: fk.Str(10),
-		LocationID:  loc.ID,
+		ParentID:    loc.ID,
 	}
 
-	itm, err := invalidRepos.Items.Create(context.Background(), tGroup.ID, itmC)
+	itm, err := invalidRepos.Entities.Create(context.Background(), tGroup.ID, itmC)
 	require.NoError(t, err)
 	assert.NotNil(t, itm)
 	t.Cleanup(func() {
-		err := invalidRepos.Items.Delete(context.Background(), itm.ID)
+		err := invalidRepos.Entities.Delete(context.Background(), itm.ID)
 		require.NoError(t, err)
 	})
 

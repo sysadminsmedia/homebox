@@ -468,6 +468,12 @@
         },
         {
           id: 65,
+          active: computed(() => route.path === "/collection/entity-types"),
+          name: computed(() => t("collection.tabs.entity_types")),
+          to: "/collection/entity-types",
+        },
+        {
+          id: 66,
           active: computed(() => route.path === "/collection/tools"),
           name: computed(() => t("collection.tabs.tools")),
           to: "/collection/tools",
@@ -505,17 +511,10 @@
     tagStore.refresh();
   });
 
-  onServerEvent(ServerEvent.LocationMutation, () => {
+  onServerEvent(ServerEvent.EntityMutation, () => {
     locationStore.refreshChildren();
     locationStore.refreshParents();
     locationStore.refreshTree();
-  });
-
-  onServerEvent(ServerEvent.ItemMutation, () => {
-    // item mutations can affect locations counts
-    // so we need to refresh those as well
-    locationStore.refreshChildren();
-    locationStore.refreshParents();
   });
 
   const authCtx = useAuthContext();

@@ -153,7 +153,8 @@ export function makeColumns({
           () => sortable(column, "items.location")
         ),
       cell: ({ row }) => {
-        const loc = (row.original as ItemSummary).location as { id: string; name: string } | null;
+        const item = row.original as ItemSummary;
+        const loc = (item.location || item.parent) as { id: string; name: string } | null;
         if (loc) {
           return h("a", { href: `/location/${loc.id}`, class: "hover:underline text-sm" }, loc.name);
         }

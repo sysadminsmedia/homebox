@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 )
 
@@ -146,23 +146,23 @@ func (_c *TemplateFieldCreate) SetNillableID(v *uuid.UUID) *TemplateFieldCreate 
 	return _c
 }
 
-// SetItemTemplateID sets the "item_template" edge to the ItemTemplate entity by ID.
-func (_c *TemplateFieldCreate) SetItemTemplateID(id uuid.UUID) *TemplateFieldCreate {
-	_c.mutation.SetItemTemplateID(id)
+// SetEntityTemplateID sets the "entity_template" edge to the EntityTemplate entity by ID.
+func (_c *TemplateFieldCreate) SetEntityTemplateID(id uuid.UUID) *TemplateFieldCreate {
+	_c.mutation.SetEntityTemplateID(id)
 	return _c
 }
 
-// SetNillableItemTemplateID sets the "item_template" edge to the ItemTemplate entity by ID if the given value is not nil.
-func (_c *TemplateFieldCreate) SetNillableItemTemplateID(id *uuid.UUID) *TemplateFieldCreate {
+// SetNillableEntityTemplateID sets the "entity_template" edge to the EntityTemplate entity by ID if the given value is not nil.
+func (_c *TemplateFieldCreate) SetNillableEntityTemplateID(id *uuid.UUID) *TemplateFieldCreate {
 	if id != nil {
-		_c = _c.SetItemTemplateID(*id)
+		_c = _c.SetEntityTemplateID(*id)
 	}
 	return _c
 }
 
-// SetItemTemplate sets the "item_template" edge to the ItemTemplate entity.
-func (_c *TemplateFieldCreate) SetItemTemplate(v *ItemTemplate) *TemplateFieldCreate {
-	return _c.SetItemTemplateID(v.ID)
+// SetEntityTemplate sets the "entity_template" edge to the EntityTemplate entity.
+func (_c *TemplateFieldCreate) SetEntityTemplate(v *EntityTemplate) *TemplateFieldCreate {
+	return _c.SetEntityTemplateID(v.ID)
 }
 
 // Mutation returns the TemplateFieldMutation object of the builder.
@@ -333,21 +333,21 @@ func (_c *TemplateFieldCreate) createSpec() (*TemplateField, *sqlgraph.CreateSpe
 		_spec.SetField(templatefield.FieldTimeValue, field.TypeTime, value)
 		_node.TimeValue = value
 	}
-	if nodes := _c.mutation.ItemTemplateIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.EntityTemplateIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   templatefield.ItemTemplateTable,
-			Columns: []string{templatefield.ItemTemplateColumn},
+			Table:   templatefield.EntityTemplateTable,
+			Columns: []string{templatefield.EntityTemplateColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(itemtemplate.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entitytemplate.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.item_template_fields = &nodes[0]
+		_node.entity_template_fields = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

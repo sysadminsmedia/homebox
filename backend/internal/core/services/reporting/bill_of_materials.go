@@ -23,8 +23,8 @@ type BillOfMaterialsEntry struct {
 
 // BillOfMaterialsCSV returns a byte slice of the Bill of Materials for a given GID in CSV format
 // See BillOfMaterialsEntry for the format of the output
-func BillOfMaterialsCSV(entities []repo.ItemOut) ([]byte, error) {
-	return gocsv.MarshalBytes(new(lo.Map(entities, func(entity repo.ItemOut, _ int) BillOfMaterialsEntry {
+func BillOfMaterialsCSV(entities []repo.EntityOut) ([]byte, error) {
+	return gocsv.MarshalBytes(new(lo.Map(entities, func(entity repo.EntityOut, _ int) BillOfMaterialsEntry {
 		return BillOfMaterialsEntry{
 			PurchaseDate: entity.PurchaseTime,
 			Name:         entity.Name,

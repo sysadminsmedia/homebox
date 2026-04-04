@@ -120,13 +120,13 @@
 
     const payload: ItemUpdate = {
       ...item.value,
-      locationId: item.value.location?.id,
+      parentId: parent.value?.id || item.value.location?.id || null,
       tagIds: item.value.tagIds,
-      parentId: parent.value ? parent.value.id : null,
       assetId: item.value.assetId,
       purchasePrice,
       soldPrice,
       purchaseTime: item.value.purchaseTime as Date,
+      syncChildEntityLocations: item.value.syncChildItemsLocations,
     };
 
     const { error } = await api.items.update(itemId.value, payload);
@@ -485,10 +485,10 @@
 
     const payload: ItemUpdate = {
       ...item.value,
-      locationId: item.value.location?.id,
+      parentId: parent.value?.id || item.value.location?.id || null,
       tagIds: item.value.tagIds,
-      parentId: parent.value ? parent.value.id : null,
       assetId: item.value.assetId,
+      syncChildEntityLocations: item.value.syncChildItemsLocations,
     };
 
     const { error } = await api.items.update(itemId.value, payload);

@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/currencies"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
@@ -218,6 +219,22 @@ func run(cfg *config.Config) error {
 		services.WithCurrencies(currencyData),
 		services.WithNotifierConfig(&cfg.Notifier),
 	)
+
+	// Ensure all entities have asset IDs (covers locations after entity merge migration)
+	{
+		groups, err := app.repos.Groups.GetAllGroups(context.Background(), uuid.Nil)
+		if err != nil {
+			log.Warn().Err(err).Msg("failed to get groups for asset ID assignment")
+		} else {
+			for _, g := range groups {
+				if n, err := app.services.Entities.EnsureAssetID(context.Background(), g.ID); err != nil {
+					log.Warn().Err(err).Str("group", g.Name).Msg("failed to ensure asset IDs")
+				} else if n > 0 {
+					log.Info().Int("count", n).Str("group", g.Name).Msg("assigned asset IDs to entities")
+				}
+			}
+		}
+	}
 
 	// =========================================================================
 	// Start Server

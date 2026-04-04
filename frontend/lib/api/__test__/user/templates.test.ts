@@ -203,7 +203,7 @@ describe("templates with location and tags", () => {
 
     // First create a location
     const locationData = factories.location();
-    const { response: locResponse, data: location } = await api.locations.create(locationData);
+    const { response: locResponse, data: location } = await api.items.createLocation(locationData);
     expect(locResponse.status).toBe(201);
 
     // Create template with the location
@@ -219,7 +219,7 @@ describe("templates with location and tags", () => {
 
     // Cleanup
     await api.templates.delete(data.id);
-    await api.locations.delete(location.id);
+    await api.items.deleteLocation(location.id);
   });
 
   test("user should be able to create a template with default tags", async () => {
@@ -253,7 +253,7 @@ describe("templates with location and tags", () => {
     const api = await sharedUserClient();
 
     // Create a location
-    const { response: locResponse, data: location } = await api.locations.create(factories.location());
+    const { response: locResponse, data: location } = await api.items.createLocation(factories.location());
     expect(locResponse.status).toBe(201);
 
     // Create template with location
@@ -292,6 +292,6 @@ describe("templates with location and tags", () => {
 
     // Cleanup
     await api.templates.delete(template.id);
-    await api.locations.delete(location.id);
+    await api.items.deleteLocation(location.id);
   });
 });
