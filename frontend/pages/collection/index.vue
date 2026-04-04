@@ -123,18 +123,6 @@
     actionLoading.value = true;
 
     try {
-      let userId = currentUserId.value;
-      if (!userId) {
-        const { data } = await api.user.self();
-        userId = data?.item.id ?? "";
-      }
-
-      if (!userId) {
-        const msg = t("errors.api_failure") + "Missing user id";
-        toast.error(msg);
-        return;
-      }
-
       const res = await api.group.leave();
       if (res.error) {
         const msg = t("errors.api_failure") + String(res.error);
