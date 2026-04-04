@@ -73,7 +73,7 @@ export type DialogParamsMap = {
     removeTags?: boolean;
   };
   [DialogID.CreateCollection]?: { redirectTo?: string };
-  [DialogID.JoinCollection]?: { redirectTo?: string };
+  [DialogID.JoinCollection]?: { redirectTo?: string; inviteCode?: string };
 };
 
 /**

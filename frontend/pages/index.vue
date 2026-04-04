@@ -31,7 +31,12 @@
     middleware: [
       () => {
         const ctx = useAuthContext();
+        const route = useRoute();
         if (ctx.isAuthorized()) {
+          // Preserve invitation token when redirecting authenticated users
+          if (route.query.token) {
+            return `/home?token=${encodeURIComponent(route.query.token as string)}`;
+          }
           return "/home";
         } else {
           console.log("Logged out, clearing collectionId preference");
