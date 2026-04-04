@@ -36,7 +36,7 @@ func (svc *GroupService) validateCanLeaveGroup(ctx Context) (repo.UserOut, error
 
 	// Validate not last member
 	if len(members) <= 1 {
-		return repo.UserOut{}, validate.NewRequestError(errors.New("cannot leave the group as its last member"), http.StatusBadRequest)
+		return repo.UserOut{}, validate.NewRequestError(errors.New(repo.ErrCannotLeaveLastMember.Error()), http.StatusBadRequest)
 	}
 
 	return currentUser, nil
@@ -127,5 +127,12 @@ func (svc *GroupService) LeaveGroup(ctx Context) error {
 	}
 
 	newDefaultGroupID := svc.getNewDefaultGroupID(currentUser, ctx.GID)
-	return svc.repos.Groups.GroupLeave(ctx, ctx.GID, ctx.UID, newDefaultGroupID)
+	err = svc.repos.Groups.GroupLeave(ctx, ctx.GID, ctx.UID, newDefaultGroupID)
+	if err != nil {
+		if errors.Is(err, repo.ErrCannotLeaveLastMember) {
+			return validate.NewRequestError(errors.New(repo.ErrCannotLeaveLastMember.Error()), http.StatusBadRequest)
+		}
+		return err
+	}
+	return nil
 }

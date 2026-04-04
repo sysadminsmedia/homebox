@@ -28,6 +28,10 @@ type GroupRepository struct {
 	attachments      *AttachmentRepo
 }
 
+// ErrCannotLeaveLastMember is returned when a user attempts to leave a group
+// as its last remaining member.
+var ErrCannotLeaveLastMember = errors.New("cannot leave the group as its last member")
+
 func NewGroupRepository(db *ent.Client) *GroupRepository {
 	gmap := func(g *ent.Group) Group {
 		return Group{
@@ -532,23 +536,6 @@ func (r *GroupRepository) GroupLeave(ctx context.Context, groupID, userID, newDe
 		return err
 	}
 
-	// Ensure not last member
-	count, err := tx.User.Query().
-		Where(user.HasGroupsWith(group.ID(groupID))).
-		Count(ctx)
-	if err != nil {
-		if err := tx.Rollback(); err != nil {
-			log.Warn().Err(err).Msg("failed to rollback transaction")
-		}
-		return err
-	}
-	if count <= 1 {
-		if err := tx.Rollback(); err != nil {
-			log.Warn().Err(err).Msg("failed to rollback transaction")
-		}
-		return errors.New("cannot leave the group as its last member")
-	}
-
 	// Update default group if needed
 	if newDefaultGroupID != uuid.Nil {
 		err = tx.User.UpdateOneID(userID).
@@ -570,11 +557,20 @@ func (r *GroupRepository) GroupLeave(ctx context.Context, groupID, userID, newDe
 
 	// Remove member
 	err = tx.Group.UpdateOneID(groupID).
-		// Ensure user is a member of the group
-		Where(group.HasUsersWith(user.ID(userID))).
+		// Ensure user is a member and not the last member at mutation time
+		Where(
+			group.HasUsersWith(user.ID(userID)),
+			group.HasUsersWith(user.IDNEQ(userID)),
+		).
 		RemoveUserIDs(userID).
 		Exec(ctx)
 	if err != nil {
+		if ent.IsNotFound(err) {
+			if rerr := tx.Rollback(); rerr != nil {
+				log.Warn().Err(rerr).Msg("failed to rollback transaction")
+			}
+			return ErrCannotLeaveLastMember
+		}
 		if err := tx.Rollback(); err != nil {
 			log.Warn().Err(err).Msg("failed to rollback transaction")
 		}
