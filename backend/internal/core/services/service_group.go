@@ -185,5 +185,5 @@ func (svc *GroupService) LeaveGroup(ctx Context) error {
 	}
 
 	newDefaultGroupID := svc.getNewDefaultGroupID(currentUser, ctx.GID)
-	return svc.repos.Groups.LeaveGroupTransaction(ctx, ctx.GID, ctx.UID, newDefaultGroupID)
+	return svc.repos.Groups.GroupLeave(ctx, ctx.GID, ctx.UID, newDefaultGroupID)
 }

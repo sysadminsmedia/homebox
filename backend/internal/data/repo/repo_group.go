@@ -525,7 +525,7 @@ func (r *GroupRepository) InvitationAccept(ctx context.Context, token []byte, us
 	return r.groupMapper.Map(invitation.Edges.Group), nil
 }
 
-func (r *GroupRepository) LeaveGroupTransaction(ctx context.Context, groupID, userID, newDefaultGroupID uuid.UUID) error {
+func (r *GroupRepository) GroupLeave(ctx context.Context, groupID, userID, newDefaultGroupID uuid.UUID) error {
 	tx, err := r.db.Tx(ctx)
 	if err != nil {
 		return err
