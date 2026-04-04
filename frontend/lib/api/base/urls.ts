@@ -1,9 +1,11 @@
 const parts = {
+  base: "/",
   host: "http://localhost.com",
   prefix: "/api/v1",
 };
 
-export function overrideParts(host: string, prefix: string) {
+export function overrideParts(host: string, prefix: string, base: string = "/") {
+  parts.base = base;
   parts.host = host;
   parts.prefix = prefix;
 }
@@ -20,7 +22,8 @@ export type QueryValue = string | string[] | number | number[] | boolean | null 
  * relative URLs in production because the API and client bundle are served from the same server/host.
  */
 export function route(rest: string, params: Record<string, QueryValue> = {}): string {
-  const url = new URL(parts.prefix + rest, parts.host);
+  const base = parts.base.replace(/\/$/, "");
+  const url = new URL(base + parts.prefix + rest, parts.host);
 
   for (const [key, value] of Object.entries(params)) {
     if (Array.isArray(value)) {
