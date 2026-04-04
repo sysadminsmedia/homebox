@@ -1,3 +1,4 @@
+import { useAppBase } from "./use-app-base";
 import { useViewPreferences } from "./use-preferences";
 import { watch } from "vue";
 
@@ -27,8 +28,9 @@ function connect(onmessage: (m: EventMessage) => void) {
   const dev = import.meta.dev;
 
   const host = dev ? window.location.host.replace("3000", "7745") : window.location.host;
+  const base = useAppBase();
 
-  let url = `${protocol}://${host}/api/v1/ws/events`;
+  let url = `${protocol}://${host}${base}api/v1/ws/events`;
   if (currentTenantId) {
     url += `?tenant=${currentTenantId}`;
   }
