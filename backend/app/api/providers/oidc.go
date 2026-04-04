@@ -24,6 +24,7 @@ type OIDCProvider struct {
 	service      *services.UserService
 	config       *config.OIDCConf
 	options      *config.Options
+	webConfig    *config.WebConfig
 	cookieSecure bool
 	provider     *oidc.Provider
 	verifier     *oidc.IDTokenVerifier
@@ -39,7 +40,7 @@ type OIDCClaims struct {
 	EmailVerified *bool
 }
 
-func NewOIDCProvider(service *services.UserService, config *config.OIDCConf, options *config.Options, cookieSecure bool) (*OIDCProvider, error) {
+func NewOIDCProvider(service *services.UserService, config *config.OIDCConf, options *config.Options, webConfig *config.WebConfig, cookieSecure bool) (*OIDCProvider, error) {
 	if !config.Enabled {
 		return nil, fmt.Errorf("OIDC is not enabled")
 	}
@@ -106,6 +107,7 @@ func NewOIDCProvider(service *services.UserService, config *config.OIDCConf, opt
 		service:      service,
 		config:       config,
 		options:      options,
+		webConfig:    webConfig,
 		cookieSecure: cookieSecure,
 		provider:     provider,
 		verifier:     verifier,
@@ -416,7 +418,7 @@ func (p *OIDCProvider) initiateOIDCFlow(w http.ResponseWriter, r *http.Request) 
 		Domain:   domain,
 		Secure:   p.isSecure(r),
 		HttpOnly: true,
-		Path:     "/",
+		Path:     u.Path,
 		SameSite: http.SameSiteLaxMode,
 	})
 
@@ -428,7 +430,7 @@ func (p *OIDCProvider) initiateOIDCFlow(w http.ResponseWriter, r *http.Request) 
 		Domain:   domain,
 		Secure:   p.isSecure(r),
 		HttpOnly: true,
-		Path:     "/",
+		Path:     u.Path,
 		SameSite: http.SameSiteLaxMode,
 	})
 
@@ -440,7 +442,7 @@ func (p *OIDCProvider) initiateOIDCFlow(w http.ResponseWriter, r *http.Request) 
 		Domain:   domain,
 		Secure:   p.isSecure(r),
 		HttpOnly: true,
-		Path:     "/",
+		Path:     u.Path,
 		SameSite: http.SameSiteLaxMode,
 	})
 
@@ -470,7 +472,7 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 			MaxAge:   -1,
 			Secure:   p.isSecure(r),
 			HttpOnly: true,
-			Path:     "/",
+			Path:     u.Path,
 			SameSite: http.SameSiteLaxMode,
 		})
 		http.SetCookie(w, &http.Cookie{
@@ -481,7 +483,7 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 			MaxAge:   -1,
 			Secure:   p.isSecure(r),
 			HttpOnly: true,
-			Path:     "/",
+			Path:     u.Path,
 			SameSite: http.SameSiteLaxMode,
 		})
 		http.SetCookie(w, &http.Cookie{
@@ -492,7 +494,7 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 			MaxAge:   -1,
 			Secure:   p.isSecure(r),
 			HttpOnly: true,
-			Path:     "/",
+			Path:     u.Path,
 			SameSite: http.SameSiteLaxMode,
 		})
 	}
@@ -600,7 +602,7 @@ func (p *OIDCProvider) getBaseURL(r *http.Request) string {
 		}
 	}
 
-	return scheme + "://" + host
+	return scheme + "://" + host + p.webConfig.APIBase
 }
 
 func (p *OIDCProvider) isSecure(r *http.Request) bool {
