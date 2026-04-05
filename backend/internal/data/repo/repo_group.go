@@ -132,7 +132,7 @@ func (r *GroupRepository) StatsLocationsByPurchasePrice(ctx context.Context, gid
 			AND child.entity_type_entities IN (SELECT id FROM entity_types WHERE is_location = false)
 		WHERE parent.group_entities = $1 AND et.is_location = true
 		GROUP BY parent.id, parent.name
-		HAVING total > 0
+		HAVING COALESCE(SUM(child.purchase_price), 0) > 0
 	`
 
 	rows, err := r.db.Sql().QueryContext(ctx, q, gid)

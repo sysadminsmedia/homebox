@@ -64,22 +64,16 @@ func mergeCreateEntityTypes(ctx context.Context, db *sql.DB) error {
 		return fmt.Errorf("create entity_types: %w", err)
 	}
 
-	uuidExpr := `lower(hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-4' || substr(hex(randomblob(2)),2) || '-' || substr('89ab', abs(random()) %% 4 + 1, 1) || substr(hex(randomblob(2)),2) || '-' || hex(randomblob(6)))`
+	uuidExpr := "lower(hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-4' || substr(hex(randomblob(2)),2) || '-' || substr('89ab', abs(random()) % 4 + 1, 1) || substr(hex(randomblob(2)),2) || '-' || hex(randomblob(6)))"
 
-	for _, seed := range []struct {
-		name  string
-		isLoc int
-	}{
-		{"Location", 1},
-		{"Item", 0},
-	} {
-		q := fmt.Sprintf(`
-			INSERT INTO entity_types (id, created_at, updated_at, name, description, is_location, group_entity_types)
-			SELECT %s, datetime('now'), datetime('now'), '%s', '', %d, g.id FROM groups g;
-		`, uuidExpr, seed.name, seed.isLoc)
-		if _, err := db.ExecContext(ctx, q); err != nil {
-			return fmt.Errorf("seed %s type: %w", seed.name, err)
-		}
+	seedSQL := `INSERT INTO entity_types (id, created_at, updated_at, name, description, is_location, group_entity_types)
+		SELECT ` + uuidExpr + `, datetime('now'), datetime('now'), $1, '', $2, g.id FROM groups g;`
+
+	if _, err := db.ExecContext(ctx, seedSQL, "Location", true); err != nil {
+		return fmt.Errorf("seed Location type: %w", err)
+	}
+	if _, err := db.ExecContext(ctx, seedSQL, "Item", false); err != nil {
+		return fmt.Errorf("seed Item type: %w", err)
 	}
 
 	return nil
