@@ -636,6 +636,7 @@
                     "Group"
                 ],
                 "summary": "Create Group Invitation",
+                "operationId": "groupInvitationCreate",
                 "parameters": [
                     {
                         "description": "User Data",
@@ -671,6 +672,7 @@
                     "Group"
                 ],
                 "summary": "Accept Group Invitation",
+                "operationId": "groupInvitationAccept",
                 "parameters": [
                     {
                         "type": "string",

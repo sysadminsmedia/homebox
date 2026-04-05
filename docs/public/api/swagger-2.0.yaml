@@ -2420,6 +2420,7 @@ paths:
       tags:
       - Group
     post:
+      operationId: groupInvitationCreate
       parameters:
       - description: User Data
         in: body
@@ -2458,6 +2459,7 @@ paths:
       tags:
       - Group
     post:
+      operationId: groupInvitationAccept
       parameters:
       - description: Invitation Token
         in: path

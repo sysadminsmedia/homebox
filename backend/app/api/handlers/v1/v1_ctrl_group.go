@@ -88,6 +88,7 @@ func (ctrl *V1Controller) HandleGroupUpdate() errchain.HandlerFunc {
 // HandleGroupInvitationsCreate godoc
 //
 //	@Summary	Create Group Invitation
+//	@ID			groupInvitationCreate
 //	@Tags		Group
 //	@Produce	json
 //	@Param		payload	body		GroupInvitationCreate	true	"User Data"
@@ -305,6 +306,7 @@ func (ctrl *V1Controller) HandleGroupInvitationsDelete() errchain.HandlerFunc {
 // HandleGroupInvitationsAccept godoc
 //
 //	@Summary	Accept Group Invitation
+//	@ID			groupInvitationAccept
 //	@Tags		Group
 //	@Produce	json
 //	@Param		id	path	string	true	"Invitation Token"

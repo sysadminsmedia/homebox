@@ -425,17 +425,11 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 
 	// Filter by entity type (location vs item) when specified.
 	// Default (nil) = items only (excludes locations for backward compat)
-	if q.IsLocation == nil {
-		// Default: exclude locations
-		qb = qb.Where(
-			entity.Or(
-				entity.Not(entity.HasEntityType()),
-				entity.HasEntityTypeWith(entitytype.IsLocation(false)),
-			),
-		)
-	} else if *q.IsLocation {
+	switch {
+	case q.IsLocation != nil && *q.IsLocation:
 		qb = qb.Where(entity.HasEntityTypeWith(entitytype.IsLocation(true)))
-	} else {
+	default:
+		// nil or false: exclude locations
 		qb = qb.Where(
 			entity.Or(
 				entity.Not(entity.HasEntityType()),

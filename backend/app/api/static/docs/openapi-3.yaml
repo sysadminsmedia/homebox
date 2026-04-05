@@ -381,6 +381,7 @@ paths:
       tags:
         - Group
       summary: Create Group Invitation
+      operationId: groupInvitationCreate
       requestBody:
         content:
           application/json:
@@ -402,6 +403,7 @@ paths:
       tags:
         - Group
       summary: Accept Group Invitation
+      operationId: groupInvitationAccept
       parameters:
         - description: Invitation Token
           name: id

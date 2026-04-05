@@ -1,0 +1,90 @@
+---
+title: Entity Types
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+Entity Types define the different kinds of things you can track in Homebox. Out of the box, Homebox comes with two default
+entity types: **Item** and **Location**. Entity types control a key behavior — whether an entity acts as a **container**
+(like a room, shelf, or box that holds other things) or as a regular tracked item.
+
+You can create custom entity types to better reflect how you organize your inventory. For example, you might create
+"Room", "Shelf", "Drawer" as location types, and "Electronics", "Furniture", "Tool" as item types. Each entity type
+can have a default template assigned, so creating a new entity of that type automatically pre-fills fields from the template.
+
+## Understanding Entity Types
+
+Every entity in Homebox has a type. The type determines two things:
+
+1. **Container behavior** — If the type has "Is a container / location type" enabled, entities of that type appear in the
+   location tree and can have items placed inside them. If not, they appear as regular items.
+
+2. **Default template** — When a type has a default template assigned, creating a new entity of that type automatically
+   applies the template's default values (name, description, quantity, tags, manufacturer, etc.).
+
+## Managing Entity Types
+
+Entity types are managed per collection. You can find the entity types management page under your collection settings.
+
+### Viewing Entity Types
+
+<Steps>
+    1. Navigate to your collection settings by clicking on "Collection" in the sidebar.
+    2. Click on the "Entity Types" tab.
+    3. You will see a list of all entity types for your collection, showing their name, whether they are a container type,
+       and their default template (if assigned).
+</Steps>
+
+### Creating an Entity Type
+
+<Steps>
+    1. Navigate to Collection Settings → Entity Types.
+    2. Click the "Create" button.
+    3. Enter a name for the entity type (e.g., "Shelf", "Electronics").
+    4. Check "Is a container / location type" if this type should act as a storage location.
+    5. Optionally select a default template — entities created with this type will inherit the template's default values.
+    6. Click "Create" to save.
+</Steps>
+
+### Editing an Entity Type
+
+<Steps>
+    1. Navigate to Collection Settings → Entity Types.
+    2. Click the edit (pencil) icon on the entity type you want to modify.
+    3. Update the name, container flag, or default template as needed.
+    4. Click "Update" to save your changes.
+</Steps>
+
+### Deleting an Entity Type
+
+<Steps>
+    1. Navigate to Collection Settings → Entity Types.
+    2. Click the delete (trash) icon on the entity type you want to remove.
+    3. Confirm the deletion when prompted.
+</Steps>
+
+> [!NOTE]
+> You cannot delete an entity type that is currently in use by any entities. You must first reassign those entities
+> to a different type before deleting.
+
+## Using Entity Types During Creation
+
+When you create a new item or location, Homebox will show an entity type selector if more than one type exists
+for that category (item types or location types). Selecting a type that has a default template will automatically
+pre-fill the creation form with the template's values.
+
+If only one type exists for the category (which is the default — one "Item" type and one "Location" type),
+the type is applied automatically and no selector is shown.
+
+## Locations as Full Entities
+
+With the entity type system, locations now support all the same features as items:
+
+- **Photos** — Upload images of your storage locations
+- **Tags** — Organize locations with the same tag system used for items
+- **Custom fields** — Add any additional metadata to locations
+- **Attachments** — Attach documents, manuals, or other files
+- **Notes** — Add detailed markdown notes to locations
+- **Asset IDs** — Locations receive unique asset IDs just like items
+
+To edit these fields on a location, navigate to the location detail page and click "Edit".

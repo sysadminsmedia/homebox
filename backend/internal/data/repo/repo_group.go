@@ -12,6 +12,7 @@ import (
 	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
@@ -128,8 +129,10 @@ func (r *GroupRepository) StatsLocationsByPurchasePrice(ctx context.Context, gid
 		FROM entities parent
 		JOIN entity_types et ON et.id = parent.entity_type_entities
 		LEFT JOIN entities child ON child.entity_children = parent.id
+			AND child.entity_type_entities IN (SELECT id FROM entity_types WHERE is_location = false)
 		WHERE parent.group_entities = $1 AND et.is_location = true
 		GROUP BY parent.id, parent.name
+		HAVING total > 0
 	`
 
 	rows, err := r.db.Sql().QueryContext(ctx, q, gid)
@@ -179,10 +182,11 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 	// Get the Totals for the Start and End of the Given Time Period
 	q := `
 	SELECT
-		SUM(CASE WHEN created_at < $1 THEN purchase_price ELSE 0 END) AS price_at_start,
-		SUM(CASE WHEN created_at < $2 THEN purchase_price ELSE 0 END) AS price_at_end
-	FROM entities
-	WHERE group_entities = $3 AND archived = false
+		SUM(CASE WHEN e.created_at < $1 THEN e.purchase_price ELSE 0 END) AS price_at_start,
+		SUM(CASE WHEN e.created_at < $2 THEN e.purchase_price ELSE 0 END) AS price_at_end
+	FROM entities e
+	JOIN entity_types et ON et.id = e.entity_type_entities
+	WHERE e.group_entities = $3 AND e.archived = false AND et.is_location = false
 `
 	stats := ValueOverTime{
 		Start: start,
@@ -216,6 +220,7 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 			entity.CreatedAtGTE(start),
 			entity.CreatedAtLTE(end),
 			entity.Archived(false),
+			entity.HasEntityTypeWith(entitytype.IsLocation(false)),
 		).
 		Select(
 			entity.FieldName,
@@ -242,15 +247,17 @@ func (r *GroupRepository) StatsGroup(ctx context.Context, gid uuid.UUID) (GroupS
 	q := `
 		SELECT
             (SELECT COUNT(*) FROM user_groups WHERE group_id = $2) AS total_users,
-            (SELECT COUNT(*) FROM entities WHERE group_entities = $2 AND entities.archived = false) AS total_items,
+            (SELECT COUNT(*) FROM entities e JOIN entity_types et ON et.id = e.entity_type_entities WHERE e.group_entities = $2 AND e.archived = false AND et.is_location = false) AS total_items,
             (SELECT COUNT(*) FROM entities e JOIN entity_types et ON et.id = e.entity_type_entities WHERE e.group_entities = $2 AND et.is_location = true) AS total_locations,
             (SELECT COUNT(*) FROM tags WHERE group_tags = $2) AS total_tags,
-            (SELECT SUM(purchase_price*quantity) FROM entities WHERE group_entities = $2 AND entities.archived = false) AS total_item_price,
+            (SELECT SUM(e.purchase_price*e.quantity) FROM entities e JOIN entity_types et ON et.id = e.entity_type_entities WHERE e.group_entities = $2 AND e.archived = false AND et.is_location = false) AS total_item_price,
             (SELECT COUNT(*)
-                FROM entities
-                    WHERE group_entities = $2
-                    AND entities.archived = false
-                    AND (entities.lifetime_warranty = true OR entities.warranty_expires > $1)
+                FROM entities e
+                JOIN entity_types et ON et.id = e.entity_type_entities
+                    WHERE e.group_entities = $2
+                    AND e.archived = false
+                    AND et.is_location = false
+                    AND (e.lifetime_warranty = true OR e.warranty_expires > $1)
                 ) AS total_with_warranty;
 `
 	var stats GroupStatistics

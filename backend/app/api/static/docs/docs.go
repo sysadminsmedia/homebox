@@ -638,6 +638,7 @@ const docTemplate = `{
                     "Group"
                 ],
                 "summary": "Create Group Invitation",
+                "operationId": "groupInvitationCreate",
                 "parameters": [
                     {
                         "description": "User Data",
@@ -673,6 +674,7 @@ const docTemplate = `{
                     "Group"
                 ],
                 "summary": "Accept Group Invitation",
+                "operationId": "groupInvitationAccept",
                 "parameters": [
                     {
                         "type": "string",

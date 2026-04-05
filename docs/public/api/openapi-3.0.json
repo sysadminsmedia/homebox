@@ -652,6 +652,7 @@
                     "Group"
                 ],
                 "summary": "Create Group Invitation",
+                "operationId": "groupInvitationCreate",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -688,6 +689,7 @@
                     "Group"
                 ],
                 "summary": "Accept Group Invitation",
+                "operationId": "groupInvitationAccept",
                 "parameters": [
                     {
                         "description": "Invitation Token",

@@ -220,21 +220,7 @@ func run(cfg *config.Config) error {
 		services.WithNotifierConfig(&cfg.Notifier),
 	)
 
-	// Ensure all entities have asset IDs (covers locations after entity merge migration)
-	{
-		groups, err := app.repos.Groups.GetAllGroups(context.Background(), uuid.Nil)
-		if err != nil {
-			log.Warn().Err(err).Msg("failed to get groups for asset ID assignment")
-		} else {
-			for _, g := range groups {
-				if n, err := app.services.Entities.EnsureAssetID(context.Background(), g.ID); err != nil {
-					log.Warn().Err(err).Str("group", g.Name).Msg("failed to ensure asset IDs")
-				} else if n > 0 {
-					log.Info().Int("count", n).Str("group", g.Name).Msg("assigned asset IDs to entities")
-				}
-			}
-		}
-	}
+	ensureAssetIDs(app)
 
 	// =========================================================================
 	// Start Server
@@ -346,4 +332,23 @@ func run(cfg *config.Config) error {
 	}
 
 	return runner.Start(context.Background())
+}
+
+// ensureAssetIDs assigns asset IDs to any entities that don't have one,
+// covering locations that were migrated from the old schema.
+func ensureAssetIDs(app *app) {
+	groups, err := app.repos.Groups.GetAllGroups(context.Background(), uuid.Nil)
+	if err != nil {
+		log.Warn().Err(err).Msg("failed to get groups for asset ID assignment")
+		return
+	}
+
+	for _, g := range groups {
+		n, err := app.services.Entities.EnsureAssetID(context.Background(), g.ID)
+		if err != nil {
+			log.Warn().Err(err).Str("group", g.Name).Msg("failed to ensure asset IDs")
+		} else if n > 0 {
+			log.Info().Int("count", n).Str("group", g.Name).Msg("assigned asset IDs to entities")
+		}
+	}
 }
