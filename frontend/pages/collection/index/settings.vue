@@ -8,7 +8,6 @@
   import FormTextField from "~/components/Form/TextField.vue";
   import type { CurrenciesCurrency, Group } from "~~/lib/api/types/data-contracts";
   import { fmtCurrencyAsync } from "~/composables/utils";
-  import { getLocaleCode, setCurrency } from "~/composables/use-formatters";
 
   definePageMeta({
     middleware: ["auth"],
