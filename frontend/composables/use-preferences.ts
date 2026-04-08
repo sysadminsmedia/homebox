@@ -41,7 +41,7 @@ const DEFAULT_PREFERENCES: LocationViewPreferences = {
   editorAdvancedView: false,
   itemDisplayView: "card",
   theme: "homebox",
-  itemsPerTablePage: 10,
+  itemsPerTablePage: 12,
   displayLegacyHeader: false,
   legacyImageFit: false,
   language: null,
