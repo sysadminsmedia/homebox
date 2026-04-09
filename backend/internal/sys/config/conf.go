@@ -101,7 +101,8 @@ type OIDCConf struct {
 }
 
 type BarcodeAPIConf struct {
-	TokenBarcodespider string `yaml:"token_barcodespider"`
+	TokenBarcodespider    string `yaml:"token_barcodespider"`
+	OpenFoodFactsContact  string `yaml:"openfoodfacts_contact"`
 }
 
 type AuthConfig struct {
