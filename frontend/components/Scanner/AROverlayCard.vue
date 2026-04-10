@@ -33,7 +33,7 @@
       <!-- Child items -->
       <div v-if="entity.childItems && entity.childItems.length > 0" class="mt-1 border-t border-border pt-1">
         <span class="text-xs font-medium text-muted-foreground">
-          {{ entity.childItems.length }} {{ t("scanner_ar.child_items") }}:
+          {{ entity.childItems.length }} {{ t("scanner_ar.child_items", { count: entity.childItems.length }) }}:
         </span>
         <div
           v-for="child in entity.childItems.slice(0, 3)"
@@ -53,7 +53,7 @@
       <span class="truncate text-sm font-semibold text-foreground">{{ entity.location.name }}</span>
       <div class="flex flex-wrap items-center gap-1.5">
         <span v-if="entity.location.children.length > 0" class="text-xs text-muted-foreground">
-          {{ entity.location.children.length }} {{ t("scanner_ar.children") }}
+          {{ entity.location.children.length }} {{ t("scanner_ar.children", { count: entity.location.children.length }) }}
         </span>
       </div>
       <span v-if="entity.location.totalPrice" class="text-xs text-muted-foreground">
@@ -62,7 +62,7 @@
       <!-- Items in location -->
       <div v-if="entity.childItems && entity.childItems.length > 0" class="mt-1 border-t border-border pt-1">
         <span class="text-xs font-medium text-muted-foreground">
-          {{ entity.childItems.length }} {{ t("scanner_ar.items_in_location") }}:
+          {{ entity.childItems.length }} {{ t("scanner_ar.items_in_location", { count: entity.childItems.length }) }}:
         </span>
         <div
           v-for="child in entity.childItems.slice(0, 3)"
@@ -80,7 +80,7 @@
     <!-- Asset with multiple items (no single parent item) -->
     <div v-else-if="entity.childItems && entity.childItems.length > 0" class="flex flex-col gap-1">
       <span class="text-sm font-semibold text-foreground">
-        {{ entity.childItems.length }} {{ t("scanner_ar.items") }}
+        {{ entity.childItems.length }} {{ t("scanner_ar.items", { count: entity.childItems.length }) }}
       </span>
       <div
         v-for="child in entity.childItems.slice(0, 3)"
@@ -97,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, ref, onMounted } from "vue";
+  import { computed, ref, watchEffect } from "vue";
   import { useElementSize } from "@vueuse/core";
   import { useI18n } from "vue-i18n";
   import type { EntityData, Pose3D, Point2D } from "@/composables/use-barcode-detector";
@@ -193,14 +193,24 @@
     };
   });
 
-  onMounted(async () => {
-    const formatCurrency = await useFormatCurrency();
-    if (props.entity?.item?.purchasePrice) {
-      formattedPrice.value = formatCurrency(props.entity.item.purchasePrice);
+  let currencyFormatter: ((value: number | string) => string) | null = null;
+
+  watchEffect(async () => {
+    const item = props.entity?.item;
+    const location = props.entity?.location;
+
+    if (!item?.purchasePrice && !location?.totalPrice) {
+      formattedPrice.value = "";
+      formattedTotalPrice.value = "";
+      return;
     }
-    if (props.entity?.location?.totalPrice) {
-      formattedTotalPrice.value = formatCurrency(props.entity.location.totalPrice);
+
+    if (!currencyFormatter) {
+      currencyFormatter = await useFormatCurrency();
     }
+
+    formattedPrice.value = item?.purchasePrice ? currencyFormatter(item.purchasePrice) : "";
+    formattedTotalPrice.value = location?.totalPrice ? currencyFormatter(location.totalPrice) : "";
   });
 
   function handleClick() {

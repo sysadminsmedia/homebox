@@ -76,6 +76,9 @@ function parseHomeboxUrl(rawValue: string): { entityType: "item" | "location" | 
     let pathname: string;
     try {
       const url = new URL(rawValue);
+      if (url.origin !== globalThis.location?.origin) {
+        return null;
+      }
       pathname = url.pathname;
     } catch {
       if (rawValue.startsWith("/")) {
@@ -234,6 +237,8 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
   let detectRequestId = 0;
   let detectInFlight = false;
   let lastDetectTime = 0;
+  /** Incremented on each new session; stale loops bail out after awaits */
+  let sessionId = 0;
 
   const entityCache = new Map<string, CachedEntity>();
   const pendingRequests = new Map<string, Promise<EntityData | null>>();
@@ -430,60 +435,8 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
     return request;
   }
 
-  async function startCamera() {
-    error.value = null;
-    console.debug("[AR] startCamera called");
-
-    if (!navigator?.mediaDevices?.getUserMedia) {
-      error.value = "scanner.unsupported";
-      return;
-    }
-
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: { ideal: "environment" },
-          width: { ideal: 1920 },
-          height: { ideal: 1080 },
-        },
-      });
-      console.debug("[AR] Camera stream acquired");
-
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      videoDevices = devices.filter(d => d.kind === "videoinput");
-
-      const currentTrack = stream.getVideoTracks()[0];
-      if (currentTrack) {
-        const settings = currentTrack.getSettings();
-        currentDeviceIndex = videoDevices.findIndex(d => d.deviceId === settings.deviceId);
-        if (currentDeviceIndex === -1) currentDeviceIndex = 0;
-      }
-
-      if (videoRef.value) {
-        videoRef.value.srcObject = stream;
-        videoRef.value.setAttribute("playsinline", "true");
-        await videoRef.value.play();
-        console.debug("[AR] Video playing:", videoRef.value.videoWidth, "x", videoRef.value.videoHeight);
-      }
-
-      await initWorker();
-
-      if (isSupported.value) {
-        startDetection();
-      } else {
-        error.value = "scanner_ar.unsupported";
-      }
-    } catch (err: unknown) {
-      console.error("[AR] startCamera error:", err);
-      if (err instanceof Error && err.name === "NotAllowedError") {
-        error.value = "scanner.permission_denied";
-      } else {
-        error.value = "scanner.error";
-      }
-    }
-  }
-
-  function stopCamera() {
+  /** Tear down stream, worker, and detection without touching sessionId */
+  function teardown() {
     stopDetection();
     if (worker) {
       worker.terminate();
@@ -500,9 +453,78 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
     detections.value = [];
   }
 
+  async function startCamera() {
+    // Invalidate any previous session and tear down
+    const mySession = ++sessionId;
+    teardown();
+
+    error.value = null;
+    console.debug("[AR] startCamera called, session:", mySession);
+
+    if (!navigator?.mediaDevices?.getUserMedia) {
+      error.value = "scanner.unsupported";
+      return;
+    }
+
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { ideal: "environment" },
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+        },
+      });
+      if (sessionId !== mySession) return; // superseded
+
+      console.debug("[AR] Camera stream acquired");
+
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      if (sessionId !== mySession) return;
+      videoDevices = devices.filter(d => d.kind === "videoinput");
+
+      const currentTrack = stream.getVideoTracks()[0];
+      if (currentTrack) {
+        const settings = currentTrack.getSettings();
+        currentDeviceIndex = videoDevices.findIndex(d => d.deviceId === settings.deviceId);
+        if (currentDeviceIndex === -1) currentDeviceIndex = 0;
+      }
+
+      if (videoRef.value) {
+        videoRef.value.srcObject = stream;
+        videoRef.value.setAttribute("playsinline", "true");
+        await videoRef.value.play();
+        if (sessionId !== mySession) return;
+        console.debug("[AR] Video playing:", videoRef.value.videoWidth, "x", videoRef.value.videoHeight);
+      }
+
+      await initWorker();
+      if (sessionId !== mySession) return;
+
+      if (isSupported.value) {
+        startDetection(mySession);
+      } else {
+        error.value = "scanner_ar.unsupported";
+      }
+    } catch (err: unknown) {
+      if (sessionId !== mySession) return;
+      console.error("[AR] startCamera error:", err);
+      if (err instanceof Error && err.name === "NotAllowedError") {
+        error.value = "scanner.permission_denied";
+      } else {
+        error.value = "scanner.error";
+      }
+    }
+  }
+
+  function stopCamera() {
+    sessionId++;
+    teardown();
+  }
+
   async function switchCamera() {
     if (videoDevices.length < 2) return;
 
+    const mySession = ++sessionId;
     currentDeviceIndex = (currentDeviceIndex + 1) % videoDevices.length;
     const nextDevice = videoDevices[currentDeviceIndex];
     if (!nextDevice) return;
@@ -516,24 +538,28 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
       stream = await navigator.mediaDevices.getUserMedia({
         video: { deviceId: { exact: nextDevice.deviceId } },
       });
+      if (sessionId !== mySession) return;
 
       if (videoRef.value) {
         videoRef.value.srcObject = stream;
         await videoRef.value.play();
+        if (sessionId !== mySession) return;
       }
 
-      startDetection();
+      startDetection(mySession);
     } catch {
+      if (sessionId !== mySession) return;
       error.value = "scanner.error";
     }
   }
 
-  function startDetection() {
+  function startDetection(session: number) {
+    if (sessionId !== session) return;
     scanning = true;
     isScanning.value = true;
     detectInFlight = false;
     lastDetectTime = 0;
-    renderLoop();
+    renderLoop(session);
   }
 
   function stopDetection() {
@@ -550,14 +576,14 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
     if (!stream || !worker) return;
     scanning = true;
     isScanning.value = true;
-    renderLoop();
+    renderLoop(sessionId);
   }
 
   let frameCount = 0;
   let lastLogTime = 0;
 
-  function renderLoop() {
-    if (!scanning || !videoRef.value) return;
+  function renderLoop(session: number) {
+    if (!scanning || !videoRef.value || sessionId !== session) return;
 
     const video = videoRef.value;
     const now = Date.now();
@@ -577,7 +603,7 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
       try {
         const frame = createImageBitmap(video);
         frame.then(bitmap => {
-          if (!worker || !scanning) {
+          if (!worker || !scanning || sessionId !== session) {
             bitmap.close();
             return;
           }
@@ -603,8 +629,8 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
       updateDetections();
     }
 
-    if (scanning) {
-      requestAnimationFrame(renderLoop);
+    if (scanning && sessionId === session) {
+      requestAnimationFrame(() => renderLoop(session));
     }
   }
 
