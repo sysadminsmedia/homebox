@@ -25,6 +25,11 @@ func (svc *GroupService) validateCanLeaveGroup(ctx Context) (repo.UserOut, error
 		return repo.UserOut{}, err
 	}
 
+	// Validate user is a member of the group they're trying to leave
+	if !lo.Contains(currentUser.GroupIDs, ctx.GID) {
+		return repo.UserOut{}, validate.NewRequestError(errors.New("you are not a member of this group"), http.StatusBadRequest)
+	}
+
 	// Validate not leaving only group
 	if len(currentUser.GroupIDs) <= 1 {
 		return repo.UserOut{}, validate.NewRequestError(errors.New("cannot leave the only group you are a member of"), http.StatusBadRequest)
