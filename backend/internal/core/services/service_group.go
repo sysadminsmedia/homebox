@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
@@ -131,6 +132,11 @@ func (svc *GroupService) LeaveGroup(ctx Context) error {
 	if err != nil {
 		if errors.Is(err, repo.ErrCannotLeaveLastMember) {
 			return validate.NewRequestError(errors.New(repo.ErrCannotLeaveLastMember.Error()), http.StatusBadRequest)
+		}
+		// Map any unexpected not-found (e.g. stale membership read) to a 400
+		var entNotFound *ent.NotFoundError
+		if errors.As(err, &entNotFound) {
+			return validate.NewRequestError(errors.New("group membership not found; try again"), http.StatusBadRequest)
 		}
 		return err
 	}
