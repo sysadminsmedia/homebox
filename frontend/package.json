@@ -65,6 +65,7 @@
     "@vueuse/core": "^13.9.0",
     "@vueuse/nuxt": "^13.9.0",
     "@vueuse/router": "^13.9.0",
+    "barcode-detector": "^3.0.2",
     "@zxing/library": "^0.21.3",
     "autoprefixer": "^10.4.27",
     "class-variance-authority": "^0.7.1",
