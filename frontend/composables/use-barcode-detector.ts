@@ -1,7 +1,7 @@
 import { ref, type Ref, watch, onUnmounted } from "vue";
 import { useDocumentVisibility } from "@vueuse/core";
-import { BarcodeDetector as BarcodeDetectorPolyfill } from "barcode-detector";
 import type { ItemOut, ItemSummary, LocationOut } from "~~/lib/api/types/data-contracts";
+import type { WorkerResponse } from "~~/workers/barcode-detector";
 
 export interface EntityData {
   item?: ItemOut;
@@ -16,16 +16,11 @@ export interface Point2D {
 
 /** 3D pose derived from QR code corner points */
 export interface Pose3D {
-  /** Center of the QR code in viewport coordinates */
   centerX: number;
   centerY: number;
-  /** In-plane rotation in degrees (Z-axis) */
   rotateZ: number;
-  /** Forward/backward tilt in degrees (X-axis) — positive = top tilted away */
   rotateX: number;
-  /** Left/right tilt in degrees (Y-axis) — positive = right side closer */
   rotateY: number;
-  /** Scale factor based on apparent QR code size (1.0 = reference size of ~200px) */
   scale: number;
 }
 
@@ -50,8 +45,9 @@ interface CachedEntity {
 const CACHE_TTL = 60_000;
 const STALE_TIMEOUT = 1500;
 const MAX_DETECTIONS = 10;
-/** Smoothing factor: 0 = no smoothing (snap), 1 = frozen. 0.6 feels responsive but stable. */
 const SMOOTH = 0.6;
+/** Minimum ms between detection requests sent to worker */
+const DETECT_INTERVAL = 50; // ~20fps detection, rAF loop runs at display rate for smooth lerp
 
 function lerpVal(prev: number, next: number, t: number): number {
   return prev * t + next * (1 - t);
@@ -85,72 +81,35 @@ function parseHomeboxUrl(rawValue: string): { entityType: "item" | "location" | 
       if (rawValue.startsWith("/")) {
         pathname = rawValue;
       } else {
-        console.debug("[AR] QR value is not a URL or path, ignoring:", rawValue);
         return null;
       }
     }
 
     const sanitized = pathname.replace(/[^a-zA-Z0-9-_/]/g, "");
 
-    // /a/{asset-id} - the primary QR code format
     const assetMatch = sanitized.match(/^\/a\/([a-zA-Z0-9-_]+)/);
-    if (assetMatch) {
-      return { entityType: "asset", id: assetMatch[1]! };
-    }
+    if (assetMatch) return { entityType: "asset", id: assetMatch[1]! };
 
     const itemMatch = sanitized.match(/^\/item\/([a-zA-Z0-9-_]+)/);
-    if (itemMatch) {
-      return { entityType: "item", id: itemMatch[1]! };
-    }
+    if (itemMatch) return { entityType: "item", id: itemMatch[1]! };
 
     const locationMatch = sanitized.match(/^\/location\/([a-zA-Z0-9-_]+)/);
-    if (locationMatch) {
-      return { entityType: "location", id: locationMatch[1]! };
-    }
+    if (locationMatch) return { entityType: "location", id: locationMatch[1]! };
+
     return null;
   } catch {
     return null;
   }
 }
 
-function mapBoundingBox(bbox: DOMRectReadOnly, video: HTMLVideoElement): DOMRect {
-  const videoW = video.videoWidth;
-  const videoH = video.videoHeight;
-  const clientW = video.clientWidth;
-  const clientH = video.clientHeight;
-
-  if (!videoW || !videoH || !clientW || !clientH) {
-    return new DOMRect(bbox.x, bbox.y, bbox.width, bbox.height);
-  }
-
-  const videoAspect = videoW / videoH;
-  const clientAspect = clientW / clientH;
-
-  let scaleX: number, scaleY: number, offsetX: number, offsetY: number;
-
-  if (videoAspect > clientAspect) {
-    // Video is wider than container - cropped horizontally (object-fit: cover)
-    scaleY = clientH / videoH;
-    scaleX = scaleY;
-    offsetX = (clientW - videoW * scaleX) / 2;
-    offsetY = 0;
-  } else {
-    // Video is taller than container - cropped vertically
-    scaleX = clientW / videoW;
-    scaleY = scaleX;
-    offsetX = 0;
-    offsetY = (clientH - videoH * scaleY) / 2;
-  }
-
-  return new DOMRect(bbox.x * scaleX + offsetX, bbox.y * scaleY + offsetY, bbox.width * scaleX, bbox.height * scaleY);
+interface VideoTransform {
+  scaleX: number;
+  scaleY: number;
+  offsetX: number;
+  offsetY: number;
 }
 
-function getVideoTransform(video: HTMLVideoElement) {
-  const videoW = video.videoWidth;
-  const videoH = video.videoHeight;
-  const clientW = video.clientWidth;
-  const clientH = video.clientHeight;
-
+function getVideoTransform(videoW: number, videoH: number, clientW: number, clientH: number): VideoTransform {
   if (!videoW || !videoH || !clientW || !clientH) {
     return { scaleX: 1, scaleY: 1, offsetX: 0, offsetY: 0 };
   }
@@ -167,24 +126,28 @@ function getVideoTransform(video: HTMLVideoElement) {
   }
 }
 
-function mapCornerPoints(corners: Array<{ x: number; y: number }>, video: HTMLVideoElement): Point2D[] {
-  const { scaleX, scaleY, offsetX, offsetY } = getVideoTransform(video);
+function mapBox(bbox: { x: number; y: number; width: number; height: number }, t: VideoTransform): DOMRect {
+  return new DOMRect(
+    bbox.x * t.scaleX + t.offsetX,
+    bbox.y * t.scaleY + t.offsetY,
+    bbox.width * t.scaleX,
+    bbox.height * t.scaleY
+  );
+}
+
+function mapCorners(corners: Array<{ x: number; y: number }>, t: VideoTransform): Point2D[] {
   return corners.map(c => ({
-    x: c.x * scaleX + offsetX,
-    y: c.y * scaleY + offsetY,
+    x: c.x * t.scaleX + t.offsetX,
+    y: c.y * t.scaleY + t.offsetY,
   }));
 }
 
-function dist(a: Point2D, b: Point2D): number {
+function ptDist(a: Point2D, b: Point2D): number {
   return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
 }
 
 const REFERENCE_QR_SIZE = 200;
 
-/**
- * Compute 3D pose from 4 corner points of a detected QR code.
- * Corner order: [topLeft, topRight, bottomRight, bottomLeft]
- */
 function computePose(corners: Point2D[]): Pose3D {
   if (corners.length < 4) {
     return { centerX: 0, centerY: 0, rotateZ: 0, rotateX: 0, rotateY: 0, scale: 1 };
@@ -192,47 +155,30 @@ function computePose(corners: Point2D[]): Pose3D {
 
   const [tl, tr, br, bl] = corners as [Point2D, Point2D, Point2D, Point2D];
 
-  // Center
   const centerX = (tl.x + tr.x + br.x + bl.x) / 4;
   const centerY = (tl.y + tr.y + br.y + bl.y) / 4;
-
-  // In-plane rotation: angle of the top edge relative to horizontal
   const rotateZ = Math.atan2(tr.y - tl.y, tr.x - tl.x) * (180 / Math.PI);
 
-  // Perspective tilt (X-axis rotation: top tilted away from camera)
-  // When QR is tilted back, the top edge appears shorter than the bottom edge
-  const topEdge = dist(tl, tr);
-  const bottomEdge = dist(bl, br);
-  // Ratio > 1 means bottom is wider (top tilted away)
+  const topEdge = ptDist(tl, tr);
+  const bottomEdge = ptDist(bl, br);
   const xRatio = bottomEdge / (topEdge || 1);
-  // Convert to approximate angle — clamp to avoid extreme values
   const rotateX = Math.max(-60, Math.min(60, (xRatio - 1) * 50));
 
-  // Perspective tilt (Y-axis rotation: right side closer to camera)
-  // When QR is rotated right, the right edge appears taller than the left edge
-  const leftEdge = dist(tl, bl);
-  const rightEdge = dist(tr, br);
+  const leftEdge = ptDist(tl, bl);
+  const rightEdge = ptDist(tr, br);
   const yRatio = rightEdge / (leftEdge || 1);
   const rotateY = Math.max(-60, Math.min(60, (1 - yRatio) * 50));
 
-  // Scale based on average edge length relative to reference size
   const avgEdge = (topEdge + bottomEdge + leftEdge + rightEdge) / 4;
   const scale = Math.max(0.3, Math.min(2.0, avgEdge / REFERENCE_QR_SIZE));
 
   return { centerX, centerY, rotateZ, rotateX, rotateY, scale };
 }
 
-/**
- * Solve a 2D perspective transform (homography) from 4 point correspondences.
- * Returns a 3x3 matrix H (row-major, 9 elements) such that dst ≈ H * src in homogeneous coords.
- */
 export function solveHomography(
   src: [Point2D, Point2D, Point2D, Point2D],
   dst: [Point2D, Point2D, Point2D, Point2D]
 ): number[] {
-  // 8x8 linear system: for each (x,y)→(u,v):
-  //   [x y 1 0 0 0 -xu -yu] [a]   [u]
-  //   [0 0 0 x y 1 -xv -yv] [b] = [v]
   const aug: number[][] = [];
   for (let i = 0; i < 4; i++) {
     const { x, y } = src[i]!;
@@ -242,7 +188,6 @@ export function solveHomography(
   }
 
   const n = 8;
-  // Gaussian elimination with partial pivoting
   for (let col = 0; col < n; col++) {
     let maxRow = col;
     for (let row = col + 1; row < n; row++) {
@@ -250,7 +195,7 @@ export function solveHomography(
     }
     [aug[col], aug[maxRow]] = [aug[maxRow]!, aug[col]!];
     const pivot = aug[col]![col]!;
-    if (Math.abs(pivot) < 1e-10) return [1, 0, 0, 0, 1, 0, 0, 0, 1]; // degenerate, return identity
+    if (Math.abs(pivot) < 1e-10) return [1, 0, 0, 0, 1, 0, 0, 0, 1];
     for (let row = col + 1; row < n; row++) {
       const factor = aug[row]![col]! / pivot;
       for (let j = col; j <= n; j++) {
@@ -259,7 +204,6 @@ export function solveHomography(
     }
   }
 
-  // Back substitution
   const h = new Array(n).fill(0);
   for (let i = n - 1; i >= 0; i--) {
     h[i] = aug[i]![n]!;
@@ -269,20 +213,10 @@ export function solveHomography(
     h[i] /= aug[i]![i]!;
   }
 
-  return [...h, 1]; // [a,b,c,d,e,f,g,h,1]
+  return [...h, 1];
 }
 
-/**
- * Convert a 3x3 row-major homography matrix to a CSS matrix3d() string.
- * Embeds the 2D projective transform into 3D so CSS perspective division applies.
- */
 export function homographyToMatrix3d(H: number[]): string {
-  // H = [h0 h1 h2; h3 h4 h5; h6 h7 h8] row-major
-  // CSS matrix3d is column-major 4x4:
-  // [h0 h1 0 h2]     matrix3d(h0, h3, 0, h6,
-  // [h3 h4 0 h5]  →           h1, h4, 0, h7,
-  // [0  0  1 0 ]               0,  0, 1,  0,
-  // [h6 h7 0 h8]              h2, h5, 0, h8)
   return `matrix3d(${H[0]}, ${H[3]}, 0, ${H[6]}, ${H[1]}, ${H[4]}, 0, ${H[7]}, 0, 0, 1, 0, ${H[2]}, ${H[5]}, 0, ${H[8]})`;
 }
 
@@ -292,11 +226,14 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
   const error = ref<string | null>(null);
   const detections = ref<DetectedEntity[]>([]);
 
-  let detector: BarcodeDetectorPolyfill | null = null;
+  let worker: Worker | null = null;
   let stream: MediaStream | null = null;
   let scanning = false;
   let currentDeviceIndex = 0;
   let videoDevices: MediaDeviceInfo[] = [];
+  let detectRequestId = 0;
+  let detectInFlight = false;
+  let lastDetectTime = 0;
 
   const entityCache = new Map<string, CachedEntity>();
   const pendingRequests = new Map<string, Promise<EntityData | null>>();
@@ -315,15 +252,120 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
     }
   });
 
-  function init() {
-    try {
-      detector = new BarcodeDetectorPolyfill({ formats: ["qr_code"] });
-      isSupported.value = true;
-      console.debug("[AR] BarcodeDetector initialized successfully");
-    } catch (e) {
-      isSupported.value = false;
-      console.error("[AR] BarcodeDetector init failed:", e);
+  function initWorker(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        worker = new Worker(new URL("~~/workers/barcode-detector.ts", import.meta.url), { type: "module" });
+
+        worker.onmessage = (event: MessageEvent<WorkerResponse>) => {
+          const msg = event.data;
+
+          if (msg.type === "ready") {
+            isSupported.value = true;
+            console.debug("[AR] Worker ready, BarcodeDetector initialized");
+            resolve();
+          } else if (msg.type === "error") {
+            console.error("[AR] Worker init error:", msg.message);
+            isSupported.value = false;
+            reject(new Error(msg.message));
+          } else if (msg.type === "result") {
+            handleDetectionResult(msg.barcodes);
+          }
+        };
+
+        worker.onerror = e => {
+          console.error("[AR] Worker error:", e);
+          isSupported.value = false;
+          reject(e);
+        };
+      } catch (e) {
+        console.error("[AR] Failed to create worker:", e);
+        reject(e);
+      }
+    });
+  }
+
+  function handleDetectionResult(
+    barcodes: Array<{
+      rawValue: string;
+      format: string;
+      boundingBox: { x: number; y: number; width: number; height: number };
+      cornerPoints: Array<{ x: number; y: number }>;
+    }>
+  ) {
+    detectInFlight = false;
+
+    const video = videoRef.value;
+    if (!video || !scanning) return;
+
+    const vt = getVideoTransform(video.videoWidth, video.videoHeight, video.clientWidth, video.clientHeight);
+    const now = Date.now();
+
+    for (const barcode of barcodes.slice(0, MAX_DETECTIONS)) {
+      const parsed = parseHomeboxUrl(barcode.rawValue);
+      if (!parsed) continue;
+
+      const key = `${parsed.entityType}:${parsed.id}`;
+      const mappedBox = mapBox(barcode.boundingBox, vt);
+      const mappedCorners = mapCorners(barcode.cornerPoints, vt);
+      const pose = computePose(mappedCorners);
+      const existing = trackedEntities.get(key);
+
+      if (existing) {
+        existing.boundingBox = lerpRect(existing.boundingBox, mappedBox, SMOOTH);
+        existing.cornerPoints = lerpCorners(existing.cornerPoints, mappedCorners, SMOOTH);
+        existing.pose = {
+          centerX: lerpVal(existing.pose.centerX, pose.centerX, SMOOTH),
+          centerY: lerpVal(existing.pose.centerY, pose.centerY, SMOOTH),
+          rotateZ: lerpVal(existing.pose.rotateZ, pose.rotateZ, SMOOTH),
+          rotateX: lerpVal(existing.pose.rotateX, pose.rotateX, SMOOTH),
+          rotateY: lerpVal(existing.pose.rotateY, pose.rotateY, SMOOTH),
+          scale: lerpVal(existing.pose.scale, pose.scale, SMOOTH),
+        };
+        existing.lastSeen = now;
+      } else {
+        console.debug("[AR] New entity detected:", key);
+        const entity: DetectedEntity = {
+          id: parsed.id,
+          entityType: parsed.entityType,
+          rawValue: barcode.rawValue,
+          boundingBox: mappedBox,
+          cornerPoints: mappedCorners,
+          pose,
+          data: null,
+          loading: true,
+          error: false,
+          lastSeen: now,
+        };
+        trackedEntities.set(key, entity);
+
+        fetchEntityData(parsed.entityType, parsed.id).then(data => {
+          const tracked = trackedEntities.get(key);
+          if (tracked) {
+            tracked.data = data;
+            tracked.loading = false;
+            tracked.error = data === null;
+            console.debug(
+              "[AR] Data fetched for",
+              key,
+              data
+                ? `item: ${data.item?.name ?? "-"}, location: ${data.location?.name ?? "-"}, children: ${data.childItems?.length ?? 0}`
+                : "not found"
+            );
+            updateDetections();
+          }
+        });
+      }
     }
+
+    // Remove stale entries
+    for (const [key, entity] of trackedEntities) {
+      if (now - entity.lastSeen > STALE_TIMEOUT) {
+        trackedEntities.delete(key);
+      }
+    }
+
+    updateDetections();
   }
 
   async function fetchEntityData(entityType: "item" | "location" | "asset", id: string): Promise<EntityData | null> {
@@ -335,30 +377,23 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
     }
 
     const pending = pendingRequests.get(cacheKey);
-    if (pending) {
-      return pending;
-    }
+    if (pending) return pending;
 
     const api = useUserApi();
-    const request = (async (): Promise<EntityData | null> => {
+    const fetcher = async (): Promise<EntityData | null> => {
       try {
         if (entityType === "asset") {
           const { data } = await api.assets.get(id);
           if (data && data.items.length > 0) {
             if (data.items.length === 1) {
-              // Single item - fetch full details + child items
               const [itemRes, childRes] = await Promise.all([
                 api.items.get(data.items[0]!.id),
                 api.items.getAll({ parentIds: [data.items[0]!.id] }),
               ]);
-              const result: EntityData = {
-                item: itemRes.data ?? undefined,
-                childItems: childRes.data?.items ?? [],
-              };
+              const result: EntityData = { item: itemRes.data ?? undefined, childItems: childRes.data?.items ?? [] };
               entityCache.set(cacheKey, { data: result, fetchedAt: Date.now() });
               return result;
             }
-            // Multiple items share this asset ID
             const result: EntityData = { childItems: data.items };
             entityCache.set(cacheKey, { data: result, fetchedAt: Date.now() });
             return result;
@@ -369,23 +404,16 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
         if (entityType === "item") {
           const [itemRes, childRes] = await Promise.all([api.items.get(id), api.items.getAll({ parentIds: [id] })]);
           if (itemRes.data) {
-            const result: EntityData = {
-              item: itemRes.data,
-              childItems: childRes.data?.items ?? [],
-            };
+            const result: EntityData = { item: itemRes.data, childItems: childRes.data?.items ?? [] };
             entityCache.set(cacheKey, { data: result, fetchedAt: Date.now() });
             return result;
           }
           return null;
         }
 
-        // Location - fetch location details + items in location
         const [locRes, itemsRes] = await Promise.all([api.locations.get(id), api.items.getAll({ locations: [id] })]);
         if (locRes.data) {
-          const result: EntityData = {
-            location: locRes.data,
-            childItems: itemsRes.data?.items ?? [],
-          };
+          const result: EntityData = { location: locRes.data, childItems: itemsRes.data?.items ?? [] };
           entityCache.set(cacheKey, { data: result, fetchedAt: Date.now() });
           return result;
         }
@@ -395,7 +423,8 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
       } finally {
         pendingRequests.delete(cacheKey);
       }
-    })();
+    };
+    const request = fetcher();
 
     pendingRequests.set(cacheKey, request);
     return request;
@@ -406,13 +435,11 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
     console.debug("[AR] startCamera called");
 
     if (!navigator?.mediaDevices?.getUserMedia) {
-      console.error("[AR] getUserMedia not available");
       error.value = "scanner.unsupported";
       return;
     }
 
     try {
-      console.debug("[AR] Requesting camera stream...");
       stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: { ideal: "environment" },
@@ -420,56 +447,30 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
           height: { ideal: 1080 },
         },
       });
-      console.debug(
-        "[AR] Camera stream acquired, tracks:",
-        stream.getTracks().map(t => ({ kind: t.kind, label: t.label, readyState: t.readyState }))
-      );
+      console.debug("[AR] Camera stream acquired");
 
-      // Enumerate devices for camera switching
       const devices = await navigator.mediaDevices.enumerateDevices();
       videoDevices = devices.filter(d => d.kind === "videoinput");
-      console.debug(
-        "[AR] Video devices found:",
-        videoDevices.length,
-        videoDevices.map(d => d.label)
-      );
 
-      // Find current device index
       const currentTrack = stream.getVideoTracks()[0];
       if (currentTrack) {
         const settings = currentTrack.getSettings();
         currentDeviceIndex = videoDevices.findIndex(d => d.deviceId === settings.deviceId);
         if (currentDeviceIndex === -1) currentDeviceIndex = 0;
-        console.debug("[AR] Current device index:", currentDeviceIndex, "settings:", {
-          width: settings.width,
-          height: settings.height,
-          facingMode: settings.facingMode,
-        });
       }
 
       if (videoRef.value) {
         videoRef.value.srcObject = stream;
         videoRef.value.setAttribute("playsinline", "true");
         await videoRef.value.play();
-        console.debug(
-          "[AR] Video playing, readyState:",
-          videoRef.value.readyState,
-          "videoWidth:",
-          videoRef.value.videoWidth,
-          "videoHeight:",
-          videoRef.value.videoHeight
-        );
-      } else {
-        console.error("[AR] videoRef.value is undefined, cannot attach stream");
+        console.debug("[AR] Video playing:", videoRef.value.videoWidth, "x", videoRef.value.videoHeight);
       }
 
-      init();
+      await initWorker();
 
       if (isSupported.value) {
-        console.debug("[AR] Starting detection loop");
         startDetection();
       } else {
-        console.error("[AR] BarcodeDetector not supported");
         error.value = "scanner_ar.unsupported";
       }
     } catch (err: unknown) {
@@ -484,6 +485,10 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
 
   function stopCamera() {
     stopDetection();
+    if (worker) {
+      worker.terminate();
+      worker = null;
+    }
     if (stream) {
       stream.getTracks().forEach(t => t.stop());
       stream = null;
@@ -526,7 +531,9 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
   function startDetection() {
     scanning = true;
     isScanning.value = true;
-    detectLoop();
+    detectInFlight = false;
+    lastDetectTime = 0;
+    renderLoop();
   }
 
   function stopDetection() {
@@ -540,140 +547,69 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
   }
 
   function resumeDetection() {
-    if (!stream || !detector) return;
+    if (!stream || !worker) return;
     scanning = true;
     isScanning.value = true;
-    detectLoop();
+    renderLoop();
   }
 
   let frameCount = 0;
   let lastLogTime = 0;
 
-  async function detectLoop() {
-    if (!scanning || !detector || !videoRef.value) {
-      console.debug(
-        "[AR] detectLoop exiting early: scanning=",
-        scanning,
-        "detector=",
-        !!detector,
-        "videoRef=",
-        !!videoRef.value
-      );
-      return;
-    }
+  function renderLoop() {
+    if (!scanning || !videoRef.value) return;
 
     const video = videoRef.value;
-    if (video.readyState < 2) {
-      console.debug("[AR] Video not ready yet, readyState:", video.readyState);
-      requestAnimationFrame(detectLoop);
-      return;
+    const now = Date.now();
+
+    // Log stats periodically
+    frameCount++;
+    if (now - lastLogTime > 3000) {
+      console.debug(
+        `[AR] Stats: ${frameCount} frames, ${trackedEntities.size} tracked, detect in-flight: ${detectInFlight}`
+      );
+      lastLogTime = now;
+      frameCount = 0;
     }
 
-    try {
-      const barcodes = await detector.detect(video);
-      frameCount++;
-      const now = Date.now();
-
-      // Log stats every 3 seconds
-      if (now - lastLogTime > 3000) {
-        console.debug(
-          `[AR] Detection stats: ${frameCount} frames processed, ${barcodes.length} barcodes in latest frame, ${trackedEntities.size} tracked entities, video: ${video.videoWidth}x${video.videoHeight}, client: ${video.clientWidth}x${video.clientHeight}`
-        );
-        lastLogTime = now;
-        frameCount = 0;
+    // Send frame to worker for detection at throttled rate
+    if (!detectInFlight && worker && video.readyState >= 2 && now - lastDetectTime >= DETECT_INTERVAL) {
+      try {
+        const frame = createImageBitmap(video);
+        frame.then(bitmap => {
+          if (!worker || !scanning) {
+            bitmap.close();
+            return;
+          }
+          detectInFlight = true;
+          lastDetectTime = now;
+          detectRequestId++;
+          worker.postMessage({ type: "detect", frame: bitmap, id: detectRequestId }, [bitmap]);
+        });
+      } catch {
+        // createImageBitmap can fail if video not ready
       }
+    }
 
-      const seenIds = new Set<string>();
-
-      for (const barcode of barcodes.slice(0, MAX_DETECTIONS)) {
-        const parsed = parseHomeboxUrl(barcode.rawValue);
-        if (!parsed) continue;
-
-        const key = `${parsed.entityType}:${parsed.id}`;
-        seenIds.add(key);
-
-        const mappedBox = mapBoundingBox(barcode.boundingBox, video);
-        const mappedCorners = mapCornerPoints(barcode.cornerPoints ?? [], video);
-        const pose = computePose(mappedCorners);
-        const existing = trackedEntities.get(key);
-
-        if (existing) {
-          existing.boundingBox = lerpRect(existing.boundingBox, mappedBox, SMOOTH);
-          existing.cornerPoints = lerpCorners(existing.cornerPoints, mappedCorners, SMOOTH);
-          existing.pose = {
-            centerX: lerpVal(existing.pose.centerX, pose.centerX, SMOOTH),
-            centerY: lerpVal(existing.pose.centerY, pose.centerY, SMOOTH),
-            rotateZ: lerpVal(existing.pose.rotateZ, pose.rotateZ, SMOOTH),
-            rotateX: lerpVal(existing.pose.rotateX, pose.rotateX, SMOOTH),
-            rotateY: lerpVal(existing.pose.rotateY, pose.rotateY, SMOOTH),
-            scale: lerpVal(existing.pose.scale, pose.scale, SMOOTH),
-          };
-          existing.lastSeen = now;
-        } else {
-          console.debug(
-            "[AR] New entity detected:",
-            key,
-            "pose:",
-            `center=(${Math.round(pose.centerX)},${Math.round(pose.centerY)}) rotZ=${pose.rotateZ.toFixed(1)} rotX=${pose.rotateX.toFixed(1)} rotY=${pose.rotateY.toFixed(1)} scale=${pose.scale.toFixed(2)}`
-          );
-          const entity: DetectedEntity = {
-            id: parsed.id,
-            entityType: parsed.entityType,
-            rawValue: barcode.rawValue,
-            boundingBox: mappedBox,
-            cornerPoints: mappedCorners,
-            pose,
-            data: null,
-            loading: true,
-            error: false,
-            lastSeen: now,
-          };
-          trackedEntities.set(key, entity);
-
-          // Fetch data in background
-          console.debug("[AR] Fetching data for", key);
-          fetchEntityData(parsed.entityType, parsed.id).then(data => {
-            const tracked = trackedEntities.get(key);
-            if (tracked) {
-              tracked.data = data;
-              tracked.loading = false;
-              tracked.error = data === null;
-              console.debug(
-                "[AR] Data fetched for",
-                key,
-                "success:",
-                data !== null,
-                data
-                  ? `item: ${data.item?.name ?? "-"}, location: ${data.location?.name ?? "-"}, children: ${data.childItems?.length ?? 0}`
-                  : ""
-              );
-              updateDetections();
-            }
-          });
-        }
+    // Remove stale entries every frame (so cards disappear promptly)
+    let removedStale = false;
+    for (const [key, entity] of trackedEntities) {
+      if (now - entity.lastSeen > STALE_TIMEOUT) {
+        trackedEntities.delete(key);
+        removedStale = true;
       }
-
-      // Remove stale entries
-      for (const [key, entity] of trackedEntities) {
-        if (now - entity.lastSeen > STALE_TIMEOUT) {
-          console.debug("[AR] Removing stale entity:", key);
-          trackedEntities.delete(key);
-        }
-      }
-
+    }
+    if (removedStale) {
       updateDetections();
-    } catch (e) {
-      console.error("[AR] Detection error:", e);
     }
 
     if (scanning) {
-      requestAnimationFrame(detectLoop);
+      requestAnimationFrame(renderLoop);
     }
   }
 
   function updateDetections() {
-    // Deep-copy tracked entities into plain objects so Vue reactivity picks up all changes
-    const snapshot: DetectedEntity[] = Array.from(trackedEntities.values()).map(e => ({
+    detections.value = Array.from(trackedEntities.values()).map(e => ({
       id: e.id,
       entityType: e.entityType,
       rawValue: e.rawValue,
@@ -685,7 +621,6 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
       error: e.error,
       lastSeen: e.lastSeen,
     }));
-    detections.value = snapshot;
   }
 
   onUnmounted(() => {
