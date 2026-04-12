@@ -59,6 +59,34 @@ func TestBuildOpenFactsBarcodeProductRequiresName(t *testing.T) {
 	}
 }
 
+func TestBuildOpenFactsBarcodeProductRejectsUntrustedImageHost(t *testing.T) {
+	product, ok := buildOpenFactsBarcodeProduct("openfoodfacts.org", "1234567890123", openFactsProduct{
+		ProductName: "Example Product",
+		ImageURL:    "https://example.com/image.jpg",
+	})
+
+	if !ok {
+		t.Fatal("expected product to be built")
+	}
+	if product.ImageURL != "" {
+		t.Fatalf("expected untrusted image URL to be cleared, got %q", product.ImageURL)
+	}
+}
+
+func TestBuildOpenFactsBarcodeProductRejectsUnsupportedImageScheme(t *testing.T) {
+	product, ok := buildOpenFactsBarcodeProduct("openfoodfacts.org", "1234567890123", openFactsProduct{
+		ProductName: "Example Product",
+		ImageURL:    "ftp://images.openfoodfacts.org/image.jpg",
+	})
+
+	if !ok {
+		t.Fatal("expected product to be built")
+	}
+	if product.ImageURL != "" {
+		t.Fatalf("expected unsupported image URL to be cleared, got %q", product.ImageURL)
+	}
+}
+
 func TestSanitizeHeaderRemovesControlCharacters(t *testing.T) {
 	got := sanitizeHeader("owner@example.com\r\nInjected: value\t")
 	if got != "owner@example.comInjected: value" {

@@ -19,7 +19,10 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
 )
 
-const barcodeHTTPTimeoutSec = 10
+const (
+	barcodeHTTPTimeoutSec = 10
+	schemeHTTPS           = "https"
+)
 
 type UPCITEMDBResponse struct {
 	Code   string `json:"code"`
@@ -243,6 +246,49 @@ func firstNonEmpty(values ...string) string {
 	return ""
 }
 
+func isAllowedOpenFactsImageHost(host string) bool {
+	host = strings.ToLower(strings.TrimSuffix(strings.TrimSpace(host), "."))
+	allowedDomains := []string{
+		"openfoodfacts.org",
+		"openbeautyfacts.org",
+		"openproductsfacts.org",
+	}
+
+	for _, domain := range allowedDomains {
+		if host == domain || strings.HasSuffix(host, "."+domain) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func normalizeOpenFactsImageURL(imageURL string) string {
+	imageURL = strings.TrimSpace(imageURL)
+	if imageURL == "" {
+		return ""
+	}
+
+	u, err := url.Parse(imageURL)
+	if err != nil || u.Hostname() == "" || u.User != nil {
+		return ""
+	}
+
+	switch u.Scheme {
+	case "http":
+		u.Scheme = schemeHTTPS
+	case schemeHTTPS:
+	default:
+		return ""
+	}
+
+	if !isAllowedOpenFactsImageHost(u.Hostname()) {
+		return ""
+	}
+
+	return u.String()
+}
+
 func buildOpenFactsBarcodeProduct(sourceName string, iEan string, product openFactsProduct) (repo.BarcodeProduct, bool) {
 	name := firstNonEmpty(product.ProductName, product.GenericName, product.Brands)
 	if name == "" {
@@ -264,10 +310,7 @@ func buildOpenFactsBarcodeProduct(sourceName string, iEan string, product openFa
 	}
 	p.Item.Description = strings.Join(descriptionParts, " | ")
 
-	p.ImageURL = firstNonEmpty(product.ImageFrontURL, product.ImageURL)
-	if strings.HasPrefix(p.ImageURL, "http://") {
-		p.ImageURL = "https://" + strings.TrimPrefix(p.ImageURL, "http://")
-	}
+	p.ImageURL = normalizeOpenFactsImageURL(firstNonEmpty(product.ImageFrontURL, product.ImageURL))
 
 	return p, true
 }
@@ -426,7 +469,7 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 
 			// Validate URL is HTTPS
 			u, err := url.Parse(p.ImageURL)
-			if err != nil || u.Scheme != "https" {
+			if err != nil || u.Scheme != schemeHTTPS {
 				log.Warn().Msg("Skipping non-HTTPS image URL: " + p.ImageURL)
 				continue
 			}
