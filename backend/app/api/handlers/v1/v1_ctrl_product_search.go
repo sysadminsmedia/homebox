@@ -19,7 +19,10 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
 )
 
-const barcodeHTTPTimeoutSec = 10
+const (
+	barcodeHTTPTimeoutSec = 10
+	schemeHTTPS           = "https"
+)
 
 type UPCITEMDBResponse struct {
 	Code   string `json:"code"`
@@ -58,17 +61,33 @@ type UPCITEMDBResponse struct {
 	} `json:"items"`
 }
 
-type OpenFoodFactsResponse struct {
-	Code    string `json:"code"`
-	Status  int    `json:"status"`
-	Product struct {
-		ProductName   string `json:"product_name"`
-		Brands        string `json:"brands"`
-		Categories    string `json:"categories"`
-		ImageFrontURL string `json:"image_front_url"`
-		Quantity      string `json:"quantity"`
-		GenericName   string `json:"generic_name"`
-	} `json:"product"`
+type OpenFactsResponse struct {
+	Code    string           `json:"code"`
+	Status  int              `json:"status"`
+	Product openFactsProduct `json:"product"`
+}
+
+// Open Food Facts, Open Beauty Facts, and Open Products Facts share the same
+// product response shape and API path, so one mapper can safely serve all three.
+type openFactsProduct struct {
+	ProductName   string `json:"product_name"`
+	Brands        string `json:"brands"`
+	Categories    string `json:"categories"`
+	ImageFrontURL string `json:"image_front_url"`
+	ImageURL      string `json:"image_url"`
+	Quantity      string `json:"quantity"`
+	GenericName   string `json:"generic_name"`
+}
+
+type openFactsSource struct {
+	Name    string
+	BaseURL string
+}
+
+var openFactsSources = []openFactsSource{
+	{Name: "openfoodfacts.org", BaseURL: "https://world.openfoodfacts.org"},
+	{Name: "openbeautyfacts.org", BaseURL: "https://world.openbeautyfacts.org"},
+	{Name: "openproductsfacts.org", BaseURL: "https://world.openproductsfacts.org"},
 }
 
 type BARCODESPIDER_COMResponse struct {
@@ -217,10 +236,89 @@ func sanitizeHeader(s string) string {
 	}, s)
 }
 
-func lookupOpenFoodFacts(contact string, iEan string) ([]repo.BarcodeProduct, error) {
+func firstNonEmpty(values ...string) string {
+	for _, value := range values {
+		value = strings.TrimSpace(value)
+		if value != "" {
+			return value
+		}
+	}
+	return ""
+}
+
+func isAllowedOpenFactsImageHost(host string) bool {
+	host = strings.ToLower(strings.TrimSuffix(strings.TrimSpace(host), "."))
+	allowedDomains := []string{
+		"openfoodfacts.org",
+		"openbeautyfacts.org",
+		"openproductsfacts.org",
+	}
+
+	for _, domain := range allowedDomains {
+		if host == domain || strings.HasSuffix(host, "."+domain) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func normalizeOpenFactsImageURL(imageURL string) string {
+	imageURL = strings.TrimSpace(imageURL)
+	if imageURL == "" {
+		return ""
+	}
+
+	u, err := url.Parse(imageURL)
+	if err != nil || u.Hostname() == "" || u.User != nil {
+		return ""
+	}
+
+	switch u.Scheme {
+	case "http":
+		u.Scheme = schemeHTTPS
+	case schemeHTTPS:
+	default:
+		return ""
+	}
+
+	if !isAllowedOpenFactsImageHost(u.Hostname()) {
+		return ""
+	}
+
+	return u.String()
+}
+
+func buildOpenFactsBarcodeProduct(sourceName string, iEan string, product openFactsProduct) (repo.BarcodeProduct, bool) {
+	name := firstNonEmpty(product.ProductName, product.GenericName, product.Brands)
+	if name == "" {
+		return repo.BarcodeProduct{}, false
+	}
+
+	var p repo.BarcodeProduct
+	p.Barcode = iEan
+	p.SearchEngineName = sourceName
+	p.Item.Name = name
+	p.Manufacturer = product.Brands
+
+	var descriptionParts []string
+	for _, value := range []string{product.GenericName, product.Categories, product.Quantity} {
+		value = strings.TrimSpace(value)
+		if value != "" && value != name {
+			descriptionParts = append(descriptionParts, value)
+		}
+	}
+	p.Item.Description = strings.Join(descriptionParts, " | ")
+
+	p.ImageURL = normalizeOpenFactsImageURL(firstNonEmpty(product.ImageFrontURL, product.ImageURL))
+
+	return p, true
+}
+
+func lookupOpenFacts(contact string, source openFactsSource, iEan string) ([]repo.BarcodeProduct, error) {
 	client := &http.Client{Timeout: barcodeHTTPTimeoutSec * time.Second}
 	req, err := http.NewRequest(
-		"GET", "https://world.openfoodfacts.org/api/v2/product/"+url.PathEscape(iEan)+".json", nil)
+		"GET", strings.TrimRight(source.BaseURL, "/")+"/api/v2/product/"+url.PathEscape(iEan)+".json", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -240,8 +338,11 @@ func lookupOpenFoodFacts(contact string, iEan string) ([]repo.BarcodeProduct, er
 		err = errors.Join(err, resp.Body.Close())
 	}()
 
+	if resp.StatusCode == http.StatusNotFound {
+		return nil, nil
+	}
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("OpenFoodFacts API returned status code: %d", resp.StatusCode)
+		return nil, fmt.Errorf("%s API returned status code: %d", source.Name, resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(resp.Body)
@@ -249,9 +350,9 @@ func lookupOpenFoodFacts(contact string, iEan string) ([]repo.BarcodeProduct, er
 		return nil, err
 	}
 
-	var result OpenFoodFactsResponse
+	var result OpenFactsResponse
 	if err := json.Unmarshal(body, &result); err != nil {
-		log.Error().Msg("Can not unmarshal OpenFoodFacts JSON")
+		log.Error().Msg("Can not unmarshal " + source.Name + " JSON")
 		return nil, err
 	}
 
@@ -259,29 +360,9 @@ func lookupOpenFoodFacts(contact string, iEan string) ([]repo.BarcodeProduct, er
 		return nil, nil
 	}
 
-	var p repo.BarcodeProduct
-	p.Barcode = iEan
-	p.SearchEngineName = "openfoodfacts.org"
-	p.Item.Name = result.Product.ProductName
-	p.Manufacturer = result.Product.Brands
-
-	description := result.Product.GenericName
-	if len(result.Product.Categories) > 0 {
-		if len(description) > 0 {
-			description += " | "
-		}
-		description += result.Product.Categories
-	}
-	if len(result.Product.Quantity) > 0 {
-		if len(description) > 0 {
-			description += " | "
-		}
-		description += result.Product.Quantity
-	}
-	p.Item.Description = description
-
-	if len(result.Product.ImageFrontURL) > 0 {
-		p.ImageURL = result.Product.ImageFrontURL
+	p, ok := buildOpenFactsBarcodeProduct(source.Name, iEan, result.Product)
+	if !ok {
+		return nil, nil
 	}
 
 	return []repo.BarcodeProduct{p}, nil
@@ -360,21 +441,23 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 		if err != nil {
 			log.Error().Msg("Can not retrieve product from upcitemdb.com: " + err.Error())
 		}
-
-		ps2, err := lookupBarcodespider(conf.TokenBarcodespider, q.EAN)
-		if err != nil {
-			log.Error().Msg("Can not retrieve product from barcodespider.com: " + err.Error())
-		}
-
-		ps3, err := lookupOpenFoodFacts(conf.OpenFoodFactsContact, q.EAN)
-		if err != nil {
-			log.Error().Msg("Can not retrieve product from openfoodfacts.org: " + err.Error())
-		}
-
-		// Merge everything.
 		products = append(products, ps...)
-		products = append(products, ps2...)
-		products = append(products, ps3...)
+
+		if conf.TokenBarcodespider != "" {
+			ps2, err := lookupBarcodespider(conf.TokenBarcodespider, q.EAN)
+			if err != nil {
+				log.Error().Msg("Can not retrieve product from barcodespider.com: " + err.Error())
+			}
+			products = append(products, ps2...)
+		}
+
+		for _, source := range openFactsSources {
+			ps3, err := lookupOpenFacts(conf.OpenFoodFactsContact, source, q.EAN)
+			if err != nil {
+				log.Error().Msg("Can not retrieve product from " + source.Name + ": " + err.Error())
+			}
+			products = append(products, ps3...)
+		}
 
 		// Retrieve images if possible
 		for i := range products {
@@ -386,7 +469,7 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 
 			// Validate URL is HTTPS
 			u, err := url.Parse(p.ImageURL)
-			if err != nil || u.Scheme != "https" {
+			if err != nil || u.Scheme != schemeHTTPS {
 				log.Warn().Msg("Skipping non-HTTPS image URL: " + p.ImageURL)
 				continue
 			}
