@@ -1,6 +1,7 @@
 import { defineNuxtConfig } from "nuxt/config";
 
 const baseURL = process.env.NUXT_APP_BASE_URL || "/";
+const devAPIBase = process.env.DEV_API_BASE || "/";
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
@@ -44,7 +45,7 @@ export default defineNuxtConfig({
   nitro: {
     devProxy: {
       [baseURL + "api"]: {
-        target: "http://localhost:7745/api",
+        target: new URL(devAPIBase + "api", "http://localhost:7745"),
         ws: true,
         changeOrigin: true,
       },

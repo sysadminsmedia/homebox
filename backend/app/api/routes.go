@@ -59,7 +59,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		v1.WithURL(fmt.Sprintf("%s:%s", a.conf.Web.Host, a.conf.Web.Port)),
 	)
 
-	r.Route(prefix+"/v1", func(r chi.Router) {
+	r.Route(path.Join(a.conf.Web.APIBase, prefix, "/v1"), func(r chi.Router) {
 		r.Get("/status", chain.ToHandlerFunc(v1Ctrl.HandleBase(func() bool { return true }, v1.Build{
 			Version:   version,
 			Commit:    commit,
