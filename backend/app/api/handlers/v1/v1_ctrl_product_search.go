@@ -24,6 +24,30 @@ const (
 	schemeHTTPS           = "https"
 )
 
+// flexibleString is a string that can be unmarshaled from either a JSON
+// string or a JSON number. upcitemdb.com sometimes returns price fields
+// (e.g. list_price, shipping) as numbers rather than strings, which would
+// otherwise cause json.Unmarshal to fail on a plain string field.
+type flexibleString string
+
+func (f *flexibleString) UnmarshalJSON(data []byte) error {
+	if len(data) == 0 || string(data) == "null" {
+		*f = ""
+		return nil
+	}
+	if data[0] == '"' {
+		var s string
+		if err := json.Unmarshal(data, &s); err != nil {
+			return err
+		}
+		*f = flexibleString(s)
+		return nil
+	}
+	// Accept JSON numbers (and other scalar tokens) as their literal representation.
+	*f = flexibleString(string(data))
+	return nil
+}
+
 type UPCITEMDBResponse struct {
 	Code   string `json:"code"`
 	Total  int    `json:"total"`
@@ -44,17 +68,17 @@ type UPCITEMDBResponse struct {
 		HighestRecordedPrice float64  `json:"highest_recorded_price"`
 		Images               []string `json:"images"`
 		Offers               []struct {
-			Merchant     string  `json:"merchant"`
-			Domain       string  `json:"domain"`
-			Title        string  `json:"title"`
-			Currency     string  `json:"currency"`
-			ListPrice    string  `json:"list_price"`
-			Price        float64 `json:"price"`
-			Shipping     string  `json:"shipping"`
-			Condition    string  `json:"condition"`
-			Availability string  `json:"availability"`
-			Link         string  `json:"link"`
-			UpdatedT     int     `json:"updated_t"`
+			Merchant     string         `json:"merchant"`
+			Domain       string         `json:"domain"`
+			Title        string         `json:"title"`
+			Currency     string         `json:"currency"`
+			ListPrice    flexibleString `json:"list_price"`
+			Price        float64        `json:"price"`
+			Shipping     flexibleString `json:"shipping"`
+			Condition    string         `json:"condition"`
+			Availability string         `json:"availability"`
+			Link         string         `json:"link"`
+			UpdatedT     int            `json:"updated_t"`
 		} `json:"offers"`
 		Asin string `json:"asin"`
 		Elid string `json:"elid"`
