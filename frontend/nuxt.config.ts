@@ -1,7 +1,18 @@
 import { defineNuxtConfig } from "nuxt/config";
 
-const baseURL = process.env.NUXT_APP_BASE_URL || "/";
-const devAPIBase = process.env.DEV_API_BASE || "/";
+/**
+ * Ensure base path has leading and trailing slash
+ */
+const normalizeBase = (value = "/") => {
+  const trimmed = value.trim();
+  if (!trimmed || trimmed === "/") {
+    return "/";
+  }
+  return `/${trimmed.replace(/^\/+|\/+$/g, "")}/`;
+};
+
+const baseURL = normalizeBase(process.env.NUXT_APP_BASE_URL);
+const devAPIBase = normalizeBase(process.env.DEV_API_BASE);
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
@@ -63,11 +74,11 @@ export default defineNuxtConfig({
 
   pwa: {
     workbox: {
-      navigateFallbackDenylist: [RegExp(`^${baseURL}/api`)],
+      navigateFallbackDenylist: [RegExp(`^${baseURL}api`)],
       cleanupOutdatedCaches: true,
       runtimeCaching: [
         {
-          urlPattern: RegExp(`^${baseURL}/api`),
+          urlPattern: RegExp(`^${baseURL}api`),
           handler: "NetworkFirst",
           method: "GET",
           options: {
@@ -92,7 +103,7 @@ export default defineNuxtConfig({
       short_name: "Homebox",
       description: "Home Inventory App",
       theme_color: "#5b7f67",
-      start_url: baseURL.replace(/\/$/, "") + "/home",
+      start_url: baseURL + "home",
       icons: [
         {
           src: "pwa-192x192.png",
