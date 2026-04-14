@@ -62,8 +62,7 @@ type DebugConf struct {
 type WebConfig struct {
 	Port          string        `yaml:"port"            conf:"default:7745"`
 	Host          string        `yaml:"host"`
-	APIBase       string        `yaml:"api_base"        conf:"default:/"`
-	FrontendBase  string        `yaml:"frontend_base"   conf:"default:/"`
+	AppBase       string        `yaml:"app_base"        conf:"default:/"`
 	MaxUploadSize int64         `yaml:"max_file_upload" conf:"default:10"`
 	ReadTimeout   time.Duration `yaml:"read_timeout"    conf:"default:10s"`
 	WriteTimeout  time.Duration `yaml:"write_timeout"   conf:"default:10s"`
@@ -140,15 +139,14 @@ func New(buildstr string, description string) (*Config, error) {
 		return &cfg, fmt.Errorf("parsing config: %w", err)
 	}
 
-	cfg.Web.APIBase = normalizePath(cfg.Web.APIBase)
-	cfg.Web.FrontendBase = normalizePath(cfg.Web.FrontendBase)
+	cfg.Web.AppBase = normalizePath(cfg.Web.AppBase)
 
 	return &cfg, nil
 }
 
 // normalizePath ensures a path is never empty and always has a leading and
-// trailing slash. This prevents malformed URL concatenation when APIBase or
-// FrontendBase are used as path prefixes.
+// trailing slash. This prevents malformed URL concatenation when AppBase is
+// used as a path prefix.
 func normalizePath(p string) string {
 	if p == "" {
 		return "/"

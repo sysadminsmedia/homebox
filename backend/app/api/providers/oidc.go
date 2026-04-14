@@ -602,7 +602,7 @@ func (p *OIDCProvider) getBaseURL(r *http.Request) string {
 		}
 	}
 
-	return scheme + "://" + host + p.webConfig.APIBase
+	return scheme + "://" + host + p.webConfig.AppBase
 }
 
 func (p *OIDCProvider) isSecure(r *http.Request) bool {

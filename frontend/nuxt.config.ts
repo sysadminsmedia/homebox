@@ -12,7 +12,6 @@ const normalizeBase = (value = "/") => {
 };
 
 const baseURL = normalizeBase(process.env.NUXT_APP_BASE_URL);
-const devAPIBase = normalizeBase(process.env.DEV_API_BASE);
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
@@ -56,7 +55,7 @@ export default defineNuxtConfig({
   nitro: {
     devProxy: {
       [baseURL + "api"]: {
-        target: new URL(devAPIBase + "api", "http://localhost:7745"),
+        target: new URL(baseURL + "api", "http://localhost:7745"),
         ws: true,
         changeOrigin: true,
       },
