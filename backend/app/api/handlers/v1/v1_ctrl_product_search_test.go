@@ -1,6 +1,91 @@
 package v1
 
-import "testing"
+import (
+	"encoding/json"
+	"testing"
+)
+
+func TestUPCITEMDBResponseUnmarshalNumericListPrice(t *testing.T) {
+	body := []byte(`{
+		"code": "OK",
+		"total": 1,
+		"offset": 0,
+		"items": [{
+			"title": "Example",
+			"offers": [{
+				"merchant": "ExampleStore",
+				"list_price": 19.99,
+				"price": 14.5,
+				"shipping": 4.25
+			}]
+		}]
+	}`)
+
+	var result UPCITEMDBResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		t.Fatalf("unexpected unmarshal error: %v", err)
+	}
+
+	if len(result.Items) != 1 || len(result.Items[0].Offers) != 1 {
+		t.Fatalf("expected one item with one offer, got items=%d", len(result.Items))
+	}
+
+	offer := result.Items[0].Offers[0]
+	if offer.ListPrice != "19.99" {
+		t.Fatalf("expected list_price %q, got %q", "19.99", offer.ListPrice)
+	}
+	if offer.Shipping != "4.25" {
+		t.Fatalf("expected shipping %q, got %q", "4.25", offer.Shipping)
+	}
+}
+
+func TestUPCITEMDBResponseUnmarshalStringListPrice(t *testing.T) {
+	body := []byte(`{
+		"items": [{
+			"offers": [{
+				"list_price": "19.99",
+				"shipping": "Free"
+			}]
+		}]
+	}`)
+
+	var result UPCITEMDBResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		t.Fatalf("unexpected unmarshal error: %v", err)
+	}
+
+	offer := result.Items[0].Offers[0]
+	if offer.ListPrice != "19.99" {
+		t.Fatalf("expected list_price %q, got %q", "19.99", offer.ListPrice)
+	}
+	if offer.Shipping != "Free" {
+		t.Fatalf("expected shipping %q, got %q", "Free", offer.Shipping)
+	}
+}
+
+func TestUPCITEMDBResponseUnmarshalNullListPrice(t *testing.T) {
+	body := []byte(`{
+		"items": [{
+			"offers": [{
+				"list_price": null,
+				"shipping": null
+			}]
+		}]
+	}`)
+
+	var result UPCITEMDBResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		t.Fatalf("unexpected unmarshal error: %v", err)
+	}
+
+	offer := result.Items[0].Offers[0]
+	if offer.ListPrice != "" {
+		t.Fatalf("expected empty list_price, got %q", offer.ListPrice)
+	}
+	if offer.Shipping != "" {
+		t.Fatalf("expected empty shipping, got %q", offer.Shipping)
+	}
+}
 
 func TestBuildOpenFactsBarcodeProduct(t *testing.T) {
 	product, ok := buildOpenFactsBarcodeProduct("openbeautyfacts.org", "3600522058124", openFactsProduct{
