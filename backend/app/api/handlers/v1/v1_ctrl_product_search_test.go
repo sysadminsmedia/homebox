@@ -54,6 +54,10 @@ func TestUPCITEMDBResponseUnmarshalStringListPrice(t *testing.T) {
 		t.Fatalf("unexpected unmarshal error: %v", err)
 	}
 
+	if len(result.Items) == 0 || len(result.Items[0].Offers) == 0 {
+		t.Fatalf("expected at least one item with one offer, got items=%d", len(result.Items))
+	}
+
 	offer := result.Items[0].Offers[0]
 	if offer.ListPrice != "19.99" {
 		t.Fatalf("expected list_price %q, got %q", "19.99", offer.ListPrice)
@@ -78,12 +82,43 @@ func TestUPCITEMDBResponseUnmarshalNullListPrice(t *testing.T) {
 		t.Fatalf("unexpected unmarshal error: %v", err)
 	}
 
+	if len(result.Items) == 0 || len(result.Items[0].Offers) == 0 {
+		t.Fatalf("expected at least one item with one offer, got items=%d", len(result.Items))
+	}
+
 	offer := result.Items[0].Offers[0]
 	if offer.ListPrice != "" {
 		t.Fatalf("expected empty list_price, got %q", offer.ListPrice)
 	}
 	if offer.Shipping != "" {
 		t.Fatalf("expected empty shipping, got %q", offer.Shipping)
+	}
+}
+
+func TestFlexibleStringRejectsCompositeTypes(t *testing.T) {
+	cases := map[string]string{
+		"object": `{"foo":"bar"}`,
+		"array":  `[1,2,3]`,
+		"bool":   `true`,
+	}
+
+	for name, payload := range cases {
+		t.Run(name, func(t *testing.T) {
+			var f flexibleString
+			if err := f.UnmarshalJSON([]byte(payload)); err == nil {
+				t.Fatalf("expected error for %s payload, got nil (value=%q)", name, f)
+			}
+		})
+	}
+}
+
+func TestFlexibleStringHandlesLeadingWhitespace(t *testing.T) {
+	var f flexibleString
+	if err := f.UnmarshalJSON([]byte("   12.50")); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if f != "12.50" {
+		t.Fatalf("expected %q, got %q", "12.50", f)
 	}
 }
 
