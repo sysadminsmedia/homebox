@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -30,22 +31,42 @@ const (
 // otherwise cause json.Unmarshal to fail on a plain string field.
 type flexibleString string
 
+// UnmarshalJSON accepts a JSON string, number, or null and stores the result
+// as a Go string. Composite tokens (objects and arrays) are rejected so that
+// unexpected shapes surface as clear errors instead of being silently stored
+// as their raw representation.
 func (f *flexibleString) UnmarshalJSON(data []byte) error {
-	if len(data) == 0 || string(data) == "null" {
+	trimmed := bytes.TrimSpace(data)
+	if len(trimmed) == 0 {
 		*f = ""
 		return nil
 	}
-	if data[0] == '"' {
+
+	switch c := trimmed[0]; {
+	case c == '"':
 		var s string
-		if err := json.Unmarshal(data, &s); err != nil {
+		if err := json.Unmarshal(trimmed, &s); err != nil {
 			return err
 		}
 		*f = flexibleString(s)
 		return nil
+	case c == 'n':
+		if string(trimmed) != "null" {
+			return fmt.Errorf("flexibleString: unexpected token %q", string(trimmed))
+		}
+		*f = ""
+		return nil
+	case c == '-' || (c >= '0' && c <= '9'):
+		// Validate the token is a well-formed JSON number, then store its literal form.
+		var n json.Number
+		if err := json.Unmarshal(trimmed, &n); err != nil {
+			return err
+		}
+		*f = flexibleString(n.String())
+		return nil
+	default:
+		return fmt.Errorf("flexibleString: cannot unmarshal %s into string", string(trimmed))
 	}
-	// Accept JSON numbers (and other scalar tokens) as their literal representation.
-	*f = flexibleString(string(data))
-	return nil
 }
 
 type UPCITEMDBResponse struct {
