@@ -541,7 +541,9 @@
         "only_with_photo": "Alleen items met foto",
         "only_without_photo": "Alleen items zonder foto",
         "options": "Opties",
-        "order_by": "Sorteren op",
+        "order": {
+            "order_by": "Sorteren op"
+        },
         "pages": "Pagina { page } van { totalPages }",
         "parent_item": "Hoofd Item",
         "photo": "Foto",

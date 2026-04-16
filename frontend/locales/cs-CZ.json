@@ -541,7 +541,9 @@
         "only_with_photo": "Pouze položky s fotografií",
         "only_without_photo": "Pouze položky bez fotografie",
         "options": "Možnosti",
-        "order_by": "Seřadit podle",
+        "order": {
+            "order_by": "Seřadit podle"
+        },
         "pages": "Stránka { page } z { totalPages }",
         "parent_item": "Nadřazená položka",
         "photo": "Fotka",

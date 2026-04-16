@@ -416,22 +416,22 @@ paths:
         - Items
       summary: Query All Items
       parameters:
-        - description: search string
+        - description: Search string
           name: q
           in: query
           schema:
             type: string
-        - description: page number
+        - description: Page number
           name: page
           in: query
           schema:
             type: integer
-        - description: items per page
+        - description: Items per page
           name: pageSize
           in: query
           schema:
             type: integer
-        - description: tags Ids
+        - description: Tag Ids to filter the results by
           name: tags
           in: query
           explode: true
@@ -439,7 +439,12 @@ paths:
             type: array
             items:
               type: string
-        - description: location Ids
+        - description: Exclude tags specified in the query parameter
+          name: negateTags
+          in: query
+          schema:
+            type: boolean
+        - description: Location Ids to filter the results by
           name: locations
           in: query
           explode: true
@@ -447,7 +452,7 @@ paths:
             type: array
             items:
               type: string
-        - description: parent Ids
+        - description: Parent Ids to filter the results by
           name: parentIds
           in: query
           explode: true
@@ -455,6 +460,31 @@ paths:
             type: array
             items:
               type: string
+        - description: Only return items that have a photo
+          name: onlyWithPhoto
+          in: query
+          schema:
+            type: boolean
+        - description: Only return items that don't have a photo
+          name: onlyWithoutPhoto
+          in: query
+          schema:
+            type: boolean
+        - description: Include items in the results that have been archived
+          name: includeArchived
+          in: query
+          schema:
+            type: boolean
+        - description: Field to order the results by
+          name: orderBy
+          in: query
+          schema:
+            type: string
+        - description: Direction to order the results by
+          name: orderByDirection
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: OK

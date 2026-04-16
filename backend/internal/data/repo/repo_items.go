@@ -49,6 +49,7 @@ type (
 		IncludeArchived  bool         `json:"includeArchived"`
 		Fields           []FieldQuery `json:"fields"`
 		OrderBy          string       `json:"orderBy"`
+		OrderByDirection string       `json:"orderByDirection"`
 	}
 
 	DuplicateOptions struct {
@@ -489,15 +490,28 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 	}
 
 	// Order
+	var orderByField string
+
 	switch q.OrderBy {
 	case "createdAt":
-		qb = qb.Order(ent.Desc(item.FieldCreatedAt))
+		orderByField = item.FieldCreatedAt
 	case "updatedAt":
-		qb = qb.Order(ent.Desc(item.FieldUpdatedAt))
+		orderByField = item.FieldUpdatedAt
 	case "assetId":
-		qb = qb.Order(ent.Asc(item.FieldAssetID))
+		orderByField = item.FieldAssetID
+	case "purchasePrice":
+		orderByField = item.FieldPurchasePrice
+	case "quantity":
+		orderByField = item.FieldQuantity
 	default: // "name"
-		qb = qb.Order(ent.Asc(item.FieldName))
+		orderByField = item.FieldName
+	}
+
+	switch q.OrderByDirection {
+	case "desc":
+		qb = qb.Order(ent.Desc(orderByField))
+	default: // "asc"
+		qb = qb.Order(ent.Asc(orderByField))
 	}
 
 	qb = qb.

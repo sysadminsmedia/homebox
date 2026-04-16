@@ -531,7 +531,9 @@
         "only_with_photo": "Kun elementer med foto",
         "only_without_photo": "Kun elementer uden foto",
         "options": "Muligheder",
-        "order_by": "Sorter efter",
+        "order": {
+            "order_by": "Sorter efter"
+        },
         "pages": "Side { page } af { totalPages }",
         "parent_item": "Overordnet element",
         "photo": "Foto",

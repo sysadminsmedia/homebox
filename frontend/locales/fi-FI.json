@@ -541,7 +541,9 @@
         "only_with_photo": "Vain esineet, joissa on valokuva",
         "only_without_photo": "Vain esineet ilman valokuvaa",
         "options": "Valinnat",
-        "order_by": "Lajittele",
+        "order": {
+            "order_by": "Lajittele"
+        },
         "pages": "Sivu { page } / { totalPages }",
         "parent_item": "Yläesine",
         "photo": "Kuva",

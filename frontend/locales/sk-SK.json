@@ -533,7 +533,9 @@
         "only_with_photo": "Iba položky s fotografiou",
         "only_without_photo": "Iba položky bez fotografie",
         "options": "Možnosti",
-        "order_by": "Radiť podľa",
+        "order": {
+            "order_by": "Radiť podľa"
+        },
         "pages": "Strana { page } z { totalPages }",
         "parent_item": "Nadradená položka",
         "photo": "Fotografia",

@@ -541,7 +541,9 @@
         "only_with_photo": "僅包含圖片物品",
         "only_without_photo": "僅未包含圖片物品",
         "options": "選項",
-        "order_by": "排序",
+        "order": {
+            "order_by": "排序"
+        },
         "pages": "第{ page } 頁(共{ totalPages })",
         "parent_item": "母物品",
         "photo": "圖片",

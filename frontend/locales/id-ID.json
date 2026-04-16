@@ -278,7 +278,9 @@
         "only_with_photo": "Hanya item dengan foto",
         "only_without_photo": "Hanya item tanpa foto",
         "options": "Opsi",
-        "order_by": "Urutan",
+        "order": {
+            "order_by": "Urutan"
+        },
         "pages": "Halaman { page } dari { totalPages }",
         "parent_item": "Item Induk",
         "photo": "Foto",

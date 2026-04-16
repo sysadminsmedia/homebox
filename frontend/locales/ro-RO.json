@@ -221,7 +221,9 @@
         "no_results": "Nu s-au găsit articole",
         "notes": "Notițe",
         "options": "Opțiuni",
-        "order_by": "Ordonează După",
+        "order": {
+            "order_by": "Ordonează După"
+        },
         "pages": "Pagina { page } din { totalPages }",
         "parent_item": "Articol Părinte",
         "photo": "Fotografie",

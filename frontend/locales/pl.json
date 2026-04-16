@@ -541,7 +541,9 @@
         "only_with_photo": "Tylko przedmioty ze zdjęciem",
         "only_without_photo": "Tylko przedmioty bez zdjęcia",
         "options": "Opcje",
-        "order_by": "Ułóż według",
+        "order": {
+            "order_by": "Ułóż według"
+        },
         "pages": "Strona {page} z {totalPages}",
         "parent_item": "Nadrzędny obiekt",
         "photo": "Zdjęcie",

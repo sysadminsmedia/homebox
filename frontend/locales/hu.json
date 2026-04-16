@@ -436,7 +436,9 @@
         "only_with_photo": "Csak fényképes tételek",
         "only_without_photo": "Csak fénykép nélküli tételek",
         "options": "Opciók",
-        "order_by": "Rendezés",
+        "order": {
+            "order_by": "Rendezés"
+        },
         "pages": "{page}/{totalPages} oldal",
         "parent_item": "Szülő tétel",
         "photo": "Fénykép",
