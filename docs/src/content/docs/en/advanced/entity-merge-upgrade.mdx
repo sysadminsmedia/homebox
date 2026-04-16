@@ -1,111 +1,109 @@
 ---
-title: Entity Merge Upgrade Guide
+title: API Migration Guide — Entity Merge
 ---
 
-This guide covers the breaking changes introduced by the entity merge — the unification of the `items` and `locations`
-tables into a single `entities` table. This is primarily relevant to developers integrating with the Homebox API.
+This guide is for third-party developers integrating with the Homebox REST API. It covers all breaking changes
+introduced by the entity merge, where items and locations were unified into a single "entities" API.
 
-## Overview of Changes
+## What Changed
 
-The `items` and `locations` database tables have been merged into a single `entities` table. All related tables
-have been renamed accordingly. A new `entity_types` table has been introduced to differentiate between items and
-locations using a user-definable type system.
+Items and locations are now both **entities**, differentiated by a user-definable **entity type**. The separate
+`/v1/items/*` and `/v1/locations/*` endpoints have been replaced by a unified `/v1/entities/*` API. A new
+`/v1/entity-types` API lets you manage the types that determine entity behavior.
 
-### Database Changes
-
-| Old Table | New Table |
-|-----------|-----------|
-| `items` | `entities` |
-| `locations` | merged into `entities` |
-| `item_fields` | `entity_fields` |
-| `item_templates` | `entity_templates` |
-| `tag_items` | `tag_entities` |
-
-Key column renames:
-
-| Old Column | New Column |
-|------------|------------|
-| `group_items` / `group_locations` | `group_entities` |
-| `item_children` / `location_children` | `entity_children` |
-| `location_items` | removed (absorbed into `entity_children`) |
-| `item_attachments` | `entity_attachments` |
-| `item_id` (maintenance_entries) | `entity_id` |
-| `sync_child_items_locations` | `sync_child_entity_locations` |
-
-### Migration
-
-The migration runs automatically on startup. It:
-1. Creates the `entity_types` table and seeds default "Item" and "Location" types per group
-2. Renames the `items` table to `entities` and renames all columns
-3. Inserts all locations into `entities` preserving their original UUIDs
-4. Re-parents items under their former locations using the unified `entity_children` column
-5. Renames all related tables and their foreign key columns
-6. Drops the `locations` table
-7. Assigns asset IDs to any entities that don't have them (including former locations)
-
-> [!CAUTION]
-> This migration is irreversible. Back up your database before upgrading.
-
-## API Changes
+## Endpoint Changes
 
 ### Removed Endpoints
 
-All `/v1/items/*` and `/v1/locations/*` endpoints have been removed. They are replaced by the unified
-`/v1/entities/*` endpoints.
+All of the following endpoints have been removed:
+
+- `GET/POST /v1/items`, `GET/PUT/PATCH/DELETE /v1/items/{id}`
+- `GET/POST /v1/locations`, `GET/PUT/DELETE /v1/locations/{id}`
+- `GET /v1/locations/tree`
+- `GET /v1/items/{id}/path`, `POST /v1/items/{id}/duplicate`
+- `POST/PUT/DELETE/GET /v1/items/{id}/attachments/*`
+- `GET/POST /v1/items/{id}/maintenance`
+- `GET /v1/items/export`, `POST /v1/items/import`
+- `GET /v1/items/fields`, `GET /v1/items/fields/values`
 
 ### New Endpoints
 
-#### Entities (replaces both Items and Locations)
+#### Entities
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `GET` | `/v1/entities` | Query entities (items by default, locations with `?isLocation=true`) |
-| `POST` | `/v1/entities` | Create an entity (item or location based on `entityTypeId`) |
-| `GET` | `/v1/entities/tree` | Get the location/item tree |
-| `GET` | `/v1/entities/export` | Export entities as CSV |
-| `POST` | `/v1/entities/import` | Import entities from CSV |
-| `GET` | `/v1/entities/fields` | Get all custom field names |
-| `GET` | `/v1/entities/fields/values` | Get all values for a custom field |
-| `GET` | `/v1/entities/{id}` | Get a single entity |
-| `GET` | `/v1/entities/{id}/path` | Get the full path to an entity |
-| `PUT` | `/v1/entities/{id}` | Update an entity |
-| `PATCH` | `/v1/entities/{id}` | Partial update an entity |
-| `DELETE` | `/v1/entities/{id}` | Delete an entity |
-| `POST` | `/v1/entities/{id}/duplicate` | Duplicate an entity |
-| `POST` | `/v1/entities/{id}/attachments` | Add an attachment |
-| `PUT` | `/v1/entities/{id}/attachments/{attachment_id}` | Update an attachment |
-| `DELETE` | `/v1/entities/{id}/attachments/{attachment_id}` | Delete an attachment |
-| `GET` | `/v1/entities/{id}/attachments/{attachment_id}` | Get an attachment file |
-| `GET` | `/v1/entities/{id}/maintenance` | Get maintenance log |
-| `POST` | `/v1/entities/{id}/maintenance` | Create maintenance entry |
+| `GET` | `/v1/entities` | Query entities. Returns items by default; pass `?isLocation=true` for locations. |
+| `POST` | `/v1/entities` | Create an entity. Set `entityTypeId` to control whether it's an item or location. |
+| `GET` | `/v1/entities/{id}` | Get a single entity by ID. |
+| `PUT` | `/v1/entities/{id}` | Full update of an entity. |
+| `PATCH` | `/v1/entities/{id}` | Partial update (quantity, parent, tags). |
+| `DELETE` | `/v1/entities/{id}` | Delete an entity. |
+| `POST` | `/v1/entities/{id}/duplicate` | Duplicate an entity. |
+| `GET` | `/v1/entities/{id}/path` | Get the full hierarchy path to an entity. |
+| `GET` | `/v1/entities/tree` | Get the location/item tree (replaces `/v1/locations/tree`). |
+| `GET` | `/v1/entities/export` | Export entities as CSV. |
+| `POST` | `/v1/entities/import` | Import entities from CSV. |
+| `GET` | `/v1/entities/fields` | Get all custom field names. |
+| `GET` | `/v1/entities/fields/values` | Get all values for a given custom field. |
+
+#### Entity Attachments
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/v1/entities/{id}/attachments` | Upload an attachment. |
+| `GET` | `/v1/entities/{id}/attachments/{attachment_id}` | Download an attachment file. |
+| `PUT` | `/v1/entities/{id}/attachments/{attachment_id}` | Update attachment metadata. |
+| `DELETE` | `/v1/entities/{id}/attachments/{attachment_id}` | Delete an attachment. |
+
+#### Entity Maintenance
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/v1/entities/{id}/maintenance` | Get maintenance log for an entity. |
+| `POST` | `/v1/entities/{id}/maintenance` | Create a maintenance entry. |
 
 #### Entity Types (new)
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `GET` | `/v1/entity-types` | List all entity types for the group |
-| `POST` | `/v1/entity-types` | Create an entity type |
-| `PUT` | `/v1/entity-types/{id}` | Update an entity type |
-| `DELETE` | `/v1/entity-types/{id}` | Delete an entity type |
+| `GET` | `/v1/entity-types` | List all entity types for the current group. |
+| `POST` | `/v1/entity-types` | Create an entity type. |
+| `PUT` | `/v1/entity-types/{id}` | Update an entity type. |
+| `DELETE` | `/v1/entity-types/{id}` | Delete an entity type (fails if entities still use it). |
 
-### Query Parameter Changes
+## Query Parameters
 
-#### `GET /v1/entities`
+### `GET /v1/entities`
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `isLocation` | `bool` | `false` | `true` returns locations only (with `itemCount` on each). Omit or `false` for items only. |
+| `filterChildren` | `bool` | `false` | When `isLocation=true`, return only root locations (those with no parent). |
+| `parentIds` | `[]string` | — | Filter by parent entity ID. **Replaces the old `locations` parameter.** |
+| `q` | `string` | — | Search query. |
+| `tags` | `[]string` | — | Filter by tag IDs. |
+| `negateTags` | `bool` | `false` | Exclude entities matching the given tags. |
+| `page` | `int` | — | Page number for pagination. |
+| `pageSize` | `int` | — | Items per page. |
+| `orderBy` | `string` | — | Sort field (`name`, `createdAt`, `updatedAt`). |
+| `includeArchived` | `bool` | `false` | Include archived entities. |
+| `fields` | `[]string` | — | Filter by custom field values (`fieldName=value` format). |
+
+### `GET /v1/entities/tree`
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `withItems` | `bool` | `false` | Include items (non-location entities) in the tree. |
+
+### `GET /v1/entities/fields/values`
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `isLocation` | `bool` | Filter by entity type. `true` = locations only (returns array with `itemCount`), `false` = items only. Omit for items only (default). |
-| `filterChildren` | `bool` | When `isLocation=true`, only return root locations (no parent). |
-| `parentIds` | `[]string` | Filter entities by parent ID. Replaces the old `locations` parameter. |
-| `q` | `string` | Search query (unchanged) |
-| `tags` | `[]string` | Filter by tag IDs (unchanged) |
-| `page`, `pageSize` | `int` | Pagination (unchanged) |
-| `orderBy` | `string` | Sort order (unchanged) |
-| `includeArchived` | `bool` | Include archived entities (unchanged) |
+| `field` | `string` | **Required.** The custom field name to get values for. |
 
-### Request Body Changes
+## Request Body Changes
 
-#### Create Entity (`POST /v1/entities`)
+### Create Entity — `POST /v1/entities`
 
 ```json
 {
@@ -118,21 +116,47 @@ All `/v1/items/*` and `/v1/locations/*` endpoints have been removed. They are re
 }
 ```
 
-Key changes from the old `POST /v1/items`:
-- `locationId` → `parentId` — the parent entity (typically a location)
-- `entityTypeId` — new optional field. If omitted, defaults to the group's default "Item" type. To create a location, pass a location-type entity type ID.
+**Changes from the old `POST /v1/items`:**
 
-#### Update Entity (`PUT /v1/entities/{id}`)
+| Old Field | New Field | Notes |
+|-----------|-----------|-------|
+| `locationId` | `parentId` | The parent entity (typically a location). |
+| — | `entityTypeId` | New. Controls whether this is an item or location. Omit to default to the group's "Item" type. Pass a location-type entity type ID to create a location. |
 
-- `locationId` → `parentId`
-- `syncChildItemsLocations` → `syncChildEntityLocations`
-- `entityTypeId` — optional, can change the entity's type
+### Update Entity — `PUT /v1/entities/{id}`
 
-### Response Body Changes
+| Old Field | New Field |
+|-----------|-----------|
+| `locationId` | `parentId` |
+| `syncChildItemsLocations` | `syncChildEntityLocations` |
+| — | `entityTypeId` (optional — change the entity's type) |
 
-#### Entity Summary
+### Patch Entity — `PATCH /v1/entities/{id}`
 
-The `location` field has been replaced by `parent`:
+| Old Field | New Field |
+|-----------|-----------|
+| `locationId` | `parentId` |
+| — | `entityTypeId` (optional) |
+
+### Create Entity Type — `POST /v1/entity-types`
+
+```json
+{
+  "name": "Shelf",
+  "isLocation": true,
+  "icon": "",
+  "defaultTemplateId": "uuid-or-omit"
+}
+```
+
+- `isLocation` — if `true`, entities of this type act as containers (appear in the location tree, can hold other entities).
+- `defaultTemplateId` — optional. When set, creating an entity with this type will auto-apply the template's defaults.
+
+## Response Body Changes
+
+### Entity Summary (in list responses)
+
+The `location` field has been replaced by `parent`. A new `entityType` field is included.
 
 ```json
 {
@@ -147,19 +171,65 @@ The `location` field has been replaced by `parent`:
     "name": "Item",
     "isLocation": false
   },
-  "tags": [...],
-  ...
+  "itemCount": 0,
+  "tags": [],
+  "quantity": 1,
+  "purchasePrice": 0,
+  "assetId": "001-234",
+  "insured": false,
+  "archived": false,
+  "createdAt": "...",
+  "updatedAt": "..."
 }
 ```
 
-#### Entity Out (full detail)
+- `parent` replaces `location`. It references the parent entity (which is typically a location-type entity for items).
+- `entityType` is new. It contains the type's `id`, `name`, and `isLocation` flag.
+- `itemCount` is populated only when querying with `?isLocation=true`. It contains the count of non-location child entities.
 
-The `children` field on an entity now only includes **location-type children** (sub-containers).
-Items inside a location are retrieved separately via `GET /v1/entities?parentIds=[locationId]`.
+### Entity Detail (single entity response)
 
-### WebSocket Events
+The `children` field now only includes **location-type children** (sub-containers). To get items inside a location, query `GET /v1/entities?parentIds=[locationId]`.
 
-The `item.mutation` and `location.mutation` events have been merged into a single `entity.mutation` event.
+### Entity Type Summary
+
+```json
+{
+  "id": "...",
+  "name": "Shelf",
+  "description": "",
+  "isLocation": true,
+  "icon": "",
+  "defaultTemplateId": "...",
+  "defaultTemplate": {
+    "id": "...",
+    "name": "Default Shelf Template",
+    "description": ""
+  },
+  "createdAt": "...",
+  "updatedAt": "..."
+}
+```
+
+### Paginated Response
+
+All `GET /v1/entities` responses (both items and locations) return a consistent paginated shape:
+
+```json
+{
+  "page": 1,
+  "pageSize": 50,
+  "total": 120,
+  "items": [],
+  "totalPrice": 1234.56
+}
+```
+
+`totalPrice` is the sum of `purchasePrice * quantity` for non-sold items in the result set.
+
+## WebSocket Events
+
+The `item.mutation` and `location.mutation` events have been merged into a single event:
 
 ```json
 {
@@ -170,12 +240,13 @@ The `item.mutation` and `location.mutation` events have been merged into a singl
 }
 ```
 
-## Migration Checklist for API Consumers
+Subscribe to `entity.mutation` to be notified of any entity change (create, update, delete) regardless of whether it's an item or location.
 
-1. Replace all `/v1/items/*` and `/v1/locations/*` URLs with `/v1/entities/*`
-2. Replace `locationId` with `parentId` in create/update payloads
-3. Replace `syncChildItemsLocations` with `syncChildEntityLocations` in update payloads
-4. Replace `item.location` with `item.parent` when reading entity responses
-5. Use `?isLocation=true` to query locations, `?parentIds=` instead of `?locations=` to filter by parent
-6. Listen for `entity.mutation` instead of `item.mutation` / `location.mutation` on WebSocket
-7. Use `/v1/entity-types` to manage and query available entity types
+## Migration Checklist
+
+1. **Update all endpoint URLs** — replace `/v1/items/*` and `/v1/locations/*` with `/v1/entities/*`
+2. **Update create/update payloads** — `locationId` → `parentId`, `syncChildItemsLocations` → `syncChildEntityLocations`
+3. **Update response parsing** — `item.location` → `item.parent`, and expect `entityType` on all entity responses
+4. **Update query parameters** — `?locations=` → `?parentIds=`, use `?isLocation=true` to query locations
+5. **Update WebSocket listeners** — listen for `entity.mutation` instead of `item.mutation` / `location.mutation`
+6. **Use `/v1/entity-types`** to query available types if your integration needs to create entities with specific types

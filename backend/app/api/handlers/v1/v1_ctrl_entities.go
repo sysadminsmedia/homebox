@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"errors"
 	"fmt"
+	"math"
 	"math/big"
 	"net/http"
 	"strings"
@@ -138,10 +139,10 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 			if !item.SoldTime.IsZero() {
 				continue
 			}
-			totalPrice.Add(totalPrice, big.NewInt(int64(item.PurchasePrice*100)))
+			totalPrice.Add(totalPrice, big.NewInt(int64(math.Round(item.PurchasePrice*100))))
 		}
 
-		totalPriceFloat, _ := new(big.Float).SetInt(totalPrice).Quo(new(big.Float).SetInt(totalPrice), big.NewFloat(100)).Float64()
+		totalPriceFloat, _ := new(big.Float).Quo(new(big.Float).SetInt(totalPrice), big.NewFloat(100)).Float64()
 
 		return server.JSON(w, http.StatusOK, struct {
 			repo.PaginationResult[repo.EntitySummary]
@@ -364,7 +365,8 @@ func (ctrl *V1Controller) HandleEntitiesImport() errchain.HandlerFunc {
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
-		return server.JSON(w, http.StatusNoContent, nil)
+		w.WriteHeader(http.StatusNoContent)
+		return nil
 	}
 }
 
@@ -403,14 +405,19 @@ func (ctrl *V1Controller) HandleEntitiesExport() errchain.HandlerFunc {
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
-		timestamp := time.Now().Format("2006-01-02_15-04-05")      // YYYY-MM-DD_HH-MM-SS format
-		filename := fmt.Sprintf("homebox-items_%s.csv", timestamp) // add timestamp to filename
+		timestamp := time.Now().Format("2006-01-02_15-04-05")
+		filename := fmt.Sprintf("homebox-entities_%s.csv", timestamp)
 
 		w.Header().Set("Content-Type", "text/csv")
 		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment;filename=%s", filename))
 
 		writer := csv.NewWriter(w)
-		writer.Comma = ','
-		return writer.WriteAll(csvData)
+		writer.WriteAll(csvData)
+		writer.Flush()
+		if err := writer.Error(); err != nil {
+			// Headers already sent, can't write an HTTP error response
+			log.Err(err).Msg("failed to write CSV export response")
+		}
+		return nil
 	}
 }
