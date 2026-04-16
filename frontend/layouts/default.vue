@@ -372,6 +372,7 @@
   ];
 
   const route = useRoute();
+  const router = useRouter();
 
   const nav: {
     icon: Component;
@@ -505,6 +506,23 @@
   onMounted(() => {
     locationStore.refreshParents();
     locationStore.refreshTree();
+
+    // Auto-open JoinModal when invitation token is in URL
+    const token = route.query.token;
+    if (typeof token === "string" && token.length > 0) {
+      // Remove token from browser URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete("token");
+      window.history.replaceState(history.state, "", url.toString());
+
+      // Sync router's state to clear route.query.token
+      const { token: _, ...cleanQuery } = route.query;
+      router.replace({ query: cleanQuery });
+
+      openDialog(DialogID.JoinCollection, {
+        params: { inviteCode: token },
+      });
+    }
   });
 
   onServerEvent(ServerEvent.TagMutation, () => {

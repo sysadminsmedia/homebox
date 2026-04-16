@@ -69,7 +69,33 @@ func (svc *GroupService) RemoveMember(ctx Context, userID uuid.UUID) error {
 		return errors.New("user ID cannot be empty")
 	}
 
-	return svc.repos.Groups.RemoveMember(ctx.Context, ctx.GID, userID)
+	err := svc.repos.Groups.RemoveMember(ctx.Context, ctx.GID, userID)
+	if err != nil {
+		return err
+	}
+
+	// If the removed group was the user's default group, reassign to another group
+	removedUser, err := svc.repos.Users.GetOneID(ctx.Context, userID)
+	if err != nil {
+		return err
+	}
+
+	if removedUser.DefaultGroupID == ctx.GID {
+		// Find another group the user is still a member of
+		var newDefaultGroupID uuid.UUID
+		for _, gid := range removedUser.GroupIDs {
+			if gid != ctx.GID {
+				newDefaultGroupID = gid
+				break
+			}
+		}
+		// Update to another group, or uuid.Nil if the user has no remaining groups
+		if err := svc.repos.Users.UpdateDefaultGroup(ctx.Context, userID, newDefaultGroupID); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (svc *GroupService) DeleteInvitation(ctx Context, id uuid.UUID) error {

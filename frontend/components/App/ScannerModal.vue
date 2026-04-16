@@ -76,6 +76,8 @@
   const detectedBarcode = ref<string>("");
   const detectedBarcodeType = ref<string>("");
 
+  const LAST_USED_DEVICE_ID_KEY = "homebox:lastUsedDeviceId";
+
   const handleError = (error: unknown) => {
     console.error("Scanner error:", error);
     errorMessage.value = t("scanner.error");
@@ -109,13 +111,21 @@
       sources.value = devices;
 
       if (devices.length > 0) {
-        for (let i = 0; i < devices.length; i++) {
-          if (devices[i]!.label.toLowerCase().includes("back")) {
-            selectedSource.value = devices[i]!.deviceId;
-          }
+        let lastUsedDeviceId: string | null = null;
+        try {
+          lastUsedDeviceId = localStorage.getItem(LAST_USED_DEVICE_ID_KEY);
+        } catch (e) {
+          console.debug("failed to read selected camera", e);
         }
-        if (!selectedSource.value) {
-          selectedSource.value = devices[0]!.deviceId;
+
+        selectedSource.value = devices[0]!.deviceId;
+        for (const device of devices) {
+          if (device.deviceId === lastUsedDeviceId) {
+            selectedSource.value = device.deviceId;
+            break;
+          } else if (device.label.toLowerCase().includes("back")) {
+            selectedSource.value = device.deviceId;
+          }
         }
       } else {
         errorMessage.value = t("scanner.no_sources");
@@ -144,6 +154,12 @@
   watch(selectedSource, async newSource => {
     if (!open.value || !newSource) return;
     codeReader.reset();
+
+    try {
+      localStorage.setItem(LAST_USED_DEVICE_ID_KEY, newSource);
+    } catch (e) {
+      console.warn("failed to persist selected camera", e);
+    }
 
     try {
       await codeReader.decodeFromVideoDevice(newSource, video.value!, (result, err) => {
