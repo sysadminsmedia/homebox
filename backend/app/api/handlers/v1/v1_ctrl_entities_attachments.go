@@ -51,7 +51,7 @@ func sanitizeAttachmentName(name string) string {
 //	@Param		name	formData	string	true	"name of the file including extension"
 //	@Success	200		{object}	repo.EntityOut
 //	@Failure	422		{object}	validate.ErrorResponse
-//	@Router		/v1/items/{id}/attachments [POST]
+//	@Router		/v1/entities/{id}/attachments [POST]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityAttachmentCreate() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
@@ -138,7 +138,7 @@ func (ctrl *V1Controller) HandleEntityAttachmentCreate() errchain.HandlerFunc {
 //	@Param		id				path		string	true	"Entity ID"
 //	@Param		attachment_id	path		string	true	"Attachment ID"
 //	@Success	200				{object}	EntityAttachmentToken
-//	@Router		/v1/items/{id}/attachments/{attachment_id} [GET]
+//	@Router		/v1/entities/{id}/attachments/{attachment_id} [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityAttachmentGet() errchain.HandlerFunc {
 	return ctrl.handleEntityAttachmentsHandler
@@ -151,7 +151,7 @@ func (ctrl *V1Controller) HandleEntityAttachmentGet() errchain.HandlerFunc {
 //	@Param		id				path	string	true	"Entity ID"
 //	@Param		attachment_id	path	string	true	"Attachment ID"
 //	@Success	204
-//	@Router		/v1/items/{id}/attachments/{attachment_id} [DELETE]
+//	@Router		/v1/entities/{id}/attachments/{attachment_id} [DELETE]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityAttachmentDelete() errchain.HandlerFunc {
 	return ctrl.handleEntityAttachmentsHandler
@@ -165,7 +165,7 @@ func (ctrl *V1Controller) HandleEntityAttachmentDelete() errchain.HandlerFunc {
 //	@Param		attachment_id	path		string						true	"Attachment ID"
 //	@Param		payload			body		repo.ItemAttachmentUpdate	true	"Attachment Update"
 //	@Success	200				{object}	repo.EntityOut
-//	@Router		/v1/items/{id}/attachments/{attachment_id} [PUT]
+//	@Router		/v1/entities/{id}/attachments/{attachment_id} [PUT]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityAttachmentUpdate() errchain.HandlerFunc {
 	return ctrl.handleEntityAttachmentsHandler

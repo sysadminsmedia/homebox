@@ -232,7 +232,7 @@
                 }
             }
         },
-        "/v1/entities/containers": {
+        "/v1/entities": {
             "get": {
                 "security": [
                     {
@@ -242,14 +242,54 @@
                 "tags": [
                     "Entities"
                 ],
-                "summary": "Get All Containers (Locations)",
+                "summary": "Query All Entities",
                 "parameters": [
                     {
-                        "description": "only return root containers",
-                        "name": "filterChildren",
+                        "description": "search string",
+                        "name": "q",
                         "in": "query",
                         "schema": {
-                            "type": "boolean"
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "page number",
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "items per page",
+                        "name": "pageSize",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "tags Ids",
+                        "name": "tags",
+                        "in": "query",
+                        "explode": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    {
+                        "description": "parent Ids",
+                        "name": "parentIds",
+                        "in": "query",
+                        "explode": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     }
                 ],
@@ -259,10 +299,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/repo.EntityOutCount"
-                                    }
+                                    "$ref": "#/components/schemas/repo.PaginationResult-repo_EntitySummary"
                                 }
                             }
                         }
@@ -278,7 +315,7 @@
                 "tags": [
                     "Entities"
                 ],
-                "summary": "Create Container (Location)",
+                "summary": "Create Entity",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -287,7 +324,7 @@
                             }
                         }
                     },
-                    "description": "Container Data",
+                    "description": "Entity Data",
                     "required": true
                 },
                 "responses": {
@@ -300,6 +337,125 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/v1/entities/export": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Export Entities",
+                "responses": {
+                    "200": {
+                        "description": "text/csv",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/fields": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Get All Custom Field Names",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/fields/values": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Get All Custom Field Values",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/import": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Import Entities",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "csv": {
+                                        "description": "CSV file to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "required": [
+                                    "csv"
+                                ]
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "204": {
+                        "description": "No Content"
                     }
                 }
             }
@@ -334,6 +490,560 @@
                                     "type": "array",
                                     "items": {
                                         "$ref": "#/components/schemas/repo.TreeItem"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Get Entity",
+                "parameters": [
+                    {
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.EntityOut"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Update Entity",
+                "parameters": [
+                    {
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/repo.EntityUpdate"
+                            }
+                        }
+                    },
+                    "description": "Entity Data",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.EntityOut"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Delete Entity",
+                "parameters": [
+                    {
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Patch Entity",
+                "parameters": [
+                    {
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/repo.EntityPatch"
+                            }
+                        }
+                    },
+                    "description": "Entity Data",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.EntityOut"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/{id}/attachments": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Entities Attachments"
+                ],
+                "summary": "Create Entity Attachment",
+                "parameters": [
+                    {
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "file": {
+                                        "description": "File attachment",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "type": {
+                                        "description": "Type of file",
+                                        "type": "string"
+                                    },
+                                    "primary": {
+                                        "description": "Is this the primary attachment",
+                                        "type": "boolean"
+                                    },
+                                    "name": {
+                                        "description": "name of the file including extension",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "file",
+                                    "name"
+                                ]
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.EntityOut"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/validate.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/{id}/attachments/{attachment_id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Entities Attachments"
+                ],
+                "summary": "Get Entity Attachment",
+                "parameters": [
+                    {
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Attachment ID",
+                        "name": "attachment_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/octet-stream": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.EntityAttachmentToken"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Entities Attachments"
+                ],
+                "summary": "Update Entity Attachment",
+                "parameters": [
+                    {
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Attachment ID",
+                        "name": "attachment_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/repo.ItemAttachmentUpdate"
+                            }
+                        }
+                    },
+                    "description": "Attachment Update",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.EntityOut"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Entities Attachments"
+                ],
+                "summary": "Delete Entity Attachment",
+                "parameters": [
+                    {
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Attachment ID",
+                        "name": "attachment_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/entities/{id}/duplicate": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Duplicate Entity",
+                "parameters": [
+                    {
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/repo.DuplicateOptions"
+                            }
+                        }
+                    },
+                    "description": "Duplicate Options",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.EntityOut"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/{id}/maintenance": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Item Maintenance"
+                ],
+                "summary": "Get Maintenance Log",
+                "parameters": [
+                    {
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "x-enum-varnames": [
+                            "MaintenanceFilterStatusScheduled",
+                            "MaintenanceFilterStatusCompleted",
+                            "MaintenanceFilterStatusBoth"
+                        ],
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "scheduled",
+                                "completed",
+                                "both"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/repo.MaintenanceEntryWithDetails"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Item Maintenance"
+                ],
+                "summary": "Create Maintenance Entry",
+                "parameters": [
+                    {
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/repo.MaintenanceEntryCreate"
+                            }
+                        }
+                    },
+                    "description": "Entry Data",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.MaintenanceEntry"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/{id}/path": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Get the full path of an entity",
+                "parameters": [
+                    {
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/repo.EntityPath"
                                     }
                                 }
                             }
@@ -942,788 +1652,6 @@
                                     "type": "array",
                                     "items": {
                                         "$ref": "#/components/schemas/repo.TotalsByOrganizer"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/items": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Entities"
-                ],
-                "summary": "Query All Entities",
-                "parameters": [
-                    {
-                        "description": "search string",
-                        "name": "q",
-                        "in": "query",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "page number",
-                        "name": "page",
-                        "in": "query",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "items per page",
-                        "name": "pageSize",
-                        "in": "query",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "tags Ids",
-                        "name": "tags",
-                        "in": "query",
-                        "explode": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    {
-                        "description": "parent Ids",
-                        "name": "parentIds",
-                        "in": "query",
-                        "explode": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/repo.PaginationResult-repo_EntitySummary"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Entities"
-                ],
-                "summary": "Create Entity",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/repo.EntityCreate"
-                            }
-                        }
-                    },
-                    "description": "Entity Data",
-                    "required": true
-                },
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/repo.EntityOut"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/items/export": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Entities"
-                ],
-                "summary": "Export Entities",
-                "responses": {
-                    "200": {
-                        "description": "text/csv",
-                        "content": {
-                            "*/*": {
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/items/fields": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Entities"
-                ],
-                "summary": "Get All Custom Field Names",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/items/fields/values": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Entities"
-                ],
-                "summary": "Get All Custom Field Values",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/items/import": {
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Entities"
-                ],
-                "summary": "Import Entities",
-                "requestBody": {
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "csv": {
-                                        "description": "CSV file to upload",
-                                        "type": "string",
-                                        "format": "binary"
-                                    }
-                                },
-                                "required": [
-                                    "csv"
-                                ]
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
-            }
-        },
-        "/v1/items/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Entities"
-                ],
-                "summary": "Get Entity",
-                "parameters": [
-                    {
-                        "description": "Entity ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/repo.EntityOut"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Entities"
-                ],
-                "summary": "Update Entity",
-                "parameters": [
-                    {
-                        "description": "Entity ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/repo.EntityUpdate"
-                            }
-                        }
-                    },
-                    "description": "Entity Data",
-                    "required": true
-                },
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/repo.EntityOut"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Entities"
-                ],
-                "summary": "Delete Entity",
-                "parameters": [
-                    {
-                        "description": "Entity ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
-            },
-            "patch": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Entities"
-                ],
-                "summary": "Patch Entity",
-                "parameters": [
-                    {
-                        "description": "Entity ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/repo.EntityPatch"
-                            }
-                        }
-                    },
-                    "description": "Entity Data",
-                    "required": true
-                },
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/repo.EntityOut"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/items/{id}/attachments": {
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Entities Attachments"
-                ],
-                "summary": "Create Entity Attachment",
-                "parameters": [
-                    {
-                        "description": "Entity ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "file": {
-                                        "description": "File attachment",
-                                        "type": "string",
-                                        "format": "binary"
-                                    },
-                                    "type": {
-                                        "description": "Type of file",
-                                        "type": "string"
-                                    },
-                                    "primary": {
-                                        "description": "Is this the primary attachment",
-                                        "type": "boolean"
-                                    },
-                                    "name": {
-                                        "description": "name of the file including extension",
-                                        "type": "string"
-                                    }
-                                },
-                                "required": [
-                                    "file",
-                                    "name"
-                                ]
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/repo.EntityOut"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/validate.ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/items/{id}/attachments/{attachment_id}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Entities Attachments"
-                ],
-                "summary": "Get Entity Attachment",
-                "parameters": [
-                    {
-                        "description": "Entity ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Attachment ID",
-                        "name": "attachment_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/octet-stream": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/v1.EntityAttachmentToken"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Entities Attachments"
-                ],
-                "summary": "Update Entity Attachment",
-                "parameters": [
-                    {
-                        "description": "Entity ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Attachment ID",
-                        "name": "attachment_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/repo.ItemAttachmentUpdate"
-                            }
-                        }
-                    },
-                    "description": "Attachment Update",
-                    "required": true
-                },
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "*/*": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/repo.EntityOut"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Entities Attachments"
-                ],
-                "summary": "Delete Entity Attachment",
-                "parameters": [
-                    {
-                        "description": "Entity ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Attachment ID",
-                        "name": "attachment_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
-            }
-        },
-        "/v1/items/{id}/duplicate": {
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Entities"
-                ],
-                "summary": "Duplicate Entity",
-                "parameters": [
-                    {
-                        "description": "Entity ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/repo.DuplicateOptions"
-                            }
-                        }
-                    },
-                    "description": "Duplicate Options",
-                    "required": true
-                },
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/repo.EntityOut"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/items/{id}/maintenance": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Item Maintenance"
-                ],
-                "summary": "Get Maintenance Log",
-                "parameters": [
-                    {
-                        "description": "Item ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "x-enum-varnames": [
-                            "MaintenanceFilterStatusScheduled",
-                            "MaintenanceFilterStatusCompleted",
-                            "MaintenanceFilterStatusBoth"
-                        ],
-                        "name": "status",
-                        "in": "query",
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "scheduled",
-                                "completed",
-                                "both"
-                            ]
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/repo.MaintenanceEntryWithDetails"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Item Maintenance"
-                ],
-                "summary": "Create Maintenance Entry",
-                "parameters": [
-                    {
-                        "description": "Item ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/repo.MaintenanceEntryCreate"
-                            }
-                        }
-                    },
-                    "description": "Entry Data",
-                    "required": true
-                },
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/repo.MaintenanceEntry"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/items/{id}/path": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Entities"
-                ],
-                "summary": "Get the full path of an entity",
-                "parameters": [
-                    {
-                        "description": "Entity ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/repo.EntityPath"
                                     }
                                 }
                             }
@@ -4454,84 +4382,6 @@
                         "type": "string"
                     },
                     "warrantyExpires": {
-                        "type": "string"
-                    }
-                }
-            },
-            "repo.EntityOutCount": {
-                "type": "object",
-                "properties": {
-                    "archived": {
-                        "type": "boolean"
-                    },
-                    "assetId": {
-                        "type": "string",
-                        "example": "0"
-                    },
-                    "createdAt": {
-                        "type": "string"
-                    },
-                    "description": {
-                        "type": "string"
-                    },
-                    "entityType": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/repo.EntityTypeSummary"
-                            }
-                        ],
-                        "x-omitempty": true,
-                        "nullable": true
-                    },
-                    "id": {
-                        "type": "string"
-                    },
-                    "imageId": {
-                        "type": "string",
-                        "x-omitempty": true,
-                        "nullable": true
-                    },
-                    "insured": {
-                        "type": "boolean"
-                    },
-                    "itemCount": {
-                        "type": "number"
-                    },
-                    "name": {
-                        "type": "string"
-                    },
-                    "parent": {
-                        "description": "Edges",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/repo.EntitySummary"
-                            }
-                        ],
-                        "x-omitempty": true,
-                        "nullable": true
-                    },
-                    "purchasePrice": {
-                        "type": "number"
-                    },
-                    "quantity": {
-                        "type": "number"
-                    },
-                    "soldTime": {
-                        "description": "Sale details",
-                        "type": "string"
-                    },
-                    "tags": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/repo.TagSummary"
-                        }
-                    },
-                    "thumbnailId": {
-                        "type": "string",
-                        "x-omitempty": true,
-                        "nullable": true
-                    },
-                    "updatedAt": {
                         "type": "string"
                     }
                 }

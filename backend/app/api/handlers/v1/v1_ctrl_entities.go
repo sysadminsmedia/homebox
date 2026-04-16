@@ -32,7 +32,7 @@ import (
 //	@Param		tags		query		[]string	false	"tags Ids"		collectionFormat(multi)
 //	@Param		parentIds	query		[]string	false	"parent Ids"	collectionFormat(multi)
 //	@Success	200			{object}	repo.PaginationResult[repo.EntitySummary]{}
-//	@Router		/v1/items [GET]
+//	@Router		/v1/entities [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 	extractQuery := func(r *http.Request) repo.EntityQuery {
@@ -121,10 +121,15 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 			totalPrice.Add(totalPrice, big.NewInt(int64(item.PurchasePrice*100)))
 		}
 
-		totalPriceFloat := new(big.Float).SetInt(totalPrice)
-		totalPriceFloat.Quo(totalPriceFloat, big.NewFloat(100))
+		totalPriceFloat, _ := new(big.Float).SetInt(totalPrice).Quo(new(big.Float).SetInt(totalPrice), big.NewFloat(100)).Float64()
 
-		return server.JSON(w, http.StatusOK, items)
+		return server.JSON(w, http.StatusOK, struct {
+			repo.PaginationResult[repo.EntitySummary]
+			TotalPrice float64 `json:"totalPrice"`
+		}{
+			PaginationResult: items,
+			TotalPrice:       totalPriceFloat,
+		})
 	}
 }
 
@@ -135,7 +140,7 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 //	@Produce	json
 //	@Param		id	path		string	true	"Entity ID"
 //	@Success	200	{object}	[]repo.EntityPath
-//	@Router		/v1/items/{id}/path [GET]
+//	@Router		/v1/entities/{id}/path [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityFullPath() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) ([]repo.EntityPath, error) {
@@ -153,7 +158,7 @@ func (ctrl *V1Controller) HandleEntityFullPath() errchain.HandlerFunc {
 //	@Produce	json
 //	@Param		payload	body		repo.EntityCreate	true	"Entity Data"
 //	@Success	201		{object}	repo.EntityOut
-//	@Router		/v1/items [POST]
+//	@Router		/v1/entities [POST]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntitiesCreate() errchain.HandlerFunc {
 	fn := func(r *http.Request, body repo.EntityCreate) (repo.EntityOut, error) {
@@ -170,7 +175,7 @@ func (ctrl *V1Controller) HandleEntitiesCreate() errchain.HandlerFunc {
 //	@Produce	json
 //	@Param		id	path		string	true	"Entity ID"
 //	@Success	200	{object}	repo.EntityOut
-//	@Router		/v1/items/{id} [GET]
+//	@Router		/v1/entities/{id} [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityGet() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) (repo.EntityOut, error) {
@@ -189,7 +194,7 @@ func (ctrl *V1Controller) HandleEntityGet() errchain.HandlerFunc {
 //	@Produce	json
 //	@Param		id	path	string	true	"Entity ID"
 //	@Success	204
-//	@Router		/v1/items/{id} [DELETE]
+//	@Router		/v1/entities/{id} [DELETE]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityDelete() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) (any, error) {
@@ -209,7 +214,7 @@ func (ctrl *V1Controller) HandleEntityDelete() errchain.HandlerFunc {
 //	@Param		id		path		string				true	"Entity ID"
 //	@Param		payload	body		repo.EntityUpdate	true	"Entity Data"
 //	@Success	200		{object}	repo.EntityOut
-//	@Router		/v1/items/{id} [PUT]
+//	@Router		/v1/entities/{id} [PUT]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityUpdate() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID, body repo.EntityUpdate) (repo.EntityOut, error) {
@@ -230,7 +235,7 @@ func (ctrl *V1Controller) HandleEntityUpdate() errchain.HandlerFunc {
 //	@Param		id		path		string				true	"Entity ID"
 //	@Param		payload	body		repo.EntityPatch	true	"Entity Data"
 //	@Success	200		{object}	repo.EntityOut
-//	@Router		/v1/items/{id} [Patch]
+//	@Router		/v1/entities/{id} [Patch]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityPatch() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID, body repo.EntityPatch) (repo.EntityOut, error) {
@@ -256,7 +261,7 @@ func (ctrl *V1Controller) HandleEntityPatch() errchain.HandlerFunc {
 //	@Param		id		path		string					true	"Entity ID"
 //	@Param		payload	body		repo.DuplicateOptions	true	"Duplicate Options"
 //	@Success	201		{object}	repo.EntityOut
-//	@Router		/v1/items/{id}/duplicate [POST]
+//	@Router		/v1/entities/{id}/duplicate [POST]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityDuplicate() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID, options repo.DuplicateOptions) (repo.EntityOut, error) {
@@ -273,7 +278,7 @@ func (ctrl *V1Controller) HandleEntityDuplicate() errchain.HandlerFunc {
 //	@Tags		Entities
 //	@Produce	json
 //	@Success	200
-//	@Router		/v1/items/fields [GET]
+//	@Router		/v1/entities/fields [GET]
 //	@Success	200	{object}	[]string
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGetAllCustomFieldNames() errchain.HandlerFunc {
@@ -291,7 +296,7 @@ func (ctrl *V1Controller) HandleGetAllCustomFieldNames() errchain.HandlerFunc {
 //	@Tags		Entities
 //	@Produce	json
 //	@Success	200
-//	@Router		/v1/items/fields/values [GET]
+//	@Router		/v1/entities/fields/values [GET]
 //	@Success	200	{object}	[]string
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGetAllCustomFieldValues() errchain.HandlerFunc {
@@ -315,7 +320,7 @@ func (ctrl *V1Controller) HandleGetAllCustomFieldValues() errchain.HandlerFunc {
 //	@Produce	json
 //	@Success	204
 //	@Param		csv	formData	file	true	"CSV file to upload"
-//	@Router		/v1/items/import [Post]
+//	@Router		/v1/entities/import [Post]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntitiesImport() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
@@ -330,6 +335,7 @@ func (ctrl *V1Controller) HandleEntitiesImport() errchain.HandlerFunc {
 			log.Err(err).Msg("failed to get file from form")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
+		defer func() { _ = file.Close() }()
 
 		tenant := services.UseTenantCtx(r.Context())
 
@@ -361,48 +367,12 @@ func (ctrl *V1Controller) HandleLocationTreeQuery() errchain.HandlerFunc {
 	return adapters.Query(fn, http.StatusOK)
 }
 
-// HandleContainersGetAll godoc
-//
-//	@Summary	Get All Containers (Locations)
-//	@Tags		Entities
-//	@Produce	json
-//	@Param		filterChildren	query		bool	false	"only return root containers"
-//	@Success	200				{object}	[]repo.EntityOutCount
-//	@Router		/v1/entities/containers [GET]
-//	@Security	Bearer
-func (ctrl *V1Controller) HandleContainersGetAll() errchain.HandlerFunc {
-	fn := func(r *http.Request, query repo.ContainerQuery) ([]repo.EntityOutCount, error) {
-		auth := services.NewContext(r.Context())
-		return ctrl.repo.Entities.GetAllContainers(auth, auth.GID, query)
-	}
-
-	return adapters.Query(fn, http.StatusOK)
-}
-
-// HandleContainerCreate godoc
-//
-//	@Summary	Create Container (Location)
-//	@Tags		Entities
-//	@Produce	json
-//	@Param		payload	body		repo.EntityCreate	true	"Container Data"
-//	@Success	201		{object}	repo.EntityOut
-//	@Router		/v1/entities/containers [POST]
-//	@Security	Bearer
-func (ctrl *V1Controller) HandleContainerCreate() errchain.HandlerFunc {
-	fn := func(r *http.Request, body repo.EntityCreate) (repo.EntityOut, error) {
-		auth := services.NewContext(r.Context())
-		return ctrl.repo.Entities.CreateContainer(auth, auth.GID, body)
-	}
-
-	return adapters.Action(fn, http.StatusCreated)
-}
-
 // HandleEntitiesExport godoc
 //
 //	@Summary	Export Entities
 //	@Tags		Entities
 //	@Success	200	{string}	string	"text/csv"
-//	@Router		/v1/items/export [GET]
+//	@Router		/v1/entities/export [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntitiesExport() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {

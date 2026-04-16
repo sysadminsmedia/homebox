@@ -277,7 +277,7 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 		}
 
 		if entity.ID == uuid.Nil {
-			panic("entity ID is nil on import - this should never happen")
+			return 0, fmt.Errorf("entity ID is nil for entity with import ref %q", row.ImportRef)
 		}
 
 		fields := lo.Map(row.Fields, func(f reporting.ExportItemFields, _ int) repo.EntityFieldData {

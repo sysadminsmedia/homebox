@@ -979,58 +979,6 @@ definitions:
       warrantyExpires:
         type: string
     type: object
-  repo.EntityOutCount:
-    properties:
-      archived:
-        type: boolean
-      assetId:
-        example: "0"
-        type: string
-      createdAt:
-        type: string
-      description:
-        type: string
-      entityType:
-        allOf:
-        - $ref: '#/definitions/repo.EntityTypeSummary'
-        x-nullable: true
-        x-omitempty: true
-      id:
-        type: string
-      imageId:
-        type: string
-        x-nullable: true
-        x-omitempty: true
-      insured:
-        type: boolean
-      itemCount:
-        type: number
-      name:
-        type: string
-      parent:
-        allOf:
-        - $ref: '#/definitions/repo.EntitySummary'
-        description: Edges
-        x-nullable: true
-        x-omitempty: true
-      purchasePrice:
-        type: number
-      quantity:
-        type: number
-      soldTime:
-        description: Sale details
-        type: string
-      tags:
-        items:
-          $ref: '#/definitions/repo.TagSummary'
-        type: array
-      thumbnailId:
-        type: string
-        x-nullable: true
-        x-omitempty: true
-      updatedAt:
-        type: string
-    type: object
   repo.EntityPatch:
     properties:
       entityTypeId:
@@ -2181,30 +2129,50 @@ paths:
       summary: Currency
       tags:
       - Base
-  /v1/entities/containers:
+  /v1/entities:
     get:
       parameters:
-      - description: only return root containers
+      - description: search string
         in: query
-        name: filterChildren
-        type: boolean
+        name: q
+        type: string
+      - description: page number
+        in: query
+        name: page
+        type: integer
+      - description: items per page
+        in: query
+        name: pageSize
+        type: integer
+      - collectionFormat: multi
+        description: tags Ids
+        in: query
+        items:
+          type: string
+        name: tags
+        type: array
+      - collectionFormat: multi
+        description: parent Ids
+        in: query
+        items:
+          type: string
+        name: parentIds
+        type: array
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/repo.EntityOutCount'
-            type: array
+            $ref: '#/definitions/repo.PaginationResult-repo_EntitySummary'
       security:
       - Bearer: []
-      summary: Get All Containers (Locations)
+      summary: Query All Entities
       tags:
       - Entities
     post:
       parameters:
-      - description: Container Data
+      - description: Entity Data
         in: body
         name: payload
         required: true
@@ -2219,7 +2187,381 @@ paths:
             $ref: '#/definitions/repo.EntityOut'
       security:
       - Bearer: []
-      summary: Create Container (Location)
+      summary: Create Entity
+      tags:
+      - Entities
+  /v1/entities/{id}:
+    delete:
+      parameters:
+      - description: Entity ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete Entity
+      tags:
+      - Entities
+    get:
+      parameters:
+      - description: Entity ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.EntityOut'
+      security:
+      - Bearer: []
+      summary: Get Entity
+      tags:
+      - Entities
+    patch:
+      parameters:
+      - description: Entity ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Entity Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.EntityPatch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.EntityOut'
+      security:
+      - Bearer: []
+      summary: Patch Entity
+      tags:
+      - Entities
+    put:
+      parameters:
+      - description: Entity ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Entity Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.EntityUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.EntityOut'
+      security:
+      - Bearer: []
+      summary: Update Entity
+      tags:
+      - Entities
+  /v1/entities/{id}/attachments:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: Entity ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: File attachment
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: Type of file
+        in: formData
+        name: type
+        type: string
+      - description: Is this the primary attachment
+        in: formData
+        name: primary
+        type: boolean
+      - description: name of the file including extension
+        in: formData
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.EntityOut'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/validate.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Create Entity Attachment
+      tags:
+      - Entities Attachments
+  /v1/entities/{id}/attachments/{attachment_id}:
+    delete:
+      parameters:
+      - description: Entity ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Attachment ID
+        in: path
+        name: attachment_id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete Entity Attachment
+      tags:
+      - Entities Attachments
+    get:
+      parameters:
+      - description: Entity ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Attachment ID
+        in: path
+        name: attachment_id
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.EntityAttachmentToken'
+      security:
+      - Bearer: []
+      summary: Get Entity Attachment
+      tags:
+      - Entities Attachments
+    put:
+      parameters:
+      - description: Entity ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Attachment ID
+        in: path
+        name: attachment_id
+        required: true
+        type: string
+      - description: Attachment Update
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.ItemAttachmentUpdate'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.EntityOut'
+      security:
+      - Bearer: []
+      summary: Update Entity Attachment
+      tags:
+      - Entities Attachments
+  /v1/entities/{id}/duplicate:
+    post:
+      parameters:
+      - description: Entity ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Duplicate Options
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.DuplicateOptions'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.EntityOut'
+      security:
+      - Bearer: []
+      summary: Duplicate Entity
+      tags:
+      - Entities
+  /v1/entities/{id}/maintenance:
+    get:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - enum:
+        - scheduled
+        - completed
+        - both
+        in: query
+        name: status
+        type: string
+        x-enum-varnames:
+        - MaintenanceFilterStatusScheduled
+        - MaintenanceFilterStatusCompleted
+        - MaintenanceFilterStatusBoth
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.MaintenanceEntryWithDetails'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get Maintenance Log
+      tags:
+      - Item Maintenance
+    post:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Entry Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.MaintenanceEntryCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.MaintenanceEntry'
+      security:
+      - Bearer: []
+      summary: Create Maintenance Entry
+      tags:
+      - Item Maintenance
+  /v1/entities/{id}/path:
+    get:
+      parameters:
+      - description: Entity ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.EntityPath'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get the full path of an entity
+      tags:
+      - Entities
+  /v1/entities/export:
+    get:
+      responses:
+        "200":
+          description: text/csv
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Export Entities
+      tags:
+      - Entities
+  /v1/entities/fields:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+      security:
+      - Bearer: []
+      summary: Get All Custom Field Names
+      tags:
+      - Entities
+  /v1/entities/fields/values:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+      security:
+      - Bearer: []
+      summary: Get All Custom Field Values
+      tags:
+      - Entities
+  /v1/entities/import:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: CSV file to upload
+        in: formData
+        name: csv
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Import Entities
       tags:
       - Entities
   /v1/entities/tree:
@@ -2599,441 +2941,6 @@ paths:
       summary: Get Tags Statistics
       tags:
       - Statistics
-  /v1/items:
-    get:
-      parameters:
-      - description: search string
-        in: query
-        name: q
-        type: string
-      - description: page number
-        in: query
-        name: page
-        type: integer
-      - description: items per page
-        in: query
-        name: pageSize
-        type: integer
-      - collectionFormat: multi
-        description: tags Ids
-        in: query
-        items:
-          type: string
-        name: tags
-        type: array
-      - collectionFormat: multi
-        description: parent Ids
-        in: query
-        items:
-          type: string
-        name: parentIds
-        type: array
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/repo.PaginationResult-repo_EntitySummary'
-      security:
-      - Bearer: []
-      summary: Query All Entities
-      tags:
-      - Entities
-    post:
-      parameters:
-      - description: Entity Data
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/repo.EntityCreate'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/repo.EntityOut'
-      security:
-      - Bearer: []
-      summary: Create Entity
-      tags:
-      - Entities
-  /v1/items/{id}:
-    delete:
-      parameters:
-      - description: Entity ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-      security:
-      - Bearer: []
-      summary: Delete Entity
-      tags:
-      - Entities
-    get:
-      parameters:
-      - description: Entity ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/repo.EntityOut'
-      security:
-      - Bearer: []
-      summary: Get Entity
-      tags:
-      - Entities
-    patch:
-      parameters:
-      - description: Entity ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Entity Data
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/repo.EntityPatch'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/repo.EntityOut'
-      security:
-      - Bearer: []
-      summary: Patch Entity
-      tags:
-      - Entities
-    put:
-      parameters:
-      - description: Entity ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Entity Data
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/repo.EntityUpdate'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/repo.EntityOut'
-      security:
-      - Bearer: []
-      summary: Update Entity
-      tags:
-      - Entities
-  /v1/items/{id}/attachments:
-    post:
-      consumes:
-      - multipart/form-data
-      parameters:
-      - description: Entity ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: File attachment
-        in: formData
-        name: file
-        required: true
-        type: file
-      - description: Type of file
-        in: formData
-        name: type
-        type: string
-      - description: Is this the primary attachment
-        in: formData
-        name: primary
-        type: boolean
-      - description: name of the file including extension
-        in: formData
-        name: name
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/repo.EntityOut'
-        "422":
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/validate.ErrorResponse'
-      security:
-      - Bearer: []
-      summary: Create Entity Attachment
-      tags:
-      - Entities Attachments
-  /v1/items/{id}/attachments/{attachment_id}:
-    delete:
-      parameters:
-      - description: Entity ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Attachment ID
-        in: path
-        name: attachment_id
-        required: true
-        type: string
-      responses:
-        "204":
-          description: No Content
-      security:
-      - Bearer: []
-      summary: Delete Entity Attachment
-      tags:
-      - Entities Attachments
-    get:
-      parameters:
-      - description: Entity ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Attachment ID
-        in: path
-        name: attachment_id
-        required: true
-        type: string
-      produces:
-      - application/octet-stream
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/v1.EntityAttachmentToken'
-      security:
-      - Bearer: []
-      summary: Get Entity Attachment
-      tags:
-      - Entities Attachments
-    put:
-      parameters:
-      - description: Entity ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Attachment ID
-        in: path
-        name: attachment_id
-        required: true
-        type: string
-      - description: Attachment Update
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/repo.ItemAttachmentUpdate'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/repo.EntityOut'
-      security:
-      - Bearer: []
-      summary: Update Entity Attachment
-      tags:
-      - Entities Attachments
-  /v1/items/{id}/duplicate:
-    post:
-      parameters:
-      - description: Entity ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Duplicate Options
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/repo.DuplicateOptions'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/repo.EntityOut'
-      security:
-      - Bearer: []
-      summary: Duplicate Entity
-      tags:
-      - Entities
-  /v1/items/{id}/maintenance:
-    get:
-      parameters:
-      - description: Item ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - enum:
-        - scheduled
-        - completed
-        - both
-        in: query
-        name: status
-        type: string
-        x-enum-varnames:
-        - MaintenanceFilterStatusScheduled
-        - MaintenanceFilterStatusCompleted
-        - MaintenanceFilterStatusBoth
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/repo.MaintenanceEntryWithDetails'
-            type: array
-      security:
-      - Bearer: []
-      summary: Get Maintenance Log
-      tags:
-      - Item Maintenance
-    post:
-      parameters:
-      - description: Item ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Entry Data
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/repo.MaintenanceEntryCreate'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/repo.MaintenanceEntry'
-      security:
-      - Bearer: []
-      summary: Create Maintenance Entry
-      tags:
-      - Item Maintenance
-  /v1/items/{id}/path:
-    get:
-      parameters:
-      - description: Entity ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/repo.EntityPath'
-            type: array
-      security:
-      - Bearer: []
-      summary: Get the full path of an entity
-      tags:
-      - Entities
-  /v1/items/export:
-    get:
-      responses:
-        "200":
-          description: text/csv
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: Export Entities
-      tags:
-      - Entities
-  /v1/items/fields:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              type: string
-            type: array
-      security:
-      - Bearer: []
-      summary: Get All Custom Field Names
-      tags:
-      - Entities
-  /v1/items/fields/values:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              type: string
-            type: array
-      security:
-      - Bearer: []
-      summary: Get All Custom Field Values
-      tags:
-      - Entities
-  /v1/items/import:
-    post:
-      consumes:
-      - multipart/form-data
-      parameters:
-      - description: CSV file to upload
-        in: formData
-        name: csv
-        required: true
-        type: file
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-      security:
-      - Bearer: []
-      summary: Import Entities
-      tags:
-      - Entities
   /v1/labelmaker/asset/{id}:
     get:
       parameters:

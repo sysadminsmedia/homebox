@@ -22,10 +22,13 @@ type EntityTemplatesRepository struct {
 
 type (
 	TemplateField struct {
-		ID        *uuid.UUID `json:"id,omitempty"`
-		Type      string     `json:"type"`
-		Name      string     `json:"name"`
-		TextValue string     `json:"textValue"`
+		ID           *uuid.UUID `json:"id,omitempty"`
+		Type         string     `json:"type"`
+		Name         string     `json:"name"`
+		TextValue    string     `json:"textValue"`
+		NumberValue  int        `json:"numberValue"`
+		BooleanValue bool       `json:"booleanValue"`
+		TimeValue    time.Time  `json:"timeValue"`
 	}
 
 	TemplateTagSummary struct {
@@ -137,10 +140,13 @@ type (
 
 func mapTemplateField(field *ent.TemplateField) TemplateField {
 	return TemplateField{
-		ID:        lo.ToPtr(field.ID),
-		Type:      string(field.Type),
-		Name:      field.Name,
-		TextValue: field.TextValue,
+		ID:           lo.ToPtr(field.ID),
+		Type:         string(field.Type),
+		Name:         field.Name,
+		TextValue:    field.TextValue,
+		NumberValue:  field.NumberValue,
+		BooleanValue: field.BooleanValue,
+		TimeValue:    field.TimeValue,
 	}
 }
 

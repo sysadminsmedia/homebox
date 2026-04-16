@@ -212,7 +212,7 @@ func (s *IOSheet) ReadItems(ctx context.Context, entities []repo.EntityOut, gid 
 		// Resolve parent (location) path
 		var locString LocationString
 		if item.Parent != nil {
-			locPaths, err := repos.Entities.PathForEntity(context.Background(), gid, item.Parent.ID)
+			locPaths, err := repos.Entities.PathForEntity(ctx, gid, item.Parent.ID)
 			if err != nil {
 				log.Error().Err(err).Msg("could not get entity path")
 				return err
@@ -297,11 +297,14 @@ func (s *IOSheet) ReadItems(ctx context.Context, entities []repo.EntityOut, gid 
 }
 
 func generateEntityURL(entity repo.EntityOut, d string) string {
-	url := ""
-	if entity.ID != uuid.Nil {
-		url = fmt.Sprintf("%s/item/%s", d, entity.ID.String())
+	if entity.ID == uuid.Nil {
+		return ""
 	}
-	return url
+	prefix := "item"
+	if entity.EntityType != nil && entity.EntityType.IsLocation {
+		prefix = "location"
+	}
+	return fmt.Sprintf("%s/%s/%s", d, prefix, entity.ID.String())
 }
 
 // CSV writes the current sheet to a 2d array, for compatibility with TSV/CSV files.
