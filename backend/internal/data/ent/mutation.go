@@ -1865,8 +1865,8 @@ type EntityMutation struct {
 	addquantity                 *float64
 	insured                     *bool
 	archived                    *bool
-	asset_id                    *int
-	addasset_id                 *int
+	asset_id                    *int64
+	addasset_id                 *int64
 	sync_child_entity_locations *bool
 	serial_number               *string
 	model_number                *string
@@ -2398,13 +2398,13 @@ func (m *EntityMutation) ResetArchived() {
 }
 
 // SetAssetID sets the "asset_id" field.
-func (m *EntityMutation) SetAssetID(i int) {
+func (m *EntityMutation) SetAssetID(i int64) {
 	m.asset_id = &i
 	m.addasset_id = nil
 }
 
 // AssetID returns the value of the "asset_id" field in the mutation.
-func (m *EntityMutation) AssetID() (r int, exists bool) {
+func (m *EntityMutation) AssetID() (r int64, exists bool) {
 	v := m.asset_id
 	if v == nil {
 		return
@@ -2415,7 +2415,7 @@ func (m *EntityMutation) AssetID() (r int, exists bool) {
 // OldAssetID returns the old "asset_id" field's value of the Entity entity.
 // If the Entity object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EntityMutation) OldAssetID(ctx context.Context) (v int, err error) {
+func (m *EntityMutation) OldAssetID(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldAssetID is only allowed on UpdateOne operations")
 	}
@@ -2430,7 +2430,7 @@ func (m *EntityMutation) OldAssetID(ctx context.Context) (v int, err error) {
 }
 
 // AddAssetID adds i to the "asset_id" field.
-func (m *EntityMutation) AddAssetID(i int) {
+func (m *EntityMutation) AddAssetID(i int64) {
 	if m.addasset_id != nil {
 		*m.addasset_id += i
 	} else {
@@ -2439,7 +2439,7 @@ func (m *EntityMutation) AddAssetID(i int) {
 }
 
 // AddedAssetID returns the value that was added to the "asset_id" field in this mutation.
-func (m *EntityMutation) AddedAssetID() (r int, exists bool) {
+func (m *EntityMutation) AddedAssetID() (r int64, exists bool) {
 	v := m.addasset_id
 	if v == nil {
 		return
@@ -3807,7 +3807,7 @@ func (m *EntityMutation) SetField(name string, value ent.Value) error {
 		m.SetArchived(v)
 		return nil
 	case entity.FieldAssetID:
-		v, ok := value.(int)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -3964,7 +3964,7 @@ func (m *EntityMutation) AddField(name string, value ent.Value) error {
 		m.AddQuantity(v)
 		return nil
 	case entity.FieldAssetID:
-		v, ok := value.(int)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

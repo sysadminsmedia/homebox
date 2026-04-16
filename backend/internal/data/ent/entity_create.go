@@ -146,13 +146,13 @@ func (_c *EntityCreate) SetNillableArchived(v *bool) *EntityCreate {
 }
 
 // SetAssetID sets the "asset_id" field.
-func (_c *EntityCreate) SetAssetID(v int) *EntityCreate {
+func (_c *EntityCreate) SetAssetID(v int64) *EntityCreate {
 	_c.mutation.SetAssetID(v)
 	return _c
 }
 
 // SetNillableAssetID sets the "asset_id" field if the given value is not nil.
-func (_c *EntityCreate) SetNillableAssetID(v *int) *EntityCreate {
+func (_c *EntityCreate) SetNillableAssetID(v *int64) *EntityCreate {
 	if v != nil {
 		_c.SetAssetID(*v)
 	}
@@ -724,7 +724,7 @@ func (_c *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		_node.Archived = value
 	}
 	if value, ok := _c.mutation.AssetID(); ok {
-		_spec.SetField(entity.FieldAssetID, field.TypeInt, value)
+		_spec.SetField(entity.FieldAssetID, field.TypeInt64, value)
 		_node.AssetID = value
 	}
 	if value, ok := _c.mutation.SyncChildEntityLocations(); ok {

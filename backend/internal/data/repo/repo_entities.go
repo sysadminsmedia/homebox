@@ -463,7 +463,7 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 	}
 
 	if !q.AssetID.Nil() {
-		qb = qb.Where(entity.AssetID(q.AssetID.Int()))
+		qb = qb.Where(entity.AssetID(int64(q.AssetID)))
 	}
 
 	var andPredicates []predicate.Entity
@@ -592,7 +592,7 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 func (r *EntityRepository) QueryByAssetID(ctx context.Context, gid uuid.UUID, assetID AssetID, page int, pageSize int) (PaginationResult[EntitySummary], error) {
 	qb := r.db.Entity.Query().Where(
 		entity.HasGroupWith(group.ID(gid)),
-		entity.AssetID(int(assetID)),
+		entity.AssetID(int64(assetID)),
 	)
 
 	if page != -1 || pageSize != -1 {
@@ -681,7 +681,7 @@ func (r *EntityRepository) SetAssetID(ctx context.Context, gid uuid.UUID, id uui
 		entity.ID(id),
 	)
 
-	_, err := q.SetAssetID(int(assetID)).Save(ctx)
+	_, err := q.SetAssetID(int64(assetID)).Save(ctx)
 	return err
 }
 
@@ -704,7 +704,7 @@ func (r *EntityRepository) Create(ctx context.Context, gid uuid.UUID, data Entit
 		SetQuantity(data.Quantity).
 		SetDescription(data.Description).
 		SetGroupID(gid).
-		SetAssetID(int(data.AssetID))
+		SetAssetID(int64(data.AssetID))
 
 	if data.ParentID != uuid.Nil {
 		q.SetParentID(data.ParentID)
@@ -784,7 +784,7 @@ func (r *EntityRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID
 		SetDescription(data.Description).
 		SetQuantity(data.Quantity).
 		SetGroupID(gid).
-		SetAssetID(int(nextAssetID)).
+		SetAssetID(int64(nextAssetID)).
 		SetInsured(data.Insured).
 		SetManufacturer(data.Manufacturer).
 		SetModelNumber(data.ModelNumber).
@@ -1003,7 +1003,7 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		SetWarrantyExpires(data.WarrantyExpires.Time()).
 		SetWarrantyDetails(data.WarrantyDetails).
 		SetQuantity(data.Quantity).
-		SetAssetID(int(data.AssetID)).
+		SetAssetID(int64(data.AssetID)).
 		SetSyncChildEntityLocations(data.SyncChildEntityLocations)
 
 	if data.EntityTypeID != uuid.Nil {
@@ -1460,7 +1460,7 @@ func (r *EntityRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opt
 		SetDescription(originalEntity.Description).
 		SetQuantity(originalEntity.Quantity).
 		SetGroupID(gid).
-		SetAssetID(int(nextAssetID)).
+		SetAssetID(int64(nextAssetID)).
 		SetSerialNumber(originalEntity.SerialNumber).
 		SetModelNumber(originalEntity.ModelNumber).
 		SetManufacturer(originalEntity.Manufacturer).

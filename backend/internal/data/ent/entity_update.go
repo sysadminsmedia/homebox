@@ -165,14 +165,14 @@ func (_u *EntityUpdate) SetNillableArchived(v *bool) *EntityUpdate {
 }
 
 // SetAssetID sets the "asset_id" field.
-func (_u *EntityUpdate) SetAssetID(v int) *EntityUpdate {
+func (_u *EntityUpdate) SetAssetID(v int64) *EntityUpdate {
 	_u.mutation.ResetAssetID()
 	_u.mutation.SetAssetID(v)
 	return _u
 }
 
 // SetNillableAssetID sets the "asset_id" field if the given value is not nil.
-func (_u *EntityUpdate) SetNillableAssetID(v *int) *EntityUpdate {
+func (_u *EntityUpdate) SetNillableAssetID(v *int64) *EntityUpdate {
 	if v != nil {
 		_u.SetAssetID(*v)
 	}
@@ -180,7 +180,7 @@ func (_u *EntityUpdate) SetNillableAssetID(v *int) *EntityUpdate {
 }
 
 // AddAssetID adds value to the "asset_id" field.
-func (_u *EntityUpdate) AddAssetID(v int) *EntityUpdate {
+func (_u *EntityUpdate) AddAssetID(v int64) *EntityUpdate {
 	_u.mutation.AddAssetID(v)
 	return _u
 }
@@ -840,10 +840,10 @@ func (_u *EntityUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.SetField(entity.FieldArchived, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.AssetID(); ok {
-		_spec.SetField(entity.FieldAssetID, field.TypeInt, value)
+		_spec.SetField(entity.FieldAssetID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedAssetID(); ok {
-		_spec.AddField(entity.FieldAssetID, field.TypeInt, value)
+		_spec.AddField(entity.FieldAssetID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.SyncChildEntityLocations(); ok {
 		_spec.SetField(entity.FieldSyncChildEntityLocations, field.TypeBool, value)
@@ -1385,14 +1385,14 @@ func (_u *EntityUpdateOne) SetNillableArchived(v *bool) *EntityUpdateOne {
 }
 
 // SetAssetID sets the "asset_id" field.
-func (_u *EntityUpdateOne) SetAssetID(v int) *EntityUpdateOne {
+func (_u *EntityUpdateOne) SetAssetID(v int64) *EntityUpdateOne {
 	_u.mutation.ResetAssetID()
 	_u.mutation.SetAssetID(v)
 	return _u
 }
 
 // SetNillableAssetID sets the "asset_id" field if the given value is not nil.
-func (_u *EntityUpdateOne) SetNillableAssetID(v *int) *EntityUpdateOne {
+func (_u *EntityUpdateOne) SetNillableAssetID(v *int64) *EntityUpdateOne {
 	if v != nil {
 		_u.SetAssetID(*v)
 	}
@@ -1400,7 +1400,7 @@ func (_u *EntityUpdateOne) SetNillableAssetID(v *int) *EntityUpdateOne {
 }
 
 // AddAssetID adds value to the "asset_id" field.
-func (_u *EntityUpdateOne) AddAssetID(v int) *EntityUpdateOne {
+func (_u *EntityUpdateOne) AddAssetID(v int64) *EntityUpdateOne {
 	_u.mutation.AddAssetID(v)
 	return _u
 }
@@ -2090,10 +2090,10 @@ func (_u *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err erro
 		_spec.SetField(entity.FieldArchived, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.AssetID(); ok {
-		_spec.SetField(entity.FieldAssetID, field.TypeInt, value)
+		_spec.SetField(entity.FieldAssetID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedAssetID(); ok {
-		_spec.AddField(entity.FieldAssetID, field.TypeInt, value)
+		_spec.AddField(entity.FieldAssetID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.SyncChildEntityLocations(); ok {
 		_spec.SetField(entity.FieldSyncChildEntityLocations, field.TypeBool, value)

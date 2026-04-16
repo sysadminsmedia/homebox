@@ -99,7 +99,7 @@ func mergeCreateEntitiesTable(ctx context.Context, db *sql.DB) error {
 			quantity                    real    default 1     not null,
 			insured                     bool    default false not null,
 			archived                    bool    default false not null,
-			asset_id                    integer default 0     not null,
+			asset_id                    bigint  default 0     not null,
 			sync_child_entity_locations bool    default false not null,
 			serial_number               text,
 			model_number                text,

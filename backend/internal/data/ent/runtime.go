@@ -148,7 +148,7 @@ func init() {
 	// entityDescAssetID is the schema descriptor for asset_id field.
 	entityDescAssetID := entityFields[5].Descriptor()
 	// entity.DefaultAssetID holds the default value on creation for the asset_id field.
-	entity.DefaultAssetID = entityDescAssetID.Default.(int)
+	entity.DefaultAssetID = entityDescAssetID.Default.(int64)
 	// entityDescSyncChildEntityLocations is the schema descriptor for sync_child_entity_locations field.
 	entityDescSyncChildEntityLocations := entityFields[6].Descriptor()
 	// entity.DefaultSyncChildEntityLocations holds the default value on creation for the sync_child_entity_locations field.

@@ -103,7 +103,7 @@ var (
 		{Name: "quantity", Type: field.TypeFloat64, Default: 1},
 		{Name: "insured", Type: field.TypeBool, Default: false},
 		{Name: "archived", Type: field.TypeBool, Default: false},
-		{Name: "asset_id", Type: field.TypeInt, Default: 0},
+		{Name: "asset_id", Type: field.TypeInt64, Default: 0},
 		{Name: "sync_child_entity_locations", Type: field.TypeBool, Default: false},
 		{Name: "serial_number", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "model_number", Type: field.TypeString, Nullable: true, Size: 255},

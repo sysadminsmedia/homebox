@@ -211,7 +211,7 @@ var (
 	// DefaultArchived holds the default value on creation for the "archived" field.
 	DefaultArchived bool
 	// DefaultAssetID holds the default value on creation for the "asset_id" field.
-	DefaultAssetID int
+	DefaultAssetID int64
 	// DefaultSyncChildEntityLocations holds the default value on creation for the "sync_child_entity_locations" field.
 	DefaultSyncChildEntityLocations bool
 	// SerialNumberValidator is a validator for the "serial_number" field. It is called by the builders before save.

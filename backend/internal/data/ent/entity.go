@@ -39,7 +39,7 @@ type Entity struct {
 	// Archived holds the value of the "archived" field.
 	Archived bool `json:"archived,omitempty"`
 	// AssetID holds the value of the "asset_id" field.
-	AssetID int `json:"asset_id,omitempty"`
+	AssetID int64 `json:"asset_id,omitempty"`
 	// SyncChildEntityLocations holds the value of the "sync_child_entity_locations" field.
 	SyncChildEntityLocations bool `json:"sync_child_entity_locations,omitempty"`
 	// SerialNumber holds the value of the "serial_number" field.
@@ -280,7 +280,7 @@ func (_m *Entity) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field asset_id", values[i])
 			} else if value.Valid {
-				_m.AssetID = int(value.Int64)
+				_m.AssetID = value.Int64
 			}
 		case entity.FieldSyncChildEntityLocations:
 			if value, ok := values[i].(*sql.NullBool); !ok {

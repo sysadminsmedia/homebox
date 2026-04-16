@@ -102,7 +102,7 @@ func Archived(v bool) predicate.Entity {
 }
 
 // AssetID applies equality check predicate on the "asset_id" field. It's identical to AssetIDEQ.
-func AssetID(v int) predicate.Entity {
+func AssetID(v int64) predicate.Entity {
 	return predicate.Entity(sql.FieldEQ(FieldAssetID, v))
 }
 
@@ -607,42 +607,42 @@ func ArchivedNEQ(v bool) predicate.Entity {
 }
 
 // AssetIDEQ applies the EQ predicate on the "asset_id" field.
-func AssetIDEQ(v int) predicate.Entity {
+func AssetIDEQ(v int64) predicate.Entity {
 	return predicate.Entity(sql.FieldEQ(FieldAssetID, v))
 }
 
 // AssetIDNEQ applies the NEQ predicate on the "asset_id" field.
-func AssetIDNEQ(v int) predicate.Entity {
+func AssetIDNEQ(v int64) predicate.Entity {
 	return predicate.Entity(sql.FieldNEQ(FieldAssetID, v))
 }
 
 // AssetIDIn applies the In predicate on the "asset_id" field.
-func AssetIDIn(vs ...int) predicate.Entity {
+func AssetIDIn(vs ...int64) predicate.Entity {
 	return predicate.Entity(sql.FieldIn(FieldAssetID, vs...))
 }
 
 // AssetIDNotIn applies the NotIn predicate on the "asset_id" field.
-func AssetIDNotIn(vs ...int) predicate.Entity {
+func AssetIDNotIn(vs ...int64) predicate.Entity {
 	return predicate.Entity(sql.FieldNotIn(FieldAssetID, vs...))
 }
 
 // AssetIDGT applies the GT predicate on the "asset_id" field.
-func AssetIDGT(v int) predicate.Entity {
+func AssetIDGT(v int64) predicate.Entity {
 	return predicate.Entity(sql.FieldGT(FieldAssetID, v))
 }
 
 // AssetIDGTE applies the GTE predicate on the "asset_id" field.
-func AssetIDGTE(v int) predicate.Entity {
+func AssetIDGTE(v int64) predicate.Entity {
 	return predicate.Entity(sql.FieldGTE(FieldAssetID, v))
 }
 
 // AssetIDLT applies the LT predicate on the "asset_id" field.
-func AssetIDLT(v int) predicate.Entity {
+func AssetIDLT(v int64) predicate.Entity {
 	return predicate.Entity(sql.FieldLT(FieldAssetID, v))
 }
 
 // AssetIDLTE applies the LTE predicate on the "asset_id" field.
-func AssetIDLTE(v int) predicate.Entity {
+func AssetIDLTE(v int64) predicate.Entity {
 	return predicate.Entity(sql.FieldLTE(FieldAssetID, v))
 }
 
