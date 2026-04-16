@@ -321,7 +321,7 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 			Fields: fields,
 		}
 
-		entity, err = svc.repo.Entities.UpdateByGroup(ctx, gid, updateEntity)
+		_, err = svc.repo.Entities.UpdateByGroup(ctx, gid, updateEntity)
 		if err != nil {
 			return 0, err
 		}
