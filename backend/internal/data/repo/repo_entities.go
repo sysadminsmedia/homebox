@@ -157,6 +157,9 @@ type (
 
 		// Sale details
 		SoldTime time.Time `json:"soldTime"`
+
+		// Container-specific (populated when querying locations)
+		ItemCount float64 `json:"itemCount,omitempty"`
 	}
 
 	EntityOut struct {

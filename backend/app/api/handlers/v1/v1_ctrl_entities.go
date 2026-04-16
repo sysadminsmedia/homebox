@@ -89,7 +89,8 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 		query := extractQuery(r)
 
 		// When querying for locations specifically, use the container query
-		// which includes item count aggregation
+		// which includes item count aggregation, then normalize to the same
+		// PaginationResult shape so the endpoint always returns a consistent type.
 		if query.IsLocation != nil && *query.IsLocation {
 			filterChildren := queryBool(r.URL.Query().Get("filterChildren"))
 			containers, err := ctrl.repo.Entities.GetAllContainers(ctx, ctx.GID, repo.ContainerQuery{
@@ -99,7 +100,26 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 				log.Err(err).Msg("failed to get containers")
 				return validate.NewRequestError(err, http.StatusInternalServerError)
 			}
-			return server.JSON(w, http.StatusOK, containers)
+
+			summaries := make([]repo.EntitySummary, len(containers))
+			for i, c := range containers {
+				s := c.EntitySummary
+				s.ItemCount = c.ItemCount
+				summaries[i] = s
+			}
+
+			return server.JSON(w, http.StatusOK, struct {
+				repo.PaginationResult[repo.EntitySummary]
+				TotalPrice float64 `json:"totalPrice"`
+			}{
+				PaginationResult: repo.PaginationResult[repo.EntitySummary]{
+					Page:     1,
+					PageSize: len(summaries),
+					Total:    len(summaries),
+					Items:    summaries,
+				},
+				TotalPrice: 0,
+			})
 		}
 
 		items, err := ctrl.repo.Entities.QueryByGroup(ctx, ctx.GID, query)

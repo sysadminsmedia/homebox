@@ -246,8 +246,13 @@ export class ItemsApi extends BaseAPI {
   // Location / Container methods (formerly in LocationsApi)
   // =========================================================================
 
-  getLocations(q: LocationsQuery = { filterChildren: false }) {
-    return this.http.get<LocationOutCount[]>({ url: route("/entities", { ...q, isLocation: true }) });
+  async getLocations(q: LocationsQuery = { filterChildren: false }) {
+    const resp = await this.http.get<{ items: LocationOutCount[] }>({ url: route("/entities", { ...q, isLocation: true }) });
+    // Unwrap paginated response to flat array for backward compat
+    return {
+      ...resp,
+      data: resp.data?.items ?? [],
+    } as { data: LocationOutCount[]; error: any; status: number };
   }
 
   getTree(tq: TreeQuery = { withItems: false }) {

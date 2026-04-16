@@ -713,7 +713,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.EntityAttachmentToken"
+                            "type": "file"
                         }
                     }
                 }
@@ -4110,6 +4110,10 @@ const docTemplate = `{
                 "insured": {
                     "type": "boolean"
                 },
+                "itemCount": {
+                    "description": "Container-specific (populated when querying locations)",
+                    "type": "number"
+                },
                 "lifetimeWarranty": {
                     "description": "Warranty",
                     "type": "boolean"
@@ -4285,6 +4289,10 @@ const docTemplate = `{
                 },
                 "insured": {
                     "type": "boolean"
+                },
+                "itemCount": {
+                    "description": "Container-specific (populated when querying locations)",
+                    "type": "number"
                 },
                 "name": {
                     "type": "string"
@@ -5516,14 +5524,6 @@ const docTemplate = `{
             ],
             "properties": {
                 "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.EntityAttachmentToken": {
-            "type": "object",
-            "properties": {
-                "token": {
                     "type": "string"
                 }
             }

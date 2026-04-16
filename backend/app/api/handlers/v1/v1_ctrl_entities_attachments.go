@@ -24,12 +24,6 @@ import (
 	_ "gocloud.dev/blob/s3blob"
 )
 
-type (
-	EntityAttachmentToken struct {
-		Token string `json:"token"`
-	}
-)
-
 func sanitizeAttachmentName(name string) string {
 	name = filepath.Base(name)
 	name = strings.ReplaceAll(name, "..", "")
@@ -137,7 +131,7 @@ func (ctrl *V1Controller) HandleEntityAttachmentCreate() errchain.HandlerFunc {
 //	@Produce	application/octet-stream
 //	@Param		id				path		string	true	"Entity ID"
 //	@Param		attachment_id	path		string	true	"Attachment ID"
-//	@Success	200				{object}	EntityAttachmentToken
+//	@Success	200				{file}		file
 //	@Router		/v1/entities/{id}/attachments/{attachment_id} [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityAttachmentGet() errchain.HandlerFunc {

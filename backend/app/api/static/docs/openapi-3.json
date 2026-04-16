@@ -767,7 +767,8 @@
                         "content": {
                             "application/octet-stream": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/v1.EntityAttachmentToken"
+                                    "type": "string",
+                                    "format": "binary"
                                 }
                             }
                         }
@@ -4302,6 +4303,10 @@
                     "insured": {
                         "type": "boolean"
                     },
+                    "itemCount": {
+                        "description": "Container-specific (populated when querying locations)",
+                        "type": "number"
+                    },
                     "lifetimeWarranty": {
                         "description": "Warranty",
                         "type": "boolean"
@@ -4477,6 +4482,10 @@
                     },
                     "insured": {
                         "type": "boolean"
+                    },
+                    "itemCount": {
+                        "description": "Container-specific (populated when querying locations)",
+                        "type": "number"
                     },
                     "name": {
                         "type": "string"
@@ -5708,14 +5717,6 @@
                 ],
                 "properties": {
                     "name": {
-                        "type": "string"
-                    }
-                }
-            },
-            "v1.EntityAttachmentToken": {
-                "type": "object",
-                "properties": {
-                    "token": {
                         "type": "string"
                     }
                 }

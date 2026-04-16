@@ -621,6 +621,8 @@ export interface EntityOut {
   id: string;
   imageId?: string | null;
   insured: boolean;
+  /** Container-specific (populated when querying locations) */
+  itemCount: number;
   /** Warranty */
   lifetimeWarranty: boolean;
   manufacturer: string;
@@ -674,6 +676,8 @@ export interface EntitySummary {
   id: string;
   imageId?: string | null;
   insured: boolean;
+  /** Container-specific (populated when querying locations) */
+  itemCount: number;
   name: string;
   /** Edges */
   parent?: EntitySummary | null;
@@ -1138,10 +1142,6 @@ export interface ChangePassword {
 
 export interface CreateRequest {
   name: string;
-}
-
-export interface EntityAttachmentToken {
-  token: string;
 }
 
 export interface EntityTemplateCreateItemRequest {

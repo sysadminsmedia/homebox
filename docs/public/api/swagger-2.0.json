@@ -711,7 +711,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.EntityAttachmentToken"
+                            "type": "file"
                         }
                     }
                 }
@@ -4108,6 +4108,10 @@
                 "insured": {
                     "type": "boolean"
                 },
+                "itemCount": {
+                    "description": "Container-specific (populated when querying locations)",
+                    "type": "number"
+                },
                 "lifetimeWarranty": {
                     "description": "Warranty",
                     "type": "boolean"
@@ -4283,6 +4287,10 @@
                 },
                 "insured": {
                     "type": "boolean"
+                },
+                "itemCount": {
+                    "description": "Container-specific (populated when querying locations)",
+                    "type": "number"
                 },
                 "name": {
                     "type": "string"
@@ -5514,14 +5522,6 @@
             ],
             "properties": {
                 "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.EntityAttachmentToken": {
-            "type": "object",
-            "properties": {
-                "token": {
                     "type": "string"
                 }
             }

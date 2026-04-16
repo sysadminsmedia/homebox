@@ -922,6 +922,9 @@ definitions:
         x-omitempty: true
       insured:
         type: boolean
+      itemCount:
+        description: Container-specific (populated when querying locations)
+        type: number
       lifetimeWarranty:
         description: Warranty
         type: boolean
@@ -1043,6 +1046,9 @@ definitions:
         x-omitempty: true
       insured:
         type: boolean
+      itemCount:
+        description: Container-specific (populated when querying locations)
+        type: number
       name:
         type: string
       parent:
@@ -1880,11 +1886,6 @@ definitions:
     required:
     - name
     type: object
-  v1.EntityAttachmentToken:
-    properties:
-      token:
-        type: string
-    type: object
   v1.EntityTemplateCreateItemRequest:
     properties:
       description:
@@ -2366,7 +2367,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.EntityAttachmentToken'
+            type: file
       security:
       - Bearer: []
       summary: Get Entity Attachment

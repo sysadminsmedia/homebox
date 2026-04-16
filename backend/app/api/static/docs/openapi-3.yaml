@@ -460,7 +460,8 @@ paths:
           content:
             application/octet-stream:
               schema:
-                $ref: "#/components/schemas/v1.EntityAttachmentToken"
+                type: string
+                format: binary
     put:
       security:
         - Bearer: []
@@ -2687,6 +2688,9 @@ components:
           nullable: true
         insured:
           type: boolean
+        itemCount:
+          description: Container-specific (populated when querying locations)
+          type: number
         lifetimeWarranty:
           description: Warranty
           type: boolean
@@ -2808,6 +2812,9 @@ components:
           nullable: true
         insured:
           type: boolean
+        itemCount:
+          description: Container-specific (populated when querying locations)
+          type: number
         name:
           type: string
         parent:
@@ -3643,11 +3650,6 @@ components:
         - name
       properties:
         name:
-          type: string
-    v1.EntityAttachmentToken:
-      type: object
-      properties:
-        token:
           type: string
     v1.EntityTemplateCreateItemRequest:
       type: object
