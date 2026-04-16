@@ -95,6 +95,21 @@ export class GroupApi extends BaseAPI {
   }
 
   /**
+   * Leave the current (or specified) group.
+   */
+  leave(groupId?: string) {
+    const headers = groupId
+      ? {
+          "X-Tenant": groupId,
+        }
+      : undefined;
+    return this.http.delete<void>({
+      url: route(`/groups/leave`),
+      headers,
+    });
+  }
+
+  /**
    * Update group name and currency.
    */
   update(data: GroupUpdate, groupId?: string) {

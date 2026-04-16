@@ -283,6 +283,30 @@ func (ctrl *V1Controller) HandleGroupMemberRemove() errchain.HandlerFunc {
 	return adapters.CommandID("user_id", fn, http.StatusNoContent)
 }
 
+// HandleGroupLeave godoc
+//
+//	@Summary	Leave Group
+//	@Tags		Group
+//	@Produce	json
+//	@Success	204
+//	@Router		/v1/groups/leave [Delete]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleGroupLeave() errchain.HandlerFunc {
+	fn := func(r *http.Request) (any, error) {
+		auth := services.NewContext(r.Context())
+
+		// Allow user to leave their own group
+		err := ctrl.svc.Group.LeaveGroup(auth)
+		if err != nil {
+			return nil, err
+		}
+
+		return nil, nil
+	}
+
+	return adapters.Command(fn, http.StatusNoContent)
+}
+
 // HandleGroupInvitationsDelete godoc
 //
 //	@Summary	Delete Group Invitation
