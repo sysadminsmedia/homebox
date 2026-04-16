@@ -239,6 +239,13 @@ paths:
       tags:
         - Entities
       summary: Get All Custom Field Values
+      parameters:
+        - description: Field name
+          name: field
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: OK
@@ -422,8 +429,8 @@ paths:
                 - name
         required: true
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           content:
             application/json:
               schema:
@@ -1315,7 +1322,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/repo.TagOut"
+                  $ref: "#/components/schemas/repo.TagSummary"
     post:
       security:
         - Bearer: []
@@ -1330,12 +1337,12 @@ paths:
         description: Tag Data
         required: true
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/repo.TagSummary"
+                $ref: "#/components/schemas/repo.TagOut"
   "/v1/tags/{id}":
     get:
       security:
@@ -1370,6 +1377,13 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/repo.TagUpdate"
+        description: Tag Data
+        required: true
       responses:
         "200":
           description: OK
@@ -3438,6 +3452,28 @@ components:
           nullable: true
         updatedAt:
           type: string
+    repo.TagUpdate:
+      type: object
+      required:
+        - name
+      properties:
+        color:
+          type: string
+        description:
+          type: string
+          maxLength: 1000
+        icon:
+          type: string
+          maxLength: 255
+        id:
+          type: string
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+        parentId:
+          type: string
+          nullable: true
     repo.TemplateField:
       type: object
       properties:

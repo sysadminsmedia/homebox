@@ -1028,6 +1028,21 @@ export interface TagSummary {
   updatedAt: Date | string;
 }
 
+export interface TagUpdate {
+  color: string;
+  /** @maxLength 1000 */
+  description: string;
+  /** @maxLength 255 */
+  icon: string;
+  id: string;
+  /**
+   * @minLength 1
+   * @maxLength 255
+   */
+  name: string;
+  parentId?: string | null;
+}
+
 export interface TemplateField {
   booleanValue: boolean;
   id: string;

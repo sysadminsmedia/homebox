@@ -297,9 +297,8 @@ func (ctrl *V1Controller) HandleEntityDuplicate() errchain.HandlerFunc {
 //	@Summary	Get All Custom Field Names
 //	@Tags		Entities
 //	@Produce	json
-//	@Success	200
+//	@Success	200	{array}		string
 //	@Router		/v1/entities/fields [GET]
-//	@Success	200	{object}	[]string
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGetAllCustomFieldNames() errchain.HandlerFunc {
 	fn := func(r *http.Request) ([]string, error) {
@@ -315,9 +314,9 @@ func (ctrl *V1Controller) HandleGetAllCustomFieldNames() errchain.HandlerFunc {
 //	@Summary	Get All Custom Field Values
 //	@Tags		Entities
 //	@Produce	json
-//	@Success	200
+//	@Param		field	query		string	true	"Field name"
+//	@Success	200		{array}		string
 //	@Router		/v1/entities/fields/values [GET]
-//	@Success	200	{object}	[]string
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGetAllCustomFieldValues() errchain.HandlerFunc {
 	type query struct {

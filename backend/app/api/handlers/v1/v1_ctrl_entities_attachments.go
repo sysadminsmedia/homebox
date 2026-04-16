@@ -43,7 +43,7 @@ func sanitizeAttachmentName(name string) string {
 //	@Param		type	formData	string	false	"Type of file"
 //	@Param		primary	formData	bool	false	"Is this the primary attachment"
 //	@Param		name	formData	string	true	"name of the file including extension"
-//	@Success	200		{object}	repo.EntityOut
+//	@Success	201		{object}	repo.EntityOut
 //	@Failure	422		{object}	validate.ErrorResponse
 //	@Router		/v1/entities/{id}/attachments [POST]
 //	@Security	Bearer

@@ -1673,6 +1673,28 @@ definitions:
       updatedAt:
         type: string
     type: object
+  repo.TagUpdate:
+    properties:
+      color:
+        type: string
+      description:
+        maxLength: 1000
+        type: string
+      icon:
+        maxLength: 255
+        type: string
+      id:
+        type: string
+      name:
+        maxLength: 255
+        minLength: 1
+        type: string
+      parentId:
+        type: string
+        x-nullable: true
+    required:
+    - name
+    type: object
   repo.TemplateField:
     properties:
       booleanValue:
@@ -2315,8 +2337,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/repo.EntityOut'
         "422":
@@ -2537,6 +2559,12 @@ paths:
       - Entities
   /v1/entities/fields/values:
     get:
+      parameters:
+      - description: Field name
+        in: query
+        name: field
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -3259,7 +3287,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/repo.TagOut'
+              $ref: '#/definitions/repo.TagSummary'
             type: array
       security:
       - Bearer: []
@@ -3277,10 +3305,10 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
-            $ref: '#/definitions/repo.TagSummary'
+            $ref: '#/definitions/repo.TagOut'
       security:
       - Bearer: []
       summary: Create Tag
@@ -3330,6 +3358,12 @@ paths:
         name: id
         required: true
         type: string
+      - description: Tag Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.TagUpdate'
       produces:
       - application/json
       responses:

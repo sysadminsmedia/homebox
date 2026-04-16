@@ -405,6 +405,17 @@
                     "Entities"
                 ],
                 "summary": "Get All Custom Field Values",
+                "parameters": [
+                    {
+                        "description": "Field name",
+                        "name": "field",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -707,8 +718,8 @@
                     "required": true
                 },
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2216,7 +2227,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/repo.TagOut"
+                                        "$ref": "#/components/schemas/repo.TagSummary"
                                     }
                                 }
                             }
@@ -2246,12 +2257,12 @@
                     "required": true
                 },
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/repo.TagSummary"
+                                    "$ref": "#/components/schemas/repo.TagOut"
                                 }
                             }
                         }
@@ -2315,6 +2326,17 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/repo.TagUpdate"
+                            }
+                        }
+                    },
+                    "description": "Tag Data",
+                    "required": true
+                },
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -5395,6 +5417,37 @@
                     },
                     "updatedAt": {
                         "type": "string"
+                    }
+                }
+            },
+            "repo.TagUpdate": {
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "color": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 1000
+                    },
+                    "icon": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1
+                    },
+                    "parentId": {
+                        "type": "string",
+                        "nullable": true
                     }
                 }
             },

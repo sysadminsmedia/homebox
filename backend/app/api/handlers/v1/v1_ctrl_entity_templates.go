@@ -16,7 +16,7 @@ import (
 //	@Summary	Get All Entity Templates
 //	@Tags		Entity Templates
 //	@Produce	json
-//	@Success	200	{object}	[]repo.EntityTemplateSummary
+//	@Success	200	{array}		repo.EntityTemplateSummary
 //	@Router		/v1/templates [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityTemplatesGetAll() errchain.HandlerFunc {
