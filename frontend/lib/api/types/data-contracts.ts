@@ -650,29 +650,6 @@ export interface EntityOut {
   warrantyExpires: Date | string;
 }
 
-export interface EntityOutCount {
-  archived: boolean;
-  /** @example "0" */
-  assetId: string;
-  createdAt: Date | string;
-  description: string;
-  entityType?: EntityTypeSummary | null;
-  id: string;
-  imageId?: string | null;
-  insured: boolean;
-  itemCount: number;
-  name: string;
-  /** Edges */
-  parent?: EntitySummary | null;
-  purchasePrice: number;
-  quantity: number;
-  /** Sale details */
-  soldTime: Date | string;
-  tags: TagSummary[];
-  thumbnailId?: string | null;
-  updatedAt: Date | string;
-}
-
 export interface EntityPatch {
   entityTypeId?: string | null;
   id: string;
@@ -1048,9 +1025,12 @@ export interface TagSummary {
 }
 
 export interface TemplateField {
+  booleanValue: boolean;
   id: string;
   name: string;
+  numberValue: number;
   textValue: string;
+  timeValue: string;
   type: string;
 }
 

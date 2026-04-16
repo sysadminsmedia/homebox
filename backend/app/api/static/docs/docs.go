@@ -5200,13 +5200,22 @@ const docTemplate = `{
         "repo.TemplateField": {
             "type": "object",
             "properties": {
+                "booleanValue": {
+                    "type": "boolean"
+                },
                 "id": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string"
                 },
+                "numberValue": {
+                    "type": "integer"
+                },
                 "textValue": {
+                    "type": "string"
+                },
+                "timeValue": {
                     "type": "string"
                 },
                 "type": {
