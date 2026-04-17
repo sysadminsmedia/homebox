@@ -9,7 +9,7 @@
     DropdownMenuTrigger,
     DropdownMenuSeparator,
   } from "@/components/ui/dropdown-menu";
-  import type { ItemSummary } from "~/lib/api/types/data-contracts";
+  import type { EntitySummary } from "~/lib/api/types/data-contracts";
   import type { Column, Row, Table } from "@tanstack/vue-table";
   import { useI18n } from "vue-i18n";
   import { toast } from "~/components/ui/sonner";
@@ -23,13 +23,13 @@
   const { openDialog } = useDialog();
 
   const props = defineProps<{
-    item?: ItemSummary;
+    item?: EntitySummary;
     multi?: {
-      items: Row<ItemSummary>[];
-      columns: Column<ItemSummary>[];
+      items: Row<EntitySummary>[];
+      columns: Column<EntitySummary>[];
     };
     view: "table" | "card";
-    table: Table<ItemSummary>;
+    table: Table<EntitySummary>;
   }>();
 
   const emit = defineEmits<{
@@ -71,7 +71,7 @@
     return `"${str}"`;
   };
 
-  const downloadCsv = (items: Row<ItemSummary>[], columns: Column<ItemSummary>[]) => {
+  const downloadCsv = (items: Row<EntitySummary>[], columns: Column<EntitySummary>[]) => {
     // get enabled columns
     const enabledColumns = columns.filter(c => c.id !== undefined && c.getIsVisible() && c.getCanHide()).map(c => c.id);
 
@@ -80,7 +80,7 @@
 
     // map each item to a row matching enabled columns order, escaping each field
     const rows = items.map(item =>
-      enabledColumns.map(col => escapeCsvField(item.original[col as keyof ItemSummary])).join(",")
+      enabledColumns.map(col => escapeCsvField(item.original[col as keyof EntitySummary])).join(",")
     );
 
     const csv = [header, ...rows].join("\n");
@@ -94,7 +94,7 @@
     URL.revokeObjectURL(url);
   };
 
-  const downloadJson = (items: Row<ItemSummary>[], columns: Column<ItemSummary>[]) => {
+  const downloadJson = (items: Row<EntitySummary>[], columns: Column<EntitySummary>[]) => {
     // get enabled columns
     const enabledColumns = columns.filter(c => c.id !== undefined && c.getIsVisible() && c.getCanHide()).map(c => c.id);
 
@@ -102,7 +102,7 @@
     const data = items.map(item => {
       const obj: Record<string, unknown> = {};
       enabledColumns.forEach(col => {
-        obj[col] = item.original[col as keyof ItemSummary] ?? null;
+        obj[col] = item.original[col as keyof EntitySummary] ?? null;
       });
       return obj;
     });

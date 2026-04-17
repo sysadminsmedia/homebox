@@ -2,8 +2,7 @@ import { useViewPreferences } from "./use-preferences";
 import { watch } from "vue";
 
 export enum ServerEvent {
-  LocationMutation = "location.mutation",
-  ItemMutation = "item.mutation",
+  EntityMutation = "entity.mutation",
   TagMutation = "tag.mutation",
   UserMutation = "user.mutation",
 }
@@ -52,8 +51,7 @@ function connect(onmessage: (m: EventMessage) => void) {
 
   const thorttled = new Map<ServerEvent, (m: EventMessage) => void>();
 
-  thorttled.set(ServerEvent.LocationMutation, useThrottleFn(onmessage, 1000));
-  thorttled.set(ServerEvent.ItemMutation, useThrottleFn(onmessage, 1000));
+  thorttled.set(ServerEvent.EntityMutation, useThrottleFn(onmessage, 1000));
   thorttled.set(ServerEvent.TagMutation, useThrottleFn(onmessage, 1000));
   thorttled.set(ServerEvent.UserMutation, useThrottleFn(onmessage, 1000));
 

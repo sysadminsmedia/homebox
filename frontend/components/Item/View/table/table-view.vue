@@ -2,14 +2,14 @@
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
   import DataTableExpandedRow from "./data-table-expanded-row.vue";
   import { FlexRender, type Column, type ColumnDef, type Table as TableType } from "@tanstack/vue-table";
-  import type { ItemSummary } from "~/lib/api/types/data-contracts";
+  import type { EntitySummary } from "~/lib/api/types/data-contracts";
 
   defineProps<{
-    table: TableType<ItemSummary>;
-    columns: ColumnDef<ItemSummary, TValue>[];
+    table: TableType<EntitySummary>;
+    columns: ColumnDef<EntitySummary, TValue>[];
   }>();
 
-  const ariaSort = (column: Column<ItemSummary, unknown>) => {
+  const ariaSort = (column: Column<EntitySummary, unknown>) => {
     const s = column.getIsSorted();
     if (s === "asc") return "ascending";
     if (s === "desc") return "descending";

@@ -19,7 +19,7 @@
   import MdiArrowUp from "~icons/mdi/arrow-up";
   import Checkbox from "~/components/ui/checkbox/Checkbox.vue";
   import Label from "~/components/ui/label/Label.vue";
-  import type { ItemSummary } from "~/lib/api/types/data-contracts";
+  import type { EntitySummary } from "~/lib/api/types/data-contracts";
 
   import TableView from "./table-view.vue";
   import CardView from "./card-view.vue";
@@ -28,8 +28,8 @@
   import Switch from "~/components/ui/switch/Switch.vue";
 
   const props = defineProps<{
-    columns: ColumnDef<ItemSummary, TValue>[];
-    data: ItemSummary[];
+    columns: ColumnDef<EntitySummary, TValue>[];
+    data: EntitySummary[];
     disableControls?: boolean;
     view: "table" | "card";
     locationFlatTree?: FlatTreeItem[];
@@ -79,7 +79,7 @@
     }
   );
 
-  const table = useVueTable<ItemSummary>({
+  const table = useVueTable<EntitySummary>({
     manualPagination: !!props.externalPagination,
 
     get data() {
@@ -128,7 +128,7 @@
       .getAllColumns()
       .filter(column => column.getCanHide())
       .map(h => ({
-        value: h.id as keyof ItemSummary,
+        value: h.id as keyof EntitySummary,
         enabled: h.getIsVisible(),
       }));
 

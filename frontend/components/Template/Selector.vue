@@ -117,11 +117,11 @@
   import { Label } from "~/components/ui/label";
   import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
   import { cn } from "~/lib/utils";
-  import type { ItemTemplateSummary } from "~~/lib/api/types/data-contracts";
+  import type { EntityTemplateSummary } from "~~/lib/api/types/data-contracts";
   import MdiFileDocumentOutline from "~icons/mdi/file-document-outline";
 
   type Props = {
-    modelValue?: ItemTemplateSummary | null;
+    modelValue?: EntityTemplateSummary | null;
     compact?: boolean;
   };
 
@@ -144,7 +144,7 @@
     return data;
   });
 
-  function selectTemplate(template: ItemTemplateSummary) {
+  function selectTemplate(template: EntityTemplateSummary) {
     if (value.value?.id !== template.id) {
       value.value = template;
       emit("template-selected", template);

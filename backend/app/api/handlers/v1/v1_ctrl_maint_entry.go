@@ -18,7 +18,7 @@ import (
 //	@Param		id		path	string					true	"Item ID"
 //	@Param		filters	query	repo.MaintenanceFilters	false	"which maintenance to retrieve"
 //	@Success	200		{array}	repo.MaintenanceEntryWithDetails[]
-//	@Router		/v1/items/{id}/maintenance [GET]
+//	@Router		/v1/entities/{id}/maintenance [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleMaintenanceLogGet() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID, filters repo.MaintenanceFilters) ([]repo.MaintenanceEntryWithDetails, error) {
@@ -37,7 +37,7 @@ func (ctrl *V1Controller) HandleMaintenanceLogGet() errchain.HandlerFunc {
 //	@Param		id		path		string						true	"Item ID"
 //	@Param		payload	body		repo.MaintenanceEntryCreate	true	"Entry Data"
 //	@Success	201		{object}	repo.MaintenanceEntry
-//	@Router		/v1/items/{id}/maintenance [POST]
+//	@Router		/v1/entities/{id}/maintenance [POST]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleMaintenanceEntryCreate() errchain.HandlerFunc {
 	fn := func(r *http.Request, itemID uuid.UUID, body repo.MaintenanceEntryCreate) (repo.MaintenanceEntry, error) {

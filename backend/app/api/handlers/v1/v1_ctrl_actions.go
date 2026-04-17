@@ -42,7 +42,7 @@ func actionHandlerFactory(ref string, fn func(context.Context, uuid.UUID) (int, 
 //	@Router			/v1/actions/ensure-asset-ids [Post]
 //	@Security		Bearer
 func (ctrl *V1Controller) HandleEnsureAssetID() errchain.HandlerFunc {
-	return actionHandlerFactory("ensure asset IDs", ctrl.svc.Items.EnsureAssetID)
+	return actionHandlerFactory("ensure asset IDs", ctrl.svc.Entities.EnsureAssetID)
 }
 
 // HandleEnsureImportRefs godoc
@@ -55,7 +55,7 @@ func (ctrl *V1Controller) HandleEnsureAssetID() errchain.HandlerFunc {
 //	@Router			/v1/actions/ensure-import-refs [Post]
 //	@Security		Bearer
 func (ctrl *V1Controller) HandleEnsureImportRefs() errchain.HandlerFunc {
-	return actionHandlerFactory("ensure import refs", ctrl.svc.Items.EnsureImportRef)
+	return actionHandlerFactory("ensure import refs", ctrl.svc.Entities.EnsureImportRef)
 }
 
 // HandleItemDateZeroOut godoc
@@ -68,7 +68,7 @@ func (ctrl *V1Controller) HandleEnsureImportRefs() errchain.HandlerFunc {
 //	@Router			/v1/actions/zero-item-time-fields [Post]
 //	@Security		Bearer
 func (ctrl *V1Controller) HandleItemDateZeroOut() errchain.HandlerFunc {
-	return actionHandlerFactory("zero out date time", ctrl.repo.Items.ZeroOutTimeFields)
+	return actionHandlerFactory("zero out date time", ctrl.repo.Entities.ZeroOutTimeFields)
 }
 
 // HandleSetPrimaryPhotos godoc
@@ -81,7 +81,7 @@ func (ctrl *V1Controller) HandleItemDateZeroOut() errchain.HandlerFunc {
 //	@Router			/v1/actions/set-primary-photos [Post]
 //	@Security		Bearer
 func (ctrl *V1Controller) HandleSetPrimaryPhotos() errchain.HandlerFunc {
-	return actionHandlerFactory("ensure asset IDs", ctrl.repo.Items.SetPrimaryPhotos)
+	return actionHandlerFactory("ensure asset IDs", ctrl.repo.Entities.SetPrimaryPhotos)
 }
 
 // HandleCreateMissingThumbnails godoc
@@ -138,7 +138,7 @@ func (ctrl *V1Controller) HandleWipeInventory() errchain.HandlerFunc {
 			}
 		}
 
-		totalCompleted, err := ctrl.repo.Items.WipeInventory(ctx, ctx.GID, options.WipeTags, options.WipeLocations, options.WipeMaintenance)
+		totalCompleted, err := ctrl.repo.Entities.WipeInventory(ctx, ctx.GID, options.WipeTags, options.WipeLocations, options.WipeMaintenance)
 		if err != nil {
 			log.Err(err).Str("action_ref", "wipe inventory").Msg("failed to run action")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
@@ -150,7 +150,7 @@ func (ctrl *V1Controller) HandleWipeInventory() errchain.HandlerFunc {
 				ctrl.bus.Publish(eventbus.EventTagMutation, eventbus.GroupMutationEvent{GID: ctx.GID})
 			}
 			if options.WipeLocations {
-				ctrl.bus.Publish(eventbus.EventLocationMutation, eventbus.GroupMutationEvent{GID: ctx.GID})
+				ctrl.bus.Publish(eventbus.EventEntityMutation, eventbus.GroupMutationEvent{GID: ctx.GID})
 			}
 		}
 

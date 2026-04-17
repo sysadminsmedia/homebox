@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { ItemOut, ItemSummary } from "~~/lib/api/types/data-contracts";
+  import type { EntityOut, EntitySummary } from "~~/lib/api/types/data-contracts";
   import MdiShieldCheck from "~icons/mdi/shield-check";
   import MdiArchive from "~icons/mdi/archive";
   import { Badge } from "@/components/ui/badge";
@@ -97,9 +97,9 @@
       return "/no-image.jpg";
     }
     if (props.item.thumbnailId) {
-      return api.authURL(`/items/${props.item.id}/attachments/${props.item.thumbnailId}`);
+      return api.authURL(`/entities/${props.item.id}/attachments/${props.item.thumbnailId}`);
     } else {
-      return api.authURL(`/items/${props.item.id}/attachments/${props.item.imageId}`);
+      return api.authURL(`/entities/${props.item.id}/attachments/${props.item.imageId}`);
     }
   });
 
@@ -109,7 +109,7 @@
 
   const props = defineProps({
     item: {
-      type: Object as () => ItemOut | ItemSummary,
+      type: Object as () => EntityOut | EntitySummary,
       required: true,
     },
     locationFlatTree: {
@@ -118,7 +118,7 @@
       default: () => [],
     },
     tableRow: {
-      type: Object as () => Row<ItemSummary>,
+      type: Object as () => Row<EntitySummary>,
       required: false,
       default: () => null,
     },

@@ -372,6 +372,7 @@ func createOTLPMetricExporter(ctx context.Context, cfg *config.OTelConfig) (sdkm
 		}
 		if cfg.Insecure {
 			// Insecure mode disables TLS; use only for dev/testing or trusted networks.
+			opts = append(opts, otlpmetricgrpc.WithInsecure())
 			opts = append(opts, otlpmetricgrpc.WithDialOption(grpc.WithTransportCredentials(insecure.NewCredentials())))
 		}
 		if len(headers) > 0 {
@@ -427,6 +428,7 @@ func createOTLPLogExporter(ctx context.Context, cfg *config.OTelConfig) (sdklog.
 		}
 		if cfg.Insecure {
 			// Insecure mode disables TLS; use only for dev/testing or trusted networks.
+			opts = append(opts, otlploggrpc.WithInsecure())
 			opts = append(opts, otlploggrpc.WithDialOption(grpc.WithTransportCredentials(insecure.NewCredentials())))
 		}
 		if len(headers) > 0 {

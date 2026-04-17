@@ -86,8 +86,8 @@ func (csf LocationString) String() string {
 	return strings.Join(csf, " / ")
 }
 
-func fromPathSlice(s []repo.ItemPath) LocationString {
-	return lo.Map(s, func(p repo.ItemPath, _ int) string {
+func fromPathSlice(s []repo.EntityPath) LocationString {
+	return lo.Map(s, func(p repo.EntityPath, _ int) string {
 		return p.Name
 	})
 }

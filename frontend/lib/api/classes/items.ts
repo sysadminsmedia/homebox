@@ -1,18 +1,20 @@
 import { BaseAPI, route } from "../base";
 import { parseDate } from "../base/base-api";
 import type {
+  EntityCreate,
+  EntityListResult,
+  EntityOut,
+  EntityPatch,
+  EntityPath,
+  EntitySummary,
+  EntityUpdate,
   ItemAttachmentUpdate,
-  ItemCreate,
-  ItemOut,
-  ItemPatch,
-  ItemPath,
-  ItemSummary,
-  ItemUpdate,
   MaintenanceEntry,
   MaintenanceEntryCreate,
   MaintenanceEntryWithDetails,
+  TreeItem,
 } from "../types/data-contracts";
-import type { AttachmentTypes, ItemSummaryPaginationResult } from "../types/non-generated";
+import type { AttachmentTypes } from "../types/non-generated";
 import type { MaintenanceFilters } from "./maintenance.ts";
 import type { Requests } from "~~/lib/requests";
 
@@ -21,14 +23,21 @@ export type ItemsQuery = {
   includeArchived?: boolean;
   page?: number;
   pageSize?: number;
-  locations?: string[];
+  parentIds?: string[];
   tags?: string[];
   negateTags?: boolean;
   onlyWithoutPhoto?: boolean;
   onlyWithPhoto?: boolean;
-  parentIds?: string[];
   q?: string;
   fields?: string[];
+};
+
+export type LocationsQuery = {
+  filterChildren: boolean;
+};
+
+export type TreeQuery = {
+  withItems: boolean;
 };
 
 export class AttachmentsAPI extends BaseAPI {
@@ -43,19 +52,19 @@ export class AttachmentsAPI extends BaseAPI {
       formData.append("primary", primary.toString());
     }
 
-    return this.http.post<FormData, ItemOut>({
-      url: route(`/items/${id}/attachments`),
+    return this.http.post<FormData, EntityOut>({
+      url: route(`/entities/${id}/attachments`),
       data: formData,
     });
   }
 
   delete(id: string, attachmentId: string) {
-    return this.http.delete<void>({ url: route(`/items/${id}/attachments/${attachmentId}`) });
+    return this.http.delete<void>({ url: route(`/entities/${id}/attachments/${attachmentId}`) });
   }
 
   update(id: string, attachmentId: string, data: ItemAttachmentUpdate) {
-    return this.http.put<ItemAttachmentUpdate, ItemOut>({
-      url: route(`/items/${id}/attachments/${attachmentId}`),
+    return this.http.put<ItemAttachmentUpdate, EntityOut>({
+      url: route(`/entities/${id}/attachments/${attachmentId}`),
       body: data,
     });
   }
@@ -63,24 +72,24 @@ export class AttachmentsAPI extends BaseAPI {
 
 export class FieldsAPI extends BaseAPI {
   getAll() {
-    return this.http.get<string[]>({ url: route("/items/fields") });
+    return this.http.get<string[]>({ url: route("/entities/fields") });
   }
 
   getAllValues(field: string) {
-    return this.http.get<string[]>({ url: route(`/items/fields/values`, { field }) });
+    return this.http.get<string[]>({ url: route(`/entities/fields/values`, { field }) });
   }
 }
 
 export class ItemMaintenanceAPI extends BaseAPI {
   getLog(itemId: string, filters: MaintenanceFilters = {}) {
     return this.http.get<MaintenanceEntryWithDetails[]>({
-      url: route(`/items/${itemId}/maintenance`, { status: filters.status?.toString() }),
+      url: route(`/entities/${itemId}/maintenance`, { status: filters.status?.toString() }),
     });
   }
 
   create(itemId: string, data: MaintenanceEntryCreate) {
     return this.http.post<MaintenanceEntryCreate, MaintenanceEntry>({
-      url: route(`/items/${itemId}/maintenance`),
+      url: route(`/entities/${itemId}/maintenance`),
       body: data,
     });
   }
@@ -99,19 +108,21 @@ export class ItemsApi extends BaseAPI {
   }
 
   fullpath(id: string) {
-    return this.http.get<ItemPath[]>({ url: route(`/items/${id}/path`) });
+    return this.http.get<EntityPath[]>({ url: route(`/entities/${id}/path`) });
   }
 
-  getAll(q: ItemsQuery = {}) {
-    return this.http.get<ItemSummaryPaginationResult<ItemSummary>>({ url: route("/items", q) });
+  async getAll(q: ItemsQuery = {}) {
+    const payload = await this.http.get<EntityListResult>({ url: route("/entities", q) });
+    return payload;
   }
 
-  create(item: ItemCreate) {
-    return this.http.post<ItemCreate, ItemOut>({ url: route("/items"), body: item });
+  async create(item: EntityCreate) {
+    const payload = await this.http.post<EntityCreate, EntityOut>({ url: route("/entities"), body: item });
+    return payload;
   }
 
   async get(id: string) {
-    const payload = await this.http.get<ItemOut>({ url: route(`/items/${id}`) });
+    const payload = await this.http.get<EntityOut>({ url: route(`/entities/${id}`) });
 
     if (!payload.data) {
       return payload;
@@ -123,12 +134,12 @@ export class ItemsApi extends BaseAPI {
   }
 
   delete(id: string) {
-    return this.http.delete<void>({ url: route(`/items/${id}`) });
+    return this.http.delete<void>({ url: route(`/entities/${id}`) });
   }
 
-  async update(id: string, item: ItemUpdate) {
-    const payload = await this.http.put<ItemCreate, ItemOut>({
-      url: route(`/items/${id}`),
+  async update(id: string, item: EntityUpdate) {
+    const payload = await this.http.put<EntityCreate, EntityOut>({
+      url: route(`/entities/${id}`),
       body: this.dropFields(item),
     });
     if (!payload.data) {
@@ -139,9 +150,9 @@ export class ItemsApi extends BaseAPI {
     return payload;
   }
 
-  async patch(id: string, item: ItemPatch) {
-    const resp = await this.http.patch<ItemPatch, ItemOut>({
-      url: route(`/items/${id}`),
+  async patch(id: string, item: EntityPatch) {
+    const resp = await this.http.patch<EntityPatch, EntityOut>({
+      url: route(`/entities/${id}`),
       body: this.dropFields(item),
     });
 
@@ -153,7 +164,7 @@ export class ItemsApi extends BaseAPI {
     return resp;
   }
 
-  duplicate(
+  async duplicate(
     id: string,
     options: {
       copyMaintenance?: boolean;
@@ -162,8 +173,8 @@ export class ItemsApi extends BaseAPI {
       copyPrefix?: string;
     } = {}
   ) {
-    return this.http.post<typeof options, ItemOut>({
-      url: route(`/items/${id}/duplicate`),
+    const payload = await this.http.post<typeof options, EntityOut>({
+      url: route(`/entities/${id}/duplicate`),
       body: {
         copyMaintenance: options.copyMaintenance,
         copyAttachments: options.copyAttachments,
@@ -171,6 +182,7 @@ export class ItemsApi extends BaseAPI {
         copyPrefix: options.copyPrefix,
       },
     });
+    return payload;
   }
 
   import(file: File | Blob) {
@@ -178,16 +190,49 @@ export class ItemsApi extends BaseAPI {
     formData.append("csv", file);
 
     return this.http.post<FormData, void>({
-      url: route("/items/import"),
+      url: route("/entities/import"),
       data: formData,
     });
   }
 
   exportURL(tenant?: string) {
     if (tenant) {
-      return route("/items/export", { tenant });
+      return route("/entities/export", { tenant });
     }
 
-    return route("/items/export");
+    return route("/entities/export");
+  }
+
+  // =========================================================================
+  // Location / Container methods (formerly in LocationsApi)
+  // =========================================================================
+
+  async getLocations(q: LocationsQuery = { filterChildren: false }) {
+    const resp = await this.http.get<{ items: EntitySummary[] }>({ url: route("/entities", { ...q, isLocation: true }) });
+    // Unwrap paginated response to flat array for backward compat
+    return {
+      ...resp,
+      data: resp.data?.items ?? [],
+    } as { data: EntitySummary[]; error: any; status: number };
+  }
+
+  getTree(tq: TreeQuery = { withItems: false }) {
+    return this.http.get<TreeItem[]>({ url: route("/entities/tree", tq) });
+  }
+
+  createLocation(body: EntityCreate) {
+    return this.http.post<EntityCreate, EntityOut>({ url: route("/entities"), body });
+  }
+
+  getLocation(id: string) {
+    return this.http.get<EntityOut>({ url: route(`/entities/${id}`) });
+  }
+
+  deleteLocation(id: string) {
+    return this.http.delete<void>({ url: route(`/entities/${id}`) });
+  }
+
+  updateLocation(id: string, body: EntityUpdate) {
+    return this.http.put<EntityUpdate, EntityOut>({ url: route(`/entities/${id}`), body });
   }
 }
