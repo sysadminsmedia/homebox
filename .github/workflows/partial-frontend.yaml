@@ -23,6 +23,10 @@ jobs:
         with:
           version: 10
 
+      - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f
+        with:
+          node-version: lts/*
+
       - name: Install dependencies
         run: pnpm install
         working-directory: frontend
