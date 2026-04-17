@@ -143,7 +143,7 @@
   import { Input } from "@/components/ui/input";
   import BaseModal from "@/components/App/CreateModal.vue";
   import type { EntityTypeSummary } from "~~/lib/api/types/data-contracts";
-  import type { LocationSummary } from "~~/lib/api/types/data-contracts";
+  import type { EntitySummary } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
   import { useTagStore } from "~/stores/tags";
@@ -209,7 +209,7 @@
   const form = reactive({
     name: "",
     description: "",
-    parent: null as LocationSummary | null,
+    parent: null as EntitySummary | null,
     tags: [] as string[],
     notes: "",
     photos: [] as PhotoPreview[],

@@ -2,7 +2,7 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
-  import type { ItemAttachment, ItemField, ItemOut, ItemUpdate } from "~~/lib/api/types/data-contracts";
+  import type { ItemAttachment, EntityFieldData, EntityOut, EntityUpdate } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
@@ -69,7 +69,7 @@
     return data;
   });
 
-  const item = ref<ItemOut & { tagIds: string[] }>(null as never);
+  const item = ref<EntityOut & { tagIds: string[] }>(null as never);
 
   watchEffect(() => {
     if (nullableItem.value) {
@@ -90,7 +90,7 @@
   async function saveLocation(redirect: boolean) {
     saving.value = true;
 
-    const payload: ItemUpdate = {
+    const payload: EntityUpdate = {
       ...item.value,
       parentId: parent.value?.id || null,
       tagIds: item.value.tagIds,
@@ -98,7 +98,7 @@
       purchasePrice: item.value.purchasePrice || 0,
       soldPrice: item.value.soldPrice || 0,
       purchaseTime: item.value.purchaseTime as Date,
-      syncChildEntityLocations: item.value.syncChildItemsLocations,
+      syncChildEntityLocations: item.value.syncChildEntityLocations,
     };
 
     const { error } = await api.items.update(locationId.value, payload);
@@ -123,7 +123,7 @@
   type TextFormField = {
     type: "text" | "textarea" | "markdown";
     label: string;
-    ref: NonNullableStringKeys<ItemOut>;
+    ref: NonNullableStringKeys<EntityOut>;
     maxLength?: number;
     minLength?: number;
   };
@@ -131,13 +131,13 @@
   type NumberFormField = {
     type: "number";
     label: string;
-    ref: NonNullableNumberKeys<ItemOut> | NonNullableStringKeys<ItemOut>;
+    ref: NonNullableNumberKeys<EntityOut> | NonNullableStringKeys<EntityOut>;
   };
 
   interface BoolFormField {
     type: "checkbox";
     label: string;
-    ref: BooleanKeys<ItemOut>;
+    ref: BooleanKeys<EntityOut>;
   }
 
   type FormField = TextFormField | BoolFormField | NumberFormField;
@@ -294,7 +294,7 @@
       numberValue: 0,
       booleanValue: false,
       timeValue: null,
-    } as unknown as ItemField);
+    } as unknown as EntityFieldData);
   }
 
   async function keyboardSave(e: KeyboardEvent) {

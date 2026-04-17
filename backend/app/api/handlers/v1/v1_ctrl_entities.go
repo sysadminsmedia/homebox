@@ -32,7 +32,7 @@ import (
 //	@Param		pageSize	query		int			false	"items per page"
 //	@Param		tags		query		[]string	false	"tags Ids"		collectionFormat(multi)
 //	@Param		parentIds	query		[]string	false	"parent Ids"	collectionFormat(multi)
-//	@Success	200			{object}	repo.PaginationResult[repo.EntitySummary]{}
+//	@Success	200			{object}	repo.EntityListResult
 //	@Router		/v1/entities [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
@@ -72,6 +72,8 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 			v.IsLocation = &isLoc
 		}
 
+		v.FilterChildren = queryBool(params.Get("filterChildren"))
+
 		if strings.HasPrefix(v.Search, "#") {
 			aidStr := strings.TrimPrefix(v.Search, "#")
 
@@ -88,40 +90,6 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		ctx := services.NewContext(r.Context())
 		query := extractQuery(r)
-
-		// When querying for locations specifically, use the container query
-		// which includes item count aggregation, then normalize to the same
-		// PaginationResult shape so the endpoint always returns a consistent type.
-		if query.IsLocation != nil && *query.IsLocation {
-			filterChildren := queryBool(r.URL.Query().Get("filterChildren"))
-			containers, err := ctrl.repo.Entities.GetAllContainers(ctx, ctx.GID, repo.ContainerQuery{
-				FilterChildren: filterChildren,
-			})
-			if err != nil {
-				log.Err(err).Msg("failed to get containers")
-				return validate.NewRequestError(err, http.StatusInternalServerError)
-			}
-
-			summaries := make([]repo.EntitySummary, len(containers))
-			for i, c := range containers {
-				s := c.EntitySummary
-				s.ItemCount = c.ItemCount
-				summaries[i] = s
-			}
-
-			return server.JSON(w, http.StatusOK, struct {
-				repo.PaginationResult[repo.EntitySummary]
-				TotalPrice float64 `json:"totalPrice"`
-			}{
-				PaginationResult: repo.PaginationResult[repo.EntitySummary]{
-					Page:     1,
-					PageSize: len(summaries),
-					Total:    len(summaries),
-					Items:    summaries,
-				},
-				TotalPrice: 0,
-			})
-		}
 
 		items, err := ctrl.repo.Entities.QueryByGroup(ctx, ctx.GID, query)
 		if err != nil {
@@ -144,10 +112,7 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 
 		totalPriceFloat, _ := new(big.Float).Quo(new(big.Float).SetInt(totalPrice), big.NewFloat(100)).Float64()
 
-		return server.JSON(w, http.StatusOK, struct {
-			repo.PaginationResult[repo.EntitySummary]
-			TotalPrice float64 `json:"totalPrice"`
-		}{
+		return server.JSON(w, http.StatusOK, repo.EntityListResult{
 			PaginationResult: items,
 			TotalPrice:       totalPriceFloat,
 		})
@@ -357,9 +322,9 @@ func (ctrl *V1Controller) HandleEntitiesImport() errchain.HandlerFunc {
 		}
 		defer func() { _ = file.Close() }()
 
-		tenant := services.UseTenantCtx(r.Context())
+		auth := services.NewContext(r.Context())
 
-		_, err = ctrl.svc.Entities.CsvImport(r.Context(), tenant, file)
+		_, err = ctrl.svc.Entities.CsvImport(r.Context(), auth.GID, file)
 		if err != nil {
 			log.Err(err).Msg("failed to import entities")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
@@ -412,9 +377,7 @@ func (ctrl *V1Controller) HandleEntitiesExport() errchain.HandlerFunc {
 		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment;filename=%s", filename))
 
 		writer := csv.NewWriter(w)
-		writer.WriteAll(csvData)
-		writer.Flush()
-		if err := writer.Error(); err != nil {
+		if err := writer.WriteAll(csvData); err != nil {
 			// Headers already sent, can't write an HTTP error response
 			log.Err(err).Msg("failed to write CSV export response")
 		}

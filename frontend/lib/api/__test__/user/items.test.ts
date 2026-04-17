@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { describe, expect, test } from "vitest";
-import type { ItemField, ItemUpdate, LocationOut } from "../../types/data-contracts";
+import type { EntityFieldData, EntityUpdate, EntityOut } from "../../types/data-contracts";
 import { AttachmentTypes } from "../../types/non-generated";
 import type { UserClient } from "../../user";
 import { factories } from "../factories";
@@ -12,7 +12,7 @@ describe("user should be able to create an item and add an attachment", () => {
    * useLocation sets up a location resource for testing, and returns a function
    * that can be used to delete the location from the backend server.
    */
-  async function useLocation(api: UserClient): Promise<[LocationOut, () => Promise<void>]> {
+  async function useLocation(api: UserClient): Promise<[EntityOut, () => Promise<void>]> {
     const { response, data } = await api.items.createLocation({
       parentId: null,
       name: `__test__.location.name_${increment}`,
@@ -78,7 +78,7 @@ describe("user should be able to create an item and add an attachment", () => {
     });
     expect(response.status).toBe(201);
 
-    const fields: ItemField[] = [
+    const fields: EntityFieldData[] = [
       factories.itemField(),
       factories.itemField(),
       factories.itemField(),
@@ -88,12 +88,12 @@ describe("user should be able to create an item and add an attachment", () => {
     // Add fields
     const itemUpdate = {
       ...item,
-      parentId: item.location?.id || item.parent?.id || null,
+      parentId: item.parent?.id || null,
       tagIds: item.tags.map(l => l.id),
       fields,
     };
 
-    const { response: updateResponse, data: item2 } = await api.items.update(item.id, itemUpdate as ItemUpdate);
+    const { response: updateResponse, data: item2 } = await api.items.update(item.id, itemUpdate as EntityUpdate);
     expect(updateResponse.status).toBe(200);
 
     expect(item2.fields).toHaveLength(fields.length);
@@ -106,7 +106,7 @@ describe("user should be able to create an item and add an attachment", () => {
 
     itemUpdate.fields = [fields[0]!, fields[1]!];
 
-    const { response: updateResponse2, data: item3 } = await api.items.update(item.id, itemUpdate as ItemUpdate);
+    const { response: updateResponse2, data: item3 } = await api.items.update(item.id, itemUpdate as EntityUpdate);
     expect(updateResponse2.status).toBe(200);
 
     expect(item3.fields).toHaveLength(2);
@@ -223,7 +223,7 @@ describe("user should be able to create an item and add an attachment", () => {
       parentId: parent.id,
       tagIds: [],
     };
-    const { response: child1UpdatedResponse } = await api.items.update(child1Item.id, child1ItemUpdate as ItemUpdate);
+    const { response: child1UpdatedResponse } = await api.items.update(child1Item.id, child1ItemUpdate as EntityUpdate);
     expect(child1UpdatedResponse.status).toBe(200);
 
     const { response: child2Response, data: child2Item } = await api.items.create({
@@ -239,7 +239,7 @@ describe("user should be able to create an item and add an attachment", () => {
       parentId: parent.id,
       tagIds: [],
     };
-    const { response: child2UpdatedResponse } = await api.items.update(child2Item.id, child2ItemUpdate as ItemUpdate);
+    const { response: child2UpdatedResponse } = await api.items.update(child2Item.id, child2ItemUpdate as EntityUpdate);
     expect(child2UpdatedResponse.status).toBe(200);
 
     const itemUpdate = {
@@ -253,11 +253,11 @@ describe("user should be able to create an item and add an attachment", () => {
 
     const { response: child1FinalResponse, data: child1FinalData } = await api.items.get(child1Item.id);
     expect(child1FinalResponse.status).toBe(200);
-    expect(child1FinalData.location?.id).toBe(parentLocation.id);
+    expect(child1FinalData.parent?.id).toBe(parentLocation.id);
 
     const { response: child2FinalResponse, data: child2FinalData } = await api.items.get(child2Item.id);
     expect(child2FinalResponse.status).toBe(200);
-    expect(child2FinalData.location?.id).toBe(parentLocation.id);
+    expect(child2FinalData.parent?.id).toBe(parentLocation.id);
 
     parentCleanup();
     childsCleanup();

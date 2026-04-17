@@ -288,7 +288,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/repo.PaginationResult-repo_EntitySummary"
+                            "$ref": "#/definitions/repo.EntityListResult"
                         }
                     }
                 }
@@ -4070,6 +4070,29 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "string"
+                }
+            }
+        },
+        "repo.EntityListResult": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.EntitySummary"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "totalPrice": {
+                    "type": "number"
                 }
             }
         },

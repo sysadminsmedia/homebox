@@ -2,7 +2,7 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
-  import type { ItemAttachment, ItemField, ItemOut, ItemUpdate } from "~~/lib/api/types/data-contracts";
+  import type { ItemAttachment, EntityFieldData, EntityOut, EntityUpdate } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
@@ -64,14 +64,6 @@
       return;
     }
 
-    if (locations.value && data.location?.id) {
-      // @ts-expect-error - we know the locations is valid
-      const location = locations.value.find(l => l.id === data.location.id);
-      if (location) {
-        data.location = location;
-      }
-    }
-
     if (data.parent) {
       parent.value = data.parent;
     }
@@ -79,7 +71,7 @@
     return data;
   });
 
-  const item = ref<ItemOut & { tagIds: string[] }>(null as never);
+  const item = ref<EntityOut & { tagIds: string[] }>(null as never);
 
   watchEffect(() => {
     if (nullableItem.value) {
@@ -90,8 +82,6 @@
     }
   });
 
-  // const item = computed(() => nullableItem.value as ItemOut);
-
   onMounted(() => {
     refresh();
   });
@@ -99,7 +89,7 @@
   const saving = ref(false);
 
   async function saveItem(redirect: boolean) {
-    if (!item.value.location?.id) {
+    if (!item.value.parent?.id && !parent.value?.id) {
       toast.error(t("items.toast.failed_save_no_location"));
       return;
     }
@@ -118,15 +108,15 @@
     console.log((item.value.purchasePrice ??= 0));
     console.log((item.value.soldPrice ??= 0));
 
-    const payload: ItemUpdate = {
+    const payload: EntityUpdate = {
       ...item.value,
-      parentId: parent.value?.id || item.value.location?.id || null,
+      parentId: parent.value?.id || item.value.parent?.id || null,
       tagIds: item.value.tagIds,
       assetId: item.value.assetId,
       purchasePrice,
       soldPrice,
       purchaseTime: item.value.purchaseTime as Date,
-      syncChildEntityLocations: item.value.syncChildItemsLocations,
+      syncChildEntityLocations: item.value.syncChildEntityLocations,
     };
 
     const { error } = await api.items.update(itemId.value, payload);
@@ -152,7 +142,7 @@
   type TextFormField = {
     type: "text" | "textarea" | "markdown";
     label: string;
-    ref: NonNullableStringKeys<ItemOut>;
+    ref: NonNullableStringKeys<EntityOut>;
     maxLength?: number;
     minLength?: number;
   };
@@ -160,19 +150,19 @@
   type NumberFormField = {
     type: "number";
     label: string;
-    ref: NonNullableNumberKeys<ItemOut> | NonNullableStringKeys<ItemOut>;
+    ref: NonNullableNumberKeys<EntityOut> | NonNullableStringKeys<EntityOut>;
   };
 
   interface BoolFormField {
     type: "checkbox";
     label: string;
-    ref: BooleanKeys<ItemOut>;
+    ref: BooleanKeys<EntityOut>;
   }
 
   type DateFormField = {
     type: "date";
     label: string;
-    ref: DateKeys<ItemOut>;
+    ref: DateKeys<EntityOut>;
   };
 
   type FormField = TextFormField | BoolFormField | DateFormField | NumberFormField;
@@ -426,7 +416,7 @@
       numberValue: 0,
       booleanValue: false,
       timeValue: null,
-    } as unknown as ItemField);
+    } as unknown as EntityFieldData);
   }
 
   const { query, results, isLoading, triggerSearch } = useItemSearch(api, { immediate: false });
@@ -455,9 +445,9 @@
         return;
       }
 
-      if (data.syncChildItemsLocations) {
+      if (data.syncChildEntityLocations) {
         toast.info(t("items.toast.sync_child_location"));
-        item.value.location = data.location;
+        item.value.parent = data.parent;
       }
     }
   }
@@ -471,24 +461,24 @@
         return;
       }
 
-      if (data.syncChildItemsLocations) {
+      if (data.syncChildEntityLocations) {
         toast.info(t("items.toast.child_location_desync"));
       }
     }
   }
 
-  async function syncChildItemsLocations() {
-    if (!item.value.location?.id) {
+  async function syncChildEntityLocations() {
+    if (!item.value.parent?.id && !parent.value?.id) {
       toast.error(t("items.toast.failed_save_no_location"));
       return;
     }
 
-    const payload: ItemUpdate = {
+    const payload: EntityUpdate = {
       ...item.value,
-      parentId: parent.value?.id || item.value.location?.id || null,
+      parentId: parent.value?.id || item.value.parent?.id || null,
       tagIds: item.value.tagIds,
       assetId: item.value.assetId,
-      syncChildEntityLocations: item.value.syncChildItemsLocations,
+      syncChildEntityLocations: item.value.syncChildEntityLocations,
     };
 
     const { error } = await api.items.update(itemId.value, payload);
@@ -498,7 +488,7 @@
       return;
     }
 
-    if (!item.value.syncChildItemsLocations) {
+    if (!item.value.syncChildEntityLocations) {
       toast.success(t("items.toast.child_items_location_no_longer_synced"));
     } else {
       toast.success(t("items.toast.child_items_location_synced"));
@@ -587,7 +577,7 @@
         <BaseCard class="overflow-visible">
           <template #title> {{ $t("items.edit_details") }} </template>
           <div class="mb-6 grid gap-4 border-t px-5 pt-2 md:grid-cols-2">
-            <LocationSelector v-model="item.location" @update:model-value="informAboutDesyncingLocationFromParent()" />
+            <LocationSelector v-model="item.parent" @update:model-value="informAboutDesyncingLocationFromParent()" />
             <ItemSelector
               v-model="parent"
               v-model:search="query"
@@ -602,7 +592,7 @@
             />
             <div class="flex flex-col gap-2">
               <Label class="px-1">{{ $t("items.sync_child_locations") }}</Label>
-              <Switch v-model="item.syncChildItemsLocations" @update:model-value="syncChildItemsLocations()" />
+              <Switch v-model="item.syncChildEntityLocations" @update:model-value="syncChildEntityLocations()" />
             </div>
             <TagSelector v-model="item.tagIds" :tags="tags" />
           </div>

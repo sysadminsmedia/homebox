@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import type { ItemTemplateOut } from "../../types/data-contracts";
+import type { EntityTemplateOut } from "../../types/data-contracts";
 import type { UserClient } from "../../user";
 import { factories } from "../factories";
 import { sharedUserClient } from "../test-utils";
@@ -9,7 +9,7 @@ describe("templates lifecycle (create, update, delete)", () => {
    * useTemplate sets up a template resource for testing, and returns a function
    * that can be used to delete the template from the backend server.
    */
-  async function useTemplate(api: UserClient): Promise<[ItemTemplateOut, () => Promise<void>]> {
+  async function useTemplate(api: UserClient): Promise<[EntityTemplateOut, () => Promise<void>]> {
     const { response, data } = await api.templates.create(factories.template());
     expect(response.status).toBe(201);
 

@@ -291,7 +291,7 @@
   import BaseModal from "@/components/App/CreateModal.vue";
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
-  import type { ItemCreate, ItemTemplateOut, ItemTemplateSummary, LocationOut } from "~~/lib/api/types/data-contracts";
+  import type { EntityCreate, EntityTemplateOut, EntityTemplateSummary, EntityOut } from "~~/lib/api/types/data-contracts";
   import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
   import MdiBarcode from "~icons/mdi/barcode";
@@ -390,7 +390,7 @@
     if (et?.defaultTemplateId && et.defaultTemplate) {
       const { data, error } = await api.templates.get(et.defaultTemplateId);
       if (!error && data) {
-        selectedTemplate.value = { id: data.id, name: data.name, description: data.description } as ItemTemplateSummary;
+        selectedTemplate.value = { id: data.id, name: data.name, description: data.description } as EntityTemplateSummary;
         templateData.value = data;
         form.quantity = data.defaultQuantity;
         if (data.defaultName) form.name = data.defaultName;
@@ -411,11 +411,11 @@
 
   const loading = ref(false);
   const focused = ref(false);
-  const selectedTemplate = ref<ItemTemplateSummary | null>(null);
-  const templateData = ref<ItemTemplateOut | null>(null);
+  const selectedTemplate = ref<EntityTemplateSummary | null>(null);
+  const templateData = ref<EntityTemplateOut | null>(null);
   const showTemplateDetails = ref(false);
   const form = reactive({
-    location: locations.value && locations.value.length > 0 ? locations.value[0] : ({} as LocationOut),
+    location: locations.value && locations.value.length > 0 ? locations.value[0] : ({} as EntityOut),
     parentId: null,
     name: "",
     quantity: 1,
@@ -425,7 +425,7 @@
     photos: [] as PhotoPreview[],
   });
 
-  async function handleTemplateSelected(template: ItemTemplateSummary | null) {
+  async function handleTemplateSelected(template: EntityTemplateSummary | null) {
     if (!template) {
       // Template was deselected, clear template data and remove from storage
       templateData.value = null;
@@ -483,7 +483,7 @@
     }
 
     // Set the template
-    selectedTemplate.value = { id: data.id, name: data.name, description: data.description } as ItemTemplateSummary;
+    selectedTemplate.value = { id: data.id, name: data.name, description: data.description } as EntityTemplateSummary;
     templateData.value = data;
     form.quantity = data.defaultQuantity;
     if (data.defaultName) {
@@ -656,7 +656,7 @@
       data = result.data;
     } else {
       // Normal item creation without template
-      const out: ItemCreate = {
+      const out: EntityCreate = {
         parentId: form.parentId || form.location.id as string,
         name: form.name,
         quantity: form.quantity,

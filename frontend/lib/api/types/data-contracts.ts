@@ -607,6 +607,14 @@ export interface EntityFieldData {
   type: string;
 }
 
+export interface EntityListResult {
+  items: EntitySummary[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPrice: number;
+}
+
 export interface EntityOut {
   archived: boolean;
   /** @example "0" */

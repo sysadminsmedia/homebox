@@ -49,7 +49,8 @@ type (
 		ParentItemIDs    []uuid.UUID  `json:"parentItemIds"`
 		SortBy           string       `json:"sortBy"`
 		IncludeArchived  bool         `json:"includeArchived"`
-		IsLocation       *bool        `json:"isLocation"` // nil=all, true=locations only, false=items only
+		IsLocation       *bool        `json:"isLocation"`     // nil=all, true=locations only, false=items only
+		FilterChildren   bool         `json:"filterChildren"` // when true, only return root entities (no parent)
 		Fields           []FieldQuery `json:"fields"`
 		OrderBy          string       `json:"orderBy"`
 	}
@@ -441,6 +442,10 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 		)
 	}
 
+	if q.FilterChildren {
+		qb = qb.Where(entity.Not(entity.HasParent()))
+	}
+
 	if q.IncludeArchived {
 		qb = qb.Where(
 			entity.Or(
@@ -583,12 +588,69 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 		return PaginationResult[EntitySummary]{}, err
 	}
 
+	// Populate ItemCount for location-type entities
+	if q.IsLocation != nil && *q.IsLocation && len(entities) > 0 {
+		ids := lo.Map(entities, func(e EntitySummary, _ int) uuid.UUID { return e.ID })
+		counts, cErr := r.getChildItemCounts(ctx, gid, ids)
+		if cErr == nil {
+			for i := range entities {
+				if c, ok := counts[entities[i].ID]; ok {
+					entities[i].ItemCount = c
+				}
+			}
+		}
+	}
+
 	return PaginationResult[EntitySummary]{
 		Page:     q.Page,
 		PageSize: q.PageSize,
 		Total:    count,
 		Items:    entities,
 	}, nil
+}
+
+// getChildItemCounts returns a map of entity ID → sum of child item quantities for the given location IDs.
+func (r *EntityRepository) getChildItemCounts(ctx context.Context, gid uuid.UUID, locationIDs []uuid.UUID) (map[uuid.UUID]float64, error) {
+	if len(locationIDs) == 0 {
+		return nil, nil
+	}
+
+	// Build placeholders for the IN clause
+	placeholders := make([]string, len(locationIDs))
+	args := make([]any, 0, len(locationIDs)+1)
+	args = append(args, gid)
+	for i, id := range locationIDs {
+		placeholders[i] = fmt.Sprintf("$%d", i+2)
+		args = append(args, id)
+	}
+
+	query := fmt.Sprintf(`
+		SELECT e.entity_children, COALESCE(SUM(e.quantity), 0)
+		FROM entities e
+		JOIN entity_types et ON et.id = e.entity_type_entities
+		WHERE e.group_entities = $1
+			AND et.is_location = false
+			AND e.archived = false
+			AND e.entity_children IN (%s)
+		GROUP BY e.entity_children
+	`, strings.Join(placeholders, ","))
+
+	rows, err := r.db.Sql().QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = rows.Close() }()
+
+	result := make(map[uuid.UUID]float64)
+	for rows.Next() {
+		var parentID uuid.UUID
+		var count float64
+		if err := rows.Scan(&parentID, &count); err != nil {
+			return nil, err
+		}
+		result[parentID] = count
+	}
+	return result, rows.Err()
 }
 
 // QueryByAssetID returns entities by asset ID.

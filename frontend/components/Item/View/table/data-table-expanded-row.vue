@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import { computed } from "vue";
-  import type { ItemSummary } from "~/lib/api/types/data-contracts";
+  import type { EntitySummary } from "~/lib/api/types/data-contracts";
   import TagChip from "@/components/Tag/Chip.vue";
   import Badge from "~/components/ui/badge/Badge.vue";
 
   const props = defineProps<{
-    item: ItemSummary;
+    item: EntitySummary;
   }>();
 
   const itemTags = computed(() => {

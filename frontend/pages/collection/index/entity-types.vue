@@ -5,7 +5,7 @@
     EntityTypeCreate,
     EntityTypeSummary,
     EntityTypeUpdate,
-    ItemTemplateSummary,
+    EntityTemplateSummary,
   } from "~~/lib/api/types/data-contracts";
   import MdiPlus from "~icons/mdi/plus";
   import MdiPencil from "~icons/mdi/pencil";
@@ -49,7 +49,7 @@
     icon: "",
     isLocation: false,
   });
-  const createTemplate = ref<ItemTemplateSummary | null>(null);
+  const createTemplate = ref<EntityTemplateSummary | null>(null);
 
   function resetCreateForm() {
     createForm.name = "";
@@ -90,7 +90,7 @@
     icon: "",
     isLocation: false,
   });
-  const updateTemplate = ref<ItemTemplateSummary | null>(null);
+  const updateTemplate = ref<EntityTemplateSummary | null>(null);
 
   function openEdit(et: EntityTypeSummary) {
     updateForm.id = et.id;
@@ -98,7 +98,7 @@
     updateForm.icon = et.icon;
     updateForm.isLocation = et.isLocation;
     updateTemplate.value = et.defaultTemplate
-      ? { id: et.defaultTemplate.id, name: et.defaultTemplate.name, description: et.defaultTemplate.description } as ItemTemplateSummary
+      ? { id: et.defaultTemplate.id, name: et.defaultTemplate.name, description: et.defaultTemplate.description } as EntityTemplateSummary
       : null;
     openDialog(DialogID.UpdateEntityType);
   }

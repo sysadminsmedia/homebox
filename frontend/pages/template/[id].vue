@@ -20,7 +20,7 @@
   import LocationSelector from "~/components/Location/Selector.vue";
   import TagSelector from "~/components/Tag/Selector.vue";
   import { useTagStore } from "~/stores/tags";
-  import type { LocationOut } from "~~/lib/api/types/data-contracts";
+  import type { EntityOut } from "~~/lib/api/types/data-contracts";
 
   definePageMeta({
     middleware: ["auth"],
@@ -75,7 +75,7 @@
     defaultModelNumber: "",
     defaultLifetimeWarranty: false,
     defaultWarrantyDetails: "",
-    defaultLocation: null as LocationOut | null,
+    defaultLocation: null as EntityOut | null,
     defaultTagIds: [] as string[],
     includeWarrantyFields: false,
     includePurchaseFields: false,

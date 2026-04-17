@@ -1,11 +1,11 @@
 import { defineStore } from "pinia";
 import type { ItemsApi } from "~~/lib/api/classes/items";
-import type { LocationOutCount, TreeItem } from "~~/lib/api/types/data-contracts";
+import type { EntitySummary, TreeItem } from "~~/lib/api/types/data-contracts";
 
 export const useLocationStore = defineStore("locations", {
   state: () => ({
-    parents: null as LocationOutCount[] | null,
-    Locations: null as LocationOutCount[] | null,
+    parents: null as EntitySummary[] | null,
+    Locations: null as EntitySummary[] | null,
     client: useUserApi(),
     tree: null as TreeItem[] | null,
     refreshLocationsPromise: null as Promise<void> | null,
@@ -16,7 +16,7 @@ export const useLocationStore = defineStore("locations", {
      * synched with the server by intercepting the API calls and updating on the
      * response
      */
-    parentLocations(state): LocationOutCount[] {
+    parentLocations(state): EntitySummary[] {
       if (state.parents === null) {
         this.client.items.getLocations({ filterChildren: true }).then(result => {
           if (result.error) {
@@ -29,7 +29,7 @@ export const useLocationStore = defineStore("locations", {
       }
       return state.parents ?? [];
     },
-    allLocations(state): LocationOutCount[] {
+    allLocations(state): EntitySummary[] {
       return state.Locations ?? [];
     },
   },

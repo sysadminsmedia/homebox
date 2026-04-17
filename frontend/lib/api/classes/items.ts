@@ -1,47 +1,22 @@
 import { BaseAPI, route } from "../base";
 import { parseDate } from "../base/base-api";
 import type {
+  EntityCreate,
+  EntityListResult,
+  EntityOut,
+  EntityPatch,
   EntityPath,
+  EntitySummary,
+  EntityUpdate,
   ItemAttachmentUpdate,
-  ItemCreate,
-  ItemOut,
-  ItemPatch,
-  ItemSummary,
-  ItemUpdate,
-  LocationOut,
-  LocationOutCount,
-  LocationUpdate,
   MaintenanceEntry,
   MaintenanceEntryCreate,
   MaintenanceEntryWithDetails,
   TreeItem,
 } from "../types/data-contracts";
-import type { AttachmentTypes, ItemSummaryPaginationResult } from "../types/non-generated";
+import type { AttachmentTypes } from "../types/non-generated";
 import type { MaintenanceFilters } from "./maintenance.ts";
 import type { Requests } from "~~/lib/requests";
-
-/**
- * Maps the backend `parent` field to `location` for backward compatibility.
- * Many frontend components still reference `item.location` which is the same as `item.parent`.
- */
-function mapParentToLocation<T extends { parent?: any; location?: any }>(item: T): T {
-  if (item.parent && !item.location) {
-    item.location = item.parent;
-  }
-  return item;
-}
-
-function mapSummaryCompat(item: ItemSummary): ItemSummary {
-  return mapParentToLocation(item);
-}
-
-function mapOutCompat(item: ItemOut): ItemOut {
-  mapParentToLocation(item);
-  if ("syncChildEntityLocations" in item) {
-    item.syncChildItemsLocations = (item as any).syncChildEntityLocations;
-  }
-  return item;
-}
 
 export type ItemsQuery = {
   orderBy?: string;
@@ -77,7 +52,7 @@ export class AttachmentsAPI extends BaseAPI {
       formData.append("primary", primary.toString());
     }
 
-    return this.http.post<FormData, ItemOut>({
+    return this.http.post<FormData, EntityOut>({
       url: route(`/entities/${id}/attachments`),
       data: formData,
     });
@@ -88,7 +63,7 @@ export class AttachmentsAPI extends BaseAPI {
   }
 
   update(id: string, attachmentId: string, data: ItemAttachmentUpdate) {
-    return this.http.put<ItemAttachmentUpdate, ItemOut>({
+    return this.http.put<ItemAttachmentUpdate, EntityOut>({
       url: route(`/entities/${id}/attachments/${attachmentId}`),
       body: data,
     });
@@ -137,30 +112,21 @@ export class ItemsApi extends BaseAPI {
   }
 
   async getAll(q: ItemsQuery = {}) {
-    const payload = await this.http.get<ItemSummaryPaginationResult<ItemSummary>>({ url: route("/entities", q) });
-    if (payload.data?.items) {
-      payload.data.items = payload.data.items.map(mapSummaryCompat);
-    }
+    const payload = await this.http.get<EntityListResult>({ url: route("/entities", q) });
     return payload;
   }
 
-  async create(item: ItemCreate) {
-    const payload = await this.http.post<ItemCreate, ItemOut>({ url: route("/entities"), body: item });
-    if (payload.data) {
-      payload.data = mapOutCompat(payload.data);
-    }
+  async create(item: EntityCreate) {
+    const payload = await this.http.post<EntityCreate, EntityOut>({ url: route("/entities"), body: item });
     return payload;
   }
 
   async get(id: string) {
-    const payload = await this.http.get<ItemOut>({ url: route(`/entities/${id}`) });
+    const payload = await this.http.get<EntityOut>({ url: route(`/entities/${id}`) });
 
     if (!payload.data) {
       return payload;
     }
-
-    // Map parent -> location for backward compat
-    payload.data = mapOutCompat(payload.data);
 
     // Parse Date Types
     payload.data = parseDate(payload.data, ["purchaseTime", "soldTime", "warrantyExpires"]);
@@ -171,8 +137,8 @@ export class ItemsApi extends BaseAPI {
     return this.http.delete<void>({ url: route(`/entities/${id}`) });
   }
 
-  async update(id: string, item: ItemUpdate) {
-    const payload = await this.http.put<ItemCreate, ItemOut>({
+  async update(id: string, item: EntityUpdate) {
+    const payload = await this.http.put<EntityCreate, EntityOut>({
       url: route(`/entities/${id}`),
       body: this.dropFields(item),
     });
@@ -180,13 +146,12 @@ export class ItemsApi extends BaseAPI {
       return payload;
     }
 
-    payload.data = mapOutCompat(payload.data);
     payload.data = parseDate(payload.data, ["purchaseTime", "soldTime", "warrantyExpires"]);
     return payload;
   }
 
-  async patch(id: string, item: ItemPatch) {
-    const resp = await this.http.patch<ItemPatch, ItemOut>({
+  async patch(id: string, item: EntityPatch) {
+    const resp = await this.http.patch<EntityPatch, EntityOut>({
       url: route(`/entities/${id}`),
       body: this.dropFields(item),
     });
@@ -195,7 +160,6 @@ export class ItemsApi extends BaseAPI {
       return resp;
     }
 
-    resp.data = mapOutCompat(resp.data);
     resp.data = parseDate(resp.data, ["purchaseTime", "soldTime", "warrantyExpires"]);
     return resp;
   }
@@ -209,7 +173,7 @@ export class ItemsApi extends BaseAPI {
       copyPrefix?: string;
     } = {}
   ) {
-    const payload = await this.http.post<typeof options, ItemOut>({
+    const payload = await this.http.post<typeof options, EntityOut>({
       url: route(`/entities/${id}/duplicate`),
       body: {
         copyMaintenance: options.copyMaintenance,
@@ -218,9 +182,6 @@ export class ItemsApi extends BaseAPI {
         copyPrefix: options.copyPrefix,
       },
     });
-    if (payload.data) {
-      payload.data = mapOutCompat(payload.data);
-    }
     return payload;
   }
 
@@ -247,31 +208,31 @@ export class ItemsApi extends BaseAPI {
   // =========================================================================
 
   async getLocations(q: LocationsQuery = { filterChildren: false }) {
-    const resp = await this.http.get<{ items: LocationOutCount[] }>({ url: route("/entities", { ...q, isLocation: true }) });
+    const resp = await this.http.get<{ items: EntitySummary[] }>({ url: route("/entities", { ...q, isLocation: true }) });
     // Unwrap paginated response to flat array for backward compat
     return {
       ...resp,
       data: resp.data?.items ?? [],
-    } as { data: LocationOutCount[]; error: any; status: number };
+    } as { data: EntitySummary[]; error: any; status: number };
   }
 
   getTree(tq: TreeQuery = { withItems: false }) {
     return this.http.get<TreeItem[]>({ url: route("/entities/tree", tq) });
   }
 
-  createLocation(body: ItemCreate) {
-    return this.http.post<ItemCreate, LocationOut>({ url: route("/entities"), body });
+  createLocation(body: EntityCreate) {
+    return this.http.post<EntityCreate, EntityOut>({ url: route("/entities"), body });
   }
 
   getLocation(id: string) {
-    return this.http.get<LocationOut>({ url: route(`/entities/${id}`) });
+    return this.http.get<EntityOut>({ url: route(`/entities/${id}`) });
   }
 
   deleteLocation(id: string) {
     return this.http.delete<void>({ url: route(`/entities/${id}`) });
   }
 
-  updateLocation(id: string, body: LocationUpdate) {
-    return this.http.put<LocationUpdate, LocationOut>({ url: route(`/entities/${id}`), body });
+  updateLocation(id: string, body: EntityUpdate) {
+    return this.http.put<EntityUpdate, EntityOut>({ url: route(`/entities/${id}`), body });
   }
 }

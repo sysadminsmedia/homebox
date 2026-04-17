@@ -1,4 +1,4 @@
-import type { ItemSummary, TagSummary, LocationSummary } from "~~/lib/api/types/data-contracts";
+import type { EntitySummary, TagSummary } from "~~/lib/api/types/data-contracts";
 import type { UserClient } from "~~/lib/api/user";
 
 type SearchOptions = {
@@ -7,9 +7,9 @@ type SearchOptions = {
 
 export function useItemSearch(client: UserClient, opts?: SearchOptions) {
   const query = ref("");
-  const locations = ref<LocationSummary[]>([]);
+  const locations = ref<EntitySummary[]>([]);
   const tags = ref<TagSummary[]>([]);
-  const results = ref<ItemSummary[]>([]);
+  const results = ref<EntitySummary[]>([]);
   const includeArchived = ref(false);
   const isLoading = ref(false);
   const pendingQuery = ref<string | null>(null);

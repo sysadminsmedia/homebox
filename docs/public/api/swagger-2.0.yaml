@@ -884,6 +884,21 @@ definitions:
       type:
         type: string
     type: object
+  repo.EntityListResult:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/repo.EntitySummary'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+      totalPrice:
+        type: number
+    type: object
   repo.EntityOut:
     properties:
       archived:
@@ -2193,7 +2208,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/repo.PaginationResult-repo_EntitySummary'
+            $ref: '#/definitions/repo.EntityListResult'
       security:
       - Bearer: []
       summary: Query All Entities
