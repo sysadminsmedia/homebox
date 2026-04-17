@@ -40,7 +40,7 @@
                 v-for="location in filteredLocations"
                 :key="location.id"
                 :value="location.id"
-                @select="selectLocation(location as unknown as LocationSummary)"
+                @select="selectLocation(location as unknown as EntitySummary)"
               >
                 <Check :class="cn('mr-2 h-4 w-4', value?.id === location.id ? 'opacity-100' : 'opacity-0')" />
                 <div>
@@ -68,12 +68,12 @@
   import { Label } from "~/components/ui/label";
   import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
   import { cn } from "~/lib/utils";
-  import type { LocationSummary } from "~~/lib/api/types/data-contracts";
+  import type { EntitySummary } from "~~/lib/api/types/data-contracts";
   import { useFlatLocations } from "~~/composables/use-location-helpers";
 
   type Props = {
-    modelValue?: LocationSummary | null;
-    currentLocation?: LocationSummary;
+    modelValue?: EntitySummary | null;
+    currentLocation?: EntitySummary;
   };
 
   const props = defineProps<Props>();
@@ -85,7 +85,7 @@
   const locations = useFlatLocations(props.currentLocation);
   const value = useVModel(props, "modelValue", emit);
 
-  function selectLocation(location: LocationSummary) {
+  function selectLocation(location: EntitySummary) {
     if (value.value?.id !== location.id) {
       value.value = location;
     } else {

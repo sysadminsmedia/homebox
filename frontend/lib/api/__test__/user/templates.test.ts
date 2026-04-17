@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import type { ItemTemplateOut } from "../../types/data-contracts";
+import type { EntityTemplateOut } from "../../types/data-contracts";
 import type { UserClient } from "../../user";
 import { factories } from "../factories";
 import { sharedUserClient } from "../test-utils";
@@ -9,7 +9,7 @@ describe("templates lifecycle (create, update, delete)", () => {
    * useTemplate sets up a template resource for testing, and returns a function
    * that can be used to delete the template from the backend server.
    */
-  async function useTemplate(api: UserClient): Promise<[ItemTemplateOut, () => Promise<void>]> {
+  async function useTemplate(api: UserClient): Promise<[EntityTemplateOut, () => Promise<void>]> {
     const { response, data } = await api.templates.create(factories.template());
     expect(response.status).toBe(201);
 
@@ -203,7 +203,7 @@ describe("templates with location and tags", () => {
 
     // First create a location
     const locationData = factories.location();
-    const { response: locResponse, data: location } = await api.locations.create(locationData);
+    const { response: locResponse, data: location } = await api.items.createLocation(locationData);
     expect(locResponse.status).toBe(201);
 
     // Create template with the location
@@ -219,7 +219,7 @@ describe("templates with location and tags", () => {
 
     // Cleanup
     await api.templates.delete(data.id);
-    await api.locations.delete(location.id);
+    await api.items.deleteLocation(location.id);
   });
 
   test("user should be able to create a template with default tags", async () => {
@@ -253,7 +253,7 @@ describe("templates with location and tags", () => {
     const api = await sharedUserClient();
 
     // Create a location
-    const { response: locResponse, data: location } = await api.locations.create(factories.location());
+    const { response: locResponse, data: location } = await api.items.createLocation(factories.location());
     expect(locResponse.status).toBe(201);
 
     // Create template with location
@@ -292,6 +292,6 @@ describe("templates with location and tags", () => {
 
     // Cleanup
     await api.templates.delete(template.id);
-    await api.locations.delete(location.id);
+    await api.items.deleteLocation(location.id);
   });
 });

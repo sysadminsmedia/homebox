@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 )
@@ -20,12 +20,12 @@ import (
 // TemplateFieldQuery is the builder for querying TemplateField entities.
 type TemplateFieldQuery struct {
 	config
-	ctx              *QueryContext
-	order            []templatefield.OrderOption
-	inters           []Interceptor
-	predicates       []predicate.TemplateField
-	withItemTemplate *ItemTemplateQuery
-	withFKs          bool
+	ctx                *QueryContext
+	order              []templatefield.OrderOption
+	inters             []Interceptor
+	predicates         []predicate.TemplateField
+	withEntityTemplate *EntityTemplateQuery
+	withFKs            bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -62,9 +62,9 @@ func (_q *TemplateFieldQuery) Order(o ...templatefield.OrderOption) *TemplateFie
 	return _q
 }
 
-// QueryItemTemplate chains the current query on the "item_template" edge.
-func (_q *TemplateFieldQuery) QueryItemTemplate() *ItemTemplateQuery {
-	query := (&ItemTemplateClient{config: _q.config}).Query()
+// QueryEntityTemplate chains the current query on the "entity_template" edge.
+func (_q *TemplateFieldQuery) QueryEntityTemplate() *EntityTemplateQuery {
+	query := (&EntityTemplateClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -75,8 +75,8 @@ func (_q *TemplateFieldQuery) QueryItemTemplate() *ItemTemplateQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(templatefield.Table, templatefield.FieldID, selector),
-			sqlgraph.To(itemtemplate.Table, itemtemplate.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, templatefield.ItemTemplateTable, templatefield.ItemTemplateColumn),
+			sqlgraph.To(entitytemplate.Table, entitytemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, templatefield.EntityTemplateTable, templatefield.EntityTemplateColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -271,26 +271,26 @@ func (_q *TemplateFieldQuery) Clone() *TemplateFieldQuery {
 		return nil
 	}
 	return &TemplateFieldQuery{
-		config:           _q.config,
-		ctx:              _q.ctx.Clone(),
-		order:            append([]templatefield.OrderOption{}, _q.order...),
-		inters:           append([]Interceptor{}, _q.inters...),
-		predicates:       append([]predicate.TemplateField{}, _q.predicates...),
-		withItemTemplate: _q.withItemTemplate.Clone(),
+		config:             _q.config,
+		ctx:                _q.ctx.Clone(),
+		order:              append([]templatefield.OrderOption{}, _q.order...),
+		inters:             append([]Interceptor{}, _q.inters...),
+		predicates:         append([]predicate.TemplateField{}, _q.predicates...),
+		withEntityTemplate: _q.withEntityTemplate.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
 	}
 }
 
-// WithItemTemplate tells the query-builder to eager-load the nodes that are connected to
-// the "item_template" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *TemplateFieldQuery) WithItemTemplate(opts ...func(*ItemTemplateQuery)) *TemplateFieldQuery {
-	query := (&ItemTemplateClient{config: _q.config}).Query()
+// WithEntityTemplate tells the query-builder to eager-load the nodes that are connected to
+// the "entity_template" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *TemplateFieldQuery) WithEntityTemplate(opts ...func(*EntityTemplateQuery)) *TemplateFieldQuery {
+	query := (&EntityTemplateClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withItemTemplate = query
+	_q.withEntityTemplate = query
 	return _q
 }
 
@@ -374,10 +374,10 @@ func (_q *TemplateFieldQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
 		loadedTypes = [1]bool{
-			_q.withItemTemplate != nil,
+			_q.withEntityTemplate != nil,
 		}
 	)
-	if _q.withItemTemplate != nil {
+	if _q.withEntityTemplate != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -401,23 +401,23 @@ func (_q *TemplateFieldQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := _q.withItemTemplate; query != nil {
-		if err := _q.loadItemTemplate(ctx, query, nodes, nil,
-			func(n *TemplateField, e *ItemTemplate) { n.Edges.ItemTemplate = e }); err != nil {
+	if query := _q.withEntityTemplate; query != nil {
+		if err := _q.loadEntityTemplate(ctx, query, nodes, nil,
+			func(n *TemplateField, e *EntityTemplate) { n.Edges.EntityTemplate = e }); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
 }
 
-func (_q *TemplateFieldQuery) loadItemTemplate(ctx context.Context, query *ItemTemplateQuery, nodes []*TemplateField, init func(*TemplateField), assign func(*TemplateField, *ItemTemplate)) error {
+func (_q *TemplateFieldQuery) loadEntityTemplate(ctx context.Context, query *EntityTemplateQuery, nodes []*TemplateField, init func(*TemplateField), assign func(*TemplateField, *EntityTemplate)) error {
 	ids := make([]uuid.UUID, 0, len(nodes))
 	nodeids := make(map[uuid.UUID][]*TemplateField)
 	for i := range nodes {
-		if nodes[i].item_template_fields == nil {
+		if nodes[i].entity_template_fields == nil {
 			continue
 		}
-		fk := *nodes[i].item_template_fields
+		fk := *nodes[i].entity_template_fields
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -426,7 +426,7 @@ func (_q *TemplateFieldQuery) loadItemTemplate(ctx context.Context, query *ItemT
 	if len(ids) == 0 {
 		return nil
 	}
-	query.Where(itemtemplate.IDIn(ids...))
+	query.Where(entitytemplate.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
@@ -434,7 +434,7 @@ func (_q *TemplateFieldQuery) loadItemTemplate(ctx context.Context, query *ItemT
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "item_template_fields" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "entity_template_fields" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

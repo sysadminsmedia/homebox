@@ -7,7 +7,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/pkgs/textutils"
 )
 
-func TestItemsRepository_AccentInsensitiveSearch(t *testing.T) {
+func TestEntityRepository_AccentInsensitiveSearch(t *testing.T) {
 	// Test cases for accent-insensitive search
 	testCases := []struct {
 		name        string

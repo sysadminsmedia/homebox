@@ -61,7 +61,7 @@ func (a *app) SetupDemo() error {
 		return errors.New("failed to setup demo")
 	}
 
-	_, err = a.services.Items.CsvImport(ctx, self.DefaultGroupID, strings.NewReader(csvText))
+	_, err = a.services.Entities.CsvImport(ctx, self.DefaultGroupID, strings.NewReader(csvText))
 	if err != nil {
 		log.Err(err).Msg("Failed to import CSV")
 		return errors.New("failed to setup demo")

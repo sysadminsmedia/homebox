@@ -4,7 +4,7 @@ import { useMagicKeys, useActiveElement } from "@vueuse/core";
 import type {
   BarcodeProduct,
   GroupInvitation,
-  ItemSummary,
+  EntitySummary,
   MaintenanceEntry,
   MaintenanceEntryWithDetails,
 } from "~~/lib/api/types/data-contracts";
@@ -35,6 +35,8 @@ export enum DialogID {
   UpdateLocation = "update-location",
   UpdateTemplate = "update-template",
   ItemChangeDetails = "item-table-updater",
+  CreateEntityType = "create-entity-type",
+  UpdateEntityType = "update-entity-type",
   WipeInventory = "wipe-inventory",
 }
 
@@ -67,7 +69,7 @@ export type DialogParamsMap = {
     | { type: "update"; maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails }
     | { type: "duplicate"; maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails; itemId: string };
   [DialogID.ItemChangeDetails]: {
-    items: ItemSummary[];
+    items: EntitySummary[];
     changeLocation?: boolean;
     addTags?: boolean;
     removeTags?: boolean;
