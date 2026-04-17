@@ -4,7 +4,6 @@
   import type { AnyDetail, Details } from "~~/components/global/DetailsSection/types";
   import { filterZeroValues } from "~~/components/global/DetailsSection/types";
   import type { ItemAttachment } from "~~/lib/api/types/data-contracts";
-  import { useLocationStore } from "~~/stores/locations";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPlus from "~icons/mdi/plus";
   import MdiPencil from "~icons/mdi/pencil";
@@ -49,7 +48,7 @@
 
   const locationId = computed<string>(() => route.params.id as string);
 
-  const { data: location, refresh } = useAsyncData(locationId.value, async () => {
+  const { data: location } = useAsyncData(locationId.value, async () => {
     const { data, error } = await api.items.getLocation(locationId.value);
     if (error) {
       toast.error(t("locations.toast.failed_load_location"));
@@ -85,8 +84,6 @@
   function goToEdit() {
     navigateTo(`/location/${locationId.value}/edit`);
   }
-
-  const locationStore = useLocationStore();
 
   // Photos
   type Photo = {
@@ -150,7 +147,12 @@
         else acc.attachments.push(attachment);
         return acc;
       },
-      { attachments: [] as ItemAttachment[], warranty: [] as ItemAttachment[], manuals: [] as ItemAttachment[], receipts: [] as ItemAttachment[] }
+      {
+        attachments: [] as ItemAttachment[],
+        warranty: [] as ItemAttachment[],
+        manuals: [] as ItemAttachment[],
+        receipts: [] as ItemAttachment[],
+      }
     );
   });
 
@@ -171,12 +173,12 @@
         type: "markdown",
         text: location.value.notes,
       },
-      ...((location.value.fields || []).map(field => {
+      ...(location.value.fields || []).map(field => {
         return {
           name: field.name,
           text: field.textValue,
         } as AnyDetail;
-      })),
+      }),
     ];
 
     if (!preferences.value.showEmpty) {
@@ -224,7 +226,7 @@
           <button
             v-for="(photo, i) in photos"
             :key="i"
-            class="group relative aspect-square overflow-hidden rounded-lg border bg-muted"
+            class="aspect-square group relative overflow-hidden rounded-lg border bg-muted"
             @click="openImageDialog(photo, location.id)"
           >
             <img
