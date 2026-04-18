@@ -335,6 +335,65 @@ func TestEntityRepository_Update_Tags(t *testing.T) {
 	}
 }
 
+func TestEntityRepository_QueryByGroup_TagFilter(t *testing.T) {
+	// Set up 3 entities and 2 tags:
+	//   entity1 -> tagA only
+	//   entity2 -> tagA + tagB
+	//   entity3 -> tagB only
+	entities := useEntities(t, 3)
+	tags := useTags(t, 2)
+	tagA, tagB := tags[0], tags[1]
+
+	assignTags := func(e EntityOut, tagIDs []uuid.UUID) {
+		t.Helper()
+		update := EntityUpdate{ID: e.ID, Name: e.Name, TagIDs: tagIDs}
+		if e.EntityType != nil {
+			update.EntityTypeID = e.EntityType.ID
+		}
+		_, err := tRepos.Entities.UpdateByGroup(context.Background(), tGroup.ID, update)
+		require.NoError(t, err)
+	}
+
+	assignTags(entities[0], []uuid.UUID{tagA.ID})
+	assignTags(entities[1], []uuid.UUID{tagA.ID, tagB.ID})
+	assignTags(entities[2], []uuid.UUID{tagB.ID})
+
+	containsID := func(results []EntitySummary, id uuid.UUID) bool {
+		for _, r := range results {
+			if r.ID == id {
+				return true
+			}
+		}
+		return false
+	}
+
+	t.Run("OR mode returns entities matching any tag", func(t *testing.T) {
+		result, err := tRepos.Entities.QueryByGroup(context.Background(), tGroup.ID, EntityQuery{
+			TagIDs:  []uuid.UUID{tagA.ID, tagB.ID},
+			TagsAND: false,
+		})
+		require.NoError(t, err)
+
+		// All three entities have at least one of the two tags
+		assert.True(t, containsID(result.Items, entities[0].ID), "entity1 (tagA only) should be included")
+		assert.True(t, containsID(result.Items, entities[1].ID), "entity2 (tagA+tagB) should be included")
+		assert.True(t, containsID(result.Items, entities[2].ID), "entity3 (tagB only) should be included")
+	})
+
+	t.Run("AND mode returns only entities matching all tags", func(t *testing.T) {
+		result, err := tRepos.Entities.QueryByGroup(context.Background(), tGroup.ID, EntityQuery{
+			TagIDs:  []uuid.UUID{tagA.ID, tagB.ID},
+			TagsAND: true,
+		})
+		require.NoError(t, err)
+
+		// Only entity2 has both tags
+		assert.False(t, containsID(result.Items, entities[0].ID), "entity1 (tagA only) should be excluded")
+		assert.True(t, containsID(result.Items, entities[1].ID), "entity2 (tagA+tagB) should be included")
+		assert.False(t, containsID(result.Items, entities[2].ID), "entity3 (tagB only) should be excluded")
+	})
+}
+
 func TestEntityRepository_Update(t *testing.T) {
 	entities := useEntities(t, 3)
 
