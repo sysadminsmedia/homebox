@@ -31,6 +31,8 @@ import (
 //	@Param		page		query		int			false	"page number"
 //	@Param		pageSize	query		int			false	"items per page"
 //	@Param		tags		query		[]string	false	"tags Ids"		collectionFormat(multi)
+//	@Param		negateTags	query		bool		false	"negate tag filter"
+//	@Param		tagsAnd		query		bool		false	"require all selected tags (AND mode)"
 //	@Param		parentIds	query		[]string	false	"parent Ids"	collectionFormat(multi)
 //	@Success	200			{object}	repo.EntityListResult
 //	@Router		/v1/entities [GET]
@@ -59,6 +61,7 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 			ParentIDs:        queryUUIDList(params, "parentIds"),
 			TagIDs:           queryUUIDList(params, "tags"),
 			NegateTags:       queryBool(params.Get("negateTags")),
+			TagsAND:          queryBool(params.Get("tagsAnd")),
 			OnlyWithoutPhoto: queryBool(params.Get("onlyWithoutPhoto")),
 			OnlyWithPhoto:    queryBool(params.Get("onlyWithPhoto")),
 			IncludeArchived:  queryBool(params.Get("includeArchived")),

@@ -44,6 +44,7 @@ type (
 		ParentIDs        []uuid.UUID  `json:"parentIds"`
 		TagIDs           []uuid.UUID  `json:"tagIds"`
 		NegateTags       bool         `json:"negateTags"`
+		TagsAND          bool         `json:"tagsAnd"`
 		OnlyWithoutPhoto bool         `json:"onlyWithoutPhoto"`
 		OnlyWithPhoto    bool         `json:"onlyWithPhoto"`
 		ParentItemIDs    []uuid.UUID  `json:"parentItemIds"`
@@ -491,7 +492,11 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 				tagPredicates = lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
 					return entity.HasTagWith(tag.ID(l))
 				})
-				andPredicates = append(andPredicates, entity.Or(tagPredicates...))
+				if q.TagsAND {
+					andPredicates = append(andPredicates, entity.And(tagPredicates...))
+				} else {
+					andPredicates = append(andPredicates, entity.Or(tagPredicates...))
+				}
 			} else {
 				tagPredicates = lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
 					return entity.Not(entity.HasTagWith(tag.ID(l)))
