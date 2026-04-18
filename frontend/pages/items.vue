@@ -204,6 +204,9 @@
 
   watch(negateTags, (newV, oldV) => {
     if (newV !== oldV) {
+      if (newV) {
+        tagsAnd.value = false;
+      }
       search();
     }
   });
