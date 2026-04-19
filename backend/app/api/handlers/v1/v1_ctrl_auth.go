@@ -337,13 +337,13 @@ func (ctrl *V1Controller) HandleOIDCCallback() errchain.HandlerFunc {
 		newToken, err := ctrl.oidcProvider.HandleCallback(w, r)
 		if err != nil {
 			log.Err(err).Msg("OIDC callback failed")
-			http.Redirect(w, r, "/?oidc_error=oidc_auth_failed", http.StatusFound)
+			http.Redirect(w, r, ctrl.config.Web.AppBase+"?oidc_error=oidc_auth_failed", http.StatusFound)
 			return nil
 		}
 
 		// Set cookies and redirect to home
 		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, true, newToken.AttachmentToken)
-		http.Redirect(w, r, "/home", http.StatusFound)
+		http.Redirect(w, r, ctrl.config.Web.AppBase+"home", http.StatusFound)
 		return nil
 	}
 }

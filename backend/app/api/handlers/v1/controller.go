@@ -133,7 +133,7 @@ func NewControllerV1(svc *services.AllServices, repos *repo.AllRepos, bus *event
 
 func (ctrl *V1Controller) initOIDCProvider() {
 	if ctrl.config.OIDC.Enabled {
-		oidcProvider, err := providers.NewOIDCProvider(ctrl.svc.User, &ctrl.config.OIDC, &ctrl.config.Options, ctrl.cookieSecure)
+		oidcProvider, err := providers.NewOIDCProvider(ctrl.svc.User, &ctrl.config.OIDC, &ctrl.config.Options, &ctrl.config.Web, ctrl.cookieSecure)
 		if err != nil {
 			log.Err(err).Msg("failed to initialize OIDC provider at startup")
 		} else {
