@@ -6,7 +6,7 @@
       class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
     >
       <div class="flex w-0 flex-1 items-center">
-        <MdiPaperclip class="size-5 shrink-0 text-gray-400" aria-hidden="true" />
+        <MdiPaperclip class="size-5 shrink-0 text-foreground/50" aria-hidden="true" />
         <span class="ml-2 w-0 flex-1 truncate"> {{ attachment.title }}</span>
       </div>
       <div class="ml-4 flex shrink-0 gap-2">

@@ -67,7 +67,7 @@
       </div>
 
       <div class="col-span-1 flex items-center justify-start gap-2 md:col-span-3 md:justify-end">
-        <label class="text-xs text-slate-500">{{ $t("global.preview") }}</label>
+        <label class="text-xs text-foreground/70">{{ $t("global.preview") }}</label>
         <Checkbox v-model="showPreview" />
       </div>
     </div>
