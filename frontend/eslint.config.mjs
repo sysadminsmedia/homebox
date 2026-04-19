@@ -10,6 +10,9 @@ const gitignorePath = fileURLToPath(new URL("../.gitignore", import.meta.url));
 
 export default withNuxt([
   includeIgnoreFile(gitignorePath, "Imported ../.gitignore patterns"),
+  {
+    ignores: ["components/ui/**"],
+  },
   ...tailwind.configs["flat/recommended"],
   {
     plugins: {

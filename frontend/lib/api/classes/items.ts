@@ -208,12 +208,14 @@ export class ItemsApi extends BaseAPI {
   // =========================================================================
 
   async getLocations(q: LocationsQuery = { filterChildren: false }) {
-    const resp = await this.http.get<{ items: EntitySummary[] }>({ url: route("/entities", { ...q, isLocation: true }) });
+    const resp = await this.http.get<{ items: EntitySummary[] }>({
+      url: route("/entities", { ...q, isLocation: true }),
+    });
     // Unwrap paginated response to flat array for backward compat
     return {
       ...resp,
       data: resp.data?.items ?? [],
-    } as { data: EntitySummary[]; error: any; status: number };
+    } as { data: EntitySummary[]; error: boolean; status: number };
   }
 
   getTree(tq: TreeQuery = { withItems: false }) {

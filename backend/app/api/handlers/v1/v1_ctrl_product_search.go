@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -24,6 +25,50 @@ const (
 	schemeHTTPS           = "https"
 )
 
+// flexibleString is a string that can be unmarshaled from either a JSON
+// string or a JSON number. upcitemdb.com sometimes returns price fields
+// (e.g. list_price, shipping) as numbers rather than strings, which would
+// otherwise cause json.Unmarshal to fail on a plain string field.
+type flexibleString string
+
+// UnmarshalJSON accepts a JSON string, number, or null and stores the result
+// as a Go string. Composite tokens (objects and arrays) are rejected so that
+// unexpected shapes surface as clear errors instead of being silently stored
+// as their raw representation.
+func (f *flexibleString) UnmarshalJSON(data []byte) error {
+	trimmed := bytes.TrimSpace(data)
+	if len(trimmed) == 0 {
+		*f = ""
+		return nil
+	}
+
+	switch c := trimmed[0]; {
+	case c == '"':
+		var s string
+		if err := json.Unmarshal(trimmed, &s); err != nil {
+			return err
+		}
+		*f = flexibleString(s)
+		return nil
+	case c == 'n':
+		if string(trimmed) != "null" {
+			return fmt.Errorf("flexibleString: unexpected token %q", string(trimmed))
+		}
+		*f = ""
+		return nil
+	case c == '-' || (c >= '0' && c <= '9'):
+		// Validate the token is a well-formed JSON number, then store its literal form.
+		var n json.Number
+		if err := json.Unmarshal(trimmed, &n); err != nil {
+			return err
+		}
+		*f = flexibleString(n.String())
+		return nil
+	default:
+		return fmt.Errorf("flexibleString: cannot unmarshal %s into string", string(trimmed))
+	}
+}
+
 type UPCITEMDBResponse struct {
 	Code   string `json:"code"`
 	Total  int    `json:"total"`
@@ -44,17 +89,17 @@ type UPCITEMDBResponse struct {
 		HighestRecordedPrice float64  `json:"highest_recorded_price"`
 		Images               []string `json:"images"`
 		Offers               []struct {
-			Merchant     string  `json:"merchant"`
-			Domain       string  `json:"domain"`
-			Title        string  `json:"title"`
-			Currency     string  `json:"currency"`
-			ListPrice    string  `json:"list_price"`
-			Price        float64 `json:"price"`
-			Shipping     string  `json:"shipping"`
-			Condition    string  `json:"condition"`
-			Availability string  `json:"availability"`
-			Link         string  `json:"link"`
-			UpdatedT     int     `json:"updated_t"`
+			Merchant     string         `json:"merchant"`
+			Domain       string         `json:"domain"`
+			Title        string         `json:"title"`
+			Currency     string         `json:"currency"`
+			ListPrice    flexibleString `json:"list_price"`
+			Price        float64        `json:"price"`
+			Shipping     flexibleString `json:"shipping"`
+			Condition    string         `json:"condition"`
+			Availability string         `json:"availability"`
+			Link         string         `json:"link"`
+			UpdatedT     int            `json:"updated_t"`
 		} `json:"offers"`
 		Asin string `json:"asin"`
 		Elid string `json:"elid"`
