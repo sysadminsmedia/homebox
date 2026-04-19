@@ -85,6 +85,7 @@
   const includeArchived = useOptionalRouteQuery("archived", false);
   const fieldSelector = useOptionalRouteQuery("fieldSelector", false);
   const negateTags = useOptionalRouteQuery("negateTags", false);
+  const tagsAnd = useOptionalRouteQuery("tagsAnd", false);
   const onlyWithoutPhoto = useOptionalRouteQuery("onlyWithoutPhoto", false);
   const onlyWithPhoto = useOptionalRouteQuery("onlyWithPhoto", false);
   const orderBy = useOptionalRouteQuery("orderBy", "name");
@@ -203,6 +204,15 @@
 
   watch(negateTags, (newV, oldV) => {
     if (newV !== oldV) {
+      if (newV) {
+        tagsAnd.value = false;
+      }
+      search();
+    }
+  });
+
+  watch(tagsAnd, (newV, oldV) => {
+    if (newV !== oldV) {
       search();
     }
   });
@@ -275,6 +285,7 @@
       archived: includeArchived.value,
       fieldSelector: fieldSelector.value,
       negateTags: negateTags.value,
+      tagsAnd: tagsAnd.value,
       onlyWithoutPhoto: onlyWithoutPhoto.value,
       onlyWithPhoto: onlyWithPhoto.value,
       orderBy: orderBy.value,
@@ -312,6 +323,7 @@
       parentIds: locIDs.value,
       tags: tagIDs.value,
       negateTags: negateTags.value,
+      tagsAnd: tagsAnd.value,
       onlyWithoutPhoto: onlyWithoutPhoto.value,
       onlyWithPhoto: onlyWithPhoto.value,
       includeArchived: includeArchived.value,
@@ -427,6 +439,11 @@
               <span class="text-right"> {{ $t("items.negate_tags") }} </span>
             </Label>
             <Label class="flex cursor-pointer items-center">
+              <Switch v-model="tagsAnd" class="ml-auto" :disabled="negateTags" />
+              <div class="grow" />
+              <span class="text-right"> {{ $t("items.tags_and") }} </span>
+            </Label>
+            <Label class="flex cursor-pointer items-center">
               <Switch v-model="onlyWithoutPhoto" class="ml-auto" />
               <div class="grow" />
               <span class="text-right"> {{ $t("items.only_without_photo") }} </span>
@@ -472,6 +489,9 @@
               </li>
               <li>
                 {{ $t("items.tip_3") }}
+              </li>
+              <li>
+                {{ $t("items.tip_4") }}
               </li>
             </ul>
           </PopoverContent>

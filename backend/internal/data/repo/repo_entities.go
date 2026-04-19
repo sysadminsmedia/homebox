@@ -44,6 +44,7 @@ type (
 		ParentIDs        []uuid.UUID  `json:"parentIds"`
 		TagIDs           []uuid.UUID  `json:"tagIds"`
 		NegateTags       bool         `json:"negateTags"`
+		TagsAND          bool         `json:"tagsAnd"`
 		OnlyWithoutPhoto bool         `json:"onlyWithoutPhoto"`
 		OnlyWithPhoto    bool         `json:"onlyWithPhoto"`
 		ParentItemIDs    []uuid.UUID  `json:"parentItemIds"`
@@ -478,25 +479,34 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 	{
 		if len(q.TagIDs) > 0 {
 			tagRepo := &TagRepository{r.db, r.bus}
-			descendants, err := tagRepo.GetDescendantTagIDs(ctx, q.TagIDs)
-			if err != nil {
-				log.Warn().Err(err).Msg("failed to get descendant tags, using only direct tags")
-				descendants = q.TagIDs
-			} else if len(descendants) == 0 {
-				descendants = q.TagIDs
-			}
 
-			var tagPredicates []predicate.Entity
-			if !q.NegateTags {
-				tagPredicates = lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
+			// Build a per-tag predicate group: each selected tag matches itself OR any of its descendants.
+			// In AND mode these groups are ANDed together; in OR mode they are ORed.
+			perTagPredicates := make([]predicate.Entity, 0, len(q.TagIDs))
+			for _, tagID := range q.TagIDs {
+				descendants, err := tagRepo.GetDescendantTagIDs(ctx, []uuid.UUID{tagID})
+				if err != nil {
+					log.Warn().Err(err).Msg("failed to get descendant tags, using only direct tag")
+					descendants = nil
+				}
+				family := lo.Uniq(append([]uuid.UUID{tagID}, descendants...))
+				familyPredicates := lo.Map(family, func(l uuid.UUID, _ int) predicate.Entity {
 					return entity.HasTagWith(tag.ID(l))
 				})
-				andPredicates = append(andPredicates, entity.Or(tagPredicates...))
+				perTagPredicates = append(perTagPredicates, entity.Or(familyPredicates...))
+			}
+
+			if !q.NegateTags {
+				if q.TagsAND {
+					andPredicates = append(andPredicates, entity.And(perTagPredicates...))
+				} else {
+					andPredicates = append(andPredicates, entity.Or(perTagPredicates...))
+				}
 			} else {
-				tagPredicates = lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
-					return entity.Not(entity.HasTagWith(tag.ID(l)))
+				negated := lo.Map(perTagPredicates, func(p predicate.Entity, _ int) predicate.Entity {
+					return entity.Not(p)
 				})
-				andPredicates = append(andPredicates, entity.And(tagPredicates...))
+				andPredicates = append(andPredicates, entity.And(negated...))
 			}
 		}
 
