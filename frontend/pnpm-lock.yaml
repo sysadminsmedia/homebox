@@ -76,7 +76,10 @@ importers:
         version: 0.21.3
       autoprefixer:
         specifier: ^10.4.27
-        version: 10.4.27(postcss@8.5.9)
+        version: 10.4.27(postcss@8.5.8)
+      barcode-detector:
+        specifier: ^3.0.2
+        version: 3.1.2(@types/emscripten@1.41.5)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -2306,6 +2309,9 @@ packages:
   '@types/deep-eql@4.0.2':
     resolution: {integrity: sha512-c9h9dVVMigMPc4bwTvC5dxqtqJZwQPePsWjPlpSOnojbor6pGqdk541lfA7AqFQr5pB1BRdq0juY9db81BwyFw==}
 
+  '@types/emscripten@1.41.5':
+    resolution: {integrity: sha512-cMQm7pxu6BxtHyqJ7mQZ2kXWV5SLmugybFdHCBbJ5eHzOo6VhBckEgAT3//rP5FwPHNPeEiq4SmQ5ucBwsOo4Q==}
+
   '@types/eslint@8.56.12':
     resolution: {integrity: sha512-03ruubjWyOHlmljCVoxSuNDdmfZDzsrrz0P2LeJsOXr+ZwFQ+0yQIwNCwt/GYhV7Z31fgtXJTAEs+FYlEL851g==}
 
@@ -2940,6 +2946,9 @@ packages:
   balanced-match@4.0.4:
     resolution: {integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==}
     engines: {node: 18 || 20 || >=22}
+
+  barcode-detector@3.1.2:
+    resolution: {integrity: sha512-Q5kjXpVH5I3ItykNzbWmfWnNryFN1ZTWp10k9/PKJuS0RnoKR7jTrHEJODR4fn04bRomq7TJwie/Dr9fj/GoGQ==}
 
   bare-events@2.8.2:
     resolution: {integrity: sha512-riJjyv1/mHLIPX4RwiK+oW9/4c3TEUeORHKefKAKnZ5kyslbN+HXowtbaVEqt4IMUB7OXlfixcs6gsFeo/jhiQ==}
@@ -6772,6 +6781,11 @@ packages:
   zone.js@0.16.1:
     resolution: {integrity: sha512-dpvY17vxYIW3+bNrP0ClUlaiY0CiIRK3tnoLaGoQsQcY9/I/NpzIWQ7tQNhbV7LacQMpCII6wVzuL3tuWOyfuA==}
 
+  zxing-wasm@3.0.2:
+    resolution: {integrity: sha512-2YMAriaYHX9wrBY2k7H0epSo+dyCaCZg/vOtt+nEDXM9ul480gkXz/9SkwpOeHcD2H5qqDG8lWDSBwpTcZpa6w==}
+    peerDependencies:
+      '@types/emscripten': '>=1.39.6'
+
 snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
@@ -9105,6 +9119,8 @@ snapshots:
 
   '@types/deep-eql@4.0.2': {}
 
+  '@types/emscripten@1.41.5': {}
+
   '@types/eslint@8.56.12':
     dependencies:
       '@types/estree': 1.0.8
@@ -9901,6 +9917,12 @@ snapshots:
   balanced-match@1.0.2: {}
 
   balanced-match@4.0.4: {}
+
+  barcode-detector@3.1.2(@types/emscripten@1.41.5):
+    dependencies:
+      zxing-wasm: 3.0.2(@types/emscripten@1.41.5)
+    transitivePeerDependencies:
+      - '@types/emscripten'
 
   bare-events@2.8.2: {}
 
@@ -14288,3 +14310,8 @@ snapshots:
       readable-stream: 4.7.0
 
   zone.js@0.16.1: {}
+
+  zxing-wasm@3.0.2(@types/emscripten@1.41.5):
+    dependencies:
+      '@types/emscripten': 1.41.5
+      type-fest: 5.5.0

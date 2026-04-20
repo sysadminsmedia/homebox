@@ -826,6 +826,22 @@
         "title": "Scanner",
         "unsupported": "Media Stream API is not supported without HTTPS"
     },
+    "scanner_ar": {
+        "ar_mode": "AR Mode",
+        "back": "Back",
+        "child_items": "{count, plural, one {child item} other {child items}}",
+        "children": "{count, plural, one {sub-location} other {sub-locations}}",
+        "items": "{count, plural, one {item} other {items}}",
+        "items_in_location": "{count, plural, one {item} other {items}}",
+        "more": "more",
+        "not_found": "Item not found",
+        "qty": "Qty",
+        "retry": "Retry",
+        "scanning": "Scanning",
+        "switch_camera": "Switch Camera",
+        "title": "AR Scanner",
+        "unsupported": "AR scanning is not supported in this browser"
+    },
     "tags": {
         "no_results": "No Tags Found",
         "tag_delete_confirm": "Are you sure you want to delete this tag? This action cannot be undone.",

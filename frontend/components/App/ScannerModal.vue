@@ -34,7 +34,7 @@
         </div>
         <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
         <video ref="video" class="aspect-video w-full rounded-lg bg-muted shadow" poster="data:image/gif,AAAA" />
-        <div class="mt-4">
+        <div class="mt-4 flex flex-col gap-3">
           <Select v-model="selectedSource">
             <SelectTrigger class="w-full">
               <SelectValue :placeholder="t('scanner.select_video_source')" />
@@ -45,6 +45,10 @@
               </SelectItem>
             </SelectContent>
           </Select>
+          <Button variant="outline" class="w-full" @click="openArMode">
+            <MdiCameraOutline class="mr-2" />
+            {{ t("scanner_ar.ar_mode") }}
+          </Button>
         </div>
       </div>
     </DialogScrollContent>
@@ -61,6 +65,7 @@
   import { Button, ButtonGroup } from "@/components/ui/button";
   import MdiBarcode from "~icons/mdi/barcode";
   import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
+  import MdiCameraOutline from "~icons/mdi/camera-outline";
   import { useDialog } from "@/components/ui/dialog-provider";
 
   const { t } = useI18n();
@@ -85,6 +90,11 @@
 
   const handleButtonClick = () => {
     openDialog(DialogID.ProductImport, { params: { barcode: detectedBarcode.value } });
+  };
+
+  const openArMode = () => {
+    closeDialog(DialogID.Scanner);
+    navigateTo("/scanner-ar");
   };
 
   const startScanner = async () => {
