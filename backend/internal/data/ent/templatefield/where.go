@@ -511,21 +511,21 @@ func TimeValueLTE(v time.Time) predicate.TemplateField {
 	return predicate.TemplateField(sql.FieldLTE(FieldTimeValue, v))
 }
 
-// HasItemTemplate applies the HasEdge predicate on the "item_template" edge.
-func HasItemTemplate() predicate.TemplateField {
+// HasEntityTemplate applies the HasEdge predicate on the "entity_template" edge.
+func HasEntityTemplate() predicate.TemplateField {
 	return predicate.TemplateField(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ItemTemplateTable, ItemTemplateColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, EntityTemplateTable, EntityTemplateColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasItemTemplateWith applies the HasEdge predicate on the "item_template" edge with a given conditions (other predicates).
-func HasItemTemplateWith(preds ...predicate.ItemTemplate) predicate.TemplateField {
+// HasEntityTemplateWith applies the HasEdge predicate on the "entity_template" edge with a given conditions (other predicates).
+func HasEntityTemplateWith(preds ...predicate.EntityTemplate) predicate.TemplateField {
 	return predicate.TemplateField(func(s *sql.Selector) {
-		step := newItemTemplateStep()
+		step := newEntityTemplateStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

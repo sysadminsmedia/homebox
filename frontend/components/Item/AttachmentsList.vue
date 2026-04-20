@@ -59,7 +59,7 @@
   const api = useUserApi();
 
   function attachmentURL(attachmentId: string) {
-    return api.authURL(`/items/${props.itemId}/attachments/${attachmentId}`);
+    return api.authURL(`/entities/${props.itemId}/attachments/${attachmentId}`);
   }
 </script>
 

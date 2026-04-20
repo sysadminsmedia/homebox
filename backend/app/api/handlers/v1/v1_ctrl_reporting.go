@@ -26,7 +26,7 @@ func (ctrl *V1Controller) HandleBillOfMaterialsExport() errchain.HandlerFunc {
 			return validate.NewRequestError(errors.New("tenant required"), http.StatusBadRequest)
 		}
 
-		csv, err := ctrl.svc.Items.ExportBillOfMaterialsCSV(r.Context(), tenant)
+		csv, err := ctrl.svc.Entities.ExportBillOfMaterialsCSV(r.Context(), tenant)
 		if err != nil {
 			return err
 		}

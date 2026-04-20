@@ -1,5 +1,5 @@
 import type { Ref } from "vue";
-import type { ItemSummary } from "~/lib/api/types/data-contracts";
+import type { EntitySummary } from "~/lib/api/types/data-contracts";
 import type { DaisyTheme } from "~~/lib/data/themes";
 
 export type ViewType = "table" | "card";
@@ -19,7 +19,7 @@ export type LocationViewPreferences = {
   theme: DaisyTheme;
   itemsPerTablePage: number;
   tableHeaders?: {
-    value: keyof ItemSummary;
+    value: keyof EntitySummary;
     enabled: boolean;
   }[];
   displayLegacyHeader: boolean;

@@ -42,6 +42,19 @@
     <form class="flex min-w-0 flex-col gap-2" @submit.prevent="create()">
       <LocationSelector v-model="form.location" />
 
+      <!-- Entity Type selector (shown when multiple item types exist) -->
+      <div v-if="showEntityTypeSelector" class="flex w-full flex-col gap-1.5">
+        <Label class="px-1">{{ $t("global.type") || "Type" }}</Label>
+        <select
+          class="w-full rounded-md border bg-background px-3 py-2 text-sm"
+          :value="selectedEntityType?.id || ''"
+          @change="onEntityTypeChanged(($event.target as HTMLSelectElement).value)"
+        >
+          <option value="">{{ $t("global.select") || "Select type..." }}</option>
+          <option v-for="et in itemTypes" :key="et.id" :value="et.id">{{ et.name }}</option>
+        </select>
+      </div>
+
       <!-- Template Info Display - Collapsible banner with distinct styling -->
       <div v-if="templateData" class="rounded-lg border-l-4 border-l-primary bg-primary/5 p-3">
         <div class="flex items-start justify-between gap-2">
@@ -278,7 +291,7 @@
   import BaseModal from "@/components/App/CreateModal.vue";
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
-  import type { ItemCreate, ItemTemplateOut, ItemTemplateSummary, LocationOut } from "~~/lib/api/types/data-contracts";
+  import type { EntityCreate, EntityTemplateOut, EntityTemplateSummary, EntityOut } from "~~/lib/api/types/data-contracts";
   import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
   import MdiBarcode from "~icons/mdi/barcode";
@@ -353,15 +366,56 @@
 
   const nameInput = ref<HTMLInputElement | null>(null);
 
+  // Entity type selection
+  const itemTypes = ref<import("~~/lib/api/types/data-contracts").EntityTypeSummary[]>([]);
+  const selectedEntityType = ref<import("~~/lib/api/types/data-contracts").EntityTypeSummary | null>(null);
+  const showEntityTypeSelector = computed(() => itemTypes.value.length > 1);
+
+  onMounted(async () => {
+    const { data, error } = await api.entityTypes.getAll();
+    if (!error && data) {
+      itemTypes.value = data.filter(et => !et.isLocation);
+      // Auto-select first if only one
+      if (itemTypes.value.length === 1) {
+        selectedEntityType.value = itemTypes.value[0]!;
+      }
+    }
+  });
+
+  async function onEntityTypeChanged(typeId: string) {
+    const et = itemTypes.value.find(t => t.id === typeId);
+    selectedEntityType.value = et || null;
+
+    // If the selected type has a default template, auto-apply it
+    if (et?.defaultTemplateId && et.defaultTemplate) {
+      const { data, error } = await api.templates.get(et.defaultTemplateId);
+      if (!error && data) {
+        selectedTemplate.value = { id: data.id, name: data.name, description: data.description } as EntityTemplateSummary;
+        templateData.value = data;
+        form.quantity = data.defaultQuantity;
+        if (data.defaultName) form.name = data.defaultName;
+        if (data.defaultDescription) form.description = data.defaultDescription;
+        if (data.defaultLocation) {
+          const found = locations.value.find(l => l.id === data.defaultLocation!.id);
+          if (found) form.location = found;
+        }
+        if (data.defaultTags && data.defaultTags.length > 0) {
+          form.tags = data.defaultTags.map(l => l.id);
+        }
+        toast.success(t("components.template.toast.applied", { name: data.name }));
+      }
+    }
+  }
+
   const LAST_TEMPLATE_KEY = "homebox:lastUsedTemplate";
 
   const loading = ref(false);
   const focused = ref(false);
-  const selectedTemplate = ref<ItemTemplateSummary | null>(null);
-  const templateData = ref<ItemTemplateOut | null>(null);
+  const selectedTemplate = ref<EntityTemplateSummary | null>(null);
+  const templateData = ref<EntityTemplateOut | null>(null);
   const showTemplateDetails = ref(false);
   const form = reactive({
-    location: locations.value && locations.value.length > 0 ? locations.value[0] : ({} as LocationOut),
+    location: locations.value && locations.value.length > 0 ? locations.value[0] : ({} as EntityOut),
     parentId: null,
     name: "",
     quantity: 1,
@@ -371,7 +425,7 @@
     photos: [] as PhotoPreview[],
   });
 
-  async function handleTemplateSelected(template: ItemTemplateSummary | null) {
+  async function handleTemplateSelected(template: EntityTemplateSummary | null) {
     if (!template) {
       // Template was deselected, clear template data and remove from storage
       templateData.value = null;
@@ -429,7 +483,7 @@
     }
 
     // Set the template
-    selectedTemplate.value = { id: data.id, name: data.name, description: data.description } as ItemTemplateSummary;
+    selectedTemplate.value = { id: data.id, name: data.name, description: data.description } as EntityTemplateSummary;
     templateData.value = data;
     form.quantity = data.defaultQuantity;
     if (data.defaultName) {
@@ -521,9 +575,9 @@
           parent.value = data;
         }
 
-        if (data.location) {
-          const { location } = data;
-          parentItemLocationId = location.id;
+        if (data.location || data.parent) {
+          const loc = data.location || data.parent;
+          parentItemLocationId = loc.id;
         }
 
         // clear URL Parameter (subItemCreate) since intention was communicated and received
@@ -592,7 +646,7 @@
       const templateRequest = {
         name: form.name,
         description: form.description,
-        locationId: form.location.id as string,
+        parentId: form.location.id as string,
         tagIds: form.tags,
         quantity: form.quantity,
       };
@@ -602,13 +656,13 @@
       data = result.data;
     } else {
       // Normal item creation without template
-      const out: ItemCreate = {
-        parentId: form.parentId,
+      const out: EntityCreate = {
+        parentId: form.parentId || form.location.id as string,
         name: form.name,
         quantity: form.quantity,
         description: form.description,
-        locationId: form.location.id as string,
         tagIds: form.tags,
+        entityTypeId: selectedEntityType.value?.id,
       };
 
       const result = await api.items.create(out);

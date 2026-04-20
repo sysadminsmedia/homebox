@@ -205,7 +205,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/repo.PaginationResult-repo_ItemSummary"
+                            "$ref": "#/definitions/repo.PaginationResult-repo_EntitySummary"
                         }
                     }
                 }
@@ -226,6 +226,879 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/currencies.Currency"
                         }
+                    }
+                }
+            }
+        },
+        "/v1/entities": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Query All Entities",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "search string",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "items per page",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "description": "tags Ids",
+                        "name": "tags",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "description": "parent Ids",
+                        "name": "parentIds",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityListResult"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Create Entity",
+                "parameters": [
+                    {
+                        "description": "Entity Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityOut"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/export": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Export Entities",
+                "responses": {
+                    "200": {
+                        "description": "text/csv",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/fields": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Get All Custom Field Names",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/fields/values": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Get All Custom Field Values",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Field name",
+                        "name": "field",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/import": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Import Entities",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "CSV file to upload",
+                        "name": "csv",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/entities/tree": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Get Locations Tree",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "description": "include items in response tree",
+                        "name": "withItems",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.TreeItem"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Get Entity",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityOut"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Update Entity",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Entity Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityOut"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Delete Entity",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Patch Entity",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Entity Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityPatch"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityOut"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/{id}/attachments": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entities Attachments"
+                ],
+                "summary": "Create Entity Attachment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "File attachment",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Type of file",
+                        "name": "type",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Is this the primary attachment",
+                        "name": "primary",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "name of the file including extension",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityOut"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/validate.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/{id}/attachments/{attachment_id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "tags": [
+                    "Entities Attachments"
+                ],
+                "summary": "Get Entity Attachment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Attachment ID",
+                        "name": "attachment_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Entities Attachments"
+                ],
+                "summary": "Update Entity Attachment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Attachment ID",
+                        "name": "attachment_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Attachment Update",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.ItemAttachmentUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityOut"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Entities Attachments"
+                ],
+                "summary": "Delete Entity Attachment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Attachment ID",
+                        "name": "attachment_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/entities/{id}/duplicate": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Duplicate Entity",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Duplicate Options",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.DuplicateOptions"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityOut"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/{id}/maintenance": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Item Maintenance"
+                ],
+                "summary": "Get Maintenance Log",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "scheduled",
+                            "completed",
+                            "both"
+                        ],
+                        "type": "string",
+                        "x-enum-varnames": [
+                            "MaintenanceFilterStatusScheduled",
+                            "MaintenanceFilterStatusCompleted",
+                            "MaintenanceFilterStatusBoth"
+                        ],
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.MaintenanceEntryWithDetails"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Item Maintenance"
+                ],
+                "summary": "Create Maintenance Entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Entry Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.MaintenanceEntryCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.MaintenanceEntry"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/{id}/path": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Get the full path of an entity",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.EntityPath"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entity-types": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entity Types"
+                ],
+                "summary": "Get All Entity Types",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.EntityTypeSummary"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entity Types"
+                ],
+                "summary": "Create Entity Type",
+                "parameters": [
+                    {
+                        "description": "Entity Type Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityTypeCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityTypeSummary"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entity-types/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entity Types"
+                ],
+                "summary": "Update Entity Type",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity Type ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Entity Type Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityTypeUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityTypeSummary"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entity Types"
+                ],
+                "summary": "Delete Entity Type",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity Type ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
                     }
                 }
             }
@@ -405,6 +1278,7 @@ const docTemplate = `{
                     "Group"
                 ],
                 "summary": "Create Group Invitation",
+                "operationId": "groupInvitationCreate",
                 "parameters": [
                     {
                         "description": "User Data",
@@ -440,6 +1314,7 @@ const docTemplate = `{
                     "Group"
                 ],
                 "summary": "Accept Group Invitation",
+                "operationId": "groupInvitationAccept",
                 "parameters": [
                     {
                         "type": "string",
@@ -690,715 +1565,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/items": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Items"
-                ],
-                "summary": "Query All Items",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "search string",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "page number",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "items per page",
-                        "name": "pageSize",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "description": "tags Ids",
-                        "name": "tags",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "description": "location Ids",
-                        "name": "locations",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "multi",
-                        "description": "parent Ids",
-                        "name": "parentIds",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/repo.PaginationResult-repo_ItemSummary"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Items"
-                ],
-                "summary": "Create Item",
-                "parameters": [
-                    {
-                        "description": "Item Data",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/repo.ItemCreate"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/repo.ItemSummary"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/items/export": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Items"
-                ],
-                "summary": "Export Items",
-                "responses": {
-                    "200": {
-                        "description": "text/csv",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/items/fields": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Items"
-                ],
-                "summary": "Get All Custom Field Names",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/items/fields/values": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Items"
-                ],
-                "summary": "Get All Custom Field Values",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/items/import": {
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "multipart/form-data"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Items"
-                ],
-                "summary": "Import Items",
-                "parameters": [
-                    {
-                        "type": "file",
-                        "description": "Image to upload",
-                        "name": "csv",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
-            }
-        },
-        "/v1/items/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Items"
-                ],
-                "summary": "Get Item",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Item ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/repo.ItemOut"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Items"
-                ],
-                "summary": "Update Item",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Item ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Item Data",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/repo.ItemUpdate"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/repo.ItemOut"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Items"
-                ],
-                "summary": "Delete Item",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Item ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
-            },
-            "patch": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Items"
-                ],
-                "summary": "Update Item",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Item ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Item Data",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/repo.ItemPatch"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/repo.ItemOut"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/items/{id}/attachments": {
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "multipart/form-data"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Items Attachments"
-                ],
-                "summary": "Create Item Attachment",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Item ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "file",
-                        "description": "File attachment",
-                        "name": "file",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Type of file",
-                        "name": "type",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "Is this the primary attachment",
-                        "name": "primary",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "name of the file including extension",
-                        "name": "name",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/repo.ItemOut"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "$ref": "#/definitions/validate.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/items/{id}/attachments/{attachment_id}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/octet-stream"
-                ],
-                "tags": [
-                    "Items Attachments"
-                ],
-                "summary": "Get Item Attachment",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Item ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Attachment ID",
-                        "name": "attachment_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v1.ItemAttachmentToken"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Items Attachments"
-                ],
-                "summary": "Update Item Attachment",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Item ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Attachment ID",
-                        "name": "attachment_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Attachment Update",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/repo.ItemAttachmentUpdate"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/repo.ItemOut"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Items Attachments"
-                ],
-                "summary": "Delete Item Attachment",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Item ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Attachment ID",
-                        "name": "attachment_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
-            }
-        },
-        "/v1/items/{id}/duplicate": {
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Items"
-                ],
-                "summary": "Duplicate Item",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Item ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Duplicate Options",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/repo.DuplicateOptions"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/repo.ItemOut"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/items/{id}/maintenance": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Item Maintenance"
-                ],
-                "summary": "Get Maintenance Log",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Item ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            "scheduled",
-                            "completed",
-                            "both"
-                        ],
-                        "type": "string",
-                        "x-enum-varnames": [
-                            "MaintenanceFilterStatusScheduled",
-                            "MaintenanceFilterStatusCompleted",
-                            "MaintenanceFilterStatusBoth"
-                        ],
-                        "name": "status",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/repo.MaintenanceEntryWithDetails"
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Item Maintenance"
-                ],
-                "summary": "Create Maintenance Entry",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Item ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Entry Data",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/repo.MaintenanceEntryCreate"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/repo.MaintenanceEntry"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/items/{id}/path": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Items"
-                ],
-                "summary": "Get the full path of an item",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Item ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/repo.ItemPath"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/v1/labelmaker/asset/{id}": {
             "get": {
                 "security": [
@@ -1512,210 +1678,6 @@ const docTemplate = `{
                         "schema": {
                             "type": "string"
                         }
-                    }
-                }
-            }
-        },
-        "/v1/locations": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Locations"
-                ],
-                "summary": "Get All Locations",
-                "parameters": [
-                    {
-                        "type": "boolean",
-                        "description": "Filter locations with parents",
-                        "name": "filterChildren",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/repo.LocationOutCount"
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Locations"
-                ],
-                "summary": "Create Location",
-                "parameters": [
-                    {
-                        "description": "Location Data",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/repo.LocationCreate"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/repo.LocationSummary"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/locations/tree": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Locations"
-                ],
-                "summary": "Get Locations Tree",
-                "parameters": [
-                    {
-                        "type": "boolean",
-                        "description": "include items in response tree",
-                        "name": "withItems",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/repo.TreeItem"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/locations/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Locations"
-                ],
-                "summary": "Get Location",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Location ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/repo.LocationOut"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Locations"
-                ],
-                "summary": "Update Location",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Location ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Location Data",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/repo.LocationUpdate"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/repo.LocationOut"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Locations"
-                ],
-                "summary": "Delete Location",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Location ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
                     }
                 }
             }
@@ -2118,7 +2080,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/repo.TagOut"
+                                "$ref": "#/definitions/repo.TagSummary"
                             }
                         }
                     }
@@ -2149,10 +2111,10 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/repo.TagSummary"
+                            "$ref": "#/definitions/repo.TagOut"
                         }
                     }
                 }
@@ -2210,6 +2172,15 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Tag Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.TagUpdate"
+                        }
                     }
                 ],
                 "responses": {
@@ -2261,16 +2232,16 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Item Templates"
+                    "Entity Templates"
                 ],
-                "summary": "Get All Item Templates",
+                "summary": "Get All Entity Templates",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/repo.ItemTemplateSummary"
+                                "$ref": "#/definitions/repo.EntityTemplateSummary"
                             }
                         }
                     }
@@ -2286,9 +2257,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Item Templates"
+                    "Entity Templates"
                 ],
-                "summary": "Create Item Template",
+                "summary": "Create Entity Template",
                 "parameters": [
                     {
                         "description": "Template Data",
@@ -2296,7 +2267,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/repo.ItemTemplateCreate"
+                            "$ref": "#/definitions/repo.EntityTemplateCreate"
                         }
                     }
                 ],
@@ -2304,7 +2275,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/repo.ItemTemplateOut"
+                            "$ref": "#/definitions/repo.EntityTemplateOut"
                         }
                     }
                 }
@@ -2321,9 +2292,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Item Templates"
+                    "Entity Templates"
                 ],
-                "summary": "Get Item Template",
+                "summary": "Get Entity Template",
                 "parameters": [
                     {
                         "type": "string",
@@ -2337,7 +2308,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/repo.ItemTemplateOut"
+                            "$ref": "#/definitions/repo.EntityTemplateOut"
                         }
                     }
                 }
@@ -2352,9 +2323,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Item Templates"
+                    "Entity Templates"
                 ],
-                "summary": "Update Item Template",
+                "summary": "Update Entity Template",
                 "parameters": [
                     {
                         "type": "string",
@@ -2369,7 +2340,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/repo.ItemTemplateUpdate"
+                            "$ref": "#/definitions/repo.EntityTemplateUpdate"
                         }
                     }
                 ],
@@ -2377,7 +2348,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/repo.ItemTemplateOut"
+                            "$ref": "#/definitions/repo.EntityTemplateOut"
                         }
                     }
                 }
@@ -2392,9 +2363,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Item Templates"
+                    "Entity Templates"
                 ],
-                "summary": "Delete Item Template",
+                "summary": "Delete Entity Template",
                 "parameters": [
                     {
                         "type": "string",
@@ -2422,9 +2393,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Item Templates"
+                    "Entity Templates"
                 ],
-                "summary": "Create Item from Template",
+                "summary": "Create Entity from Template",
                 "parameters": [
                     {
                         "type": "string",
@@ -2434,12 +2405,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Item Data",
+                        "description": "Entity Data",
                         "name": "payload",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.ItemTemplateCreateItemRequest"
+                            "$ref": "#/definitions/v1.EntityTemplateCreateItemRequest"
                         }
                     }
                 ],
@@ -2447,7 +2418,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/repo.ItemOut"
+                            "$ref": "#/definitions/repo.EntityOut"
                         }
                     }
                 }
@@ -2931,11 +2902,11 @@ const docTemplate = `{
         "ent.AttachmentEdges": {
             "type": "object",
             "properties": {
-                "item": {
-                    "description": "Item holds the value of the item edge.",
+                "entity": {
+                    "description": "Entity holds the value of the entity edge.",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/ent.Item"
+                            "$ref": "#/definitions/ent.Entity"
                         }
                     ]
                 },
@@ -3044,6 +3015,438 @@ const docTemplate = `{
                 }
             }
         },
+        "ent.Entity": {
+            "type": "object",
+            "properties": {
+                "archived": {
+                    "description": "Archived holds the value of the \"archived\" field.",
+                    "type": "boolean"
+                },
+                "asset_id": {
+                    "description": "AssetID holds the value of the \"asset_id\" field.",
+                    "type": "integer"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description holds the value of the \"description\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the EntityQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.EntityEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "import_ref": {
+                    "description": "ImportRef holds the value of the \"import_ref\" field.",
+                    "type": "string"
+                },
+                "insured": {
+                    "description": "Insured holds the value of the \"insured\" field.",
+                    "type": "boolean"
+                },
+                "lifetime_warranty": {
+                    "description": "LifetimeWarranty holds the value of the \"lifetime_warranty\" field.",
+                    "type": "boolean"
+                },
+                "manufacturer": {
+                    "description": "Manufacturer holds the value of the \"manufacturer\" field.",
+                    "type": "string"
+                },
+                "model_number": {
+                    "description": "ModelNumber holds the value of the \"model_number\" field.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "notes": {
+                    "description": "Notes holds the value of the \"notes\" field.",
+                    "type": "string"
+                },
+                "purchase_from": {
+                    "description": "PurchaseFrom holds the value of the \"purchase_from\" field.",
+                    "type": "string"
+                },
+                "purchase_price": {
+                    "description": "PurchasePrice holds the value of the \"purchase_price\" field.",
+                    "type": "number"
+                },
+                "purchase_time": {
+                    "description": "PurchaseTime holds the value of the \"purchase_time\" field.",
+                    "type": "string"
+                },
+                "quantity": {
+                    "description": "Quantity holds the value of the \"quantity\" field.",
+                    "type": "number"
+                },
+                "serial_number": {
+                    "description": "SerialNumber holds the value of the \"serial_number\" field.",
+                    "type": "string"
+                },
+                "sold_notes": {
+                    "description": "SoldNotes holds the value of the \"sold_notes\" field.",
+                    "type": "string"
+                },
+                "sold_price": {
+                    "description": "SoldPrice holds the value of the \"sold_price\" field.",
+                    "type": "number"
+                },
+                "sold_time": {
+                    "description": "SoldTime holds the value of the \"sold_time\" field.",
+                    "type": "string"
+                },
+                "sold_to": {
+                    "description": "SoldTo holds the value of the \"sold_to\" field.",
+                    "type": "string"
+                },
+                "sync_child_entity_locations": {
+                    "description": "SyncChildEntityLocations holds the value of the \"sync_child_entity_locations\" field.",
+                    "type": "boolean"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                },
+                "warranty_details": {
+                    "description": "WarrantyDetails holds the value of the \"warranty_details\" field.",
+                    "type": "string"
+                },
+                "warranty_expires": {
+                    "description": "WarrantyExpires holds the value of the \"warranty_expires\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.EntityEdges": {
+            "type": "object",
+            "properties": {
+                "attachments": {
+                    "description": "Attachments holds the value of the attachments edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Attachment"
+                    }
+                },
+                "children": {
+                    "description": "Children holds the value of the children edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Entity"
+                    }
+                },
+                "entity_type": {
+                    "description": "EntityType holds the value of the entity_type edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.EntityType"
+                        }
+                    ]
+                },
+                "fields": {
+                    "description": "Fields holds the value of the fields edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.EntityField"
+                    }
+                },
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                },
+                "maintenance_entries": {
+                    "description": "MaintenanceEntries holds the value of the maintenance_entries edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.MaintenanceEntry"
+                    }
+                },
+                "parent": {
+                    "description": "Parent holds the value of the parent edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Entity"
+                        }
+                    ]
+                },
+                "tag": {
+                    "description": "Tag holds the value of the tag edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Tag"
+                    }
+                }
+            }
+        },
+        "ent.EntityField": {
+            "type": "object",
+            "properties": {
+                "boolean_value": {
+                    "description": "BooleanValue holds the value of the \"boolean_value\" field.",
+                    "type": "boolean"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description holds the value of the \"description\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the EntityFieldQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.EntityFieldEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "number_value": {
+                    "description": "NumberValue holds the value of the \"number_value\" field.",
+                    "type": "integer"
+                },
+                "text_value": {
+                    "description": "TextValue holds the value of the \"text_value\" field.",
+                    "type": "string"
+                },
+                "time_value": {
+                    "description": "TimeValue holds the value of the \"time_value\" field.",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "Type holds the value of the \"type\" field.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/entityfield.Type"
+                        }
+                    ]
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.EntityFieldEdges": {
+            "type": "object",
+            "properties": {
+                "entity": {
+                    "description": "Entity holds the value of the entity edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Entity"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.EntityTemplate": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "default_description": {
+                    "description": "Default description for items created from this template",
+                    "type": "string"
+                },
+                "default_insured": {
+                    "description": "DefaultInsured holds the value of the \"default_insured\" field.",
+                    "type": "boolean"
+                },
+                "default_lifetime_warranty": {
+                    "description": "DefaultLifetimeWarranty holds the value of the \"default_lifetime_warranty\" field.",
+                    "type": "boolean"
+                },
+                "default_manufacturer": {
+                    "description": "DefaultManufacturer holds the value of the \"default_manufacturer\" field.",
+                    "type": "string"
+                },
+                "default_model_number": {
+                    "description": "Default model number for items created from this template",
+                    "type": "string"
+                },
+                "default_name": {
+                    "description": "Default name template for items (can use placeholders)",
+                    "type": "string"
+                },
+                "default_quantity": {
+                    "description": "DefaultQuantity holds the value of the \"default_quantity\" field.",
+                    "type": "number"
+                },
+                "default_tag_ids": {
+                    "description": "Default tag IDs for items created from this template",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "default_warranty_details": {
+                    "description": "DefaultWarrantyDetails holds the value of the \"default_warranty_details\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description holds the value of the \"description\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the EntityTemplateQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.EntityTemplateEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "include_purchase_fields": {
+                    "description": "Whether to include purchase fields in items created from this template",
+                    "type": "boolean"
+                },
+                "include_sold_fields": {
+                    "description": "Whether to include sold fields in items created from this template",
+                    "type": "boolean"
+                },
+                "include_warranty_fields": {
+                    "description": "Whether to include warranty fields in items created from this template",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "notes": {
+                    "description": "Notes holds the value of the \"notes\" field.",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.EntityTemplateEdges": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "description": "Fields holds the value of the fields edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.TemplateField"
+                    }
+                },
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                },
+                "location": {
+                    "description": "Location holds the value of the location edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Entity"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.EntityType": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description holds the value of the \"description\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the EntityTypeQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.EntityTypeEdges"
+                        }
+                    ]
+                },
+                "icon": {
+                    "description": "Icon holds the value of the \"icon\" field.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "is_location": {
+                    "description": "IsLocation holds the value of the \"is_location\" field.",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.EntityTypeEdges": {
+            "type": "object",
+            "properties": {
+                "default_template": {
+                    "description": "DefaultTemplate holds the value of the default_template edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.EntityTemplate"
+                        }
+                    ]
+                },
+                "entities": {
+                    "description": "Entities holds the value of the entities edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Entity"
+                    }
+                },
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                }
+            }
+        },
         "ent.Group": {
             "type": "object",
             "properties": {
@@ -3080,32 +3483,32 @@ const docTemplate = `{
         "ent.GroupEdges": {
             "type": "object",
             "properties": {
+                "entities": {
+                    "description": "Entities holds the value of the entities edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Entity"
+                    }
+                },
+                "entity_templates": {
+                    "description": "EntityTemplates holds the value of the entity_templates edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.EntityTemplate"
+                    }
+                },
+                "entity_types": {
+                    "description": "EntityTypes holds the value of the entity_types edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.EntityType"
+                    }
+                },
                 "invitation_tokens": {
                     "description": "InvitationTokens holds the value of the invitation_tokens edge.",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/ent.GroupInvitationToken"
-                    }
-                },
-                "item_templates": {
-                    "description": "ItemTemplates holds the value of the item_templates edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.ItemTemplate"
-                    }
-                },
-                "items": {
-                    "description": "Items holds the value of the items edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Item"
-                    }
-                },
-                "locations": {
-                    "description": "Locations holds the value of the locations edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Location"
                     }
                 },
                 "notifiers": {
@@ -3184,437 +3587,6 @@ const docTemplate = `{
                 }
             }
         },
-        "ent.Item": {
-            "type": "object",
-            "properties": {
-                "archived": {
-                    "description": "Archived holds the value of the \"archived\" field.",
-                    "type": "boolean"
-                },
-                "asset_id": {
-                    "description": "AssetID holds the value of the \"asset_id\" field.",
-                    "type": "integer"
-                },
-                "created_at": {
-                    "description": "CreatedAt holds the value of the \"created_at\" field.",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "Description holds the value of the \"description\" field.",
-                    "type": "string"
-                },
-                "edges": {
-                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the ItemQuery when eager-loading is set.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.ItemEdges"
-                        }
-                    ]
-                },
-                "id": {
-                    "description": "ID of the ent.",
-                    "type": "string"
-                },
-                "import_ref": {
-                    "description": "ImportRef holds the value of the \"import_ref\" field.",
-                    "type": "string"
-                },
-                "insured": {
-                    "description": "Insured holds the value of the \"insured\" field.",
-                    "type": "boolean"
-                },
-                "lifetime_warranty": {
-                    "description": "LifetimeWarranty holds the value of the \"lifetime_warranty\" field.",
-                    "type": "boolean"
-                },
-                "manufacturer": {
-                    "description": "Manufacturer holds the value of the \"manufacturer\" field.",
-                    "type": "string"
-                },
-                "model_number": {
-                    "description": "ModelNumber holds the value of the \"model_number\" field.",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "Name holds the value of the \"name\" field.",
-                    "type": "string"
-                },
-                "notes": {
-                    "description": "Notes holds the value of the \"notes\" field.",
-                    "type": "string"
-                },
-                "purchase_from": {
-                    "description": "PurchaseFrom holds the value of the \"purchase_from\" field.",
-                    "type": "string"
-                },
-                "purchase_price": {
-                    "description": "PurchasePrice holds the value of the \"purchase_price\" field.",
-                    "type": "number"
-                },
-                "purchase_time": {
-                    "description": "PurchaseTime holds the value of the \"purchase_time\" field.",
-                    "type": "string"
-                },
-                "quantity": {
-                    "description": "Quantity holds the value of the \"quantity\" field.",
-                    "type": "number"
-                },
-                "serial_number": {
-                    "description": "SerialNumber holds the value of the \"serial_number\" field.",
-                    "type": "string"
-                },
-                "sold_notes": {
-                    "description": "SoldNotes holds the value of the \"sold_notes\" field.",
-                    "type": "string"
-                },
-                "sold_price": {
-                    "description": "SoldPrice holds the value of the \"sold_price\" field.",
-                    "type": "number"
-                },
-                "sold_time": {
-                    "description": "SoldTime holds the value of the \"sold_time\" field.",
-                    "type": "string"
-                },
-                "sold_to": {
-                    "description": "SoldTo holds the value of the \"sold_to\" field.",
-                    "type": "string"
-                },
-                "sync_child_items_locations": {
-                    "description": "SyncChildItemsLocations holds the value of the \"sync_child_items_locations\" field.",
-                    "type": "boolean"
-                },
-                "updated_at": {
-                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
-                    "type": "string"
-                },
-                "warranty_details": {
-                    "description": "WarrantyDetails holds the value of the \"warranty_details\" field.",
-                    "type": "string"
-                },
-                "warranty_expires": {
-                    "description": "WarrantyExpires holds the value of the \"warranty_expires\" field.",
-                    "type": "string"
-                }
-            }
-        },
-        "ent.ItemEdges": {
-            "type": "object",
-            "properties": {
-                "attachments": {
-                    "description": "Attachments holds the value of the attachments edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Attachment"
-                    }
-                },
-                "children": {
-                    "description": "Children holds the value of the children edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Item"
-                    }
-                },
-                "fields": {
-                    "description": "Fields holds the value of the fields edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.ItemField"
-                    }
-                },
-                "group": {
-                    "description": "Group holds the value of the group edge.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.Group"
-                        }
-                    ]
-                },
-                "location": {
-                    "description": "Location holds the value of the location edge.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.Location"
-                        }
-                    ]
-                },
-                "maintenance_entries": {
-                    "description": "MaintenanceEntries holds the value of the maintenance_entries edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.MaintenanceEntry"
-                    }
-                },
-                "parent": {
-                    "description": "Parent holds the value of the parent edge.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.Item"
-                        }
-                    ]
-                },
-                "tag": {
-                    "description": "Tag holds the value of the tag edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Tag"
-                    }
-                }
-            }
-        },
-        "ent.ItemField": {
-            "type": "object",
-            "properties": {
-                "boolean_value": {
-                    "description": "BooleanValue holds the value of the \"boolean_value\" field.",
-                    "type": "boolean"
-                },
-                "created_at": {
-                    "description": "CreatedAt holds the value of the \"created_at\" field.",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "Description holds the value of the \"description\" field.",
-                    "type": "string"
-                },
-                "edges": {
-                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the ItemFieldQuery when eager-loading is set.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.ItemFieldEdges"
-                        }
-                    ]
-                },
-                "id": {
-                    "description": "ID of the ent.",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "Name holds the value of the \"name\" field.",
-                    "type": "string"
-                },
-                "number_value": {
-                    "description": "NumberValue holds the value of the \"number_value\" field.",
-                    "type": "integer"
-                },
-                "text_value": {
-                    "description": "TextValue holds the value of the \"text_value\" field.",
-                    "type": "string"
-                },
-                "time_value": {
-                    "description": "TimeValue holds the value of the \"time_value\" field.",
-                    "type": "string"
-                },
-                "type": {
-                    "description": "Type holds the value of the \"type\" field.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/itemfield.Type"
-                        }
-                    ]
-                },
-                "updated_at": {
-                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
-                    "type": "string"
-                }
-            }
-        },
-        "ent.ItemFieldEdges": {
-            "type": "object",
-            "properties": {
-                "item": {
-                    "description": "Item holds the value of the item edge.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.Item"
-                        }
-                    ]
-                }
-            }
-        },
-        "ent.ItemTemplate": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "description": "CreatedAt holds the value of the \"created_at\" field.",
-                    "type": "string"
-                },
-                "default_description": {
-                    "description": "Default description for items created from this template",
-                    "type": "string"
-                },
-                "default_insured": {
-                    "description": "DefaultInsured holds the value of the \"default_insured\" field.",
-                    "type": "boolean"
-                },
-                "default_lifetime_warranty": {
-                    "description": "DefaultLifetimeWarranty holds the value of the \"default_lifetime_warranty\" field.",
-                    "type": "boolean"
-                },
-                "default_manufacturer": {
-                    "description": "DefaultManufacturer holds the value of the \"default_manufacturer\" field.",
-                    "type": "string"
-                },
-                "default_model_number": {
-                    "description": "Default model number for items created from this template",
-                    "type": "string"
-                },
-                "default_name": {
-                    "description": "Default name template for items (can use placeholders)",
-                    "type": "string"
-                },
-                "default_quantity": {
-                    "description": "DefaultQuantity holds the value of the \"default_quantity\" field.",
-                    "type": "number"
-                },
-                "default_tag_ids": {
-                    "description": "Default tag IDs for items created from this template",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "default_warranty_details": {
-                    "description": "DefaultWarrantyDetails holds the value of the \"default_warranty_details\" field.",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "Description holds the value of the \"description\" field.",
-                    "type": "string"
-                },
-                "edges": {
-                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the ItemTemplateQuery when eager-loading is set.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.ItemTemplateEdges"
-                        }
-                    ]
-                },
-                "id": {
-                    "description": "ID of the ent.",
-                    "type": "string"
-                },
-                "include_purchase_fields": {
-                    "description": "Whether to include purchase fields in items created from this template",
-                    "type": "boolean"
-                },
-                "include_sold_fields": {
-                    "description": "Whether to include sold fields in items created from this template",
-                    "type": "boolean"
-                },
-                "include_warranty_fields": {
-                    "description": "Whether to include warranty fields in items created from this template",
-                    "type": "boolean"
-                },
-                "name": {
-                    "description": "Name holds the value of the \"name\" field.",
-                    "type": "string"
-                },
-                "notes": {
-                    "description": "Notes holds the value of the \"notes\" field.",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
-                    "type": "string"
-                }
-            }
-        },
-        "ent.ItemTemplateEdges": {
-            "type": "object",
-            "properties": {
-                "fields": {
-                    "description": "Fields holds the value of the fields edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.TemplateField"
-                    }
-                },
-                "group": {
-                    "description": "Group holds the value of the group edge.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.Group"
-                        }
-                    ]
-                },
-                "location": {
-                    "description": "Location holds the value of the location edge.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.Location"
-                        }
-                    ]
-                }
-            }
-        },
-        "ent.Location": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "description": "CreatedAt holds the value of the \"created_at\" field.",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "Description holds the value of the \"description\" field.",
-                    "type": "string"
-                },
-                "edges": {
-                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the LocationQuery when eager-loading is set.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.LocationEdges"
-                        }
-                    ]
-                },
-                "id": {
-                    "description": "ID of the ent.",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "Name holds the value of the \"name\" field.",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
-                    "type": "string"
-                }
-            }
-        },
-        "ent.LocationEdges": {
-            "type": "object",
-            "properties": {
-                "children": {
-                    "description": "Children holds the value of the children edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Location"
-                    }
-                },
-                "group": {
-                    "description": "Group holds the value of the group edge.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.Group"
-                        }
-                    ]
-                },
-                "items": {
-                    "description": "Items holds the value of the items edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Item"
-                    }
-                },
-                "parent": {
-                    "description": "Parent holds the value of the parent edge.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.Location"
-                        }
-                    ]
-                }
-            }
-        },
         "ent.MaintenanceEntry": {
             "type": "object",
             "properties": {
@@ -3642,12 +3614,12 @@ const docTemplate = `{
                         }
                     ]
                 },
-                "id": {
-                    "description": "ID of the ent.",
+                "entity_id": {
+                    "description": "EntityID holds the value of the \"entity_id\" field.",
                     "type": "string"
                 },
-                "item_id": {
-                    "description": "ItemID holds the value of the \"item_id\" field.",
+                "id": {
+                    "description": "ID of the ent.",
                     "type": "string"
                 },
                 "name": {
@@ -3667,11 +3639,11 @@ const docTemplate = `{
         "ent.MaintenanceEntryEdges": {
             "type": "object",
             "properties": {
-                "item": {
-                    "description": "Item holds the value of the item edge.",
+                "entity": {
+                    "description": "Entity holds the value of the entity edge.",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/ent.Item"
+                            "$ref": "#/definitions/ent.Entity"
                         }
                     ]
                 }
@@ -3790,6 +3762,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/ent.Tag"
                     }
                 },
+                "entities": {
+                    "description": "Entities holds the value of the entities edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Entity"
+                    }
+                },
                 "group": {
                     "description": "Group holds the value of the group edge.",
                     "allOf": [
@@ -3797,13 +3776,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/ent.Group"
                         }
                     ]
-                },
-                "items": {
-                    "description": "Items holds the value of the items edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Item"
-                    }
                 },
                 "parent": {
                     "description": "Parent holds the value of the parent edge.",
@@ -3875,11 +3847,11 @@ const docTemplate = `{
         "ent.TemplateFieldEdges": {
             "type": "object",
             "properties": {
-                "item_template": {
-                    "description": "ItemTemplate holds the value of the item_template edge.",
+                "entity_template": {
+                    "description": "EntityTemplate holds the value of the entity_template edge.",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/ent.ItemTemplate"
+                            "$ref": "#/definitions/ent.EntityTemplate"
                         }
                     ]
                 }
@@ -3981,7 +3953,7 @@ const docTemplate = `{
                 }
             }
         },
-        "itemfield.Type": {
+        "entityfield.Type": {
             "type": "string",
             "enum": [
                 "text",
@@ -4009,7 +3981,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "item": {
-                    "$ref": "#/definitions/repo.ItemCreate"
+                    "$ref": "#/definitions/repo.EntityCreate"
                 },
                 "manufacturer": {
                     "type": "string"
@@ -4040,6 +4012,816 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "copyPrefix": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.EntityCreate": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "entityTypeId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "parentId": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "quantity": {
+                    "type": "number"
+                },
+                "tagIds": {
+                    "description": "Edges",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "repo.EntityFieldData": {
+            "type": "object",
+            "properties": {
+                "booleanValue": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "numberValue": {
+                    "type": "integer"
+                },
+                "textValue": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.EntityListResult": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.EntitySummary"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "totalPrice": {
+                    "type": "number"
+                }
+            }
+        },
+        "repo.EntityOut": {
+            "type": "object",
+            "properties": {
+                "archived": {
+                    "type": "boolean"
+                },
+                "assetId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "attachments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.ItemAttachment"
+                    }
+                },
+                "children": {
+                    "description": "Container-specific fields (for entities whose entity_type.is_location = true)",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.EntitySummary"
+                    }
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "entityType": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/repo.EntityTypeSummary"
+                        }
+                    ],
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.EntityFieldData"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "imageId": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "insured": {
+                    "type": "boolean"
+                },
+                "itemCount": {
+                    "description": "Container-specific (populated when querying locations)",
+                    "type": "number"
+                },
+                "lifetimeWarranty": {
+                    "description": "Warranty",
+                    "type": "boolean"
+                },
+                "manufacturer": {
+                    "type": "string"
+                },
+                "modelNumber": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "notes": {
+                    "description": "Extras",
+                    "type": "string"
+                },
+                "parent": {
+                    "description": "Edges",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/repo.EntitySummary"
+                        }
+                    ],
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "purchaseFrom": {
+                    "type": "string"
+                },
+                "purchasePrice": {
+                    "type": "number"
+                },
+                "purchaseTime": {
+                    "description": "Purchase",
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "number"
+                },
+                "serialNumber": {
+                    "type": "string"
+                },
+                "soldNotes": {
+                    "type": "string"
+                },
+                "soldPrice": {
+                    "type": "number"
+                },
+                "soldTime": {
+                    "description": "Sold",
+                    "type": "string"
+                },
+                "soldTo": {
+                    "type": "string"
+                },
+                "syncChildEntityLocations": {
+                    "type": "boolean"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.TagSummary"
+                    }
+                },
+                "thumbnailId": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "totalPrice": {
+                    "type": "number"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "warrantyDetails": {
+                    "type": "string"
+                },
+                "warrantyExpires": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.EntityPatch": {
+            "type": "object",
+            "properties": {
+                "entityTypeId": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "id": {
+                    "type": "string"
+                },
+                "parentId": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "quantity": {
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "tagIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "x-nullable": true,
+                    "x-omitempty": true
+                }
+            }
+        },
+        "repo.EntityPath": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/repo.EntityPathType"
+                }
+            }
+        },
+        "repo.EntityPathType": {
+            "type": "string",
+            "enum": [
+                "location",
+                "item"
+            ],
+            "x-enum-varnames": [
+                "EntityPathTypeLocation",
+                "EntityPathTypeItem"
+            ]
+        },
+        "repo.EntitySummary": {
+            "type": "object",
+            "properties": {
+                "archived": {
+                    "type": "boolean"
+                },
+                "assetId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "entityType": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/repo.EntityTypeSummary"
+                        }
+                    ],
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "id": {
+                    "type": "string"
+                },
+                "imageId": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "insured": {
+                    "type": "boolean"
+                },
+                "itemCount": {
+                    "description": "Container-specific (populated when querying locations)",
+                    "type": "number"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent": {
+                    "description": "Edges",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/repo.EntitySummary"
+                        }
+                    ],
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "purchasePrice": {
+                    "type": "number"
+                },
+                "quantity": {
+                    "type": "number"
+                },
+                "soldTime": {
+                    "description": "Sale details",
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.TagSummary"
+                    }
+                },
+                "thumbnailId": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.EntityTemplateCreate": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "defaultDescription": {
+                    "type": "string",
+                    "maxLength": 1000,
+                    "x-nullable": true
+                },
+                "defaultInsured": {
+                    "type": "boolean"
+                },
+                "defaultLifetimeWarranty": {
+                    "type": "boolean"
+                },
+                "defaultLocationId": {
+                    "description": "Default location and tags",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "defaultManufacturer": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "x-nullable": true
+                },
+                "defaultModelNumber": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "x-nullable": true
+                },
+                "defaultName": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "x-nullable": true
+                },
+                "defaultQuantity": {
+                    "description": "Default values for entities",
+                    "type": "number",
+                    "x-nullable": true
+                },
+                "defaultTagIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "x-nullable": true
+                },
+                "defaultWarrantyDetails": {
+                    "type": "string",
+                    "maxLength": 1000,
+                    "x-nullable": true
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "fields": {
+                    "description": "Custom fields",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.TemplateField"
+                    }
+                },
+                "includePurchaseFields": {
+                    "type": "boolean"
+                },
+                "includeSoldFields": {
+                    "type": "boolean"
+                },
+                "includeWarrantyFields": {
+                    "description": "Metadata flags",
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "notes": {
+                    "type": "string",
+                    "maxLength": 1000
+                }
+            }
+        },
+        "repo.EntityTemplateOut": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "defaultDescription": {
+                    "type": "string"
+                },
+                "defaultInsured": {
+                    "type": "boolean"
+                },
+                "defaultLifetimeWarranty": {
+                    "type": "boolean"
+                },
+                "defaultLocation": {
+                    "description": "Default location and tags",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/repo.TemplateLocationSummary"
+                        }
+                    ]
+                },
+                "defaultManufacturer": {
+                    "type": "string"
+                },
+                "defaultModelNumber": {
+                    "type": "string"
+                },
+                "defaultName": {
+                    "type": "string"
+                },
+                "defaultQuantity": {
+                    "description": "Default values for entities",
+                    "type": "number"
+                },
+                "defaultTags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.TemplateTagSummary"
+                    }
+                },
+                "defaultWarrantyDetails": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "fields": {
+                    "description": "Custom fields",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.TemplateField"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "includePurchaseFields": {
+                    "type": "boolean"
+                },
+                "includeSoldFields": {
+                    "type": "boolean"
+                },
+                "includeWarrantyFields": {
+                    "description": "Metadata flags",
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.EntityTemplateSummary": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.EntityTemplateUpdate": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "defaultDescription": {
+                    "type": "string",
+                    "maxLength": 1000,
+                    "x-nullable": true
+                },
+                "defaultInsured": {
+                    "type": "boolean"
+                },
+                "defaultLifetimeWarranty": {
+                    "type": "boolean"
+                },
+                "defaultLocationId": {
+                    "description": "Default location and tags",
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "defaultManufacturer": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "x-nullable": true
+                },
+                "defaultModelNumber": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "x-nullable": true
+                },
+                "defaultName": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "x-nullable": true
+                },
+                "defaultQuantity": {
+                    "description": "Default values for entities",
+                    "type": "number",
+                    "x-nullable": true
+                },
+                "defaultTagIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "x-nullable": true
+                },
+                "defaultWarrantyDetails": {
+                    "type": "string",
+                    "maxLength": 1000,
+                    "x-nullable": true
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "fields": {
+                    "description": "Custom fields",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.TemplateField"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "includePurchaseFields": {
+                    "type": "boolean"
+                },
+                "includeSoldFields": {
+                    "type": "boolean"
+                },
+                "includeWarrantyFields": {
+                    "description": "Metadata flags",
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "notes": {
+                    "type": "string",
+                    "maxLength": 1000
+                }
+            }
+        },
+        "repo.EntityTypeCreate": {
+            "type": "object",
+            "properties": {
+                "defaultTemplateId": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "isLocation": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.EntityTypeSummary": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "defaultTemplate": {
+                    "$ref": "#/definitions/repo.EntityTemplateSummary"
+                },
+                "defaultTemplateId": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isLocation": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.EntityTypeUpdate": {
+            "type": "object",
+            "properties": {
+                "defaultTemplateId": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isLocation": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.EntityUpdate": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "archived": {
+                    "type": "boolean"
+                },
+                "assetId": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "entityTypeId": {
+                    "type": "string"
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.EntityFieldData"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "insured": {
+                    "type": "boolean"
+                },
+                "lifetimeWarranty": {
+                    "description": "Warranty",
+                    "type": "boolean"
+                },
+                "manufacturer": {
+                    "type": "string"
+                },
+                "modelNumber": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "notes": {
+                    "description": "Extras",
+                    "type": "string"
+                },
+                "parentId": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "purchaseFrom": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "purchasePrice": {
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "purchaseTime": {
+                    "description": "Purchase",
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "number"
+                },
+                "serialNumber": {
+                    "description": "Identifications",
+                    "type": "string"
+                },
+                "soldNotes": {
+                    "type": "string"
+                },
+                "soldPrice": {
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "soldTime": {
+                    "description": "Sold",
+                    "type": "string"
+                },
+                "soldTo": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "syncChildEntityLocations": {
+                    "type": "boolean"
+                },
+                "tagIds": {
+                    "description": "Edges",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "warrantyDetails": {
+                    "type": "string"
+                },
+                "warrantyExpires": {
                     "type": "string"
                 }
             }
@@ -4158,800 +4940,6 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "string"
-                }
-            }
-        },
-        "repo.ItemCreate": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string",
-                    "maxLength": 1000
-                },
-                "locationId": {
-                    "description": "Edges",
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "parentId": {
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "quantity": {
-                    "type": "number"
-                },
-                "tagIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "repo.ItemField": {
-            "type": "object",
-            "properties": {
-                "booleanValue": {
-                    "type": "boolean"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "numberValue": {
-                    "type": "integer"
-                },
-                "textValue": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "repo.ItemOut": {
-            "type": "object",
-            "properties": {
-                "archived": {
-                    "type": "boolean"
-                },
-                "assetId": {
-                    "type": "string",
-                    "example": "0"
-                },
-                "attachments": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/repo.ItemAttachment"
-                    }
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "fields": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/repo.ItemField"
-                    }
-                },
-                "id": {
-                    "type": "string"
-                },
-                "imageId": {
-                    "type": "string",
-                    "x-nullable": true,
-                    "x-omitempty": true
-                },
-                "insured": {
-                    "type": "boolean"
-                },
-                "lifetimeWarranty": {
-                    "description": "Warranty",
-                    "type": "boolean"
-                },
-                "location": {
-                    "description": "Edges",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/repo.LocationSummary"
-                        }
-                    ],
-                    "x-nullable": true,
-                    "x-omitempty": true
-                },
-                "manufacturer": {
-                    "type": "string"
-                },
-                "modelNumber": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "notes": {
-                    "description": "Extras",
-                    "type": "string"
-                },
-                "parent": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/repo.ItemSummary"
-                        }
-                    ],
-                    "x-nullable": true,
-                    "x-omitempty": true
-                },
-                "purchaseFrom": {
-                    "type": "string"
-                },
-                "purchasePrice": {
-                    "type": "number"
-                },
-                "purchaseTime": {
-                    "description": "Purchase",
-                    "type": "string"
-                },
-                "quantity": {
-                    "type": "number"
-                },
-                "serialNumber": {
-                    "type": "string"
-                },
-                "soldNotes": {
-                    "type": "string"
-                },
-                "soldPrice": {
-                    "type": "number"
-                },
-                "soldTime": {
-                    "description": "Sold",
-                    "type": "string"
-                },
-                "soldTo": {
-                    "type": "string"
-                },
-                "syncChildItemsLocations": {
-                    "type": "boolean"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/repo.TagSummary"
-                    }
-                },
-                "thumbnailId": {
-                    "type": "string",
-                    "x-nullable": true,
-                    "x-omitempty": true
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "warrantyDetails": {
-                    "type": "string"
-                },
-                "warrantyExpires": {
-                    "type": "string"
-                }
-            }
-        },
-        "repo.ItemPatch": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "locationId": {
-                    "type": "string",
-                    "x-nullable": true,
-                    "x-omitempty": true
-                },
-                "quantity": {
-                    "type": "number",
-                    "x-nullable": true,
-                    "x-omitempty": true
-                },
-                "tagIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "x-nullable": true,
-                    "x-omitempty": true
-                }
-            }
-        },
-        "repo.ItemPath": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "type": {
-                    "$ref": "#/definitions/repo.ItemType"
-                }
-            }
-        },
-        "repo.ItemSummary": {
-            "type": "object",
-            "properties": {
-                "archived": {
-                    "type": "boolean"
-                },
-                "assetId": {
-                    "type": "string",
-                    "example": "0"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "imageId": {
-                    "type": "string",
-                    "x-nullable": true,
-                    "x-omitempty": true
-                },
-                "insured": {
-                    "type": "boolean"
-                },
-                "location": {
-                    "description": "Edges",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/repo.LocationSummary"
-                        }
-                    ],
-                    "x-nullable": true,
-                    "x-omitempty": true
-                },
-                "name": {
-                    "type": "string"
-                },
-                "purchasePrice": {
-                    "type": "number"
-                },
-                "quantity": {
-                    "type": "number"
-                },
-                "soldTime": {
-                    "description": "Sale details",
-                    "type": "string"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/repo.TagSummary"
-                    }
-                },
-                "thumbnailId": {
-                    "type": "string",
-                    "x-nullable": true,
-                    "x-omitempty": true
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "repo.ItemTemplateCreate": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "defaultDescription": {
-                    "type": "string",
-                    "maxLength": 1000,
-                    "x-nullable": true
-                },
-                "defaultInsured": {
-                    "type": "boolean"
-                },
-                "defaultLifetimeWarranty": {
-                    "type": "boolean"
-                },
-                "defaultLocationId": {
-                    "description": "Default location and tags",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "defaultManufacturer": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "x-nullable": true
-                },
-                "defaultModelNumber": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "x-nullable": true
-                },
-                "defaultName": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "x-nullable": true
-                },
-                "defaultQuantity": {
-                    "description": "Default values for items",
-                    "type": "number",
-                    "x-nullable": true
-                },
-                "defaultTagIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "x-nullable": true
-                },
-                "defaultWarrantyDetails": {
-                    "type": "string",
-                    "maxLength": 1000,
-                    "x-nullable": true
-                },
-                "description": {
-                    "type": "string",
-                    "maxLength": 1000
-                },
-                "fields": {
-                    "description": "Custom fields",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/repo.TemplateField"
-                    }
-                },
-                "includePurchaseFields": {
-                    "type": "boolean"
-                },
-                "includeSoldFields": {
-                    "type": "boolean"
-                },
-                "includeWarrantyFields": {
-                    "description": "Metadata flags",
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "notes": {
-                    "type": "string",
-                    "maxLength": 1000
-                }
-            }
-        },
-        "repo.ItemTemplateOut": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "defaultDescription": {
-                    "type": "string"
-                },
-                "defaultInsured": {
-                    "type": "boolean"
-                },
-                "defaultLifetimeWarranty": {
-                    "type": "boolean"
-                },
-                "defaultLocation": {
-                    "description": "Default location and tags",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/repo.TemplateLocationSummary"
-                        }
-                    ]
-                },
-                "defaultManufacturer": {
-                    "type": "string"
-                },
-                "defaultModelNumber": {
-                    "type": "string"
-                },
-                "defaultName": {
-                    "type": "string"
-                },
-                "defaultQuantity": {
-                    "description": "Default values for items",
-                    "type": "number"
-                },
-                "defaultTags": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/repo.TemplateTagSummary"
-                    }
-                },
-                "defaultWarrantyDetails": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "fields": {
-                    "description": "Custom fields",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/repo.TemplateField"
-                    }
-                },
-                "id": {
-                    "type": "string"
-                },
-                "includePurchaseFields": {
-                    "type": "boolean"
-                },
-                "includeSoldFields": {
-                    "type": "boolean"
-                },
-                "includeWarrantyFields": {
-                    "description": "Metadata flags",
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "notes": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "repo.ItemTemplateSummary": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "repo.ItemTemplateUpdate": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "defaultDescription": {
-                    "type": "string",
-                    "maxLength": 1000,
-                    "x-nullable": true
-                },
-                "defaultInsured": {
-                    "type": "boolean"
-                },
-                "defaultLifetimeWarranty": {
-                    "type": "boolean"
-                },
-                "defaultLocationId": {
-                    "description": "Default location and tags",
-                    "type": "string",
-                    "x-nullable": true
-                },
-                "defaultManufacturer": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "x-nullable": true
-                },
-                "defaultModelNumber": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "x-nullable": true
-                },
-                "defaultName": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "x-nullable": true
-                },
-                "defaultQuantity": {
-                    "description": "Default values for items",
-                    "type": "number",
-                    "x-nullable": true
-                },
-                "defaultTagIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "x-nullable": true
-                },
-                "defaultWarrantyDetails": {
-                    "type": "string",
-                    "maxLength": 1000,
-                    "x-nullable": true
-                },
-                "description": {
-                    "type": "string",
-                    "maxLength": 1000
-                },
-                "fields": {
-                    "description": "Custom fields",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/repo.TemplateField"
-                    }
-                },
-                "id": {
-                    "type": "string"
-                },
-                "includePurchaseFields": {
-                    "type": "boolean"
-                },
-                "includeSoldFields": {
-                    "type": "boolean"
-                },
-                "includeWarrantyFields": {
-                    "description": "Metadata flags",
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "notes": {
-                    "type": "string",
-                    "maxLength": 1000
-                }
-            }
-        },
-        "repo.ItemType": {
-            "type": "string",
-            "enum": [
-                "location",
-                "item"
-            ],
-            "x-enum-varnames": [
-                "ItemTypeLocation",
-                "ItemTypeItem"
-            ]
-        },
-        "repo.ItemUpdate": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "archived": {
-                    "type": "boolean"
-                },
-                "assetId": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string",
-                    "maxLength": 1000
-                },
-                "fields": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/repo.ItemField"
-                    }
-                },
-                "id": {
-                    "type": "string"
-                },
-                "insured": {
-                    "type": "boolean"
-                },
-                "lifetimeWarranty": {
-                    "description": "Warranty",
-                    "type": "boolean"
-                },
-                "locationId": {
-                    "description": "Edges",
-                    "type": "string"
-                },
-                "manufacturer": {
-                    "type": "string"
-                },
-                "modelNumber": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "notes": {
-                    "description": "Extras",
-                    "type": "string"
-                },
-                "parentId": {
-                    "type": "string",
-                    "x-nullable": true,
-                    "x-omitempty": true
-                },
-                "purchaseFrom": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "purchasePrice": {
-                    "type": "number",
-                    "x-nullable": true,
-                    "x-omitempty": true
-                },
-                "purchaseTime": {
-                    "description": "Purchase",
-                    "type": "string"
-                },
-                "quantity": {
-                    "type": "number"
-                },
-                "serialNumber": {
-                    "description": "Identifications",
-                    "type": "string"
-                },
-                "soldNotes": {
-                    "type": "string"
-                },
-                "soldPrice": {
-                    "type": "number",
-                    "x-nullable": true,
-                    "x-omitempty": true
-                },
-                "soldTime": {
-                    "description": "Sold",
-                    "type": "string"
-                },
-                "soldTo": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "syncChildItemsLocations": {
-                    "type": "boolean"
-                },
-                "tagIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "warrantyDetails": {
-                    "type": "string"
-                },
-                "warrantyExpires": {
-                    "type": "string"
-                }
-            }
-        },
-        "repo.LocationCreate": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "parentId": {
-                    "type": "string",
-                    "x-nullable": true
-                }
-            }
-        },
-        "repo.LocationOut": {
-            "type": "object",
-            "properties": {
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/repo.LocationSummary"
-                    }
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "parent": {
-                    "$ref": "#/definitions/repo.LocationSummary"
-                },
-                "totalPrice": {
-                    "type": "number"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "repo.LocationOutCount": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "itemCount": {
-                    "type": "number"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "repo.LocationSummary": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "repo.LocationUpdate": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "parentId": {
-                    "type": "string",
-                    "x-nullable": true
                 }
             }
         },
@@ -5136,13 +5124,13 @@ const docTemplate = `{
                 }
             }
         },
-        "repo.PaginationResult-repo_ItemSummary": {
+        "repo.PaginationResult-repo_EntitySummary": {
             "type": "object",
             "properties": {
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/repo.ItemSummary"
+                        "$ref": "#/definitions/repo.EntitySummary"
                     }
                 },
                 "page": {
@@ -5258,16 +5246,56 @@ const docTemplate = `{
                 }
             }
         },
+        "repo.TagUpdate": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "icon": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "parentId": {
+                    "type": "string",
+                    "x-nullable": true
+                }
+            }
+        },
         "repo.TemplateField": {
             "type": "object",
             "properties": {
+                "booleanValue": {
+                    "type": "boolean"
+                },
                 "id": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string"
                 },
+                "numberValue": {
+                    "type": "integer"
+                },
                 "textValue": {
+                    "type": "string"
+                },
+                "timeValue": {
                     "type": "string"
                 },
                 "type": {
@@ -5572,6 +5600,36 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.EntityTemplateCreateItemRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "parentId"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "parentId": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "number"
+                },
+                "tagIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "v1.GroupAcceptInvitationResponse": {
             "type": "object",
             "properties": {
@@ -5624,44 +5682,6 @@ const docTemplate = `{
             "properties": {
                 "userId": {
                     "type": "string"
-                }
-            }
-        },
-        "v1.ItemAttachmentToken": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.ItemTemplateCreateItemRequest": {
-            "type": "object",
-            "required": [
-                "locationId",
-                "name"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string",
-                    "maxLength": 1000
-                },
-                "locationId": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "quantity": {
-                    "type": "number"
-                },
-                "tagIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 }
             }
         },

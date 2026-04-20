@@ -3,7 +3,7 @@
   import { Button } from "@/components/ui/button";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
-  import type { ItemPatch, ItemSummary, TagOut, LocationSummary } from "~/lib/api/types/data-contracts";
+  import type { EntityPatch, EntitySummary, TagOut } from "~/lib/api/types/data-contracts";
   import LocationSelector from "~/components/Location/Selector.vue";
   import MdiLoading from "~icons/mdi/loading";
   import { toast } from "~/components/ui/sonner";
@@ -18,7 +18,7 @@
 
   const allTags = computed(() => tagStore.tags);
 
-  const items = ref<ItemSummary[]>([]);
+  const items = ref<EntitySummary[]>([]);
   const saving = ref(false);
 
   const enabled = reactive({
@@ -27,14 +27,14 @@
     removeTags: false,
   });
 
-  const newLocation = ref<LocationSummary | null>(null);
+  const newLocation = ref<EntitySummary | null>(null);
   const addTags = ref<string[]>([]);
   const removeTags = ref<string[]>([]);
 
   const availableToAddTags = ref<TagOut[]>([]);
   const availableToRemoveTags = ref<TagOut[]>([]);
 
-  const intersectTagIds = (items: ItemSummary[]): string[] => {
+  const intersectTagIds = (items: EntitySummary[]): string[] => {
     if (items.length === 0) return [];
     const counts = new Map<string, number>();
     for (const it of items) {
@@ -45,7 +45,7 @@
     return [...counts.entries()].filter(([_, c]) => c === items.length).map(([id]) => id);
   };
 
-  const unionTagIds = (items: ItemSummary[]): string[] => {
+  const unionTagIds = (items: EntitySummary[]): string[] => {
     const s = new Set<string>();
     for (const it of items) for (const l of it.tags || []) s.add(l.id);
     return Array.from(s);
@@ -94,12 +94,12 @@
 
     // Process items sequentially to avoid database locking issues with concurrent write transactions
     for (const item of items.value) {
-      const patch: ItemPatch = {
+      const patch: EntityPatch = {
         id: item.id,
       };
 
       if (enabled.changeLocation) {
-        patch.locationId = location!.id;
+        patch.parentId = location!.id;
       }
 
       let currentTags = item.tags.map(l => l.id);

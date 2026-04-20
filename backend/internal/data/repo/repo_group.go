@@ -11,10 +11,10 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
@@ -122,23 +122,34 @@ func (r *GroupRepository) GetAllGroups(ctx context.Context, userID uuid.UUID) ([
 func (r *GroupRepository) StatsLocationsByPurchasePrice(ctx context.Context, gid uuid.UUID) ([]TotalsByOrganizer, error) {
 	var v []TotalsByOrganizer
 
-	err := r.db.Location.Query().
-		Where(
-			location.HasGroupWith(group.ID(gid)),
-		).
-		GroupBy(location.FieldID, location.FieldName).
-		Aggregate(func(sq *sql.Selector) string {
-			t := sql.Table(item.Table)
-			sq.Join(t).On(sq.C(location.FieldID), t.C(item.LocationColumn))
+	// Query entities that are containers (is_location=true) and sum purchase prices of their children
+	q := `
+		SELECT parent.id, parent.name,
+			COALESCE(SUM(child.purchase_price), 0) AS total
+		FROM entities parent
+		JOIN entity_types et ON et.id = parent.entity_type_entities
+		LEFT JOIN entities child ON child.entity_children = parent.id
+			AND child.entity_type_entities IN (SELECT id FROM entity_types WHERE is_location = false)
+		WHERE parent.group_entities = $1 AND et.is_location = true
+		GROUP BY parent.id, parent.name
+		HAVING COALESCE(SUM(child.purchase_price), 0) > 0
+	`
 
-			return sql.As(sql.Sum(t.C(item.FieldPurchasePrice)), "total")
-		}).
-		Scan(ctx, &v)
+	rows, err := r.db.Sql().QueryContext(ctx, q, gid)
 	if err != nil {
 		return nil, err
 	}
+	defer func() { _ = rows.Close() }()
 
-	return v, err
+	for rows.Next() {
+		var item TotalsByOrganizer
+		if err := rows.Scan(&item.ID, &item.Name, &item.Total); err != nil {
+			return nil, err
+		}
+		v = append(v, item)
+	}
+
+	return v, rows.Err()
 }
 
 func (r *GroupRepository) StatsTagsByPurchasePrice(ctx context.Context, gid uuid.UUID) ([]TotalsByOrganizer, error) {
@@ -150,14 +161,14 @@ func (r *GroupRepository) StatsTagsByPurchasePrice(ctx context.Context, gid uuid
 		).
 		GroupBy(tag.FieldID, tag.FieldName).
 		Aggregate(func(sq *sql.Selector) string {
-			itemTable := sql.Table(item.Table)
+			entityTable := sql.Table(entity.Table)
 
-			jt := sql.Table(tag.ItemsTable)
+			jt := sql.Table(tag.EntitiesTable)
 
-			sq.Join(jt).On(sq.C(tag.FieldID), jt.C(tag.ItemsPrimaryKey[0]))
-			sq.Join(itemTable).On(jt.C(tag.ItemsPrimaryKey[1]), itemTable.C(item.FieldID))
+			sq.Join(jt).On(sq.C(tag.FieldID), jt.C(tag.EntitiesPrimaryKey[0]))
+			sq.Join(entityTable).On(jt.C(tag.EntitiesPrimaryKey[1]), entityTable.C(entity.FieldID))
 
-			return sql.As(sql.Sum(itemTable.C(item.FieldPurchasePrice)), "total")
+			return sql.As(sql.Sum(entityTable.C(entity.FieldPurchasePrice)), "total")
 		}).
 		Scan(ctx, &v)
 	if err != nil {
@@ -171,10 +182,11 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 	// Get the Totals for the Start and End of the Given Time Period
 	q := `
 	SELECT
-		SUM(CASE WHEN created_at < $1 THEN purchase_price ELSE 0 END) AS price_at_start,
-		SUM(CASE WHEN created_at < $2 THEN purchase_price ELSE 0 END) AS price_at_end
-	FROM items
-	WHERE group_items = $3 AND archived = false
+		SUM(CASE WHEN e.created_at < $1 THEN e.purchase_price ELSE 0 END) AS price_at_start,
+		SUM(CASE WHEN e.created_at < $2 THEN e.purchase_price ELSE 0 END) AS price_at_end
+	FROM entities e
+	JOIN entity_types et ON et.id = e.entity_type_entities
+	WHERE e.group_entities = $3 AND e.archived = false AND et.is_location = false
 `
 	stats := ValueOverTime{
 		Start: start,
@@ -201,18 +213,19 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 
 	var v []itemPriceEntry
 
-	// Get Created Date and Price of all items between start and end
-	err = r.db.Item.Query().
+	// Get Created Date and Price of all entities between start and end
+	err = r.db.Entity.Query().
 		Where(
-			item.HasGroupWith(group.ID(gid)),
-			item.CreatedAtGTE(start),
-			item.CreatedAtLTE(end),
-			item.Archived(false),
+			entity.HasGroupWith(group.ID(gid)),
+			entity.CreatedAtGTE(start),
+			entity.CreatedAtLTE(end),
+			entity.Archived(false),
+			entity.HasEntityTypeWith(entitytype.IsLocation(false)),
 		).
 		Select(
-			item.FieldName,
-			item.FieldCreatedAt,
-			item.FieldPurchasePrice,
+			entity.FieldName,
+			entity.FieldCreatedAt,
+			entity.FieldPurchasePrice,
 		).
 		Scan(ctx, &v)
 
@@ -234,15 +247,17 @@ func (r *GroupRepository) StatsGroup(ctx context.Context, gid uuid.UUID) (GroupS
 	q := `
 		SELECT
             (SELECT COUNT(*) FROM user_groups WHERE group_id = $2) AS total_users,
-            (SELECT COUNT(*) FROM items WHERE group_items = $2 AND items.archived = false) AS total_items,
-            (SELECT COUNT(*) FROM locations WHERE group_locations = $2) AS total_locations,
+            (SELECT COUNT(*) FROM entities e JOIN entity_types et ON et.id = e.entity_type_entities WHERE e.group_entities = $2 AND e.archived = false AND et.is_location = false) AS total_items,
+            (SELECT COUNT(*) FROM entities e JOIN entity_types et ON et.id = e.entity_type_entities WHERE e.group_entities = $2 AND et.is_location = true) AS total_locations,
             (SELECT COUNT(*) FROM tags WHERE group_tags = $2) AS total_tags,
-            (SELECT SUM(purchase_price*quantity) FROM items WHERE group_items = $2 AND items.archived = false) AS total_item_price,
+            (SELECT SUM(e.purchase_price*e.quantity) FROM entities e JOIN entity_types et ON et.id = e.entity_type_entities WHERE e.group_entities = $2 AND e.archived = false AND et.is_location = false) AS total_item_price,
             (SELECT COUNT(*)
-                FROM items
-                    WHERE group_items = $2
-                    AND items.archived = false
-                    AND (items.lifetime_warranty = true OR items.warranty_expires > $1)
+                FROM entities e
+                JOIN entity_types et ON et.id = e.entity_type_entities
+                    WHERE e.group_entities = $2
+                    AND e.archived = false
+                    AND et.is_location = false
+                    AND (e.lifetime_warranty = true OR e.warranty_expires > $1)
                 ) AS total_with_warranty;
 `
 	var stats GroupStatistics
@@ -292,8 +307,8 @@ func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) error {
 		return err
 	}
 
-	itm, err := tx.Item.Query().
-		Where(item.HasGroupWith(group.ID(id))).
+	itm, err := tx.Entity.Query().
+		Where(entity.HasGroupWith(group.ID(id))).
 		WithGroup().
 		WithAttachments().
 		All(ctx)
@@ -301,19 +316,19 @@ func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) error {
 		return err
 	}
 
-	// Delete all attachments (and their files) before deleting the items
+	// Delete all attachments (and their files) before deleting the entities
 	for _, it := range itm {
 		for _, att := range it.Edges.Attachments {
 			if err := r.attachments.Delete(ctx, id, att.ID); err != nil {
-				log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during item deletion")
+				log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during entity deletion")
 				// Continue with other attachments even if one fails
 			}
 		}
 	}
 
-	// Delete all items from the database
-	if _, err := tx.Item.Delete().
-		Where(item.HasGroupWith(group.ID(id))).
+	// Delete all entities from the database
+	if _, err := tx.Entity.Delete().
+		Where(entity.HasGroupWith(group.ID(id))).
 		Exec(ctx); err != nil {
 		if rerr := tx.Rollback(); rerr != nil {
 			log.Error().Err(rerr).Msg("failed to rollback transaction")

@@ -30,7 +30,7 @@ func getPrevMonth(now time.Time) time.Time {
 }
 
 func TestMaintenanceEntryRepository_GetLog(t *testing.T) {
-	item := useItems(t, 1)[0]
+	item := useEntities(t, 1)[0]
 
 	// Create 11 maintenance entries for the item
 	created := make([]MaintenanceEntryCreate, 11)

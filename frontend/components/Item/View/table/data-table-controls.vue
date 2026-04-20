@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import type { Table as TableType } from "@tanstack/vue-table";
-  import type { ItemSummary } from "~/lib/api/types/data-contracts";
+  import type { EntitySummary } from "~/lib/api/types/data-contracts";
 
   import MdiTableCog from "~icons/mdi/table-cog";
 
@@ -19,7 +19,7 @@
   const { openDialog } = useDialog();
 
   const props = defineProps<{
-    table: TableType<ItemSummary>;
+    table: TableType<EntitySummary>;
     dataLength: number;
     externalPagination?: PaginationType;
   }>();

@@ -1,0 +1,551 @@
+<!-- eslint-disable @typescript-eslint/no-explicit-any -->
+<script setup lang="ts">
+  import { useI18n } from "vue-i18n";
+  import { toast } from "@/components/ui/sonner";
+  import type { ItemAttachment, EntityFieldData, EntityOut, EntityUpdate } from "~~/lib/api/types/data-contracts";
+  import { AttachmentTypes } from "~~/lib/api/types/non-generated";
+  import { useTagStore } from "~/stores/tags";
+  import { useLocationStore } from "~~/stores/locations";
+  import MdiLoading from "~icons/mdi/loading";
+  import MdiDelete from "~icons/mdi/delete";
+  import MdiPencil from "~icons/mdi/pencil";
+  import MdiContentSaveOutline from "~icons/mdi/content-save-outline";
+  import MdiImageOutline from "~icons/mdi/image-outline";
+  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { Button } from "@/components/ui/button";
+  import { useDialog } from "@/components/ui/dialog-provider";
+  import { Checkbox } from "@/components/ui/checkbox";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+  import { Switch } from "@/components/ui/switch";
+  import { Label } from "@/components/ui/label";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormTextArea from "~/components/Form/TextArea.vue";
+  import MarkdownEditor from "~/components/Form/MarkdownEditor.vue";
+  import FormCheckbox from "~/components/Form/Checkbox.vue";
+  import LocationSelector from "~/components/Location/Selector.vue";
+  import TagSelector from "~/components/Tag/Selector.vue";
+  import BaseCard from "@/components/Base/Card.vue";
+  import { Card } from "~/components/ui/card";
+  import DropZone from "~/components/global/DropZone.vue";
+
+  const { t } = useI18n();
+
+  const { openDialog, closeDialog } = useDialog();
+
+  definePageMeta({
+    middleware: ["auth"],
+  });
+
+  const route = useRoute();
+  const api = useUserApi();
+  const preferences = useViewPreferences();
+
+  const locationId = computed<string>(() => route.params.id as string);
+
+  const locationStore = useLocationStore();
+  const locations = computed(() => locationStore.allLocations);
+
+  const tagStore = useTagStore();
+  const tags = computed(() => tagStore.tags);
+
+  const {
+    data: nullableItem,
+    refresh,
+    pending: requestPending,
+  } = useAsyncData(async () => {
+    const { data, error } = await api.items.get(locationId.value);
+    if (error) {
+      toast.error(t("locations.toast.failed_load_location"));
+      navigateTo("/home");
+      return;
+    }
+
+    if (data.parent) {
+      parent.value = data.parent;
+    }
+
+    return data;
+  });
+
+  const item = ref<EntityOut & { tagIds: string[] }>(null as never);
+
+  watchEffect(() => {
+    if (nullableItem.value) {
+      item.value = {
+        ...nullableItem.value,
+        tagIds: nullableItem.value.tags?.map(l => l.id) ?? [],
+      };
+    }
+  });
+
+  onMounted(() => {
+    refresh();
+  });
+
+  const saving = ref(false);
+  const parent = ref<any>({});
+
+  async function saveLocation(redirect: boolean) {
+    saving.value = true;
+
+    const payload: EntityUpdate = {
+      ...item.value,
+      parentId: parent.value?.id || null,
+      tagIds: item.value.tagIds,
+      assetId: item.value.assetId,
+      purchasePrice: item.value.purchasePrice || 0,
+      soldPrice: item.value.soldPrice || 0,
+      purchaseTime: item.value.purchaseTime as Date,
+      syncChildEntityLocations: item.value.syncChildEntityLocations,
+    };
+
+    const { error } = await api.items.update(locationId.value, payload);
+
+    saving.value = false;
+
+    if (error) {
+      toast.error(t("locations.toast.failed_update_location"));
+      return;
+    }
+
+    toast.success(t("locations.toast.location_updated"));
+    if (redirect) {
+      navigateTo("/location/" + locationId.value);
+    }
+  }
+
+  type NonNullableStringKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends string ? K : never]: any }>;
+  type NonNullableNumberKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends number ? K : never]: any }>;
+  type BooleanKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends boolean ? K : never]: any }>;
+
+  type TextFormField = {
+    type: "text" | "textarea" | "markdown";
+    label: string;
+    ref: NonNullableStringKeys<EntityOut>;
+    maxLength?: number;
+    minLength?: number;
+  };
+
+  type NumberFormField = {
+    type: "number";
+    label: string;
+    ref: NonNullableNumberKeys<EntityOut> | NonNullableStringKeys<EntityOut>;
+  };
+
+  interface BoolFormField {
+    type: "checkbox";
+    label: string;
+    ref: BooleanKeys<EntityOut>;
+  }
+
+  type FormField = TextFormField | BoolFormField | NumberFormField;
+
+  const mainFields: FormField[] = [
+    {
+      type: "text",
+      label: "items.name",
+      ref: "name",
+      maxLength: 255,
+      minLength: 1,
+    },
+    {
+      type: "markdown",
+      label: "items.description",
+      ref: "description",
+      maxLength: 1000,
+    },
+    {
+      type: "markdown",
+      label: "items.notes",
+      ref: "notes",
+      maxLength: 1000,
+    },
+    {
+      type: "text",
+      label: "items.asset_id",
+      ref: "assetId",
+    },
+  ];
+
+  // - Attachments
+  const attDropZone = ref<HTMLDivElement>();
+  const { isOverDropZone: attDropZoneActive } = useDropZone(attDropZone);
+
+  const refAttachmentInput = ref<HTMLInputElement>();
+
+  function clickUpload() {
+    if (!refAttachmentInput.value) {
+      return;
+    }
+    refAttachmentInput.value.click();
+  }
+
+  function uploadImage(e: Event) {
+    const files = (e.target as HTMLInputElement).files;
+    if (!files || !files.item(0)) {
+      return;
+    }
+
+    const first = files.item(0);
+    if (!first) {
+      return;
+    }
+
+    uploadAttachment([first], null);
+  }
+
+  const dropPhoto = (files: File[] | null) => uploadAttachment(files, AttachmentTypes.Photo);
+  const dropAttachment = (files: File[] | null) => uploadAttachment(files, AttachmentTypes.Attachment);
+
+  async function uploadAttachment(files: File[] | null, type: AttachmentTypes | null) {
+    if (!files || files.length === 0 || !files[0]) {
+      return;
+    }
+
+    const { data, error } = await api.items.attachments.add(locationId.value, files[0], files[0].name, type);
+
+    if (error) {
+      toast.error(t("items.toast.failed_upload_attachment"));
+      return;
+    }
+
+    toast.success(t("items.toast.attachment_uploaded"));
+
+    await saveLocation(false);
+
+    item.value.attachments = data.attachments;
+  }
+
+  const confirm = useConfirm();
+
+  async function deleteAttachment(attachmentId: string) {
+    const confirmed = await confirm.open(t("items.delete_attachment_confirm"));
+
+    if (confirmed.isCanceled) {
+      return;
+    }
+
+    const { error } = await api.items.attachments.delete(locationId.value, attachmentId);
+
+    if (error) {
+      toast.error(t("items.toast.failed_delete_attachment"));
+      return;
+    }
+
+    toast.success(t("items.toast.attachment_deleted"));
+    item.value.attachments = item.value.attachments.filter(a => a.id !== attachmentId);
+  }
+
+  const editState = reactive({
+    loading: false,
+    obj: {},
+    id: "",
+    title: "",
+    type: "",
+    primary: false,
+  });
+
+  const attachmentOpts = Object.entries(AttachmentTypes).map(([key, value]) => ({
+    text: key[0]!.toUpperCase() + key.slice(1),
+    value,
+  }));
+
+  function openAttachmentEditDialog(attachment: ItemAttachment) {
+    editState.id = attachment.id;
+    editState.title = attachment.title;
+    editState.type = attachment.type;
+    editState.primary = attachment.primary;
+    openDialog(DialogID.AttachmentEdit);
+    editState.obj = attachmentOpts.find(o => o.value === attachment.type) || attachmentOpts[0]!;
+  }
+
+  async function updateAttachment() {
+    editState.loading = true;
+    const { error, data } = await api.items.attachments.update(locationId.value, editState.id, {
+      title: editState.title,
+      type: editState.type,
+      primary: editState.primary,
+    });
+
+    if (error) {
+      toast.error(t("items.toast.failed_delete_attachment"));
+      return;
+    }
+
+    item.value.attachments = data.attachments;
+
+    editState.loading = false;
+    closeDialog(DialogID.AttachmentEdit);
+    editState.id = "";
+    editState.title = "";
+    editState.type = "";
+
+    toast.success(t("items.toast.attachment_updated"));
+  }
+
+  function addField() {
+    item.value.fields.push({
+      id: null,
+      name: "Field Name",
+      type: "text",
+      textValue: "",
+      numberValue: 0,
+      booleanValue: false,
+      timeValue: null,
+    } as unknown as EntityFieldData);
+  }
+
+  async function keyboardSave(e: KeyboardEvent) {
+    if ((e.metaKey || e.ctrlKey) && e.key === "s") {
+      e.preventDefault();
+      await saveLocation(!e.shiftKey);
+    }
+  }
+
+  onMounted(() => {
+    window.addEventListener("keydown", keyboardSave);
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener("keydown", keyboardSave);
+  });
+</script>
+
+<template>
+  <div v-if="item" class="pb-8">
+    <Dialog :dialog-id="DialogID.AttachmentEdit">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{{ $t("items.edit.edit_attachment_dialog.title") }}</DialogTitle>
+        </DialogHeader>
+
+        <FormTextField v-model="editState.title" :label="$t('items.edit.edit_attachment_dialog.attachment_title')" />
+        <div>
+          <Label for="attachment-type"> {{ $t("items.edit.edit_attachment_dialog.attachment_type") }} </Label>
+          <Select id="attachment-type" v-model:model-value="editState.type">
+            <SelectTrigger>
+              <SelectValue :placeholder="$t('items.edit.edit_attachment_dialog.select_type')" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="opt in attachmentOpts" :key="opt.value" :value="opt.value">
+                {{ opt.text }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div v-if="editState.type == 'photo'" class="mt-3 flex items-center gap-2">
+          <Checkbox
+            id="primary"
+            v-model="editState.primary"
+            :label="$t('items.edit.edit_attachment_dialog.primary_photo')"
+          />
+          <label class="cursor-pointer text-sm" for="primary">
+            <span class="font-semibold">{{ $t("items.edit.edit_attachment_dialog.primary_photo") }}</span>
+            {{ $t("items.edit.edit_attachment_dialog.primary_photo_sub") }}
+          </label>
+        </div>
+
+        <DialogFooter>
+          <Button :disabled="editState.loading" @click="updateAttachment">
+            <MdiLoading v-if="editState.loading" class="animate-spin" />
+            {{ $t("global.update") }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    <section class="relative">
+      <div
+        class="sticky z-10 my-4 flex items-center justify-between gap-2"
+        :class="{
+          'top-[calc(var(--header-height-mobile)+0.25rem)] sm:top-[calc(var(--header-height)+0.25rem)]':
+            !preferences.displayLegacyHeader,
+          'top-1': preferences.displayLegacyHeader,
+        }"
+      >
+        <TooltipProvider :delay-duration="0">
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <Label class="flex cursor-pointer items-center gap-2 backdrop-blur-sm">
+                <Switch v-model="preferences.editorAdvancedView" />
+                {{ $t("items.advanced") }}
+              </Label>
+            </TooltipTrigger>
+            <TooltipContent>{{ $t("items.show_advanced_view_options") }}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <Button size="sm" :disabled="saving" @click="saveLocation(true)">
+          <MdiLoading v-if="saving" class="animate-spin" />
+          <MdiContentSaveOutline v-else />
+          {{ $t("global.save") }}
+        </Button>
+      </div>
+      <div v-if="!requestPending" class="space-y-6">
+        <BaseCard class="overflow-visible">
+          <template #title> {{ $t("locations.update_location") }} </template>
+          <div class="mb-6 grid gap-4 border-t px-5 pt-2 md:grid-cols-2">
+            <LocationSelector v-model="parent" label="Parent Location" :current-location="item" />
+            <TagSelector v-model="item.tagIds" :tags="tags" />
+          </div>
+
+          <div class="border-t sm:p-0">
+            <div v-for="field in mainFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y">
+              <div class="border-b px-4 pb-4 pt-2 sm:px-6">
+                <FormTextArea
+                  v-if="field.type === 'textarea'"
+                  v-model="item[field.ref]"
+                  :label="$t(field.label)"
+                  inline
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
+                />
+                <MarkdownEditor
+                  v-else-if="field.type === 'markdown'"
+                  v-model="item[field.ref]"
+                  :label="$t(field.label)"
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
+                />
+                <FormTextField
+                  v-else-if="field.type === 'text'"
+                  v-model="item[field.ref]"
+                  :label="$t(field.label)"
+                  inline
+                  type="text"
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
+                />
+                <FormTextField
+                  v-else-if="field.type === 'number'"
+                  v-model.number="item[field.ref]"
+                  type="number"
+                  step="any"
+                  :label="$t(field.label)"
+                  inline
+                />
+                <FormCheckbox
+                  v-else-if="field.type === 'checkbox'"
+                  v-model="item[field.ref]"
+                  :label="$t(field.label)"
+                  inline
+                />
+              </div>
+            </div>
+          </div>
+        </BaseCard>
+
+        <BaseCard v-if="preferences.editorAdvancedView">
+          <template #title> {{ $t("items.custom_fields") }} </template>
+          <div class="space-y-4 divide-y border-t px-5">
+            <div
+              v-for="(field, idx) in item.fields"
+              :key="`field-${idx}`"
+              class="grid grid-cols-2 gap-2 pt-4 md:grid-cols-4"
+            >
+              <FormTextField v-model="field.name" :label="$t('global.name')" />
+              <div class="col-span-3 flex items-end">
+                <FormTextField v-model="field.textValue" :label="$t('global.value')" :max-length="500" />
+                <Tooltip>
+                  <TooltipTrigger as-child>
+                    <Button size="icon" variant="destructive" class="ml-2" @click="item.fields.splice(idx, 1)">
+                      <MdiDelete />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{{ $t("global.delete") }}</TooltipContent>
+                </Tooltip>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 flex justify-end px-5 pb-4">
+            <Button size="sm" @click="addField"> {{ $t("global.add") }} </Button>
+          </div>
+        </BaseCard>
+
+        <Card ref="attDropZone" class="overflow-visible shadow-xl">
+          <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-lg font-medium leading-6">{{ $t("items.attachments") }}</h3>
+            <p class="text-xs">{{ $t("items.changes_persisted_immediately") }}</p>
+          </div>
+          <div class="border-t p-4">
+            <div v-if="attDropZoneActive" class="grid grid-cols-2 gap-4">
+              <DropZone @drop="dropPhoto"> {{ $t("items.photos") }} </DropZone>
+              <DropZone @drop="dropAttachment"> {{ $t("items.attachments") }} </DropZone>
+            </div>
+            <button
+              v-else
+              class="grid h-24 w-full place-content-center border-2 border-dashed border-primary"
+              @click="clickUpload"
+            >
+              <input ref="refAttachmentInput" hidden type="file" @change="uploadImage" />
+              <p>{{ $t("items.drag_and_drop") }}</p>
+            </button>
+          </div>
+
+          <div class="border-t p-4">
+            <ul role="list" class="divide-y rounded-md border">
+              <li
+                v-for="attachment in item.attachments"
+                :key="attachment.id"
+                class="grid grid-cols-6 justify-between py-3 pl-3 pr-4 text-sm"
+              >
+                <p class="col-span-4 my-auto">
+                  {{ attachment.title }}
+                </p>
+                <p class="my-auto">
+                  {{ $t(`items.${attachment.type}`) }}
+                </p>
+                <div class="flex justify-end gap-2">
+                  <Tooltip v-if="attachment.type === 'photo'">
+                    <TooltipTrigger as-child>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        @click="
+                          openDialog(DialogID.ItemImage, {
+                            params: {
+                              type: 'attachment',
+                              itemId: item.id,
+                              attachmentId: attachment.id,
+                              thumbnailId: attachment.thumbnail?.id,
+                              mimeType: attachment.mimeType,
+                            },
+                            onClose: result => {
+                              if (result?.action === 'delete') {
+                                item.attachments = item.attachments.filter(a => a.id !== result.id);
+                              }
+                            },
+                          })
+                        "
+                      >
+                        <MdiImageOutline />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{{ $t("items.edit.view_image") }}</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger as-child>
+                      <Button variant="destructive" size="icon" @click="deleteAttachment(attachment.id)">
+                        <MdiDelete />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{{ $t("global.delete") }}</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger as-child>
+                      <Button size="icon" @click="openAttachmentEditDialog(attachment)">
+                        <MdiPencil />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{{ $t("global.edit") }}</TooltipContent>
+                  </Tooltip>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </Card>
+      </div>
+    </section>
+  </div>
+</template>

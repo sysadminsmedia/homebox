@@ -10,7 +10,7 @@ import (
 type AllServices struct {
 	User              *UserService
 	Group             *GroupService
-	Items             *ItemService
+	Entities          *EntityService
 	BackgroundService *BackgroundService
 	Currencies        *currencies.CurrencyRegistry
 }
@@ -77,7 +77,7 @@ func New(repos *repo.AllRepos, opts ...OptionsFunc) *AllServices {
 	return &AllServices{
 		User:  &UserService{repos},
 		Group: &GroupService{repos},
-		Items: &ItemService{
+		Entities: &EntityService{
 			repo:                 repos,
 			autoIncrementAssetID: options.autoIncrementAssetID,
 		},

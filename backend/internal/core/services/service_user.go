@@ -119,8 +119,8 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 		}
 
 		log.Debug().Msg("creating default locations")
-		for _, location := range defaultLocations() {
-			_, err := svc.repos.Locations.Create(ctx, usr.DefaultGroupID, location)
+		for _, loc := range defaultLocations() {
+			_, err := svc.repos.Entities.CreateContainer(ctx, usr.DefaultGroupID, loc)
 			if err != nil {
 				return repo.UserOut{}, err
 			}
@@ -322,8 +322,8 @@ func (svc *UserService) registerOIDCUser(ctx context.Context, issuer, subject, e
 	}
 
 	log.Debug().Str("issuer", issuer).Str("subject", subject).Msg("creating default locations for OIDC user")
-	for _, location := range defaultLocations() {
-		_, err := svc.repos.Locations.Create(ctx, group.ID, location)
+	for _, loc := range defaultLocations() {
+		_, err := svc.repos.Entities.CreateContainer(ctx, group.ID, loc)
 		if err != nil {
 			log.Err(err).Msg("Failed to create default location")
 		}

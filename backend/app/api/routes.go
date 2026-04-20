@@ -127,14 +127,6 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Post("/actions/create-missing-thumbnails", chain.ToHandlerFunc(v1Ctrl.HandleCreateMissingThumbnails(), userMW...))
 		r.Post("/actions/wipe-inventory", chain.ToHandlerFunc(v1Ctrl.HandleWipeInventory(), userMW...))
 
-		// Location endpoints
-		r.Get("/locations", chain.ToHandlerFunc(v1Ctrl.HandleLocationGetAll(), userMW...))
-		r.Post("/locations", chain.ToHandlerFunc(v1Ctrl.HandleLocationCreate(), userMW...))
-		r.Get("/locations/tree", chain.ToHandlerFunc(v1Ctrl.HandleLocationTreeQuery(), userMW...))
-		r.Get("/locations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleLocationGet(), userMW...))
-		r.Put("/locations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleLocationUpdate(), userMW...))
-		r.Delete("/locations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleLocationDelete(), userMW...))
-
 		// Tags endpoints
 		r.Get("/tags", chain.ToHandlerFunc(v1Ctrl.HandleTagsGetAll(), userMW...))
 		r.Post("/tags", chain.ToHandlerFunc(v1Ctrl.HandleTagsCreate(), userMW...))
@@ -142,39 +134,46 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Put("/tags/{id}", chain.ToHandlerFunc(v1Ctrl.HandleTagUpdate(), userMW...))
 		r.Delete("/tags/{id}", chain.ToHandlerFunc(v1Ctrl.HandleTagDelete(), userMW...))
 
-		// Item endpoints
-		r.Get("/items", chain.ToHandlerFunc(v1Ctrl.HandleItemsGetAll(), userMW...))
-		r.Post("/items", chain.ToHandlerFunc(v1Ctrl.HandleItemsCreate(), userMW...))
-		r.Post("/items/import", chain.ToHandlerFunc(v1Ctrl.HandleItemsImport(), userMW...))
-		r.Get("/items/export", chain.ToHandlerFunc(v1Ctrl.HandleItemsExport(), userMW...))
-		r.Get("/items/fields", chain.ToHandlerFunc(v1Ctrl.HandleGetAllCustomFieldNames(), userMW...))
-		r.Get("/items/fields/values", chain.ToHandlerFunc(v1Ctrl.HandleGetAllCustomFieldValues(), userMW...))
+		// Entity Type endpoints
+		r.Get("/entity-types", chain.ToHandlerFunc(v1Ctrl.HandleEntityTypeGetAll(), userMW...))
+		r.Post("/entity-types", chain.ToHandlerFunc(v1Ctrl.HandleEntityTypeCreate(), userMW...))
+		r.Put("/entity-types/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTypeUpdate(), userMW...))
+		r.Delete("/entity-types/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTypeDelete(), userMW...))
 
-		r.Get("/items/{id}", chain.ToHandlerFunc(v1Ctrl.HandleItemGet(), userMW...))
-		r.Get("/items/{id}/path", chain.ToHandlerFunc(v1Ctrl.HandleItemFullPath(), userMW...))
-		r.Put("/items/{id}", chain.ToHandlerFunc(v1Ctrl.HandleItemUpdate(), userMW...))
-		r.Patch("/items/{id}", chain.ToHandlerFunc(v1Ctrl.HandleItemPatch(), userMW...))
-		r.Delete("/items/{id}", chain.ToHandlerFunc(v1Ctrl.HandleItemDelete(), userMW...))
-		r.Post("/items/{id}/duplicate", chain.ToHandlerFunc(v1Ctrl.HandleItemDuplicate(), userMW...))
+		// Entity endpoints (primary)
+		r.Get("/entities", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesGetAll(), userMW...))
+		r.Post("/entities", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesCreate(), userMW...))
+		r.Post("/entities/import", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesImport(), userMW...))
+		r.Get("/entities/export", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesExport(), userMW...))
+		r.Get("/entities/fields", chain.ToHandlerFunc(v1Ctrl.HandleGetAllCustomFieldNames(), userMW...))
+		r.Get("/entities/fields/values", chain.ToHandlerFunc(v1Ctrl.HandleGetAllCustomFieldValues(), userMW...))
+		r.Get("/entities/tree", chain.ToHandlerFunc(v1Ctrl.HandleLocationTreeQuery(), userMW...))
 
-		// Item attachment endpoints
-		r.Post("/items/{id}/attachments", chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentCreate(), userMW...))
-		r.Put("/items/{id}/attachments/{attachment_id}", chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentUpdate(), userMW...))
-		r.Delete("/items/{id}/attachments/{attachment_id}", chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentDelete(), userMW...))
+		r.Get("/entities/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityGet(), userMW...))
+		r.Get("/entities/{id}/path", chain.ToHandlerFunc(v1Ctrl.HandleEntityFullPath(), userMW...))
+		r.Put("/entities/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityUpdate(), userMW...))
+		r.Patch("/entities/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityPatch(), userMW...))
+		r.Delete("/entities/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityDelete(), userMW...))
+		r.Post("/entities/{id}/duplicate", chain.ToHandlerFunc(v1Ctrl.HandleEntityDuplicate(), userMW...))
 
-		// Item maintenance endpoints
-		r.Get("/items/{id}/maintenance", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceLogGet(), userMW...))
-		r.Post("/items/{id}/maintenance", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceEntryCreate(), userMW...))
+		// Entity attachment endpoints
+		r.Post("/entities/{id}/attachments", chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentCreate(), userMW...))
+		r.Put("/entities/{id}/attachments/{attachment_id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentUpdate(), userMW...))
+		r.Delete("/entities/{id}/attachments/{attachment_id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentDelete(), userMW...))
+
+		// Entity maintenance endpoints
+		r.Get("/entities/{id}/maintenance", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceLogGet(), userMW...))
+		r.Post("/entities/{id}/maintenance", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceEntryCreate(), userMW...))
 
 		r.Get("/assets/{id}", chain.ToHandlerFunc(v1Ctrl.HandleAssetGet(), userMW...))
 
-		// Item Templates
-		r.Get("/templates", chain.ToHandlerFunc(v1Ctrl.HandleItemTemplatesGetAll(), userMW...))
-		r.Post("/templates", chain.ToHandlerFunc(v1Ctrl.HandleItemTemplatesCreate(), userMW...))
-		r.Get("/templates/{id}", chain.ToHandlerFunc(v1Ctrl.HandleItemTemplatesGet(), userMW...))
-		r.Put("/templates/{id}", chain.ToHandlerFunc(v1Ctrl.HandleItemTemplatesUpdate(), userMW...))
-		r.Delete("/templates/{id}", chain.ToHandlerFunc(v1Ctrl.HandleItemTemplatesDelete(), userMW...))
-		r.Post("/templates/{id}/create-item", chain.ToHandlerFunc(v1Ctrl.HandleItemTemplatesCreateItem(), userMW...))
+		// Entity Templates
+		r.Get("/templates", chain.ToHandlerFunc(v1Ctrl.HandleEntityTemplatesGetAll(), userMW...))
+		r.Post("/templates", chain.ToHandlerFunc(v1Ctrl.HandleEntityTemplatesCreate(), userMW...))
+		r.Get("/templates/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTemplatesGet(), userMW...))
+		r.Put("/templates/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTemplatesUpdate(), userMW...))
+		r.Delete("/templates/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTemplatesDelete(), userMW...))
+		r.Post("/templates/{id}/create-item", chain.ToHandlerFunc(v1Ctrl.HandleEntityTemplatesCreateItem(), userMW...))
 
 		// Maintenance
 		r.Get("/maintenance", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceGetAll(), userMW...))
@@ -199,11 +198,12 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 
 		r.Get("/qrcode", chain.ToHandlerFunc(v1Ctrl.HandleGenerateQRCode(), assetMW...))
 		r.Get(
-			"/items/{id}/attachments/{attachment_id}",
-			chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentGet(), assetMW...),
+			"/entities/{id}/attachments/{attachment_id}",
+			chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentGet(), assetMW...),
 		)
 
 		// Labelmaker
+		r.Get("/labelmaker/entity/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGetItemLabel(), userMW...))
 		r.Get("/labelmaker/location/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGetLocationLabel(), userMW...))
 		r.Get("/labelmaker/item/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGetItemLabel(), userMW...))
 		r.Get("/labelmaker/asset/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGetAssetLabel(), userMW...))

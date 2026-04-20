@@ -3,17 +3,17 @@ import { expect } from "vitest";
 import { overrideParts } from "../../base/urls";
 import { PublicApi } from "../../public";
 import type {
-  ItemField,
-  ItemTemplateCreate,
+  EntityFieldData,
+  EntityTemplateCreate,
   TagCreate,
-  LocationCreate,
+  EntityCreate,
   UserRegistration,
 } from "../../types/data-contracts";
 import * as config from "../../../../test/config";
 import { UserClient } from "../../user";
 import { Requests } from "../../../requests";
 
-function itemField(id = null): ItemField {
+function itemField(id = null): EntityFieldData {
   return {
     // @ts-expect-error - not actually an issue
     id,
@@ -39,7 +39,7 @@ function user(): UserRegistration {
   };
 }
 
-function location(parentId: string | null = null): LocationCreate {
+function location(parentId: string | null = null): Partial<EntityCreate> & { name: string; description: string } {
   return {
     parentId,
     name: faker.location.city(),
@@ -55,7 +55,7 @@ function tag(): TagCreate {
   };
 }
 
-function template(): ItemTemplateCreate {
+function template(): EntityTemplateCreate {
   return {
     name: faker.lorem.words(2),
     description: faker.lorem.sentence(),

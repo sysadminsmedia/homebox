@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 )
@@ -159,23 +159,23 @@ func (_u *TemplateFieldUpdate) SetNillableTimeValue(v *time.Time) *TemplateField
 	return _u
 }
 
-// SetItemTemplateID sets the "item_template" edge to the ItemTemplate entity by ID.
-func (_u *TemplateFieldUpdate) SetItemTemplateID(id uuid.UUID) *TemplateFieldUpdate {
-	_u.mutation.SetItemTemplateID(id)
+// SetEntityTemplateID sets the "entity_template" edge to the EntityTemplate entity by ID.
+func (_u *TemplateFieldUpdate) SetEntityTemplateID(id uuid.UUID) *TemplateFieldUpdate {
+	_u.mutation.SetEntityTemplateID(id)
 	return _u
 }
 
-// SetNillableItemTemplateID sets the "item_template" edge to the ItemTemplate entity by ID if the given value is not nil.
-func (_u *TemplateFieldUpdate) SetNillableItemTemplateID(id *uuid.UUID) *TemplateFieldUpdate {
+// SetNillableEntityTemplateID sets the "entity_template" edge to the EntityTemplate entity by ID if the given value is not nil.
+func (_u *TemplateFieldUpdate) SetNillableEntityTemplateID(id *uuid.UUID) *TemplateFieldUpdate {
 	if id != nil {
-		_u = _u.SetItemTemplateID(*id)
+		_u = _u.SetEntityTemplateID(*id)
 	}
 	return _u
 }
 
-// SetItemTemplate sets the "item_template" edge to the ItemTemplate entity.
-func (_u *TemplateFieldUpdate) SetItemTemplate(v *ItemTemplate) *TemplateFieldUpdate {
-	return _u.SetItemTemplateID(v.ID)
+// SetEntityTemplate sets the "entity_template" edge to the EntityTemplate entity.
+func (_u *TemplateFieldUpdate) SetEntityTemplate(v *EntityTemplate) *TemplateFieldUpdate {
+	return _u.SetEntityTemplateID(v.ID)
 }
 
 // Mutation returns the TemplateFieldMutation object of the builder.
@@ -183,9 +183,9 @@ func (_u *TemplateFieldUpdate) Mutation() *TemplateFieldMutation {
 	return _u.mutation
 }
 
-// ClearItemTemplate clears the "item_template" edge to the ItemTemplate entity.
-func (_u *TemplateFieldUpdate) ClearItemTemplate() *TemplateFieldUpdate {
-	_u.mutation.ClearItemTemplate()
+// ClearEntityTemplate clears the "entity_template" edge to the EntityTemplate entity.
+func (_u *TemplateFieldUpdate) ClearEntityTemplate() *TemplateFieldUpdate {
+	_u.mutation.ClearEntityTemplate()
 	return _u
 }
 
@@ -298,28 +298,28 @@ func (_u *TemplateFieldUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	if value, ok := _u.mutation.TimeValue(); ok {
 		_spec.SetField(templatefield.FieldTimeValue, field.TypeTime, value)
 	}
-	if _u.mutation.ItemTemplateCleared() {
+	if _u.mutation.EntityTemplateCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   templatefield.ItemTemplateTable,
-			Columns: []string{templatefield.ItemTemplateColumn},
+			Table:   templatefield.EntityTemplateTable,
+			Columns: []string{templatefield.EntityTemplateColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(itemtemplate.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entitytemplate.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.ItemTemplateIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.EntityTemplateIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   templatefield.ItemTemplateTable,
-			Columns: []string{templatefield.ItemTemplateColumn},
+			Table:   templatefield.EntityTemplateTable,
+			Columns: []string{templatefield.EntityTemplateColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(itemtemplate.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entitytemplate.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -476,23 +476,23 @@ func (_u *TemplateFieldUpdateOne) SetNillableTimeValue(v *time.Time) *TemplateFi
 	return _u
 }
 
-// SetItemTemplateID sets the "item_template" edge to the ItemTemplate entity by ID.
-func (_u *TemplateFieldUpdateOne) SetItemTemplateID(id uuid.UUID) *TemplateFieldUpdateOne {
-	_u.mutation.SetItemTemplateID(id)
+// SetEntityTemplateID sets the "entity_template" edge to the EntityTemplate entity by ID.
+func (_u *TemplateFieldUpdateOne) SetEntityTemplateID(id uuid.UUID) *TemplateFieldUpdateOne {
+	_u.mutation.SetEntityTemplateID(id)
 	return _u
 }
 
-// SetNillableItemTemplateID sets the "item_template" edge to the ItemTemplate entity by ID if the given value is not nil.
-func (_u *TemplateFieldUpdateOne) SetNillableItemTemplateID(id *uuid.UUID) *TemplateFieldUpdateOne {
+// SetNillableEntityTemplateID sets the "entity_template" edge to the EntityTemplate entity by ID if the given value is not nil.
+func (_u *TemplateFieldUpdateOne) SetNillableEntityTemplateID(id *uuid.UUID) *TemplateFieldUpdateOne {
 	if id != nil {
-		_u = _u.SetItemTemplateID(*id)
+		_u = _u.SetEntityTemplateID(*id)
 	}
 	return _u
 }
 
-// SetItemTemplate sets the "item_template" edge to the ItemTemplate entity.
-func (_u *TemplateFieldUpdateOne) SetItemTemplate(v *ItemTemplate) *TemplateFieldUpdateOne {
-	return _u.SetItemTemplateID(v.ID)
+// SetEntityTemplate sets the "entity_template" edge to the EntityTemplate entity.
+func (_u *TemplateFieldUpdateOne) SetEntityTemplate(v *EntityTemplate) *TemplateFieldUpdateOne {
+	return _u.SetEntityTemplateID(v.ID)
 }
 
 // Mutation returns the TemplateFieldMutation object of the builder.
@@ -500,9 +500,9 @@ func (_u *TemplateFieldUpdateOne) Mutation() *TemplateFieldMutation {
 	return _u.mutation
 }
 
-// ClearItemTemplate clears the "item_template" edge to the ItemTemplate entity.
-func (_u *TemplateFieldUpdateOne) ClearItemTemplate() *TemplateFieldUpdateOne {
-	_u.mutation.ClearItemTemplate()
+// ClearEntityTemplate clears the "entity_template" edge to the EntityTemplate entity.
+func (_u *TemplateFieldUpdateOne) ClearEntityTemplate() *TemplateFieldUpdateOne {
+	_u.mutation.ClearEntityTemplate()
 	return _u
 }
 
@@ -645,28 +645,28 @@ func (_u *TemplateFieldUpdateOne) sqlSave(ctx context.Context) (_node *TemplateF
 	if value, ok := _u.mutation.TimeValue(); ok {
 		_spec.SetField(templatefield.FieldTimeValue, field.TypeTime, value)
 	}
-	if _u.mutation.ItemTemplateCleared() {
+	if _u.mutation.EntityTemplateCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   templatefield.ItemTemplateTable,
-			Columns: []string{templatefield.ItemTemplateColumn},
+			Table:   templatefield.EntityTemplateTable,
+			Columns: []string{templatefield.EntityTemplateColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(itemtemplate.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entitytemplate.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.ItemTemplateIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.EntityTemplateIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   templatefield.ItemTemplateTable,
-			Columns: []string{templatefield.ItemTemplateColumn},
+			Table:   templatefield.EntityTemplateTable,
+			Columns: []string{templatefield.EntityTemplateColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(itemtemplate.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entitytemplate.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
