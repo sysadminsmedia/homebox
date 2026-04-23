@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { faker } from "@faker-js/faker";
-import { registerAndLogin, STRONG_PASSWORD } from "./helpers/auth";
+import { registerAndLogin } from "./helpers/auth";
 
 type EntityTypeSummary = { id: string; name: string; isLocation: boolean };
 
@@ -97,7 +97,7 @@ test.describe("Items search, filter, sort, pagination", () => {
     test.slow();
     await registerAndLogin(page);
 
-    const { locType, itemType } = await pickEntityTypeIds(page);
+    const { locType } = await pickEntityTypeIds(page);
     const locName = `loc-${faker.string.alphanumeric(6).toLowerCase()}`;
     const location = await createLocation(page, locName, locType.id);
 
@@ -127,7 +127,7 @@ test.describe("Items search, filter, sort, pagination", () => {
     test.slow();
     await registerAndLogin(page);
 
-    const { locType, itemType } = await pickEntityTypeIds(page);
+    const { locType } = await pickEntityTypeIds(page);
     const suffix = faker.string.alphanumeric(6).toLowerCase();
     const locA = await createLocation(page, `locA-${suffix}`, locType.id);
     const locB = await createLocation(page, `locB-${suffix}`, locType.id);

@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { faker } from "@faker-js/faker";
-import { registerAndLogin, STRONG_PASSWORD } from "./helpers/auth";
+import { registerAndLogin } from "./helpers/auth";
 
 /**
  * Open the "Create Location" dialog via the Shift+3 hotkey
