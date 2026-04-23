@@ -1,6 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { faker } from "@faker-js/faker";
-import { registerAndLogin, STRONG_PASSWORD } from "./helpers/auth";
+import { registerAndLogin } from "./helpers/auth";
 
 const TOOLS_ROUTE = "/collection/tools";
 const IMPORT_API = "**/api/v1/entities/import**";

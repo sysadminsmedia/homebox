@@ -1,6 +1,6 @@
 import { expect, test, type Page, type APIRequestContext, type Locator } from "@playwright/test";
 import { faker } from "@faker-js/faker";
-import { registerAndLogin, STRONG_PASSWORD } from "./helpers/auth";
+import { registerAndLogin } from "./helpers/auth";
 
 async function apiCreateEntity(
   request: APIRequestContext,

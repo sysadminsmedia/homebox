@@ -1,6 +1,6 @@
 import { expect, test, type Page, type APIRequestContext } from "@playwright/test";
 import { faker } from "@faker-js/faker";
-import { registerAndLogin, STRONG_PASSWORD } from "./helpers/auth";
+import { registerAndLogin } from "./helpers/auth";
 
 // 1x1 transparent PNG (smallest valid PNG)
 const PNG_BUFFER = Buffer.from(
