@@ -208,7 +208,9 @@ export class ItemsApi extends BaseAPI {
   // =========================================================================
 
   async getLocations(q: LocationsQuery = { filterChildren: false }) {
-    const resp = await this.http.get<{ items: EntitySummary[] }>({ url: route("/entities", { ...q, isLocation: true }) });
+    const resp = await this.http.get<{ items: EntitySummary[] }>({
+      url: route("/entities", { ...q, isLocation: true }),
+    });
     // Unwrap paginated response to flat array for backward compat
     return {
       ...resp,

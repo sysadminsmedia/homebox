@@ -119,7 +119,13 @@
           <ButtonGroup>
             <Tooltip>
               <TooltipTrigger>
-                <Button size="icon" variant="outline" data-pos="start" @click="openAll">
+                <Button
+                  size="icon"
+                  variant="outline"
+                  data-pos="start"
+                  data-testid="location-tree-expand-all"
+                  @click="openAll"
+                >
                   <MdiExpandAllOutline />
                 </Button>
               </TooltipTrigger>
@@ -129,7 +135,13 @@
             </Tooltip>
             <Tooltip>
               <TooltipTrigger>
-                <Button size="icon" variant="outline" data-pos="middle" @click="closeAll">
+                <Button
+                  size="icon"
+                  variant="outline"
+                  data-pos="middle"
+                  data-testid="location-tree-collapse-all"
+                  @click="closeAll"
+                >
                   <MdiCollapseAllOutline />
                 </Button>
               </TooltipTrigger>
@@ -143,6 +155,7 @@
                   size="icon"
                   :variant="showItems ? 'default' : 'outline'"
                   data-pos="end"
+                  data-testid="location-tree-toggle-items"
                   @click="showItems = !showItems"
                 >
                   <MdiPackageVariant />

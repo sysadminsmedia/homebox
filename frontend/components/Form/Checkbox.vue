@@ -1,7 +1,7 @@
 <template>
   <div v-if="!inline" class="flex w-full items-center gap-1.5">
-    <Checkbox :id="id" v-model="value" class="size-6" />
-    <Label :for="id" class="cursor-pointer">
+    <Checkbox :id="id" v-model="value" class="size-6" :aria-label="ariaLabel || undefined" />
+    <Label v-if="label" :for="id" class="cursor-pointer">
       {{ label }}
     </Label>
   </div>
@@ -9,7 +9,7 @@
     <Label :for="id" class="flex w-full cursor-pointer px-1 py-2">
       {{ label }}
     </Label>
-    <Checkbox :id="id" v-model="value" class="size-6" />
+    <Checkbox :id="id" v-model="value" class="size-6" :aria-label="ariaLabel || undefined" />
   </div>
 </template>
 
@@ -27,6 +27,10 @@
       default: false,
     },
     label: {
+      type: String,
+      default: "",
+    },
+    ariaLabel: {
       type: String,
       default: "",
     },

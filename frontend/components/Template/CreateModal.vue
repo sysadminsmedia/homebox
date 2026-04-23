@@ -90,7 +90,7 @@
       <p v-else class="text-sm text-muted-foreground">{{ $t("components.template.form.no_custom_fields") }}</p>
 
       <div class="mt-4 flex justify-end">
-        <Button type="submit" :loading="loading">{{ $t("global.create") }}</Button>
+        <Button data-testid="template-create-submit" type="submit" :loading="loading">{{ $t("global.create") }}</Button>
       </div>
     </form>
   </BaseModal>

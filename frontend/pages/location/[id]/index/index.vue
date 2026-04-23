@@ -245,7 +245,7 @@
               <MdiPackageVariant class="size-7" />
             </div>
             <div>
-              <Breadcrumb v-if="location?.parent">
+              <Breadcrumb v-if="location?.parent" data-testid="location-breadcrumb">
                 <BreadcrumbList>
                   <BreadcrumbItem>
                     <BreadcrumbLink as-child class="text-foreground/70 hover:underline">
@@ -258,7 +258,7 @@
                   <BreadcrumbItem> {{ location.name }} </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
-              <h1 class="flex items-center gap-3 pb-1 text-2xl">
+              <h1 class="flex items-center gap-3 pb-1 text-2xl" data-testid="location-detail-name">
                 {{ location ? location.name : "" }}
 
                 <Badge v-if="location && location.totalPrice" variant="secondary">
