@@ -59,12 +59,15 @@ test.describe("Collection members & invites", () => {
     await expect(row).toContainText(name);
   });
 
-  test("creates, displays, copies, and deletes an invite", async ({ page, context }) => {
+  test("creates, displays, copies, and deletes an invite", async ({ page, context, browserName }) => {
     test.slow();
     await registerAndLogin(page);
 
-    // Prevent the CopyText component from showing an error dialog when the clipboard is unavailable.
-    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    // Clipboard permissions are only a valid `grantPermissions` name on Chromium.
+    // Firefox / WebKit will throw "Unknown permission" if we pass them — skip there.
+    if (browserName === "chromium") {
+      await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    }
 
     const token = await createInvite(page);
 
