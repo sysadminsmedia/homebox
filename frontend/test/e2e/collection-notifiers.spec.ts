@@ -14,20 +14,17 @@ async function openCreateDialog(page: Page): Promise<Locator> {
   await page.getByRole("main").getByRole("button", { name: "Create", exact: true }).click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
-  // Note: the component renders "Edit Notifier" in both create and edit modes due to an
-  // existing i18n condition bug, so we assert on the form fields instead of the title.
+  await expect(dialog.getByRole("heading", { name: "Create Notifier", exact: true })).toBeVisible();
   await expect(dialog.getByLabel("Name", { exact: true })).toBeVisible();
   await expect(dialog.getByLabel("URL", { exact: true })).toBeVisible();
   return dialog;
 }
 
 async function openEditDialog(article: Locator, page: Page): Promise<Locator> {
-  // Edit is an icon-only button with no accessible name; it is the second (outline) action
-  // inside the article's action group. Use the inner `data-button` element (tooltip wraps
-  // the real button) and pick index 1 for the edit (pencil) action.
-  await article.locator("[data-button]").nth(1).click();
+  await article.locator('[data-testid="notifier-row-edit"]').click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("heading", { name: "Edit Notifier", exact: true })).toBeVisible();
   await expect(dialog.getByLabel("Name", { exact: true })).toBeVisible();
   await expect(dialog.getByLabel("URL", { exact: true })).toBeVisible();
   return dialog;
@@ -102,12 +99,12 @@ test.describe("Collection notifiers", () => {
     await expect(article.getByText("Active", { exact: true })).toBeVisible();
 
     let dialog = await openEditDialog(article, page);
-    await dialog.getByRole("checkbox").click();
+    await dialog.getByRole("checkbox", { name: /active|enabled/i }).click();
     await submitAndWaitClose(dialog);
     await expect(article.getByText("Inactive", { exact: true })).toBeVisible({ timeout: 5000 });
 
     dialog = await openEditDialog(article, page);
-    await dialog.getByRole("checkbox").click();
+    await dialog.getByRole("checkbox", { name: /active|enabled/i }).click();
     await submitAndWaitClose(dialog);
     await expect(article.getByText("Active", { exact: true })).toBeVisible({ timeout: 5000 });
   });
@@ -119,8 +116,7 @@ test.describe("Collection notifiers", () => {
     const article = page.locator("article").filter({ hasText: notifierName });
     await expect(article).toBeVisible();
 
-    // Delete is the first (destructive) icon-only button within the article.
-    await article.locator("[data-button]").nth(0).click();
+    await article.locator('[data-testid="notifier-row-delete"]').click();
     await page.getByRole("alertdialog").getByRole("button", { name: "Confirm" }).click();
 
     await expect(page.locator("article").filter({ hasText: notifierName })).toHaveCount(0, { timeout: 5000 });

@@ -3,6 +3,7 @@ package validate
 import (
 	"encoding/json"
 	"errors"
+	"net/http"
 )
 
 type UnauthorizedError struct {
@@ -59,6 +60,12 @@ func NewRequestError(err error, status int) error {
 }
 
 func (err *RequestError) Error() string {
+	if err.Err == nil {
+		if err.Status != 0 {
+			return http.StatusText(err.Status)
+		}
+		return "request error"
+	}
 	return err.Err.Error()
 }
 
