@@ -2,10 +2,13 @@ package v1
 
 import (
 	"bytes"
+	"context"
+	"errors"
 	"image/png"
 	"io"
 	"net/http"
 	"net/url"
+	"syscall"
 
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
@@ -67,6 +70,17 @@ func (ctrl *V1Controller) HandleGenerateQRCode() errchain.HandlerFunc {
 		// Return the QR code as a jpeg image
 		w.Header().Set("Content-Type", "image/jpeg")
 		w.Header().Set("Content-Disposition", "attachment; filename=qrcode.jpg")
-		return qrc.Save(qrwriter)
+		if err := qrc.Save(qrwriter); err != nil {
+			// Client closed the connection before we finished writing (common
+			// when the label-generator page renders many <img> tags and the
+			// user navigates away or the browser cancels slow loads). Don't
+			// treat this as a server error and don't try to write a 500 on a
+			// half-written response.
+			if errors.Is(err, syscall.EPIPE) || errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+				return nil
+			}
+			return err
+		}
+		return nil
 	}
 }

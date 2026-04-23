@@ -543,6 +543,8 @@
             <div class="flex items-center">
               <img
                 :src="item.url"
+                loading="lazy"
+                decoding="async"
                 :style="{
                   minWidth: `${out.card.height * 0.9}${out.measure}`,
                   width: `${out.card.height * 0.9}${out.measure}`,
