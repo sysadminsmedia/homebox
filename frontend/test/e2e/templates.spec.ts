@@ -172,11 +172,16 @@ test.describe("Templates CRUD", () => {
     await expect(itemDialog.getByLabel("Item Name", { exact: false }).first()).toHaveValue(defaultItemName);
     await expect(itemDialog.getByLabel("Item Description", { exact: false }).first()).toHaveValue(defaultDesc);
 
-    // Close and reopen the Create Item dialog so restoreLastTemplate() runs and
-    // authoritatively overrides the default location with the template's location.
-    // (handleTemplateSelected only overrides when form.location is empty; if the
-    // locations store has already loaded a first seeded location, we'd miss it.)
-    await page.keyboard.press("Escape");
+    // Close and reopen the Create Item dialog so restoreLastTemplate() runs on
+    // the next mount and authoritatively overrides the default location with
+    // the template's location. (handleTemplateSelected only overrides when
+    // form.location is empty, so if the locations store has already loaded a
+    // first seeded location during initial mount we'd miss it.) Use the dialog's
+    // explicit Close button rather than Escape — if a future "unsaved changes"
+    // guard intercepts Escape, this teardown would hang; the DialogClose X is
+    // always present and always dismissable. Update this if the UX around
+    // template application or dialog close changes.
+    await itemDialog.getByRole("button", { name: /Close/i }).click();
     await expect(itemDialog).toBeHidden();
     await page.keyboard.press("Shift+Digit1");
     await expect(itemDialog).toBeVisible();

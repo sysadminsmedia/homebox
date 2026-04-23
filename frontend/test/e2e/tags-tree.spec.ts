@@ -167,21 +167,40 @@ test.describe("tags tree view", () => {
     // Heading shows the child's name.
     await expect(page.getByRole("heading", { name: childName })).toBeVisible();
 
+    // Scope subsequent assertions to the tag detail <header> so icon/metadata
+    // selectors can't drift into the sidebar, app header, or the items table
+    // below that also renders SVGs and "Created" column headers.
+    const tagHeader = page.locator("header").filter({ has: page.getByRole("heading", { name: childName }) });
+    await expect(tagHeader).toBeVisible();
+
     // Breadcrumb shows a chip linking to the parent tag.
-    const parentChip = page.locator(`a[href*='/tag/']`, { hasText: parentName }).first();
+    const parentChip = tagHeader.locator(`a[href*='/tag/']`).filter({ hasText: parentName }).first();
     await expect(parentChip).toBeVisible();
 
-    // Icon container (rounded-full element with svg) is rendered near the title.
-    await expect(page.locator("svg").first()).toBeVisible();
+    // Icon container (rounded-full element with svg) is rendered inside the header.
+    await expect(tagHeader.locator("div.rounded-full svg").first()).toBeVisible();
 
-    // "Created" metadata is present on the detail page.
-    await expect(page.getByText(/created/i).first()).toBeVisible();
+    // "Created" metadata is present in the header (distinct from the items-below table's column header).
+    await expect(tagHeader.getByText(/created/i).first()).toBeVisible();
   });
 
   test("empty tree shows create-tag call-to-action", async ({ page }) => {
+    // Fresh users come seeded with default tags (Appliances, Electronics, …),
+    // so the Root empty-state block (`v-if="sortedTags.length === 0"`) won't
+    // render unless we wipe them first.
+    const tags = (await (await page.request.get("/api/v1/tags")).json()) as Array<{ id: string }>;
+    for (const t of tags) {
+      await page.request.delete(`/api/v1/tags/${t.id}`);
+    }
+
     await page.goto("/tags");
-    // Brand new user, no tags — the Root component renders an empty-state Create button.
-    const emptyCta = page.getByRole("button", { name: /create/i }).first();
+
+    // Scope to the empty-state container (role="status" with the "No Tags Found"
+    // message from tags.no_results) so the CTA assertion can't accidentally
+    // match the sidebar's Create dropdown or any toolbar button.
+    const emptyState = page.locator("[role='status']").filter({ hasText: "No Tags Found" });
+    await expect(emptyState).toBeVisible();
+    const emptyCta = emptyState.getByRole("button", { name: /create/i });
     await expect(emptyCta).toBeVisible();
   });
 });

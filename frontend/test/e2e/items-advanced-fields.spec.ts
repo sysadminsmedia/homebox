@@ -74,9 +74,16 @@ function detailRow(page: Page, label: string): Locator {
     .locator("..");
 }
 
-async function fillDatePicker(scope: Locator, page: Page, value: string) {
+async function fillDatePicker(scope: Locator, page: Page, value: string, options: { allowMissing?: boolean } = {}) {
   const input = scope.locator("input[aria-label='Select Date']").first();
-  if ((await input.count()) === 0) return;
+  if ((await input.count()) === 0) {
+    if (options.allowMissing) return;
+    throw new Error(
+      `fillDatePicker: no 'input[aria-label="Select Date"]' found in the given scope — ` +
+        `the test is about to write '${value}' to a field that doesn't exist. ` +
+        `If a caller legitimately expects the picker to be absent, pass { allowMissing: true }.`
+    );
+  }
   await input.fill(value);
   await page.keyboard.press("Enter");
 }
@@ -131,6 +138,10 @@ test.describe("Item advanced fields", () => {
 
     await expect(page.getByText("Warranty Details", { exact: true }).first()).toBeVisible();
     await expect(detailRow(page, "Lifetime Warranty")).toContainText("No");
+    // DetailsSection renders dates via <DateTime format="relative"> which
+    // fmtDate expands to "{{relative}} (M/d/yyyy)" at en-US — accept both
+    // leading-zero and non-leading-zero month renderings.
+    await expect(detailRow(page, "Warranty Expires")).toContainText(/0?6\/20\/2026/);
   });
 
   test("insurance checkbox toggles to Yes on detail view", async ({ page }) => {

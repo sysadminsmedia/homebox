@@ -135,5 +135,16 @@ test.describe("Tag CRUD", () => {
     // Dialog stays open (submit rejected); the page URL and the existing tag have not changed.
     await expect(updateDialog.first()).toBeVisible();
     await expect(page).toHaveURL(/\/tag\/[0-9a-f-]+/i);
+
+    // A "Tag updated" toast would only appear if the backend silently accepted
+    // the empty name — assert no such toast is present.
+    await expect(page.getByText(/Tag updated/i)).toHaveCount(0);
+
+    // Close the dialog so the detail page is no longer aria-hidden behind it,
+    // then confirm the original tag name is still rendered (i.e. a no-op client
+    // handler didn't blank it out).
+    await updateDialog.getByRole("button", { name: /Close/i }).click();
+    await expect(updateDialog).toBeHidden();
+    await expect(page.getByRole("heading", { name: tagName })).toBeVisible();
   });
 });

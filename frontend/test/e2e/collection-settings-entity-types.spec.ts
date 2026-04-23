@@ -117,14 +117,20 @@ async function fillNameAndSubmit(dialog: Locator, name: string, submitName: "Cre
   await submitBtn.click();
 }
 
-// Workaround: the entity-types page serializes `defaultTemplateId: ""` which the backend
-// rejects with a 500 (the *uuid.UUID JSON decoder can't parse an empty string).
-// Rewrite outgoing create/update requests to send `null` instead until the component is fixed.
+// FIXME(entity-types-default-template-id): the entity-types page serializes
+// `defaultTemplateId: ""` (see pages/collection/index/entity-types.vue:65,115)
+// which the backend rejects with a 500 — the *uuid.UUID JSON decoder can't
+// parse an empty string. Rewrite outgoing create/update requests to send `null`
+// instead until the component is fixed. When that ships, delete this function
+// and its two call sites below so the E2E tests exercise the real wire format.
 async function installEntityTypeCreateFix(page: Page) {
-  await page.route(/\/api\/v1\/entity-types/, async route => {
+  // Glob scoped to this resource (and its id subpaths) rather than a regex
+  // substring so unrelated URLs can't accidentally trigger the rewrite handler.
+  await page.route("**/api/v1/entity-types*", async route => {
     const req = route.request();
     const method = req.method();
-    if (method === "POST" || method === "PUT") {
+    const contentType = req.headers()["content-type"] ?? "";
+    if ((method === "POST" || method === "PUT") && contentType.includes("application/json")) {
       try {
         const data = req.postDataJSON() as Record<string, unknown> | null;
         if (data && data.defaultTemplateId === "") {

@@ -529,6 +529,7 @@
         <div
           v-for="(item, idx) in row.items"
           :key="idx"
+          data-testid="label-preview-card"
           class="flex border-2"
           :class="{
             'border-black': bordered && !!item,

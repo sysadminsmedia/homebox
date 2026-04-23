@@ -106,10 +106,18 @@ test.describe("profile page", () => {
     await expect(dialog).toBeVisible();
 
     const switchIds = ["#copy-maintenance", "#copy-attachments", "#copy-custom-fields"] as const;
+    // reka-ui's Switch uses `data-state="checked"` or `"unchecked"`. Wait for
+    // that attribute to settle into a real value before capturing — a raw
+    // getAttribute() doesn't auto-retry, so under hydration load it can return
+    // null/"" and the later not.toHaveAttribute(…, "") check would pass
+    // vacuously even if the click was a no-op.
     const switchesWithInitial = await Promise.all(
       switchIds.map(async id => {
         const locator = dialog.locator(id);
-        return { id, locator, initial: (await locator.getAttribute("data-state")) ?? "" };
+        await expect(locator).toHaveAttribute("data-state", /^(checked|unchecked)$/);
+        const initial = (await locator.getAttribute("data-state")) ?? "";
+        expect(initial).toMatch(/^(checked|unchecked)$/);
+        return { id, locator, initial };
       })
     );
 
@@ -154,11 +162,18 @@ test.describe("profile page", () => {
     await gotoProfile(page);
 
     const legacyBtn = page.getByRole("button", { name: /Legacy Header/i });
-    const initialLabel = await legacyBtn.textContent();
+    // Make sure the button is hydrated with a non-empty label before capturing
+    // it — otherwise textContent() can return null / "" and the later
+    // not.toHaveText(initialLabel) would pass vacuously.
+    await expect(legacyBtn).toHaveText(/.+/);
+    const initialLabel = (await legacyBtn.textContent())?.trim() ?? "";
+    expect(initialLabel.length).toBeGreaterThan(0);
+
     await legacyBtn.click();
-    await expect(legacyBtn).not.toHaveText(initialLabel ?? "");
+    await expect(legacyBtn).not.toHaveText(initialLabel);
 
     // Toggle back to avoid polluting shared state.
     await legacyBtn.click();
+    await expect(legacyBtn).toHaveText(initialLabel);
   });
 });

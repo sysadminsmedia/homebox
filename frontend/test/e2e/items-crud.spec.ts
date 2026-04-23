@@ -186,9 +186,7 @@ test.describe("Item CRUD", () => {
     await submitCreateItem(page);
     await expect(page.getByRole("heading", { name: itemName, level: 1 })).toBeVisible();
 
-    // The more-actions trigger's aria-label comes from i18n key "global.more_actions",
-    // which vue-i18n falls back to the raw key when that key is missing in en.json.
-    await page.locator('button[aria-label="global.more_actions"], button[aria-label="More actions"]').first().click();
+    await page.getByRole("button", { name: "More actions" }).click();
     // The menu item contains an icon + text; use non-exact matching and scope
     // to the visible open menu to avoid matching the sidebar "Delete" text.
     await page.getByRole("menu").getByRole("menuitem", { name: "Delete", exact: false }).click();

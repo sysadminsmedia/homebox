@@ -82,6 +82,14 @@ test.describe("Collection members & invites", () => {
     await expect(copyButton).toBeVisible();
     await copyButton.click();
 
+    // Verify the clipboard actually received the token. Chromium is the only
+    // browser Playwright exposes `clipboard-read` permission to (see the
+    // grantPermissions guard above); Firefox/WebKit skip this check.
+    if (browserName === "chromium") {
+      const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
+      expect(clipboardText).toContain(token);
+    }
+
     // The Delete button has aria-label="Delete" (from $t('global.delete')).
     await row.getByRole("button", { name: "Delete", exact: true }).click();
     await confirmAlert(page);
@@ -98,7 +106,9 @@ test.describe("Collection members & invites", () => {
     try {
       const secondPage = await secondContext.newPage();
 
-      const inviteeEmail = faker.internet.email().toLowerCase();
+      // Append a unique suffix so parallel/retried runs can't collide on the
+      // email and trip a 409 from the UNIQUE constraint.
+      const inviteeEmail = `${faker.internet.userName().toLowerCase()}-${crypto.randomUUID()}@example.com`;
       const inviteeName = "Second User";
 
       // Register via API with the invite token. The UI register flow + shared
@@ -107,7 +117,7 @@ test.describe("Collection members & invites", () => {
       const regRes = await secondContext.request.post("/api/v1/users/register", {
         data: { name: inviteeName, email: inviteeEmail, password: PASSWORD, token },
       });
-      expect(regRes.status(), `register (token): ${await regRes.text()}`).toBeLessThan(400);
+      expect(regRes.ok(), `register (token) status=${regRes.status()}`).toBeTruthy();
 
       await loginOnly(secondPage, inviteeEmail, PASSWORD);
 

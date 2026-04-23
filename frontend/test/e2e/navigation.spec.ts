@@ -43,6 +43,10 @@ test.describe("navigation", () => {
   for (const href of COLLECTION_LINKS) {
     test(`collection sub-link ${href} navigates correctly`, async ({ page }) => {
       const nav = page.locator('[data-sidebar="sidebar"]').first();
+      // `.last()` targets the collapsible sub-menu entry rather than the parent
+      // "Collection" link — /collection/members in particular appears twice in
+      // the sidebar (once as the parent group's href, once as the Members
+      // sub-link). Don't replace with `.first()` without re-verifying.
       await nav.locator(`a[href="${href}"]`).last().click();
       await expect(page).toHaveURL(new RegExp(`${href}(\\?.*)?$`));
     });

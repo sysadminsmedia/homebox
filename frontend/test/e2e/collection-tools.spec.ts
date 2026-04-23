@@ -48,8 +48,8 @@ test.describe("Collection Tools Page", () => {
   });
 
   test("CSV import rejects malformed input via API error response", async ({ page }) => {
-    await page.route(IMPORT_API, route => {
-      route.fulfill({
+    await page.route(IMPORT_API, async route => {
+      await route.fulfill({
         status: 422,
         contentType: "application/json",
         body: JSON.stringify({ message: "invalid columns" }),
@@ -85,8 +85,8 @@ test.describe("Collection Tools Page", () => {
   });
 
   test("Ensure Asset IDs completes successfully and reports count", async ({ page }) => {
-    await page.route(ENSURE_IDS_API, route => {
-      route.fulfill({
+    await page.route(ENSURE_IDS_API, async route => {
+      await route.fulfill({
         status: 200,
         contentType: "application/json",
         body: JSON.stringify({ completed: 7 }),
@@ -104,8 +104,8 @@ test.describe("Collection Tools Page", () => {
   });
 
   test("Ensure Asset IDs shows error toast on API failure", async ({ page }) => {
-    await page.route(ENSURE_IDS_API, route => {
-      route.fulfill({
+    await page.route(ENSURE_IDS_API, async route => {
+      await route.fulfill({
         status: 500,
         contentType: "application/json",
         body: JSON.stringify({ message: "boom" }),

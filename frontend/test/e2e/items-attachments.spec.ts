@@ -141,7 +141,16 @@ test.describe("Item attachments", () => {
     }
   });
 
-  test("set primary image for a photo attachment", async ({ page }) => {
+  // FIXME(attachment-primary-ui): This covers the primary-attachment round-trip
+  // via the REST API plus the UI's read path on dialog re-open, but NOT the
+  // UI's write path — clicking the reka-ui CheckboxRoot inside the Attachment
+  // Edit dialog (components/ui/checkbox + ItemEditAttachmentDialog in
+  // pages/item/[id]/index/edit.vue) does not reliably propagate the v-model
+  // update in headless chromium; the button's click handler fires but
+  // aria-checked never flips, which looks like a portal/focus issue inside the
+  // dialog. When that's resolved, rename this test back and replace the PUT
+  // block with a dialog.locator('#primary').click() + expect aria-checked.
+  test("primary flag round-trips via the API and is reflected in the edit dialog", async ({ page }) => {
     test.slow();
     const itemId = await setupItemAndGotoEdit(page);
 
@@ -157,12 +166,8 @@ test.describe("Item attachments", () => {
     const attachment = entity.attachments.find(a => a.title === filename);
     expect(attachment, "uploaded attachment should be present in entity").toBeDefined();
 
-    // Drive the "primary" flag through the public API. Clicking the reka-ui
-    // CheckboxRoot button directly in headless chromium does not reliably
-    // propagate the v-model update from inside the dialog portal (the button's
-    // click handler fires but the aria-checked attribute never flips), so we
-    // exercise the same update endpoint the dialog posts to and then verify
-    // the edit UI reads the flag back correctly on re-open.
+    // Drive the "primary" flag through the same endpoint the dialog posts to.
+    // See the FIXME on the enclosing test for why we don't click the checkbox.
     const putResp = await page.request.put(`/api/v1/entities/${itemId}/attachments/${attachment!.id}`, {
       data: {
         type: attachment!.type,
@@ -170,13 +175,14 @@ test.describe("Item attachments", () => {
         primary: true,
       },
     });
-    expect(putResp.ok(), `update attachment failed: ${putResp.status()} ${await putResp.text()}`).toBe(true);
+    expect(putResp.ok(), `update attachment failed: status=${putResp.status()}`).toBe(true);
 
     // Reload the edit page so the client picks up the new state from the API.
     await page.reload();
     await expect(page.getByRole("heading", { name: "Attachments", exact: true }).first()).toBeVisible();
 
-    // Open the edit dialog for the same attachment and confirm primary is set.
+    // Open the edit dialog for the same attachment and confirm primary is set —
+    // this is the UI read-path assertion.
     await attachmentRow(page, filename).getByTestId("attachment-edit").click();
     const dialog = page.getByRole("dialog").filter({ has: page.getByText("Attachment Edit", { exact: true }) });
     await expect(dialog).toBeVisible();
