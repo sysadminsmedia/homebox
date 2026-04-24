@@ -14,6 +14,10 @@ jobs:
   playwright-tests:
     timeout-minutes: 60
     strategy:
+      # Don't cancel sibling shards when one fails — every shard's blob report
+      # still needs to reach the merge-reports job so the final HTML summary
+      # reflects the full suite.
+      fail-fast: false
       matrix:
         shardIndex: [1,2,3,4]
         shardTotal: [4]
