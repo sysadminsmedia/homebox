@@ -97,7 +97,11 @@ test.describe("Session lifecycle", () => {
 
     const logoutButton = page.getByTestId("logout-button");
     await expect(logoutButton).toBeVisible();
-    await logoutButton.click();
+    // `force: true` skips the actionability re-check — the sidebar's
+    // SidebarMenuButton flips `data-state` on hover, which in webkit can cause
+    // Playwright's built-in stability wait to see the element as "detached"
+    // and burn the full test timeout retrying.
+    await logoutButton.click({ force: true });
 
     await expect(page).toHaveURL("/");
   });
@@ -105,7 +109,7 @@ test.describe("Session lifecycle", () => {
   test("after logout, visiting a protected route redirects to login", async ({ page }) => {
     test.slow();
     await registerAndLogin(page);
-    await page.getByTestId("logout-button").click();
+    await page.getByTestId("logout-button").click({ force: true });
     await expect(page).toHaveURL("/");
 
     await page.goto("/home");

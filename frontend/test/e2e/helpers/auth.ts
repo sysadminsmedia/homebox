@@ -41,6 +41,13 @@ async function fillLogin(page: Page, email: string, password: string) {
   await pw.fill(password);
   await page.getByRole("button", { name: "Login", exact: true }).click();
   await expect(page).toHaveURL("/home");
+  // Waiting on the URL alone isn't enough on webkit: the auth cookie is set by
+  // the Set-Cookie response but middleware on the *next* navigation (e.g.
+  // page.goto('/collection/...')) can fire before the cookie jar has observed
+  // it, which makes the auth middleware redirect back to '/'. Waiting for the
+  // logout button proves the layout has finished hydrating with the auth
+  // context, which in turn proves the session cookie is fully live.
+  await expect(page.getByTestId("logout-button")).toBeVisible({ timeout: 15000 });
 }
 
 export async function registerAndLogin(page: Page) {

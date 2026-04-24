@@ -63,7 +63,7 @@ test.describe("navigation", () => {
   });
 
   test("logout returns to /", async ({ page }) => {
-    await page.getByTestId("logout-button").click();
+    await page.getByTestId("logout-button").click({ force: true });
     await expect(page).toHaveURL("/");
   });
 });
