@@ -1,6 +1,5 @@
-import { expect, test, type Page } from "@playwright/test";
-import { faker } from "@faker-js/faker";
-import { registerAndLogin, STRONG_PASSWORD } from "./helpers/auth";
+import { expect, test } from "@playwright/test";
+import { registerAndLogin } from "./helpers/auth";
 
 const PRIMARY_LINKS = ["/home", "/locations", "/tags", "/items", "/templates", "/maintenance", "/profile"] as const;
 

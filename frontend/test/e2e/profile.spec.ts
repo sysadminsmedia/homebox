@@ -1,5 +1,4 @@
 import { expect, test, type Page } from "@playwright/test";
-import { faker } from "@faker-js/faker";
 import { registerAndLogin, STRONG_PASSWORD } from "./helpers/auth";
 
 const ANOTHER_STRONG_PASSWORD = "AnotherVeryStrongPass123!";

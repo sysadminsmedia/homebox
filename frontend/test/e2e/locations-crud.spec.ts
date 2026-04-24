@@ -27,16 +27,6 @@ async function fillLocationDescription(page: Page, description: string) {
   await dialog.getByLabel("Location Description", { exact: false }).first().fill(description);
 }
 
-async function expandAdvanced(page: Page) {
-  const dialog = createLocationDialog(page);
-  await dialog.getByRole("button", { name: "Show more", exact: false }).click();
-}
-
-async function fillLocationNotes(page: Page, notes: string) {
-  const dialog = createLocationDialog(page);
-  await dialog.getByLabel("Notes", { exact: true }).first().fill(notes);
-}
-
 async function submitCreate(page: Page) {
   const dialog = createLocationDialog(page);
   await dialog.getByRole("button", { name: "Create", exact: true }).click();

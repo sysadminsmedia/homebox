@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { faker } from "@faker-js/faker";
 import { registerAndLogin, STRONG_PASSWORD } from "./helpers/auth";
 
@@ -54,7 +54,7 @@ test.describe("Registration", () => {
     test.slow();
     const email = faker.internet.email().toLowerCase();
 
-    const firstRegister = (url: string) =>
+    const firstRegister = () =>
       page.waitForResponse(r => r.url().includes("/api/v1/users/register") && r.request().method() === "POST");
 
     await page.goto("/");
@@ -62,7 +62,7 @@ test.describe("Registration", () => {
     await page.getByTestId("email-input").locator("input").fill(email);
     await page.getByTestId("name-input").locator("input").fill("Duplicate User");
     await page.getByTestId("password-input").locator("input").fill(STRONG_PASSWORD);
-    const firstResp = firstRegister("first");
+    const firstResp = firstRegister();
     await page.getByTestId("confirm-register-button").click();
     expect((await firstResp).status()).toBe(204);
 
@@ -71,7 +71,7 @@ test.describe("Registration", () => {
     await page.getByTestId("email-input").locator("input").fill(email);
     await page.getByTestId("name-input").locator("input").fill("Duplicate User");
     await page.getByTestId("password-input").locator("input").fill(STRONG_PASSWORD);
-    const secondResp = firstRegister("second");
+    const secondResp = firstRegister();
     await page.getByTestId("confirm-register-button").click();
     expect((await secondResp).status()).toBeGreaterThanOrEqual(400);
     await expect(page.getByText("Problem registering user").first()).toBeVisible();

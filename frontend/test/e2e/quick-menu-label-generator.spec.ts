@@ -1,6 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { faker } from "@faker-js/faker";
-import { registerAndLogin, STRONG_PASSWORD } from "./helpers/auth";
+import { registerAndLogin } from "./helpers/auth";
 
 const QUICK_MENU_PLACEHOLDER = "Use the number keys to quickly select an action.";
 

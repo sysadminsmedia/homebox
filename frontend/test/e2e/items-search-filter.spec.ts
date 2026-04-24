@@ -153,7 +153,7 @@ test.describe("Items search, filter, sort, pagination", () => {
     test.slow();
     await registerAndLogin(page);
 
-    const { locType, itemType } = await pickEntityTypeIds(page);
+    const { locType } = await pickEntityTypeIds(page);
     const suffix = faker.string.alphanumeric(6).toLowerCase();
     const locA = await createLocation(page, `locA-${suffix}`, locType.id);
     const locB = await createLocation(page, `locB-${suffix}`, locType.id);
@@ -185,7 +185,7 @@ test.describe("Items search, filter, sort, pagination", () => {
     test.slow();
     await registerAndLogin(page);
 
-    const { locType, itemType } = await pickEntityTypeIds(page);
+    const { locType } = await pickEntityTypeIds(page);
     const suffix = faker.string.alphanumeric(6).toLowerCase();
     const location = await createLocation(page, `loc-${suffix}`, locType.id);
     const tag = await createTag(page, `tag-${suffix}`);
@@ -215,7 +215,7 @@ test.describe("Items search, filter, sort, pagination", () => {
     test.slow();
     await registerAndLogin(page);
 
-    const { locType, itemType } = await pickEntityTypeIds(page);
+    const { locType } = await pickEntityTypeIds(page);
     const suffix = faker.string.alphanumeric(6).toLowerCase();
     const location = await createLocation(page, `loc-${suffix}`, locType.id);
 
@@ -242,7 +242,7 @@ test.describe("Items search, filter, sort, pagination", () => {
     test.slow();
     await registerAndLogin(page);
 
-    const { locType, itemType } = await pickEntityTypeIds(page);
+    const { locType } = await pickEntityTypeIds(page);
     const suffix = faker.string.alphanumeric(6).toLowerCase();
     const location = await createLocation(page, `loc-${suffix}`, locType.id);
 
@@ -275,7 +275,7 @@ test.describe("Items search, filter, sort, pagination", () => {
     test.slow();
     await registerAndLogin(page);
 
-    const { locType, itemType } = await pickEntityTypeIds(page);
+    const { locType } = await pickEntityTypeIds(page);
     const suffix = faker.string.alphanumeric(6).toLowerCase();
     const location = await createLocation(page, `loc-${suffix}`, locType.id);
     const tag = await createTag(page, `tag-${suffix}`);

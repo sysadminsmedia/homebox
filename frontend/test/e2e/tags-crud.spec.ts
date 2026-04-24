@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { faker } from "@faker-js/faker";
-import { registerAndLogin, STRONG_PASSWORD } from "./helpers/auth";
+import { registerAndLogin } from "./helpers/auth";
 
 function getDialog(page: Page, titleText: string): Locator {
   return page.getByRole("dialog").filter({ has: page.getByText(titleText, { exact: true }) });
