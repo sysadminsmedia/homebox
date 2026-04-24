@@ -1,11 +1,25 @@
 <template>
   <div v-if="!inline" class="flex w-full flex-col">
     <Label class="cursor-pointer"> {{ label }} </Label>
-    <VueDatePicker v-model="selected" :enable-time-picker="false" clearable :dark="isDark" :format="formatDate" />
+    <VueDatePicker
+      v-model="selected"
+      :enable-time-picker="false"
+      clearable
+      :text-input="textInputOpts"
+      :dark="isDark"
+      :format="formatDate"
+    />
   </div>
   <div v-else class="sm:flex sm:items-start sm:gap-4">
     <Label class="flex w-full cursor-pointer px-1 py-2"> {{ label }} </Label>
-    <VueDatePicker v-model="selected" :enable-time-picker="false" clearable :dark="isDark" :format="formatDate" />
+    <VueDatePicker
+      v-model="selected"
+      :enable-time-picker="false"
+      clearable
+      :text-input="textInputOpts"
+      :dark="isDark"
+      :format="formatDate"
+    />
   </div>
 </template>
 
@@ -37,6 +51,11 @@
   const isDark = useIsThemeInList(darkThemes);
 
   const formatDate = (date: Date | string | number) => fmtDate(date, "human", "date");
+  // Explicit text-input parsing format so typed dates commit on Enter/Tab.
+  // The `format` prop above only controls display; without this config the
+  // text-input parser can't derive a pattern from our function-valued format
+  // and silently fails to accept typed input.
+  const textInputOpts = { format: ["MM/dd/yyyy", "yyyy-MM-dd"], enterSubmit: true, tabSubmit: true };
 
   const selected = computed<Date | null>({
     get() {
