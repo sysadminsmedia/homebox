@@ -75,11 +75,13 @@ function detailRow(page: Page, label: string): Locator {
 }
 
 async function fillDatePicker(scope: Locator, page: Page, value: string, options: { allowMissing?: boolean } = {}) {
-  const input = scope.locator("input[aria-label='Select Date']").first();
+  // @vuepic/vue-datepicker v11 labels the text input as "Datepicker input"
+  // (earlier versions used "Select Date"). Match on that aria-label.
+  const input = scope.locator("input[aria-label='Datepicker input']").first();
   if ((await input.count()) === 0) {
     if (options.allowMissing) return;
     throw new Error(
-      `fillDatePicker: no 'input[aria-label="Select Date"]' found in the given scope — ` +
+      `fillDatePicker: no 'input[aria-label="Datepicker input"]' found in the given scope — ` +
         `the test is about to write '${value}' to a field that doesn't exist. ` +
         `If a caller legitimately expects the picker to be absent, pass { allowMissing: true }.`
     );

@@ -65,6 +65,9 @@ test.describe("Collection members & invites", () => {
 
     // Clipboard permissions are only a valid `grantPermissions` name on Chromium.
     // Firefox / WebKit will throw "Unknown permission" if we pass them — skip there.
+    // The backend's Permissions-Policy header sets `clipboard-read=(self)` only in
+    // demo mode (see security.go), which the E2E task stack always enables via
+    // `HBOX_DEMO: true`, so readText is allowed under test.
     if (browserName === "chromium") {
       await context.grantPermissions(["clipboard-read", "clipboard-write"]);
     }
@@ -108,7 +111,7 @@ test.describe("Collection members & invites", () => {
 
       // Append a unique suffix so parallel/retried runs can't collide on the
       // email and trip a 409 from the UNIQUE constraint.
-      const inviteeEmail = `${faker.internet.userName().toLowerCase()}-${crypto.randomUUID()}@example.com`;
+      const inviteeEmail = `${faker.internet.username().toLowerCase()}-${crypto.randomUUID()}@example.com`;
       const inviteeName = "Second User";
 
       // Register via API with the invite token. The UI register flow + shared

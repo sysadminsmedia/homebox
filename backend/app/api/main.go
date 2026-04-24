@@ -242,7 +242,7 @@ func run(cfg *config.Config) error {
 		middleware.RequestID,
 		middleware.RealIP,
 		mid.Logger(logger),
-		mid.SecurityHeaders(),
+		mid.SecurityHeaders(cfg.Demo),
 		// Restrict the max body size to the upload limit + 1MB (for overhead)
 		mid.MaxBodySize(cfg.Web.MaxUploadSize+1),
 		middleware.Recoverer,

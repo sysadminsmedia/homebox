@@ -124,9 +124,10 @@ async function fillNameAndSubmit(dialog: Locator, name: string, submitName: "Cre
 // instead until the component is fixed. When that ships, delete this function
 // and its two call sites below so the E2E tests exercise the real wire format.
 async function installEntityTypeCreateFix(page: Page) {
-  // Glob scoped to this resource (and its id subpaths) rather than a regex
-  // substring so unrelated URLs can't accidentally trigger the rewrite handler.
-  await page.route("**/api/v1/entity-types*", async route => {
+  // Regex matches the collection endpoint and id subpaths — Playwright globs
+  // treat `*` as a within-segment match, so `**/api/v1/entity-types*` would
+  // miss `/api/v1/entity-types/{id}` (the PUT update path).
+  await page.route(/\/api\/v1\/entity-types(?:$|[/?])/, async route => {
     const req = route.request();
     const method = req.method();
     const contentType = req.headers()["content-type"] ?? "";
