@@ -110,7 +110,7 @@ func (ctrl *V1Controller) HandleUserSelfUpdate() errchain.HandlerFunc {
 func (ctrl *V1Controller) HandleUserSelfDelete() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		if ctrl.isDemo {
-			return validate.NewRequestError(nil, http.StatusForbidden)
+			return validate.NewRequestError(fmt.Errorf("account deletion is disabled in demo mode"), http.StatusForbidden)
 		}
 
 		actor := services.UseUserCtx(r.Context())
@@ -199,7 +199,7 @@ type (
 func (ctrl *V1Controller) HandleUserSelfChangePassword() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		if ctrl.isDemo {
-			return validate.NewRequestError(nil, http.StatusForbidden)
+			return validate.NewRequestError(fmt.Errorf("password change is disabled in demo mode"), http.StatusForbidden)
 		}
 
 		var cp ChangePassword

@@ -55,12 +55,13 @@
 </script>
 
 <template>
-  <div>
+  <div :data-testid="`location-tree-node-${item.name}`">
     <div
       class="flex items-center gap-1 rounded p-1"
       :class="{
         'cursor-pointer hover:bg-accent hover:text-accent-foreground': hasChildren,
       }"
+      :data-testid="`location-tree-toggle-${item.name}`"
       @click="openRef = !openRef"
     >
       <div
@@ -80,7 +81,9 @@
       </div>
       <MdiMapMarker v-if="item.type === 'location'" class="size-4" />
       <MdiPackageVariant v-else class="size-4" />
-      <NuxtLink class="text-lg hover:underline" :to="link" @click.stop>{{ item.name }} </NuxtLink>
+      <NuxtLink class="text-lg hover:underline" :to="link" :data-testid="`location-tree-link-${item.name}`" @click.stop
+        >{{ item.name }}
+      </NuxtLink>
     </div>
     <div v-if="openRef" class="ml-4">
       <LocationTreeNode

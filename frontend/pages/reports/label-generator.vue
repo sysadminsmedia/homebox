@@ -529,6 +529,7 @@
         <div
           v-for="(item, idx) in row.items"
           :key="idx"
+          data-testid="label-preview-card"
           class="flex border-2"
           :class="{
             'border-black': bordered && !!item,
@@ -543,6 +544,8 @@
             <div class="flex items-center">
               <img
                 :src="item.url"
+                loading="lazy"
+                decoding="async"
                 :style="{
                   minWidth: `${out.card.height * 0.9}${out.measure}`,
                   width: `${out.card.height * 0.9}${out.measure}`,

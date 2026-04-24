@@ -54,19 +54,27 @@ func (ctrl *V1Controller) HandleGenerateQRCode() errchain.HandlerFunc {
 			return err
 		}
 
-		toWriteCloser := struct {
+		// Render into a buffer first so we don't touch `w` until we know the
+		// image is complete. Writing partial bytes and then returning an error
+		// causes the Errors middleware to call WriteHeader a second time, which
+		// produces "superfluous response.WriteHeader" log spam (common when the
+		// label-generator page renders many <img> tags and the client cancels
+		// slow loads).
+		var buf bytes.Buffer
+		qrwriter := standard.NewWithWriter(struct {
 			io.Writer
 			io.Closer
-		}{
-			Writer: w,
-			Closer: io.NopCloser(nil),
+		}{Writer: &buf, Closer: io.NopCloser(nil)}, standard.WithLogoImage(image))
+
+		if err := qrc.Save(qrwriter); err != nil {
+			return err
 		}
 
-		qrwriter := standard.NewWithWriter(toWriteCloser, standard.WithLogoImage(image))
-
-		// Return the QR code as a jpeg image
 		w.Header().Set("Content-Type", "image/jpeg")
 		w.Header().Set("Content-Disposition", "attachment; filename=qrcode.jpg")
-		return qrc.Save(qrwriter)
+		// Ignore write errors — if the client disconnected, there's nothing to
+		// report back, and returning the error would trigger a superfluous 500.
+		_, _ = w.Write(buf.Bytes())
+		return nil
 	}
 }

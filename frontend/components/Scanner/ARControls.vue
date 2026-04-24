@@ -2,7 +2,13 @@
   <div class="pointer-events-none absolute inset-0 z-20 flex flex-col justify-between">
     <!-- Top bar -->
     <div class="pointer-events-auto flex items-center gap-3 bg-background/60 p-3 backdrop-blur-sm">
-      <Button variant="ghost" size="icon" :aria-label="t('scanner_ar.back')" :title="t('scanner_ar.back')" @click="$emit('back')">
+      <Button
+        variant="ghost"
+        size="icon"
+        :aria-label="t('scanner_ar.back')"
+        :title="t('scanner_ar.back')"
+        @click="$emit('back')"
+      >
         <MdiArrowLeft class="size-5" />
       </Button>
       <span class="text-sm font-semibold text-foreground">{{ t("scanner_ar.title") }}</span>

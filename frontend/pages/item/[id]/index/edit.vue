@@ -692,25 +692,33 @@
             </div>
             <button
               v-else
+              data-testid="attachment-upload-button"
               class="grid h-24 w-full place-content-center border-2 border-dashed border-primary"
               @click="clickUpload"
             >
-              <input ref="refAttachmentInput" hidden type="file" @change="uploadImage" />
+              <input
+                ref="refAttachmentInput"
+                data-testid="attachment-file-input"
+                hidden
+                type="file"
+                @change="uploadImage"
+              />
               <p>{{ $t("items.drag_and_drop") }}</p>
             </button>
           </div>
 
           <div class="border-t p-4">
-            <ul role="list" class="divide-y rounded-md border">
+            <ul role="list" data-testid="attachments-list" class="divide-y rounded-md border">
               <li
                 v-for="attachment in item.attachments"
                 :key="attachment.id"
+                :data-testid="`attachment-row-${attachment.title}`"
                 class="grid grid-cols-6 justify-between py-3 pl-3 pr-4 text-sm"
               >
                 <p class="col-span-4 my-auto">
                   {{ attachment.title }}
                 </p>
-                <p class="my-auto">
+                <p data-testid="attachment-type" class="my-auto">
                   {{ $t(`items.${attachment.type}`) }}
                 </p>
                 <div class="flex justify-end gap-2">
@@ -719,6 +727,7 @@
                       <Button
                         variant="outline"
                         size="icon"
+                        data-testid="attachment-view"
                         @click="
                           openDialog(DialogID.ItemImage, {
                             params: {
@@ -743,7 +752,12 @@
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger as-child>
-                      <Button variant="destructive" size="icon" @click="deleteAttachment(attachment.id)">
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        data-testid="attachment-delete"
+                        @click="deleteAttachment(attachment.id)"
+                      >
                         <MdiDelete />
                       </Button>
                     </TooltipTrigger>
@@ -751,7 +765,7 @@
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger as-child>
-                      <Button size="icon" @click="openAttachmentEditDialog(attachment)">
+                      <Button size="icon" data-testid="attachment-edit" @click="openAttachmentEditDialog(attachment)">
                         <MdiPencil />
                       </Button>
                     </TooltipTrigger>

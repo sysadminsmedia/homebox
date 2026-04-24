@@ -4,6 +4,7 @@
     <PopoverTrigger as-child>
       <Button
         :id="id"
+        data-testid="template-selector-compact"
         variant="outline"
         size="icon"
         role="combobox"

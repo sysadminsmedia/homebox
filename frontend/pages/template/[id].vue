@@ -240,7 +240,9 @@
         </div>
 
         <DialogFooter>
-          <Button type="submit" :loading="updating">{{ $t("global.update") }}</Button>
+          <Button data-testid="template-update-submit" type="submit" :loading="updating">{{
+            $t("global.update")
+          }}</Button>
         </DialogFooter>
       </form>
     </DialogContent>
@@ -261,11 +263,11 @@
             </div>
           </div>
           <div class="ml-auto flex gap-2">
-            <Button @click="openUpdate">
+            <Button data-testid="template-detail-edit" @click="openUpdate">
               <MdiPencil class="mr-1" />
               {{ $t("global.edit") }}
             </Button>
-            <Button variant="destructive" @click="confirmDelete">
+            <Button data-testid="template-detail-delete" variant="destructive" @click="confirmDelete">
               <MdiDelete class="mr-1" />
               {{ $t("global.delete") }}
             </Button>

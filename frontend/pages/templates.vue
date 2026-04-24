@@ -41,7 +41,7 @@
   <BaseContainer>
     <div class="mb-4 flex justify-between">
       <BaseSectionHeader>{{ $t("pages.templates.title") }}</BaseSectionHeader>
-      <Button @click="openDialog(DialogID.CreateTemplate)">
+      <Button data-testid="create-template-button" @click="openDialog(DialogID.CreateTemplate)">
         <MdiPlus class="mr-2" />
         {{ $t("global.create") }}
       </Button>

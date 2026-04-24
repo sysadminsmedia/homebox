@@ -131,7 +131,7 @@
     <Dialog :dialog-id="DialogID.CreateNotifier">
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{{ $t("profile.notifier_modal", { type: notifier != null }) }}</DialogTitle>
+          <DialogTitle>{{ $t("profile.notifier_modal", { type: !!targetID }) }}</DialogTitle>
         </DialogHeader>
 
         <form @submit.prevent="createNotifier">
@@ -174,7 +174,13 @@
             <TooltipProvider :delay-duration="0" class="flex justify-end gap-2">
               <Tooltip>
                 <TooltipTrigger>
-                  <Button variant="destructive" size="icon" @click="deleteNotifier(n.id)">
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    data-testid="notifier-row-delete"
+                    :aria-label="$t('global.delete')"
+                    @click="deleteNotifier(n.id)"
+                  >
                     <MdiDelete />
                   </Button>
                 </TooltipTrigger>
@@ -182,7 +188,13 @@
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger>
-                  <Button variant="outline" size="icon" @click="openNotifierDialog(n)">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    data-testid="notifier-row-edit"
+                    :aria-label="$t('global.edit')"
+                    @click="openNotifierDialog(n)"
+                  >
                     <MdiPencil />
                   </Button>
                 </TooltipTrigger>

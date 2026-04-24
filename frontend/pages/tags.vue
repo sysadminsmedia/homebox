@@ -133,7 +133,13 @@
           <ButtonGroup>
             <Tooltip>
               <TooltipTrigger>
-                <Button size="icon" variant="outline" data-pos="start" @click="openAll">
+                <Button
+                  size="icon"
+                  variant="outline"
+                  data-pos="start"
+                  data-testid="tag-tree-expand-all"
+                  @click="openAll"
+                >
                   <MdiExpandAllOutline />
                 </Button>
               </TooltipTrigger>
@@ -143,7 +149,13 @@
             </Tooltip>
             <Tooltip>
               <TooltipTrigger>
-                <Button size="icon" variant="outline" data-pos="end" @click="closeAll">
+                <Button
+                  size="icon"
+                  variant="outline"
+                  data-pos="end"
+                  data-testid="tag-tree-collapse-all"
+                  @click="closeAll"
+                >
                   <MdiCollapseAllOutline />
                 </Button>
               </TooltipTrigger>

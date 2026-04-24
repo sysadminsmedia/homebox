@@ -83,7 +83,7 @@
 </script>
 
 <template>
-  <Card>
+  <Card :data-testid="`template-card-${template.name}`">
     <CardHeader>
       <CardTitle class="truncate">{{ template.name }}</CardTitle>
       <CardDescription v-if="template.description" class="line-clamp-2">
@@ -91,7 +91,14 @@
       </CardDescription>
     </CardHeader>
     <CardFooter class="flex justify-end gap-1">
-      <Button size="icon" variant="outline" class="size-8" as-child :title="$t('components.template.card.edit')">
+      <Button
+        size="icon"
+        variant="outline"
+        class="size-8"
+        as-child
+        :title="$t('components.template.card.edit')"
+        data-testid="template-card-edit"
+      >
         <NuxtLink :to="`/template/${template.id}`">
           <MdiPencil class="size-4" />
         </NuxtLink>
@@ -101,6 +108,7 @@
         variant="outline"
         class="size-8"
         :title="$t('components.template.card.duplicate')"
+        data-testid="template-card-duplicate"
         @click="handleDuplicate"
       >
         <MdiContentCopy class="size-4" />
@@ -110,6 +118,7 @@
         variant="destructive"
         class="size-8"
         :title="$t('components.template.card.delete')"
+        data-testid="template-card-delete"
         @click="handleDelete"
       >
         <MdiDelete class="size-4" />

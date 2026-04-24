@@ -88,6 +88,7 @@ tasks:
   go:ci:
     env:
       HBOX_DEMO: true
+      HBOX_LOG_LEVEL: fatal
     desc: Runs all go test and lint related tasks
     dir: backend
     cmds:
