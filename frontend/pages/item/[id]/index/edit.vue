@@ -94,7 +94,7 @@
       return;
     }
 
-    if (item.value.quantity < 0) {
+    if (form.quantity < 0) {
       toast.error(t("items.toast.quantity_cannot_negative"));
       return;
     }

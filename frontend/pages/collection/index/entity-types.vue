@@ -152,7 +152,7 @@
           <DialogTitle>Create Entity Type</DialogTitle>
         </DialogHeader>
         <form class="flex flex-col gap-3" @submit.prevent="create">
-          <FormTextField v-model="createForm.name" :autofocus="true" label="Name" :max-length="255" :min-length="1" />
+          <FormTextField v-model="createForm.name" :autofocus="true" :label="t('common.name')" :max-length="255" :min-length="1" />
           <FormCheckbox v-model="createForm.isLocation" label="Is a container / location type" />
           <TemplateSelector v-model="createTemplate" />
 

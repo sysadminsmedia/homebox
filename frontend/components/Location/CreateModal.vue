@@ -67,7 +67,7 @@
 
       <template v-if="showAdvanced">
         <TagSelector v-model="form.tags" :tags="tags ?? []" />
-        <FormTextArea v-model="form.notes" label="Notes" :max-length="1000" />
+        <FormTextArea v-model="form.notes" :label="$t('components.location.create_modal.notes')" :max-length="1000" />
       </template>
 
       <div class="mt-4 flex flex-row-reverse">

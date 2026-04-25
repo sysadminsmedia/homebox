@@ -645,7 +645,7 @@
     }
 
     if (form.quantity < 0) {
-      toast.error(t("items.toast.quantity_cannot_negative"));
+      toast.error(t("components.item.create_modal.toast.quantity_cannot_negative"));
       return;
     }
 
