@@ -358,10 +358,10 @@ func TestAttachmentRepo_MigrateLegacyFlatPaths(t *testing.T) {
 	for _, hash := range []string{"hash1.png", "hash2.png"} {
 		want := filepath.Join(root, ".data", "eb6bf410-a1a8-478d-a803-ca3948368a0c", "documents", hash)
 		_, err := os.Stat(want)
-		assert.NoError(t, err, "expected migrated file at %s", want)
+		require.NoError(t, err, "expected migrated file at %s", want)
 	}
 	_, err := os.Stat(other)
-	assert.NoError(t, err, "unrelated files at the bucket root should be left in place")
+	require.NoError(t, err, "unrelated files at the bucket root should be left in place")
 
 	// Idempotent: running again should be a no-op and not error.
 	require.NoError(t, r.MigrateLegacyFlatPaths())
