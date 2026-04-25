@@ -9,6 +9,7 @@ import (
 	"io"
 	"io/fs"
 	"net/http"
+	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -102,6 +103,111 @@ func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
 func normalizePath(path string) string {
 	path = strings.ReplaceAll(path, "\\", "/")
 	return strings.Trim(path, "/")
+}
+
+// legacyFlatPathToken is the gocloud fileblob escape sequence for a backslash
+// (0x5c). On Windows, pre-v0.22.1 attachment keys built with filepath.Join used
+// "\" as the path separator; fileblob escaped that to this token, so files were
+// stored as flat names at the bucket root. v0.22.1+ uses "/" so files now live
+// in real subdirectories.
+const legacyFlatPathToken = "__0x5c__"
+
+// bucketLocalDir returns the absolute on-disk directory backing the fileblob
+// bucket, or "" if the storage backend is not a file:// URL.
+func (r *AttachmentRepo) bucketLocalDir() (string, error) {
+	cs := r.storage.ConnString
+	if !strings.HasPrefix(cs, "file://") {
+		return "", nil
+	}
+	// Homebox-specific shortcut for "relative to cwd".
+	if strings.HasPrefix(cs, "file:///./") {
+		return filepath.Abs(strings.TrimPrefix(cs, "file:///./"))
+	}
+	raw := strings.TrimPrefix(cs, "file://")
+	if i := strings.IndexAny(raw, "?#"); i >= 0 {
+		raw = raw[:i]
+	}
+	// On Windows a file URL looks like file:///C:/foo, so strip the empty-host
+	// leading slash before treating the rest as a native path.
+	if runtime.GOOS == "windows" && len(raw) >= 3 && raw[0] == '/' && raw[2] == ':' {
+		raw = raw[1:]
+	}
+	return filepath.Abs(raw)
+}
+
+// MigrateLegacyFlatPaths renames attachment files written by older homebox
+// versions on Windows from a flat-escaped layout into a real subdirectory
+// layout. It is a no-op when the storage backend is not file:// or when no
+// matching files are found, so it is safe to run on every startup. Callers
+// should gate invocation on runtime.GOOS == "windows" since no other platform
+// can produce these files.
+func (r *AttachmentRepo) MigrateLegacyFlatPaths() error {
+	root, err := r.bucketLocalDir()
+	if err != nil {
+		return err
+	}
+	if root == "" {
+		return nil
+	}
+	info, err := os.Stat(root)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+	if !info.IsDir() {
+		return nil
+	}
+
+	entries, err := os.ReadDir(root)
+	if err != nil {
+		return fmt.Errorf("read bucket root %s: %w", root, err)
+	}
+
+	moved, skipped := 0, 0
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+		name := entry.Name()
+		if !strings.Contains(name, legacyFlatPathToken) {
+			continue
+		}
+
+		decoded := strings.ReplaceAll(name, legacyFlatPathToken, string(filepath.Separator))
+		oldPath := filepath.Join(root, name)
+		newPath := filepath.Join(root, decoded)
+
+		if _, statErr := os.Stat(newPath); statErr == nil {
+			log.Warn().Str("source", oldPath).Str("target", newPath).
+				Msg("legacy attachment migration: target already exists, leaving source in place")
+			skipped++
+			continue
+		} else if !os.IsNotExist(statErr) {
+			log.Err(statErr).Str("target", newPath).Msg("legacy attachment migration: failed to stat target")
+			skipped++
+			continue
+		}
+
+		if err := os.MkdirAll(filepath.Dir(newPath), 0o755); err != nil {
+			log.Err(err).Str("dir", filepath.Dir(newPath)).Msg("legacy attachment migration: failed to create parent directory")
+			skipped++
+			continue
+		}
+		if err := os.Rename(oldPath, newPath); err != nil {
+			log.Err(err).Str("source", oldPath).Str("target", newPath).Msg("legacy attachment migration: failed to rename file")
+			skipped++
+			continue
+		}
+		moved++
+	}
+
+	if moved > 0 || skipped > 0 {
+		log.Info().Int("moved", moved).Int("skipped", skipped).
+			Msg("migrated legacy flat-encoded attachment files")
+	}
+	return nil
 }
 
 func (r *AttachmentRepo) path(gid uuid.UUID, hash string) string {
