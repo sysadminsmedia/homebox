@@ -53,7 +53,8 @@
       <span class="truncate text-sm font-semibold text-foreground">{{ entity.location.name }}</span>
       <div class="flex flex-wrap items-center gap-1.5">
         <span v-if="entity.location.children.length > 0" class="text-xs text-muted-foreground">
-          {{ entity.location.children.length }} {{ t("scanner_ar.children", { count: entity.location.children.length }) }}
+          {{ entity.location.children.length }}
+          {{ t("scanner_ar.children", { count: entity.location.children.length }) }}
         </span>
       </div>
       <span v-if="entity.location.totalPrice" class="text-xs text-muted-foreground">
@@ -98,7 +99,7 @@
 
 <script setup lang="ts">
   import { computed, ref, watchEffect } from "vue";
-  import { useElementSize } from "@vueuse/core";
+  import { useElementSize, useWindowSize } from "@vueuse/core";
   import { useI18n } from "vue-i18n";
   import type { EntityData, Pose3D, Point2D } from "@/composables/use-barcode-detector";
   import { solveHomography, homographyToMatrix3d } from "@/composables/use-barcode-detector";
@@ -122,6 +123,7 @@
 
   const cardRef = ref<HTMLElement>();
   const { width: cardW, height: cardH } = useElementSize(cardRef);
+  const { width: viewportW } = useWindowSize();
 
   function ptDist(a: Point2D, b: Point2D): number {
     return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
@@ -146,33 +148,64 @@
 
     const [tl, tr, br, bl] = corners as [Point2D, Point2D, Point2D, Point2D];
 
-    // The QR code's left and right edge vectors define the "down" direction on the QR plane
-    const leftDir = { x: bl.x - tl.x, y: bl.y - tl.y };
-    const rightDir = { x: br.x - tr.x, y: br.y - tr.y };
-    const leftLen = ptDist(tl, bl);
-    const rightLen = ptDist(tr, br);
+    // Apparent QR screen size = average of its top and bottom edges. We floor
+    // the card's rendered width so a far-away tiny QR doesn't produce
+    // illegible squished text. Close-up QRs are left alone — the card grows
+    // with them.
+    //
+    // 200px is the smallest width where the card's text-sm/text-xs content
+    // stays readable after the p-2 padding, sized for the typical user on a
+    // Pixel 6 / iPhone 14 in portrait (~390–412 logical px wide). The vw cap
+    // keeps it from dominating unusually narrow viewports.
+    const apparentSize = (ptDist(tl, tr) + ptDist(bl, br)) / 2;
+    const vw = viewportW.value || 1920;
+    const minW = Math.min(200, vw * 0.55);
+    const targetW = Math.max(minW, apparentSize);
+    const scale = apparentSize > 0 ? targetW / apparentSize : 1;
 
-    // Gap between QR bottom edge and card top edge (as fraction of edge length)
+    // Scale all four QR corners around the bottom-edge midpoint. This grows
+    // (or shrinks) the QR's projected quad while keeping its anchor and
+    // perspective tilt intact, so the card sits where the QR's bottom edge
+    // would be if the QR were the clamped target size.
+    const anchorX = (bl.x + br.x) / 2;
+    const anchorY = (bl.y + br.y) / 2;
+    const scalePoint = (p: Point2D): Point2D => ({
+      x: anchorX + (p.x - anchorX) * scale,
+      y: anchorY + (p.y - anchorY) * scale,
+    });
+    const sTL = scalePoint(tl);
+    const sTR = scalePoint(tr);
+    const sBR = scalePoint(br);
+    const sBL = scalePoint(bl);
+
+    // Perspective "down" vectors derived from the scaled quad
+    const leftDir = { x: sBL.x - sTL.x, y: sBL.y - sTL.y };
+    const rightDir = { x: sBR.x - sTR.x, y: sBR.y - sTR.y };
+    const leftLen = ptDist(sTL, sBL);
+    const rightLen = ptDist(sTR, sBR);
+
+    // Gap between QR bottom edge and card top edge (8 screen px along the
+    // perspective down direction)
     const gap = 8;
     const gapL = leftLen > 0 ? gap / leftLen : 0;
     const gapR = rightLen > 0 ? gap / rightLen : 0;
 
-    // How far to extend for the card's height, proportional to QR size
-    const avgEdge = (leftLen + rightLen) / 2 || 1;
-    const heightRatio = h / avgEdge;
+    // Preserve the card's natural aspect ratio at the clamped size — without
+    // this, the homography would stretch the card to QR-width × natural-CSS-
+    // height and distort the layout.
+    const heightRatio = w > 0 ? h / w : 0;
 
-    // Destination corners: card sits below QR on the same perspective plane
-    // Top edge = QR bottom edge + small gap along perspective lines
-    // Bottom edge = further along the same perspective lines
-    const dstTL = { x: bl.x + leftDir.x * gapL, y: bl.y + leftDir.y * gapL };
-    const dstTR = { x: br.x + rightDir.x * gapR, y: br.y + rightDir.y * gapR };
+    // Destination corners: card sits below the (virtually-resized) QR on the
+    // same perspective plane.
+    const dstTL = { x: sBL.x + leftDir.x * gapL, y: sBL.y + leftDir.y * gapL };
+    const dstTR = { x: sBR.x + rightDir.x * gapR, y: sBR.y + rightDir.y * gapR };
     const dstBL = {
-      x: bl.x + leftDir.x * (gapL + heightRatio),
-      y: bl.y + leftDir.y * (gapL + heightRatio),
+      x: sBL.x + leftDir.x * (gapL + heightRatio),
+      y: sBL.y + leftDir.y * (gapL + heightRatio),
     };
     const dstBR = {
-      x: br.x + rightDir.x * (gapR + heightRatio),
-      y: br.y + rightDir.y * (gapR + heightRatio),
+      x: sBR.x + rightDir.x * (gapR + heightRatio),
+      y: sBR.y + rightDir.y * (gapR + heightRatio),
     };
 
     // Source: card's natural rect (before transform)
