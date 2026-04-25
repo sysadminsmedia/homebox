@@ -126,12 +126,12 @@ type (
 		WarrantyDetails  string     `json:"warrantyDetails"`
 
 		// Purchase
-		PurchaseTime  types.Date `json:"purchaseTime"`
+		PurchaseDate  types.Date `json:"purchaseDate"`
 		PurchaseFrom  string     `json:"purchaseFrom"  validate:"max=255"`
 		PurchasePrice float64    `json:"purchasePrice" extensions:"x-nullable,x-omitempty"`
 
 		// Sold
-		SoldTime  types.Date `json:"soldTime"`
+		SoldDate  types.Date `json:"soldDate"`
 		SoldTo    string     `json:"soldTo"    validate:"max=255"`
 		SoldPrice float64    `json:"soldPrice" extensions:"x-nullable,x-omitempty"`
 		SoldNotes string     `json:"soldNotes"`
@@ -173,7 +173,7 @@ type (
 		ThumbnailId *uuid.UUID `json:"thumbnailId,omitempty" extensions:"x-nullable,x-omitempty"`
 
 		// Sale details
-		SoldTime time.Time `json:"soldTime"`
+		SoldDate types.Date `json:"soldDate"`
 
 		// Container-specific (populated when querying locations)
 		ItemCount float64 `json:"itemCount,omitempty"`
@@ -196,11 +196,11 @@ type (
 		WarrantyDetails  string     `json:"warrantyDetails"`
 
 		// Purchase
-		PurchaseTime types.Date `json:"purchaseTime"`
+		PurchaseDate types.Date `json:"purchaseDate"`
 		PurchaseFrom string     `json:"purchaseFrom"`
 
 		// Sold
-		SoldTime  types.Date `json:"soldTime"`
+		SoldDate  types.Date `json:"soldDate"`
 		SoldTo    string     `json:"soldTo"`
 		SoldPrice float64    `json:"soldPrice"`
 		SoldNotes string     `json:"soldNotes"`
@@ -274,6 +274,9 @@ func mapEntitySummary(e *ent.Entity) EntitySummary {
 		Insured:     e.Insured,
 		ImageID:     imageID,
 		ThumbnailId: thumbnailID,
+
+		// Sale
+		SoldDate: types.DateFromTime(e.SoldDate),
 	}
 }
 
@@ -338,11 +341,11 @@ func mapEntityOut(e *ent.Entity) EntityOut {
 		Manufacturer: e.Manufacturer,
 
 		// Purchase
-		PurchaseTime: types.DateFromTime(e.PurchaseTime),
+		PurchaseDate: types.DateFromTime(e.PurchaseDate),
 		PurchaseFrom: e.PurchaseFrom,
 
 		// Sold
-		SoldTime:  types.DateFromTime(e.SoldTime),
+		SoldDate:  types.DateFromTime(e.SoldDate),
 		SoldTo:    e.SoldTo,
 		SoldPrice: e.SoldPrice,
 		SoldNotes: e.SoldNotes,
@@ -1424,21 +1427,37 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		SetModelNumber(data.ModelNumber).
 		SetManufacturer(data.Manufacturer).
 		SetArchived(data.Archived).
-		SetPurchaseTime(data.PurchaseTime.Time()).
 		SetPurchaseFrom(data.PurchaseFrom).
 		SetPurchasePrice(data.PurchasePrice).
-		SetSoldTime(data.SoldTime.Time()).
 		SetSoldTo(data.SoldTo).
 		SetSoldPrice(data.SoldPrice).
 		SetSoldNotes(data.SoldNotes).
 		SetNotes(data.Notes).
 		SetLifetimeWarranty(data.LifetimeWarranty).
 		SetInsured(data.Insured).
-		SetWarrantyExpires(data.WarrantyExpires.Time()).
 		SetWarrantyDetails(data.WarrantyDetails).
 		SetQuantity(data.Quantity).
 		SetAssetID(int64(data.AssetID)).
 		SetSyncChildEntityLocations(data.SyncChildEntityLocations)
+
+	// Date fields are nullable. Writing types.Date{}.Time() would persist
+	// the 0001-01-01 sentinel that ZeroOutTimeFields then has to chase —
+	// clear the column instead so absent dates round-trip as NULL/"".
+	if t := data.PurchaseDate.Time(); t.IsZero() {
+		q.ClearPurchaseDate()
+	} else {
+		q.SetPurchaseDate(t)
+	}
+	if t := data.SoldDate.Time(); t.IsZero() {
+		q.ClearSoldDate()
+	} else {
+		q.SetSoldDate(t)
+	}
+	if t := data.WarrantyExpires.Time(); t.IsZero() {
+		q.ClearWarrantyExpires()
+	} else {
+		q.SetWarrantyExpires(t)
+	}
 
 	if data.EntityTypeID != uuid.Nil {
 		q.SetEntityTypeID(data.EntityTypeID)
@@ -1883,9 +1902,9 @@ func (r *EntityRepository) ZeroOutTimeFields(ctx context.Context, gid uuid.UUID)
 	q := r.db.Entity.Query().Where(
 		entity.HasGroupWith(group.ID(gid)),
 		entity.Or(
-			entity.PurchaseTimeNotNil(),
+			entity.PurchaseDateNotNil(),
 			entity.PurchaseFromLT("0002-01-01"),
-			entity.SoldTimeNotNil(),
+			entity.SoldDateNotNil(),
 			entity.SoldToLT("0002-01-01"),
 			entity.WarrantyExpiresNotNil(),
 			entity.WarrantyDetailsLT("0002-01-01"),
@@ -1919,26 +1938,26 @@ func (r *EntityRepository) ZeroOutTimeFields(ctx context.Context, gid uuid.UUID)
 	for _, e := range entities {
 		updateQ := r.db.Entity.Update().Where(entity.ID(e.ID))
 
-		if !e.PurchaseTime.IsZero() {
+		if !e.PurchaseDate.IsZero() {
 			switch {
-			case e.PurchaseTime.Year() < 100:
-				updateQ.ClearPurchaseTime()
+			case e.PurchaseDate.Year() < 100:
+				updateQ.ClearPurchaseDate()
 			default:
-				updateQ.SetPurchaseTime(toDateOnly(e.PurchaseTime))
+				updateQ.SetPurchaseDate(toDateOnly(e.PurchaseDate))
 			}
 		} else {
-			updateQ.ClearPurchaseTime()
+			updateQ.ClearPurchaseDate()
 		}
 
-		if !e.SoldTime.IsZero() {
+		if !e.SoldDate.IsZero() {
 			switch {
-			case e.SoldTime.Year() < 100:
-				updateQ.ClearSoldTime()
+			case e.SoldDate.Year() < 100:
+				updateQ.ClearSoldDate()
 			default:
-				updateQ.SetSoldTime(toDateOnly(e.SoldTime))
+				updateQ.SetSoldDate(toDateOnly(e.SoldDate))
 			}
 		} else {
-			updateQ.ClearSoldTime()
+			updateQ.ClearSoldDate()
 		}
 
 		if !e.WarrantyExpires.IsZero() {
@@ -2096,12 +2115,9 @@ func (r *EntityRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opt
 		SetModelNumber(originalEntity.ModelNumber).
 		SetManufacturer(originalEntity.Manufacturer).
 		SetLifetimeWarranty(originalEntity.LifetimeWarranty).
-		SetWarrantyExpires(originalEntity.WarrantyExpires.Time()).
 		SetWarrantyDetails(originalEntity.WarrantyDetails).
-		SetPurchaseTime(originalEntity.PurchaseTime.Time()).
 		SetPurchaseFrom(originalEntity.PurchaseFrom).
 		SetPurchasePrice(originalEntity.PurchasePrice).
-		SetSoldTime(originalEntity.SoldTime.Time()).
 		SetSoldTo(originalEntity.SoldTo).
 		SetSoldPrice(originalEntity.SoldPrice).
 		SetSoldNotes(originalEntity.SoldNotes).
@@ -2109,6 +2125,18 @@ func (r *EntityRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opt
 		SetInsured(originalEntity.Insured).
 		SetArchived(originalEntity.Archived).
 		SetSyncChildEntityLocations(originalEntity.SyncChildEntityLocations)
+
+	// Skip Set on zero dates so the duplicate's nullable date columns end up
+	// NULL rather than the 0001-01-01 sentinel.
+	if t := originalEntity.PurchaseDate.Time(); !t.IsZero() {
+		entityBuilder.SetPurchaseDate(t)
+	}
+	if t := originalEntity.SoldDate.Time(); !t.IsZero() {
+		entityBuilder.SetSoldDate(t)
+	}
+	if t := originalEntity.WarrantyExpires.Time(); !t.IsZero() {
+		entityBuilder.SetWarrantyExpires(t)
+	}
 
 	if originalEntity.Parent != nil {
 		entityBuilder.SetParentID(originalEntity.Parent.ID)

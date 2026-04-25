@@ -1874,11 +1874,11 @@ type EntityMutation struct {
 	lifetime_warranty           *bool
 	warranty_expires            *time.Time
 	warranty_details            *string
-	purchase_time               *time.Time
+	purchase_date               *time.Time
 	purchase_from               *string
 	purchase_price              *float64
 	addpurchase_price           *float64
-	sold_time                   *time.Time
+	sold_date                   *time.Time
 	sold_to                     *string
 	sold_price                  *float64
 	addsold_price               *float64
@@ -2770,53 +2770,53 @@ func (m *EntityMutation) ResetWarrantyDetails() {
 	delete(m.clearedFields, entity.FieldWarrantyDetails)
 }
 
-// SetPurchaseTime sets the "purchase_time" field.
-func (m *EntityMutation) SetPurchaseTime(t time.Time) {
-	m.purchase_time = &t
+// SetPurchaseDate sets the "purchase_date" field.
+func (m *EntityMutation) SetPurchaseDate(t time.Time) {
+	m.purchase_date = &t
 }
 
-// PurchaseTime returns the value of the "purchase_time" field in the mutation.
-func (m *EntityMutation) PurchaseTime() (r time.Time, exists bool) {
-	v := m.purchase_time
+// PurchaseDate returns the value of the "purchase_date" field in the mutation.
+func (m *EntityMutation) PurchaseDate() (r time.Time, exists bool) {
+	v := m.purchase_date
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldPurchaseTime returns the old "purchase_time" field's value of the Entity entity.
+// OldPurchaseDate returns the old "purchase_date" field's value of the Entity entity.
 // If the Entity object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EntityMutation) OldPurchaseTime(ctx context.Context) (v time.Time, err error) {
+func (m *EntityMutation) OldPurchaseDate(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldPurchaseTime is only allowed on UpdateOne operations")
+		return v, errors.New("OldPurchaseDate is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldPurchaseTime requires an ID field in the mutation")
+		return v, errors.New("OldPurchaseDate requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPurchaseTime: %w", err)
+		return v, fmt.Errorf("querying old value for OldPurchaseDate: %w", err)
 	}
-	return oldValue.PurchaseTime, nil
+	return oldValue.PurchaseDate, nil
 }
 
-// ClearPurchaseTime clears the value of the "purchase_time" field.
-func (m *EntityMutation) ClearPurchaseTime() {
-	m.purchase_time = nil
-	m.clearedFields[entity.FieldPurchaseTime] = struct{}{}
+// ClearPurchaseDate clears the value of the "purchase_date" field.
+func (m *EntityMutation) ClearPurchaseDate() {
+	m.purchase_date = nil
+	m.clearedFields[entity.FieldPurchaseDate] = struct{}{}
 }
 
-// PurchaseTimeCleared returns if the "purchase_time" field was cleared in this mutation.
-func (m *EntityMutation) PurchaseTimeCleared() bool {
-	_, ok := m.clearedFields[entity.FieldPurchaseTime]
+// PurchaseDateCleared returns if the "purchase_date" field was cleared in this mutation.
+func (m *EntityMutation) PurchaseDateCleared() bool {
+	_, ok := m.clearedFields[entity.FieldPurchaseDate]
 	return ok
 }
 
-// ResetPurchaseTime resets all changes to the "purchase_time" field.
-func (m *EntityMutation) ResetPurchaseTime() {
-	m.purchase_time = nil
-	delete(m.clearedFields, entity.FieldPurchaseTime)
+// ResetPurchaseDate resets all changes to the "purchase_date" field.
+func (m *EntityMutation) ResetPurchaseDate() {
+	m.purchase_date = nil
+	delete(m.clearedFields, entity.FieldPurchaseDate)
 }
 
 // SetPurchaseFrom sets the "purchase_from" field.
@@ -2924,53 +2924,53 @@ func (m *EntityMutation) ResetPurchasePrice() {
 	m.addpurchase_price = nil
 }
 
-// SetSoldTime sets the "sold_time" field.
-func (m *EntityMutation) SetSoldTime(t time.Time) {
-	m.sold_time = &t
+// SetSoldDate sets the "sold_date" field.
+func (m *EntityMutation) SetSoldDate(t time.Time) {
+	m.sold_date = &t
 }
 
-// SoldTime returns the value of the "sold_time" field in the mutation.
-func (m *EntityMutation) SoldTime() (r time.Time, exists bool) {
-	v := m.sold_time
+// SoldDate returns the value of the "sold_date" field in the mutation.
+func (m *EntityMutation) SoldDate() (r time.Time, exists bool) {
+	v := m.sold_date
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldSoldTime returns the old "sold_time" field's value of the Entity entity.
+// OldSoldDate returns the old "sold_date" field's value of the Entity entity.
 // If the Entity object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EntityMutation) OldSoldTime(ctx context.Context) (v time.Time, err error) {
+func (m *EntityMutation) OldSoldDate(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSoldTime is only allowed on UpdateOne operations")
+		return v, errors.New("OldSoldDate is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSoldTime requires an ID field in the mutation")
+		return v, errors.New("OldSoldDate requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSoldTime: %w", err)
+		return v, fmt.Errorf("querying old value for OldSoldDate: %w", err)
 	}
-	return oldValue.SoldTime, nil
+	return oldValue.SoldDate, nil
 }
 
-// ClearSoldTime clears the value of the "sold_time" field.
-func (m *EntityMutation) ClearSoldTime() {
-	m.sold_time = nil
-	m.clearedFields[entity.FieldSoldTime] = struct{}{}
+// ClearSoldDate clears the value of the "sold_date" field.
+func (m *EntityMutation) ClearSoldDate() {
+	m.sold_date = nil
+	m.clearedFields[entity.FieldSoldDate] = struct{}{}
 }
 
-// SoldTimeCleared returns if the "sold_time" field was cleared in this mutation.
-func (m *EntityMutation) SoldTimeCleared() bool {
-	_, ok := m.clearedFields[entity.FieldSoldTime]
+// SoldDateCleared returns if the "sold_date" field was cleared in this mutation.
+func (m *EntityMutation) SoldDateCleared() bool {
+	_, ok := m.clearedFields[entity.FieldSoldDate]
 	return ok
 }
 
-// ResetSoldTime resets all changes to the "sold_time" field.
-func (m *EntityMutation) ResetSoldTime() {
-	m.sold_time = nil
-	delete(m.clearedFields, entity.FieldSoldTime)
+// ResetSoldDate resets all changes to the "sold_date" field.
+func (m *EntityMutation) ResetSoldDate() {
+	m.sold_date = nil
+	delete(m.clearedFields, entity.FieldSoldDate)
 }
 
 // SetSoldTo sets the "sold_to" field.
@@ -3600,8 +3600,8 @@ func (m *EntityMutation) Fields() []string {
 	if m.warranty_details != nil {
 		fields = append(fields, entity.FieldWarrantyDetails)
 	}
-	if m.purchase_time != nil {
-		fields = append(fields, entity.FieldPurchaseTime)
+	if m.purchase_date != nil {
+		fields = append(fields, entity.FieldPurchaseDate)
 	}
 	if m.purchase_from != nil {
 		fields = append(fields, entity.FieldPurchaseFrom)
@@ -3609,8 +3609,8 @@ func (m *EntityMutation) Fields() []string {
 	if m.purchase_price != nil {
 		fields = append(fields, entity.FieldPurchasePrice)
 	}
-	if m.sold_time != nil {
-		fields = append(fields, entity.FieldSoldTime)
+	if m.sold_date != nil {
+		fields = append(fields, entity.FieldSoldDate)
 	}
 	if m.sold_to != nil {
 		fields = append(fields, entity.FieldSoldTo)
@@ -3663,14 +3663,14 @@ func (m *EntityMutation) Field(name string) (ent.Value, bool) {
 		return m.WarrantyExpires()
 	case entity.FieldWarrantyDetails:
 		return m.WarrantyDetails()
-	case entity.FieldPurchaseTime:
-		return m.PurchaseTime()
+	case entity.FieldPurchaseDate:
+		return m.PurchaseDate()
 	case entity.FieldPurchaseFrom:
 		return m.PurchaseFrom()
 	case entity.FieldPurchasePrice:
 		return m.PurchasePrice()
-	case entity.FieldSoldTime:
-		return m.SoldTime()
+	case entity.FieldSoldDate:
+		return m.SoldDate()
 	case entity.FieldSoldTo:
 		return m.SoldTo()
 	case entity.FieldSoldPrice:
@@ -3720,14 +3720,14 @@ func (m *EntityMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldWarrantyExpires(ctx)
 	case entity.FieldWarrantyDetails:
 		return m.OldWarrantyDetails(ctx)
-	case entity.FieldPurchaseTime:
-		return m.OldPurchaseTime(ctx)
+	case entity.FieldPurchaseDate:
+		return m.OldPurchaseDate(ctx)
 	case entity.FieldPurchaseFrom:
 		return m.OldPurchaseFrom(ctx)
 	case entity.FieldPurchasePrice:
 		return m.OldPurchasePrice(ctx)
-	case entity.FieldSoldTime:
-		return m.OldSoldTime(ctx)
+	case entity.FieldSoldDate:
+		return m.OldSoldDate(ctx)
 	case entity.FieldSoldTo:
 		return m.OldSoldTo(ctx)
 	case entity.FieldSoldPrice:
@@ -3862,12 +3862,12 @@ func (m *EntityMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetWarrantyDetails(v)
 		return nil
-	case entity.FieldPurchaseTime:
+	case entity.FieldPurchaseDate:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetPurchaseTime(v)
+		m.SetPurchaseDate(v)
 		return nil
 	case entity.FieldPurchaseFrom:
 		v, ok := value.(string)
@@ -3883,12 +3883,12 @@ func (m *EntityMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPurchasePrice(v)
 		return nil
-	case entity.FieldSoldTime:
+	case entity.FieldSoldDate:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetSoldTime(v)
+		m.SetSoldDate(v)
 		return nil
 	case entity.FieldSoldTo:
 		v, ok := value.(string)
@@ -4016,14 +4016,14 @@ func (m *EntityMutation) ClearedFields() []string {
 	if m.FieldCleared(entity.FieldWarrantyDetails) {
 		fields = append(fields, entity.FieldWarrantyDetails)
 	}
-	if m.FieldCleared(entity.FieldPurchaseTime) {
-		fields = append(fields, entity.FieldPurchaseTime)
+	if m.FieldCleared(entity.FieldPurchaseDate) {
+		fields = append(fields, entity.FieldPurchaseDate)
 	}
 	if m.FieldCleared(entity.FieldPurchaseFrom) {
 		fields = append(fields, entity.FieldPurchaseFrom)
 	}
-	if m.FieldCleared(entity.FieldSoldTime) {
-		fields = append(fields, entity.FieldSoldTime)
+	if m.FieldCleared(entity.FieldSoldDate) {
+		fields = append(fields, entity.FieldSoldDate)
 	}
 	if m.FieldCleared(entity.FieldSoldTo) {
 		fields = append(fields, entity.FieldSoldTo)
@@ -4069,14 +4069,14 @@ func (m *EntityMutation) ClearField(name string) error {
 	case entity.FieldWarrantyDetails:
 		m.ClearWarrantyDetails()
 		return nil
-	case entity.FieldPurchaseTime:
-		m.ClearPurchaseTime()
+	case entity.FieldPurchaseDate:
+		m.ClearPurchaseDate()
 		return nil
 	case entity.FieldPurchaseFrom:
 		m.ClearPurchaseFrom()
 		return nil
-	case entity.FieldSoldTime:
-		m.ClearSoldTime()
+	case entity.FieldSoldDate:
+		m.ClearSoldDate()
 		return nil
 	case entity.FieldSoldTo:
 		m.ClearSoldTo()
@@ -4143,8 +4143,8 @@ func (m *EntityMutation) ResetField(name string) error {
 	case entity.FieldWarrantyDetails:
 		m.ResetWarrantyDetails()
 		return nil
-	case entity.FieldPurchaseTime:
-		m.ResetPurchaseTime()
+	case entity.FieldPurchaseDate:
+		m.ResetPurchaseDate()
 		return nil
 	case entity.FieldPurchaseFrom:
 		m.ResetPurchaseFrom()
@@ -4152,8 +4152,8 @@ func (m *EntityMutation) ResetField(name string) error {
 	case entity.FieldPurchasePrice:
 		m.ResetPurchasePrice()
 		return nil
-	case entity.FieldSoldTime:
-		m.ResetSoldTime()
+	case entity.FieldSoldDate:
+		m.ResetSoldDate()
 		return nil
 	case entity.FieldSoldTo:
 		m.ResetSoldTo()

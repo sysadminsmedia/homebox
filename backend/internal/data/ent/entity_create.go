@@ -257,16 +257,16 @@ func (_c *EntityCreate) SetNillableWarrantyDetails(v *string) *EntityCreate {
 	return _c
 }
 
-// SetPurchaseTime sets the "purchase_time" field.
-func (_c *EntityCreate) SetPurchaseTime(v time.Time) *EntityCreate {
-	_c.mutation.SetPurchaseTime(v)
+// SetPurchaseDate sets the "purchase_date" field.
+func (_c *EntityCreate) SetPurchaseDate(v time.Time) *EntityCreate {
+	_c.mutation.SetPurchaseDate(v)
 	return _c
 }
 
-// SetNillablePurchaseTime sets the "purchase_time" field if the given value is not nil.
-func (_c *EntityCreate) SetNillablePurchaseTime(v *time.Time) *EntityCreate {
+// SetNillablePurchaseDate sets the "purchase_date" field if the given value is not nil.
+func (_c *EntityCreate) SetNillablePurchaseDate(v *time.Time) *EntityCreate {
 	if v != nil {
-		_c.SetPurchaseTime(*v)
+		_c.SetPurchaseDate(*v)
 	}
 	return _c
 }
@@ -299,16 +299,16 @@ func (_c *EntityCreate) SetNillablePurchasePrice(v *float64) *EntityCreate {
 	return _c
 }
 
-// SetSoldTime sets the "sold_time" field.
-func (_c *EntityCreate) SetSoldTime(v time.Time) *EntityCreate {
-	_c.mutation.SetSoldTime(v)
+// SetSoldDate sets the "sold_date" field.
+func (_c *EntityCreate) SetSoldDate(v time.Time) *EntityCreate {
+	_c.mutation.SetSoldDate(v)
 	return _c
 }
 
-// SetNillableSoldTime sets the "sold_time" field if the given value is not nil.
-func (_c *EntityCreate) SetNillableSoldTime(v *time.Time) *EntityCreate {
+// SetNillableSoldDate sets the "sold_date" field if the given value is not nil.
+func (_c *EntityCreate) SetNillableSoldDate(v *time.Time) *EntityCreate {
 	if v != nil {
-		_c.SetSoldTime(*v)
+		_c.SetSoldDate(*v)
 	}
 	return _c
 }
@@ -755,9 +755,9 @@ func (_c *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		_spec.SetField(entity.FieldWarrantyDetails, field.TypeString, value)
 		_node.WarrantyDetails = value
 	}
-	if value, ok := _c.mutation.PurchaseTime(); ok {
-		_spec.SetField(entity.FieldPurchaseTime, field.TypeTime, value)
-		_node.PurchaseTime = value
+	if value, ok := _c.mutation.PurchaseDate(); ok {
+		_spec.SetField(entity.FieldPurchaseDate, field.TypeTime, value)
+		_node.PurchaseDate = value
 	}
 	if value, ok := _c.mutation.PurchaseFrom(); ok {
 		_spec.SetField(entity.FieldPurchaseFrom, field.TypeString, value)
@@ -767,9 +767,9 @@ func (_c *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		_spec.SetField(entity.FieldPurchasePrice, field.TypeFloat64, value)
 		_node.PurchasePrice = value
 	}
-	if value, ok := _c.mutation.SoldTime(); ok {
-		_spec.SetField(entity.FieldSoldTime, field.TypeTime, value)
-		_node.SoldTime = value
+	if value, ok := _c.mutation.SoldDate(); ok {
+		_spec.SetField(entity.FieldSoldDate, field.TypeTime, value)
+		_node.SoldDate = value
 	}
 	if value, ok := _c.mutation.SoldTo(); ok {
 		_spec.SetField(entity.FieldSoldTo, field.TypeString, value)

@@ -97,7 +97,7 @@
       assetId: item.value.assetId,
       purchasePrice: item.value.purchasePrice || 0,
       soldPrice: item.value.soldPrice || 0,
-      purchaseTime: item.value.purchaseTime as Date,
+      // Date-only fields stay as YYYY-MM-DD strings via the spread above.
       syncChildEntityLocations: item.value.syncChildEntityLocations,
     };
 

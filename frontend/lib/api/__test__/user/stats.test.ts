@@ -17,13 +17,13 @@ type ImportObj = {
   [`HB.notes`]: string;
   [`HB.purchase_price`]: number;
   [`HB.purchase_from`]: string;
-  [`HB.purchase_time`]: string;
+  [`HB.purchase_date`]: string;
   [`HB.lifetime_warranty`]: boolean;
   [`HB.warranty_expires`]: string;
   [`HB.warranty_details`]: string;
   [`HB.sold_to`]: string;
   [`HB.sold_price`]: number;
-  [`HB.sold_time`]: string;
+  [`HB.sold_date`]: string;
   [`HB.sold_notes`]: string;
 };
 
@@ -63,12 +63,12 @@ function importFileGenerator(entries: number): ImportObj[] {
       [`HB.notes`]: "",
       [`HB.purchase_from`]: faker.person.fullName(),
       [`HB.purchase_price`]: faker.number.int(100),
-      [`HB.purchase_time`]: faker.date.past().toDateString(),
+      [`HB.purchase_date`]: formatDate(faker.date.past()),
       [`HB.lifetime_warranty`]: half > i,
       [`HB.warranty_details`]: "",
       [`HB.sold_to`]: faker.person.fullName(),
       [`HB.sold_price`]: faker.number.int(100),
-      [`HB.sold_time`]: formatDate(faker.date.past()),
+      [`HB.sold_date`]: formatDate(faker.date.past()),
       [`HB.sold_notes`]: "",
     });
   }

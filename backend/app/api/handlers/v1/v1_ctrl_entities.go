@@ -148,7 +148,7 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 			attribute.Int("items.count", len(items.Items)))
 		totalPrice := new(big.Int)
 		for _, item := range items.Items {
-			if !item.SoldTime.IsZero() {
+			if !item.SoldDate.Time().IsZero() {
 				continue
 			}
 			totalPrice.Add(totalPrice, big.NewInt(int64(math.Round(item.PurchasePrice*100))))

@@ -313,23 +313,23 @@ func (_u *EntityUpdate) ClearWarrantyDetails() *EntityUpdate {
 	return _u
 }
 
-// SetPurchaseTime sets the "purchase_time" field.
-func (_u *EntityUpdate) SetPurchaseTime(v time.Time) *EntityUpdate {
-	_u.mutation.SetPurchaseTime(v)
+// SetPurchaseDate sets the "purchase_date" field.
+func (_u *EntityUpdate) SetPurchaseDate(v time.Time) *EntityUpdate {
+	_u.mutation.SetPurchaseDate(v)
 	return _u
 }
 
-// SetNillablePurchaseTime sets the "purchase_time" field if the given value is not nil.
-func (_u *EntityUpdate) SetNillablePurchaseTime(v *time.Time) *EntityUpdate {
+// SetNillablePurchaseDate sets the "purchase_date" field if the given value is not nil.
+func (_u *EntityUpdate) SetNillablePurchaseDate(v *time.Time) *EntityUpdate {
 	if v != nil {
-		_u.SetPurchaseTime(*v)
+		_u.SetPurchaseDate(*v)
 	}
 	return _u
 }
 
-// ClearPurchaseTime clears the value of the "purchase_time" field.
-func (_u *EntityUpdate) ClearPurchaseTime() *EntityUpdate {
-	_u.mutation.ClearPurchaseTime()
+// ClearPurchaseDate clears the value of the "purchase_date" field.
+func (_u *EntityUpdate) ClearPurchaseDate() *EntityUpdate {
+	_u.mutation.ClearPurchaseDate()
 	return _u
 }
 
@@ -374,23 +374,23 @@ func (_u *EntityUpdate) AddPurchasePrice(v float64) *EntityUpdate {
 	return _u
 }
 
-// SetSoldTime sets the "sold_time" field.
-func (_u *EntityUpdate) SetSoldTime(v time.Time) *EntityUpdate {
-	_u.mutation.SetSoldTime(v)
+// SetSoldDate sets the "sold_date" field.
+func (_u *EntityUpdate) SetSoldDate(v time.Time) *EntityUpdate {
+	_u.mutation.SetSoldDate(v)
 	return _u
 }
 
-// SetNillableSoldTime sets the "sold_time" field if the given value is not nil.
-func (_u *EntityUpdate) SetNillableSoldTime(v *time.Time) *EntityUpdate {
+// SetNillableSoldDate sets the "sold_date" field if the given value is not nil.
+func (_u *EntityUpdate) SetNillableSoldDate(v *time.Time) *EntityUpdate {
 	if v != nil {
-		_u.SetSoldTime(*v)
+		_u.SetSoldDate(*v)
 	}
 	return _u
 }
 
-// ClearSoldTime clears the value of the "sold_time" field.
-func (_u *EntityUpdate) ClearSoldTime() *EntityUpdate {
-	_u.mutation.ClearSoldTime()
+// ClearSoldDate clears the value of the "sold_date" field.
+func (_u *EntityUpdate) ClearSoldDate() *EntityUpdate {
+	_u.mutation.ClearSoldDate()
 	return _u
 }
 
@@ -881,11 +881,11 @@ func (_u *EntityUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.WarrantyDetailsCleared() {
 		_spec.ClearField(entity.FieldWarrantyDetails, field.TypeString)
 	}
-	if value, ok := _u.mutation.PurchaseTime(); ok {
-		_spec.SetField(entity.FieldPurchaseTime, field.TypeTime, value)
+	if value, ok := _u.mutation.PurchaseDate(); ok {
+		_spec.SetField(entity.FieldPurchaseDate, field.TypeTime, value)
 	}
-	if _u.mutation.PurchaseTimeCleared() {
-		_spec.ClearField(entity.FieldPurchaseTime, field.TypeTime)
+	if _u.mutation.PurchaseDateCleared() {
+		_spec.ClearField(entity.FieldPurchaseDate, field.TypeTime)
 	}
 	if value, ok := _u.mutation.PurchaseFrom(); ok {
 		_spec.SetField(entity.FieldPurchaseFrom, field.TypeString, value)
@@ -899,11 +899,11 @@ func (_u *EntityUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedPurchasePrice(); ok {
 		_spec.AddField(entity.FieldPurchasePrice, field.TypeFloat64, value)
 	}
-	if value, ok := _u.mutation.SoldTime(); ok {
-		_spec.SetField(entity.FieldSoldTime, field.TypeTime, value)
+	if value, ok := _u.mutation.SoldDate(); ok {
+		_spec.SetField(entity.FieldSoldDate, field.TypeTime, value)
 	}
-	if _u.mutation.SoldTimeCleared() {
-		_spec.ClearField(entity.FieldSoldTime, field.TypeTime)
+	if _u.mutation.SoldDateCleared() {
+		_spec.ClearField(entity.FieldSoldDate, field.TypeTime)
 	}
 	if value, ok := _u.mutation.SoldTo(); ok {
 		_spec.SetField(entity.FieldSoldTo, field.TypeString, value)
@@ -1533,23 +1533,23 @@ func (_u *EntityUpdateOne) ClearWarrantyDetails() *EntityUpdateOne {
 	return _u
 }
 
-// SetPurchaseTime sets the "purchase_time" field.
-func (_u *EntityUpdateOne) SetPurchaseTime(v time.Time) *EntityUpdateOne {
-	_u.mutation.SetPurchaseTime(v)
+// SetPurchaseDate sets the "purchase_date" field.
+func (_u *EntityUpdateOne) SetPurchaseDate(v time.Time) *EntityUpdateOne {
+	_u.mutation.SetPurchaseDate(v)
 	return _u
 }
 
-// SetNillablePurchaseTime sets the "purchase_time" field if the given value is not nil.
-func (_u *EntityUpdateOne) SetNillablePurchaseTime(v *time.Time) *EntityUpdateOne {
+// SetNillablePurchaseDate sets the "purchase_date" field if the given value is not nil.
+func (_u *EntityUpdateOne) SetNillablePurchaseDate(v *time.Time) *EntityUpdateOne {
 	if v != nil {
-		_u.SetPurchaseTime(*v)
+		_u.SetPurchaseDate(*v)
 	}
 	return _u
 }
 
-// ClearPurchaseTime clears the value of the "purchase_time" field.
-func (_u *EntityUpdateOne) ClearPurchaseTime() *EntityUpdateOne {
-	_u.mutation.ClearPurchaseTime()
+// ClearPurchaseDate clears the value of the "purchase_date" field.
+func (_u *EntityUpdateOne) ClearPurchaseDate() *EntityUpdateOne {
+	_u.mutation.ClearPurchaseDate()
 	return _u
 }
 
@@ -1594,23 +1594,23 @@ func (_u *EntityUpdateOne) AddPurchasePrice(v float64) *EntityUpdateOne {
 	return _u
 }
 
-// SetSoldTime sets the "sold_time" field.
-func (_u *EntityUpdateOne) SetSoldTime(v time.Time) *EntityUpdateOne {
-	_u.mutation.SetSoldTime(v)
+// SetSoldDate sets the "sold_date" field.
+func (_u *EntityUpdateOne) SetSoldDate(v time.Time) *EntityUpdateOne {
+	_u.mutation.SetSoldDate(v)
 	return _u
 }
 
-// SetNillableSoldTime sets the "sold_time" field if the given value is not nil.
-func (_u *EntityUpdateOne) SetNillableSoldTime(v *time.Time) *EntityUpdateOne {
+// SetNillableSoldDate sets the "sold_date" field if the given value is not nil.
+func (_u *EntityUpdateOne) SetNillableSoldDate(v *time.Time) *EntityUpdateOne {
 	if v != nil {
-		_u.SetSoldTime(*v)
+		_u.SetSoldDate(*v)
 	}
 	return _u
 }
 
-// ClearSoldTime clears the value of the "sold_time" field.
-func (_u *EntityUpdateOne) ClearSoldTime() *EntityUpdateOne {
-	_u.mutation.ClearSoldTime()
+// ClearSoldDate clears the value of the "sold_date" field.
+func (_u *EntityUpdateOne) ClearSoldDate() *EntityUpdateOne {
+	_u.mutation.ClearSoldDate()
 	return _u
 }
 
@@ -2131,11 +2131,11 @@ func (_u *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err erro
 	if _u.mutation.WarrantyDetailsCleared() {
 		_spec.ClearField(entity.FieldWarrantyDetails, field.TypeString)
 	}
-	if value, ok := _u.mutation.PurchaseTime(); ok {
-		_spec.SetField(entity.FieldPurchaseTime, field.TypeTime, value)
+	if value, ok := _u.mutation.PurchaseDate(); ok {
+		_spec.SetField(entity.FieldPurchaseDate, field.TypeTime, value)
 	}
-	if _u.mutation.PurchaseTimeCleared() {
-		_spec.ClearField(entity.FieldPurchaseTime, field.TypeTime)
+	if _u.mutation.PurchaseDateCleared() {
+		_spec.ClearField(entity.FieldPurchaseDate, field.TypeTime)
 	}
 	if value, ok := _u.mutation.PurchaseFrom(); ok {
 		_spec.SetField(entity.FieldPurchaseFrom, field.TypeString, value)
@@ -2149,11 +2149,11 @@ func (_u *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err erro
 	if value, ok := _u.mutation.AddedPurchasePrice(); ok {
 		_spec.AddField(entity.FieldPurchasePrice, field.TypeFloat64, value)
 	}
-	if value, ok := _u.mutation.SoldTime(); ok {
-		_spec.SetField(entity.FieldSoldTime, field.TypeTime, value)
+	if value, ok := _u.mutation.SoldDate(); ok {
+		_spec.SetField(entity.FieldSoldDate, field.TypeTime, value)
 	}
-	if _u.mutation.SoldTimeCleared() {
-		_spec.ClearField(entity.FieldSoldTime, field.TypeTime)
+	if _u.mutation.SoldDateCleared() {
+		_spec.ClearField(entity.FieldSoldDate, field.TypeTime)
 	}
 	if value, ok := _u.mutation.SoldTo(); ok {
 		_spec.SetField(entity.FieldSoldTo, field.TypeString, value)

@@ -54,14 +54,14 @@ type Entity struct {
 	WarrantyExpires time.Time `json:"warranty_expires,omitempty"`
 	// WarrantyDetails holds the value of the "warranty_details" field.
 	WarrantyDetails string `json:"warranty_details,omitempty"`
-	// PurchaseTime holds the value of the "purchase_time" field.
-	PurchaseTime time.Time `json:"purchase_time,omitempty"`
+	// PurchaseDate holds the value of the "purchase_date" field.
+	PurchaseDate time.Time `json:"purchase_date,omitempty"`
 	// PurchaseFrom holds the value of the "purchase_from" field.
 	PurchaseFrom string `json:"purchase_from,omitempty"`
 	// PurchasePrice holds the value of the "purchase_price" field.
 	PurchasePrice float64 `json:"purchase_price,omitempty"`
-	// SoldTime holds the value of the "sold_time" field.
-	SoldTime time.Time `json:"sold_time,omitempty"`
+	// SoldDate holds the value of the "sold_date" field.
+	SoldDate time.Time `json:"sold_date,omitempty"`
 	// SoldTo holds the value of the "sold_to" field.
 	SoldTo string `json:"sold_to,omitempty"`
 	// SoldPrice holds the value of the "sold_price" field.
@@ -191,7 +191,7 @@ func (*Entity) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case entity.FieldName, entity.FieldDescription, entity.FieldImportRef, entity.FieldNotes, entity.FieldSerialNumber, entity.FieldModelNumber, entity.FieldManufacturer, entity.FieldWarrantyDetails, entity.FieldPurchaseFrom, entity.FieldSoldTo, entity.FieldSoldNotes:
 			values[i] = new(sql.NullString)
-		case entity.FieldCreatedAt, entity.FieldUpdatedAt, entity.FieldWarrantyExpires, entity.FieldPurchaseTime, entity.FieldSoldTime:
+		case entity.FieldCreatedAt, entity.FieldUpdatedAt, entity.FieldWarrantyExpires, entity.FieldPurchaseDate, entity.FieldSoldDate:
 			values[i] = new(sql.NullTime)
 		case entity.FieldID:
 			values[i] = new(uuid.UUID)
@@ -324,11 +324,11 @@ func (_m *Entity) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.WarrantyDetails = value.String
 			}
-		case entity.FieldPurchaseTime:
+		case entity.FieldPurchaseDate:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field purchase_time", values[i])
+				return fmt.Errorf("unexpected type %T for field purchase_date", values[i])
 			} else if value.Valid {
-				_m.PurchaseTime = value.Time
+				_m.PurchaseDate = value.Time
 			}
 		case entity.FieldPurchaseFrom:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -342,11 +342,11 @@ func (_m *Entity) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.PurchasePrice = value.Float64
 			}
-		case entity.FieldSoldTime:
+		case entity.FieldSoldDate:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field sold_time", values[i])
+				return fmt.Errorf("unexpected type %T for field sold_date", values[i])
 			} else if value.Valid {
-				_m.SoldTime = value.Time
+				_m.SoldDate = value.Time
 			}
 		case entity.FieldSoldTo:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -514,8 +514,8 @@ func (_m *Entity) String() string {
 	builder.WriteString("warranty_details=")
 	builder.WriteString(_m.WarrantyDetails)
 	builder.WriteString(", ")
-	builder.WriteString("purchase_time=")
-	builder.WriteString(_m.PurchaseTime.Format(time.ANSIC))
+	builder.WriteString("purchase_date=")
+	builder.WriteString(_m.PurchaseDate.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("purchase_from=")
 	builder.WriteString(_m.PurchaseFrom)
@@ -523,8 +523,8 @@ func (_m *Entity) String() string {
 	builder.WriteString("purchase_price=")
 	builder.WriteString(fmt.Sprintf("%v", _m.PurchasePrice))
 	builder.WriteString(", ")
-	builder.WriteString("sold_time=")
-	builder.WriteString(_m.SoldTime.Format(time.ANSIC))
+	builder.WriteString("sold_date=")
+	builder.WriteString(_m.SoldDate.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("sold_to=")
 	builder.WriteString(_m.SoldTo)

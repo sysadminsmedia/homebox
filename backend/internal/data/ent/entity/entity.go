@@ -49,14 +49,14 @@ const (
 	FieldWarrantyExpires = "warranty_expires"
 	// FieldWarrantyDetails holds the string denoting the warranty_details field in the database.
 	FieldWarrantyDetails = "warranty_details"
-	// FieldPurchaseTime holds the string denoting the purchase_time field in the database.
-	FieldPurchaseTime = "purchase_time"
+	// FieldPurchaseDate holds the string denoting the purchase_date field in the database.
+	FieldPurchaseDate = "purchase_date"
 	// FieldPurchaseFrom holds the string denoting the purchase_from field in the database.
 	FieldPurchaseFrom = "purchase_from"
 	// FieldPurchasePrice holds the string denoting the purchase_price field in the database.
 	FieldPurchasePrice = "purchase_price"
-	// FieldSoldTime holds the string denoting the sold_time field in the database.
-	FieldSoldTime = "sold_time"
+	// FieldSoldDate holds the string denoting the sold_date field in the database.
+	FieldSoldDate = "sold_date"
 	// FieldSoldTo holds the string denoting the sold_to field in the database.
 	FieldSoldTo = "sold_to"
 	// FieldSoldPrice holds the string denoting the sold_price field in the database.
@@ -151,10 +151,10 @@ var Columns = []string{
 	FieldLifetimeWarranty,
 	FieldWarrantyExpires,
 	FieldWarrantyDetails,
-	FieldPurchaseTime,
+	FieldPurchaseDate,
 	FieldPurchaseFrom,
 	FieldPurchasePrice,
-	FieldSoldTime,
+	FieldSoldDate,
 	FieldSoldTo,
 	FieldSoldPrice,
 	FieldSoldNotes,
@@ -327,9 +327,9 @@ func ByWarrantyDetails(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldWarrantyDetails, opts...).ToFunc()
 }
 
-// ByPurchaseTime orders the results by the purchase_time field.
-func ByPurchaseTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldPurchaseTime, opts...).ToFunc()
+// ByPurchaseDate orders the results by the purchase_date field.
+func ByPurchaseDate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPurchaseDate, opts...).ToFunc()
 }
 
 // ByPurchaseFrom orders the results by the purchase_from field.
@@ -342,9 +342,9 @@ func ByPurchasePrice(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPurchasePrice, opts...).ToFunc()
 }
 
-// BySoldTime orders the results by the sold_time field.
-func BySoldTime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSoldTime, opts...).ToFunc()
+// BySoldDate orders the results by the sold_date field.
+func BySoldDate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSoldDate, opts...).ToFunc()
 }
 
 // BySoldTo orders the results by the sold_to field.

@@ -141,9 +141,9 @@ func WarrantyDetails(v string) predicate.Entity {
 	return predicate.Entity(sql.FieldEQ(FieldWarrantyDetails, v))
 }
 
-// PurchaseTime applies equality check predicate on the "purchase_time" field. It's identical to PurchaseTimeEQ.
-func PurchaseTime(v time.Time) predicate.Entity {
-	return predicate.Entity(sql.FieldEQ(FieldPurchaseTime, v))
+// PurchaseDate applies equality check predicate on the "purchase_date" field. It's identical to PurchaseDateEQ.
+func PurchaseDate(v time.Time) predicate.Entity {
+	return predicate.Entity(sql.FieldEQ(FieldPurchaseDate, v))
 }
 
 // PurchaseFrom applies equality check predicate on the "purchase_from" field. It's identical to PurchaseFromEQ.
@@ -156,9 +156,9 @@ func PurchasePrice(v float64) predicate.Entity {
 	return predicate.Entity(sql.FieldEQ(FieldPurchasePrice, v))
 }
 
-// SoldTime applies equality check predicate on the "sold_time" field. It's identical to SoldTimeEQ.
-func SoldTime(v time.Time) predicate.Entity {
-	return predicate.Entity(sql.FieldEQ(FieldSoldTime, v))
+// SoldDate applies equality check predicate on the "sold_date" field. It's identical to SoldDateEQ.
+func SoldDate(v time.Time) predicate.Entity {
+	return predicate.Entity(sql.FieldEQ(FieldSoldDate, v))
 }
 
 // SoldTo applies equality check predicate on the "sold_to" field. It's identical to SoldToEQ.
@@ -1016,54 +1016,54 @@ func WarrantyDetailsContainsFold(v string) predicate.Entity {
 	return predicate.Entity(sql.FieldContainsFold(FieldWarrantyDetails, v))
 }
 
-// PurchaseTimeEQ applies the EQ predicate on the "purchase_time" field.
-func PurchaseTimeEQ(v time.Time) predicate.Entity {
-	return predicate.Entity(sql.FieldEQ(FieldPurchaseTime, v))
+// PurchaseDateEQ applies the EQ predicate on the "purchase_date" field.
+func PurchaseDateEQ(v time.Time) predicate.Entity {
+	return predicate.Entity(sql.FieldEQ(FieldPurchaseDate, v))
 }
 
-// PurchaseTimeNEQ applies the NEQ predicate on the "purchase_time" field.
-func PurchaseTimeNEQ(v time.Time) predicate.Entity {
-	return predicate.Entity(sql.FieldNEQ(FieldPurchaseTime, v))
+// PurchaseDateNEQ applies the NEQ predicate on the "purchase_date" field.
+func PurchaseDateNEQ(v time.Time) predicate.Entity {
+	return predicate.Entity(sql.FieldNEQ(FieldPurchaseDate, v))
 }
 
-// PurchaseTimeIn applies the In predicate on the "purchase_time" field.
-func PurchaseTimeIn(vs ...time.Time) predicate.Entity {
-	return predicate.Entity(sql.FieldIn(FieldPurchaseTime, vs...))
+// PurchaseDateIn applies the In predicate on the "purchase_date" field.
+func PurchaseDateIn(vs ...time.Time) predicate.Entity {
+	return predicate.Entity(sql.FieldIn(FieldPurchaseDate, vs...))
 }
 
-// PurchaseTimeNotIn applies the NotIn predicate on the "purchase_time" field.
-func PurchaseTimeNotIn(vs ...time.Time) predicate.Entity {
-	return predicate.Entity(sql.FieldNotIn(FieldPurchaseTime, vs...))
+// PurchaseDateNotIn applies the NotIn predicate on the "purchase_date" field.
+func PurchaseDateNotIn(vs ...time.Time) predicate.Entity {
+	return predicate.Entity(sql.FieldNotIn(FieldPurchaseDate, vs...))
 }
 
-// PurchaseTimeGT applies the GT predicate on the "purchase_time" field.
-func PurchaseTimeGT(v time.Time) predicate.Entity {
-	return predicate.Entity(sql.FieldGT(FieldPurchaseTime, v))
+// PurchaseDateGT applies the GT predicate on the "purchase_date" field.
+func PurchaseDateGT(v time.Time) predicate.Entity {
+	return predicate.Entity(sql.FieldGT(FieldPurchaseDate, v))
 }
 
-// PurchaseTimeGTE applies the GTE predicate on the "purchase_time" field.
-func PurchaseTimeGTE(v time.Time) predicate.Entity {
-	return predicate.Entity(sql.FieldGTE(FieldPurchaseTime, v))
+// PurchaseDateGTE applies the GTE predicate on the "purchase_date" field.
+func PurchaseDateGTE(v time.Time) predicate.Entity {
+	return predicate.Entity(sql.FieldGTE(FieldPurchaseDate, v))
 }
 
-// PurchaseTimeLT applies the LT predicate on the "purchase_time" field.
-func PurchaseTimeLT(v time.Time) predicate.Entity {
-	return predicate.Entity(sql.FieldLT(FieldPurchaseTime, v))
+// PurchaseDateLT applies the LT predicate on the "purchase_date" field.
+func PurchaseDateLT(v time.Time) predicate.Entity {
+	return predicate.Entity(sql.FieldLT(FieldPurchaseDate, v))
 }
 
-// PurchaseTimeLTE applies the LTE predicate on the "purchase_time" field.
-func PurchaseTimeLTE(v time.Time) predicate.Entity {
-	return predicate.Entity(sql.FieldLTE(FieldPurchaseTime, v))
+// PurchaseDateLTE applies the LTE predicate on the "purchase_date" field.
+func PurchaseDateLTE(v time.Time) predicate.Entity {
+	return predicate.Entity(sql.FieldLTE(FieldPurchaseDate, v))
 }
 
-// PurchaseTimeIsNil applies the IsNil predicate on the "purchase_time" field.
-func PurchaseTimeIsNil() predicate.Entity {
-	return predicate.Entity(sql.FieldIsNull(FieldPurchaseTime))
+// PurchaseDateIsNil applies the IsNil predicate on the "purchase_date" field.
+func PurchaseDateIsNil() predicate.Entity {
+	return predicate.Entity(sql.FieldIsNull(FieldPurchaseDate))
 }
 
-// PurchaseTimeNotNil applies the NotNil predicate on the "purchase_time" field.
-func PurchaseTimeNotNil() predicate.Entity {
-	return predicate.Entity(sql.FieldNotNull(FieldPurchaseTime))
+// PurchaseDateNotNil applies the NotNil predicate on the "purchase_date" field.
+func PurchaseDateNotNil() predicate.Entity {
+	return predicate.Entity(sql.FieldNotNull(FieldPurchaseDate))
 }
 
 // PurchaseFromEQ applies the EQ predicate on the "purchase_from" field.
@@ -1181,54 +1181,54 @@ func PurchasePriceLTE(v float64) predicate.Entity {
 	return predicate.Entity(sql.FieldLTE(FieldPurchasePrice, v))
 }
 
-// SoldTimeEQ applies the EQ predicate on the "sold_time" field.
-func SoldTimeEQ(v time.Time) predicate.Entity {
-	return predicate.Entity(sql.FieldEQ(FieldSoldTime, v))
+// SoldDateEQ applies the EQ predicate on the "sold_date" field.
+func SoldDateEQ(v time.Time) predicate.Entity {
+	return predicate.Entity(sql.FieldEQ(FieldSoldDate, v))
 }
 
-// SoldTimeNEQ applies the NEQ predicate on the "sold_time" field.
-func SoldTimeNEQ(v time.Time) predicate.Entity {
-	return predicate.Entity(sql.FieldNEQ(FieldSoldTime, v))
+// SoldDateNEQ applies the NEQ predicate on the "sold_date" field.
+func SoldDateNEQ(v time.Time) predicate.Entity {
+	return predicate.Entity(sql.FieldNEQ(FieldSoldDate, v))
 }
 
-// SoldTimeIn applies the In predicate on the "sold_time" field.
-func SoldTimeIn(vs ...time.Time) predicate.Entity {
-	return predicate.Entity(sql.FieldIn(FieldSoldTime, vs...))
+// SoldDateIn applies the In predicate on the "sold_date" field.
+func SoldDateIn(vs ...time.Time) predicate.Entity {
+	return predicate.Entity(sql.FieldIn(FieldSoldDate, vs...))
 }
 
-// SoldTimeNotIn applies the NotIn predicate on the "sold_time" field.
-func SoldTimeNotIn(vs ...time.Time) predicate.Entity {
-	return predicate.Entity(sql.FieldNotIn(FieldSoldTime, vs...))
+// SoldDateNotIn applies the NotIn predicate on the "sold_date" field.
+func SoldDateNotIn(vs ...time.Time) predicate.Entity {
+	return predicate.Entity(sql.FieldNotIn(FieldSoldDate, vs...))
 }
 
-// SoldTimeGT applies the GT predicate on the "sold_time" field.
-func SoldTimeGT(v time.Time) predicate.Entity {
-	return predicate.Entity(sql.FieldGT(FieldSoldTime, v))
+// SoldDateGT applies the GT predicate on the "sold_date" field.
+func SoldDateGT(v time.Time) predicate.Entity {
+	return predicate.Entity(sql.FieldGT(FieldSoldDate, v))
 }
 
-// SoldTimeGTE applies the GTE predicate on the "sold_time" field.
-func SoldTimeGTE(v time.Time) predicate.Entity {
-	return predicate.Entity(sql.FieldGTE(FieldSoldTime, v))
+// SoldDateGTE applies the GTE predicate on the "sold_date" field.
+func SoldDateGTE(v time.Time) predicate.Entity {
+	return predicate.Entity(sql.FieldGTE(FieldSoldDate, v))
 }
 
-// SoldTimeLT applies the LT predicate on the "sold_time" field.
-func SoldTimeLT(v time.Time) predicate.Entity {
-	return predicate.Entity(sql.FieldLT(FieldSoldTime, v))
+// SoldDateLT applies the LT predicate on the "sold_date" field.
+func SoldDateLT(v time.Time) predicate.Entity {
+	return predicate.Entity(sql.FieldLT(FieldSoldDate, v))
 }
 
-// SoldTimeLTE applies the LTE predicate on the "sold_time" field.
-func SoldTimeLTE(v time.Time) predicate.Entity {
-	return predicate.Entity(sql.FieldLTE(FieldSoldTime, v))
+// SoldDateLTE applies the LTE predicate on the "sold_date" field.
+func SoldDateLTE(v time.Time) predicate.Entity {
+	return predicate.Entity(sql.FieldLTE(FieldSoldDate, v))
 }
 
-// SoldTimeIsNil applies the IsNil predicate on the "sold_time" field.
-func SoldTimeIsNil() predicate.Entity {
-	return predicate.Entity(sql.FieldIsNull(FieldSoldTime))
+// SoldDateIsNil applies the IsNil predicate on the "sold_date" field.
+func SoldDateIsNil() predicate.Entity {
+	return predicate.Entity(sql.FieldIsNull(FieldSoldDate))
 }
 
-// SoldTimeNotNil applies the NotNil predicate on the "sold_time" field.
-func SoldTimeNotNil() predicate.Entity {
-	return predicate.Entity(sql.FieldNotNull(FieldSoldTime))
+// SoldDateNotNil applies the NotNil predicate on the "sold_date" field.
+func SoldDateNotNil() predicate.Entity {
+	return predicate.Entity(sql.FieldNotNull(FieldSoldDate))
 }
 
 // SoldToEQ applies the EQ predicate on the "sold_to" field.
