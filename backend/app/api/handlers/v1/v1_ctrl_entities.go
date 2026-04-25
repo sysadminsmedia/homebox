@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"context"
 	"database/sql"
 	"encoding/csv"
 	"errors"
@@ -20,7 +21,27 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
+
+func entityCtrlTracer() trace.Tracer {
+	return otel.Tracer("controller")
+}
+
+func recordCtrlSpanError(span trace.Span, err error) {
+	if err == nil {
+		return
+	}
+	span.RecordError(err)
+	span.SetStatus(codes.Error, err.Error())
+}
+
+func startEntityCtrlSpan(ctx context.Context, name string, attrs ...attribute.KeyValue) (context.Context, trace.Span) {
+	return entityCtrlTracer().Start(ctx, name, trace.WithAttributes(attrs...))
+}
 
 // HandleEntitiesGetAll godoc
 //
@@ -88,20 +109,43 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) error {
-		ctx := services.NewContext(r.Context())
 		query := extractQuery(r)
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntitiesGetAll",
+			attribute.String("query.search", query.Search),
+			attribute.Int("query.page", query.Page),
+			attribute.Int("query.page_size", query.PageSize),
+			attribute.Int("query.tag_ids.count", len(query.TagIDs)),
+			attribute.Int("query.parent_ids.count", len(query.ParentIDs)),
+			attribute.Int("query.fields.count", len(query.Fields)),
+			attribute.Bool("query.include_archived", query.IncludeArchived),
+			attribute.Bool("query.filter_children", query.FilterChildren),
+			attribute.Bool("query.only_with_photo", query.OnlyWithPhoto),
+			attribute.Bool("query.only_without_photo", query.OnlyWithoutPhoto),
+			attribute.String("query.order_by", query.OrderBy),
+			attribute.Bool("query.is_location.set", query.IsLocation != nil),
+			attribute.Bool("query.is_location.value", query.IsLocation != nil && *query.IsLocation),
+			attribute.Bool("query.asset_id.set", !query.AssetID.Nil()),
+		)
+		defer span.End()
+
+		ctx := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("group.id", ctx.GID.String()))
 
 		items, err := ctrl.repo.Entities.QueryByGroup(ctx, ctx.GID, query)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
+				span.SetAttributes(attribute.Int("response.items.count", 0))
 				return server.JSON(w, http.StatusOK, repo.PaginationResult[repo.EntitySummary]{
 					Items: []repo.EntitySummary{},
 				})
 			}
+			recordCtrlSpanError(span, err)
 			log.Err(err).Msg("failed to get entities")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
+		_, totalSpan := startEntityCtrlSpan(spanCtx, "controller.V1.HandleEntitiesGetAll.totalPrice",
+			attribute.Int("items.count", len(items.Items)))
 		totalPrice := new(big.Int)
 		for _, item := range items.Items {
 			if !item.SoldTime.IsZero() {
@@ -111,6 +155,14 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 		}
 
 		totalPriceFloat, _ := new(big.Float).Quo(new(big.Float).SetInt(totalPrice), big.NewFloat(100)).Float64()
+		totalSpan.SetAttributes(attribute.Float64("total_price", totalPriceFloat))
+		totalSpan.End()
+
+		span.SetAttributes(
+			attribute.Int("response.items.count", len(items.Items)),
+			attribute.Int("response.total", items.Total),
+			attribute.Float64("response.total_price", totalPriceFloat),
+		)
 
 		return server.JSON(w, http.StatusOK, repo.EntityListResult{
 			PaginationResult: items,
@@ -130,8 +182,19 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityFullPath() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) ([]repo.EntityPath, error) {
-		auth := services.NewContext(r.Context())
-		return ctrl.repo.Entities.PathForEntity(auth, auth.GID, ID)
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntityFullPath",
+			attribute.String("entity.id", ID.String()))
+		defer span.End()
+
+		auth := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("group.id", auth.GID.String()))
+		out, err := ctrl.repo.Entities.PathForEntity(auth, auth.GID, ID)
+		if err != nil {
+			recordCtrlSpanError(span, err)
+			return out, err
+		}
+		span.SetAttributes(attribute.Int("path.depth", len(out)))
+		return out, nil
 	}
 
 	return adapters.CommandID("id", fn, http.StatusOK)
@@ -148,7 +211,24 @@ func (ctrl *V1Controller) HandleEntityFullPath() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntitiesCreate() errchain.HandlerFunc {
 	fn := func(r *http.Request, body repo.EntityCreate) (repo.EntityOut, error) {
-		return ctrl.svc.Entities.Create(services.NewContext(r.Context()), body)
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntitiesCreate",
+			attribute.String("entity.name", body.Name),
+			attribute.Float64("entity.quantity", body.Quantity),
+			attribute.Bool("entity.parent_id.set", body.ParentID != uuid.Nil),
+			attribute.Bool("entity.entity_type_id.set", body.EntityTypeID != uuid.Nil),
+			attribute.Int("entity.tags.count", len(body.TagIDs)),
+		)
+		defer span.End()
+
+		ctx := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("group.id", ctx.GID.String()))
+		out, err := ctrl.svc.Entities.Create(ctx, body)
+		if err != nil {
+			recordCtrlSpanError(span, err)
+			return out, err
+		}
+		span.SetAttributes(attribute.String("entity.id", out.ID.String()))
+		return out, nil
 	}
 
 	return adapters.Action(fn, http.StatusCreated)
@@ -165,9 +245,17 @@ func (ctrl *V1Controller) HandleEntitiesCreate() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityGet() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) (repo.EntityOut, error) {
-		auth := services.NewContext(r.Context())
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntityGet",
+			attribute.String("entity.id", ID.String()))
+		defer span.End()
 
-		return ctrl.repo.Entities.GetOneByGroup(auth, auth.GID, ID)
+		auth := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("group.id", auth.GID.String()))
+		out, err := ctrl.repo.Entities.GetOneByGroup(auth, auth.GID, ID)
+		if err != nil {
+			recordCtrlSpanError(span, err)
+		}
+		return out, err
 	}
 
 	return adapters.CommandID("id", fn, http.StatusOK)
@@ -184,8 +272,16 @@ func (ctrl *V1Controller) HandleEntityGet() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityDelete() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) (any, error) {
-		auth := services.NewContext(r.Context())
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntityDelete",
+			attribute.String("entity.id", ID.String()))
+		defer span.End()
+
+		auth := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("group.id", auth.GID.String()))
 		err := ctrl.repo.Entities.DeleteByGroup(auth, auth.GID, ID)
+		if err != nil {
+			recordCtrlSpanError(span, err)
+		}
 		return nil, err
 	}
 
@@ -204,10 +300,27 @@ func (ctrl *V1Controller) HandleEntityDelete() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityUpdate() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID, body repo.EntityUpdate) (repo.EntityOut, error) {
-		auth := services.NewContext(r.Context())
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntityUpdate",
+			attribute.String("entity.id", ID.String()),
+			attribute.String("entity.name", body.Name),
+			attribute.Float64("entity.quantity", body.Quantity),
+			attribute.Bool("entity.archived", body.Archived),
+			attribute.Bool("entity.parent_id.set", body.ParentID != uuid.Nil),
+			attribute.Int("entity.tags.count", len(body.TagIDs)),
+			attribute.Int("entity.fields.count", len(body.Fields)),
+			attribute.Bool("entity.sync_child_locations", body.SyncChildEntityLocations),
+		)
+		defer span.End()
+
+		auth := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("group.id", auth.GID.String()))
 
 		body.ID = ID
-		return ctrl.repo.Entities.UpdateByGroup(auth, auth.GID, body)
+		out, err := ctrl.repo.Entities.UpdateByGroup(auth, auth.GID, body)
+		if err != nil {
+			recordCtrlSpanError(span, err)
+		}
+		return out, err
 	}
 
 	return adapters.ActionID("id", fn, http.StatusOK)
@@ -225,15 +338,31 @@ func (ctrl *V1Controller) HandleEntityUpdate() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityPatch() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID, body repo.EntityPatch) (repo.EntityOut, error) {
-		auth := services.NewContext(r.Context())
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntityPatch",
+			attribute.String("entity.id", ID.String()),
+			attribute.Bool("patch.import_ref.set", body.ImportRef != nil),
+			attribute.Bool("patch.quantity.set", body.Quantity != nil),
+			attribute.Bool("patch.parent_id.set", body.ParentID != uuid.Nil),
+			attribute.Bool("patch.entity_type_id.set", body.EntityTypeID != uuid.Nil),
+			attribute.Bool("patch.tag_ids.set", body.TagIDs != nil),
+		)
+		defer span.End()
+
+		auth := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("group.id", auth.GID.String()))
 
 		body.ID = ID
 		err := ctrl.repo.Entities.Patch(auth, auth.GID, ID, body)
 		if err != nil {
+			recordCtrlSpanError(span, err)
 			return repo.EntityOut{}, err
 		}
 
-		return ctrl.repo.Entities.GetOneByGroup(auth, auth.GID, ID)
+		out, err := ctrl.repo.Entities.GetOneByGroup(auth, auth.GID, ID)
+		if err != nil {
+			recordCtrlSpanError(span, err)
+		}
+		return out, err
 	}
 
 	return adapters.ActionID("id", fn, http.StatusOK)
@@ -251,8 +380,23 @@ func (ctrl *V1Controller) HandleEntityPatch() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityDuplicate() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID, options repo.DuplicateOptions) (repo.EntityOut, error) {
-		ctx := services.NewContext(r.Context())
-		return ctrl.svc.Entities.Duplicate(ctx, ctx.GID, ID, options)
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntityDuplicate",
+			attribute.String("entity.source_id", ID.String()),
+			attribute.Bool("options.copy_maintenance", options.CopyMaintenance),
+			attribute.Bool("options.copy_attachments", options.CopyAttachments),
+			attribute.Bool("options.copy_custom_fields", options.CopyCustomFields),
+		)
+		defer span.End()
+
+		ctx := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("group.id", ctx.GID.String()))
+		out, err := ctrl.svc.Entities.Duplicate(ctx, ctx.GID, ID, options)
+		if err != nil {
+			recordCtrlSpanError(span, err)
+			return out, err
+		}
+		span.SetAttributes(attribute.String("entity.id", out.ID.String()))
+		return out, nil
 	}
 
 	return adapters.ActionID("id", fn, http.StatusCreated)
@@ -268,8 +412,18 @@ func (ctrl *V1Controller) HandleEntityDuplicate() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGetAllCustomFieldNames() errchain.HandlerFunc {
 	fn := func(r *http.Request) ([]string, error) {
-		auth := services.NewContext(r.Context())
-		return ctrl.repo.Entities.GetAllCustomFieldNames(auth, auth.GID)
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleGetAllCustomFieldNames")
+		defer span.End()
+
+		auth := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("group.id", auth.GID.String()))
+		out, err := ctrl.repo.Entities.GetAllCustomFieldNames(auth, auth.GID)
+		if err != nil {
+			recordCtrlSpanError(span, err)
+			return out, err
+		}
+		span.SetAttributes(attribute.Int("names.count", len(out)))
+		return out, nil
 	}
 
 	return adapters.Command(fn, http.StatusOK)
@@ -290,8 +444,19 @@ func (ctrl *V1Controller) HandleGetAllCustomFieldValues() errchain.HandlerFunc {
 	}
 
 	fn := func(r *http.Request, q query) ([]string, error) {
-		auth := services.NewContext(r.Context())
-		return ctrl.repo.Entities.GetAllCustomFieldValues(auth, auth.GID, q.Field)
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleGetAllCustomFieldValues",
+			attribute.String("field.name", q.Field))
+		defer span.End()
+
+		auth := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("group.id", auth.GID.String()))
+		out, err := ctrl.repo.Entities.GetAllCustomFieldValues(auth, auth.GID, q.Field)
+		if err != nil {
+			recordCtrlSpanError(span, err)
+			return out, err
+		}
+		span.SetAttributes(attribute.Int("values.count", len(out)))
+		return out, nil
 	}
 
 	return adapters.Query(fn, http.StatusOK)
@@ -309,26 +474,40 @@ func (ctrl *V1Controller) HandleGetAllCustomFieldValues() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntitiesImport() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntitiesImport")
+		defer span.End()
+
+		_, parseSpan := startEntityCtrlSpan(spanCtx, "controller.V1.HandleEntitiesImport.parseForm")
 		err := r.ParseMultipartForm(ctrl.maxUploadSize << 20)
 		if err != nil {
+			recordCtrlSpanError(parseSpan, err)
+			parseSpan.End()
+			recordCtrlSpanError(span, err)
 			log.Err(err).Msg("failed to parse multipart form")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
 		file, _, err := r.FormFile("csv")
 		if err != nil {
+			recordCtrlSpanError(parseSpan, err)
+			parseSpan.End()
+			recordCtrlSpanError(span, err)
 			log.Err(err).Msg("failed to get file from form")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
+		parseSpan.End()
 		defer func() { _ = file.Close() }()
 
-		auth := services.NewContext(r.Context())
+		auth := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("group.id", auth.GID.String()))
 
-		_, err = ctrl.svc.Entities.CsvImport(r.Context(), auth.GID, file)
+		count, err := ctrl.svc.Entities.CsvImport(spanCtx, auth.GID, file)
 		if err != nil {
+			recordCtrlSpanError(span, err)
 			log.Err(err).Msg("failed to import entities")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
+		span.SetAttributes(attribute.Int("rows.imported.count", count))
 
 		w.WriteHeader(http.StatusNoContent)
 		return nil
@@ -346,8 +525,19 @@ func (ctrl *V1Controller) HandleEntitiesImport() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleLocationTreeQuery() errchain.HandlerFunc {
 	fn := func(r *http.Request, query repo.TreeQuery) ([]repo.TreeItem, error) {
-		auth := services.NewContext(r.Context())
-		return ctrl.repo.Entities.Tree(auth, auth.GID, query)
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleLocationTreeQuery",
+			attribute.Bool("query.with_items", query.WithItems))
+		defer span.End()
+
+		auth := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("group.id", auth.GID.String()))
+		out, err := ctrl.repo.Entities.Tree(auth, auth.GID, query)
+		if err != nil {
+			recordCtrlSpanError(span, err)
+			return out, err
+		}
+		span.SetAttributes(attribute.Int("tree.roots.count", len(out)))
+		return out, nil
 	}
 
 	return adapters.Query(fn, http.StatusOK)
@@ -362,13 +552,19 @@ func (ctrl *V1Controller) HandleLocationTreeQuery() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntitiesExport() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		ctx := services.NewContext(r.Context())
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntitiesExport")
+		defer span.End()
 
-		csvData, err := ctrl.svc.Entities.ExportCSV(r.Context(), ctx.GID, GetHBURL(r, &ctrl.config.Options, ctrl.url))
+		ctx := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("group.id", ctx.GID.String()))
+
+		csvData, err := ctrl.svc.Entities.ExportCSV(spanCtx, ctx.GID, GetHBURL(r, &ctrl.config.Options, ctrl.url))
 		if err != nil {
+			recordCtrlSpanError(span, err)
 			log.Err(err).Msg("failed to export entities")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
+		span.SetAttributes(attribute.Int("csv.rows.count", len(csvData)))
 
 		timestamp := time.Now().Format("2006-01-02_15-04-05")
 		filename := fmt.Sprintf("homebox-entities_%s.csv", timestamp)
@@ -376,9 +572,12 @@ func (ctrl *V1Controller) HandleEntitiesExport() errchain.HandlerFunc {
 		w.Header().Set("Content-Type", "text/csv")
 		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment;filename=%s", filename))
 
+		_, writeSpan := startEntityCtrlSpan(spanCtx, "controller.V1.HandleEntitiesExport.write",
+			attribute.Int("csv.rows.count", len(csvData)))
+		defer writeSpan.End()
 		writer := csv.NewWriter(w)
 		if err := writer.WriteAll(csvData); err != nil {
-			// Headers already sent, can't write an HTTP error response
+			recordCtrlSpanError(writeSpan, err)
 			log.Err(err).Msg("failed to write CSV export response")
 		}
 		return nil

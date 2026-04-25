@@ -19,7 +19,23 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
+
+func mwTracer() trace.Tracer {
+	return otel.Tracer("middleware")
+}
+
+func recordMwSpanError(span trace.Span, err error) {
+	if err == nil {
+		return
+	}
+	span.RecordError(err)
+	span.SetStatus(codes.Error, err.Error())
+}
 
 type tokenHasKey struct {
 	key string
@@ -42,38 +58,53 @@ const (
 func (a *app) mwRoles(rm RoleMode, required ...string) errchain.Middleware {
 	return func(next errchain.Handler) errchain.Handler {
 		return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-			ctx := r.Context()
+			spanCtx, span := mwTracer().Start(r.Context(), "middleware.mwRoles",
+				trace.WithAttributes(
+					attribute.Int("roles.required.count", len(required)),
+					attribute.StringSlice("roles.required", required),
+					attribute.Int("roles.mode", int(rm)),
+				))
+			defer span.End()
 
-			maybeToken := ctx.Value(hashedToken)
+			maybeToken := spanCtx.Value(hashedToken)
 			if maybeToken == nil {
 				panic("mwRoles: token not found in context, you must call mwAuthToken before mwRoles")
 			}
 
 			token := maybeToken.(string)
 
-			roles, err := a.repos.AuthTokens.GetRoles(r.Context(), token)
+			roles, err := a.repos.AuthTokens.GetRoles(spanCtx, token)
 			if err != nil {
+				recordMwSpanError(span, err)
 				return err
 			}
+			span.SetAttributes(attribute.Int("roles.actual.count", roles.Len()))
 
 		outer:
 			switch rm {
 			case RoleModeOr:
 				for _, role := range required {
 					if roles.Contains(role) {
+						span.SetAttributes(attribute.String("roles.outcome", "ok_or"))
 						break outer
 					}
 				}
+				span.SetAttributes(attribute.String("roles.outcome", "forbidden_or"))
 				return validate.NewRequestError(errors.New("Forbidden"), http.StatusForbidden)
 			case RoleModeAnd:
 				for _, req := range required {
 					if !roles.Contains(req) {
+						span.SetAttributes(
+							attribute.String("roles.outcome", "forbidden_and"),
+							attribute.String("roles.missing", req),
+						)
 						return validate.NewRequestError(errors.New("Unauthorized"), http.StatusForbidden)
 					}
 				}
+				span.SetAttributes(attribute.String("roles.outcome", "ok_and"))
 			}
 
-			return next.ServeHTTP(w, r)
+			return next.ServeHTTP(w, r.WithContext(spanCtx))
 		})
 	}
 }
@@ -112,48 +143,81 @@ func getQuery(r *http.Request) (string, error) {
 //   - query = "?access_token=1234567890"
 func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-		var requestToken string
+		spanCtx, span := mwTracer().Start(r.Context(), "middleware.mwAuthToken",
+			trace.WithAttributes(
+				attribute.String("http.method", r.Method),
+				attribute.String("http.path", r.URL.Path),
+			))
+		defer span.End()
 
-		// We ignore the error to allow the next strategy to be attempted
+		var requestToken string
+		tokenSource := "none"
+
 		{
 			cookies, _ := v1.GetCookies(r)
 			if cookies != nil {
 				requestToken = cookies.Token
+				tokenSource = "cookie"
 			}
 		}
 
 		if requestToken == "" {
-			keyFuncs := [...]KeyFunc{
-				getBearer,
-				getQuery,
+			keyFuncs := [...]struct {
+				name string
+				fn   KeyFunc
+			}{
+				{"bearer", getBearer},
+				{"query", getQuery},
 			}
 
-			for _, keyFunc := range keyFuncs {
-				token, err := keyFunc(r)
+			for _, kf := range keyFuncs {
+				token, err := kf.fn(r)
 				if err == nil {
 					requestToken = token
+					tokenSource = kf.name
 					break
 				}
 			}
 		}
 
+		span.SetAttributes(
+			attribute.String("auth.token.source", tokenSource),
+			attribute.Bool("auth.token.present", requestToken != ""),
+		)
+
 		if requestToken == "" {
+			span.SetAttributes(attribute.String("auth.outcome", "no_token"))
 			return validate.NewRequestError(errors.New("authorization header or query is required"), http.StatusUnauthorized)
 		}
 
+		hadBearerPrefix := strings.HasPrefix(requestToken, "Bearer ")
 		requestToken = strings.TrimPrefix(requestToken, "Bearer ")
+		span.SetAttributes(
+			attribute.Bool("auth.token.had_bearer_prefix", hadBearerPrefix),
+			attribute.Int("auth.token.length", len(requestToken)),
+		)
 
-		r = r.WithContext(context.WithValue(r.Context(), hashedToken, requestToken))
+		r = r.WithContext(context.WithValue(spanCtx, hashedToken, requestToken))
 
 		usr, err := a.services.User.GetSelf(r.Context(), requestToken)
-		// Check the database for the token
 		if err != nil {
 			if ent.IsNotFound(err) {
+				span.SetAttributes(attribute.String("auth.outcome", "token_not_found"))
 				return validate.NewRequestError(errors.New("valid authorization token is required"), http.StatusUnauthorized)
 			}
 
+			recordMwSpanError(span, err)
+			span.SetAttributes(attribute.String("auth.outcome", "lookup_error"))
 			return err
 		}
+
+		span.SetAttributes(
+			attribute.String("auth.outcome", "authenticated"),
+			attribute.String("user.id", usr.ID.String()),
+			attribute.String("user.default_group_id", usr.DefaultGroupID.String()),
+			attribute.Int("user.groups.count", len(usr.GroupIDs)),
+			attribute.Bool("user.is_superuser", usr.IsSuperuser),
+		)
 
 		r = r.WithContext(services.SetUserCtx(r.Context(), &usr, requestToken))
 		return next.ServeHTTP(w, r)
@@ -166,32 +230,44 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 // WARNING: This middleware _MUST_ be called after mwAuthToken
 func (a *app) mwTenant(next errchain.Handler) errchain.Handler {
 	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-		ctx := r.Context()
+		spanCtx, span := mwTracer().Start(r.Context(), "middleware.mwTenant")
+		defer span.End()
 
-		// Get the user from context (set by mwAuthToken)
-		user := services.UseUserCtx(ctx)
+		user := services.UseUserCtx(spanCtx)
 		if user == nil {
-			return validate.NewRequestError(errors.New("user context not found"), http.StatusInternalServerError)
+			err := errors.New("user context not found")
+			recordMwSpanError(span, err)
+			span.SetAttributes(attribute.String("tenant.outcome", "no_user_ctx"))
+			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
 		tenantID := user.DefaultGroupID
+		tenantSource := "default"
 
-		// Check for X-Tenant header or tenant query parameter
 		tenantHeader := r.Header.Get("X-Tenant")
 		if tenantHeader == "" {
 			tenantHeader = r.URL.Query().Get("tenant")
+			if tenantHeader != "" {
+				tenantSource = "query"
+			}
+		} else {
+			tenantSource = "header"
 		}
 
 		if tenantHeader != "" {
 			parsedTenantID, err := uuid.Parse(tenantHeader)
 			if err != nil {
+				recordMwSpanError(span, err)
+				span.SetAttributes(
+					attribute.String("tenant.outcome", "parse_failed"),
+					attribute.String("tenant.source", tenantSource),
+				)
 				return validate.NewRequestError(errors.New("invalid X-Tenant header format"), http.StatusBadRequest)
 			}
 
 			tenantID = parsedTenantID
 		}
 
-		// Validate user has access to the resolved tenant (whether from header or default group)
 		hasAccess := false
 		for _, gid := range user.GroupIDs {
 			if gid == tenantID {
@@ -200,12 +276,21 @@ func (a *app) mwTenant(next errchain.Handler) errchain.Handler {
 			}
 		}
 
+		span.SetAttributes(
+			attribute.String("user.id", user.ID.String()),
+			attribute.String("tenant.id", tenantID.String()),
+			attribute.String("tenant.source", tenantSource),
+			attribute.Int("user.groups.count", len(user.GroupIDs)),
+			attribute.Bool("tenant.has_access", hasAccess),
+		)
+
 		if !hasAccess {
+			span.SetAttributes(attribute.String("tenant.outcome", "forbidden"))
 			return validate.NewRequestError(errors.New("user does not have access to the requested tenant"), http.StatusForbidden)
 		}
 
-		// Set the tenant in context
-		r = r.WithContext(services.SetTenantCtx(ctx, tenantID))
+		span.SetAttributes(attribute.String("tenant.outcome", "ok"))
+		r = r.WithContext(services.SetTenantCtx(spanCtx, tenantID))
 		return next.ServeHTTP(w, r)
 	})
 }
@@ -303,25 +388,38 @@ func (l *authRateLimiter) Stop() {
 // mwAuthRateLimit enforces request throttling for authentication endpoints with an exponential backoff.
 func (a *app) mwAuthRateLimit(next errchain.Handler) errchain.Handler {
 	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+		spanCtx, span := mwTracer().Start(r.Context(), "middleware.mwAuthRateLimit")
+		defer span.End()
+
 		limiter := a.authLimiter
 		if limiter == nil || !limiter.cfg.Enabled {
-			return next.ServeHTTP(w, r)
+			span.SetAttributes(attribute.String("rate_limit.outcome", "disabled"))
+			return next.ServeHTTP(w, r.WithContext(spanCtx))
 		}
 
 		key := limiter.keyForRequest(r, a.conf.Options.TrustProxy)
 		now := limiter.nowFn()
+		span.SetAttributes(attribute.String("rate_limit.key", key))
 
 		if retryAfter, allowed := limiter.shouldAllow(key, now); !allowed {
 			seconds := int(retryAfter.Round(time.Second).Seconds())
 			if seconds < 0 {
 				seconds = 0
 			}
+			span.SetAttributes(
+				attribute.String("rate_limit.outcome", "blocked"),
+				attribute.Int("rate_limit.retry_after_seconds", seconds),
+			)
 			w.Header().Set("Retry-After", strconv.Itoa(seconds))
 			return validate.NewRequestError(errors.New("too many authentication attempts"), http.StatusTooManyRequests)
 		}
 
-		err := next.ServeHTTP(w, r)
+		err := next.ServeHTTP(w, r.WithContext(spanCtx))
 		limiter.record(key, now, err == nil)
+		span.SetAttributes(
+			attribute.String("rate_limit.outcome", "allowed"),
+			attribute.Bool("rate_limit.recorded_success", err == nil),
+		)
 		return err
 	})
 }

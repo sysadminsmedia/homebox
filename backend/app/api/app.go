@@ -21,7 +21,7 @@ type app struct {
 	bus                 *eventbus.EventBus
 	authLimiter         *authRateLimiter
 	notifierTestLimiter *simpleRateLimiter
-	otel     *otel.Provider
+	otel                *otel.Provider
 }
 
 func new(conf *config.Config) *app {
