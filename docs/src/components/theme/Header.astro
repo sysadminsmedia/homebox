@@ -14,7 +14,7 @@ import Default from '@astrojs/starlight/components/Header.astro';
 <script is:inline>
   (() => {
     const RAW_GITHUB_HOST = 'raw.githubusercontent.com';
-    const RAW_GITHUB_FALLBACK_ORIGIN = 'https://demo.homeboxsoftware.com';
+    const RAW_GITHUB_FALLBACK_ORIGIN = 'https://demo.homebox.software';
 
     const resolveOrigin = (hostname) => {
       if (hostname === RAW_GITHUB_HOST) {
@@ -44,12 +44,23 @@ import Default from '@astrojs/starlight/components/Header.astro';
       return `${targetOrigin}${parsed.pathname}${parsed.search}${parsed.hash}`;
     };
 
+    const normalizeEmbeddedRawUrl = (value) => {
+      if (typeof value !== 'string' || !value.includes(RAW_GITHUB_HOST)) {
+        return value;
+      }
+
+      return value.replace(
+        /https?:\/\/raw\.githubusercontent\.com(\/api[^\s"'<>]*)/g,
+        `${RAW_GITHUB_FALLBACK_ORIGIN}$1`
+      );
+    };
+
     const updateElementValue = (el) => {
       if (!(el instanceof HTMLInputElement || el instanceof HTMLOptionElement)) {
         return;
       }
 
-      const normalized = normalizeApiUrl(el.value);
+      const normalized = normalizeEmbeddedRawUrl(normalizeApiUrl(el.value));
       if (normalized === el.value) {
         return;
       }
@@ -59,6 +70,36 @@ import Default from '@astrojs/starlight/components/Header.astro';
       el.dispatchEvent(new Event('change', { bubbles: true }));
     };
 
+    const updateLinkTargets = (el) => {
+      if (!(el instanceof HTMLAnchorElement || el instanceof HTMLImageElement)) {
+        return;
+      }
+
+      for (const attr of ['href', 'src']) {
+        const current = el.getAttribute(attr);
+        if (!current) {
+          continue;
+        }
+
+        const normalized = normalizeEmbeddedRawUrl(normalizeApiUrl(current));
+        if (normalized !== current) {
+          el.setAttribute(attr, normalized);
+        }
+      }
+    };
+
+    const updateTextNode = (node) => {
+      const current = node.textContent;
+      if (!current) {
+        return;
+      }
+
+      const normalized = normalizeEmbeddedRawUrl(current);
+      if (normalized !== current) {
+        node.textContent = normalized;
+      }
+    };
+
     const applyApiUrlGuard = () => {
       if (!window.location.pathname.includes('/api')) {
         return;
@@ -66,6 +107,17 @@ import Default from '@astrojs/starlight/components/Header.astro';
 
       for (const el of document.querySelectorAll('input, option')) {
         updateElementValue(el);
+      }
+
+      for (const el of document.querySelectorAll('a, img')) {
+        updateLinkTargets(el);
+      }
+
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      let node = walker.nextNode();
+      while (node) {
+        updateTextNode(node);
+        node = walker.nextNode();
       }
     };
 
