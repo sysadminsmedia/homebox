@@ -12,6 +12,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 // HandleUserRegistration godoc
@@ -25,27 +26,46 @@ import (
 //		@Router		/v1/users/register [Post]
 func (ctrl *V1Controller) HandleUserRegistration() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		// Forbidden if local login is not enabled
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleUserRegistration")
+		defer span.End()
+
 		if !ctrl.config.Options.AllowLocalLogin {
+			span.SetAttributes(attribute.String("registration.outcome", "local_login_disabled"))
 			return validate.NewRequestError(fmt.Errorf("local login is not enabled"), http.StatusForbidden)
 		}
 
 		regData := services.UserRegistration{}
 
 		if err := server.Decode(r, &regData); err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("registration.outcome", "decode_failed"))
 			log.Err(err).Msg("failed to decode user registration data")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
+		span.SetAttributes(
+			attribute.Int("user.name.length", len(regData.Name)),
+			attribute.Int("user.email.length", len(regData.Email)),
+			attribute.Int("user.password.length", len(regData.Password)),
+			attribute.Bool("registration.has_group_token", regData.GroupToken != ""),
+		)
 
 		if !ctrl.allowRegistration && regData.GroupToken == "" {
+			span.SetAttributes(attribute.String("registration.outcome", "registration_disabled"))
 			return validate.NewRequestError(fmt.Errorf("user registration disabled"), http.StatusForbidden)
 		}
 
-		_, err := ctrl.svc.User.RegisterUser(r.Context(), regData)
+		usr, err := ctrl.svc.User.RegisterUser(spanCtx, regData)
 		if err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("registration.outcome", "register_failed"))
 			log.Err(err).Msg("failed to register user")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
+		span.SetAttributes(
+			attribute.String("registration.outcome", "success"),
+			attribute.String("user.id", usr.ID.String()),
+			attribute.String("group.id", usr.DefaultGroupID.String()),
+		)
 
 		return server.JSON(w, http.StatusNoContent, nil)
 	}
@@ -61,12 +81,19 @@ func (ctrl *V1Controller) HandleUserRegistration() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleUserSelf() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		token := services.UseTokenCtx(r.Context())
-		usr, err := ctrl.svc.User.GetSelf(r.Context(), token)
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleUserSelf")
+		defer span.End()
+
+		token := services.UseTokenCtx(spanCtx)
+		span.SetAttributes(attribute.Bool("token.present", token != ""))
+		usr, err := ctrl.svc.User.GetSelf(spanCtx, token)
 		if usr.ID == uuid.Nil || err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("self.outcome", "lookup_failed"))
 			log.Err(err).Msg("failed to get user")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
+		span.SetAttributes(attribute.String("user.id", usr.ID.String()))
 
 		return server.JSON(w, http.StatusOK, Wrap(usr))
 	}
@@ -83,17 +110,26 @@ func (ctrl *V1Controller) HandleUserSelf() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleUserSelfUpdate() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleUserSelfUpdate")
+		defer span.End()
+
 		updateData := repo.UserUpdate{}
 		if err := server.Decode(r, &updateData); err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("update.outcome", "decode_failed"))
 			log.Err(err).Msg("failed to decode user update data")
 			return validate.NewRequestError(err, http.StatusBadRequest)
 		}
 
-		actor := services.UseUserCtx(r.Context())
-		newData, err := ctrl.svc.User.UpdateSelf(r.Context(), actor.ID, updateData)
+		actor := services.UseUserCtx(spanCtx)
+		span.SetAttributes(attribute.String("user.id", actor.ID.String()))
+		newData, err := ctrl.svc.User.UpdateSelf(spanCtx, actor.ID, updateData)
 		if err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("update.outcome", "service_failed"))
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
+		span.SetAttributes(attribute.String("update.outcome", "success"))
 
 		return server.JSON(w, http.StatusOK, Wrap(newData))
 	}
@@ -109,14 +145,22 @@ func (ctrl *V1Controller) HandleUserSelfUpdate() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleUserSelfDelete() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleUserSelfDelete")
+		defer span.End()
+
 		if ctrl.isDemo {
+			span.SetAttributes(attribute.String("delete.outcome", "demo_blocked"))
 			return validate.NewRequestError(nil, http.StatusForbidden)
 		}
 
-		actor := services.UseUserCtx(r.Context())
-		if err := ctrl.svc.User.DeleteSelf(r.Context(), actor.ID); err != nil {
+		actor := services.UseUserCtx(spanCtx)
+		span.SetAttributes(attribute.String("user.id", actor.ID.String()))
+		if err := ctrl.svc.User.DeleteSelf(spanCtx, actor.ID); err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("delete.outcome", "delete_failed"))
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
+		span.SetAttributes(attribute.String("delete.outcome", "success"))
 
 		return server.JSON(w, http.StatusNoContent, nil)
 	}
@@ -132,11 +176,17 @@ func (ctrl *V1Controller) HandleUserSelfDelete() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleUserSelfSettingsGet() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		actor := services.UseUserCtx(r.Context())
-		settings, err := ctrl.svc.User.GetSettings(r.Context(), actor.ID)
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleUserSelfSettingsGet")
+		defer span.End()
+
+		actor := services.UseUserCtx(spanCtx)
+		span.SetAttributes(attribute.String("user.id", actor.ID.String()))
+		settings, err := ctrl.svc.User.GetSettings(spanCtx, actor.ID)
 		if err != nil {
+			recordCtrlSpanError(span, err)
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
+		span.SetAttributes(attribute.Int("settings.keys.count", len(settings)))
 
 		w.Header().Set("Cache-Control", "no-store")
 		return server.JSON(w, http.StatusOK, Wrap(settings))
@@ -154,27 +204,37 @@ func (ctrl *V1Controller) HandleUserSelfSettingsGet() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleUserSelfSettingsUpdate() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleUserSelfSettingsUpdate")
+		defer span.End()
 
-		// Cap body to prevent DOS via large payloads.
 		r.Body = http.MaxBytesReader(w, r.Body, 64*1024)
 		var settings map[string]interface{}
 		if err := server.Decode(r, &settings); err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("settings.outcome", "decode_failed"))
 			log.Err(err).Msg("failed to decode user settings data")
 			return validate.NewRequestError(err, http.StatusBadRequest)
 		}
+		span.SetAttributes(attribute.Int("settings.keys.count", len(settings)))
 
-		actor := services.UseUserCtx(r.Context())
-		if err := ctrl.svc.User.SetSettings(r.Context(), actor.ID, settings); err != nil {
+		actor := services.UseUserCtx(spanCtx)
+		span.SetAttributes(attribute.String("user.id", actor.ID.String()))
+		if err := ctrl.svc.User.SetSettings(spanCtx, actor.ID, settings); err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("settings.outcome", "set_failed"))
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
-		ctx := services.NewContext(r.Context())
+		ctx := services.NewContext(spanCtx)
 		ctrl.bus.Publish(eventbus.EventUserMutation, eventbus.GroupMutationEvent{GID: ctx.GID})
 
-		newSettings, err := ctrl.svc.User.GetSettings(r.Context(), actor.ID)
+		newSettings, err := ctrl.svc.User.GetSettings(spanCtx, actor.ID)
 		if err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("settings.outcome", "reload_failed"))
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
+		span.SetAttributes(attribute.String("settings.outcome", "success"))
 
 		w.Header().Set("Cache-Control", "no-store")
 		return server.JSON(w, http.StatusOK, Wrap(newSettings))
@@ -198,22 +258,36 @@ type (
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleUserSelfChangePassword() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleUserSelfChangePassword")
+		defer span.End()
+
 		if ctrl.isDemo {
+			span.SetAttributes(attribute.String("change_password.outcome", "demo_blocked"))
 			return validate.NewRequestError(nil, http.StatusForbidden)
 		}
 
 		var cp ChangePassword
 		err := server.Decode(r, &cp)
 		if err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("change_password.outcome", "decode_failed"))
 			log.Err(err).Msg("user failed to change password")
 		}
+		span.SetAttributes(
+			attribute.Int("password.current.length", len(cp.Current)),
+			attribute.Int("password.new.length", len(cp.New)),
+		)
 
-		ctx := services.NewContext(r.Context())
+		ctx := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("user.id", ctx.UID.String()))
 
 		ok := ctrl.svc.User.ChangePassword(ctx, cp.Current, cp.New)
+		span.SetAttributes(attribute.Bool("change_password.ok", ok))
 		if !ok {
+			span.SetAttributes(attribute.String("change_password.outcome", "service_rejected"))
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
+		span.SetAttributes(attribute.String("change_password.outcome", "success"))
 
 		return server.JSON(w, http.StatusNoContent, nil)
 	}

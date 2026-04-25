@@ -14,6 +14,7 @@ import (
 	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 const (
@@ -101,28 +102,37 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 	})
 
 	return func(w http.ResponseWriter, r *http.Request) error {
-		// Extract provider query
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleAuthLogin")
+		defer span.End()
+
 		provider := r.URL.Query().Get("provider")
 		if provider == "" {
 			provider = "local"
 		}
+		span.SetAttributes(attribute.String("auth.provider", provider))
 
-		// Block local only when disabled
 		if provider == "local" && !ctrl.config.Options.AllowLocalLogin {
+			span.SetAttributes(attribute.String("auth.outcome", "local_disabled"))
 			return validate.NewRequestError(fmt.Errorf("local login is not enabled"), http.StatusForbidden)
 		}
 
-		// Get the provider
 		p, ok := providers[provider]
 		if !ok {
+			span.SetAttributes(attribute.String("auth.outcome", "unknown_provider"))
 			return validate.NewRequestError(errors.New("invalid auth provider"), http.StatusBadRequest)
 		}
 
-		newToken, err := p.Authenticate(w, r)
+		newToken, err := p.Authenticate(w, r.WithContext(spanCtx))
 		if err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("auth.outcome", "authenticate_failed"))
 			log.Warn().Err(err).Msg("authentication failed")
 			return validate.NewUnauthorizedError()
 		}
+		span.SetAttributes(
+			attribute.String("auth.outcome", "success"),
+			attribute.String("auth.session.expires_at", newToken.ExpiresAt.Format(time.RFC3339)),
+		)
 
 		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, true, newToken.AttachmentToken)
 		return server.JSON(w, http.StatusOK, TokenResponse{
@@ -142,16 +152,23 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleAuthLogout() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		token := services.UseTokenCtx(r.Context())
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleAuthLogout")
+		defer span.End()
+
+		token := services.UseTokenCtx(spanCtx)
 		if token == "" {
+			span.SetAttributes(attribute.String("logout.outcome", "no_token"))
 			return validate.NewRequestError(errors.New("no token within request context"), http.StatusUnauthorized)
 		}
 
-		err := ctrl.svc.User.Logout(r.Context(), token)
+		err := ctrl.svc.User.Logout(spanCtx, token)
 		if err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("logout.outcome", "delete_failed"))
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
+		span.SetAttributes(attribute.String("logout.outcome", "success"))
 		ctrl.unsetCookies(w, noPort(r.Host))
 		return server.JSON(w, http.StatusNoContent, nil)
 	}
@@ -168,16 +185,26 @@ func (ctrl *V1Controller) HandleAuthLogout() errchain.HandlerFunc {
 //	@Security		Bearer
 func (ctrl *V1Controller) HandleAuthRefresh() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		requestToken := services.UseTokenCtx(r.Context())
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleAuthRefresh")
+		defer span.End()
+
+		requestToken := services.UseTokenCtx(spanCtx)
 		if requestToken == "" {
+			span.SetAttributes(attribute.String("refresh.outcome", "no_token"))
 			return validate.NewRequestError(errors.New("no token within request context"), http.StatusUnauthorized)
 		}
 
-		newToken, err := ctrl.svc.User.RenewToken(r.Context(), requestToken)
+		newToken, err := ctrl.svc.User.RenewToken(spanCtx, requestToken)
 		if err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("refresh.outcome", "renew_failed"))
 			return validate.NewUnauthorizedError()
 		}
 
+		span.SetAttributes(
+			attribute.String("refresh.outcome", "success"),
+			attribute.String("refresh.expires_at", newToken.ExpiresAt.Format(time.RFC3339)),
+		)
 		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, false, newToken.AttachmentToken)
 		return server.JSON(w, http.StatusOK, newToken)
 	}
@@ -295,19 +322,27 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 //	@Router		/v1/users/login/oidc [GET]
 func (ctrl *V1Controller) HandleOIDCLogin() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		// Forbidden if OIDC is not enabled
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleOIDCLogin")
+		defer span.End()
+
 		if !ctrl.config.OIDC.Enabled {
+			span.SetAttributes(attribute.String("oidc.outcome", "disabled"))
 			return validate.NewRequestError(fmt.Errorf("OIDC is not enabled"), http.StatusForbidden)
 		}
 
-		// Check if OIDC provider is available
 		if ctrl.oidcProvider == nil {
+			span.SetAttributes(attribute.String("oidc.outcome", "provider_unavailable"))
 			log.Error().Msg("OIDC provider not initialized")
 			return validate.NewRequestError(errors.New("OIDC provider not available"), http.StatusInternalServerError)
 		}
 
-		// Initiate OIDC flow
-		_, err := ctrl.oidcProvider.InitiateOIDCFlow(w, r)
+		_, err := ctrl.oidcProvider.InitiateOIDCFlow(w, r.WithContext(spanCtx))
+		if err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("oidc.outcome", "initiate_failed"))
+		} else {
+			span.SetAttributes(attribute.String("oidc.outcome", "initiated"))
+		}
 		return err
 	}
 }
@@ -322,26 +357,36 @@ func (ctrl *V1Controller) HandleOIDCLogin() errchain.HandlerFunc {
 //	@Router		/v1/users/login/oidc/callback [GET]
 func (ctrl *V1Controller) HandleOIDCCallback() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		// Forbidden if OIDC is not enabled
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleOIDCCallback",
+			attribute.Bool("oidc.has_code", r.URL.Query().Get("code") != ""),
+			attribute.Bool("oidc.has_state", r.URL.Query().Get("state") != ""),
+		)
+		defer span.End()
+
 		if !ctrl.config.OIDC.Enabled {
+			span.SetAttributes(attribute.String("oidc.outcome", "disabled"))
 			return validate.NewRequestError(fmt.Errorf("OIDC is not enabled"), http.StatusForbidden)
 		}
 
-		// Check if OIDC provider is available
 		if ctrl.oidcProvider == nil {
+			span.SetAttributes(attribute.String("oidc.outcome", "provider_unavailable"))
 			log.Error().Msg("OIDC provider not initialized")
 			return validate.NewRequestError(errors.New("OIDC provider not available"), http.StatusInternalServerError)
 		}
 
-		// Handle callback
-		newToken, err := ctrl.oidcProvider.HandleCallback(w, r)
+		newToken, err := ctrl.oidcProvider.HandleCallback(w, r.WithContext(spanCtx))
 		if err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("oidc.outcome", "callback_failed"))
 			log.Err(err).Msg("OIDC callback failed")
 			http.Redirect(w, r, "/?oidc_error=oidc_auth_failed", http.StatusFound)
 			return nil
 		}
 
-		// Set cookies and redirect to home
+		span.SetAttributes(
+			attribute.String("oidc.outcome", "success"),
+			attribute.String("session.expires_at", newToken.ExpiresAt.Format(time.RFC3339)),
+		)
 		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, true, newToken.AttachmentToken)
 		http.Redirect(w, r, "/home", http.StatusFound)
 		return nil

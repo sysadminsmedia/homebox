@@ -15,6 +15,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
+	"go.opentelemetry.io/otel/attribute"
 
 	"gocloud.dev/blob"
 	_ "gocloud.dev/blob/azureblob"
@@ -49,8 +50,15 @@ func sanitizeAttachmentName(name string) string {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityAttachmentCreate() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntityAttachmentCreate")
+		defer span.End()
+
+		_, parseSpan := startEntityCtrlSpan(spanCtx, "controller.V1.HandleEntityAttachmentCreate.parseForm")
 		err := r.ParseMultipartForm(ctrl.maxUploadSize << 20)
 		if err != nil {
+			recordCtrlSpanError(parseSpan, err)
+			parseSpan.End()
+			recordCtrlSpanError(span, err)
 			log.Err(err).Msg("failed to parse multipart form")
 			return validate.NewRequestError(errors.New("failed to parse multipart form"), http.StatusBadRequest)
 		}
@@ -64,6 +72,9 @@ func (ctrl *V1Controller) HandleEntityAttachmentCreate() errchain.HandlerFunc {
 				log.Debug().Msg("file for attachment is missing")
 				errs = errs.Append("file", "file is required")
 			default:
+				recordCtrlSpanError(parseSpan, err)
+				parseSpan.End()
+				recordCtrlSpanError(span, err)
 				log.Err(err).Msg("failed to get file from form")
 				return validate.NewRequestError(err, http.StatusInternalServerError)
 			}
@@ -74,8 +85,10 @@ func (ctrl *V1Controller) HandleEntityAttachmentCreate() errchain.HandlerFunc {
 			log.Debug().Msg("failed to get name from form")
 			errs = errs.Append("name", "name is required")
 		}
+		parseSpan.End()
 
 		if !errs.Nil() {
+			span.SetAttributes(attribute.String("response.status", "validation_error"))
 			return server.JSON(w, http.StatusUnprocessableEntity, errs)
 		}
 
@@ -83,7 +96,6 @@ func (ctrl *V1Controller) HandleEntityAttachmentCreate() errchain.HandlerFunc {
 
 		attachmentType := r.FormValue("type")
 		if attachmentType == "" {
-			// Attempt to auto-detect the type of the file
 			ext := filepath.Ext(attachmentName)
 
 			switch strings.ToLower(ext) {
@@ -102,10 +114,19 @@ func (ctrl *V1Controller) HandleEntityAttachmentCreate() errchain.HandlerFunc {
 
 		id, err := ctrl.routeID(r)
 		if err != nil {
+			recordCtrlSpanError(span, err)
 			return err
 		}
 
-		ctx := services.NewContext(r.Context())
+		span.SetAttributes(
+			attribute.String("entity.id", id.String()),
+			attribute.String("attachment.name", attachmentName),
+			attribute.String("attachment.type", attachmentType),
+			attribute.Bool("attachment.primary", primary),
+		)
+
+		ctx := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("group.id", ctx.GID.String()))
 
 		item, err := ctrl.svc.Entities.AttachmentAdd(
 			ctx,
@@ -116,6 +137,7 @@ func (ctrl *V1Controller) HandleEntityAttachmentCreate() errchain.HandlerFunc {
 			file,
 		)
 		if err != nil {
+			recordCtrlSpanError(span, err)
 			log.Err(err).Msg("failed to add attachment")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
@@ -166,35 +188,72 @@ func (ctrl *V1Controller) HandleEntityAttachmentUpdate() errchain.HandlerFunc {
 }
 
 func (ctrl *V1Controller) handleEntityAttachmentsHandler(w http.ResponseWriter, r *http.Request) error {
+	spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.handleEntityAttachmentsHandler",
+		attribute.String("http.method", r.Method))
+	defer span.End()
+
 	ID, err := ctrl.routeID(r)
 	if err != nil {
+		recordCtrlSpanError(span, err)
 		return err
 	}
 
 	attachmentID, err := ctrl.routeUUID(r, "attachment_id")
 	if err != nil {
+		recordCtrlSpanError(span, err)
 		return err
 	}
 
-	ctx := services.NewContext(r.Context())
+	span.SetAttributes(
+		attribute.String("entity.id", ID.String()),
+		attribute.String("attachment.id", attachmentID.String()),
+	)
+
+	ctx := services.NewContext(spanCtx)
+	span.SetAttributes(attribute.String("group.id", ctx.GID.String()))
+
 	switch r.Method {
 	case http.MethodGet:
-		doc, err := ctrl.svc.Entities.AttachmentPath(r.Context(), ctx.GID, attachmentID)
+		getCtx, getSpan := startEntityCtrlSpan(spanCtx, "controller.V1.handleEntityAttachmentsHandler.get")
+		defer getSpan.End()
+
+		doc, err := ctrl.svc.Entities.AttachmentPath(getCtx, ctx.GID, attachmentID)
 		if err != nil {
+			recordCtrlSpanError(getSpan, err)
+			recordCtrlSpanError(span, err)
 			log.Err(err).Msg("failed to get attachment path")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
+		getSpan.SetAttributes(
+			attribute.String("attachment.path", doc.Path),
+			attribute.String("attachment.mime_type", doc.MimeType),
+			attribute.String("attachment.title", doc.Title),
+		)
 
-		bucket, err := blob.OpenBucket(ctx, ctrl.repo.Attachments.GetConnString())
+		bucketCtx, bucketSpan := startEntityCtrlSpan(getCtx, "controller.V1.handleEntityAttachmentsHandler.openBucket")
+		bucket, err := blob.OpenBucket(bucketCtx, ctrl.repo.Attachments.GetConnString())
 		if err != nil {
+			recordCtrlSpanError(bucketSpan, err)
+			bucketSpan.End()
+			recordCtrlSpanError(getSpan, err)
+			recordCtrlSpanError(span, err)
 			log.Err(err).Msg("failed to open bucket")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
-		file, err := bucket.NewReader(ctx, ctrl.repo.Attachments.GetFullPath(doc.Path), nil)
+		bucketSpan.End()
+
+		readerCtx, readerSpan := startEntityCtrlSpan(getCtx, "controller.V1.handleEntityAttachmentsHandler.openReader")
+		file, err := bucket.NewReader(readerCtx, ctrl.repo.Attachments.GetFullPath(doc.Path), nil)
 		if err != nil {
+			recordCtrlSpanError(readerSpan, err)
+			readerSpan.End()
+			recordCtrlSpanError(getSpan, err)
+			recordCtrlSpanError(span, err)
 			log.Err(err).Msg("failed to open file")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
+		readerSpan.End()
+
 		defer func(file *blob.Reader) {
 			err := file.Close()
 			if err != nil {
@@ -208,7 +267,6 @@ func (ctrl *V1Controller) handleEntityAttachmentsHandler(w http.ResponseWriter, 
 			}
 		}(bucket)
 
-		// Set the Content-Disposition header for RFC6266 compliance
 		disposition := "attachment"
 		if isSafeInlineType(doc.MimeType) {
 			disposition = "inline"
@@ -218,34 +276,43 @@ func (ctrl *V1Controller) handleEntityAttachmentsHandler(w http.ResponseWriter, 
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Set("X-Frame-Options", "DENY")
 		w.Header().Set("X-Download-Options", "noopen")
-		// Set strict CSP for all attachments to prevent any script execution
-		// Even for "safe" types, we want to ensure no inline scripts can execute
 		w.Header().Set("Content-Security-Policy", "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; sandbox;")
+
+		_, serveSpan := startEntityCtrlSpan(getCtx, "controller.V1.handleEntityAttachmentsHandler.serveContent",
+			attribute.String("attachment.disposition", disposition))
 		http.ServeContent(w, r, doc.Title, doc.CreatedAt, file)
+		serveSpan.End()
 		return nil
 
-	// Delete Attachment Handler
 	case http.MethodDelete:
-		err = ctrl.svc.Entities.AttachmentDelete(r.Context(), ctx.GID, attachmentID)
+		err = ctrl.svc.Entities.AttachmentDelete(spanCtx, ctx.GID, attachmentID)
 		if err != nil {
+			recordCtrlSpanError(span, err)
 			log.Err(err).Msg("failed to delete attachment")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
 		return server.JSON(w, http.StatusNoContent, nil)
 
-	// Update Attachment Handler
 	case http.MethodPut:
 		var attachment repo.ItemAttachmentUpdate
 		err = server.Decode(r, &attachment)
 		if err != nil {
+			recordCtrlSpanError(span, err)
 			log.Err(err).Msg("failed to decode attachment")
 			return validate.NewRequestError(err, http.StatusBadRequest)
 		}
 
 		attachment.ID = attachmentID
+		span.SetAttributes(
+			attribute.String("attachment.type", attachment.Type),
+			attribute.String("attachment.title", attachment.Title),
+			attribute.Bool("attachment.primary", attachment.Primary),
+		)
+
 		val, err := ctrl.svc.Entities.AttachmentUpdate(ctx, ctx.GID, ID, &attachment)
 		if err != nil {
+			recordCtrlSpanError(span, err)
 			log.Err(err).Msg("failed to update attachment")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
