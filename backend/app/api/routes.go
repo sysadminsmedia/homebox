@@ -16,7 +16,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/app/api/handlers/debughandlers"
 	v1 "github.com/sysadminsmedia/homebox/backend/app/api/handlers/v1"
 	"github.com/sysadminsmedia/homebox/backend/app/api/providers"
-	_ "github.com/sysadminsmedia/homebox/backend/app/api/static/docs"
+	docs "github.com/sysadminsmedia/homebox/backend/app/api/static/docs"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 )
@@ -40,6 +40,20 @@ func (a *app) debugRouter() *http.ServeMux {
 // registerRoutes registers all the routes for the API
 func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllRepos) {
 	registerMimes()
+
+	// Serve doc.json dynamically so the Swagger UI "Base URL" reflects the
+	// actual host of the user's instance rather than a hardcoded value.
+	r.Get("/swagger/doc.json", func(w http.ResponseWriter, r *http.Request) {
+		host := r.Host
+		if fwdHost := r.Header.Get("X-Forwarded-Host"); fwdHost != "" {
+			host = fwdHost
+		}
+		spec := *docs.SwaggerInfo
+		spec.Host = host
+		doc := spec.ReadDoc()
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		_, _ = w.Write([]byte(doc))
+	})
 
 	r.Get("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("/swagger/doc.json"),

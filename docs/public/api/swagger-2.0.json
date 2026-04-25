@@ -13,7 +13,6 @@
         },
         "version": "1.0"
     },
-    "host": "demo.homebox.software",
     "basePath": "/api",
     "paths": {
         "/v1/actions/create-missing-thumbnails": {

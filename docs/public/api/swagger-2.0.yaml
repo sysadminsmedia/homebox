@@ -2036,7 +2036,6 @@ definitions:
       fields:
         type: string
     type: object
-host: demo.homebox.software
 info:
   contact:
     name: Homebox Team
