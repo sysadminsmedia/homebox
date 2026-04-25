@@ -64,12 +64,12 @@
       return;
     }
 
-    const payload: EntityTypeCreate = {
+    const payload = {
       name: createForm.name,
       icon: createForm.icon,
       isLocation: createForm.isLocation,
-      defaultTemplateId: createTemplate.value?.id || "",
-    };
+      ...(createTemplate.value?.id ? { defaultTemplateId: createTemplate.value.id } : {}),
+    } as EntityTypeCreate;
 
     const { error } = await api.entityTypes.create(payload);
     if (error) {
@@ -109,13 +109,13 @@
       return;
     }
 
-    const payload: EntityTypeUpdate = {
+    const payload = {
       id: updateForm.id,
       name: updateForm.name,
       icon: updateForm.icon,
       isLocation: updateForm.isLocation,
-      defaultTemplateId: updateTemplate.value?.id || "",
-    };
+      ...(updateTemplate.value?.id ? { defaultTemplateId: updateTemplate.value.id } : {}),
+    } as EntityTypeUpdate;
 
     const { error } = await api.entityTypes.update(updateForm.id, payload);
     if (error) {

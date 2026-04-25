@@ -24,7 +24,7 @@
     "@types/markdown-it": "^14.1.2",
     "@types/semver": "^7.7.1",
     "@vite-pwa/nuxt": "^1.1.1",
-    "@vue/runtime-core": "^3.5.32",
+    "@vue/runtime-core": "^3.5.33",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
@@ -40,7 +40,7 @@
     "unplugin-icons": "^22.5.0",
     "vite-plugin-eslint": "^1.8.1",
     "vitest": "^3.2.4",
-    "vue-i18n": "^11.3.2",
+    "vue-i18n": "^11.4.0",
     "vue-tsc": "3.0.6"
   },
   "dependencies": {
@@ -71,7 +71,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
-    "dompurify": "^3.4.0",
+    "dompurify": "^3.4.1",
     "fuzzysort": "^3.1.0",
     "h3": "^1.15.11",
     "http-proxy": "^1.18.1",
