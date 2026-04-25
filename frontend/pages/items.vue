@@ -203,10 +203,10 @@
   });
 
   watch(negateTags, (newV, oldV) => {
-    if (newV !== oldV) {
-      if (newV) {
-        tagsAnd.value = false;
-      }
+    if (newV && tagsAnd.value) {
+      // this triggers the watch on tagsAnd
+      tagsAnd.value = false;
+    } else if (newV !== oldV) {
       search();
     }
   });

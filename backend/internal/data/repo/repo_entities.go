@@ -480,16 +480,21 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 		if len(q.TagIDs) > 0 {
 			tagRepo := &TagRepository{r.db, r.bus}
 
+			// Fetch all descendants in a single batched, group-scoped BFS call.
+			descendantsMap, err := tagRepo.GetDescendantTagIDs(ctx, gid, q.TagIDs)
+			if err != nil {
+				log.Warn().Err(err).Msg("failed to get descendant tags, using only direct tags")
+				descendantsMap = make(map[uuid.UUID][]uuid.UUID, len(q.TagIDs))
+				for _, id := range q.TagIDs {
+					descendantsMap[id] = nil
+				}
+			}
+
 			// Build a per-tag predicate group: each selected tag matches itself OR any of its descendants.
 			// In AND mode these groups are ANDed together; in OR mode they are ORed.
 			perTagPredicates := make([]predicate.Entity, 0, len(q.TagIDs))
 			for _, tagID := range q.TagIDs {
-				descendants, err := tagRepo.GetDescendantTagIDs(ctx, []uuid.UUID{tagID})
-				if err != nil {
-					log.Warn().Err(err).Msg("failed to get descendant tags, using only direct tag")
-					descendants = nil
-				}
-				family := lo.Uniq(append([]uuid.UUID{tagID}, descendants...))
+				family := append([]uuid.UUID{tagID}, descendantsMap[tagID]...)
 				familyPredicates := lo.Map(family, func(l uuid.UUID, _ int) predicate.Entity {
 					return entity.HasTagWith(tag.ID(l))
 				})

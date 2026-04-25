@@ -160,53 +160,56 @@ func (r *TagRepository) GetAll(ctx context.Context, groupID uuid.UUID) ([]TagSum
 	)
 }
 
-// GetDescendantTagIDs retrieves all descendant tag IDs for the given parent tag IDs.
-// Returns all tags that are direct or indirect children of any of the provided tag IDs.
-// Uses recursive in-memory traversal since Ent doesn't support recursive CTEs directly.
-func (r *TagRepository) GetDescendantTagIDs(ctx context.Context, tagIDs []uuid.UUID) ([]uuid.UUID, error) {
+// GetDescendantTagIDs retrieves the descendants for each of the given tag IDs, scoped to a group.
+// Returns a map from each input tag ID to its descendant IDs (not including the tag itself).
+// All descendant lookups are filtered by gid to enforce group isolation.
+// Uses level-batched BFS: one DB query per depth level rather than one per node.
+func (r *TagRepository) GetDescendantTagIDs(ctx context.Context, gid uuid.UUID, tagIDs []uuid.UUID) (map[uuid.UUID][]uuid.UUID, error) {
+	result := make(map[uuid.UUID][]uuid.UUID, len(tagIDs))
 	if len(tagIDs) == 0 {
-		return []uuid.UUID{}, nil
+		return result, nil
 	}
 
-	// Start with the provided tag IDs
-	result := make(map[uuid.UUID]bool)
 	for _, id := range tagIDs {
-		result[id] = true
+		result[id] = nil
 	}
 
-	// Queue of parent IDs to process
-	queue := make([]uuid.UUID, len(tagIDs))
-	copy(queue, tagIDs)
+	// parentToRoot maps each node ID to the original selected tag it descended from.
+	parentToRoot := make(map[uuid.UUID]uuid.UUID, len(tagIDs))
+	frontier := make([]uuid.UUID, 0, len(tagIDs))
+	for _, id := range tagIDs {
+		parentToRoot[id] = id
+		frontier = append(frontier, id)
+	}
 
-	for len(queue) > 0 {
-		// Get next parent ID
-		parentID := queue[0]
-		queue = queue[1:]
-
-		// Get all direct children of this parent
+	for len(frontier) > 0 {
+		// Fetch all children of the current frontier in one query.
 		children, err := r.db.Tag.Query().
-			Where(tag.HasParentWith(tag.ID(parentID))).
+			Where(
+				tag.HasParentWith(tag.IDIn(frontier...)),
+				tag.HasGroupWith(group.ID(gid)),
+			).
+			WithParent().
 			All(ctx)
 		if err != nil {
 			return nil, err
 		}
 
-		// Add children to result and queue
+		nextFrontier := make([]uuid.UUID, 0, len(children))
 		for _, child := range children {
-			if !result[child.ID] {
-				result[child.ID] = true
-				queue = append(queue, child.ID)
+			if _, seen := parentToRoot[child.ID]; seen {
+				continue
 			}
+			parentID := child.Edges.Parent.ID
+			root := parentToRoot[parentID]
+			parentToRoot[child.ID] = root
+			result[root] = append(result[root], child.ID)
+			nextFrontier = append(nextFrontier, child.ID)
 		}
+		frontier = nextFrontier
 	}
 
-	// Convert map to slice
-	descendantIDs := make([]uuid.UUID, 0, len(result))
-	for id := range result {
-		descendantIDs = append(descendantIDs, id)
-	}
-
-	return descendantIDs, nil
+	return result, nil
 }
 
 // getSubtreeDepth calculates the maximum depth of the subtree rooted at the given tag ID.
