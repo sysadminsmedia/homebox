@@ -10,3 +10,70 @@ import Default from '@astrojs/starlight/components/Header.astro';
     <!-- Starlight will handle all the layout -->
   </Fragment>
 </Default>
+
+<script is:inline>
+  (() => {
+    const RAW_GITHUB_HOST = 'raw.githubusercontent.com';
+    const RAW_GITHUB_FALLBACK_ORIGIN = 'https://demo.homeboxsoftware.com';
+
+    const resolveOrigin = (hostname) => {
+      if (hostname === RAW_GITHUB_HOST) {
+        return RAW_GITHUB_FALLBACK_ORIGIN;
+      }
+
+      return window.location.origin;
+    };
+
+    const normalizeApiUrl = (value) => {
+      if (typeof value !== 'string' || value.length === 0) {
+        return value;
+      }
+
+      let parsed;
+      try {
+        parsed = new URL(value, window.location.origin);
+      } catch {
+        return value;
+      }
+
+      if (!parsed.pathname.startsWith('/api')) {
+        return value;
+      }
+
+      const targetOrigin = resolveOrigin(parsed.hostname);
+      return `${targetOrigin}${parsed.pathname}${parsed.search}${parsed.hash}`;
+    };
+
+    const updateElementValue = (el) => {
+      if (!(el instanceof HTMLInputElement || el instanceof HTMLOptionElement)) {
+        return;
+      }
+
+      const normalized = normalizeApiUrl(el.value);
+      if (normalized === el.value) {
+        return;
+      }
+
+      el.value = normalized;
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+
+    const applyApiUrlGuard = () => {
+      if (!window.location.pathname.includes('/api')) {
+        return;
+      }
+
+      for (const el of document.querySelectorAll('input, option')) {
+        updateElementValue(el);
+      }
+    };
+
+    const observer = new MutationObserver(applyApiUrlGuard);
+
+    window.addEventListener('load', () => {
+      applyApiUrlGuard();
+      observer.observe(document.body, { childList: true, subtree: true });
+    });
+  })();
+</script>

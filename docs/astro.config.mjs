@@ -60,8 +60,9 @@ export default defineConfig({
                 starlightOpenAPI([
                     {
                         base: 'en/api',
-                        schema:
-                            'https://raw.githubusercontent.com/sysadminsmedia/homebox/refs/heads/main/docs/public/api/openapi-3.0.json',
+                        // Load the schema from this docs site so relative server URLs
+                        // (e.g. /api) resolve against the current host.
+                        schema: './public/api/openapi-3.0.json',
                     },
                 ]),
                 starlightSidebarTopics(
