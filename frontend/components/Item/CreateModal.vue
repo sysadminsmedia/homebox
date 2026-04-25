@@ -291,7 +291,12 @@
   import BaseModal from "@/components/App/CreateModal.vue";
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
-  import type { EntityCreate, EntityTemplateOut, EntityTemplateSummary, EntityOut } from "~~/lib/api/types/data-contracts";
+  import type {
+    EntityCreate,
+    EntityTemplateOut,
+    EntityTemplateSummary,
+    EntityOut,
+  } from "~~/lib/api/types/data-contracts";
   import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
   import MdiBarcode from "~icons/mdi/barcode";
@@ -390,7 +395,11 @@
     if (et?.defaultTemplateId && et.defaultTemplate) {
       const { data, error } = await api.templates.get(et.defaultTemplateId);
       if (!error && data) {
-        selectedTemplate.value = { id: data.id, name: data.name, description: data.description } as EntityTemplateSummary;
+        selectedTemplate.value = {
+          id: data.id,
+          name: data.name,
+          description: data.description,
+        } as EntityTemplateSummary;
         templateData.value = data;
         form.quantity = data.defaultQuantity;
         if (data.defaultName) form.name = data.defaultName;
@@ -635,6 +644,11 @@
       return;
     }
 
+    if (form.quantity < 0) {
+      toast.error(t("items.toast.quantity_cannot_negative"));
+      return;
+    }
+
     loading.value = true;
 
     if (shift?.value) close = false;
@@ -657,7 +671,7 @@
     } else {
       // Normal item creation without template
       const out: EntityCreate = {
-        parentId: form.parentId || form.location.id as string,
+        parentId: form.parentId || (form.location.id as string),
         name: form.name,
         quantity: form.quantity,
         description: form.description,
