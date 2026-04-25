@@ -65,7 +65,7 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 	case "":
 		log.Debug().Msg("creating new group")
 		creatingGroup = true
-		group, err = svc.repos.Groups.GroupCreate(ctx, fmt.Sprintf("%ss' Home", data.Name), uuid.Nil)
+		group, err = svc.repos.Groups.GroupCreate(ctx, fmt.Sprintf("%s's Home", data.Name), uuid.Nil)
 		if err != nil {
 			log.Err(err).Msg("Failed to create group")
 			return repo.UserOut{}, err
