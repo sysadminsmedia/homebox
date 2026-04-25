@@ -62,7 +62,7 @@ export default defineConfig({
                         base: 'en/api',
                         // Load the schema from this docs site so relative server URLs
                         // (e.g. /api) resolve against the current host.
-                        schema: './public/api/openapi-3.0.json',
+                        schema: '/api/openapi-3.0.json',
                     },
                 ]),
                 starlightSidebarTopics(
