@@ -1,8 +1,4 @@
-<script setup lang="ts">
-  definePageMeta({
-    middleware: ["auth"],
-  });
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <BaseContainer>
@@ -12,4 +8,7 @@
 
 <script lang="ts">
   import BaseContainer from "@/components/Base/Container.vue";
+  definePageMeta({
+    middleware: ["auth"],
+  });
 </script>

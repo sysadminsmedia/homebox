@@ -94,6 +94,11 @@
       return;
     }
 
+    if (form.quantity < 0) {
+      toast.error(t("items.toast.quantity_cannot_negative"));
+      return;
+    }
+
     saving.value = true;
 
     let purchasePrice = 0;

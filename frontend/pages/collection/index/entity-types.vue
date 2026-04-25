@@ -16,13 +16,7 @@
   import { Badge } from "@/components/ui/badge";
   import { Card } from "@/components/ui/card";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-  import {
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-  } from "@/components/ui/dialog";
+  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
   import FormTextField from "~/components/Form/TextField.vue";
@@ -98,7 +92,11 @@
     updateForm.icon = et.icon;
     updateForm.isLocation = et.isLocation;
     updateTemplate.value = et.defaultTemplate
-      ? { id: et.defaultTemplate.id, name: et.defaultTemplate.name, description: et.defaultTemplate.description } as EntityTemplateSummary
+      ? ({
+          id: et.defaultTemplate.id,
+          name: et.defaultTemplate.name,
+          description: et.defaultTemplate.description,
+        } as EntityTemplateSummary)
       : null;
     openDialog(DialogID.UpdateEntityType);
   }
@@ -154,13 +152,7 @@
           <DialogTitle>Create Entity Type</DialogTitle>
         </DialogHeader>
         <form class="flex flex-col gap-3" @submit.prevent="create">
-          <FormTextField
-            v-model="createForm.name"
-            :autofocus="true"
-            label="Name"
-            :max-length="255"
-            :min-length="1"
-          />
+          <FormTextField v-model="createForm.name" :autofocus="true" :label="t('common.name')" :max-length="255" :min-length="1" />
           <FormCheckbox v-model="createForm.isLocation" label="Is a container / location type" />
           <TemplateSelector v-model="createTemplate" />
 
@@ -178,13 +170,7 @@
           <DialogTitle>Update Entity Type</DialogTitle>
         </DialogHeader>
         <form class="flex flex-col gap-3" @submit.prevent="update">
-          <FormTextField
-            v-model="updateForm.name"
-            :autofocus="true"
-            label="Name"
-            :max-length="255"
-            :min-length="1"
-          />
+          <FormTextField v-model="updateForm.name" :autofocus="true" label="Name" :max-length="255" :min-length="1" />
           <FormCheckbox v-model="updateForm.isLocation" label="Is a container / location type" />
           <TemplateSelector v-model="updateTemplate" />
 
@@ -196,7 +182,7 @@
     </Dialog>
 
     <!-- Page Content -->
-    <div class="flex items-center justify-between mb-4">
+    <div class="mb-4 flex items-center justify-between">
       <h3 class="text-lg font-medium">Entity Types</h3>
       <Button size="sm" @click="openDialog(DialogID.CreateEntityType)">
         <MdiPlus class="mr-1 size-4" />
@@ -207,7 +193,9 @@
     <div v-if="entityTypes && entityTypes.length > 0" class="space-y-2">
       <Card v-for="et in entityTypes" :key="et.id" class="p-4">
         <div class="flex items-center gap-3">
-          <div class="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
+          <div
+            class="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground"
+          >
             <MdiMapMarkerOutline v-if="et.isLocation" class="size-5" />
             <MdiPackageVariantClosed v-else class="size-5" />
           </div>
