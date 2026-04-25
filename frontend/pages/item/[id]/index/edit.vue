@@ -64,7 +64,7 @@
       return;
     }
 
-    if (data.parent) {
+    if (data.parent && data.parent.entityType && !data.parent.entityType.isLocation) {
       parent.value = data.parent;
     }
 

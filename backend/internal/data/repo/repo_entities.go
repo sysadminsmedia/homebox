@@ -430,7 +430,9 @@ func (r *EntityRepository) getOneTx(ctx context.Context, tx *ent.Tx, where ...pr
 	out, err := mapEntityOutErr(q.
 		WithFields().
 		WithTag().
-		WithParent().
+		WithParent(func(eq *ent.EntityQuery) {
+			eq.WithEntityType()
+		}).
 		WithEntityType().
 		WithGroup().
 		WithChildren(func(eq *ent.EntityQuery) {
