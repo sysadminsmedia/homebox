@@ -115,7 +115,9 @@
       assetId: item.value.assetId,
       purchasePrice,
       soldPrice,
-      purchaseTime: item.value.purchaseTime as Date,
+      // Date-only fields stay as YYYY-MM-DD strings — see types.Date on the
+      // backend. The form/picker hold strings; sending the spread above is
+      // sufficient.
       syncChildEntityLocations: item.value.syncChildEntityLocations,
     };
 
@@ -242,7 +244,7 @@
     {
       type: "date",
       label: "items.purchase_date",
-      ref: "purchaseTime",
+      ref: "purchaseDate",
     },
   ];
 
@@ -280,7 +282,7 @@
     {
       type: "date",
       label: "items.sold_at",
-      ref: "soldTime",
+      ref: "soldDate",
     },
   ];
 
@@ -636,6 +638,7 @@
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
                   :label="$t(field.label)"
+                  date-only
                   inline
                 />
                 <FormCheckbox
@@ -798,6 +801,7 @@
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
                   :label="$t(field.label)"
+                  date-only
                   inline
                 />
                 <FormCheckbox
@@ -846,6 +850,7 @@
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
                   :label="$t(field.label)"
+                  date-only
                   inline
                 />
                 <FormCheckbox
@@ -894,6 +899,7 @@
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
                   :label="$t(field.label)"
+                  date-only
                   inline
                 />
                 <FormCheckbox

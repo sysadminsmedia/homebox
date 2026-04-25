@@ -302,7 +302,7 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 
 			PurchasePrice: row.PurchasePrice,
 			PurchaseFrom:  row.PurchaseFrom,
-			PurchaseTime:  row.PurchaseTime,
+			PurchaseDate:  row.PurchaseDate,
 
 			Manufacturer: row.Manufacturer,
 			ModelNumber:  row.ModelNumber,
@@ -313,7 +313,7 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 			WarrantyDetails:  row.WarrantyDetails,
 
 			SoldTo:    row.SoldTo,
-			SoldTime:  row.SoldTime,
+			SoldDate:  row.SoldDate,
 			SoldPrice: row.SoldPrice,
 			SoldNotes: row.SoldNotes,
 

@@ -110,12 +110,12 @@ type (
 		WarrantyDetails  string     `json:"warrantyDetails"`
 
 		// Purchase
-		PurchaseTime  types.Date `json:"purchaseTime"`
+		PurchaseDate  types.Date `json:"purchaseDate"`
 		PurchaseFrom  string     `json:"purchaseFrom"  validate:"max=255"`
 		PurchasePrice float64    `json:"purchasePrice" extensions:"x-nullable,x-omitempty"`
 
 		// Sold
-		SoldTime  types.Date `json:"soldTime"`
+		SoldDate  types.Date `json:"soldDate"`
 		SoldTo    string     `json:"soldTo"    validate:"max=255"`
 		SoldPrice float64    `json:"soldPrice" extensions:"x-nullable,x-omitempty"`
 		SoldNotes string     `json:"soldNotes"`
@@ -157,7 +157,7 @@ type (
 		ThumbnailId *uuid.UUID `json:"thumbnailId,omitempty" extensions:"x-nullable,x-omitempty"`
 
 		// Sale details
-		SoldTime time.Time `json:"soldTime"`
+		SoldDate time.Time `json:"soldDate"`
 
 		// Container-specific (populated when querying locations)
 		ItemCount float64 `json:"itemCount,omitempty"`
@@ -180,11 +180,11 @@ type (
 		WarrantyDetails  string     `json:"warrantyDetails"`
 
 		// Purchase
-		PurchaseTime types.Date `json:"purchaseTime"`
+		PurchaseDate types.Date `json:"purchaseDate"`
 		PurchaseFrom string     `json:"purchaseFrom"`
 
 		// Sold
-		SoldTime  types.Date `json:"soldTime"`
+		SoldDate  types.Date `json:"soldDate"`
 		SoldTo    string     `json:"soldTo"`
 		SoldPrice float64    `json:"soldPrice"`
 		SoldNotes string     `json:"soldNotes"`
@@ -322,11 +322,11 @@ func mapEntityOut(e *ent.Entity) EntityOut {
 		Manufacturer: e.Manufacturer,
 
 		// Purchase
-		PurchaseTime: types.DateFromTime(e.PurchaseTime),
+		PurchaseDate: types.DateFromTime(e.PurchaseDate),
 		PurchaseFrom: e.PurchaseFrom,
 
 		// Sold
-		SoldTime:  types.DateFromTime(e.SoldTime),
+		SoldDate:  types.DateFromTime(e.SoldDate),
 		SoldTo:    e.SoldTo,
 		SoldPrice: e.SoldPrice,
 		SoldNotes: e.SoldNotes,
@@ -1055,10 +1055,10 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		SetModelNumber(data.ModelNumber).
 		SetManufacturer(data.Manufacturer).
 		SetArchived(data.Archived).
-		SetPurchaseTime(data.PurchaseTime.Time()).
+		SetPurchaseDate(data.PurchaseDate.Time()).
 		SetPurchaseFrom(data.PurchaseFrom).
 		SetPurchasePrice(data.PurchasePrice).
-		SetSoldTime(data.SoldTime.Time()).
+		SetSoldDate(data.SoldDate.Time()).
 		SetSoldTo(data.SoldTo).
 		SetSoldPrice(data.SoldPrice).
 		SetSoldNotes(data.SoldNotes).
@@ -1374,9 +1374,9 @@ func (r *EntityRepository) ZeroOutTimeFields(ctx context.Context, gid uuid.UUID)
 	q := r.db.Entity.Query().Where(
 		entity.HasGroupWith(group.ID(gid)),
 		entity.Or(
-			entity.PurchaseTimeNotNil(),
+			entity.PurchaseDateNotNil(),
 			entity.PurchaseFromLT("0002-01-01"),
-			entity.SoldTimeNotNil(),
+			entity.SoldDateNotNil(),
 			entity.SoldToLT("0002-01-01"),
 			entity.WarrantyExpiresNotNil(),
 			entity.WarrantyDetailsLT("0002-01-01"),
@@ -1397,26 +1397,26 @@ func (r *EntityRepository) ZeroOutTimeFields(ctx context.Context, gid uuid.UUID)
 	for _, e := range entities {
 		updateQ := r.db.Entity.Update().Where(entity.ID(e.ID))
 
-		if !e.PurchaseTime.IsZero() {
+		if !e.PurchaseDate.IsZero() {
 			switch {
-			case e.PurchaseTime.Year() < 100:
-				updateQ.ClearPurchaseTime()
+			case e.PurchaseDate.Year() < 100:
+				updateQ.ClearPurchaseDate()
 			default:
-				updateQ.SetPurchaseTime(toDateOnly(e.PurchaseTime))
+				updateQ.SetPurchaseDate(toDateOnly(e.PurchaseDate))
 			}
 		} else {
-			updateQ.ClearPurchaseTime()
+			updateQ.ClearPurchaseDate()
 		}
 
-		if !e.SoldTime.IsZero() {
+		if !e.SoldDate.IsZero() {
 			switch {
-			case e.SoldTime.Year() < 100:
-				updateQ.ClearSoldTime()
+			case e.SoldDate.Year() < 100:
+				updateQ.ClearSoldDate()
 			default:
-				updateQ.SetSoldTime(toDateOnly(e.SoldTime))
+				updateQ.SetSoldDate(toDateOnly(e.SoldDate))
 			}
 		} else {
-			updateQ.ClearSoldTime()
+			updateQ.ClearSoldDate()
 		}
 
 		if !e.WarrantyExpires.IsZero() {
@@ -1532,10 +1532,10 @@ func (r *EntityRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opt
 		SetLifetimeWarranty(originalEntity.LifetimeWarranty).
 		SetWarrantyExpires(originalEntity.WarrantyExpires.Time()).
 		SetWarrantyDetails(originalEntity.WarrantyDetails).
-		SetPurchaseTime(originalEntity.PurchaseTime.Time()).
+		SetPurchaseDate(originalEntity.PurchaseDate.Time()).
 		SetPurchaseFrom(originalEntity.PurchaseFrom).
 		SetPurchasePrice(originalEntity.PurchasePrice).
-		SetSoldTime(originalEntity.SoldTime.Time()).
+		SetSoldDate(originalEntity.SoldDate.Time()).
 		SetSoldTo(originalEntity.SoldTo).
 		SetSoldPrice(originalEntity.SoldPrice).
 		SetSoldNotes(originalEntity.SoldNotes).

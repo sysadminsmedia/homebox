@@ -170,22 +170,22 @@ export interface EntEntity {
   name: string;
   /** Notes holds the value of the "notes" field. */
   notes: string;
+  /** PurchaseDate holds the value of the "purchase_date" field. */
+  purchase_date: Date | string;
   /** PurchaseFrom holds the value of the "purchase_from" field. */
   purchase_from: string;
   /** PurchasePrice holds the value of the "purchase_price" field. */
   purchase_price: number;
-  /** PurchaseTime holds the value of the "purchase_time" field. */
-  purchase_time: string;
   /** Quantity holds the value of the "quantity" field. */
   quantity: number;
   /** SerialNumber holds the value of the "serial_number" field. */
   serial_number: string;
+  /** SoldDate holds the value of the "sold_date" field. */
+  sold_date: Date | string;
   /** SoldNotes holds the value of the "sold_notes" field. */
   sold_notes: string;
   /** SoldPrice holds the value of the "sold_price" field. */
   sold_price: number;
-  /** SoldTime holds the value of the "sold_time" field. */
-  sold_time: string;
   /** SoldTo holds the value of the "sold_to" field. */
   sold_to: string;
   /** SyncChildEntityLocations holds the value of the "sync_child_entity_locations" field. */
@@ -640,16 +640,16 @@ export interface EntityOut {
   notes: string;
   /** Edges */
   parent?: EntitySummary | null;
+  /** Purchase */
+  purchaseDate: Date | string;
   purchaseFrom: string;
   purchasePrice: number;
-  /** Purchase */
-  purchaseTime: Date | string;
   quantity: number;
   serialNumber: string;
+  /** Sold */
+  soldDate: Date | string;
   soldNotes: string;
   soldPrice: number;
-  /** Sold */
-  soldTime: Date | string;
   soldTo: string;
   syncChildEntityLocations: boolean;
   tags: TagSummary[];
@@ -692,7 +692,7 @@ export interface EntitySummary {
   purchasePrice: number;
   quantity: number;
   /** Sale details */
-  soldTime: Date | string;
+  soldDate: Date | string;
   tags: TagSummary[];
   thumbnailId?: string | null;
   updatedAt: Date | string;
@@ -852,18 +852,18 @@ export interface EntityUpdate {
   /** Extras */
   notes: string;
   parentId?: string | null;
+  /** Purchase */
+  purchaseDate: Date | string;
   /** @maxLength 255 */
   purchaseFrom: string;
   purchasePrice?: number | null;
-  /** Purchase */
-  purchaseTime: Date | string;
   quantity: number;
   /** Identifications */
   serialNumber: string;
+  /** Sold */
+  soldDate: Date | string;
   soldNotes: string;
   soldPrice?: number | null;
-  /** Sold */
-  soldTime: Date | string;
   /** @maxLength 255 */
   soldTo: string;
   syncChildEntityLocations: boolean;

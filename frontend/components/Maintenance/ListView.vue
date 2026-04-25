@@ -22,6 +22,7 @@
   import Markdown from "~/components/global/Markdown.vue";
   import { toast } from "@/components/ui/sonner";
   import { useDialog } from "@/components/ui/dialog-provider";
+  import { toDateOnlyString } from "~/lib/datelib/dateOnly";
   import { DialogID } from "../ui/dialog-provider/utils";
 
   const maintenanceFilterStatus = ref(MaintenanceFilterStatus.MaintenanceFilterStatusScheduled);
@@ -104,8 +105,10 @@
   async function completeEntry(maintenanceEntry: MaintenanceEntry) {
     const { error } = await api.maintenance.update(maintenanceEntry.id, {
       name: maintenanceEntry.name,
-      completedDate: new Date(Date.now()),
-      scheduledDate: maintenanceEntry.scheduledDate ?? "null",
+      // Local YYYY-MM-DD — using a Date object would JSON-stringify to UTC and
+      // shift the day for users east of UTC.
+      completedDate: toDateOnlyString(new Date()),
+      scheduledDate: (maintenanceEntry.scheduledDate as string) ?? "",
       description: maintenanceEntry.description,
       cost: maintenanceEntry.cost,
     });

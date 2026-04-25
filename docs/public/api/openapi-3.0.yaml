@@ -1963,20 +1963,23 @@ components:
         notes:
           description: Notes holds the value of the "notes" field.
           type: string
+        purchase_date:
+          description: PurchaseDate holds the value of the "purchase_date" field.
+          type: string
         purchase_from:
           description: PurchaseFrom holds the value of the "purchase_from" field.
           type: string
         purchase_price:
           description: PurchasePrice holds the value of the "purchase_price" field.
           type: number
-        purchase_time:
-          description: PurchaseTime holds the value of the "purchase_time" field.
-          type: string
         quantity:
           description: Quantity holds the value of the "quantity" field.
           type: number
         serial_number:
           description: SerialNumber holds the value of the "serial_number" field.
+          type: string
+        sold_date:
+          description: SoldDate holds the value of the "sold_date" field.
           type: string
         sold_notes:
           description: SoldNotes holds the value of the "sold_notes" field.
@@ -1984,9 +1987,6 @@ components:
         sold_price:
           description: SoldPrice holds the value of the "sold_price" field.
           type: number
-        sold_time:
-          description: SoldTime holds the value of the "sold_time" field.
-          type: string
         sold_to:
           description: SoldTo holds the value of the "sold_to" field.
           type: string
@@ -2738,24 +2738,24 @@ components:
             - $ref: "#/components/schemas/repo.EntitySummary"
           x-omitempty: true
           nullable: true
+        purchaseDate:
+          description: Purchase
+          type: string
         purchaseFrom:
           type: string
         purchasePrice:
           type: number
-        purchaseTime:
-          description: Purchase
-          type: string
         quantity:
           type: number
         serialNumber:
+          type: string
+        soldDate:
+          description: Sold
           type: string
         soldNotes:
           type: string
         soldPrice:
           type: number
-        soldTime:
-          description: Sold
-          type: string
         soldTo:
           type: string
         syncChildEntityLocations:
@@ -2856,7 +2856,7 @@ components:
           type: number
         quantity:
           type: number
-        soldTime:
+        soldDate:
           description: Sale details
           type: string
         tags:
@@ -3149,6 +3149,9 @@ components:
           type: string
           x-omitempty: true
           nullable: true
+        purchaseDate:
+          description: Purchase
+          type: string
         purchaseFrom:
           type: string
           maxLength: 255
@@ -3156,13 +3159,13 @@ components:
           type: number
           x-omitempty: true
           nullable: true
-        purchaseTime:
-          description: Purchase
-          type: string
         quantity:
           type: number
         serialNumber:
           description: Identifications
+          type: string
+        soldDate:
+          description: Sold
           type: string
         soldNotes:
           type: string
@@ -3170,9 +3173,6 @@ components:
           type: number
           x-omitempty: true
           nullable: true
-        soldTime:
-          description: Sold
-          type: string
         soldTo:
           type: string
           maxLength: 255

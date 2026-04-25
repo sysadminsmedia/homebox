@@ -3074,6 +3074,10 @@ const docTemplate = `{
                     "description": "Notes holds the value of the \"notes\" field.",
                     "type": "string"
                 },
+                "purchase_date": {
+                    "description": "PurchaseDate holds the value of the \"purchase_date\" field.",
+                    "type": "string"
+                },
                 "purchase_from": {
                     "description": "PurchaseFrom holds the value of the \"purchase_from\" field.",
                     "type": "string"
@@ -3081,10 +3085,6 @@ const docTemplate = `{
                 "purchase_price": {
                     "description": "PurchasePrice holds the value of the \"purchase_price\" field.",
                     "type": "number"
-                },
-                "purchase_time": {
-                    "description": "PurchaseTime holds the value of the \"purchase_time\" field.",
-                    "type": "string"
                 },
                 "quantity": {
                     "description": "Quantity holds the value of the \"quantity\" field.",
@@ -3094,6 +3094,10 @@ const docTemplate = `{
                     "description": "SerialNumber holds the value of the \"serial_number\" field.",
                     "type": "string"
                 },
+                "sold_date": {
+                    "description": "SoldDate holds the value of the \"sold_date\" field.",
+                    "type": "string"
+                },
                 "sold_notes": {
                     "description": "SoldNotes holds the value of the \"sold_notes\" field.",
                     "type": "string"
@@ -3101,10 +3105,6 @@ const docTemplate = `{
                 "sold_price": {
                     "description": "SoldPrice holds the value of the \"sold_price\" field.",
                     "type": "number"
-                },
-                "sold_time": {
-                    "description": "SoldTime holds the value of the \"sold_time\" field.",
-                    "type": "string"
                 },
                 "sold_to": {
                     "description": "SoldTo holds the value of the \"sold_to\" field.",
@@ -4182,15 +4182,15 @@ const docTemplate = `{
                     "x-nullable": true,
                     "x-omitempty": true
                 },
+                "purchaseDate": {
+                    "description": "Purchase",
+                    "type": "string"
+                },
                 "purchaseFrom": {
                     "type": "string"
                 },
                 "purchasePrice": {
                     "type": "number"
-                },
-                "purchaseTime": {
-                    "description": "Purchase",
-                    "type": "string"
                 },
                 "quantity": {
                     "type": "number"
@@ -4198,15 +4198,15 @@ const docTemplate = `{
                 "serialNumber": {
                     "type": "string"
                 },
+                "soldDate": {
+                    "description": "Sold",
+                    "type": "string"
+                },
                 "soldNotes": {
                     "type": "string"
                 },
                 "soldPrice": {
                     "type": "number"
-                },
-                "soldTime": {
-                    "description": "Sold",
-                    "type": "string"
                 },
                 "soldTo": {
                     "type": "string"
@@ -4354,7 +4354,7 @@ const docTemplate = `{
                 "quantity": {
                     "type": "number"
                 },
-                "soldTime": {
+                "soldDate": {
                     "description": "Sale details",
                     "type": "string"
                 },
@@ -4772,6 +4772,10 @@ const docTemplate = `{
                     "x-nullable": true,
                     "x-omitempty": true
                 },
+                "purchaseDate": {
+                    "description": "Purchase",
+                    "type": "string"
+                },
                 "purchaseFrom": {
                     "type": "string",
                     "maxLength": 255
@@ -4781,15 +4785,15 @@ const docTemplate = `{
                     "x-nullable": true,
                     "x-omitempty": true
                 },
-                "purchaseTime": {
-                    "description": "Purchase",
-                    "type": "string"
-                },
                 "quantity": {
                     "type": "number"
                 },
                 "serialNumber": {
                     "description": "Identifications",
+                    "type": "string"
+                },
+                "soldDate": {
+                    "description": "Sold",
                     "type": "string"
                 },
                 "soldNotes": {
@@ -4799,10 +4803,6 @@ const docTemplate = `{
                     "type": "number",
                     "x-nullable": true,
                     "x-omitempty": true
-                },
-                "soldTime": {
-                    "description": "Sold",
-                    "type": "string"
                 },
                 "soldTo": {
                     "type": "string",

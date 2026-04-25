@@ -1,5 +1,4 @@
 import { BaseAPI, route } from "../base";
-import { parseDate } from "../base/base-api";
 import type {
   EntityCreate,
   EntityListResult,
@@ -122,15 +121,7 @@ export class ItemsApi extends BaseAPI {
   }
 
   async get(id: string) {
-    const payload = await this.http.get<EntityOut>({ url: route(`/entities/${id}`) });
-
-    if (!payload.data) {
-      return payload;
-    }
-
-    // Parse Date Types
-    payload.data = parseDate(payload.data, ["purchaseTime", "soldTime", "warrantyExpires"]);
-    return payload;
+    return this.http.get<EntityOut>({ url: route(`/entities/${id}`) });
   }
 
   delete(id: string) {
@@ -138,30 +129,17 @@ export class ItemsApi extends BaseAPI {
   }
 
   async update(id: string, item: EntityUpdate) {
-    const payload = await this.http.put<EntityCreate, EntityOut>({
+    return this.http.put<EntityCreate, EntityOut>({
       url: route(`/entities/${id}`),
       body: this.dropFields(item),
     });
-    if (!payload.data) {
-      return payload;
-    }
-
-    payload.data = parseDate(payload.data, ["purchaseTime", "soldTime", "warrantyExpires"]);
-    return payload;
   }
 
   async patch(id: string, item: EntityPatch) {
-    const resp = await this.http.patch<EntityPatch, EntityOut>({
+    return this.http.patch<EntityPatch, EntityOut>({
       url: route(`/entities/${id}`),
       body: this.dropFields(item),
     });
-
-    if (!resp.data) {
-      return resp;
-    }
-
-    resp.data = parseDate(resp.data, ["purchaseTime", "soldTime", "warrantyExpires"]);
-    return resp;
   }
 
   async duplicate(
@@ -208,7 +186,9 @@ export class ItemsApi extends BaseAPI {
   // =========================================================================
 
   async getLocations(q: LocationsQuery = { filterChildren: false }) {
-    const resp = await this.http.get<{ items: EntitySummary[] }>({ url: route("/entities", { ...q, isLocation: true }) });
+    const resp = await this.http.get<{ items: EntitySummary[] }>({
+      url: route("/entities", { ...q, isLocation: true }),
+    });
     // Unwrap paginated response to flat array for backward compat
     return {
       ...resp,

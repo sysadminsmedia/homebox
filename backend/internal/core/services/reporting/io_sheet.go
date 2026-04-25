@@ -251,7 +251,7 @@ func (s *IOSheet) ReadItems(ctx context.Context, entities []repo.EntityOut, gid 
 
 			PurchasePrice: item.PurchasePrice,
 			PurchaseFrom:  item.PurchaseFrom,
-			PurchaseTime:  item.PurchaseTime,
+			PurchaseDate:  item.PurchaseDate,
 
 			Manufacturer: item.Manufacturer,
 			ModelNumber:  item.ModelNumber,
@@ -262,7 +262,7 @@ func (s *IOSheet) ReadItems(ctx context.Context, entities []repo.EntityOut, gid 
 			WarrantyDetails:  item.WarrantyDetails,
 
 			SoldTo:    item.SoldTo,
-			SoldTime:  item.SoldTime,
+			SoldDate:  item.SoldDate,
 			SoldPrice: item.SoldPrice,
 			SoldNotes: item.SoldNotes,
 

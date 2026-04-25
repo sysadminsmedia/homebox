@@ -9,8 +9,8 @@
 
       <form class="flex flex-col gap-2" @submit.prevent="dispatchFormSubmit">
         <FormTextField v-model="entry.name" autofocus :label="$t('maintenance.modal.entry_name')" />
-        <DatePicker v-model="entry.completedDate" :label="$t('maintenance.modal.completed_date')" />
-        <DatePicker v-model="entry.scheduledDate" :label="$t('maintenance.modal.scheduled_date')" />
+        <DatePicker v-model="entry.completedDate" date-only :label="$t('maintenance.modal.completed_date')" />
+        <DatePicker v-model="entry.scheduledDate" date-only :label="$t('maintenance.modal.scheduled_date')" />
         <FormTextArea v-model="entry.description" :label="$t('maintenance.modal.notes')" />
         <FormTextField v-model="entry.cost" autofocus :label="$t('maintenance.modal.cost')" />
 
@@ -45,8 +45,8 @@
   const entry = reactive({
     id: null as string | null,
     name: "",
-    completedDate: null as Date | null,
-    scheduledDate: null as Date | null,
+    completedDate: "",
+    scheduledDate: "",
     description: "",
     cost: "",
     itemIds: null as string[] | null,
@@ -70,8 +70,8 @@
       entry.itemIds.map(async itemId => {
         const { error } = await api.items.maintenance.create(itemId, {
           name: entry.name,
-          completedDate: entry.completedDate ?? "",
-          scheduledDate: entry.scheduledDate ?? "",
+          completedDate: entry.completedDate,
+          scheduledDate: entry.scheduledDate,
           description: entry.description,
           cost: parseFloat(entry.cost) ? entry.cost : "0",
         });
@@ -93,10 +93,10 @@
 
     const { error } = await api.maintenance.update(entry.id, {
       name: entry.name,
-      completedDate: entry.completedDate ?? "null",
-      scheduledDate: entry.scheduledDate ?? "null",
+      completedDate: entry.completedDate,
+      scheduledDate: entry.scheduledDate,
       description: entry.description,
-      cost: entry.cost,
+      cost: parseFloat(entry.cost) ? entry.cost : "0",
     });
 
     if (error) {
@@ -113,8 +113,8 @@
         case "create":
           entry.id = null;
           entry.name = "";
-          entry.completedDate = null;
-          entry.scheduledDate = null;
+          entry.completedDate = "";
+          entry.scheduledDate = "";
           entry.description = "";
           entry.cost = "";
           entry.itemIds = typeof params.itemId === "string" ? [params.itemId] : params.itemId;
@@ -122,8 +122,10 @@
         case "update":
           entry.id = params.maintenanceEntry.id;
           entry.name = params.maintenanceEntry.name;
-          entry.completedDate = new Date(params.maintenanceEntry.completedDate);
-          entry.scheduledDate = new Date(params.maintenanceEntry.scheduledDate);
+          // Backend already returns YYYY-MM-DD via types.Date — keep as string
+          // so JSON.stringify never converts to a UTC instant.
+          entry.completedDate = (params.maintenanceEntry.completedDate as string) ?? "";
+          entry.scheduledDate = (params.maintenanceEntry.scheduledDate as string) ?? "";
           entry.description = params.maintenanceEntry.description;
           entry.cost = params.maintenanceEntry.cost;
           entry.itemIds = null;
@@ -131,8 +133,8 @@
         case "duplicate":
           entry.id = null;
           entry.name = params.maintenanceEntry.name;
-          entry.completedDate = null;
-          entry.scheduledDate = null;
+          entry.completedDate = "";
+          entry.scheduledDate = "";
           entry.description = params.maintenanceEntry.description;
           entry.cost = params.maintenanceEntry.cost;
           entry.itemIds = [params.itemId];
