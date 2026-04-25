@@ -1756,8 +1756,7 @@ paths:
                         type: object
                         additionalProperties: true
 servers:
-  - url: https://demo.homebox.software/api
-  - url: http://demo.homebox.software/api
+  - url: /api
 components:
   securitySchemes:
     Bearer:
