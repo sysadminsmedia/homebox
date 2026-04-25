@@ -63,7 +63,7 @@ function importFileGenerator(entries: number): ImportObj[] {
       [`HB.notes`]: "",
       [`HB.purchase_from`]: faker.person.fullName(),
       [`HB.purchase_price`]: faker.number.int(100),
-      [`HB.purchase_date`]: faker.date.past().toDateString(),
+      [`HB.purchase_date`]: formatDate(faker.date.past()),
       [`HB.lifetime_warranty`]: half > i,
       [`HB.warranty_details`]: "",
       [`HB.sold_to`]: faker.person.fullName(),

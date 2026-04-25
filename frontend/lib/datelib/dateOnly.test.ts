@@ -60,6 +60,27 @@ describe("parseDateOnly", () => {
     expect(parseDateOnly("2026-04-17T22:00:00Z")).toBeNull();
     expect(parseDateOnly("not a date")).toBeNull();
   });
+
+  test("returns null for impossible calendar dates (no JS rollover)", () => {
+    // Day overflow — JS would roll these into the next month.
+    expect(parseDateOnly("2026-02-30")).toBeNull();
+    expect(parseDateOnly("2026-04-31")).toBeNull();
+    // Non-leap Feb 29 — JS would roll into March 1.
+    expect(parseDateOnly("2025-02-29")).toBeNull();
+    // Month out of range — JS would roll into next/prev year.
+    expect(parseDateOnly("2026-13-01")).toBeNull();
+    expect(parseDateOnly("2026-00-15")).toBeNull();
+    // Day = 0 — JS would land on the last day of the previous month.
+    expect(parseDateOnly("2026-04-00")).toBeNull();
+  });
+
+  test("accepts genuine leap-year Feb 29", () => {
+    const d = parseDateOnly("2024-02-29");
+    expect(d).not.toBeNull();
+    expect(d!.getFullYear()).toBe(2024);
+    expect(d!.getMonth()).toBe(1);
+    expect(d!.getDate()).toBe(29);
+  });
 });
 
 describe("Date object round-trip preserves the calendar day", () => {

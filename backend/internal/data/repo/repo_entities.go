@@ -157,7 +157,7 @@ type (
 		ThumbnailId *uuid.UUID `json:"thumbnailId,omitempty" extensions:"x-nullable,x-omitempty"`
 
 		// Sale details
-		SoldDate time.Time `json:"soldDate"`
+		SoldDate types.Date `json:"soldDate"`
 
 		// Container-specific (populated when querying locations)
 		ItemCount float64 `json:"itemCount,omitempty"`
@@ -258,6 +258,9 @@ func mapEntitySummary(e *ent.Entity) EntitySummary {
 		Insured:     e.Insured,
 		ImageID:     imageID,
 		ThumbnailId: thumbnailID,
+
+		// Sale
+		SoldDate: types.DateFromTime(e.SoldDate),
 	}
 }
 
@@ -1055,21 +1058,37 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		SetModelNumber(data.ModelNumber).
 		SetManufacturer(data.Manufacturer).
 		SetArchived(data.Archived).
-		SetPurchaseDate(data.PurchaseDate.Time()).
 		SetPurchaseFrom(data.PurchaseFrom).
 		SetPurchasePrice(data.PurchasePrice).
-		SetSoldDate(data.SoldDate.Time()).
 		SetSoldTo(data.SoldTo).
 		SetSoldPrice(data.SoldPrice).
 		SetSoldNotes(data.SoldNotes).
 		SetNotes(data.Notes).
 		SetLifetimeWarranty(data.LifetimeWarranty).
 		SetInsured(data.Insured).
-		SetWarrantyExpires(data.WarrantyExpires.Time()).
 		SetWarrantyDetails(data.WarrantyDetails).
 		SetQuantity(data.Quantity).
 		SetAssetID(int64(data.AssetID)).
 		SetSyncChildEntityLocations(data.SyncChildEntityLocations)
+
+	// Date fields are nullable. Writing types.Date{}.Time() would persist
+	// the 0001-01-01 sentinel that ZeroOutTimeFields then has to chase —
+	// clear the column instead so absent dates round-trip as NULL/"".
+	if t := data.PurchaseDate.Time(); t.IsZero() {
+		q.ClearPurchaseDate()
+	} else {
+		q.SetPurchaseDate(t)
+	}
+	if t := data.SoldDate.Time(); t.IsZero() {
+		q.ClearSoldDate()
+	} else {
+		q.SetSoldDate(t)
+	}
+	if t := data.WarrantyExpires.Time(); t.IsZero() {
+		q.ClearWarrantyExpires()
+	} else {
+		q.SetWarrantyExpires(t)
+	}
 
 	if data.EntityTypeID != uuid.Nil {
 		q.SetEntityTypeID(data.EntityTypeID)
@@ -1530,12 +1549,9 @@ func (r *EntityRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opt
 		SetModelNumber(originalEntity.ModelNumber).
 		SetManufacturer(originalEntity.Manufacturer).
 		SetLifetimeWarranty(originalEntity.LifetimeWarranty).
-		SetWarrantyExpires(originalEntity.WarrantyExpires.Time()).
 		SetWarrantyDetails(originalEntity.WarrantyDetails).
-		SetPurchaseDate(originalEntity.PurchaseDate.Time()).
 		SetPurchaseFrom(originalEntity.PurchaseFrom).
 		SetPurchasePrice(originalEntity.PurchasePrice).
-		SetSoldDate(originalEntity.SoldDate.Time()).
 		SetSoldTo(originalEntity.SoldTo).
 		SetSoldPrice(originalEntity.SoldPrice).
 		SetSoldNotes(originalEntity.SoldNotes).
@@ -1543,6 +1559,18 @@ func (r *EntityRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opt
 		SetInsured(originalEntity.Insured).
 		SetArchived(originalEntity.Archived).
 		SetSyncChildEntityLocations(originalEntity.SyncChildEntityLocations)
+
+	// Skip Set on zero dates so the duplicate's nullable date columns end up
+	// NULL rather than the 0001-01-01 sentinel.
+	if t := originalEntity.PurchaseDate.Time(); !t.IsZero() {
+		entityBuilder.SetPurchaseDate(t)
+	}
+	if t := originalEntity.SoldDate.Time(); !t.IsZero() {
+		entityBuilder.SetSoldDate(t)
+	}
+	if t := originalEntity.WarrantyExpires.Time(); !t.IsZero() {
+		entityBuilder.SetWarrantyExpires(t)
+	}
 
 	if originalEntity.Parent != nil {
 		entityBuilder.SetParentID(originalEntity.Parent.ID)

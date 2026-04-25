@@ -36,11 +36,17 @@ export function toDateOnlyString(value: Date | string | null | undefined): strin
 
 // parseDateOnly turns YYYY-MM-DD into a Date constructed from LOCAL
 // components, so the resulting Date's local getters return the same Y/M/D.
-// Anything else returns null.
+// Returns null for shape mismatches and for impossible calendar dates
+// (e.g. "2026-02-30", "2026-13-01", "2025-02-29") — JS Date silently
+// rolls those over, so we verify the parsed components round-trip.
 export function parseDateOnly(value: string | null | undefined): Date | null {
   if (!value || !isDateOnlyString(value)) return null;
   const [y, m, d] = value.split("-").map(n => parseInt(n, 10)) as [number, number, number];
-  return new Date(y, m - 1, d);
+  const date = new Date(y, m - 1, d);
+  if (date.getFullYear() !== y || date.getMonth() !== m - 1 || date.getDate() !== d) {
+    return null;
+  }
+  return date;
 }
 
 function formatLocal(d: Date): string {
