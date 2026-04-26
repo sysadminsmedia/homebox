@@ -5,7 +5,6 @@
   import type { ItemAttachment, EntityFieldData, EntityOut, EntityUpdate } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useTagStore } from "~/stores/tags";
-  import { useLocationStore } from "~~/stores/locations";
   import MdiLoading from "~icons/mdi/loading";
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
@@ -43,9 +42,6 @@
   const preferences = useViewPreferences();
 
   const locationId = computed<string>(() => route.params.id as string);
-
-  const locationStore = useLocationStore();
-  const locations = computed(() => locationStore.allLocations);
 
   const tagStore = useTagStore();
   const tags = computed(() => tagStore.tags);
