@@ -3,7 +3,7 @@
   import { toast } from "@/components/ui/sonner";
   import type { AnyDetail, Detail, Details } from "~~/components/global/DetailsSection/types";
   import { filterZeroValues } from "~~/components/global/DetailsSection/types";
-  import type { ItemAttachment } from "~~/lib/api/types/data-contracts";
+  import type { ItemAttachment, ItemOut } from "~~/lib/api/types/data-contracts";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPlus from "~icons/mdi/plus";
   import MdiMinus from "~icons/mdi/minus";
@@ -45,6 +45,7 @@
   import DetailsSection from "~/components/global/DetailsSection/DetailsSection.vue";
   import ItemAttachmentsList from "~/components/Item/AttachmentsList.vue";
   import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
+import Integer from "@zxing/library/esm/core/util/Integer";
 
   const { t } = useI18n();
 
@@ -374,6 +375,34 @@
     return item.value?.purchaseFrom || item.value?.purchasePrice !== 0 || validDate(item.value?.purchaseDate);
   });
 
+  function countMonths(start: Date, end: Date): number {
+    // Start after end? Doesn't make sense.
+    if (start > end) { return 0; }
+    const yearDiff = end.getFullYear() - start.getFullYear();
+    const monthDiff = end.getMonth() - start.getMonth();
+    let totalMonths = yearDiff * 12 + monthDiff
+    // Adjust for cases where the end day is before the start day in the month
+    if (end.getDate() < start.getDate()) {
+      totalMonths--;
+    }
+    // Double check to avoid start after end.
+    if (totalMonths < 0) {
+      return 0
+    }
+    return totalMonths
+  }
+
+  function calcPurchasePricePerMonth(item?: ItemOut): string {
+    if (item) {
+    // If we don't really have a purchase time, don't calc pppm.
+    if (! (item?.purchaseTime instanceof Date)) { return "" }
+      var months = countMonths(item.purchaseTime, new Date())
+      if (months <= 0) { return "" }
+      return (item.purchasePrice / months).toString()
+    }
+    else { return "" }
+  }
+
   const purchaseDetails = computed<Details>(() => {
     const v: Details = [
       {
@@ -383,6 +412,11 @@
       {
         name: "items.purchase_price",
         text: String(item.value?.purchasePrice) || "",
+        type: "currency",
+      },
+      {
+        name: "items.purchase_price_per_month",
+        text: calcPurchasePricePerMonth(item.value),
         type: "currency",
       },
       {
