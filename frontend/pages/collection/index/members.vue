@@ -122,7 +122,7 @@
                           variant="destructive"
                           size="icon"
                           :aria-label="$t('global.delete')"
-                          :disabled="removing[user.id] || (isLastMember && user.id === currentUserId)"
+                          :disabled="user.id === currentUserId || removing[user.id] || isLastMember"
                           @click="handleRemove(user)"
                         >
                           <MdiDelete class="size-4" />

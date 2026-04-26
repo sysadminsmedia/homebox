@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -26,6 +27,10 @@ type GroupRepository struct {
 	invitationMapper MapFunc[*ent.GroupInvitationToken, GroupInvitation]
 	attachments      *AttachmentRepo
 }
+
+// ErrCannotLeaveLastMember is returned when a user attempts to leave a group
+// as its last remaining member.
+var ErrCannotLeaveLastMember = errors.New("cannot leave the group as its last member")
 
 func NewGroupRepository(db *ent.Client) *GroupRepository {
 	gmap := func(g *ent.Group) Group {
@@ -538,4 +543,58 @@ func (r *GroupRepository) InvitationAccept(ctx context.Context, token []byte, us
 	}
 
 	return r.groupMapper.Map(invitation.Edges.Group), nil
+}
+
+func (r *GroupRepository) GroupLeave(ctx context.Context, groupID, userID, newDefaultGroupID uuid.UUID) error {
+	tx, err := r.db.Tx(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Update default group if needed
+	if newDefaultGroupID != uuid.Nil {
+		err = tx.User.UpdateOneID(userID).
+			// Ensure user is a member of the leaving group, replacement group, and leaving group is current default
+			Where(
+				user.HasGroupsWith(group.ID(groupID)),
+				user.HasGroupsWith(group.ID(newDefaultGroupID)),
+				user.DefaultGroupID(groupID),
+			).
+			SetDefaultGroupID(newDefaultGroupID).
+			Exec(ctx)
+		if err != nil {
+			if err := tx.Rollback(); err != nil {
+				log.Warn().Err(err).Msg("failed to rollback transaction")
+			}
+			return err
+		}
+	}
+
+	// Remove member
+	err = tx.Group.UpdateOneID(groupID).
+		// Ensure user is a member and not the last member at mutation time
+		Where(
+			group.HasUsersWith(user.ID(userID)),
+			group.HasUsersWith(user.IDNEQ(userID)),
+		).
+		RemoveUserIDs(userID).
+		Exec(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			if rerr := tx.Rollback(); rerr != nil {
+				log.Warn().Err(rerr).Msg("failed to rollback transaction")
+			}
+			return ErrCannotLeaveLastMember
+		}
+		if err := tx.Rollback(); err != nil {
+			log.Warn().Err(err).Msg("failed to rollback transaction")
+		}
+		return err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+
+	return nil
 }
