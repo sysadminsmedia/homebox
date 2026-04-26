@@ -275,7 +275,9 @@
           "
         >
           <MdiWrenchClock class="inline size-16" />
-          <span class="mt-2 block text-sm font-medium text-gray-900"> {{ $t("maintenance.list.create_first") }} </span>
+          <span class="mt-2 block text-sm font-medium text-foreground">
+            {{ $t("maintenance.list.create_first") }}
+          </span>
         </button>
       </div>
     </div>

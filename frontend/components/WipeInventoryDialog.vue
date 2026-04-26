@@ -10,38 +10,28 @@
 
       <div class="space-y-2">
         <div class="flex items-center space-x-2">
-          <input id="wipe-tags-checkbox" v-model="wipeTags" type="checkbox" class="size-4 rounded border-gray-300" />
+          <Checkbox id="wipe-tags-checkbox" v-model="wipeTags" />
           <label for="wipe-tags-checkbox" class="cursor-pointer text-sm font-medium">
             {{ $t("tools.actions_set.wipe_inventory_tags") }}
           </label>
         </div>
 
         <div class="flex items-center space-x-2">
-          <input
-            id="wipe-locations-checkbox"
-            v-model="wipeLocations"
-            type="checkbox"
-            class="size-4 rounded border-gray-300"
-          />
+          <Checkbox id="wipe-locations-checkbox" v-model="wipeLocations" />
           <label for="wipe-locations-checkbox" class="cursor-pointer text-sm font-medium">
             {{ $t("tools.actions_set.wipe_inventory_locations") }}
           </label>
         </div>
 
         <div class="flex items-center space-x-2">
-          <input
-            id="wipe-maintenance-checkbox"
-            v-model="wipeMaintenance"
-            type="checkbox"
-            class="size-4 rounded border-gray-300"
-          />
+          <Checkbox id="wipe-maintenance-checkbox" v-model="wipeMaintenance" />
           <label for="wipe-maintenance-checkbox" class="cursor-pointer text-sm font-medium">
             {{ $t("tools.actions_set.wipe_inventory_maintenance") }}
           </label>
         </div>
       </div>
 
-      <p class="text-sm text-gray-600">
+      <p class="text-sm text-foreground/90">
         {{ $t("tools.actions_set.wipe_inventory_note") }}
       </p>
 
@@ -70,6 +60,7 @@
     AlertDialogTitle,
   } from "@/components/ui/alert-dialog";
   import { Button } from "@/components/ui/button";
+  import { Checkbox } from "@/components/ui/checkbox";
 
   const { registerOpenDialogCallback, closeDialog, addAlert, removeAlert } = useDialog();
 
