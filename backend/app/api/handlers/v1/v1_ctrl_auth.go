@@ -379,7 +379,7 @@ func (ctrl *V1Controller) HandleOIDCCallback() errchain.HandlerFunc {
 			recordCtrlSpanError(span, err)
 			span.SetAttributes(attribute.String("oidc.outcome", "callback_failed"))
 			log.Err(err).Msg("OIDC callback failed")
-			http.Redirect(w, r, "/?oidc_error=oidc_auth_failed", http.StatusFound)
+			http.Redirect(w, r, ctrl.config.Web.AppBase+"?oidc_error=oidc_auth_failed", http.StatusFound)
 			return nil
 		}
 
@@ -388,7 +388,7 @@ func (ctrl *V1Controller) HandleOIDCCallback() errchain.HandlerFunc {
 			attribute.String("session.expires_at", newToken.ExpiresAt.Format(time.RFC3339)),
 		)
 		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, true, newToken.AttachmentToken)
-		http.Redirect(w, r, "/home", http.StatusFound)
+		http.Redirect(w, r, ctrl.config.Web.AppBase+"home", http.StatusFound)
 		return nil
 	}
 }

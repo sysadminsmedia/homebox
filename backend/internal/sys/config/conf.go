@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/ardanlabs/conf/v3"
@@ -61,6 +62,7 @@ type DebugConf struct {
 type WebConfig struct {
 	Port          string        `yaml:"port"            conf:"default:7745"`
 	Host          string        `yaml:"host"`
+	AppBase       string        `yaml:"app_base"        conf:"default:/"`
 	MaxUploadSize int64         `yaml:"max_file_upload" conf:"default:10"`
 	ReadTimeout   time.Duration `yaml:"read_timeout"    conf:"default:10s"`
 	WriteTimeout  time.Duration `yaml:"write_timeout"   conf:"default:10s"`
@@ -137,7 +139,25 @@ func New(buildstr string, description string) (*Config, error) {
 		return &cfg, fmt.Errorf("parsing config: %w", err)
 	}
 
+	cfg.Web.AppBase = normalizePath(cfg.Web.AppBase)
+
 	return &cfg, nil
+}
+
+// normalizePath ensures a path is never empty and always has a leading and
+// trailing slash. This prevents malformed URL concatenation when AppBase is
+// used as a path prefix.
+func normalizePath(p string) string {
+	if p == "" {
+		return "/"
+	}
+	if !strings.HasPrefix(p, "/") {
+		p = "/" + p
+	}
+	if !strings.HasSuffix(p, "/") {
+		p = p + "/"
+	}
+	return p
 }
 
 // Print prints the configuration to stdout as a json indented string

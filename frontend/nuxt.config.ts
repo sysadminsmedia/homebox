@@ -1,5 +1,18 @@
 import { defineNuxtConfig } from "nuxt/config";
 
+/**
+ * Ensure base path has leading and trailing slash
+ */
+const normalizeBase = (value = "/") => {
+  const trimmed = value.trim();
+  if (!trimmed || trimmed === "/") {
+    return "/";
+  }
+  return `/${trimmed.replace(/^\/+|\/+$/g, "")}/`;
+};
+
+const baseURL = normalizeBase(process.env.NUXT_APP_BASE_URL);
+
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
   ssr: false,
@@ -41,8 +54,8 @@ export default defineNuxtConfig({
 
   nitro: {
     devProxy: {
-      "/api": {
-        target: "http://localhost:7745/api",
+      [baseURL + "api"]: {
+        target: new URL(baseURL + "api", "http://localhost:7745"),
         ws: true,
         changeOrigin: true,
       },
@@ -50,8 +63,9 @@ export default defineNuxtConfig({
   },
 
   app: {
+    baseURL,
     head: {
-      script: [{ src: "/set-theme.js" }],
+      script: [{ src: baseURL + "set-theme.js" }],
     },
   },
 
@@ -59,11 +73,11 @@ export default defineNuxtConfig({
 
   pwa: {
     workbox: {
-      navigateFallbackDenylist: [/^\/api/],
+      navigateFallbackDenylist: [RegExp(`^${baseURL}api`)],
       cleanupOutdatedCaches: true,
       runtimeCaching: [
         {
-          urlPattern: /^\/api/,
+          urlPattern: RegExp(`^${baseURL}api`),
           handler: "NetworkFirst",
           method: "GET",
           options: {
@@ -88,7 +102,7 @@ export default defineNuxtConfig({
       short_name: "Homebox",
       description: "Home Inventory App",
       theme_color: "#5b7f67",
-      start_url: "/home",
+      start_url: baseURL + "home",
       icons: [
         {
           src: "pwa-192x192.png",
