@@ -1,0 +1,29 @@
+---
+import {
+    sectionGridClass,
+    fieldClass,
+    fieldLabelClass,
+    controlClass,
+} from './constants';
+---
+
+<div class={sectionGridClass}>
+    <div class={fieldClass}>
+        <label for="compose-proxy-type" class={fieldLabelClass}>Proxy</label>
+        <select id="compose-proxy-type" data-field="proxyType" class={controlClass}>
+            <option value="none" selected>None</option>
+            <option value="caddy">Caddy</option>
+            <option value="nginx">Nginx</option>
+            <option value="cloudflare">Cloudflare Tunnels</option>
+            <option value="traefik">Traefik Labels</option>
+        </select>
+    </div>
+
+    <div class={fieldClass}>
+        <label for="compose-hostname" class={fieldLabelClass}>External hostname
+            (`HBOX_OPTIONS_HOSTNAME`)</label>
+        <input id="compose-hostname" type="text" data-field="hostname" value=""
+               placeholder="homebox.example.com" class={controlClass}/>
+    </div>
+</div>
+
