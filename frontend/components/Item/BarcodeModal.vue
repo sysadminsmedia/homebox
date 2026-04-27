@@ -6,6 +6,21 @@
       </DialogHeader>
 
       <div
+        v-if="existingItems.length > 0"
+        class="flex flex-col gap-2 rounded-md border border-amber-500/40 bg-amber-500/10 p-4 text-amber-700 dark:text-amber-300"
+        role="alert"
+      >
+        <span class="text-sm font-medium">
+          Found {{ existingItems.length }} existing item(s) with UPC {{ barcode }}.
+        </span>
+        <div class="flex flex-wrap gap-2">
+          <Button v-for="existing in existingItems" :key="existing.id" size="sm" variant="outline" @click="navigateToItem(existing.id)">
+            Open {{ existing.name }}
+          </Button>
+        </div>
+      </div>
+
+      <div
         v-if="errorMessage"
         class="flex items-center gap-2 rounded-md border border-destructive bg-destructive/10 p-4 text-destructive"
         role="alert"
@@ -112,7 +127,7 @@
   import { useI18n } from "vue-i18n";
   import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { Button } from "~/components/ui/button";
-  import type { BarcodeProduct } from "~~/lib/api/types/data-contracts";
+  import type { BarcodeProduct, EntitySummary } from "~~/lib/api/types/data-contracts";
   import { useDialog } from "~/components/ui/dialog-provider";
   import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
   import MdiBarcode from "~icons/mdi/barcode";
@@ -129,6 +144,7 @@
   const searching = ref(false);
   const barcode = ref<string>("");
   const products = ref<BarcodeProduct[] | null>(null);
+  const existingItems = ref<EntitySummary[]>([]);
   const selectedRow = ref(-1);
   const errorMessage = ref<string | null>(null);
 
@@ -159,6 +175,7 @@
       selectedRow.value = -1;
       searching.value = false;
       errorMessage.value = null;
+      existingItems.value = [];
 
       if (params?.barcode) {
         // Reset if the barcode is different
@@ -196,6 +213,7 @@
 
   async function retrieveProductInfo(barcode: string) {
     errorMessage.value = null;
+    existingItems.value = [];
 
     if (!barcode || barcode.trim().length === 0 || !/^[0-9]+$/.test(barcode)) {
       errorMessage.value = t("components.item.product_import.error_invalid_barcode");
@@ -207,6 +225,11 @@
     searching.value = true;
 
     try {
+      const existingResult = await api.items.getAll({ q: barcode.trim(), page: 1, pageSize: 10 });
+      if (!existingResult.error && existingResult.data?.items) {
+        existingItems.value = existingResult.data.items.filter(item => item.upc === barcode.trim());
+      }
+
       const result = await api.products.searchFromBarcode(barcode.trim());
       if (result.error) {
         errorMessage.value = t("errors.api_failure") + result.error;
@@ -224,6 +247,10 @@
     } finally {
       searching.value = false;
     }
+  }
+
+  function navigateToItem(itemId: string) {
+    navigateTo(`/item/${itemId}`);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

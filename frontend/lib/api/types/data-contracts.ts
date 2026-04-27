@@ -594,6 +594,7 @@ export interface EntityCreate {
   name: string;
   parentId?: string | null;
   quantity: number;
+  upc: string;
   /** Edges */
   tagIds: string[];
 }
@@ -651,6 +652,7 @@ export interface EntityOut {
   soldNotes: string;
   soldPrice: number;
   soldTo: string;
+  upc: string;
   syncChildEntityLocations: boolean;
   tags: TagSummary[];
   thumbnailId?: string | null;
@@ -691,6 +693,7 @@ export interface EntitySummary {
   parent?: EntitySummary | null;
   purchasePrice: number;
   quantity: number;
+  upc: string;
   /** Sale details */
   soldDate: Date | string;
   tags: TagSummary[];
@@ -858,6 +861,7 @@ export interface EntityUpdate {
   purchaseFrom: string;
   purchasePrice?: number | null;
   quantity: number;
+  upc: string;
   /** Identifications */
   serialNumber: string;
   /** Sold */

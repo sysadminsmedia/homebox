@@ -569,6 +569,7 @@
         "select_field": "Select a field",
         "select_value": "Select a value",
         "serial_number": "Serial Number",
+        "upc": "UPC",
         "show_advanced_view_options": "Show Advanced View Options",
         "show_empty": "Show Empty",
         "sold_at": "Sold At",

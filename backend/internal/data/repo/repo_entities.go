@@ -93,6 +93,7 @@ type (
 		Name         string    `json:"name"         validate:"required,min=1,max=255"`
 		Quantity     float64   `json:"quantity"`
 		Description  string    `json:"description"  validate:"max=1000"`
+		UPC          string    `json:"upc"          validate:"max=64"`
 		AssetID      AssetID   `json:"-"`
 		EntityTypeID uuid.UUID `json:"entityTypeId"`
 
@@ -116,6 +117,7 @@ type (
 		TagIDs []uuid.UUID `json:"tagIds"`
 
 		// Identifications
+		UPC          string `json:"upc"          validate:"max=64"`
 		SerialNumber string `json:"serialNumber"`
 		ModelNumber  string `json:"modelNumber"`
 		Manufacturer string `json:"manufacturer"`
@@ -156,6 +158,7 @@ type (
 		AssetID     AssetID   `json:"assetId,string"`
 		Name        string    `json:"name"`
 		Description string    `json:"description"`
+		UPC         string    `json:"upc"`
 		Quantity    float64   `json:"quantity"`
 		Insured     bool      `json:"insured"`
 		Archived    bool      `json:"archived"`
@@ -187,6 +190,7 @@ type (
 		SyncChildEntityLocations bool `json:"syncChildEntityLocations"`
 
 		SerialNumber string `json:"serialNumber"`
+		UPC          string `json:"upc"`
 		ModelNumber  string `json:"modelNumber"`
 		Manufacturer string `json:"manufacturer"`
 
@@ -258,6 +262,7 @@ func mapEntitySummary(e *ent.Entity) EntitySummary {
 		AssetID:       AssetID(e.AssetID),
 		Name:          e.Name,
 		Description:   e.Description,
+		UPC:           e.ImportRef,
 		ImportRef:     e.ImportRef,
 		Quantity:      e.Quantity,
 		CreatedAt:     e.CreatedAt,
@@ -336,6 +341,7 @@ func mapEntityOut(e *ent.Entity) EntityOut {
 		SyncChildEntityLocations: e.SyncChildEntityLocations,
 
 		// Identification
+		UPC:          e.ImportRef,
 		SerialNumber: e.SerialNumber,
 		ModelNumber:  e.ModelNumber,
 		Manufacturer: e.Manufacturer,
@@ -587,6 +593,7 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 			entity.Or(
 				entity.NameContainsFold(q.Search),
 				entity.DescriptionContainsFold(q.Search),
+				entity.ImportRefContainsFold(q.Search),
 				entity.SerialNumberContainsFold(q.Search),
 				entity.ModelNumberContainsFold(q.Search),
 				entity.ManufacturerContainsFold(q.Search),
@@ -993,8 +1000,13 @@ func (r *EntityRepository) Create(ctx context.Context, gid uuid.UUID, data Entit
 		return EntityOut{}, err
 	}
 
+	importRef := data.ImportRef
+	if data.UPC != "" {
+		importRef = data.UPC
+	}
+
 	q := r.db.Entity.Create().
-		SetImportRef(data.ImportRef).
+		SetImportRef(importRef).
 		SetName(data.Name).
 		SetQuantity(data.Quantity).
 		SetDescription(data.Description).
@@ -1425,6 +1437,7 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 	q := r.db.Entity.Update().Where(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))).
 		SetName(data.Name).
 		SetDescription(data.Description).
+		SetImportRef(data.UPC).
 		SetSerialNumber(data.SerialNumber).
 		SetModelNumber(data.ModelNumber).
 		SetManufacturer(data.Manufacturer).
@@ -2113,6 +2126,7 @@ func (r *EntityRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opt
 		SetQuantity(originalEntity.Quantity).
 		SetGroupID(gid).
 		SetAssetID(int64(nextAssetID)).
+		SetImportRef(originalEntity.ImportRef).
 		SetSerialNumber(originalEntity.SerialNumber).
 		SetModelNumber(originalEntity.ModelNumber).
 		SetManufacturer(originalEntity.Manufacturer).

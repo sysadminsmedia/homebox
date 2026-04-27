@@ -419,6 +419,7 @@
     parentId: null,
     name: "",
     quantity: 1,
+    upc: "",
     description: "",
     color: "",
     tags: [] as string[],
@@ -602,6 +603,7 @@
       if (params?.product) {
         form.name = params.product.item.name;
         form.description = params.product.item.description;
+        form.upc = params.product.barcode;
 
         if (params.product.imageURL) {
           form.photos.push({
@@ -660,6 +662,7 @@
         parentId: form.parentId || form.location.id as string,
         name: form.name,
         quantity: form.quantity,
+        upc: form.upc,
         description: form.description,
         tagIds: form.tags,
         entityTypeId: selectedEntityType.value?.id,
@@ -705,6 +708,7 @@
 
     form.name = "";
     form.quantity = 1;
+    form.upc = "";
     form.description = "";
     form.color = "";
     form.photos = [];
