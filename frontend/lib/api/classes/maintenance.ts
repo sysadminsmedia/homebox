@@ -1,6 +1,8 @@
 import { BaseAPI, route } from "../base";
 import type {
   MaintenanceEntry,
+  MaintenancePlan,
+  MaintenancePlanUpdate,
   MaintenanceEntryUpdate,
   MaintenanceEntryWithDetails,
   MaintenanceFilterStatus,
@@ -26,5 +28,16 @@ export class MaintenanceAPI extends BaseAPI {
       url: route(`/maintenance/${id}`),
       body: data,
     });
+  }
+
+  updatePlan(id: string, data: MaintenancePlanUpdate) {
+    return this.http.put<MaintenancePlanUpdate, MaintenancePlan>({
+      url: route(`/maintenance/plans/${id}`),
+      body: data,
+    });
+  }
+
+  deletePlan(id: string) {
+    return this.http.delete<void>({ url: route(`/maintenance/plans/${id}`) });
   }
 }

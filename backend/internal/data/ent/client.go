@@ -26,6 +26,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceplan"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
@@ -57,6 +58,8 @@ type Client struct {
 	GroupInvitationToken *GroupInvitationTokenClient
 	// MaintenanceEntry is the client for interacting with the MaintenanceEntry builders.
 	MaintenanceEntry *MaintenanceEntryClient
+	// MaintenancePlan is the client for interacting with the MaintenancePlan builders.
+	MaintenancePlan *MaintenancePlanClient
 	// Notifier is the client for interacting with the Notifier builders.
 	Notifier *NotifierClient
 	// Tag is the client for interacting with the Tag builders.
@@ -86,6 +89,7 @@ func (c *Client) init() {
 	c.Group = NewGroupClient(c.config)
 	c.GroupInvitationToken = NewGroupInvitationTokenClient(c.config)
 	c.MaintenanceEntry = NewMaintenanceEntryClient(c.config)
+	c.MaintenancePlan = NewMaintenancePlanClient(c.config)
 	c.Notifier = NewNotifierClient(c.config)
 	c.Tag = NewTagClient(c.config)
 	c.TemplateField = NewTemplateFieldClient(c.config)
@@ -192,6 +196,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Group:                NewGroupClient(cfg),
 		GroupInvitationToken: NewGroupInvitationTokenClient(cfg),
 		MaintenanceEntry:     NewMaintenanceEntryClient(cfg),
+		MaintenancePlan:      NewMaintenancePlanClient(cfg),
 		Notifier:             NewNotifierClient(cfg),
 		Tag:                  NewTagClient(cfg),
 		TemplateField:        NewTemplateFieldClient(cfg),
@@ -225,6 +230,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Group:                NewGroupClient(cfg),
 		GroupInvitationToken: NewGroupInvitationTokenClient(cfg),
 		MaintenanceEntry:     NewMaintenanceEntryClient(cfg),
+		MaintenancePlan:      NewMaintenancePlanClient(cfg),
 		Notifier:             NewNotifierClient(cfg),
 		Tag:                  NewTagClient(cfg),
 		TemplateField:        NewTemplateFieldClient(cfg),
@@ -260,7 +266,8 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity, c.EntityField,
 		c.EntityTemplate, c.EntityType, c.Group, c.GroupInvitationToken,
-		c.MaintenanceEntry, c.Notifier, c.Tag, c.TemplateField, c.User,
+		c.MaintenanceEntry, c.MaintenancePlan, c.Notifier, c.Tag, c.TemplateField,
+		c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -272,7 +279,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity, c.EntityField,
 		c.EntityTemplate, c.EntityType, c.Group, c.GroupInvitationToken,
-		c.MaintenanceEntry, c.Notifier, c.Tag, c.TemplateField, c.User,
+		c.MaintenanceEntry, c.MaintenancePlan, c.Notifier, c.Tag, c.TemplateField,
+		c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -301,6 +309,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.GroupInvitationToken.mutate(ctx, m)
 	case *MaintenanceEntryMutation:
 		return c.MaintenanceEntry.mutate(ctx, m)
+	case *MaintenancePlanMutation:
+		return c.MaintenancePlan.mutate(ctx, m)
 	case *NotifierMutation:
 		return c.Notifier.mutate(ctx, m)
 	case *TagMutation:
@@ -1006,6 +1016,22 @@ func (c *EntityClient) QueryMaintenanceEntries(_m *Entity) *MaintenanceEntryQuer
 			sqlgraph.From(entity.Table, entity.FieldID, id),
 			sqlgraph.To(maintenanceentry.Table, maintenanceentry.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, entity.MaintenanceEntriesTable, entity.MaintenanceEntriesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMaintenancePlans queries the maintenance_plans edge of a Entity.
+func (c *EntityClient) QueryMaintenancePlans(_m *Entity) *MaintenancePlanQuery {
+	query := (&MaintenancePlanClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entity.Table, entity.FieldID, id),
+			sqlgraph.To(maintenanceplan.Table, maintenanceplan.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, entity.MaintenancePlansTable, entity.MaintenancePlansColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -2083,6 +2109,22 @@ func (c *MaintenanceEntryClient) QueryEntity(_m *MaintenanceEntry) *EntityQuery 
 	return query
 }
 
+// QueryPlan queries the plan edge of a MaintenanceEntry.
+func (c *MaintenanceEntryClient) QueryPlan(_m *MaintenanceEntry) *MaintenancePlanQuery {
+	query := (&MaintenancePlanClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(maintenanceentry.Table, maintenanceentry.FieldID, id),
+			sqlgraph.To(maintenanceplan.Table, maintenanceplan.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, maintenanceentry.PlanTable, maintenanceentry.PlanColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *MaintenanceEntryClient) Hooks() []Hook {
 	return c.hooks.MaintenanceEntry
@@ -2105,6 +2147,171 @@ func (c *MaintenanceEntryClient) mutate(ctx context.Context, m *MaintenanceEntry
 		return (&MaintenanceEntryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown MaintenanceEntry mutation op: %q", m.Op())
+	}
+}
+
+// MaintenancePlanClient is a client for the MaintenancePlan schema.
+type MaintenancePlanClient struct {
+	config
+}
+
+// NewMaintenancePlanClient returns a client for the MaintenancePlan from the given config.
+func NewMaintenancePlanClient(c config) *MaintenancePlanClient {
+	return &MaintenancePlanClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `maintenanceplan.Hooks(f(g(h())))`.
+func (c *MaintenancePlanClient) Use(hooks ...Hook) {
+	c.hooks.MaintenancePlan = append(c.hooks.MaintenancePlan, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `maintenanceplan.Intercept(f(g(h())))`.
+func (c *MaintenancePlanClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MaintenancePlan = append(c.inters.MaintenancePlan, interceptors...)
+}
+
+// Create returns a builder for creating a MaintenancePlan entity.
+func (c *MaintenancePlanClient) Create() *MaintenancePlanCreate {
+	mutation := newMaintenancePlanMutation(c.config, OpCreate)
+	return &MaintenancePlanCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MaintenancePlan entities.
+func (c *MaintenancePlanClient) CreateBulk(builders ...*MaintenancePlanCreate) *MaintenancePlanCreateBulk {
+	return &MaintenancePlanCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MaintenancePlanClient) MapCreateBulk(slice any, setFunc func(*MaintenancePlanCreate, int)) *MaintenancePlanCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MaintenancePlanCreateBulk{err: fmt.Errorf("calling to MaintenancePlanClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MaintenancePlanCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MaintenancePlanCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MaintenancePlan.
+func (c *MaintenancePlanClient) Update() *MaintenancePlanUpdate {
+	mutation := newMaintenancePlanMutation(c.config, OpUpdate)
+	return &MaintenancePlanUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MaintenancePlanClient) UpdateOne(_m *MaintenancePlan) *MaintenancePlanUpdateOne {
+	mutation := newMaintenancePlanMutation(c.config, OpUpdateOne, withMaintenancePlan(_m))
+	return &MaintenancePlanUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MaintenancePlanClient) UpdateOneID(id uuid.UUID) *MaintenancePlanUpdateOne {
+	mutation := newMaintenancePlanMutation(c.config, OpUpdateOne, withMaintenancePlanID(id))
+	return &MaintenancePlanUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MaintenancePlan.
+func (c *MaintenancePlanClient) Delete() *MaintenancePlanDelete {
+	mutation := newMaintenancePlanMutation(c.config, OpDelete)
+	return &MaintenancePlanDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MaintenancePlanClient) DeleteOne(_m *MaintenancePlan) *MaintenancePlanDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MaintenancePlanClient) DeleteOneID(id uuid.UUID) *MaintenancePlanDeleteOne {
+	builder := c.Delete().Where(maintenanceplan.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MaintenancePlanDeleteOne{builder}
+}
+
+// Query returns a query builder for MaintenancePlan.
+func (c *MaintenancePlanClient) Query() *MaintenancePlanQuery {
+	return &MaintenancePlanQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMaintenancePlan},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MaintenancePlan entity by its id.
+func (c *MaintenancePlanClient) Get(ctx context.Context, id uuid.UUID) (*MaintenancePlan, error) {
+	return c.Query().Where(maintenanceplan.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MaintenancePlanClient) GetX(ctx context.Context, id uuid.UUID) *MaintenancePlan {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryEntity queries the entity edge of a MaintenancePlan.
+func (c *MaintenancePlanClient) QueryEntity(_m *MaintenancePlan) *EntityQuery {
+	query := (&EntityClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(maintenanceplan.Table, maintenanceplan.FieldID, id),
+			sqlgraph.To(entity.Table, entity.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, maintenanceplan.EntityTable, maintenanceplan.EntityColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMaintenanceEntries queries the maintenance_entries edge of a MaintenancePlan.
+func (c *MaintenancePlanClient) QueryMaintenanceEntries(_m *MaintenancePlan) *MaintenanceEntryQuery {
+	query := (&MaintenanceEntryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(maintenanceplan.Table, maintenanceplan.FieldID, id),
+			sqlgraph.To(maintenanceentry.Table, maintenanceentry.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, maintenanceplan.MaintenanceEntriesTable, maintenanceplan.MaintenanceEntriesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *MaintenancePlanClient) Hooks() []Hook {
+	return c.hooks.MaintenancePlan
+}
+
+// Interceptors returns the client interceptors.
+func (c *MaintenancePlanClient) Interceptors() []Interceptor {
+	return c.inters.MaintenancePlan
+}
+
+func (c *MaintenancePlanClient) mutate(ctx context.Context, m *MaintenancePlanMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MaintenancePlanCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MaintenancePlanUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MaintenancePlanUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MaintenancePlanDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown MaintenancePlan mutation op: %q", m.Op())
 	}
 }
 
@@ -2804,12 +3011,12 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 type (
 	hooks struct {
 		Attachment, AuthRoles, AuthTokens, Entity, EntityField, EntityTemplate,
-		EntityType, Group, GroupInvitationToken, MaintenanceEntry, Notifier, Tag,
-		TemplateField, User []ent.Hook
+		EntityType, Group, GroupInvitationToken, MaintenanceEntry, MaintenancePlan,
+		Notifier, Tag, TemplateField, User []ent.Hook
 	}
 	inters struct {
 		Attachment, AuthRoles, AuthTokens, Entity, EntityField, EntityTemplate,
-		EntityType, Group, GroupInvitationToken, MaintenanceEntry, Notifier, Tag,
-		TemplateField, User []ent.Interceptor
+		EntityType, Group, GroupInvitationToken, MaintenanceEntry, MaintenancePlan,
+		Notifier, Tag, TemplateField, User []ent.Interceptor
 	}
 )

@@ -672,6 +672,7 @@
         "filter": {
             "both": "Both",
             "completed": "Completed",
+            "overdue": "Overdue",
             "scheduled": "Scheduled"
         },
         "list": {
@@ -680,7 +681,10 @@
             "delete": "Delete",
             "duplicate": "Duplicate",
             "edit": "Edit",
-            "new": "New"
+            "new": "New",
+            "overdue": "Overdue",
+            "overdue_since": "Overdue since",
+            "select_item": "Select Item"
         },
         "modal": {
             "completed_date": "Completed Date",
@@ -689,9 +693,17 @@
             "edit_action": "Update",
             "edit_title": "Edit Entry",
             "entry_name": "Entry Name",
+            "interval_day": "Day(s)",
+            "interval_hour": "Hour(s)",
+            "interval_month": "Month(s)",
+            "interval_value": "Every",
+            "interval_week": "Week(s)",
+            "interval_year": "Year(s)",
             "new_action": "Create",
             "new_title": "New Entry",
+            "next_scheduled_dates": "Next scheduled dates",
             "notes": "Notes",
+            "recurring": "Recurring Plan",
             "scheduled_date": "Scheduled Date"
         },
         "monthly_average": "Monthly Average",

@@ -1,25 +1,30 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
-  import type { MaintenanceEntry, MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
+  import { DialogRoot } from "reka-ui";
+  import type { EntitySummary, MaintenanceEntry, MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
   import { MaintenanceFilterStatus } from "~~/lib/api/types/data-contracts";
   import type { StatsFormat } from "~~/components/global/StatCard/types";
   import MdiCheck from "~icons/mdi/check";
   import MdiDelete from "~icons/mdi/delete";
   import MdiEdit from "~icons/mdi/edit";
   import MdiCalendar from "~icons/mdi/calendar";
+  import MdiRepeat from "~icons/mdi/repeat";
   import MdiPlus from "~icons/mdi/plus";
+  import MdiAlertCircle from "~icons/mdi/alert-circle";
   import MdiWrenchClock from "~icons/mdi/wrench-clock";
   import MdiContentDuplicate from "~icons/mdi/content-duplicate";
   import MaintenanceEditModal from "~~/components/Maintenance/EditModal.vue";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
   import { Badge } from "@/components/ui/badge";
   import { Button, ButtonGroup } from "@/components/ui/button";
+  import { DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import StatCard from "~/components/global/StatCard/StatCard.vue";
   import BaseCard from "@/components/Base/Card.vue";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import DateTime from "~/components/global/DateTime.vue";
   import Currency from "~/components/global/Currency.vue";
   import Markdown from "~/components/global/Markdown.vue";
+  import ItemSelector from "~/components/Item/Selector.vue";
   import { toast } from "@/components/ui/sonner";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { DialogID } from "../ui/dialog-provider/utils";
@@ -38,13 +43,18 @@
     },
   });
 
+  const itemPickerOpen = ref(false);
+  const selectedItem = ref<EntitySummary | null>(null);
+  const itemSearch = ref("");
+  const availableItems = ref<EntitySummary[]>([]);
+  const isLoadingItems = ref(false);
+
   const { data: maintenanceDataList, refresh: refreshList } = useAsyncData(
     async () => {
       const { data } =
         props.currentItemId !== undefined
           ? await api.items.maintenance.getLog(props.currentItemId, { status: maintenanceFilterStatus.value })
           : await api.maintenance.getAll({ status: maintenanceFilterStatus.value });
-      console.log(data);
       return data;
     },
     {
@@ -53,7 +63,6 @@
   );
 
   const stats = computed(() => {
-    console.log(maintenanceDataList);
     if (!maintenanceDataList.value) return [];
 
     const count = maintenanceDataList.value ? maintenanceDataList.value.length || 0 : 0;
@@ -106,6 +115,7 @@
       name: maintenanceEntry.name,
       completedDate: new Date(Date.now()),
       scheduledDate: maintenanceEntry.scheduledDate ?? "null",
+      planID: maintenanceEntry.planID,
       description: maintenanceEntry.description,
       cost: maintenanceEntry.cost,
     });
@@ -113,6 +123,85 @@
       toast.error(t("maintenance.toast.failed_to_update"));
     }
     refreshList();
+  }
+
+  function hasRecurringPlan(entry: MaintenanceEntry | MaintenanceEntryWithDetails): boolean {
+    if (!entry.planID) {
+      return false;
+    }
+
+    return entry.planID !== "00000000-0000-0000-0000-000000000000";
+  }
+
+  async function searchItems(query: string) {
+    isLoadingItems.value = true;
+    const { data, error } = await api.items.getAll({
+      q: query,
+      page: 1,
+      pageSize: 100,
+    });
+    isLoadingItems.value = false;
+
+    if (error || !data) {
+      return false;
+    }
+
+    availableItems.value = data.items;
+    return true;
+  }
+
+  async function loadInitialItems() {
+    if (availableItems.value.length > 0) {
+      return true;
+    }
+
+    return searchItems("");
+  }
+
+  watch(
+    itemSearch,
+    async query => {
+      if (!itemPickerOpen.value) {
+        return;
+      }
+
+      await searchItems(query);
+    },
+    { immediate: false }
+  );
+
+  function openMaintenanceModalForCurrentItem() {
+    openDialog(DialogID.EditMaintenance, {
+      params: { type: "create", itemId: props.currentItemId },
+      onClose: result => {
+        if (result) {
+          refreshList();
+        }
+      },
+    });
+  }
+
+  function openItemPickerModal() {
+    selectedItem.value = null;
+    itemSearch.value = "";
+    itemPickerOpen.value = true;
+    void loadInitialItems();
+  }
+
+  function openMaintenanceModalForSelectedItem() {
+    if (!selectedItem.value) {
+      return;
+    }
+
+    itemPickerOpen.value = false;
+    openDialog(DialogID.EditMaintenance, {
+      params: { type: "create", itemId: selectedItem.value.id },
+      onClose: result => {
+        if (result) {
+          refreshList();
+        }
+      },
+    });
   }
 </script>
 
@@ -135,6 +224,15 @@
         <Button
           size="sm"
           :variant="
+            maintenanceFilterStatus == MaintenanceFilterStatus.MaintenanceFilterStatusOverdue ? 'default' : 'outline'
+          "
+          @click="maintenanceFilterStatus = MaintenanceFilterStatus.MaintenanceFilterStatusOverdue"
+        >
+          {{ $t("maintenance.filter.overdue") }}
+        </Button>
+        <Button
+          size="sm"
+          :variant="
             maintenanceFilterStatus == MaintenanceFilterStatus.MaintenanceFilterStatusCompleted ? 'default' : 'outline'
           "
           @click="maintenanceFilterStatus = MaintenanceFilterStatus.MaintenanceFilterStatusCompleted"
@@ -152,19 +250,9 @@
         </Button>
       </ButtonGroup>
       <Button
-        v-if="props.currentItemId"
         class="ml-auto"
         size="sm"
-        @click="
-          openDialog(DialogID.EditMaintenance, {
-            params: { type: 'create', itemId: props.currentItemId },
-            onClose: result => {
-              if (result) {
-                refreshList();
-              }
-            },
-          })
-        "
+        @click="props.currentItemId ? openMaintenanceModalForCurrentItem() : openItemPickerModal()"
       >
         <MdiPlus />
         {{ $t("maintenance.list.new") }}
@@ -174,6 +262,33 @@
   <section>
     <!-- begin -->
     <MaintenanceEditModal ref="maintenanceEditModal" @changed="refreshList" />
+    <DialogRoot :open="itemPickerOpen" @update:open="itemPickerOpen = $event">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{{ $t("maintenance.list.select_item") }}</DialogTitle>
+        </DialogHeader>
+        <div class="py-2">
+          <ItemSelector
+            v-model="selectedItem"
+            v-model:search="itemSearch"
+            :items="availableItems"
+            item-text="name"
+            item-value="id"
+            :is-loading="isLoadingItems"
+            :label="$t('global.items')"
+            :trigger-search="loadInitialItems"
+          />
+        </div>
+        <DialogFooter>
+          <Button variant="outline" @click="itemPickerOpen = false">
+            {{ $t("global.cancel") }}
+          </Button>
+          <Button :disabled="!selectedItem" @click="openMaintenanceModalForSelectedItem">
+            {{ $t("global.confirm") }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </DialogRoot>
     <div class="container space-y-6">
       <BaseCard v-for="e in maintenanceDataList" :key="e.id">
         <BaseSectionHeader class="border-b p-6">
@@ -191,10 +306,22 @@
               <Badge v-if="validDate(e.completedDate)" variant="outline">
                 <MdiCheck class="mr-2" />
                 <DateTime :date="e.completedDate" format="human" datetime-type="date" />
+                <MdiRepeat v-if="hasRecurringPlan(e)" class="ml-2" />
+              </Badge>
+              <Badge v-else-if="e.isOverdue" variant="destructive">
+                <MdiAlertCircle class="mr-2" />
+                <span v-if="validDate(e.scheduledDate)">
+                  {{ $t("maintenance.list.overdue_since") }}
+                  <DateTime :date="e.scheduledDate" format="human" datetime-type="date" />
+                </span>
+                <span v-else>
+                  {{ $t("maintenance.list.overdue") }}
+                </span>
               </Badge>
               <Badge v-else-if="validDate(e.scheduledDate)" variant="outline">
                 <MdiCalendar class="mr-2" />
                 <DateTime :date="e.scheduledDate" format="human" datetime-type="date" />
+                <MdiRepeat v-if="hasRecurringPlan(e)" class="ml-2" />
               </Badge>
               <TooltipProvider :delay-duration="0">
                 <Tooltip>
@@ -217,7 +344,7 @@
             size="sm"
             @click="
               openDialog(DialogID.EditMaintenance, {
-                params: { type: 'update', maintenanceEntry: e },
+                params: { type: 'update', maintenanceEntry: e, itemId: props.currentItemId ?? undefined },
                 onClose: result => {
                   if (result) {
                     refreshList();

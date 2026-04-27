@@ -17,6 +17,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceplan"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 )
 
@@ -470,6 +471,21 @@ func (_c *EntityCreate) AddMaintenanceEntries(v ...*MaintenanceEntry) *EntityCre
 	return _c.AddMaintenanceEntryIDs(ids...)
 }
 
+// AddMaintenancePlanIDs adds the "maintenance_plans" edge to the MaintenancePlan entity by IDs.
+func (_c *EntityCreate) AddMaintenancePlanIDs(ids ...uuid.UUID) *EntityCreate {
+	_c.mutation.AddMaintenancePlanIDs(ids...)
+	return _c
+}
+
+// AddMaintenancePlans adds the "maintenance_plans" edges to the MaintenancePlan entity.
+func (_c *EntityCreate) AddMaintenancePlans(v ...*MaintenancePlan) *EntityCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddMaintenancePlanIDs(ids...)
+}
+
 // AddAttachmentIDs adds the "attachments" edge to the Attachment entity by IDs.
 func (_c *EntityCreate) AddAttachmentIDs(ids ...uuid.UUID) *EntityCreate {
 	_c.mutation.AddAttachmentIDs(ids...)
@@ -891,6 +907,22 @@ func (_c *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(maintenanceentry.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.MaintenancePlansIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.MaintenancePlansTable,
+			Columns: []string{entity.MaintenancePlansColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenanceplan.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

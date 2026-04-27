@@ -26,8 +26,17 @@ export enum TemplatefieldType {
 
 export enum MaintenanceFilterStatus {
   MaintenanceFilterStatusScheduled = "scheduled",
+  MaintenanceFilterStatusOverdue = "overdue",
   MaintenanceFilterStatusCompleted = "completed",
   MaintenanceFilterStatusBoth = "both",
+}
+
+export enum MaintenancePlanIntervalUnit {
+  Hour = "hour",
+  Day = "day",
+  Week = "week",
+  Month = "month",
+  Year = "year",
 }
 
 export enum EntityPathType {
@@ -926,7 +935,9 @@ export interface MaintenanceEntry {
   cost: string;
   description: string;
   id: string;
+  isOverdue: boolean;
   name: string;
+  planID?: string;
   scheduledDate: Date | string;
 }
 
@@ -936,6 +947,7 @@ export interface MaintenanceEntryCreate {
   cost: string;
   description: string;
   name: string;
+  planID?: string;
   scheduledDate: Date | string;
 }
 
@@ -945,6 +957,7 @@ export interface MaintenanceEntryUpdate {
   cost: string;
   description: string;
   name: string;
+  planID?: string;
   scheduledDate: Date | string;
 }
 
@@ -954,10 +967,42 @@ export interface MaintenanceEntryWithDetails {
   cost: string;
   description: string;
   id: string;
+  isOverdue: boolean;
   itemID: string;
   itemName: string;
   name: string;
+  planID?: string;
   scheduledDate: Date | string;
+}
+
+export interface MaintenancePlan {
+  active: boolean;
+  description: string;
+  id: string;
+  intervalUnit: MaintenancePlanIntervalUnit;
+  intervalValue: number;
+  itemID: string;
+  lastCompletedAt: Date | string;
+  name: string;
+  nextDueAt: Date | string;
+}
+
+export interface MaintenancePlanCreate {
+  active: boolean;
+  description: string;
+  intervalUnit: MaintenancePlanIntervalUnit;
+  intervalValue: number;
+  name: string;
+  startDate: Date | string;
+}
+
+export interface MaintenancePlanUpdate {
+  active: boolean;
+  description: string;
+  intervalUnit: MaintenancePlanIntervalUnit;
+  intervalValue: number;
+  name: string;
+  nextDueAt: Date | string;
 }
 
 export interface NotifierCreate {

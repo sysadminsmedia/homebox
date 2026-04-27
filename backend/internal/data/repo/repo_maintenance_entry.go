@@ -24,6 +24,7 @@ type MaintenanceEntryRepository struct {
 type MaintenanceEntryCreate struct {
 	CompletedDate types.Date `json:"completedDate"`
 	ScheduledDate types.Date `json:"scheduledDate"`
+	PlanID        uuid.UUID  `json:"planID"`
 	Name          string     `json:"name"          validate:"required"`
 	Description   string     `json:"description"`
 	Cost          float64    `json:"cost,string"`
@@ -39,6 +40,7 @@ func (mc MaintenanceEntryCreate) Validate() error {
 type MaintenanceEntryUpdate struct {
 	CompletedDate types.Date `json:"completedDate"`
 	ScheduledDate types.Date `json:"scheduledDate"`
+	PlanID        uuid.UUID  `json:"planID"`
 	Name          string     `json:"name"`
 	Description   string     `json:"description"`
 	Cost          float64    `json:"cost,string"`
@@ -56,6 +58,8 @@ type (
 		ID            uuid.UUID  `json:"id"`
 		CompletedDate types.Date `json:"completedDate"`
 		ScheduledDate types.Date `json:"scheduledDate"`
+		PlanID        uuid.UUID  `json:"planID,omitempty"`
+		IsOverdue     bool       `json:"isOverdue"`
 		Name          string     `json:"name"`
 		Description   string     `json:"description"`
 		Cost          float64    `json:"cost,string"`
@@ -68,10 +72,16 @@ var (
 )
 
 func mapMaintenanceEntry(entry *ent.MaintenanceEntry) MaintenanceEntry {
+	planID := uuid.Nil
+	if entry.PlanID != nil {
+		planID = *entry.PlanID
+	}
 	return MaintenanceEntry{
 		ID:            entry.ID,
 		CompletedDate: types.Date(entry.Date),
 		ScheduledDate: types.Date(entry.ScheduledDate),
+		PlanID:        planID,
+		IsOverdue:     isEntryOverdue(entry.Date, entry.ScheduledDate),
 		Name:          entry.Name,
 		Description:   entry.Description,
 		Cost:          entry.Cost,
@@ -108,18 +118,73 @@ func (r *MaintenanceEntryRepository) Create(ctx context.Context, itemID uuid.UUI
 		SetDescription(input.Description).
 		SetCost(input.Cost).
 		Save(ctx)
+	if err != nil {
+		return mapMaintenanceEntryErr(item, err)
+	}
+
+	if input.PlanID != uuid.Nil {
+		item, err = r.db.MaintenanceEntry.UpdateOneID(item.ID).
+			SetPlanID(input.PlanID).
+			Save(ctx)
+	}
 
 	return mapMaintenanceEntryErr(item, err)
 }
 
 func (r *MaintenanceEntryRepository) Update(ctx context.Context, id uuid.UUID, input MaintenanceEntryUpdate) (MaintenanceEntry, error) {
-	item, err := r.db.MaintenanceEntry.UpdateOneID(id).
-		SetDate(input.CompletedDate.Time()).
-		SetScheduledDate(input.ScheduledDate.Time()).
-		SetName(input.Name).
-		SetDescription(input.Description).
-		SetCost(input.Cost).
-		Save(ctx)
+	current, err := r.db.MaintenanceEntry.Query().Where(maintenanceentry.IDEQ(id)).Only(ctx)
+	if err != nil {
+		return MaintenanceEntry{}, err
+	}
+
+	completedDate := input.CompletedDate.Time()
+	if completedDate.IsZero() {
+		completedDate = current.Date
+	}
+
+	scheduledDate := input.ScheduledDate.Time()
+	if scheduledDate.IsZero() {
+		scheduledDate = current.ScheduledDate
+	}
+
+	name := input.Name
+	if name == "" {
+		name = current.Name
+	}
+
+	description := input.Description
+	if description == "" {
+		description = current.Description
+	}
+
+	cost := input.Cost
+	if input.Cost == 0 && current.Cost != 0 {
+		cost = current.Cost
+	}
+
+	updater := r.db.MaintenanceEntry.UpdateOneID(id).
+		SetDate(completedDate).
+		SetScheduledDate(scheduledDate).
+		SetName(name).
+		SetDescription(description).
+		SetCost(cost)
+
+	if input.PlanID != uuid.Nil {
+		updater = updater.SetPlanID(input.PlanID)
+	} else {
+		updater = updater.ClearPlanID()
+	}
+
+	item, err := updater.Save(ctx)
+	if err != nil {
+		return mapMaintenanceEntryErr(item, err)
+	}
+
+	if current.Date.IsZero() && !completedDate.IsZero() && item.PlanID != nil && *item.PlanID != uuid.Nil {
+		if _, err = r.rollPlanFromCompletion(ctx, *item.PlanID, completedDate, item.EntityID); err != nil {
+			return MaintenanceEntry{}, err
+		}
+	}
 
 	return mapMaintenanceEntryErr(item, err)
 }
@@ -153,6 +218,17 @@ func (r *MaintenanceEntryRepository) GetMaintenanceByItemID(ctx context.Context,
 		query = query.Order(
 			maintenanceentry.ByDate(sql.OrderDesc()),
 		)
+	case MaintenanceFilterStatusOverdue:
+		query = query.Where(
+			maintenanceentry.ScheduledDateLT(time.Now()),
+			maintenanceentry.Or(
+				maintenanceentry.DateIsNil(),
+				maintenanceentry.DateEQ(time.Time{}),
+			),
+		)
+		query = query.Order(
+			maintenanceentry.ByScheduledDate(sql.OrderAsc()),
+		)
 	default:
 		// Sort entries by default by scheduled and maintenance date in descending order
 		query = query.Order(
@@ -167,6 +243,18 @@ func (r *MaintenanceEntryRepository) GetMaintenanceByItemID(ctx context.Context,
 	}
 
 	return mapEachMaintenanceEntryWithDetails(entries), nil
+}
+
+func isEntryOverdue(completedDate, scheduledDate time.Time) bool {
+	if scheduledDate.IsZero() {
+		return false
+	}
+
+	if completedDate.IsZero() {
+		return scheduledDate.Before(time.Now())
+	}
+
+	return false
 }
 
 func (r *MaintenanceEntryRepository) Delete(ctx context.Context, id uuid.UUID) error {

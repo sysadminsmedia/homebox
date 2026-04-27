@@ -21,6 +21,9 @@ func (MaintenanceEntry) Mixin() []ent.Mixin {
 func (MaintenanceEntry) Fields() []ent.Field {
 	return []ent.Field{
 		field.UUID("entity_id", uuid.UUID{}),
+		field.UUID("plan_id", uuid.UUID{}).
+			Optional().
+			Nillable(),
 		field.Time("date").
 			Optional(),
 		field.Time("scheduled_date").
@@ -43,6 +46,10 @@ func (MaintenanceEntry) Edges() []ent.Edge {
 			Field("entity_id").
 			Ref("maintenance_entries").
 			Required().
+			Unique(),
+		edge.From("plan", MaintenancePlan.Type).
+			Field("plan_id").
+			Ref("maintenance_entries").
 			Unique(),
 	}
 }

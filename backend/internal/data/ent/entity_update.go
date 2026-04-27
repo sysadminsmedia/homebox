@@ -18,6 +18,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceplan"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 )
@@ -556,6 +557,21 @@ func (_u *EntityUpdate) AddMaintenanceEntries(v ...*MaintenanceEntry) *EntityUpd
 	return _u.AddMaintenanceEntryIDs(ids...)
 }
 
+// AddMaintenancePlanIDs adds the "maintenance_plans" edge to the MaintenancePlan entity by IDs.
+func (_u *EntityUpdate) AddMaintenancePlanIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.AddMaintenancePlanIDs(ids...)
+	return _u
+}
+
+// AddMaintenancePlans adds the "maintenance_plans" edges to the MaintenancePlan entity.
+func (_u *EntityUpdate) AddMaintenancePlans(v ...*MaintenancePlan) *EntityUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddMaintenancePlanIDs(ids...)
+}
+
 // AddAttachmentIDs adds the "attachments" edge to the Attachment entity by IDs.
 func (_u *EntityUpdate) AddAttachmentIDs(ids ...uuid.UUID) *EntityUpdate {
 	_u.mutation.AddAttachmentIDs(ids...)
@@ -676,6 +692,27 @@ func (_u *EntityUpdate) RemoveMaintenanceEntries(v ...*MaintenanceEntry) *Entity
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveMaintenanceEntryIDs(ids...)
+}
+
+// ClearMaintenancePlans clears all "maintenance_plans" edges to the MaintenancePlan entity.
+func (_u *EntityUpdate) ClearMaintenancePlans() *EntityUpdate {
+	_u.mutation.ClearMaintenancePlans()
+	return _u
+}
+
+// RemoveMaintenancePlanIDs removes the "maintenance_plans" edge to MaintenancePlan entities by IDs.
+func (_u *EntityUpdate) RemoveMaintenancePlanIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.RemoveMaintenancePlanIDs(ids...)
+	return _u
+}
+
+// RemoveMaintenancePlans removes "maintenance_plans" edges to MaintenancePlan entities.
+func (_u *EntityUpdate) RemoveMaintenancePlans(v ...*MaintenancePlan) *EntityUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveMaintenancePlanIDs(ids...)
 }
 
 // ClearAttachments clears all "attachments" edges to the Attachment entity.
@@ -1183,6 +1220,51 @@ func (_u *EntityUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(maintenanceentry.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.MaintenancePlansCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.MaintenancePlansTable,
+			Columns: []string{entity.MaintenancePlansColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenanceplan.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedMaintenancePlansIDs(); len(nodes) > 0 && !_u.mutation.MaintenancePlansCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.MaintenancePlansTable,
+			Columns: []string{entity.MaintenancePlansColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenanceplan.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.MaintenancePlansIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.MaintenancePlansTable,
+			Columns: []string{entity.MaintenancePlansColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenanceplan.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -1776,6 +1858,21 @@ func (_u *EntityUpdateOne) AddMaintenanceEntries(v ...*MaintenanceEntry) *Entity
 	return _u.AddMaintenanceEntryIDs(ids...)
 }
 
+// AddMaintenancePlanIDs adds the "maintenance_plans" edge to the MaintenancePlan entity by IDs.
+func (_u *EntityUpdateOne) AddMaintenancePlanIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.AddMaintenancePlanIDs(ids...)
+	return _u
+}
+
+// AddMaintenancePlans adds the "maintenance_plans" edges to the MaintenancePlan entity.
+func (_u *EntityUpdateOne) AddMaintenancePlans(v ...*MaintenancePlan) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddMaintenancePlanIDs(ids...)
+}
+
 // AddAttachmentIDs adds the "attachments" edge to the Attachment entity by IDs.
 func (_u *EntityUpdateOne) AddAttachmentIDs(ids ...uuid.UUID) *EntityUpdateOne {
 	_u.mutation.AddAttachmentIDs(ids...)
@@ -1896,6 +1993,27 @@ func (_u *EntityUpdateOne) RemoveMaintenanceEntries(v ...*MaintenanceEntry) *Ent
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveMaintenanceEntryIDs(ids...)
+}
+
+// ClearMaintenancePlans clears all "maintenance_plans" edges to the MaintenancePlan entity.
+func (_u *EntityUpdateOne) ClearMaintenancePlans() *EntityUpdateOne {
+	_u.mutation.ClearMaintenancePlans()
+	return _u
+}
+
+// RemoveMaintenancePlanIDs removes the "maintenance_plans" edge to MaintenancePlan entities by IDs.
+func (_u *EntityUpdateOne) RemoveMaintenancePlanIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.RemoveMaintenancePlanIDs(ids...)
+	return _u
+}
+
+// RemoveMaintenancePlans removes "maintenance_plans" edges to MaintenancePlan entities.
+func (_u *EntityUpdateOne) RemoveMaintenancePlans(v ...*MaintenancePlan) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveMaintenancePlanIDs(ids...)
 }
 
 // ClearAttachments clears all "attachments" edges to the Attachment entity.
@@ -2433,6 +2551,51 @@ func (_u *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err erro
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(maintenanceentry.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.MaintenancePlansCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.MaintenancePlansTable,
+			Columns: []string{entity.MaintenancePlansColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenanceplan.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedMaintenancePlansIDs(); len(nodes) > 0 && !_u.mutation.MaintenancePlansCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.MaintenancePlansTable,
+			Columns: []string{entity.MaintenancePlansColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenanceplan.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.MaintenancePlansIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.MaintenancePlansTable,
+			Columns: []string{entity.MaintenancePlansColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenanceplan.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

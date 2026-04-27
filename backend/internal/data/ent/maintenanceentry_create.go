@@ -13,6 +13,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceplan"
 )
 
 // MaintenanceEntryCreate is the builder for creating a MaintenanceEntry entity.
@@ -53,6 +54,20 @@ func (_c *MaintenanceEntryCreate) SetNillableUpdatedAt(v *time.Time) *Maintenanc
 // SetEntityID sets the "entity_id" field.
 func (_c *MaintenanceEntryCreate) SetEntityID(v uuid.UUID) *MaintenanceEntryCreate {
 	_c.mutation.SetEntityID(v)
+	return _c
+}
+
+// SetPlanID sets the "plan_id" field.
+func (_c *MaintenanceEntryCreate) SetPlanID(v uuid.UUID) *MaintenanceEntryCreate {
+	_c.mutation.SetPlanID(v)
+	return _c
+}
+
+// SetNillablePlanID sets the "plan_id" field if the given value is not nil.
+func (_c *MaintenanceEntryCreate) SetNillablePlanID(v *uuid.UUID) *MaintenanceEntryCreate {
+	if v != nil {
+		_c.SetPlanID(*v)
+	}
 	return _c
 }
 
@@ -135,6 +150,11 @@ func (_c *MaintenanceEntryCreate) SetNillableID(v *uuid.UUID) *MaintenanceEntryC
 // SetEntity sets the "entity" edge to the Entity entity.
 func (_c *MaintenanceEntryCreate) SetEntity(v *Entity) *MaintenanceEntryCreate {
 	return _c.SetEntityID(v.ID)
+}
+
+// SetPlan sets the "plan" edge to the MaintenancePlan entity.
+func (_c *MaintenanceEntryCreate) SetPlan(v *MaintenancePlan) *MaintenanceEntryCreate {
+	return _c.SetPlanID(v.ID)
 }
 
 // Mutation returns the MaintenanceEntryMutation object of the builder.
@@ -298,6 +318,23 @@ func (_c *MaintenanceEntryCreate) createSpec() (*MaintenanceEntry, *sqlgraph.Cre
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.EntityID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.PlanIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   maintenanceentry.PlanTable,
+			Columns: []string{maintenanceentry.PlanColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenanceplan.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.PlanID = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

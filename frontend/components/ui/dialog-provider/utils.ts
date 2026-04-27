@@ -66,7 +66,7 @@ export type DialogParamsMap = {
   [DialogID.ProductImport]?: { barcode?: string };
   [DialogID.EditMaintenance]:
     | { type: "create"; itemId: string | string[] }
-    | { type: "update"; maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails }
+    | { type: "update"; maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails; itemId?: string }
     | { type: "duplicate"; maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails; itemId: string };
   [DialogID.ItemChangeDetails]: {
     items: EntitySummary[];
