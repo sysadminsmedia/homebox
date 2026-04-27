@@ -14,12 +14,13 @@ type ExportItemFields struct {
 }
 
 type ExportCSVRow struct {
-	ImportRef string         `csv:"HB.import_ref"`
-	Location  LocationString `csv:"HB.location"`
-	TagStr    TagString      `csv:"HB.tags|HB.labels"`
-	AssetID   repo.AssetID   `csv:"HB.asset_id"`
-	Archived  bool           `csv:"HB.archived"`
-	URL       string         `csv:"HB.url"`
+	ImportRef       string         `csv:"HB.import_ref"`
+	ParentImportRef string         `csv:"HB.parent_import_ref"`
+	Location        LocationString `csv:"HB.location"`
+	TagStr          TagString      `csv:"HB.tags|HB.labels"`
+	AssetID         repo.AssetID   `csv:"HB.asset_id"`
+	Archived        bool           `csv:"HB.archived"`
+	URL             string         `csv:"HB.url"`
 
 	Name        string  `csv:"HB.name"`
 	Quantity    float64 `csv:"HB.quantity"`
