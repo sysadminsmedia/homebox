@@ -81,6 +81,8 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		})))
 
 		r.Get("/currency", chain.ToHandlerFunc(v1Ctrl.HandleCurrency()))
+		// Backward-compatible alias; remove after frontend migration to /currency.
+		r.Get("/currencies", chain.ToHandlerFunc(v1Ctrl.HandleCurrency()))
 
 		providers := []v1.AuthProvider{
 			providers.NewLocalProvider(a.services.User),
