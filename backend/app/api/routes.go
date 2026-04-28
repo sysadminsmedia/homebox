@@ -80,7 +80,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 			BuildTime: buildTime,
 		})))
 
-		r.Get("/currencies", chain.ToHandlerFunc(v1Ctrl.HandleCurrency()))
+		r.Get("/currency", chain.ToHandlerFunc(v1Ctrl.HandleCurrency()))
 
 		providers := []v1.AuthProvider{
 			providers.NewLocalProvider(a.services.User),
