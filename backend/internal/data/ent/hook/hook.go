@@ -93,6 +93,18 @@ func (f EntityTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EntityTypeMutation", m)
 }
 
+// The ExportFunc type is an adapter to allow the use of ordinary
+// function as Export mutator.
+type ExportFunc func(context.Context, *ent.ExportMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ExportFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ExportMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ExportMutation", m)
+}
+
 // The GroupFunc type is an adapter to allow the use of ordinary
 // function as Group mutator.
 type GroupFunc func(context.Context, *ent.GroupMutation) (ent.Value, error)

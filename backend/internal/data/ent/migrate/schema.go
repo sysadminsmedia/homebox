@@ -290,6 +290,44 @@ var (
 			},
 		},
 	}
+	// ExportsColumns holds the columns for the "exports" table.
+	ExportsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"pending", "running", "completed", "failed"}, Default: "pending"},
+		{Name: "progress", Type: field.TypeInt, Default: 0},
+		{Name: "artifact_path", Type: field.TypeString, Nullable: true},
+		{Name: "size_bytes", Type: field.TypeInt64, Default: 0},
+		{Name: "error", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "group_id", Type: field.TypeUUID},
+	}
+	// ExportsTable holds the schema information for the "exports" table.
+	ExportsTable = &schema.Table{
+		Name:       "exports",
+		Columns:    ExportsColumns,
+		PrimaryKey: []*schema.Column{ExportsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "exports_groups_exports",
+				Columns:    []*schema.Column{ExportsColumns[8]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "export_group_id",
+				Unique:  false,
+				Columns: []*schema.Column{ExportsColumns[8]},
+			},
+			{
+				Name:    "export_group_id_status",
+				Unique:  false,
+				Columns: []*schema.Column{ExportsColumns[8], ExportsColumns[3]},
+			},
+		},
+	}
 	// GroupsColumns holds the columns for the "groups" table.
 	GroupsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -556,6 +594,7 @@ var (
 		EntityFieldsTable,
 		EntityTemplatesTable,
 		EntityTypesTable,
+		ExportsTable,
 		GroupsTable,
 		GroupInvitationTokensTable,
 		MaintenanceEntriesTable,
@@ -581,6 +620,7 @@ func init() {
 	EntityTemplatesTable.ForeignKeys[1].RefTable = GroupsTable
 	EntityTypesTable.ForeignKeys[0].RefTable = EntityTemplatesTable
 	EntityTypesTable.ForeignKeys[1].RefTable = GroupsTable
+	ExportsTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupInvitationTokensTable.ForeignKeys[0].RefTable = GroupsTable
 	MaintenanceEntriesTable.ForeignKeys[0].RefTable = EntitiesTable
 	NotifiersTable.ForeignKeys[0].RefTable = GroupsTable

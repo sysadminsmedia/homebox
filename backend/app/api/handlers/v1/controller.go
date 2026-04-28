@@ -233,6 +233,8 @@ func (ctrl *V1Controller) HandleCacheWS() errchain.HandlerFunc {
 	ctrl.bus.Subscribe(eventbus.EventTagMutation, factory("tag.mutation"))
 	ctrl.bus.Subscribe(eventbus.EventEntityMutation, factory("entity.mutation"))
 	ctrl.bus.Subscribe(eventbus.EventUserMutation, factory("user.mutation"))
+	ctrl.bus.Subscribe(eventbus.EventExportMutation, factory("export.mutation"))
+	ctrl.bus.Subscribe(eventbus.EventImportMutation, factory("import.mutation"))
 
 	// Persistent asynchronous ticker that keeps all websocket connections alive with periodic pings.
 	go func() {

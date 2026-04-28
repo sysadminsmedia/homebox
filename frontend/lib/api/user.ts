@@ -12,6 +12,7 @@ import { NotifiersAPI } from "./classes/notifiers";
 import { MaintenanceAPI } from "./classes/maintenance";
 import { ProductAPI } from "./classes/product";
 import { TemplatesApi } from "./classes/templates";
+import { BackupsAPI } from "./classes/backups";
 import type { Requests } from "~~/lib/requests";
 
 export class UserClient extends BaseAPI {
@@ -28,6 +29,7 @@ export class UserClient extends BaseAPI {
   reports: ReportsAPI;
   notifiers: NotifiersAPI;
   products: ProductAPI;
+  backups: BackupsAPI;
 
   /** Backward-compat shim that delegates to the entities (items) API. */
   locations: {
@@ -55,6 +57,7 @@ export class UserClient extends BaseAPI {
     this.reports = new ReportsAPI(requests);
     this.notifiers = new NotifiersAPI(requests);
     this.products = new ProductAPI(requests);
+    this.backups = new BackupsAPI(requests);
 
     // Backward-compat shim: api.locations.* delegates to api.items.*
     this.locations = {

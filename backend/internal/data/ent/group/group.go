@@ -37,6 +37,8 @@ const (
 	EdgeNotifiers = "notifiers"
 	// EdgeEntityTemplates holds the string denoting the entity_templates edge name in mutations.
 	EdgeEntityTemplates = "entity_templates"
+	// EdgeExports holds the string denoting the exports edge name in mutations.
+	EdgeExports = "exports"
 	// Table holds the table name of the group in the database.
 	Table = "groups"
 	// UsersTable is the table that holds the users relation/edge. The primary key declared below.
@@ -86,6 +88,13 @@ const (
 	EntityTemplatesInverseTable = "entity_templates"
 	// EntityTemplatesColumn is the table column denoting the entity_templates relation/edge.
 	EntityTemplatesColumn = "group_entity_templates"
+	// ExportsTable is the table that holds the exports relation/edge.
+	ExportsTable = "exports"
+	// ExportsInverseTable is the table name for the Export entity.
+	// It exists in this package in order to avoid circular dependency with the "export" package.
+	ExportsInverseTable = "exports"
+	// ExportsColumn is the table column denoting the exports relation/edge.
+	ExportsColumn = "group_id"
 )
 
 // Columns holds all SQL columns for group fields.
@@ -253,6 +262,20 @@ func ByEntityTemplates(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newEntityTemplatesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByExportsCount orders the results by exports count.
+func ByExportsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newExportsStep(), opts...)
+	}
+}
+
+// ByExports orders the results by exports terms.
+func ByExports(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newExportsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUsersStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -300,5 +323,12 @@ func newEntityTemplatesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EntityTemplatesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, EntityTemplatesTable, EntityTemplatesColumn),
+	)
+}
+func newExportsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ExportsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ExportsTable, ExportsColumn),
 	)
 }

@@ -50,6 +50,7 @@ func (Group) Edges() []ent.Edge {
 		owned("invitation_tokens", GroupInvitationToken.Type),
 		owned("notifiers", Notifier.Type),
 		owned("entity_templates", EntityTemplate.Type),
+		owned("exports", Export.Type),
 		// $scaffold_edge
 	}
 }

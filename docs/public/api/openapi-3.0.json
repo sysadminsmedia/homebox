@@ -1200,6 +1200,196 @@
                 }
             }
         },
+        "/v1/group/exports": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Returns export job rows for the caller's group, newest first.",
+                "tags": [
+                    "Group"
+                ],
+                "summary": "List Collection Exports",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.Results-repo_ExportOut"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Creates a pending export row and enqueues the build job. Poll the listing endpoint or watch the WebSocket for completion.",
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Start a Collection Export",
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.ExportOut"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/group/exports/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Get an Export",
+                "parameters": [
+                    {
+                        "description": "Export ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.ExportOut"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Deletes the export row and its blob artifact.",
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Delete an Export",
+                "parameters": [
+                    {
+                        "description": "Export ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/group/exports/{id}/download": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Download an Export Artifact",
+                "parameters": [
+                    {
+                        "description": "Export ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/zip": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/group/import": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Uploads a collection-export zip and enqueues the import job. The destination group must be empty.",
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Import a Collection Zip",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "file": {
+                                        "description": "Export zip",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "required": [
+                                    "file"
+                                ]
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "202": {
+                        "description": "Accepted"
+                    }
+                }
+            }
+        },
         "/v1/groups": {
             "get": {
                 "security": [
@@ -3641,6 +3831,72 @@
                     }
                 }
             },
+            "ent.Export": {
+                "type": "object",
+                "properties": {
+                    "artifact_path": {
+                        "description": "ArtifactPath holds the value of the \"artifact_path\" field.",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "CreatedAt holds the value of the \"created_at\" field.",
+                        "type": "string"
+                    },
+                    "edges": {
+                        "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the ExportQuery when eager-loading is set.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.ExportEdges"
+                            }
+                        ]
+                    },
+                    "error": {
+                        "description": "Error holds the value of the \"error\" field.",
+                        "type": "string"
+                    },
+                    "group_id": {
+                        "description": "GroupID holds the value of the \"group_id\" field.",
+                        "type": "string"
+                    },
+                    "id": {
+                        "description": "ID of the ent.",
+                        "type": "string"
+                    },
+                    "progress": {
+                        "description": "Progress holds the value of the \"progress\" field.",
+                        "type": "integer"
+                    },
+                    "size_bytes": {
+                        "description": "SizeBytes holds the value of the \"size_bytes\" field.",
+                        "type": "integer"
+                    },
+                    "status": {
+                        "description": "Status holds the value of the \"status\" field.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/export.Status"
+                            }
+                        ]
+                    },
+                    "updated_at": {
+                        "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                        "type": "string"
+                    }
+                }
+            },
+            "ent.ExportEdges": {
+                "type": "object",
+                "properties": {
+                    "group": {
+                        "description": "Group holds the value of the group edge.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.Group"
+                            }
+                        ]
+                    }
+                }
+            },
             "ent.Group": {
                 "type": "object",
                 "properties": {
@@ -3696,6 +3952,13 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/ent.EntityType"
+                        }
+                    },
+                    "exports": {
+                        "description": "Exports holds the value of the exports edge.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ent.Export"
                         }
                     },
                     "invitation_tokens": {
@@ -4160,6 +4423,23 @@
                     "TypeNumber",
                     "TypeBoolean",
                     "TypeTime"
+                ]
+            },
+            "export.Status": {
+                "type": "string",
+                "enum": [
+                    "pending",
+                    "pending",
+                    "running",
+                    "completed",
+                    "failed"
+                ],
+                "x-enum-varnames": [
+                    "DefaultStatus",
+                    "StatusPending",
+                    "StatusRunning",
+                    "StatusCompleted",
+                    "StatusFailed"
                 ]
             },
             "repo.BarcodeProduct": {
@@ -5016,6 +5296,38 @@
                         "type": "string"
                     },
                     "warrantyExpires": {
+                        "type": "string"
+                    }
+                }
+            },
+            "repo.ExportOut": {
+                "type": "object",
+                "properties": {
+                    "artifactPath": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "type": "string"
+                    },
+                    "error": {
+                        "type": "string"
+                    },
+                    "groupId": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "progress": {
+                        "type": "integer"
+                    },
+                    "sizeBytes": {
+                        "type": "integer"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
                         "type": "string"
                     }
                 }
@@ -5909,6 +6221,17 @@
                     },
                     "enabled": {
                         "type": "boolean"
+                    }
+                }
+            },
+            "v1.Results-repo_ExportOut": {
+                "type": "object",
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/repo.ExportOut"
+                        }
                     }
                 }
             },

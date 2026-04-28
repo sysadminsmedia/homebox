@@ -886,6 +886,24 @@
             "zero_datetimes_sub": "Resets the time value for all date time fields in your inventory to the beginning of the date. This is to fix a bug that was introduced early on in the development of the site that caused the time value to be stored with the time which caused issues with date fields displaying accurate values. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
         },
         "actions_sub": "Apply Actions to your inventory in bulk. These are irreversible actions. '<b>'Be careful.'</b>'",
+        "backups": "Backup & Restore",
+        "backups_sub": "Export your entire collection — entities, tags, attachments, and metadata — to a portable zip archive. Restore an archive into a freshly registered, empty collection on this or another server.",
+        "backups_set": {
+            "create": "Create Backup",
+            "create_button": "Start Backup",
+            "create_sub": "Builds a zip with every entity, tag, custom field, attachment, and maintenance record in this collection. The job runs in the background; the artifact will appear in the table below when it's ready.",
+            "delete_confirm": "Delete this backup artifact? This cannot be undone.",
+            "list_empty": "No backups yet.",
+            "restore": "Restore from Backup",
+            "restore_button": "Upload & Restore",
+            "restore_sub": "Upload a backup zip to populate this collection. The collection must contain no items yet — default locations and tags are wiped automatically as part of the restore.",
+            "table": {
+                "actions": "Actions",
+                "created": "Created",
+                "size": "Size",
+                "status": "Status"
+            }
+        },
         "demo_mode_error": {
             "wipe_inventory": "Inventory, tags, locations and maintenance records cannot be wiped whilst Homebox is in demo mode. Please ensure that you are not in demo mode and try again."
         },
@@ -912,6 +930,12 @@
         "reports_sub": "Generate different reports for your inventory.",
         "toast": {
             "asset_success": "{ results } assets have been updated.",
+            "backup_started": "Backup started — it will appear in the table when ready.",
+            "backup_start_failed": "Failed to start backup.",
+            "backup_delete_failed": "Failed to delete backup.",
+            "restore_started": "Restore started — refresh shortly to see imported items.",
+            "restore_failed": "Restore failed.",
+            "restore_requires_empty": "Restore requires a collection with no items. Switch to a freshly registered collection (default locations and tags are fine) and try again.",
             "failed_create_missing_thumbnails": "Failed to create missing thumbnails.",
             "failed_ensure_ids": "Failed to ensure asset IDs.",
             "failed_ensure_import_refs": "Failed to ensure import refs.",
