@@ -57,8 +57,8 @@
   import { useDialog } from "@/components/ui/dialog-provider";
   import FormTextField from "~/components/Form/TextField.vue";
   import FormTextArea from "~/components/Form/TextArea.vue";
-  import { MaintenanceFilterStatus, MaintenancePlanIntervalUnit } from "~~/lib/api/types/data-contracts";
-  import type { MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
+  import { MaintenancePlanIntervalUnit } from "~~/lib/api/types/data-contracts";
+  import type { MaintenanceEntryWithDetails, MaintenancePlanUpdate } from "~~/lib/api/types/data-contracts";
   import { getNextNDueDates } from "~/lib/maintenance/recurrence";
   import Button from "@/components/ui/button/Button.vue";
 
@@ -81,6 +81,44 @@
     itemIds: null as string[] | null,
     itemIdForPlanLookup: null as string | null,
   });
+
+  /** Snapshot when the dialog opened / plan hydrated — used to avoid overwriting plan nextDueAt when unchanged */
+  const planFieldBaseline = reactive({
+    scheduledDate: null as Date | null,
+    completedDate: null as Date | null,
+    intervalValue: "30",
+    intervalUnit: MaintenancePlanIntervalUnit.Day,
+  });
+
+  function cloneDate(d: Date | null): Date | null {
+    return d ? new Date(d.getTime()) : null;
+  }
+
+  function capturePlanFieldBaseline() {
+    planFieldBaseline.scheduledDate = cloneDate(entry.scheduledDate);
+    planFieldBaseline.completedDate = cloneDate(entry.completedDate);
+    planFieldBaseline.intervalValue = entry.intervalValue;
+    planFieldBaseline.intervalUnit = entry.intervalUnit;
+  }
+
+  function sameCalendarDate(a: Date | null, b: Date | null): boolean {
+    if (!a && !b) {
+      return true;
+    }
+    if (!a || !b) {
+      return false;
+    }
+    return dateToApiValue(a, "") === dateToApiValue(b, "");
+  }
+
+  function planScheduleOrRecurrenceChanged(): boolean {
+    return (
+      !sameCalendarDate(entry.scheduledDate, planFieldBaseline.scheduledDate) ||
+      !sameCalendarDate(entry.completedDate, planFieldBaseline.completedDate) ||
+      entry.intervalValue !== planFieldBaseline.intervalValue ||
+      entry.intervalUnit !== planFieldBaseline.intervalUnit
+    );
+  }
 
   const nextDuePreview = computed(() => {
     if (!entry.isRecurring) {
@@ -136,23 +174,27 @@
   }
 
   async function hydrateRecurringPlan() {
-    if (!entry.planID || !entry.itemIdForPlanLookup) {
-      return;
-    }
+    try {
+      if (!entry.planID || !entry.itemIdForPlanLookup) {
+        return;
+      }
 
-    const { data, error } = await api.items.maintenance.getPlans(entry.itemIdForPlanLookup);
-    if (error || !data) {
-      return;
-    }
+      const { data, error } = await api.items.maintenance.getPlans(entry.itemIdForPlanLookup);
+      if (error || !data) {
+        return;
+      }
 
-    const currentPlan = data.find(plan => plan.id === entry.planID);
-    if (!currentPlan) {
-      return;
-    }
+      const currentPlan = data.find(plan => plan.id === entry.planID);
+      if (!currentPlan) {
+        return;
+      }
 
-    entry.isRecurring = true;
-    entry.intervalValue = currentPlan.intervalValue.toString();
-    entry.intervalUnit = currentPlan.intervalUnit;
+      entry.isRecurring = true;
+      entry.intervalValue = currentPlan.intervalValue.toString();
+      entry.intervalUnit = currentPlan.intervalUnit;
+    } finally {
+      capturePlanFieldBaseline();
+    }
   }
 
   async function dispatchFormSubmit() {
@@ -181,7 +223,7 @@
             active: true,
             intervalValue: parseInt(entry.intervalValue, 10) || 1,
             intervalUnit: entry.intervalUnit,
-            startDate: firstDueDate,
+            startDate: dateToApiValue(firstDueDate, ""),
           });
 
           if (planError) {
@@ -218,9 +260,8 @@
     const recurringPlanId = entry.planID;
     const shouldDisableRecurringPlan = !isRecurring && !!recurringPlanId;
     const shouldCreateRecurringPlan = isRecurring && !recurringPlanId && !!entry.itemIdForPlanLookup;
-    let createdPlanId: string | null = null;
 
-    if (shouldCreateRecurringPlan && entry.itemIdForPlanLookup) {
+    if (shouldCreateRecurringPlan && entry.itemIdForPlanLookup && entry.id) {
       const firstDueDate = entry.scheduledDate ?? entry.completedDate ?? new Date(Date.now());
       const { data: createdPlan, error: createPlanError } = await api.items.maintenance.createPlan(entry.itemIdForPlanLookup, {
         name: entry.name,
@@ -228,7 +269,8 @@
         active: true,
         intervalValue: Math.max(parseInt(entry.intervalValue, 10) || 1, 1),
         intervalUnit: entry.intervalUnit,
-        startDate: firstDueDate,
+        startDate: dateToApiValue(firstDueDate, ""),
+        linkExistingEntryID: entry.id,
       });
 
       if (createPlanError || !createdPlan) {
@@ -236,7 +278,6 @@
         return;
       }
 
-      createdPlanId = createdPlan.id;
       entry.planID = createdPlan.id;
     }
 
@@ -254,23 +295,6 @@
       return;
     }
 
-    if (createdPlanId && entry.itemIdForPlanLookup) {
-      const { data: logData, error: logError } = await api.items.maintenance.getLog(entry.itemIdForPlanLookup, {
-        status: MaintenanceFilterStatus.MaintenanceFilterStatusBoth,
-      });
-
-      if (!logError && logData) {
-        const autoCreatedEntry = logData.find(logEntry => logEntry.planID === createdPlanId && logEntry.id !== entry.id);
-        if (autoCreatedEntry) {
-          const { error: deleteError } = await api.maintenance.delete(autoCreatedEntry.id);
-          if (deleteError) {
-            toast.error(t("maintenance.toast.failed_to_update"));
-            return;
-          }
-        }
-      }
-    }
-
     if (shouldDisableRecurringPlan && recurringPlanId) {
       const { error: planDeleteError } = await api.maintenance.deletePlan(recurringPlanId);
       if (planDeleteError) {
@@ -281,15 +305,18 @@
 
     if (isRecurring && entry.planID) {
       const intervalValue = Math.max(parseInt(entry.intervalValue, 10) || 1, 1);
-      const firstDueDate = entry.scheduledDate ?? entry.completedDate ?? new Date(Date.now());
-      const { error: planError } = await api.maintenance.updatePlan(entry.planID, {
+      const planPayload: MaintenancePlanUpdate = {
         name: entry.name,
         description: entry.description,
         active: true,
         intervalValue,
         intervalUnit: entry.intervalUnit,
-        nextDueAt: firstDueDate,
-      });
+      };
+      if (planScheduleOrRecurrenceChanged()) {
+        const firstDueDate = entry.scheduledDate ?? entry.completedDate ?? new Date(Date.now());
+        planPayload.nextDueAt = dateToApiValue(firstDueDate, "");
+      }
+      const { error: planError } = await api.maintenance.updatePlan(entry.planID, planPayload);
 
       if (planError) {
         toast.error(t("maintenance.toast.failed_to_update"));
@@ -330,6 +357,9 @@
           entry.intervalUnit = MaintenancePlanIntervalUnit.Day;
           entry.itemIdForPlanLookup = params.itemId ?? getItemIdFromEntry(params.maintenanceEntry);
           entry.itemIds = null;
+          if (!entry.planID) {
+            capturePlanFieldBaseline();
+          }
           void hydrateRecurringPlan();
           break;
         case "duplicate":

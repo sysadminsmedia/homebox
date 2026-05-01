@@ -993,7 +993,10 @@ export interface MaintenancePlanCreate {
   intervalUnit: MaintenancePlanIntervalUnit;
   intervalValue: number;
   name: string;
+  /** Date-only string (YYYY-MM-DD) or Date; normalized server-side to UTC calendar date */
   startDate: Date | string;
+  /** When set, links this maintenance entry to the new plan instead of auto-creating a duplicate open entry */
+  linkExistingEntryID?: string;
 }
 
 export interface MaintenancePlanUpdate {
@@ -1002,7 +1005,8 @@ export interface MaintenancePlanUpdate {
   intervalUnit: MaintenancePlanIntervalUnit;
   intervalValue: number;
   name: string;
-  nextDueAt: Date | string;
+  /** Omitted to keep the plan’s current next due when only name/description/active change */
+  nextDueAt?: Date | string;
 }
 
 export interface NotifierCreate {

@@ -17,12 +17,62 @@ CREATE TABLE maintenance_plans (
 
 CREATE INDEX idx_maintenance_plans_entity_id ON maintenance_plans (entity_id);
 
-ALTER TABLE maintenance_entries
-  ADD COLUMN plan_id uuid;
+CREATE TABLE maintenance_entries_new (
+  id             uuid           not null primary key,
+  created_at     datetime       not null,
+  updated_at     datetime       not null,
+  date           datetime,
+  scheduled_date datetime,
+  name           text           not null,
+  description    text,
+  cost           real default 0 not null,
+  entity_id      uuid           not null
+    constraint maintenance_entries_entities_maintenance_entries
+      references entities (id) on delete cascade,
+  plan_id        uuid
+    constraint maintenance_entries_plan_id_fkey
+      references maintenance_plans (id) on delete set null
+);
+
+INSERT INTO maintenance_entries_new (
+  id, created_at, updated_at, date, scheduled_date, name, description, cost, entity_id, plan_id
+)
+SELECT
+  id, created_at, updated_at, date, scheduled_date, name, description, cost, entity_id, NULL
+FROM maintenance_entries;
+
+DROP TABLE maintenance_entries;
+
+ALTER TABLE maintenance_entries_new RENAME TO maintenance_entries;
 
 CREATE INDEX idx_maintenance_entries_plan_id ON maintenance_entries (plan_id);
 
 -- +goose Down
 DROP INDEX IF EXISTS idx_maintenance_entries_plan_id;
+
+CREATE TABLE maintenance_entries_old (
+  id             uuid           not null primary key,
+  created_at     datetime       not null,
+  updated_at     datetime       not null,
+  date           datetime,
+  scheduled_date datetime,
+  name           text           not null,
+  description    text,
+  cost           real default 0 not null,
+  entity_id      uuid           not null
+    constraint maintenance_entries_entities_maintenance_entries_old
+      references entities (id) on delete cascade
+);
+
+INSERT INTO maintenance_entries_old (
+  id, created_at, updated_at, date, scheduled_date, name, description, cost, entity_id
+)
+SELECT id, created_at, updated_at, date, scheduled_date, name, description, cost, entity_id
+FROM maintenance_entries;
+
+DROP TABLE maintenance_entries;
+
+ALTER TABLE maintenance_entries_old RENAME TO maintenance_entries;
+
 DROP INDEX IF EXISTS idx_maintenance_plans_entity_id;
 DROP TABLE IF EXISTS maintenance_plans;

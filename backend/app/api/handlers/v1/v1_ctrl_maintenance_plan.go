@@ -16,7 +16,7 @@ import (
 //	@Tags		Item Maintenance
 //	@Produce	json
 //	@Param		id	path		string	true	"Item ID"
-//	@Success	200	{array}		repo.MaintenancePlan[]
+//	@Success	200	{array}		repo.MaintenancePlan
 //	@Router		/v1/entities/{id}/maintenance/plans [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleMaintenancePlanGetAll() errchain.HandlerFunc {

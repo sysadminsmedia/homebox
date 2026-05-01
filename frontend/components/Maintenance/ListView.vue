@@ -28,6 +28,7 @@
   import { toast } from "@/components/ui/sonner";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { DialogID } from "../ui/dialog-provider/utils";
+  import { useDebounceFn } from "@vueuse/core";
 
   const maintenanceFilterStatus = ref(MaintenanceFilterStatus.MaintenanceFilterStatusScheduled);
 
@@ -48,6 +49,7 @@
   const itemSearch = ref("");
   const availableItems = ref<EntitySummary[]>([]);
   const isLoadingItems = ref(false);
+  let itemSearchRequestId = 0;
 
   const { data: maintenanceDataList, refresh: refreshList } = useAsyncData(
     async () => {
@@ -134,6 +136,7 @@
   }
 
   async function searchItems(query: string) {
+    const requestId = ++itemSearchRequestId;
     isLoadingItems.value = true;
     const { data, error } = await api.items.getAll({
       q: query,
@@ -142,6 +145,10 @@
     });
     isLoadingItems.value = false;
 
+    if (requestId !== itemSearchRequestId) {
+      return false;
+    }
+
     if (error || !data) {
       return false;
     }
@@ -149,6 +156,10 @@
     availableItems.value = data.items;
     return true;
   }
+
+  const debouncedSearchItems = useDebounceFn((query: string) => {
+    void searchItems(query);
+  }, 300);
 
   async function loadInitialItems() {
     if (availableItems.value.length > 0) {
@@ -160,12 +171,12 @@
 
   watch(
     itemSearch,
-    async query => {
+    query => {
       if (!itemPickerOpen.value) {
         return;
       }
 
-      await searchItems(query);
+      debouncedSearchItems(query);
     },
     { immediate: false }
   );

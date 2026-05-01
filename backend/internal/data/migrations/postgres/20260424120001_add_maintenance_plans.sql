@@ -20,10 +20,15 @@ CREATE INDEX idx_maintenance_plans_entity_id ON maintenance_plans (entity_id);
 ALTER TABLE maintenance_entries
   ADD COLUMN plan_id uuid;
 
+ALTER TABLE maintenance_entries
+  ADD CONSTRAINT maintenance_entries_plan_id_fkey
+  FOREIGN KEY (plan_id) REFERENCES maintenance_plans (id) ON DELETE SET NULL;
+
 CREATE INDEX idx_maintenance_entries_plan_id ON maintenance_entries (plan_id);
 
 -- +goose Down
 DROP INDEX IF EXISTS idx_maintenance_entries_plan_id;
+ALTER TABLE maintenance_entries DROP CONSTRAINT IF EXISTS maintenance_entries_plan_id_fkey;
 ALTER TABLE maintenance_entries DROP COLUMN IF EXISTS plan_id;
 DROP INDEX IF EXISTS idx_maintenance_plans_entity_id;
 DROP TABLE IF EXISTS maintenance_plans;

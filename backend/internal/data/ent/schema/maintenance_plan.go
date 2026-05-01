@@ -68,7 +68,7 @@ func (MaintenancePlan) Edges() []ent.Edge {
 			Unique(),
 		edge.To("maintenance_entries", MaintenanceEntry.Type).
 			Annotations(entsql.Annotation{
-				OnDelete: entsql.Cascade,
+				OnDelete: entsql.SetNull,
 			}),
 	}
 }

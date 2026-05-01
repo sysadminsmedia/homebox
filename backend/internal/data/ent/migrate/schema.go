@@ -357,7 +357,7 @@ var (
 				Symbol:     "maintenance_entries_maintenance_plans_maintenance_entries",
 				Columns:    []*schema.Column{MaintenanceEntriesColumns[9]},
 				RefColumns: []*schema.Column{MaintenancePlansColumns[0]},
-				OnDelete:   schema.Cascade,
+				OnDelete:   schema.SetNull,
 			},
 		},
 	}

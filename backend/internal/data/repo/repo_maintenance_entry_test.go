@@ -140,7 +140,7 @@ func TestMaintenanceEntryRepository_Update_RecurringCompletionCreatesNextEntry(t
 		Description:   "Recurring filter task",
 		IntervalValue: 1,
 		IntervalUnit:  MaintenancePlanIntervalUnitMonth,
-		StartDate:     startDate,
+		StartDate:     types.DateFromTime(startDate),
 		Active:        true,
 	})
 	require.NoError(t, err)
@@ -196,24 +196,25 @@ func TestMaintenanceEntryRepository_Update_RecurringCompletionCreatesNextEntry(t
 func TestMaintenanceEntryRepository_CreatePlan_UsesStartDateAsFirstDueDate(t *testing.T) {
 	item := useEntities(t, 1)[0]
 	startDate := time.Date(2026, time.March, 10, 9, 30, 0, 0, time.UTC)
+	expectedFirstDue := types.DateFromTime(startDate).Time()
 
 	plan, err := tRepos.MaintEntry.CreatePlan(context.Background(), item.ID, MaintenancePlanCreate{
 		Name:          "Weekly maintenance",
 		Description:   "Recurring task with explicit scheduled date",
 		IntervalValue: 1,
 		IntervalUnit:  MaintenancePlanIntervalUnitWeek,
-		StartDate:     startDate,
+		StartDate:     types.DateFromTime(startDate),
 		Active:        true,
 	})
 	require.NoError(t, err)
 
-	assert.Equal(t, startDate, plan.NextDueAt)
+	assert.True(t, expectedFirstDue.Equal(plan.NextDueAt))
 
 	openEntries, err := tRepos.MaintEntry.db.MaintenanceEntry.Query().
 		Where(
 			maintenanceentry.EntityID(item.ID),
 			maintenanceentry.PlanIDEQ(plan.ID),
-			maintenanceentry.ScheduledDateEQ(startDate),
+			maintenanceentry.ScheduledDateEQ(expectedFirstDue),
 			maintenanceentry.Or(
 				maintenanceentry.DateIsNil(),
 				maintenanceentry.DateEQ(time.Time{}),

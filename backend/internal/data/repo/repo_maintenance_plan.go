@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -11,6 +12,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceplan"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
 
 type MaintenancePlanIntervalUnit string
@@ -24,12 +26,13 @@ const (
 )
 
 type MaintenancePlanCreate struct {
-	Name          string                      `json:"name" validate:"required"`
-	Description   string                      `json:"description"`
-	IntervalValue int                         `json:"intervalValue" validate:"required,min=1"`
-	IntervalUnit  MaintenancePlanIntervalUnit `json:"intervalUnit" validate:"required"`
-	StartDate     time.Time                   `json:"startDate"`
-	Active        bool                        `json:"active"`
+	Name                 string                      `json:"name" validate:"required"`
+	Description          string                      `json:"description"`
+	IntervalValue        int                         `json:"intervalValue" validate:"required,min=1"`
+	IntervalUnit         MaintenancePlanIntervalUnit `json:"intervalUnit" validate:"required"`
+	StartDate            types.Date                  `json:"startDate"`
+	Active               bool                        `json:"active"`
+	LinkExistingEntryID  *uuid.UUID                  `json:"linkExistingEntryID,omitempty"`
 }
 
 type MaintenancePlanUpdate struct {
@@ -37,7 +40,7 @@ type MaintenancePlanUpdate struct {
 	Description   string                      `json:"description"`
 	IntervalValue int                         `json:"intervalValue"`
 	IntervalUnit  MaintenancePlanIntervalUnit `json:"intervalUnit"`
-	NextDueAt     time.Time                   `json:"nextDueAt"`
+	NextDueAt     *types.Date                 `json:"nextDueAt,omitempty"`
 	Active        bool                        `json:"active"`
 }
 
@@ -123,7 +126,7 @@ func (r *MaintenanceEntryRepository) ListPlansByItemID(ctx context.Context, grou
 }
 
 func (r *MaintenanceEntryRepository) CreatePlan(ctx context.Context, itemID uuid.UUID, input MaintenancePlanCreate) (MaintenancePlan, error) {
-	base := input.StartDate
+	base := input.StartDate.Time()
 	if base.IsZero() {
 		base = time.Now().UTC()
 	}
@@ -141,16 +144,35 @@ func (r *MaintenanceEntryRepository) CreatePlan(ctx context.Context, itemID uuid
 		return MaintenancePlan{}, err
 	}
 
-	_, err = r.db.MaintenanceEntry.Create().
-		SetEntityID(itemID).
-		SetPlanID(item.ID).
-		SetName(item.Name).
-		SetDescription(item.Description).
-		SetScheduledDate(firstDue).
-		SetDate(time.Time{}).
-		Save(ctx)
-	if err != nil {
-		return MaintenancePlan{}, err
+	if input.LinkExistingEntryID != nil && *input.LinkExistingEntryID != uuid.Nil {
+		exists, err := r.db.MaintenanceEntry.Query().
+			Where(
+				maintenanceentry.IDEQ(*input.LinkExistingEntryID),
+				maintenanceentry.EntityIDEQ(itemID),
+			).
+			Only(ctx)
+		if err != nil {
+			return MaintenancePlan{}, fmt.Errorf("link existing maintenance entry: %w", err)
+		}
+		_, err = r.db.MaintenanceEntry.UpdateOneID(exists.ID).
+			SetPlanID(item.ID).
+			SetScheduledDate(firstDue).
+			Save(ctx)
+		if err != nil {
+			return MaintenancePlan{}, err
+		}
+	} else {
+		_, err = r.db.MaintenanceEntry.Create().
+			SetEntityID(itemID).
+			SetPlanID(item.ID).
+			SetName(item.Name).
+			SetDescription(item.Description).
+			SetScheduledDate(firstDue).
+			SetDate(time.Time{}).
+			Save(ctx)
+		if err != nil {
+			return MaintenancePlan{}, err
+		}
 	}
 
 	return mapMaintenancePlan(item), nil
@@ -163,10 +185,13 @@ func (r *MaintenanceEntryRepository) UpdatePlan(ctx context.Context, planID uuid
 		SetIntervalValue(input.IntervalValue).
 		SetIntervalUnit(maintenanceplan.IntervalUnit(input.IntervalUnit)).
 		SetActive(input.Active)
-	if input.NextDueAt.IsZero() {
-		up = up.ClearNextDueAt()
-	} else {
-		up = up.SetNextDueAt(input.NextDueAt)
+	if input.NextDueAt != nil {
+		t := input.NextDueAt.Time()
+		if t.IsZero() {
+			up = up.ClearNextDueAt()
+		} else {
+			up = up.SetNextDueAt(t.UTC())
+		}
 	}
 
 	item, err := up.Save(ctx)
