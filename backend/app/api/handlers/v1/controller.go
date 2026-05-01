@@ -106,6 +106,7 @@ type (
 		ButtonText   string `json:"buttonText,omitempty"`
 		AutoRedirect bool   `json:"autoRedirect,omitempty"`
 		AllowLocal   bool   `json:"allowLocal"`
+		Initialized  bool   `json:"initialized"`
 	}
 
 	TelemetryStatus struct {
@@ -166,6 +167,7 @@ func (ctrl *V1Controller) HandleBase(ready ReadyFunc, build Build) errchain.Hand
 				ButtonText:   ctrl.config.OIDC.ButtonText,
 				AutoRedirect: ctrl.config.OIDC.AutoRedirect,
 				AllowLocal:   ctrl.config.Options.AllowLocalLogin,
+				Initialized:  ctrl.oidcProvider != nil,
 			},
 			Telemetry: TelemetryStatus{
 				Enabled: ctrl.config.Otel.Enabled,

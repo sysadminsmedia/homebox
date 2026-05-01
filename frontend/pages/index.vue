@@ -73,7 +73,13 @@
     }
 
     // Auto-redirect to OIDC if autoRedirect is enabled, but not if there's an OIDC initialization error
-    if (status?.oidc?.enabled && status?.oidc?.autoRedirect && !oidcError.value && !shownErrorMessage.value) {
+    if (
+      status?.oidc?.enabled &&
+      status?.oidc?.initialized &&
+      status?.oidc?.autoRedirect &&
+      !oidcError.value &&
+      !shownErrorMessage.value
+    ) {
       loginWithOIDC();
     }
   });
@@ -384,7 +390,7 @@
                   </div>
 
                   <Button
-                    v-if="status?.oidc?.enabled"
+                    v-if="status?.oidc?.enabled && status?.oidc?.initialized"
                     type="button"
                     variant="outline"
                     class="w-full"
