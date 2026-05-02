@@ -5,12 +5,10 @@
       <span class="grow" />
       <span
         :class="{
-          'text-destructive':
-            typeof value === 'string' &&
-            ((maxLength !== -1 && value.length > maxLength) || (minLength !== -1 && value.length < minLength)),
+          'text-destructive': hasLengthError,
         }"
       >
-        {{ typeof value === "string" && (maxLength !== -1 || minLength !== -1) ? `${value.length}/${maxLength}` : "" }}
+        {{ characterCountText }}
       </span>
     </Label>
     <Input
@@ -30,6 +28,7 @@
       :passwordrules="passwordrules"
       :required="required"
       class="w-full"
+      @input="markDirty"
     />
   </div>
   <div v-else v-bind="wrapperAttrs()" class="sm:grid sm:grid-cols-4 sm:items-start sm:gap-4" :class="wrapperClass()">
@@ -38,17 +37,16 @@
       <span class="grow" />
       <span
         :class="{
-          'text-destructive':
-            typeof value === 'string' &&
-            ((maxLength !== -1 && value.length > maxLength) || (minLength !== -1 && value.length < minLength)),
+          'text-destructive': hasLengthError,
         }"
       >
-        {{ typeof value === "string" && (maxLength !== -1 || minLength !== -1) ? `${value.length}/${maxLength}` : "" }}
+        {{ characterCountText }}
       </span>
     </Label>
     <Input
       v-bind="inputAttrs()"
       :id="fieldId"
+      ref="input"
       v-model="value"
       :name="name"
       :placeholder="placeholder"
@@ -62,11 +60,13 @@
       :passwordrules="passwordrules"
       :required="required"
       class="col-span-3 mt-2 w-full"
+      @input="markDirty"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
+  import { useI18n } from "vue-i18n";
   import { Label } from "~/components/ui/label";
   import { Input } from "~/components/ui/input";
 
@@ -145,6 +145,8 @@
     },
   });
 
+  const { t } = useI18n();
+
   const generatedId = useId();
   const fieldId = computed(() => props.id ?? generatedId);
 
@@ -174,4 +176,37 @@
   );
 
   const value = useVModel(props, "modelValue");
+  const isDirty = ref(false);
+
+  function markDirty() {
+    isDirty.value = true;
+  }
+
+  const hasLengthError = computed(() => {
+    if (typeof value.value !== "string" || !isDirty.value) {
+      return false;
+    }
+
+    return (
+      (props.maxLength !== -1 && value.value.length > props.maxLength) ||
+      (props.minLength !== -1 && value.value.length < props.minLength)
+    );
+  });
+
+  const characterCountText = computed(() => {
+    if (typeof value.value !== "string") {
+      return "";
+    }
+
+    if (props.maxLength !== -1) {
+      const minText = props.minLength !== -1 ? ` (${t("components.form.min_length", { min: props.minLength })})` : "";
+      return `${value.value.length}/${props.maxLength}${minText}`;
+    }
+
+    if (props.minLength !== -1) {
+      return `${value.value.length} (${t("components.form.min_length", { min: props.minLength })})`;
+    }
+
+    return "";
+  });
 </script>
