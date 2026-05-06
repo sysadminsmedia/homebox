@@ -230,6 +230,19 @@ func (ctrl *V1Controller) handleEntityAttachmentsHandler(w http.ResponseWriter, 
 			attribute.String("attachment.title", doc.Title),
 		)
 
+		if doc.MimeType == repo.MimeTypeLinkURL {
+			parsed, parseErr := url.ParseRequestURI(doc.Path)
+			if parseErr != nil || (parsed.Scheme != "http" && parsed.Scheme != "https") {
+				err = errors.New("invalid external URL attachment")
+				recordCtrlSpanError(getSpan, err)
+				recordCtrlSpanError(span, err)
+				return validate.NewRequestError(err, http.StatusUnprocessableEntity)
+			}
+
+			http.Redirect(w, r, doc.Path, http.StatusFound)
+			return nil
+		}
+
 		bucketCtx, bucketSpan := startEntityCtrlSpan(getCtx, "controller.V1.handleEntityAttachmentsHandler.openBucket")
 		bucket, err := blob.OpenBucket(bucketCtx, ctrl.repo.Attachments.GetConnString())
 		if err != nil {
