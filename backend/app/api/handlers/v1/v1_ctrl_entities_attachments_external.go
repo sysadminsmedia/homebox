@@ -6,13 +6,14 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
-	"github.com/hay-kot/httpkit/server"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
+	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
 	"go.opentelemetry.io/otel/attribute"
 )
 
@@ -48,6 +49,17 @@ func redactExternalURLForTrace(raw string) string {
 	return u.String()
 }
 
+func sanitizeExternalURLTitle(raw string) string {
+	u, ok := parseExternalHTTPURL(raw)
+	if !ok {
+		return ""
+	}
+	u.User = nil
+	u.RawQuery = ""
+	u.Fragment = ""
+	return u.String()
+}
+
 // HandleEntityAttachmentExternalCreate godoc
 //
 //	@Summary	Create External Link Attachment
@@ -60,52 +72,46 @@ func redactExternalURLForTrace(raw string) string {
 //	@Param		payload	body		externalAttachmentRequest	true	"External document reference"
 //	@Success	201		{object}	repo.EntityOut
 //	@Failure	400		{object}	validate.ErrorResponse
-//	@Failure	422		{object}	validate.ErrorResponse
 //	@Router		/v1/entities/{id}/attachments/external [POST]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityAttachmentExternalCreate() errchain.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) error {
+	fn := func(r *http.Request, id uuid.UUID, body externalAttachmentRequest) (repo.EntityOut, error) {
 		_, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntityAttachmentExternalCreate")
 		defer span.End()
-
-		var body externalAttachmentRequest
-		if err := server.Decode(r, &body); err != nil {
-			recordCtrlSpanError(span, err)
-			log.Err(err).Msg("failed to decode external attachment request")
-			return validate.NewRequestError(err, http.StatusBadRequest)
-		}
 
 		body.SourceType = strings.TrimSpace(body.SourceType)
 		body.ExternalID = strings.TrimSpace(body.ExternalID)
 
 		if body.SourceType == "" {
-			return server.JSON(w, http.StatusUnprocessableEntity,
-				validate.NewFieldErrors().Append("source_type", "source_type is required"))
+			return repo.EntityOut{}, validate.NewRequestError(
+				validate.NewFieldErrors().Append("source_type", "source_type is required"),
+				http.StatusBadRequest,
+			)
 		}
 		if body.ExternalID == "" {
-			return server.JSON(w, http.StatusUnprocessableEntity,
-				validate.NewFieldErrors().Append("external_id", "external_id is required"))
+			return repo.EntityOut{}, validate.NewRequestError(
+				validate.NewFieldErrors().Append("external_id", "external_id is required"),
+				http.StatusBadRequest,
+			)
 		}
 		if _, ok := repo.MimeTypeForSourceType(body.SourceType); !ok {
-			return server.JSON(w, http.StatusUnprocessableEntity,
-				validate.NewFieldErrors().Append("source_type", fmt.Sprintf("unknown source_type %q", body.SourceType)))
+			return repo.EntityOut{}, validate.NewRequestError(
+				validate.NewFieldErrors().Append("source_type", fmt.Sprintf("unknown source_type %q", body.SourceType)),
+				http.StatusBadRequest,
+			)
 		}
 		if body.SourceType == "link" {
 			if _, ok := parseExternalHTTPURL(body.ExternalID); !ok {
-				return server.JSON(w, http.StatusUnprocessableEntity,
-					validate.NewFieldErrors().Append("external_id", "external_id must be a valid http/https URL"))
+				return repo.EntityOut{}, validate.NewRequestError(
+					validate.NewFieldErrors().Append("external_id", "external_id must be a valid http/https URL"),
+					http.StatusBadRequest,
+				)
 			}
 		}
 
 		title := strings.TrimSpace(body.Title)
 		if title == "" {
-			title = body.ExternalID
-		}
-
-		id, err := ctrl.routeID(r)
-		if err != nil {
-			recordCtrlSpanError(span, err)
-			return err
+			title = sanitizeExternalURLTitle(body.ExternalID)
 		}
 
 		span.SetAttributes(
@@ -130,9 +136,11 @@ func (ctrl *V1Controller) HandleEntityAttachmentExternalCreate() errchain.Handle
 		if err != nil {
 			recordCtrlSpanError(span, err)
 			log.Err(err).Msg("failed to add external link attachment")
-			return validate.NewRequestError(err, http.StatusInternalServerError)
+			return repo.EntityOut{}, validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
-		return server.JSON(w, http.StatusCreated, item)
+		return item, nil
 	}
+
+	return adapters.ActionID("id", fn, http.StatusCreated)
 }

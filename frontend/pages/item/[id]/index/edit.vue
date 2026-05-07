@@ -818,7 +818,7 @@
                     <TooltipContent>{{ $t("items.edit.view_image") }}</TooltipContent>
                   </Tooltip>
                   <Tooltip
-                    v-if="attachment.mimeType === 'link/url' || attachment.path.startsWith('http://') || attachment.path.startsWith('https://')"
+                    v-if="attachment.mimeType === 'link/url' || (attachment.path ?? '').startsWith('http://') || (attachment.path ?? '').startsWith('https://')"
                   >
                     <TooltipTrigger as-child>
                       <a :href="attachment.path" target="_blank" rel="noopener noreferrer">
