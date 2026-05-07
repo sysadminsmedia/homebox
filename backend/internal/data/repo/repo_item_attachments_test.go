@@ -22,7 +22,7 @@ func TestMimeTypeForSourceType(t *testing.T) {
 
 	mime, ok = MimeTypeForSourceType("unknown")
 	assert.False(t, ok)
-	assert.Equal(t, "", mime)
+	assert.Empty(t, mime)
 }
 
 func TestAttachmentRepo_Create(t *testing.T) {

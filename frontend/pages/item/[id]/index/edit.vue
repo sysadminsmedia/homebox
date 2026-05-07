@@ -365,7 +365,7 @@
     if (!droppedURL) return;
 
     if (!isValidHttpURL(droppedURL)) {
-      toast.error("Only http/https URLs are supported for external links");
+      toast.error(t("items.toast.failed_upload_attachment"));
       return;
     }
 
@@ -383,11 +383,11 @@
     );
 
     if (error) {
-      toast.error("Failed to create external link attachment");
+      toast.error(t("items.toast.failed_upload_attachment"));
       return;
     }
 
-    toast.success("External link added");
+    toast.success(t("items.toast.attachment_uploaded"));
     item.value.attachments = data.attachments;
   }
 

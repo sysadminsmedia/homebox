@@ -231,15 +231,15 @@ func (ctrl *V1Controller) handleEntityAttachmentsHandler(w http.ResponseWriter, 
 		)
 
 		if doc.MimeType == repo.MimeTypeLinkURL {
-			parsed, parseErr := url.ParseRequestURI(doc.Path)
-			if parseErr != nil || (parsed.Scheme != "http" && parsed.Scheme != "https") {
+			parsed, ok := parseExternalHTTPURL(doc.Path)
+			if !ok {
 				err = errors.New("invalid external URL attachment")
 				recordCtrlSpanError(getSpan, err)
 				recordCtrlSpanError(span, err)
 				return validate.NewRequestError(err, http.StatusUnprocessableEntity)
 			}
 
-			http.Redirect(w, r, doc.Path, http.StatusFound)
+			http.Redirect(w, r, parsed.String(), http.StatusFound)
 			return nil
 		}
 

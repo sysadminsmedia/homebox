@@ -23,6 +23,31 @@ type externalAttachmentRequest struct {
 	AttachmentType string `json:"attachment_type"`
 }
 
+func parseExternalHTTPURL(raw string) (*url.URL, bool) {
+	u, err := url.ParseRequestURI(strings.TrimSpace(raw))
+	if err != nil {
+		return nil, false
+	}
+	if !strings.EqualFold(u.Scheme, "http") && !strings.EqualFold(u.Scheme, schemeHTTPS) {
+		return nil, false
+	}
+	if u.Host == "" || u.User != nil {
+		return nil, false
+	}
+	return u, true
+}
+
+func redactExternalURLForTrace(raw string) string {
+	u, ok := parseExternalHTTPURL(raw)
+	if !ok {
+		return ""
+	}
+	u.User = nil
+	u.RawQuery = ""
+	u.Fragment = ""
+	return u.String()
+}
+
 // HandleEntityAttachmentExternalCreate godoc
 //
 //	@Summary	Create External Link Attachment
@@ -40,7 +65,7 @@ type externalAttachmentRequest struct {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityAttachmentExternalCreate() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntityAttachmentExternalCreate")
+		_, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntityAttachmentExternalCreate")
 		defer span.End()
 
 		var body externalAttachmentRequest
@@ -66,8 +91,7 @@ func (ctrl *V1Controller) HandleEntityAttachmentExternalCreate() errchain.Handle
 				validate.NewFieldErrors().Append("source_type", fmt.Sprintf("unknown source_type %q", body.SourceType)))
 		}
 		if body.SourceType == "link" {
-			u, err := url.ParseRequestURI(body.ExternalID)
-			if err != nil || (u.Scheme != "http" && u.Scheme != "https") {
+			if _, ok := parseExternalHTTPURL(body.ExternalID); !ok {
 				return server.JSON(w, http.StatusUnprocessableEntity,
 					validate.NewFieldErrors().Append("external_id", "external_id must be a valid http/https URL"))
 			}
@@ -87,10 +111,10 @@ func (ctrl *V1Controller) HandleEntityAttachmentExternalCreate() errchain.Handle
 		span.SetAttributes(
 			attribute.String("entity.id", id.String()),
 			attribute.String("integration.source_type", body.SourceType),
-			attribute.String("integration.external_id", body.ExternalID),
+			attribute.String("integration.external_id", redactExternalURLForTrace(body.ExternalID)),
 		)
 
-		ctx := services.NewContext(spanCtx)
+		ctx := services.NewContext(r.Context())
 		span.SetAttributes(attribute.String("group.id", ctx.GID.String()))
 
 		attType := attachment.Type(strings.TrimSpace(body.AttachmentType))
