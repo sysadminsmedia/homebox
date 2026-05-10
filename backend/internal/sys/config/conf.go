@@ -107,6 +107,11 @@ type BarcodeAPIConf struct {
 
 type AuthConfig struct {
 	RateLimit AuthRateLimit `yaml:"rate_limit"`
+	// APIKeyPepper is a server-side secret HMAC-keyed into stored API key hashes.
+	// Holding it outside the database means a DB-only leak yields no usable hashes.
+	// Must stay stable across restarts — rotating it invalidates every issued key.
+	// Generate with `openssl rand -base64 48`.
+	APIKeyPepper string `yaml:"api_key_pepper" conf:"mask"`
 }
 
 type AuthRateLimit struct {

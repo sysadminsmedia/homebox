@@ -1,5 +1,5 @@
 import { BaseAPI, route } from "../base";
-import type { ChangePassword, UserOut } from "../types/data-contracts";
+import type { APIKeyCreate, APIKeyCreatedOut, APIKeyOut, ChangePassword, UserOut } from "../types/data-contracts";
 import type { Result } from "../types/non-generated";
 
 export class UserApi extends BaseAPI {
@@ -36,5 +36,20 @@ export class UserApi extends BaseAPI {
       url: route("/users/self/settings"),
       body: settings,
     });
+  }
+
+  public listApiKeys() {
+    return this.http.get<APIKeyOut[]>({ url: route("/users/self/api-keys") });
+  }
+
+  public createApiKey(body: APIKeyCreate) {
+    return this.http.post<APIKeyCreate, APIKeyCreatedOut>({
+      url: route("/users/self/api-keys"),
+      body,
+    });
+  }
+
+  public deleteApiKey(id: string) {
+    return this.http.delete<void>({ url: route(`/users/self/api-keys/${id}`) });
   }
 }

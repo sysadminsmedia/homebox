@@ -713,6 +713,64 @@ func (svc *UserService) EnsureUserPassword(ctx context.Context, email, password 
 	return nil
 }
 
+// ============================================================================
+// User API Keys
+
+// CreateAPIKey generates a new static API key for the user. The raw token is
+// returned exactly once and must be displayed to the user immediately — only
+// the hash is persisted.
+func (svc *UserService) CreateAPIKey(ctx context.Context, userID uuid.UUID, in repo.APIKeyCreate) (repo.APIKeyCreatedOut, error) {
+	ctx, span := entityServiceTracer().Start(ctx, "service.UserService.CreateAPIKey",
+		trace.WithAttributes(
+			attribute.String("user.id", userID.String()),
+			attribute.Int("api_key.name.length", len(in.Name)),
+			attribute.Bool("api_key.has_expiration", in.ExpiresAt != nil),
+		))
+	defer span.End()
+
+	token := hasher.GenerateAPIKeyCtx(ctx)
+	out, err := svc.repos.APIKeys.Create(ctx, userID, in.Name, token.Hash, in.ExpiresAt)
+	if err != nil {
+		recordServiceSpanError(span, err)
+		return repo.APIKeyCreatedOut{}, err
+	}
+
+	span.SetAttributes(attribute.String("api_key.id", out.ID.String()))
+	return repo.APIKeyCreatedOut{
+		APIKeyOut: out,
+		Token:     token.Raw,
+	}, nil
+}
+
+func (svc *UserService) ListAPIKeys(ctx context.Context, userID uuid.UUID) ([]repo.APIKeyOut, error) {
+	ctx, span := entityServiceTracer().Start(ctx, "service.UserService.ListAPIKeys",
+		trace.WithAttributes(attribute.String("user.id", userID.String())))
+	defer span.End()
+
+	out, err := svc.repos.APIKeys.GetByUser(ctx, userID)
+	if err != nil {
+		recordServiceSpanError(span, err)
+		return nil, err
+	}
+	span.SetAttributes(attribute.Int("api_keys.count", len(out)))
+	return out, nil
+}
+
+func (svc *UserService) DeleteAPIKey(ctx context.Context, userID, id uuid.UUID) error {
+	ctx, span := entityServiceTracer().Start(ctx, "service.UserService.DeleteAPIKey",
+		trace.WithAttributes(
+			attribute.String("user.id", userID.String()),
+			attribute.String("api_key.id", id.String()),
+		))
+	defer span.End()
+
+	err := svc.repos.APIKeys.Delete(ctx, userID, id)
+	if err != nil && !ent.IsNotFound(err) {
+		recordServiceSpanError(span, err)
+	}
+	return err
+}
+
 // ExistsByEmail returns true if a user with the given email exists.
 func (svc *UserService) ExistsByEmail(ctx context.Context, email string) bool {
 	ctx, span := entityServiceTracer().Start(ctx, "service.UserService.ExistsByEmail",

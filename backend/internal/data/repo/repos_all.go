@@ -11,6 +11,7 @@ import (
 type AllRepos struct {
 	Users           *UserRepository
 	AuthTokens      *TokenRepository
+	APIKeys         *APIKeyRepository
 	Groups          *GroupRepository
 	Entities        *EntityRepository
 	EntityTypes     *EntityTypeRepository
@@ -27,6 +28,7 @@ func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubC
 	return &AllRepos{
 		Users:           &UserRepository{db},
 		AuthTokens:      &TokenRepository{db},
+		APIKeys:         NewAPIKeyRepository(db),
 		Groups:          NewGroupRepository(db),
 		Entities:        &EntityRepository{db, bus, attachments},
 		EntityTypes:     &EntityTypeRepository{db, bus},

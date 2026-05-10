@@ -75,6 +75,33 @@ export interface CurrenciesCurrency {
   symbol: string;
 }
 
+export interface EntAPIKey {
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the APIKeyQuery when eager-loading is set.
+   */
+  edges: EntAPIKeyEdges;
+  /** ExpiresAt holds the value of the "expires_at" field. */
+  expires_at: string;
+  /** ID of the ent. */
+  id: string;
+  /** LastUsedAt holds the value of the "last_used_at" field. */
+  last_used_at: string;
+  /** Name holds the value of the "name" field. */
+  name: string;
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+  /** UserID holds the value of the "user_id" field. */
+  user_id: string;
+}
+
+export interface EntAPIKeyEdges {
+  /** User holds the value of the user edge. */
+  user: EntUser;
+}
+
 export interface EntAttachment {
   /** CreatedAt holds the value of the "created_at" field. */
   created_at: string;
@@ -596,12 +623,42 @@ export interface EntUser {
 }
 
 export interface EntUserEdges {
+  /** APIKeys holds the value of the api_keys edge. */
+  api_keys: EntAPIKey[];
   /** AuthTokens holds the value of the auth_tokens edge. */
   auth_tokens: EntAuthTokens[];
   /** Groups holds the value of the groups edge. */
   groups: EntGroup[];
   /** Notifiers holds the value of the notifiers edge. */
   notifiers: EntNotifier[];
+}
+
+export interface APIKeyCreate {
+  expiresAt?: string | null;
+  /**
+   * @minLength 1
+   * @maxLength 255
+   */
+  name: string;
+}
+
+export interface APIKeyCreatedOut {
+  createdAt: Date | string;
+  expiresAt?: string | null;
+  id: string;
+  lastUsedAt?: string | null;
+  name: string;
+  token: string;
+  userId: string;
+}
+
+export interface APIKeyOut {
+  createdAt: Date | string;
+  expiresAt?: string | null;
+  id: string;
+  lastUsedAt?: string | null;
+  name: string;
+  userId: string;
 }
 
 export interface BarcodeProduct {
@@ -1295,6 +1352,13 @@ export interface WipeInventoryOptions {
 
 export interface Wrapped {
   item: any;
+}
+
+export interface ExternalAttachmentRequest {
+  attachment_type: string;
+  external_id: string;
+  source_type: string;
+  title: string;
 }
 
 export interface ValidateErrorResponse {

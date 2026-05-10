@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"io"
 
 	"github.com/google/uuid"
@@ -102,6 +103,52 @@ func (svc *EntityService) AttachmentAdd(ctx Context, entityID uuid.UUID, filenam
 		createSpan.End()
 		recordServiceSpanError(span, err)
 		log.Err(err).Msg("failed to create attachment")
+		return repo.EntityOut{}, err
+	}
+	createSpan.End()
+
+	out, err := svc.repo.Entities.GetOneByGroup(ctx, ctx.GID, entityID)
+	if err != nil {
+		recordServiceSpanError(span, err)
+	}
+	return out, err
+}
+
+func (svc *EntityService) AttachmentAddExternalLink(ctx Context, entityID uuid.UUID, sourceType, externalID, title string, attType attachment.Type) (repo.EntityOut, error) {
+	spanCtx, span := entityServiceTracer().Start(ctx.Context, "service.EntityService.AttachmentAddExternalLink",
+		trace.WithAttributes(
+			attribute.String("group.id", ctx.GID.String()),
+			attribute.String("entity.id", entityID.String()),
+			attribute.String("integration.source_type", sourceType),
+			attribute.String("integration.external_id", externalID),
+		))
+	defer span.End()
+	ctx.Context = spanCtx
+
+	mimeType, ok := repo.MimeTypeForSourceType(sourceType)
+	if !ok {
+		err := fmt.Errorf("unknown source_type %q", sourceType)
+		recordServiceSpanError(span, err)
+		return repo.EntityOut{}, err
+	}
+
+	verifyCtx, verifySpan := entityServiceTracer().Start(spanCtx, "service.EntityService.AttachmentAddExternalLink.verifyEntity")
+	_, err := svc.repo.Entities.GetOneByGroup(verifyCtx, ctx.GID, entityID)
+	if err != nil {
+		recordServiceSpanError(verifySpan, err)
+		verifySpan.End()
+		recordServiceSpanError(span, err)
+		return repo.EntityOut{}, err
+	}
+	verifySpan.End()
+
+	createCtx, createSpan := entityServiceTracer().Start(spanCtx, "service.EntityService.AttachmentAddExternalLink.create")
+	_, err = svc.repo.Attachments.CreateExternalLink(createCtx, entityID, externalID, title, mimeType, attType)
+	if err != nil {
+		recordServiceSpanError(createSpan, err)
+		createSpan.End()
+		recordServiceSpanError(span, err)
+		log.Err(err).Msg("failed to create external link attachment")
 		return repo.EntityOut{}, err
 	}
 	createSpan.End()

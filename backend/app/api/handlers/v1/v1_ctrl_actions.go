@@ -122,8 +122,11 @@ func (ctrl *V1Controller) HandleWipeInventory() errchain.HandlerFunc {
 
 		ctx := services.NewContext(r.Context())
 
-		// Check if user is owner
-		if !ctx.User.IsOwner {
+		isOwner, err := ctrl.repo.Groups.IsOwnerOf(ctx, ctx.UID, ctx.GID)
+		if err != nil {
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		if !isOwner {
 			return validate.NewRequestError(errors.New("only group owners can wipe inventory"), http.StatusForbidden)
 		}
 

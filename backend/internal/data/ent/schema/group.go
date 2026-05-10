@@ -42,8 +42,10 @@ func (Group) Edges() []ent.Edge {
 	}
 
 	return []ent.Edge{
-		// Use edge.From + Ref("groups") to model M:M between users and groups via junction table
-		edge.From("users", User.Type).Ref("groups"),
+		// M:M between users and groups; the user_groups join carries per-membership role.
+		edge.From("users", User.Type).
+			Ref("groups").
+			Through("user_groups", UserGroup.Type),
 		owned("entity_types", EntityType.Type),
 		owned("entities", Entity.Type),
 		owned("tags", Tag.Type),

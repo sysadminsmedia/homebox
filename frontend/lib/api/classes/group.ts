@@ -5,7 +5,6 @@ import type {
   GroupAcceptInvitationResponse,
   GroupInvitation,
   GroupInvitationCreate,
-  GroupMemberAdd,
   GroupUpdate,
   UserSummary,
 } from "../types/data-contracts";
@@ -60,22 +59,6 @@ export class GroupApi extends BaseAPI {
     return this.http.get<UserSummary[]>({
       url: route(`/groups/members`),
       headers,
-    });
-  }
-
-  /**
-   * Add a user to the current (or specified) group.
-   */
-  addMember(data: GroupMemberAdd, groupId?: string) {
-    const headers = groupId
-      ? {
-          "X-Tenant": groupId,
-        }
-      : undefined;
-    return this.http.post<GroupMemberAdd, void>({
-      url: route(`/groups/members`),
-      headers,
-      body: data,
     });
   }
 
