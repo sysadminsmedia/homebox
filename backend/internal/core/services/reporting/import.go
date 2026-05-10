@@ -40,9 +40,16 @@ func determineSeparator(data []byte) (rune, error) {
 	}
 }
 
-// separatorDetectionBufferSize is the buffer size for reading CSV headers
-// to detect the separator (comma vs tab)
-const separatorDetectionBufferSize = 4096
+const (
+	homeboxFieldHeaderPrefix = "HB.field."
+	homeboxHeaderPrefix      = "HB."
+	homeboxLocationHeader    = "HB.location"
+	homeboxNameHeader        = "HB.name"
+
+	// separatorDetectionBufferSize is the buffer size for reading CSV headers
+	// to detect the separator (comma vs tab)
+	separatorDetectionBufferSize = 4096
+)
 
 // readRawCsv reads a CSV file and returns the raw data as a 2D string array
 // It determines the separator used in the CSV file and returns an error if
@@ -80,16 +87,16 @@ func parseHeaders(headers []string) (hbHeaders map[string]int, fieldHeaders []st
 	hbHeaders = map[string]int{} // initialize map
 
 	for col, h := range headers {
-		if strings.HasPrefix(h, "HB.field.") {
+		if strings.HasPrefix(h, homeboxFieldHeaderPrefix) {
 			fieldHeaders = append(fieldHeaders, h)
 		}
 
-		if strings.HasPrefix(h, "HB.") {
+		if strings.HasPrefix(h, homeboxHeaderPrefix) {
 			hbHeaders[h] = col
 		}
 	}
 
-	required := []string{"HB.location", "HB.name"}
+	required := []string{homeboxLocationHeader, homeboxNameHeader}
 	if !lo.EveryBy(required, func(h string) bool {
 		return lo.HasKey(hbHeaders, h)
 	}) {
