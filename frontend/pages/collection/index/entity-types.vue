@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import type {
     EntityTypeCreate,
@@ -25,15 +26,20 @@
   const api = useUserApi();
   const confirm = useConfirm();
   const { openDialog, closeDialog } = useDialog();
+  const { t } = useI18n();
 
-  const { data: entityTypes, refresh } = useAsyncData("entity-types", async () => {
+  const { data: entityTypes, refresh } = useAsyncData<EntityTypeSummary[]>("entity-types", async () => {
     const { data, error } = await api.entityTypes.getAll();
     if (error) {
-      toast.error("Failed to load entity types");
+      toast.error(t("collection.entity_types.toast.load_failed"));
       return [];
     }
-    return data;
+    return data ?? [];
   });
+
+  function getEntityTypes(): EntityTypeSummary[] {
+    return entityTypes.value ?? [];
+  }
 
   // Create form
   const createForm = reactive({
@@ -52,7 +58,7 @@
 
   async function create() {
     if (!createForm.name.trim()) {
-      toast.error("Name is required");
+      toast.error(t("collection.entity_types.toast.name_required"));
       return;
     }
 
@@ -65,11 +71,11 @@
 
     const { error } = await api.entityTypes.create(payload);
     if (error) {
-      toast.error("Failed to create entity type");
+      toast.error(t("collection.entity_types.toast.create_failed"));
       return;
     }
 
-    toast.success("Entity type created");
+    toast.success(t("collection.entity_types.toast.created"));
     resetCreateForm();
     closeDialog(DialogID.CreateEntityType);
     refresh();
@@ -101,7 +107,7 @@
 
   async function update() {
     if (!updateForm.name.trim()) {
-      toast.error("Name is required");
+      toast.error(t("collection.entity_types.toast.name_required"));
       return;
     }
 
@@ -115,28 +121,26 @@
 
     const { error } = await api.entityTypes.update(updateForm.id, payload);
     if (error) {
-      toast.error("Failed to update entity type");
+      toast.error(t("collection.entity_types.toast.update_failed"));
       return;
     }
 
-    toast.success("Entity type updated");
+    toast.success(t("collection.entity_types.toast.updated"));
     closeDialog(DialogID.UpdateEntityType);
     refresh();
   }
 
   async function deleteEntityType(et: EntityTypeSummary) {
-    const { isCanceled } = await confirm.open(
-      `Are you sure you want to delete "${et.name}"? Entities using this type will need to be reassigned.`
-    );
+    const { isCanceled } = await confirm.open(t("collection.entity_types.confirm_delete", { name: et.name }));
     if (isCanceled) return;
 
     const { error } = await api.entityTypes.delete(et.id);
     if (error) {
-      toast.error("Failed to delete entity type. Make sure no entities are using it.");
+      toast.error(t("collection.entity_types.toast.delete_failed"));
       return;
     }
 
-    toast.success("Entity type deleted");
+    toast.success(t("collection.entity_types.toast.deleted"));
     refresh();
   }
 </script>
@@ -147,15 +151,21 @@
     <Dialog :dialog-id="DialogID.CreateEntityType">
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Entity Type</DialogTitle>
+          <DialogTitle>{{ t("collection.entity_types.create_title") }}</DialogTitle>
         </DialogHeader>
         <form class="flex flex-col gap-3" @submit.prevent="create">
-          <FormTextField v-model="createForm.name" :autofocus="true" label="Name" :max-length="255" :min-length="1" />
-          <FormCheckbox v-model="createForm.isLocation" label="Is a container / location type" />
+          <FormTextField
+            v-model="createForm.name"
+            :autofocus="true"
+            :label="t('global.name')"
+            :max-length="255"
+            :min-length="1"
+          />
+          <FormCheckbox v-model="createForm.isLocation" :label="t('collection.entity_types.is_location')" />
           <TemplateSelector v-model="createTemplate" />
 
           <DialogFooter>
-            <Button type="submit">Create</Button>
+            <Button type="submit">{{ t("global.create") }}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
@@ -165,15 +175,21 @@
     <Dialog :dialog-id="DialogID.UpdateEntityType">
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Update Entity Type</DialogTitle>
+          <DialogTitle>{{ t("collection.entity_types.update_title") }}</DialogTitle>
         </DialogHeader>
         <form class="flex flex-col gap-3" @submit.prevent="update">
-          <FormTextField v-model="updateForm.name" :autofocus="true" label="Name" :max-length="255" :min-length="1" />
-          <FormCheckbox v-model="updateForm.isLocation" label="Is a container / location type" />
+          <FormTextField
+            v-model="updateForm.name"
+            :autofocus="true"
+            :label="t('global.name')"
+            :max-length="255"
+            :min-length="1"
+          />
+          <FormCheckbox v-model="updateForm.isLocation" :label="t('collection.entity_types.is_location')" />
           <TemplateSelector v-model="updateTemplate" />
 
           <DialogFooter>
-            <Button type="submit">Update</Button>
+            <Button type="submit">{{ t("global.update") }}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
@@ -181,15 +197,15 @@
 
     <!-- Page Content -->
     <div class="mb-4 flex items-center justify-between">
-      <h3 class="text-lg font-medium">Entity Types</h3>
+      <h3 class="text-lg font-medium">{{ t("collection.entity_types.title") }}</h3>
       <Button size="sm" @click="openDialog(DialogID.CreateEntityType)">
         <MdiPlus class="mr-1 size-4" />
-        Create
+        {{ t("global.create") }}
       </Button>
     </div>
 
-    <div v-if="entityTypes && entityTypes.length > 0" class="space-y-2">
-      <Card v-for="et in entityTypes" :key="et.id" class="p-4">
+    <div v-if="getEntityTypes().length > 0" class="space-y-2">
+      <Card v-for="et in getEntityTypes()" :key="et.id" class="p-4">
         <div class="flex items-center gap-3">
           <div
             class="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground"
@@ -201,10 +217,12 @@
           <div class="mr-auto min-w-0">
             <div class="flex items-center gap-2">
               <span class="font-medium">{{ et.name }}</span>
-              <Badge v-if="et.isLocation" variant="secondary" class="text-xs">Container</Badge>
+              <Badge v-if="et.isLocation" variant="secondary" class="text-xs">
+                {{ t("collection.entity_types.container") }}
+              </Badge>
             </div>
             <p v-if="et.defaultTemplate" class="text-xs text-muted-foreground">
-              Default template: {{ et.defaultTemplate.name }}
+              {{ t("collection.entity_types.default_template", { name: et.defaultTemplate.name }) }}
             </p>
           </div>
 
@@ -216,7 +234,7 @@
                     <MdiPencil class="size-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Edit</TooltipContent>
+                <TooltipContent>{{ t("global.edit") }}</TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger as-child>
@@ -224,7 +242,7 @@
                     <MdiDelete class="size-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Delete</TooltipContent>
+                <TooltipContent>{{ t("global.delete") }}</TooltipContent>
               </Tooltip>
             </div>
           </TooltipProvider>
@@ -233,10 +251,10 @@
     </div>
 
     <div v-else class="flex flex-col items-center justify-center py-12 text-center">
-      <p class="mb-4 text-muted-foreground">No entity types defined yet.</p>
+      <p class="mb-4 text-muted-foreground">{{ t("collection.entity_types.empty") }}</p>
       <Button @click="openDialog(DialogID.CreateEntityType)">
         <MdiPlus class="mr-2" />
-        Create Entity Type
+        {{ t("collection.entity_types.create_title") }}
       </Button>
     </div>
   </div>

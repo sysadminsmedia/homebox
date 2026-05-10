@@ -42,6 +42,26 @@
             "entity_types": "Entity Types",
             "tools": "Tools"
         },
+        "entity_types": {
+            "confirm_delete": "Are you sure you want to delete \"{name}\"? Entities using this type will need to be reassigned.",
+            "container": "Container",
+            "create_title": "Create Entity Type",
+            "default_template": "Default template: {name}",
+            "empty": "No entity types defined yet.",
+            "is_location": "Is a container / location type",
+            "title": "Entity Types",
+            "toast": {
+                "create_failed": "Failed to create entity type",
+                "created": "Entity type created",
+                "delete_failed": "Failed to delete entity type. Make sure no entities are using it.",
+                "deleted": "Entity type deleted",
+                "load_failed": "Failed to load entity types",
+                "name_required": "Name is required",
+                "update_failed": "Failed to update entity type",
+                "updated": "Entity type updated"
+            },
+            "update_title": "Update Entity Type"
+        },
         "uses": "Uses"
     },
     "components": {
