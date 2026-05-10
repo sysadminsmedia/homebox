@@ -302,6 +302,7 @@
             "create_modal": {
                 "location_description": "Location Description",
                 "location_name": "Location Name",
+                "notes": "Notes",
                 "title": "Create Location",
                 "toast": {
                     "already_creating": "Already creating a location",

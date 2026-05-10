@@ -39,6 +39,8 @@ export type TreeQuery = {
   withItems: boolean;
 };
 
+export type EntityCreateBody = Omit<EntityCreate, "entityTypeId"> & Partial<Pick<EntityCreate, "entityTypeId">>;
+
 export class AttachmentsAPI extends BaseAPI {
   add(id: string, file: File | Blob, filename: string, type: AttachmentTypes | null = null, primary?: boolean) {
     const formData = new FormData();
@@ -115,8 +117,8 @@ export class ItemsApi extends BaseAPI {
     return payload;
   }
 
-  async create(item: EntityCreate) {
-    const payload = await this.http.post<EntityCreate, EntityOut>({ url: route("/entities"), body: item });
+  async create(item: EntityCreateBody) {
+    const payload = await this.http.post<EntityCreateBody, EntityOut>({ url: route("/entities"), body: item });
     return payload;
   }
 
@@ -200,8 +202,8 @@ export class ItemsApi extends BaseAPI {
     return this.http.get<TreeItem[]>({ url: route("/entities/tree", tq) });
   }
 
-  createLocation(body: EntityCreate) {
-    return this.http.post<EntityCreate, EntityOut>({ url: route("/entities"), body });
+  createLocation(body: EntityCreateBody) {
+    return this.http.post<EntityCreateBody, EntityOut>({ url: route("/entities"), body });
   }
 
   getLocation(id: string) {

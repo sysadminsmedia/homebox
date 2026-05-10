@@ -553,7 +553,7 @@ func (r *EntityRepository) GetPublicFoundByAssetID(ctx context.Context, assetID 
 	span.SetAttributes(attribute.Int("entity.matches", len(results)))
 	switch len(results) {
 	case 0:
-		err := fmt.Errorf("asset id not found")
+		err := &ent.NotFoundError{}
 		recordSpanError(span, err)
 		return PublicFoundEntity{}, err
 	case 1:

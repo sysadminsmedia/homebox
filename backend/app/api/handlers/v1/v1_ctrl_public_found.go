@@ -9,10 +9,18 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/server"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
 )
+
+func publicFoundRequestError(err error) error {
+	if ent.IsNotFound(err) {
+		return validate.NewRequestError(errors.New("not found"), http.StatusNotFound)
+	}
+	return validate.NewRequestError(err, http.StatusInternalServerError)
+}
 
 // HandlePublicFoundItemGet godoc
 //
@@ -31,7 +39,7 @@ func (ctrl *V1Controller) HandlePublicFoundItemGet() errchain.HandlerFunc {
 
 		out, err := ctrl.repo.Entities.GetPublicFoundByID(r.Context(), ID)
 		if err != nil {
-			return validate.NewRequestError(err, http.StatusNotFound)
+			return publicFoundRequestError(err)
 		}
 
 		return server.JSON(w, http.StatusOK, out)
@@ -59,7 +67,7 @@ func (ctrl *V1Controller) HandlePublicFoundAssetGet() errchain.HandlerFunc {
 
 		out, err := ctrl.repo.Entities.GetPublicFoundByAssetID(r.Context(), repo.AssetID(assetID))
 		if err != nil {
-			return validate.NewRequestError(errors.New("not found"), http.StatusNotFound)
+			return publicFoundRequestError(err)
 		}
 
 		return server.JSON(w, http.StatusOK, out)

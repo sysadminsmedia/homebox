@@ -292,11 +292,12 @@
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
   import type {
-    EntityCreate,
     EntityTemplateOut,
     EntityTemplateSummary,
     EntityOut,
+    EntitySummary,
   } from "~~/lib/api/types/data-contracts";
+  import type { EntityCreateBody } from "~~/lib/api/classes/items";
   import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
   import MdiBarcode from "~icons/mdi/barcode";
@@ -584,8 +585,11 @@
           parent.value = data;
         }
 
-        if (data.location || data.parent) {
-          const loc = data.location || data.parent;
+        let loc: EntitySummary | null | undefined = data.parent;
+        if ("location" in data) {
+          loc = (data as EntityOut & { location?: EntitySummary | null }).location ?? loc;
+        }
+        if (loc) {
           parentItemLocationId = loc.id;
         }
 
@@ -665,14 +669,16 @@
       data = result.data;
     } else {
       // Normal item creation without template
-      const out: EntityCreate = {
+      const out: EntityCreateBody = {
         parentId: form.parentId || (form.location.id as string),
         name: form.name,
         quantity: form.quantity,
         description: form.description,
         tagIds: form.tags,
-        entityTypeId: selectedEntityType.value?.id,
       };
+      if (selectedEntityType.value) {
+        out.entityTypeId = selectedEntityType.value.id;
+      }
 
       const result = await api.items.create(out);
       error = result.error;

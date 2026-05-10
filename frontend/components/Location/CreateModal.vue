@@ -67,7 +67,7 @@
 
       <template v-if="showAdvanced">
         <TagSelector v-model="form.tags" :tags="tags ?? []" />
-        <FormTextArea v-model="form.notes" label="Notes" :max-length="1000" />
+        <FormTextArea v-model="form.notes" :label="$t('components.location.create_modal.notes')" :max-length="1000" />
       </template>
 
       <div class="mt-4 flex flex-row-reverse">
@@ -139,6 +139,7 @@
   import { Input } from "@/components/ui/input";
   import BaseModal from "@/components/App/CreateModal.vue";
   import type { EntityTypeSummary, EntitySummary } from "~~/lib/api/types/data-contracts";
+  import type { EntityCreateBody } from "~~/lib/api/classes/items";
 
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
@@ -290,12 +291,18 @@
 
     if (shift?.value) close = false;
 
-    const { data, error } = await api.items.createLocation({
+    const locationRequest: EntityCreateBody = {
       name: form.name,
       description: form.description,
       parentId: form.parent ? form.parent.id : null,
-      entityTypeId: selectedEntityType.value?.id,
-    });
+      quantity: 1,
+      tagIds: form.tags,
+    };
+    if (selectedEntityType.value) {
+      locationRequest.entityTypeId = selectedEntityType.value.id;
+    }
+
+    const { data, error } = await api.items.createLocation(locationRequest);
 
     if (error) {
       loading.value = false;

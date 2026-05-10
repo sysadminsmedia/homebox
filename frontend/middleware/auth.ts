@@ -16,7 +16,7 @@ export default defineNuxtRouteMiddleware(async to => {
   const ctx = useAuthContext();
   const api = useUserApi();
   const redirectTo = useState("authRedirect");
-  const currentPath = import.meta.client ? window.location.pathname : to.path;
+  const currentPath = to.path;
 
   if (!ctx.isAuthorized()) {
     const foundPath = foundItemPath(to.path);
