@@ -395,6 +395,15 @@
     "errors": {
         "api_failure": "Backend API call failed: "
     },
+    "found_item": {
+        "contact_owner": "Contact {owner} to return it.",
+        "email_owner": "Email owner",
+        "email_subject": "Found item: {item}",
+        "not_found_description": "This item could not be found, or the link is no longer valid.",
+        "not_found_title": "Item not found",
+        "sign_in": "Sign in to manage this item",
+        "title": "Did you find this item?"
+    },
     "global": {
         "add": "Add",
         "archived": "Archived",

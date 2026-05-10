@@ -166,8 +166,8 @@
   useDialogHotkey(DialogID.CreateLocation, { code: "Digit3", shift: true });
 
   // Entity type selection
-  const locationTypes = ref<import("~~/lib/api/types/data-contracts").EntityTypeSummary[]>([]);
-  const selectedEntityType = ref<import("~~/lib/api/types/data-contracts").EntityTypeSummary | null>(null);
+  const locationTypes = ref<EntityTypeSummary[]>([]);
+  const selectedEntityType = ref<EntityTypeSummary | null>(null);
   const showEntityTypeSelector = computed(() => locationTypes.value.length > 1);
 
   onMounted(async () => {

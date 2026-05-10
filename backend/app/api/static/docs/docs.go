@@ -1155,6 +1155,34 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/found/entities/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Get public found entity details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.FoundEntityOut"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/groups": {
             "get": {
                 "security": [
@@ -1437,36 +1465,6 @@ const docTemplate = `{
                                 "$ref": "#/definitions/repo.UserSummary"
                             }
                         }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Group"
-                ],
-                "summary": "Add User to Group",
-                "parameters": [
-                    {
-                        "description": "User ID",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.GroupMemberAdd"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
                     }
                 }
             }
@@ -3718,6 +3716,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/ent.Tag"
                     }
                 },
+                "user_groups": {
+                    "description": "UserGroups holds the value of the user_groups edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.UserGroup"
+                    }
+                },
                 "users": {
                     "description": "Users holds the value of the users edge.",
                     "type": "array",
@@ -4097,14 +4102,6 @@ const docTemplate = `{
                     "description": "OidcSubject holds the value of the \"oidc_subject\" field.",
                     "type": "string"
                 },
-                "role": {
-                    "description": "Role holds the value of the \"role\" field.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/user.Role"
-                        }
-                    ]
-                },
                 "settings": {
                     "description": "Settings holds the value of the \"settings\" field.",
                     "type": "object",
@@ -4150,6 +4147,63 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/ent.Notifier"
                     }
+                },
+                "user_groups": {
+                    "description": "UserGroups holds the value of the user_groups edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.UserGroup"
+                    }
+                }
+            }
+        },
+        "ent.UserGroup": {
+            "type": "object",
+            "properties": {
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the UserGroupQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.UserGroupEdges"
+                        }
+                    ]
+                },
+                "group_id": {
+                    "description": "GroupID holds the value of the \"group_id\" field.",
+                    "type": "string"
+                },
+                "role": {
+                    "description": "Role holds the value of the \"role\" field.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/usergroup.Role"
+                        }
+                    ]
+                },
+                "user_id": {
+                    "description": "UserID holds the value of the \"user_id\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.UserGroupEdges": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                },
+                "user": {
+                    "description": "User holds the value of the user edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.User"
+                        }
+                    ]
                 }
             }
         },
@@ -5096,6 +5150,27 @@ const docTemplate = `{
                 }
             }
         },
+        "repo.FoundEntityOut": {
+            "type": "object",
+            "properties": {
+                "assetId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "ownerEmail": {
+                    "type": "string"
+                },
+                "ownerName": {
+                    "type": "string"
+                }
+            }
+        },
         "repo.Group": {
             "type": "object",
             "properties": {
@@ -5647,9 +5722,6 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "isOwner": {
-                    "type": "boolean"
-                },
                 "isSuperuser": {
                     "type": "boolean"
                 },
@@ -5672,9 +5744,6 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
-                },
-                "isOwner": {
-                    "type": "boolean"
                 },
                 "name": {
                     "type": "string"
@@ -5772,7 +5841,7 @@ const docTemplate = `{
                 "TypeTime"
             ]
         },
-        "user.Role": {
+        "usergroup.Role": {
             "type": "string",
             "enum": [
                 "user",
@@ -5941,17 +6010,6 @@ const docTemplate = `{
                     "type": "integer",
                     "maximum": 100,
                     "minimum": 1
-                }
-            }
-        },
-        "v1.GroupMemberAdd": {
-            "type": "object",
-            "required": [
-                "userId"
-            ],
-            "properties": {
-                "userId": {
-                    "type": "string"
                 }
             }
         },
