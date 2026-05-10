@@ -88,8 +88,14 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 
 		r.Post("/users/register", chain.ToHandlerFunc(v1Ctrl.HandleUserRegistration()))
 		r.Post("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(providers...), a.mwAuthRateLimit))
-		r.Get("/public/found/item/{id}", chain.ToHandlerFunc(v1Ctrl.HandlePublicFoundItemGet()))
-		r.Get("/public/found/asset/{id}", chain.ToHandlerFunc(v1Ctrl.HandlePublicFoundAssetGet()))
+
+		// Public found-item lookups are intentionally unauthenticated so QR labels
+		// can help return lost items. Rate limiting reduces asset-id enumeration.
+		publicFoundMW := []errchain.Middleware{
+			a.publicFoundLimiter.middleware,
+		}
+		r.Get("/public/found/item/{id}", chain.ToHandlerFunc(v1Ctrl.HandlePublicFoundItemGet(), publicFoundMW...))
+		r.Get("/public/found/asset/{id}", chain.ToHandlerFunc(v1Ctrl.HandlePublicFoundAssetGet(), publicFoundMW...))
 
 		if a.conf.OIDC.Enabled {
 			r.Get("/users/login/oidc", chain.ToHandlerFunc(v1Ctrl.HandleOIDCLogin(), a.mwAuthRateLimit))

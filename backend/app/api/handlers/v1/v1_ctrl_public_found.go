@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"fmt"
+	"errors"
 	"net/http"
 	"strconv"
 	"strings"
@@ -51,15 +51,15 @@ func (ctrl *V1Controller) HandlePublicFoundAssetGet() errchain.HandlerFunc {
 		assetIDParam := strings.ReplaceAll(chi.URLParam(r, "id"), "-", "")
 		assetID, err := strconv.ParseInt(assetIDParam, 10, 64)
 		if err != nil {
-			return validate.NewRequestError(err, http.StatusBadRequest)
+			return validate.NewRequestError(errors.New("not found"), http.StatusNotFound)
 		}
 		if repo.AssetID(assetID).Nil() {
-			return validate.NewRequestError(fmt.Errorf("invalid asset id"), http.StatusBadRequest)
+			return validate.NewRequestError(errors.New("not found"), http.StatusNotFound)
 		}
 
 		out, err := ctrl.repo.Entities.GetPublicFoundByAssetID(r.Context(), repo.AssetID(assetID))
 		if err != nil {
-			return validate.NewRequestError(fmt.Errorf("failed to find asset id"), http.StatusNotFound)
+			return validate.NewRequestError(errors.New("not found"), http.StatusNotFound)
 		}
 
 		return server.JSON(w, http.StatusOK, out)

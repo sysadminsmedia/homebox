@@ -399,6 +399,7 @@
         "contact_owner": "Contact Owner",
         "email_body": "Hi, I found an item with your HomeBox tag. Please let me know how I can return it.",
         "email_subject": "Found HomeBox item {assetId}",
+        "invalid_kind": "This found-item link is not valid.",
         "multiple_matches": "This asset tag matches more than one item on this HomeBox instance, so the owner cannot be shown safely.",
         "not_found": "This item tag could not be matched to a public contact.",
         "owner_name": "Owner: {name}",

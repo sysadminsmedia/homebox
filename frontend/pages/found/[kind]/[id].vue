@@ -20,19 +20,35 @@
   const id = computed(() => route.params.id as string);
   const isAsset = computed(() => kind.value === "asset");
   const isItem = computed(() => kind.value === "item");
-  const originalPath = computed(() => (isAsset.value ? `/a/${id.value}` : `/item/${id.value}`));
+  const hasInvalidKind = computed(() => !isAsset.value && !isItem.value);
+  const originalPath = computed(() => {
+    if (isAsset.value) {
+      return `/a/${id.value}`;
+    }
+    if (isItem.value) {
+      return `/item/${id.value}`;
+    }
+    return "/";
+  });
 
   useHead({
     title: `HomeBox | ${t("found.title")}`,
   });
 
-  const { data: found, pending } = useAsyncData(`found-${kind.value}-${id.value}`, async () => {
-    if (!isAsset.value && !isItem.value) {
-      return null;
+  const {
+    data: found,
+    pending,
+    error,
+  } = useAsyncData(`found-${kind.value}-${id.value}`, async () => {
+    if (hasInvalidKind.value) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: t("found.invalid_kind"),
+      });
     }
 
-    const { data, error } = isAsset.value ? await api.foundAsset(id.value) : await api.foundItem(id.value);
-    if (error) {
+    const { data, error: apiError } = isAsset.value ? await api.foundAsset(id.value) : await api.foundItem(id.value);
+    if (apiError) {
       return null;
     }
     return data;
@@ -42,6 +58,9 @@
   const hasContactName = computed(() => Boolean(found.value?.contactName));
   const ownerNameText = computed(() => t("found.owner_name", { name: found.value?.contactName ?? "" }));
   const hasMultipleMatches = computed(() => Boolean(found.value?.multipleMatches));
+  const notFoundText = computed(() =>
+    hasInvalidKind.value || error.value ? t("found.invalid_kind") : t("found.not_found")
+  );
 
   const contactHref = computed(() => {
     if (!found.value?.contactEmail) {
@@ -93,6 +112,13 @@
             <p class="flex gap-2">
               <MdiAlertCircle class="mt-0.5 size-5 shrink-0" />
               <span>{{ $t("found.multiple_matches") }}</span>
+            </p>
+          </template>
+
+          <template v-else-if="hasInvalidKind || error">
+            <p class="flex gap-2">
+              <MdiAlertCircle class="mt-0.5 size-5 shrink-0" />
+              <span>{{ notFoundText }}</span>
             </p>
           </template>
 
