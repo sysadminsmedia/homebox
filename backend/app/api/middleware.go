@@ -231,7 +231,7 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 				return validate.NewRequestError(errors.New("valid authorization token is required"), http.StatusUnauthorized)
 			}
 
-			tokenHash := hasher.HashToken(requestToken)
+			tokenHash := hasher.HashAPIKey(requestToken)
 			keyUsr, keyID, keyErr := a.repos.APIKeys.GetUserFromToken(r.Context(), tokenHash)
 			if keyErr != nil {
 				if ent.IsNotFound(keyErr) {

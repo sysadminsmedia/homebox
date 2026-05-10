@@ -20,6 +20,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/otel"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -107,6 +108,17 @@ func main() {
 func run(cfg *config.Config) error {
 	app := new(cfg)
 	app.setupLogger()
+
+	// Fail fast on a missing or weak API key pepper. Without it, the HMAC keying
+	// for stored API key hashes would degrade to a constant key and a DB leak
+	// would expose every issued token. 32 bytes ≈ 256 bits is the cutoff.
+	if len(cfg.Auth.APIKeyPepper) < 32 {
+		return fmt.Errorf(
+			"auth.api_key_pepper must be set to at least 32 bytes; generate with `openssl rand -base64 48` " +
+				"and provide via HBOX_AUTH_API_KEY_PEPPER. Rotating it invalidates all issued API keys",
+		)
+	}
+	hasher.SetAPIKeyPepper([]byte(cfg.Auth.APIKeyPepper))
 
 	// =========================================================================
 	// Initialize OpenTelemetry

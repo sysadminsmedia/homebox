@@ -2,10 +2,12 @@ package hasher
 
 import (
 	"context"
+	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base32"
 	"encoding/base64"
+	"sync/atomic"
 
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -17,6 +19,21 @@ const APIKeyPrefix = "hb_"
 type Token struct {
 	Raw  string
 	Hash []byte
+}
+
+// apiKeyPepper holds the HMAC key applied to API key hashes. Stored as an
+// atomic.Pointer so SetAPIKeyPepper at startup is visible to verify paths
+// without a lock. A nil load means the app forgot to install it.
+var apiKeyPepper atomic.Pointer[[]byte]
+
+// SetAPIKeyPepper installs the server-side pepper used for HMAC-keyed API key
+// hashing. Call once at startup before any API key is hashed or verified.
+// Rotating the pepper invalidates every previously issued API key, so the
+// caller must persist the same value across restarts.
+func SetAPIKeyPepper(pepper []byte) {
+	cp := make([]byte, len(pepper))
+	copy(cp, pepper)
+	apiKeyPepper.Store(&cp)
 }
 
 // GenerateToken generates a cryptographically random token. The non-context variant is
@@ -52,6 +69,21 @@ func HashToken(plainTextToken string) []byte {
 	return hash[:]
 }
 
+// HashAPIKey returns HMAC-SHA256(pepper, plain). Indexed equality lookups stay
+// O(1) while a DB-only leak — without the pepper held in app config — yields
+// no usable hashes. Panics if SetAPIKeyPepper has not been called: missing it
+// would silently fall back to a constant key, which is the failure mode this
+// function exists to prevent.
+func HashAPIKey(plain string) []byte {
+	p := apiKeyPepper.Load()
+	if p == nil || len(*p) == 0 {
+		panic("hasher: API key pepper not configured (call SetAPIKeyPepper at startup)")
+	}
+	mac := hmac.New(sha256.New, *p)
+	mac.Write([]byte(plain))
+	return mac.Sum(nil)
+}
+
 // GenerateAPIKey produces a static API key with 256 bits of entropy and a
 // recognizable prefix. The format is `hb_<base64url(32 bytes)>` — long enough
 // to discourage guessing, mixed-case + symbols for visual distinctness from
@@ -68,7 +100,7 @@ func GenerateAPIKeyCtx(ctx context.Context) Token {
 	_, _ = rand.Read(randomBytes)
 
 	plainText := APIKeyPrefix + base64.RawURLEncoding.EncodeToString(randomBytes)
-	hash := HashToken(plainText)
+	hash := HashAPIKey(plainText)
 
 	span.SetAttributes(
 		attribute.Int("token.raw.length", len(plainText)),
