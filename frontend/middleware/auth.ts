@@ -16,6 +16,7 @@ export default defineNuxtRouteMiddleware(async to => {
   const ctx = useAuthContext();
   const api = useUserApi();
   const redirectTo = useState("authRedirect");
+  const currentPath = import.meta.client ? window.location.pathname : to.path;
 
   if (!ctx.isAuthorized()) {
     const foundPath = foundItemPath(to.path);
@@ -23,9 +24,9 @@ export default defineNuxtRouteMiddleware(async to => {
       return navigateTo(foundPath);
     }
 
-    if (to.path !== "/") {
+    if (currentPath !== "/") {
       console.debug("[middleware/auth] isAuthorized returned false, redirecting to /");
-      redirectTo.value = to.path;
+      redirectTo.value = currentPath;
       return navigateTo("/");
     }
   }
@@ -34,9 +35,9 @@ export default defineNuxtRouteMiddleware(async to => {
     console.log("Fetching user data");
     const { data, error } = await api.user.self();
     if (error) {
-      if (to.path !== "/") {
+      if (currentPath !== "/") {
         console.debug("[middleware/user] user is null and fetch failed, redirecting to /");
-        redirectTo.value = to.path;
+        redirectTo.value = currentPath;
         return navigateTo("/");
       }
     }
