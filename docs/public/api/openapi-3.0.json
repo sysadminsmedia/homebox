@@ -1285,6 +1285,26 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/validate.ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/validate.ErrorResponse"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -5374,9 +5394,6 @@
                         "type": "string"
                     },
                     "ownerEmail": {
-                        "type": "string"
-                    },
-                    "ownerName": {
                         "type": "string"
                     }
                 }

@@ -1179,6 +1179,18 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/repo.FoundEntityOut"
                         }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/validate.ErrorResponse"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/validate.ErrorResponse"
+                        }
                     }
                 }
             }
@@ -5164,9 +5176,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "ownerEmail": {
-                    "type": "string"
-                },
-                "ownerName": {
                     "type": "string"
                 }
             }

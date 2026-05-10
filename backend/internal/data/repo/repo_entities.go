@@ -227,7 +227,6 @@ type (
 		ID         uuid.UUID `json:"id"`
 		AssetID    AssetID   `json:"assetId,string"`
 		Name       string    `json:"name"`
-		OwnerName  string    `json:"ownerName"`
 		OwnerEmail string    `json:"ownerEmail"`
 	}
 )
@@ -505,12 +504,6 @@ func (r *EntityRepository) GetFoundEntity(ctx context.Context, id uuid.UUID) (Fo
 		).
 		WithUser().
 		First(ctx)
-	if ent.IsNotFound(err) {
-		membership, err = r.db.UserGroup.Query().
-			Where(usergroup.GroupID(e.Edges.Group.ID)).
-			WithUser().
-			First(ctx)
-	}
 	if err != nil {
 		recordSpanError(span, err)
 		return FoundEntityOut{}, err
@@ -525,7 +518,6 @@ func (r *EntityRepository) GetFoundEntity(ctx context.Context, id uuid.UUID) (Fo
 		ID:         e.ID,
 		AssetID:    AssetID(e.AssetID),
 		Name:       e.Name,
-		OwnerName:  membership.Edges.User.Name,
 		OwnerEmail: membership.Edges.User.Email,
 	}
 	span.SetAttributes(attribute.String("group.id", e.Edges.Group.ID.String()))

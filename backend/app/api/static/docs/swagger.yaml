@@ -1545,8 +1545,6 @@ definitions:
         type: string
       ownerEmail:
         type: string
-      ownerName:
-        type: string
     type: object
   repo.Group:
     properties:
@@ -2902,6 +2900,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/repo.FoundEntityOut'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/validate.ErrorResponse'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/validate.ErrorResponse'
       summary: Get public found entity details
       tags:
       - Entities

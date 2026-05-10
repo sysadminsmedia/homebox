@@ -12,9 +12,16 @@
   const { t } = useI18n();
   const route = useRoute();
   const api = usePublicApi();
-  const itemId = computed(() => route.params.id as string);
+  const itemId = computed(() => {
+    const id = route.params.id;
+    return Array.isArray(id) ? (id[0] ?? "") : id;
+  });
 
-  const { data: foundItem, pending } = await useAsyncData(`found-item-${itemId.value}`, async () => {
+  const {
+    data: foundItem,
+    pending,
+    refresh,
+  } = await useAsyncData(`found-item-${itemId.value}`, async () => {
     const { data, error } = await api.foundEntity(itemId.value);
     if (error) {
       return null;
@@ -22,6 +29,7 @@
 
     return data;
   });
+  watch(itemId, () => refresh());
 
   const mailto = computed(() => {
     if (!foundItem.value?.ownerEmail) {
@@ -54,7 +62,7 @@
         <div class="space-y-2 text-center">
           <h1 class="text-2xl font-semibold">{{ $t("found_item.title") }}</h1>
           <p class="text-muted-foreground">
-            {{ $t("found_item.contact_owner", { owner: foundItem.ownerName }) }}
+            {{ $t("found_item.contact_owner") }}
           </p>
         </div>
 

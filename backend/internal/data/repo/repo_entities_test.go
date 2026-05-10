@@ -129,7 +129,9 @@ func TestEntityRepository_GetFoundEntity(t *testing.T) {
 	group, err := tRepos.Groups.GroupCreate(ctx, "found-item-test", uuid.Nil)
 	require.NoError(t, err)
 	t.Cleanup(func() {
-		_ = tRepos.Groups.GroupDelete(context.Background(), group.ID)
+		if err := tRepos.Groups.GroupDelete(context.Background(), group.ID); err != nil {
+			t.Fatalf("GroupDelete cleanup failed: %v", err)
+		}
 	})
 
 	ownerCreate := userFactory()
@@ -159,7 +161,6 @@ func TestEntityRepository_GetFoundEntity(t *testing.T) {
 	assert.Equal(t, item.ID, found.ID)
 	assert.Equal(t, item.AssetID, found.AssetID)
 	assert.Equal(t, item.Name, found.Name)
-	assert.Equal(t, owner.Name, found.OwnerName)
 	assert.Equal(t, owner.Email, found.OwnerEmail)
 }
 

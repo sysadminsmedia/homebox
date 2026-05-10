@@ -959,7 +959,6 @@ export interface FoundEntityOut {
   id: string;
   name: string;
   ownerEmail: string;
-  ownerName: string;
 }
 
 export interface Group {

@@ -17,6 +17,8 @@ import (
 //	@Produce	json
 //	@Param		id	path		string	true	"Entity ID"
 //	@Success	200	{object}	repo.FoundEntityOut
+//	@Failure	404	{object}	validate.ErrorResponse
+//	@Failure	429	{object}	validate.ErrorResponse
 //	@Router		/v1/found/entities/{id} [GET]
 func (ctrl *V1Controller) HandleFoundEntityGet() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) (repo.FoundEntityOut, error) {

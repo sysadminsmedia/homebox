@@ -94,7 +94,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 			r.Get("/users/login/oidc/callback", chain.ToHandlerFunc(v1Ctrl.HandleOIDCCallback(), a.mwAuthRateLimit))
 		}
 
-		r.Get("/found/entities/{id}", chain.ToHandlerFunc(v1Ctrl.HandleFoundEntityGet()))
+		r.Get("/found/entities/{id}", chain.ToHandlerFunc(v1Ctrl.HandleFoundEntityGet(), a.foundEntityLimiter.middleware))
 
 		userMW := []errchain.Middleware{
 			a.mwAuthToken,

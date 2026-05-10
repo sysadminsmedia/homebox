@@ -396,7 +396,7 @@
         "api_failure": "Backend API call failed: "
     },
     "found_item": {
-        "contact_owner": "Contact {owner} to return it.",
+        "contact_owner": "Contact the owner to return it.",
         "email_owner": "Email owner",
         "email_subject": "Found item: {item}",
         "not_found_description": "This item could not be found, or the link is no longer valid.",
