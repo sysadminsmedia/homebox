@@ -441,6 +441,42 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/validate.ErrorResponse"
+  "/v1/entities/{id}/attachments/external":
+    post:
+      security:
+        - Bearer: []
+      description: Links an entity to a document or URL in an external system without
+        copying
+      tags:
+        - Entities Attachments
+      summary: Create External Link Attachment
+      parameters:
+        - description: Entity ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/v1.externalAttachmentRequest"
+        description: External document reference
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/repo.EntityOut"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/validate.ErrorResponse"
   "/v1/entities/{id}/attachments/{attachment_id}":
     get:
       security:
@@ -3807,6 +3843,17 @@ components:
       type: object
       properties:
         item: {}
+    v1.externalAttachmentRequest:
+      type: object
+      properties:
+        attachment_type:
+          type: string
+        external_id:
+          type: string
+        source_type:
+          type: string
+        title:
+          type: string
     validate.ErrorResponse:
       type: object
       properties:

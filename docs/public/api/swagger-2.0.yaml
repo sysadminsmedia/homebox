@@ -2029,6 +2029,17 @@ definitions:
     properties:
       item: {}
     type: object
+  v1.externalAttachmentRequest:
+    properties:
+      attachment_type:
+        type: string
+      external_id:
+        type: string
+      source_type:
+        type: string
+      title:
+        type: string
+    type: object
   validate.ErrorResponse:
     properties:
       error:
@@ -2435,6 +2446,40 @@ paths:
       security:
       - Bearer: []
       summary: Update Entity Attachment
+      tags:
+      - Entities Attachments
+  /v1/entities/{id}/attachments/external:
+    post:
+      consumes:
+      - application/json
+      description: Links an entity to a document or URL in an external system without
+        copying
+      parameters:
+      - description: Entity ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: External document reference
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/v1.externalAttachmentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.EntityOut'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/validate.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Create External Link Attachment
       tags:
       - Entities Attachments
   /v1/entities/{id}/duplicate:

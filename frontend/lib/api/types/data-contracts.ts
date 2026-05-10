@@ -1240,6 +1240,13 @@ export interface Wrapped {
   item: any;
 }
 
+export interface ExternalAttachmentRequest {
+  attachment_type: string;
+  external_id: string;
+  source_type: string;
+  title: string;
+}
+
 export interface ValidateErrorResponse {
   error: string;
   fields: string;

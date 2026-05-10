@@ -685,6 +685,58 @@
                 }
             }
         },
+        "/v1/entities/{id}/attachments/external": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Links an entity to a document or URL in an external system without copying",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entities Attachments"
+                ],
+                "summary": "Create External Link Attachment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "External document reference",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.externalAttachmentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityOut"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/validate.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/entities/{id}/attachments/{attachment_id}": {
             "get": {
                 "security": [
@@ -5755,6 +5807,23 @@
             "type": "object",
             "properties": {
                 "item": {}
+            }
+        },
+        "v1.externalAttachmentRequest": {
+            "type": "object",
+            "properties": {
+                "attachment_type": {
+                    "type": "string"
+                },
+                "external_id": {
+                    "type": "string"
+                },
+                "source_type": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
             }
         },
         "validate.ErrorResponse": {
