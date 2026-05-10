@@ -6,6 +6,25 @@ import prettier from "eslint-plugin-prettier";
 import { includeIgnoreFile } from "@eslint/compat";
 import { fileURLToPath } from "node:url";
 
+if (!Object.groupBy) {
+  Object.defineProperty(Object, "groupBy", {
+    value(items, callback) {
+      const groups = Object.create(null);
+      let index = 0;
+
+      for (const item of items) {
+        const group = callback(item, index++);
+        const key = typeof group === "symbol" ? group : String(group);
+
+        groups[key] ??= [];
+        groups[key].push(item);
+      }
+
+      return groups;
+    },
+  });
+}
+
 const gitignorePath = fileURLToPath(new URL("../.gitignore", import.meta.url));
 
 export default withNuxt([
