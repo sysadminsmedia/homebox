@@ -50,9 +50,11 @@ type GroupEdges struct {
 	EntityTemplates []*EntityTemplate `json:"entity_templates,omitempty"`
 	// Exports holds the value of the exports edge.
 	Exports []*Export `json:"exports,omitempty"`
+	// UserGroups holds the value of the user_groups edge.
+	UserGroups []*UserGroup `json:"user_groups,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [8]bool
+	loadedTypes [9]bool
 }
 
 // UsersOrErr returns the Users value or an error if the edge
@@ -125,6 +127,15 @@ func (e GroupEdges) ExportsOrErr() ([]*Export, error) {
 		return e.Exports, nil
 	}
 	return nil, &NotLoadedError{edge: "exports"}
+}
+
+// UserGroupsOrErr returns the UserGroups value or an error if the edge
+// was not loaded in eager-loading.
+func (e GroupEdges) UserGroupsOrErr() ([]*UserGroup, error) {
+	if e.loadedTypes[8] {
+		return e.UserGroups, nil
+	}
+	return nil, &NotLoadedError{edge: "user_groups"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -234,6 +245,11 @@ func (_m *Group) QueryEntityTemplates() *EntityTemplateQuery {
 // QueryExports queries the "exports" edge of the Group entity.
 func (_m *Group) QueryExports() *ExportQuery {
 	return NewGroupClient(_m.config).QueryExports(_m)
+}
+
+// QueryUserGroups queries the "user_groups" edge of the Group entity.
+func (_m *Group) QueryUserGroups() *UserGroupQuery {
+	return NewGroupClient(_m.config).QueryUserGroups(_m)
 }
 
 // Update returns a builder for updating this Group.

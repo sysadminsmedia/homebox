@@ -11,7 +11,7 @@
  * ---------------------------------------------------------------
  */
 
-export enum UserRole {
+export enum UsergroupRole {
   DefaultRole = "user",
   RoleUser = "user",
   RoleOwner = "owner",
@@ -433,6 +433,8 @@ export interface EntGroupEdges {
   notifiers: EntNotifier[];
   /** Tags holds the value of the tags edge. */
   tags: EntTag[];
+  /** UserGroups holds the value of the user_groups edge. */
+  user_groups: EntUserGroup[];
   /** Users holds the value of the users edge. */
   users: EntUser[];
 }
@@ -612,8 +614,6 @@ export interface EntUser {
   oidc_issuer: string;
   /** OidcSubject holds the value of the "oidc_subject" field. */
   oidc_subject: string;
-  /** Role holds the value of the "role" field. */
-  role: UserRole;
   /** Settings holds the value of the "settings" field. */
   settings: Record<string, any>;
   /** Superuser holds the value of the "superuser" field. */
@@ -631,6 +631,29 @@ export interface EntUserEdges {
   groups: EntGroup[];
   /** Notifiers holds the value of the notifiers edge. */
   notifiers: EntNotifier[];
+  /** UserGroups holds the value of the user_groups edge. */
+  user_groups: EntUserGroup[];
+}
+
+export interface EntUserGroup {
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the UserGroupQuery when eager-loading is set.
+   */
+  edges: EntUserGroupEdges;
+  /** GroupID holds the value of the "group_id" field. */
+  group_id: string;
+  /** Role holds the value of the "role" field. */
+  role: UsergroupRole;
+  /** UserID holds the value of the "user_id" field. */
+  user_id: string;
+}
+
+export interface EntUserGroupEdges {
+  /** Group holds the value of the group edge. */
+  group: EntGroup;
+  /** User holds the value of the user edge. */
+  user: EntUser;
 }
 
 export interface APIKeyCreate {
@@ -1199,7 +1222,6 @@ export interface UserOut {
   email: string;
   groupIds: string[];
   id: string;
-  isOwner: boolean;
   isSuperuser: boolean;
   name: string;
   oidcIssuer: string;
@@ -1209,7 +1231,6 @@ export interface UserOut {
 export interface UserSummary {
   email: string;
   id: string;
-  isOwner: boolean;
   name: string;
 }
 
@@ -1309,10 +1330,6 @@ export interface GroupInvitationCreate {
    * @max 100
    */
   uses: number;
-}
-
-export interface GroupMemberAdd {
-  userId: string;
 }
 
 export interface LoginForm {
