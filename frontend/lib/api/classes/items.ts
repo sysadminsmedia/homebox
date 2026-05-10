@@ -15,7 +15,7 @@ import type {
 } from "../types/data-contracts";
 import type { AttachmentTypes } from "../types/non-generated";
 import type { MaintenanceFilters } from "./maintenance.ts";
-import type { Requests } from "~~/lib/requests";
+import type { Requests, TResponse } from "~~/lib/requests";
 
 export type ItemsQuery = {
   orderBy?: string;
@@ -193,7 +193,7 @@ export class ItemsApi extends BaseAPI {
     return {
       ...resp,
       data: resp.data?.items ?? [],
-    } as { data: EntitySummary[]; error: any; status: number };
+    } as TResponse<EntitySummary[]>;
   }
 
   getTree(tq: TreeQuery = { withItems: false }) {
