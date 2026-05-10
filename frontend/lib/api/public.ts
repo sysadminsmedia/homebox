@@ -1,5 +1,11 @@
 import { BaseAPI, route } from "./base";
-import type { APISummary, LoginForm, TokenResponse, UserRegistration } from "./types/data-contracts";
+import type {
+  APISummary,
+  FoundEntityContact,
+  LoginForm,
+  TokenResponse,
+  UserRegistration,
+} from "./types/data-contracts";
 
 export type StatusResult = {
   health: boolean;
@@ -25,6 +31,21 @@ export class PublicApi extends BaseAPI {
   }
 
   public register(body: UserRegistration) {
-    return this.http.post<UserRegistration, TokenResponse>({ url: route("/users/register"), body });
+    return this.http.post<UserRegistration, TokenResponse>({
+      url: route("/users/register"),
+      body,
+    });
+  }
+
+  public foundEntityContact(id: string) {
+    return this.http.get<FoundEntityContact>({
+      url: route(`/found/entities/${id}`),
+    });
+  }
+
+  public foundAssetContact(id: string) {
+    return this.http.get<FoundEntityContact>({
+      url: route(`/found/assets/${id}`),
+    });
   }
 }

@@ -21,6 +21,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/usergroup"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -220,6 +221,11 @@ type (
 	EntityOutCount struct {
 		EntitySummary
 		ItemCount float64 `json:"itemCount"`
+	}
+
+	FoundEntityContact struct {
+		ItemID     uuid.UUID `json:"itemId"`
+		OwnerEmail string    `json:"ownerEmail"`
 	}
 )
 
@@ -513,6 +519,105 @@ func (r *EntityRepository) GetOneByGroup(ctx context.Context, gid, id uuid.UUID)
 	out, err := r.getOne(ctx, entity.ID(id), entity.HasGroupWith(group.ID(gid)))
 	recordSpanError(span, err)
 	return out, err
+}
+
+// GetFoundEntityContact returns the minimal public contact information needed
+// when someone opens an item label URL while signed out. It intentionally does
+// not expose item details or attachments.
+func (r *EntityRepository) GetFoundEntityContact(ctx context.Context, id uuid.UUID) (FoundEntityContact, error) {
+	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.GetFoundEntityContact",
+		trace.WithAttributes(attribute.String("entity.id", id.String())))
+	defer span.End()
+
+	entEntity, err := r.db.Entity.Query().
+		Where(entity.ID(id)).
+		WithGroup().
+		Only(ctx)
+	if err != nil {
+		recordSpanError(span, err)
+		return FoundEntityContact{}, err
+	}
+
+	if entEntity.Edges.Group == nil {
+		err := &ent.NotFoundError{}
+		recordSpanError(span, err)
+		return FoundEntityContact{}, err
+	}
+
+	gid := entEntity.Edges.Group.ID
+	span.SetAttributes(attribute.String("group.id", gid.String()))
+
+	contact, err := r.foundEntityContactForGroup(ctx, id, gid)
+	recordSpanError(span, err)
+	return contact, err
+}
+
+// GetFoundEntityContactByAssetID returns public contact information for asset
+// label URLs only when the asset ID resolves to exactly one entity.
+func (r *EntityRepository) GetFoundEntityContactByAssetID(ctx context.Context, assetID AssetID) (FoundEntityContact, error) {
+	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.GetFoundEntityContactByAssetID",
+		trace.WithAttributes(attribute.Int64("entity.asset_id", int64(assetID))))
+	defer span.End()
+
+	if assetID.Nil() {
+		err := &ent.NotFoundError{}
+		recordSpanError(span, err)
+		return FoundEntityContact{}, err
+	}
+
+	entities, err := r.db.Entity.Query().
+		Where(entity.AssetID(int64(assetID))).
+		WithGroup().
+		Limit(2).
+		All(ctx)
+	if err != nil {
+		recordSpanError(span, err)
+		return FoundEntityContact{}, err
+	}
+	if len(entities) != 1 {
+		err := &ent.NotFoundError{}
+		recordSpanError(span, err)
+		return FoundEntityContact{}, err
+	}
+
+	entEntity := entities[0]
+	if entEntity.Edges.Group == nil {
+		err := &ent.NotFoundError{}
+		recordSpanError(span, err)
+		return FoundEntityContact{}, err
+	}
+
+	gid := entEntity.Edges.Group.ID
+	span.SetAttributes(
+		attribute.String("entity.id", entEntity.ID.String()),
+		attribute.String("group.id", gid.String()),
+	)
+
+	contact, err := r.foundEntityContactForGroup(ctx, entEntity.ID, gid)
+	recordSpanError(span, err)
+	return contact, err
+}
+
+func (r *EntityRepository) foundEntityContactForGroup(ctx context.Context, itemID, gid uuid.UUID) (FoundEntityContact, error) {
+	membership, err := r.db.UserGroup.Query().
+		Where(
+			usergroup.GroupID(gid),
+			usergroup.RoleEQ(usergroup.RoleOwner),
+		).
+		WithUser().
+		First(ctx)
+	if err != nil {
+		return FoundEntityContact{}, err
+	}
+	if membership.Edges.User == nil {
+		err := &ent.NotFoundError{}
+		return FoundEntityContact{}, err
+	}
+
+	return FoundEntityContact{
+		ItemID:     itemID,
+		OwnerEmail: membership.Edges.User.Email,
+	}, nil
 }
 
 func entityQuerySpanAttrs(gid uuid.UUID, q EntityQuery) []attribute.KeyValue {
