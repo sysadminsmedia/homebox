@@ -226,8 +226,7 @@
           <button
             v-for="(photo, i) in photos"
             :key="i"
-            class="group relative overflow-hidden rounded-lg border bg-muted"
-            style="aspect-ratio: 1 / 1"
+            class="aspect-square group relative overflow-hidden rounded-lg border bg-muted"
             @click="openImageDialog(photo, location.id)"
           >
             <img
