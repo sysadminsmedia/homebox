@@ -161,6 +161,17 @@ func (ctrl *V1Controller) HandleAuthLogout() errchain.HandlerFunc {
 			return validate.NewRequestError(errors.New("no token within request context"), http.StatusUnauthorized)
 		}
 
+		// API keys are not session tokens — they live in their own table and
+		// are managed from the profile page. Returning 204 here would silently
+		// delete zero rows from auth_tokens and mislead the caller.
+		if services.IsAPIKeyAuth(spanCtx) {
+			span.SetAttributes(attribute.String("logout.outcome", "api_key_rejected"))
+			return validate.NewRequestError(
+				errors.New("API keys cannot be logged out; revoke them from the API keys page"),
+				http.StatusBadRequest,
+			)
+		}
+
 		err := ctrl.svc.User.Logout(spanCtx, token)
 		if err != nil {
 			recordCtrlSpanError(span, err)
@@ -192,6 +203,17 @@ func (ctrl *V1Controller) HandleAuthRefresh() errchain.HandlerFunc {
 		if requestToken == "" {
 			span.SetAttributes(attribute.String("refresh.outcome", "no_token"))
 			return validate.NewRequestError(errors.New("no token within request context"), http.StatusUnauthorized)
+		}
+
+		// API keys are long-lived and don't go through the session refresh
+		// flow. Reject the request with a clear error rather than the generic
+		// 401 RenewToken would otherwise produce.
+		if services.IsAPIKeyAuth(spanCtx) {
+			span.SetAttributes(attribute.String("refresh.outcome", "api_key_rejected"))
+			return validate.NewRequestError(
+				errors.New("API keys do not require refresh"),
+				http.StatusBadRequest,
+			)
 		}
 
 		newToken, err := ctrl.svc.User.RenewToken(spanCtx, requestToken)

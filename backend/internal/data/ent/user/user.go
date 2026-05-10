@@ -46,6 +46,8 @@ const (
 	EdgeGroups = "groups"
 	// EdgeAuthTokens holds the string denoting the auth_tokens edge name in mutations.
 	EdgeAuthTokens = "auth_tokens"
+	// EdgeAPIKeys holds the string denoting the api_keys edge name in mutations.
+	EdgeAPIKeys = "api_keys"
 	// EdgeNotifiers holds the string denoting the notifiers edge name in mutations.
 	EdgeNotifiers = "notifiers"
 	// Table holds the table name of the user in the database.
@@ -62,6 +64,13 @@ const (
 	AuthTokensInverseTable = "auth_tokens"
 	// AuthTokensColumn is the table column denoting the auth_tokens relation/edge.
 	AuthTokensColumn = "user_auth_tokens"
+	// APIKeysTable is the table that holds the api_keys relation/edge.
+	APIKeysTable = "api_keys"
+	// APIKeysInverseTable is the table name for the APIKey entity.
+	// It exists in this package in order to avoid circular dependency with the "apikey" package.
+	APIKeysInverseTable = "api_keys"
+	// APIKeysColumn is the table column denoting the api_keys relation/edge.
+	APIKeysColumn = "user_id"
 	// NotifiersTable is the table that holds the notifiers relation/edge.
 	NotifiersTable = "notifiers"
 	// NotifiersInverseTable is the table name for the Notifier entity.
@@ -248,6 +257,20 @@ func ByAuthTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByAPIKeysCount orders the results by api_keys count.
+func ByAPIKeysCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAPIKeysStep(), opts...)
+	}
+}
+
+// ByAPIKeys orders the results by api_keys terms.
+func ByAPIKeys(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAPIKeysStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByNotifiersCount orders the results by notifiers count.
 func ByNotifiersCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -273,6 +296,13 @@ func newAuthTokensStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(AuthTokensInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, AuthTokensTable, AuthTokensColumn),
+	)
+}
+func newAPIKeysStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(APIKeysInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, APIKeysTable, APIKeysColumn),
 	)
 }
 func newNotifiersStep() *sqlgraph.Step {

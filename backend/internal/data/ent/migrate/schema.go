@@ -8,6 +8,43 @@ import (
 )
 
 var (
+	// APIKeysColumns holds the columns for the "api_keys" table.
+	APIKeysColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 255},
+		{Name: "token", Type: field.TypeBytes, Unique: true},
+		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
+		{Name: "last_used_at", Type: field.TypeTime, Nullable: true},
+		{Name: "user_id", Type: field.TypeUUID},
+	}
+	// APIKeysTable holds the schema information for the "api_keys" table.
+	APIKeysTable = &schema.Table{
+		Name:       "api_keys",
+		Columns:    APIKeysColumns,
+		PrimaryKey: []*schema.Column{APIKeysColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "api_keys_users_api_keys",
+				Columns:    []*schema.Column{APIKeysColumns[7]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "apikey_token",
+				Unique:  false,
+				Columns: []*schema.Column{APIKeysColumns[4]},
+			},
+			{
+				Name:    "apikey_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{APIKeysColumns[7]},
+			},
+		},
+	}
 	// AttachmentsColumns holds the columns for the "attachments" table.
 	AttachmentsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -549,6 +586,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		APIKeysTable,
 		AttachmentsTable,
 		AuthRolesTable,
 		AuthTokensTable,
@@ -569,6 +607,7 @@ var (
 )
 
 func init() {
+	APIKeysTable.ForeignKeys[0].RefTable = UsersTable
 	AttachmentsTable.ForeignKeys[0].RefTable = AttachmentsTable
 	AttachmentsTable.ForeignKeys[1].RefTable = EntitiesTable
 	AuthRolesTable.ForeignKeys[0].RefTable = AuthTokensTable

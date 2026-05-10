@@ -76,6 +76,10 @@ func (User) Edges() []ent.Edge {
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,
 			}),
+		edge.To("api_keys", APIKey.Type).
+			Annotations(entsql.Annotation{
+				OnDelete: entsql.Cascade,
+			}),
 		edge.To("notifiers", Notifier.Type).
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,

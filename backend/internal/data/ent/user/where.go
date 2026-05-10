@@ -742,6 +742,29 @@ func HasAuthTokensWith(preds ...predicate.AuthTokens) predicate.User {
 	})
 }
 
+// HasAPIKeys applies the HasEdge predicate on the "api_keys" edge.
+func HasAPIKeys() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, APIKeysTable, APIKeysColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAPIKeysWith applies the HasEdge predicate on the "api_keys" edge with a given conditions (other predicates).
+func HasAPIKeysWith(preds ...predicate.APIKey) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newAPIKeysStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasNotifiers applies the HasEdge predicate on the "notifiers" edge.
 func HasNotifiers() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

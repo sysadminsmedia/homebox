@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/apikey"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
@@ -29,6 +30,7 @@ type UserQuery struct {
 	predicates     []predicate.User
 	withGroups     *GroupQuery
 	withAuthTokens *AuthTokensQuery
+	withAPIKeys    *APIKeyQuery
 	withNotifiers  *NotifierQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -103,6 +105,28 @@ func (_q *UserQuery) QueryAuthTokens() *AuthTokensQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(authtokens.Table, authtokens.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.AuthTokensTable, user.AuthTokensColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAPIKeys chains the current query on the "api_keys" edge.
+func (_q *UserQuery) QueryAPIKeys() *APIKeyQuery {
+	query := (&APIKeyClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(apikey.Table, apikey.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.APIKeysTable, user.APIKeysColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -326,6 +350,7 @@ func (_q *UserQuery) Clone() *UserQuery {
 		predicates:     append([]predicate.User{}, _q.predicates...),
 		withGroups:     _q.withGroups.Clone(),
 		withAuthTokens: _q.withAuthTokens.Clone(),
+		withAPIKeys:    _q.withAPIKeys.Clone(),
 		withNotifiers:  _q.withNotifiers.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
@@ -352,6 +377,17 @@ func (_q *UserQuery) WithAuthTokens(opts ...func(*AuthTokensQuery)) *UserQuery {
 		opt(query)
 	}
 	_q.withAuthTokens = query
+	return _q
+}
+
+// WithAPIKeys tells the query-builder to eager-load the nodes that are connected to
+// the "api_keys" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithAPIKeys(opts ...func(*APIKeyQuery)) *UserQuery {
+	query := (&APIKeyClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withAPIKeys = query
 	return _q
 }
 
@@ -444,9 +480,10 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = _q.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			_q.withGroups != nil,
 			_q.withAuthTokens != nil,
+			_q.withAPIKeys != nil,
 			_q.withNotifiers != nil,
 		}
 	)
@@ -479,6 +516,13 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := _q.loadAuthTokens(ctx, query, nodes,
 			func(n *User) { n.Edges.AuthTokens = []*AuthTokens{} },
 			func(n *User, e *AuthTokens) { n.Edges.AuthTokens = append(n.Edges.AuthTokens, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withAPIKeys; query != nil {
+		if err := _q.loadAPIKeys(ctx, query, nodes,
+			func(n *User) { n.Edges.APIKeys = []*APIKey{} },
+			func(n *User, e *APIKey) { n.Edges.APIKeys = append(n.Edges.APIKeys, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -579,6 +623,36 @@ func (_q *UserQuery) loadAuthTokens(ctx context.Context, query *AuthTokensQuery,
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_auth_tokens" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *UserQuery) loadAPIKeys(ctx context.Context, query *APIKeyQuery, nodes []*User, init func(*User), assign func(*User, *APIKey)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(apikey.FieldUserID)
+	}
+	query.Where(predicate.APIKey(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.APIKeysColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

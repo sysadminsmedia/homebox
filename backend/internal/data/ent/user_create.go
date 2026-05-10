@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/apikey"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
@@ -224,6 +225,21 @@ func (_c *UserCreate) AddAuthTokens(v ...*AuthTokens) *UserCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddAuthTokenIDs(ids...)
+}
+
+// AddAPIKeyIDs adds the "api_keys" edge to the APIKey entity by IDs.
+func (_c *UserCreate) AddAPIKeyIDs(ids ...uuid.UUID) *UserCreate {
+	_c.mutation.AddAPIKeyIDs(ids...)
+	return _c
+}
+
+// AddAPIKeys adds the "api_keys" edges to the APIKey entity.
+func (_c *UserCreate) AddAPIKeys(v ...*APIKey) *UserCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddAPIKeyIDs(ids...)
 }
 
 // AddNotifierIDs adds the "notifiers" edge to the Notifier entity by IDs.
@@ -457,6 +473,22 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(authtokens.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.APIKeysIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.APIKeysTable,
+			Columns: []string{user.APIKeysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apikey.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

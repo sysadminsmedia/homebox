@@ -379,7 +379,7 @@
       "link",
       droppedURL,
       title,
-      attachmentType,
+      attachmentType
     );
 
     if (error) {
@@ -752,7 +752,12 @@
           </div>
         </BaseCard>
 
-        <Card ref="attDropZone" class="overflow-visible shadow-xl" @dragover.prevent @drop.prevent="handleAttachmentCardDrop">
+        <Card
+          ref="attDropZone"
+          class="overflow-visible shadow-xl"
+          @dragover.prevent
+          @drop.prevent="handleAttachmentCardDrop"
+        >
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">{{ $t("items.attachments") }}</h3>
             <p class="text-xs">{{ $t("items.changes_persisted_immediately") }}</p>
@@ -818,7 +823,11 @@
                     <TooltipContent>{{ $t("items.edit.view_image") }}</TooltipContent>
                   </Tooltip>
                   <Tooltip
-                    v-if="attachment.mimeType === 'link/url' || (attachment.path ?? '').startsWith('http://') || (attachment.path ?? '').startsWith('https://')"
+                    v-if="
+                      attachment.mimeType === 'link/url' ||
+                      (attachment.path ?? '').startsWith('http://') ||
+                      (attachment.path ?? '').startsWith('https://')
+                    "
                   >
                     <TooltipTrigger as-child>
                       <a :href="attachment.path" target="_blank" rel="noopener noreferrer">

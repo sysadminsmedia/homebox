@@ -2757,6 +2757,93 @@
                 }
             }
         },
+        "/v1/users/self/api-keys": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "List API Keys",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.APIKeyOut"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Create API Key",
+                "parameters": [
+                    {
+                        "description": "API Key Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.APIKeyCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.APIKeyCreatedOut"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/users/self/api-keys/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete API Key",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "API Key ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
         "/v1/users/self/settings": {
             "get": {
                 "security": [
@@ -2896,6 +2983,60 @@
                 },
                 "symbol": {
                     "type": "string"
+                }
+            }
+        },
+        "ent.APIKey": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the APIKeyQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.APIKeyEdges"
+                        }
+                    ]
+                },
+                "expires_at": {
+                    "description": "ExpiresAt holds the value of the \"expires_at\" field.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "last_used_at": {
+                    "description": "LastUsedAt holds the value of the \"last_used_at\" field.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "UserID holds the value of the \"user_id\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.APIKeyEdges": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "description": "User holds the value of the user edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.User"
+                        }
+                    ]
                 }
             }
         },
@@ -3979,6 +4120,13 @@
         "ent.UserEdges": {
             "type": "object",
             "properties": {
+                "api_keys": {
+                    "description": "APIKeys holds the value of the api_keys edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.APIKey"
+                    }
+                },
                 "auth_tokens": {
                     "description": "AuthTokens holds the value of the auth_tokens edge.",
                     "type": "array",
@@ -4016,6 +4164,76 @@
                 "TypeBoolean",
                 "TypeTime"
             ]
+        },
+        "repo.APIKeyCreate": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "expiresAt": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                }
+            }
+        },
+        "repo.APIKeyCreatedOut": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "expiresAt": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lastUsedAt": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "name": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.APIKeyOut": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "expiresAt": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lastUsedAt": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "name": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
         },
         "repo.BarcodeProduct": {
             "type": "object",

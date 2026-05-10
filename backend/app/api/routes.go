@@ -112,6 +112,11 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Get("/users/refresh", chain.ToHandlerFunc(v1Ctrl.HandleAuthRefresh(), userMW...))
 		r.Put("/users/self/change-password", chain.ToHandlerFunc(v1Ctrl.HandleUserSelfChangePassword(), userMW...))
 
+		// User API keys (static tokens that authenticate as the owning user)
+		r.Get("/users/self/api-keys", chain.ToHandlerFunc(v1Ctrl.HandleUserAPIKeysList(), userMW...))
+		r.Post("/users/self/api-keys", chain.ToHandlerFunc(v1Ctrl.HandleUserAPIKeyCreate(), userMW...))
+		r.Delete("/users/self/api-keys/{id}", chain.ToHandlerFunc(v1Ctrl.HandleUserAPIKeyDelete(), userMW...))
+
 		// Group management endpoints
 		r.Get("/groups/all", chain.ToHandlerFunc(v1Ctrl.HandleGroupsGetAll(), userMW...))
 		r.Post("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupCreate(), userMW...))
