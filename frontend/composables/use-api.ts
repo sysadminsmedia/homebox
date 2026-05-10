@@ -37,7 +37,7 @@ export function useUserApi(): UserClient {
     headers["X-Tenant"] = prefs.value.collectionId;
   }
 
-  const requests = new Requests("", "", headers);
+  const requests = new Requests("", () => authCtx.apiToken || "", headers);
   requests.addResponseInterceptor(logger);
   requests.addResponseInterceptor(async r => {
     if (r.status === 401) {
