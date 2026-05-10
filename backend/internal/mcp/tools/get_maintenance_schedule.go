@@ -42,8 +42,10 @@ func init() {
 	mcp.Register(func(s *mcpsdk.Server, d mcp.Deps) {
 		mcpsdk.AddTool(s,
 			&mcpsdk.Tool{
-				Name:        "get_maintenance_schedule",
-				Description: "List maintenance entries across the calling user's group. Filter by status (scheduled, completed, or both) to find upcoming work or review history.",
+				Name:         "get_maintenance_schedule",
+				Description:  "List maintenance entries across the calling user's group. Filter by status (scheduled, completed, or both) to find upcoming work or review history.",
+				InputSchema:  mcp.MustSchema[getMaintenanceScheduleInput](),
+				OutputSchema: mcp.MustSchema[getMaintenanceScheduleOutput](),
 			},
 			func(ctx context.Context, _ *mcpsdk.CallToolRequest, in getMaintenanceScheduleInput) (*mcpsdk.CallToolResult, getMaintenanceScheduleOutput, error) {
 				sctx, err := mcp.ResolveGroup(ctx, in.GroupID)

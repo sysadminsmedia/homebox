@@ -236,7 +236,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		// Mounted behind userMW so each tool call inherits the calling user's
 		// services.Context (UID/GID); tool handlers must scope their queries
 		// using that context, never trust group/user IDs from tool input.
-		if a.conf.MCP.Enabled {
+		if a.conf.Mcp.Enabled {
 			mcpHandler := hbmcp.NewHandler(hbmcp.Deps{
 				Services: a.services,
 				Repos:    a.repos,

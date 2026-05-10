@@ -42,8 +42,10 @@ func init() {
 	mcp.Register(func(s *mcpsdk.Server, d mcp.Deps) {
 		mcpsdk.AddTool(s,
 			&mcpsdk.Tool{
-				Name:        "search_items",
-				Description: "Search the inventory for items (and optionally locations) belonging to the calling user's group. Returns a paginated list of matches with parent location and entity type included.",
+				Name:         "search_items",
+				Description:  "Search the inventory for items (and optionally locations) belonging to the calling user's group. Returns a paginated list of matches with parent location and entity type included.",
+				InputSchema:  mcp.MustSchema[searchItemsInput](),
+				OutputSchema: mcp.MustSchema[searchItemsOutput](),
 			},
 			func(ctx context.Context, _ *mcpsdk.CallToolRequest, in searchItemsInput) (*mcpsdk.CallToolResult, searchItemsOutput, error) {
 				sctx, err := mcp.ResolveGroup(ctx, in.GroupID)

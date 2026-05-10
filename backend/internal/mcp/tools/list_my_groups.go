@@ -26,8 +26,10 @@ func init() {
 	mcp.Register(func(s *mcpsdk.Server, d mcp.Deps) {
 		mcpsdk.AddTool(s,
 			&mcpsdk.Tool{
-				Name:        "list_my_groups",
-				Description: "List the groups the calling user is a member of. The returned IDs can be passed as the optional `group_id` argument on other tools to scope queries to a specific group; omit `group_id` to use the user's default group.",
+				Name:         "list_my_groups",
+				Description:  "List the groups the calling user is a member of. The returned IDs can be passed as the optional `group_id` argument on other tools to scope queries to a specific group; omit `group_id` to use the user's default group.",
+				InputSchema:  mcp.MustSchema[listMyGroupsInput](),
+				OutputSchema: mcp.MustSchema[listMyGroupsOutput](),
 			},
 			func(ctx context.Context, _ *mcpsdk.CallToolRequest, _ listMyGroupsInput) (*mcpsdk.CallToolResult, listMyGroupsOutput, error) {
 				sctx, err := mcp.ServiceCtx(ctx)

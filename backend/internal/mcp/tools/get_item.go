@@ -62,8 +62,10 @@ func init() {
 	mcp.Register(func(s *mcpsdk.Server, d mcp.Deps) {
 		mcpsdk.AddTool(s,
 			&mcpsdk.Tool{
-				Name:        "get_item",
-				Description: "Fetch full details of a single inventory entity (item or location) by its UUID. Returns parent location, entity type, tags, custom fields, attachments, warranty, purchase, and sold info.",
+				Name:         "get_item",
+				Description:  "Fetch full details of a single inventory entity (item or location) by its UUID. Returns parent location, entity type, tags, custom fields, attachments, warranty, purchase, and sold info.",
+				InputSchema:  mcp.MustSchema[getItemInput](),
+				OutputSchema: mcp.MustSchema[getItemOutput](),
 			},
 			func(ctx context.Context, _ *mcpsdk.CallToolRequest, in getItemInput) (*mcpsdk.CallToolResult, getItemOutput, error) {
 				sctx, err := mcp.ResolveGroup(ctx, in.GroupID)

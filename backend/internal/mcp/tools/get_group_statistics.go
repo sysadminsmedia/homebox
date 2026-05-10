@@ -26,8 +26,10 @@ func init() {
 	mcp.Register(func(s *mcpsdk.Server, d mcp.Deps) {
 		mcpsdk.AddTool(s,
 			&mcpsdk.Tool{
-				Name:        "get_group_statistics",
-				Description: "Return high-level inventory statistics for the calling user's group: counts of items, locations, labels, total purchase value, etc.",
+				Name:         "get_group_statistics",
+				Description:  "Return high-level inventory statistics for the calling user's group: counts of items, locations, labels, total purchase value, etc.",
+				InputSchema:  mcp.MustSchema[getGroupStatisticsInput](),
+				OutputSchema: mcp.MustSchema[getGroupStatisticsOutput](),
 			},
 			func(ctx context.Context, _ *mcpsdk.CallToolRequest, in getGroupStatisticsInput) (*mcpsdk.CallToolResult, getGroupStatisticsOutput, error) {
 				sctx, err := mcp.ResolveGroup(ctx, in.GroupID)

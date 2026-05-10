@@ -28,8 +28,10 @@ func init() {
 	mcp.Register(func(s *mcpsdk.Server, d mcp.Deps) {
 		mcpsdk.AddTool(s,
 			&mcpsdk.Tool{
-				Name:        "get_entity_path",
-				Description: "Return the full breadcrumb path from the root location down to the given entity. Useful for answering 'where is X?' — the last element of the path is the entity itself; everything before it is its containing chain.",
+				Name:         "get_entity_path",
+				Description:  "Return the full breadcrumb path from the root location down to the given entity. Useful for answering 'where is X?' — the last element of the path is the entity itself; everything before it is its containing chain.",
+				InputSchema:  mcp.MustSchema[getEntityPathInput](),
+				OutputSchema: mcp.MustSchema[getEntityPathOutput](),
 			},
 			func(ctx context.Context, _ *mcpsdk.CallToolRequest, in getEntityPathInput) (*mcpsdk.CallToolResult, getEntityPathOutput, error) {
 				sctx, err := mcp.ResolveGroup(ctx, in.GroupID)

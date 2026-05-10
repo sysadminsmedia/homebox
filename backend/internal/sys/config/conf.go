@@ -34,7 +34,7 @@ type Config struct {
 	Otel       OTelConfig     `yaml:"otel"`
 	Auth       AuthConfig     `yaml:"auth"`
 	Notifier   NotifierConf   `yaml:"notifier"`
-	MCP        MCPConfig      `yaml:"mcp"`
+	Mcp        MCPConfig      `yaml:"mcp"`
 }
 
 // MCPConfig configures the optional Model Context Protocol server mounted at

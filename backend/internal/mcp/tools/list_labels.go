@@ -29,8 +29,10 @@ func init() {
 	mcp.Register(func(s *mcpsdk.Server, d mcp.Deps) {
 		mcpsdk.AddTool(s,
 			&mcpsdk.Tool{
-				Name:        "list_labels",
-				Description: "List all labels (tags) defined in the calling user's group. Use the returned label IDs to filter `search_items` results.",
+				Name:         "list_labels",
+				Description:  "List all labels (tags) defined in the calling user's group. Use the returned label IDs to filter `search_items` results.",
+				InputSchema:  mcp.MustSchema[listLabelsInput](),
+				OutputSchema: mcp.MustSchema[listLabelsOutput](),
 			},
 			func(ctx context.Context, _ *mcpsdk.CallToolRequest, in listLabelsInput) (*mcpsdk.CallToolResult, listLabelsOutput, error) {
 				sctx, err := mcp.ResolveGroup(ctx, in.GroupID)

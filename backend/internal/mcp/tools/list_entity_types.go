@@ -34,8 +34,10 @@ func init() {
 	mcp.Register(func(s *mcpsdk.Server, d mcp.Deps) {
 		mcpsdk.AddTool(s,
 			&mcpsdk.Tool{
-				Name:        "list_entity_types",
-				Description: "List all entity types (categories) defined in the calling user's group. Each type indicates whether entities of that type are locations or items.",
+				Name:         "list_entity_types",
+				Description:  "List all entity types (categories) defined in the calling user's group. Each type indicates whether entities of that type are locations or items.",
+				InputSchema:  mcp.MustSchema[listEntityTypesInput](),
+				OutputSchema: mcp.MustSchema[listEntityTypesOutput](),
 			},
 			func(ctx context.Context, _ *mcpsdk.CallToolRequest, in listEntityTypesInput) (*mcpsdk.CallToolResult, listEntityTypesOutput, error) {
 				sctx, err := mcp.ResolveGroup(ctx, in.GroupID)
