@@ -120,7 +120,8 @@
         "form": {
             "password": {
                 "toggle_show": "Toggle Password Show"
-            }
+            },
+            "min_length": "min {min}"
         },
         "global": {
             "copy_text": {

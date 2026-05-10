@@ -19,6 +19,7 @@
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import DetailsSection from "@/components/global/DetailsSection/DetailsSection.vue";
   import PasswordScore from "~/components/global/PasswordScore.vue";
+  import { PASSWORD_MIN_LENGTH, PASSWORD_RULES } from "~/lib/passwords";
 
   const { t } = useI18n();
 
@@ -85,6 +86,7 @@
   async function changePassword() {
     passwordChange.loading = true;
     if (!passwordChange.isValid) {
+      passwordChange.loading = false;
       return;
     }
 
@@ -124,16 +126,30 @@
           <DialogTitle> {{ $t("profile.change_password") }} </DialogTitle>
         </DialogHeader>
 
-        <FormPassword
-          v-model="passwordChange.current"
-          :label="$t('profile.current_password')"
-          placeholder=""
-          class="mb-2"
-        />
-        <FormPassword v-model="passwordChange.new" :label="$t('profile.new_password')" placeholder="" />
-        <PasswordScore v-model:valid="passwordChange.isValid" :password="passwordChange.new" />
+        <form id="change-password-form" name="change-password" method="post" @submit.prevent="changePassword">
+          <FormPassword
+            id="current-password"
+            v-model="passwordChange.current"
+            :label="$t('profile.current_password')"
+            name="current-password"
+            autocomplete="current-password"
+            placeholder=""
+            :required="true"
+            class="mb-2"
+          />
+          <FormPassword
+            id="new-password"
+            v-model="passwordChange.new"
+            :label="$t('profile.new_password')"
+            name="new-password"
+            autocomplete="new-password"
+            placeholder=""
+            :min-length="PASSWORD_MIN_LENGTH"
+            :passwordrules="PASSWORD_RULES"
+            :required="true"
+          />
+          <PasswordScore v-model:valid="passwordChange.isValid" :password="passwordChange.new" />
 
-        <form @submit.prevent="changePassword">
           <DialogFooter>
             <Button :disabled="!passwordChange.isValid || passwordChange.loading" type="submit">
               <MdiLoading v-if="passwordChange.loading" class="animate-spin" />
