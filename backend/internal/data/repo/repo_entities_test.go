@@ -124,6 +124,74 @@ func TestEntityRepository_GetOne(t *testing.T) {
 	}
 }
 
+func TestEntityRepository_GetPublicFoundByID(t *testing.T) {
+	ctx := context.Background()
+	item := entityFactory()
+	item.AssetID = AssetID(123456)
+
+	created, err := tRepos.Entities.Create(ctx, tGroup.ID, item)
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = tRepos.Entities.Delete(ctx, created.ID)
+	})
+
+	found, err := tRepos.Entities.GetPublicFoundByID(ctx, created.ID)
+	require.NoError(t, err)
+	assert.Equal(t, item.AssetID, found.AssetID)
+	assert.Equal(t, tUser.Email, found.ContactEmail)
+	assert.NotEmpty(t, found.ContactName)
+	assert.False(t, found.MultipleMatches)
+}
+
+func TestEntityRepository_GetPublicFoundByAssetIDRequiresUniqueMatch(t *testing.T) {
+	ctx := context.Background()
+	assetID := AssetID(234567)
+
+	first := entityFactory()
+	first.AssetID = assetID
+	firstItem, err := tRepos.Entities.Create(ctx, tGroup.ID, first)
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = tRepos.Entities.Delete(ctx, firstItem.ID)
+	})
+
+	found, err := tRepos.Entities.GetPublicFoundByAssetID(ctx, assetID)
+	require.NoError(t, err)
+	assert.Equal(t, assetID, found.AssetID)
+	assert.Equal(t, tUser.Email, found.ContactEmail)
+	assert.False(t, found.MultipleMatches)
+
+	otherGroup, err := tRepos.Groups.GroupCreate(ctx, "found-item-ambiguous", uuid.Nil)
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = tRepos.Groups.GroupDelete(ctx, otherGroup.ID)
+	})
+
+	otherPassword := "password"
+	_, err = tRepos.Users.Create(ctx, UserCreate{
+		Name:           "Other Owner",
+		Email:          fk.Email(),
+		Password:       &otherPassword,
+		DefaultGroupID: otherGroup.ID,
+		IsOwner:        true,
+	})
+	require.NoError(t, err)
+
+	second := entityFactory()
+	second.AssetID = assetID
+	secondItem, err := tRepos.Entities.Create(ctx, otherGroup.ID, second)
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = tRepos.Entities.Delete(ctx, secondItem.ID)
+	})
+
+	ambiguous, err := tRepos.Entities.GetPublicFoundByAssetID(ctx, assetID)
+	require.NoError(t, err)
+	assert.Equal(t, assetID, ambiguous.AssetID)
+	assert.True(t, ambiguous.MultipleMatches)
+	assert.Empty(t, ambiguous.ContactEmail)
+}
+
 func TestEntityRepository_GetAll(t *testing.T) {
 	length := 10
 	expected := useEntities(t, length)

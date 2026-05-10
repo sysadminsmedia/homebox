@@ -21,6 +21,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -220,6 +221,13 @@ type (
 	EntityOutCount struct {
 		EntitySummary
 		ItemCount float64 `json:"itemCount"`
+	}
+
+	PublicFoundEntity struct {
+		AssetID         AssetID `json:"assetId,string"`
+		ContactName     string  `json:"contactName,omitempty"`
+		ContactEmail    string  `json:"contactEmail,omitempty"`
+		MultipleMatches bool    `json:"multipleMatches,omitempty"`
 	}
 )
 
@@ -468,6 +476,98 @@ func (r *EntityRepository) GetOne(ctx context.Context, id uuid.UUID) (EntityOut,
 	out, err := r.getOne(ctx, entity.ID(id))
 	recordSpanError(span, err)
 	return out, err
+}
+
+func withPublicFoundContact(q *ent.EntityQuery) *ent.EntityQuery {
+	return q.WithGroup(func(gq *ent.GroupQuery) {
+		gq.WithUsers(func(uq *ent.UserQuery) {
+			uq.Order(ent.Asc(user.FieldRole), ent.Asc(user.FieldEmail))
+		})
+	})
+}
+
+func mapPublicFoundEntity(e *ent.Entity) (PublicFoundEntity, error) {
+	out := PublicFoundEntity{
+		AssetID: AssetID(e.AssetID),
+	}
+
+	if e.Edges.Group == nil || len(e.Edges.Group.Edges.Users) == 0 {
+		return out, fmt.Errorf("no contact user found for entity")
+	}
+
+	contact := e.Edges.Group.Edges.Users[0]
+	for _, candidate := range e.Edges.Group.Edges.Users {
+		if candidate.Role == user.RoleOwner {
+			contact = candidate
+			break
+		}
+	}
+
+	out.ContactName = contact.Name
+	out.ContactEmail = contact.Email
+	return out, nil
+}
+
+func (r *EntityRepository) GetPublicFoundByID(ctx context.Context, id uuid.UUID) (PublicFoundEntity, error) {
+	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.GetPublicFoundByID",
+		trace.WithAttributes(attribute.String("entity.id", id.String())))
+	defer span.End()
+
+	result, err := withPublicFoundContact(r.db.Entity.Query()).
+		Where(entity.ID(id)).
+		Only(ctx)
+	if err != nil {
+		recordSpanError(span, err)
+		return PublicFoundEntity{}, err
+	}
+
+	out, err := mapPublicFoundEntity(result)
+	if err != nil {
+		recordSpanError(span, err)
+		return out, err
+	}
+	span.SetAttributes(attribute.Int64("entity.asset_id", int64(out.AssetID)))
+	return out, nil
+}
+
+func (r *EntityRepository) GetPublicFoundByAssetID(ctx context.Context, assetID AssetID) (PublicFoundEntity, error) {
+	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.GetPublicFoundByAssetID",
+		trace.WithAttributes(attribute.Int64("entity.asset_id", int64(assetID))))
+	defer span.End()
+
+	if assetID.Nil() {
+		err := fmt.Errorf("invalid asset id")
+		recordSpanError(span, err)
+		return PublicFoundEntity{}, err
+	}
+
+	results, err := withPublicFoundContact(r.db.Entity.Query()).
+		Where(entity.AssetID(int64(assetID))).
+		Limit(2).
+		All(ctx)
+	if err != nil {
+		recordSpanError(span, err)
+		return PublicFoundEntity{}, err
+	}
+
+	span.SetAttributes(attribute.Int("entity.matches", len(results)))
+	switch len(results) {
+	case 0:
+		err := fmt.Errorf("asset id not found")
+		recordSpanError(span, err)
+		return PublicFoundEntity{}, err
+	case 1:
+		out, err := mapPublicFoundEntity(results[0])
+		if err != nil {
+			recordSpanError(span, err)
+		}
+		return out, err
+	default:
+		return PublicFoundEntity{
+			AssetID:         assetID,
+			MultipleMatches: true,
+		}, nil
+	}
 }
 
 func (r *EntityRepository) CheckRef(ctx context.Context, gid uuid.UUID, ref string) (bool, error) {
