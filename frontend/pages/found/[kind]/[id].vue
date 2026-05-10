@@ -39,6 +39,9 @@
   });
 
   const canContactOwner = computed(() => Boolean(found.value?.contactEmail && !found.value?.multipleMatches));
+  const hasContactName = computed(() => Boolean(found.value?.contactName));
+  const ownerNameText = computed(() => t("found.owner_name", { name: found.value?.contactName ?? "" }));
+  const hasMultipleMatches = computed(() => Boolean(found.value?.multipleMatches));
 
   const contactHref = computed(() => {
     if (!found.value?.contactEmail) {
@@ -81,12 +84,12 @@
 
           <template v-else-if="canContactOwner">
             <p>{{ $t("found.contact_body") }}</p>
-            <p v-if="found?.contactName">
-              {{ $t("found.owner_name", { name: found.contactName }) }}
+            <p v-if="hasContactName">
+              {{ ownerNameText }}
             </p>
           </template>
 
-          <template v-else-if="found?.multipleMatches">
+          <template v-else-if="hasMultipleMatches">
             <p class="flex gap-2">
               <MdiAlertCircle class="mt-0.5 size-5 shrink-0" />
               <span>{{ $t("found.multiple_matches") }}</span>
