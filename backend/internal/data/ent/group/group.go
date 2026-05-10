@@ -37,6 +37,8 @@ const (
 	EdgeNotifiers = "notifiers"
 	// EdgeEntityTemplates holds the string denoting the entity_templates edge name in mutations.
 	EdgeEntityTemplates = "entity_templates"
+	// EdgeUserGroups holds the string denoting the user_groups edge name in mutations.
+	EdgeUserGroups = "user_groups"
 	// Table holds the table name of the group in the database.
 	Table = "groups"
 	// UsersTable is the table that holds the users relation/edge. The primary key declared below.
@@ -86,6 +88,13 @@ const (
 	EntityTemplatesInverseTable = "entity_templates"
 	// EntityTemplatesColumn is the table column denoting the entity_templates relation/edge.
 	EntityTemplatesColumn = "group_entity_templates"
+	// UserGroupsTable is the table that holds the user_groups relation/edge.
+	UserGroupsTable = "user_groups"
+	// UserGroupsInverseTable is the table name for the UserGroup entity.
+	// It exists in this package in order to avoid circular dependency with the "usergroup" package.
+	UserGroupsInverseTable = "user_groups"
+	// UserGroupsColumn is the table column denoting the user_groups relation/edge.
+	UserGroupsColumn = "group_id"
 )
 
 // Columns holds all SQL columns for group fields.
@@ -253,6 +262,20 @@ func ByEntityTemplates(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newEntityTemplatesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByUserGroupsCount orders the results by user_groups count.
+func ByUserGroupsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newUserGroupsStep(), opts...)
+	}
+}
+
+// ByUserGroups orders the results by user_groups terms.
+func ByUserGroups(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserGroupsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUsersStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -300,5 +323,12 @@ func newEntityTemplatesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EntityTemplatesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, EntityTemplatesTable, EntityTemplatesColumn),
+	)
+}
+func newUserGroupsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserGroupsInverseTable, UserGroupsColumn),
+		sqlgraph.Edge(sqlgraph.O2M, true, UserGroupsTable, UserGroupsColumn),
 	)
 }

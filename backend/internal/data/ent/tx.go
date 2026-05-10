@@ -42,6 +42,8 @@ type Tx struct {
 	TemplateField *TemplateFieldClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserGroup is the client for interacting with the UserGroup builders.
+	UserGroup *UserGroupClient
 
 	// lazily loaded.
 	client     *Client
@@ -188,6 +190,7 @@ func (tx *Tx) init() {
 	tx.Tag = NewTagClient(tx.config)
 	tx.TemplateField = NewTemplateFieldClient(tx.config)
 	tx.User = NewUserClient(tx.config)
+	tx.UserGroup = NewUserGroupClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

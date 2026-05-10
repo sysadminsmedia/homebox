@@ -3,7 +3,6 @@
 package user
 
 import (
-	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -30,8 +29,6 @@ const (
 	FieldIsSuperuser = "is_superuser"
 	// FieldSuperuser holds the string denoting the superuser field in the database.
 	FieldSuperuser = "superuser"
-	// FieldRole holds the string denoting the role field in the database.
-	FieldRole = "role"
 	// FieldActivatedOn holds the string denoting the activated_on field in the database.
 	FieldActivatedOn = "activated_on"
 	// FieldOidcIssuer holds the string denoting the oidc_issuer field in the database.
@@ -50,6 +47,8 @@ const (
 	EdgeAPIKeys = "api_keys"
 	// EdgeNotifiers holds the string denoting the notifiers edge name in mutations.
 	EdgeNotifiers = "notifiers"
+	// EdgeUserGroups holds the string denoting the user_groups edge name in mutations.
+	EdgeUserGroups = "user_groups"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// GroupsTable is the table that holds the groups relation/edge. The primary key declared below.
@@ -78,6 +77,13 @@ const (
 	NotifiersInverseTable = "notifiers"
 	// NotifiersColumn is the table column denoting the notifiers relation/edge.
 	NotifiersColumn = "user_id"
+	// UserGroupsTable is the table that holds the user_groups relation/edge.
+	UserGroupsTable = "user_groups"
+	// UserGroupsInverseTable is the table name for the UserGroup entity.
+	// It exists in this package in order to avoid circular dependency with the "usergroup" package.
+	UserGroupsInverseTable = "user_groups"
+	// UserGroupsColumn is the table column denoting the user_groups relation/edge.
+	UserGroupsColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -90,7 +96,6 @@ var Columns = []string{
 	FieldPassword,
 	FieldIsSuperuser,
 	FieldSuperuser,
-	FieldRole,
 	FieldActivatedOn,
 	FieldOidcIssuer,
 	FieldOidcSubject,
@@ -135,32 +140,6 @@ var (
 	DefaultID func() uuid.UUID
 )
 
-// Role defines the type for the "role" enum field.
-type Role string
-
-// RoleUser is the default value of the Role enum.
-const DefaultRole = RoleUser
-
-// Role values.
-const (
-	RoleUser  Role = "user"
-	RoleOwner Role = "owner"
-)
-
-func (r Role) String() string {
-	return string(r)
-}
-
-// RoleValidator is a validator for the "role" field enum values. It is called by the builders before save.
-func RoleValidator(r Role) error {
-	switch r {
-	case RoleUser, RoleOwner:
-		return nil
-	default:
-		return fmt.Errorf("user: invalid enum value for role field: %q", r)
-	}
-}
-
 // OrderOption defines the ordering options for the User queries.
 type OrderOption func(*sql.Selector)
 
@@ -202,11 +181,6 @@ func ByIsSuperuser(opts ...sql.OrderTermOption) OrderOption {
 // BySuperuser orders the results by the superuser field.
 func BySuperuser(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSuperuser, opts...).ToFunc()
-}
-
-// ByRole orders the results by the role field.
-func ByRole(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldRole, opts...).ToFunc()
 }
 
 // ByActivatedOn orders the results by the activated_on field.
@@ -284,6 +258,20 @@ func ByNotifiers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newNotifiersStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByUserGroupsCount orders the results by user_groups count.
+func ByUserGroupsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newUserGroupsStep(), opts...)
+	}
+}
+
+// ByUserGroups orders the results by user_groups terms.
+func ByUserGroups(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserGroupsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newGroupsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -310,5 +298,12 @@ func newNotifiersStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(NotifiersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, NotifiersTable, NotifiersColumn),
+	)
+}
+func newUserGroupsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserGroupsInverseTable, UserGroupsColumn),
+		sqlgraph.Edge(sqlgraph.O2M, true, UserGroupsTable, UserGroupsColumn),
 	)
 }

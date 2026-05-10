@@ -31,6 +31,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/usergroup"
 )
 
 // Client is the client that holds all ent builders.
@@ -68,6 +69,8 @@ type Client struct {
 	TemplateField *TemplateFieldClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserGroup is the client for interacting with the UserGroup builders.
+	UserGroup *UserGroupClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -94,6 +97,7 @@ func (c *Client) init() {
 	c.Tag = NewTagClient(c.config)
 	c.TemplateField = NewTemplateFieldClient(c.config)
 	c.User = NewUserClient(c.config)
+	c.UserGroup = NewUserGroupClient(c.config)
 }
 
 type (
@@ -201,6 +205,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Tag:                  NewTagClient(cfg),
 		TemplateField:        NewTemplateFieldClient(cfg),
 		User:                 NewUserClient(cfg),
+		UserGroup:            NewUserGroupClient(cfg),
 	}, nil
 }
 
@@ -235,6 +240,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Tag:                  NewTagClient(cfg),
 		TemplateField:        NewTemplateFieldClient(cfg),
 		User:                 NewUserClient(cfg),
+		UserGroup:            NewUserGroupClient(cfg),
 	}, nil
 }
 
@@ -266,7 +272,7 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.APIKey, c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity, c.EntityField,
 		c.EntityTemplate, c.EntityType, c.Group, c.GroupInvitationToken,
-		c.MaintenanceEntry, c.Notifier, c.Tag, c.TemplateField, c.User,
+		c.MaintenanceEntry, c.Notifier, c.Tag, c.TemplateField, c.User, c.UserGroup,
 	} {
 		n.Use(hooks...)
 	}
@@ -278,7 +284,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.APIKey, c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity, c.EntityField,
 		c.EntityTemplate, c.EntityType, c.Group, c.GroupInvitationToken,
-		c.MaintenanceEntry, c.Notifier, c.Tag, c.TemplateField, c.User,
+		c.MaintenanceEntry, c.Notifier, c.Tag, c.TemplateField, c.User, c.UserGroup,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -317,6 +323,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.TemplateField.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
+	case *UserGroupMutation:
+		return c.UserGroup.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
 	}
@@ -1942,6 +1950,22 @@ func (c *GroupClient) QueryEntityTemplates(_m *Group) *EntityTemplateQuery {
 	return query
 }
 
+// QueryUserGroups queries the user_groups edge of a Group.
+func (c *GroupClient) QueryUserGroups(_m *Group) *UserGroupQuery {
+	query := (&UserGroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, id),
+			sqlgraph.To(usergroup.Table, usergroup.GroupColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, group.UserGroupsTable, group.UserGroupsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *GroupClient) Hooks() []Hook {
 	return c.hooks.Group
@@ -2948,6 +2972,22 @@ func (c *UserClient) QueryNotifiers(_m *User) *NotifierQuery {
 	return query
 }
 
+// QueryUserGroups queries the user_groups edge of a User.
+func (c *UserClient) QueryUserGroups(_m *User) *UserGroupQuery {
+	query := (&UserGroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(usergroup.Table, usergroup.UserColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.UserGroupsTable, user.UserGroupsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -2973,16 +3013,132 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 	}
 }
 
+// UserGroupClient is a client for the UserGroup schema.
+type UserGroupClient struct {
+	config
+}
+
+// NewUserGroupClient returns a client for the UserGroup from the given config.
+func NewUserGroupClient(c config) *UserGroupClient {
+	return &UserGroupClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `usergroup.Hooks(f(g(h())))`.
+func (c *UserGroupClient) Use(hooks ...Hook) {
+	c.hooks.UserGroup = append(c.hooks.UserGroup, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `usergroup.Intercept(f(g(h())))`.
+func (c *UserGroupClient) Intercept(interceptors ...Interceptor) {
+	c.inters.UserGroup = append(c.inters.UserGroup, interceptors...)
+}
+
+// Create returns a builder for creating a UserGroup entity.
+func (c *UserGroupClient) Create() *UserGroupCreate {
+	mutation := newUserGroupMutation(c.config, OpCreate)
+	return &UserGroupCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserGroup entities.
+func (c *UserGroupClient) CreateBulk(builders ...*UserGroupCreate) *UserGroupCreateBulk {
+	return &UserGroupCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *UserGroupClient) MapCreateBulk(slice any, setFunc func(*UserGroupCreate, int)) *UserGroupCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &UserGroupCreateBulk{err: fmt.Errorf("calling to UserGroupClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*UserGroupCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &UserGroupCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserGroup.
+func (c *UserGroupClient) Update() *UserGroupUpdate {
+	mutation := newUserGroupMutation(c.config, OpUpdate)
+	return &UserGroupUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserGroupClient) UpdateOne(_m *UserGroup) *UserGroupUpdateOne {
+	mutation := newUserGroupMutation(c.config, OpUpdateOne)
+	mutation.user = &_m.UserID
+	mutation.group = &_m.GroupID
+	return &UserGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserGroup.
+func (c *UserGroupClient) Delete() *UserGroupDelete {
+	mutation := newUserGroupMutation(c.config, OpDelete)
+	return &UserGroupDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Query returns a query builder for UserGroup.
+func (c *UserGroupClient) Query() *UserGroupQuery {
+	return &UserGroupQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserGroup},
+		inters: c.Interceptors(),
+	}
+}
+
+// QueryUser queries the user edge of a UserGroup.
+func (c *UserGroupClient) QueryUser(_m *UserGroup) *UserQuery {
+	return c.Query().
+		Where(usergroup.UserID(_m.UserID), usergroup.GroupID(_m.GroupID)).
+		QueryUser()
+}
+
+// QueryGroup queries the group edge of a UserGroup.
+func (c *UserGroupClient) QueryGroup(_m *UserGroup) *GroupQuery {
+	return c.Query().
+		Where(usergroup.UserID(_m.UserID), usergroup.GroupID(_m.GroupID)).
+		QueryGroup()
+}
+
+// Hooks returns the client hooks.
+func (c *UserGroupClient) Hooks() []Hook {
+	return c.hooks.UserGroup
+}
+
+// Interceptors returns the client interceptors.
+func (c *UserGroupClient) Interceptors() []Interceptor {
+	return c.inters.UserGroup
+}
+
+func (c *UserGroupClient) mutate(ctx context.Context, m *UserGroupMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserGroupCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserGroupUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserGroupDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown UserGroup mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
 		APIKey, Attachment, AuthRoles, AuthTokens, Entity, EntityField, EntityTemplate,
 		EntityType, Group, GroupInvitationToken, MaintenanceEntry, Notifier, Tag,
-		TemplateField, User []ent.Hook
+		TemplateField, User, UserGroup []ent.Hook
 	}
 	inters struct {
 		APIKey, Attachment, AuthRoles, AuthTokens, Entity, EntityField, EntityTemplate,
 		EntityType, Group, GroupInvitationToken, MaintenanceEntry, Notifier, Tag,
-		TemplateField, User []ent.Interceptor
+		TemplateField, User, UserGroup []ent.Interceptor
 	}
 )

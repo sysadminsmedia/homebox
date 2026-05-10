@@ -115,20 +115,6 @@ func (_u *UserUpdate) SetNillableSuperuser(v *bool) *UserUpdate {
 	return _u
 }
 
-// SetRole sets the "role" field.
-func (_u *UserUpdate) SetRole(v user.Role) *UserUpdate {
-	_u.mutation.SetRole(v)
-	return _u
-}
-
-// SetNillableRole sets the "role" field if the given value is not nil.
-func (_u *UserUpdate) SetNillableRole(v *user.Role) *UserUpdate {
-	if v != nil {
-		_u.SetRole(*v)
-	}
-	return _u
-}
-
 // SetActivatedOn sets the "activated_on" field.
 func (_u *UserUpdate) SetActivatedOn(v time.Time) *UserUpdate {
 	_u.mutation.SetActivatedOn(v)
@@ -423,11 +409,6 @@ func (_u *UserUpdate) check() error {
 			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "User.password": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.Role(); ok {
-		if err := user.RoleValidator(v); err != nil {
-			return &ValidationError{Name: "role", err: fmt.Errorf(`ent: validator failed for field "User.role": %w`, err)}
-		}
-	}
 	return nil
 }
 
@@ -463,9 +444,6 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Superuser(); ok {
 		_spec.SetField(user.FieldSuperuser, field.TypeBool, value)
-	}
-	if value, ok := _u.mutation.Role(); ok {
-		_spec.SetField(user.FieldRole, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.ActivatedOn(); ok {
 		_spec.SetField(user.FieldActivatedOn, field.TypeTime, value)
@@ -508,6 +486,10 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
 			},
 		}
+		createE := &UserGroupCreate{config: _u.config, mutation: newUserGroupMutation(_u.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := _u.mutation.RemovedGroupsIDs(); len(nodes) > 0 && !_u.mutation.GroupsCleared() {
@@ -524,6 +506,10 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		createE := &UserGroupCreate{config: _u.config, mutation: newUserGroupMutation(_u.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := _u.mutation.GroupsIDs(); len(nodes) > 0 {
@@ -540,6 +526,10 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		createE := &UserGroupCreate{config: _u.config, mutation: newUserGroupMutation(_u.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if _u.mutation.AuthTokensCleared() {
@@ -775,20 +765,6 @@ func (_u *UserUpdateOne) SetSuperuser(v bool) *UserUpdateOne {
 func (_u *UserUpdateOne) SetNillableSuperuser(v *bool) *UserUpdateOne {
 	if v != nil {
 		_u.SetSuperuser(*v)
-	}
-	return _u
-}
-
-// SetRole sets the "role" field.
-func (_u *UserUpdateOne) SetRole(v user.Role) *UserUpdateOne {
-	_u.mutation.SetRole(v)
-	return _u
-}
-
-// SetNillableRole sets the "role" field if the given value is not nil.
-func (_u *UserUpdateOne) SetNillableRole(v *user.Role) *UserUpdateOne {
-	if v != nil {
-		_u.SetRole(*v)
 	}
 	return _u
 }
@@ -1100,11 +1076,6 @@ func (_u *UserUpdateOne) check() error {
 			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "User.password": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.Role(); ok {
-		if err := user.RoleValidator(v); err != nil {
-			return &ValidationError{Name: "role", err: fmt.Errorf(`ent: validator failed for field "User.role": %w`, err)}
-		}
-	}
 	return nil
 }
 
@@ -1158,9 +1129,6 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	if value, ok := _u.mutation.Superuser(); ok {
 		_spec.SetField(user.FieldSuperuser, field.TypeBool, value)
 	}
-	if value, ok := _u.mutation.Role(); ok {
-		_spec.SetField(user.FieldRole, field.TypeEnum, value)
-	}
 	if value, ok := _u.mutation.ActivatedOn(); ok {
 		_spec.SetField(user.FieldActivatedOn, field.TypeTime, value)
 	}
@@ -1202,6 +1170,10 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
 			},
 		}
+		createE := &UserGroupCreate{config: _u.config, mutation: newUserGroupMutation(_u.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := _u.mutation.RemovedGroupsIDs(); len(nodes) > 0 && !_u.mutation.GroupsCleared() {
@@ -1218,6 +1190,10 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		createE := &UserGroupCreate{config: _u.config, mutation: newUserGroupMutation(_u.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := _u.mutation.GroupsIDs(); len(nodes) > 0 {
@@ -1234,6 +1210,10 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		createE := &UserGroupCreate{config: _u.config, mutation: newUserGroupMutation(_u.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if _u.mutation.AuthTokensCleared() {

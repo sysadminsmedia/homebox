@@ -107,20 +107,6 @@ func (_c *UserCreate) SetNillableSuperuser(v *bool) *UserCreate {
 	return _c
 }
 
-// SetRole sets the "role" field.
-func (_c *UserCreate) SetRole(v user.Role) *UserCreate {
-	_c.mutation.SetRole(v)
-	return _c
-}
-
-// SetNillableRole sets the "role" field if the given value is not nil.
-func (_c *UserCreate) SetNillableRole(v *user.Role) *UserCreate {
-	if v != nil {
-		_c.SetRole(*v)
-	}
-	return _c
-}
-
 // SetActivatedOn sets the "activated_on" field.
 func (_c *UserCreate) SetActivatedOn(v time.Time) *UserCreate {
 	_c.mutation.SetActivatedOn(v)
@@ -308,10 +294,6 @@ func (_c *UserCreate) defaults() {
 		v := user.DefaultSuperuser
 		_c.mutation.SetSuperuser(v)
 	}
-	if _, ok := _c.mutation.Role(); !ok {
-		v := user.DefaultRole
-		_c.mutation.SetRole(v)
-	}
 	if _, ok := _c.mutation.ID(); !ok {
 		v := user.DefaultID()
 		_c.mutation.SetID(v)
@@ -352,14 +334,6 @@ func (_c *UserCreate) check() error {
 	}
 	if _, ok := _c.mutation.Superuser(); !ok {
 		return &ValidationError{Name: "superuser", err: errors.New(`ent: missing required field "User.superuser"`)}
-	}
-	if _, ok := _c.mutation.Role(); !ok {
-		return &ValidationError{Name: "role", err: errors.New(`ent: missing required field "User.role"`)}
-	}
-	if v, ok := _c.mutation.Role(); ok {
-		if err := user.RoleValidator(v); err != nil {
-			return &ValidationError{Name: "role", err: fmt.Errorf(`ent: validator failed for field "User.role": %w`, err)}
-		}
 	}
 	return nil
 }
@@ -424,10 +398,6 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldSuperuser, field.TypeBool, value)
 		_node.Superuser = value
 	}
-	if value, ok := _c.mutation.Role(); ok {
-		_spec.SetField(user.FieldRole, field.TypeEnum, value)
-		_node.Role = value
-	}
 	if value, ok := _c.mutation.ActivatedOn(); ok {
 		_spec.SetField(user.FieldActivatedOn, field.TypeTime, value)
 		_node.ActivatedOn = value
@@ -462,6 +432,10 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		createE := &UserGroupCreate{config: _c.config, mutation: newUserGroupMutation(_c.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.AuthTokensIDs(); len(nodes) > 0 {

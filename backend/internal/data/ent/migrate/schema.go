@@ -3,6 +3,7 @@
 package migrate
 
 import (
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/dialect/sql/schema"
 	"entgo.io/ent/schema/field"
 )
@@ -514,7 +515,6 @@ var (
 		{Name: "password", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "is_superuser", Type: field.TypeBool, Default: false},
 		{Name: "superuser", Type: field.TypeBool, Default: false},
-		{Name: "role", Type: field.TypeEnum, Enums: []string{"user", "owner"}, Default: "user"},
 		{Name: "activated_on", Type: field.TypeTime, Nullable: true},
 		{Name: "oidc_issuer", Type: field.TypeString, Nullable: true},
 		{Name: "oidc_subject", Type: field.TypeString, Nullable: true},
@@ -530,7 +530,33 @@ var (
 			{
 				Name:    "user_oidc_issuer_oidc_subject",
 				Unique:  true,
-				Columns: []*schema.Column{UsersColumns[10], UsersColumns[11]},
+				Columns: []*schema.Column{UsersColumns[9], UsersColumns[10]},
+			},
+		},
+	}
+	// UserGroupsColumns holds the columns for the "user_groups" table.
+	UserGroupsColumns = []*schema.Column{
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"user", "owner"}, Default: "user"},
+		{Name: "user_id", Type: field.TypeUUID},
+		{Name: "group_id", Type: field.TypeUUID},
+	}
+	// UserGroupsTable holds the schema information for the "user_groups" table.
+	UserGroupsTable = &schema.Table{
+		Name:       "user_groups",
+		Columns:    UserGroupsColumns,
+		PrimaryKey: []*schema.Column{UserGroupsColumns[1], UserGroupsColumns[2]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_groups_users_user",
+				Columns:    []*schema.Column{UserGroupsColumns[1]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "user_groups_groups_group",
+				Columns:    []*schema.Column{UserGroupsColumns[2]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.Cascade,
 			},
 		},
 	}
@@ -559,31 +585,6 @@ var (
 			},
 		},
 	}
-	// UserGroupsColumns holds the columns for the "user_groups" table.
-	UserGroupsColumns = []*schema.Column{
-		{Name: "user_id", Type: field.TypeUUID},
-		{Name: "group_id", Type: field.TypeUUID},
-	}
-	// UserGroupsTable holds the schema information for the "user_groups" table.
-	UserGroupsTable = &schema.Table{
-		Name:       "user_groups",
-		Columns:    UserGroupsColumns,
-		PrimaryKey: []*schema.Column{UserGroupsColumns[0], UserGroupsColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "user_groups_user_id",
-				Columns:    []*schema.Column{UserGroupsColumns[0]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "user_groups_group_id",
-				Columns:    []*schema.Column{UserGroupsColumns[1]},
-				RefColumns: []*schema.Column{GroupsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		APIKeysTable,
@@ -601,8 +602,8 @@ var (
 		TagsTable,
 		TemplateFieldsTable,
 		UsersTable,
-		TagEntitiesTable,
 		UserGroupsTable,
+		TagEntitiesTable,
 	}
 )
 
@@ -627,8 +628,11 @@ func init() {
 	TagsTable.ForeignKeys[0].RefTable = GroupsTable
 	TagsTable.ForeignKeys[1].RefTable = TagsTable
 	TemplateFieldsTable.ForeignKeys[0].RefTable = EntityTemplatesTable
-	TagEntitiesTable.ForeignKeys[0].RefTable = TagsTable
-	TagEntitiesTable.ForeignKeys[1].RefTable = EntitiesTable
 	UserGroupsTable.ForeignKeys[0].RefTable = UsersTable
 	UserGroupsTable.ForeignKeys[1].RefTable = GroupsTable
+	UserGroupsTable.Annotation = &entsql.Annotation{
+		Table: "user_groups",
+	}
+	TagEntitiesTable.ForeignKeys[0].RefTable = TagsTable
+	TagEntitiesTable.ForeignKeys[1].RefTable = EntitiesTable
 }

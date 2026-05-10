@@ -19,6 +19,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/usergroup"
 )
 
 // UserQuery is the builder for querying User entities.
@@ -32,6 +33,7 @@ type UserQuery struct {
 	withAuthTokens *AuthTokensQuery
 	withAPIKeys    *APIKeyQuery
 	withNotifiers  *NotifierQuery
+	withUserGroups *UserGroupQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -149,6 +151,28 @@ func (_q *UserQuery) QueryNotifiers() *NotifierQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(notifier.Table, notifier.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.NotifiersTable, user.NotifiersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryUserGroups chains the current query on the "user_groups" edge.
+func (_q *UserQuery) QueryUserGroups() *UserGroupQuery {
+	query := (&UserGroupClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(usergroup.Table, usergroup.UserColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.UserGroupsTable, user.UserGroupsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -352,6 +376,7 @@ func (_q *UserQuery) Clone() *UserQuery {
 		withAuthTokens: _q.withAuthTokens.Clone(),
 		withAPIKeys:    _q.withAPIKeys.Clone(),
 		withNotifiers:  _q.withNotifiers.Clone(),
+		withUserGroups: _q.withUserGroups.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -399,6 +424,17 @@ func (_q *UserQuery) WithNotifiers(opts ...func(*NotifierQuery)) *UserQuery {
 		opt(query)
 	}
 	_q.withNotifiers = query
+	return _q
+}
+
+// WithUserGroups tells the query-builder to eager-load the nodes that are connected to
+// the "user_groups" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithUserGroups(opts ...func(*UserGroupQuery)) *UserQuery {
+	query := (&UserGroupClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withUserGroups = query
 	return _q
 }
 
@@ -480,11 +516,12 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = _q.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			_q.withGroups != nil,
 			_q.withAuthTokens != nil,
 			_q.withAPIKeys != nil,
 			_q.withNotifiers != nil,
+			_q.withUserGroups != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -530,6 +567,13 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := _q.loadNotifiers(ctx, query, nodes,
 			func(n *User) { n.Edges.Notifiers = []*Notifier{} },
 			func(n *User, e *Notifier) { n.Edges.Notifiers = append(n.Edges.Notifiers, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withUserGroups; query != nil {
+		if err := _q.loadUserGroups(ctx, query, nodes,
+			func(n *User) { n.Edges.UserGroups = []*UserGroup{} },
+			func(n *User, e *UserGroup) { n.Edges.UserGroups = append(n.Edges.UserGroups, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -683,6 +727,36 @@ func (_q *UserQuery) loadNotifiers(ctx context.Context, query *NotifierQuery, no
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *UserQuery) loadUserGroups(ctx context.Context, query *UserGroupQuery, nodes []*User, init func(*User), assign func(*User, *UserGroup)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(usergroup.FieldUserID)
+	}
+	query.Where(predicate.UserGroup(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.UserGroupsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n)
 		}
 		assign(node, n)
 	}

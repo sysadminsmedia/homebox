@@ -27,6 +27,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/usergroup"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -102,6 +103,7 @@ func checkColumn(t, c string) error {
 			tag.Table:                  tag.ValidColumn,
 			templatefield.Table:        templatefield.ValidColumn,
 			user.Table:                 user.ValidColumn,
+			usergroup.Table:            usergroup.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

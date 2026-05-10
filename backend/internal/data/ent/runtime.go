@@ -769,4 +769,6 @@ func init() {
 	userDescID := userMixinFields0[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.
 	user.DefaultID = userDescID.Default.(func() uuid.UUID)
+	usergroupFields := schema.UserGroup{}.Fields()
+	_ = usergroupFields
 }

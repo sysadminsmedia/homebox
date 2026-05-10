@@ -33,8 +33,6 @@ type User struct {
 	IsSuperuser bool `json:"is_superuser,omitempty"`
 	// Superuser holds the value of the "superuser" field.
 	Superuser bool `json:"superuser,omitempty"`
-	// Role holds the value of the "role" field.
-	Role user.Role `json:"role,omitempty"`
 	// ActivatedOn holds the value of the "activated_on" field.
 	ActivatedOn time.Time `json:"activated_on,omitempty"`
 	// OidcIssuer holds the value of the "oidc_issuer" field.
@@ -61,9 +59,11 @@ type UserEdges struct {
 	APIKeys []*APIKey `json:"api_keys,omitempty"`
 	// Notifiers holds the value of the notifiers edge.
 	Notifiers []*Notifier `json:"notifiers,omitempty"`
+	// UserGroups holds the value of the user_groups edge.
+	UserGroups []*UserGroup `json:"user_groups,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 }
 
 // GroupsOrErr returns the Groups value or an error if the edge
@@ -102,6 +102,15 @@ func (e UserEdges) NotifiersOrErr() ([]*Notifier, error) {
 	return nil, &NotLoadedError{edge: "notifiers"}
 }
 
+// UserGroupsOrErr returns the UserGroups value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) UserGroupsOrErr() ([]*UserGroup, error) {
+	if e.loadedTypes[4] {
+		return e.UserGroups, nil
+	}
+	return nil, &NotLoadedError{edge: "user_groups"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -113,7 +122,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case user.FieldIsSuperuser, user.FieldSuperuser:
 			values[i] = new(sql.NullBool)
-		case user.FieldName, user.FieldEmail, user.FieldPassword, user.FieldRole, user.FieldOidcIssuer, user.FieldOidcSubject:
+		case user.FieldName, user.FieldEmail, user.FieldPassword, user.FieldOidcIssuer, user.FieldOidcSubject:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldActivatedOn:
 			values[i] = new(sql.NullTime)
@@ -183,12 +192,6 @@ func (_m *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Superuser = value.Bool
 			}
-		case user.FieldRole:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field role", values[i])
-			} else if value.Valid {
-				_m.Role = user.Role(value.String)
-			}
 		case user.FieldActivatedOn:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field activated_on", values[i])
@@ -257,6 +260,11 @@ func (_m *User) QueryNotifiers() *NotifierQuery {
 	return NewUserClient(_m.config).QueryNotifiers(_m)
 }
 
+// QueryUserGroups queries the "user_groups" edge of the User entity.
+func (_m *User) QueryUserGroups() *UserGroupQuery {
+	return NewUserClient(_m.config).QueryUserGroups(_m)
+}
+
 // Update returns a builder for updating this User.
 // Note that you need to call User.Unwrap() before calling this method if this User
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -299,9 +307,6 @@ func (_m *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("superuser=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Superuser))
-	builder.WriteString(", ")
-	builder.WriteString("role=")
-	builder.WriteString(fmt.Sprintf("%v", _m.Role))
 	builder.WriteString(", ")
 	builder.WriteString("activated_on=")
 	builder.WriteString(_m.ActivatedOn.Format(time.ANSIC))
