@@ -34,6 +34,14 @@ type Config struct {
 	Otel       OTelConfig     `yaml:"otel"`
 	Auth       AuthConfig     `yaml:"auth"`
 	Notifier   NotifierConf   `yaml:"notifier"`
+	MCP        MCPConfig      `yaml:"mcp"`
+}
+
+// MCPConfig configures the optional Model Context Protocol server mounted at
+// /api/v1/mcp. Disabled by default; when enabled it exposes read tools that
+// query the inventory using the same auth/tenant scope as the calling user.
+type MCPConfig struct {
+	Enabled bool `yaml:"enabled" conf:"default:false"`
 }
 
 type Options struct {

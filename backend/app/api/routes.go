@@ -19,6 +19,8 @@ import (
 	docs "github.com/sysadminsmedia/homebox/backend/app/api/static/docs"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	hbmcp "github.com/sysadminsmedia/homebox/backend/internal/mcp"
+	_ "github.com/sysadminsmedia/homebox/backend/internal/mcp/tools" // register tools via init()
 )
 
 const prefix = "/api"
@@ -224,6 +226,24 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 
 		// Reporting Services
 		r.Get("/reporting/bill-of-materials", chain.ToHandlerFunc(v1Ctrl.HandleBillOfMaterialsExport(), userMW...))
+
+		// MCP (Model Context Protocol) endpoint — disabled by default.
+		// Mounted behind userMW so each tool call inherits the calling user's
+		// services.Context (UID/GID); tool handlers must scope their queries
+		// using that context, never trust group/user IDs from tool input.
+		if a.conf.MCP.Enabled {
+			mcpHandler := hbmcp.NewHandler(hbmcp.Deps{
+				Services: a.services,
+				Repos:    a.repos,
+			})
+			mcpHandlerFunc := chain.ToHandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+				mcpHandler.ServeHTTP(w, r)
+				return nil
+			}, userMW...)
+			r.Get("/mcp", mcpHandlerFunc)
+			r.Post("/mcp", mcpHandlerFunc)
+			r.Delete("/mcp", mcpHandlerFunc)
+		}
 
 		// OpenTelemetry proxy endpoint for frontend telemetry (requires auth)
 		if a.otel != nil && a.otel.IsEnabled() && a.conf.Otel.ProxyEnabled {
