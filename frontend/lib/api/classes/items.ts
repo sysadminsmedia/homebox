@@ -67,6 +67,16 @@ export class AttachmentsAPI extends BaseAPI {
       body: data,
     });
   }
+
+  addExternalLink(id: string, sourceType: string, externalId: string, title: string, attachmentType?: string) {
+    return this.http.post<
+      { source_type: string; external_id: string; title: string; attachment_type?: string },
+      EntityOut
+    >({
+      url: route(`/entities/${id}/attachments/external`),
+      body: { source_type: sourceType, external_id: externalId, title, attachment_type: attachmentType },
+    });
+  }
 }
 
 export class FieldsAPI extends BaseAPI {

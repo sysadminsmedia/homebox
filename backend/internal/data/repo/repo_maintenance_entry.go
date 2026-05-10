@@ -112,7 +112,18 @@ func (r *MaintenanceEntryRepository) Create(ctx context.Context, itemID uuid.UUI
 	return mapMaintenanceEntryErr(item, err)
 }
 
-func (r *MaintenanceEntryRepository) Update(ctx context.Context, id uuid.UUID, input MaintenanceEntryUpdate) (MaintenanceEntry, error) {
+func (r *MaintenanceEntryRepository) Update(ctx context.Context, gid uuid.UUID, id uuid.UUID, input MaintenanceEntryUpdate) (MaintenanceEntry, error) {
+	owned, err := r.db.MaintenanceEntry.Query().Where(
+		maintenanceentry.ID(id),
+		maintenanceentry.HasEntityWith(entity.HasGroupWith(group.ID(gid))),
+	).Exist(ctx)
+	if err != nil {
+		return MaintenanceEntry{}, err
+	}
+	if !owned {
+		return MaintenanceEntry{}, &ent.NotFoundError{}
+	}
+
 	item, err := r.db.MaintenanceEntry.UpdateOneID(id).
 		SetDate(input.CompletedDate.Time()).
 		SetScheduledDate(input.ScheduledDate.Time()).
@@ -169,6 +180,16 @@ func (r *MaintenanceEntryRepository) GetMaintenanceByItemID(ctx context.Context,
 	return mapEachMaintenanceEntryWithDetails(entries), nil
 }
 
-func (r *MaintenanceEntryRepository) Delete(ctx context.Context, id uuid.UUID) error {
-	return r.db.MaintenanceEntry.DeleteOneID(id).Exec(ctx)
+func (r *MaintenanceEntryRepository) Delete(ctx context.Context, gid uuid.UUID, id uuid.UUID) error {
+	deleted, err := r.db.MaintenanceEntry.Delete().Where(
+		maintenanceentry.ID(id),
+		maintenanceentry.HasEntityWith(entity.HasGroupWith(group.ID(gid))),
+	).Exec(ctx)
+	if err != nil {
+		return err
+	}
+	if deleted == 0 {
+		return &ent.NotFoundError{}
+	}
+	return nil
 }

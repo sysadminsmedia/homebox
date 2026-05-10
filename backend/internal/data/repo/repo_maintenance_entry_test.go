@@ -76,7 +76,7 @@ func TestMaintenanceEntryRepository_GetLog(t *testing.T) {
 	assert.Len(t, log, 10)
 
 	for _, entry := range log {
-		err := tRepos.MaintEntry.Delete(context.Background(), entry.ID)
+		err := tRepos.MaintEntry.Delete(context.Background(), tGroup.ID, entry.ID)
 		require.NoError(t, err)
 	}
 }

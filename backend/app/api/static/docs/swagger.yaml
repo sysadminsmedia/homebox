@@ -43,6 +43,43 @@ definitions:
       symbol:
         type: string
     type: object
+  ent.APIKey:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.APIKeyEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the APIKeyQuery when eager-loading is set.
+      expires_at:
+        description: ExpiresAt holds the value of the "expires_at" field.
+        type: string
+      id:
+        description: ID of the ent.
+        type: string
+      last_used_at:
+        description: LastUsedAt holds the value of the "last_used_at" field.
+        type: string
+      name:
+        description: Name holds the value of the "name" field.
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      user_id:
+        description: UserID holds the value of the "user_id" field.
+        type: string
+    type: object
+  ent.APIKeyEdges:
+    properties:
+      user:
+        allOf:
+        - $ref: '#/definitions/ent.User'
+        description: User holds the value of the user edge.
+    type: object
   ent.Attachment:
     properties:
       created_at:
@@ -785,6 +822,11 @@ definitions:
     type: object
   ent.UserEdges:
     properties:
+      api_keys:
+        description: APIKeys holds the value of the api_keys edge.
+        items:
+          $ref: '#/definitions/ent.APIKey'
+        type: array
       auth_tokens:
         description: AuthTokens holds the value of the auth_tokens edge.
         items:
@@ -813,6 +855,54 @@ definitions:
     - TypeNumber
     - TypeBoolean
     - TypeTime
+  repo.APIKeyCreate:
+    properties:
+      expiresAt:
+        type: string
+        x-nullable: true
+      name:
+        maxLength: 255
+        minLength: 1
+        type: string
+    required:
+    - name
+    type: object
+  repo.APIKeyCreatedOut:
+    properties:
+      createdAt:
+        type: string
+      expiresAt:
+        type: string
+        x-nullable: true
+      id:
+        type: string
+      lastUsedAt:
+        type: string
+        x-nullable: true
+      name:
+        type: string
+      token:
+        type: string
+      userId:
+        type: string
+    type: object
+  repo.APIKeyOut:
+    properties:
+      createdAt:
+        type: string
+      expiresAt:
+        type: string
+        x-nullable: true
+      id:
+        type: string
+      lastUsedAt:
+        type: string
+        x-nullable: true
+      name:
+        type: string
+      userId:
+        type: string
+    type: object
   repo.BarcodeProduct:
     properties:
       barcode:
@@ -2029,6 +2119,17 @@ definitions:
     properties:
       item: {}
     type: object
+  v1.externalAttachmentRequest:
+    properties:
+      attachment_type:
+        type: string
+      external_id:
+        type: string
+      source_type:
+        type: string
+      title:
+        type: string
+    type: object
   validate.ErrorResponse:
     properties:
       error:
@@ -2435,6 +2536,40 @@ paths:
       security:
       - Bearer: []
       summary: Update Entity Attachment
+      tags:
+      - Entities Attachments
+  /v1/entities/{id}/attachments/external:
+    post:
+      consumes:
+      - application/json
+      description: Links an entity to a document or URL in an external system without
+        copying
+      parameters:
+      - description: Entity ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: External document reference
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/v1.externalAttachmentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.EntityOut'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/validate.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Create External Link Attachment
       tags:
       - Entities Attachments
   /v1/entities/{id}/duplicate:
@@ -3683,6 +3818,58 @@ paths:
       security:
       - Bearer: []
       summary: Update Account
+      tags:
+      - User
+  /v1/users/self/api-keys:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.APIKeyOut'
+            type: array
+      security:
+      - Bearer: []
+      summary: List API Keys
+      tags:
+      - User
+    post:
+      parameters:
+      - description: API Key Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.APIKeyCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.APIKeyCreatedOut'
+      security:
+      - Bearer: []
+      summary: Create API Key
+      tags:
+      - User
+  /v1/users/self/api-keys/{id}:
+    delete:
+      parameters:
+      - description: API Key ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete API Key
       tags:
       - User
   /v1/users/self/settings:

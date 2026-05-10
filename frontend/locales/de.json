@@ -119,7 +119,8 @@
         "form": {
             "password": {
                 "toggle_show": "Passwort anzeigen"
-            }
+            },
+            "min_length": "mind. {min}"
         },
         "global": {
             "copy_text": {

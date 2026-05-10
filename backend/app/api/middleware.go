@@ -11,11 +11,14 @@ import (
 	"sync"
 	"time"
 
+	"github.com/rs/zerolog/log"
 	v1 "github.com/sysadminsmedia/homebox/backend/app/api/handlers/v1"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/set"
 
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
@@ -73,10 +76,21 @@ func (a *app) mwRoles(rm RoleMode, required ...string) errchain.Middleware {
 
 			token := maybeToken.(string)
 
-			roles, err := a.repos.AuthTokens.GetRoles(spanCtx, token)
-			if err != nil {
-				recordMwSpanError(span, err)
-				return err
+			// API keys grant the same access as the owning user. They live
+			// outside the auth_roles table, so we synthesize the "user" role
+			// here rather than querying the DB.
+			var roles *set.Set[string]
+			if services.IsAPIKeyAuth(spanCtx) {
+				s := set.New("user")
+				roles = &s
+				span.SetAttributes(attribute.Bool("roles.api_key", true))
+			} else {
+				r, err := a.repos.AuthTokens.GetRoles(spanCtx, token)
+				if err != nil {
+					recordMwSpanError(span, err)
+					return err
+				}
+				roles = r
 			}
 			span.SetAttributes(attribute.Int("roles.actual.count", roles.Len()))
 
@@ -200,26 +214,58 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 		r = r.WithContext(context.WithValue(spanCtx, hashedToken, requestToken))
 
 		usr, err := a.services.User.GetSelf(r.Context(), requestToken)
-		if err != nil {
-			if ent.IsNotFound(err) {
-				span.SetAttributes(attribute.String("auth.outcome", "token_not_found"))
-				return validate.NewRequestError(errors.New("valid authorization token is required"), http.StatusUnauthorized)
-			}
-
+		if err != nil && !ent.IsNotFound(err) {
 			recordMwSpanError(span, err)
 			span.SetAttributes(attribute.String("auth.outcome", "lookup_error"))
 			return err
 		}
 
+		isAPIKey := false
+		if err != nil {
+			// Session-token lookup missed. API keys are only accepted via the
+			// Authorization header — never via cookies or query params, since
+			// those paths leak credentials into logs, browser history, and
+			// referer headers. Reject without consulting the api_keys table.
+			if tokenSource != "bearer" {
+				span.SetAttributes(attribute.String("auth.outcome", "token_not_found"))
+				return validate.NewRequestError(errors.New("valid authorization token is required"), http.StatusUnauthorized)
+			}
+
+			tokenHash := hasher.HashAPIKey(requestToken)
+			keyUsr, keyID, keyErr := a.repos.APIKeys.GetUserFromToken(r.Context(), tokenHash)
+			if keyErr != nil {
+				if ent.IsNotFound(keyErr) {
+					span.SetAttributes(attribute.String("auth.outcome", "token_not_found"))
+					return validate.NewRequestError(errors.New("valid authorization token is required"), http.StatusUnauthorized)
+				}
+				recordMwSpanError(span, keyErr)
+				span.SetAttributes(attribute.String("auth.outcome", "lookup_error"))
+				return keyErr
+			}
+			usr = keyUsr
+			isAPIKey = true
+
+			// Best-effort last_used_at update; failure must not break the
+			// request, but we want it surfaced in logs.
+			if touchErr := a.repos.APIKeys.TouchLastUsed(r.Context(), keyID, time.Now()); touchErr != nil {
+				log.Warn().Err(touchErr).Str("api_key.id", keyID.String()).Msg("failed to update api key last_used_at")
+			}
+		}
+
 		span.SetAttributes(
 			attribute.String("auth.outcome", "authenticated"),
+			attribute.String("auth.method", map[bool]string{true: "api_key", false: "session"}[isAPIKey]),
 			attribute.String("user.id", usr.ID.String()),
 			attribute.String("user.default_group_id", usr.DefaultGroupID.String()),
 			attribute.Int("user.groups.count", len(usr.GroupIDs)),
 			attribute.Bool("user.is_superuser", usr.IsSuperuser),
 		)
 
-		r = r.WithContext(services.SetUserCtx(r.Context(), &usr, requestToken))
+		ctxOut := services.SetUserCtx(r.Context(), &usr, requestToken)
+		if isAPIKey {
+			ctxOut = services.SetAPIKeyAuth(ctxOut)
+		}
+		r = r.WithContext(ctxOut)
 		return next.ServeHTTP(w, r)
 	})
 }
