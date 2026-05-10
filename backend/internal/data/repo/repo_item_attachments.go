@@ -84,6 +84,30 @@ type (
 	}
 )
 
+const MimeTypeLinkURL = "link/url"
+
+var externalLinkMimeTypes = []string{
+	MimeTypeLinkURL,
+}
+
+func MimeTypeForSourceType(sourceType string) (string, bool) {
+	switch sourceType {
+	case "link":
+		return MimeTypeLinkURL, true
+	default:
+		return "", false
+	}
+}
+
+func isExternalLink(mimeType string) bool {
+	for _, m := range externalLinkMimeTypes {
+		if m == mimeType {
+			return true
+		}
+	}
+	return false
+}
+
 func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
 	return ItemAttachment{
 		ID:        attachment.ID,
@@ -404,6 +428,32 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	return attachmentDb, nil
 }
 
+func (r *AttachmentRepo) CreateExternalLink(ctx context.Context, entityID uuid.UUID, externalID string, title string, mimeType string, attType attachment.Type) (*ent.Attachment, error) {
+	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.CreateExternalLink")
+	defer span.End()
+
+	if attType == "" {
+		attType = attachment.TypeAttachment
+	}
+
+	att, err := r.db.Attachment.Create().
+		SetID(uuid.New()).
+		SetCreatedAt(time.Now()).
+		SetUpdatedAt(time.Now()).
+		SetType(attType).
+		SetEntityID(entityID).
+		SetTitle(title).
+		SetPath(externalID).
+		SetMimeType(mimeType).
+		SetPrimary(false).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return att, nil
+}
+
 func (r *AttachmentRepo) Get(ctx context.Context, gid uuid.UUID, id uuid.UUID) (*ent.Attachment, error) {
 	first, err := r.db.Attachment.Query().Where(attachment.ID(id)).Only(ctx)
 	if err != nil {
@@ -498,6 +548,10 @@ func (r *AttachmentRepo) Delete(ctx context.Context, gid uuid.UUID, id uuid.UUID
 		Only(ctx)
 	if err != nil {
 		return err
+	}
+
+	if isExternalLink(doc.MimeType) {
+		return r.db.Attachment.DeleteOneID(id).Exec(ctx)
 	}
 
 	all, err := r.db.Attachment.Query().Where(attachment.Path(doc.Path)).All(ctx)
