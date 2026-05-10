@@ -2,6 +2,7 @@ package mid
 
 import (
 	"net/http"
+	"strings"
 )
 
 // SecurityHeaders is a middleware that will set security headers on the response
@@ -30,6 +31,27 @@ func MaxBodySize(maxBytes int64) func(http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			r.Body = http.MaxBytesReader(w, r.Body, maxBytes*1024*1024) // maxBytes in MB
+			h.ServeHTTP(w, r)
+		})
+	}
+}
+
+// MaxBodySizeByPath is like MaxBodySize but picks the cap by URL path
+// prefix. Useful when one route legitimately accepts a much larger body
+// than the rest of the API (e.g., collection imports vs. attachment
+// uploads). The first matching prefix wins; if none match, defaultMB
+// applies. Sizes are in MB.
+func MaxBodySizeByPath(defaultMB int64, overrides map[string]int64) func(http.Handler) http.Handler {
+	return func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			limit := defaultMB
+			for prefix, override := range overrides {
+				if strings.HasPrefix(r.URL.Path, prefix) {
+					limit = override
+					break
+				}
+			}
+			r.Body = http.MaxBytesReader(w, r.Body, limit*1024*1024)
 			h.ServeHTTP(w, r)
 		})
 	}

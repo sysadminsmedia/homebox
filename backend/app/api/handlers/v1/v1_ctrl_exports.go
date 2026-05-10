@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"path"
 	"strings"
 
 	"github.com/google/uuid"
@@ -15,7 +16,9 @@ import (
 
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
+	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
 )
 
 // HandleExportsList godoc
@@ -28,15 +31,16 @@ import (
 //	@Router			/v1/group/exports [GET]
 //	@Security		Bearer
 func (ctrl *V1Controller) HandleExportsList() errchain.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) error {
+	fn := func(r *http.Request) (Results[repo.ExportOut], error) {
 		ctx := services.NewContext(r.Context())
 		rows, err := ctrl.repo.Exports.ListByGroup(ctx, ctx.GID)
 		if err != nil {
-			log.Err(err).Msg("failed to list exports")
-			return validate.NewRequestError(err, http.StatusInternalServerError)
+			return Results[repo.ExportOut]{}, err
 		}
-		return server.JSON(w, http.StatusOK, WrapResults(rows))
+		return WrapResults(rows), nil
 	}
+
+	return adapters.Command(fn, http.StatusOK)
 }
 
 // HandleExportsCreate godoc
@@ -70,21 +74,12 @@ func (ctrl *V1Controller) HandleExportsCreate() errchain.HandlerFunc {
 //	@Router			/v1/group/exports/{id} [GET]
 //	@Security		Bearer
 func (ctrl *V1Controller) HandleExportGet() errchain.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) error {
+	fn := func(r *http.Request, id uuid.UUID) (repo.ExportOut, error) {
 		ctx := services.NewContext(r.Context())
-		id, err := ctrl.routeID(r)
-		if err != nil {
-			return err
-		}
-		out, err := ctrl.repo.Exports.Get(ctx, ctx.GID, id)
-		if err != nil {
-			if ent.IsNotFound(err) {
-				return validate.NewRequestError(err, http.StatusNotFound)
-			}
-			return validate.NewRequestError(err, http.StatusInternalServerError)
-		}
-		return server.JSON(w, http.StatusOK, out)
+		return ctrl.repo.Exports.Get(ctx, ctx.GID, id)
 	}
+
+	return adapters.CommandID("id", fn, http.StatusOK)
 }
 
 // HandleExportDownload godoc
@@ -155,44 +150,52 @@ func (ctrl *V1Controller) HandleExportDownload() errchain.HandlerFunc {
 //	@Router			/v1/group/exports/{id} [DELETE]
 //	@Security		Bearer
 func (ctrl *V1Controller) HandleExportDelete() errchain.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) error {
+	fn := func(r *http.Request, id uuid.UUID) (any, error) {
 		ctx := services.NewContext(r.Context())
-		id, err := ctrl.routeID(r)
-		if err != nil {
-			return err
-		}
 		out, err := ctrl.repo.Exports.Get(ctx, ctx.GID, id)
 		if err != nil {
+			// Idempotent: a missing row is already in the desired state.
+			// Swallow here so the adapter writes 204 instead of letting the
+			// error middleware translate ent.IsNotFound into a 404.
 			if ent.IsNotFound(err) {
-				w.WriteHeader(http.StatusNoContent)
-				return nil
+				return nil, nil
 			}
-			return validate.NewRequestError(err, http.StatusInternalServerError)
+			return nil, err
 		}
 		if out.ArtifactPath != "" {
-			bucket, err := blob.OpenBucket(r.Context(), ctrl.repo.Attachments.GetConnString())
-			if err == nil {
-				_ = bucket.Delete(r.Context(), ctrl.repo.Attachments.GetFullPath(out.ArtifactPath))
-				_ = bucket.Close()
+			// Defence in depth: only touch blobs that live under the caller's
+			// group prefix. The repo Get above already enforces ownership; this
+			// catches a stale row whose artifact_path was tampered with, and
+			// path.Clean collapses any traversal segments before the prefix
+			// check so "<gid>/exports/../../other" can't slip through.
+			cleanPath := path.Clean(out.ArtifactPath)
+			expectedPrefix := ctx.GID.String() + "/exports/"
+			if strings.HasPrefix(cleanPath, expectedPrefix) {
+				bucket, err := blob.OpenBucket(r.Context(), ctrl.repo.Attachments.GetConnString())
+				if err == nil {
+					_ = bucket.Delete(r.Context(), ctrl.repo.Attachments.GetFullPath(cleanPath))
+					_ = bucket.Close()
+				}
 			}
 		}
 		if _, err := ctrl.repo.Exports.Delete(ctx, ctx.GID, id); err != nil {
-			return validate.NewRequestError(err, http.StatusInternalServerError)
+			return nil, err
 		}
-		w.WriteHeader(http.StatusNoContent)
-		return nil
+		return nil, nil
 	}
+
+	return adapters.CommandID("id", fn, http.StatusNoContent)
 }
 
 // HandleCollectionImport godoc
 //
 //	@Summary		Import a Collection Zip
-//	@Description	Uploads a collection-export zip and enqueues the import job. The destination group must be empty.
+//	@Description	Uploads a collection-export zip and enqueues the import job. The destination group must be empty. Returns the tracked import row so clients can poll for progress.
 //	@Tags			Group
 //	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			file	formData	file	true	"Export zip"
-//	@Success		202
+//	@Success		202	{object}	repo.ExportOut
 //	@Router			/v1/group/import [POST]
 //	@Security		Bearer
 func (ctrl *V1Controller) HandleCollectionImport() errchain.HandlerFunc {
@@ -202,7 +205,12 @@ func (ctrl *V1Controller) HandleCollectionImport() errchain.HandlerFunc {
 		}
 
 		ctx := services.NewContext(r.Context())
-		if !ctx.User.IsOwner {
+
+		isOwner, err := ctrl.repo.Groups.IsOwnerOf(ctx, ctx.UID, ctx.GID)
+		if err != nil {
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		if !isOwner {
 			return validate.NewRequestError(errors.New("only group owners can import"), http.StatusForbidden)
 		}
 
@@ -219,10 +227,21 @@ func (ctrl *V1Controller) HandleCollectionImport() errchain.HandlerFunc {
 				http.StatusConflict)
 		}
 
-		if err := r.ParseMultipartForm(ctrl.maxUploadSize << 20); err != nil {
+		// maxImportSize is in MB and applies to the whole request body via the
+		// path-aware middleware; here we pass it to ParseMultipartForm as the
+		// memory-vs-disk threshold so larger archives spool gracefully.
+		if err := r.ParseMultipartForm(ctrl.maxImportSize << 20); err != nil {
 			log.Err(err).Msg("import: parse multipart")
 			return validate.NewRequestError(err, http.StatusBadRequest)
 		}
+		// Remove any spooled temp files the multipart parser may have created.
+		// Registered before file.Close so the close (LIFO) runs first — on
+		// Windows os.Remove fails while the handle is still open.
+		defer func() {
+			if r.MultipartForm != nil {
+				_ = r.MultipartForm.RemoveAll()
+			}
+		}()
 		file, _, err := r.FormFile("file")
 		if err != nil {
 			return validate.NewRequestError(err, http.StatusBadRequest)
@@ -248,7 +267,10 @@ func (ctrl *V1Controller) HandleCollectionImport() errchain.HandlerFunc {
 			log.Err(err).Msg("import: open writer")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
-		if _, err := io.Copy(bw, file); err != nil {
+		// io.Copy returns the staged byte count; we record it on the import
+		// row so the UI can render "X MB queued" before the worker starts.
+		uploadSize, err := io.Copy(bw, file)
+		if err != nil {
 			_ = bw.Close()
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
@@ -256,13 +278,13 @@ func (ctrl *V1Controller) HandleCollectionImport() errchain.HandlerFunc {
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
-		if err := ctrl.svc.Exports.EnqueueImport(r.Context(), ctx.GID, ctx.UID, uploadKey); err != nil {
+		row, err := ctrl.svc.Exports.EnqueueImport(r.Context(), ctx.GID, ctx.UID, uploadKey, uploadSize)
+		if err != nil {
 			// Best-effort cleanup of the staged upload if we couldn't enqueue.
 			_ = bucket.Delete(r.Context(), ctrl.repo.Attachments.GetFullPath(uploadKey))
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
-		w.WriteHeader(http.StatusAccepted)
-		return nil
+		return server.JSON(w, http.StatusAccepted, row)
 	}
 }

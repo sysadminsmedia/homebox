@@ -80,8 +80,12 @@
                   <td class="py-2">
                     <span>{{ b.status }}</span>
                     <span v-if="b.status === 'running'"> ({{ b.progress }}%)</span>
-                    <span v-if="b.status === 'failed' && b.error" class="block text-xs text-destructive">
-                      {{ b.error }}
+                    <span
+                      v-if="b.status === 'failed' && b.error"
+                      class="block text-xs text-destructive"
+                      :title="b.error"
+                    >
+                      {{ $t("tools.backups_set.failed") }}
                     </span>
                   </td>
                   <td class="py-2">{{ b.status === "completed" ? formatBytes(b.sizeBytes) : "—" }}</td>
@@ -92,9 +96,11 @@
                       class="text-primary underline"
                       :download="`homebox-export-${b.id}.zip`"
                     >
-                      Download
+                      {{ $t("tools.backups_set.download") }}
                     </a>
-                    <button class="text-destructive underline" @click="deleteBackup(b.id)">Delete</button>
+                    <button class="text-destructive underline" @click="deleteBackup(b.id)">
+                      {{ $t("global.delete") }}
+                    </button>
                   </td>
                 </tr>
               </tbody>

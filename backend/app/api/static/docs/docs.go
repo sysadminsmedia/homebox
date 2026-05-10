@@ -1302,7 +1302,7 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
-                "description": "Uploads a collection-export zip and enqueues the import job. The destination group must be empty.",
+                "description": "Uploads a collection-export zip and enqueues the import job. The destination group must be empty. Returns the tracked import row so clients can poll for progress.",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -1324,7 +1324,10 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "202": {
-                        "description": "Accepted"
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/repo.ExportOut"
+                        }
                     }
                 }
             }
@@ -3815,6 +3818,14 @@ const docTemplate = `{
                     "description": "ID of the ent.",
                     "type": "string"
                 },
+                "kind": {
+                    "description": "Kind holds the value of the \"kind\" field.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/export.Kind"
+                        }
+                    ]
+                },
                 "progress": {
                     "description": "Progress holds the value of the \"progress\" field.",
                     "type": "integer"
@@ -4439,6 +4450,19 @@ const docTemplate = `{
                 "TypeNumber",
                 "TypeBoolean",
                 "TypeTime"
+            ]
+        },
+        "export.Kind": {
+            "type": "string",
+            "enum": [
+                "export",
+                "export",
+                "import"
+            ],
+            "x-enum-varnames": [
+                "DefaultKind",
+                "KindExport",
+                "KindImport"
             ]
         },
         "export.Status": {
@@ -5402,6 +5426,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "kind": {
+                    "description": "Kind is \"export\" for server-produced backup artifacts, \"import\" for\nuser-uploaded restore zips. The lifecycle fields below behave the\nsame for both.",
                     "type": "string"
                 },
                 "progress": {

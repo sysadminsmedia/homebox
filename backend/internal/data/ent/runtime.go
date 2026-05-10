@@ -441,15 +441,15 @@ func init() {
 	// export.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	export.UpdateDefaultUpdatedAt = exportDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// exportDescProgress is the schema descriptor for progress field.
-	exportDescProgress := exportFields[1].Descriptor()
+	exportDescProgress := exportFields[2].Descriptor()
 	// export.DefaultProgress holds the default value on creation for the progress field.
 	export.DefaultProgress = exportDescProgress.Default.(int)
 	// exportDescSizeBytes is the schema descriptor for size_bytes field.
-	exportDescSizeBytes := exportFields[3].Descriptor()
+	exportDescSizeBytes := exportFields[4].Descriptor()
 	// export.DefaultSizeBytes holds the default value on creation for the size_bytes field.
 	export.DefaultSizeBytes = exportDescSizeBytes.Default.(int64)
 	// exportDescError is the schema descriptor for error field.
-	exportDescError := exportFields[4].Descriptor()
+	exportDescError := exportFields[5].Descriptor()
 	// export.ErrorValidator is a validator for the "error" field. It is called by the builders before save.
 	export.ErrorValidator = exportDescError.Validators[0].(func(string) error)
 	// exportDescID is the schema descriptor for id field.

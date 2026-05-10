@@ -916,6 +916,8 @@
             "create_button": "Start Backup",
             "create_sub": "Builds a zip with every entity, tag, custom field, attachment, and maintenance record in this collection. The job runs in the background; the artifact will appear in the table below when it's ready.",
             "delete_confirm": "Delete this backup artifact? This cannot be undone.",
+            "download": "Download",
+            "failed": "Backup failed. Check server logs for details.",
             "list_empty": "No backups yet.",
             "restore": "Restore from Backup",
             "restore_button": "Upload & Restore",

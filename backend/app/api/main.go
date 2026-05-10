@@ -240,7 +240,7 @@ func run(cfg *config.Config) error {
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),
 		services.WithCurrencies(currencyData),
 		services.WithNotifierConfig(&cfg.Notifier),
-		services.WithExportPlumbing(app.bus, app.db, cfg.Storage, cfg.Database.PubSubConnString, strings.ToLower(cfg.Database.Driver)),
+		services.WithExportPlumbing(app.bus, app.db, cfg.Storage, cfg.Database.PubSubConnString, sqlDriver),
 	)
 
 	ensureAssetIDs(app)
@@ -266,8 +266,13 @@ func run(cfg *config.Config) error {
 		middleware.RealIP,
 		mid.Logger(logger),
 		mid.SecurityHeaders(),
-		// Restrict the max body size to the upload limit + 1MB (for overhead)
-		mid.MaxBodySize(cfg.Web.MaxUploadSize+1),
+		// Restrict the max body size to the upload limit + 1MB (for overhead).
+		// Collection-import uploads carry the full inventory zip and have
+		// their own much larger cap; everything else falls through to the
+		// default.
+		mid.MaxBodySizeByPath(cfg.Web.MaxUploadSize+1, map[string]int64{
+			"/api/v1/group/import": cfg.Web.MaxImportSize + 1,
+		}),
 		middleware.Recoverer,
 		middleware.StripSlashes,
 	)

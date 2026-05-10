@@ -112,12 +112,12 @@ func registerRecurringTasks(app *app, cfg *config.Config, runner *graceful.Runne
 				log.Err(err).Str("user_id", msg.Metadata["user_id"]).Msg("import job: bad user_id")
 				return
 			}
-			uploadKey := msg.Metadata["upload_key"]
-			if uploadKey == "" {
-				log.Error().Msg("import job: missing upload_key")
+			importID, err := uuid.Parse(msg.Metadata["import_id"])
+			if err != nil {
+				log.Err(err).Str("import_id", msg.Metadata["import_id"]).Msg("import job: bad import_id")
 				return
 			}
-			app.services.Exports.RunImport(ctx, gid, userID, uploadKey)
+			app.services.Exports.RunImport(ctx, gid, userID, importID)
 		})
 	})
 

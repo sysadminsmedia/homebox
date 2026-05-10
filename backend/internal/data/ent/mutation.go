@@ -8572,6 +8572,7 @@ type ExportMutation struct {
 	id            *uuid.UUID
 	created_at    *time.Time
 	updated_at    *time.Time
+	kind          *export.Kind
 	status        *export.Status
 	progress      *int
 	addprogress   *int
@@ -8797,6 +8798,42 @@ func (m *ExportMutation) OldGroupID(ctx context.Context) (v uuid.UUID, err error
 // ResetGroupID resets all changes to the "group_id" field.
 func (m *ExportMutation) ResetGroupID() {
 	m.group = nil
+}
+
+// SetKind sets the "kind" field.
+func (m *ExportMutation) SetKind(e export.Kind) {
+	m.kind = &e
+}
+
+// Kind returns the value of the "kind" field in the mutation.
+func (m *ExportMutation) Kind() (r export.Kind, exists bool) {
+	v := m.kind
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldKind returns the old "kind" field's value of the Export entity.
+// If the Export object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExportMutation) OldKind(ctx context.Context) (v export.Kind, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldKind is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldKind requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldKind: %w", err)
+	}
+	return oldValue.Kind, nil
+}
+
+// ResetKind resets all changes to the "kind" field.
+func (m *ExportMutation) ResetKind() {
+	m.kind = nil
 }
 
 // SetStatus sets the "status" field.
@@ -9106,7 +9143,7 @@ func (m *ExportMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ExportMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.created_at != nil {
 		fields = append(fields, export.FieldCreatedAt)
 	}
@@ -9115,6 +9152,9 @@ func (m *ExportMutation) Fields() []string {
 	}
 	if m.group != nil {
 		fields = append(fields, export.FieldGroupID)
+	}
+	if m.kind != nil {
+		fields = append(fields, export.FieldKind)
 	}
 	if m.status != nil {
 		fields = append(fields, export.FieldStatus)
@@ -9145,6 +9185,8 @@ func (m *ExportMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedAt()
 	case export.FieldGroupID:
 		return m.GroupID()
+	case export.FieldKind:
+		return m.Kind()
 	case export.FieldStatus:
 		return m.Status()
 	case export.FieldProgress:
@@ -9170,6 +9212,8 @@ func (m *ExportMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldUpdatedAt(ctx)
 	case export.FieldGroupID:
 		return m.OldGroupID(ctx)
+	case export.FieldKind:
+		return m.OldKind(ctx)
 	case export.FieldStatus:
 		return m.OldStatus(ctx)
 	case export.FieldProgress:
@@ -9209,6 +9253,13 @@ func (m *ExportMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetGroupID(v)
+		return nil
+	case export.FieldKind:
+		v, ok := value.(export.Kind)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetKind(v)
 		return nil
 	case export.FieldStatus:
 		v, ok := value.(export.Status)
@@ -9344,6 +9395,9 @@ func (m *ExportMutation) ResetField(name string) error {
 		return nil
 	case export.FieldGroupID:
 		m.ResetGroupID()
+		return nil
+	case export.FieldKind:
+		m.ResetKind()
 		return nil
 	case export.FieldStatus:
 		m.ResetStatus()

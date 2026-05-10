@@ -191,6 +191,26 @@ func GroupIDNotIn(vs ...uuid.UUID) predicate.Export {
 	return predicate.Export(sql.FieldNotIn(FieldGroupID, vs...))
 }
 
+// KindEQ applies the EQ predicate on the "kind" field.
+func KindEQ(v Kind) predicate.Export {
+	return predicate.Export(sql.FieldEQ(FieldKind, v))
+}
+
+// KindNEQ applies the NEQ predicate on the "kind" field.
+func KindNEQ(v Kind) predicate.Export {
+	return predicate.Export(sql.FieldNEQ(FieldKind, v))
+}
+
+// KindIn applies the In predicate on the "kind" field.
+func KindIn(vs ...Kind) predicate.Export {
+	return predicate.Export(sql.FieldIn(FieldKind, vs...))
+}
+
+// KindNotIn applies the NotIn predicate on the "kind" field.
+func KindNotIn(vs ...Kind) predicate.Export {
+	return predicate.Export(sql.FieldNotIn(FieldKind, vs...))
+}
+
 // StatusEQ applies the EQ predicate on the "status" field.
 func StatusEQ(v Status) predicate.Export {
 	return predicate.Export(sql.FieldEQ(FieldStatus, v))

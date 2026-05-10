@@ -50,6 +50,20 @@ func (_u *ExportUpdate) SetNillableGroupID(v *uuid.UUID) *ExportUpdate {
 	return _u
 }
 
+// SetKind sets the "kind" field.
+func (_u *ExportUpdate) SetKind(v export.Kind) *ExportUpdate {
+	_u.mutation.SetKind(v)
+	return _u
+}
+
+// SetNillableKind sets the "kind" field if the given value is not nil.
+func (_u *ExportUpdate) SetNillableKind(v *export.Kind) *ExportUpdate {
+	if v != nil {
+		_u.SetKind(*v)
+	}
+	return _u
+}
+
 // SetStatus sets the "status" field.
 func (_u *ExportUpdate) SetStatus(v export.Status) *ExportUpdate {
 	_u.mutation.SetStatus(v)
@@ -200,6 +214,11 @@ func (_u *ExportUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *ExportUpdate) check() error {
+	if v, ok := _u.mutation.Kind(); ok {
+		if err := export.KindValidator(v); err != nil {
+			return &ValidationError{Name: "kind", err: fmt.Errorf(`ent: validator failed for field "Export.kind": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Status(); ok {
 		if err := export.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Export.status": %w`, err)}
@@ -230,6 +249,9 @@ func (_u *ExportUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(export.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.Kind(); ok {
+		_spec.SetField(export.FieldKind, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(export.FieldStatus, field.TypeEnum, value)
@@ -323,6 +345,20 @@ func (_u *ExportUpdateOne) SetGroupID(v uuid.UUID) *ExportUpdateOne {
 func (_u *ExportUpdateOne) SetNillableGroupID(v *uuid.UUID) *ExportUpdateOne {
 	if v != nil {
 		_u.SetGroupID(*v)
+	}
+	return _u
+}
+
+// SetKind sets the "kind" field.
+func (_u *ExportUpdateOne) SetKind(v export.Kind) *ExportUpdateOne {
+	_u.mutation.SetKind(v)
+	return _u
+}
+
+// SetNillableKind sets the "kind" field if the given value is not nil.
+func (_u *ExportUpdateOne) SetNillableKind(v *export.Kind) *ExportUpdateOne {
+	if v != nil {
+		_u.SetKind(*v)
 	}
 	return _u
 }
@@ -490,6 +526,11 @@ func (_u *ExportUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *ExportUpdateOne) check() error {
+	if v, ok := _u.mutation.Kind(); ok {
+		if err := export.KindValidator(v); err != nil {
+			return &ValidationError{Name: "kind", err: fmt.Errorf(`ent: validator failed for field "Export.kind": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Status(); ok {
 		if err := export.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Export.status": %w`, err)}
@@ -537,6 +578,9 @@ func (_u *ExportUpdateOne) sqlSave(ctx context.Context) (_node *Export, err erro
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(export.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.Kind(); ok {
+		_spec.SetField(export.FieldKind, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(export.FieldStatus, field.TypeEnum, value)

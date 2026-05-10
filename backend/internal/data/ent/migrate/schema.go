@@ -333,6 +333,7 @@ var (
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "kind", Type: field.TypeEnum, Enums: []string{"export", "import"}, Default: "export"},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"pending", "running", "completed", "failed"}, Default: "pending"},
 		{Name: "progress", Type: field.TypeInt, Default: 0},
 		{Name: "artifact_path", Type: field.TypeString, Nullable: true},
@@ -348,7 +349,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "exports_groups_exports",
-				Columns:    []*schema.Column{ExportsColumns[8]},
+				Columns:    []*schema.Column{ExportsColumns[9]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -357,12 +358,12 @@ var (
 			{
 				Name:    "export_group_id",
 				Unique:  false,
-				Columns: []*schema.Column{ExportsColumns[8]},
+				Columns: []*schema.Column{ExportsColumns[9]},
 			},
 			{
 				Name:    "export_group_id_status",
 				Unique:  false,
-				Columns: []*schema.Column{ExportsColumns[8], ExportsColumns[3]},
+				Columns: []*schema.Column{ExportsColumns[9], ExportsColumns[4]},
 			},
 		},
 	}

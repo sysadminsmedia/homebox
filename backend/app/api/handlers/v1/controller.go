@@ -41,6 +41,12 @@ func WithMaxUploadSize(maxUploadSize int64) func(*V1Controller) {
 	}
 }
 
+func WithMaxImportSize(maxImportSize int64) func(*V1Controller) {
+	return func(ctrl *V1Controller) {
+		ctrl.maxImportSize = maxImportSize
+	}
+}
+
 func WithDemoStatus(demoStatus bool) func(*V1Controller) {
 	return func(ctrl *V1Controller) {
 		ctrl.isDemo = demoStatus
@@ -70,6 +76,7 @@ type V1Controller struct {
 	repo              *repo.AllRepos
 	svc               *services.AllServices
 	maxUploadSize     int64
+	maxImportSize     int64
 	isDemo            bool
 	allowRegistration bool
 	bus               *eventbus.EventBus

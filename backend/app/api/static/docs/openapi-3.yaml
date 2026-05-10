@@ -848,7 +848,8 @@ paths:
       security:
         - Bearer: []
       description: Uploads a collection-export zip and enqueues the import job. The
-        destination group must be empty.
+        destination group must be empty. Returns the tracked import row so
+        clients can poll for progress.
       tags:
         - Group
       summary: Import a Collection Zip
@@ -868,6 +869,10 @@ paths:
       responses:
         "202":
           description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/repo.ExportOut"
   /v1/groups:
     get:
       security:
@@ -2475,6 +2480,10 @@ components:
         id:
           description: ID of the ent.
           type: string
+        kind:
+          description: Kind holds the value of the "kind" field.
+          allOf:
+            - $ref: "#/components/schemas/export.Kind"
         progress:
           description: Progress holds the value of the "progress" field.
           type: integer
@@ -2909,6 +2918,16 @@ components:
         - TypeNumber
         - TypeBoolean
         - TypeTime
+    export.Kind:
+      type: string
+      enum:
+        - export
+        - export
+        - import
+      x-enum-varnames:
+        - DefaultKind
+        - KindExport
+        - KindImport
     export.Status:
       type: string
       enum:
@@ -3578,6 +3597,12 @@ components:
         groupId:
           type: string
         id:
+          type: string
+        kind:
+          description: |-
+            Kind is "export" for server-produced backup artifacts, "import" for
+            user-uploaded restore zips. The lifecycle fields below behave the
+            same for both.
           type: string
         progress:
           type: integer

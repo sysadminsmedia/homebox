@@ -22,6 +22,8 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// FieldGroupID holds the string denoting the group_id field in the database.
 	FieldGroupID = "group_id"
+	// FieldKind holds the string denoting the kind field in the database.
+	FieldKind = "kind"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldProgress holds the string denoting the progress field in the database.
@@ -51,6 +53,7 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldGroupID,
+	FieldKind,
 	FieldStatus,
 	FieldProgress,
 	FieldArtifactPath,
@@ -84,6 +87,32 @@ var (
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
+
+// Kind defines the type for the "kind" enum field.
+type Kind string
+
+// KindExport is the default value of the Kind enum.
+const DefaultKind = KindExport
+
+// Kind values.
+const (
+	KindExport Kind = "export"
+	KindImport Kind = "import"
+)
+
+func (k Kind) String() string {
+	return string(k)
+}
+
+// KindValidator is a validator for the "kind" field enum values. It is called by the builders before save.
+func KindValidator(k Kind) error {
+	switch k {
+	case KindExport, KindImport:
+		return nil
+	default:
+		return fmt.Errorf("export: invalid enum value for kind field: %q", k)
+	}
+}
 
 // Status defines the type for the "status" enum field.
 type Status string
@@ -134,6 +163,11 @@ func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByGroupID orders the results by the group_id field.
 func ByGroupID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldGroupID, opts...).ToFunc()
+}
+
+// ByKind orders the results by the kind field.
+func ByKind(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldKind, opts...).ToFunc()
 }
 
 // ByStatus orders the results by the status field.

@@ -25,6 +25,8 @@ type Export struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// GroupID holds the value of the "group_id" field.
 	GroupID uuid.UUID `json:"group_id,omitempty"`
+	// Kind holds the value of the "kind" field.
+	Kind export.Kind `json:"kind,omitempty"`
 	// Status holds the value of the "status" field.
 	Status export.Status `json:"status,omitempty"`
 	// Progress holds the value of the "progress" field.
@@ -68,7 +70,7 @@ func (*Export) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case export.FieldProgress, export.FieldSizeBytes:
 			values[i] = new(sql.NullInt64)
-		case export.FieldStatus, export.FieldArtifactPath, export.FieldError:
+		case export.FieldKind, export.FieldStatus, export.FieldArtifactPath, export.FieldError:
 			values[i] = new(sql.NullString)
 		case export.FieldCreatedAt, export.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -112,6 +114,12 @@ func (_m *Export) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field group_id", values[i])
 			} else if value != nil {
 				_m.GroupID = *value
+			}
+		case export.FieldKind:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field kind", values[i])
+			} else if value.Valid {
+				_m.Kind = export.Kind(value.String)
 			}
 		case export.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -192,6 +200,9 @@ func (_m *Export) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("group_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.GroupID))
+	builder.WriteString(", ")
+	builder.WriteString("kind=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Kind))
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Status))

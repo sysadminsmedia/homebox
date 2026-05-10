@@ -513,6 +513,10 @@ definitions:
       id:
         description: ID of the ent.
         type: string
+      kind:
+        allOf:
+        - $ref: '#/definitions/export.Kind'
+        description: Kind holds the value of the "kind" field.
       progress:
         description: Progress holds the value of the "progress" field.
         type: integer
@@ -940,6 +944,16 @@ definitions:
     - TypeNumber
     - TypeBoolean
     - TypeTime
+  export.Kind:
+    enum:
+    - export
+    - export
+    - import
+    type: string
+    x-enum-varnames:
+    - DefaultKind
+    - KindExport
+    - KindImport
   export.Status:
     enum:
     - pending
@@ -1608,6 +1622,12 @@ definitions:
       groupId:
         type: string
       id:
+        type: string
+      kind:
+        description: |-
+          Kind is "export" for server-produced backup artifacts, "import" for
+          user-uploaded restore zips. The lifecycle fields below behave the
+          same for both.
         type: string
       progress:
         type: integer
@@ -3055,7 +3075,8 @@ paths:
       consumes:
       - multipart/form-data
       description: Uploads a collection-export zip and enqueues the import job. The
-        destination group must be empty.
+        destination group must be empty. Returns the tracked import row so clients
+        can poll for progress.
       parameters:
       - description: Export zip
         in: formData
@@ -3067,6 +3088,8 @@ paths:
       responses:
         "202":
           description: Accepted
+          schema:
+            $ref: '#/definitions/repo.ExportOut'
       security:
       - Bearer: []
       summary: Import a Collection Zip

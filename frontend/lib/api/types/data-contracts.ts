@@ -43,6 +43,12 @@ export enum ExportStatus {
   StatusFailed = "failed",
 }
 
+export enum ExportKind {
+  DefaultKind = "export",
+  KindExport = "export",
+  KindImport = "import",
+}
+
 export enum EntityfieldType {
   TypeText = "text",
   TypeNumber = "number",
@@ -385,6 +391,8 @@ export interface EntExport {
   group_id: string;
   /** ID of the ent. */
   id: string;
+  /** Kind holds the value of the "kind" field. */
+  kind: ExportKind;
   /** Progress holds the value of the "progress" field. */
   progress: number;
   /** SizeBytes holds the value of the "size_bytes" field. */
@@ -1000,6 +1008,12 @@ export interface ExportOut {
   error: string;
   groupId: string;
   id: string;
+  /**
+   * Kind is "export" for server-produced backup artifacts, "import" for
+   * user-uploaded restore zips. The lifecycle fields below behave the
+   * same for both.
+   */
+  kind: string;
   progress: number;
   sizeBytes: number;
   status: string;

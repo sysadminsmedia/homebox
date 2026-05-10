@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
 	"strings"
 	"time"
 
@@ -208,7 +209,7 @@ func (s *ExportService) Enqueue(ctx context.Context, gid uuid.UUID) (repo.Export
 	}
 
 	if err := s.publishExportJob(ctx, gid, out.ID); err != nil {
-		_ = s.repos.Exports.SetFailed(ctx, out.ID, "failed to enqueue: "+err.Error())
+		_ = s.repos.Exports.SetFailed(ctx, gid, out.ID, "failed to enqueue: "+err.Error())
 		return out, err
 	}
 
@@ -216,13 +217,28 @@ func (s *ExportService) Enqueue(ctx context.Context, gid uuid.UUID) (repo.Export
 	return out, nil
 }
 
-// EnqueueImport publishes a job to import the zip already staged at
-// uploadKey. uploadKey must live under "{gid}/imports/" — the worker will
-// re-validate this before reading.
-func (s *ExportService) EnqueueImport(ctx context.Context, gid uuid.UUID, userID uuid.UUID, uploadKey string) error {
+// EnqueueImport creates a tracked import row pointing at the zip already
+// staged at uploadKey and publishes a job for the worker to pick up. The
+// returned row carries the ID the frontend can poll for progress.
+// uploadKey must live under "{gid}/imports/" — the worker re-validates
+// this before reading.
+func (s *ExportService) EnqueueImport(ctx context.Context, gid uuid.UUID, userID uuid.UUID, uploadKey string, sizeBytes int64) (repo.ExportOut, error) {
 	ctx, span := otel.Tracer("services").Start(ctx, "ExportService.EnqueueImport")
 	defer span.End()
-	return s.publishImportJob(ctx, gid, userID, uploadKey)
+
+	row, err := s.repos.Exports.CreateImport(ctx, gid, uploadKey, sizeBytes)
+	if err != nil {
+		return row, err
+	}
+
+	if err := s.publishImportJob(ctx, gid, userID, row.ID); err != nil {
+		// Mark the row failed so the user sees what happened instead of a
+		// permanently-pending entry. Best-effort: if the SetFailed also
+		// fails we still return the publish error to the caller.
+		_ = s.repos.Exports.SetFailed(ctx, gid, row.ID, "failed to enqueue: "+err.Error())
+		return row, err
+	}
+	return row, nil
 }
 
 // IsGroupReadyForImport returns true if gid contains no items (i.e. no
@@ -258,7 +274,7 @@ func (s *ExportService) RunExport(ctx context.Context, exportID, gid uuid.UUID) 
 		return
 	}
 
-	if err := s.repos.Exports.SetRunning(ctx, exportID); err != nil {
+	if err := s.repos.Exports.SetRunning(ctx, gid, exportID); err != nil {
 		log.Err(err).Msg("export job: failed to mark running")
 		return
 	}
@@ -267,12 +283,12 @@ func (s *ExportService) RunExport(ctx context.Context, exportID, gid uuid.UUID) 
 	artifactPath, sizeBytes, err := s.buildArtifact(ctx, exportID, gid)
 	if err != nil {
 		log.Err(err).Stringer("export_id", exportID).Msg("export job: failed")
-		_ = s.repos.Exports.SetFailed(ctx, exportID, err.Error())
+		_ = s.repos.Exports.SetFailed(ctx, gid, exportID, err.Error())
 		s.publishMutation(gid)
 		return
 	}
 
-	if err := s.repos.Exports.SetCompleted(ctx, exportID, artifactPath, sizeBytes); err != nil {
+	if err := s.repos.Exports.SetCompleted(ctx, gid, exportID, artifactPath, sizeBytes); err != nil {
 		log.Err(err).Msg("export job: failed to mark completed")
 	}
 	s.publishMutation(gid)
@@ -318,7 +334,7 @@ func (s *ExportService) buildArtifact(ctx context.Context, exportID, gid uuid.UU
 		// Coarse-grained progress: 0..80% spans the table dumps, 80..95% the
 		// attachment copies, 95..100% the upload.
 		pct := int(float64(i+1) / float64(len(exportTables)) * 80)
-		_ = s.repos.Exports.SetProgress(ctx, exportID, pct)
+		_ = s.repos.Exports.SetProgress(ctx, gid, exportID, pct)
 	}
 
 	// Copy attachment blobs into the zip.
@@ -326,7 +342,7 @@ func (s *ExportService) buildArtifact(ctx context.Context, exportID, gid uuid.UU
 		_ = zw.Close()
 		return "", 0, fmt.Errorf("copy attachments: %w", err)
 	}
-	_ = s.repos.Exports.SetProgress(ctx, exportID, 95)
+	_ = s.repos.Exports.SetProgress(ctx, gid, exportID, 95)
 
 	// Manifest last so we know the counts.
 	mf := Manifest{
@@ -473,10 +489,11 @@ func (s *ExportService) publishExportJob(ctx context.Context, gid, exportID uuid
 	})
 }
 
-// publishImportJob sends a message on the import topic. The worker reads the
-// staged upload from blob storage at uploadKey, unzips, restores into the
-// group identified by gid, then deletes the staged upload.
-func (s *ExportService) publishImportJob(ctx context.Context, gid, userID uuid.UUID, uploadKey string) error {
+// publishImportJob sends a message on the import topic. The worker loads
+// the tracked import row by importID, reads the staged upload from blob
+// storage at the row's artifact_path, unzips, restores into the group
+// identified by gid, then deletes the staged upload.
+func (s *ExportService) publishImportJob(ctx context.Context, gid, userID, importID uuid.UUID) error {
 	conn, err := utils.GenerateSubPubConn(s.pubSubConn, TopicCollectionImport)
 	if err != nil {
 		return err
@@ -489,9 +506,9 @@ func (s *ExportService) publishImportJob(ctx context.Context, gid, userID uuid.U
 	return topic.Send(ctx, &pubsub.Message{
 		Body: []byte("collection_import:" + gid.String()),
 		Metadata: map[string]string{
-			"group_id":   gid.String(),
-			"user_id":    userID.String(),
-			"upload_key": uploadKey,
+			"group_id":  gid.String(),
+			"user_id":   userID.String(),
+			"import_id": importID.String(),
 		},
 	})
 }
@@ -584,22 +601,53 @@ func rebindPlaceholders(s, dialect string) string {
 // =============================================================================
 
 // RunImport is invoked by the pubsub subscriber when an import job message
-// is received. It reads the staged upload, validates the manifest, asserts
-// the destination group is empty, and replays every row.
-func (s *ExportService) RunImport(ctx context.Context, gid, userID uuid.UUID, uploadKey string) {
+// is received. It loads the tracked import row, validates the staged
+// upload, asserts the destination group is empty, and replays every row.
+// Status/progress on the row drives the polling UI on the frontend.
+func (s *ExportService) RunImport(ctx context.Context, gid, userID, importID uuid.UUID) {
 	ctx, span := otel.Tracer("services").Start(ctx, "ExportService.RunImport")
 	defer span.End()
+
+	row, err := s.repos.Exports.Get(ctx, gid, importID)
+	if err != nil {
+		log.Err(err).Stringer("import_id", importID).Stringer("gid", gid).Msg("import job: row not found or wrong group")
+		return
+	}
+	if row.Kind != "import" {
+		log.Error().Stringer("import_id", importID).Str("kind", row.Kind).Msg("import job: row is not an import, refusing")
+		return
+	}
+	if row.Status != "pending" {
+		log.Warn().Stringer("import_id", importID).Str("status", row.Status).Msg("import job: not pending, skipping")
+		return
+	}
+	uploadKey := row.ArtifactPath
 
 	// Hard scope check: refuse anything that doesn't live under the caller's
 	// group prefix. Defence in depth — the handler already enforced this.
 	prefix := gid.String() + "/imports/"
 	if !strings.HasPrefix(uploadKey, prefix) {
 		log.Error().Str("upload_key", uploadKey).Stringer("gid", gid).Msg("import job: upload key outside group prefix, refusing")
+		_ = s.repos.Exports.SetFailed(ctx, gid, importID, "upload outside group prefix")
+		s.publishImportFinished(gid)
 		return
 	}
 
-	if err := s.runImport(ctx, gid, userID, uploadKey); err != nil {
+	if err := s.repos.Exports.SetRunning(ctx, gid, importID); err != nil {
+		log.Err(err).Stringer("import_id", importID).Msg("import job: failed to mark running")
+		return
+	}
+	s.publishImportFinished(gid)
+
+	if err := s.runImport(ctx, gid, userID, importID, uploadKey); err != nil {
 		log.Err(err).Stringer("gid", gid).Msg("import job: failed")
+		_ = s.repos.Exports.SetFailed(ctx, gid, importID, err.Error())
+	} else {
+		// On success the upload zip has been fully restored; keep the row
+		// size_bytes (set when the upload was staged) and just flip status.
+		if err := s.repos.Exports.SetCompleted(ctx, gid, importID, uploadKey, row.SizeBytes); err != nil {
+			log.Err(err).Stringer("import_id", importID).Msg("import job: failed to mark completed")
+		}
 	}
 
 	// Cleanup the staging blob whether the import succeeded or not — keeping
@@ -611,7 +659,16 @@ func (s *ExportService) RunImport(ctx context.Context, gid, userID uuid.UUID, up
 	s.publishImportFinished(gid)
 }
 
-func (s *ExportService) runImport(ctx context.Context, gid, userID uuid.UUID, uploadKey string) error {
+func (s *ExportService) runImport(ctx context.Context, gid, userID, importID uuid.UUID, uploadKey string) error {
+	// setProgress is best-effort: a failed status update is logged but never
+	// aborts the import itself — progress is observability, not correctness.
+	setProgress := func(pct int) {
+		if err := s.repos.Exports.SetProgress(ctx, gid, importID, pct); err != nil {
+			log.Warn().Err(err).Stringer("import_id", importID).Int("pct", pct).Msg("import job: failed to update progress")
+		}
+		s.publishImportFinished(gid)
+	}
+
 	// Precondition: no items (non-location entities) in this group. Default
 	// seeded locations/tags/entity_types are fine; we wipe them below before
 	// restoring.
@@ -662,13 +719,31 @@ func (s *ExportService) runImport(ctx context.Context, gid, userID uuid.UUID, up
 	if mf.SchemaVersion != ExportSchemaVersion {
 		return fmt.Errorf("unsupported schema version %d (this server expects %d)", mf.SchemaVersion, ExportSchemaVersion)
 	}
+	// Progress budget: 0–5% download + manifest, ~5–80% reserved for the DB
+	// phase (reported once after commit because intermediate setProgress
+	// calls would deadlock on SQLite — the write tx holds the single
+	// writer lock and ent's pool can't take it), 80–95% per-file blob
+	// restore, 95–100% finalization.
+	setProgress(5)
+
+	// All DB work — the seed wipe, every row insert, and the deferred FK
+	// patches — runs in a single tx so the group never sits in a half-imported
+	// state. If anything below fails, the deferred Rollback unwinds the wipe
+	// too. Blob uploads and bus notifications run only after Commit because
+	// (a) blobs are not transactional, and (b) restoreAttachmentBlobs needs to
+	// look up rows via the ent client, which uses its own pool and would not
+	// see uncommitted writes under Postgres READ COMMITTED.
+	tx, err := s.db.Sql().BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("begin import tx: %w", err)
+	}
+	defer func() { _ = tx.Rollback() }()
 
 	// Wipe the seeded defaults (locations, tags, entity_types, notifiers,
 	// etc.) so the imported collection isn't mixed with the auto-created
 	// starter content. The empty-group precondition above guarantees this is
 	// safe — there are no user-created items to lose.
-	dbSqlWipe := s.db.Sql()
-	if err := wipeGroup(ctx, dbSqlWipe, s.dialect, gid); err != nil {
+	if err := wipeGroup(ctx, tx, s.dialect, gid); err != nil {
 		return fmt.Errorf("wipe before import: %w", err)
 	}
 
@@ -712,7 +787,6 @@ func (s *ExportService) runImport(ctx context.Context, gid, userID uuid.UUID, up
 	}
 	var deferred []deferredUpdate
 
-	dbSql := dbSqlWipe
 	for _, spec := range exportTables {
 		rows, err := readTableJSON(zr, spec.name+".json")
 		if err != nil {
@@ -767,14 +841,35 @@ func (s *ExportService) runImport(ctx context.Context, gid, userID uuid.UUID, up
 			// become the destination gid so the row points at where we will
 			// actually upload the blob, and so cascade-cleanup on group
 			// delete sweeps it correctly.
+			//
+			// The zip is attacker-controlled (an admin imports a file they
+			// uploaded). Without validation, a crafted path like
+			// "{srcGid}/documents/../../etc/foo" would survive rewriteBlobPath
+			// (it only swaps the gid prefix) and reach the blob writer; the
+			// fileblob backend doesn't resolve ".." segments. Validate the
+			// source shape strictly, then re-validate the result.
 			if spec.name == "attachments" {
-				if v, ok := row["path"]; ok {
-					if str, ok := v.(string); ok && str != "" {
-						row["path"] = rewriteBlobPath(str, mf.GroupID, gid)
-					}
+				v, ok := row["path"]
+				if !ok {
+					return fmt.Errorf("attachment row missing path column")
 				}
+				str, ok := v.(string)
+				if !ok || str == "" {
+					return fmt.Errorf("attachment row has empty/non-string path")
+				}
+				cleanPath := path.Clean(str)
+				srcPrefix := mf.GroupID.String() + "/documents/"
+				if !strings.HasPrefix(cleanPath, srcPrefix) {
+					return fmt.Errorf("attachment path %q does not live under source group's documents prefix", str)
+				}
+				newPath := rewriteBlobPath(cleanPath, mf.GroupID, gid)
+				dstPrefix := gid.String() + "/documents/"
+				if !strings.HasPrefix(newPath, dstPrefix) {
+					return fmt.Errorf("rewritten attachment path %q escapes destination group's documents prefix", newPath)
+				}
+				row["path"] = newPath
 			}
-			if err := insertRow(ctx, dbSql, s.dialect, spec.name, row); err != nil {
+			if err := insertRow(ctx, tx, s.dialect, spec.name, row); err != nil {
 				return fmt.Errorf("insert %s: %w", spec.name, err)
 			}
 		}
@@ -785,16 +880,30 @@ func (s *ExportService) runImport(ctx context.Context, gid, userID uuid.UUID, up
 		newFK := remapFK(d.targetTable, d.oldFKValue)
 		q := fmt.Sprintf("UPDATE %s SET %s = %s WHERE id = %s",
 			d.table, d.col, placeholder(s.dialect, 1), placeholder(s.dialect, 2))
-		if _, err := dbSql.ExecContext(ctx, q, newFK, d.newID); err != nil {
+		if _, err := tx.ExecContext(ctx, q, newFK, d.newID); err != nil {
 			return fmt.Errorf("deferred update %s.%s: %w", d.table, d.col, err)
 		}
 	}
 
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("commit import: %w", err)
+	}
+	setProgress(80)
+
 	// Restore attachment blobs. The zip names them attachments/{old_uuid};
-	// look up the new attachment row through the id map.
-	if err := s.restoreAttachmentBlobs(ctx, zr, idMap["attachments"]); err != nil {
+	// look up the new attachment row through the id map. Must run post-commit
+	// because the lookup goes through the ent client, which uses a different
+	// connection than our tx.
+	blobProgress := func(done, total int) {
+		if total <= 0 {
+			return
+		}
+		setProgress(80 + int(float64(done)/float64(total)*15))
+	}
+	if err := s.restoreAttachmentBlobs(ctx, zr, idMap["attachments"], blobProgress); err != nil {
 		return fmt.Errorf("restore attachments: %w", err)
 	}
+	setProgress(95)
 
 	// Notify the frontend that lots of things just appeared.
 	if s.bus != nil {
@@ -807,13 +916,25 @@ func (s *ExportService) runImport(ctx context.Context, gid, userID uuid.UUID, up
 // restoreAttachmentBlobs iterates attachments/* in the zip and writes each
 // file to blob storage at the path recorded on the matching attachment row.
 // Filenames in the zip use the source-side attachment UUID; idMap translates
-// to the new UUID assigned during the row import.
-func (s *ExportService) restoreAttachmentBlobs(ctx context.Context, zr *zip.Reader, idMap map[string]string) error {
+// to the new UUID assigned during the row import. The optional onProgress
+// callback is invoked after each blob is written so the import row's
+// progress field stays current during what can be the slowest phase of a
+// restore.
+func (s *ExportService) restoreAttachmentBlobs(ctx context.Context, zr *zip.Reader, idMap map[string]string, onProgress func(done, total int)) error {
 	bucket, err := blob.OpenBucket(ctx, s.repos.Attachments.GetConnString())
 	if err != nil {
 		return err
 	}
 	defer func() { _ = bucket.Close() }()
+
+	// Pre-count blob entries so onProgress can report a meaningful ratio.
+	total := 0
+	for _, f := range zr.File {
+		if strings.HasPrefix(f.Name, attachmentsDir) && !f.FileInfo().IsDir() {
+			total++
+		}
+	}
+	done := 0
 
 	for _, f := range zr.File {
 		if !strings.HasPrefix(f.Name, attachmentsDir) || f.FileInfo().IsDir() {
@@ -856,6 +977,10 @@ func (s *ExportService) restoreAttachmentBlobs(ctx context.Context, zr *zip.Read
 			return err
 		}
 		_ = zf.Close()
+		done++
+		if onProgress != nil {
+			onProgress(done, total)
+		}
 	}
 	return nil
 }
@@ -915,14 +1040,31 @@ func readTableJSON(zr *zip.Reader, name string) ([]map[string]any, error) {
 	return nil, nil
 }
 
+// sqlExecer is the minimal interface used by the import path so the same
+// helpers work against a *sql.DB (auto-commit) and a *sql.Tx (transactional
+// import). Both stdlib types implement ExecContext with this signature.
+type sqlExecer interface {
+	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
+}
+
 // insertRow builds and runs an INSERT for one row's worth of column-value
 // pairs. Self-maintaining: every JSON key becomes a column.
-func insertRow(ctx context.Context, db *sql.DB, dialect, table string, row map[string]any) error {
+func insertRow(ctx context.Context, db sqlExecer, dialect, table string, row map[string]any) error {
 	if len(row) == 0 {
 		return nil
 	}
+	// Reject any attacker-shaped identifiers before they reach the SQL
+	// builder. Column names flow from JSON keys in an attacker-controlled
+	// zip; quoteIdent also escapes embedded quotes, but rejecting up front
+	// gives a clear error and keeps the SQL we generate trivial to audit.
+	if !isValidSQLIdent(table) {
+		return fmt.Errorf("invalid table identifier %q", table)
+	}
 	cols := make([]string, 0, len(row))
 	for k := range row {
+		if !isValidSQLIdent(k) {
+			return fmt.Errorf("invalid column identifier %q on table %q", k, table)
+		}
 		cols = append(cols, k)
 	}
 	// Stable column order so generated SQL is deterministic in tests/logs.
@@ -954,9 +1096,39 @@ func placeholder(dialect string, n int) string {
 
 // quoteIdent quotes an identifier. Both supported dialects accept double
 // quotes around identifiers — including sqlite for reserved words like
-// "primary" on the attachments table.
+// "primary" on the attachments table. Any embedded double-quote is escaped
+// per the SQL standard (and shared dialect behavior) by doubling it, so a
+// stray quote can never close the identifier and inject SQL. Callers should
+// still validate identifiers via isValidSQLIdent for attacker-supplied input;
+// this escape is defence-in-depth, not the primary gate.
 func quoteIdent(_ string, ident string) string {
-	return `"` + ident + `"`
+	return `"` + strings.ReplaceAll(ident, `"`, `""`) + `"`
+}
+
+// isValidSQLIdent returns true if s is a syntactically conservative SQL
+// identifier: an ASCII letter or underscore followed by letters, digits, or
+// underscores. The import path runs JSON map keys through this before they
+// are interpolated as column names, so a hostile export zip cannot smuggle
+// SQL into a table name or column list. dumpTable populates these keys from
+// rows.Columns(), which only ever returns plain identifiers, so every legit
+// key satisfies this check.
+func isValidSQLIdent(s string) bool {
+	if s == "" {
+		return false
+	}
+	for i, r := range s {
+		switch {
+		case r >= 'a' && r <= 'z',
+			r >= 'A' && r <= 'Z',
+			r == '_':
+			// always allowed
+		case (r >= '0' && r <= '9') && i > 0:
+			// digits allowed anywhere except the first character
+		default:
+			return false
+		}
+	}
+	return true
 }
 
 func joinQuoted(dialect string, cols []string) string {
@@ -986,7 +1158,7 @@ func rewriteBlobPath(path string, srcGid, dstGid uuid.UUID) string {
 //
 // Reusing exportTables means new tables are wiped automatically once they're
 // added to the export schema — no separate list to keep in sync.
-func wipeGroup(ctx context.Context, db *sql.DB, dialect string, gid uuid.UUID) error {
+func wipeGroup(ctx context.Context, db sqlExecer, dialect string, gid uuid.UUID) error {
 	for i := len(exportTables) - 1; i >= 0; i-- {
 		spec := exportTables[i]
 		if spec.scope == "" {

@@ -59,12 +59,19 @@ type DebugConf struct {
 }
 
 type WebConfig struct {
-	Port          string        `yaml:"port"            conf:"default:7745"`
-	Host          string        `yaml:"host"`
-	MaxUploadSize int64         `yaml:"max_file_upload" conf:"default:10"`
-	ReadTimeout   time.Duration `yaml:"read_timeout"    conf:"default:10s"`
-	WriteTimeout  time.Duration `yaml:"write_timeout"   conf:"default:10s"`
-	IdleTimeout   time.Duration `yaml:"idle_timeout"    conf:"default:30s"`
+	Port string `yaml:"port" conf:"default:7745"`
+	Host string `yaml:"host"`
+	// MaxUploadSize is the body cap (in MB) applied to ordinary upload
+	// endpoints (attachments, item imports, etc.). Defaults to 10 MB.
+	MaxUploadSize int64 `yaml:"max_file_upload" conf:"default:10"`
+	// MaxImportSize is the body cap (in MB) for collection-restore uploads
+	// (POST /v1/group/import). Set independently because a full collection
+	// backup including attachments can be much larger than a single asset
+	// upload. Defaults to 1 GB.
+	MaxImportSize int64         `yaml:"max_import_upload" conf:"default:1024"`
+	ReadTimeout   time.Duration `yaml:"read_timeout"      conf:"default:10s"`
+	WriteTimeout  time.Duration `yaml:"write_timeout"     conf:"default:10s"`
+	IdleTimeout   time.Duration `yaml:"idle_timeout"      conf:"default:30s"`
 }
 
 type LabelMakerConf struct {

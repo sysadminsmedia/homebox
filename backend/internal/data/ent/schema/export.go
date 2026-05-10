@@ -27,11 +27,23 @@ func (Export) Mixin() []ent.Mixin {
 
 func (Export) Fields() []ent.Field {
 	return []ent.Field{
+		// kind distinguishes server-produced export artifacts from
+		// user-uploaded import zips. The whole row lifecycle (status,
+		// progress, error) applies identically to both flavors — only the
+		// terminal action differs ("download" vs "restore"). Keeping them
+		// in one table avoids duplicating the entire job-tracking schema.
+		field.Enum("kind").
+			Values("export", "import").
+			Default("export"),
 		field.Enum("status").
 			Values("pending", "running", "completed", "failed").
 			Default("pending"),
 		field.Int("progress").
 			Default(0),
+		// artifact_path is the blob key this row points at: for kind=export
+		// it's the server-produced zip; for kind=import it's the upload
+		// staged at "{gid}/imports/{uuid}.zip" before the worker restores
+		// it.
 		field.String("artifact_path").
 			Optional(),
 		field.Int64("size_bytes").

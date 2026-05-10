@@ -17,8 +17,12 @@ type ExportRepository struct {
 }
 
 type ExportOut struct {
-	ID           uuid.UUID `json:"id"`
-	GroupID      uuid.UUID `json:"groupId"`
+	ID      uuid.UUID `json:"id"`
+	GroupID uuid.UUID `json:"groupId"`
+	// Kind is "export" for server-produced backup artifacts, "import" for
+	// user-uploaded restore zips. The lifecycle fields below behave the
+	// same for both.
+	Kind         string    `json:"kind"`
 	CreatedAt    time.Time `json:"createdAt"`
 	UpdatedAt    time.Time `json:"updatedAt"`
 	Status       string    `json:"status"`
@@ -32,6 +36,7 @@ func mapExport(e *ent.Export) ExportOut {
 	return ExportOut{
 		ID:           e.ID,
 		GroupID:      e.GroupID,
+		Kind:         string(e.Kind),
 		CreatedAt:    e.CreatedAt,
 		UpdatedAt:    e.UpdatedAt,
 		Status:       string(e.Status),
@@ -45,6 +50,23 @@ func mapExport(e *ent.Export) ExportOut {
 func (r *ExportRepository) Create(ctx context.Context, gid uuid.UUID) (ExportOut, error) {
 	e, err := r.db.Export.Create().
 		SetGroupID(gid).
+		Save(ctx)
+	if err != nil {
+		return ExportOut{}, err
+	}
+	return mapExport(e), nil
+}
+
+// CreateImport stages a new pending row representing an upload that the
+// worker will restore. The uploadKey points at the blob already written
+// to "{gid}/imports/{uuid}.zip", and sizeBytes is the streamed upload
+// size so the UI can show "X MB queued" before the worker even starts.
+func (r *ExportRepository) CreateImport(ctx context.Context, gid uuid.UUID, uploadKey string, sizeBytes int64) (ExportOut, error) {
+	e, err := r.db.Export.Create().
+		SetGroupID(gid).
+		SetKind(export.KindImport).
+		SetArtifactPath(uploadKey).
+		SetSizeBytes(sizeBytes).
 		Save(ctx)
 	if err != nil {
 		return ExportOut{}, err
@@ -78,24 +100,33 @@ func (r *ExportRepository) Get(ctx context.Context, gid uuid.UUID, id uuid.UUID)
 	return mapExport(e), nil
 }
 
-func (r *ExportRepository) SetRunning(ctx context.Context, id uuid.UUID) error {
+// SetRunning, SetProgress, SetCompleted, and SetFailed all carry gid so the
+// underlying UPDATE matches only when the row belongs to that group. A
+// mismatched gid yields ent.NotFoundError rather than a silent cross-tenant
+// mutation — matching the package contract documented on ExportRepository.
+func (r *ExportRepository) SetRunning(ctx context.Context, gid, id uuid.UUID) error {
 	return r.db.Export.UpdateOneID(id).
+		Where(export.GroupID(gid)).
 		SetStatus(export.StatusRunning).
 		SetProgress(0).
 		Exec(ctx)
 }
 
-func (r *ExportRepository) SetProgress(ctx context.Context, id uuid.UUID, pct int) error {
+func (r *ExportRepository) SetProgress(ctx context.Context, gid, id uuid.UUID, pct int) error {
 	if pct < 0 {
 		pct = 0
 	} else if pct > 100 {
 		pct = 100
 	}
-	return r.db.Export.UpdateOneID(id).SetProgress(pct).Exec(ctx)
+	return r.db.Export.UpdateOneID(id).
+		Where(export.GroupID(gid)).
+		SetProgress(pct).
+		Exec(ctx)
 }
 
-func (r *ExportRepository) SetCompleted(ctx context.Context, id uuid.UUID, artifactPath string, sizeBytes int64) error {
+func (r *ExportRepository) SetCompleted(ctx context.Context, gid, id uuid.UUID, artifactPath string, sizeBytes int64) error {
 	return r.db.Export.UpdateOneID(id).
+		Where(export.GroupID(gid)).
 		SetStatus(export.StatusCompleted).
 		SetProgress(100).
 		SetArtifactPath(artifactPath).
@@ -103,11 +134,12 @@ func (r *ExportRepository) SetCompleted(ctx context.Context, id uuid.UUID, artif
 		Exec(ctx)
 }
 
-func (r *ExportRepository) SetFailed(ctx context.Context, id uuid.UUID, errMsg string) error {
+func (r *ExportRepository) SetFailed(ctx context.Context, gid, id uuid.UUID, errMsg string) error {
 	if len(errMsg) > 1000 {
 		errMsg = errMsg[:1000]
 	}
 	return r.db.Export.UpdateOneID(id).
+		Where(export.GroupID(gid)).
 		SetStatus(export.StatusFailed).
 		SetError(errMsg).
 		Exec(ctx)

@@ -142,7 +142,11 @@ func TestExportRoundTrip(t *testing.T) {
 	importKey := dst.ID.String() + "/imports/" + uuid.New().String() + ".zip"
 	require.NoError(t, copyBlobUnderTest(ctx, tSvc.Exports, artifactPath, importKey))
 
-	tSvc.Exports.RunImport(ctx, dst.ID, tUser.ID, importKey)
+	// Create the tracked import row the worker reads to find the upload key
+	// and to report status/progress against.
+	impRow, err := tRepos.Exports.CreateImport(ctx, dst.ID, importKey, sizeBytes)
+	require.NoError(t, err)
+	tSvc.Exports.RunImport(ctx, dst.ID, tUser.ID, impRow.ID)
 
 	// --- Assertions ----------------------------------------------------
 	dstEntities, err := tClient.Entity.Query().Where(entity.HasGroupWith(group.ID(dst.ID))).All(ctx)

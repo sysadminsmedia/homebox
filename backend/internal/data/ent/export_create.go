@@ -56,6 +56,20 @@ func (_c *ExportCreate) SetGroupID(v uuid.UUID) *ExportCreate {
 	return _c
 }
 
+// SetKind sets the "kind" field.
+func (_c *ExportCreate) SetKind(v export.Kind) *ExportCreate {
+	_c.mutation.SetKind(v)
+	return _c
+}
+
+// SetNillableKind sets the "kind" field if the given value is not nil.
+func (_c *ExportCreate) SetNillableKind(v *export.Kind) *ExportCreate {
+	if v != nil {
+		_c.SetKind(*v)
+	}
+	return _c
+}
+
 // SetStatus sets the "status" field.
 func (_c *ExportCreate) SetStatus(v export.Status) *ExportCreate {
 	_c.mutation.SetStatus(v)
@@ -188,6 +202,10 @@ func (_c *ExportCreate) defaults() {
 		v := export.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := _c.mutation.Kind(); !ok {
+		v := export.DefaultKind
+		_c.mutation.SetKind(v)
+	}
 	if _, ok := _c.mutation.Status(); !ok {
 		v := export.DefaultStatus
 		_c.mutation.SetStatus(v)
@@ -216,6 +234,14 @@ func (_c *ExportCreate) check() error {
 	}
 	if _, ok := _c.mutation.GroupID(); !ok {
 		return &ValidationError{Name: "group_id", err: errors.New(`ent: missing required field "Export.group_id"`)}
+	}
+	if _, ok := _c.mutation.Kind(); !ok {
+		return &ValidationError{Name: "kind", err: errors.New(`ent: missing required field "Export.kind"`)}
+	}
+	if v, ok := _c.mutation.Kind(); ok {
+		if err := export.KindValidator(v); err != nil {
+			return &ValidationError{Name: "kind", err: fmt.Errorf(`ent: validator failed for field "Export.kind": %w`, err)}
+		}
 	}
 	if _, ok := _c.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Export.status"`)}
@@ -281,6 +307,10 @@ func (_c *ExportCreate) createSpec() (*Export, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(export.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := _c.mutation.Kind(); ok {
+		_spec.SetField(export.FieldKind, field.TypeEnum, value)
+		_node.Kind = value
 	}
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(export.FieldStatus, field.TypeEnum, value)
