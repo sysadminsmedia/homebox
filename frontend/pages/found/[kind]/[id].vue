@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import MdiEmailOutline from "~icons/mdi/email-outline";
   import MdiLogin from "~icons/mdi/login";
   import AppLogo from "~/components/App/Logo.vue";
@@ -8,8 +9,10 @@
     layout: "empty",
   });
 
+  const { t } = useI18n();
+
   useHead({
-    title: "HomeBox | Found Item",
+    title: computed(() => `HomeBox | ${t("pages.found.title")}`),
   });
 
   const route = useRoute();
@@ -42,8 +45,8 @@
     }
 
     const email = encodeURIComponent(contact.value.ownerEmail);
-    const subject = encodeURIComponent("Found item");
-    const body = encodeURIComponent(`I found an item with a HomeBox label: ${labelPath.value}`);
+    const subject = encodeURIComponent(t("pages.found.mail_subject"));
+    const body = encodeURIComponent(t("pages.found.mail_body", { labelPath: labelPath.value }));
     return `mailto:${email}?subject=${subject}&body=${body}`;
   });
 
@@ -61,27 +64,27 @@
 
       <div class="space-y-4">
         <p class="text-sm font-medium text-muted-foreground">HomeBox</p>
-        <h1 class="text-3xl font-semibold tracking-normal">Did you find this item?</h1>
+        <h1 class="text-3xl font-semibold tracking-normal">{{ $t("pages.found.heading") }}</h1>
         <p class="text-base leading-7 text-muted-foreground">
-          Contact the owner directly so they can arrange its return.
+          {{ $t("pages.found.subheading") }}
         </p>
       </div>
 
       <div class="mt-8 flex flex-col gap-3 sm:flex-row">
         <Button v-if="contact?.ownerEmail" as="a" :href="mailtoHref" class="w-full sm:w-auto">
           <MdiEmailOutline />
-          Email owner
+          {{ $t("pages.found.email_owner") }}
         </Button>
 
         <Button variant="outline" class="w-full sm:w-auto" @click="signIn">
           <MdiLogin />
-          Sign in
+          {{ $t("pages.found.sign_in") }}
         </Button>
       </div>
 
-      <p v-if="pending" class="mt-6 text-sm text-muted-foreground">Loading contact details...</p>
+      <p v-if="pending" class="mt-6 text-sm text-muted-foreground">{{ $t("pages.found.loading") }}</p>
       <p v-else-if="!contact?.ownerEmail" class="mt-6 text-sm text-muted-foreground">
-        This label could not be resolved. Sign in to open HomeBox.
+        {{ $t("pages.found.unresolved") }}
       </p>
     </section>
   </main>

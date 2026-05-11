@@ -39,13 +39,13 @@ export class PublicApi extends BaseAPI {
 
   public foundEntityContact(id: string) {
     return this.http.get<FoundEntityContact>({
-      url: route(`/found/entities/${id}`),
+      url: route(`/found/entities/${encodeURIComponent(id)}`),
     });
   }
 
   public foundAssetContact(id: string) {
     return this.http.get<FoundEntityContact>({
-      url: route(`/found/assets/${id}`),
+      url: route(`/found/assets/${encodeURIComponent(id)}`),
     });
   }
 }

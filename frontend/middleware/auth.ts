@@ -32,12 +32,12 @@ export default defineNuxtRouteMiddleware(async to => {
 });
 
 function foundLabelPath(path: string): string | null {
-  const itemMatch = path.match(/^\/item\/([^/]+)/);
+  const itemMatch = path.match(/^\/item\/([^/]+)\/?$/);
   if (itemMatch) {
     return `/found/item/${encodeURIComponent(itemMatch[1]!)}`;
   }
 
-  const assetMatch = path.match(/^\/(?:a|assets)\/([^/]+)/);
+  const assetMatch = path.match(/^\/(?:a|assets)\/([^/]+)\/?$/);
   if (assetMatch) {
     return `/found/asset/${encodeURIComponent(assetMatch[1]!)}`;
   }

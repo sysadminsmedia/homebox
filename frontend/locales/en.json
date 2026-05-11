@@ -719,6 +719,17 @@
         "templates": "Templates"
     },
     "pages": {
+        "found": {
+            "email_owner": "Email owner",
+            "heading": "Did you find this item?",
+            "loading": "Loading contact details...",
+            "mail_body": "I found an item with a HomeBox label: { labelPath }",
+            "mail_subject": "Found item",
+            "sign_in": "Sign in",
+            "subheading": "Contact the owner directly so they can arrange its return.",
+            "title": "Found Item",
+            "unresolved": "This label could not be resolved. Sign in to open HomeBox."
+        },
         "templates": {
             "no_templates": "No templates yet.",
             "title": "Templates"
