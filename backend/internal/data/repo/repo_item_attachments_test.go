@@ -16,10 +16,22 @@ import (
 )
 
 func TestMimeTypeForSourceType(t *testing.T) {
+	// Test "link" source type
 	mime, ok := MimeTypeForSourceType("link")
 	assert.True(t, ok)
 	assert.Equal(t, MimeTypeLinkURL, mime)
 
+	// Test "paperless" source type
+	mime, ok = MimeTypeForSourceType("paperless")
+	assert.True(t, ok)
+	assert.Equal(t, MimeTypePaperlessDocument, mime)
+
+	// Test "immich" source type
+	mime, ok = MimeTypeForSourceType("immich")
+	assert.True(t, ok)
+	assert.Equal(t, MimeTypeImmichAsset, mime)
+
+	// Test unknown source type
 	mime, ok = MimeTypeForSourceType("unknown")
 	assert.False(t, ok)
 	assert.Empty(t, mime)
@@ -138,44 +150,103 @@ func TestAttachmentRepo_Delete(t *testing.T) {
 	require.Error(t, err)
 }
 
-func TestAttachmentRepo_CreateExternalLink(t *testing.T) {
-	ctx := context.Background()
-	entity := useEntities(t, 1)[0]
-
-	att, err := tRepos.Attachments.CreateExternalLink(
-		ctx,
-		entity.ID,
-		"https://example.com/manual",
-		"Example Manual",
-		MimeTypeLinkURL,
-		attachment.TypeManual,
-	)
-	require.NoError(t, err)
-	require.NotNil(t, att)
-
-	t.Cleanup(func() {
-		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, att.ID)
-	})
-
-	assert.Equal(t, "https://example.com/manual", att.Path)
-	assert.Equal(t, "Example Manual", att.Title)
-	assert.Equal(t, MimeTypeLinkURL, att.MimeType)
-	assert.Equal(t, attachment.TypeManual, att.Type)
-	assert.False(t, att.Primary)
+// externalLinkMimeTypeCases covers every registered external-link MIME type.
+// Adding a new integration only requires a new entry here — all table-driven
+// tests below pick it up automatically.
+var externalLinkMimeTypeCases = []struct {
+	mimeType   string
+	externalID string
+}{
+	{MimeTypeLinkURL, "https://example.com/doc"},
+	{MimeTypePaperlessDocument, "42"},
+	{MimeTypeImmichAsset, "1df4f848-dead-beef-cafe-123456789abc"},
 }
 
+// TestAttachmentRepo_CreateExternalLink_PerMimeType verifies that path, title,
+// and mimeType are stored and returned verbatim for every known external-link
+// MIME type.
+func TestAttachmentRepo_CreateExternalLink_PerMimeType(t *testing.T) {
+	ctx := context.Background()
+
+	for _, tc := range externalLinkMimeTypeCases {
+		t.Run(tc.mimeType, func(t *testing.T) {
+			entity := useEntities(t, 1)[0]
+
+			att, err := tRepos.Attachments.CreateExternalLink(ctx, entity.ID, tc.externalID, "Test Doc", tc.mimeType, attachment.TypeAttachment)
+			require.NoError(t, err)
+			require.NotNil(t, att)
+
+			t.Cleanup(func() { _ = tRepos.Attachments.Delete(ctx, tGroup.ID, att.ID) })
+
+			assert.Equal(t, tc.externalID, att.Path)
+			assert.Equal(t, "Test Doc", att.Title)
+			assert.Equal(t, tc.mimeType, att.MimeType)
+			assert.Equal(t, attachment.TypeAttachment, att.Type)
+			assert.False(t, att.Primary)
+		})
+	}
+}
+
+// TestAttachmentRepo_CreateExternalLink_AttachmentTypes verifies that all
+// attachment type variants are stored correctly. A single representative MIME
+// type is sufficient since the MIME type coverage is handled above.
+func TestAttachmentRepo_CreateExternalLink_AttachmentTypes(t *testing.T) {
+	ctx := context.Background()
+	mimeType := externalLinkMimeTypeCases[0].mimeType
+	externalID := externalLinkMimeTypeCases[0].externalID
+
+	types := []attachment.Type{
+		attachment.TypeAttachment,
+		attachment.TypeManual,
+		attachment.TypeWarranty,
+		attachment.TypeReceipt,
+	}
+
+	for _, typ := range types {
+		t.Run(string(typ), func(t *testing.T) {
+			entity := useEntities(t, 1)[0]
+
+			att, err := tRepos.Attachments.CreateExternalLink(ctx, entity.ID, externalID, "Doc", mimeType, typ)
+			require.NoError(t, err)
+			t.Cleanup(func() { _ = tRepos.Attachments.Delete(ctx, tGroup.ID, att.ID) })
+
+			assert.Equal(t, typ, att.Type)
+			assert.Equal(t, mimeType, att.MimeType)
+		})
+	}
+}
+
+// TestAttachmentRepo_CreateExternalLink_EmptyTypeDefaultsToAttachment verifies
+// that passing an empty attachment type string results in TypeAttachment.
+func TestAttachmentRepo_CreateExternalLink_EmptyTypeDefaultsToAttachment(t *testing.T) {
+	ctx := context.Background()
+	tc := externalLinkMimeTypeCases[0]
+	entity := useEntities(t, 1)[0]
+
+	att, err := tRepos.Attachments.CreateExternalLink(ctx, entity.ID, tc.externalID, "Test", tc.mimeType, "")
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = tRepos.Attachments.Delete(ctx, tGroup.ID, att.ID) })
+
+	assert.Equal(t, attachment.TypeAttachment, att.Type)
+}
+
+// TestAttachmentRepo_CreateExternalLink_InvalidEntityID verifies that using a
+// non-existent entity ID returns an error.
+func TestAttachmentRepo_CreateExternalLink_InvalidEntityID(t *testing.T) {
+	tc := externalLinkMimeTypeCases[0]
+
+	_, err := tRepos.Attachments.CreateExternalLink(context.Background(), uuid.New(), tc.externalID, "Orphan", tc.mimeType, attachment.TypeAttachment)
+	assert.Error(t, err)
+}
+
+// TestAttachmentRepo_DeleteExternalLink verifies that a created external-link
+// attachment can be deleted and is no longer retrievable.
 func TestAttachmentRepo_DeleteExternalLink(t *testing.T) {
 	ctx := context.Background()
 	entity := useEntities(t, 1)[0]
+	tc := externalLinkMimeTypeCases[0]
 
-	att, err := tRepos.Attachments.CreateExternalLink(
-		ctx,
-		entity.ID,
-		"https://example.com/receipt",
-		"Example Receipt",
-		MimeTypeLinkURL,
-		attachment.TypeReceipt,
-	)
+	att, err := tRepos.Attachments.CreateExternalLink(ctx, entity.ID, tc.externalID, "Delete Me", tc.mimeType, attachment.TypeAttachment)
 	require.NoError(t, err)
 
 	err = tRepos.Attachments.Delete(ctx, tGroup.ID, att.ID)
@@ -185,24 +256,22 @@ func TestAttachmentRepo_DeleteExternalLink(t *testing.T) {
 	require.Error(t, err)
 }
 
+// TestAttachmentRepo_DeleteExternalLink_DoesNotRequireBlobStorage verifies that
+// deleting an external-link attachment does not attempt blob-storage I/O.
 func TestAttachmentRepo_DeleteExternalLink_DoesNotRequireBlobStorage(t *testing.T) {
 	ctx := context.Background()
-
 	repos := New(tClient, tbus, config.Storage{PrefixPath: "/", ConnString: "mem://"}, "mem://{{ .Topic }}", config.Thumbnail{Enabled: false})
 	entity := useEntities(t, 1)[0]
+	tc := externalLinkMimeTypeCases[0]
 
-	att, err := repos.Attachments.CreateExternalLink(
-		ctx,
-		entity.ID,
-		"https://example.com/no-blob",
-		"No Blob",
-		MimeTypeLinkURL,
-		attachment.TypeAttachment,
-	)
+	att, err := repos.Attachments.CreateExternalLink(ctx, entity.ID, tc.externalID, "No Blob", tc.mimeType, attachment.TypeAttachment)
 	require.NoError(t, err)
 
 	err = repos.Attachments.Delete(ctx, tGroup.ID, att.ID)
 	require.NoError(t, err)
+
+	_, err = tRepos.Attachments.Get(ctx, tGroup.ID, att.ID)
+	assert.Error(t, err)
 }
 
 func TestAttachmentRepo_EnsureSinglePrimaryAttachment(t *testing.T) {
