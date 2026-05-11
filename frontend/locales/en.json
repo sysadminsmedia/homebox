@@ -283,7 +283,10 @@
             "create_modal": {
                 "location_description": "Location Description",
                 "location_name": "Location Name",
+                "notes": "Notes",
+                "select_type": "Select type...",
                 "title": "Create Location",
+                "type": "Type",
                 "toast": {
                     "already_creating": "Already creating a location",
                     "create_failed": "Couldn't create location",
