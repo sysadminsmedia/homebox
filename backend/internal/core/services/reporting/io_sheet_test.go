@@ -23,6 +23,12 @@ var (
 	customTypesImportCSV []byte
 )
 
+const (
+	hbField1Header = "HB.field.1"
+	hbField2Header = "HB.field.2"
+	hbField3Header = "HB.field.3"
+)
+
 func TestSheet_Read(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -130,27 +136,27 @@ func Test_parseHeaders(t *testing.T) {
 		},
 		{
 			name:       "field headers only",
-			rawHeaders: []string{"HB.location", "HB.name", "HB.field.1", "HB.field.2", "HB.field.3"},
+			rawHeaders: []string{hbLocationHeader, hbNameHeader, hbField1Header, hbField2Header, hbField3Header},
 			wantHbHeaders: map[string]int{
-				"HB.location": 0,
-				"HB.name":     1,
-				"HB.field.1":  2,
-				"HB.field.2":  3,
-				"HB.field.3":  4,
+				hbLocationHeader: 0,
+				hbNameHeader:     1,
+				hbField1Header:   2,
+				hbField2Header:   3,
+				hbField3Header:   4,
 			},
-			wantFieldHeaders: []string{"HB.field.1", "HB.field.2", "HB.field.3"},
+			wantFieldHeaders: []string{hbField1Header, hbField2Header, hbField3Header},
 			wantErr:          false,
 		},
 		{
 			name:       "mixed headers",
-			rawHeaders: []string{"Header 1", "HB.name", "Header 2", "HB.field.2", "Header 3", "HB.field.3", "HB.location"},
+			rawHeaders: []string{"Header 1", hbNameHeader, "Header 2", hbField2Header, "Header 3", hbField3Header, hbLocationHeader},
 			wantHbHeaders: map[string]int{
-				"HB.name":     1,
-				"HB.field.2":  3,
-				"HB.field.3":  5,
-				"HB.location": 6,
+				hbNameHeader:     1,
+				hbField2Header:   3,
+				hbField3Header:   5,
+				hbLocationHeader: 6,
 			},
-			wantFieldHeaders: []string{"HB.field.2", "HB.field.3"},
+			wantFieldHeaders: []string{hbField2Header, hbField3Header},
 			wantErr:          false,
 		},
 	}

@@ -1,6 +1,7 @@
 package hasher
 
 import (
+	"os"
 	"strings"
 	"testing"
 
@@ -10,9 +11,10 @@ import (
 
 const ITERATIONS = 200
 
-func init() {
+func TestMain(m *testing.M) {
 	// Tests need a pepper installed for HashAPIKey/GenerateAPIKey paths.
 	SetAPIKeyPepper([]byte("test-pepper-not-for-production-use-only"))
+	os.Exit(m.Run())
 }
 
 func Test_NewToken(t *testing.T) {

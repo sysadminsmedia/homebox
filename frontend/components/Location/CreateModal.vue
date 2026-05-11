@@ -5,14 +5,14 @@
 
       <!-- Entity Type selector (shown when multiple location types exist) -->
       <div v-if="showEntityTypeSelector" class="flex w-full flex-col gap-1.5">
-        <Label for="location-type-select" class="px-1">Type</Label>
+        <Label for="location-type-select" class="px-1">{{ $t("components.location.create_modal.type") }}</Label>
         <select
           id="location-type-select"
           class="w-full rounded-md border bg-background px-3 py-2 text-sm"
           :value="selectedEntityType?.id || ''"
           @change="onEntityTypeChanged(($event.target as HTMLSelectElement).value)"
         >
-          <option value="">Select type...</option>
+          <option value="">{{ $t("components.location.create_modal.select_type") }}</option>
           <option v-for="et in locationTypes" :key="et.id" :value="et.id">{{ et.name }}</option>
         </select>
       </div>
@@ -67,7 +67,7 @@
 
       <template v-if="showAdvanced">
         <TagSelector v-model="form.tags" :tags="tags ?? []" />
-        <FormTextArea v-model="form.notes" label="Notes" :max-length="1000" />
+        <FormTextArea v-model="form.notes" :label="$t('components.location.create_modal.notes')" :max-length="1000" />
       </template>
 
       <div class="mt-4 flex flex-row-reverse">
@@ -166,8 +166,8 @@
   useDialogHotkey(DialogID.CreateLocation, { code: "Digit3", shift: true });
 
   // Entity type selection
-  const locationTypes = ref<import("~~/lib/api/types/data-contracts").EntityTypeSummary[]>([]);
-  const selectedEntityType = ref<import("~~/lib/api/types/data-contracts").EntityTypeSummary | null>(null);
+  const locationTypes = ref<EntityTypeSummary[]>([]);
+  const selectedEntityType = ref<EntityTypeSummary | null>(null);
   const showEntityTypeSelector = computed(() => locationTypes.value.length > 1);
 
   onMounted(async () => {

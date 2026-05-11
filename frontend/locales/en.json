@@ -283,7 +283,10 @@
             "create_modal": {
                 "location_description": "Location Description",
                 "location_name": "Location Name",
+                "notes": "Notes",
+                "select_type": "Select type...",
                 "title": "Create Location",
+                "type": "Type",
                 "toast": {
                     "already_creating": "Already creating a location",
                     "create_failed": "Couldn't create location",
@@ -394,6 +397,15 @@
     },
     "errors": {
         "api_failure": "Backend API call failed: "
+    },
+    "found_item": {
+        "contact_owner": "Contact the owner to return it.",
+        "email_owner": "Email owner",
+        "email_subject": "Found item: {item}",
+        "not_found_description": "This item could not be found, or the link is no longer valid.",
+        "not_found_title": "Item not found",
+        "sign_in": "Sign in to manage this item",
+        "title": "Did you find this item?"
     },
     "global": {
         "add": "Add",

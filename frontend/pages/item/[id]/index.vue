@@ -51,7 +51,7 @@
   const { openDialog, closeDialog } = useDialog();
 
   definePageMeta({
-    middleware: ["auth"],
+    middleware: ["auth-or-found"],
   });
 
   const route = useRoute();

@@ -21,6 +21,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/usergroup"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -220,6 +221,13 @@ type (
 	EntityOutCount struct {
 		EntitySummary
 		ItemCount float64 `json:"itemCount"`
+	}
+
+	FoundEntityOut struct {
+		ID         uuid.UUID `json:"id"`
+		AssetID    AssetID   `json:"assetId,string"`
+		Name       string    `json:"name"`
+		OwnerEmail string    `json:"ownerEmail"`
 	}
 )
 
@@ -468,6 +476,53 @@ func (r *EntityRepository) GetOne(ctx context.Context, id uuid.UUID) (EntityOut,
 	out, err := r.getOne(ctx, entity.ID(id))
 	recordSpanError(span, err)
 	return out, err
+}
+
+func (r *EntityRepository) GetFoundEntity(ctx context.Context, id uuid.UUID) (FoundEntityOut, error) {
+	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.GetFoundEntity",
+		trace.WithAttributes(attribute.String("entity.id", id.String())))
+	defer span.End()
+
+	e, err := r.db.Entity.Query().
+		Where(entity.ID(id)).
+		WithGroup().
+		Only(ctx)
+	if err != nil {
+		recordSpanError(span, err)
+		return FoundEntityOut{}, err
+	}
+	if e.Edges.Group == nil {
+		err := &ent.NotFoundError{}
+		recordSpanError(span, err)
+		return FoundEntityOut{}, err
+	}
+
+	membership, err := r.db.UserGroup.Query().
+		Where(
+			usergroup.GroupID(e.Edges.Group.ID),
+			usergroup.RoleEQ(usergroup.RoleOwner),
+		).
+		Order(usergroup.ByUserID()).
+		WithUser().
+		First(ctx)
+	if err != nil {
+		recordSpanError(span, err)
+		return FoundEntityOut{}, err
+	}
+	if membership.Edges.User == nil {
+		err := &ent.NotFoundError{}
+		recordSpanError(span, err)
+		return FoundEntityOut{}, err
+	}
+
+	out := FoundEntityOut{
+		ID:         e.ID,
+		AssetID:    AssetID(e.AssetID),
+		Name:       e.Name,
+		OwnerEmail: membership.Edges.User.Email,
+	}
+	span.SetAttributes(attribute.String("group.id", e.Edges.Group.ID.String()))
+	return out, nil
 }
 
 func (r *EntityRepository) CheckRef(ctx context.Context, gid uuid.UUID, ref string) (bool, error) {

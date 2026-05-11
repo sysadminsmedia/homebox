@@ -7,6 +7,8 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/pkgs/textutils"
 )
 
+const accentedElectronics = "electrónica"
+
 func TestEntityRepository_AccentInsensitiveSearch(t *testing.T) {
 	// Test cases for accent-insensitive search
 	testCases := []struct {
@@ -18,22 +20,22 @@ func TestEntityRepository_AccentInsensitiveSearch(t *testing.T) {
 	}{
 		{
 			name:        "Spanish accented item, search without accents",
-			itemName:    "electrónica",
+			itemName:    accentedElectronics,
 			searchQuery: "electronica",
 			shouldMatch: true,
 			description: "Should find 'electrónica' when searching for 'electronica'",
 		},
 		{
 			name:        "Spanish accented item, search with accents",
-			itemName:    "electrónica",
-			searchQuery: "electrónica",
+			itemName:    accentedElectronics,
+			searchQuery: accentedElectronics,
 			shouldMatch: true,
 			description: "Should find 'electrónica' when searching for 'electrónica'",
 		},
 		{
 			name:        "Non-accented item, search with accents",
 			itemName:    "electronica",
-			searchQuery: "electrónica",
+			searchQuery: accentedElectronics,
 			shouldMatch: true,
 			description: "Should find 'electronica' when searching for 'electrónica' (bidirectional search)",
 		},
@@ -186,7 +188,7 @@ func TestNormalizeSearchQueryIntegration(t *testing.T) {
 		input    string
 		expected string
 	}{
-		{"electrónica", "electronica"},
+		{accentedElectronics, "electronica"},
 		{"café", "cafe"},
 		{"ELECTRÓNICA", "electronica"},
 		{"Café París", "cafe paris"},

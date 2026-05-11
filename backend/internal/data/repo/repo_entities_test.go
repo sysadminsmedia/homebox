@@ -124,6 +124,46 @@ func TestEntityRepository_GetOne(t *testing.T) {
 	}
 }
 
+func TestEntityRepository_GetFoundEntity(t *testing.T) {
+	ctx := context.Background()
+	group, err := tRepos.Groups.GroupCreate(ctx, "found-item-test", uuid.Nil)
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		if err := tRepos.Groups.GroupDelete(context.Background(), group.ID); err != nil {
+			t.Fatalf("GroupDelete cleanup failed: %v", err)
+		}
+	})
+
+	ownerCreate := userFactory()
+	ownerCreate.DefaultGroupID = group.ID
+	ownerCreate.IsOwner = true
+	owner, err := tRepos.Users.Create(ctx, ownerCreate)
+	require.NoError(t, err)
+
+	containerET, err := tRepos.EntityTypes.GetDefault(ctx, group.ID, true)
+	require.NoError(t, err)
+	itemET, err := tRepos.EntityTypes.GetDefault(ctx, group.ID, false)
+	require.NoError(t, err)
+
+	containerCreate := containerFactory()
+	containerCreate.EntityTypeID = containerET.ID
+	container, err := tRepos.Entities.Create(ctx, group.ID, containerCreate)
+	require.NoError(t, err)
+
+	itemCreate := entityFactory()
+	itemCreate.ParentID = container.ID
+	itemCreate.EntityTypeID = itemET.ID
+	item, err := tRepos.Entities.Create(ctx, group.ID, itemCreate)
+	require.NoError(t, err)
+
+	found, err := tRepos.Entities.GetFoundEntity(ctx, item.ID)
+	require.NoError(t, err)
+	assert.Equal(t, item.ID, found.ID)
+	assert.Equal(t, item.AssetID, found.AssetID)
+	assert.Equal(t, item.Name, found.Name)
+	assert.Equal(t, owner.Email, found.OwnerEmail)
+}
+
 func TestEntityRepository_GetAll(t *testing.T) {
 	length := 10
 	expected := useEntities(t, length)

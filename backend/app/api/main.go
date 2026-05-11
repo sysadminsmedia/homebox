@@ -105,6 +105,7 @@ func main() {
 	}
 }
 
+//nolint:gocyclo // Startup wiring has several independent service branches.
 func run(cfg *config.Config) error {
 	app := new(cfg)
 	app.setupLogger()

@@ -15,6 +15,11 @@ var (
 	ErrMissingRequiredHeaders = errors.New("missing required headers `HB.location` or `HB.name`")
 )
 
+const (
+	hbLocationHeader = "HB.location"
+	hbNameHeader     = "HB.name"
+)
+
 // determineSeparator determines the separator used in the CSV file
 // It returns the separator as a rune and an error if it could not be determined
 //
@@ -89,7 +94,7 @@ func parseHeaders(headers []string) (hbHeaders map[string]int, fieldHeaders []st
 		}
 	}
 
-	required := []string{"HB.location", "HB.name"}
+	required := []string{hbLocationHeader, hbNameHeader}
 	if !lo.EveryBy(required, func(h string) bool {
 		return lo.HasKey(hbHeaders, h)
 	}) {
