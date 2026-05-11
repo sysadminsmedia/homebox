@@ -17,6 +17,7 @@ import (
 //	@Produce	json
 //	@Param		id	path		string	true	"Entity ID"
 //	@Success	200	{object}	repo.FoundEntityOut
+//	@Header		200	{string}	Cache-Control	"no-store"
 //	@Failure	404	{object}	validate.ErrorResponse
 //	@Failure	429	{object}	validate.ErrorResponse
 //	@Router		/v1/found/entities/{id} [GET]
@@ -33,5 +34,9 @@ func (ctrl *V1Controller) HandleFoundEntityGet() errchain.HandlerFunc {
 		return out, err
 	}
 
-	return adapters.CommandID("id", fn, http.StatusOK)
+	handler := adapters.CommandID("id", fn, http.StatusOK)
+	return func(w http.ResponseWriter, r *http.Request) error {
+		w.Header().Set("Cache-Control", "no-store")
+		return handler(w, r)
+	}
 }

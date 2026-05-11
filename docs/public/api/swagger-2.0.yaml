@@ -2898,6 +2898,10 @@ paths:
       responses:
         "200":
           description: OK
+          headers:
+            Cache-Control:
+              description: no-store
+              type: string
           schema:
             $ref: '#/definitions/repo.FoundEntityOut'
         "404":

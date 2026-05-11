@@ -502,6 +502,7 @@ func (r *EntityRepository) GetFoundEntity(ctx context.Context, id uuid.UUID) (Fo
 			usergroup.GroupID(e.Edges.Group.ID),
 			usergroup.RoleEQ(usergroup.RoleOwner),
 		).
+		Order(usergroup.ByUserID()).
 		WithUser().
 		First(ctx)
 	if err != nil {

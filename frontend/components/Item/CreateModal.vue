@@ -582,11 +582,11 @@
 
         if (data) {
           parent.value = data;
-        }
 
-        const loc = data.location ?? data.parent;
-        if (loc) {
-          parentItemLocationId = loc.id;
+          const loc = data.location ?? data.parent;
+          if (loc) {
+            parentItemLocationId = loc.id;
+          }
         }
 
         // clear URL Parameter (subItemCreate) since intention was communicated and received

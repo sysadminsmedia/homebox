@@ -1278,6 +1278,14 @@
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "headers": {
+                            "Cache-Control": {
+                                "description": "no-store",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        },
                         "content": {
                             "application/json": {
                                 "schema": {
