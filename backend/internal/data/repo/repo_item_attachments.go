@@ -84,16 +84,32 @@ type (
 	}
 )
 
+// MimeTypeLinkURL is the MIME type for generic HTTP/HTTPS URL links.
 const MimeTypeLinkURL = "link/url"
+
+// MimeTypePaperlessDocument is the MIME type for Paperless-ngx document links.
+const MimeTypePaperlessDocument = "paperless/document"
+
+// MimeTypeImmichAsset is the MIME type for Immich asset links.
+const MimeTypeImmichAsset = "immich/asset"
 
 var externalLinkMimeTypes = []string{
 	MimeTypeLinkURL,
+	MimeTypePaperlessDocument,
+	MimeTypeImmichAsset,
 }
 
+// MimeTypeForSourceType maps a user-facing integration source-type name (e.g. "paperless")
+// to the internal MIME discriminator stored in the attachments table.
+// Returns ("", false) for unknown source types.
 func MimeTypeForSourceType(sourceType string) (string, bool) {
 	switch sourceType {
 	case "link":
 		return MimeTypeLinkURL, true
+	case "paperless":
+		return MimeTypePaperlessDocument, true
+	case "immich":
+		return MimeTypeImmichAsset, true
 	default:
 		return "", false
 	}

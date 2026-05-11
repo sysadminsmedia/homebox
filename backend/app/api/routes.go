@@ -208,6 +208,9 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Delete("/notifiers/{id}", chain.ToHandlerFunc(v1Ctrl.HandleDeleteNotifier(), userMW...))
 		r.Post("/notifiers/test", chain.ToHandlerFunc(v1Ctrl.HandlerNotifierTest(), append(userMW, a.notifierTestLimiter.middleware)...))
 
+		// Integration proxy endpoints
+		r.Get("/integrations/{name}/proxy", chain.ToHandlerFunc(v1Ctrl.HandleIntegrationProxy(), userMW...))
+
 		// Asset-Like endpoints
 		assetMW := []errchain.Middleware{
 			a.mwAuthToken,
