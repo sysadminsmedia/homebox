@@ -4,6 +4,7 @@
   import AppLogo from "~/components/App/Logo.vue";
   import MdiEmailOutline from "~icons/mdi/email-outline";
   import MdiLogin from "~icons/mdi/login";
+  import { useI18n } from "vue-i18n";
 
   definePageMeta({
     layout: "empty",
@@ -12,9 +13,9 @@
   const { t } = useI18n();
   const route = useRoute();
   const api = usePublicApi();
-  const itemId = computed(() => {
+  const itemId = computed<string>(() => {
     const id = route.params.id;
-    return Array.isArray(id) ? (id[0] ?? "") : id;
+    return typeof id === "string" ? id : (id?.[0] ?? "");
   });
 
   const {

@@ -24,7 +24,7 @@
     "@types/markdown-it": "^14.1.2",
     "@types/semver": "^7.7.1",
     "@vite-pwa/nuxt": "^1.1.1",
-    "@vue/runtime-core": "^3.5.34",
+    "@vue/runtime-core": "3.5.34",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
@@ -86,7 +86,7 @@
     "tailwindcss-animate": "^1.0.7",
     "vaul-vue": "^0.4.1",
     "vite": "^7.3.3",
-    "vue": "3.5.20",
+    "vue": "3.5.34",
     "vue-router": "^4.6.4",
     "vue-sonner": "^2.0.9"
   },

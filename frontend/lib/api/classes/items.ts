@@ -23,6 +23,7 @@ export type ItemsQuery = {
   page?: number;
   pageSize?: number;
   parentIds?: string[];
+  locations?: string[];
   tags?: string[];
   negateTags?: boolean;
   onlyWithoutPhoto?: boolean;

@@ -584,8 +584,8 @@
           parent.value = data;
         }
 
-        if (data.location || data.parent) {
-          const loc = data.location || data.parent;
+        const loc = data.location ?? data.parent;
+        if (loc) {
           parentItemLocationId = loc.id;
         }
 

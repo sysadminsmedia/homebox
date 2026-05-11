@@ -666,16 +666,16 @@ export interface DuplicateOptions {
 export interface EntityCreate {
   /** @maxLength 1000 */
   description: string;
-  entityTypeId: string;
+  entityTypeId?: string;
   /**
    * @minLength 1
    * @maxLength 255
    */
   name: string;
   parentId?: string | null;
-  quantity: number;
+  quantity?: number;
   /** Edges */
-  tagIds: string[];
+  tagIds?: string[];
 }
 
 export interface EntityFieldData {
@@ -709,6 +709,7 @@ export interface EntityOut {
   id: string;
   imageId?: string | null;
   insured: boolean;
+  location?: EntitySummary | null;
   /** Container-specific (populated when querying locations) */
   itemCount: number;
   /** Warranty */
@@ -764,6 +765,7 @@ export interface EntitySummary {
   id: string;
   imageId?: string | null;
   insured: boolean;
+  location?: EntitySummary | null;
   /** Container-specific (populated when querying locations) */
   itemCount: number;
   name: string;
@@ -777,6 +779,11 @@ export interface EntitySummary {
   thumbnailId?: string | null;
   updatedAt: Date | string;
 }
+
+export type ItemOut = EntityOut;
+export type ItemSummary = EntitySummary;
+export type LocationOut = EntityOut;
+export type LocationSummary = EntitySummary;
 
 export interface EntityTemplateCreate {
   /** @maxLength 1000 */
@@ -916,7 +923,7 @@ export interface EntityUpdate {
   assetId: string;
   /** @maxLength 1000 */
   description: string;
-  entityTypeId: string;
+  entityTypeId?: string;
   fields: EntityFieldData[];
   id: string;
   insured: boolean;
@@ -1091,7 +1098,7 @@ export interface TagCreate {
   /** @maxLength 1000 */
   description: string;
   /** @maxLength 255 */
-  icon: string;
+  icon?: string;
   /**
    * @minLength 1
    * @maxLength 255
@@ -1140,12 +1147,12 @@ export interface TagUpdate {
 }
 
 export interface TemplateField {
-  booleanValue: boolean;
+  booleanValue?: boolean;
   id: string;
   name: string;
-  numberValue: number;
+  numberValue?: number;
   textValue: string;
-  timeValue: string;
+  timeValue?: string;
   type: string;
 }
 

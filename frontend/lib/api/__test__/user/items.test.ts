@@ -34,7 +34,6 @@ describe("user should be able to create an item and add an attachment", () => {
     const [location, cleanup] = await useLocation(api);
 
     const { response, data: item } = await api.items.create({
-      parentId: null,
       name: "test-item",
       tagIds: [],
       description: "test-description",
@@ -69,7 +68,6 @@ describe("user should be able to create an item and add an attachment", () => {
     const [location, cleanup] = await useLocation(api);
 
     const { response, data: item } = await api.items.create({
-      parentId: null,
       name: faker.vehicle.model(),
       tagIds: [],
       description: faker.lorem.paragraph(1),
@@ -123,7 +121,6 @@ describe("user should be able to create an item and add an attachment", () => {
     const api = await sharedUserClient();
     const [location, cleanup] = await useLocation(api);
     const { response, data: item } = await api.items.create({
-      parentId: null,
       name: faker.vehicle.model(),
       tagIds: [],
       description: faker.lorem.paragraph(1),
