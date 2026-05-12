@@ -113,7 +113,7 @@ func TestResetPassword_HappyPath_RevokesSessions(t *testing.T) {
 
 	// Login with the old password fails.
 	_, err = tSvc.User.Login(ctx, usr.Email, "old-password", false)
-	assert.ErrorIs(t, err, ErrorInvalidLogin)
+	require.ErrorIs(t, err, ErrorInvalidLogin)
 
 	// Token is marked used (not retrievable as valid).
 	_, err = tRepos.PasswordResetTokens.GetValidByHash(ctx, hasher.HashToken(rawToken))
@@ -157,7 +157,7 @@ func TestResetPassword_AtomicClaim_LosesRaceToConcurrentReset(t *testing.T) {
 	require.NoError(t, tRepos.PasswordResetTokens.MarkUsed(ctx, tok.ID, time.Now()))
 
 	err = tSvc.User.ResetPassword(ctx, rawToken, "race-loser-pw")
-	assert.ErrorIs(t, err, ErrorPasswordResetInvalid)
+	require.ErrorIs(t, err, ErrorPasswordResetInvalid)
 
 	// Confirm the password was NOT changed by the losing caller.
 	_, err = tSvc.User.Login(ctx, usr.Email, "starting-pw", false)
@@ -171,7 +171,7 @@ func TestResetPassword_BogusToken_Rejected(t *testing.T) {
 
 func TestResetPassword_EmptyInputs_Rejected(t *testing.T) {
 	err := tSvc.User.ResetPassword(context.Background(), "", "newpw")
-	assert.ErrorIs(t, err, ErrorPasswordResetInvalid)
+	require.ErrorIs(t, err, ErrorPasswordResetInvalid)
 
 	err = tSvc.User.ResetPassword(context.Background(), "sometoken", "")
 	assert.ErrorIs(t, err, ErrorPasswordResetInvalid)

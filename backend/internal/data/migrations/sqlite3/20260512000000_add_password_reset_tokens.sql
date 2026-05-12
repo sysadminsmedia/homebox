@@ -21,9 +21,6 @@ create table if not exists password_reset_tokens
 create unique index if not exists password_reset_tokens_token_key
     on password_reset_tokens (token);
 
-create index if not exists passwordresettokens_token
-    on password_reset_tokens (token);
-
 create index if not exists passwordresettokens_user_id
     on password_reset_tokens (user_id);
 

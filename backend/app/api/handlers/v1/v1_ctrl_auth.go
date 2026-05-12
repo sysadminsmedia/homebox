@@ -158,12 +158,16 @@ type (
 //
 //	@Summary		Request Password Reset
 //	@Description	Sends a password reset email if the address is associated with a local account.
-//	@Description	Always returns 204 to avoid leaking whether the email is registered.
+//	@Description	Always returns 204 on success to avoid leaking whether the email is registered.
 //	@Tags			Authentication
 //	@Accept			application/json
-//	@Param			payload	body	ForgotPasswordRequest	true	"Email"
+//	@Produce		json
+//	@Param			payload	body		ForgotPasswordRequest	true	"Email"
 //	@Success		204
-//	@Failure		400	{string}	string	"local login is disabled or SMTP is not configured"
+//	@Failure		400		{string}	string					"missing or invalid request body"
+//	@Failure		403		{string}	string					"demo mode is enabled or local login is disabled"
+//	@Failure		500		{string}	string					"internal error while processing the request"
+//	@Failure		503		{string}	string					"SMTP is not configured, or HBOX_OPTIONS_HOSTNAME is unset so a safe reset URL cannot be built"
 //	@Router			/v1/users/forgot-password [POST]
 func (ctrl *V1Controller) HandleForgotPassword() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
@@ -235,9 +239,12 @@ func (ctrl *V1Controller) HandleForgotPassword() errchain.HandlerFunc {
 //	@Description	On success, all existing sessions for the user are revoked.
 //	@Tags			Authentication
 //	@Accept			application/json
-//	@Param			payload	body	ResetPasswordRequest	true	"Token + new password"
+//	@Produce		json
+//	@Param			payload	body		ResetPasswordRequest	true	"Token + new password"
 //	@Success		204
-//	@Failure		400	{string}	string	"invalid token, expired token, or missing field"
+//	@Failure		400		{string}	string					"invalid request body, invalid token, expired token, or already-used token"
+//	@Failure		403		{string}	string					"demo mode is enabled or local login is disabled"
+//	@Failure		500		{string}	string					"internal error while processing the request"
 //	@Router			/v1/users/reset-password [POST]
 func (ctrl *V1Controller) HandleResetPassword() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {

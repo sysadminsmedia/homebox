@@ -10,7 +10,7 @@ import (
 
 const ITERATIONS = 200
 
-func init() {
+func init() { // nolint:gochecknoinits
 	// Tests need a pepper installed for HashAPIKey/GenerateAPIKey paths.
 	SetAPIKeyPepper([]byte("test-pepper-not-for-production-use-only"))
 }

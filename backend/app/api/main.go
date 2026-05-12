@@ -15,7 +15,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
@@ -27,16 +26,12 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/graceful"
-	"github.com/pressly/goose/v3"
 	"github.com/riandyrn/otelchi"
 	otelchimetric "github.com/riandyrn/otelchi/metric"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/rs/zerolog/pkgerrors"
 	"go.balki.me/anyhttp"
-
-	"entgo.io/ent/dialect"
-	entsql "entgo.io/ent/dialect/sql"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/postgres"
@@ -141,80 +136,16 @@ func run(cfg *config.Config) error {
 
 	// =========================================================================
 	// Initialize Database & Repos
-	err = setupStorageDir(cfg)
+	c, err := setupDatabase(cfg, otelProvider)
 	if err != nil {
 		return err
 	}
-
-	if strings.ToLower(cfg.Database.Driver) == config.DriverPostgres {
-		if !validatePostgresSSLMode(cfg.Database.SslMode) {
-			log.Error().Str("sslmode", cfg.Database.SslMode).Msg("invalid sslmode")
-			return fmt.Errorf("invalid sslmode: %s", cfg.Database.SslMode)
-		}
-	}
-
-	databaseURL, err := setupDatabaseURL(cfg)
-	if err != nil {
-		return err
-	}
-
-	sqlDriver := strings.ToLower(cfg.Database.Driver)
-	var driverName string
-	switch sqlDriver {
-	case config.DriverPostgres:
-		driverName = "pgx"
-		sqlDriver = dialect.Postgres
-	case config.DriverSqlite3, "sqlite":
-		driverName = "sqlite3"
-		sqlDriver = dialect.SQLite
-	default:
-		return fmt.Errorf("unsupported driver: %s", sqlDriver)
-	}
-
-	db, err := otelProvider.OpenDatabase(driverName, databaseURL)
-	if err != nil {
-		log.Error().
-			Err(err).
-			Str("driver", strings.ToLower(cfg.Database.Driver)).
-			Str("host", cfg.Database.Host).
-			Str("port", cfg.Database.Port).
-			Str("database", cfg.Database.Database).
-			Msg("failed opening connection to {driver} database at {host}:{port}/{database}")
-		return fmt.Errorf("failed opening connection to %s database at %s:%s/%s: %w",
-			strings.ToLower(cfg.Database.Driver),
-			cfg.Database.Host,
-			cfg.Database.Port,
-			cfg.Database.Database,
-			err,
-		)
-	}
-
-	drv := entsql.OpenDB(sqlDriver, db)
-	c := ent.NewClient(ent.Driver(drv))
 	defer func(c *ent.Client) {
 		err := c.Close()
 		if err != nil {
 			log.Error().Err(err).Msg("failed to close database connection")
 		}
 	}(c)
-
-	migrationsFs, err := migrations.Migrations(strings.ToLower(cfg.Database.Driver))
-	if err != nil {
-		return fmt.Errorf("failed to get migrations for %s: %w", strings.ToLower(cfg.Database.Driver), err)
-	}
-
-	goose.SetBaseFS(migrationsFs)
-	err = goose.SetDialect(strings.ToLower(cfg.Database.Driver))
-	if err != nil {
-		log.Error().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")
-		return fmt.Errorf("unsupported database driver: %s", cfg.Database.Driver)
-	}
-
-	err = goose.Up(c.Sql(), strings.ToLower(cfg.Database.Driver))
-	if err != nil {
-		log.Error().Err(err).Msg("failed to migrate database")
-		return err
-	}
 
 	collectFuncs, err := loadCurrencies(cfg)
 	if err != nil {
@@ -263,8 +194,8 @@ func run(cfg *config.Config) error {
 		otelChiBaseCfg := otelchimetric.NewBaseConfig(cfg.Otel.ServiceName, otelchimetric.WithMeterProvider(otelProvider.MeterProvider()))
 		router.Use(
 			otelchi.Middleware(cfg.Otel.ServiceName, otelchi.WithChiRoutes(router)),
-			otelchimetric.NewResponseSizeBytes(otelChiBaseCfg),
-			otelchimetric.NewRequestInFlight(otelChiBaseCfg),
+			otelchimetric.NewServerResponseBodySize(otelChiBaseCfg),
+			otelchimetric.NewServerActiveRequests(otelChiBaseCfg),
 		)
 	}
 

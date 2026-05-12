@@ -2477,8 +2477,11 @@ const docTemplate = `{
         },
         "/v1/users/forgot-password": {
             "post": {
-                "description": "Sends a password reset email if the address is associated with a local account.\nAlways returns 204 to avoid leaking whether the email is registered.",
+                "description": "Sends a password reset email if the address is associated with a local account.\nAlways returns 204 on success to avoid leaking whether the email is registered.",
                 "consumes": [
+                    "application/json"
+                ],
+                "produces": [
                     "application/json"
                 ],
                 "tags": [
@@ -2501,7 +2504,25 @@ const docTemplate = `{
                         "description": "No Content"
                     },
                     "400": {
-                        "description": "local login is disabled or SMTP is not configured",
+                        "description": "missing or invalid request body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "demo mode is enabled or local login is disabled",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal error while processing the request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "503": {
+                        "description": "SMTP is not configured, or HBOX_OPTIONS_HOSTNAME is unset so a safe reset URL cannot be built",
                         "schema": {
                             "type": "string"
                         }
@@ -2670,6 +2691,9 @@ const docTemplate = `{
                 "consumes": [
                     "application/json"
                 ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "Authentication"
                 ],
@@ -2690,7 +2714,19 @@ const docTemplate = `{
                         "description": "No Content"
                     },
                     "400": {
-                        "description": "invalid token, expired token, or missing field",
+                        "description": "invalid request body, invalid token, expired token, or already-used token",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "demo mode is enabled or local login is disabled",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal error while processing the request",
                         "schema": {
                             "type": "string"
                         }

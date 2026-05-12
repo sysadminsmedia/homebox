@@ -46,7 +46,8 @@ func runResetPasswordCLI(args []string) (handled bool, exitCode int) {
 	if err := fs.Parse(args[2:]); err != nil {
 		return true, 2
 	}
-	if strings.TrimSpace(*email) == "" {
+	trimmedEmail := strings.TrimSpace(*email)
+	if trimmedEmail == "" {
 		fs.Usage()
 		return true, 2
 	}
@@ -57,10 +58,10 @@ func runResetPasswordCLI(args []string) (handled bool, exitCode int) {
 		return true, 1
 	}
 
-	link, err := generateResetLinkOffline(cfg, *email)
+	link, err := generateResetLinkOffline(cfg, trimmedEmail)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			fmt.Fprintf(os.Stderr, "no account found for %s\n", *email)
+			fmt.Fprintf(os.Stderr, "no account found for %s\n", trimmedEmail)
 			return true, 1
 		}
 		fmt.Fprintf(os.Stderr, "failed to generate reset link: %v\n", err)
