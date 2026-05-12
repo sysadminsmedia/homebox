@@ -1,12 +1,17 @@
-export default defineNuxtRouteMiddleware(async () => {
+export default defineNuxtRouteMiddleware(async to => {
   const ctx = useAuthContext();
   const api = useUserApi();
   const redirectTo = useState("authRedirect");
 
   if (!ctx.isAuthorized()) {
-    if (window.location.pathname !== "/") {
+    const foundPath = foundLabelPath(to.path);
+    if (foundPath) {
+      return navigateTo(foundPath);
+    }
+
+    if (to.path !== "/") {
       console.debug("[middleware/auth] isAuthorized returned false, redirecting to /");
-      redirectTo.value = window.location.pathname;
+      redirectTo.value = to.path;
       return navigateTo("/");
     }
   }
@@ -15,9 +20,9 @@ export default defineNuxtRouteMiddleware(async () => {
     console.log("Fetching user data");
     const { data, error } = await api.user.self();
     if (error) {
-      if (window.location.pathname !== "/") {
+      if (to.path !== "/") {
         console.debug("[middleware/user] user is null and fetch failed, redirecting to /");
-        redirectTo.value = window.location.pathname;
+        redirectTo.value = to.path;
         return navigateTo("/");
       }
     }
@@ -25,3 +30,17 @@ export default defineNuxtRouteMiddleware(async () => {
     ctx.user = data.item;
   }
 });
+
+function foundLabelPath(path: string): string | null {
+  const itemMatch = path.match(/^\/item\/([^/]+)\/?$/);
+  if (itemMatch) {
+    return `/found/item/${encodeURIComponent(itemMatch[1]!)}`;
+  }
+
+  const assetMatch = path.match(/^\/(?:a|assets)\/([^/]+)\/?$/);
+  if (assetMatch) {
+    return `/found/asset/${encodeURIComponent(assetMatch[1]!)}`;
+  }
+
+  return null;
+}

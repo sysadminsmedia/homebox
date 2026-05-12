@@ -546,6 +546,11 @@ definitions:
         items:
           $ref: '#/definitions/ent.Tag'
         type: array
+      user_groups:
+        description: UserGroups holds the value of the user_groups edge.
+        items:
+          $ref: '#/definitions/ent.UserGroup'
+        type: array
       users:
         description: Users holds the value of the users edge.
         items:
@@ -805,10 +810,6 @@ definitions:
       oidc_subject:
         description: OidcSubject holds the value of the "oidc_subject" field.
         type: string
-      role:
-        allOf:
-        - $ref: '#/definitions/user.Role'
-        description: Role holds the value of the "role" field.
       settings:
         additionalProperties: true
         description: Settings holds the value of the "settings" field.
@@ -842,6 +843,41 @@ definitions:
         items:
           $ref: '#/definitions/ent.Notifier'
         type: array
+      user_groups:
+        description: UserGroups holds the value of the user_groups edge.
+        items:
+          $ref: '#/definitions/ent.UserGroup'
+        type: array
+    type: object
+  ent.UserGroup:
+    properties:
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.UserGroupEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the UserGroupQuery when eager-loading is set.
+      group_id:
+        description: GroupID holds the value of the "group_id" field.
+        type: string
+      role:
+        allOf:
+        - $ref: '#/definitions/usergroup.Role'
+        description: Role holds the value of the "role" field.
+      user_id:
+        description: UserID holds the value of the "user_id" field.
+        type: string
+    type: object
+  ent.UserGroupEdges:
+    properties:
+      group:
+        allOf:
+        - $ref: '#/definitions/ent.Group'
+        description: Group holds the value of the group edge.
+      user:
+        allOf:
+        - $ref: '#/definitions/ent.User'
+        description: User holds the value of the user edge.
     type: object
   entityfield.Type:
     enum:
@@ -1498,6 +1534,13 @@ definitions:
     required:
     - name
     type: object
+  repo.FoundEntityContact:
+    properties:
+      itemId:
+        type: string
+      ownerEmail:
+        type: string
+    type: object
   repo.Group:
     properties:
       createdAt:
@@ -1865,8 +1908,6 @@ definitions:
         type: array
       id:
         type: string
-      isOwner:
-        type: boolean
       isSuperuser:
         type: boolean
       name:
@@ -1882,8 +1923,6 @@ definitions:
         type: string
       id:
         type: string
-      isOwner:
-        type: boolean
       name:
         type: string
     type: object
@@ -1948,7 +1987,7 @@ definitions:
     - TypeNumber
     - TypeBoolean
     - TypeTime
-  user.Role:
+  usergroup.Role:
     enum:
     - user
     - user
@@ -2062,13 +2101,6 @@ definitions:
         type: integer
     required:
     - uses
-    type: object
-  v1.GroupMemberAdd:
-    properties:
-      userId:
-        type: string
-    required:
-    - userId
     type: object
   v1.LoginForm:
     properties:
@@ -2848,6 +2880,42 @@ paths:
       summary: Update Entity Type
       tags:
       - Entity Types
+  /v1/found/assets/{id}:
+    get:
+      parameters:
+      - description: Asset ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.FoundEntityContact'
+      summary: Get found asset contact
+      tags:
+      - Entities
+  /v1/found/entities/{id}:
+    get:
+      parameters:
+      - description: Entity ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.FoundEntityContact'
+      summary: Get found item contact
+      tags:
+      - Entities
   /v1/groups:
     delete:
       produces:
@@ -3018,24 +3086,6 @@ paths:
       security:
       - Bearer: []
       summary: Get All Group Members
-      tags:
-      - Group
-    post:
-      parameters:
-      - description: User ID
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/v1.GroupMemberAdd'
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-      security:
-      - Bearer: []
-      summary: Add User to Group
       tags:
       - Group
   /v1/groups/members/{user_id}:

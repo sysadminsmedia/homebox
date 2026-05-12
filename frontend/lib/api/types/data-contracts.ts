@@ -930,6 +930,11 @@ export interface EntityUpdate {
   warrantyExpires: Date | string;
 }
 
+export interface FoundEntityContact {
+  itemId: string;
+  ownerEmail: string;
+}
+
 export interface Group {
   createdAt: Date | string;
   currency: string;

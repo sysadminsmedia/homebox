@@ -88,6 +88,8 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 
 		r.Post("/users/register", chain.ToHandlerFunc(v1Ctrl.HandleUserRegistration()))
 		r.Post("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(providers...), a.mwAuthRateLimit))
+		r.Get("/found/entities/{id}", chain.ToHandlerFunc(v1Ctrl.HandleFoundEntityContact(), a.foundLabelLimiter.middleware))
+		r.Get("/found/assets/{id}", chain.ToHandlerFunc(v1Ctrl.HandleFoundAssetContact(), a.foundLabelLimiter.middleware))
 
 		if a.conf.OIDC.Enabled {
 			r.Get("/users/login/oidc", chain.ToHandlerFunc(v1Ctrl.HandleOIDCLogin(), a.mwAuthRateLimit))
