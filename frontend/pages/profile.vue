@@ -20,6 +20,7 @@
   import FormCheckbox from "~/components/Form/Checkbox.vue";
   import BaseContainer from "@/components/Base/Container.vue";
   import BaseCard from "@/components/Base/Card.vue";
+  import { useIntegrationCacheStore } from "~/stores/integration-cache";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import DetailsSection from "@/components/global/DetailsSection/DetailsSection.vue";
   import DateTime from "@/components/global/DateTime.vue";
@@ -207,6 +208,64 @@
     toast.success(t("profile.toast.api_key_deleted"));
     await loadApiKeys();
   }
+
+  // ---------------------------------------------------------------------------
+  // Integration settings
+
+  const integrationSettings = reactive({
+    paperlessUrl: "",
+    paperlessToken: "",
+    loading: false,
+    saving: false,
+  });
+
+  async function loadIntegrationSettings() {
+    integrationSettings.loading = true;
+    const { data, error } = await api.user.getSettings();
+    integrationSettings.loading = false;
+
+    if (error || !data?.item) {
+      toast.error(t("errors.api_failure"));
+      return;
+    }
+
+    const settings = data.item as Record<string, unknown>;
+    integrationSettings.paperlessUrl = (settings.paperless_url as string) || "";
+    integrationSettings.paperlessToken = (settings.paperless_token as string) || "";
+  }
+
+  async function saveIntegrationSettings() {
+    integrationSettings.saving = true;
+    const { data: current, error: currentError } = await api.user.getSettings();
+    if (currentError) {
+      integrationSettings.saving = false;
+      toast.error(t("profile.toast.failed_settings_save"));
+      return;
+    }
+
+    const { error } = await api.user.setSettings({
+      ...(current?.item ?? {}),
+      paperless_url: integrationSettings.paperlessUrl,
+      paperless_token: integrationSettings.paperlessToken,
+    });
+    integrationSettings.saving = false;
+
+    if (error) {
+      toast.error(t("profile.toast.failed_settings_save"));
+      return;
+    }
+
+    // Push the new URLs into the shared store so any mounted AttachmentsList
+    // immediately promotes or demotes its service attachments.
+    const integrationCacheStore = useIntegrationCacheStore();
+    integrationCacheStore.setServiceUrl("paperless", integrationSettings.paperlessUrl);
+
+    toast.success(t("profile.toast.settings_saved"));
+  }
+
+  onMounted(() => {
+    void loadIntegrationSettings();
+  });
 </script>
 
 <template>
@@ -431,6 +490,48 @@
           </div>
         </div>
       </BaseCard>
+
+      <BaseCard>
+        <template #title>
+          <BaseSectionHeader>
+            <span> {{ $t("profile.integrations") }} </span>
+            <template #description>
+              {{ $t("profile.integrations_sub") }}
+            </template>
+          </BaseSectionHeader>
+        </template>
+
+        <div class="space-y-6 px-4 pb-4">
+          <!-- Paperless Settings -->
+          <div class="space-y-2">
+            <h4 class="font-semibold">{{ $t("profile.paperless_settings") }}</h4>
+            <FormTextField
+              v-model="integrationSettings.paperlessUrl"
+              :label="$t('profile.paperless_url')"
+              :placeholder="$t('profile.paperless_url_placeholder')"
+              type="url"
+              class="mb-2"
+            />
+            <FormTextField
+              v-model="integrationSettings.paperlessToken"
+              :label="$t('profile.paperless_token')"
+              :placeholder="$t('profile.paperless_token_placeholder')"
+              type="password"
+            />
+          </div>
+
+          <div class="border-t pt-4">
+            <Button
+              :disabled="integrationSettings.saving || integrationSettings.loading"
+              @click="saveIntegrationSettings"
+            >
+              <MdiLoading v-if="integrationSettings.saving" class="animate-spin" />
+              {{ $t("global.save") }}
+            </Button>
+          </div>
+        </div>
+      </BaseCard>
+
       <BaseCard>
         <template #title>
           <BaseSectionHeader>

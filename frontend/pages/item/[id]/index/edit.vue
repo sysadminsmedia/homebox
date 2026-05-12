@@ -5,7 +5,7 @@
   import type { ItemAttachment, EntityFieldData, EntityOut, EntityUpdate } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useTagStore } from "~/stores/tags";
-  import { useLocationStore } from "~~/stores/locations";
+  import { classifyDroppedUrl } from "~/lib/integration-adapters";
   import MdiLoading from "~icons/mdi/loading";
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
@@ -37,6 +37,14 @@
 
   const { openDialog, closeDialog } = useDialog();
 
+  // Integration settings for drop detection
+  const integrationSettings = reactive({
+    paperless_url: "",
+    paperless_token: "",
+    immich_url: "",
+    immich_token: "",
+  });
+
   definePageMeta({
     middleware: ["auth"],
   });
@@ -46,9 +54,6 @@
   const preferences = useViewPreferences();
 
   const itemId = computed<string>(() => route.params.id as string);
-
-  const locationStore = useLocationStore();
-  const locations = computed(() => locationStore.allLocations);
 
   const tagStore = useTagStore();
   const tags = computed(() => tagStore.tags);
@@ -83,7 +88,21 @@
     }
   });
 
-  onMounted(() => {
+  async function loadIntegrationSettings() {
+    const { data, error } = await api.user.getSettings();
+    if (error || !data?.item) {
+      return;
+    }
+
+    const settings = data.item as Record<string, unknown>;
+    integrationSettings.paperless_url = (settings.paperless_url as string) || "";
+    integrationSettings.paperless_token = (settings.paperless_token as string) || "";
+    integrationSettings.immich_url = (settings.immich_url as string) || "";
+    integrationSettings.immich_token = (settings.immich_token as string) || "";
+  }
+
+  onMounted(async () => {
+    await loadIntegrationSettings();
     refresh();
   });
 
@@ -373,7 +392,12 @@
     const zoneEl = targetEl?.closest("[data-link-type]");
     const attachmentType = zoneEl?.getAttribute("data-link-type") || "attachment";
 
+    // Always use the URL-based title as fallback; the real document title is
+    // fetched from the service API at display time (hydration in AttachmentsList.vue).
     const title = fallbackLinkTitle(droppedURL);
+
+    const classified = classifyDroppedUrl(droppedURL, integrationSettings);
+
     const { data, error } = await api.items.attachments.addExternalLink(
       itemId.value,
       "link",
@@ -387,7 +411,12 @@
       return;
     }
 
-    toast.success(t("items.toast.attachment_uploaded"));
+    if (classified) {
+      const serviceName = classified.adapter.name.charAt(0).toUpperCase() + classified.adapter.name.slice(1);
+      toast.success(`${serviceName} linked`);
+    } else {
+      toast.success(t("items.toast.attachment_uploaded"));
+    }
     item.value.attachments = data.attachments;
   }
 
@@ -822,13 +851,7 @@
                     </TooltipTrigger>
                     <TooltipContent>{{ $t("items.edit.view_image") }}</TooltipContent>
                   </Tooltip>
-                  <Tooltip
-                    v-if="
-                      attachment.mimeType === 'link/url' ||
-                      (attachment.path ?? '').startsWith('http://') ||
-                      (attachment.path ?? '').startsWith('https://')
-                    "
-                  >
+                  <Tooltip v-if="(attachment.path ?? '').startsWith('http://') || (attachment.path ?? '').startsWith('https://')">
                     <TooltipTrigger as-child>
                       <a :href="attachment.path" target="_blank" rel="noopener noreferrer">
                         <Button variant="outline" size="icon">
