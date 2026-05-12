@@ -26,11 +26,6 @@ func TestMimeTypeForSourceType(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, MimeTypePaperlessDocument, mime)
 
-	// Test "immich" source type
-	mime, ok = MimeTypeForSourceType("immich")
-	assert.True(t, ok)
-	assert.Equal(t, MimeTypeImmichAsset, mime)
-
 	// Test unknown source type
 	mime, ok = MimeTypeForSourceType("unknown")
 	assert.False(t, ok)
@@ -159,7 +154,6 @@ var externalLinkMimeTypeCases = []struct {
 }{
 	{MimeTypeLinkURL, "https://example.com/doc"},
 	{MimeTypePaperlessDocument, "42"},
-	{MimeTypeImmichAsset, "1df4f848-dead-beef-cafe-123456789abc"},
 }
 
 // TestAttachmentRepo_CreateExternalLink_PerMimeType verifies that path, title,

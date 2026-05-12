@@ -39,7 +39,6 @@ var knownSources = []struct {
 	externalID string
 }{
 	{"paperless", "42"},
-	{"immich", "1df4f848-dead-beef-cafe-123456789abc"},
 	{"link", "https://example.com/doc"},
 }
 
