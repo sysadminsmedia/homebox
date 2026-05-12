@@ -11,10 +11,11 @@
  */
 import { describe, expect, it } from "vitest";
 import { DEFAULT_PREFERENCES, buildSyncedSettings, mergeSyncedSettings } from "./preferences-utils";
+import { SERVICE_ADAPTERS } from "../lib/integration-adapters";
 
 // Keys that live in the settings object but are NOT preferences and must never
 // be overwritten by a bare preferences save.
-const INTEGRATION_KEYS = ["paperless_url", "paperless_token"] as const;
+const INTEGRATION_KEYS = SERVICE_ADAPTERS.flatMap(a => [a.settingsUrlKey, a.settingsTokenKey]);
 
 // Default sync config (all preference keys synced).
 const SYNC_ALL = {};
@@ -103,27 +104,6 @@ describe("use-preferences pure helpers", () => {
       expect(merged.paperless_token).toBe("secret-token");
       // And preferences are still updated:
       expect(merged.showDetails).toBe(false);
-    });
-
-    it("old (broken) approach would wipe integration keys", () => {
-      const existingServerSettings: Record<string, unknown> = {
-        paperless_url: "http://localhost:8000",
-        paperless_token: "secret-token",
-      };
-
-      const prefPayload = buildSyncedSettings(DEFAULT_PREFERENCES, SYNC_ALL);
-
-      // Old buggy approach: only send preference keys (no GET+merge first)
-      expect(prefPayload).not.toHaveProperty("paperless_url");
-      expect(prefPayload).not.toHaveProperty("paperless_token");
-
-      // Sending only prefPayload to the server would have left paperless_url absent.
-      // The fix is: { ...existingServerSettings, ...prefPayload }
-      const broken = prefPayload; // ← what the old code sent
-      const fixed = { ...existingServerSettings, ...prefPayload };
-
-      expect(broken).not.toHaveProperty("paperless_url");
-      expect(fixed).toHaveProperty("paperless_url", "http://localhost:8000");
     });
   });
 });

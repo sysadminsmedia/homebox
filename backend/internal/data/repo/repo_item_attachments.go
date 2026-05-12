@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strings"
 	"time"
 
@@ -90,34 +91,36 @@ const MimeTypeLinkURL = "link/url"
 // MimeTypePaperlessDocument is the MIME type for Paperless-ngx document links.
 const MimeTypePaperlessDocument = "paperless/document"
 
-var externalLinkMimeTypes = []string{
-	MimeTypeLinkURL,
-	MimeTypePaperlessDocument,
+// sourceTypeMIMEs is the single source of truth mapping user-facing source-type
+// names to their internal MIME discriminators. Both MimeTypeForSourceType and
+// externalLinkMimeTypes are derived from this map so the two can never diverge.
+var sourceTypeMIMEs = map[string]string{
+	"link":      MimeTypeLinkURL,
+	"paperless": MimeTypePaperlessDocument,
 }
+
+// externalLinkMimeTypes is the complete set of MIME types used for reference-only
+// (non-blob) attachments. Derived from sourceTypeMIMEs.
+var externalLinkMimeTypes = func() []string {
+	s := make([]string, 0, len(sourceTypeMIMEs))
+	for _, v := range sourceTypeMIMEs {
+		s = append(s, v)
+	}
+	return s
+}()
 
 // MimeTypeForSourceType maps a user-facing integration source-type name (e.g. "paperless")
 // to the internal MIME discriminator stored in the attachments table.
 // Returns ("", false) for unknown source types.
 func MimeTypeForSourceType(sourceType string) (string, bool) {
-	switch sourceType {
-	case "link":
-		return MimeTypeLinkURL, true
-	case "paperless":
-		return MimeTypePaperlessDocument, true
-	default:
-		return "", false
-	}
+	mime, ok := sourceTypeMIMEs[sourceType]
+	return mime, ok
 }
 
 // isExternalLink reports whether mimeType belongs to the set of registered
 // external-link MIME types (i.e. records stored by path reference, not blob).
 func isExternalLink(mimeType string) bool {
-	for _, m := range externalLinkMimeTypes {
-		if m == mimeType {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(externalLinkMimeTypes, mimeType)
 }
 
 func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
@@ -446,6 +449,10 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 func (r *AttachmentRepo) CreateExternalLink(ctx context.Context, entityID uuid.UUID, externalID string, title string, mimeType string, attType attachment.Type) (*ent.Attachment, error) {
 	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.CreateExternalLink")
 	defer span.End()
+
+	if !isExternalLink(mimeType) {
+		return nil, fmt.Errorf("unsupported external-link MIME type %q", mimeType)
+	}
 
 	if attType == "" {
 		attType = attachment.TypeAttachment

@@ -69,12 +69,12 @@ func ssrfSafeDialContext(ctx context.Context, network, addr string) (net.Conn, e
 	if err != nil {
 		return nil, fmt.Errorf("integration proxy: invalid address %q: %w", addr, err)
 	}
+	d := &net.Dialer{}
 	// Fast path: literal IP — validate directly, no DNS lookup or rebinding window.
 	if ip := net.ParseIP(host); ip != nil {
 		if err := checkBlockedIP(ip); err != nil {
 			return nil, err
 		}
-		d := &net.Dialer{}
 		return d.DialContext(ctx, network, net.JoinHostPort(ip.String(), port))
 	}
 	// Hostname: resolve all addresses and validate each before dialing.
@@ -91,7 +91,6 @@ func ssrfSafeDialContext(ctx context.Context, network, addr string) (net.Conn, e
 			lastErr = err
 			continue
 		}
-		d := &net.Dialer{}
 		conn, dialErr := d.DialContext(ctx, network, net.JoinHostPort(ia.IP.String(), port))
 		if dialErr == nil {
 			return conn, nil
@@ -206,8 +205,6 @@ func (ctrl *V1Controller) HandleIntegrationProxy() errchain.HandlerFunc {
 			var safeURL string
 			if u, parseErr := url.Parse(upstream); parseErr == nil {
 				safeURL = u.Host + u.Path
-			} else {
-				safeURL = "(unparseable)"
 			}
 			log.Err(err).Str("integration", name).Str("upstream", safeURL).Msg("integration proxy: upstream request failed")
 			return validate.NewRequestError(err, http.StatusBadGateway)
@@ -252,7 +249,6 @@ func (ctrl *V1Controller) HandleIntegrationProxy() errchain.HandlerFunc {
 		if ct := resp.Header.Get("Content-Type"); ct != "" {
 			w.Header().Set("Content-Type", ct)
 		}
-		w.WriteHeader(http.StatusOK)
 		if _, writeErr := w.Write(buf); writeErr != nil {
 			log.Err(writeErr).Str("integration", name).Msg("integration proxy: failed to write response")
 		}
