@@ -1439,36 +1439,6 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Group"
-                ],
-                "summary": "Add User to Group",
-                "parameters": [
-                    {
-                        "description": "User ID",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.GroupMemberAdd"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
             }
         },
         "/v1/groups/members/{user_id}": {
@@ -2505,6 +2475,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/users/forgot-password": {
+            "post": {
+                "description": "Sends a password reset email if the address is associated with a local account.\nAlways returns 204 to avoid leaking whether the email is registered.",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Request Password Reset",
+                "parameters": [
+                    {
+                        "description": "Email",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.ForgotPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "local login is disabled or SMTP is not configured",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/users/login": {
             "post": {
                 "consumes": [
@@ -2653,6 +2657,40 @@ const docTemplate = `{
                     },
                     "403": {
                         "description": "Local login is not enabled",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/users/reset-password": {
+            "post": {
+                "description": "Consumes a single-use reset token and changes the user's password.\nOn success, all existing sessions for the user are revoked.",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Reset Password",
+                "parameters": [
+                    {
+                        "description": "Token + new password",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.ResetPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "invalid token, expired token, or missing field",
                         "schema": {
                             "type": "string"
                         }
@@ -3718,6 +3756,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/ent.Tag"
                     }
                 },
+                "user_groups": {
+                    "description": "UserGroups holds the value of the user_groups edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.UserGroup"
+                    }
+                },
                 "users": {
                     "description": "Users holds the value of the users edge.",
                     "type": "array",
@@ -3894,6 +3939,59 @@ const docTemplate = `{
                         }
                     ]
                 },
+                "user": {
+                    "description": "User holds the value of the user edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.User"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.PasswordResetTokens": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the PasswordResetTokensQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.PasswordResetTokensEdges"
+                        }
+                    ]
+                },
+                "expires_at": {
+                    "description": "ExpiresAt holds the value of the \"expires_at\" field.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "token": {
+                    "description": "Token holds the value of the \"token\" field.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                },
+                "used_at": {
+                    "description": "UsedAt holds the value of the \"used_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.PasswordResetTokensEdges": {
+            "type": "object",
+            "properties": {
                 "user": {
                     "description": "User holds the value of the user edge.",
                     "allOf": [
@@ -4097,14 +4195,6 @@ const docTemplate = `{
                     "description": "OidcSubject holds the value of the \"oidc_subject\" field.",
                     "type": "string"
                 },
-                "role": {
-                    "description": "Role holds the value of the \"role\" field.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/user.Role"
-                        }
-                    ]
-                },
                 "settings": {
                     "description": "Settings holds the value of the \"settings\" field.",
                     "type": "object",
@@ -4150,6 +4240,70 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/ent.Notifier"
                     }
+                },
+                "password_reset_tokens": {
+                    "description": "PasswordResetTokens holds the value of the password_reset_tokens edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.PasswordResetTokens"
+                    }
+                },
+                "user_groups": {
+                    "description": "UserGroups holds the value of the user_groups edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.UserGroup"
+                    }
+                }
+            }
+        },
+        "ent.UserGroup": {
+            "type": "object",
+            "properties": {
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the UserGroupQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.UserGroupEdges"
+                        }
+                    ]
+                },
+                "group_id": {
+                    "description": "GroupID holds the value of the \"group_id\" field.",
+                    "type": "string"
+                },
+                "role": {
+                    "description": "Role holds the value of the \"role\" field.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/usergroup.Role"
+                        }
+                    ]
+                },
+                "user_id": {
+                    "description": "UserID holds the value of the \"user_id\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.UserGroupEdges": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                },
+                "user": {
+                    "description": "User holds the value of the user edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.User"
+                        }
+                    ]
                 }
             }
         },
@@ -5647,9 +5801,6 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "isOwner": {
-                    "type": "boolean"
-                },
                 "isSuperuser": {
                     "type": "boolean"
                 },
@@ -5672,9 +5823,6 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
-                },
-                "isOwner": {
-                    "type": "boolean"
                 },
                 "name": {
                     "type": "string"
@@ -5772,7 +5920,7 @@ const docTemplate = `{
                 "TypeTime"
             ]
         },
-        "user.Role": {
+        "usergroup.Role": {
             "type": "string",
             "enum": [
                 "user",
@@ -5900,6 +6048,15 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.ForgotPasswordRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                }
+            }
+        },
         "v1.GroupAcceptInvitationResponse": {
             "type": "object",
             "properties": {
@@ -5944,17 +6101,6 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.GroupMemberAdd": {
-            "type": "object",
-            "required": [
-                "userId"
-            ],
-            "properties": {
-                "userId": {
-                    "type": "string"
-                }
-            }
-        },
         "v1.LoginForm": {
             "type": "object",
             "properties": {
@@ -5985,6 +6131,17 @@ const docTemplate = `{
                 },
                 "enabled": {
                     "type": "boolean"
+                }
+            }
+        },
+        "v1.ResetPasswordRequest": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
                 }
             }
         },

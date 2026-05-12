@@ -546,6 +546,11 @@ definitions:
         items:
           $ref: '#/definitions/ent.Tag'
         type: array
+      user_groups:
+        description: UserGroups holds the value of the user_groups edge.
+        items:
+          $ref: '#/definitions/ent.UserGroup'
+        type: array
       users:
         description: Users holds the value of the users edge.
         items:
@@ -667,6 +672,42 @@ definitions:
         allOf:
         - $ref: '#/definitions/ent.Group'
         description: Group holds the value of the group edge.
+      user:
+        allOf:
+        - $ref: '#/definitions/ent.User'
+        description: User holds the value of the user edge.
+    type: object
+  ent.PasswordResetTokens:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.PasswordResetTokensEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the PasswordResetTokensQuery when eager-loading is set.
+      expires_at:
+        description: ExpiresAt holds the value of the "expires_at" field.
+        type: string
+      id:
+        description: ID of the ent.
+        type: string
+      token:
+        description: Token holds the value of the "token" field.
+        items:
+          type: integer
+        type: array
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      used_at:
+        description: UsedAt holds the value of the "used_at" field.
+        type: string
+    type: object
+  ent.PasswordResetTokensEdges:
+    properties:
       user:
         allOf:
         - $ref: '#/definitions/ent.User'
@@ -805,10 +846,6 @@ definitions:
       oidc_subject:
         description: OidcSubject holds the value of the "oidc_subject" field.
         type: string
-      role:
-        allOf:
-        - $ref: '#/definitions/user.Role'
-        description: Role holds the value of the "role" field.
       settings:
         additionalProperties: true
         description: Settings holds the value of the "settings" field.
@@ -842,6 +879,47 @@ definitions:
         items:
           $ref: '#/definitions/ent.Notifier'
         type: array
+      password_reset_tokens:
+        description: PasswordResetTokens holds the value of the password_reset_tokens
+          edge.
+        items:
+          $ref: '#/definitions/ent.PasswordResetTokens'
+        type: array
+      user_groups:
+        description: UserGroups holds the value of the user_groups edge.
+        items:
+          $ref: '#/definitions/ent.UserGroup'
+        type: array
+    type: object
+  ent.UserGroup:
+    properties:
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.UserGroupEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the UserGroupQuery when eager-loading is set.
+      group_id:
+        description: GroupID holds the value of the "group_id" field.
+        type: string
+      role:
+        allOf:
+        - $ref: '#/definitions/usergroup.Role'
+        description: Role holds the value of the "role" field.
+      user_id:
+        description: UserID holds the value of the "user_id" field.
+        type: string
+    type: object
+  ent.UserGroupEdges:
+    properties:
+      group:
+        allOf:
+        - $ref: '#/definitions/ent.Group'
+        description: Group holds the value of the group edge.
+      user:
+        allOf:
+        - $ref: '#/definitions/ent.User'
+        description: User holds the value of the user edge.
     type: object
   entityfield.Type:
     enum:
@@ -1865,8 +1943,6 @@ definitions:
         type: array
       id:
         type: string
-      isOwner:
-        type: boolean
       isSuperuser:
         type: boolean
       name:
@@ -1882,8 +1958,6 @@ definitions:
         type: string
       id:
         type: string
-      isOwner:
-        type: boolean
       name:
         type: string
     type: object
@@ -1948,7 +2022,7 @@ definitions:
     - TypeNumber
     - TypeBoolean
     - TypeTime
-  user.Role:
+  usergroup.Role:
     enum:
     - user
     - user
@@ -2034,6 +2108,12 @@ definitions:
     - name
     - parentId
     type: object
+  v1.ForgotPasswordRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+    type: object
   v1.GroupAcceptInvitationResponse:
     properties:
       id:
@@ -2063,13 +2143,6 @@ definitions:
     required:
     - uses
     type: object
-  v1.GroupMemberAdd:
-    properties:
-      userId:
-        type: string
-    required:
-    - userId
-    type: object
   v1.LoginForm:
     properties:
       password:
@@ -2091,6 +2164,13 @@ definitions:
         type: string
       enabled:
         type: boolean
+    type: object
+  v1.ResetPasswordRequest:
+    properties:
+      password:
+        type: string
+      token:
+        type: string
     type: object
   v1.TelemetryStatus:
     properties:
@@ -3020,24 +3100,6 @@ paths:
       summary: Get All Group Members
       tags:
       - Group
-    post:
-      parameters:
-      - description: User ID
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/v1.GroupMemberAdd'
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-      security:
-      - Bearer: []
-      summary: Add User to Group
-      tags:
-      - Group
   /v1/groups/members/{user_id}:
     delete:
       parameters:
@@ -3666,6 +3728,30 @@ paths:
       summary: Change Password
       tags:
       - User
+  /v1/users/forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Sends a password reset email if the address is associated with a local account.
+        Always returns 204 to avoid leaking whether the email is registered.
+      parameters:
+      - description: Email
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ForgotPasswordRequest'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: local login is disabled or SMTP is not configured
+          schema:
+            type: string
+      summary: Request Password Reset
+      tags:
+      - Authentication
   /v1/users/login:
     post:
       consumes:
@@ -3765,6 +3851,30 @@ paths:
       summary: Register New User
       tags:
       - User
+  /v1/users/reset-password:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Consumes a single-use reset token and changes the user's password.
+        On success, all existing sessions for the user are revoked.
+      parameters:
+      - description: Token + new password
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ResetPasswordRequest'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: invalid token, expired token, or missing field
+          schema:
+            type: string
+      summary: Reset Password
+      tags:
+      - Authentication
   /v1/users/self:
     delete:
       produces:

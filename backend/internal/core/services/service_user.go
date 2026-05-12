@@ -13,18 +13,23 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/mailer"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
 
 var (
-	oneWeek           = time.Hour * 24 * 7
-	ErrorInvalidLogin = errors.New("invalid username or password")
-	ErrorInvalidToken = errors.New("invalid token")
+	oneWeek                   = time.Hour * 24 * 7
+	passwordResetTokenTTL     = time.Hour
+	ErrorInvalidLogin         = errors.New("invalid username or password")
+	ErrorInvalidToken         = errors.New("invalid token")
+	ErrorMailerNotConfigured  = errors.New("password reset by email is unavailable: SMTP is not configured")
+	ErrorPasswordResetInvalid = errors.New("password reset link is invalid or has expired")
 )
 
 type UserService struct {
-	repos *repo.AllRepos
+	repos  *repo.AllRepos
+	mailer *mailer.Mailer
 }
 
 type (

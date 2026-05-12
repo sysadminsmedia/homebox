@@ -143,6 +143,124 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 	}
 }
 
+type (
+	ForgotPasswordRequest struct {
+		Email string `json:"email" example:"user@example.com"`
+	}
+
+	ResetPasswordRequest struct {
+		Token       string `json:"token"`
+		NewPassword string `json:"password"`
+	}
+)
+
+// HandleForgotPassword godoc
+//
+//	@Summary		Request Password Reset
+//	@Description	Sends a password reset email if the address is associated with a local account.
+//	@Description	Always returns 204 to avoid leaking whether the email is registered.
+//	@Tags			Authentication
+//	@Accept			application/json
+//	@Param			payload	body	ForgotPasswordRequest	true	"Email"
+//	@Success		204
+//	@Failure		400	{string}	string	"local login is disabled or SMTP is not configured"
+//	@Router			/v1/users/forgot-password [POST]
+func (ctrl *V1Controller) HandleForgotPassword() errchain.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleForgotPassword")
+		defer span.End()
+
+		if !ctrl.config.Options.AllowLocalLogin {
+			span.SetAttributes(attribute.String("forgot.outcome", "local_login_disabled"))
+			return validate.NewRequestError(errors.New("local login is not enabled"), http.StatusForbidden)
+		}
+
+		var body ForgotPasswordRequest
+		if err := server.Decode(r, &body); err != nil {
+			span.SetAttributes(attribute.String("forgot.outcome", "decode_failed"))
+			return validate.NewRequestError(err, http.StatusBadRequest)
+		}
+		body.Email = strings.TrimSpace(body.Email)
+		span.SetAttributes(attribute.Int("user.email.length", len(body.Email)))
+		if body.Email == "" {
+			span.SetAttributes(attribute.String("forgot.outcome", "missing_email"))
+			return validate.NewRequestError(errors.New("email is required"), http.StatusBadRequest)
+		}
+
+		if !ctrl.svc.User.MailerReady() {
+			// Surface the misconfiguration explicitly rather than silently
+			// swallowing it: an admin staring at "we sent an email" with
+			// nothing arriving is much harder to debug than a clear 400.
+			span.SetAttributes(attribute.String("forgot.outcome", "mailer_not_configured"))
+			return validate.NewRequestError(
+				errors.New("password reset by email is not available — SMTP is not configured on this server"),
+				http.StatusServiceUnavailable,
+			)
+		}
+
+		baseURL := GetHBURL(r, &ctrl.config.Options, ctrl.url)
+
+		if err := ctrl.svc.User.RequestPasswordReset(spanCtx, body.Email, baseURL); err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("forgot.outcome", "service_failed"))
+			log.Err(err).Msg("password reset request failed")
+			// Don't leak the underlying error to the client; respond with 500
+			// but no details.
+			return validate.NewRequestError(errors.New("internal error"), http.StatusInternalServerError)
+		}
+
+		span.SetAttributes(attribute.String("forgot.outcome", "ok"))
+		return server.JSON(w, http.StatusNoContent, nil)
+	}
+}
+
+// HandleResetPassword godoc
+//
+//	@Summary		Reset Password
+//	@Description	Consumes a single-use reset token and changes the user's password.
+//	@Description	On success, all existing sessions for the user are revoked.
+//	@Tags			Authentication
+//	@Accept			application/json
+//	@Param			payload	body	ResetPasswordRequest	true	"Token + new password"
+//	@Success		204
+//	@Failure		400	{string}	string	"invalid token, expired token, or missing field"
+//	@Router			/v1/users/reset-password [POST]
+func (ctrl *V1Controller) HandleResetPassword() errchain.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleResetPassword")
+		defer span.End()
+
+		if !ctrl.config.Options.AllowLocalLogin {
+			span.SetAttributes(attribute.String("reset.outcome", "local_login_disabled"))
+			return validate.NewRequestError(errors.New("local login is not enabled"), http.StatusForbidden)
+		}
+
+		var body ResetPasswordRequest
+		if err := server.Decode(r, &body); err != nil {
+			span.SetAttributes(attribute.String("reset.outcome", "decode_failed"))
+			return validate.NewRequestError(err, http.StatusBadRequest)
+		}
+		span.SetAttributes(
+			attribute.Int("token.length", len(body.Token)),
+			attribute.Int("password.new.length", len(body.NewPassword)),
+		)
+
+		if err := ctrl.svc.User.ResetPassword(spanCtx, body.Token, body.NewPassword); err != nil {
+			if errors.Is(err, services.ErrorPasswordResetInvalid) {
+				span.SetAttributes(attribute.String("reset.outcome", "token_invalid"))
+				return validate.NewRequestError(err, http.StatusBadRequest)
+			}
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("reset.outcome", "service_failed"))
+			log.Err(err).Msg("password reset failed")
+			return validate.NewRequestError(errors.New("internal error"), http.StatusInternalServerError)
+		}
+
+		span.SetAttributes(attribute.String("reset.outcome", "success"))
+		return server.JSON(w, http.StatusNoContent, nil)
+	}
+}
+
 // HandleAuthLogout godoc
 //
 //	@Summary	User Logout

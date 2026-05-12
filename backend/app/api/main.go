@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"runtime"
 	"strings"
 	"time"
@@ -94,6 +95,12 @@ func validatePostgresSSLMode(sslMode string) bool {
 
 func main() {
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
+
+	// Subcommand dispatch happens before config.New so the conf package never
+	// sees positional args (which it would treat as an error).
+	if handled, code := runResetPasswordCLI(os.Args); handled {
+		os.Exit(code)
+	}
 
 	cfg, err := config.New(build(), "Homebox inventory management system")
 	if err != nil {
@@ -240,6 +247,7 @@ func run(cfg *config.Config) error {
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),
 		services.WithCurrencies(currencyData),
 		services.WithNotifierConfig(&cfg.Notifier),
+		services.WithMailer(&app.mailer),
 	)
 
 	ensureAssetIDs(app)

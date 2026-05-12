@@ -15,6 +15,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/passwordresettokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -211,6 +212,21 @@ func (_c *UserCreate) AddAuthTokens(v ...*AuthTokens) *UserCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddAuthTokenIDs(ids...)
+}
+
+// AddPasswordResetTokenIDs adds the "password_reset_tokens" edge to the PasswordResetTokens entity by IDs.
+func (_c *UserCreate) AddPasswordResetTokenIDs(ids ...uuid.UUID) *UserCreate {
+	_c.mutation.AddPasswordResetTokenIDs(ids...)
+	return _c
+}
+
+// AddPasswordResetTokens adds the "password_reset_tokens" edges to the PasswordResetTokens entity.
+func (_c *UserCreate) AddPasswordResetTokens(v ...*PasswordResetTokens) *UserCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddPasswordResetTokenIDs(ids...)
 }
 
 // AddAPIKeyIDs adds the "api_keys" edge to the APIKey entity by IDs.
@@ -447,6 +463,22 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(authtokens.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.PasswordResetTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.PasswordResetTokensTable,
+			Columns: []string{user.PasswordResetTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(passwordresettokens.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

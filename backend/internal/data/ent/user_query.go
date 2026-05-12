@@ -17,6 +17,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/passwordresettokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/usergroup"
@@ -25,15 +26,16 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx            *QueryContext
-	order          []user.OrderOption
-	inters         []Interceptor
-	predicates     []predicate.User
-	withGroups     *GroupQuery
-	withAuthTokens *AuthTokensQuery
-	withAPIKeys    *APIKeyQuery
-	withNotifiers  *NotifierQuery
-	withUserGroups *UserGroupQuery
+	ctx                     *QueryContext
+	order                   []user.OrderOption
+	inters                  []Interceptor
+	predicates              []predicate.User
+	withGroups              *GroupQuery
+	withAuthTokens          *AuthTokensQuery
+	withPasswordResetTokens *PasswordResetTokensQuery
+	withAPIKeys             *APIKeyQuery
+	withNotifiers           *NotifierQuery
+	withUserGroups          *UserGroupQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -107,6 +109,28 @@ func (_q *UserQuery) QueryAuthTokens() *AuthTokensQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(authtokens.Table, authtokens.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.AuthTokensTable, user.AuthTokensColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPasswordResetTokens chains the current query on the "password_reset_tokens" edge.
+func (_q *UserQuery) QueryPasswordResetTokens() *PasswordResetTokensQuery {
+	query := (&PasswordResetTokensClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(passwordresettokens.Table, passwordresettokens.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.PasswordResetTokensTable, user.PasswordResetTokensColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -367,16 +391,17 @@ func (_q *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:         _q.config,
-		ctx:            _q.ctx.Clone(),
-		order:          append([]user.OrderOption{}, _q.order...),
-		inters:         append([]Interceptor{}, _q.inters...),
-		predicates:     append([]predicate.User{}, _q.predicates...),
-		withGroups:     _q.withGroups.Clone(),
-		withAuthTokens: _q.withAuthTokens.Clone(),
-		withAPIKeys:    _q.withAPIKeys.Clone(),
-		withNotifiers:  _q.withNotifiers.Clone(),
-		withUserGroups: _q.withUserGroups.Clone(),
+		config:                  _q.config,
+		ctx:                     _q.ctx.Clone(),
+		order:                   append([]user.OrderOption{}, _q.order...),
+		inters:                  append([]Interceptor{}, _q.inters...),
+		predicates:              append([]predicate.User{}, _q.predicates...),
+		withGroups:              _q.withGroups.Clone(),
+		withAuthTokens:          _q.withAuthTokens.Clone(),
+		withPasswordResetTokens: _q.withPasswordResetTokens.Clone(),
+		withAPIKeys:             _q.withAPIKeys.Clone(),
+		withNotifiers:           _q.withNotifiers.Clone(),
+		withUserGroups:          _q.withUserGroups.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -402,6 +427,17 @@ func (_q *UserQuery) WithAuthTokens(opts ...func(*AuthTokensQuery)) *UserQuery {
 		opt(query)
 	}
 	_q.withAuthTokens = query
+	return _q
+}
+
+// WithPasswordResetTokens tells the query-builder to eager-load the nodes that are connected to
+// the "password_reset_tokens" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithPasswordResetTokens(opts ...func(*PasswordResetTokensQuery)) *UserQuery {
+	query := (&PasswordResetTokensClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withPasswordResetTokens = query
 	return _q
 }
 
@@ -516,9 +552,10 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = _q.querySpec()
-		loadedTypes = [5]bool{
+		loadedTypes = [6]bool{
 			_q.withGroups != nil,
 			_q.withAuthTokens != nil,
+			_q.withPasswordResetTokens != nil,
 			_q.withAPIKeys != nil,
 			_q.withNotifiers != nil,
 			_q.withUserGroups != nil,
@@ -553,6 +590,15 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := _q.loadAuthTokens(ctx, query, nodes,
 			func(n *User) { n.Edges.AuthTokens = []*AuthTokens{} },
 			func(n *User, e *AuthTokens) { n.Edges.AuthTokens = append(n.Edges.AuthTokens, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withPasswordResetTokens; query != nil {
+		if err := _q.loadPasswordResetTokens(ctx, query, nodes,
+			func(n *User) { n.Edges.PasswordResetTokens = []*PasswordResetTokens{} },
+			func(n *User, e *PasswordResetTokens) {
+				n.Edges.PasswordResetTokens = append(n.Edges.PasswordResetTokens, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -667,6 +713,37 @@ func (_q *UserQuery) loadAuthTokens(ctx context.Context, query *AuthTokensQuery,
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_auth_tokens" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *UserQuery) loadPasswordResetTokens(ctx context.Context, query *PasswordResetTokensQuery, nodes []*User, init func(*User), assign func(*User, *PasswordResetTokens)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.PasswordResetTokens(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.PasswordResetTokensColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.user_password_reset_tokens
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_password_reset_tokens" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_password_reset_tokens" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
