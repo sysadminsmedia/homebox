@@ -156,14 +156,10 @@ export function detectServiceFromUrl(url: string, settings: Record<string, strin
     return null;
   }
 
-  // 2. Pattern-only fallback – skipped for any service that has a configured base URL
-  // (if settings are present but host didn't match, we do NOT fall back to pattern;
-  //  this prevents host-prefix spoofing: paperless.local.evil won't match paperless.local).
-  for (const adapter of SERVICE_ADAPTERS) {
-    if (settings[adapter.settingsUrlKey]) continue; // configured but didn't match – skip
-    if (adapter.extractId(url) !== null) return adapter;
-  }
-
+  // Pattern-only fallback intentionally removed: a URL is only classified as a service
+  // link when the service base URL is configured AND the URL matches that base.
+  // If no URL is configured for a service, dropped URLs are stored as plain link/url
+  // attachments instead of being silently classified as service links.
   return null;
 }
 

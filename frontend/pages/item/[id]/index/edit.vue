@@ -5,14 +5,13 @@
   import type { ItemAttachment, EntityFieldData, EntityOut, EntityUpdate } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useTagStore } from "~/stores/tags";
-  import { classifyDroppedUrl, extractPaperlessDocId } from "~/lib/integration-adapters";
+  import { classifyDroppedUrl } from "~/lib/integration-adapters";
   import MdiLoading from "~icons/mdi/loading";
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiContentSaveOutline from "~icons/mdi/content-save-outline";
   import MdiImageOutline from "~icons/mdi/image-outline";
   import MdiOpenInNew from "~icons/mdi/open-in-new";
-  import MdiAutorenew from "~icons/mdi/autorenew";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { Button } from "@/components/ui/button";
   import { useDialog } from "@/components/ui/dialog-provider";
@@ -393,23 +392,16 @@
     const zoneEl = targetEl?.closest("[data-link-type]");
     const attachmentType = zoneEl?.getAttribute("data-link-type") || "attachment";
 
-    let title = fallbackLinkTitle(droppedURL);
-    let sourceType = "link";
-    let externalId = droppedURL;
+    // Always use the URL-based title as fallback; the real document title is
+    // fetched from the service API at display time (hydration in AttachmentsList.vue).
+    const title = fallbackLinkTitle(droppedURL);
 
-    // Classify the dropped URL against the service registry.
-    // Falls back to pattern-only detection when settings are missing or invalid.
     const classified = classifyDroppedUrl(droppedURL, integrationSettings);
-    if (classified) {
-      sourceType = classified.adapter.name;
-      externalId = classified.id;
-      title = classified.adapter.buildTitle(classified.id);
-    }
 
     const { data, error } = await api.items.attachments.addExternalLink(
       itemId.value,
-      sourceType,
-      externalId,
+      "link",
+      droppedURL,
       title,
       attachmentType
     );
@@ -419,11 +411,11 @@
       return;
     }
 
-    if (sourceType === "link") {
-      toast.success(t("items.toast.attachment_uploaded"));
-    } else {
-      const serviceName = sourceType.charAt(0).toUpperCase() + sourceType.slice(1);
+    if (classified) {
+      const serviceName = classified.adapter.name.charAt(0).toUpperCase() + classified.adapter.name.slice(1);
       toast.success(`${serviceName} linked`);
+    } else {
+      toast.success(t("items.toast.attachment_uploaded"));
     }
     item.value.attachments = data.attachments;
   }
@@ -448,40 +440,6 @@
   }
 
   const confirm = useConfirm();
-
-  const reclassifyingLinkId = ref<string | null>(null);
-
-  async function reclassifyLinkAsPaperless(attachment: ItemAttachment) {
-    const docId = extractPaperlessDocId(attachment.path);
-    if (!docId) return;
-
-    reclassifyingLinkId.value = attachment.id;
-
-    const { error: delError } = await api.items.attachments.delete(itemId.value, attachment.id);
-    if (delError) {
-      toast.error(t("items.toast.failed_delete_attachment"));
-      reclassifyingLinkId.value = null;
-      return;
-    }
-
-    const { data, error } = await api.items.attachments.addExternalLink(
-      itemId.value,
-      "paperless",
-      docId,
-      attachment.title,
-      attachment.type
-    );
-
-    reclassifyingLinkId.value = null;
-
-    if (error || !data) {
-      toast.error(t("items.toast.failed_upload_attachment"));
-      return;
-    }
-
-    item.value.attachments = data.attachments;
-    toast.success("Paperless document linked");
-  }
 
   async function deleteAttachment(attachmentId: string) {
     const confirmed = await confirm.open(t("items.delete_attachment_confirm"));
@@ -892,20 +850,6 @@
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>{{ $t("items.edit.view_image") }}</TooltipContent>
-                  </Tooltip>
-                  <Tooltip v-if="attachment.mimeType === 'link/url' && extractPaperlessDocId(attachment.path)">
-                    <TooltipTrigger as-child>
-                      <Button
-                        :disabled="reclassifyingLinkId === attachment.id"
-                        variant="outline"
-                        size="icon"
-                        @click="reclassifyLinkAsPaperless(attachment)"
-                      >
-                        <MdiLoading v-if="reclassifyingLinkId === attachment.id" class="animate-spin" />
-                        <MdiAutorenew v-else />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Reclassify as Paperless</TooltipContent>
                   </Tooltip>
                   <Tooltip v-if="(attachment.path ?? '').startsWith('http://') || (attachment.path ?? '').startsWith('https://')">
                     <TooltipTrigger as-child>

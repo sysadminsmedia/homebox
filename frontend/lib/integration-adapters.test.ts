@@ -107,14 +107,12 @@ describe("integration adapters", () => {
       expect(detectServiceFromUrl("https://immich.local/assets/1", settings)?.name).toBe("immich");
     });
 
-    it("detects paperless via URL pattern when settings empty", () => {
-      expect(detectServiceFromUrl("https://any.host/documents/1/details", {})?.name).toBe("paperless");
+    it("returns null for paperless URL when settings are empty (no fallback)", () => {
+      expect(detectServiceFromUrl("https://any.host/documents/1/details", {})).toBeNull();
     });
 
-    it("detects immich via URL pattern when settings empty", () => {
-      expect(detectServiceFromUrl("https://any.host/assets/1df4f848-c8fc-4e72-bfba-20159757da8f", {})?.name).toBe(
-        "immich"
-      );
+    it("returns null for immich URL when settings are empty (no fallback)", () => {
+      expect(detectServiceFromUrl("https://any.host/assets/1df4f848-c8fc-4e72-bfba-20159757da8f", {})).toBeNull();
     });
 
     it("does not match host-prefix attacks", () => {
@@ -144,10 +142,8 @@ describe("integration adapters", () => {
       expect(result?.id).toBe("1df4f848-c8fc-4e72-bfba-20159757da8f");
     });
 
-    it("classifies paperless URL with missing settings (pattern fallback)", () => {
-      const result = classifyDroppedUrl("https://any.host/documents/7/details", {});
-      expect(result?.adapter.name).toBe("paperless");
-      expect(result?.id).toBe("7");
+    it("returns null for paperless URL with no settings configured (no fallback)", () => {
+      expect(classifyDroppedUrl("https://any.host/documents/7/details", {})).toBeNull();
     });
 
     it("returns null for unrecognised URL", () => {
@@ -160,10 +156,8 @@ describe("integration adapters", () => {
       expect(result?.id).toBe("42");
     });
 
-    it("classifies immich URL with no settings (pattern fallback)", () => {
-      const result = classifyDroppedUrl("https://any.host/assets/1df4f848-c8fc-4e72-bfba-20159757da8f", {});
-      expect(result?.adapter.name).toBe("immich");
-      expect(result?.id).toBe("1df4f848-c8fc-4e72-bfba-20159757da8f");
+    it("returns null for immich URL with no settings configured (no fallback)", () => {
+      expect(classifyDroppedUrl("https://any.host/assets/1df4f848-c8fc-4e72-bfba-20159757da8f", {})).toBeNull();
     });
   });
 
