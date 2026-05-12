@@ -1,14 +1,10 @@
 /**
- * Integration adapter registry for external link services (Paperless, Immich, …).
+ * Integration adapter registry for external link services (Paperless, …).
  *
  * To add a new service:
  *  1. Add an `extractXyzId` function below using `extractWithPattern`.
  *  2. Push a new `ServiceAdapter` entry to `SERVICE_ADAPTERS`.
  *  That's it – drop detection, classification, and hydration are all registry-driven.
- *
- * To remove a service (e.g. Immich):
- *  1. Delete its `ServiceAdapter` entry from `SERVICE_ADAPTERS`.
- *  2. Delete its extract function and any service-specific template branch.
  */
 
 // ---------------------------------------------------------------------------
@@ -79,11 +75,6 @@ export function extractPaperlessDocId(url: string, baseUrl?: string): string | n
   return extractWithPattern(url, baseUrl, /\/documents\/(\d+)(?:\/details)?\/?$/);
 }
 
-/** Extract Immich asset UUID from pattern: /assets/{uuid} */
-export function extractImmichAssetId(url: string, baseUrl?: string): string | null {
-  return extractWithPattern(url, baseUrl, /\/assets\/([a-f0-9-]+)\/?$/i);
-}
-
 // ---------------------------------------------------------------------------
 // Service registry – the single source of truth for all integrations
 // ---------------------------------------------------------------------------
@@ -96,14 +87,6 @@ export const SERVICE_ADAPTERS: ServiceAdapter[] = [
     settingsTokenKey: "paperless_token",
     extractId: extractPaperlessDocId,
     buildTitle: id => `Paperless Document ${id}`,
-  },
-  {
-    name: "immich",
-    mimeType: "immich/asset",
-    settingsUrlKey: "immich_url",
-    settingsTokenKey: "immich_token",
-    extractId: extractImmichAssetId,
-    buildTitle: id => `Immich Asset ${id}`,
   },
 ];
 
