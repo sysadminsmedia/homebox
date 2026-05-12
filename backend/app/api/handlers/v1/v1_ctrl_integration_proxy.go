@@ -49,6 +49,8 @@ var blockedCIDRs = func() []*net.IPNet {
 	return nets
 }()
 
+// checkBlockedIP returns an error if ip falls within any of the blocked ranges
+// (loopback, link-local, RFC1918, cloud metadata, etc.).
 func checkBlockedIP(ip net.IP) error {
 	for _, block := range blockedCIDRs {
 		if block.Contains(ip) {

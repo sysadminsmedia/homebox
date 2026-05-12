@@ -109,6 +109,8 @@ func MimeTypeForSourceType(sourceType string) (string, bool) {
 	}
 }
 
+// isExternalLink reports whether mimeType belongs to the set of registered
+// external-link MIME types (i.e. records stored by path reference, not blob).
 func isExternalLink(mimeType string) bool {
 	for _, m := range externalLinkMimeTypes {
 		if m == mimeType {
@@ -438,6 +440,9 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	return attachmentDb, nil
 }
 
+// CreateExternalLink persists a new attachment that references an external
+// resource by externalID (e.g. a Paperless document ID or a URL) rather than
+// uploading a blob. mimeType must be a value registered in externalLinkMimeTypes.
 func (r *AttachmentRepo) CreateExternalLink(ctx context.Context, entityID uuid.UUID, externalID string, title string, mimeType string, attType attachment.Type) (*ent.Attachment, error) {
 	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.CreateExternalLink")
 	defer span.End()
