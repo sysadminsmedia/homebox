@@ -64,6 +64,25 @@ func getScheme(r *http.Request, trustProxy bool) string {
 	return "http"
 }
 
+// SecureBaseURL returns a base URL safe to embed in security-sensitive emails
+// (password reset, etc.). Unlike GetHBURL it deliberately omits the Referer
+// fallback, since Referer is unauthenticated client input — an attacker who
+// can reach /forgot-password could otherwise poison the link in the victim's
+// reset email and phish the new password. X-Forwarded-Host is honored only
+// when the operator has opted into TrustProxy. Returns "" when no trusted
+// source is available; callers must refuse the operation in that case.
+func SecureBaseURL(r *http.Request, options *config.Options) string {
+	if options.Hostname != "" {
+		return ensureScheme(options.Hostname, r, options.TrustProxy)
+	}
+	if options.TrustProxy {
+		if xfHost := r.Header.Get("X-Forwarded-Host"); xfHost != "" {
+			return getScheme(r, options.TrustProxy) + "://" + xfHost
+		}
+	}
+	return ""
+}
+
 // stripPathFromURL removes the path from a URL.
 // ex. https://example.com/tools -> https://example.com
 func stripPathFromURL(rawURL string) string {

@@ -25,17 +25,20 @@ func (svc *UserService) MailerReady() bool {
 	return svc.mailer != nil && svc.mailer.Ready()
 }
 
-// RequestPasswordReset issues a single-use reset token for the account at
-// `email` and emails the link. To prevent account enumeration, it returns nil
-// for both "user not found" and "user has no password" — only infrastructure
-// failures (mail send, db write) surface as errors. The handler should treat
-// nil as success regardless of whether mail was actually sent.
+// RequestPasswordReset issues a single-use reset token and emails the link.
+// All work — user lookup, token creation, SMTP send — runs in a background
+// goroutine so the HTTP response time does not depend on whether the email
+// is registered. Without this, the SMTP call (tens of ms) would defeat the
+// "always 204" enumeration defense by letting an attacker time-distinguish
+// known accounts from unknown ones. Only the up-front "is the mailer
+// configured" check runs synchronously.
 //
 // baseURL is the absolute URL prefix (scheme + host) the reset link is built
-// against; the caller resolves it via GetHBURL so proxy and hostname configs
-// are respected.
+// against. The handler MUST resolve it via SecureBaseURL — never via
+// GetHBURL — so a forged Referer or untrusted X-Forwarded-Host can't poison
+// the link in the victim's email.
 func (svc *UserService) RequestPasswordReset(ctx context.Context, email, baseURL string) error {
-	ctx, span := entityServiceTracer().Start(ctx, "service.UserService.RequestPasswordReset",
+	_, span := entityServiceTracer().Start(ctx, "service.UserService.RequestPasswordReset",
 		trace.WithAttributes(
 			attribute.Int("user.email.length", len(email)),
 			attribute.Int("base_url.length", len(baseURL)),
@@ -47,33 +50,44 @@ func (svc *UserService) RequestPasswordReset(ctx context.Context, email, baseURL
 		return ErrorMailerNotConfigured
 	}
 
+	// Detach from the request context so a client disconnect or timeout
+	// doesn't abort the email send halfway through. Errors are logged, never
+	// propagated — surfacing them would re-introduce the enumeration leak.
+	go svc.processResetRequest(email, baseURL)
+
+	span.SetAttributes(attribute.String("reset.outcome", "queued"))
+	return nil
+}
+
+func (svc *UserService) processResetRequest(email, baseURL string) {
+	ctx, span := entityServiceTracer().Start(context.Background(), "service.UserService.processResetRequest",
+		trace.WithAttributes(attribute.Int("user.email.length", len(email))))
+	defer span.End()
+
 	rawToken, usr, err := svc.createResetToken(ctx, email)
 	if err != nil {
-		if ent.IsNotFound(err) {
+		switch {
+		case ent.IsNotFound(err):
 			span.SetAttributes(attribute.String("reset.outcome", "user_not_found"))
-			return nil
-		}
-		if errors.Is(err, errResetUserHasNoPassword) {
+		case errors.Is(err, errResetUserHasNoPassword):
 			span.SetAttributes(attribute.String("reset.outcome", "user_no_password"))
-			return nil
+		default:
+			recordServiceSpanError(span, err)
+			span.SetAttributes(attribute.String("reset.outcome", "create_failed"))
+			log.Err(err).Msg("failed to create password reset token")
 		}
-		recordServiceSpanError(span, err)
-		span.SetAttributes(attribute.String("reset.outcome", "create_failed"))
-		return err
+		return
 	}
 	span.SetAttributes(attribute.String("user.id", usr.ID.String()))
 
 	link := buildResetLink(baseURL, rawToken)
-	span.SetAttributes(attribute.Int("reset.link.length", len(link)))
-
 	if err := svc.sendResetEmail(usr, link); err != nil {
 		recordServiceSpanError(span, err)
 		span.SetAttributes(attribute.String("reset.outcome", "email_send_failed"))
-		return err
+		log.Err(err).Str("user.id", usr.ID.String()).Msg("failed to send password reset email")
+		return
 	}
-
 	span.SetAttributes(attribute.String("reset.outcome", "sent"))
-	return nil
 }
 
 // GenerateResetLink mints a token and returns the reset URL without sending
@@ -136,6 +150,23 @@ func (svc *UserService) ResetPassword(ctx context.Context, rawToken, newPassword
 		attribute.String("token.id", tok.ID.String()),
 	)
 
+	// Claim the token BEFORE changing the password. MarkUsed is an atomic
+	// conditional update (used_at IS NULL → now), so a concurrent request
+	// holding the same token loses the race here and never reaches
+	// ChangePassword. Without this ordering both racers would call
+	// ChangePassword and the last write would win — letting an attacker
+	// race a legitimate user with the same stolen token to plant their own
+	// password.
+	if err := svc.repos.PasswordResetTokens.MarkUsed(ctx, tok.ID, time.Now()); err != nil {
+		if errors.Is(err, repo.ErrPasswordResetTokenAlreadyClaimed) {
+			span.SetAttributes(attribute.String("reset.outcome", "claim_race_lost"))
+			return ErrorPasswordResetInvalid
+		}
+		recordServiceSpanError(span, err)
+		span.SetAttributes(attribute.String("reset.outcome", "mark_used_failed"))
+		return err
+	}
+
 	hashed, err := hasher.HashPasswordCtx(ctx, newPassword)
 	if err != nil {
 		recordServiceSpanError(span, err)
@@ -146,14 +177,6 @@ func (svc *UserService) ResetPassword(ctx context.Context, rawToken, newPassword
 	if err := svc.repos.Users.ChangePassword(ctx, tok.UserID, hashed); err != nil {
 		recordServiceSpanError(span, err)
 		span.SetAttributes(attribute.String("reset.outcome", "persist_failed"))
-		return err
-	}
-
-	// Mark the token used before revoking sessions: if the next step fails the
-	// token still cannot be replayed, which is the more important invariant.
-	if err := svc.repos.PasswordResetTokens.MarkUsed(ctx, tok.ID, time.Now()); err != nil {
-		recordServiceSpanError(span, err)
-		span.SetAttributes(attribute.String("reset.outcome", "mark_used_failed"))
 		return err
 	}
 

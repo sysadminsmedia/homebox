@@ -8,7 +8,7 @@ require (
 	github.com/ardanlabs/conf/v3 v3.11.0
 	github.com/containrrr/shoutrrr v0.8.0
 	github.com/coreos/go-oidc/v3 v3.18.0
-	github.com/evanoberholster/imagemeta v1.0.0
+	github.com/evanoberholster/imagemeta v0.3.1
 	github.com/gen2brain/avif v0.4.4
 	github.com/gen2brain/heic v0.4.9
 	github.com/gen2brain/jpegxl v0.4.5

@@ -170,6 +170,11 @@ func (ctrl *V1Controller) HandleForgotPassword() errchain.HandlerFunc {
 		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleForgotPassword")
 		defer span.End()
 
+		if ctrl.isDemo {
+			span.SetAttributes(attribute.String("forgot.outcome", "demo_blocked"))
+			return validate.NewRequestError(nil, http.StatusForbidden)
+		}
+
 		if !ctrl.config.Options.AllowLocalLogin {
 			span.SetAttributes(attribute.String("forgot.outcome", "local_login_disabled"))
 			return validate.NewRequestError(errors.New("local login is not enabled"), http.StatusForbidden)
@@ -190,7 +195,7 @@ func (ctrl *V1Controller) HandleForgotPassword() errchain.HandlerFunc {
 		if !ctrl.svc.User.MailerReady() {
 			// Surface the misconfiguration explicitly rather than silently
 			// swallowing it: an admin staring at "we sent an email" with
-			// nothing arriving is much harder to debug than a clear 400.
+			// nothing arriving is much harder to debug than a clear 503.
 			span.SetAttributes(attribute.String("forgot.outcome", "mailer_not_configured"))
 			return validate.NewRequestError(
 				errors.New("password reset by email is not available — SMTP is not configured on this server"),
@@ -198,7 +203,16 @@ func (ctrl *V1Controller) HandleForgotPassword() errchain.HandlerFunc {
 			)
 		}
 
-		baseURL := GetHBURL(r, &ctrl.config.Options, ctrl.url)
+		// SecureBaseURL refuses Referer-based fallback so an attacker can't
+		// poison the link in the victim's email by sending a forged Referer.
+		baseURL := SecureBaseURL(r, &ctrl.config.Options)
+		if baseURL == "" {
+			span.SetAttributes(attribute.String("forgot.outcome", "no_safe_base_url"))
+			return validate.NewRequestError(
+				errors.New("password reset by email is not available — set HBOX_OPTIONS_HOSTNAME so the reset link can be constructed safely"),
+				http.StatusServiceUnavailable,
+			)
+		}
 
 		if err := ctrl.svc.User.RequestPasswordReset(spanCtx, body.Email, baseURL); err != nil {
 			recordCtrlSpanError(span, err)
@@ -229,6 +243,11 @@ func (ctrl *V1Controller) HandleResetPassword() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleResetPassword")
 		defer span.End()
+
+		if ctrl.isDemo {
+			span.SetAttributes(attribute.String("reset.outcome", "demo_blocked"))
+			return validate.NewRequestError(nil, http.StatusForbidden)
+		}
 
 		if !ctrl.config.Options.AllowLocalLogin {
 			span.SetAttributes(attribute.String("reset.outcome", "local_login_disabled"))

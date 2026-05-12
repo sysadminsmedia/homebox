@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
@@ -83,15 +84,36 @@ func (r *PasswordResetTokenRepository) GetValidByHash(ctx context.Context, token
 	}, nil
 }
 
-// MarkUsed sets used_at on the token so it cannot be replayed.
+// ErrPasswordResetTokenAlreadyClaimed is returned by MarkUsed when no
+// unclaimed row matched the predicate — i.e. the token was used by a
+// concurrent request. Callers must treat this as the same kind of failure as
+// "token not found" so a race doesn't let two resets succeed against the
+// same token.
+var ErrPasswordResetTokenAlreadyClaimed = errors.New("password reset token was already claimed")
+
+// MarkUsed atomically sets used_at on the token, succeeding only if used_at
+// was previously NULL. Returns ErrPasswordResetTokenAlreadyClaimed if a
+// concurrent caller won the race. Callers should claim BEFORE running any
+// side effects (changing the password, etc.) so the token can be used at
+// most once even under contention.
 func (r *PasswordResetTokenRepository) MarkUsed(ctx context.Context, id uuid.UUID, at time.Time) error {
 	ctx, span := entityTracer().Start(ctx, "repo.PasswordResetTokenRepository.MarkUsed",
 		trace.WithAttributes(attribute.String("token.id", id.String())))
 	defer span.End()
 
-	err := r.db.PasswordResetTokens.UpdateOneID(id).SetUsedAt(at).Exec(ctx)
-	recordSpanError(span, err)
-	return err
+	affected, err := r.db.PasswordResetTokens.Update().
+		Where(passwordresettokens.ID(id), passwordresettokens.UsedAtIsNil()).
+		SetUsedAt(at).
+		Save(ctx)
+	if err != nil {
+		recordSpanError(span, err)
+		return err
+	}
+	span.SetAttributes(attribute.Int("tokens.claimed.count", affected))
+	if affected == 0 {
+		return ErrPasswordResetTokenAlreadyClaimed
+	}
+	return nil
 }
 
 // PurgeExpired deletes expired and already-used tokens. Run periodically.

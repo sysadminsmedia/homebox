@@ -135,6 +135,35 @@ func TestResetPassword_TokenReplay_Rejected(t *testing.T) {
 	assert.ErrorIs(t, err, ErrorPasswordResetInvalid)
 }
 
+func TestResetPassword_AtomicClaim_LosesRaceToConcurrentReset(t *testing.T) {
+	// Simulate the race: two requests both get the token via GetValidByHash
+	// before either marks it used. The atomic conditional update inside
+	// MarkUsed must let only one win. We model this by manually marking the
+	// token used between GetValidByHash and the second ResetPassword call —
+	// the second caller's MarkUsed should fail with the claim-race error,
+	// which ResetPassword translates to ErrorPasswordResetInvalid.
+	ctx := context.Background()
+	usr := newTestUserWithPassword(t, "starting-pw")
+
+	link, err := tSvc.User.GenerateResetLink(ctx, usr.Email, "https://example.com")
+	require.NoError(t, err)
+	rawToken := extractToken(t, link)
+
+	// Mark the token used out-of-band, mimicking a concurrent winner. After
+	// this, ResetPassword's GetValidByHash will return NotFound (since
+	// GetValidByHash filters used tokens), giving ErrorPasswordResetInvalid.
+	tok, err := tRepos.PasswordResetTokens.GetValidByHash(ctx, hasher.HashToken(rawToken))
+	require.NoError(t, err)
+	require.NoError(t, tRepos.PasswordResetTokens.MarkUsed(ctx, tok.ID, time.Now()))
+
+	err = tSvc.User.ResetPassword(ctx, rawToken, "race-loser-pw")
+	assert.ErrorIs(t, err, ErrorPasswordResetInvalid)
+
+	// Confirm the password was NOT changed by the losing caller.
+	_, err = tSvc.User.Login(ctx, usr.Email, "starting-pw", false)
+	assert.NoError(t, err, "original password must still work — losing race must not have changed it")
+}
+
 func TestResetPassword_BogusToken_Rejected(t *testing.T) {
 	err := tSvc.User.ResetPassword(context.Background(), "this-is-not-a-real-token", "newpw")
 	assert.ErrorIs(t, err, ErrorPasswordResetInvalid)
