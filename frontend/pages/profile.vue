@@ -20,6 +20,7 @@
   import FormCheckbox from "~/components/Form/Checkbox.vue";
   import BaseContainer from "@/components/Base/Container.vue";
   import BaseCard from "@/components/Base/Card.vue";
+  import { useIntegrationCacheStore } from "~/stores/integration-cache";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import DetailsSection from "@/components/global/DetailsSection/DetailsSection.vue";
   import DateTime from "@/components/global/DateTime.vue";
@@ -259,6 +260,12 @@
       toast.error(t("profile.toast.failed_settings_save"));
       return;
     }
+
+    // Push the new URLs into the shared store so any mounted AttachmentsList
+    // immediately promotes or demotes its service attachments.
+    const integrationCacheStore = useIntegrationCacheStore();
+    integrationCacheStore.setServiceUrl("paperless", integrationSettings.paperlessUrl);
+    integrationCacheStore.setServiceUrl("immich", integrationSettings.immichUrl);
 
     toast.success(t("profile.toast.settings_saved"));
   }

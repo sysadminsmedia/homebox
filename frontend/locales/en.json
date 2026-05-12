@@ -215,7 +215,11 @@
         "item": {
             "attachments_list": {
                 "download": "Download",
-                "open_new_tab": "Open in new tab"
+                "open_new_tab": "Open in new tab",
+                "configure_service": "Configure {service} URL in Profile Settings to access this attachment",
+                "request_failed": "Request to {url} failed",
+                "request_failed_stale": "Showing cached data — request to {url} failed",
+                "open_in_service": "Open in {service}"
             },
             "product_import": {
                 "barcode": "Product's barcode",
