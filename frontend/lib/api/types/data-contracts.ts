@@ -1327,7 +1327,9 @@ export interface OIDCStatus {
 }
 
 export interface ResetPasswordRequest {
+  /** @minLength 6 */
   password: string;
+  /** @minLength 20 */
   token: string;
 }
 

@@ -4046,6 +4046,8 @@ components:
             type: string
     v1.ForgotPasswordRequest:
       type: object
+      required:
+        - email
       properties:
         email:
           type: string
@@ -4103,11 +4105,16 @@ components:
           type: boolean
     v1.ResetPasswordRequest:
       type: object
+      required:
+        - password
+        - token
       properties:
         password:
           type: string
+          minLength: 6
         token:
           type: string
+          minLength: 20
     v1.TelemetryStatus:
       type: object
       properties:

@@ -150,23 +150,6 @@ func (svc *UserService) ResetPassword(ctx context.Context, rawToken, newPassword
 		attribute.String("token.id", tok.ID.String()),
 	)
 
-	// Claim the token BEFORE changing the password. MarkUsed is an atomic
-	// conditional update (used_at IS NULL → now), so a concurrent request
-	// holding the same token loses the race here and never reaches
-	// ChangePassword. Without this ordering both racers would call
-	// ChangePassword and the last write would win — letting an attacker
-	// race a legitimate user with the same stolen token to plant their own
-	// password.
-	if err := svc.repos.PasswordResetTokens.MarkUsed(ctx, tok.ID, time.Now()); err != nil {
-		if errors.Is(err, repo.ErrPasswordResetTokenAlreadyClaimed) {
-			span.SetAttributes(attribute.String("reset.outcome", "claim_race_lost"))
-			return ErrorPasswordResetInvalid
-		}
-		recordServiceSpanError(span, err)
-		span.SetAttributes(attribute.String("reset.outcome", "mark_used_failed"))
-		return err
-	}
-
 	hashed, err := hasher.HashPasswordCtx(ctx, newPassword)
 	if err != nil {
 		recordServiceSpanError(span, err)
@@ -174,7 +157,18 @@ func (svc *UserService) ResetPassword(ctx context.Context, rawToken, newPassword
 		return err
 	}
 
-	if err := svc.repos.Users.ChangePassword(ctx, tok.UserID, hashed); err != nil {
+	// ConsumeAndChangePassword runs the atomic conditional claim of the token
+	// (used_at IS NULL → now) and the password update in a single ent
+	// transaction, so a transient DB failure can never leave us in the bad
+	// state where the token is burned but the password is unchanged. The
+	// conditional UPDATE still defends against the concurrent-reset race —
+	// a racer sees 0 rows affected and gets ErrPasswordResetTokenAlreadyClaimed.
+	// Session revocation runs only after the commit succeeds.
+	if err := svc.repos.PasswordResetTokens.ConsumeAndChangePassword(ctx, tok.ID, tok.UserID, hashed); err != nil {
+		if errors.Is(err, repo.ErrPasswordResetTokenAlreadyClaimed) {
+			span.SetAttributes(attribute.String("reset.outcome", "claim_race_lost"))
+			return ErrorPasswordResetInvalid
+		}
 		recordServiceSpanError(span, err)
 		span.SetAttributes(attribute.String("reset.outcome", "persist_failed"))
 		return err

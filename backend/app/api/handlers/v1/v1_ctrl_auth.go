@@ -145,14 +145,27 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 
 type (
 	ForgotPasswordRequest struct {
-		Email string `json:"email" example:"user@example.com"`
+		Email string `json:"email" validate:"required" example:"user@example.com"`
 	}
 
+	// ResetPasswordRequest carries the token from the email link and the new
+	// password. The constraints below feed the OpenAPI spec via swaggo and
+	// are also enforced by the handler so the spec doesn't over-promise.
+	//
+	// password min=6 matches the frontend's PASSWORD_MIN_LENGTH. No max:
+	// argon2id has no practical input limit, and the inbound body is already
+	// bounded by mid.MaxBodySize. Token min=20 fits the 26-char base32 output
+	// of hasher.GenerateToken with a little slack; it's spec-only since the
+	// lookup itself rejects anything that doesn't match a stored hash.
 	ResetPasswordRequest struct {
-		Token       string `json:"token"`
-		NewPassword string `json:"password"`
+		Token       string `json:"token"    validate:"required,min=20"`
+		NewPassword string `json:"password" validate:"required,min=6"`
 	}
 )
+
+// resetPasswordMinLength is enforced server-side to keep the OpenAPI spec
+// honest about its minLength constraint.
+const resetPasswordMinLength = 6
 
 // HandleForgotPassword godoc
 //
@@ -270,6 +283,17 @@ func (ctrl *V1Controller) HandleResetPassword() errchain.HandlerFunc {
 			attribute.Int("token.length", len(body.Token)),
 			attribute.Int("password.new.length", len(body.NewPassword)),
 		)
+
+		// Enforce the documented minimum so the OpenAPI spec's minLength on
+		// `password` is honored. Token bounds are spec-only (the hash lookup
+		// naturally rejects bad tokens), so we don't re-check them here.
+		if len(body.NewPassword) < resetPasswordMinLength {
+			span.SetAttributes(attribute.String("reset.outcome", "password_too_short"))
+			return validate.NewRequestError(
+				fmt.Errorf("password must be at least %d characters", resetPasswordMinLength),
+				http.StatusBadRequest,
+			)
+		}
 
 		if err := ctrl.svc.User.ResetPassword(spanCtx, body.Token, body.NewPassword); err != nil {
 			if errors.Is(err, services.ErrorPasswordResetInvalid) {

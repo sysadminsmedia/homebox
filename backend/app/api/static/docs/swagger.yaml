@@ -2113,6 +2113,8 @@ definitions:
       email:
         example: user@example.com
         type: string
+    required:
+    - email
     type: object
   v1.GroupAcceptInvitationResponse:
     properties:
@@ -2168,9 +2170,14 @@ definitions:
   v1.ResetPasswordRequest:
     properties:
       password:
+        minLength: 6
         type: string
       token:
+        minLength: 20
         type: string
+    required:
+    - password
+    - token
     type: object
   v1.TelemetryStatus:
     properties:

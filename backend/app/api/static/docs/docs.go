@@ -6086,6 +6086,9 @@ const docTemplate = `{
         },
         "v1.ForgotPasswordRequest": {
             "type": "object",
+            "required": [
+                "email"
+            ],
             "properties": {
                 "email": {
                     "type": "string",
@@ -6172,12 +6175,18 @@ const docTemplate = `{
         },
         "v1.ResetPasswordRequest": {
             "type": "object",
+            "required": [
+                "password",
+                "token"
+            ],
             "properties": {
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 6
                 },
                 "token": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 20
                 }
             }
         },
