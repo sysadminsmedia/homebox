@@ -27,6 +27,7 @@
   import PasswordScore from "~/components/global/PasswordScore.vue";
   import { PASSWORD_MIN_LENGTH, PASSWORD_RULES } from "~/lib/passwords";
   import type { APIKeyOut } from "~~/lib/api/types/data-contracts";
+  import { SERVICE_ADAPTERS } from "~/lib/integration-adapters";
 
   const { t } = useI18n();
 
@@ -212,9 +213,7 @@
   // ---------------------------------------------------------------------------
   // Integration settings
 
-  const integrationSettings = reactive({
-    paperlessUrl: "",
-    paperlessToken: "",
+  const integrationSettings = reactive<Record<string, string> & { loading: boolean; saving: boolean }>({
     loading: false,
     saving: false,
   });
@@ -230,8 +229,10 @@
     }
 
     const settings = data.item as Record<string, unknown>;
-    integrationSettings.paperlessUrl = (settings.paperless_url as string) || "";
-    integrationSettings.paperlessToken = (settings.paperless_token as string) || "";
+    for (const adapter of SERVICE_ADAPTERS) {
+      integrationSettings[adapter.settingsUrlKey] = (settings[adapter.settingsUrlKey] as string) || "";
+      integrationSettings[adapter.settingsTokenKey] = (settings[adapter.settingsTokenKey] as string) || "";
+    }
   }
 
   async function saveIntegrationSettings() {
@@ -243,10 +244,15 @@
       return;
     }
 
+    const integrationPatch: Record<string, string> = {};
+    for (const adapter of SERVICE_ADAPTERS) {
+      integrationPatch[adapter.settingsUrlKey] = integrationSettings[adapter.settingsUrlKey] ?? "";
+      integrationPatch[adapter.settingsTokenKey] = integrationSettings[adapter.settingsTokenKey] ?? "";
+    }
+
     const { error } = await api.user.setSettings({
       ...(current?.item ?? {}),
-      paperless_url: integrationSettings.paperlessUrl,
-      paperless_token: integrationSettings.paperlessToken,
+      ...integrationPatch,
     });
     integrationSettings.saving = false;
 
@@ -255,10 +261,12 @@
       return;
     }
 
-    // Push the new URLs into the shared store so any mounted AttachmentsList
-    // immediately promotes or demotes its service attachments.
+    // Push new URLs into the shared store so mounted AttachmentsList components
+    // immediately promote or demote service attachments.
     const integrationCacheStore = useIntegrationCacheStore();
-    integrationCacheStore.setServiceUrl("paperless", integrationSettings.paperlessUrl);
+    for (const adapter of SERVICE_ADAPTERS) {
+      integrationCacheStore.setServiceUrl(adapter.name, integrationSettings[adapter.settingsUrlKey] ?? "");
+    }
 
     toast.success(t("profile.toast.settings_saved"));
   }
@@ -506,14 +514,14 @@
           <div class="space-y-2">
             <h4 class="font-semibold">{{ $t("profile.paperless_settings") }}</h4>
             <FormTextField
-              v-model="integrationSettings.paperlessUrl"
+              v-model="integrationSettings['paperless_url']"
               :label="$t('profile.paperless_url')"
               :placeholder="$t('profile.paperless_url_placeholder')"
               type="url"
               class="mb-2"
             />
             <FormTextField
-              v-model="integrationSettings.paperlessToken"
+              v-model="integrationSettings['paperless_token']"
               :label="$t('profile.paperless_token')"
               :placeholder="$t('profile.paperless_token_placeholder')"
               type="password"

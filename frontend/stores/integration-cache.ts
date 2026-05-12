@@ -47,11 +47,7 @@ function lsWrite(key: string, data: unknown): void {
 
 function lsDelete(key: string): void {
   if (typeof localStorage === "undefined") return;
-  try {
-    localStorage.removeItem(LS_PREFIX + key);
-  } catch {
-    // ignore
-  }
+  localStorage.removeItem(LS_PREFIX + key);
 }
 
 // ---------------------------------------------------------------------------
@@ -111,7 +107,7 @@ export const useIntegrationCacheStore = defineStore("integrationCache", () => {
   // Enriched data cache
   // -------------------------------------------------------------------------
 
-  function getEnrichedData(serviceName: string, id: string): unknown | null {
+  function getEnrichedData(serviceName: string, id: string): unknown {
     const key = `${serviceName}:${id}`;
     if (key in enrichedData) return enrichedData[key];
     const cached = lsRead(key);

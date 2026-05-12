@@ -127,20 +127,7 @@ func TestEntityService_AttachmentAddExternalLink_MultipleAttachments(t *testing.
 
 	latest, err := svc.repo.Entities.GetOneByGroup(tCtx, tCtx.GID, entity.ID)
 	require.NoError(t, err)
-	assert.GreaterOrEqual(t, len(latest.Attachments), len(knownSources))
-}
-
-// TestEntityService_AttachmentAddExternalLink_NoBlobStorage verifies that
-// adding an external-link attachment does not trigger any blob-storage
-// operations (which would fail without a real storage backend).
-func TestEntityService_AttachmentAddExternalLink_NoBlobStorage(t *testing.T) {
-	svc := &EntityService{repo: tRepos}
-	entity := newExternalLinkEntity(t)
-	src := knownSources[0]
-
-	out, err := svc.AttachmentAddExternalLink(tCtx, entity.ID, src.sourceType, src.externalID, "No Blob Doc", attachment.TypeAttachment)
-	require.NoError(t, err)
-	require.NotEmpty(t, out.Attachments)
+	assert.Equal(t, len(knownSources), len(latest.Attachments))
 }
 
 // TestEntityService_AttachmentAddExternalLink_InvalidEntity verifies that

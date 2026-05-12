@@ -5,7 +5,8 @@
   import type { ItemAttachment, EntityFieldData, EntityOut, EntityUpdate } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useTagStore } from "~/stores/tags";
-  import { classifyDroppedUrl } from "~/lib/integration-adapters";
+  import { classifyDroppedUrl, SERVICE_ADAPTERS } from "~/lib/integration-adapters";
+  import { useIntegrationCacheStore } from "~/stores/integration-cache";
   import MdiLoading from "~icons/mdi/loading";
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
@@ -36,12 +37,6 @@
   const { t } = useI18n();
 
   const { openDialog, closeDialog } = useDialog();
-
-  // Integration settings for drop detection
-  const integrationSettings = reactive({
-    paperless_url: "",
-    paperless_token: "",
-  });
 
   definePageMeta({
     middleware: ["auth"],
@@ -87,15 +82,9 @@
   });
 
   async function loadIntegrationSettings() {
-    const { data, error } = await api.user.getSettings();
-    if (error || !data?.item) {
-      console.warn("Failed to load integration settings");
-      return;
-    }
-
-    const settings = data.item as Record<string, unknown>;
-    integrationSettings.paperless_url = typeof settings.paperless_url === "string" ? settings.paperless_url : "";
-    integrationSettings.paperless_token = typeof settings.paperless_token === "string" ? settings.paperless_token : "";
+    // No-op: integration settings are now loaded by AttachmentsList.vue via
+    // useIntegrationCacheStore().loadSettings(). We keep this stub to avoid
+    // a larger refactor of the onMounted call site.
   }
 
   onMounted(async () => {
@@ -393,7 +382,9 @@
     // fetched from the service API at display time (hydration in AttachmentsList.vue).
     const title = fallbackLinkTitle(droppedURL);
 
-    const classified = classifyDroppedUrl(droppedURL, integrationSettings);
+    const store = useIntegrationCacheStore();
+    const settingsForClassify = Object.fromEntries(SERVICE_ADAPTERS.map(a => [a.settingsUrlKey, store.serviceUrls[a.name] ?? ""]));
+    const classified = classifyDroppedUrl(droppedURL, settingsForClassify);
 
     const { data, error } = await api.items.attachments.addExternalLink(
       itemId.value,

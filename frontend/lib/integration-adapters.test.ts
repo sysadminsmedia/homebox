@@ -145,7 +145,7 @@ describe("integration adapters", () => {
     it("each adapter has required fields", () => {
       for (const adapter of SERVICE_ADAPTERS) {
         expect(adapter.name).toBeTruthy();
-        expect(adapter.mimeType).toContain("/");
+        expect(adapter.mimeType).toMatch(/^[a-z][a-z0-9_+-]*\/[a-z][a-z0-9_+-]*$/);
         expect(adapter.settingsUrlKey).toContain("_url");
         expect(adapter.settingsTokenKey).toContain("_token");
         expect(typeof adapter.extractId).toBe("function");

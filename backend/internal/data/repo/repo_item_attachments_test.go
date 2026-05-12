@@ -16,20 +16,22 @@ import (
 )
 
 func TestMimeTypeForSourceType(t *testing.T) {
-	// Test "link" source type
-	mime, ok := MimeTypeForSourceType("link")
-	assert.True(t, ok)
-	assert.Equal(t, MimeTypeLinkURL, mime)
-
-	// Test "paperless" source type
-	mime, ok = MimeTypeForSourceType("paperless")
-	assert.True(t, ok)
-	assert.Equal(t, MimeTypePaperlessDocument, mime)
-
-	// Test unknown source type
-	mime, ok = MimeTypeForSourceType("unknown")
-	assert.False(t, ok)
-	assert.Empty(t, mime)
+	cases := []struct {
+		sourceType   string
+		expectedMime string
+		expectedOk   bool
+	}{
+		{"link", MimeTypeLinkURL, true},
+		{"paperless", MimeTypePaperlessDocument, true},
+		{"unknown", "", false},
+	}
+	for _, tc := range cases {
+		t.Run(tc.sourceType, func(t *testing.T) {
+			mime, ok := MimeTypeForSourceType(tc.sourceType)
+			assert.Equal(t, tc.expectedOk, ok)
+			assert.Equal(t, tc.expectedMime, mime)
+		})
+	}
 }
 
 func TestAttachmentRepo_Create(t *testing.T) {

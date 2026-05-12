@@ -161,7 +161,7 @@ export function classifyDroppedUrl(
   if (!adapter) return null;
 
   const configuredBase = settings[adapter.settingsUrlKey];
-  const id = adapter.extractId(url, configuredBase) ?? adapter.extractId(url);
+  const id = adapter.extractId(url, configuredBase);
   if (!id) return null;
 
   return { adapter, id };

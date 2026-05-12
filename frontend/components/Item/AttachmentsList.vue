@@ -187,7 +187,7 @@
   import type { ItemAttachment } from "~~/lib/api/types/data-contracts";
   import { useIntegrationCacheStore } from "~/stores/integration-cache";
   import type { AttachmentFetchState } from "~/stores/integration-cache";
-  import { SERVICE_ADAPTERS } from "~/lib/integration-adapters";
+  import { SERVICE_ADAPTERS, getAdapterByMimeType } from "~/lib/integration-adapters";
   import MdiPaperclip from "~icons/mdi/paperclip";
   import MdiLinkVariant from "~icons/mdi/link-variant";
   import MdiDownload from "~icons/mdi/download";
@@ -200,8 +200,9 @@
   import { buttonVariants } from "@/components/ui/button";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-  const MIME_PAPERLESS = "paperless/document";
   const MIME_LINK = "link/url";
+  /** MIME type for Paperless-ngx document links — sourced from the adapter registry. */
+  const MIME_PAPERLESS = getAdapterByMimeType("paperless/document")!.mimeType;
 
   const props = defineProps({
     attachments: {
@@ -477,12 +478,8 @@
   }
 
   // ---------------------------------------------------------------------------
-  // Generic dispatch table — add a new service by adding one entry here
+  // Generic dispatch — add a new service by adding a new else-if branch here
   // ---------------------------------------------------------------------------
-
-  const hydrateHandlers: Partial<Record<string, (a: ItemAttachment) => Promise<void>>> = {
-    paperless: hydratePaperless,
-  };
 
   async function hydrateAllAttachments(attachments: ItemAttachment[]): Promise<void> {
     await Promise.all(
@@ -490,17 +487,16 @@
         const serviceName = mimeToServiceName(attachment.mimeType);
         if (!serviceName) return; // not a service attachment
         if (!store.serviceUrls[serviceName]?.trim()) return; // unconfigured — show degraded state
-        const handler = hydrateHandlers[serviceName];
-        if (!handler) return;
-        await handler(attachment);
+        if (serviceName === "paperless") {
+          await hydratePaperless(attachment);
+        }
       })
     );
   }
 
   /** Maps a service MIME type to its service name, or null for non-service types. */
   function mimeToServiceName(mimeType: string): string | null {
-    if (mimeType === MIME_PAPERLESS) return "paperless";
-    return null;
+    return getAdapterByMimeType(mimeType)?.name ?? null;
   }
 
   // ---------------------------------------------------------------------------
