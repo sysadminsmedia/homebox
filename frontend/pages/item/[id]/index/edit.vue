@@ -41,8 +41,6 @@
   const integrationSettings = reactive({
     paperless_url: "",
     paperless_token: "",
-    immich_url: "",
-    immich_token: "",
   });
 
   definePageMeta({
@@ -91,14 +89,13 @@
   async function loadIntegrationSettings() {
     const { data, error } = await api.user.getSettings();
     if (error || !data?.item) {
+      console.warn("Failed to load integration settings:", error);
       return;
     }
 
     const settings = data.item as Record<string, unknown>;
     integrationSettings.paperless_url = (settings.paperless_url as string) || "";
     integrationSettings.paperless_token = (settings.paperless_token as string) || "";
-    integrationSettings.immich_url = (settings.immich_url as string) || "";
-    integrationSettings.immich_token = (settings.immich_token as string) || "";
   }
 
   onMounted(async () => {
@@ -413,7 +410,7 @@
 
     if (classified) {
       const serviceName = classified.adapter.name.charAt(0).toUpperCase() + classified.adapter.name.slice(1);
-      toast.success(`${serviceName} linked`);
+      toast.success(t("items.toast.service_linked", { service: serviceName }));
     } else {
       toast.success(t("items.toast.attachment_uploaded"));
     }

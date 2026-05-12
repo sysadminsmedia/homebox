@@ -216,6 +216,7 @@
 
   const api = useUserApi();
   const store = useIntegrationCacheStore();
+  const { t } = useI18n();
 
   // ---------------------------------------------------------------------------
   // Settings state (reactive, driven by store)
@@ -354,12 +355,12 @@
     if (statusMatch) {
       const status = Number(statusMatch[1]);
       if (status === 401 || status === 403) {
-        return "Authentication failed — check your API token in Profile Settings";
+        return t("components.item.attachments_list.errors.auth_failed");
       }
-      return `Request failed (HTTP ${status}) — did you set an API token in Profile Settings?`;
+      return t("components.item.attachments_list.errors.request_failed", { status });
     }
     // No HTTP status → network-level failure (DNS, refused connection, etc.)
-    return `Service unreachable at ${baseUrl}`;
+    return t("components.item.attachments_list.errors.service_unreachable", { baseUrl });
   }
 
   // ---------------------------------------------------------------------------
