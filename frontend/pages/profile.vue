@@ -215,8 +215,6 @@
   const integrationSettings = reactive({
     paperlessUrl: "",
     paperlessToken: "",
-    immichUrl: "",
-    immichToken: "",
     loading: false,
     saving: false,
   });
@@ -234,8 +232,6 @@
     const settings = data.item as Record<string, unknown>;
     integrationSettings.paperlessUrl = (settings.paperless_url as string) || "";
     integrationSettings.paperlessToken = (settings.paperless_token as string) || "";
-    integrationSettings.immichUrl = (settings.immich_url as string) || "";
-    integrationSettings.immichToken = (settings.immich_token as string) || "";
   }
 
   async function saveIntegrationSettings() {
@@ -251,8 +247,6 @@
       ...(current?.item ?? {}),
       paperless_url: integrationSettings.paperlessUrl,
       paperless_token: integrationSettings.paperlessToken,
-      immich_url: integrationSettings.immichUrl,
-      immich_token: integrationSettings.immichToken,
     });
     integrationSettings.saving = false;
 
@@ -265,7 +259,6 @@
     // immediately promotes or demotes its service attachments.
     const integrationCacheStore = useIntegrationCacheStore();
     integrationCacheStore.setServiceUrl("paperless", integrationSettings.paperlessUrl);
-    integrationCacheStore.setServiceUrl("immich", integrationSettings.immichUrl);
 
     toast.success(t("profile.toast.settings_saved"));
   }
@@ -523,24 +516,6 @@
               v-model="integrationSettings.paperlessToken"
               :label="$t('profile.paperless_token')"
               :placeholder="$t('profile.paperless_token_placeholder')"
-              type="password"
-            />
-          </div>
-
-          <!-- Immich Settings -->
-          <div class="space-y-2 border-t pt-4">
-            <h4 class="font-semibold">{{ $t("profile.immich_settings") }}</h4>
-            <FormTextField
-              v-model="integrationSettings.immichUrl"
-              :label="$t('profile.immich_url')"
-              :placeholder="$t('profile.immich_url_placeholder')"
-              type="url"
-              class="mb-2"
-            />
-            <FormTextField
-              v-model="integrationSettings.immichToken"
-              :label="$t('profile.immich_token')"
-              :placeholder="$t('profile.immich_token_placeholder')"
               type="password"
             />
           </div>

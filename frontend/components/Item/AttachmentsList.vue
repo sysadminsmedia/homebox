@@ -111,115 +111,6 @@
         </div>
       </template>
 
-      <!-- ================================================================ -->
-      <!-- Immich asset                                                      -->
-      <!-- ================================================================ -->
-      <template v-else-if="attachment.mimeType === MIME_IMMICH">
-        <!-- Unconfigured: URL removed — render as plain unlinkable attachment, no service hints -->
-        <div v-if="!immichConfigured" class="flex items-center">
-          <MdiPaperclip class="size-5 shrink-0 text-gray-400" aria-hidden="true" />
-          <span class="ml-2 truncate">{{ attachment.title }}</span>
-        </div>
-
-        <!-- Photo card (configured) -->
-        <div v-else-if="isPhotoAttachment(attachment)" class="flex w-full gap-3">
-          <div class="shrink-0">
-            <div
-              v-if="attachState(attachment) === 'loading' && !immichThumbUrls[attachment.path]"
-              class="flex size-14 items-center justify-center rounded border bg-muted"
-            >
-              <MdiLoading class="size-7 animate-spin text-muted-foreground" aria-hidden="true" />
-            </div>
-            <img
-              v-else-if="immichThumbUrls[attachment.path]"
-              :src="immichThumbUrls[attachment.path]"
-              class="size-14 rounded object-cover shadow"
-              alt=""
-            />
-            <div v-else class="flex size-14 items-center justify-center rounded border bg-muted">
-              <MdiImage class="size-7 text-emerald-600" aria-hidden="true" />
-            </div>
-          </div>
-
-          <div class="min-w-0 flex-1 space-y-1">
-            <p class="truncate font-medium leading-tight">{{ attachment.title }}</p>
-            <p class="text-xs text-muted-foreground">Immich</p>
-            <p v-if="immichAsset(attachment)?.originalFileName" class="truncate text-xs text-muted-foreground">
-              {{ immichAsset(attachment)?.originalFileName }}
-            </p>
-            <p v-if="immichAsset(attachment)?.exifInfo?.dateTimeOriginal" class="text-xs text-muted-foreground">
-              {{ immichAsset(attachment)?.exifInfo?.dateTimeOriginal }}
-            </p>
-          </div>
-
-          <div class="ml-2 flex shrink-0 items-start gap-1">
-            <TooltipProvider v-if="isUnreachable(attachment)" :delay-duration="0">
-              <Tooltip>
-                <TooltipTrigger>
-                  <MdiAlertCircleOutline class="size-4 text-amber-500" aria-label="Service unreachable" />
-                </TooltipTrigger>
-                <TooltipContent>{{ attachError(attachment) }}</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider :delay-duration="0">
-              <Tooltip>
-                <TooltipTrigger as-child>
-                  <a
-                    :class="buttonVariants({ size: 'icon', variant: 'outline' })"
-                    :href="immichAssetUrl(attachment)"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <MdiOpenInNew />
-                  </a>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {{ $t("components.item.attachments_list.open_in_service", { service: "Immich" }) }}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </div>
-
-        <!-- Non-photo row (configured) -->
-        <div v-else class="flex items-center justify-between">
-          <div class="flex w-0 flex-1 items-center">
-            <MdiImage class="size-5 shrink-0 text-emerald-600" aria-hidden="true" />
-            <div class="ml-2 w-0 flex-1">
-              <p class="truncate font-semibold">{{ attachment.title }}</p>
-              <p class="text-xs text-muted-foreground">Immich</p>
-            </div>
-          </div>
-          <div class="ml-4 flex shrink-0 items-center gap-1">
-            <TooltipProvider v-if="isUnreachable(attachment)" :delay-duration="0">
-              <Tooltip>
-                <TooltipTrigger>
-                  <MdiAlertCircleOutline class="size-4 text-amber-500" aria-label="Service unreachable" />
-                </TooltipTrigger>
-                <TooltipContent>{{ attachError(attachment) }}</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider :delay-duration="0">
-              <Tooltip>
-                <TooltipTrigger as-child>
-                  <a
-                    :class="buttonVariants({ size: 'icon' })"
-                    :href="immichAssetUrl(attachment)"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <MdiOpenInNew />
-                  </a>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {{ $t("components.item.attachments_list.open_in_service", { service: "Immich" }) }}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </div>
-      </template>
-
       <!-- Generic Link Attachment -->
       <template v-else-if="isLink(attachment)">
         <div class="flex items-center justify-between">
@@ -304,14 +195,12 @@
   import MdiFileDocument from "~icons/mdi/file-document";
   import MdiAccountOutline from "~icons/mdi/account-outline";
   import MdiTagOutline from "~icons/mdi/tag-outline";
-  import MdiImage from "~icons/mdi/image";
   import MdiLoading from "~icons/mdi/loading";
   import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
   import { buttonVariants } from "@/components/ui/button";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
   const MIME_PAPERLESS = "paperless/document";
-  const MIME_IMMICH = "immich/asset";
   const MIME_LINK = "link/url";
 
   const props = defineProps({
@@ -333,7 +222,6 @@
   // ---------------------------------------------------------------------------
 
   const paperlessConfigured = computed(() => !!store.serviceUrls["paperless"]?.trim());
-  const immichConfigured = computed(() => !!store.serviceUrls["immich"]?.trim());
 
   // ---------------------------------------------------------------------------
   // Runtime lift: treat link/url attachments as their service type when the
@@ -358,7 +246,7 @@
   /**
    * Attachments as the template sees them.  link/url entries that match a
    * service URL are lifted to the correct mimeType/path so the existing
-   * Paperless/Immich card branches handle them automatically.
+   * Paperless card branch handles them automatically.
    */
   const displayAttachments = computed(() => props.attachments.map(liftAttachment));
 
@@ -367,7 +255,6 @@
   // ---------------------------------------------------------------------------
 
   const paperlessThumbUrls = ref<Record<string, string>>({});
-  const immichThumbUrls = ref<Record<string, string>>({});
   const objectUrls = new Set<string>();
 
   function createObjectUrl(blob: Blob): string {
@@ -407,21 +294,12 @@
     tags: PaperlessTag[];
   }
 
-  interface ImmichAsset {
-    originalFileName?: string;
-    exifInfo?: { dateTimeOriginal?: string };
-  }
-
   // ---------------------------------------------------------------------------
   // Store-backed typed getters
   // ---------------------------------------------------------------------------
 
   function paperlessDoc(attachment: ItemAttachment): PaperlessEnrichedDoc | null {
     return (store.getEnrichedData("paperless", attachment.path) as PaperlessEnrichedDoc | undefined) ?? null;
-  }
-
-  function immichAsset(attachment: ItemAttachment): ImmichAsset | null {
-    return (store.getEnrichedData("immich", attachment.path) as ImmichAsset | undefined) ?? null;
   }
 
   function attachState(attachment: ItemAttachment): AttachmentFetchState | undefined {
@@ -456,18 +334,9 @@
     return `${base}/documents/${attachment.path}/details`;
   }
 
-  function immichAssetUrl(attachment: ItemAttachment): string {
-    const base = (store.serviceUrls["immich"] ?? "").replace(/\/$/, "");
-    if (!base) return "#";
-    return `${base}/assets/${attachment.path}`;
-  }
 
   function isLink(attachment: ItemAttachment): boolean {
     return attachment.mimeType === MIME_LINK;
-  }
-
-  function isPhotoAttachment(attachment: ItemAttachment): boolean {
-    return attachment.type === "photo";
   }
 
   // ---------------------------------------------------------------------------
@@ -607,48 +476,11 @@
   }
 
   // ---------------------------------------------------------------------------
-  // Immich hydration
-  // ---------------------------------------------------------------------------
-
-  async function fetchImmichAssetData(assetId: string): Promise<ImmichAsset> {
-    const res = await fetch(proxyUrl("immich", `/api/assets/${assetId}`));
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return (await res.json()) as ImmichAsset;
-  }
-
-  async function fetchImmichThumbnail(assetId: string): Promise<void> {
-    if (immichThumbUrls.value[assetId]) return;
-    const res = await fetch(proxyUrl("immich", `/api/assets/${assetId}/thumbnail`));
-    if (!res.ok) return;
-    immichThumbUrls.value[assetId] = createObjectUrl(await res.blob());
-  }
-
-  async function hydrateImmich(attachment: ItemAttachment): Promise<void> {
-    const assetId = attachment.path;
-    const configuredUrl = store.serviceUrls["immich"] ?? "";
-    const cached = store.getEnrichedData("immich", assetId);
-
-    store.setState(attachment.id, cached ? "stale" : "loading");
-
-    try {
-      const asset = await fetchImmichAssetData(assetId);
-      store.setEnrichedData("immich", assetId, asset);
-      store.setState(attachment.id, "ok");
-      if (isPhotoAttachment(attachment)) {
-        fetchImmichThumbnail(assetId).catch(() => {});
-      }
-    } catch (err) {
-      store.setState(attachment.id, cached ? "stale" : "error", describeRequestError(err, configuredUrl));
-    }
-  }
-
-  // ---------------------------------------------------------------------------
   // Generic dispatch table — add a new service by adding one entry here
   // ---------------------------------------------------------------------------
 
   const hydrateHandlers: Partial<Record<string, (a: ItemAttachment) => Promise<void>>> = {
     paperless: hydratePaperless,
-    immich: hydrateImmich,
   };
 
   async function hydrateAllAttachments(attachments: ItemAttachment[]): Promise<void> {
@@ -667,7 +499,6 @@
   /** Maps a service MIME type to its service name, or null for non-service types. */
   function mimeToServiceName(mimeType: string): string | null {
     if (mimeType === MIME_PAPERLESS) return "paperless";
-    if (mimeType === MIME_IMMICH) return "immich";
     return null;
   }
 
