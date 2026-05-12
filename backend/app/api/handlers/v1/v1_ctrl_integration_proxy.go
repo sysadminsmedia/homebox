@@ -6,6 +6,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"net/url"
 	"path"
 	"regexp"
 	"strings"
@@ -193,7 +194,7 @@ func (ctrl *V1Controller) HandleIntegrationProxy() errchain.HandlerFunc {
 
 		upstream := strings.TrimRight(baseURL, "/") + cleanPath
 
-		req, err := http.NewRequest(http.MethodGet, upstream, nil)
+		req, err := http.NewRequestWithContext(r.Context(), http.MethodGet, upstream, nil)
 		if err != nil {
 			return validate.NewRequestError(err, http.StatusBadRequest)
 		}
@@ -201,7 +202,14 @@ func (ctrl *V1Controller) HandleIntegrationProxy() errchain.HandlerFunc {
 
 		resp, err := proxyHTTPClient.Do(req)
 		if err != nil {
-			log.Err(err).Str("integration", name).Str("upstream", upstream).Msg("integration proxy: upstream request failed")
+			// Log only host+path to avoid leaking query strings or embedded credentials.
+			var safeURL string
+			if u, parseErr := url.Parse(upstream); parseErr == nil {
+				safeURL = u.Host + u.Path
+			} else {
+				safeURL = "(unparseable)"
+			}
+			log.Err(err).Str("integration", name).Str("upstream", safeURL).Msg("integration proxy: upstream request failed")
 			return validate.NewRequestError(err, http.StatusBadGateway)
 		}
 		defer func() { _ = resp.Body.Close() }()
