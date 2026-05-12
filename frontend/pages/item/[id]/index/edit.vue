@@ -89,13 +89,13 @@
   async function loadIntegrationSettings() {
     const { data, error } = await api.user.getSettings();
     if (error || !data?.item) {
-      console.warn("Failed to load integration settings:", error);
+      console.warn("Failed to load integration settings");
       return;
     }
 
     const settings = data.item as Record<string, unknown>;
-    integrationSettings.paperless_url = (settings.paperless_url as string) || "";
-    integrationSettings.paperless_token = (settings.paperless_token as string) || "";
+    integrationSettings.paperless_url = typeof settings.paperless_url === "string" ? settings.paperless_url : "";
+    integrationSettings.paperless_token = typeof settings.paperless_token === "string" ? settings.paperless_token : "";
   }
 
   onMounted(async () => {
