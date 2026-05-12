@@ -283,6 +283,7 @@
             "create_modal": {
                 "location_description": "Location Description",
                 "location_name": "Location Name",
+                "location_photo": "Location Photo 📷",
                 "title": "Create Location",
                 "toast": {
                     "already_creating": "Already creating a location",
