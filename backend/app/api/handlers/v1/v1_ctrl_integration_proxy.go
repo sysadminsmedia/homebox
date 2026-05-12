@@ -7,6 +7,7 @@ import (
 	"path"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/hay-kot/httpkit/errchain"
@@ -19,6 +20,17 @@ import (
 // validIntegrationName restricts integration names to safe lower-case identifiers,
 // preventing settings-key injection (e.g. "../../evil").
 var validIntegrationName = regexp.MustCompile(`^[a-z][a-z0-9_-]{0,31}$`)
+
+// proxyHTTPClient is a shared client with a hard timeout and bounded pool.
+// Using a dedicated client (not http.DefaultClient) prevents upstream services
+// from hanging the server indefinitely.
+var proxyHTTPClient = &http.Client{
+	Timeout: 30 * time.Second,
+	Transport: &http.Transport{
+		MaxIdleConns:    10,
+		IdleConnTimeout: 90 * time.Second,
+	},
+}
 
 // HandleIntegrationProxy godoc
 //
@@ -101,7 +113,7 @@ func (ctrl *V1Controller) HandleIntegrationProxy() errchain.HandlerFunc {
 		}
 		req.Header.Set("Authorization", "Token "+token)
 
-		resp, err := http.DefaultClient.Do(req)
+		resp, err := proxyHTTPClient.Do(req)
 		if err != nil {
 			log.Err(err).Str("integration", name).Str("upstream", upstream).Msg("integration proxy: upstream request failed")
 			return validate.NewRequestError(err, http.StatusBadGateway)
@@ -118,11 +130,18 @@ func (ctrl *V1Controller) HandleIntegrationProxy() errchain.HandlerFunc {
 			)
 		}
 
+		const maxResponseSize = 10 * 1024 * 1024 // 10 MB
 		if ct := resp.Header.Get("Content-Type"); ct != "" {
 			w.Header().Set("Content-Type", ct)
 		}
 		w.WriteHeader(http.StatusOK)
-		_, _ = io.Copy(w, resp.Body)
+		n, copyErr := io.Copy(w, io.LimitReader(resp.Body, maxResponseSize))
+		if copyErr != nil {
+			log.Err(copyErr).Msg("integration proxy: failed to copy response")
+		}
+		if n == maxResponseSize {
+			log.Warn().Str("integration", name).Int64("bytes", n).Msg("integration proxy: response truncated at size limit")
+		}
 		return nil
 	}
 }

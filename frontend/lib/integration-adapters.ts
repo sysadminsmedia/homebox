@@ -54,8 +54,9 @@ function extractWithPattern(url: string, baseUrl: string | undefined, pattern: R
         if (basePath && !target.pathname.startsWith(basePath + "/") && target.pathname !== basePath) {
           return null;
         }
-      } catch {
+      } catch (e) {
         // Invalid configured base URL – fall through to pattern-only match.
+        console.warn("integration-adapters: invalid baseUrl, falling back to pattern-only match:", baseUrl, e);
       }
     }
 

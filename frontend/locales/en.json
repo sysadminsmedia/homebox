@@ -219,7 +219,12 @@
                 "configure_service": "Configure {service} URL in Profile Settings to access this attachment",
                 "request_failed": "Request to {url} failed",
                 "request_failed_stale": "Showing cached data — request to {url} failed",
-                "open_in_service": "Open in {service}"
+                "open_in_service": "Open in {service}",
+                "errors": {
+                    "auth_failed": "Authentication failed — check your API token in Profile Settings",
+                    "request_failed": "Request failed (HTTP {status}) — did you set an API token in Profile Settings?",
+                    "service_unreachable": "Service unreachable at {baseUrl}"
+                }
             },
             "product_import": {
                 "barcode": "Product's barcode",
@@ -669,6 +674,7 @@
             "item_deleted": "Item deleted",
             "item_saved": "Item saved",
             "quantity_cannot_negative": "Quantity cannot be negative",
+            "service_linked": "{service} linked",
             "sync_child_location": "Selected parent syncs its children's locations to its own. The location has been updated."
         },
         "updated_at": "Updated At",
