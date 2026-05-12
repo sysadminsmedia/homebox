@@ -14,7 +14,7 @@ import { DEFAULT_PREFERENCES, buildSyncedSettings, mergeSyncedSettings } from ".
 
 // Keys that live in the settings object but are NOT preferences and must never
 // be overwritten by a bare preferences save.
-const INTEGRATION_KEYS = ["paperless_url", "paperless_token", "immich_url", "immich_token"] as const;
+const INTEGRATION_KEYS = ["paperless_url", "paperless_token"] as const;
 
 // Default sync config (all preference keys synced).
 const SYNC_ALL = {};
@@ -91,8 +91,6 @@ describe("use-preferences pure helpers", () => {
         theme: "homebox",
         paperless_url: "http://localhost:8000",
         paperless_token: "secret-token",
-        immich_url: "http://localhost:2283",
-        immich_token: "immich-key",
       };
 
       const localPrefs = { ...DEFAULT_PREFERENCES, showDetails: false };
@@ -103,8 +101,6 @@ describe("use-preferences pure helpers", () => {
 
       expect(merged.paperless_url).toBe("http://localhost:8000");
       expect(merged.paperless_token).toBe("secret-token");
-      expect(merged.immich_url).toBe("http://localhost:2283");
-      expect(merged.immich_token).toBe("immich-key");
       // And preferences are still updated:
       expect(merged.showDetails).toBe(false);
     });
