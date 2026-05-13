@@ -226,6 +226,108 @@ type (
 
 var mapEntitiesSummaryErr = mapTEachErrFunc(mapEntitySummary)
 
+func (r *EntityRepository) tagFilterPredicates(ctx context.Context, gid uuid.UUID, q EntityQuery) []predicate.Entity {
+	descendantGroups := r.tagDescendantGroups(ctx, gid, q)
+	if q.MatchAllTags {
+		return []predicate.Entity{entityTagGroupsPredicate(descendantGroups, q.NegateTags)}
+	}
+
+	return []predicate.Entity{entityTagIDsPredicate(descendantGroups[0], q.NegateTags)}
+}
+
+func (r *EntityRepository) tagDescendantGroups(ctx context.Context, gid uuid.UUID, q EntityQuery) [][]uuid.UUID {
+	tagRepo := &TagRepository{r.db, r.bus}
+	ctxDescendants, span := entityTracer().Start(ctx, "repo.EntityRepository.QueryByGroup.tagDescendants",
+		trace.WithAttributes(attribute.Int("query.tag_ids.count", len(q.TagIDs))))
+	defer span.End()
+
+	var descendantGroups [][]uuid.UUID
+	if q.MatchAllTags {
+		descendantGroups = r.matchAllTagDescendantGroups(ctxDescendants, gid, tagRepo, q.TagIDs, span)
+	} else {
+		descendantGroups = [][]uuid.UUID{r.matchAnyTagDescendants(ctxDescendants, tagRepo, q.TagIDs, span)}
+	}
+
+	span.SetAttributes(attribute.Int("query.tag_descendants.count", tagDescendantCount(descendantGroups)))
+
+	return descendantGroups
+}
+
+func (r *EntityRepository) matchAllTagDescendantGroups(ctx context.Context, gid uuid.UUID, tagRepo *TagRepository, tagIDs []uuid.UUID, span trace.Span) [][]uuid.UUID {
+	descendantsByRoot, err := tagRepo.GetDescendantTagIDsByRoot(ctx, gid, tagIDs)
+	if err != nil {
+		recordSpanError(span, err)
+		log.Warn().Err(err).Msg("failed to get descendant tags, using only direct tag")
+		return directTagGroups(tagIDs)
+	}
+
+	descendantGroups := make([][]uuid.UUID, 0, len(tagIDs))
+	for _, tagID := range tagIDs {
+		descendants := descendantsByRoot[tagID]
+		if len(descendants) == 0 {
+			descendants = []uuid.UUID{tagID}
+		}
+		descendantGroups = append(descendantGroups, descendants)
+	}
+
+	return descendantGroups
+}
+
+func (r *EntityRepository) matchAnyTagDescendants(ctx context.Context, tagRepo *TagRepository, tagIDs []uuid.UUID, span trace.Span) []uuid.UUID {
+	descendants, err := tagRepo.GetDescendantTagIDs(ctx, tagIDs)
+	if err != nil {
+		recordSpanError(span, err)
+		log.Warn().Err(err).Msg("failed to get descendant tags, using only direct tags")
+		return tagIDs
+	}
+	if len(descendants) == 0 {
+		return tagIDs
+	}
+
+	return descendants
+}
+
+func directTagGroups(tagIDs []uuid.UUID) [][]uuid.UUID {
+	groups := make([][]uuid.UUID, 0, len(tagIDs))
+	for _, tagID := range tagIDs {
+		groups = append(groups, []uuid.UUID{tagID})
+	}
+
+	return groups
+}
+
+func tagDescendantCount(descendantGroups [][]uuid.UUID) int {
+	count := 0
+	for _, descendants := range descendantGroups {
+		count += len(descendants)
+	}
+
+	return count
+}
+
+func entityTagGroupsPredicate(descendantGroups [][]uuid.UUID, negate bool) predicate.Entity {
+	groupPredicates := make([]predicate.Entity, 0, len(descendantGroups))
+	for _, descendants := range descendantGroups {
+		groupPredicates = append(groupPredicates, entityTagIDsPredicate(descendants, false))
+	}
+	if negate {
+		return entity.Not(entity.And(groupPredicates...))
+	}
+
+	return entity.And(groupPredicates...)
+}
+
+func entityTagIDsPredicate(tagIDs []uuid.UUID, negate bool) predicate.Entity {
+	tagPredicates := lo.Map(tagIDs, func(l uuid.UUID, _ int) predicate.Entity {
+		return entity.HasTagWith(tag.ID(l))
+	})
+	if negate {
+		return entity.Not(entity.Or(tagPredicates...))
+	}
+
+	return entity.Or(tagPredicates...)
+}
+
 func mapEntitySummary(e *ent.Entity) EntitySummary {
 	var parent *EntitySummary
 	if e.Edges.Parent != nil {
@@ -603,68 +705,7 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 	var andPredicates []predicate.Entity
 	{
 		if len(q.TagIDs) > 0 {
-			tagRepo := &TagRepository{r.db, r.bus}
-			ctxDescendants, descSpan := entityTracer().Start(ctx, "repo.EntityRepository.QueryByGroup.tagDescendants",
-				trace.WithAttributes(attribute.Int("query.tag_ids.count", len(q.TagIDs))))
-			descendantGroups := make([][]uuid.UUID, 0, len(q.TagIDs))
-			descendantCount := 0
-			if q.MatchAllTags {
-				descendantsByRoot, err := tagRepo.GetDescendantTagIDsByRoot(ctxDescendants, gid, q.TagIDs)
-				if err != nil {
-					recordSpanError(descSpan, err)
-					log.Warn().Err(err).Msg("failed to get descendant tags, using only direct tag")
-					for _, tagID := range q.TagIDs {
-						descendantGroups = append(descendantGroups, []uuid.UUID{tagID})
-					}
-					descendantCount = len(q.TagIDs)
-				} else {
-					for _, tagID := range q.TagIDs {
-						descendants := descendantsByRoot[tagID]
-						if len(descendants) == 0 {
-							descendants = []uuid.UUID{tagID}
-						}
-						descendantGroups = append(descendantGroups, descendants)
-						descendantCount += len(descendants)
-					}
-				}
-			} else {
-				descendants, err := tagRepo.GetDescendantTagIDs(ctxDescendants, q.TagIDs)
-				if err != nil {
-					recordSpanError(descSpan, err)
-					log.Warn().Err(err).Msg("failed to get descendant tags, using only direct tags")
-					descendants = q.TagIDs
-				} else if len(descendants) == 0 {
-					descendants = q.TagIDs
-				}
-				descendantGroups = append(descendantGroups, descendants)
-				descendantCount = len(descendants)
-			}
-			descSpan.SetAttributes(attribute.Int("query.tag_descendants.count", descendantCount))
-			descSpan.End()
-
-			if q.MatchAllTags {
-				groupPredicates := make([]predicate.Entity, 0, len(descendantGroups))
-				for _, descendants := range descendantGroups {
-					tagPredicates := lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
-						return entity.HasTagWith(tag.ID(l))
-					})
-					groupPredicates = append(groupPredicates, entity.Or(tagPredicates...))
-				}
-				if q.NegateTags {
-					andPredicates = append(andPredicates, entity.Not(entity.And(groupPredicates...)))
-				} else {
-					andPredicates = append(andPredicates, entity.And(groupPredicates...))
-				}
-			} else {
-				tagPredicates := lo.Map(descendantGroups[0], func(l uuid.UUID, _ int) predicate.Entity {
-					return entity.HasTagWith(tag.ID(l))
-				})
-				if q.NegateTags {
-					andPredicates = append(andPredicates, entity.Not(entity.Or(tagPredicates...)))
-				} else {
-					andPredicates = append(andPredicates, entity.Or(tagPredicates...))
-				}
-			}
+			andPredicates = append(andPredicates, r.tagFilterPredicates(ctx, gid, q)...)
 		}
 
 		if q.OnlyWithoutPhoto {
