@@ -437,6 +437,19 @@ func TestEntityRepository_QueryByGroup_MatchAllTags(t *testing.T) {
 	assert.Contains(t, ids, descendantWideMatch.ID)
 	assert.NotContains(t, ids, narrowMatch.ID)
 	assert.NotContains(t, ids, descendantNarrowMatch.ID)
+
+	query.NegateTags = true
+	results, err = tRepos.Entities.QueryByGroup(context.Background(), tGroup.ID, query)
+	require.NoError(t, err)
+
+	ids = ids[:0]
+	for _, item := range results.Items {
+		ids = append(ids, item.ID)
+	}
+	assert.Contains(t, ids, narrowMatch.ID)
+	assert.Contains(t, ids, descendantNarrowMatch.ID)
+	assert.NotContains(t, ids, wideMatch.ID)
+	assert.NotContains(t, ids, descendantWideMatch.ID)
 }
 
 func TestEntityRepository_Update(t *testing.T) {

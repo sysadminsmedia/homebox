@@ -209,6 +209,57 @@ func (r *TagRepository) GetDescendantTagIDs(ctx context.Context, tagIDs []uuid.U
 	return descendantIDs, nil
 }
 
+// GetDescendantTagIDsByRoot retrieves descendant tag IDs for each provided root tag ID.
+// It batches the database read so callers can avoid repeated descendant lookups per tag.
+func (r *TagRepository) GetDescendantTagIDsByRoot(ctx context.Context, tagIDs []uuid.UUID) (map[uuid.UUID][]uuid.UUID, error) {
+	if len(tagIDs) == 0 {
+		return map[uuid.UUID][]uuid.UUID{}, nil
+	}
+
+	tags, err := r.db.Tag.Query().WithParent().All(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	childrenByParent := make(map[uuid.UUID][]uuid.UUID, len(tags))
+	for _, tg := range tags {
+		if tg.Edges.Parent != nil {
+			childrenByParent[tg.Edges.Parent.ID] = append(childrenByParent[tg.Edges.Parent.ID], tg.ID)
+		}
+	}
+
+	descendantsByRoot := make(map[uuid.UUID][]uuid.UUID, len(tagIDs))
+	for _, rootID := range tagIDs {
+		descendantsByRoot[rootID] = descendantsFromChildren(rootID, childrenByParent)
+	}
+
+	return descendantsByRoot, nil
+}
+
+func descendantsFromChildren(rootID uuid.UUID, childrenByParent map[uuid.UUID][]uuid.UUID) []uuid.UUID {
+	result := make(map[uuid.UUID]bool)
+	queue := []uuid.UUID{rootID}
+
+	for len(queue) > 0 {
+		currentID := queue[0]
+		queue = queue[1:]
+
+		if result[currentID] {
+			continue
+		}
+		result[currentID] = true
+
+		queue = append(queue, childrenByParent[currentID]...)
+	}
+
+	descendantIDs := make([]uuid.UUID, 0, len(result))
+	for id := range result {
+		descendantIDs = append(descendantIDs, id)
+	}
+
+	return descendantIDs
+}
+
 // getSubtreeDepth calculates the maximum depth of the subtree rooted at the given tag ID.
 // Uses a recursive CTE to traverse the entire subtree and find the deepest level.
 // Returns 1 for a tag with no children, and increases by 1 for each level.
