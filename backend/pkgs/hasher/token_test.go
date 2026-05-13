@@ -1,6 +1,7 @@
 package hasher
 
 import (
+	"os"
 	"strings"
 	"testing"
 
@@ -8,11 +9,15 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const ITERATIONS = 200
+const (
+	ITERATIONS       = 200
+	testAPIKeyPepper = "test-pepper-not-for-production-use-only"
+)
 
-func init() {
+func TestMain(m *testing.M) {
 	// Tests need a pepper installed for HashAPIKey/GenerateAPIKey paths.
-	SetAPIKeyPepper([]byte("test-pepper-not-for-production-use-only"))
+	SetAPIKeyPepper([]byte(testAPIKeyPepper))
+	os.Exit(m.Run())
 }
 
 func Test_NewToken(t *testing.T) {
