@@ -609,7 +609,7 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 			descendantGroups := make([][]uuid.UUID, 0, len(q.TagIDs))
 			descendantCount := 0
 			if q.MatchAllTags {
-				descendantsByRoot, err := tagRepo.GetDescendantTagIDsByRoot(ctxDescendants, q.TagIDs)
+				descendantsByRoot, err := tagRepo.GetDescendantTagIDsByRoot(ctxDescendants, gid, q.TagIDs)
 				if err != nil {
 					recordSpanError(descSpan, err)
 					log.Warn().Err(err).Msg("failed to get descendant tags, using only direct tag")

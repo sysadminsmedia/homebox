@@ -211,12 +211,15 @@ func (r *TagRepository) GetDescendantTagIDs(ctx context.Context, tagIDs []uuid.U
 
 // GetDescendantTagIDsByRoot retrieves descendant tag IDs for each provided root tag ID.
 // It batches the database read so callers can avoid repeated descendant lookups per tag.
-func (r *TagRepository) GetDescendantTagIDsByRoot(ctx context.Context, tagIDs []uuid.UUID) (map[uuid.UUID][]uuid.UUID, error) {
+func (r *TagRepository) GetDescendantTagIDsByRoot(ctx context.Context, gid uuid.UUID, tagIDs []uuid.UUID) (map[uuid.UUID][]uuid.UUID, error) {
 	if len(tagIDs) == 0 {
 		return map[uuid.UUID][]uuid.UUID{}, nil
 	}
 
-	tags, err := r.db.Tag.Query().WithParent().All(ctx)
+	tags, err := r.db.Tag.Query().
+		Where(tag.HasGroupWith(group.ID(gid))).
+		WithParent().
+		All(ctx)
 	if err != nil {
 		return nil, err
 	}
