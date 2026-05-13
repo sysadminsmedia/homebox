@@ -335,6 +335,110 @@ func TestEntityRepository_Update_Tags(t *testing.T) {
 	}
 }
 
+func TestEntityRepository_QueryByGroup_MatchAllTags(t *testing.T) {
+	containerET := useContainerEntityType(t)
+	itemET := useItemEntityType(t)
+	tags := useTags(t, 2)
+	childTag1, err := tRepos.Tags.Create(context.Background(), tGroup.ID, TagCreate{
+		Name:        fk.Str(10),
+		Description: fk.Str(100),
+		ParentID:    tags[0].ID,
+	})
+	require.NoError(t, err)
+	childTag2, err := tRepos.Tags.Create(context.Background(), tGroup.ID, TagCreate{
+		Name:        fk.Str(10),
+		Description: fk.Str(100),
+		ParentID:    tags[1].ID,
+	})
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = tRepos.Tags.delete(context.Background(), childTag2.ID)
+		_ = tRepos.Tags.delete(context.Background(), childTag1.ID)
+	})
+
+	container, err := tRepos.Entities.Create(context.Background(), tGroup.ID, EntityCreate{
+		Name:         fk.Str(10),
+		Description:  fk.Str(100),
+		EntityTypeID: containerET.ID,
+	})
+	require.NoError(t, err)
+
+	wideMatch, err := tRepos.Entities.Create(context.Background(), tGroup.ID, EntityCreate{
+		Name:         fk.Str(10),
+		Description:  fk.Str(100),
+		ParentID:     container.ID,
+		EntityTypeID: itemET.ID,
+		TagIDs:       []uuid.UUID{tags[0].ID, tags[1].ID},
+	})
+	require.NoError(t, err)
+
+	narrowMatch, err := tRepos.Entities.Create(context.Background(), tGroup.ID, EntityCreate{
+		Name:         fk.Str(10),
+		Description:  fk.Str(100),
+		ParentID:     container.ID,
+		EntityTypeID: itemET.ID,
+		TagIDs:       []uuid.UUID{tags[0].ID},
+	})
+	require.NoError(t, err)
+
+	descendantWideMatch, err := tRepos.Entities.Create(context.Background(), tGroup.ID, EntityCreate{
+		Name:         fk.Str(10),
+		Description:  fk.Str(100),
+		ParentID:     container.ID,
+		EntityTypeID: itemET.ID,
+		TagIDs:       []uuid.UUID{childTag1.ID, childTag2.ID},
+	})
+	require.NoError(t, err)
+
+	descendantNarrowMatch, err := tRepos.Entities.Create(context.Background(), tGroup.ID, EntityCreate{
+		Name:         fk.Str(10),
+		Description:  fk.Str(100),
+		ParentID:     container.ID,
+		EntityTypeID: itemET.ID,
+		TagIDs:       []uuid.UUID{childTag1.ID},
+	})
+	require.NoError(t, err)
+
+	t.Cleanup(func() {
+		_ = tRepos.Entities.Delete(context.Background(), descendantNarrowMatch.ID)
+		_ = tRepos.Entities.Delete(context.Background(), descendantWideMatch.ID)
+		_ = tRepos.Entities.Delete(context.Background(), narrowMatch.ID)
+		_ = tRepos.Entities.Delete(context.Background(), wideMatch.ID)
+		_ = tRepos.Entities.Delete(context.Background(), container.ID)
+	})
+
+	query := EntityQuery{
+		Page:     -1,
+		PageSize: -1,
+		TagIDs:   []uuid.UUID{tags[0].ID, tags[1].ID},
+	}
+
+	results, err := tRepos.Entities.QueryByGroup(context.Background(), tGroup.ID, query)
+	require.NoError(t, err)
+
+	ids := make([]uuid.UUID, 0, len(results.Items))
+	for _, item := range results.Items {
+		ids = append(ids, item.ID)
+	}
+	assert.Contains(t, ids, wideMatch.ID)
+	assert.Contains(t, ids, narrowMatch.ID)
+	assert.Contains(t, ids, descendantWideMatch.ID)
+	assert.Contains(t, ids, descendantNarrowMatch.ID)
+
+	query.MatchAllTags = true
+	results, err = tRepos.Entities.QueryByGroup(context.Background(), tGroup.ID, query)
+	require.NoError(t, err)
+
+	ids = ids[:0]
+	for _, item := range results.Items {
+		ids = append(ids, item.ID)
+	}
+	assert.Contains(t, ids, wideMatch.ID)
+	assert.Contains(t, ids, descendantWideMatch.ID)
+	assert.NotContains(t, ids, narrowMatch.ID)
+	assert.NotContains(t, ids, descendantNarrowMatch.ID)
+}
+
 func TestEntityRepository_Update(t *testing.T) {
 	entities := useEntities(t, 3)
 

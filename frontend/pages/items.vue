@@ -85,6 +85,7 @@
   const includeArchived = useOptionalRouteQuery("archived", false);
   const fieldSelector = useOptionalRouteQuery("fieldSelector", false);
   const negateTags = useOptionalRouteQuery("negateTags", false);
+  const matchAllTags = useOptionalRouteQuery("matchAllTags", false);
   const onlyWithoutPhoto = useOptionalRouteQuery("onlyWithoutPhoto", false);
   const onlyWithPhoto = useOptionalRouteQuery("onlyWithPhoto", false);
   const orderBy = useOptionalRouteQuery("orderBy", "name");
@@ -207,6 +208,12 @@
     }
   });
 
+  watch(matchAllTags, (newV, oldV) => {
+    if (newV !== oldV) {
+      search();
+    }
+  });
+
   watch(onlyWithoutPhoto, (newV, oldV) => {
     if (newV && onlyWithPhoto.value) {
       // this triggers the watch on onlyWithPhoto
@@ -275,6 +282,7 @@
       archived: includeArchived.value,
       fieldSelector: fieldSelector.value,
       negateTags: negateTags.value,
+      matchAllTags: matchAllTags.value,
       onlyWithoutPhoto: onlyWithoutPhoto.value,
       onlyWithPhoto: onlyWithPhoto.value,
       orderBy: orderBy.value,
@@ -312,6 +320,7 @@
       parentIds: locIDs.value,
       tags: tagIDs.value,
       negateTags: negateTags.value,
+      matchAllTags: matchAllTags.value,
       onlyWithoutPhoto: onlyWithoutPhoto.value,
       onlyWithPhoto: onlyWithPhoto.value,
       includeArchived: includeArchived.value,
@@ -425,6 +434,11 @@
               <Switch v-model="negateTags" class="ml-auto" />
               <div class="grow" />
               <span class="text-right"> {{ $t("items.negate_tags") }} </span>
+            </Label>
+            <Label class="flex cursor-pointer items-center">
+              <Switch v-model="matchAllTags" class="ml-auto" />
+              <div class="grow" />
+              <span class="text-right"> {{ $t("items.match_all_tags") }} </span>
             </Label>
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="onlyWithoutPhoto" class="ml-auto" />
