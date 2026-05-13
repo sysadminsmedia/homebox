@@ -1593,7 +1593,7 @@ paths:
         "204":
           description: No Content
         "400":
-          description: missing or invalid request body
+          description: missing or invalid request body, or empty email field
           content:
             application/json:
               schema:
@@ -1606,13 +1606,6 @@ paths:
                 type: string
         "500":
           description: internal error while processing the request
-          content:
-            application/json:
-              schema:
-                type: string
-        "503":
-          description: SMTP is not configured, or HBOX_OPTIONS_HOSTNAME is unset so a safe
-            reset URL cannot be built
           content:
             application/json:
               schema:
@@ -1739,8 +1732,8 @@ paths:
         "204":
           description: No Content
         "400":
-          description: invalid request body, invalid token, expired token, or already-used
-            token
+          description: invalid request body, password shorter than the minimum length, or
+            token that is invalid / expired / already used
           content:
             application/json:
               schema:

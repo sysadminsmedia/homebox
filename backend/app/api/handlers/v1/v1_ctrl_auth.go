@@ -177,10 +177,9 @@ const resetPasswordMinLength = 6
 //	@Produce		json
 //	@Param			payload	body		ForgotPasswordRequest	true	"Email"
 //	@Success		204
-//	@Failure		400		{string}	string					"missing or invalid request body"
+//	@Failure		400		{string}	string					"missing or invalid request body, or empty email field"
 //	@Failure		403		{string}	string					"demo mode is enabled or local login is disabled"
 //	@Failure		500		{string}	string					"internal error while processing the request"
-//	@Failure		503		{string}	string					"SMTP is not configured, or HBOX_OPTIONS_HOSTNAME is unset so a safe reset URL cannot be built"
 //	@Router			/v1/users/forgot-password [POST]
 func (ctrl *V1Controller) HandleForgotPassword() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
@@ -209,15 +208,18 @@ func (ctrl *V1Controller) HandleForgotPassword() errchain.HandlerFunc {
 			return validate.NewRequestError(errors.New("email is required"), http.StatusBadRequest)
 		}
 
+		// SECURITY: The two configuration failures below (SMTP not ready,
+		// no safe base URL) MUST NOT be reported to the client. The whole
+		// point of the "always 204" response is that an unauthenticated
+		// caller can't probe the server for state — including configuration
+		// state. Returning 503 here would let an attacker fingerprint
+		// whether the instance has SMTP configured or what HBOX_OPTIONS_*
+		// values are set, which is reconnaissance info we deliberately
+		// withhold. Operators discover these via server logs instead.
 		if !ctrl.svc.User.MailerReady() {
-			// Surface the misconfiguration explicitly rather than silently
-			// swallowing it: an admin staring at "we sent an email" with
-			// nothing arriving is much harder to debug than a clear 503.
 			span.SetAttributes(attribute.String("forgot.outcome", "mailer_not_configured"))
-			return validate.NewRequestError(
-				errors.New("password reset by email is not available — SMTP is not configured on this server"),
-				http.StatusServiceUnavailable,
-			)
+			log.Warn().Msg("forgot-password requested but SMTP mailer is not configured; no email will be sent")
+			return server.JSON(w, http.StatusNoContent, nil)
 		}
 
 		// SecureBaseURL refuses Referer-based fallback so an attacker can't
@@ -225,10 +227,8 @@ func (ctrl *V1Controller) HandleForgotPassword() errchain.HandlerFunc {
 		baseURL := SecureBaseURL(r, &ctrl.config.Options)
 		if baseURL == "" {
 			span.SetAttributes(attribute.String("forgot.outcome", "no_safe_base_url"))
-			return validate.NewRequestError(
-				errors.New("password reset by email is not available — set HBOX_OPTIONS_HOSTNAME so the reset link can be constructed safely"),
-				http.StatusServiceUnavailable,
-			)
+			log.Warn().Msg("forgot-password requested but no safe base URL is available; set HBOX_OPTIONS_HOSTNAME to enable")
+			return server.JSON(w, http.StatusNoContent, nil)
 		}
 
 		if err := ctrl.svc.User.RequestPasswordReset(spanCtx, body.Email, baseURL); err != nil {
@@ -255,7 +255,7 @@ func (ctrl *V1Controller) HandleForgotPassword() errchain.HandlerFunc {
 //	@Produce		json
 //	@Param			payload	body		ResetPasswordRequest	true	"Token + new password"
 //	@Success		204
-//	@Failure		400		{string}	string					"invalid request body, invalid token, expired token, or already-used token"
+//	@Failure		400		{string}	string					"invalid request body, password shorter than the minimum length, or token that is invalid / expired / already used"
 //	@Failure		403		{string}	string					"demo mode is enabled or local login is disabled"
 //	@Failure		500		{string}	string					"internal error while processing the request"
 //	@Router			/v1/users/reset-password [POST]

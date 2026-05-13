@@ -138,6 +138,14 @@ func (svc *UserService) ResetPassword(ctx context.Context, rawToken, newPassword
 	tok, err := svc.repos.PasswordResetTokens.GetValidByHash(ctx, hash)
 	if err != nil {
 		if ent.IsNotFound(err) {
+			// SECURITY: equalize response time with the valid-token path.
+			// The valid-token path runs argon2id (~50ms) + DB writes; without
+			// a dummy hash here, an attacker could distinguish valid from
+			// invalid tokens by response time. argon2id dominates the cost
+			// of the success path, so equalizing it brings the residual gap
+			// well below typical network jitter and below practical
+			// distinguishability. The dummy hash result is discarded.
+			_, _ = hasher.HashPasswordCtx(ctx, newPassword)
 			span.SetAttributes(attribute.String("reset.outcome", "token_invalid"))
 			return ErrorPasswordResetInvalid
 		}

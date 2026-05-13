@@ -169,6 +169,48 @@ func TestResetPassword_BogusToken_Rejected(t *testing.T) {
 	assert.ErrorIs(t, err, ErrorPasswordResetInvalid)
 }
 
+// TestResetPassword_InvalidToken_RunsDummyHash exists to catch regressions of
+// the timing-equalization fix. We don't assert absolute timings (CI is too
+// noisy) — instead we assert that the invalid-token path takes at LEAST a
+// reasonable fraction of the valid-token path. argon2id with the configured
+// params (m=64MiB, t=3, p=2) takes tens of ms on any modern host; the
+// invalid-token path without the dummy hash returns in microseconds, so a
+// loose floor reliably distinguishes "dummy hash ran" from "didn't".
+func TestResetPassword_InvalidToken_RunsDummyHash(t *testing.T) {
+	ctx := context.Background()
+
+	// Warm up: argon2id allocates ~64 MiB; the first call in a process can be
+	// markedly slower than steady-state. Run once so the measurement below
+	// reflects steady-state cost.
+	_, _ = hasher.HashPasswordCtx(ctx, "warmup-pw")
+
+	const password = "any-password-of-reasonable-length"
+
+	measure := func(token string) time.Duration {
+		start := time.Now()
+		_ = tSvc.User.ResetPassword(ctx, token, password)
+		return time.Since(start)
+	}
+
+	// Establish a per-host baseline by measuring a real argon2id directly.
+	// This avoids hard-coding a millisecond floor that could be flaky on
+	// slow CI runners or fast workstations.
+	hashStart := time.Now()
+	_, err := hasher.HashPasswordCtx(ctx, password)
+	require.NoError(t, err)
+	hashCost := time.Since(hashStart)
+
+	invalidElapsed := measure("definitely-not-a-real-token-value-here")
+
+	// The invalid-token path must take at least ~half the cost of a single
+	// argon2id call. If the dummy hash were skipped, this would return in
+	// well under a millisecond and the assertion would fail loudly.
+	floor := hashCost / 2
+	assert.GreaterOrEqual(t, invalidElapsed, floor,
+		"invalid-token path returned in %s but a single argon2id costs %s — dummy hash likely was not run, exposing a timing oracle for valid vs invalid tokens",
+		invalidElapsed, hashCost)
+}
+
 func TestResetPassword_EmptyInputs_Rejected(t *testing.T) {
 	err := tSvc.User.ResetPassword(context.Background(), "", "newpw")
 	require.ErrorIs(t, err, ErrorPasswordResetInvalid)

@@ -26,19 +26,14 @@
 
   async function submit() {
     loading.value = true;
-    const { error, status } = await api.forgotPassword(email.value.trim());
+    const { error } = await api.forgotPassword(email.value.trim());
     loading.value = false;
 
     if (error) {
-      // 503 means SMTP isn't configured — show the actionable message rather
-      // than the generic "if that email exists" success line, since waiting
-      // for an email that won't come is the worst outcome here.
-      if (status === 503) {
-        toast.error(t("index.toast.forgot_password_unavailable"));
-        return;
-      }
-      // Other errors (rate limit, network) get a generic notice; don't leak
-      // server details to an unauthenticated form.
+      // Server deliberately collapses configuration state and missing-account
+      // cases into the same 204 — see HandleForgotPassword. So real errors
+      // here are limited to rate limiting (429), demo mode (403), or network
+      // failures, none of which we want to detail to an unauthenticated user.
       toast.error(t("index.toast.invalid_email"));
       return;
     }

@@ -2504,7 +2504,7 @@ const docTemplate = `{
                         "description": "No Content"
                     },
                     "400": {
-                        "description": "missing or invalid request body",
+                        "description": "missing or invalid request body, or empty email field",
                         "schema": {
                             "type": "string"
                         }
@@ -2517,12 +2517,6 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "internal error while processing the request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "503": {
-                        "description": "SMTP is not configured, or HBOX_OPTIONS_HOSTNAME is unset so a safe reset URL cannot be built",
                         "schema": {
                             "type": "string"
                         }
@@ -2714,7 +2708,7 @@ const docTemplate = `{
                         "description": "No Content"
                     },
                     "400": {
-                        "description": "invalid request body, invalid token, expired token, or already-used token",
+                        "description": "invalid request body, password shorter than the minimum length, or token that is invalid / expired / already used",
                         "schema": {
                             "type": "string"
                         }

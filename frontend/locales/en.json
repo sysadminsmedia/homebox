@@ -486,7 +486,6 @@
         "tagline": "Track, Organize, and Manage your Things.",
         "title": "Organize and Tag Your Stuff",
         "toast": {
-            "forgot_password_unavailable": "Password reset by email is not available — SMTP is not configured on this server. Ask an administrator to run the reset-password CLI command.",
             "invalid_email": "Invalid email address",
             "invalid_email_password": "Invalid email or password",
             "login_success": "Logged in successfully",

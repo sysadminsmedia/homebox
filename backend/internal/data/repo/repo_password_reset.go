@@ -92,17 +92,22 @@ func (r *PasswordResetTokenRepository) GetValidByHash(ctx context.Context, token
 var ErrPasswordResetTokenAlreadyClaimed = errors.New("password reset token was already claimed")
 
 // MarkUsed atomically sets used_at on the token, succeeding only if used_at
-// was previously NULL. Returns ErrPasswordResetTokenAlreadyClaimed if a
-// concurrent caller won the race. Callers should claim BEFORE running any
-// side effects (changing the password, etc.) so the token can be used at
-// most once even under contention.
+// was previously NULL AND the token has not yet expired. Returns
+// ErrPasswordResetTokenAlreadyClaimed if a concurrent caller won the race or
+// if the token expired between GetValidByHash and this call. Callers should
+// claim BEFORE running any side effects (changing the password, etc.) so the
+// token can be used at most once even under contention.
 func (r *PasswordResetTokenRepository) MarkUsed(ctx context.Context, id uuid.UUID, at time.Time) error {
 	ctx, span := entityTracer().Start(ctx, "repo.PasswordResetTokenRepository.MarkUsed",
 		trace.WithAttributes(attribute.String("token.id", id.String())))
 	defer span.End()
 
 	affected, err := r.db.PasswordResetTokens.Update().
-		Where(passwordresettokens.ID(id), passwordresettokens.UsedAtIsNil()).
+		Where(
+			passwordresettokens.ID(id),
+			passwordresettokens.UsedAtIsNil(),
+			passwordresettokens.ExpiresAtGT(at),
+		).
 		SetUsedAt(at).
 		Save(ctx)
 	if err != nil {
@@ -139,9 +144,14 @@ func (r *PasswordResetTokenRepository) ConsumeAndChangePassword(ctx context.Cont
 		return err
 	}
 
+	now := time.Now()
 	affected, err := tx.PasswordResetTokens.Update().
-		Where(passwordresettokens.ID(tokenID), passwordresettokens.UsedAtIsNil()).
-		SetUsedAt(time.Now()).
+		Where(
+			passwordresettokens.ID(tokenID),
+			passwordresettokens.UsedAtIsNil(),
+			passwordresettokens.ExpiresAtGT(now),
+		).
+		SetUsedAt(now).
 		Save(ctx)
 	if err != nil {
 		_ = tx.Rollback()
