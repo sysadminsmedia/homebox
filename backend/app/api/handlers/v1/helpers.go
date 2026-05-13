@@ -56,16 +56,16 @@ func ensureScheme(hostname string, r *http.Request, trustProxy bool) string {
 // getScheme determines the appropriate URL scheme based on request and proxy settings
 func getScheme(r *http.Request, trustProxy bool) string {
 	if r.TLS != nil {
-		return "https"
+		return schemeHTTPS
 	}
 	if trustProxy {
 		// X-Forwarded-Proto may be a comma-separated list (one entry per hop);
 		// the leftmost entry is the original client-facing protocol — that's
-		// what we want for user-facing URL construction. A literal `==
-		// "https"` check fails on legitimate "https, http" multi-hop values.
+		// what we want for user-facing URL construction. A literal equality
+		// check fails on legitimate "https, http" multi-hop values.
 		proto := strings.ToLower(firstHeaderValue(r.Header.Get("X-Forwarded-Proto")))
-		if proto == "https" {
-			return "https"
+		if proto == schemeHTTPS {
+			return schemeHTTPS
 		}
 	}
 	return "http"

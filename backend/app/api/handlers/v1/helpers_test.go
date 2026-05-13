@@ -8,6 +8,10 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 )
 
+// fixtureAppURL is the canonical URL used across SecureBaseURL test cases.
+// Extracted to satisfy goconst.
+const fixtureAppURL = "https://app.example.com"
+
 func TestSecureBaseURL(t *testing.T) {
 	cases := []struct {
 		name        string
@@ -20,8 +24,8 @@ func TestSecureBaseURL(t *testing.T) {
 	}{
 		{
 			name:      "Hostname configured wins outright",
-			hostname:  "https://app.example.com",
-			expectURL: "https://app.example.com",
+			hostname:  fixtureAppURL,
+			expectURL: fixtureAppURL,
 		},
 		{
 			name:        "no hostname, no trust proxy → refuse",
@@ -36,21 +40,21 @@ func TestSecureBaseURL(t *testing.T) {
 			name:       "trust proxy + XF-Host (https)",
 			trustProxy: true,
 			xfHost:     "app.example.com",
-			xfProto:    "https",
-			expectURL:  "https://app.example.com",
+			xfProto:    schemeHTTPS,
+			expectURL:  fixtureAppURL,
 		},
 		{
 			name:       "trust proxy + XF-Host with port",
 			trustProxy: true,
 			xfHost:     "app.example.com:8443",
-			xfProto:    "https",
+			xfProto:    schemeHTTPS,
 			expectURL:  "https://app.example.com:8443",
 		},
 		{
 			name:       "trust proxy + IPv6 XF-Host",
 			trustProxy: true,
 			xfHost:     "[2001:db8::1]:8443",
-			xfProto:    "https",
+			xfProto:    schemeHTTPS,
 			expectURL:  "https://[2001:db8::1]:8443",
 		},
 
@@ -61,15 +65,15 @@ func TestSecureBaseURL(t *testing.T) {
 			name:       "comma-separated XF-Host: take first",
 			trustProxy: true,
 			xfHost:     "app.example.com, internal.example.com",
-			xfProto:    "https",
-			expectURL:  "https://app.example.com",
+			xfProto:    schemeHTTPS,
+			expectURL:  fixtureAppURL,
 		},
 		{
 			name:       "comma-separated XF-Proto: take first",
 			trustProxy: true,
 			xfHost:     "app.example.com",
 			xfProto:    "https, http",
-			expectURL:  "https://app.example.com",
+			expectURL:  fixtureAppURL,
 		},
 
 		// Validation rejections — these are the attack-relevant cases. A
@@ -130,7 +134,7 @@ func TestSecureBaseURL(t *testing.T) {
 			name:        "untrusted proxy headers are ignored",
 			trustProxy:  false,
 			xfHost:      "app.example.com",
-			xfProto:     "https",
+			xfProto:     schemeHTTPS,
 			expectEmpty: true,
 		},
 	}
@@ -205,7 +209,7 @@ func TestFirstHeaderValue(t *testing.T) {
 		{"foo, bar", "foo"},
 		{"foo,bar", "foo"},
 		{"  foo , bar", "foo"},
-		{"https, http", "https"},
+		{"https, http", schemeHTTPS},
 	}
 	for _, c := range cases {
 		t.Run(c.in, func(t *testing.T) {
