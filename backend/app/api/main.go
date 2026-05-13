@@ -226,14 +226,7 @@ func run(cfg *config.Config) error {
 	app.db = c
 	app.repos = repo.New(c, app.bus, cfg.Storage, cfg.Database.PubSubConnString, cfg.Thumbnail)
 
-	// Attachment-key escaping in fileblob only flattens paths on Windows
-	// (where os.PathSeparator is "\"), so the legacy-path rename is a Windows-
-	// only concern; skip the disk scan everywhere else.
-	if runtime.GOOS == "windows" {
-		if err := app.repos.Attachments.MigrateLegacyFlatPaths(); err != nil {
-			log.Error().Err(err).Msg("failed to migrate legacy attachment file paths")
-		}
-	}
+	migrateLegacyAttachmentPaths(app)
 
 	app.services = services.New(
 		app.repos,
@@ -354,6 +347,19 @@ func run(cfg *config.Config) error {
 	}
 
 	return runner.Start(context.Background())
+}
+
+func migrateLegacyAttachmentPaths(app *app) {
+	// Attachment-key escaping in fileblob only flattens paths on Windows
+	// (where os.PathSeparator is "\"), so the legacy-path rename is a Windows-
+	// only concern; skip the disk scan everywhere else.
+	if runtime.GOOS != "windows" {
+		return
+	}
+
+	if err := app.repos.Attachments.MigrateLegacyFlatPaths(); err != nil {
+		log.Error().Err(err).Msg("failed to migrate legacy attachment file paths")
+	}
 }
 
 // ensureAssetIDs assigns asset IDs to any entities that don't have one,

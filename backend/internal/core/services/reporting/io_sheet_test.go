@@ -23,6 +23,12 @@ var (
 	customTypesImportCSV []byte
 )
 
+const (
+	homeboxField1Header = homeboxFieldHeaderPrefix + "1"
+	homeboxField2Header = homeboxFieldHeaderPrefix + "2"
+	homeboxField3Header = homeboxFieldHeaderPrefix + "3"
+)
+
 func TestSheet_Read(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -130,27 +136,27 @@ func Test_parseHeaders(t *testing.T) {
 		},
 		{
 			name:       "field headers only",
-			rawHeaders: []string{"HB.location", "HB.name", "HB.field.1", "HB.field.2", "HB.field.3"},
+			rawHeaders: []string{homeboxLocationHeader, homeboxNameHeader, homeboxField1Header, homeboxField2Header, homeboxField3Header},
 			wantHbHeaders: map[string]int{
-				"HB.location": 0,
-				"HB.name":     1,
-				"HB.field.1":  2,
-				"HB.field.2":  3,
-				"HB.field.3":  4,
+				homeboxLocationHeader: 0,
+				homeboxNameHeader:     1,
+				homeboxField1Header:   2,
+				homeboxField2Header:   3,
+				homeboxField3Header:   4,
 			},
-			wantFieldHeaders: []string{"HB.field.1", "HB.field.2", "HB.field.3"},
+			wantFieldHeaders: []string{homeboxField1Header, homeboxField2Header, homeboxField3Header},
 			wantErr:          false,
 		},
 		{
 			name:       "mixed headers",
-			rawHeaders: []string{"Header 1", "HB.name", "Header 2", "HB.field.2", "Header 3", "HB.field.3", "HB.location"},
+			rawHeaders: []string{"Header 1", homeboxNameHeader, "Header 2", homeboxField2Header, "Header 3", homeboxField3Header, homeboxLocationHeader},
 			wantHbHeaders: map[string]int{
-				"HB.name":     1,
-				"HB.field.2":  3,
-				"HB.field.3":  5,
-				"HB.location": 6,
+				homeboxNameHeader:     1,
+				homeboxField2Header:   3,
+				homeboxField3Header:   5,
+				homeboxLocationHeader: 6,
 			},
-			wantFieldHeaders: []string{"HB.field.2", "HB.field.3"},
+			wantFieldHeaders: []string{homeboxField2Header, homeboxField3Header},
 			wantErr:          false,
 		},
 	}

@@ -546,6 +546,7 @@
         "model_number": "Model Number",
         "name": "Name",
         "negate_tags": "Negate Selected Tags",
+        "match_all_tags": "Match All Selected Tags",
         "next_page": "Next Page",
         "no_attachments": "No attachments found",
         "no_results": "No Items Found",

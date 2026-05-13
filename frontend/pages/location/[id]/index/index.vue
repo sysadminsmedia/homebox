@@ -4,7 +4,6 @@
   import type { AnyDetail, Details } from "~~/components/global/DetailsSection/types";
   import { filterZeroValues } from "~~/components/global/DetailsSection/types";
   import type { ItemAttachment } from "~~/lib/api/types/data-contracts";
-  import { useLocationStore } from "~~/stores/locations";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPlus from "~icons/mdi/plus";
   import MdiPencil from "~icons/mdi/pencil";
@@ -49,16 +48,22 @@
 
   const locationId = computed<string>(() => route.params.id as string);
 
-  const { data: location, refresh } = useAsyncData(locationId.value, async () => {
-    const { data, error } = await api.items.getLocation(locationId.value);
-    if (error) {
-      toast.error(t("locations.toast.failed_load_location"));
-      navigateTo("/home");
-      return;
-    }
+  const { data: location } = useAsyncData(
+    () => `location-${locationId.value}`,
+    async () => {
+      const { data, error } = await api.items.getLocation(locationId.value);
+      if (error) {
+        toast.error(t("locations.toast.failed_load_location"));
+        navigateTo("/home");
+        return;
+      }
 
-    return data;
-  });
+      return data;
+    },
+    {
+      watch: [locationId],
+    }
+  );
 
   const confirm = useConfirm();
 
@@ -85,8 +90,6 @@
   function goToEdit() {
     navigateTo(`/location/${locationId.value}/edit`);
   }
-
-  const locationStore = useLocationStore();
 
   // Photos
   type Photo = {

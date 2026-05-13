@@ -10,7 +10,12 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 )
 
-const proxyRemoteAddr = "10.0.0.1:1234"
+const (
+	proxyRemoteAddr          = "10.0.0.1:1234"
+	directConnectionTestName = "DirectConnection"
+	proxyXRealIPTestName     = "ProxyXRealIP"
+	rateLimitClientIP        = "192.168.1.1"
+)
 
 func TestSimpleRateLimiter(t *testing.T) {
 	type testCase struct {
@@ -21,12 +26,12 @@ func TestSimpleRateLimiter(t *testing.T) {
 
 	tests := []testCase{
 		{
-			name:       "DirectConnection",
+			name:       directConnectionTestName,
 			trustProxy: false,
 			setupReq:   func(r *http.Request, ip string) { r.RemoteAddr = ip + ":1234" },
 		},
 		{
-			name:       "ProxyXRealIP",
+			name:       proxyXRealIPTestName,
 			trustProxy: true,
 			setupReq: func(r *http.Request, ip string) {
 				r.RemoteAddr = proxyRemoteAddr // Proxy IP
@@ -48,7 +53,7 @@ func TestSimpleRateLimiter(t *testing.T) {
 			// Create a rate limiter that allows 3 requests per 10 seconds
 			limiter := newSimpleRateLimiter(3, 10*time.Second, tc.trustProxy)
 			t.Cleanup(func() { limiter.Stop() })
-			clientIP := "192.168.1.1"
+			clientIP := rateLimitClientIP
 
 			// Helper to get IP
 			getIP := func(ip string) string {
@@ -96,12 +101,12 @@ func TestSimpleRateLimiterRefill(t *testing.T) {
 
 	tests := []testCase{
 		{
-			name:       "DirectConnection",
+			name:       directConnectionTestName,
 			trustProxy: false,
 			setupReq:   func(r *http.Request, ip string) { r.RemoteAddr = ip + ":1234" },
 		},
 		{
-			name:       "ProxyXRealIP",
+			name:       proxyXRealIPTestName,
 			trustProxy: true,
 			setupReq: func(r *http.Request, ip string) {
 				r.RemoteAddr = proxyRemoteAddr // Proxy IP
@@ -115,7 +120,7 @@ func TestSimpleRateLimiterRefill(t *testing.T) {
 			// Create a rate limiter that allows 2 requests per 100ms
 			limiter := newSimpleRateLimiter(2, 100*time.Millisecond, tc.trustProxy)
 			t.Cleanup(func() { limiter.Stop() })
-			clientIP := "192.168.1.1"
+			clientIP := rateLimitClientIP
 
 			// Helper to get IP
 			getIP := func(ip string) string {
@@ -157,12 +162,12 @@ func TestSimpleRateLimiterConcurrent(t *testing.T) {
 
 	tests := []testCase{
 		{
-			name:       "DirectConnection",
+			name:       directConnectionTestName,
 			trustProxy: false,
 			setupReq:   func(r *http.Request, ip string) { r.RemoteAddr = ip + ":1234" },
 		},
 		{
-			name:       "ProxyXRealIP",
+			name:       proxyXRealIPTestName,
 			trustProxy: true,
 			setupReq: func(r *http.Request, ip string) {
 				r.RemoteAddr = proxyRemoteAddr // Proxy IP
@@ -175,7 +180,7 @@ func TestSimpleRateLimiterConcurrent(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			limiter := newSimpleRateLimiter(10, time.Second, tc.trustProxy)
 			t.Cleanup(func() { limiter.Stop() })
-			clientIP := "192.168.1.1"
+			clientIP := rateLimitClientIP
 
 			// Helper to get IP
 			getIP := func(ip string) string {
@@ -222,12 +227,12 @@ func TestSimpleRateLimiterCleanup(t *testing.T) {
 
 	tests := []testCase{
 		{
-			name:       "DirectConnection",
+			name:       directConnectionTestName,
 			trustProxy: false,
 			setupReq:   func(r *http.Request, ip string) { r.RemoteAddr = ip + ":1234" },
 		},
 		{
-			name:       "ProxyXRealIP",
+			name:       proxyXRealIPTestName,
 			trustProxy: true,
 			setupReq: func(r *http.Request, ip string) {
 				r.RemoteAddr = proxyRemoteAddr // Proxy IP
@@ -250,7 +255,7 @@ func TestSimpleRateLimiterCleanup(t *testing.T) {
 			}
 
 			// Add entries for multiple IPs
-			ips := []string{"192.168.1.1", "192.168.1.2", "192.168.1.3", "192.168.1.4", "192.168.1.5"}
+			ips := []string{rateLimitClientIP, "192.168.1.2", "192.168.1.3", "192.168.1.4", "192.168.1.5"}
 			for _, ip := range ips {
 				limiter.allow(getIP(ip))
 			}
@@ -291,12 +296,12 @@ func TestSimpleRateLimiterCleanupPreservesActive(t *testing.T) {
 
 	tests := []testCase{
 		{
-			name:       "DirectConnection",
+			name:       directConnectionTestName,
 			trustProxy: false,
 			setupReq:   func(r *http.Request, ip string) { r.RemoteAddr = ip + ":1234" },
 		},
 		{
-			name:       "ProxyXRealIP",
+			name:       proxyXRealIPTestName,
 			trustProxy: true,
 			setupReq: func(r *http.Request, ip string) {
 				r.RemoteAddr = proxyRemoteAddr // Proxy IP
@@ -317,7 +322,7 @@ func TestSimpleRateLimiterCleanupPreservesActive(t *testing.T) {
 				return limiter.getClientIP(req, limiter.trustProxy)
 			}
 
-			activeIP := "192.168.1.1"
+			activeIP := rateLimitClientIP
 			staleIP := "192.168.1.2"
 
 			// Create a stale entry
@@ -420,7 +425,11 @@ func TestAuthRateLimiterCleanupPreservesLocked(t *testing.T) {
 
 	lockedKey := "locked"
 	staleKey := "stale"
-	now := limiter.nowFn()
+	now := time.Now()
+	currentTime := now
+	limiter.nowFn = func() time.Time {
+		return currentTime
+	}
 
 	// Create a locked entry (exceed max attempts)
 	for i := 0; i < cfg.MaxAttempts+1; i++ {
@@ -430,8 +439,8 @@ func TestAuthRateLimiterCleanupPreservesLocked(t *testing.T) {
 	// Create a stale entry
 	limiter.record(staleKey, now, false)
 
-	// Wait for entries to be outside the window but locked entry still locked
-	time.Sleep(100 * time.Millisecond)
+	// Move outside the window while keeping the lockout active.
+	currentTime = now.Add(100 * time.Millisecond)
 
 	// Trigger cleanup
 	limiter.cleanup()
