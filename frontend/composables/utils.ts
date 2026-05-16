@@ -147,18 +147,17 @@ export async function fmtCurrencyAsync(value: number | string, currency = "USD",
   return fmtCurrency(value, currency, locale);
 }
 
-// Matches a value that already declares a URL scheme (e.g. "https://...",
-// "file://...", "ftp://..."). Inputs with an explicit scheme are passed to
-// the URL parser as-is. We accept http(s) and reject everything else rather
-// than trying to coerce them.
+// Matches an input that already declares a URL scheme like "https://" or
+// "file://". When this matches we pass the input to the URL parser as-is
+// and accept only http(s); anything else is rejected without trying to
+// coerce it.
 const EXPLICIT_SCHEME_RE = /^[a-z][a-z0-9+.-]*:\/\//i;
 
-// Parses a scanner / barcode payload into a URL. Accepts full URLs as well as
-// protocol-less host+path payloads (e.g. "example.com/a/1", "localhost:3000/a/1").
-// Dropping the protocol and using uppercase characters fits more data into the
-// smallest QR / Data Matrix codes, which matters for pre-printed asset
-// stickers. Returns null for inputs that don't look like a homebox URL (e.g.
-// EAN/UPC barcode digits, file://, mailto:) so callers can fall back to other
+// Parses a scanner payload into a URL. Accepts full URLs as well as
+// protocol-less host+path payloads such as "example.com/a/1" or
+// "localhost:3000/a/1", which let pre-printed asset stickers carry less
+// data. Returns null for inputs that aren't URL-shaped (e.g. EAN/UPC
+// barcode digits, file://, mailto:) so callers can fall back to other
 // handling.
 export function parseScanResult(rawValue: string): URL | null {
   if (EXPLICIT_SCHEME_RE.test(rawValue)) {
@@ -180,7 +179,7 @@ export function parseScanResult(rawValue: string): URL | null {
     return null;
   }
   // Use the current page's protocol so http-only deployments still pass
-  // their own origin checks (URL constructor normalizes protocol/host case).
+  // their own origin checks.
   const protocol = globalThis.location?.protocol ?? "https:";
   try {
     const url = new URL(`${protocol}//${rawValue}`);

@@ -85,7 +85,7 @@ function parseHomeboxUrl(rawValue: string): { entityType: "item" | "location" | 
 
     const sanitized = pathname.replace(/[^a-zA-Z0-9-_/]/g, "");
 
-    // Case-insensitive prefix match so all-uppercase C40 Data Matrix codes scan.
+    // Case-insensitive so uppercase-encoded codes resolve to the right entity.
     const assetMatch = sanitized.match(/^\/a\/([a-zA-Z0-9-_]+)/i);
     if (assetMatch) return { entityType: "asset", id: assetMatch[1]! };
 
