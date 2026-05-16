@@ -67,6 +67,23 @@ describe("parseScanResult", () => {
     expect(url?.pathname).toBe("/A/1");
   });
 
+  test("accepts protocol-less localhost with port", () => {
+    // The URL parser otherwise interprets "localhost:3000/a/1" as scheme
+    // "localhost:". Important for dev and self-hosted deployments without
+    // a TLD in the URL.
+    vi.stubGlobal("location", { protocol: "http:", origin: "http://localhost:3000" });
+    const url = parseScanResult("localhost:3000/a/1");
+    expect(url?.host).toBe("localhost:3000");
+    expect(url?.pathname).toBe("/a/1");
+  });
+
+  test("accepts uppercase localhost payload", () => {
+    vi.stubGlobal("location", { protocol: "http:", origin: "http://localhost:3000" });
+    const url = parseScanResult("LOCALHOST:3000/A/1");
+    expect(url?.host).toBe("localhost:3000");
+    expect(url?.pathname).toBe("/A/1");
+  });
+
   test("uses current page protocol for protocol-less payloads", () => {
     vi.stubGlobal("location", { protocol: "http:", origin: "http://example.com" });
     const url = parseScanResult("example.com/a/1");
@@ -77,7 +94,7 @@ describe("parseScanResult", () => {
     expect(parseScanResult("1234567890123")).toBeNull();
   });
 
-  test("rejects arbitrary text without dot+slash", () => {
+  test("rejects arbitrary text without a slash", () => {
     expect(parseScanResult("hello world")).toBeNull();
   });
 
@@ -89,5 +106,21 @@ describe("parseScanResult", () => {
 
   test("rejects protocol-relative URL (cannot be parsed without base)", () => {
     expect(parseScanResult("//evil.example/a/1")).toBeNull();
+  });
+
+  test("rejects file:// URLs", () => {
+    expect(parseScanResult("file:///etc/passwd")).toBeNull();
+  });
+
+  test("rejects mailto: URLs", () => {
+    expect(parseScanResult("mailto:foo@example.com")).toBeNull();
+  });
+
+  test("rejects javascript: URLs", () => {
+    expect(parseScanResult("javascript:alert(1)")).toBeNull();
+  });
+
+  test("rejects data: URLs", () => {
+    expect(parseScanResult("data:text/plain;base64,SGVsbG8=")).toBeNull();
   });
 });

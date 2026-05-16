@@ -147,30 +147,49 @@ export async function fmtCurrencyAsync(value: number | string, currency = "USD",
   return fmtCurrency(value, currency, locale);
 }
 
+// Matches a value that already declares a URL scheme (e.g. "https://...",
+// "file://...", "ftp://..."). Inputs with an explicit scheme are passed to
+// the URL parser as-is. We accept http(s) and reject everything else rather
+// than trying to coerce them.
+const EXPLICIT_SCHEME_RE = /^[a-z][a-z0-9+.-]*:\/\//i;
+
 // Parses a scanner / barcode payload into a URL. Accepts full URLs as well as
-// protocol-less host+path payloads (e.g. "example.com/a/1") — dropping the
-// protocol and using uppercase characters fits more data into the smallest
-// QR / Data Matrix codes, which matters for pre-printed asset stickers.
-// Returns null for inputs that don't look like a URL (e.g. EAN/UPC barcode
-// digits) so callers can fall back to other handling.
+// protocol-less host+path payloads (e.g. "example.com/a/1", "localhost:3000/a/1").
+// Dropping the protocol and using uppercase characters fits more data into the
+// smallest QR / Data Matrix codes, which matters for pre-printed asset
+// stickers. Returns null for inputs that don't look like a homebox URL (e.g.
+// EAN/UPC barcode digits, file://, mailto:) so callers can fall back to other
+// handling.
 export function parseScanResult(rawValue: string): URL | null {
-  try {
-    return new URL(rawValue);
-  } catch {
-    // Only attempt the protocol-less fallback when the value still looks
-    // host-shaped: not a bare path, and contains both "/" and "." so plain
-    // numeric barcodes (EAN/UPC) and arbitrary text fall through to null.
-    if (rawValue.startsWith("/") || !rawValue.includes("/") || !rawValue.includes(".")) {
-      return null;
-    }
-    // Use the current page's protocol so http-only deployments still match
-    // their own origin checks (URL constructor normalizes protocol/host case).
-    const protocol = globalThis.location?.protocol ?? "https:";
+  if (EXPLICIT_SCHEME_RE.test(rawValue)) {
     try {
-      return new URL(`${protocol}//${rawValue}`);
+      const url = new URL(rawValue);
+      if ((url.protocol === "http:" || url.protocol === "https:") && url.host) {
+        return url;
+      }
     } catch {
+      // Malformed URL.
+    }
+    return null;
+  }
+
+  // No "scheme://", so treat as a protocol-less host+path payload. Require a
+  // "/" so plain barcode payloads (EAN/UPC digits) and arbitrary text return
+  // null and the caller can fall back to the barcode handler.
+  if (rawValue.startsWith("/") || !rawValue.includes("/")) {
+    return null;
+  }
+  // Use the current page's protocol so http-only deployments still pass
+  // their own origin checks (URL constructor normalizes protocol/host case).
+  const protocol = globalThis.location?.protocol ?? "https:";
+  try {
+    const url = new URL(`${protocol}//${rawValue}`);
+    if ((url.protocol !== "http:" && url.protocol !== "https:") || !url.host) {
       return null;
     }
+    return url;
+  } catch {
+    return null;
   }
 }
 
