@@ -164,6 +164,29 @@ func (r *TokenRepository) DeleteAllByUser(ctx context.Context, userID uuid.UUID)
 	return deleted, nil
 }
 
+// DeleteAllByUserExceptToken revokes every session token for userID except the
+// one identified by exceptHash. Used by the self-service ChangePassword flow
+// so the caller's current session keeps working while every other session
+// (laptop, phone, attacker-held cookie) is invalidated immediately.
+func (r *TokenRepository) DeleteAllByUserExceptToken(ctx context.Context, userID uuid.UUID, exceptHash []byte) (int, error) {
+	ctx, span := entityTracer().Start(ctx, "repo.TokenRepository.DeleteAllByUserExceptToken",
+		trace.WithAttributes(attribute.String("user.id", userID.String())))
+	defer span.End()
+
+	deleted, err := r.db.AuthTokens.Delete().
+		Where(
+			authtokens.HasUserWith(user.ID(userID)),
+			authtokens.TokenNEQ(exceptHash),
+		).
+		Exec(ctx)
+	if err != nil {
+		recordSpanError(span, err)
+		return 0, err
+	}
+	span.SetAttributes(attribute.Int("tokens.deleted.count", deleted))
+	return deleted, nil
+}
+
 // DeleteToken remove a single token from the database - equivalent to revoke or logout
 func (r *TokenRepository) DeleteToken(ctx context.Context, token []byte) error {
 	ctx, span := entityTracer().Start(ctx, "repo.TokenRepository.DeleteToken",

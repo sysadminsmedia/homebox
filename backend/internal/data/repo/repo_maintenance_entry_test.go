@@ -61,7 +61,7 @@ func TestMaintenanceEntryRepository_GetLog(t *testing.T) {
 	}
 
 	for _, entry := range created {
-		_, err := tRepos.MaintEntry.Create(context.Background(), item.ID, entry)
+		_, err := tRepos.MaintEntry.Create(context.Background(), tGroup.ID, item.ID, entry)
 		if err != nil {
 			t.Fatalf("failed to create maintenance entry: %v", err)
 		}

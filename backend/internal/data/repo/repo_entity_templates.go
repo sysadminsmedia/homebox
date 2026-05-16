@@ -265,6 +265,10 @@ func (r *EntityTemplatesRepository) GetOne(ctx context.Context, gid uuid.UUID, i
 
 // Create creates a new template
 func (r *EntityTemplatesRepository) Create(ctx context.Context, gid uuid.UUID, data EntityTemplateCreate) (EntityTemplateOut, error) {
+	if err := assertEntityInGroup(ctx, r.db.Entity, gid, data.DefaultLocationID); err != nil {
+		return EntityTemplateOut{}, err
+	}
+
 	q := r.db.EntityTemplate.Create().
 		SetName(data.Name).
 		SetDescription(data.Description).
@@ -315,6 +319,10 @@ func (r *EntityTemplatesRepository) Create(ctx context.Context, gid uuid.UUID, d
 
 // Update updates an existing template
 func (r *EntityTemplatesRepository) Update(ctx context.Context, gid uuid.UUID, data EntityTemplateUpdate) (EntityTemplateOut, error) {
+	if err := assertEntityInGroup(ctx, r.db.Entity, gid, data.DefaultLocationID); err != nil {
+		return EntityTemplateOut{}, err
+	}
+
 	// Verify template belongs to group
 	template, err := r.db.EntityTemplate.Query().
 		Where(

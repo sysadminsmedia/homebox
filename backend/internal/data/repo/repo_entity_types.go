@@ -98,6 +98,12 @@ func (r *EntityTypeRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]Ent
 
 // Create creates a new entity type for a group.
 func (r *EntityTypeRepository) Create(ctx context.Context, gid uuid.UUID, data EntityTypeCreate) (EntityTypeSummary, error) {
+	if data.DefaultTemplateID != nil {
+		if err := assertEntityTemplateInGroup(ctx, r.db.EntityTemplate, gid, *data.DefaultTemplateID); err != nil {
+			return EntityTypeSummary{}, err
+		}
+	}
+
 	q := r.db.EntityType.Create().
 		SetName(data.Name).
 		SetIsLocation(data.IsLocation).
@@ -119,6 +125,12 @@ func (r *EntityTypeRepository) Create(ctx context.Context, gid uuid.UUID, data E
 
 // Update updates an existing entity type.
 func (r *EntityTypeRepository) Update(ctx context.Context, gid uuid.UUID, data EntityTypeUpdate) (EntityTypeSummary, error) {
+	if data.DefaultTemplateID != nil {
+		if err := assertEntityTemplateInGroup(ctx, r.db.EntityTemplate, gid, *data.DefaultTemplateID); err != nil {
+			return EntityTypeSummary{}, err
+		}
+	}
+
 	q := r.db.EntityType.Update().
 		Where(
 			entitytype.ID(data.ID),

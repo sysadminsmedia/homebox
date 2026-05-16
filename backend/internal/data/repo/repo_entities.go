@@ -993,6 +993,23 @@ func (r *EntityRepository) Create(ctx context.Context, gid uuid.UUID, data Entit
 		return EntityOut{}, err
 	}
 
+	// Reject cross-group UUIDs in the request body before any write hits the DB.
+	// Without these checks, an authenticated caller in group A could reparent
+	// onto group B's location, attach group B's tags, or set a group B
+	// entity type — corrupting tenant trees and confirming cross-group UUIDs.
+	if err := assertEntityInGroup(ctx, r.db.Entity, gid, data.ParentID); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+	if err := assertEntityTypeInGroup(ctx, r.db.EntityType, gid, data.EntityTypeID); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+	if err := assertTagsInGroup(ctx, r.db.Tag, gid, data.TagIDs); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+
 	q := r.db.Entity.Create().
 		SetImportRef(data.ImportRef).
 		SetName(data.Name).
@@ -1065,6 +1082,21 @@ func (r *EntityRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID
 	defer span.End()
 
 	if err := validateQuantity("create entity from template", data.Quantity); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+
+	// Same group-ownership checks as Create. Done before opening the tx so a
+	// rejected request doesn't leave a dangling transaction.
+	if err := assertEntityInGroup(ctx, r.db.Entity, gid, data.ParentID); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+	if err := assertEntityTypeInGroup(ctx, r.db.EntityType, gid, data.EntityTypeID); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+	if err := assertTagsInGroup(ctx, r.db.Tag, gid, data.TagIDs); err != nil {
 		recordSpanError(span, err)
 		return EntityOut{}, err
 	}
@@ -1422,6 +1454,22 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		return EntityOut{}, err
 	}
 
+	// See EntityRepository.Create for the rationale on these cross-group
+	// reference checks. Applied before the update so a rejected request never
+	// mutates the row.
+	if err := assertEntityInGroup(ctx, r.db.Entity, gid, data.ParentID); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+	if err := assertEntityTypeInGroup(ctx, r.db.EntityType, gid, data.EntityTypeID); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+	if err := assertTagsInGroup(ctx, r.db.Tag, gid, data.TagIDs); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+
 	q := r.db.Entity.Update().Where(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))).
 		SetName(data.Name).
 		SetDescription(data.Description).
@@ -1667,6 +1715,25 @@ func (r *EntityRepository) Patch(ctx context.Context, gid, id uuid.UUID, data En
 			attribute.Bool("patch.tag_ids.set", data.TagIDs != nil),
 		))
 	defer span.End()
+
+	// See EntityRepository.Create for the rationale on these cross-group
+	// reference checks. data.TagIDs == nil means "leave tags alone"; a non-nil
+	// (possibly empty) slice means "set tags to this exact list", and only the
+	// latter needs validation.
+	if err := assertEntityInGroup(ctx, r.db.Entity, gid, data.ParentID); err != nil {
+		recordSpanError(span, err)
+		return err
+	}
+	if err := assertEntityTypeInGroup(ctx, r.db.EntityType, gid, data.EntityTypeID); err != nil {
+		recordSpanError(span, err)
+		return err
+	}
+	if data.TagIDs != nil {
+		if err := assertTagsInGroup(ctx, r.db.Tag, gid, data.TagIDs); err != nil {
+			recordSpanError(span, err)
+			return err
+		}
+	}
 
 	tx, err := r.db.Tx(ctx)
 	if err != nil {
@@ -2402,8 +2469,11 @@ func (r *EntityRepository) CreateContainer(ctx context.Context, gid uuid.UUID, d
 
 	if data.ParentID != uuid.Nil {
 		validateCtx, validateSpan := entityTracer().Start(ctx, "repo.EntityRepository.CreateContainer.validateParent")
+		// HasGroupWith filter scopes the parent lookup to this tenant — without
+		// it a caller could reparent under another group's location and surface
+		// it back via the "parent not found" branch as an existence oracle.
 		parentEntity, err := r.db.Entity.Query().
-			Where(entity.ID(data.ParentID)).
+			Where(entity.ID(data.ParentID), entity.HasGroupWith(group.ID(gid))).
 			WithEntityType().
 			Only(validateCtx)
 		if err != nil {
@@ -2421,6 +2491,11 @@ func (r *EntityRepository) CreateContainer(ctx context.Context, gid uuid.UUID, d
 			return EntityOut{}, wrapped
 		}
 		validateSpan.End()
+	}
+
+	if err := assertEntityTypeInGroup(ctx, r.db.EntityType, gid, data.EntityTypeID); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
 	}
 
 	q := r.db.Entity.Create().
@@ -2469,8 +2544,9 @@ func (r *EntityRepository) UpdateContainer(ctx context.Context, gid, id uuid.UUI
 
 	if data.ParentID != uuid.Nil {
 		validateCtx, validateSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateContainer.validateParent")
+		// Same tenant-scope reasoning as CreateContainer above.
 		parentEntity, err := r.db.Entity.Query().
-			Where(entity.ID(data.ParentID)).
+			Where(entity.ID(data.ParentID), entity.HasGroupWith(group.ID(gid))).
 			WithEntityType().
 			Only(validateCtx)
 		if err != nil {
