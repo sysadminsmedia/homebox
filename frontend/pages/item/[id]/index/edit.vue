@@ -81,14 +81,7 @@
     }
   });
 
-  async function loadIntegrationSettings() {
-    // No-op: integration settings are now loaded by AttachmentsList.vue via
-    // useIntegrationCacheStore().loadSettings(). We keep this stub to avoid
-    // a larger refactor of the onMounted call site.
-  }
-
-  onMounted(async () => {
-    await loadIntegrationSettings();
+  onMounted(() => {
     refresh();
   });
 
