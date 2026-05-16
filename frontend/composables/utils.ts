@@ -147,6 +147,33 @@ export async function fmtCurrencyAsync(value: number | string, currency = "USD",
   return fmtCurrency(value, currency, locale);
 }
 
+// Parses a scanner / barcode payload into a URL. Accepts full URLs as well as
+// protocol-less host+path payloads (e.g. "example.com/a/1") — dropping the
+// protocol and using uppercase characters fits more data into the smallest
+// QR / Data Matrix codes, which matters for pre-printed asset stickers.
+// Returns null for inputs that don't look like a URL (e.g. EAN/UPC barcode
+// digits) so callers can fall back to other handling.
+export function parseScanResult(rawValue: string): URL | null {
+  try {
+    return new URL(rawValue);
+  } catch {
+    // Only attempt the protocol-less fallback when the value still looks
+    // host-shaped: not a bare path, and contains both "/" and "." so plain
+    // numeric barcodes (EAN/UPC) and arbitrary text fall through to null.
+    if (rawValue.startsWith("/") || !rawValue.includes("/") || !rawValue.includes(".")) {
+      return null;
+    }
+    // Use the current page's protocol so http-only deployments still match
+    // their own origin checks (URL constructor normalizes protocol/host case).
+    const protocol = globalThis.location?.protocol ?? "https:";
+    try {
+      return new URL(`${protocol}//${rawValue}`);
+    } catch {
+      return null;
+    }
+  }
+}
+
 export type MaybeUrlResult = {
   isUrl: boolean;
   url: string;
