@@ -18,7 +18,8 @@ const (
 	demoPasswordEnv = "HBOX_DEMO_PASSWORD"
 	// demoPasswordDefault is the password used when demo mode runs outside
 	// production. Public knowledge — never used unless cfg.Mode is development.
-	demoPasswordDefault = "demo"
+	// Must satisfy services.PasswordMinLength or registration will reject it.
+	demoPasswordDefault = "demodemo"
 	// demoPasswordMinLength is the minimum acceptable length for a demo
 	// password supplied via demoPasswordEnv in production mode.
 	demoPasswordMinLength = 12

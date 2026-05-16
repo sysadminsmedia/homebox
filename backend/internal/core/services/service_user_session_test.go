@@ -50,7 +50,7 @@ func TestRenewToken_InvalidatesPriorToken(t *testing.T) {
 
 	// The new token authenticates.
 	_, err = tRepos.AuthTokens.GetUserFromToken(ctx, hasher.HashToken(renewed.Raw))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// The old token does NOT authenticate.
 	_, err = tRepos.AuthTokens.GetUserFromToken(ctx, hasher.HashToken(old.Raw))
@@ -85,7 +85,7 @@ func TestChangePassword_RevokesOtherSessions_KeepsCurrent(t *testing.T) {
 
 	// Current token still authenticates.
 	_, err = tRepos.AuthTokens.GetUserFromToken(ctx, hasher.HashToken(current.Raw))
-	assert.NoError(t, err, "current session must remain valid")
+	require.NoError(t, err, "current session must remain valid")
 
 	// Login works with the new password and not the old.
 	_, err = tSvc.User.Login(ctx, usr.Email, "new-cp-pw", false)

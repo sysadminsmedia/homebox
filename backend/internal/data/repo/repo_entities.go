@@ -1703,6 +1703,95 @@ func (r *EntityRepository) GetAllZeroImportRef(ctx context.Context, gid uuid.UUI
 	return ids, nil
 }
 
+// patchSyncTags reconciles an entity's tag set against want: tags in want
+// but not currently attached are added; currently attached tags absent from
+// want are removed. want must be non-nil — callers omit the call entirely
+// when the patch doesn't touch tags.
+func patchSyncTags(ctx context.Context, tx *ent.Tx, gid, id uuid.UUID, want []uuid.UUID) error {
+	tagsCtx, tagsSpan := entityTracer().Start(ctx, "repo.EntityRepository.Patch.tags",
+		trace.WithAttributes(attribute.Int("tags.input.count", len(want))))
+	defer tagsSpan.End()
+
+	currentTags, err := tx.Entity.Query().Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).QueryTag().All(tagsCtx)
+	if err != nil {
+		recordSpanError(tagsSpan, err)
+		return err
+	}
+	set := newIDSet(currentTags)
+
+	addTags := []uuid.UUID{}
+	for _, l := range want {
+		if set.Contains(l) {
+			set.Remove(l)
+		} else {
+			addTags = append(addTags, l)
+		}
+	}
+
+	if len(addTags) > 0 {
+		if err := tx.Entity.Update().
+			Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).
+			AddTagIDs(addTags...).
+			Exec(tagsCtx); err != nil {
+			recordSpanError(tagsSpan, err)
+			return err
+		}
+	}
+	if set.Len() > 0 {
+		if err := tx.Entity.Update().
+			Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).
+			RemoveTagIDs(set.Slice()...).
+			Exec(tagsCtx); err != nil {
+			recordSpanError(tagsSpan, err)
+			return err
+		}
+	}
+	tagsSpan.SetAttributes(
+		attribute.Int("tags.added.count", len(addTags)),
+		attribute.Int("tags.removed.count", set.Len()),
+	)
+	return nil
+}
+
+// patchSyncChildLocations propagates a parent move down to children when the
+// entity has SyncChildEntityLocations enabled. No-op when the flag is off.
+func patchSyncChildLocations(ctx context.Context, tx *ent.Tx, gid, id, parentID uuid.UUID) error {
+	syncCtx, syncSpan := entityTracer().Start(ctx, "repo.EntityRepository.Patch.syncChildLocations")
+	defer syncSpan.End()
+
+	entityEnt, err := tx.Entity.Query().Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).Only(syncCtx)
+	if err != nil {
+		recordSpanError(syncSpan, err)
+		return err
+	}
+	syncSpan.SetAttributes(attribute.Bool("entity.sync_child_locations", entityEnt.SyncChildEntityLocations))
+	if !entityEnt.SyncChildEntityLocations {
+		return nil
+	}
+
+	children, err := tx.Entity.Query().Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).QueryChildren().All(syncCtx)
+	if err != nil {
+		recordSpanError(syncSpan, err)
+		return err
+	}
+	updatedCount := 0
+	for _, child := range children {
+		childParent, err := child.QueryParent().First(syncCtx)
+		if err != nil || childParent.ID != parentID {
+			if err := child.Update().SetParentID(parentID).Exec(syncCtx); err != nil {
+				recordSpanError(syncSpan, err)
+				return err
+			}
+			updatedCount++
+		}
+	}
+	syncSpan.SetAttributes(
+		attribute.Int("children.count", len(children)),
+		attribute.Int("children.updated.count", updatedCount),
+	)
+	return nil
+}
+
 func (r *EntityRepository) Patch(ctx context.Context, gid, id uuid.UUID, data EntityPatch) error {
 	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.Patch",
 		trace.WithAttributes(
@@ -1787,93 +1876,17 @@ func (r *EntityRepository) Patch(ctx context.Context, gid, id uuid.UUID, data En
 	execSpan.End()
 
 	if data.TagIDs != nil {
-		tagsCtx, tagsSpan := entityTracer().Start(ctx, "repo.EntityRepository.Patch.tags",
-			trace.WithAttributes(attribute.Int("tags.input.count", len(data.TagIDs))))
-		currentTags, err := tx.Entity.Query().Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).QueryTag().All(tagsCtx)
-		if err != nil {
-			recordSpanError(tagsSpan, err)
-			tagsSpan.End()
+		if err := patchSyncTags(ctx, tx, gid, id, data.TagIDs); err != nil {
 			recordSpanError(span, err)
 			return err
 		}
-		set := newIDSet(currentTags)
-
-		addTags := []uuid.UUID{}
-		for _, l := range data.TagIDs {
-			if set.Contains(l) {
-				set.Remove(l)
-			} else {
-				addTags = append(addTags, l)
-			}
-		}
-
-		if len(addTags) > 0 {
-			if err := tx.Entity.Update().
-				Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).
-				AddTagIDs(addTags...).
-				Exec(tagsCtx); err != nil {
-				recordSpanError(tagsSpan, err)
-				tagsSpan.End()
-				recordSpanError(span, err)
-				return err
-			}
-		}
-		if set.Len() > 0 {
-			if err := tx.Entity.Update().
-				Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).
-				RemoveTagIDs(set.Slice()...).
-				Exec(tagsCtx); err != nil {
-				recordSpanError(tagsSpan, err)
-				tagsSpan.End()
-				recordSpanError(span, err)
-				return err
-			}
-		}
-		tagsSpan.SetAttributes(
-			attribute.Int("tags.added.count", len(addTags)),
-			attribute.Int("tags.removed.count", set.Len()),
-		)
-		tagsSpan.End()
 	}
 
 	if data.ParentID != uuid.Nil {
-		syncCtx, syncSpan := entityTracer().Start(ctx, "repo.EntityRepository.Patch.syncChildLocations")
-		entityEnt, err := tx.Entity.Query().Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).Only(syncCtx)
-		if err != nil {
-			recordSpanError(syncSpan, err)
-			syncSpan.End()
+		if err := patchSyncChildLocations(ctx, tx, gid, id, data.ParentID); err != nil {
 			recordSpanError(span, err)
 			return err
 		}
-		syncSpan.SetAttributes(attribute.Bool("entity.sync_child_locations", entityEnt.SyncChildEntityLocations))
-		if entityEnt.SyncChildEntityLocations {
-			children, err := tx.Entity.Query().Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).QueryChildren().All(syncCtx)
-			if err != nil {
-				recordSpanError(syncSpan, err)
-				syncSpan.End()
-				recordSpanError(span, err)
-				return err
-			}
-			updatedCount := 0
-			for _, child := range children {
-				childParent, err := child.QueryParent().First(syncCtx)
-				if err != nil || childParent.ID != data.ParentID {
-					err = child.Update().SetParentID(data.ParentID).Exec(syncCtx)
-					if err != nil {
-						recordSpanError(syncSpan, err)
-						syncSpan.End()
-						recordSpanError(span, err)
-						return err
-					}
-					updatedCount++
-				}
-			}
-			syncSpan.SetAttributes(
-				attribute.Int("children.count", len(children)),
-				attribute.Int("children.updated.count", updatedCount),
-			)
-		}
-		syncSpan.End()
 	}
 
 	_, commitSpan := entityTracer().Start(ctx, "repo.EntityRepository.Patch.commit")

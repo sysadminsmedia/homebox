@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -140,6 +139,6 @@ func Test_Config_FullMarshalRedactsAllSecrets(t *testing.T) {
 		"bs-secret",
 		"otel-secret",
 	} {
-		assert.Falsef(t, strings.Contains(string(out), secret), "expected %q to be redacted in output", secret)
+		assert.NotContainsf(t, string(out), secret, "expected %q to be redacted in output", secret)
 	}
 }

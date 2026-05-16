@@ -153,10 +153,13 @@ func (r *ExportRepository) Delete(ctx context.Context, gid uuid.UUID, id uuid.UU
 		Exec(ctx)
 }
 
-// PurgeOlderThan returns rows that would be purged (so callers can drop the
-// blob artifacts) and then deletes them. Not scoped by group on purpose: this
-// is the cleanup task that sweeps every tenant.
-func (r *ExportRepository) PurgeOlderThan(ctx context.Context, cutoff time.Time) ([]ExportOut, error) {
+// ListOlderThan returns rows older than cutoff so the sweep task can drop
+// each one's blob artifact before removing the DB row. The row carries the
+// only persisted pointer to the blob, so the caller MUST delete the row only
+// after the blob is gone (or confirmed absent) — otherwise a transient bucket
+// outage would orphan the blob with no path to find it again. Not scoped by
+// group on purpose: this is the cleanup task that sweeps every tenant.
+func (r *ExportRepository) ListOlderThan(ctx context.Context, cutoff time.Time) ([]ExportOut, error) {
 	rows, err := r.db.Export.Query().
 		Where(export.CreatedAtLT(cutoff)).
 		All(ctx)
@@ -166,9 +169,6 @@ func (r *ExportRepository) PurgeOlderThan(ctx context.Context, cutoff time.Time)
 	out := make([]ExportOut, len(rows))
 	for i, e := range rows {
 		out[i] = mapExport(e)
-	}
-	if _, err := r.db.Export.Delete().Where(export.CreatedAtLT(cutoff)).Exec(ctx); err != nil {
-		return nil, err
 	}
 	return out, nil
 }

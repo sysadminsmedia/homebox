@@ -106,7 +106,7 @@ func TestExportRoundTrip(t *testing.T) {
 	artifactPath, sizeBytes, err := tSvc.Exports.buildArtifact(ctx, expRow.ID, src.ID)
 	require.NoError(t, err)
 	require.NotEmpty(t, artifactPath)
-	require.Greater(t, sizeBytes, int64(0))
+	require.Positive(t, sizeBytes)
 
 	// Artifact must live under the source group's prefix.
 	assert.True(t, strings.HasPrefix(artifactPath, src.ID.String()+"/exports/"),
@@ -211,6 +211,106 @@ func TestExportRoundTrip(t *testing.T) {
 	thumbBlob, err := bk.ReadAll(ctx, tRepos.Attachments.GetFullPath(gotThumb.Path))
 	require.NoError(t, err, "thumbnail blob must be present at the rewritten path")
 	assert.Equal(t, "dummy thumbnail body", string(thumbBlob))
+}
+
+// TestIsGroupReadyForImport_BlocksUserCreatedRows asserts that the import
+// gate blocks not just on items but on user-created rows in any table the
+// import would wipe (tags, entity_templates, notifiers, custom entity_types,
+// and custom locations beyond the seeded baseline). The pure-seed and
+// pure-empty cases must still pass.
+func TestIsGroupReadyForImport_BlocksUserCreatedRows(t *testing.T) {
+	ctx := context.Background()
+
+	t.Run("empty group passes", func(t *testing.T) {
+		g, err := tRepos.Groups.GroupCreate(ctx, "ready-empty-"+fk.Str(4), uuid.Nil)
+		require.NoError(t, err)
+		ready, err := tSvc.Exports.IsGroupReadyForImport(ctx, g.ID)
+		require.NoError(t, err)
+		assert.True(t, ready, "empty group must be importable")
+	})
+
+	t.Run("only seeded defaults passes", func(t *testing.T) {
+		g, err := tRepos.Groups.GroupCreate(ctx, "ready-seed-"+fk.Str(4), uuid.Nil)
+		require.NoError(t, err)
+		locET, err := tRepos.EntityTypes.GetDefault(ctx, g.ID, true)
+		require.NoError(t, err)
+		for _, name := range []string{"Living Room", "Garage", "Kitchen", "Bedroom", "Bathroom", "Office", "Attic", "Basement"} {
+			_, err := tRepos.Entities.Create(ctx, g.ID, repo.EntityCreate{Name: name, EntityTypeID: locET.ID})
+			require.NoError(t, err)
+		}
+		for _, name := range []string{"Appliances", "IOT", "Electronics", "Servers", "General", "Important"} {
+			_, err := tRepos.Tags.Create(ctx, g.ID, repo.TagCreate{Name: name})
+			require.NoError(t, err)
+		}
+		ready, err := tSvc.Exports.IsGroupReadyForImport(ctx, g.ID)
+		require.NoError(t, err)
+		assert.True(t, ready, "full seed baseline must be importable")
+	})
+
+	t.Run("extra tag blocks", func(t *testing.T) {
+		g, err := tRepos.Groups.GroupCreate(ctx, "ready-tag-"+fk.Str(4), uuid.Nil)
+		require.NoError(t, err)
+		for i := 0; i <= len(defaultTags()); i++ {
+			_, err := tRepos.Tags.Create(ctx, g.ID, repo.TagCreate{Name: fk.Str(8)})
+			require.NoError(t, err)
+		}
+		ready, err := tSvc.Exports.IsGroupReadyForImport(ctx, g.ID)
+		require.NoError(t, err)
+		assert.False(t, ready, "tag count beyond seed baseline must block")
+	})
+
+	t.Run("extra location blocks", func(t *testing.T) {
+		g, err := tRepos.Groups.GroupCreate(ctx, "ready-loc-"+fk.Str(4), uuid.Nil)
+		require.NoError(t, err)
+		locET, err := tRepos.EntityTypes.GetDefault(ctx, g.ID, true)
+		require.NoError(t, err)
+		for i := 0; i <= len(defaultLocations()); i++ {
+			_, err := tRepos.Entities.Create(ctx, g.ID, repo.EntityCreate{Name: fk.Str(8), EntityTypeID: locET.ID})
+			require.NoError(t, err)
+		}
+		ready, err := tSvc.Exports.IsGroupReadyForImport(ctx, g.ID)
+		require.NoError(t, err)
+		assert.False(t, ready, "location count beyond seed baseline must block")
+	})
+
+	t.Run("notifier blocks", func(t *testing.T) {
+		g, err := tRepos.Groups.GroupCreate(ctx, "ready-not-"+fk.Str(4), uuid.Nil)
+		require.NoError(t, err)
+		_, err = tRepos.Notifiers.Create(ctx, g.ID, tUser.ID, repo.NotifierCreate{
+			Name:     "n",
+			URL:      "ntfy://x/topic",
+			IsActive: true,
+		})
+		require.NoError(t, err)
+		ready, err := tSvc.Exports.IsGroupReadyForImport(ctx, g.ID)
+		require.NoError(t, err)
+		assert.False(t, ready, "any notifier must block")
+	})
+
+	t.Run("template blocks", func(t *testing.T) {
+		g, err := tRepos.Groups.GroupCreate(ctx, "ready-tpl-"+fk.Str(4), uuid.Nil)
+		require.NoError(t, err)
+		_, err = tRepos.EntityTemplates.Create(ctx, g.ID, repo.EntityTemplateCreate{Name: "t"})
+		require.NoError(t, err)
+		ready, err := tSvc.Exports.IsGroupReadyForImport(ctx, g.ID)
+		require.NoError(t, err)
+		assert.False(t, ready, "any entity template must block")
+	})
+
+	t.Run("custom entity_type blocks", func(t *testing.T) {
+		g, err := tRepos.Groups.GroupCreate(ctx, "ready-et-"+fk.Str(4), uuid.Nil)
+		require.NoError(t, err)
+		// Trigger lazy creation of both defaults, then add a third custom type.
+		_, err = tRepos.EntityTypes.GetDefault(ctx, g.ID, true)
+		require.NoError(t, err)
+		_, err = tRepos.EntityTypes.GetDefault(ctx, g.ID, false)
+		require.NoError(t, err)
+		_, err = tRepos.EntityTypes.Create(ctx, g.ID, repo.EntityTypeCreate{Name: "Custom", IsLocation: false})
+		require.NoError(t, err)
+		ready, err := tSvc.Exports.IsGroupReadyForImport(ctx, g.ID)
+		require.NoError(t, err)
+		assert.False(t, ready, "entity_type beyond Item/Location defaults must block")
+	})
 }
 
 // copyBlobUnderTest reuses the export service's bucket plumbing to copy a

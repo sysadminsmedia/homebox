@@ -223,7 +223,7 @@ func (ctrl *V1Controller) HandleCollectionImport() errchain.HandlerFunc {
 		}
 		if !ready {
 			return validate.NewRequestError(
-				errors.New("import requires a collection with no items"),
+				errors.New("import requires a collection with no user-created items, tags, templates, notifiers, or custom types"),
 				http.StatusConflict)
 		}
 

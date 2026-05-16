@@ -22,8 +22,11 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
@@ -33,6 +36,11 @@ import (
 // Bump this when manifest/file shapes change in incompatible ways and import
 // can no longer round-trip an older export.
 const ExportSchemaVersion = 1
+
+// entitiesTable is the on-disk name of the entities table. Hoisted out of
+// the exportTables literal so the same string isn't repeated across every
+// FK/scope reference that points back at it.
+const entitiesTable = "entities"
 
 // Pubsub topic names used by the export and import workers.
 const (
@@ -110,7 +118,7 @@ var exportTables = []tableSpec{
 		scope:     "group_entity_templates = ?",
 		pkCol:     "id",
 		groupCols: []string{"group_entity_templates"},
-		deferCols: map[string]string{"entity_template_location": "entities"},
+		deferCols: map[string]string{"entity_template_location": entitiesTable},
 	},
 	{
 		name:   "template_fields",
@@ -126,24 +134,24 @@ var exportTables = []tableSpec{
 		deferCols: map[string]string{"tag_children": "tags"},
 	},
 	{
-		name:      "entities",
+		name:      entitiesTable,
 		scope:     "group_entities = ?",
 		pkCol:     "id",
 		groupCols: []string{"group_entities"},
 		fkCols:    map[string]string{"entity_type_entities": "entity_types"},
-		deferCols: map[string]string{"entity_children": "entities"},
+		deferCols: map[string]string{"entity_children": entitiesTable},
 	},
 	{
 		name:   "entity_fields",
 		scope:  "entity_fields IN (SELECT id FROM entities WHERE group_entities = ?)",
 		pkCol:  "id",
-		fkCols: map[string]string{"entity_fields": "entities"},
+		fkCols: map[string]string{"entity_fields": entitiesTable},
 	},
 	{
 		name:   "maintenance_entries",
 		scope:  "entity_id IN (SELECT id FROM entities WHERE group_entities = ?)",
 		pkCol:  "id",
-		fkCols: map[string]string{"entity_id": "entities"},
+		fkCols: map[string]string{"entity_id": entitiesTable},
 	},
 	{
 		// Two-part scope: the regular attachments owned by an entity in this
@@ -157,13 +165,13 @@ var exportTables = []tableSpec{
 			" WHERE attachment_thumbnail IS NOT NULL" +
 			" AND entity_attachments IN (SELECT id FROM entities WHERE group_entities = ?))",
 		pkCol:     "id",
-		fkCols:    map[string]string{"entity_attachments": "entities"},
+		fkCols:    map[string]string{"entity_attachments": entitiesTable},
 		deferCols: map[string]string{"attachment_thumbnail": "attachments"},
 	},
 	{
 		name:   "tag_entities",
 		scope:  "tag_id IN (SELECT id FROM tags WHERE group_tags = ?)",
-		fkCols: map[string]string{"tag_id": "tags", "entity_id": "entities"},
+		fkCols: map[string]string{"tag_id": "tags", "entity_id": entitiesTable},
 	},
 	{
 		name:      "notifiers",
@@ -241,20 +249,81 @@ func (s *ExportService) EnqueueImport(ctx context.Context, gid uuid.UUID, userID
 	return row, nil
 }
 
-// IsGroupReadyForImport returns true if gid contains no items (i.e. no
-// entities whose type is not a location). Default locations and tags
-// auto-seeded at registration are tolerated — the import wipes them before
-// restoring. Hard "no entities at all" was too strict because a freshly
-// registered group already has the seeded locations/tags.
+// IsGroupReadyForImport returns true when gid contains no user-created data
+// across any table that wipeGroup will delete. Default locations, tags, and
+// the lazily-created "Item"/"Location" entity_types from registration are
+// tolerated — the import wipes them before restoring. Any extra rows beyond
+// those seed baselines, or any presence in tables that aren't seeded
+// (entity_templates, notifiers), blocks the import so a one-click restore
+// can't silently destroy work.
+//
+// The seed-baseline counts are coarse: a user who deletes some default tags
+// and then adds the same number of custom tags would pass with a false
+// negative. Acceptable trade-off versus adding a per-row "is_seed" flag.
+//
+// Tables not checked explicitly are covered transitively: template_fields
+// require templates; entity_fields/attachments/maintenance_entries/tag_entities
+// require entities or tags.
 func (s *ExportService) IsGroupReadyForImport(ctx context.Context, gid uuid.UUID) (bool, error) {
-	n, err := s.db.Entity.Query().Where(
+	items, err := s.db.Entity.Query().Where(
 		entity.HasGroupWith(group.ID(gid)),
 		entity.HasEntityTypeWith(entitytype.IsLocation(false)),
 	).Count(ctx)
 	if err != nil {
 		return false, err
 	}
-	return n == 0, nil
+	if items > 0 {
+		return false, nil
+	}
+
+	locations, err := s.db.Entity.Query().Where(
+		entity.HasGroupWith(group.ID(gid)),
+		entity.HasEntityTypeWith(entitytype.IsLocation(true)),
+	).Count(ctx)
+	if err != nil {
+		return false, err
+	}
+	if locations > len(defaultLocations()) {
+		return false, nil
+	}
+
+	tags, err := s.db.Tag.Query().Where(tag.HasGroupWith(group.ID(gid))).Count(ctx)
+	if err != nil {
+		return false, err
+	}
+	if tags > len(defaultTags()) {
+		return false, nil
+	}
+
+	// Entity types are lazily created with names "Item" and "Location" the
+	// first time GetDefault is called for each. Anything beyond those two
+	// implies a user-customized type.
+	const defaultEntityTypeCount = 2
+	entityTypes, err := s.db.EntityType.Query().Where(entitytype.HasGroupWith(group.ID(gid))).Count(ctx)
+	if err != nil {
+		return false, err
+	}
+	if entityTypes > defaultEntityTypeCount {
+		return false, nil
+	}
+
+	templates, err := s.db.EntityTemplate.Query().Where(entitytemplate.HasGroupWith(group.ID(gid))).Count(ctx)
+	if err != nil {
+		return false, err
+	}
+	if templates > 0 {
+		return false, nil
+	}
+
+	notifiers, err := s.db.Notifier.Query().Where(notifier.HasGroupWith(group.ID(gid))).Count(ctx)
+	if err != nil {
+		return false, err
+	}
+	if notifiers > 0 {
+		return false, nil
+	}
+
+	return true, nil
 }
 
 // RunExport is invoked by the pubsub subscriber when an export job message is
@@ -423,12 +492,12 @@ func (s *ExportService) copyAttachmentBlobs(ctx context.Context, zw *zip.Writer,
 	if err != nil {
 		return err
 	}
+	defer func() { _ = rows.Close() }()
 	type attRef struct{ id, path string }
 	var refs []attRef
 	for rows.Next() {
 		var id, path string
 		if err := rows.Scan(&id, &path); err != nil {
-			_ = rows.Close()
 			return err
 		}
 		if path == "" {
@@ -436,7 +505,7 @@ func (s *ExportService) copyAttachmentBlobs(ctx context.Context, zw *zip.Writer,
 		}
 		refs = append(refs, attRef{id: id, path: path})
 	}
-	if err := rows.Close(); err != nil {
+	if err := rows.Err(); err != nil {
 		return err
 	}
 
@@ -712,6 +781,10 @@ func (s *ExportService) runImport(ctx context.Context, gid, userID, importID uui
 		return fmt.Errorf("open zip: %w", err)
 	}
 
+	if err := enforceZipUncompressedLimit(zr, size); err != nil {
+		return err
+	}
+
 	mf, err := readManifest(zr)
 	if err != nil {
 		return fmt.Errorf("read manifest: %w", err)
@@ -747,142 +820,9 @@ func (s *ExportService) runImport(ctx context.Context, gid, userID, importID uui
 		return fmt.Errorf("wipe before import: %w", err)
 	}
 
-	// idMap[table][oldID] = newID. Every PK is regenerated on import so that
-	// re-importing the same export never collides with itself, and so that
-	// importing into a server that already saw this data also works.
-	idMap := make(map[string]map[string]string)
-	rememberID := func(table, oldID, newID string) {
-		if _, ok := idMap[table]; !ok {
-			idMap[table] = make(map[string]string)
-		}
-		idMap[table][oldID] = newID
-	}
-
-	// remapFK looks up an old FK value in the id map for its target table
-	// and returns the substituted new value, or the original if unknown
-	// (which will surface as a FK violation on insert — better to fail loud
-	// than silently null it out).
-	remapFK := func(target string, v any) any {
-		if v == nil {
-			return nil
-		}
-		s := fmt.Sprint(v)
-		if s == "" {
-			return nil
-		}
-		if mapping, ok := idMap[target]; ok {
-			if newID, found := mapping[s]; found {
-				return newID
-			}
-		}
-		return v
-	}
-
-	type deferredUpdate struct {
-		table       string
-		col         string
-		newID       string
-		oldFKValue  string
-		targetTable string
-	}
-	var deferred []deferredUpdate
-
-	for _, spec := range exportTables {
-		rows, err := readTableJSON(zr, spec.name+".json")
-		if err != nil {
-			return fmt.Errorf("read %s.json: %w", spec.name, err)
-		}
-		for _, row := range rows {
-			// 1. PK remap (skipped for junction tables with pkCol == "").
-			var newID string
-			if spec.pkCol != "" {
-				if v, ok := row[spec.pkCol]; ok && v != nil {
-					old := fmt.Sprint(v)
-					newID = uuid.NewString()
-					row[spec.pkCol] = newID
-					rememberID(spec.name, old, newID)
-				}
-			}
-			// 2. Group remap.
-			for _, col := range spec.groupCols {
-				if _, ok := row[col]; ok {
-					row[col] = gid.String()
-				}
-			}
-			// 3. User remap (notifiers).
-			for _, col := range spec.userCols {
-				if _, ok := row[col]; ok {
-					row[col] = userID.String()
-				}
-			}
-			// 4. Immediate FK remap.
-			for col, target := range spec.fkCols {
-				if v, ok := row[col]; ok {
-					row[col] = remapFK(target, v)
-				}
-			}
-			// 5. Deferred FK: stash old value, null on insert, patch later.
-			for col, target := range spec.deferCols {
-				if v, ok := row[col]; ok && v != nil && v != "" {
-					if newID != "" {
-						deferred = append(deferred, deferredUpdate{
-							table:       spec.name,
-							col:         col,
-							newID:       newID,
-							oldFKValue:  fmt.Sprint(v),
-							targetTable: target,
-						})
-					}
-					row[col] = nil
-				}
-			}
-			// 6. Blob path rewrite. Attachment paths are
-			// "{group_id}/documents/{hash}"; the source gid prefix needs to
-			// become the destination gid so the row points at where we will
-			// actually upload the blob, and so cascade-cleanup on group
-			// delete sweeps it correctly.
-			//
-			// The zip is attacker-controlled (an admin imports a file they
-			// uploaded). Without validation, a crafted path like
-			// "{srcGid}/documents/../../etc/foo" would survive rewriteBlobPath
-			// (it only swaps the gid prefix) and reach the blob writer; the
-			// fileblob backend doesn't resolve ".." segments. Validate the
-			// source shape strictly, then re-validate the result.
-			if spec.name == "attachments" {
-				v, ok := row["path"]
-				if !ok {
-					return fmt.Errorf("attachment row missing path column")
-				}
-				str, ok := v.(string)
-				if !ok || str == "" {
-					return fmt.Errorf("attachment row has empty/non-string path")
-				}
-				cleanPath := path.Clean(str)
-				srcPrefix := mf.GroupID.String() + "/documents/"
-				if !strings.HasPrefix(cleanPath, srcPrefix) {
-					return fmt.Errorf("attachment path %q does not live under source group's documents prefix", str)
-				}
-				newPath := rewriteBlobPath(cleanPath, mf.GroupID, gid)
-				dstPrefix := gid.String() + "/documents/"
-				if !strings.HasPrefix(newPath, dstPrefix) {
-					return fmt.Errorf("rewritten attachment path %q escapes destination group's documents prefix", newPath)
-				}
-				row["path"] = newPath
-			}
-			if err := insertRow(ctx, tx, s.dialect, spec.name, row); err != nil {
-				return fmt.Errorf("insert %s: %w", spec.name, err)
-			}
-		}
-	}
-
-	// Apply deferred updates (self-referential and forward-circular FKs).
-	for _, d := range deferred {
-		newFK := remapFK(d.targetTable, d.oldFKValue)
-		q := fmt.Sprintf("UPDATE %s SET %s = %s WHERE id = %s",
-			d.table, d.col, placeholder(s.dialect, 1), placeholder(s.dialect, 2))
-		if _, err := tx.ExecContext(ctx, q, newFK, d.newID); err != nil {
-			return fmt.Errorf("deferred update %s.%s: %w", d.table, d.col, err)
-		}
+	idMap, err := s.replayImportRows(ctx, tx, zr, gid, userID, mf.GroupID)
+	if err != nil {
+		return err
 	}
 
 	if err := tx.Commit(); err != nil {
@@ -901,6 +841,15 @@ func (s *ExportService) runImport(ctx context.Context, gid, userID, importID uui
 		setProgress(80 + int(float64(done)/float64(total)*15))
 	}
 	if err := s.restoreAttachmentBlobs(ctx, zr, idMap["attachments"], blobProgress); err != nil {
+		// Compensating cleanup. The tx is already committed, so a partial blob
+		// restore leaves rows pointing at blobs that don't exist on disk and —
+		// because IsGroupReadyForImport rejects non-empty groups — blocks any
+		// retry. Wipe the freshly-imported rows so the group goes back to its
+		// pre-import (empty) state. Successfully uploaded blobs are left on
+		// disk; on retry the same content hashes will write to the same paths.
+		if werr := wipeGroup(ctx, s.db.Sql(), s.dialect, gid); werr != nil {
+			log.Err(werr).Stringer("gid", gid).Msg("import job: blob restore failed and rollback wipe also failed; group left in partially imported state")
+		}
 		return fmt.Errorf("restore attachments: %w", err)
 	}
 	setProgress(95)
@@ -1150,6 +1099,194 @@ func rewriteBlobPath(path string, srcGid, dstGid uuid.UUID) string {
 		return path
 	}
 	return dstGid.String() + "/" + strings.TrimPrefix(path, prefix)
+}
+
+// enforceZipUncompressedLimit rejects zip bombs before any member is opened.
+// Legitimate exports compress ~3-10x (JSON tables compress well, attachment
+// binaries barely at all); 100x the compressed upload is a generous ceiling
+// that still flags any pathological expansion ratio. Both per-entry and
+// cumulative caps are checked since either alone is bypassable. The declared
+// uncompressed size in the central directory is what attackers control, but
+// typical bombs declare accurate-but-tiny per-entry sizes that sum to a huge
+// total — the cumulative check is what stops them.
+func enforceZipUncompressedLimit(zr *zip.Reader, uploadSize int64) error {
+	const maxZipExpansionRatio = 100
+	maxUncompressed := uint64(uploadSize) * maxZipExpansionRatio
+	var total uint64
+	for _, f := range zr.File {
+		if f.UncompressedSize64 > maxUncompressed {
+			return fmt.Errorf("import rejected: zip entry %q declares uncompressed size %d, exceeds limit %d", f.Name, f.UncompressedSize64, maxUncompressed)
+		}
+		if f.UncompressedSize64 > maxUncompressed-total {
+			return fmt.Errorf("import rejected: zip cumulative uncompressed size exceeds limit %d", maxUncompressed)
+		}
+		total += f.UncompressedSize64
+	}
+	return nil
+}
+
+// replayImportRows reads each table file from the zip, regenerates every PK,
+// remaps group/user/FK columns, rewrites attachment blob paths from the source
+// gid prefix to the destination, and inserts the row into tx. Self-referential
+// and forward-circular FKs are stashed and patched in a second pass so the
+// first INSERT can succeed before the referenced row exists. Returns
+// idMap[table][oldID]=newID so the post-commit blob restore can resolve
+// attachment file names back to the just-inserted rows.
+func (s *ExportService) replayImportRows(ctx context.Context, tx *sql.Tx, zr *zip.Reader, gid, userID, srcGroupID uuid.UUID) (map[string]map[string]string, error) {
+	idMap := make(map[string]map[string]string)
+	rememberID := func(table, oldID, newID string) {
+		if _, ok := idMap[table]; !ok {
+			idMap[table] = make(map[string]string)
+		}
+		idMap[table][oldID] = newID
+	}
+
+	// remapFK substitutes an old FK value with its remapped new value, or
+	// returns the original if unknown (which surfaces as a FK violation on
+	// insert — better to fail loud than silently null it out).
+	remapFK := func(target string, v any) any {
+		if v == nil {
+			return nil
+		}
+		s := fmt.Sprint(v)
+		if s == "" {
+			return nil
+		}
+		if mapping, ok := idMap[target]; ok {
+			if newID, found := mapping[s]; found {
+				return newID
+			}
+		}
+		return v
+	}
+
+	type deferredUpdate struct {
+		table, col, newID, oldFKValue, targetTable string
+	}
+	var deferred []deferredUpdate
+
+	for _, spec := range exportTables {
+		rows, err := readTableJSON(zr, spec.name+".json")
+		if err != nil {
+			return nil, fmt.Errorf("read %s.json: %w", spec.name, err)
+		}
+		for _, row := range rows {
+			newID, err := remapImportRow(row, spec, gid, userID, srcGroupID, remapFK, rememberID)
+			if err != nil {
+				return nil, err
+			}
+			for col, target := range spec.deferCols {
+				if v, ok := row[col]; ok && v != nil && v != "" {
+					if newID != "" {
+						deferred = append(deferred, deferredUpdate{
+							table:       spec.name,
+							col:         col,
+							newID:       newID,
+							oldFKValue:  fmt.Sprint(v),
+							targetTable: target,
+						})
+					}
+					row[col] = nil
+				}
+			}
+			if err := insertRow(ctx, tx, s.dialect, spec.name, row); err != nil {
+				return nil, fmt.Errorf("insert %s: %w", spec.name, err)
+			}
+		}
+	}
+
+	// Apply deferred updates (self-referential and forward-circular FKs).
+	for _, d := range deferred {
+		newFK := remapFK(d.targetTable, d.oldFKValue)
+		q := fmt.Sprintf("UPDATE %s SET %s = %s WHERE id = %s",
+			d.table, d.col, placeholder(s.dialect, 1), placeholder(s.dialect, 2))
+		if _, err := tx.ExecContext(ctx, q, newFK, d.newID); err != nil {
+			return nil, fmt.Errorf("deferred update %s.%s: %w", d.table, d.col, err)
+		}
+	}
+
+	return idMap, nil
+}
+
+// remapImportRow rewrites a single row in place: regenerates its PK, swaps
+// group/user/FK columns, and validates+rewrites attachment blob paths from
+// the source gid prefix to the destination gid. Returns the new PK (empty
+// for junction tables with no pkCol) so the caller can record deferred FK
+// updates against it.
+func remapImportRow(
+	row map[string]any,
+	spec tableSpec,
+	gid, userID, srcGroupID uuid.UUID,
+	remapFK func(target string, v any) any,
+	rememberID func(table, oldID, newID string),
+) (string, error) {
+	var newID string
+	if spec.pkCol != "" {
+		if v, ok := row[spec.pkCol]; ok && v != nil {
+			old := fmt.Sprint(v)
+			newID = uuid.NewString()
+			row[spec.pkCol] = newID
+			rememberID(spec.name, old, newID)
+		}
+	}
+	for _, col := range spec.groupCols {
+		if _, ok := row[col]; ok {
+			row[col] = gid.String()
+		}
+	}
+	for _, col := range spec.userCols {
+		if _, ok := row[col]; ok {
+			row[col] = userID.String()
+		}
+	}
+	for col, target := range spec.fkCols {
+		if v, ok := row[col]; ok {
+			row[col] = remapFK(target, v)
+		}
+	}
+	// Attachment paths are "{group_id}/documents/{hash}"; rewrite the source
+	// gid prefix to the destination so the row points at where we will
+	// actually upload the blob and so cascade-cleanup on group delete sweeps
+	// it correctly.
+	//
+	// The zip is attacker-controlled (an admin imports a file they
+	// uploaded). Without validation, a crafted path like
+	// "{srcGid}/documents/../../etc/foo" would survive rewriteBlobPath
+	// (it only swaps the gid prefix) and reach the blob writer; the
+	// fileblob backend doesn't resolve ".." segments. Validate the
+	// source shape strictly, then re-validate the result.
+	if spec.name == "attachments" {
+		if err := rewriteAttachmentPath(row, srcGroupID, gid); err != nil {
+			return "", err
+		}
+	}
+	return newID, nil
+}
+
+// rewriteAttachmentPath validates the attachment row's path column, swaps
+// the source gid prefix for the destination gid, and re-validates the
+// result. Mutates row in place.
+func rewriteAttachmentPath(row map[string]any, srcGroupID, dstGroupID uuid.UUID) error {
+	v, ok := row["path"]
+	if !ok {
+		return fmt.Errorf("attachment row missing path column")
+	}
+	str, ok := v.(string)
+	if !ok || str == "" {
+		return fmt.Errorf("attachment row has empty/non-string path")
+	}
+	cleanPath := path.Clean(str)
+	srcPrefix := srcGroupID.String() + "/documents/"
+	if !strings.HasPrefix(cleanPath, srcPrefix) {
+		return fmt.Errorf("attachment path %q does not live under source group's documents prefix", str)
+	}
+	newPath := rewriteBlobPath(cleanPath, srcGroupID, dstGroupID)
+	dstPrefix := dstGroupID.String() + "/documents/"
+	if !strings.HasPrefix(newPath, dstPrefix) {
+		return fmt.Errorf("rewritten attachment path %q escapes destination group's documents prefix", newPath)
+	}
+	row["path"] = newPath
+	return nil
 }
 
 // wipeGroup deletes every group-scoped row in the export table list, in
