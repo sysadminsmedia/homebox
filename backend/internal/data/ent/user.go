@@ -55,6 +55,8 @@ type UserEdges struct {
 	Groups []*Group `json:"groups,omitempty"`
 	// AuthTokens holds the value of the auth_tokens edge.
 	AuthTokens []*AuthTokens `json:"auth_tokens,omitempty"`
+	// PasswordResetTokens holds the value of the password_reset_tokens edge.
+	PasswordResetTokens []*PasswordResetTokens `json:"password_reset_tokens,omitempty"`
 	// APIKeys holds the value of the api_keys edge.
 	APIKeys []*APIKey `json:"api_keys,omitempty"`
 	// Notifiers holds the value of the notifiers edge.
@@ -63,7 +65,7 @@ type UserEdges struct {
 	UserGroups []*UserGroup `json:"user_groups,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [6]bool
 }
 
 // GroupsOrErr returns the Groups value or an error if the edge
@@ -84,10 +86,19 @@ func (e UserEdges) AuthTokensOrErr() ([]*AuthTokens, error) {
 	return nil, &NotLoadedError{edge: "auth_tokens"}
 }
 
+// PasswordResetTokensOrErr returns the PasswordResetTokens value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) PasswordResetTokensOrErr() ([]*PasswordResetTokens, error) {
+	if e.loadedTypes[2] {
+		return e.PasswordResetTokens, nil
+	}
+	return nil, &NotLoadedError{edge: "password_reset_tokens"}
+}
+
 // APIKeysOrErr returns the APIKeys value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) APIKeysOrErr() ([]*APIKey, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.APIKeys, nil
 	}
 	return nil, &NotLoadedError{edge: "api_keys"}
@@ -96,7 +107,7 @@ func (e UserEdges) APIKeysOrErr() ([]*APIKey, error) {
 // NotifiersOrErr returns the Notifiers value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) NotifiersOrErr() ([]*Notifier, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		return e.Notifiers, nil
 	}
 	return nil, &NotLoadedError{edge: "notifiers"}
@@ -105,7 +116,7 @@ func (e UserEdges) NotifiersOrErr() ([]*Notifier, error) {
 // UserGroupsOrErr returns the UserGroups value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) UserGroupsOrErr() ([]*UserGroup, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[5] {
 		return e.UserGroups, nil
 	}
 	return nil, &NotLoadedError{edge: "user_groups"}
@@ -248,6 +259,11 @@ func (_m *User) QueryGroups() *GroupQuery {
 // QueryAuthTokens queries the "auth_tokens" edge of the User entity.
 func (_m *User) QueryAuthTokens() *AuthTokensQuery {
 	return NewUserClient(_m.config).QueryAuthTokens(_m)
+}
+
+// QueryPasswordResetTokens queries the "password_reset_tokens" edge of the User entity.
+func (_m *User) QueryPasswordResetTokens() *PasswordResetTokensQuery {
+	return NewUserClient(_m.config).QueryPasswordResetTokens(_m)
 }
 
 // QueryAPIKeys queries the "api_keys" edge of the User entity.

@@ -1548,33 +1548,6 @@
                         }
                     }
                 }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "tags": [
-                    "Group"
-                ],
-                "summary": "Add User to Group",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/v1.GroupMemberAdd"
-                            }
-                        }
-                    },
-                    "description": "User ID",
-                    "required": true
-                },
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
             }
         },
         "/v1/groups/members/{user_id}": {
@@ -2682,6 +2655,61 @@
                 }
             }
         },
+        "/v1/users/forgot-password": {
+            "post": {
+                "description": "Sends a password reset email if the address is associated with a local account.\nAlways returns 204 on success to avoid leaking whether the email is registered.",
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Request Password Reset",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/v1.ForgotPasswordRequest"
+                            }
+                        }
+                    },
+                    "description": "Email",
+                    "required": true
+                },
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "missing or invalid request body, or empty email field",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "demo mode is enabled or local login is disabled",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "internal error while processing the request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/users/login": {
             "post": {
                 "tags": [
@@ -2834,6 +2862,61 @@
                     },
                     "403": {
                         "description": "Local login is not enabled",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/users/reset-password": {
+            "post": {
+                "description": "Consumes a single-use reset token and changes the user's password.\nOn success, all existing sessions for the user are revoked.",
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Reset Password",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/v1.ResetPasswordRequest"
+                            }
+                        }
+                    },
+                    "description": "Token + new password",
+                    "required": true
+                },
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "invalid request body, password shorter than the minimum length, or token that is invalid / expired / already used",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "demo mode is enabled or local login is disabled",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "internal error while processing the request",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3922,6 +4005,13 @@
                             "$ref": "#/components/schemas/ent.Tag"
                         }
                     },
+                    "user_groups": {
+                        "description": "UserGroups holds the value of the user_groups edge.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ent.UserGroup"
+                        }
+                    },
                     "users": {
                         "description": "Users holds the value of the users edge.",
                         "type": "array",
@@ -4098,6 +4188,59 @@
                             }
                         ]
                     },
+                    "user": {
+                        "description": "User holds the value of the user edge.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.User"
+                            }
+                        ]
+                    }
+                }
+            },
+            "ent.PasswordResetTokens": {
+                "type": "object",
+                "properties": {
+                    "created_at": {
+                        "description": "CreatedAt holds the value of the \"created_at\" field.",
+                        "type": "string"
+                    },
+                    "edges": {
+                        "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the PasswordResetTokensQuery when eager-loading is set.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.PasswordResetTokensEdges"
+                            }
+                        ]
+                    },
+                    "expires_at": {
+                        "description": "ExpiresAt holds the value of the \"expires_at\" field.",
+                        "type": "string"
+                    },
+                    "id": {
+                        "description": "ID of the ent.",
+                        "type": "string"
+                    },
+                    "token": {
+                        "description": "Token holds the value of the \"token\" field.",
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "updated_at": {
+                        "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                        "type": "string"
+                    },
+                    "used_at": {
+                        "description": "UsedAt holds the value of the \"used_at\" field.",
+                        "type": "string"
+                    }
+                }
+            },
+            "ent.PasswordResetTokensEdges": {
+                "type": "object",
+                "properties": {
                     "user": {
                         "description": "User holds the value of the user edge.",
                         "allOf": [
@@ -4301,14 +4444,6 @@
                         "description": "OidcSubject holds the value of the \"oidc_subject\" field.",
                         "type": "string"
                     },
-                    "role": {
-                        "description": "Role holds the value of the \"role\" field.",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/user.Role"
-                            }
-                        ]
-                    },
                     "settings": {
                         "description": "Settings holds the value of the \"settings\" field.",
                         "type": "object",
@@ -4354,6 +4489,70 @@
                         "items": {
                             "$ref": "#/components/schemas/ent.Notifier"
                         }
+                    },
+                    "password_reset_tokens": {
+                        "description": "PasswordResetTokens holds the value of the password_reset_tokens edge.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ent.PasswordResetTokens"
+                        }
+                    },
+                    "user_groups": {
+                        "description": "UserGroups holds the value of the user_groups edge.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ent.UserGroup"
+                        }
+                    }
+                }
+            },
+            "ent.UserGroup": {
+                "type": "object",
+                "properties": {
+                    "edges": {
+                        "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the UserGroupQuery when eager-loading is set.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.UserGroupEdges"
+                            }
+                        ]
+                    },
+                    "group_id": {
+                        "description": "GroupID holds the value of the \"group_id\" field.",
+                        "type": "string"
+                    },
+                    "role": {
+                        "description": "Role holds the value of the \"role\" field.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/usergroup.Role"
+                            }
+                        ]
+                    },
+                    "user_id": {
+                        "description": "UserID holds the value of the \"user_id\" field.",
+                        "type": "string"
+                    }
+                }
+            },
+            "ent.UserGroupEdges": {
+                "type": "object",
+                "properties": {
+                    "group": {
+                        "description": "Group holds the value of the group edge.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.Group"
+                            }
+                        ]
+                    },
+                    "user": {
+                        "description": "User holds the value of the user edge.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.User"
+                            }
+                        ]
                     }
                 }
             },
@@ -5851,9 +6050,6 @@
                     "id": {
                         "type": "string"
                     },
-                    "isOwner": {
-                        "type": "boolean"
-                    },
                     "isSuperuser": {
                         "type": "boolean"
                     },
@@ -5876,9 +6072,6 @@
                     },
                     "id": {
                         "type": "string"
-                    },
-                    "isOwner": {
-                        "type": "boolean"
                     },
                     "name": {
                         "type": "string"
@@ -5976,7 +6169,7 @@
                     "TypeTime"
                 ]
             },
-            "user.Role": {
+            "usergroup.Role": {
                 "type": "string",
                 "enum": [
                     "user",
@@ -6104,6 +6297,18 @@
                     }
                 }
             },
+            "v1.ForgotPasswordRequest": {
+                "type": "object",
+                "required": [
+                    "email"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "example": "user@example.com"
+                    }
+                }
+            },
             "v1.GroupAcceptInvitationResponse": {
                 "type": "object",
                 "properties": {
@@ -6148,17 +6353,6 @@
                     }
                 }
             },
-            "v1.GroupMemberAdd": {
-                "type": "object",
-                "required": [
-                    "userId"
-                ],
-                "properties": {
-                    "userId": {
-                        "type": "string"
-                    }
-                }
-            },
             "v1.LoginForm": {
                 "type": "object",
                 "properties": {
@@ -6189,6 +6383,23 @@
                     },
                     "enabled": {
                         "type": "boolean"
+                    }
+                }
+            },
+            "v1.ResetPasswordRequest": {
+                "type": "object",
+                "required": [
+                    "password",
+                    "token"
+                ],
+                "properties": {
+                    "password": {
+                        "type": "string",
+                        "minLength": 6
+                    },
+                    "token": {
+                        "type": "string",
+                        "minLength": 20
                     }
                 }
             },

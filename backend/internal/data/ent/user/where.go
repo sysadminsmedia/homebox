@@ -722,6 +722,29 @@ func HasAuthTokensWith(preds ...predicate.AuthTokens) predicate.User {
 	})
 }
 
+// HasPasswordResetTokens applies the HasEdge predicate on the "password_reset_tokens" edge.
+func HasPasswordResetTokens() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PasswordResetTokensTable, PasswordResetTokensColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPasswordResetTokensWith applies the HasEdge predicate on the "password_reset_tokens" edge with a given conditions (other predicates).
+func HasPasswordResetTokensWith(preds ...predicate.PasswordResetTokens) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newPasswordResetTokensStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasAPIKeys applies the HasEdge predicate on the "api_keys" edge.
 func HasAPIKeys() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

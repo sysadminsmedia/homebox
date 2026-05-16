@@ -52,6 +52,10 @@ func (_m *Notifier) GetID() uuid.UUID {
 	return _m.ID
 }
 
+func (_m *PasswordResetTokens) GetID() uuid.UUID {
+	return _m.ID
+}
+
 func (_m *Tag) GetID() uuid.UUID {
 	return _m.ID
 }
