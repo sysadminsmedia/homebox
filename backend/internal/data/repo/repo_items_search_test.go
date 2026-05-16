@@ -7,6 +7,9 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/pkgs/textutils"
 )
 
+// Repeated test fixture; constant satisfies goconst across the test cases below.
+const fixtureElectronicaAccented = "electrónica"
+
 func TestEntityRepository_AccentInsensitiveSearch(t *testing.T) {
 	// Test cases for accent-insensitive search
 	testCases := []struct {
@@ -18,22 +21,22 @@ func TestEntityRepository_AccentInsensitiveSearch(t *testing.T) {
 	}{
 		{
 			name:        "Spanish accented item, search without accents",
-			itemName:    "electrónica",
+			itemName:    fixtureElectronicaAccented,
 			searchQuery: "electronica",
 			shouldMatch: true,
 			description: "Should find 'electrónica' when searching for 'electronica'",
 		},
 		{
 			name:        "Spanish accented item, search with accents",
-			itemName:    "electrónica",
-			searchQuery: "electrónica",
+			itemName:    fixtureElectronicaAccented,
+			searchQuery: fixtureElectronicaAccented,
 			shouldMatch: true,
 			description: "Should find 'electrónica' when searching for 'electrónica'",
 		},
 		{
 			name:        "Non-accented item, search with accents",
 			itemName:    "electronica",
-			searchQuery: "electrónica",
+			searchQuery: fixtureElectronicaAccented,
 			shouldMatch: true,
 			description: "Should find 'electronica' when searching for 'electrónica' (bidirectional search)",
 		},
@@ -186,7 +189,7 @@ func TestNormalizeSearchQueryIntegration(t *testing.T) {
 		input    string
 		expected string
 	}{
-		{"electrónica", "electronica"},
+		{fixtureElectronicaAccented, "electronica"},
 		{"café", "cafe"},
 		{"ELECTRÓNICA", "electronica"},
 		{"Café París", "cafe paris"},

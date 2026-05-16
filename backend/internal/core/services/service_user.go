@@ -13,18 +13,29 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/mailer"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
 
 var (
-	oneWeek           = time.Hour * 24 * 7
-	ErrorInvalidLogin = errors.New("invalid username or password")
-	ErrorInvalidToken = errors.New("invalid token")
+	oneWeek                   = time.Hour * 24 * 7
+	passwordResetTokenTTL     = time.Hour
+	ErrorInvalidLogin         = errors.New("invalid username or password")
+	ErrorInvalidToken         = errors.New("invalid token")
+	ErrorMailerNotConfigured  = errors.New("password reset by email is unavailable: SMTP is not configured")
+	ErrorPasswordResetInvalid = errors.New("password reset link is invalid or has expired")
+	ErrorPasswordTooShort     = fmt.Errorf("password must be at least %d characters", PasswordMinLength)
 )
 
+// PasswordMinLength is the minimum length enforced server-side for any flow
+// that sets a user password (registration, reset, change). Matches the value
+// already documented by the password reset handler's OpenAPI spec.
+const PasswordMinLength = 6
+
 type UserService struct {
-	repos *repo.AllRepos
+	repos  *repo.AllRepos
+	mailer *mailer.Mailer
 }
 
 type (
@@ -57,10 +68,20 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 		))
 	defer span.End()
 
+	// Reject too-short (and empty) passwords before any DB work. The reset and
+	// change-password flows enforce the same floor; registration was the gap.
+	if len(data.Password) < PasswordMinLength {
+		span.SetAttributes(attribute.String("registration.outcome", "password_too_short"))
+		return repo.UserOut{}, ErrorPasswordTooShort
+	}
+
+	// Don't log the raw invitation token — it's a single-use credential that
+	// grants group membership and is replayable from log aggregators until it
+	// expires. The boolean is enough for diagnostics.
 	log.Debug().
 		Str("name", data.Name).
 		Str("email", data.Email).
-		Str("groupToken", data.GroupToken).
+		Bool("hasGroupToken", data.GroupToken != "").
 		Msg("Registering new user")
 
 	var (
@@ -580,8 +601,20 @@ func (svc *UserService) RenewToken(ctx context.Context, token string) (UserAuthT
 	out, err := svc.createSessionToken(ctx, dbToken.ID, false)
 	if err != nil {
 		recordServiceSpanError(span, err)
+		return out, err
 	}
-	return out, err
+
+	// Invalidate the just-rotated token so a leaked refresh request can't
+	// continue to authenticate alongside the freshly issued one. Done after
+	// createSessionToken succeeds — order matters: if the delete ran first and
+	// the new-token issuance failed, the caller would be logged out instead of
+	// just missing a refresh. Delete failures are non-fatal: the new token is
+	// already valid, and the old hash will expire on its own.
+	if delErr := svc.repos.AuthTokens.DeleteToken(ctx, hash); delErr != nil {
+		recordServiceSpanError(span, delErr)
+		log.Warn().Err(delErr).Msg("RenewToken: failed to delete prior session token")
+	}
+	return out, nil
 }
 
 // DeleteSelf deletes the user that is currently logged based of the provided UUID
@@ -637,6 +670,29 @@ func (svc *UserService) ChangePassword(ctx Context, current string, new string) 
 		log.Err(err).Msg("Failed to change password")
 		return false
 	}
+
+	// Revoke every other session for this user. The current request's token
+	// is preserved so the caller stays logged in; every other device, browser,
+	// or stolen cookie is invalidated atomically with the password change.
+	// If the request was authed via API key (no session token in context),
+	// fall back to a full revoke — there's nothing to preserve.
+	currentRaw := UseTokenCtx(ctx.Context)
+	var revokeErr error
+	var revoked int
+	if currentRaw != "" {
+		revoked, revokeErr = svc.repos.AuthTokens.DeleteAllByUserExceptToken(ctx.Context, ctx.UID, hasher.HashToken(currentRaw))
+	} else {
+		revoked, revokeErr = svc.repos.AuthTokens.DeleteAllByUser(ctx.Context, ctx.UID)
+	}
+	if revokeErr != nil {
+		// The password is already changed — surface the partial-success state
+		// in telemetry but still return success to the caller. The caller's
+		// password is updated; other sessions will expire on their own.
+		recordServiceSpanError(span, revokeErr)
+		span.SetAttributes(attribute.String("change_password.outcome", "revoke_failed"))
+		log.Warn().Err(revokeErr).Msg("password changed but failed to revoke other sessions")
+	}
+	span.SetAttributes(attribute.Int("change_password.sessions_revoked", revoked))
 
 	span.SetAttributes(attribute.String("change_password.outcome", "success"))
 	return true

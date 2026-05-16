@@ -283,6 +283,7 @@
             "create_modal": {
                 "location_description": "Location Description",
                 "location_name": "Location Name",
+                "location_photo": "Location Photo 📷",
                 "title": "Create Location",
                 "toast": {
                     "already_creating": "Already creating a location",
@@ -461,13 +462,25 @@
         "total_value": "Total Value"
     },
     "index": {
+        "back_to_login": "Back to login",
         "disabled_registration": "Registration Disabled",
         "dont_join_group": "Don't want to join a group?",
+        "forgot_password": "Forgot your password?",
+        "forgot_password_check_email": "If that email is associated with an account, a reset link is on its way. The link expires in one hour.",
+        "forgot_password_send": "Send reset link",
+        "forgot_password_subtitle": "Enter the email for your account and we'll send you a link to reset your password.",
+        "forgot_password_title": "Reset your password",
         "joining_group": "You're Joining an Existing Group!",
         "login": "Login",
         "or": "or",
         "register": "Register",
         "remember_me": "Remember Me",
+        "reset_password_invalid": "This reset link is invalid or has expired. Request a new one.",
+        "reset_password_missing_token": "Missing reset token. Open the link from your email again, or request a new one.",
+        "reset_password_set": "Set new password",
+        "reset_password_subtitle": "Choose a new password for your account.",
+        "reset_password_success": "Your password has been reset. Sign in with the new password.",
+        "reset_password_title": "Reset your password",
         "set_email": "What's your email?",
         "set_name": "What's your name?",
         "set_password": "Set your password",

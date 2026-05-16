@@ -1692,6 +1692,44 @@ paths:
       responses:
         "204":
           description: No Content
+  /v1/users/forgot-password:
+    post:
+      description: >-
+        Sends a password reset email if the address is associated with a local
+        account.
+
+        Always returns 204 on success to avoid leaking whether the email is registered.
+      tags:
+        - Authentication
+      summary: Request Password Reset
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/v1.ForgotPasswordRequest"
+        description: Email
+        required: true
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: missing or invalid request body, or empty email field
+          content:
+            application/json:
+              schema:
+                type: string
+        "403":
+          description: demo mode is enabled or local login is disabled
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: internal error while processing the request
+          content:
+            application/json:
+              schema:
+                type: string
   /v1/users/login:
     post:
       tags:
@@ -1791,6 +1829,43 @@ paths:
           description: No Content
         "403":
           description: Local login is not enabled
+          content:
+            application/json:
+              schema:
+                type: string
+  /v1/users/reset-password:
+    post:
+      description: |-
+        Consumes a single-use reset token and changes the user's password.
+        On success, all existing sessions for the user are revoked.
+      tags:
+        - Authentication
+      summary: Reset Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/v1.ResetPasswordRequest"
+        description: Token + new password
+        required: true
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: invalid request body, password shorter than the minimum length, or
+            token that is invalid / expired / already used
+          content:
+            application/json:
+              schema:
+                type: string
+        "403":
+          description: demo mode is enabled or local login is disabled
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: internal error while processing the request
           content:
             application/json:
               schema:
@@ -2700,6 +2775,43 @@ components:
           description: User holds the value of the user edge.
           allOf:
             - $ref: "#/components/schemas/ent.User"
+    ent.PasswordResetTokens:
+      type: object
+      properties:
+        created_at:
+          description: CreatedAt holds the value of the "created_at" field.
+          type: string
+        edges:
+          description: >-
+            Edges holds the relations/edges for other nodes in the graph.
+
+            The values are being populated by the PasswordResetTokensQuery when eager-loading is set.
+          allOf:
+            - $ref: "#/components/schemas/ent.PasswordResetTokensEdges"
+        expires_at:
+          description: ExpiresAt holds the value of the "expires_at" field.
+          type: string
+        id:
+          description: ID of the ent.
+          type: string
+        token:
+          description: Token holds the value of the "token" field.
+          type: array
+          items:
+            type: integer
+        updated_at:
+          description: UpdatedAt holds the value of the "updated_at" field.
+          type: string
+        used_at:
+          description: UsedAt holds the value of the "used_at" field.
+          type: string
+    ent.PasswordResetTokensEdges:
+      type: object
+      properties:
+        user:
+          description: User holds the value of the user edge.
+          allOf:
+            - $ref: "#/components/schemas/ent.User"
     ent.Tag:
       type: object
       properties:
@@ -2870,6 +2982,12 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ent.Notifier"
+        password_reset_tokens:
+          description: PasswordResetTokens holds the value of the password_reset_tokens
+            edge.
+          type: array
+          items:
+            $ref: "#/components/schemas/ent.PasswordResetTokens"
         user_groups:
           description: UserGroups holds the value of the user_groups edge.
           type: array
@@ -4144,6 +4262,14 @@ components:
           type: array
           items:
             type: string
+    v1.ForgotPasswordRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          example: user@example.com
     v1.GroupAcceptInvitationResponse:
       type: object
       properties:
@@ -4195,6 +4321,18 @@ components:
           type: string
         enabled:
           type: boolean
+    v1.ResetPasswordRequest:
+      type: object
+      required:
+        - password
+        - token
+      properties:
+        password:
+          type: string
+          minLength: 6
+        token:
+          type: string
+          minLength: 20
     v1.Results-repo_ExportOut:
       type: object
       properties:

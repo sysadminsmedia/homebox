@@ -99,7 +99,21 @@ func (r *MaintenanceEntryRepository) GetScheduled(ctx context.Context, gid uuid.
 	return mapEachMaintenanceEntry(entries), nil
 }
 
-func (r *MaintenanceEntryRepository) Create(ctx context.Context, itemID uuid.UUID, input MaintenanceEntryCreate) (MaintenanceEntry, error) {
+func (r *MaintenanceEntryRepository) Create(ctx context.Context, gid, itemID uuid.UUID, input MaintenanceEntryCreate) (MaintenanceEntry, error) {
+	// Verify the target item belongs to the caller's group before creating an
+	// entry against it. Without this check, a caller in group A could POST a
+	// maintenance entry to any item UUID guessed in group B; the entry would
+	// then surface in B's maintenance log with no audit trail.
+	owned, err := r.db.Entity.Query().
+		Where(entity.ID(itemID), entity.HasGroupWith(group.ID(gid))).
+		Exist(ctx)
+	if err != nil {
+		return MaintenanceEntry{}, err
+	}
+	if !owned {
+		return MaintenanceEntry{}, &ent.NotFoundError{}
+	}
+
 	item, err := r.db.MaintenanceEntry.Create().
 		SetEntityID(itemID).
 		SetDate(input.CompletedDate.Time()).

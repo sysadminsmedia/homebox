@@ -7,6 +7,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/mailer"
 )
 
 type AllServices struct {
@@ -29,6 +30,7 @@ type options struct {
 	storage              config.Storage
 	pubSubConn           string
 	dialect              string
+	mailer               *mailer.Mailer
 }
 
 func WithAutoIncrementAssetID(v bool) func(*options) {
@@ -60,6 +62,15 @@ func WithExportPlumbing(bus *eventbus.EventBus, db *ent.Client, storage config.S
 		o.storage = storage
 		o.pubSubConn = pubSubConn
 		o.dialect = dialect
+	}
+}
+
+// WithMailer hands the SMTP mailer to services that send mail (currently only
+// password reset). A nil or unconfigured mailer disables those code paths
+// rather than panicking.
+func WithMailer(m *mailer.Mailer) func(*options) {
+	return func(o *options) {
+		o.mailer = m
 	}
 }
 
@@ -95,7 +106,7 @@ func New(repos *repo.AllRepos, opts ...OptionsFunc) *AllServices {
 	}
 
 	return &AllServices{
-		User:  &UserService{repos},
+		User:  &UserService{repos: repos, mailer: options.mailer},
 		Group: &GroupService{repos},
 		Entities: &EntityService{
 			repo:                 repos,

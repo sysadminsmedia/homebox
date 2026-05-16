@@ -18,6 +18,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/passwordresettokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
@@ -628,6 +629,29 @@ func init() {
 	notifierDescID := notifierMixinFields0[0].Descriptor()
 	// notifier.DefaultID holds the default value on creation for the id field.
 	notifier.DefaultID = notifierDescID.Default.(func() uuid.UUID)
+	passwordresettokensMixin := schema.PasswordResetTokens{}.Mixin()
+	passwordresettokensMixinFields0 := passwordresettokensMixin[0].Fields()
+	_ = passwordresettokensMixinFields0
+	passwordresettokensFields := schema.PasswordResetTokens{}.Fields()
+	_ = passwordresettokensFields
+	// passwordresettokensDescCreatedAt is the schema descriptor for created_at field.
+	passwordresettokensDescCreatedAt := passwordresettokensMixinFields0[1].Descriptor()
+	// passwordresettokens.DefaultCreatedAt holds the default value on creation for the created_at field.
+	passwordresettokens.DefaultCreatedAt = passwordresettokensDescCreatedAt.Default.(func() time.Time)
+	// passwordresettokensDescUpdatedAt is the schema descriptor for updated_at field.
+	passwordresettokensDescUpdatedAt := passwordresettokensMixinFields0[2].Descriptor()
+	// passwordresettokens.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	passwordresettokens.DefaultUpdatedAt = passwordresettokensDescUpdatedAt.Default.(func() time.Time)
+	// passwordresettokens.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	passwordresettokens.UpdateDefaultUpdatedAt = passwordresettokensDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// passwordresettokensDescExpiresAt is the schema descriptor for expires_at field.
+	passwordresettokensDescExpiresAt := passwordresettokensFields[1].Descriptor()
+	// passwordresettokens.DefaultExpiresAt holds the default value on creation for the expires_at field.
+	passwordresettokens.DefaultExpiresAt = passwordresettokensDescExpiresAt.Default.(func() time.Time)
+	// passwordresettokensDescID is the schema descriptor for id field.
+	passwordresettokensDescID := passwordresettokensMixinFields0[0].Descriptor()
+	// passwordresettokens.DefaultID holds the default value on creation for the id field.
+	passwordresettokens.DefaultID = passwordresettokensDescID.Default.(func() uuid.UUID)
 	tagMixin := schema.Tag{}.Mixin()
 	tagMixinFields0 := tagMixin[0].Fields()
 	_ = tagMixinFields0

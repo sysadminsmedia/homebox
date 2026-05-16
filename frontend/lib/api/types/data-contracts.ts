@@ -532,6 +532,31 @@ export interface EntNotifierEdges {
   user: EntUser;
 }
 
+export interface EntPasswordResetTokens {
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the PasswordResetTokensQuery when eager-loading is set.
+   */
+  edges: EntPasswordResetTokensEdges;
+  /** ExpiresAt holds the value of the "expires_at" field. */
+  expires_at: string;
+  /** ID of the ent. */
+  id: string;
+  /** Token holds the value of the "token" field. */
+  token: number[];
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+  /** UsedAt holds the value of the "used_at" field. */
+  used_at: string;
+}
+
+export interface EntPasswordResetTokensEdges {
+  /** User holds the value of the user edge. */
+  user: EntUser;
+}
+
 export interface EntTag {
   /** Color holds the value of the "color" field. */
   color: string;
@@ -639,6 +664,8 @@ export interface EntUserEdges {
   groups: EntGroup[];
   /** Notifiers holds the value of the notifiers edge. */
   notifiers: EntNotifier[];
+  /** PasswordResetTokens holds the value of the password_reset_tokens edge. */
+  password_reset_tokens: EntPasswordResetTokens[];
   /** UserGroups holds the value of the user_groups edge. */
   user_groups: EntUserGroup[];
 }
@@ -1325,6 +1352,11 @@ export interface EntityTemplateCreateItemRequest {
   tagIds: string[];
 }
 
+export interface ForgotPasswordRequest {
+  /** @example "user@example.com" */
+  email: string;
+}
+
 export interface GroupAcceptInvitationResponse {
   id: string;
   name: string;
@@ -1359,6 +1391,13 @@ export interface OIDCStatus {
   autoRedirect: boolean;
   buttonText: string;
   enabled: boolean;
+}
+
+export interface ResetPasswordRequest {
+  /** @minLength 6 */
+  password: string;
+  /** @minLength 20 */
+  token: string;
 }
 
 export interface ResultsRepoExportOut {

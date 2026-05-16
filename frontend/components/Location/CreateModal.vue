@@ -36,7 +36,7 @@
       <!-- Photo upload -->
       <div class="flex w-full flex-col gap-1.5">
         <Label for="location-create-photo" class="flex w-full px-1">
-          {{ $t("components.item.create_modal.item_photo") }}
+          {{ $t("components.location.create_modal.location_photo") }}
         </Label>
         <div class="relative inline-block">
           <Button type="button" variant="outline" class="w-full" aria-hidden="true" @click.prevent="">

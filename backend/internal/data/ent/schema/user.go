@@ -74,6 +74,10 @@ func (User) Edges() []ent.Edge {
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,
 			}),
+		edge.To("password_reset_tokens", PasswordResetTokens.Type).
+			Annotations(entsql.Annotation{
+				OnDelete: entsql.Cascade,
+			}),
 		edge.To("api_keys", APIKey.Type).
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,

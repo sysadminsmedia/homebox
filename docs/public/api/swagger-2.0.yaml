@@ -730,6 +730,42 @@ definitions:
         - $ref: '#/definitions/ent.User'
         description: User holds the value of the user edge.
     type: object
+  ent.PasswordResetTokens:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.PasswordResetTokensEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the PasswordResetTokensQuery when eager-loading is set.
+      expires_at:
+        description: ExpiresAt holds the value of the "expires_at" field.
+        type: string
+      id:
+        description: ID of the ent.
+        type: string
+      token:
+        description: Token holds the value of the "token" field.
+        items:
+          type: integer
+        type: array
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      used_at:
+        description: UsedAt holds the value of the "used_at" field.
+        type: string
+    type: object
+  ent.PasswordResetTokensEdges:
+    properties:
+      user:
+        allOf:
+        - $ref: '#/definitions/ent.User'
+        description: User holds the value of the user edge.
+    type: object
   ent.Tag:
     properties:
       color:
@@ -895,6 +931,12 @@ definitions:
         description: Notifiers holds the value of the notifiers edge.
         items:
           $ref: '#/definitions/ent.Notifier'
+        type: array
+      password_reset_tokens:
+        description: PasswordResetTokens holds the value of the password_reset_tokens
+          edge.
+        items:
+          $ref: '#/definitions/ent.PasswordResetTokens'
         type: array
       user_groups:
         description: UserGroups holds the value of the user_groups edge.
@@ -2170,6 +2212,14 @@ definitions:
     - name
     - parentId
     type: object
+  v1.ForgotPasswordRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+    required:
+    - email
+    type: object
   v1.GroupAcceptInvitationResponse:
     properties:
       id:
@@ -2220,6 +2270,18 @@ definitions:
         type: string
       enabled:
         type: boolean
+    type: object
+  v1.ResetPasswordRequest:
+    properties:
+      password:
+        minLength: 6
+        type: string
+      token:
+        minLength: 20
+        type: string
+    required:
+    - password
+    - token
     type: object
   v1.Results-repo_ExportOut:
     properties:
@@ -3895,6 +3957,40 @@ paths:
       summary: Change Password
       tags:
       - User
+  /v1/users/forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Sends a password reset email if the address is associated with a local account.
+        Always returns 204 on success to avoid leaking whether the email is registered.
+      parameters:
+      - description: Email
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ForgotPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: missing or invalid request body, or empty email field
+          schema:
+            type: string
+        "403":
+          description: demo mode is enabled or local login is disabled
+          schema:
+            type: string
+        "500":
+          description: internal error while processing the request
+          schema:
+            type: string
+      summary: Request Password Reset
+      tags:
+      - Authentication
   /v1/users/login:
     post:
       consumes:
@@ -3994,6 +4090,41 @@ paths:
       summary: Register New User
       tags:
       - User
+  /v1/users/reset-password:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Consumes a single-use reset token and changes the user's password.
+        On success, all existing sessions for the user are revoked.
+      parameters:
+      - description: Token + new password
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ResetPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: invalid request body, password shorter than the minimum length,
+            or token that is invalid / expired / already used
+          schema:
+            type: string
+        "403":
+          description: demo mode is enabled or local login is disabled
+          schema:
+            type: string
+        "500":
+          description: internal error while processing the request
+          schema:
+            type: string
+      summary: Reset Password
+      tags:
+      - Authentication
   /v1/users/self:
     delete:
       produces:

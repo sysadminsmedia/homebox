@@ -16,6 +16,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/passwordresettokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
@@ -237,6 +238,21 @@ func (_u *UserUpdate) AddAuthTokens(v ...*AuthTokens) *UserUpdate {
 	return _u.AddAuthTokenIDs(ids...)
 }
 
+// AddPasswordResetTokenIDs adds the "password_reset_tokens" edge to the PasswordResetTokens entity by IDs.
+func (_u *UserUpdate) AddPasswordResetTokenIDs(ids ...uuid.UUID) *UserUpdate {
+	_u.mutation.AddPasswordResetTokenIDs(ids...)
+	return _u
+}
+
+// AddPasswordResetTokens adds the "password_reset_tokens" edges to the PasswordResetTokens entity.
+func (_u *UserUpdate) AddPasswordResetTokens(v ...*PasswordResetTokens) *UserUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddPasswordResetTokenIDs(ids...)
+}
+
 // AddAPIKeyIDs adds the "api_keys" edge to the APIKey entity by IDs.
 func (_u *UserUpdate) AddAPIKeyIDs(ids ...uuid.UUID) *UserUpdate {
 	_u.mutation.AddAPIKeyIDs(ids...)
@@ -312,6 +328,27 @@ func (_u *UserUpdate) RemoveAuthTokens(v ...*AuthTokens) *UserUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveAuthTokenIDs(ids...)
+}
+
+// ClearPasswordResetTokens clears all "password_reset_tokens" edges to the PasswordResetTokens entity.
+func (_u *UserUpdate) ClearPasswordResetTokens() *UserUpdate {
+	_u.mutation.ClearPasswordResetTokens()
+	return _u
+}
+
+// RemovePasswordResetTokenIDs removes the "password_reset_tokens" edge to PasswordResetTokens entities by IDs.
+func (_u *UserUpdate) RemovePasswordResetTokenIDs(ids ...uuid.UUID) *UserUpdate {
+	_u.mutation.RemovePasswordResetTokenIDs(ids...)
+	return _u
+}
+
+// RemovePasswordResetTokens removes "password_reset_tokens" edges to PasswordResetTokens entities.
+func (_u *UserUpdate) RemovePasswordResetTokens(v ...*PasswordResetTokens) *UserUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemovePasswordResetTokenIDs(ids...)
 }
 
 // ClearAPIKeys clears all "api_keys" edges to the APIKey entity.
@@ -570,6 +607,51 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(authtokens.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.PasswordResetTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.PasswordResetTokensTable,
+			Columns: []string{user.PasswordResetTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(passwordresettokens.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedPasswordResetTokensIDs(); len(nodes) > 0 && !_u.mutation.PasswordResetTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.PasswordResetTokensTable,
+			Columns: []string{user.PasswordResetTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(passwordresettokens.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.PasswordResetTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.PasswordResetTokensTable,
+			Columns: []string{user.PasswordResetTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(passwordresettokens.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -891,6 +973,21 @@ func (_u *UserUpdateOne) AddAuthTokens(v ...*AuthTokens) *UserUpdateOne {
 	return _u.AddAuthTokenIDs(ids...)
 }
 
+// AddPasswordResetTokenIDs adds the "password_reset_tokens" edge to the PasswordResetTokens entity by IDs.
+func (_u *UserUpdateOne) AddPasswordResetTokenIDs(ids ...uuid.UUID) *UserUpdateOne {
+	_u.mutation.AddPasswordResetTokenIDs(ids...)
+	return _u
+}
+
+// AddPasswordResetTokens adds the "password_reset_tokens" edges to the PasswordResetTokens entity.
+func (_u *UserUpdateOne) AddPasswordResetTokens(v ...*PasswordResetTokens) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddPasswordResetTokenIDs(ids...)
+}
+
 // AddAPIKeyIDs adds the "api_keys" edge to the APIKey entity by IDs.
 func (_u *UserUpdateOne) AddAPIKeyIDs(ids ...uuid.UUID) *UserUpdateOne {
 	_u.mutation.AddAPIKeyIDs(ids...)
@@ -966,6 +1063,27 @@ func (_u *UserUpdateOne) RemoveAuthTokens(v ...*AuthTokens) *UserUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveAuthTokenIDs(ids...)
+}
+
+// ClearPasswordResetTokens clears all "password_reset_tokens" edges to the PasswordResetTokens entity.
+func (_u *UserUpdateOne) ClearPasswordResetTokens() *UserUpdateOne {
+	_u.mutation.ClearPasswordResetTokens()
+	return _u
+}
+
+// RemovePasswordResetTokenIDs removes the "password_reset_tokens" edge to PasswordResetTokens entities by IDs.
+func (_u *UserUpdateOne) RemovePasswordResetTokenIDs(ids ...uuid.UUID) *UserUpdateOne {
+	_u.mutation.RemovePasswordResetTokenIDs(ids...)
+	return _u
+}
+
+// RemovePasswordResetTokens removes "password_reset_tokens" edges to PasswordResetTokens entities.
+func (_u *UserUpdateOne) RemovePasswordResetTokens(v ...*PasswordResetTokens) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemovePasswordResetTokenIDs(ids...)
 }
 
 // ClearAPIKeys clears all "api_keys" edges to the APIKey entity.
@@ -1254,6 +1372,51 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(authtokens.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.PasswordResetTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.PasswordResetTokensTable,
+			Columns: []string{user.PasswordResetTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(passwordresettokens.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedPasswordResetTokensIDs(); len(nodes) > 0 && !_u.mutation.PasswordResetTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.PasswordResetTokensTable,
+			Columns: []string{user.PasswordResetTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(passwordresettokens.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.PasswordResetTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.PasswordResetTokensTable,
+			Columns: []string{user.PasswordResetTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(passwordresettokens.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

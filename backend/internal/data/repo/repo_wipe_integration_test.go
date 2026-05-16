@@ -75,7 +75,7 @@ func TestWipeInventory_Integration(t *testing.T) {
 	require.NoError(t, err)
 
 	// 4. Create maintenance entries
-	_, err = tRepos.MaintEntry.Create(context.Background(), entity1.ID, MaintenanceEntryCreate{
+	_, err = tRepos.MaintEntry.Create(context.Background(), tGroup.ID, entity1.ID, MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now()),
 		Name:          "Laptop cleaning",
 		Description:   "Cleaned keyboard and screen",
@@ -83,7 +83,7 @@ func TestWipeInventory_Integration(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	_, err = tRepos.MaintEntry.Create(context.Background(), entity2.ID, MaintenanceEntryCreate{
+	_, err = tRepos.MaintEntry.Create(context.Background(), tGroup.ID, entity2.ID, MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now()),
 		Name:          "Drill maintenance",
 		Description:   "Oiled motor",
@@ -91,7 +91,7 @@ func TestWipeInventory_Integration(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	_, err = tRepos.MaintEntry.Create(context.Background(), entity3.ID, MaintenanceEntryCreate{
+	_, err = tRepos.MaintEntry.Create(context.Background(), tGroup.ID, entity3.ID, MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now()),
 		Name:          "Monitor calibration",
 		Description:   "Color calibration",
@@ -164,7 +164,7 @@ func TestWipeInventory_SelectiveWipe(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	_, err = tRepos.MaintEntry.Create(context.Background(), e.ID, MaintenanceEntryCreate{
+	_, err = tRepos.MaintEntry.Create(context.Background(), tGroup.ID, e.ID, MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now()),
 		Name:          "System update",
 		Description:   "OS update",

@@ -3,12 +3,25 @@ package main
 import (
 	"context"
 	"errors"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+)
+
+const (
+	// demoPasswordEnv is the env var operators set when running demo mode in
+	// production, overriding the hardcoded development default below.
+	demoPasswordEnv = "HBOX_DEMO_PASSWORD"
+	// demoPasswordDefault is the password used when demo mode runs outside
+	// production. Public knowledge — never used unless cfg.Mode is development.
+	demoPasswordDefault = "demo"
+	// demoPasswordMinLength is the minimum acceptable length for a demo
+	// password supplied via demoPasswordEnv in production mode.
+	demoPasswordMinLength = 12
 )
 
 func (a *app) SetupDemo() error {
@@ -24,10 +37,15 @@ func (a *app) SetupDemo() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
+	demoPassword := os.Getenv(demoPasswordEnv)
+	if demoPassword == "" {
+		demoPassword = demoPasswordDefault
+	}
+
 	registration := services.UserRegistration{
 		Email:    "demo@example.com",
 		Name:     "Demo",
-		Password: "demo",
+		Password: demoPassword,
 	}
 
 	// If demo user already exists, skip all demo seeding tasks

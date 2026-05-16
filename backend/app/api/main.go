@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"runtime"
 	"strings"
 	"time"
@@ -14,7 +15,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
@@ -26,16 +26,12 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/graceful"
-	"github.com/pressly/goose/v3"
 	"github.com/riandyrn/otelchi"
 	otelchimetric "github.com/riandyrn/otelchi/metric"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/rs/zerolog/pkgerrors"
 	"go.balki.me/anyhttp"
-
-	"entgo.io/ent/dialect"
-	entsql "entgo.io/ent/dialect/sql"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/postgres"
@@ -95,6 +91,12 @@ func validatePostgresSSLMode(sslMode string) bool {
 func main() {
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
 
+	// Subcommand dispatch happens before config.New so the conf package never
+	// sees positional args (which it would treat as an error).
+	if handled, code := runResetPasswordCLI(os.Args); handled {
+		os.Exit(code)
+	}
+
 	cfg, err := config.New(build(), "Homebox inventory management system")
 	if err != nil {
 		panic(err)
@@ -120,6 +122,19 @@ func run(cfg *config.Config) error {
 	}
 	hasher.SetAPIKeyPepper([]byte(cfg.Auth.APIKeyPepper))
 
+	// Demo mode seeds a known user (demo@example.com). In production mode the
+	// hardcoded "demo" password would be publicly guessable, so require an
+	// explicit non-trivial HBOX_DEMO_PASSWORD before letting the app start.
+	if cfg.Demo && cfg.Mode == config.ModeProduction {
+		if len(os.Getenv(demoPasswordEnv)) < demoPasswordMinLength {
+			return fmt.Errorf(
+				"refusing to start: demo mode enabled in production but %s is unset or shorter than %d characters. "+
+					"Set %s to a strong password or disable demo mode (HBOX_DEMO=false)",
+				demoPasswordEnv, demoPasswordMinLength, demoPasswordEnv,
+			)
+		}
+	}
+
 	// =========================================================================
 	// Initialize OpenTelemetry
 	otelProvider, err := otel.NewProvider(context.Background(), &cfg.Otel, version)
@@ -134,80 +149,16 @@ func run(cfg *config.Config) error {
 
 	// =========================================================================
 	// Initialize Database & Repos
-	err = setupStorageDir(cfg)
+	c, sqlDialect, err := setupDatabase(cfg, otelProvider)
 	if err != nil {
 		return err
 	}
-
-	if strings.ToLower(cfg.Database.Driver) == config.DriverPostgres {
-		if !validatePostgresSSLMode(cfg.Database.SslMode) {
-			log.Error().Str("sslmode", cfg.Database.SslMode).Msg("invalid sslmode")
-			return fmt.Errorf("invalid sslmode: %s", cfg.Database.SslMode)
-		}
-	}
-
-	databaseURL, err := setupDatabaseURL(cfg)
-	if err != nil {
-		return err
-	}
-
-	sqlDriver := strings.ToLower(cfg.Database.Driver)
-	var driverName string
-	switch sqlDriver {
-	case config.DriverPostgres:
-		driverName = "pgx"
-		sqlDriver = dialect.Postgres
-	case config.DriverSqlite3, "sqlite":
-		driverName = "sqlite3"
-		sqlDriver = dialect.SQLite
-	default:
-		return fmt.Errorf("unsupported driver: %s", sqlDriver)
-	}
-
-	db, err := otelProvider.OpenDatabase(driverName, databaseURL)
-	if err != nil {
-		log.Error().
-			Err(err).
-			Str("driver", strings.ToLower(cfg.Database.Driver)).
-			Str("host", cfg.Database.Host).
-			Str("port", cfg.Database.Port).
-			Str("database", cfg.Database.Database).
-			Msg("failed opening connection to {driver} database at {host}:{port}/{database}")
-		return fmt.Errorf("failed opening connection to %s database at %s:%s/%s: %w",
-			strings.ToLower(cfg.Database.Driver),
-			cfg.Database.Host,
-			cfg.Database.Port,
-			cfg.Database.Database,
-			err,
-		)
-	}
-
-	drv := entsql.OpenDB(sqlDriver, db)
-	c := ent.NewClient(ent.Driver(drv))
 	defer func(c *ent.Client) {
 		err := c.Close()
 		if err != nil {
 			log.Error().Err(err).Msg("failed to close database connection")
 		}
 	}(c)
-
-	migrationsFs, err := migrations.Migrations(strings.ToLower(cfg.Database.Driver))
-	if err != nil {
-		return fmt.Errorf("failed to get migrations for %s: %w", strings.ToLower(cfg.Database.Driver), err)
-	}
-
-	goose.SetBaseFS(migrationsFs)
-	err = goose.SetDialect(strings.ToLower(cfg.Database.Driver))
-	if err != nil {
-		log.Error().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")
-		return fmt.Errorf("unsupported database driver: %s", cfg.Database.Driver)
-	}
-
-	err = goose.Up(c.Sql(), strings.ToLower(cfg.Database.Driver))
-	if err != nil {
-		log.Error().Err(err).Msg("failed to migrate database")
-		return err
-	}
 
 	collectFuncs, err := loadCurrencies(cfg)
 	if err != nil {
@@ -240,7 +191,8 @@ func run(cfg *config.Config) error {
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),
 		services.WithCurrencies(currencyData),
 		services.WithNotifierConfig(&cfg.Notifier),
-		services.WithExportPlumbing(app.bus, app.db, cfg.Storage, cfg.Database.PubSubConnString, sqlDriver),
+		services.WithExportPlumbing(app.bus, app.db, cfg.Storage, cfg.Database.PubSubConnString, sqlDialect),
+		services.WithMailer(&app.mailer),
 	)
 
 	ensureAssetIDs(app)
@@ -256,8 +208,8 @@ func run(cfg *config.Config) error {
 		otelChiBaseCfg := otelchimetric.NewBaseConfig(cfg.Otel.ServiceName, otelchimetric.WithMeterProvider(otelProvider.MeterProvider()))
 		router.Use(
 			otelchi.Middleware(cfg.Otel.ServiceName, otelchi.WithChiRoutes(router)),
-			otelchimetric.NewResponseSizeBytes(otelChiBaseCfg),
-			otelchimetric.NewRequestInFlight(otelChiBaseCfg),
+			otelchimetric.NewServerResponseBodySize(otelChiBaseCfg),
+			otelchimetric.NewServerActiveRequests(otelChiBaseCfg),
 		)
 	}
 

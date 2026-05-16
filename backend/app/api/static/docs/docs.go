@@ -2652,6 +2652,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/users/forgot-password": {
+            "post": {
+                "description": "Sends a password reset email if the address is associated with a local account.\nAlways returns 204 on success to avoid leaking whether the email is registered.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Request Password Reset",
+                "parameters": [
+                    {
+                        "description": "Email",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.ForgotPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "missing or invalid request body, or empty email field",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "demo mode is enabled or local login is disabled",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal error while processing the request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/users/login": {
             "post": {
                 "consumes": [
@@ -2800,6 +2849,55 @@ const docTemplate = `{
                     },
                     "403": {
                         "description": "Local login is not enabled",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/users/reset-password": {
+            "post": {
+                "description": "Consumes a single-use reset token and changes the user's password.\nOn success, all existing sessions for the user are revoked.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Reset Password",
+                "parameters": [
+                    {
+                        "description": "Token + new password",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.ResetPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "invalid request body, password shorter than the minimum length, or token that is invalid / expired / already used",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "demo mode is enabled or local login is disabled",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal error while processing the request",
                         "schema": {
                             "type": "string"
                         }
@@ -4139,6 +4237,59 @@ const docTemplate = `{
                 }
             }
         },
+        "ent.PasswordResetTokens": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the PasswordResetTokensQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.PasswordResetTokensEdges"
+                        }
+                    ]
+                },
+                "expires_at": {
+                    "description": "ExpiresAt holds the value of the \"expires_at\" field.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "token": {
+                    "description": "Token holds the value of the \"token\" field.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                },
+                "used_at": {
+                    "description": "UsedAt holds the value of the \"used_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.PasswordResetTokensEdges": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "description": "User holds the value of the user edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.User"
+                        }
+                    ]
+                }
+            }
+        },
         "ent.Tag": {
             "type": "object",
             "properties": {
@@ -4376,6 +4527,13 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/ent.Notifier"
+                    }
+                },
+                "password_reset_tokens": {
+                    "description": "PasswordResetTokens holds the value of the password_reset_tokens edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.PasswordResetTokens"
                     }
                 },
                 "user_groups": {
@@ -6244,6 +6402,18 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.ForgotPasswordRequest": {
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                }
+            }
+        },
         "v1.GroupAcceptInvitationResponse": {
             "type": "object",
             "properties": {
@@ -6318,6 +6488,23 @@ const docTemplate = `{
                 },
                 "enabled": {
                     "type": "boolean"
+                }
+            }
+        },
+        "v1.ResetPasswordRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "token"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "minLength": 6
+                },
+                "token": {
+                    "type": "string",
+                    "minLength": 20
                 }
             }
         },

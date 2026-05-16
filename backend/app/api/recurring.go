@@ -37,6 +37,13 @@ func registerRecurringTasks(app *app, cfg *config.Config, runner *graceful.Runne
 		}
 	}))
 
+	runner.AddPlugin(NewTask("purge-password-reset-tokens", 24*time.Hour, func(ctx context.Context) {
+		_, err := app.repos.PasswordResetTokens.PurgeExpired(ctx)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to purge expired password reset tokens")
+		}
+	}))
+
 	runner.AddPlugin(NewTask("purge-invitations", 24*time.Hour, func(ctx context.Context) {
 		_, err := app.repos.Groups.InvitationPurge(ctx)
 		if err != nil {
@@ -196,8 +203,14 @@ func registerRecurringTasks(app *app, cfg *config.Config, runner *graceful.Runne
 
 	if cfg.Debug.Enabled {
 		runner.AddFunc("debug", func(ctx context.Context) error {
+			// Bind to loopback only. pprof/expvar are unauthenticated and would
+			// otherwise expose heap snapshots, goroutine dumps, and runtime
+			// variables to anyone who can reach Web.Host (typically 0.0.0.0 in
+			// a container). Operators who need remote access should tunnel via
+			// SSH, e.g. `ssh -L 4000:127.0.0.1:4000 host`.
+			addr := fmt.Sprintf("127.0.0.1:%s", cfg.Debug.Port)
 			debugserver := http.Server{
-				Addr:         fmt.Sprintf("%s:%s", cfg.Web.Host, cfg.Debug.Port),
+				Addr:         addr,
 				Handler:      app.debugRouter(),
 				ReadTimeout:  cfg.Web.ReadTimeout,
 				WriteTimeout: cfg.Web.WriteTimeout,
@@ -209,7 +222,7 @@ func registerRecurringTasks(app *app, cfg *config.Config, runner *graceful.Runne
 				_ = debugserver.Shutdown(context.Background())
 			}()
 
-			log.Info().Msgf("Debug server is running on %s:%s", cfg.Web.Host, cfg.Debug.Port)
+			log.Info().Msgf("Debug server is running on %s (loopback only)", addr)
 			return debugserver.ListenAndServe()
 		})
 		// Print the configuration to the console

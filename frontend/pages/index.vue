@@ -401,8 +401,13 @@
                     autocomplete="current-password"
                     :required="true"
                   />
-                  <div class="max-w-[140px]">
-                    <FormCheckbox v-model="remember" :label="$t('index.remember_me')" />
+                  <div class="flex items-center justify-between">
+                    <div class="max-w-[140px]">
+                      <FormCheckbox v-model="remember" :label="$t('index.remember_me')" />
+                    </div>
+                    <NuxtLink to="/forgot-password" class="text-sm hover:underline">
+                      {{ $t("index.forgot_password") }}
+                    </NuxtLink>
                   </div>
                 </CardContent>
                 <CardFooter class="flex flex-col gap-2">

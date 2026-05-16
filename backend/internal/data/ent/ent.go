@@ -25,6 +25,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/passwordresettokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
@@ -102,6 +103,7 @@ func checkColumn(t, c string) error {
 			groupinvitationtoken.Table: groupinvitationtoken.ValidColumn,
 			maintenanceentry.Table:     maintenanceentry.ValidColumn,
 			notifier.Table:             notifier.ValidColumn,
+			passwordresettokens.Table:  passwordresettokens.ValidColumn,
 			tag.Table:                  tag.ValidColumn,
 			templatefield.Table:        templatefield.ValidColumn,
 			user.Table:                 user.ValidColumn,
