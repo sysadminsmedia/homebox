@@ -191,6 +191,12 @@
     },
     {
       type: "text",
+      label: "items.upc",
+      ref: "upc",
+      maxLength: 64,
+    },
+    {
+      type: "text",
       label: "items.serial_number",
       ref: "serialNumber",
       maxLength: 255,
