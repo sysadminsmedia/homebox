@@ -1777,13 +1777,25 @@ func patchSyncChildLocations(ctx context.Context, tx *ent.Tx, gid, id, parentID 
 	updatedCount := 0
 	for _, child := range children {
 		childParent, err := child.QueryParent().First(syncCtx)
-		if err != nil || childParent.ID != parentID {
-			if err := child.Update().SetParentID(parentID).Exec(syncCtx); err != nil {
-				recordSpanError(syncSpan, err)
-				return err
+		switch {
+		case err == nil:
+			if childParent.ID == parentID {
+				continue
 			}
-			updatedCount++
+		case ent.IsNotFound(err):
+			// Child has no parent yet — treat as "needs the new parent."
+		default:
+			// Any other error (transient DB failure, context cancel, etc.)
+			// must NOT be interpreted as "missing parent → reparent" — that
+			// would silently move rows on a network blip.
+			recordSpanError(syncSpan, err)
+			return err
 		}
+		if err := child.Update().SetParentID(parentID).Exec(syncCtx); err != nil {
+			recordSpanError(syncSpan, err)
+			return err
+		}
+		updatedCount++
 	}
 	syncSpan.SetAttributes(
 		attribute.Int("children.count", len(children)),

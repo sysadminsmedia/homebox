@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"time"
+	"unicode/utf8"
 
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
@@ -135,8 +136,21 @@ func (r *ExportRepository) SetCompleted(ctx context.Context, gid, id uuid.UUID, 
 }
 
 func (r *ExportRepository) SetFailed(ctx context.Context, gid, id uuid.UUID, errMsg string) error {
-	if len(errMsg) > 1000 {
-		errMsg = errMsg[:1000]
+	const maxErrBytes = 1000
+	if len(errMsg) > maxErrBytes {
+		// Cut at the last rune boundary that keeps the total ≤ maxErrBytes.
+		// Plain byte-slicing can split a multibyte rune and the resulting
+		// invalid UTF-8 fails Postgres' UTF8 encoding check on insert,
+		// masking the real failure with a database error.
+		cut := 0
+		for i, r := range errMsg {
+			end := i + utf8.RuneLen(r)
+			if end > maxErrBytes {
+				break
+			}
+			cut = end
+		}
+		errMsg = errMsg[:cut]
 	}
 	return r.db.Export.UpdateOneID(id).
 		Where(export.GroupID(gid)).
