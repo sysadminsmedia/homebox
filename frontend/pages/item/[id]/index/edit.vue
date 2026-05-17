@@ -832,7 +832,7 @@
                     </TooltipTrigger>
                     <TooltipContent>{{ $t("items.edit.view_image") }}</TooltipContent>
                   </Tooltip>
-                  <Tooltip v-if="(attachment.path ?? '').startsWith('http://') || (attachment.path ?? '').startsWith('https://')">
+                  <Tooltip v-if="isValidHttpURL(attachment.path ?? '')">
                     <TooltipTrigger as-child>
                       <a :href="attachment.path" target="_blank" rel="noopener noreferrer">
                         <Button variant="outline" size="icon">
