@@ -27,6 +27,77 @@ export function validDate(dt: Date | string | null | undefined): boolean {
   return true;
 }
 
+export function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result !== "string") {
+        reject(new Error("Failed to read blob as data URL"));
+        return;
+      }
+
+      resolve(result);
+    };
+
+    reader.onerror = () => reject(reader.error ?? new Error("Failed to read blob as data URL"));
+    reader.readAsDataURL(blob);
+  });
+}
+
+export function dataUrlToFile(dataUrl: string, fileName: string): File {
+  const parts = dataUrl.split(",");
+  const mimeMatch = parts[0]?.match(/:(.*?);/);
+  if (!mimeMatch?.[1]) {
+    throw new Error("Invalid data URL format");
+  }
+
+  const mimeType = mimeMatch[1];
+  if (!mimeType.startsWith("image/")) {
+    throw new Error("Invalid mime type, expected image");
+  }
+
+  const bytes = atob(parts[parts.length - 1] ?? "");
+  const buffer = new Uint8Array(bytes.length);
+
+  for (let index = 0; index < bytes.length; index += 1) {
+    buffer[index] = bytes.charCodeAt(index);
+  }
+
+  return new File([buffer], fileName, { type: mimeType });
+}
+
+export async function rotateImageDataUrl90Deg(dataUrl: string): Promise<string> {
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  if (!context) {
+    throw new Error("Canvas is not supported");
+  }
+
+  const image = new Image();
+  await new Promise<void>((resolve, reject) => {
+    image.onload = () => resolve();
+    image.onerror = () => reject(new Error("Failed to load image"));
+    image.src = dataUrl;
+  });
+
+  canvas.height = image.width;
+  canvas.width = image.height;
+
+  context.rotate((90 * Math.PI) / 180);
+  context.translate(0, -canvas.width);
+  context.drawImage(image, 0, 0);
+
+  const imageType = dataUrl.match(/^data:(.+);base64/)?.[1] || "image/jpeg";
+  const rotated = canvas.toDataURL(imageType, 1);
+
+  canvas.width = 0;
+  canvas.height = 0;
+
+  return rotated;
+}
+
 // Currency cache to store decimal places information
 export const currencyDecimalsCache: Record<string, number> = {};
 

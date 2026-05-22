@@ -444,8 +444,20 @@
         itemId,
       },
       onClose: result => {
+        if (!item.value) {
+          return;
+        }
+
         if (result?.action === "delete") {
-          item.value!.attachments = item.value!.attachments.filter(a => a.id !== result.id);
+          item.value = {
+            ...item.value,
+            attachments: item.value.attachments.filter(a => a.id !== result.id),
+          };
+        } else if (result?.action === "replace") {
+          item.value = {
+            ...item.value,
+            attachments: item.value.attachments.map(a => (a.id === result.oldId ? result.attachment : a)),
+          };
         }
       },
     });
@@ -806,7 +818,7 @@
           <BaseCard v-if="photos && photos.length > 0">
             <template #title> {{ $t("items.photos") }} </template>
             <div class="scroll-bg container mx-auto flex max-h-[500px] flex-wrap gap-2 overflow-y-scroll border-t p-4">
-              <button v-for="(img, i) in photos" :key="i" @click="openImageDialog(img, item.id)">
+              <button v-for="img in photos" :key="img.attachmentId" @click="openImageDialog(img, item.id)">
                 <picture>
                   <source :srcset="img.originalSrc" :type="img.originalType" />
                   <img class="max-h-[200px] rounded" :src="img.thumbnailSrc" alt="attachment image" />

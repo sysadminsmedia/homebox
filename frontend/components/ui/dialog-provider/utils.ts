@@ -5,6 +5,7 @@ import type {
   BarcodeProduct,
   GroupInvitation,
   EntitySummary,
+  ItemAttachment,
   MaintenanceEntry,
   MaintenanceEntryWithDetails,
 } from "~~/lib/api/types/data-contracts";
@@ -84,7 +85,9 @@ export type DialogParamsMap = {
  * Defines the payload type for a dialog's onClose callback.
  */
 export type DialogResultMap = {
-  [DialogID.ItemImage]?: { action: "delete"; id: string };
+  [DialogID.ItemImage]?:
+    | { action: "delete"; id: string }
+    | { action: "replace"; oldId: string; attachment: ItemAttachment };
   [DialogID.EditMaintenance]?: boolean;
   [DialogID.ItemChangeDetails]?: boolean;
   [DialogID.WipeInventory]?: { wipeTags: boolean; wipeLocations: boolean; wipeMaintenance: boolean };

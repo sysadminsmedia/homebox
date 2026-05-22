@@ -235,16 +235,7 @@
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger>
-                  <Button
-                    size="icon"
-                    type="button"
-                    variant="default"
-                    @click.prevent="
-                      async () => {
-                        await rotateBase64Image90Deg(photo.fileBase64, index);
-                      }
-                    "
-                  >
+                  <Button size="icon" type="button" variant="default" @click.prevent="rotatePhoto(index)">
                     <MdiRotateClockwise />
                     <div class="sr-only">{{ $t("components.item.create_modal.rotate_photo") }}</div>
                   </Button>
@@ -566,6 +557,21 @@
     }
   }
 
+  async function rotatePhoto(index: number) {
+    const photo = form.photos[index];
+    if (!photo) {
+      return;
+    }
+
+    try {
+      photo.fileBase64 = await rotateImageDataUrl90Deg(photo.fileBase64);
+      photo.file = dataUrlToFile(photo.fileBase64, photo.photoName);
+    } catch (error) {
+      toast.error(t("components.item.create_modal.toast.rotate_process_failed"));
+      console.error(error);
+    }
+  }
+
   onMounted(() => {
     const cleanup = registerOpenDialogCallback(DialogID.CreateItem, async params => {
       // needed since URL will be cleared in the next step => ParentId Selection should stay though
@@ -617,7 +623,7 @@
             photoName: "product_view.jpg",
             fileBase64: params.product.imageBase64,
             primary: form.photos.length === 0,
-            file: dataURLtoFile(params.product.imageBase64, "product_view.jpg"),
+            file: dataUrlToFile(params.product.imageBase64, "product_view.jpg"),
           });
         }
       }
@@ -727,81 +733,6 @@
     if (close) {
       closeDialog(DialogID.CreateItem);
       navigateTo(`/item/${data.id}`);
-    }
-  }
-
-  function dataURLtoFile(dataURL: string, fileName: string) {
-    try {
-      const arr = dataURL.split(",");
-      const mimeMatch = arr[0]!.match(/:(.*?);/);
-      if (!mimeMatch || !mimeMatch[1]) {
-        throw new Error("Invalid data URL format");
-      }
-      const mime = mimeMatch[1];
-
-      // Validate mime type is an image
-      if (!mime.startsWith("image/")) {
-        throw new Error("Invalid mime type, expected image");
-      }
-
-      const bstr = atob(arr[arr.length - 1]!);
-      let n = bstr.length;
-      const u8arr = new Uint8Array(n);
-      while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-      }
-      return new File([u8arr], fileName, { type: mime });
-    } catch (error) {
-      console.error("Error converting data URL to file:", error);
-      // Return a fallback or rethrow based on your error handling strategy
-      throw error;
-    }
-  }
-
-  async function rotateBase64Image90Deg(base64Image: string, index: number) {
-    // Create an off-screen canvas
-    const offScreenCanvas = document.createElement("canvas");
-    const offScreenCanvasCtx = offScreenCanvas.getContext("2d");
-
-    if (!offScreenCanvasCtx) {
-      toast.error(t("components.item.create_modal.toast.no_canvas_support"));
-      return;
-    }
-
-    // Create an image
-    const img = new Image();
-
-    // Create a promise to handle the image loading
-    await new Promise<void>((resolve, reject) => {
-      img.onload = () => resolve();
-      img.onerror = () => reject(new Error("Failed to load image"));
-      img.src = base64Image;
-    }).catch(error => {
-      toast.error(t("components.item.create_modal.toast.rotate_failed", { error: error.message }));
-    });
-
-    // Set its dimensions to rotated size
-    offScreenCanvas.height = img.width;
-    offScreenCanvas.width = img.height;
-
-    // Rotate and draw source image into the off-screen canvas
-    offScreenCanvasCtx.rotate((90 * Math.PI) / 180);
-    offScreenCanvasCtx.translate(0, -offScreenCanvas.width);
-    offScreenCanvasCtx.drawImage(img, 0, 0);
-
-    const imageType = base64Image.match(/^data:(.+);base64/)?.[1] || "image/jpeg";
-
-    // Encode image to data-uri with base64
-    try {
-      form.photos[index]!.fileBase64 = offScreenCanvas.toDataURL(imageType, 100);
-      form.photos[index]!.file = dataURLtoFile(form.photos[index]!.fileBase64, form.photos[index]!.photoName);
-    } catch (error) {
-      toast.error(t("components.item.create_modal.toast.rotate_process_failed"));
-      console.error(error);
-    } finally {
-      // Clean up resources
-      offScreenCanvas.width = 0;
-      offScreenCanvas.height = 0;
     }
   }
 
