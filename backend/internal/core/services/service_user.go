@@ -56,9 +56,28 @@ type (
 	}
 )
 
+// RegisterOption customizes RegisterUser behavior.
+type RegisterOption func(*registerOptions)
+
+type registerOptions struct {
+	skipPasswordValidation bool
+}
+
+// SkipPasswordValidation bypasses the PasswordMinLength floor for this
+// registration. Reserved for demo seeding, where the operator-supplied
+// HBOX_DEMO_PASSWORD must be accepted as-is regardless of length.
+func SkipPasswordValidation() RegisterOption {
+	return func(o *registerOptions) { o.skipPasswordValidation = true }
+}
+
 // RegisterUser creates a new user and group in the data with the provided data. It also bootstraps the user's group
 // with default Tags and Locations.
-func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration) (repo.UserOut, error) {
+func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration, opts ...RegisterOption) (repo.UserOut, error) {
+	options := registerOptions{}
+	for _, o := range opts {
+		o(&options)
+	}
+
 	ctx, span := entityServiceTracer().Start(ctx, "service.UserService.RegisterUser",
 		trace.WithAttributes(
 			attribute.Int("user.name.length", len(data.Name)),
@@ -70,7 +89,7 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 
 	// Reject too-short (and empty) passwords before any DB work. The reset and
 	// change-password flows enforce the same floor; registration was the gap.
-	if len(data.Password) < PasswordMinLength {
+	if !options.skipPasswordValidation && len(data.Password) < PasswordMinLength {
 		span.SetAttributes(attribute.String("registration.outcome", "password_too_short"))
 		return repo.UserOut{}, ErrorPasswordTooShort
 	}

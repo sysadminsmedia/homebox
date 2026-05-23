@@ -122,19 +122,6 @@ func run(cfg *config.Config) error {
 	}
 	hasher.SetAPIKeyPepper([]byte(cfg.Auth.APIKeyPepper))
 
-	// Demo mode seeds a known user (demo@example.com). In production mode the
-	// hardcoded "demo" password would be publicly guessable, so require an
-	// explicit non-trivial HBOX_DEMO_PASSWORD before letting the app start.
-	if cfg.Demo && cfg.Mode == config.ModeProduction {
-		if len(os.Getenv(demoPasswordEnv)) < demoPasswordMinLength {
-			return fmt.Errorf(
-				"refusing to start: demo mode enabled in production but %s is unset or shorter than %d characters. "+
-					"Set %s to a strong password or disable demo mode (HBOX_DEMO=false)",
-				demoPasswordEnv, demoPasswordMinLength, demoPasswordEnv,
-			)
-		}
-	}
-
 	// =========================================================================
 	// Initialize OpenTelemetry
 	otelProvider, err := otel.NewProvider(context.Background(), &cfg.Otel, version)
