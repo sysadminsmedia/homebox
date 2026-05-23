@@ -20,6 +20,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/export"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
@@ -49,6 +50,7 @@ const (
 	TypeEntityField          = "EntityField"
 	TypeEntityTemplate       = "EntityTemplate"
 	TypeEntityType           = "EntityType"
+	TypeExport               = "Export"
 	TypeGroup                = "Group"
 	TypeGroupInvitationToken = "GroupInvitationToken"
 	TypeMaintenanceEntry     = "MaintenanceEntry"
@@ -8564,6 +8566,934 @@ func (m *EntityTypeMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown EntityType edge %s", name)
 }
 
+// ExportMutation represents an operation that mutates the Export nodes in the graph.
+type ExportMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uuid.UUID
+	created_at    *time.Time
+	updated_at    *time.Time
+	kind          *export.Kind
+	status        *export.Status
+	progress      *int
+	addprogress   *int
+	artifact_path *string
+	size_bytes    *int64
+	addsize_bytes *int64
+	error         *string
+	clearedFields map[string]struct{}
+	group         *uuid.UUID
+	clearedgroup  bool
+	done          bool
+	oldValue      func(context.Context) (*Export, error)
+	predicates    []predicate.Export
+}
+
+var _ ent.Mutation = (*ExportMutation)(nil)
+
+// exportOption allows management of the mutation configuration using functional options.
+type exportOption func(*ExportMutation)
+
+// newExportMutation creates new mutation for the Export entity.
+func newExportMutation(c config, op Op, opts ...exportOption) *ExportMutation {
+	m := &ExportMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeExport,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withExportID sets the ID field of the mutation.
+func withExportID(id uuid.UUID) exportOption {
+	return func(m *ExportMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Export
+		)
+		m.oldValue = func(ctx context.Context) (*Export, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Export.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withExport sets the old Export of the mutation.
+func withExport(node *Export) exportOption {
+	return func(m *ExportMutation) {
+		m.oldValue = func(context.Context) (*Export, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ExportMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ExportMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Export entities.
+func (m *ExportMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ExportMutation) ID() (id uuid.UUID, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ExportMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uuid.UUID{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Export.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ExportMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ExportMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Export entity.
+// If the Export object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExportMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ExportMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ExportMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ExportMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Export entity.
+// If the Export object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExportMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ExportMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetGroupID sets the "group_id" field.
+func (m *ExportMutation) SetGroupID(u uuid.UUID) {
+	m.group = &u
+}
+
+// GroupID returns the value of the "group_id" field in the mutation.
+func (m *ExportMutation) GroupID() (r uuid.UUID, exists bool) {
+	v := m.group
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGroupID returns the old "group_id" field's value of the Export entity.
+// If the Export object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExportMutation) OldGroupID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGroupID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGroupID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGroupID: %w", err)
+	}
+	return oldValue.GroupID, nil
+}
+
+// ResetGroupID resets all changes to the "group_id" field.
+func (m *ExportMutation) ResetGroupID() {
+	m.group = nil
+}
+
+// SetKind sets the "kind" field.
+func (m *ExportMutation) SetKind(e export.Kind) {
+	m.kind = &e
+}
+
+// Kind returns the value of the "kind" field in the mutation.
+func (m *ExportMutation) Kind() (r export.Kind, exists bool) {
+	v := m.kind
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldKind returns the old "kind" field's value of the Export entity.
+// If the Export object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExportMutation) OldKind(ctx context.Context) (v export.Kind, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldKind is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldKind requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldKind: %w", err)
+	}
+	return oldValue.Kind, nil
+}
+
+// ResetKind resets all changes to the "kind" field.
+func (m *ExportMutation) ResetKind() {
+	m.kind = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *ExportMutation) SetStatus(e export.Status) {
+	m.status = &e
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *ExportMutation) Status() (r export.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the Export entity.
+// If the Export object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExportMutation) OldStatus(ctx context.Context) (v export.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *ExportMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetProgress sets the "progress" field.
+func (m *ExportMutation) SetProgress(i int) {
+	m.progress = &i
+	m.addprogress = nil
+}
+
+// Progress returns the value of the "progress" field in the mutation.
+func (m *ExportMutation) Progress() (r int, exists bool) {
+	v := m.progress
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProgress returns the old "progress" field's value of the Export entity.
+// If the Export object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExportMutation) OldProgress(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProgress is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProgress requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProgress: %w", err)
+	}
+	return oldValue.Progress, nil
+}
+
+// AddProgress adds i to the "progress" field.
+func (m *ExportMutation) AddProgress(i int) {
+	if m.addprogress != nil {
+		*m.addprogress += i
+	} else {
+		m.addprogress = &i
+	}
+}
+
+// AddedProgress returns the value that was added to the "progress" field in this mutation.
+func (m *ExportMutation) AddedProgress() (r int, exists bool) {
+	v := m.addprogress
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetProgress resets all changes to the "progress" field.
+func (m *ExportMutation) ResetProgress() {
+	m.progress = nil
+	m.addprogress = nil
+}
+
+// SetArtifactPath sets the "artifact_path" field.
+func (m *ExportMutation) SetArtifactPath(s string) {
+	m.artifact_path = &s
+}
+
+// ArtifactPath returns the value of the "artifact_path" field in the mutation.
+func (m *ExportMutation) ArtifactPath() (r string, exists bool) {
+	v := m.artifact_path
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldArtifactPath returns the old "artifact_path" field's value of the Export entity.
+// If the Export object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExportMutation) OldArtifactPath(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldArtifactPath is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldArtifactPath requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldArtifactPath: %w", err)
+	}
+	return oldValue.ArtifactPath, nil
+}
+
+// ClearArtifactPath clears the value of the "artifact_path" field.
+func (m *ExportMutation) ClearArtifactPath() {
+	m.artifact_path = nil
+	m.clearedFields[export.FieldArtifactPath] = struct{}{}
+}
+
+// ArtifactPathCleared returns if the "artifact_path" field was cleared in this mutation.
+func (m *ExportMutation) ArtifactPathCleared() bool {
+	_, ok := m.clearedFields[export.FieldArtifactPath]
+	return ok
+}
+
+// ResetArtifactPath resets all changes to the "artifact_path" field.
+func (m *ExportMutation) ResetArtifactPath() {
+	m.artifact_path = nil
+	delete(m.clearedFields, export.FieldArtifactPath)
+}
+
+// SetSizeBytes sets the "size_bytes" field.
+func (m *ExportMutation) SetSizeBytes(i int64) {
+	m.size_bytes = &i
+	m.addsize_bytes = nil
+}
+
+// SizeBytes returns the value of the "size_bytes" field in the mutation.
+func (m *ExportMutation) SizeBytes() (r int64, exists bool) {
+	v := m.size_bytes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSizeBytes returns the old "size_bytes" field's value of the Export entity.
+// If the Export object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExportMutation) OldSizeBytes(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSizeBytes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSizeBytes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSizeBytes: %w", err)
+	}
+	return oldValue.SizeBytes, nil
+}
+
+// AddSizeBytes adds i to the "size_bytes" field.
+func (m *ExportMutation) AddSizeBytes(i int64) {
+	if m.addsize_bytes != nil {
+		*m.addsize_bytes += i
+	} else {
+		m.addsize_bytes = &i
+	}
+}
+
+// AddedSizeBytes returns the value that was added to the "size_bytes" field in this mutation.
+func (m *ExportMutation) AddedSizeBytes() (r int64, exists bool) {
+	v := m.addsize_bytes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSizeBytes resets all changes to the "size_bytes" field.
+func (m *ExportMutation) ResetSizeBytes() {
+	m.size_bytes = nil
+	m.addsize_bytes = nil
+}
+
+// SetError sets the "error" field.
+func (m *ExportMutation) SetError(s string) {
+	m.error = &s
+}
+
+// Error returns the value of the "error" field in the mutation.
+func (m *ExportMutation) Error() (r string, exists bool) {
+	v := m.error
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldError returns the old "error" field's value of the Export entity.
+// If the Export object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExportMutation) OldError(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldError is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldError requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldError: %w", err)
+	}
+	return oldValue.Error, nil
+}
+
+// ClearError clears the value of the "error" field.
+func (m *ExportMutation) ClearError() {
+	m.error = nil
+	m.clearedFields[export.FieldError] = struct{}{}
+}
+
+// ErrorCleared returns if the "error" field was cleared in this mutation.
+func (m *ExportMutation) ErrorCleared() bool {
+	_, ok := m.clearedFields[export.FieldError]
+	return ok
+}
+
+// ResetError resets all changes to the "error" field.
+func (m *ExportMutation) ResetError() {
+	m.error = nil
+	delete(m.clearedFields, export.FieldError)
+}
+
+// ClearGroup clears the "group" edge to the Group entity.
+func (m *ExportMutation) ClearGroup() {
+	m.clearedgroup = true
+	m.clearedFields[export.FieldGroupID] = struct{}{}
+}
+
+// GroupCleared reports if the "group" edge to the Group entity was cleared.
+func (m *ExportMutation) GroupCleared() bool {
+	return m.clearedgroup
+}
+
+// GroupIDs returns the "group" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// GroupID instead. It exists only for internal usage by the builders.
+func (m *ExportMutation) GroupIDs() (ids []uuid.UUID) {
+	if id := m.group; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetGroup resets all changes to the "group" edge.
+func (m *ExportMutation) ResetGroup() {
+	m.group = nil
+	m.clearedgroup = false
+}
+
+// Where appends a list predicates to the ExportMutation builder.
+func (m *ExportMutation) Where(ps ...predicate.Export) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ExportMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ExportMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Export, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ExportMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ExportMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Export).
+func (m *ExportMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ExportMutation) Fields() []string {
+	fields := make([]string, 0, 9)
+	if m.created_at != nil {
+		fields = append(fields, export.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, export.FieldUpdatedAt)
+	}
+	if m.group != nil {
+		fields = append(fields, export.FieldGroupID)
+	}
+	if m.kind != nil {
+		fields = append(fields, export.FieldKind)
+	}
+	if m.status != nil {
+		fields = append(fields, export.FieldStatus)
+	}
+	if m.progress != nil {
+		fields = append(fields, export.FieldProgress)
+	}
+	if m.artifact_path != nil {
+		fields = append(fields, export.FieldArtifactPath)
+	}
+	if m.size_bytes != nil {
+		fields = append(fields, export.FieldSizeBytes)
+	}
+	if m.error != nil {
+		fields = append(fields, export.FieldError)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ExportMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case export.FieldCreatedAt:
+		return m.CreatedAt()
+	case export.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case export.FieldGroupID:
+		return m.GroupID()
+	case export.FieldKind:
+		return m.Kind()
+	case export.FieldStatus:
+		return m.Status()
+	case export.FieldProgress:
+		return m.Progress()
+	case export.FieldArtifactPath:
+		return m.ArtifactPath()
+	case export.FieldSizeBytes:
+		return m.SizeBytes()
+	case export.FieldError:
+		return m.Error()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ExportMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case export.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case export.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case export.FieldGroupID:
+		return m.OldGroupID(ctx)
+	case export.FieldKind:
+		return m.OldKind(ctx)
+	case export.FieldStatus:
+		return m.OldStatus(ctx)
+	case export.FieldProgress:
+		return m.OldProgress(ctx)
+	case export.FieldArtifactPath:
+		return m.OldArtifactPath(ctx)
+	case export.FieldSizeBytes:
+		return m.OldSizeBytes(ctx)
+	case export.FieldError:
+		return m.OldError(ctx)
+	}
+	return nil, fmt.Errorf("unknown Export field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ExportMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case export.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case export.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case export.FieldGroupID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGroupID(v)
+		return nil
+	case export.FieldKind:
+		v, ok := value.(export.Kind)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetKind(v)
+		return nil
+	case export.FieldStatus:
+		v, ok := value.(export.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case export.FieldProgress:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProgress(v)
+		return nil
+	case export.FieldArtifactPath:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetArtifactPath(v)
+		return nil
+	case export.FieldSizeBytes:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSizeBytes(v)
+		return nil
+	case export.FieldError:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetError(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Export field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ExportMutation) AddedFields() []string {
+	var fields []string
+	if m.addprogress != nil {
+		fields = append(fields, export.FieldProgress)
+	}
+	if m.addsize_bytes != nil {
+		fields = append(fields, export.FieldSizeBytes)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ExportMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case export.FieldProgress:
+		return m.AddedProgress()
+	case export.FieldSizeBytes:
+		return m.AddedSizeBytes()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ExportMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case export.FieldProgress:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddProgress(v)
+		return nil
+	case export.FieldSizeBytes:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSizeBytes(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Export numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ExportMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(export.FieldArtifactPath) {
+		fields = append(fields, export.FieldArtifactPath)
+	}
+	if m.FieldCleared(export.FieldError) {
+		fields = append(fields, export.FieldError)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ExportMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ExportMutation) ClearField(name string) error {
+	switch name {
+	case export.FieldArtifactPath:
+		m.ClearArtifactPath()
+		return nil
+	case export.FieldError:
+		m.ClearError()
+		return nil
+	}
+	return fmt.Errorf("unknown Export nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ExportMutation) ResetField(name string) error {
+	switch name {
+	case export.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case export.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case export.FieldGroupID:
+		m.ResetGroupID()
+		return nil
+	case export.FieldKind:
+		m.ResetKind()
+		return nil
+	case export.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case export.FieldProgress:
+		m.ResetProgress()
+		return nil
+	case export.FieldArtifactPath:
+		m.ResetArtifactPath()
+		return nil
+	case export.FieldSizeBytes:
+		m.ResetSizeBytes()
+		return nil
+	case export.FieldError:
+		m.ResetError()
+		return nil
+	}
+	return fmt.Errorf("unknown Export field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ExportMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.group != nil {
+		edges = append(edges, export.EdgeGroup)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ExportMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case export.EdgeGroup:
+		if id := m.group; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ExportMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ExportMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ExportMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedgroup {
+		edges = append(edges, export.EdgeGroup)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ExportMutation) EdgeCleared(name string) bool {
+	switch name {
+	case export.EdgeGroup:
+		return m.clearedgroup
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ExportMutation) ClearEdge(name string) error {
+	switch name {
+	case export.EdgeGroup:
+		m.ClearGroup()
+		return nil
+	}
+	return fmt.Errorf("unknown Export unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ExportMutation) ResetEdge(name string) error {
+	switch name {
+	case export.EdgeGroup:
+		m.ResetGroup()
+		return nil
+	}
+	return fmt.Errorf("unknown Export edge %s", name)
+}
+
 // GroupMutation represents an operation that mutates the Group nodes in the graph.
 type GroupMutation struct {
 	config
@@ -8596,6 +9526,9 @@ type GroupMutation struct {
 	entity_templates         map[uuid.UUID]struct{}
 	removedentity_templates  map[uuid.UUID]struct{}
 	clearedentity_templates  bool
+	exports                  map[uuid.UUID]struct{}
+	removedexports           map[uuid.UUID]struct{}
+	clearedexports           bool
 	done                     bool
 	oldValue                 func(context.Context) (*Group, error)
 	predicates               []predicate.Group
@@ -9227,6 +10160,60 @@ func (m *GroupMutation) ResetEntityTemplates() {
 	m.removedentity_templates = nil
 }
 
+// AddExportIDs adds the "exports" edge to the Export entity by ids.
+func (m *GroupMutation) AddExportIDs(ids ...uuid.UUID) {
+	if m.exports == nil {
+		m.exports = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		m.exports[ids[i]] = struct{}{}
+	}
+}
+
+// ClearExports clears the "exports" edge to the Export entity.
+func (m *GroupMutation) ClearExports() {
+	m.clearedexports = true
+}
+
+// ExportsCleared reports if the "exports" edge to the Export entity was cleared.
+func (m *GroupMutation) ExportsCleared() bool {
+	return m.clearedexports
+}
+
+// RemoveExportIDs removes the "exports" edge to the Export entity by IDs.
+func (m *GroupMutation) RemoveExportIDs(ids ...uuid.UUID) {
+	if m.removedexports == nil {
+		m.removedexports = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		delete(m.exports, ids[i])
+		m.removedexports[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedExports returns the removed IDs of the "exports" edge to the Export entity.
+func (m *GroupMutation) RemovedExportsIDs() (ids []uuid.UUID) {
+	for id := range m.removedexports {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ExportsIDs returns the "exports" edge IDs in the mutation.
+func (m *GroupMutation) ExportsIDs() (ids []uuid.UUID) {
+	for id := range m.exports {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetExports resets all changes to the "exports" edge.
+func (m *GroupMutation) ResetExports() {
+	m.exports = nil
+	m.clearedexports = false
+	m.removedexports = nil
+}
+
 // Where appends a list predicates to the GroupMutation builder.
 func (m *GroupMutation) Where(ps ...predicate.Group) {
 	m.predicates = append(m.predicates, ps...)
@@ -9411,7 +10398,7 @@ func (m *GroupMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *GroupMutation) AddedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.users != nil {
 		edges = append(edges, group.EdgeUsers)
 	}
@@ -9432,6 +10419,9 @@ func (m *GroupMutation) AddedEdges() []string {
 	}
 	if m.entity_templates != nil {
 		edges = append(edges, group.EdgeEntityTemplates)
+	}
+	if m.exports != nil {
+		edges = append(edges, group.EdgeExports)
 	}
 	return edges
 }
@@ -9482,13 +10472,19 @@ func (m *GroupMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case group.EdgeExports:
+		ids := make([]ent.Value, 0, len(m.exports))
+		for id := range m.exports {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *GroupMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.removedusers != nil {
 		edges = append(edges, group.EdgeUsers)
 	}
@@ -9509,6 +10505,9 @@ func (m *GroupMutation) RemovedEdges() []string {
 	}
 	if m.removedentity_templates != nil {
 		edges = append(edges, group.EdgeEntityTemplates)
+	}
+	if m.removedexports != nil {
+		edges = append(edges, group.EdgeExports)
 	}
 	return edges
 }
@@ -9559,13 +10558,19 @@ func (m *GroupMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case group.EdgeExports:
+		ids := make([]ent.Value, 0, len(m.removedexports))
+		for id := range m.removedexports {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *GroupMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.clearedusers {
 		edges = append(edges, group.EdgeUsers)
 	}
@@ -9586,6 +10591,9 @@ func (m *GroupMutation) ClearedEdges() []string {
 	}
 	if m.clearedentity_templates {
 		edges = append(edges, group.EdgeEntityTemplates)
+	}
+	if m.clearedexports {
+		edges = append(edges, group.EdgeExports)
 	}
 	return edges
 }
@@ -9608,6 +10616,8 @@ func (m *GroupMutation) EdgeCleared(name string) bool {
 		return m.clearednotifiers
 	case group.EdgeEntityTemplates:
 		return m.clearedentity_templates
+	case group.EdgeExports:
+		return m.clearedexports
 	}
 	return false
 }
@@ -9644,6 +10654,9 @@ func (m *GroupMutation) ResetEdge(name string) error {
 		return nil
 	case group.EdgeEntityTemplates:
 		m.ResetEntityTemplates()
+		return nil
+	case group.EdgeExports:
+		m.ResetExports()
 		return nil
 	}
 	return fmt.Errorf("unknown Group edge %s", name)

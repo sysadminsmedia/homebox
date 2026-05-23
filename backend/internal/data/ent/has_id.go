@@ -36,6 +36,10 @@ func (_m *EntityType) GetID() uuid.UUID {
 	return _m.ID
 }
 
+func (_m *Export) GetID() uuid.UUID {
+	return _m.ID
+}
+
 func (_m *Group) GetID() uuid.UUID {
 	return _m.ID
 }

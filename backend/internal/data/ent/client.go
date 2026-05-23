@@ -24,6 +24,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/export"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
@@ -56,6 +57,8 @@ type Client struct {
 	EntityTemplate *EntityTemplateClient
 	// EntityType is the client for interacting with the EntityType builders.
 	EntityType *EntityTypeClient
+	// Export is the client for interacting with the Export builders.
+	Export *ExportClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// GroupInvitationToken is the client for interacting with the GroupInvitationToken builders.
@@ -93,6 +96,7 @@ func (c *Client) init() {
 	c.EntityField = NewEntityFieldClient(c.config)
 	c.EntityTemplate = NewEntityTemplateClient(c.config)
 	c.EntityType = NewEntityTypeClient(c.config)
+	c.Export = NewExportClient(c.config)
 	c.Group = NewGroupClient(c.config)
 	c.GroupInvitationToken = NewGroupInvitationTokenClient(c.config)
 	c.MaintenanceEntry = NewMaintenanceEntryClient(c.config)
@@ -202,6 +206,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		EntityField:          NewEntityFieldClient(cfg),
 		EntityTemplate:       NewEntityTemplateClient(cfg),
 		EntityType:           NewEntityTypeClient(cfg),
+		Export:               NewExportClient(cfg),
 		Group:                NewGroupClient(cfg),
 		GroupInvitationToken: NewGroupInvitationTokenClient(cfg),
 		MaintenanceEntry:     NewMaintenanceEntryClient(cfg),
@@ -238,6 +243,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		EntityField:          NewEntityFieldClient(cfg),
 		EntityTemplate:       NewEntityTemplateClient(cfg),
 		EntityType:           NewEntityTypeClient(cfg),
+		Export:               NewExportClient(cfg),
 		Group:                NewGroupClient(cfg),
 		GroupInvitationToken: NewGroupInvitationTokenClient(cfg),
 		MaintenanceEntry:     NewMaintenanceEntryClient(cfg),
@@ -277,7 +283,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.APIKey, c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity, c.EntityField,
-		c.EntityTemplate, c.EntityType, c.Group, c.GroupInvitationToken,
+		c.EntityTemplate, c.EntityType, c.Export, c.Group, c.GroupInvitationToken,
 		c.MaintenanceEntry, c.Notifier, c.PasswordResetTokens, c.Tag, c.TemplateField,
 		c.User, c.UserGroup,
 	} {
@@ -290,7 +296,7 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.APIKey, c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity, c.EntityField,
-		c.EntityTemplate, c.EntityType, c.Group, c.GroupInvitationToken,
+		c.EntityTemplate, c.EntityType, c.Export, c.Group, c.GroupInvitationToken,
 		c.MaintenanceEntry, c.Notifier, c.PasswordResetTokens, c.Tag, c.TemplateField,
 		c.User, c.UserGroup,
 	} {
@@ -317,6 +323,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.EntityTemplate.mutate(ctx, m)
 	case *EntityTypeMutation:
 		return c.EntityType.mutate(ctx, m)
+	case *ExportMutation:
+		return c.Export.mutate(ctx, m)
 	case *GroupMutation:
 		return c.Group.mutate(ctx, m)
 	case *GroupInvitationTokenMutation:
@@ -1740,6 +1748,155 @@ func (c *EntityTypeClient) mutate(ctx context.Context, m *EntityTypeMutation) (V
 	}
 }
 
+// ExportClient is a client for the Export schema.
+type ExportClient struct {
+	config
+}
+
+// NewExportClient returns a client for the Export from the given config.
+func NewExportClient(c config) *ExportClient {
+	return &ExportClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `export.Hooks(f(g(h())))`.
+func (c *ExportClient) Use(hooks ...Hook) {
+	c.hooks.Export = append(c.hooks.Export, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `export.Intercept(f(g(h())))`.
+func (c *ExportClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Export = append(c.inters.Export, interceptors...)
+}
+
+// Create returns a builder for creating a Export entity.
+func (c *ExportClient) Create() *ExportCreate {
+	mutation := newExportMutation(c.config, OpCreate)
+	return &ExportCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Export entities.
+func (c *ExportClient) CreateBulk(builders ...*ExportCreate) *ExportCreateBulk {
+	return &ExportCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ExportClient) MapCreateBulk(slice any, setFunc func(*ExportCreate, int)) *ExportCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ExportCreateBulk{err: fmt.Errorf("calling to ExportClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ExportCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ExportCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Export.
+func (c *ExportClient) Update() *ExportUpdate {
+	mutation := newExportMutation(c.config, OpUpdate)
+	return &ExportUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ExportClient) UpdateOne(_m *Export) *ExportUpdateOne {
+	mutation := newExportMutation(c.config, OpUpdateOne, withExport(_m))
+	return &ExportUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ExportClient) UpdateOneID(id uuid.UUID) *ExportUpdateOne {
+	mutation := newExportMutation(c.config, OpUpdateOne, withExportID(id))
+	return &ExportUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Export.
+func (c *ExportClient) Delete() *ExportDelete {
+	mutation := newExportMutation(c.config, OpDelete)
+	return &ExportDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ExportClient) DeleteOne(_m *Export) *ExportDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ExportClient) DeleteOneID(id uuid.UUID) *ExportDeleteOne {
+	builder := c.Delete().Where(export.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ExportDeleteOne{builder}
+}
+
+// Query returns a query builder for Export.
+func (c *ExportClient) Query() *ExportQuery {
+	return &ExportQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeExport},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Export entity by its id.
+func (c *ExportClient) Get(ctx context.Context, id uuid.UUID) (*Export, error) {
+	return c.Query().Where(export.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ExportClient) GetX(ctx context.Context, id uuid.UUID) *Export {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryGroup queries the group edge of a Export.
+func (c *ExportClient) QueryGroup(_m *Export) *GroupQuery {
+	query := (&GroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(export.Table, export.FieldID, id),
+			sqlgraph.To(group.Table, group.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, export.GroupTable, export.GroupColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ExportClient) Hooks() []Hook {
+	return c.hooks.Export
+}
+
+// Interceptors returns the client interceptors.
+func (c *ExportClient) Interceptors() []Interceptor {
+	return c.inters.Export
+}
+
+func (c *ExportClient) mutate(ctx context.Context, m *ExportMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ExportCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ExportUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ExportUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ExportDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Export mutation op: %q", m.Op())
+	}
+}
+
 // GroupClient is a client for the Group schema.
 type GroupClient struct {
 	config
@@ -1953,6 +2110,22 @@ func (c *GroupClient) QueryEntityTemplates(_m *Group) *EntityTemplateQuery {
 			sqlgraph.From(group.Table, group.FieldID, id),
 			sqlgraph.To(entitytemplate.Table, entitytemplate.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, group.EntityTemplatesTable, group.EntityTemplatesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryExports queries the exports edge of a Group.
+func (c *GroupClient) QueryExports(_m *Group) *ExportQuery {
+	query := (&ExportClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, id),
+			sqlgraph.To(export.Table, export.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.ExportsTable, group.ExportsColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -3308,12 +3481,12 @@ func (c *UserGroupClient) mutate(ctx context.Context, m *UserGroupMutation) (Val
 type (
 	hooks struct {
 		APIKey, Attachment, AuthRoles, AuthTokens, Entity, EntityField, EntityTemplate,
-		EntityType, Group, GroupInvitationToken, MaintenanceEntry, Notifier,
+		EntityType, Export, Group, GroupInvitationToken, MaintenanceEntry, Notifier,
 		PasswordResetTokens, Tag, TemplateField, User, UserGroup []ent.Hook
 	}
 	inters struct {
 		APIKey, Attachment, AuthRoles, AuthTokens, Entity, EntityField, EntityTemplate,
-		EntityType, Group, GroupInvitationToken, MaintenanceEntry, Notifier,
+		EntityType, Export, Group, GroupInvitationToken, MaintenanceEntry, Notifier,
 		PasswordResetTokens, Tag, TemplateField, User, UserGroup []ent.Interceptor
 	}
 )

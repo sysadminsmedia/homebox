@@ -35,6 +35,20 @@ export enum EntityPathType {
   EntityPathTypeItem = "item",
 }
 
+export enum ExportStatus {
+  DefaultStatus = "pending",
+  StatusPending = "pending",
+  StatusRunning = "running",
+  StatusCompleted = "completed",
+  StatusFailed = "failed",
+}
+
+export enum ExportKind {
+  DefaultKind = "export",
+  KindExport = "export",
+  KindImport = "import",
+}
+
 export enum EntityfieldType {
   TypeText = "text",
   TypeNumber = "number",
@@ -361,6 +375,39 @@ export interface EntEntityTypeEdges {
   group: EntGroup;
 }
 
+export interface EntExport {
+  /** ArtifactPath holds the value of the "artifact_path" field. */
+  artifact_path: string;
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the ExportQuery when eager-loading is set.
+   */
+  edges: EntExportEdges;
+  /** Error holds the value of the "error" field. */
+  error: string;
+  /** GroupID holds the value of the "group_id" field. */
+  group_id: string;
+  /** ID of the ent. */
+  id: string;
+  /** Kind holds the value of the "kind" field. */
+  kind: ExportKind;
+  /** Progress holds the value of the "progress" field. */
+  progress: number;
+  /** SizeBytes holds the value of the "size_bytes" field. */
+  size_bytes: number;
+  /** Status holds the value of the "status" field. */
+  status: ExportStatus;
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+}
+
+export interface EntExportEdges {
+  /** Group holds the value of the group edge. */
+  group: EntGroup;
+}
+
 export interface EntGroup {
   /** CreatedAt holds the value of the "created_at" field. */
   created_at: string;
@@ -386,6 +433,8 @@ export interface EntGroupEdges {
   entity_templates: EntEntityTemplate[];
   /** EntityTypes holds the value of the entity_types edge. */
   entity_types: EntEntityType[];
+  /** Exports holds the value of the exports edge. */
+  exports: EntExport[];
   /** InvitationTokens holds the value of the invitation_tokens edge. */
   invitation_tokens: EntGroupInvitationToken[];
   /** Notifiers holds the value of the notifiers edge. */
@@ -980,6 +1029,24 @@ export interface EntityUpdate {
   warrantyExpires: Date | string;
 }
 
+export interface ExportOut {
+  artifactPath: string;
+  createdAt: Date | string;
+  error: string;
+  groupId: string;
+  id: string;
+  /**
+   * Kind is "export" for server-produced backup artifacts, "import" for
+   * user-uploaded restore zips. The lifecycle fields below behave the
+   * same for both.
+   */
+  kind: string;
+  progress: number;
+  sizeBytes: number;
+  status: string;
+  updatedAt: Date | string;
+}
+
 export interface Group {
   createdAt: Date | string;
   currency: string;
@@ -1331,6 +1398,10 @@ export interface ResetPasswordRequest {
   password: string;
   /** @minLength 20 */
   token: string;
+}
+
+export interface ResultsRepoExportOut {
+  items: ExportOut[];
 }
 
 export interface TelemetryStatus {

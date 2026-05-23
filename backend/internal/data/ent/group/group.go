@@ -37,6 +37,8 @@ const (
 	EdgeNotifiers = "notifiers"
 	// EdgeEntityTemplates holds the string denoting the entity_templates edge name in mutations.
 	EdgeEntityTemplates = "entity_templates"
+	// EdgeExports holds the string denoting the exports edge name in mutations.
+	EdgeExports = "exports"
 	// EdgeUserGroups holds the string denoting the user_groups edge name in mutations.
 	EdgeUserGroups = "user_groups"
 	// Table holds the table name of the group in the database.
@@ -88,6 +90,13 @@ const (
 	EntityTemplatesInverseTable = "entity_templates"
 	// EntityTemplatesColumn is the table column denoting the entity_templates relation/edge.
 	EntityTemplatesColumn = "group_entity_templates"
+	// ExportsTable is the table that holds the exports relation/edge.
+	ExportsTable = "exports"
+	// ExportsInverseTable is the table name for the Export entity.
+	// It exists in this package in order to avoid circular dependency with the "export" package.
+	ExportsInverseTable = "exports"
+	// ExportsColumn is the table column denoting the exports relation/edge.
+	ExportsColumn = "group_id"
 	// UserGroupsTable is the table that holds the user_groups relation/edge.
 	UserGroupsTable = "user_groups"
 	// UserGroupsInverseTable is the table name for the UserGroup entity.
@@ -263,6 +272,20 @@ func ByEntityTemplates(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByExportsCount orders the results by exports count.
+func ByExportsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newExportsStep(), opts...)
+	}
+}
+
+// ByExports orders the results by exports terms.
+func ByExports(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newExportsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByUserGroupsCount orders the results by user_groups count.
 func ByUserGroupsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -323,6 +346,13 @@ func newEntityTemplatesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EntityTemplatesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, EntityTemplatesTable, EntityTemplatesColumn),
+	)
+}
+func newExportsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ExportsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ExportsTable, ExportsColumn),
 	)
 }
 func newUserGroupsStep() *sqlgraph.Step {

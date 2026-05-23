@@ -2,6 +2,8 @@ package mid
 
 import (
 	"net/http"
+	"sort"
+	"strings"
 )
 
 // SecurityHeaders is a middleware that will set security headers on the response
@@ -30,6 +32,36 @@ func MaxBodySize(maxBytes int64) func(http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			r.Body = http.MaxBytesReader(w, r.Body, maxBytes*1024*1024) // maxBytes in MB
+			h.ServeHTTP(w, r)
+		})
+	}
+}
+
+// MaxBodySizeByPath is like MaxBodySize but picks the cap by URL path
+// prefix. Useful when one route legitimately accepts a much larger body
+// than the rest of the API (e.g., collection imports vs. attachment
+// uploads). The longest matching prefix wins, and the match is segment-
+// aware so "/api/v1/group/import" does not accidentally apply to a
+// sibling like "/api/v1/group/imports". If none match, defaultMB
+// applies. Sizes are in MB.
+func MaxBodySizeByPath(defaultMB int64, overrides map[string]int64) func(http.Handler) http.Handler {
+	prefixes := make([]string, 0, len(overrides))
+	for p := range overrides {
+		prefixes = append(prefixes, p)
+	}
+	sort.Slice(prefixes, func(i, j int) bool {
+		return len(prefixes[i]) > len(prefixes[j])
+	})
+	return func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			limit := defaultMB
+			for _, prefix := range prefixes {
+				if r.URL.Path == prefix || strings.HasPrefix(r.URL.Path, prefix+"/") {
+					limit = overrides[prefix]
+					break
+				}
+			}
+			r.Body = http.MaxBytesReader(w, r.Body, limit*1024*1024)
 			h.ServeHTTP(w, r)
 		})
 	}

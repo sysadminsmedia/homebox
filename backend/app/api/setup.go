@@ -20,30 +20,30 @@ import (
 
 // setupDatabase prepares the storage directory, validates the driver/SSL
 // config, opens the database (through the OTel provider for tracing), runs
-// any pending goose migrations, and returns an ent client. Caller owns the
-// client and must Close() it. Extracted from run() to keep that function
-// under the gocyclo threshold.
-func setupDatabase(cfg *config.Config, otelProvider *otel.Provider) (*ent.Client, error) {
+// any pending goose migrations, and returns an ent client along with the
+// resolved ent dialect name. Caller owns the client and must Close() it.
+// Extracted from run() to keep that function under the gocyclo threshold.
+func setupDatabase(cfg *config.Config, otelProvider *otel.Provider) (*ent.Client, string, error) {
 	if err := setupStorageDir(cfg); err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	driver := strings.ToLower(cfg.Database.Driver)
 	if driver == config.DriverPostgres {
 		if !validatePostgresSSLMode(cfg.Database.SslMode) {
 			log.Error().Str("sslmode", cfg.Database.SslMode).Msg("invalid sslmode")
-			return nil, fmt.Errorf("invalid sslmode: %s", cfg.Database.SslMode)
+			return nil, "", fmt.Errorf("invalid sslmode: %s", cfg.Database.SslMode)
 		}
 	}
 
 	databaseURL, err := setupDatabaseURL(cfg)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	driverName, dialectName, err := resolveDriver(driver)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	db, err := otelProvider.OpenDatabase(driverName, databaseURL)
@@ -55,7 +55,7 @@ func setupDatabase(cfg *config.Config, otelProvider *otel.Provider) (*ent.Client
 			Str("port", cfg.Database.Port).
 			Str("database", cfg.Database.Database).
 			Msg("failed opening connection to {driver} database at {host}:{port}/{database}")
-		return nil, fmt.Errorf("failed opening connection to %s database at %s:%s/%s: %w",
+		return nil, "", fmt.Errorf("failed opening connection to %s database at %s:%s/%s: %w",
 			driver, cfg.Database.Host, cfg.Database.Port, cfg.Database.Database, err)
 	}
 
@@ -63,9 +63,9 @@ func setupDatabase(cfg *config.Config, otelProvider *otel.Provider) (*ent.Client
 
 	if err := runMigrations(c, driver); err != nil {
 		_ = c.Close()
-		return nil, err
+		return nil, "", err
 	}
-	return c, nil
+	return c, dialectName, nil
 }
 
 // resolveDriver maps the configured driver name onto the (database/sql, ent

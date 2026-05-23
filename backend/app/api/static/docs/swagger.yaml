@@ -490,6 +490,54 @@ definitions:
         - $ref: '#/definitions/ent.Group'
         description: Group holds the value of the group edge.
     type: object
+  ent.Export:
+    properties:
+      artifact_path:
+        description: ArtifactPath holds the value of the "artifact_path" field.
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.ExportEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the ExportQuery when eager-loading is set.
+      error:
+        description: Error holds the value of the "error" field.
+        type: string
+      group_id:
+        description: GroupID holds the value of the "group_id" field.
+        type: string
+      id:
+        description: ID of the ent.
+        type: string
+      kind:
+        allOf:
+        - $ref: '#/definitions/export.Kind'
+        description: Kind holds the value of the "kind" field.
+      progress:
+        description: Progress holds the value of the "progress" field.
+        type: integer
+      size_bytes:
+        description: SizeBytes holds the value of the "size_bytes" field.
+        type: integer
+      status:
+        allOf:
+        - $ref: '#/definitions/export.Status'
+        description: Status holds the value of the "status" field.
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  ent.ExportEdges:
+    properties:
+      group:
+        allOf:
+        - $ref: '#/definitions/ent.Group'
+        description: Group holds the value of the group edge.
+    type: object
   ent.Group:
     properties:
       created_at:
@@ -530,6 +578,11 @@ definitions:
         description: EntityTypes holds the value of the entity_types edge.
         items:
           $ref: '#/definitions/ent.EntityType'
+        type: array
+      exports:
+        description: Exports holds the value of the exports edge.
+        items:
+          $ref: '#/definitions/ent.Export'
         type: array
       invitation_tokens:
         description: InvitationTokens holds the value of the invitation_tokens edge.
@@ -933,6 +986,30 @@ definitions:
     - TypeNumber
     - TypeBoolean
     - TypeTime
+  export.Kind:
+    enum:
+    - export
+    - export
+    - import
+    type: string
+    x-enum-varnames:
+    - DefaultKind
+    - KindExport
+    - KindImport
+  export.Status:
+    enum:
+    - pending
+    - pending
+    - running
+    - completed
+    - failed
+    type: string
+    x-enum-varnames:
+    - DefaultStatus
+    - StatusPending
+    - StatusRunning
+    - StatusCompleted
+    - StatusFailed
   repo.APIKeyCreate:
     properties:
       expiresAt:
@@ -1576,6 +1653,33 @@ definitions:
     required:
     - name
     type: object
+  repo.ExportOut:
+    properties:
+      artifactPath:
+        type: string
+      createdAt:
+        type: string
+      error:
+        type: string
+      groupId:
+        type: string
+      id:
+        type: string
+      kind:
+        description: |-
+          Kind is "export" for server-produced backup artifacts, "import" for
+          user-uploaded restore zips. The lifecycle fields below behave the
+          same for both.
+        type: string
+      progress:
+        type: integer
+      sizeBytes:
+        type: integer
+      status:
+        type: string
+      updatedAt:
+        type: string
+    type: object
   repo.Group:
     properties:
       createdAt:
@@ -2178,6 +2282,13 @@ definitions:
     required:
     - password
     - token
+    type: object
+  v1.Results-repo_ExportOut:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/repo.ExportOut'
+        type: array
     type: object
   v1.TelemetryStatus:
     properties:
@@ -2935,6 +3046,117 @@ paths:
       summary: Update Entity Type
       tags:
       - Entity Types
+  /v1/group/exports:
+    get:
+      description: Returns export job rows for the caller's group, newest first.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.Results-repo_ExportOut'
+      security:
+      - Bearer: []
+      summary: List Collection Exports
+      tags:
+      - Group
+    post:
+      description: Creates a pending export row and enqueues the build job. Poll the
+        listing endpoint or watch the WebSocket for completion.
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/repo.ExportOut'
+      security:
+      - Bearer: []
+      summary: Start a Collection Export
+      tags:
+      - Group
+  /v1/group/exports/{id}:
+    delete:
+      description: Deletes the export row and its blob artifact.
+      parameters:
+      - description: Export ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete an Export
+      tags:
+      - Group
+    get:
+      parameters:
+      - description: Export ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.ExportOut'
+      security:
+      - Bearer: []
+      summary: Get an Export
+      tags:
+      - Group
+  /v1/group/exports/{id}/download:
+    get:
+      parameters:
+      - description: Export ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/zip
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      security:
+      - Bearer: []
+      summary: Download an Export Artifact
+      tags:
+      - Group
+  /v1/group/import:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Uploads a collection-export zip and enqueues the import job. The
+        destination group must be empty. Returns the tracked import row so clients
+        can poll for progress.
+      parameters:
+      - description: Export zip
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/repo.ExportOut'
+      security:
+      - Bearer: []
+      summary: Import a Collection Zip
+      tags:
+      - Group
   /v1/groups:
     delete:
       produces:
