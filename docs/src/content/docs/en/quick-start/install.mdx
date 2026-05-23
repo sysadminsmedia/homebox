@@ -4,6 +4,7 @@ title: Install
 
 
 import {TabItem, Tabs} from '@astrojs/starlight/components';
+import DockerComposeDesigner from '../../../../components/DockerComposeDesigner.astro';
 
 There are two main ways to run Homebox.
 
@@ -72,87 +73,14 @@ Great for testing the application, but not recommended for production deployment
 </Tabs>
 
 ### Docker Compose
-1. Create a `compose.yml` file with the following contents:
+1. Create a `compose.yml` file using the dynamic designer below:
 
-<Tabs>
-    <TabItem label="Regular">
-        ```yaml title="compose.yml"
-        services:
-            homebox:
-                image: ghcr.io/sysadminsmedia/homebox:latest
-                restart: always
-                environment:
-                    - HBOX_LOG_LEVEL=info
-                    - HBOX_LOG_FORMAT=text
-                    - HBOX_WEB_MAX_UPLOAD_SIZE=10
-                    # Please consider allowing analytics to help us improve Homebox (basic computer information, no personal data)
-                    - HBOX_OPTIONS_ALLOW_ANALYTICS=false
-                volumes:
-                    - homebox-data:/data/
-                ports:
-                    - 3100:7745
+<DockerComposeDesigner />
 
-        volumes:
-            homebox-data:
-                driver: local
-        ```
-    </TabItem>
-    <TabItem label="Rootless">
-        ```yaml title="compose.yml"
-        services:
-            homebox:
-                image: ghcr.io/sysadminsmedia/homebox:latest-rootless
-                restart: always
-                environment:
-                    - HBOX_LOG_LEVEL=info
-                    - HBOX_LOG_FORMAT=text
-                    - HBOX_WEB_MAX_UPLOAD_SIZE=10
-                    # Please consider allowing analytics to help us improve Homebox (basic computer information, no personal data)
-                    - HBOX_OPTIONS_ALLOW_ANALYTICS=false
-                volumes:
-                    - homebox-data:/data/
-                ports:
-                    - 3100:7745
-
-        volumes:
-            homebox-data:
-                driver: local
-        ```
-
-        > [!NOTE]
-        > If you want to use a bind mount instead of a volume, you will need to `chown` the chosen directory in advance to
-        > the `65532` user (as shown in the Docker run example above)
-    </TabItem>
-    <TabItem label="Hardened">
-        ```yaml title="compose.yml"
-        services:
-            homebox:
-                image: ghcr.io/sysadminsmedia/homebox:latest-hardened
-                restart: always
-                environment:
-                    - HBOX_LOG_LEVEL=info
-                    - HBOX_LOG_FORMAT=text
-                    - HBOX_WEB_MAX_UPLOAD_SIZE=10
-                    # Please consider allowing analytics to help us improve Homebox (basic computer information, no personal data)
-                    - HBOX_OPTIONS_ALLOW_ANALYTICS=false
-                volumes:
-                    - homebox-data:/data/
-                ports:
-                    - 3100:7745
-
-        volumes:
-            homebox-data:
-                driver: local
-        ```
-
-        > [!CAUTION]
-        > The hardened image does not contain the MQTT client.
-
-        > [!NOTE]
-        > If you want to use a bind mount instead of a volume, you will need to `chown` the chosen directory in advance to
-        > the `65532` user (as shown in the Docker run example above)
-    </TabItem>
-</Tabs>
+> [!NOTE]
+> The generated file defaults to PostgreSQL. If you disable PostgreSQL in the designer, Homebox will use SQLite.
+>
+> For full database configuration details (including SSL options), see [database configuration](/en/quick-start/configure/database/).
 
 > [!WARNING]
 > If you previously set up docker compose with the `HBOX_WEB_READ_TIMEOUT`, `HBOX_WEB_WRITE_TIMEOUT` or `HBOX_WEB_IDLE_TIMEOUT` environment variables,
@@ -166,6 +94,9 @@ Great for testing the application, but not recommended for production deployment
 We supply a wide range of binaries for different platforms and CPU architectures.
 
 ### Windows
+> [!NOTE]
+> We do not actively test or validate the Windows binaries. Use at your own risk.
+
 1. Download the latest version from the [releases page](https://github.com/sysadminsmedia/homebox/releases).
 2. Extract the archive and run `homebox.exe`.
 3. The web interface will be available at `http://localhost:7745` by default. Access the page by navigating to

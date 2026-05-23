@@ -1,0 +1,79 @@
+---
+import {Tabs, TabItem, Code} from '@astrojs/starlight/components';
+import { sectionGridClass, fieldClass, fieldLabelClass, controlClass } from './compose/constants';
+import TabDatabase from './compose/TabDatabase.astro';
+import TabProxy from './compose/TabProxy.astro';
+import TabStorage from './compose/TabStorage.astro';
+import TabOidc from './compose/TabOidc.astro';
+import TabMisc from './compose/TabMisc.astro';
+---
+
+<div data-compose-designer class="compose-designer rounded-lg border border-(--sl-color-hairline-light) p-4">
+    <p class="text-sm mb-4">
+        Build a `compose.yml` for Homebox. The default configuration uses PostgreSQL.
+    </p>
+
+    <div class={sectionGridClass}>
+        <div class={fieldClass}>
+            <label for="image-type" class={fieldLabelClass}>
+                Image variant
+            </label>
+            <select id="image-type" data-field="imageVariant" class={controlClass}>
+                <option value="regular" selected>Regular</option>
+                <option value="rootless">Rootless</option>
+                <option value="hardened">Hardened</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="mt-5 border-t border-(--sl-color-hairline-light) pt-4">
+        <Tabs>
+            <TabItem label="Database">
+                <TabDatabase />
+            </TabItem>
+
+            <TabItem label="Proxy">
+                <TabProxy />
+            </TabItem>
+
+            <TabItem label="Storage">
+                <TabStorage />
+            </TabItem>
+
+            <TabItem label="OIDC / SSO">
+                <TabOidc />
+            </TabItem>
+
+            <TabItem label="MISC.">
+                <TabMisc />
+            </TabItem>
+        </Tabs>
+    </div>
+
+    <div class="mt-4 flex items-center justify-between gap-3">
+        <strong class="text-sm">Generated `compose.yml`</strong>
+        <button
+                type="button"
+                data-copy
+                class="rounded border border-(--sl-color-hairline) px-2 py-1 text-xs hover:bg-(--sl-color-bg-nav)"
+        >
+            Copy YAML
+        </button>
+    </div>
+
+    <div data-output-wrapper>
+        <Code lang="yaml" code={'a'} title='compose.yaml'/>
+    </div>
+
+    <p data-warning-rootless class="hidden mt-3 text-sm">
+        Rootless and hardened images require the data directory to be owned by UID/GID `65532` when using a bind mount.
+    </p>
+    <p data-warning-hardened class="hidden mt-2 text-sm">
+        The hardened image does not include the MQTT client.
+    </p>
+</div>
+
+<script>
+    import './compose/initDesigner.js';
+</script>
+

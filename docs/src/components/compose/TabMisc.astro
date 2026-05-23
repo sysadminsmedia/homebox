@@ -1,0 +1,51 @@
+---
+import {
+    sectionGridClass,
+    fieldClass,
+    fieldWideClass,
+    checkboxFieldClass,
+    controlClass,
+} from './constants';
+---
+
+<div class={sectionGridClass}>
+    <label class={checkboxFieldClass}>
+        <input type="checkbox" data-field="allowAnalytics"/>
+        Allow analytics
+    </label>
+
+    <label class={checkboxFieldClass}>
+        <input type="checkbox" data-field="allowRegistration" checked/>
+        Allow registration
+    </label>
+
+    <label class={checkboxFieldClass}>
+        <input type="checkbox" data-field="githubReleaseCheck" checked/>
+        Check GitHub releases
+    </label>
+
+    <label class={fieldClass}>
+        Log level (`HBOX_LOG_LEVEL`)
+        <select data-field="logLevel" class={controlClass}>
+            <option value="trace">trace</option>
+            <option value="debug">debug</option>
+            <option value="info" selected>info</option>
+            <option value="warn">warn</option>
+            <option value="error">error</option>
+        </select>
+    </label>
+
+    <label class={fieldClass}>
+        Log format (`HBOX_LOG_FORMAT`)
+        <select data-field="logFormat" class={controlClass}>
+            <option value="text" selected>text</option>
+            <option value="json">json</option>
+        </select>
+    </label>
+
+    <label class={fieldWideClass}>
+        Max upload size MB (`HBOX_WEB_MAX_UPLOAD_SIZE`)
+        <input type="number" data-field="maxUploadSize" value="10" min="1" class={controlClass}/>
+    </label>
+</div>
+
