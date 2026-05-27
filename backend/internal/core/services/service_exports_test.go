@@ -47,7 +47,7 @@ func TestExportRoundTrip(t *testing.T) {
 
 	// One location, one item nested in it.
 	loc, err := tRepos.Entities.Create(ctx, src.ID, repo.EntityCreate{
-		Name:         "Garage",
+		Name:         defaultLocationGarage,
 		Description:  "primary",
 		EntityTypeID: containerET.ID,
 	})
@@ -121,7 +121,7 @@ func TestExportRoundTrip(t *testing.T) {
 
 	dstContainerET, err := tRepos.EntityTypes.GetDefault(ctx, dst.ID, true)
 	require.NoError(t, err)
-	for _, name := range []string{"Living Room", "Garage", "Kitchen"} {
+	for _, name := range []string{"Living Room", defaultLocationGarage, "Kitchen"} {
 		_, err := tRepos.Entities.Create(ctx, dst.ID, repo.EntityCreate{
 			Name:         name,
 			EntityTypeID: dstContainerET.ID,
@@ -161,7 +161,7 @@ func TestExportRoundTrip(t *testing.T) {
 
 	parent, err := gotItem.QueryParent().Only(ctx)
 	require.NoError(t, err)
-	assert.Equal(t, "Garage", parent.Name, "parent FK must be restored on second pass")
+	assert.Equal(t, defaultLocationGarage, parent.Name, "parent FK must be restored on second pass")
 
 	tags, err := gotItem.QueryTag().All(ctx)
 	require.NoError(t, err)
@@ -227,7 +227,7 @@ func TestCSVExportImportPreservesItemParent(t *testing.T) {
 
 	location, err := tRepos.Entities.Create(ctx, src.ID, repo.EntityCreate{
 		ImportRef:    "loc-ref",
-		Name:         "Garage",
+		Name:         defaultLocationGarage,
 		EntityTypeID: locationType.ID,
 	})
 	require.NoError(t, err)
@@ -276,11 +276,11 @@ func TestCSVExportImportPreservesItemParent(t *testing.T) {
 	}
 	require.NotNil(t, childRow)
 	assert.Equal(t, "parent-ref", childRow[parentRefCol])
-	assert.Equal(t, "Garage", childRow[locationCol])
+	assert.Equal(t, defaultLocationGarage, childRow[locationCol])
 
 	importRows := [][]string{header}
 	for _, row := range rows[1:] {
-		if row[nameCol] != "Garage" {
+		if row[nameCol] != defaultLocationGarage {
 			importRows = append(importRows, row)
 		}
 	}
@@ -311,7 +311,7 @@ func TestCSVImportRejectsSelfParentRef(t *testing.T) {
 
 	csvData := strings.Join([]string{
 		"HB.import_ref,HB.parent_import_ref,HB.location,HB.name",
-		"self-ref,self-ref,Garage,Loop",
+		"self-ref,self-ref," + defaultLocationGarage + ",Loop",
 		"",
 	}, "\n")
 
@@ -341,7 +341,7 @@ func TestIsGroupReadyForImport_BlocksUserCreatedRows(t *testing.T) {
 		require.NoError(t, err)
 		locET, err := tRepos.EntityTypes.GetDefault(ctx, g.ID, true)
 		require.NoError(t, err)
-		for _, name := range []string{"Living Room", "Garage", "Kitchen", "Bedroom", "Bathroom", "Office", "Attic", "Basement"} {
+		for _, name := range []string{"Living Room", defaultLocationGarage, "Kitchen", "Bedroom", "Bathroom", "Office", "Attic", "Basement"} {
 			_, err := tRepos.Entities.Create(ctx, g.ID, repo.EntityCreate{Name: name, EntityTypeID: locET.ID})
 			require.NoError(t, err)
 		}

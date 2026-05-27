@@ -502,48 +502,44 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 		rowSpan.End()
 	}
 
-	for i := range sheet.Rows {
-		row := sheet.Rows[i]
+	if err := svc.patchCSVParentRefs(ctx, gid, sheet.Rows); err != nil {
+		recordServiceSpanError(importSpan, err)
+		recordServiceSpanError(span, err)
+		return 0, err
+	}
+
+	importSpan.SetAttributes(attribute.Int("rows.imported.count", finished))
+	span.SetAttributes(attribute.Int("rows.imported.count", finished))
+	return finished, nil
+}
+
+func (svc *EntityService) patchCSVParentRefs(ctx context.Context, gid uuid.UUID, rows []reporting.ExportCSVRow) error {
+	for i := range rows {
+		row := rows[i]
 		if row.ImportRef == "" || row.ParentImportRef == "" {
 			continue
 		}
 
 		child, err := svc.repo.Entities.GetByRef(ctx, gid, row.ImportRef)
 		if err != nil {
-			wrapped := fmt.Errorf("error resolving child entity with ref %q: %w", row.ImportRef, err)
-			recordServiceSpanError(importSpan, wrapped)
-			recordServiceSpanError(span, wrapped)
-			return 0, wrapped
+			return fmt.Errorf("error resolving child entity with ref %q: %w", row.ImportRef, err)
 		}
 
 		parent, err := svc.repo.Entities.GetByRef(ctx, gid, row.ParentImportRef)
 		if err != nil {
-			wrapped := fmt.Errorf("error resolving parent entity with ref %q: %w", row.ParentImportRef, err)
-			recordServiceSpanError(importSpan, wrapped)
-			recordServiceSpanError(span, wrapped)
-			return 0, wrapped
+			return fmt.Errorf("error resolving parent entity with ref %q: %w", row.ParentImportRef, err)
 		}
 
 		if child.ID == parent.ID {
-			wrapped := fmt.Errorf("invalid parent relationship: entity %q cannot be its own parent", row.ImportRef)
-			recordServiceSpanError(importSpan, wrapped)
-			recordServiceSpanError(span, wrapped)
-			return 0, wrapped
+			return fmt.Errorf("invalid parent relationship: entity %q cannot be its own parent", row.ImportRef)
 		}
 
-		err = svc.repo.Entities.Patch(ctx, gid, child.ID, repo.EntityPatch{
-			ParentID: parent.ID,
-		})
-		if err != nil {
-			recordServiceSpanError(importSpan, err)
-			recordServiceSpanError(span, err)
-			return 0, err
+		if err := svc.repo.Entities.Patch(ctx, gid, child.ID, repo.EntityPatch{ParentID: parent.ID}); err != nil {
+			return err
 		}
 	}
 
-	importSpan.SetAttributes(attribute.Int("rows.imported.count", finished))
-	span.SetAttributes(attribute.Int("rows.imported.count", finished))
-	return finished, nil
+	return nil
 }
 
 func (svc *EntityService) ExportCSV(ctx context.Context, gid uuid.UUID, hbURL string) ([][]string, error) {
