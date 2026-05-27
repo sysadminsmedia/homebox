@@ -487,6 +487,10 @@ func TestEntityRepository_Patch_RejectsParentCycles(t *testing.T) {
 	childData.ParentID = parent.ID
 	child, err := tRepos.Entities.Create(ctx, tGroup.ID, childData)
 	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = tRepos.Entities.Delete(context.Background(), child.ID)
+		_ = tRepos.Entities.Delete(context.Background(), parent.ID)
+	})
 
 	err = tRepos.Entities.Patch(ctx, tGroup.ID, parent.ID, EntityPatch{ParentID: parent.ID})
 	require.Error(t, err)

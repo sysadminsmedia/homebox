@@ -2774,7 +2774,7 @@ func (r *EntityRepository) PathForEntity(ctx context.Context, gid, entityID uuid
 
 	for rows.Next() {
 		var entry EntityPath
-		parentID := sql.NullScanner{S: new(uuid.UUID)}
+		var parentID sql.NullString
 		var isLocation bool
 		if err := rows.Scan(&entry.ID, &entry.Name, &parentID, &isLocation); err != nil {
 			recordSpanError(querySpan, err)
@@ -2790,7 +2790,13 @@ func (r *EntityRepository) PathForEntity(ctx context.Context, gid, entityID uuid
 
 		var parsedParentID uuid.UUID
 		if parentID.Valid {
-			parsedParentID = *parentID.S.(*uuid.UUID)
+			parsedParentID, err = uuid.Parse(parentID.String)
+			if err != nil {
+				recordSpanError(querySpan, err)
+				querySpan.End()
+				recordSpanError(span, err)
+				return nil, err
+			}
 		}
 
 		entries[entry.ID] = pathEntry{
