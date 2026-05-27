@@ -37,12 +37,12 @@ export const availableIcons = [
 export type IconName = (typeof availableIcons)[number]["name"];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getIconComponent(iconName: string | undefined): any {
+export function getIconComponent(iconName: string | undefined, defaultIcon: any | undefined): any {
   if (!iconName) {
-    return defaultIcon;
+    return defaultIcon || defaultTagIcon;
   }
   const icon = availableIcons.find(i => i.name === iconName);
-  return icon ? icon.component : defaultIcon;
+  return icon ? icon.component : defaultIcon || defaultTagIcon;
 }
 
-export const defaultIcon = MdiTagOutline;
+export const defaultTagIcon = MdiTagOutline;

@@ -10,8 +10,8 @@
   import MdiPlus from "~icons/mdi/plus";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiDelete from "~icons/mdi/delete";
-  import MdiMapMarkerOutline from "~icons/mdi/map-marker-outline";
-  import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
+  import MdiMapMarker from "~icons/mdi/map-marker";
+  import MdiPackageVariant from "~icons/mdi/package-variant";
   import { Button } from "@/components/ui/button";
   import { Badge } from "@/components/ui/badge";
   import { Card } from "@/components/ui/card";
@@ -164,11 +164,7 @@
         <form class="flex flex-col gap-3" @submit.prevent="create">
           <FormTextField v-model="createForm.name" :autofocus="true" label="Name" :max-length="255" :min-length="1" />
           <FormCheckbox v-model="createForm.isLocation" label="Is a container / location type" />
-          <ColorSelector
-            v-model="createForm.color"
-            :label="$t('components.tag.create_modal.tag_color')"
-            :show-hex="true"
-          />
+          <ColorSelector v-model="createForm.color" label="Entity Type Color" :show-hex="true" />
           <IconSelector v-model="createForm.icon" label="Entity Type Icon" />
           <TemplateSelector v-model="createTemplate" />
 
@@ -188,11 +184,7 @@
         <form class="flex flex-col gap-3" @submit.prevent="update">
           <FormTextField v-model="updateForm.name" :autofocus="true" label="Name" :max-length="255" :min-length="1" />
           <FormCheckbox v-model="updateForm.isLocation" label="Is a container / location type" />
-          <ColorSelector
-            v-model="updateForm.color"
-            :label="$t('components.tag.create_modal.tag_color')"
-            :show-hex="true"
-          />
+          <ColorSelector v-model="updateForm.color" label="Entity Type Color" :show-hex="true" />
           <IconSelector v-model="updateForm.icon" label="Entity Type Icon" />
           <TemplateSelector v-model="updateTemplate" />
 
@@ -223,8 +215,8 @@
                 : { backgroundColor: 'hsl(var(--accent))', color: 'hsl(var(--accent-foreground))' }
             "
           >
-            <component :is="getIconComponent(et.icon)" v-if="et.isLocation" class="size-5" />
-            <MdiPackageVariantClosed v-else class="size-5" />
+            <component :is="getIconComponent(et.icon, MdiMapMarker)" v-if="et.isLocation" class="size-5" />
+            <component :is="getIconComponent(et.icon, MdiPackageVariant)" v-else class="size-5" />
           </div>
 
           <div class="mr-auto min-w-0">

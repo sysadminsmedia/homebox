@@ -34,6 +34,8 @@
   import ItemImageDialog from "~/components/Item/ImageDialog.vue";
   import LocationCard from "~/components/Location/Card.vue";
   import TagChip from "~/components/Tag/Chip.vue";
+  import { getContrastTextColor } from "~/lib/utils";
+  import { getIconComponent } from "~/lib/icons";
 
   definePageMeta({
     middleware: ["auth"],
@@ -245,9 +247,17 @@
         <header :class="{ 'mb-2': location?.description }">
           <div class="flex flex-wrap items-end gap-2">
             <div
-              class="mb-auto flex size-12 items-center justify-center rounded-full bg-secondary text-secondary-foreground"
+              class="mb-auto flex size-12 items-center justify-center rounded-full"
+              :style="
+                location.entityType.color
+                  ? {
+                      backgroundColor: location.entityType.color,
+                      color: getContrastTextColor(location.entityType.color),
+                    }
+                  : { backgroundColor: 'hsl(var(--secondary))', color: 'hsl(var(--secondary-foreground))' }
+              "
             >
-              <MdiPackageVariant class="size-7" />
+              <component :is="getIconComponent(location.entityType.icon, MdiMapMarker)" class="size-7" />
             </div>
             <div>
               <Breadcrumb v-if="location?.parent">

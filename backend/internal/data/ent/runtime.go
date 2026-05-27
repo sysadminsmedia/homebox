@@ -380,8 +380,6 @@ func init() {
 	_ = entitytypeMixinFields0
 	entitytypeMixinFields1 := entitytypeMixin[1].Fields()
 	_ = entitytypeMixinFields1
-	entitytypeMixinFields2 := entitytypeMixin[2].Fields()
-	_ = entitytypeMixinFields2
 	entitytypeFields := schema.EntityType{}.Fields()
 	_ = entitytypeFields
 	// entitytypeDescCreatedAt is the schema descriptor for created_at field.

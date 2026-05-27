@@ -45,6 +45,8 @@
   import DetailsSection from "~/components/global/DetailsSection/DetailsSection.vue";
   import ItemAttachmentsList from "~/components/Item/AttachmentsList.vue";
   import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
+  import { getContrastTextColor } from "~/lib/utils";
+  import { getIconComponent } from "~/lib/icons";
 
   const { t } = useI18n();
 
@@ -660,9 +662,17 @@
         <header :class="{ 'mb-2': item.description }">
           <div class="flex flex-wrap items-end gap-2">
             <div
-              class="mb-auto flex size-12 items-center justify-center rounded-full bg-secondary text-secondary-foreground"
+              class="mb-auto flex size-12 items-center justify-center rounded-full"
+              :style="
+                item.entityType.color
+                  ? {
+                      backgroundColor: item.entityType.color,
+                      color: getContrastTextColor(item.entityType.color),
+                    }
+                  : { backgroundColor: 'hsl(var(--secondary))', color: 'hsl(var(--secondary-foreground))' }
+              "
             >
-              <MdiPackageVariant class="size-7" />
+              <component :is="getIconComponent(item.entityType.icon, MdiPackageVariant)" class="size-7" />
             </div>
             <div>
               <Breadcrumb v-if="fullpath && fullpath.length > 0">
