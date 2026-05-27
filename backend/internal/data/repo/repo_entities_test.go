@@ -114,6 +114,51 @@ func TestEntityRepository_RecursiveRelationships(t *testing.T) {
 	}
 }
 
+func TestEntityRepository_PathForEntity_OrdersRootToLeafAndKeepsTypes(t *testing.T) {
+	containerET := useContainerEntityType(t)
+	itemET := useItemEntityType(t)
+
+	rootData := containerFactory()
+	rootData.EntityTypeID = containerET.ID
+	rootData.Name = "path-root"
+	root, err := tRepos.Entities.Create(context.Background(), tGroup.ID, rootData)
+	require.NoError(t, err)
+
+	childData := containerFactory()
+	childData.EntityTypeID = containerET.ID
+	childData.ParentID = root.ID
+	childData.Name = "path-child"
+	child, err := tRepos.Entities.Create(context.Background(), tGroup.ID, childData)
+	require.NoError(t, err)
+
+	itemData := entityFactory()
+	itemData.EntityTypeID = itemET.ID
+	itemData.ParentID = child.ID
+	itemData.Name = "path-item"
+	item, err := tRepos.Entities.Create(context.Background(), tGroup.ID, itemData)
+	require.NoError(t, err)
+
+	t.Cleanup(func() {
+		_ = tRepos.Entities.Delete(context.Background(), item.ID)
+		_ = tRepos.Entities.Delete(context.Background(), child.ID)
+		_ = tRepos.Entities.Delete(context.Background(), root.ID)
+	})
+
+	path, err := tRepos.Entities.PathForEntity(context.Background(), tGroup.ID, item.ID)
+	require.NoError(t, err)
+	require.Len(t, path, 3)
+
+	names := make([]string, len(path))
+	types := make([]EntityPathType, len(path))
+	for i, entry := range path {
+		names[i] = entry.Name
+		types[i] = entry.Type
+	}
+
+	assert.Equal(t, []string{"path-root", "path-child", "path-item"}, names)
+	assert.Equal(t, []EntityPathType{EntityPathTypeLocation, EntityPathTypeLocation, EntityPathTypeItem}, types)
+}
+
 func TestEntityRepository_GetOne(t *testing.T) {
 	entities := useEntities(t, 3)
 

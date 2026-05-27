@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"math"
@@ -2751,7 +2752,7 @@ func (r *EntityRepository) PathForEntity(ctx context.Context, gid, entityID uuid
 		WHERE e.group_entities = $2
 	  )
 
-	  SELECT ep.id, ep.name, et.is_location
+	  SELECT ep.id, ep.name, ep.entity_children, et.is_location
 	  FROM entity_path ep
 	  JOIN entity_types et ON et.id = ep.entity_type_entities`
 
@@ -2765,12 +2766,17 @@ func (r *EntityRepository) PathForEntity(ctx context.Context, gid, entityID uuid
 	}
 	defer func() { _ = rows.Close() }()
 
-	var path []EntityPath
+	type pathEntry struct {
+		path     EntityPath
+		parentID uuid.UUID
+	}
+	entries := make(map[uuid.UUID]pathEntry)
 
 	for rows.Next() {
 		var entry EntityPath
+		parentID := sql.NullScanner{S: new(uuid.UUID)}
 		var isLocation bool
-		if err := rows.Scan(&entry.ID, &entry.Name, &isLocation); err != nil {
+		if err := rows.Scan(&entry.ID, &entry.Name, &parentID, &isLocation); err != nil {
 			recordSpanError(querySpan, err)
 			querySpan.End()
 			recordSpanError(span, err)
@@ -2781,7 +2787,16 @@ func (r *EntityRepository) PathForEntity(ctx context.Context, gid, entityID uuid
 		} else {
 			entry.Type = EntityPathTypeItem
 		}
-		path = append(path, entry)
+
+		var parsedParentID uuid.UUID
+		if parentID.Valid {
+			parsedParentID = *parentID.S.(*uuid.UUID)
+		}
+
+		entries[entry.ID] = pathEntry{
+			path:     entry,
+			parentID: parsedParentID,
+		}
 	}
 
 	if err := rows.Err(); err != nil {
@@ -2790,8 +2805,25 @@ func (r *EntityRepository) PathForEntity(ctx context.Context, gid, entityID uuid
 		recordSpanError(span, err)
 		return nil, err
 	}
-	querySpan.SetAttributes(attribute.Int("path.depth", len(path)))
 	querySpan.End()
+
+	path := make([]EntityPath, 0, len(entries))
+	seen := make(map[uuid.UUID]struct{}, len(entries))
+	for currentID := entityID; currentID != uuid.Nil; {
+		if _, ok := seen[currentID]; ok {
+			recordSpanError(span, ErrEntityParentCycle)
+			return nil, ErrEntityParentCycle
+		}
+		seen[currentID] = struct{}{}
+
+		entry, ok := entries[currentID]
+		if !ok {
+			break
+		}
+
+		path = append(path, entry.path)
+		currentID = entry.parentID
+	}
 
 	// Reverse the order so that the root is first
 	mutable.Reverse(path)
