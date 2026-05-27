@@ -303,6 +303,23 @@ func TestCSVExportImportPreservesItemParent(t *testing.T) {
 	assert.Equal(t, "Toolbox", importedChild.Parent.Name)
 }
 
+func TestCSVImportRejectsSelfParentRef(t *testing.T) {
+	ctx := context.Background()
+
+	dst, err := tRepos.Groups.GroupCreate(ctx, "csv-self-parent-"+fk.Str(4), uuid.Nil)
+	require.NoError(t, err)
+
+	csvData := strings.Join([]string{
+		"HB.import_ref,HB.parent_import_ref,HB.location,HB.name",
+		"self-ref,self-ref,Garage,Loop",
+		"",
+	}, "\n")
+
+	_, err = tSvc.Entities.CsvImport(ctx, dst.ID, strings.NewReader(csvData))
+	require.Error(t, err)
+	assert.ErrorContains(t, err, `entity "self-ref" cannot be its own parent`)
+}
+
 // TestIsGroupReadyForImport_BlocksUserCreatedRows asserts that the import
 // gate blocks not just on items but on user-created rows in any table the
 // import would wipe (tags, entity_templates, notifiers, custom entity_types,

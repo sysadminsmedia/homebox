@@ -524,6 +524,13 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 			return 0, wrapped
 		}
 
+		if child.ID == parent.ID {
+			wrapped := fmt.Errorf("invalid parent relationship: entity %q cannot be its own parent", row.ImportRef)
+			recordServiceSpanError(importSpan, wrapped)
+			recordServiceSpanError(span, wrapped)
+			return 0, wrapped
+		}
+
 		err = svc.repo.Entities.Patch(ctx, gid, child.ID, repo.EntityPatch{
 			ParentID: parent.ID,
 		})
