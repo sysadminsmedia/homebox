@@ -205,20 +205,35 @@ func (s *IOSheet) ReadItems(ctx context.Context, entities []repo.EntityOut, gid 
 	s.Rows = make([]ExportCSVRow, len(entities))
 
 	extraHeaders := map[string]struct{}{}
+	entitiesByID := lo.SliceToMap(entities, func(item repo.EntityOut) (uuid.UUID, repo.EntityOut) {
+		return item.ID, item
+	})
 
 	for i := range entities {
 		item := entities[i]
 
-		// Resolve parent (location) path
 		var locString LocationString
+		var parentImportRef string
 		if item.Parent != nil {
-			locPaths, err := repos.Entities.PathForEntity(ctx, gid, item.Parent.ID)
-			if err != nil {
-				log.Error().Err(err).Msg("could not get entity path")
-				return err
+			locationParentID := item.Parent.ID
+
+			if parent, ok := entitiesByID[item.Parent.ID]; ok && parent.EntityType != nil && !parent.EntityType.IsLocation {
+				parentImportRef = parent.ImportRef
+				locationParentID = uuid.Nil
+				if parent.Parent != nil {
+					locationParentID = parent.Parent.ID
+				}
 			}
 
-			locString = fromPathSlice(locPaths)
+			if locationParentID != uuid.Nil {
+				locPaths, err := repos.Entities.PathForEntity(ctx, gid, locationParentID)
+				if err != nil {
+					log.Error().Err(err).Msg("could not get entity path")
+					return err
+				}
+
+				locString = fromPathSlice(locPaths)
+			}
 		}
 
 		tagString := lo.Map(item.Tags, func(l repo.TagSummary, _ int) string {
@@ -240,14 +255,15 @@ func (s *IOSheet) ReadItems(ctx context.Context, entities []repo.EntityOut, gid 
 			Location: locString,
 			TagStr:   tagString,
 
-			ImportRef:   item.ImportRef,
-			AssetID:     item.AssetID,
-			Name:        item.Name,
-			Quantity:    item.Quantity,
-			Description: item.Description,
-			Insured:     item.Insured,
-			Archived:    item.Archived,
-			URL:         url,
+			ImportRef:       item.ImportRef,
+			ParentImportRef: parentImportRef,
+			AssetID:         item.AssetID,
+			Name:            item.Name,
+			Quantity:        item.Quantity,
+			Description:     item.Description,
+			Insured:         item.Insured,
+			Archived:        item.Archived,
+			URL:             url,
 
 			PurchasePrice: item.PurchasePrice,
 			PurchaseFrom:  item.PurchaseFrom,

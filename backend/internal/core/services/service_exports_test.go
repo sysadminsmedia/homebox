@@ -3,6 +3,7 @@ package services
 import (
 	"bytes"
 	"context"
+	"encoding/csv"
 	"io"
 	"strings"
 	"testing"
@@ -211,6 +212,95 @@ func TestExportRoundTrip(t *testing.T) {
 	thumbBlob, err := bk.ReadAll(ctx, tRepos.Attachments.GetFullPath(gotThumb.Path))
 	require.NoError(t, err, "thumbnail blob must be present at the rewritten path")
 	assert.Equal(t, "dummy thumbnail body", string(thumbBlob))
+}
+
+func TestCSVExportImportPreservesItemParent(t *testing.T) {
+	ctx := context.Background()
+
+	src, err := tRepos.Groups.GroupCreate(ctx, "csv-parent-src-"+fk.Str(4), uuid.Nil)
+	require.NoError(t, err)
+
+	locationType, err := tRepos.EntityTypes.GetDefault(ctx, src.ID, true)
+	require.NoError(t, err)
+	itemType, err := tRepos.EntityTypes.GetDefault(ctx, src.ID, false)
+	require.NoError(t, err)
+
+	location, err := tRepos.Entities.Create(ctx, src.ID, repo.EntityCreate{
+		ImportRef:    "loc-ref",
+		Name:         "Garage",
+		EntityTypeID: locationType.ID,
+	})
+	require.NoError(t, err)
+
+	parent, err := tRepos.Entities.Create(ctx, src.ID, repo.EntityCreate{
+		ImportRef:    "parent-ref",
+		Name:         "Toolbox",
+		ParentID:     location.ID,
+		EntityTypeID: itemType.ID,
+	})
+	require.NoError(t, err)
+
+	_, err = tRepos.Entities.Create(ctx, src.ID, repo.EntityCreate{
+		ImportRef:    "child-ref",
+		Name:         "Screwdriver",
+		ParentID:     parent.ID,
+		EntityTypeID: itemType.ID,
+	})
+	require.NoError(t, err)
+
+	rows, err := tSvc.Entities.ExportCSV(ctx, src.ID, "https://homebox.example")
+	require.NoError(t, err)
+
+	header := rows[0]
+	col := func(name string) int {
+		t.Helper()
+		for i, h := range header {
+			if h == name {
+				return i
+			}
+		}
+		require.FailNowf(t, "missing CSV column", "column %q not found in %v", name, header)
+		return -1
+	}
+
+	nameCol := col("HB.name")
+	parentRefCol := col("HB.parent_import_ref")
+	locationCol := col("HB.location")
+
+	var childRow []string
+	for _, row := range rows[1:] {
+		if row[nameCol] == "Screwdriver" {
+			childRow = row
+			break
+		}
+	}
+	require.NotNil(t, childRow)
+	assert.Equal(t, "parent-ref", childRow[parentRefCol])
+	assert.Equal(t, "Garage", childRow[locationCol])
+
+	importRows := [][]string{header}
+	for _, row := range rows[1:] {
+		if row[nameCol] != "Garage" {
+			importRows = append(importRows, row)
+		}
+	}
+
+	var csvBuf bytes.Buffer
+	writer := csv.NewWriter(&csvBuf)
+	require.NoError(t, writer.WriteAll(importRows))
+	require.NoError(t, writer.Error())
+
+	dst, err := tRepos.Groups.GroupCreate(ctx, "csv-parent-dst-"+fk.Str(4), uuid.Nil)
+	require.NoError(t, err)
+
+	imported, err := tSvc.Entities.CsvImport(ctx, dst.ID, bytes.NewReader(csvBuf.Bytes()))
+	require.NoError(t, err)
+	require.Equal(t, len(importRows)-1, imported)
+
+	importedChild, err := tRepos.Entities.GetByRef(ctx, dst.ID, "child-ref")
+	require.NoError(t, err)
+	require.NotNil(t, importedChild.Parent)
+	assert.Equal(t, "Toolbox", importedChild.Parent.Name)
 }
 
 // TestIsGroupReadyForImport_BlocksUserCreatedRows asserts that the import

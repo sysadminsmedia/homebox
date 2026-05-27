@@ -502,6 +502,38 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 		rowSpan.End()
 	}
 
+	for i := range sheet.Rows {
+		row := sheet.Rows[i]
+		if row.ImportRef == "" || row.ParentImportRef == "" {
+			continue
+		}
+
+		child, err := svc.repo.Entities.GetByRef(ctx, gid, row.ImportRef)
+		if err != nil {
+			wrapped := fmt.Errorf("error resolving child entity with ref %q: %w", row.ImportRef, err)
+			recordServiceSpanError(importSpan, wrapped)
+			recordServiceSpanError(span, wrapped)
+			return 0, wrapped
+		}
+
+		parent, err := svc.repo.Entities.GetByRef(ctx, gid, row.ParentImportRef)
+		if err != nil {
+			wrapped := fmt.Errorf("error resolving parent entity with ref %q: %w", row.ParentImportRef, err)
+			recordServiceSpanError(importSpan, wrapped)
+			recordServiceSpanError(span, wrapped)
+			return 0, wrapped
+		}
+
+		err = svc.repo.Entities.Patch(ctx, gid, child.ID, repo.EntityPatch{
+			ParentID: parent.ID,
+		})
+		if err != nil {
+			recordServiceSpanError(importSpan, err)
+			recordServiceSpanError(span, err)
+			return 0, err
+		}
+	}
+
 	importSpan.SetAttributes(attribute.Int("rows.imported.count", finished))
 	span.SetAttributes(attribute.Int("rows.imported.count", finished))
 	return finished, nil
