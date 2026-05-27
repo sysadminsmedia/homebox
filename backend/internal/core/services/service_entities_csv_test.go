@@ -47,3 +47,20 @@ func TestEntityService_CsvImportParentImportRef(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "Garage", itemLocation.Name)
 }
+
+func TestEntityService_CsvImportParentImportRefRejectsSelfParent(t *testing.T) {
+	ctx := context.Background()
+
+	g, err := tRepos.Groups.GroupCreate(ctx, "csv-parent-self-"+fk.Str(4), uuid.Nil)
+	require.NoError(t, err)
+
+	data := strings.NewReader(strings.Join([]string{
+		"HB.location,HB.import_ref,HB.parent_import_ref,HB.name,HB.quantity",
+		"Garage,self,self,Self,1",
+		"",
+	}, "\n"))
+
+	_, err = tSvc.Entities.CsvImport(ctx, g.ID, data)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "entity parent cycle detected")
+}

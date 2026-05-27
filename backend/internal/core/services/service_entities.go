@@ -565,6 +565,18 @@ func (svc *EntityService) linkCsvParentImportRefs(
 			entityIDByImportRef[link.parentImportRef] = parentID
 		}
 
+		wouldCycle, err := svc.repo.Entities.WouldCreateParentCycle(parentCtx, gid, link.childID, parentID)
+		if err != nil {
+			wrapped := fmt.Errorf("row %d failed to validate parent import ref %q: %w", link.rowIndex, link.parentImportRef, err)
+			recordServiceSpanError(parentSpan, wrapped)
+			return 0, wrapped
+		}
+		if wouldCycle {
+			wrapped := fmt.Errorf("row %d parent import ref %q creates an invalid parent relationship: %w", link.rowIndex, link.parentImportRef, repo.ErrEntityParentCycle)
+			recordServiceSpanError(parentSpan, wrapped)
+			return 0, wrapped
+		}
+
 		err := svc.repo.Entities.Patch(parentCtx, gid, link.childID, repo.EntityPatch{ParentID: parentID})
 		if err != nil {
 			wrapped := fmt.Errorf("row %d failed to set parent import ref %q: %w", link.rowIndex, link.parentImportRef, err)

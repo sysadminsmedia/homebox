@@ -428,6 +428,30 @@ func TestEntityRepository_Patch_RejectsNonFiniteQuantity(t *testing.T) {
 	assert.Contains(t, err.Error(), "invalid quantity: must be a finite number")
 }
 
+func TestEntityRepository_Patch_RejectsParentCycles(t *testing.T) {
+	ctx := context.Background()
+	itemET := useItemEntityType(t)
+
+	parentData := entityFactory()
+	parentData.EntityTypeID = itemET.ID
+	parent, err := tRepos.Entities.Create(ctx, tGroup.ID, parentData)
+	require.NoError(t, err)
+
+	childData := entityFactory()
+	childData.EntityTypeID = itemET.ID
+	childData.ParentID = parent.ID
+	child, err := tRepos.Entities.Create(ctx, tGroup.ID, childData)
+	require.NoError(t, err)
+
+	err = tRepos.Entities.Patch(ctx, tGroup.ID, parent.ID, EntityPatch{ParentID: parent.ID})
+	require.Error(t, err)
+	assert.ErrorIs(t, err, ErrEntityParentCycle)
+
+	err = tRepos.Entities.Patch(ctx, tGroup.ID, parent.ID, EntityPatch{ParentID: child.ID})
+	require.Error(t, err)
+	assert.ErrorIs(t, err, ErrEntityParentCycle)
+}
+
 func TestEntityRepository_CreateFromTemplate_RejectsNonFiniteQuantity(t *testing.T) {
 	containerET := useContainerEntityType(t)
 

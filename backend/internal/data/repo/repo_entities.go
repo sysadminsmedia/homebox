@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 	"strings"
@@ -39,6 +40,8 @@ func recordSpanError(span trace.Span, err error) {
 	span.RecordError(err)
 	span.SetStatus(codes.Error, err.Error())
 }
+
+var ErrEntityParentCycle = errors.New("entity parent cycle detected")
 
 type EntityRepository struct {
 	db          *ent.Client
@@ -1835,6 +1838,12 @@ func (r *EntityRepository) Patch(ctx context.Context, gid, id uuid.UUID, data En
 			return err
 		}
 	}
+	if data.ParentID != uuid.Nil {
+		if err := r.validateParentPatch(ctx, gid, id, data.ParentID); err != nil {
+			recordSpanError(span, err)
+			return err
+		}
+	}
 
 	tx, err := r.db.Tx(ctx)
 	if err != nil {
@@ -1913,6 +1922,55 @@ func (r *EntityRepository) Patch(ctx context.Context, gid, id uuid.UUID, data En
 
 	r.publishMutationEvent(gid)
 	return nil
+}
+
+func (r *EntityRepository) validateParentPatch(ctx context.Context, gid, childID, parentID uuid.UUID) error {
+	wouldCycle, err := r.WouldCreateParentCycle(ctx, gid, childID, parentID)
+	if err != nil {
+		return err
+	}
+	if wouldCycle {
+		return ErrEntityParentCycle
+	}
+	return nil
+}
+
+func (r *EntityRepository) WouldCreateParentCycle(ctx context.Context, gid, childID, parentID uuid.UUID) (bool, error) {
+	if parentID == uuid.Nil {
+		return false, nil
+	}
+	if childID == parentID {
+		return true, nil
+	}
+
+	query := `
+		WITH RECURSIVE ancestors(id, parent_id) AS (
+			SELECT id, entity_children
+			FROM entities
+			WHERE id = $1
+			AND group_entities = $3
+
+			UNION
+
+			SELECT e.id, e.entity_children
+			FROM entities e
+			JOIN ancestors ON e.id = ancestors.parent_id
+			WHERE e.group_entities = $3
+		)
+		SELECT 1 FROM ancestors WHERE id = $2 LIMIT 1;
+	`
+
+	rows, err := r.db.Sql().QueryContext(ctx, query, parentID, childID, gid)
+	if err != nil {
+		return false, err
+	}
+	defer func() { _ = rows.Close() }()
+
+	found := rows.Next()
+	if err := rows.Err(); err != nil {
+		return false, err
+	}
+	return found, nil
 }
 
 func (r *EntityRepository) GetAllCustomFieldValues(ctx context.Context, gid uuid.UUID, name string) ([]string, error) {
@@ -2685,11 +2743,12 @@ func (r *EntityRepository) PathForEntity(ctx context.Context, gid, entityID uuid
 		WHERE id = $1
 		AND group_entities = $2
 
-		UNION ALL
+		UNION
 
 		SELECT e.id, e.name, e.entity_children, e.entity_type_entities
 		FROM entities e
 		JOIN entity_path ep ON e.id = ep.entity_children
+		WHERE e.group_entities = $2
 	  )
 
 	  SELECT ep.id, ep.name, et.is_location
