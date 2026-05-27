@@ -6,14 +6,10 @@ import (
 	"strconv"
 )
 
-type AssetID int
+type AssetID int64
 
 func (aid AssetID) Nil() bool {
-	return aid.Int() <= 0
-}
-
-func (aid AssetID) Int() int {
-	return int(aid)
+	return int64(aid) <= 0
 }
 
 func ParseAssetIDBytes(d []byte) (aid AssetID, ok bool) {

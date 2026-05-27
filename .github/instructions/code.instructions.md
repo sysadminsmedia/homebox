@@ -8,7 +8,7 @@
 **Database**: SQLite (default) or PostgreSQL
 
 ### Stack
-- **Backend** (`/backend`): Go 1.24+, Chi router, Ent ORM, port 7745
+- **Backend** (`/backend`): Go 1.26+, Chi router, Ent ORM, port 7745
 - **Frontend** (`/frontend`): Nuxt 4, Vue 3, TypeScript, Tailwind CSS, pnpm 9.1.4+, dev proxies to backend
 
 ## Critical Build & Validation Commands

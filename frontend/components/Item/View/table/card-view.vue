@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import ItemCard from "@/components/Item/Card.vue";
-  import type { ItemSummary } from "~/lib/api/types/data-contracts";
+  import type { EntitySummary } from "~/lib/api/types/data-contracts";
   import type { Table as TableType } from "@tanstack/vue-table";
   import MdiSelectSearch from "~icons/mdi/select-search";
   import { Checkbox } from "@/components/ui/checkbox";
@@ -9,7 +9,7 @@
   const preferences = useViewPreferences();
 
   const props = defineProps<{
-    table: TableType<ItemSummary>;
+    table: TableType<EntitySummary>;
     locationFlatTree?: FlatTreeItem[];
   }>();
 

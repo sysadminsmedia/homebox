@@ -39,14 +39,22 @@
               {{ localizedNoResultsText }}
             </div>
           </CommandEmpty>
-          <CommandList :key="commandListKey">
+          <CommandList ref="listRef" :key="commandListKey">
             <CommandGroup>
-              <CommandItem v-for="item in filtered" :key="itemKey(item)" :value="itemKey(item)" @select="select(item)">
-                <Check :class="cn('mr-2 h-4 w-4', isSelected(item) ? 'opacity-100' : 'opacity-0')" />
-                <slot name="display" v-bind="{ item }">
-                  {{ displayValue(item) }}
+              <div v-if="topPadding > 0" aria-hidden="true" :style="{ height: topPadding + 'px' }" />
+              <CommandItem
+                v-for="entry in visibleItems"
+                :key="itemKey(entry.item)"
+                :value="itemKey(entry.item)"
+                :style="{ height: itemHeightPx + 'px' }"
+                @select="select(entry.item)"
+              >
+                <Check :class="cn('mr-2 h-4 w-4', isSelected(entry.item) ? 'opacity-100' : 'opacity-0')" />
+                <slot name="display" v-bind="{ item: entry.item }">
+                  {{ displayValue(entry.item) }}
                 </slot>
               </CommandItem>
+              <div v-if="bottomPadding > 0" aria-hidden="true" :style="{ height: bottomPadding + 'px' }" />
             </CommandGroup>
           </CommandList>
         </Command>
@@ -59,7 +67,7 @@
   import { computed, ref, watch } from "vue";
   import { Check, ChevronsUpDown, X } from "lucide-vue-next";
   import fuzzysort from "fuzzysort";
-  import { useVModel } from "@vueuse/core";
+  import { unrefElement, useElementSize, useScroll, useVModel } from "@vueuse/core";
   import { useI18n } from "vue-i18n";
   import { Button } from "~/components/ui/button";
   import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "~/components/ui/command";
@@ -86,6 +94,7 @@
     excludeItems?: ItemsObject[];
     isLoading?: boolean;
     triggerSearch?: () => Promise<boolean>;
+    itemHeight?: number;
   }
 
   const emit = defineEmits(["update:modelValue", "update:search"]);
@@ -102,6 +111,7 @@
     excludeItems: undefined,
     isLoading: false,
     triggerSearch: undefined,
+    itemHeight: 32,
   });
 
   const id = useId();
@@ -205,5 +215,53 @@
   // Generate a unique key to force CommandList re-render when items change
   const commandListKey = computed(() => {
     return JSON.stringify(filtered.value.map(item => itemKey(item)));
+  });
+
+  // Virtualize the list so the popover stays responsive with thousands of items.
+  const itemHeightPx = computed(() => props.itemHeight);
+  const OVERSCAN = 5;
+
+  const listRef = ref();
+  const scrollContainer = computed<HTMLElement | null>(() => {
+    return (unrefElement(listRef.value) as HTMLElement | null) ?? null;
+  });
+  const { y: scrollTop } = useScroll(scrollContainer);
+  const { height: viewportHeight } = useElementSize(scrollContainer);
+
+  const visibleRange = computed(() => {
+    const total = filtered.value.length;
+    if (total === 0) return { start: 0, end: 0 };
+    const h = viewportHeight.value || 300;
+    const ih = itemHeightPx.value;
+    const start = Math.max(0, Math.floor(scrollTop.value / ih) - OVERSCAN);
+    const visibleCount = Math.ceil(h / ih) + OVERSCAN * 2;
+    const end = Math.min(total, start + visibleCount);
+    return { start, end };
+  });
+
+  const visibleItems = computed(() => {
+    const { start, end } = visibleRange.value;
+    return filtered.value.slice(start, end).map((item, i) => ({
+      item,
+      index: start + i,
+    }));
+  });
+
+  const topPadding = computed(() => visibleRange.value.start * itemHeightPx.value);
+  const bottomPadding = computed(
+    () => Math.max(0, filtered.value.length - visibleRange.value.end) * itemHeightPx.value
+  );
+
+  watch([() => search.value, () => props.items], () => {
+    const el = scrollContainer.value;
+    if (el) el.scrollTop = 0;
+  });
+
+  watch(open, isOpen => {
+    if (!isOpen) return;
+    nextTick(() => {
+      const el = scrollContainer.value;
+      if (el) el.scrollTop = 0;
+    });
   });
 </script>

@@ -1,4 +1,47 @@
 {
+    "collection": {
+        "copy_invite": "Kopiera inbjudningslänk",
+        "create_invite": "Skapa inbjudan",
+        "delete_collection": "Ta bort samling",
+        "delete_confirm": "Är du säker på att du vill ta bort den här samlingen? Det går inte att ångra den här åtgärden.",
+        "deleted_collection": "Samling borttagen.",
+        "expires_at": "Upphör",
+        "invite_token": "Token",
+        "invite_token_hidden": "Inte längre synlig",
+        "invites": "Inbjudningar",
+        "invites_delete_confirm": "Är du säker på att du vill ta bort detta?",
+        "leave_collection": "Lämna samling",
+        "leave_confirm": "Är du säker på att du vill lämna den här samlingen?",
+        "left_collection": "Du har lämnat samlingen.",
+        "manage_collection": "Hantera samling",
+        "members": {
+            "cannot_remove_last": "Du kan inte ta bort den sista medlemmen.",
+            "email": "Epost",
+            "empty": "Ännu inga medlemmar i denna samling.",
+            "member": "Medlem",
+            "name": "Namn",
+            "owner": "Ägare",
+            "remove_confirm": "Vill du verkligen ta bort den här medlemmen?",
+            "removed": "Medlem borttagen",
+            "role": "Roll"
+        },
+        "no_collections": {
+            "create": "Skapa en ny samling",
+            "join": "Anslut till en existerande samling",
+            "message": "Det ser ut som att du inte är medlem i en samling. Skapa en ny samling för dina saker, eller anslut till en du har blivit inbjuden till.",
+            "title": "Inga samlingar hittades"
+        },
+        "no_invites": "Inga inbjudningar",
+        "remaining_uses": "Kvarvarande användningar",
+        "tabs": {
+            "invites": "Inbjudningar",
+            "members": "Medlemmar",
+            "notifiers": "Notishanterare",
+            "settings": "Inställningar",
+            "tools": "Verktyg"
+        },
+        "uses": "Användningar"
+    },
     "components": {
         "app": {
             "create_modal": {
@@ -24,6 +67,47 @@
                 "new_version_available_link": "Klicka här för att visa versionsanteckningarna"
             }
         },
+        "collection": {
+            "create_modal": {
+                "name_label": "Samlingsnamn",
+                "title": "Skapa samling",
+                "toast": {
+                    "already_creating": "Skapar redan en samling",
+                    "create_failed": "Kunde inte skapa samlingen",
+                    "create_success": "Samling skapad",
+                    "please_enter_name": "Var god ange ett samlingsnamn"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Var god ange ett datum och tid för utgång.",
+                    "invalid_expiry_past": "Utgångsdatum måste vara i framtiden.",
+                    "invalid_uses": "Användningar måste vara ett nummer mellan 1 och 100."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Inbjudningskod till samling",
+                "invites_should_look_like": "Inbjudningar kommer se ut såhär:",
+                "join": "Anslut till samling",
+                "no_invite_code_create_one": "Ingen inbjudningskod? Sapa en ny samling istället",
+                "title": "Anslut till samling",
+                "toast": {
+                    "already_joining": "Ansluter redan till en samling",
+                    "join_failed": "Kunde inte ansluta till samlingen",
+                    "join_success": "Ansluten till samling",
+                    "please_enter_valid_join_code": "Var god ange en giltig inbjudningskod till en samling"
+                }
+            },
+            "selector": {
+                "collection_options": "Samlingsinställningar",
+                "create_collection": "Skapa en ny samling",
+                "join_collection": "Anslut till existerande samling",
+                "no_collection_found": "Ingen samling hittades",
+                "search_collections": "Sök samlingar…",
+                "select_collection": "Välj samling",
+                "your_collections": "Dina samlingar"
+            }
+        },
         "color_selector": {
             "clear": "Rensa färg",
             "color": "Färg",
@@ -38,6 +122,7 @@
         },
         "global": {
             "copy_text": {
+                "continue": "Fortsätt",
                 "documentation": "dokumentation",
                 "failed_to_copy": "Misslyckades med att kopiera text till urklipp",
                 "https_required": "eftersom https krävs",
@@ -94,6 +179,7 @@
                 "open_new_tab": "Öppna i ny flik"
             },
             "create_modal": {
+                "clear_template": "Rensa mall",
                 "delete_photo": "Radera foto",
                 "item_description": "Objektbeskrivning",
                 "item_name": "Objektnamn",
@@ -128,10 +214,12 @@
                 "error_exception": "Undantag inträffade vid hämtning av artikelstreckkod: ",
                 "error_invalid_barcode": "Ogiltig streckkod",
                 "error_not_found": "Ingen produkt hittad med angiven streckkod.",
+                "import_selected": "Importera valda",
                 "search_item": "Sök produkt",
                 "title": "Importera produkt"
             },
             "selector": {
+                "clear": "Rensa val",
                 "no_results": "Inga resultat hittades",
                 "placeholder": "Välj…",
                 "search_placeholder": "Skriv för att söka…",
@@ -139,7 +227,9 @@
             },
             "view": {
                 "change_details": {
+                    "add_tags": "Lägg till taggar",
                     "failed_to_update_item": "Det gick inte att uppdatera",
+                    "remove_tags": "Ta bort taggar",
                     "title": "Ändra artikeldetaljer"
                 },
                 "selectable": {
@@ -156,6 +246,8 @@
                         "actions": "Funktioner",
                         "change_location": "Ändra plats",
                         "change_location_success": "Plats ändrad",
+                        "change_tags": "Ändra taggar",
+                        "change_tags_success": "Taggar ändrade",
                         "create_maintenance_item": "Skapa underhållspost för objekt",
                         "create_maintenance_selected": "Skapa underhållspost för valda objekt",
                         "create_maintenance_success": "Underhållspost (er) skapade",
@@ -178,7 +270,7 @@
                     "page": "Sida",
                     "quick_actions": "Aktivera snabbåtgärder och val",
                     "rows_per_page": "Rader per sida",
-                    "selected_rows": "{selected} av {total} rad(er) valda.",
+                    "selected_rows": "{selected} av {total} rader valda.",
                     "table_settings": "Bordsinställningar",
                     "view_item": "Visa objekt"
                 }
@@ -196,18 +288,64 @@
                 }
             },
             "selector": {
+                "clear": "Rensa platsval",
                 "no_location_found": "Ingen plats hittades",
                 "parent_location": "Överordnad Plats",
                 "search_location": "Sök Platser",
                 "select_location": "Välj en plats"
             },
             "tree": {
-                "no_locations": "Inga platser tillgängliga. Lägg till nya platser via\n '<span class=\"link-primary\">'Skapa'</span>'-knappen i navigationsmenyn."
+                "no_locations": "Inga platser tillgängliga. Lägg till nya platser via Skapa-knappen."
             }
         },
         "quick_menu": {
             "no_results": "Inga resultat hittades.",
             "shortcut_hint": "Använd siffertangenterna för att snabbt välja en åtgärd."
+        },
+        "search": {
+            "filter": {
+                "search_placeholder": "Sök…"
+            }
+        },
+        "tag": {
+            "create_modal": {
+                "tag_color": "Taggfärg",
+                "tag_description": "Taggbeskrivning",
+                "tag_name": "Taggnamn",
+                "title": "Skapa tagg",
+                "toast": {
+                    "already_creating": "Skapar redan en tagg",
+                    "create_failed": "Kunde inte skapa tagg",
+                    "create_success": "Tagg skapad",
+                    "tag_name_too_long": "Taggnamn får inte vara längre än 50 tecken"
+                }
+            },
+            "selector": {
+                "select_tags": "Välj taggar"
+            }
+        },
+        "template": {
+            "apply_template": "Använd en mall",
+            "card": {
+                "delete": "Ta bort mall",
+                "duplicate": "Duplicera mall",
+                "edit": "Ändra mall"
+            },
+            "confirm_delete": "Ta bort denna mall?",
+            "create_modal": {
+                "title": "Skapa mall"
+            },
+            "detail": {
+                "default_values": "Standardvärden",
+                "updated": "Uppdaterad"
+            },
+            "edit_modal": {
+                "title": "Ändra mall"
+            },
+            "empty_value": "(tom)",
+            "form": {
+                "custom_fields": "Anpassade fält"
+            }
         }
     },
     "errors": {
@@ -233,7 +371,7 @@
         "follow_dev": "Följ utvecklaren",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Version: { version } Bygge: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' Version: { version } Bygge: { build } '</a>'"
         },
         "github": "GitHub-projekt",
         "insured": "Försäkrad",
@@ -373,7 +511,7 @@
         "sold_price": "Försäljningspris",
         "sold_to": "Såld till",
         "sync_child_locations": "Synkronisera underordnade objekts platser",
-        "tip_1": "Platser och etiketter filter använder 'OR' funktionen. Om fler än en är valda, endast en kommer\nkrävas för en träff.",
+        "tip_1": "Plats- och taggfilter använder 'OR' funktionen. Om fler än en är valda, endast en kommer\nkrävas för en träff.",
         "tip_2": "Sökningar med prefixet '#'' kommer att fråga efter ett tillgångs-ID (exempel '#000-001')",
         "tip_3": "Fältfilter använder 'OR' funktion. Om fler än en är valda endast en kommer att bli krävande för en\nträff.",
         "tips": "Tips",
@@ -562,8 +700,8 @@
             "bordered_labels": "Inramade etiketter",
             "generate_page": "Generera sida",
             "input_placeholder": "Skriv här",
-            "instruction_1": "Homebox Label Generator är ett verktyg som hjälper dig att skriva ut etiketter för ditt Homebox-inventering. Dessa är skapade\nför att skrivas ut i förväg så att de är redo att användas",
-            "instruction_2": "Dessa etiketter fungerar då så att en QR-kod med en URL och ett objekt-ID skrivs ut på etiketten. Om du har stängt av\nObjekt-ID i dina Homebox.inställningar kan du fortfarande använda verktyget men då kommer Objekt-ID:t inte att hänvisa till något objekt",
+            "instruction_1": "HomeBox Label Generator är ett verktyg som hjälper dig att skriva ut etiketter för ditt HomeBox-inventering. Dessa är skapade\nför att skrivas ut i förväg så att de är redo att användas",
+            "instruction_2": "Dessa etiketter fungerar då så att en QR-kod med en URL och ett objekt-ID skrivs ut på etiketten. Om du har stängt av\nObjekt-ID i dina HomeBox.inställningar kan du fortfarande använda verktyget men då kommer Objekt-ID:t inte att hänvisa till något objekt",
             "instruction_3": "Den här funktionen befinner sig i ett tidigt utvecklingsstadium och kan komma att ändras i framtida versioner. Om du har feedback, vänligen\n ange den i<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub-diskussionen'</a>\"",
             "label_height": "Etiketthöjd",
             "label_width": "Etikettbredd",

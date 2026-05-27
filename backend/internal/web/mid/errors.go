@@ -1,6 +1,7 @@
 package mid
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/go-chi/chi/v5/middleware"
@@ -26,6 +27,7 @@ func Errors(log zerolog.Logger) errchain.ErrorHandler {
 
 				traceID := r.Context().Value(middleware.RequestIDKey).(string)
 				log.Err(err).
+					Ctx(r.Context()).
 					Stack().
 					Str("req_id", traceID).
 					Msg("ERROR occurred")
@@ -44,7 +46,8 @@ func Errors(log zerolog.Logger) errchain.ErrorHandler {
 				case validate.IsFieldError(err):
 					code = http.StatusUnprocessableEntity
 
-					fieldErrors := err.(validate.FieldErrors) // nolint
+					var fieldErrors validate.FieldErrors
+					errors.As(err, &fieldErrors) // nolint
 					resp.Error = "Validation Error"
 					resp.Fields = map[string]string{}
 
@@ -52,7 +55,8 @@ func Errors(log zerolog.Logger) errchain.ErrorHandler {
 						resp.Fields[fieldError.Field] = fieldError.Error
 					}
 				case validate.IsRequestError(err):
-					requestError := err.(*validate.RequestError) // nolint
+					var requestError *validate.RequestError
+					errors.As(err, &requestError) // nolint
 					resp.Error = requestError.Error()
 
 					if requestError.Status == 0 {
@@ -69,7 +73,7 @@ func Errors(log zerolog.Logger) errchain.ErrorHandler {
 				}
 
 				if err := server.JSON(w, code, resp); err != nil {
-					log.Err(err).Msg("failed to write response")
+					log.Err(err).Ctx(r.Context()).Msg("failed to write response")
 				}
 			}
 		})

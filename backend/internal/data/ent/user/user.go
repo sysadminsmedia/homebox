@@ -3,7 +3,6 @@
 package user
 
 import (
-	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -30,8 +29,6 @@ const (
 	FieldIsSuperuser = "is_superuser"
 	// FieldSuperuser holds the string denoting the superuser field in the database.
 	FieldSuperuser = "superuser"
-	// FieldRole holds the string denoting the role field in the database.
-	FieldRole = "role"
 	// FieldActivatedOn holds the string denoting the activated_on field in the database.
 	FieldActivatedOn = "activated_on"
 	// FieldOidcIssuer holds the string denoting the oidc_issuer field in the database.
@@ -40,12 +37,20 @@ const (
 	FieldOidcSubject = "oidc_subject"
 	// FieldDefaultGroupID holds the string denoting the default_group_id field in the database.
 	FieldDefaultGroupID = "default_group_id"
+	// FieldSettings holds the string denoting the settings field in the database.
+	FieldSettings = "settings"
 	// EdgeGroups holds the string denoting the groups edge name in mutations.
 	EdgeGroups = "groups"
 	// EdgeAuthTokens holds the string denoting the auth_tokens edge name in mutations.
 	EdgeAuthTokens = "auth_tokens"
+	// EdgePasswordResetTokens holds the string denoting the password_reset_tokens edge name in mutations.
+	EdgePasswordResetTokens = "password_reset_tokens"
+	// EdgeAPIKeys holds the string denoting the api_keys edge name in mutations.
+	EdgeAPIKeys = "api_keys"
 	// EdgeNotifiers holds the string denoting the notifiers edge name in mutations.
 	EdgeNotifiers = "notifiers"
+	// EdgeUserGroups holds the string denoting the user_groups edge name in mutations.
+	EdgeUserGroups = "user_groups"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// GroupsTable is the table that holds the groups relation/edge. The primary key declared below.
@@ -60,6 +65,20 @@ const (
 	AuthTokensInverseTable = "auth_tokens"
 	// AuthTokensColumn is the table column denoting the auth_tokens relation/edge.
 	AuthTokensColumn = "user_auth_tokens"
+	// PasswordResetTokensTable is the table that holds the password_reset_tokens relation/edge.
+	PasswordResetTokensTable = "password_reset_tokens"
+	// PasswordResetTokensInverseTable is the table name for the PasswordResetTokens entity.
+	// It exists in this package in order to avoid circular dependency with the "passwordresettokens" package.
+	PasswordResetTokensInverseTable = "password_reset_tokens"
+	// PasswordResetTokensColumn is the table column denoting the password_reset_tokens relation/edge.
+	PasswordResetTokensColumn = "user_password_reset_tokens"
+	// APIKeysTable is the table that holds the api_keys relation/edge.
+	APIKeysTable = "api_keys"
+	// APIKeysInverseTable is the table name for the APIKey entity.
+	// It exists in this package in order to avoid circular dependency with the "apikey" package.
+	APIKeysInverseTable = "api_keys"
+	// APIKeysColumn is the table column denoting the api_keys relation/edge.
+	APIKeysColumn = "user_id"
 	// NotifiersTable is the table that holds the notifiers relation/edge.
 	NotifiersTable = "notifiers"
 	// NotifiersInverseTable is the table name for the Notifier entity.
@@ -67,6 +86,13 @@ const (
 	NotifiersInverseTable = "notifiers"
 	// NotifiersColumn is the table column denoting the notifiers relation/edge.
 	NotifiersColumn = "user_id"
+	// UserGroupsTable is the table that holds the user_groups relation/edge.
+	UserGroupsTable = "user_groups"
+	// UserGroupsInverseTable is the table name for the UserGroup entity.
+	// It exists in this package in order to avoid circular dependency with the "usergroup" package.
+	UserGroupsInverseTable = "user_groups"
+	// UserGroupsColumn is the table column denoting the user_groups relation/edge.
+	UserGroupsColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -79,11 +105,11 @@ var Columns = []string{
 	FieldPassword,
 	FieldIsSuperuser,
 	FieldSuperuser,
-	FieldRole,
 	FieldActivatedOn,
 	FieldOidcIssuer,
 	FieldOidcSubject,
 	FieldDefaultGroupID,
+	FieldSettings,
 }
 
 var (
@@ -122,32 +148,6 @@ var (
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
-
-// Role defines the type for the "role" enum field.
-type Role string
-
-// RoleUser is the default value of the Role enum.
-const DefaultRole = RoleUser
-
-// Role values.
-const (
-	RoleUser  Role = "user"
-	RoleOwner Role = "owner"
-)
-
-func (r Role) String() string {
-	return string(r)
-}
-
-// RoleValidator is a validator for the "role" field enum values. It is called by the builders before save.
-func RoleValidator(r Role) error {
-	switch r {
-	case RoleUser, RoleOwner:
-		return nil
-	default:
-		return fmt.Errorf("user: invalid enum value for role field: %q", r)
-	}
-}
 
 // OrderOption defines the ordering options for the User queries.
 type OrderOption func(*sql.Selector)
@@ -190,11 +190,6 @@ func ByIsSuperuser(opts ...sql.OrderTermOption) OrderOption {
 // BySuperuser orders the results by the superuser field.
 func BySuperuser(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSuperuser, opts...).ToFunc()
-}
-
-// ByRole orders the results by the role field.
-func ByRole(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldRole, opts...).ToFunc()
 }
 
 // ByActivatedOn orders the results by the activated_on field.
@@ -245,6 +240,34 @@ func ByAuthTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByPasswordResetTokensCount orders the results by password_reset_tokens count.
+func ByPasswordResetTokensCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newPasswordResetTokensStep(), opts...)
+	}
+}
+
+// ByPasswordResetTokens orders the results by password_reset_tokens terms.
+func ByPasswordResetTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPasswordResetTokensStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByAPIKeysCount orders the results by api_keys count.
+func ByAPIKeysCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAPIKeysStep(), opts...)
+	}
+}
+
+// ByAPIKeys orders the results by api_keys terms.
+func ByAPIKeys(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAPIKeysStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByNotifiersCount orders the results by notifiers count.
 func ByNotifiersCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -256,6 +279,20 @@ func ByNotifiersCount(opts ...sql.OrderTermOption) OrderOption {
 func ByNotifiers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newNotifiersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByUserGroupsCount orders the results by user_groups count.
+func ByUserGroupsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newUserGroupsStep(), opts...)
+	}
+}
+
+// ByUserGroups orders the results by user_groups terms.
+func ByUserGroups(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserGroupsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newGroupsStep() *sqlgraph.Step {
@@ -272,10 +309,31 @@ func newAuthTokensStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, AuthTokensTable, AuthTokensColumn),
 	)
 }
+func newPasswordResetTokensStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PasswordResetTokensInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, PasswordResetTokensTable, PasswordResetTokensColumn),
+	)
+}
+func newAPIKeysStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(APIKeysInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, APIKeysTable, APIKeysColumn),
+	)
+}
 func newNotifiersStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(NotifiersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, NotifiersTable, NotifiersColumn),
+	)
+}
+func newUserGroupsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserGroupsInverseTable, UserGroupsColumn),
+		sqlgraph.Edge(sqlgraph.O2M, true, UserGroupsTable, UserGroupsColumn),
 	)
 }

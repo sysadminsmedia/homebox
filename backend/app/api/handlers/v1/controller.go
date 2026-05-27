@@ -41,6 +41,12 @@ func WithMaxUploadSize(maxUploadSize int64) func(*V1Controller) {
 	}
 }
 
+func WithMaxImportSize(maxImportSize int64) func(*V1Controller) {
+	return func(ctrl *V1Controller) {
+		ctrl.maxImportSize = maxImportSize
+	}
+}
+
 func WithDemoStatus(demoStatus bool) func(*V1Controller) {
 	return func(ctrl *V1Controller) {
 		ctrl.isDemo = demoStatus
@@ -70,6 +76,7 @@ type V1Controller struct {
 	repo              *repo.AllRepos
 	svc               *services.AllServices
 	maxUploadSize     int64
+	maxImportSize     int64
 	isDemo            bool
 	allowRegistration bool
 	bus               *eventbus.EventBus
@@ -98,6 +105,7 @@ type (
 		AllowRegistration bool            `json:"allowRegistration"`
 		LabelPrinting     bool            `json:"labelPrinting"`
 		OIDC              OIDCStatus      `json:"oidc"`
+		Telemetry         TelemetryStatus `json:"telemetry"`
 	}
 
 	OIDCStatus struct {
@@ -105,6 +113,10 @@ type (
 		ButtonText   string `json:"buttonText,omitempty"`
 		AutoRedirect bool   `json:"autoRedirect,omitempty"`
 		AllowLocal   bool   `json:"allowLocal"`
+	}
+
+	TelemetryStatus struct {
+		Enabled bool `json:"enabled"`
 	}
 )
 
@@ -161,6 +173,9 @@ func (ctrl *V1Controller) HandleBase(ready ReadyFunc, build Build) errchain.Hand
 				ButtonText:   ctrl.config.OIDC.ButtonText,
 				AutoRedirect: ctrl.config.OIDC.AutoRedirect,
 				AllowLocal:   ctrl.config.Options.AllowLocalLogin,
+			},
+			Telemetry: TelemetryStatus{
+				Enabled: ctrl.config.Otel.Enabled,
 			},
 		})
 	}
@@ -223,8 +238,10 @@ func (ctrl *V1Controller) HandleCacheWS() errchain.HandlerFunc {
 	}
 
 	ctrl.bus.Subscribe(eventbus.EventTagMutation, factory("tag.mutation"))
-	ctrl.bus.Subscribe(eventbus.EventLocationMutation, factory("location.mutation"))
-	ctrl.bus.Subscribe(eventbus.EventItemMutation, factory("item.mutation"))
+	ctrl.bus.Subscribe(eventbus.EventEntityMutation, factory("entity.mutation"))
+	ctrl.bus.Subscribe(eventbus.EventUserMutation, factory("user.mutation"))
+	ctrl.bus.Subscribe(eventbus.EventExportMutation, factory("export.mutation"))
+	ctrl.bus.Subscribe(eventbus.EventImportMutation, factory("import.mutation"))
 
 	// Persistent asynchronous ticker that keeps all websocket connections alive with periodic pings.
 	go func() {

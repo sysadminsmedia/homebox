@@ -14,5 +14,5 @@ type BarcodeProduct struct {
 	ImageURL    string `json:"imageURL"`
 	ImageBase64 string `json:"imageBase64"`
 
-	Item ItemCreate `json:"item"`
+	Item EntityCreate `json:"item"`
 }

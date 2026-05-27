@@ -4,7 +4,7 @@ test("valid login", async ({ page }) => {
   await page.goto("/home");
   await expect(page).toHaveURL("/");
   await page.fill("input[type='text']", "demo@example.com");
-  await page.fill("input[type='password']", "demo");
+  await page.fill("input[type='password']", "demodemo");
   await page.click("button[type='submit']");
   await expect(page).toHaveURL("/home");
 });

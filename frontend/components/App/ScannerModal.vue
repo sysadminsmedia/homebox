@@ -34,7 +34,7 @@
         </div>
         <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
         <video ref="video" class="aspect-video w-full rounded-lg bg-muted shadow" poster="data:image/gif,AAAA" />
-        <div class="mt-4">
+        <div class="mt-4 flex flex-col gap-3">
           <Select v-model="selectedSource">
             <SelectTrigger class="w-full">
               <SelectValue :placeholder="t('scanner.select_video_source')" />
@@ -45,6 +45,10 @@
               </SelectItem>
             </SelectContent>
           </Select>
+          <Button variant="outline" class="w-full" @click="openArMode">
+            <MdiCameraOutline class="mr-2" />
+            {{ t("scanner_ar.ar_mode") }}
+          </Button>
         </div>
       </div>
     </DialogScrollContent>
@@ -61,6 +65,7 @@
   import { Button, ButtonGroup } from "@/components/ui/button";
   import MdiBarcode from "~icons/mdi/barcode";
   import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
+  import MdiCameraOutline from "~icons/mdi/camera-outline";
   import { useDialog } from "@/components/ui/dialog-provider";
 
   const { t } = useI18n();
@@ -76,6 +81,8 @@
   const detectedBarcode = ref<string>("");
   const detectedBarcodeType = ref<string>("");
 
+  const LAST_USED_DEVICE_ID_KEY = "homebox:lastUsedDeviceId";
+
   const handleError = (error: unknown) => {
     console.error("Scanner error:", error);
     errorMessage.value = t("scanner.error");
@@ -83,6 +90,11 @@
 
   const handleButtonClick = () => {
     openDialog(DialogID.ProductImport, { params: { barcode: detectedBarcode.value } });
+  };
+
+  const openArMode = () => {
+    closeDialog(DialogID.Scanner);
+    navigateTo("/scanner-ar");
   };
 
   const startScanner = async () => {
@@ -109,13 +121,21 @@
       sources.value = devices;
 
       if (devices.length > 0) {
-        for (let i = 0; i < devices.length; i++) {
-          if (devices[i]!.label.toLowerCase().includes("back")) {
-            selectedSource.value = devices[i]!.deviceId;
-          }
+        let lastUsedDeviceId: string | null = null;
+        try {
+          lastUsedDeviceId = localStorage.getItem(LAST_USED_DEVICE_ID_KEY);
+        } catch (e) {
+          console.debug("failed to read selected camera", e);
         }
-        if (!selectedSource.value) {
-          selectedSource.value = devices[0]!.deviceId;
+
+        selectedSource.value = devices[0]!.deviceId;
+        for (const device of devices) {
+          if (device.deviceId === lastUsedDeviceId) {
+            selectedSource.value = device.deviceId;
+            break;
+          } else if (device.label.toLowerCase().includes("back")) {
+            selectedSource.value = device.deviceId;
+          }
         }
       } else {
         errorMessage.value = t("scanner.no_sources");
@@ -144,6 +164,12 @@
   watch(selectedSource, async newSource => {
     if (!open.value || !newSource) return;
     codeReader.reset();
+
+    try {
+      localStorage.setItem(LAST_USED_DEVICE_ID_KEY, newSource);
+    } catch (e) {
+      console.warn("failed to persist selected camera", e);
+    }
 
     try {
       await codeReader.decodeFromVideoDevice(newSource, video.value!, (result, err) => {

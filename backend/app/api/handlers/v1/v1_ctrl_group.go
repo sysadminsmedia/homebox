@@ -28,10 +28,6 @@ type (
 		Uses      int       `json:"uses"`
 	}
 
-	GroupMemberAdd struct {
-		UserID uuid.UUID `json:"userId" validate:"required"`
-	}
-
 	GroupAcceptInvitationResponse struct {
 		ID   uuid.UUID `json:"id"`
 		Name string    `json:"name"`
@@ -88,6 +84,7 @@ func (ctrl *V1Controller) HandleGroupUpdate() errchain.HandlerFunc {
 // HandleGroupInvitationsCreate godoc
 //
 //	@Summary	Create Group Invitation
+//	@ID			groupInvitationCreate
 //	@Tags		Group
 //	@Produce	json
 //	@Param		payload	body		GroupInvitationCreate	true	"User Data"
@@ -230,25 +227,6 @@ func (ctrl *V1Controller) HandleGroupMembersGetAll() errchain.HandlerFunc {
 	return adapters.Command(fn, http.StatusOK)
 }
 
-// HandleGroupMemberAdd godoc
-//
-//	@Summary	Add User to Group
-//	@Tags		Group
-//	@Produce	json
-//	@Param		payload	body		GroupMemberAdd	true	"User ID"
-//	@Success	204
-//	@Router		/v1/groups/members [Post]
-//	@Security	Bearer
-func (ctrl *V1Controller) HandleGroupMemberAdd() errchain.HandlerFunc {
-	fn := func(r *http.Request, body GroupMemberAdd) (any, error) {
-		auth := services.NewContext(r.Context())
-		err := ctrl.svc.Group.AddMember(auth, body.UserID)
-		return nil, err
-	}
-
-	return adapters.Action(fn, http.StatusNoContent)
-}
-
 // HandleGroupMemberRemove godoc
 //
 //	@Summary	Remove User from Group
@@ -305,6 +283,7 @@ func (ctrl *V1Controller) HandleGroupInvitationsDelete() errchain.HandlerFunc {
 // HandleGroupInvitationsAccept godoc
 //
 //	@Summary	Accept Group Invitation
+//	@ID			groupInvitationAccept
 //	@Tags		Group
 //	@Produce	json
 //	@Param		id	path	string	true	"Invitation Token"

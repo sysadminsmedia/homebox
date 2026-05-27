@@ -21,15 +21,15 @@ type ExportCSVRow struct {
 	Archived  bool           `csv:"HB.archived"`
 	URL       string         `csv:"HB.url"`
 
-	Name        string `csv:"HB.name"`
-	Quantity    int    `csv:"HB.quantity"`
-	Description string `csv:"HB.description"`
-	Insured     bool   `csv:"HB.insured"`
-	Notes       string `csv:"HB.notes"`
+	Name        string  `csv:"HB.name"`
+	Quantity    float64 `csv:"HB.quantity"`
+	Description string  `csv:"HB.description"`
+	Insured     bool    `csv:"HB.insured"`
+	Notes       string  `csv:"HB.notes"`
 
 	PurchasePrice float64    `csv:"HB.purchase_price"`
 	PurchaseFrom  string     `csv:"HB.purchase_from"`
-	PurchaseTime  types.Date `csv:"HB.purchase_time"`
+	PurchaseDate  types.Date `csv:"HB.purchase_date|HB.purchase_time"`
 
 	Manufacturer string `csv:"HB.manufacturer"`
 	ModelNumber  string `csv:"HB.model_number"`
@@ -41,7 +41,7 @@ type ExportCSVRow struct {
 
 	SoldTo    string     `csv:"HB.sold_to"`
 	SoldPrice float64    `csv:"HB.sold_price"`
-	SoldTime  types.Date `csv:"HB.sold_time"`
+	SoldDate  types.Date `csv:"HB.sold_date|HB.sold_time"`
 	SoldNotes string     `csv:"HB.sold_notes"`
 
 	Fields []ExportItemFields `csv:"-"`
@@ -86,8 +86,8 @@ func (csf LocationString) String() string {
 	return strings.Join(csf, " / ")
 }
 
-func fromPathSlice(s []repo.ItemPath) LocationString {
-	return lo.Map(s, func(p repo.ItemPath, _ int) string {
+func fromPathSlice(s []repo.EntityPath) LocationString {
+	return lo.Map(s, func(p repo.EntityPath, _ int) string {
 		return p.Name
 	})
 }

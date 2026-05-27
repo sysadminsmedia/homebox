@@ -12,20 +12,24 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/apikey"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/export"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemfield"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/passwordresettokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/usergroup"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -86,20 +90,24 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
+			apikey.Table:               apikey.ValidColumn,
 			attachment.Table:           attachment.ValidColumn,
 			authroles.Table:            authroles.ValidColumn,
 			authtokens.Table:           authtokens.ValidColumn,
+			entity.Table:               entity.ValidColumn,
+			entityfield.Table:          entityfield.ValidColumn,
+			entitytemplate.Table:       entitytemplate.ValidColumn,
+			entitytype.Table:           entitytype.ValidColumn,
+			export.Table:               export.ValidColumn,
 			group.Table:                group.ValidColumn,
 			groupinvitationtoken.Table: groupinvitationtoken.ValidColumn,
-			item.Table:                 item.ValidColumn,
-			itemfield.Table:            itemfield.ValidColumn,
-			itemtemplate.Table:         itemtemplate.ValidColumn,
-			location.Table:             location.ValidColumn,
 			maintenanceentry.Table:     maintenanceentry.ValidColumn,
 			notifier.Table:             notifier.ValidColumn,
+			passwordresettokens.Table:  passwordresettokens.ValidColumn,
 			tag.Table:                  tag.ValidColumn,
 			templatefield.Table:        templatefield.ValidColumn,
 			user.Table:                 user.ValidColumn,
+			usergroup.Table:            usergroup.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)
