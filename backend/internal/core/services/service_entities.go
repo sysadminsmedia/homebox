@@ -577,7 +577,7 @@ func (svc *EntityService) linkCsvParentImportRefs(
 			return 0, wrapped
 		}
 
-		err := svc.repo.Entities.Patch(parentCtx, gid, link.childID, repo.EntityPatch{ParentID: parentID})
+		err = svc.repo.Entities.Patch(parentCtx, gid, link.childID, repo.EntityPatch{ParentID: parentID})
 		if err != nil {
 			wrapped := fmt.Errorf("row %d failed to set parent import ref %q: %w", link.rowIndex, link.parentImportRef, err)
 			recordServiceSpanError(parentSpan, wrapped)
