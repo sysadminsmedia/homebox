@@ -13,6 +13,7 @@
   import VueDatePicker from "@vuepic/vue-datepicker";
   import "@vuepic/vue-datepicker/dist/main.css";
   import * as datelib from "~/lib/datelib/datelib";
+  import { toDateOnlyString } from "~/lib/datelib/dateOnly";
   import { Label } from "@/components/ui/label";
   import { darkThemes } from "~/lib/data/themes";
 
@@ -20,7 +21,7 @@
 
   const props = defineProps({
     modelValue: {
-      type: Date as () => Date | string | null,
+      type: [Date, String] as unknown as () => Date | string | null,
       required: false,
       default: null,
     },
@@ -31,6 +32,19 @@
     label: {
       type: String,
       default: "Date",
+    },
+    // When true, this field represents a date-only value (no time-of-day or
+    // timezone semantics). modelValue is bound as a YYYY-MM-DD string and the
+    // component emits a YYYY-MM-DD string. Use this for any field stored as
+    // types.Date on the backend (purchaseDate, scheduledDate, etc.) — it
+    // prevents the timezone day-shift bug that occurs when JSON.stringify
+    // converts a Date object to a UTC ISO string.
+    //
+    // Leave false (the default) for true timestamp fields like invite expiry,
+    // which need full Date-object precision.
+    dateOnly: {
+      type: Boolean,
+      default: false,
     },
   });
 
@@ -72,7 +86,13 @@
       return null;
     },
     set(value: Date | null) {
-      console.debug("DatePicker: SET", value);
+      if (props.dateOnly) {
+        // Always emit YYYY-MM-DD strings, derived from local components, so
+        // the user's calendar day is preserved across the API round-trip.
+        emit("update:modelValue", value ? toDateOnlyString(value) : "");
+        return;
+      }
+
       if (value instanceof Date) {
         value = datelib.zeroTime(value);
         emit("update:modelValue", value);

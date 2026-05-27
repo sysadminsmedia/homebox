@@ -27,7 +27,7 @@
         />
         <div class="absolute inset-x-1 bottom-1">
           <Badge class="text-wrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline">
-            <NuxtLink v-if="item.location" :to="`/location/${item.location.id}`">
+            <NuxtLink v-if="item.parent" :to="`/location/${item.parent.id}`">
               {{ locationString }}
             </NuxtLink>
           </Badge>
@@ -69,7 +69,7 @@
         </TooltipProvider>
         <Markdown class="mb-2 line-clamp-3 text-ellipsis" :source="item.description" />
         <div class="-mr-1 mt-auto flex flex-wrap justify-end gap-2">
-          <TagChip v-for="tag in itemTags" :key="tag.id" :tag="tag" size="sm" />
+          <TagChip v-for="tag in itemTags" :key="tag.id" :tag="tag" size="sm" :ancestors="tag.ancestors" />
         </div>
       </div>
     </NuxtLink>
@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { ItemOut, ItemSummary } from "~~/lib/api/types/data-contracts";
+  import type { EntityOut, EntitySummary } from "~~/lib/api/types/data-contracts";
   import MdiShieldCheck from "~icons/mdi/shield-check";
   import MdiArchive from "~icons/mdi/archive";
   import { Badge } from "@/components/ui/badge";
@@ -97,19 +97,19 @@
       return "/no-image.jpg";
     }
     if (props.item.thumbnailId) {
-      return api.authURL(`/items/${props.item.id}/attachments/${props.item.thumbnailId}`);
+      return api.authURL(`/entities/${props.item.id}/attachments/${props.item.thumbnailId}`);
     } else {
-      return api.authURL(`/items/${props.item.id}/attachments/${props.item.imageId}`);
+      return api.authURL(`/entities/${props.item.id}/attachments/${props.item.imageId}`);
     }
   });
 
   const itemTags = computed(() => {
-    return props.item.tags || [];
+    return useTagStore().withAncestors(props.item.tags);
   });
 
   const props = defineProps({
     item: {
-      type: Object as () => ItemOut | ItemSummary,
+      type: Object as () => EntityOut | EntitySummary,
       required: true,
     },
     locationFlatTree: {
@@ -118,7 +118,7 @@
       default: () => [],
     },
     tableRow: {
-      type: Object as () => Row<ItemSummary>,
+      type: Object as () => Row<EntitySummary>,
       required: false,
       default: () => null,
     },
@@ -127,7 +127,7 @@
   const objectContain = computed(() => imageUrl.value !== "/no-image.jpg" && !preferences.value.legacyImageFit);
 
   const locationString = computed(
-    () => props.locationFlatTree.find(l => l.id === props.item.location?.id)?.treeString || props.item.location?.name
+    () => props.locationFlatTree.find(l => l.id === props.item.parent?.id)?.treeString || props.item.parent?.name
   );
 </script>
 

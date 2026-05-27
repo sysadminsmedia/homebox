@@ -4,7 +4,7 @@ import { useMagicKeys, useActiveElement } from "@vueuse/core";
 import type {
   BarcodeProduct,
   GroupInvitation,
-  ItemSummary,
+  EntitySummary,
   MaintenanceEntry,
   MaintenanceEntryWithDetails,
 } from "~~/lib/api/types/data-contracts";
@@ -12,8 +12,9 @@ import type {
 export enum DialogID {
   AttachmentEdit = "attachment-edit",
   ChangePassword = "changePassword",
-  CreateItem = "create-item",
-  CreateLocation = "create-location",
+  CreateApiKey = "create-api-key",
+  CreateApiKeyResult = "create-api-key-result",
+  CreateEntity = "create-entity",
   CreateTag = "create-tag",
   CreateCollection = "create-collection",
   CreateGroupInvite = "create-group-invite",
@@ -35,6 +36,8 @@ export enum DialogID {
   UpdateLocation = "update-location",
   UpdateTemplate = "update-template",
   ItemChangeDetails = "item-table-updater",
+  CreateEntityType = "create-entity-type",
+  UpdateEntityType = "update-entity-type",
   WipeInventory = "wipe-inventory",
 }
 
@@ -60,20 +63,20 @@ export type DialogParamsMap = {
     itemId: string;
     attachmentId: string;
   };
-  [DialogID.CreateItem]?: { product?: BarcodeProduct };
+  [DialogID.CreateEntity]: { baseType: "item"; product?: BarcodeProduct; subItem?: true } | { baseType: "location" };
   [DialogID.ProductImport]?: { barcode?: string };
   [DialogID.EditMaintenance]:
     | { type: "create"; itemId: string | string[] }
     | { type: "update"; maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails }
     | { type: "duplicate"; maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails; itemId: string };
   [DialogID.ItemChangeDetails]: {
-    items: ItemSummary[];
+    items: EntitySummary[];
     changeLocation?: boolean;
     addTags?: boolean;
     removeTags?: boolean;
   };
   [DialogID.CreateCollection]?: { redirectTo?: string };
-  [DialogID.JoinCollection]?: { redirectTo?: string };
+  [DialogID.JoinCollection]?: { redirectTo?: string; inviteCode?: string };
 };
 
 /**

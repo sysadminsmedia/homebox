@@ -38,7 +38,8 @@ Great for testing the application, but not recommended for production deployment
         ```bash
         # Run the container
         docker run -d --name homebox --restart unless-stopped \
-        --pupblish 3100:7745 --env HBOX_OPTIONS_ALLOW_ANALYTICS=false \
+        --publish 3100:7745 --env HBOX_OPTIONS_ALLOW_ANALYTICS=false \
+        --env HBOX_AUTH_API_KEY_PEPPER=some_random_string \
         --volume /path/to/data/folder:/data \
         ghcr.io/sysadminsmedia/homebox:latest
         ```
@@ -52,6 +53,7 @@ Great for testing the application, but not recommended for production deployment
         # Run the container
         docker run -d --name homebox --restart unless-stopped \
         --publish 3100:7745 --env HBOX_OPTIONS_ALLOW_ANALYTICS=false \
+        --env HBOX_AUTH_API_KEY_PEPPER=some_random_string \
         --volume /path/to/data/folder:/data \
         ghcr.io/sysadminsmedia/homebox:latest-rootless
         ```
@@ -65,6 +67,7 @@ Great for testing the application, but not recommended for production deployment
         # Run the container
         docker run -d --name homebox --restart unless-stopped \
         --publish 3100:7745 --env HBOX_OPTIONS_ALLOW_ANALYTICS=false \
+        --env HBOX_AUTH_API_KEY_PEPPER=some_random_string \
         --volume /path/to/data/folder:/data \
         ghcr.io/sysadminsmedia/homebox:latest-hardened
         ```
@@ -87,6 +90,8 @@ Great for testing the application, but not recommended for production deployment
                     - HBOX_WEB_MAX_UPLOAD_SIZE=10
                     # Please consider allowing analytics to help us improve Homebox (basic computer information, no personal data)
                     - HBOX_OPTIONS_ALLOW_ANALYTICS=false
+                    # Use a strong random string for the pepper in production, it will be used to hash API keys and make them more secure
+                    - HBOX_AUTH_API_KEY_PEPPER=some_random_string
                 volumes:
                     - homebox-data:/data/
                 ports:
@@ -109,6 +114,8 @@ Great for testing the application, but not recommended for production deployment
                     - HBOX_WEB_MAX_UPLOAD_SIZE=10
                     # Please consider allowing analytics to help us improve Homebox (basic computer information, no personal data)
                     - HBOX_OPTIONS_ALLOW_ANALYTICS=false
+                    # Use a strong random string for the pepper in production, it will be used to hash API keys and make them more secure
+                    - HBOX_AUTH_API_KEY_PEPPER=some_random_string
                 volumes:
                     - homebox-data:/data/
                 ports:
@@ -135,6 +142,8 @@ Great for testing the application, but not recommended for production deployment
                     - HBOX_WEB_MAX_UPLOAD_SIZE=10
                     # Please consider allowing analytics to help us improve Homebox (basic computer information, no personal data)
                     - HBOX_OPTIONS_ALLOW_ANALYTICS=false
+                    # Use a strong random string for the pepper in production, it will be used to hash API keys and make them more secure
+                    - HBOX_AUTH_API_KEY_PEPPER=some_random_string
                 volumes:
                     - homebox-data:/data/
                 ports:
@@ -164,6 +173,13 @@ Great for testing the application, but not recommended for production deployment
 
 ## Binaries
 We supply a wide range of binaries for different platforms and CPU architectures.
+
+> [!NOTE]
+> While we build and provide the binaries, we do not have the resources to test them on all platforms and architectures.
+> We highly recommend using the Docker images for production deployments, as they are tested and secure by default.
+>
+> Currently Linux is the primary platform we validate and test with. Because MacOS is extremely similar to Linux, we expect the binaries to work without issues, but we do not have Mac devices.
+> Windows is not a primary platform for us, but we do provide binaries for it as well. There have been known issues with Windows binaries due to the way Windows handles file permissions and other system features, so we **heavily recommend** using Docker on Windows.
 
 ### Windows
 1. Download the latest version from the [releases page](https://github.com/sysadminsmedia/homebox/releases).

@@ -1,5 +1,5 @@
 import type { Ref } from "vue";
-import type { LocationSummary, TreeItem } from "~~/lib/api/types/data-contracts";
+import type { EntitySummary, TreeItem } from "~~/lib/api/types/data-contracts";
 
 export interface FlatTreeItem {
   id: string;
@@ -55,7 +55,7 @@ function filterOutSubtree(tree: TreeItem[], excludeId: string): TreeItem[] {
   return result;
 }
 
-export function useFlatLocations(excludeSubtreeForLocation?: LocationSummary): Ref<FlatTreeItem[]> {
+export function useFlatLocations(excludeSubtreeForLocation?: EntitySummary): Ref<FlatTreeItem[]> {
   const locations = useLocationStore();
 
   if (locations.tree === null) {

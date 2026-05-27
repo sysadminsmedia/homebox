@@ -9,6 +9,7 @@ import (
 	"io"
 	"io/fs"
 	"net/http"
+	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -19,17 +20,17 @@ import (
 	"github.com/gen2brain/heic"
 	"github.com/gen2brain/jpegxl"
 	"github.com/gen2brain/webp"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
 	"github.com/zeebo/blake3"
+	"go.opentelemetry.io/otel"
 	"golang.org/x/image/draw"
-
-	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 
 	"gocloud.dev/blob"
 	_ "gocloud.dev/blob/azureblob"
@@ -83,6 +84,30 @@ type (
 	}
 )
 
+const MimeTypeLinkURL = "link/url"
+
+var externalLinkMimeTypes = []string{
+	MimeTypeLinkURL,
+}
+
+func MimeTypeForSourceType(sourceType string) (string, bool) {
+	switch sourceType {
+	case "link":
+		return MimeTypeLinkURL, true
+	default:
+		return "", false
+	}
+}
+
+func isExternalLink(mimeType string) bool {
+	for _, m := range externalLinkMimeTypes {
+		if m == mimeType {
+			return true
+		}
+	}
+	return false
+}
+
 func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
 	return ItemAttachment{
 		ID:        attachment.ID,
@@ -102,6 +127,111 @@ func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
 func normalizePath(path string) string {
 	path = strings.ReplaceAll(path, "\\", "/")
 	return strings.Trim(path, "/")
+}
+
+// legacyFlatPathToken is the gocloud fileblob escape sequence for a backslash
+// (0x5c). On Windows, pre-v0.22.1 attachment keys built with filepath.Join used
+// "\" as the path separator; fileblob escaped that to this token, so files were
+// stored as flat names at the bucket root. v0.22.1+ uses "/" so files now live
+// in real subdirectories.
+const legacyFlatPathToken = "__0x5c__"
+
+// bucketLocalDir returns the absolute on-disk directory backing the fileblob
+// bucket, or "" if the storage backend is not a file:// URL.
+func (r *AttachmentRepo) bucketLocalDir() (string, error) {
+	cs := r.storage.ConnString
+	if !strings.HasPrefix(cs, "file://") {
+		return "", nil
+	}
+	// Homebox-specific shortcut for "relative to cwd".
+	if strings.HasPrefix(cs, "file:///./") {
+		return filepath.Abs(strings.TrimPrefix(cs, "file:///./"))
+	}
+	raw := strings.TrimPrefix(cs, "file://")
+	if i := strings.IndexAny(raw, "?#"); i >= 0 {
+		raw = raw[:i]
+	}
+	// On Windows a file URL looks like file:///C:/foo, so strip the empty-host
+	// leading slash before treating the rest as a native path.
+	if runtime.GOOS == "windows" && len(raw) >= 3 && raw[0] == '/' && raw[2] == ':' {
+		raw = raw[1:]
+	}
+	return filepath.Abs(raw)
+}
+
+// MigrateLegacyFlatPaths renames attachment files written by older homebox
+// versions on Windows from a flat-escaped layout into a real subdirectory
+// layout. It is a no-op when the storage backend is not file:// or when no
+// matching files are found, so it is safe to run on every startup. Callers
+// should gate invocation on runtime.GOOS == "windows" since no other platform
+// can produce these files.
+func (r *AttachmentRepo) MigrateLegacyFlatPaths() error {
+	root, err := r.bucketLocalDir()
+	if err != nil {
+		return err
+	}
+	if root == "" {
+		return nil
+	}
+	info, err := os.Stat(root)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+	if !info.IsDir() {
+		return nil
+	}
+
+	entries, err := os.ReadDir(root)
+	if err != nil {
+		return fmt.Errorf("read bucket root %s: %w", root, err)
+	}
+
+	moved, skipped := 0, 0
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+		name := entry.Name()
+		if !strings.Contains(name, legacyFlatPathToken) {
+			continue
+		}
+
+		decoded := strings.ReplaceAll(name, legacyFlatPathToken, string(filepath.Separator))
+		oldPath := filepath.Join(root, name)
+		newPath := filepath.Join(root, decoded)
+
+		if _, statErr := os.Stat(newPath); statErr == nil {
+			log.Warn().Str("source", oldPath).Str("target", newPath).
+				Msg("legacy attachment migration: target already exists, leaving source in place")
+			skipped++
+			continue
+		} else if !os.IsNotExist(statErr) {
+			log.Err(statErr).Str("target", newPath).Msg("legacy attachment migration: failed to stat target")
+			skipped++
+			continue
+		}
+
+		if err := os.MkdirAll(filepath.Dir(newPath), 0o755); err != nil {
+			log.Err(err).Str("dir", filepath.Dir(newPath)).Msg("legacy attachment migration: failed to create parent directory")
+			skipped++
+			continue
+		}
+		if err := os.Rename(oldPath, newPath); err != nil {
+			log.Err(err).Str("source", oldPath).Str("target", newPath).Msg("legacy attachment migration: failed to rename file")
+			skipped++
+			continue
+		}
+		moved++
+	}
+
+	if moved > 0 || skipped > 0 {
+		log.Info().Int("moved", moved).Int("skipped", skipped).
+			Msg("migrated legacy flat-encoded attachment files")
+	}
+	return nil
 }
 
 func (r *AttachmentRepo) path(gid uuid.UUID, hash string) string {
@@ -162,6 +292,9 @@ func (r *AttachmentRepo) GetConnString() string {
 }
 
 func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemCreateAttachment, typ attachment.Type, primary bool) (*ent.Attachment, error) {
+	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.Create")
+	defer span.End()
+
 	tx, err := r.db.Tx(ctx)
 	if err != nil {
 		return nil, err
@@ -184,14 +317,14 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		SetCreatedAt(time.Now()).
 		SetUpdatedAt(time.Now()).
 		SetType(typ).
-		SetItemID(itemID).
+		SetEntityID(itemID).
 		SetTitle(doc.Title)
 
 	if typ == attachment.TypePhoto && primary {
 		bldr = bldr.SetPrimary(true)
 		err := r.db.Attachment.Update().
 			Where(
-				attachment.HasItemWith(item.ID(itemID)),
+				attachment.HasEntityWith(entity.ID(itemID)),
 				attachment.IDNEQ(bldrId),
 			).
 			SetPrimary(false).
@@ -209,7 +342,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		// that is of type photo
 		cnt, err := tx.Attachment.Query().
 			Where(
-				attachment.HasItemWith(item.ID(itemID)),
+				attachment.HasEntityWith(entity.ID(itemID)),
 				attachment.TypeEQ(typ),
 			).
 			Count(ctx)
@@ -228,7 +361,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	}
 
 	// Get the group ID for the item the attachment is being created for
-	itemGroup, err := tx.Item.Query().QueryGroup().Where(group.HasItemsWith(item.ID(itemID))).First(ctx)
+	itemGroup, err := tx.Entity.Query().QueryGroup().Where(group.HasEntitiesWith(entity.ID(itemID))).First(ctx)
 	if err != nil {
 		log.Err(err).Msg("failed to get item group")
 		err := tx.Rollback()
@@ -295,6 +428,32 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	return attachmentDb, nil
 }
 
+func (r *AttachmentRepo) CreateExternalLink(ctx context.Context, entityID uuid.UUID, externalID string, title string, mimeType string, attType attachment.Type) (*ent.Attachment, error) {
+	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.CreateExternalLink")
+	defer span.End()
+
+	if attType == "" {
+		attType = attachment.TypeAttachment
+	}
+
+	att, err := r.db.Attachment.Create().
+		SetID(uuid.New()).
+		SetCreatedAt(time.Now()).
+		SetUpdatedAt(time.Now()).
+		SetType(attType).
+		SetEntityID(entityID).
+		SetTitle(title).
+		SetPath(externalID).
+		SetMimeType(mimeType).
+		SetPrimary(false).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return att, nil
+}
+
 func (r *AttachmentRepo) Get(ctx context.Context, gid uuid.UUID, id uuid.UUID) (*ent.Attachment, error) {
 	first, err := r.db.Attachment.Query().Where(attachment.ID(id)).Only(ctx)
 	if err != nil {
@@ -305,9 +464,9 @@ func (r *AttachmentRepo) Get(ctx context.Context, gid uuid.UUID, id uuid.UUID) (
 		return r.db.Attachment.
 			Query().
 			Where(attachment.ID(id),
-				attachment.HasThumbnailWith(attachment.HasItemWith(item.HasGroupWith(group.ID(gid)))),
+				attachment.HasThumbnailWith(attachment.HasEntityWith(entity.HasGroupWith(group.ID(gid)))),
 			).
-			WithItem().
+			WithEntity().
 			WithThumbnail().
 			Only(ctx)
 	} else {
@@ -315,9 +474,9 @@ func (r *AttachmentRepo) Get(ctx context.Context, gid uuid.UUID, id uuid.UUID) (
 		return r.db.Attachment.
 			Query().
 			Where(attachment.ID(id),
-				attachment.HasItemWith(item.HasGroupWith(group.ID(gid))),
+				attachment.HasEntityWith(entity.HasGroupWith(group.ID(gid))),
 			).
-			WithItem().
+			WithEntity().
 			WithThumbnail().
 			Only(ctx)
 	}
@@ -328,7 +487,7 @@ func (r *AttachmentRepo) Update(ctx context.Context, gid uuid.UUID, id uuid.UUID
 	_, err := r.db.Attachment.Query().
 		Where(
 			attachment.ID(id),
-			attachment.HasItemWith(item.HasGroupWith(group.ID(gid))),
+			attachment.HasEntityWith(entity.HasGroupWith(group.ID(gid))),
 		).
 		Only(ctx)
 	if err != nil {
@@ -353,7 +512,7 @@ func (r *AttachmentRepo) Update(ctx context.Context, gid uuid.UUID, id uuid.UUID
 		return nil, err
 	}
 
-	attachmentItem, err := updatedAttachment.QueryItem().Only(ctx)
+	attachmentItem, err := updatedAttachment.QueryEntity().Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -362,7 +521,7 @@ func (r *AttachmentRepo) Update(ctx context.Context, gid uuid.UUID, id uuid.UUID
 	if typ == attachment.TypePhoto && data.Primary {
 		err = r.db.Attachment.Update().
 			Where(
-				attachment.HasItemWith(item.ID(attachmentItem.ID)),
+				attachment.HasEntityWith(entity.ID(attachmentItem.ID)),
 				attachment.IDNEQ(updatedAttachment.ID),
 				attachment.TypeEQ(attachment.TypePhoto),
 			).
@@ -377,15 +536,22 @@ func (r *AttachmentRepo) Update(ctx context.Context, gid uuid.UUID, id uuid.UUID
 }
 
 func (r *AttachmentRepo) Delete(ctx context.Context, gid uuid.UUID, id uuid.UUID) error {
+	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.Delete")
+	defer span.End()
+
 	// Validate that the attachment belongs to the specified group
 	doc, err := r.db.Attachment.Query().
 		Where(
 			attachment.ID(id),
-			attachment.HasItemWith(item.HasGroupWith(group.ID(gid))),
+			attachment.HasEntityWith(entity.HasGroupWith(group.ID(gid))),
 		).
 		Only(ctx)
 	if err != nil {
 		return err
+	}
+
+	if isExternalLink(doc.MimeType) {
+		return r.db.Attachment.DeleteOneID(id).Exec(ctx)
 	}
 
 	all, err := r.db.Attachment.Query().Where(attachment.Path(doc.Path)).All(ctx)
@@ -441,7 +607,7 @@ func (r *AttachmentRepo) Rename(ctx context.Context, gid uuid.UUID, id uuid.UUID
 	_, err := r.db.Attachment.Query().
 		Where(
 			attachment.ID(id),
-			attachment.HasItemWith(item.HasGroupWith(group.ID(gid))),
+			attachment.HasEntityWith(entity.HasGroupWith(group.ID(gid))),
 		).
 		Only(ctx)
 	if err != nil {
@@ -453,6 +619,9 @@ func (r *AttachmentRepo) Rename(ctx context.Context, gid uuid.UUID, id uuid.UUID
 
 //nolint:gocyclo
 func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmentId uuid.UUID, title string, path string) error {
+	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.CreateThumbnail")
+	defer span.End()
+
 	log.Debug().Msg("starting thumbnail creation")
 	tx, err := r.db.Tx(ctx)
 	if err != nil {
@@ -696,9 +865,12 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 }
 
 func (r *AttachmentRepo) CreateMissingThumbnails(ctx context.Context, groupId uuid.UUID) (int, error) {
+	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.CreateMissingThumbnails")
+	defer span.End()
+
 	attachments, err := r.db.Attachment.Query().
 		Where(
-			attachment.HasItemWith(item.HasGroupWith(group.ID(groupId))),
+			attachment.HasEntityWith(entity.HasGroupWith(group.ID(groupId))),
 			attachment.TypeNEQ("thumbnail"),
 		).
 		All(ctx)
@@ -751,6 +923,9 @@ type UploadResult struct {
 }
 
 func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, doc ItemCreateAttachment) (UploadResult, error) {
+	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.UploadFile")
+	defer span.End()
+
 	// Prepare for the hashing of the file contents
 	hashOut := make([]byte, 32)
 
@@ -849,24 +1024,35 @@ func calculateThumbnailDimensions(origWidth, origHeight, maxWidth, maxHeight int
 // processThumbnailFromImage handles the common thumbnail processing logic after image decoding
 // Returns the thumbnail file path or an error
 func (r *AttachmentRepo) processThumbnailFromImage(ctx context.Context, groupId uuid.UUID, img image.Image, title string, orientation uint16) (UploadResult, error) {
+	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.processThumbnailFromImage")
+	defer span.End()
+
 	bounds := img.Bounds()
+
+	_, exifSpan := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.processThumbnailFromImage.exif")
 	// Apply EXIF orientation if needed
 	if orientation > 1 {
 		img = utils.ApplyOrientation(img, orientation)
 		bounds = img.Bounds()
 	}
+	exifSpan.End()
+
+	_, resizeSpan := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.processThumbnailFromImage.resize")
 	newWidth, newHeight := calculateThumbnailDimensions(bounds.Dx(), bounds.Dy(), r.thumbnail.Width, r.thumbnail.Height)
 	dst := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
 	draw.CatmullRom.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
+	resizeSpan.End()
 
+	_, encodeSpan := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.processThumbnailFromImage.encode")
 	buf := new(bytes.Buffer)
 	err := webp.Encode(buf, dst, webp.Options{Quality: 80, Lossless: false})
 	if err != nil {
 		return UploadResult{}, err
 	}
 	contentBytes := buf.Bytes()
-	log.Debug().Msg("uploading thumbnail file")
+	encodeSpan.End()
 
+	log.Debug().Msg("uploading thumbnail file")
 	// Get the group for uploading the thumbnail
 	group, err := r.db.Group.Get(ctx, groupId)
 	if err != nil {

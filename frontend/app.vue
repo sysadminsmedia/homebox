@@ -24,4 +24,6 @@
   const { theme } = useTheme();
 
   const { locale } = useI18n();
+
+  useViewPreferencesSync();
 </script>

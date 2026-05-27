@@ -5,11 +5,21 @@ title: Quick Start
 import { Aside, Steps } from '@astrojs/starlight/components'
 
 <Aside type="note">
-If you're currently running the original version of Homebox (https://github.com/hay-kot/homebox) switching is easy, just follow the instructions in the Migration Guide to switch to the new version.
+If you're currently running the original version of Homebox (https://github.com/hay-kot/homebox) switching is easy, just use the `ghcr.io/sysadminsmedia/homebox:latest` image as a replacement for `ghcr.io/hay-kot/homebox:latest`.
 </Aside>
 
+## Prerequisites
+### Required
+- [ ] Server to host Homebox
+- [ ] Internet connection (for downloading Homebox and updates)
+- [ ] A web browser (Chrome, Firefox, Edge, Safari, etc.) to access the Homebox web interface
+- [ ] A port available on your server to run Homebox on
+### Optional
+- [ ] Docker (Highly recommended for ease of installation and updates, but not required if you prefer to run Homebox directly via binaries)
+
+## Quick Start Guide
 <Steps>
-1. Install Homebox either by using the latest Docker image, or by downloading the correct executable for your Operating System from the Releases. (See Installation for more details)
+1. Install Homebox either by using the latest Docker image, or by downloading the correct executable for your Operating System from the Releases. (See [Installation](/en/quick-start/install/) for more details)
 2. Browse to `http://<SERVER_IP>:3100` (if Using Docker) or `http://<SERVER_IP>:7745` (if installed locally) to access the included web User Interface.
 3. Register your first user.
 4. Login with the user you just created and start adding your locations and items!

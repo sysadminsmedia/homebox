@@ -1,4 +1,7 @@
-backend/internal/data/ent/** linguist-generated
-backend/internal/data/ent/schema/** -linguist-generated
-frontend/lib/api/types/** linguist-generated
-docs/** linguist-documentation
+backend/internal/data/ent/* linguist-generated=true -diff
+frontend/lib/api/types/* linguist-generated=true -diff
+docs/* linguist-documentation=true
+
+backend/internal/data/ent/schema/* linguist-generated=false
+
+.github/workflows/*.lock.yml linguist-generated=true merge=ours

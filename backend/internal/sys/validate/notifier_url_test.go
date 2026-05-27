@@ -1,10 +1,21 @@
 package validate
 
 import (
+	"net"
 	"testing"
 
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 )
+
+// Repeated fixture values used across many test cases.
+const (
+	cidrPrivate24       = "192.168.1.0/24"
+	urlGenericIPv6Local = "generic://http://[fd00::1]/webhook"
+	urlGenericIPv4Local = "generic://http://192.168.1.100/webhook"
+)
+
+// dns64DefaultNets mirrors the conf tag default for Dns64Nets.
+var dns64DefaultNets = []string{"64:ff9b::/96", "64:ff9b:1::/48"}
 
 func TestValidateNotifierURL(t *testing.T) {
 	tests := []struct {
@@ -24,6 +35,17 @@ func TestValidateNotifierURL(t *testing.T) {
 		{
 			name: "generic notifier with public IP passes",
 			url:  "generic://https://example.com/webhook",
+			config: config.NotifierConf{
+				BlockLocalhost:     true,
+				BlockLocalNets:     true,
+				BlockBogonNets:     true,
+				BlockCloudMetadata: true,
+			},
+			expectError: false,
+		},
+		{
+			name: "generic notifier shorthand host/path passes",
+			url:  "generic://example.com/webhook",
 			config: config.NotifierConf{
 				BlockLocalhost:     true,
 				BlockLocalNets:     true,
@@ -108,7 +130,7 @@ func TestValidateNotifierURL(t *testing.T) {
 			name: "allow list permits private IP",
 			url:  "generic://http://192.168.1.1/webhook",
 			config: config.NotifierConf{
-				AllowNets:      []string{"192.168.1.0/24"},
+				AllowNets:      []string{cidrPrivate24},
 				BlockLocalNets: true,
 			},
 			expectError: false,
@@ -117,7 +139,7 @@ func TestValidateNotifierURL(t *testing.T) {
 			name: "allow list blocks non-matching IP",
 			url:  "generic://http://10.0.0.1/webhook",
 			config: config.NotifierConf{
-				AllowNets: []string{"192.168.1.0/24"},
+				AllowNets: []string{cidrPrivate24},
 			},
 			expectError: true,
 		},
@@ -133,7 +155,7 @@ func TestValidateNotifierURL(t *testing.T) {
 			name: "block_nets blocks specific network",
 			url:  "generic://http://192.168.1.1/webhook",
 			config: config.NotifierConf{
-				BlockNets: []string{"192.168.1.0/24"},
+				BlockNets: []string{cidrPrivate24},
 			},
 			expectError: true,
 		},
@@ -141,7 +163,7 @@ func TestValidateNotifierURL(t *testing.T) {
 			name: "block_nets allows non-matching network",
 			url:  "generic://http://10.0.0.1/webhook",
 			config: config.NotifierConf{
-				BlockNets: []string{"192.168.1.0/24"},
+				BlockNets: []string{cidrPrivate24},
 			},
 			expectError: false,
 		},
@@ -165,8 +187,8 @@ func TestValidateNotifierURL(t *testing.T) {
 			name: "allow_nets takes precedence over block_nets",
 			url:  "generic://http://192.168.1.1/webhook",
 			config: config.NotifierConf{
-				AllowNets: []string{"192.168.1.0/24"},
-				BlockNets: []string{"192.168.1.0/24"},
+				AllowNets: []string{cidrPrivate24},
+				BlockNets: []string{cidrPrivate24},
 			},
 			expectError: false,
 		},
@@ -189,7 +211,7 @@ func TestValidateNotifierURL(t *testing.T) {
 		},
 		{
 			name: "ipv6_ula_blocked_by_bogon_nets",
-			url:  "generic://http://[fd00::1]/webhook",
+			url:  urlGenericIPv6Local,
 			config: config.NotifierConf{
 				BlockBogonNets: true,
 			},
@@ -197,7 +219,7 @@ func TestValidateNotifierURL(t *testing.T) {
 		},
 		{
 			name: "ipv6_ula_allowed_when_bogon_nets_not_blocked",
-			url:  "generic://http://[fd00::1]/webhook",
+			url:  urlGenericIPv6Local,
 			config: config.NotifierConf{
 				BlockBogonNets: false,
 			},
@@ -205,7 +227,7 @@ func TestValidateNotifierURL(t *testing.T) {
 		},
 		{
 			name: "ipv6_ula_allowed_via_allow_nets",
-			url:  "generic://http://[fd00::1]/webhook",
+			url:  urlGenericIPv6Local,
 			config: config.NotifierConf{
 				AllowNets:      []string{"fd00::/8"},
 				BlockBogonNets: true,
@@ -262,7 +284,7 @@ func TestValidateNotifierURL(t *testing.T) {
 		},
 		{
 			name: "ipv6_ula_blocked_by_local_nets",
-			url:  "generic://http://[fd00::1]/webhook",
+			url:  urlGenericIPv6Local,
 			config: config.NotifierConf{
 				BlockLocalNets: true,
 			},
@@ -270,10 +292,127 @@ func TestValidateNotifierURL(t *testing.T) {
 		},
 		{
 			name: "ipv6_ula_allowed_when_local_nets_not_blocked",
-			url:  "generic://http://[fd00::1]/webhook",
+			url:  urlGenericIPv6Local,
 			config: config.NotifierConf{
 				BlockLocalNets: false,
 			},
+			expectError: false,
+		},
+		// DNS64 test cases
+		{
+			name: "dns64_embedded_cloud_metadata_blocked",
+			url:  "generic://http://[64:ff9b::a9fe:a9fe]/webhook",
+			config: config.NotifierConf{
+				BlockCloudMetadata: true,
+				Dns64Nets:          dns64DefaultNets,
+			},
+			expectError: true,
+		},
+		{
+			name: "dns64_embedded_cloud_metadata_blocked_by_bogon",
+			url:  "generic://http://[64:ff9b::a9fe:a9fe]/webhook",
+			config: config.NotifierConf{
+				BlockBogonNets: true,
+				Dns64Nets:      dns64DefaultNets,
+			},
+			expectError: true,
+		},
+		{
+			name: "dns64_embedded_private_ip_blocked",
+			url:  "generic://http://[64:ff9b::c0a8:101]/webhook",
+			config: config.NotifierConf{
+				BlockLocalNets: true,
+				Dns64Nets:      dns64DefaultNets,
+			},
+			expectError: true,
+		},
+		{
+			name: "dns64_embedded_localhost_blocked",
+			url:  "generic://http://[64:ff9b::7f00:1]/webhook",
+			config: config.NotifierConf{
+				BlockLocalhost: true,
+				Dns64Nets:      dns64DefaultNets,
+			},
+			expectError: true,
+		},
+		{
+			name: "dns64_embedded_public_ip_passes",
+			url:  "generic://http://[64:ff9b::808:808]/webhook",
+			config: config.NotifierConf{
+				BlockLocalhost:     true,
+				BlockLocalNets:     true,
+				BlockBogonNets:     true,
+				BlockCloudMetadata: true,
+				Dns64Nets:          dns64DefaultNets,
+			},
+			expectError: false,
+		},
+		{
+			name: "dns64_local_use_prefix_embedded_metadata_blocked",
+			url:  "generic://http://[64:ff9b:1::a9fe:a9fe]/webhook",
+			config: config.NotifierConf{
+				BlockCloudMetadata: true,
+				Dns64Nets:          dns64DefaultNets,
+			},
+			expectError: true,
+		},
+		{
+			name: "dns64_local_use_deployment_specific_prefix_blocked",
+			url:  "generic://http://[64:ff9b:1:abcd::a9fe:a9fe]/webhook",
+			config: config.NotifierConf{
+				BlockCloudMetadata: true,
+				Dns64Nets:          dns64DefaultNets,
+			},
+			expectError: true,
+		},
+		{
+			name: "dns64_custom_prefix_embedded_metadata_blocked",
+			url:  "generic://http://[2001:db8:64::a9fe:a9fe]/webhook",
+			config: config.NotifierConf{
+				BlockCloudMetadata: true,
+				Dns64Nets:          []string{"2001:db8:64::/96"},
+			},
+			expectError: true,
+		},
+		{
+			name: "dns64_embedded_ip_checked_against_block_nets",
+			url:  "generic://http://[64:ff9b::c0a8:101]/webhook",
+			config: config.NotifierConf{
+				BlockNets: []string{cidrPrivate24},
+				Dns64Nets: dns64DefaultNets,
+			},
+			expectError: true,
+		},
+		{
+			name: "dns64_allow_nets_requires_embedded_ip_allowed",
+			url:  "generic://http://[64:ff9b::c0a8:101]/webhook",
+			config: config.NotifierConf{
+				AllowNets: []string{"64:ff9b::/96"},
+				Dns64Nets: dns64DefaultNets,
+			},
+			expectError: true,
+		},
+		{
+			name: "dns64_allow_nets_passes_when_prefix_and_embedded_ip_allowed",
+			url:  "generic://http://[64:ff9b::c0a8:101]/webhook",
+			config: config.NotifierConf{
+				AllowNets: []string{"64:ff9b::/96", cidrPrivate24},
+				Dns64Nets: dns64DefaultNets,
+			},
+			expectError: false,
+		},
+		{
+			name: "dns64_range_without_extractable_ipv4_fails_closed",
+			url:  "generic://http://[64:ff9b::a9fe:a9fe]/webhook",
+			config: config.NotifierConf{
+				Dns64Nets: []string{"64:ff9b::a9fe:a9fe/128"},
+			},
+			expectError: true,
+		},
+		{
+			name:        "dns64_checks_disabled_when_no_nets_configured",
+			url:         "generic://http://[64:ff9b::a9fe:a9fe]/webhook",
+			config:      config.NotifierConf{BlockCloudMetadata: true},
 			expectError: false,
 		},
 	}
@@ -329,6 +468,12 @@ func TestExtractGenericURL(t *testing.T) {
 			expectError: false,
 		},
 		{
+			name:        "generic:// shorthand defaults to https",
+			url:         "generic://example.com/webhook",
+			expected:    "https://example.com/webhook",
+			expectError: false,
+		},
+		{
 			name:        "generic+https://",
 			url:         "generic+https://example.com/webhook",
 			expected:    "https://example.com/webhook",
@@ -364,6 +509,43 @@ func TestExtractGenericURL(t *testing.T) {
 	}
 }
 
+func TestEmbeddedIPv4(t *testing.T) {
+	// Layout examples are taken from RFC 6052 section 2.4, all embedding 192.0.2.33.
+	const rfc6052Embedded = "192.0.2.33"
+	tests := []struct {
+		name      string
+		ip        string
+		prefixLen int
+		expected  string // empty means extraction must fail
+	}{
+		{"rfc6052_example_32", "2001:db8:c000:221::", 32, rfc6052Embedded},
+		{"rfc6052_example_40", "2001:db8:1c0:2:21::", 40, rfc6052Embedded},
+		{"rfc6052_example_48", "2001:db8:122:c000:2:2100::", 48, rfc6052Embedded},
+		{"rfc6052_example_56", "2001:db8:122:3c0:0:221::", 56, rfc6052Embedded},
+		{"rfc6052_example_64", "2001:db8:122:344:c0:2:2100::", 64, rfc6052Embedded},
+		{"rfc6052_example_96", "2001:db8:122:344::c000:221", 96, rfc6052Embedded},
+		{"well_known_prefix_96", "64:ff9b::a9fe:a9fe", 96, "169.254.169.254"},
+		{"nonzero_u_octet_rejected", "2001:db8:122:344:ffc0:2:2100::", 64, ""},
+		{"nonzero_suffix_rejected", "2001:db8:122:344:c0:2:2100:1", 64, ""},
+		{"unsupported_prefix_length", "64:ff9b::a9fe:a9fe", 128, ""},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := embeddedIPv4(net.ParseIP(tt.ip), tt.prefixLen)
+			if tt.expected == "" {
+				if result != nil {
+					t.Errorf("expected no extraction but got %v", result)
+				}
+				return
+			}
+			if result == nil || result.String() != tt.expected {
+				t.Errorf("expected %v but got %v", tt.expected, result)
+			}
+		})
+	}
+}
+
 func TestValidateNotifierURL_InvalidCIDR_AllowNets(t *testing.T) {
 	// Test with invalid CIDR in AllowNets - should skip invalid and check valid ones
 	tests := []struct {
@@ -375,11 +557,11 @@ func TestValidateNotifierURL_InvalidCIDR_AllowNets(t *testing.T) {
 	}{
 		{
 			name: "invalid CIDR in AllowNets is skipped",
-			url:  "generic://http://192.168.1.100/webhook",
+			url:  urlGenericIPv4Local,
 			config: config.NotifierConf{
 				AllowNets: []string{
-					"invalid-cidr",   // Invalid - should be logged and skipped
-					"192.168.1.0/24", // Valid - should match
+					"invalid-cidr", // Invalid - should be logged and skipped
+					cidrPrivate24,  // Valid - should match
 				},
 			},
 			expectError: false,
@@ -387,7 +569,7 @@ func TestValidateNotifierURL_InvalidCIDR_AllowNets(t *testing.T) {
 		},
 		{
 			name: "all CIDRs invalid in AllowNets",
-			url:  "generic://http://192.168.1.100/webhook",
+			url:  urlGenericIPv4Local,
 			config: config.NotifierConf{
 				AllowNets: []string{
 					"invalid-cidr-1",
@@ -437,7 +619,7 @@ func TestValidateNotifierURL_InvalidCIDR_BlockNets(t *testing.T) {
 	}{
 		{
 			name: "invalid CIDR in BlockNets is skipped",
-			url:  "generic://http://192.168.1.100/webhook",
+			url:  urlGenericIPv4Local,
 			config: config.NotifierConf{
 				BlockNets: []string{
 					"invalid-cidr", // Invalid - should be logged and skipped
@@ -449,11 +631,11 @@ func TestValidateNotifierURL_InvalidCIDR_BlockNets(t *testing.T) {
 		},
 		{
 			name: "invalid CIDR doesn't prevent valid blocking",
-			url:  "generic://http://192.168.1.100/webhook",
+			url:  urlGenericIPv4Local,
 			config: config.NotifierConf{
 				BlockNets: []string{
 					"not-a-cidr",
-					"192.168.1.0/24", // Valid - should block
+					cidrPrivate24, // Valid - should block
 					"also-invalid",
 				},
 			},
@@ -462,7 +644,7 @@ func TestValidateNotifierURL_InvalidCIDR_BlockNets(t *testing.T) {
 		},
 		{
 			name: "all CIDRs invalid in BlockNets",
-			url:  "generic://http://192.168.1.100/webhook",
+			url:  urlGenericIPv4Local,
 			config: config.NotifierConf{
 				BlockNets: []string{
 					"invalid-1",

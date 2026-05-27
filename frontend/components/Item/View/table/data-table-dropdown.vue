@@ -9,12 +9,13 @@
     DropdownMenuTrigger,
     DropdownMenuSeparator,
   } from "@/components/ui/dropdown-menu";
-  import type { ItemSummary } from "~/lib/api/types/data-contracts";
+  import type { EntitySummary } from "~/lib/api/types/data-contracts";
   import type { Column, Row, Table } from "@tanstack/vue-table";
   import { useI18n } from "vue-i18n";
   import { toast } from "~/components/ui/sonner";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
+  import { formatValueAsCsvField } from "~/lib/utils";
 
   const { t } = useI18n();
   const api = useUserApi();
@@ -23,13 +24,13 @@
   const { openDialog } = useDialog();
 
   const props = defineProps<{
-    item?: ItemSummary;
+    item?: EntitySummary;
     multi?: {
-      items: Row<ItemSummary>[];
-      columns: Column<ItemSummary>[];
+      items: Row<EntitySummary>[];
+      columns: Column<EntitySummary>[];
     };
     view: "table" | "card";
-    table: Table<ItemSummary>;
+    table: Table<EntitySummary>;
   }>();
 
   const emit = defineEmits<{
@@ -59,28 +60,16 @@
     items.forEach(item => window.open(`/item/${item}`, "_blank"));
   };
 
-  const escapeCsvField = (value: unknown): string => {
-    let str = String(value ?? "");
-    // Mitigate formula injection
-    if (/^[=+\-@]/.test(str)) {
-      str = "'" + str;
-    }
-    // Escape double quotes
-    str = str.replace(/"/g, '""');
-    // Wrap in double quotes
-    return `"${str}"`;
-  };
-
   const downloadCsv = (items: Row<ItemSummary>[], columns: Column<ItemSummary>[]) => {
     // get enabled columns
     const enabledColumns = columns.filter(c => c.id !== undefined && c.getIsVisible() && c.getCanHide()).map(c => c.id);
 
     // create CSV header (escaped)
-    const header = enabledColumns.map(escapeCsvField).join(",");
+    const header = enabledColumns.map(formatValueAsCsvField).join(",");
 
     // map each item to a row matching enabled columns order, escaping each field
     const rows = items.map(item =>
-      enabledColumns.map(col => escapeCsvField(item.original[col as keyof ItemSummary])).join(",")
+      enabledColumns.map(col => formatValueAsCsvField(item.original[col as keyof ItemSummary])).join(",")
     );
 
     const csv = [header, ...rows].join("\n");
@@ -94,7 +83,7 @@
     URL.revokeObjectURL(url);
   };
 
-  const downloadJson = (items: Row<ItemSummary>[], columns: Column<ItemSummary>[]) => {
+  const downloadJson = (items: Row<EntitySummary>[], columns: Column<EntitySummary>[]) => {
     // get enabled columns
     const enabledColumns = columns.filter(c => c.id !== undefined && c.getIsVisible() && c.getCanHide()).map(c => c.id);
 
@@ -102,7 +91,7 @@
     const data = items.map(item => {
       const obj: Record<string, unknown> = {};
       enabledColumns.forEach(col => {
-        obj[col] = item.original[col as keyof ItemSummary] ?? null;
+        obj[col] = item.original[col as keyof EntitySummary] ?? null;
       });
       return obj;
     });

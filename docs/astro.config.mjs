@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig, svgoOptimizer } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightThemeNova from 'starlight-theme-nova';
 import starlightChangelogs, { makeChangelogsSidebarLinks } from 'starlight-changelogs';
@@ -15,7 +15,7 @@ import tailwindcss from "@tailwindcss/vite";
 // @ts-ignore
 export default defineConfig({
     experimental: {
-        svgo: true,
+        svgOptimizer: svgoOptimizer(),
         contentIntellisense: true,
         clientPrerender: true,
         chromeDevtoolsWorkspace: true,
@@ -33,6 +33,12 @@ export default defineConfig({
     },
 
     site: 'https://homebox.software',
+    // Astro 6 no longer defaults `markdown.gfm`; @astrojs/mdx reads this value
+    // directly, so it must be set explicitly or GFM tables/strikethrough won't
+    // render in .mdx files.
+    markdown: {
+        gfm: true,
+    },
     integrations: [
         starlight({
             components: {
@@ -60,8 +66,9 @@ export default defineConfig({
                 starlightOpenAPI([
                     {
                         base: 'en/api',
-                        schema:
-                            'https://raw.githubusercontent.com/sysadminsmedia/homebox/refs/heads/main/docs/public/api/openapi-3.0.json',
+                        // Load the schema from this docs site so relative server URLs
+                        // (e.g. /api) resolve against the current host.
+                        schema: './public/api/openapi-3.0.json',
                     },
                 ]),
                 starlightSidebarTopics(
@@ -84,18 +91,18 @@ export default defineConfig({
                                         },
                                         {
                                             label: 'Configure',
-                                            autogenerate: { directory: 'quick-start/configure' },
+                                            items: [{ autogenerate: { directory: 'quick-start/configure' } }],
                                         },
                                     ],
                                 },
                                 {
                                     label: 'User Guide',
-                                    autogenerate: { directory: 'user-guide' },
+                                    items: [{ autogenerate: { directory: 'user-guide' } }],
                                 },
                                 {
                                     label: 'Advanced',
                                     collapsed: true,
-                                    autogenerate: { directory: 'advanced' },
+                                    items: [{ autogenerate: { directory: 'advanced', collapsed: true } }],
                                 },
                                 {
                                     label: 'Contributing',
@@ -119,15 +126,15 @@ export default defineConfig({
                                         },
                                         {
                                             label: 'Development',
-                                            autogenerate: { directory: 'contribute/development' },
+                                            items: [{ autogenerate: { directory: 'contribute/development', collapsed: true } }],
                                         },
                                         {
                                             label: 'Translations',
-                                            autogenerate: { directory: 'contribute/translate' },
+                                            items: [{ autogenerate: { directory: 'contribute/translate', collapsed: true } }],
                                         },
                                         {
                                             label: 'Documentation',
-                                            autogenerate: { directory: 'contribute/documentation' },
+                                            items: [{ autogenerate: { directory: 'contribute/documentation', collapsed: true } }],
                                         },
                                     ],
                                 },

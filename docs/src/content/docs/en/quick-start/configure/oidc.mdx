@@ -26,7 +26,7 @@ HomeBox supports OpenID Connect (OIDC) authentication, allowing users to log in 
 
 ## Advanced Configuration
 - **Group Authorization**: Use `HBOX_OIDC_ALLOWED_GROUPS` to restrict access to certain groups. (e.g. `HBOX_OIDC_ALLOWED_GROUPS=admins,developers`)
-    - Some providers require the `groups` scope to be enabled. Include it in `HBOX_OIDC_SCOPES` if necessary. (e.g. `HBOX_OIDC_SCOPES=openid profile email groups`)
+    - Some providers require the `groups` scope to be enabled. Include it in `HBOX_OIDC_SCOPE` if necessary. (e.g. `HBOX_OIDC_SCOPE=openid profile email groups`)
 - **Custom Claims**: Configure `HBOX_OIDC_GROUP_CLAIM`, `HBOX_OIDC_EMAIL_CLAIM` and `HBOX_OIDC_NAME_CLAIM` if your provider uses different claim names.
     - These default to `HBOX_OIDC_GROUP_CLAIM=groups`, `HBOX_OIDC_EMAIL_CLAIM=email` and `HBOX_OIDC_NAME_CLAIM=name`
 - **Auto Redirect to OIDC**: Set `HBOX_OIDC_AUTO_REDIRECT=true` to automatically redirect users to the OIDC provider for authentication.

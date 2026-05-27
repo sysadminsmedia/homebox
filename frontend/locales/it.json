@@ -11,6 +11,9 @@
         "invite_token_warning": "I token d'invito sono mostrati solo una volta. Copia il link adesso; non sarà possibile vedere di nuovo questo token dopo aver lasciato o ricaricato questa pagina.",
         "invites": "Inviti",
         "invites_delete_confirm": "Sei sicuro di voler cancellare questo invito?",
+        "leave_collection": "Esci dalla raccolta",
+        "leave_confirm": "Sei sicuro di voler uscire dalla raccolta?",
+        "left_collection": "Sei uscito dalla raccolta.",
         "manage_collection": "Gestisci Raccolta",
         "members": {
             "cannot_remove_last": "Non puoi rimuovere l'ultimo membro.",
@@ -32,6 +35,7 @@
         "no_invites": "Nessun Invito",
         "remaining_uses": "Utilizzi rimasti",
         "tabs": {
+            "entity_types": "Tipi di entità",
             "invites": "Inviti",
             "members": "Membri",
             "notifiers": "Notifiche",
@@ -88,14 +92,20 @@
                 "invites_should_look_like": "Gli inviti dovrebbero avere il seguente aspetto:",
                 "join": "Unisciti alla Raccolta",
                 "no_invite_code_create_one": "Non hai un codice invito? Crea una nuova raccolta",
-                "title": "Unisciti alla Raccolta"
+                "title": "Unisciti alla Raccolta",
+                "toast": {
+                    "already_joining": "Unione alla Raccolta già in corso",
+                    "join_failed": "Impossibile unire alla raccolta",
+                    "join_success": "Unione alla raccolta riuscita",
+                    "please_enter_valid_join_code": "Inserisci un codice di invito per una raccolta valido"
+                }
             },
             "selector": {
                 "collection_options": "Opzioni Raccolta",
                 "create_collection": "Crea Nuova Raccolta",
                 "join_collection": "Unisciti alla Raccolta Esistente",
                 "no_collection_found": "Nessuna raccolta trovata",
-                "search_collections": "Cerca Raccolte...",
+                "search_collections": "Cerca Raccolte…",
                 "select_collection": "Seleziona Raccolta",
                 "your_collections": "Le Tue Raccolte"
             }
@@ -108,12 +118,14 @@
             "randomize": "Colore casuale"
         },
         "form": {
+            "min_length": "min {min}",
             "password": {
                 "toggle_show": "Attiva/disattiva visualizzazione password"
             }
         },
         "global": {
             "copy_text": {
+                "continue": "Continua",
                 "documentation": "documentazione",
                 "failed_to_copy": "Impossibile copiare il testo negli appunti",
                 "https_required": "perché è richiesto HTTPS",
@@ -205,6 +217,7 @@
                 "error_exception": "Si è verificato un errore durante il recupero del codice a barre dell'articolo: ",
                 "error_invalid_barcode": "Il codice a barre fornito non è valido",
                 "error_not_found": "Nessun prodotto trovato con il codice a barre fornito.",
+                "import_selected": "Importa selezionati",
                 "search_item": "Cerca prodotto",
                 "title": "Importa prodotto"
             },
@@ -260,7 +273,7 @@
                     "page": "Pagina",
                     "quick_actions": "Abilita Selezione & Azioni Rapide",
                     "rows_per_page": "Righe per pagina",
-                    "selected_rows": "{selected} di {total} riga/righe selezionate.",
+                    "selected_rows": "{selected} di {total} righe selezionate.",
                     "table_settings": "Impostazioni Tabella",
                     "view_item": "Visualizzare articolo"
                 }
@@ -270,6 +283,7 @@
             "create_modal": {
                 "location_description": "Descrizione ubicazione",
                 "location_name": "Nome ubicazione",
+                "location_photo": "Foto Posizione",
                 "title": "Crea Posizione",
                 "toast": {
                     "already_creating": "Già in fase di creazione di una posizione",
@@ -285,18 +299,25 @@
                 "select_location": "Seleziona una posizione"
             },
             "tree": {
-                "no_locations": "Nessuna posizione disponibile. Aggiungi nuove posizioni mediante il pulsante '<span class=\"link-primary\">'Crea'</span>' nella barra di navigazione."
+                "no_locations": "Nessuna posizione disponibile. Usa il tasto Crea per aggiungere una nuova posizione."
             }
         },
         "quick_menu": {
             "no_results": "Non sono stati trovati risultati.",
             "shortcut_hint": "Utilizzare i tasti numerici per selezionare rapidamente un'azione."
         },
+        "search": {
+            "filter": {
+                "search_placeholder": "Cerca…"
+            }
+        },
         "tag": {
             "create_modal": {
                 "tag_color": "Colore Etichetta",
                 "tag_description": "Descrizione Etichetta",
+                "tag_icon": "Icona del Tag",
                 "tag_name": "Nome Etichetta",
+                "tag_parent": "Tag genitore",
                 "title": "Crea Etichetta",
                 "toast": {
                     "already_creating": "Creazione dell'etichetta già in corso",
@@ -306,6 +327,8 @@
                 }
             },
             "selector": {
+                "clear": "Pulisci",
+                "no_tags_found": "Nessun tag trovato",
                 "select_tags": "Seleziona Etichette"
             }
         },
@@ -344,14 +367,14 @@
                 "template_description": "Descrizione Template",
                 "template_name": "Nome Template"
             },
-            "hide_defaults": "Nascondi campi/valori di default",
+            "hide_defaults": "Nascondi le impostazioni predefinite",
             "save_as_template": "Salva come Template",
             "selector": {
                 "clear": "Rimuovi Selezione Template",
                 "label": "Template (Opzionale)",
                 "not_found": "Nessun template trovato",
-                "search": "Ricerca templates...",
-                "select": "Seleziona template..."
+                "search": "Ricerca templates…",
+                "select": "Seleziona template…"
             },
             "show_defaults": "Mostra predefiniti",
             "toast": {
@@ -378,6 +401,7 @@
         "archived": "Archiviato",
         "build": "Compila: { build }",
         "cancel": "Ignora",
+        "close": "Chiudi",
         "confirm": "Conferma",
         "create": "Crea",
         "create_and_add": "Crea e aggiungi un altro",
@@ -393,7 +417,7 @@
         "follow_dev": "Segui lo Sviluppatore",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Versione: { version } Build: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' Versione: { version } Build: { build } '</a>'"
         },
         "github": "Progetto GitHub",
         "insured": "Assicurato",
@@ -404,6 +428,7 @@
         "maintenance": "Manutenzione",
         "name": "Nome",
         "navigate": "Naviga",
+        "no": "No",
         "password": "Password",
         "preview": "Anteprima",
         "quantity": "Quantità",
@@ -411,31 +436,51 @@
         "return_home": "Ritorna alla Home",
         "save": "Salva",
         "search": "Cerca",
+        "select": "Seleziona...",
+        "show_less": "Mostra meno",
+        "show_more": "Mostra di più",
         "sign_out": "Disconnetti",
         "submit": "Invia",
+        "tags": "Tag",
+        "type": "Tipo",
         "unknown": "Sconosciuto",
         "update": "Aggiorna",
         "updating": "Aggiornamento",
         "value": "Valore",
         "version": "Versione: { version }",
-        "welcome": "Benvenuto, { username }"
+        "welcome": "Benvenuto, { username }",
+        "yes": "Sì"
     },
     "home": {
         "quick_statistics": "Statistiche rapide",
         "recently_added": "Aggiunti di recente",
         "storage_locations": "Ubicazioni di magazzino",
+        "tags": "Tag",
         "total_items": "Articoli totali",
         "total_locations": "Ubicazioni totali",
+        "total_tags": "Tag totali",
         "total_value": "Valore totale"
     },
     "index": {
+        "back_to_login": "Torna al login",
         "disabled_registration": "Registrazione Disabilitata",
         "dont_join_group": "Non vuoi unirti a un gruppo?",
+        "forgot_password": "Password dimenticata?",
+        "forgot_password_check_email": "Se quell'indirizzo email è associato ad un account, riceverai a breve un link per reimpostare la password. Il link scade tra un'ora.",
+        "forgot_password_send": "Invia link di reset",
+        "forgot_password_subtitle": "Inserisci l'indirizzo email associato al tuo account e ti invieremo un link per reimpostare la password.",
+        "forgot_password_title": "Reimposta la password",
         "joining_group": "Stai unendoti a un gruppo esistente!",
         "login": "Accedi",
         "or": "o",
         "register": "Registrati",
         "remember_me": "Ricordami",
+        "reset_password_invalid": "Questo link di ripristino non è valido o è scaduto. Richiedine uno nuovo.",
+        "reset_password_missing_token": "Token di ripristino mancante. Apri nuovamente il link presente nella tua email oppure richiedine uno nuovo.",
+        "reset_password_set": "Imposta una nuova password",
+        "reset_password_subtitle": "Scegli una nuova password per il tuo account.",
+        "reset_password_success": "La tua password è stata reimpostata. Accedi con la nuova password.",
+        "reset_password_title": "Reimposta la password",
         "set_email": "Qual è la tua email?",
         "set_name": "Come ti chiami?",
         "set_password": "Imposta la tua password",
@@ -497,6 +542,7 @@
             "view_image": "Visualizza Immagine"
         },
         "edit_details": "Modifica dettagli",
+        "field": "Campo",
         "field_selector": "Selezione in base ai campi",
         "field_value": "Campo valore",
         "first": "Primo",
@@ -511,6 +557,7 @@
         "manufacturer": "Marca",
         "model_number": "Numero modello",
         "name": "Nome",
+        "negate_tags": "Nega tag selezionati",
         "next_page": "Pagina Successiva",
         "no_attachments": "Nessun allegato trovato",
         "no_results": "Nessun Articolo Trovato",
@@ -535,8 +582,10 @@
         "reset_search": "Reimposta Ricerca",
         "results": "{ total } Risultati",
         "select_field": "Seleziona un campo",
+        "select_value": "Seleziona un valore",
         "serial_number": "Numero seriale",
         "show_advanced_view_options": "Mostra opzioni di visualizzazione avanzate",
+        "show_empty": "Mostra Vuoti",
         "sold_at": "Venduto il",
         "sold_details": "Dettagli di vendita",
         "sold_price": "Prezzo di vendita",
@@ -553,8 +602,8 @@
             "attachment_updated": "Allegato aggiornato",
             "attachment_uploaded": "Allegato caricato",
             "child_items_location_no_longer_synced": "Le posizioni degli elementi contenuti non saranno più sincronizzate con questo elemento.",
-            "child_items_location_synced": "Le posizioni degli elementi contenuti sono sincronizzate con questo elemento.",
-            "child_location_desync": "La modifica della posizione lo desincronizzerà dalla posizione dell'elemento che lo contiene.",
+            "child_items_location_synced": "Le posizioni degli elementi contenuti sono sincronizzate con questo elemento",
+            "child_location_desync": "La modifica della posizione lo desincronizzerà dalla posizione dell'elemento che lo contiene",
             "error_loading_parent_data": "Qualcosa e' andato storto durantre il caricamento dei dati dell'elemento padre",
             "failed_adjust_quantity": "Impossibile modificare la quantita'",
             "failed_delete_attachment": "Impossibile cancellare l'allegato",
@@ -616,12 +665,15 @@
     "languages.ro-RO": "Rumeno",
     "languages.sk-SK": "Slovacco",
     "languages.sq-AL": "Albanese",
+    "languages.sr-RS": "Serbo",
     "locations": {
         "child_locations": "Ubicazione figlia",
         "collapse_tree": "Contrai albero",
         "expand_tree": "Espandi albero",
+        "hide_items": "Nascondi oggetti",
         "location_items_delete_confirm": "Sei sicuro di voler eliminare questa posizione e tutti i relativi elementi? Questa azione non può essere annullata.",
         "no_results": "Nessuna posizione trovata",
+        "show_items": "Mostra oggetti",
         "toast": {
             "failed_delete_location": "Impossibile cancellare la posizione",
             "failed_load_location": "Impossibile caricare la posizione",
@@ -667,8 +719,10 @@
         "total_entries": "Voci totali"
     },
     "menu": {
+        "collection": "Collezione",
         "create_item": "Articolo / Asset",
         "create_location": "Ubicazione",
+        "create_tag": "Tag",
         "home": "Home",
         "locations": "Posizioni",
         "maintenance": "Manutenzione",
@@ -685,6 +739,22 @@
     },
     "profile": {
         "active": "Attivo",
+        "api_key_copied": "Copiata negli appunti",
+        "api_key_copy": "Copia",
+        "api_key_create": "Crea chiave API",
+        "api_key_created": "Creata",
+        "api_key_delete_confirm": "Sei sicuro di voler revocare questa chiave API? Tutti i client che la utilizzano perderanno immediatamente l'accesso.",
+        "api_key_expires_at": "Scade",
+        "api_key_last_used": "Usato",
+        "api_key_name": "Nome",
+        "api_key_name_placeholder": "es. Home Assistant",
+        "api_key_never_used": "Mai",
+        "api_key_no_expiration": "Nessuna scadenza",
+        "api_key_set_expiration": "Imposta una data di scadenza",
+        "api_key_token_label": "La tua nuova chiave API",
+        "api_key_token_warning": "Copia questo token ora. Per la tua sicurezza, non verrà più mostrato.",
+        "api_keys": "Chiavi API",
+        "api_keys_sub": "Token statici per l'accesso programmatico. Ogni chiave ha le stesse autorizzazioni del tuo account.",
         "change_password": "Cambia Password",
         "currency_format": "Formato Valuta",
         "current_password": "Password Corrente",
@@ -699,7 +769,15 @@
         "group_settings_sub": "Impostazioni Gruppo Condivise. Potrebbe essere necessario aggiornare il browser affinché alcune impostazioni vengano applicate.",
         "inactive": "Inattivo",
         "language": "Lingua",
+        "legacy_image_fit": "{ currentValue, select, true {Disabilita ridimensionamento legacy: Ridimensiona Immagine con Barre} false {Abilita ridimensionamento legacy: Riempi immagine con ritaglio} other {Not Hit}}",
+        "moved_notice_body": "Promemoria, inviti, e impostazioni della valuta sono state spostate nella pagina delle collezioni.",
+        "moved_notice_description": "Queste impostazioni ora sono gestite per collezione.",
+        "moved_notice_link_invites": "Inviti per collezioni",
+        "moved_notice_link_notifiers": "Promemoria collezione",
+        "moved_notice_link_settings": "Impostazioni valuta collezione",
+        "moved_notice_title": "Stai cercando promemoria, inviti e impostazioni valuta?",
         "new_password": "Nuova Password",
+        "no_api_keys": "Ancora nessuna chiave API",
         "no_notifiers": "Nessun notificatore configurato",
         "no_override": "Non sostituire",
         "notifier_modal": "{ type, select, true {Modifica} false {Crea} other {Altro}} Notifier",
@@ -711,6 +789,10 @@
         "theme_settings_sub": "Le impostazioni del tema sono memorizzate nella memoria locale del tuo browser. Puoi cambiare il tema \nin qualsiasi momento. Se hai problemi a impostare il tuo tema, prova a ricaricare la pagina.",
         "toast": {
             "account_deleted": "Il tuo account e' stato cancellato.",
+            "api_key_created": "Chiave API creata.",
+            "api_key_deleted": "Chiave API revocata.",
+            "failed_api_key_create": "Impossibile creare la chiave API.",
+            "failed_api_key_delete": "Impossibile revocare la chiave API.",
             "failed_change_password": "Impossibile cambiare password.",
             "failed_create_notifier": "Impossibile creare il promemoria.",
             "failed_delete_account": "Impossibile cancellare l'account.",
@@ -737,8 +819,8 @@
             "bordered_labels": "Etichette con bordo",
             "generate_page": "Genera Pagina",
             "input_placeholder": "Scrivi qui",
-            "instruction_1": "Il Generatore di Etichette di Homebox è uno strumento che ti aiuta a stampare le etichette per il tuo inventario Homebox. Sono pensate come etichette da\nstampare in anticipo, così potrai stamparne molte e averle pronte da applicare",
-            "instruction_2": "Queste etichette funzionano stampando un codice QR con un URL e le informazioni dell’AssetID sull’etichetta. Se hai disabilitato\n gli AssetID nelle impostazioni di Homebox, puoi comunque usare questo strumento, ma gli AssetID non faranno riferimento a nessun elemento",
+            "instruction_1": "Il Generatore di Etichette di HomeBox è uno strumento che ti aiuta a stampare le etichette per il tuo inventario HomeBox.\nSono pensate come etichette da stampare in anticipo, così potrai stamparne molte e averle pronte da applicare",
+            "instruction_2": "Queste etichette funzionano stampando un codice QR con un URL e le informazioni dell’AssetID sull’etichetta. Se hai disabilitato\n gli AssetID nelle impostazioni di HomeBox, puoi comunque usare questo strumento, ma gli AssetID non faranno riferimento a nessun elemento",
             "instruction_3": "Questa funzione è nelle fasi iniziali di sviluppo e potrebbe cambiare nelle versioni future. Se hai suggerimenti,\n ti invitiamo a condividerli nella '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">Discussione GitHub</a>'",
             "label_height": "Altezza dell'etichetta",
             "label_width": "Larghezza dell'etichetta",
@@ -749,10 +831,19 @@
             "page_right_padding": "Spaziatura Destra",
             "page_top_padding": "Spaziatura in alto",
             "page_width": "Larghezza pagina",
+            "print_location_row": "Stampa Posizione Riga",
             "qr_code_example": "Esempio di codice QR",
+            "replace_homebox_behavior": "Sostituisci comportamento testo \"HomeBox\"",
+            "replace_homebox_behavior_always_replace": "Sostituisci Sempre \"HomeBox\"",
+            "replace_homebox_behavior_item_no_location": "Sostituisci \"HomeBox\" quanto l'oggetto non ha posizione",
+            "replace_homebox_behavior_item_no_name": "Sostituisci \"HomeBox\" quando l'oggetto non ha nome",
+            "replace_homebox_behavior_item_no_name_no_location": "Sostituisci \"HomeBox\" quando l'oggetto non ha nome e posizione",
+            "replace_homebox_behavior_show_homebox": "Mostra \"HomeBox\"",
+            "replace_homebox_text": "Testo da sostituire",
+            "skip_first_labels": "Salta le Prime Etichette",
             "tip_1": "Le impostazioni predefinite qui sono configurate per i\n'<a href=\"https://www.avery.com/templates/5260\">'fogli di etichette ''Avery 5260 '</a>'. Se stai utilizzando un foglio differente,\n devi modificare le impostazioni affinchè corrispondano al tuo foglio.",
             "tip_2": "Se stai personalizzando il tuo foglio, le dimensioni sono espresse in pollici. Quando ho creato il foglio 5260, ho notato che le\n dimensioni indicate nel loro modello non corrispondevano a quelle necessarie per stampare correttamente all’interno dei riquadri.\n '<b>'Preparati a qualche tentativo ed errore.'</b>'",
-            "tip_3": "Quando stampi, assicurati di:\n<ol><li>Impostare i margini su 0 o Nessuno</li><li>Impostare la scala al 100%</li><li>Disattivare la stampa fronte/retro</li><li>Stampare una pagina di prova prima di stampare più pagine</li></ol>",
+            "tip_3": "When printing be sure to:\n '<ol><li>'Impostare i margini su 0 o Nessuno'</li><li>'Impostare la scala al 100%'</li><li>'Disattivare la stampa fronte/retro'</li><li>'Stampare una pagina di prova prima di stampare più pagine'</li></ol>'",
             "tips": "Suggerimenti",
             "title": "Generatore di etichette",
             "toast": {
@@ -770,6 +861,34 @@
         "select_video_source": "Scegli una fonte video",
         "title": "Scanner",
         "unsupported": "L'API del flusso multimediale non è supportata senza HTTPS"
+    },
+    "scanner_ar": {
+        "ar_mode": "Modalità RA",
+        "back": "Retro",
+        "child_items": "{count, plural, one {child item} other {child items}}",
+        "children": "{count, plural, one {sub-location} other {sub-locations}}",
+        "items": "{count, plural, one {item} other {items}}",
+        "items_in_location": "{count, plural, one {item} other {items}}",
+        "more": "altri",
+        "not_found": "Oggetto non trovato",
+        "qty": "Q.tà",
+        "retry": "Riprova",
+        "scanning": "Scansione",
+        "switch_camera": "Cambia fotocamera",
+        "title": "Scanner RA",
+        "unsupported": "La scansione RA non è supportata da questo browser"
+    },
+    "tags": {
+        "no_results": "Nessun Tag Trovato",
+        "tag_delete_confirm": "Sei sicuro di voler cancellare questo Tag? Questa azione non può essere annullata.",
+        "toast": {
+            "failed_delete_tag": "Cancellazione Tag non riuscita",
+            "failed_load_tag": "Caricamento tag non riuscito",
+            "failed_update_tag": "Aggiornamento tag non riuscito",
+            "tag_deleted": "Tag cancellato",
+            "tag_updated": "Tag aggiornato"
+        },
+        "update_tag": "Aggiorna Tag"
     },
     "tools": {
         "actions": "Azioni Inventario",
@@ -789,12 +908,43 @@
             "set_primary_photo_button": "Imposta immagine principale",
             "set_primary_photo_confirm": "Sei sicuro di voler impostare le foto principali? Questa operazione potrebbe richiedere tempo e non può essere annullata.",
             "set_primary_photo_sub": "Nella versione v0.10.0 di Homebox, il campo immagine principale è stato aggiunto agli allegati di tipo foto. Questa azione imposterà il campo immagine principale alla prima immagine nella matrice allegati nel database, se non è già impostato. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Vedi GitHub PR #576'</a>'",
+            "wipe_inventory": "Cancella Inventario",
+            "wipe_inventory_button": "Cancella Inventario",
+            "wipe_inventory_confirm": "Sei sicuro di voler cancellare l'intero inventario? Questo cancellerà tutti gli oggetti e non può essere annullato.",
+            "wipe_inventory_locations": "Cancella anche tutte le posizioni",
+            "wipe_inventory_maintenance": "Cancella anche tutti i registri di manutenzione",
+            "wipe_inventory_note": "Nota: Solo i proprietari del gruppo possono eseguire questa operazione.",
+            "wipe_inventory_sub": "Cancella in modo permanente tutti gli oggetti del tuo inventario. Questa azione è irreversibile e rimuoverà tutti i dati degli oggetti inclusi allegati e foto.",
+            "wipe_inventory_tags": "Cancella anche tutti i tag",
             "zero_datetimes": "Azzera Data e Orario articolo",
             "zero_datetimes_button": "Azzera Date e Ora articolo",
             "zero_datetimes_confirm": "Sei sicuro di voler reimpostare tutti i valori di data e ora? Questa operazione potrebbe richiedere tempo e non può essere annullata.",
             "zero_datetimes_sub": "Reimposta il valore dell'ora per tutti i campi data e ora dell'inventario all'inizio della data. Questo è per correggere un bug che è stato introdotto all'inizio dello sviluppo del sito che ha causato il valore di orario memorizzato con il tempo che ha causato problemi con i campi data visualizzazione dei valori esatti. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Vedi Github Issue #236 per maggiori dettagli.'</a>'"
         },
         "actions_sub": "Applica Azioni massive al tuo inventario. Questo sono azioni irreversibili. '<b>'Presta attenzione.'</b>'",
+        "backups": "Backup & Ripristino",
+        "backups_set": {
+            "create": "Crea backup",
+            "create_button": "Avvia backup",
+            "create_sub": "Crea un file zip contenente tutte le entità, i tag, i campi personalizzati, gli allegati e i record di manutenzione presenti in questa raccolta. Il processo viene eseguito in background; l'artefatto verrà visualizzato nella tabella sottostante al termine dell'operazione.",
+            "delete_confirm": "Eliminare questo artefatto di backup? Questa operazione non può essere annullata.",
+            "download": "Download",
+            "failed": "Backup non riuscito. Controllare i log del server per i dettagli.",
+            "list_empty": "Nessun backup ancora disponibile.",
+            "restore": "Ripristina da backup",
+            "restore_button": "Upload & Ripristino",
+            "restore_sub": "Carica un file zip di backup per popolare questa raccolta. La raccolta non deve ancora contenere elementi: le posizioni e i tag predefiniti vengono eliminati automaticamente durante il ripristino.",
+            "table": {
+                "actions": "Azioni",
+                "created": "Creato",
+                "size": "Dimensione",
+                "status": "Stato"
+            }
+        },
+        "backups_sub": "Esporta l'intera raccolta (entità, tag, allegati e metadati) in un archivio zip portatile. Ripristina un archivio in una raccolta vuota appena registrata su questo server o su un altro.",
+        "demo_mode_error": {
+            "wipe_inventory": "Inventario, tag, posizioni e registri di manutenzione non possono essere cancellati mentre Homebox è in modalità demo. Assicurati di non essere in modalità demo e riprova."
+        },
         "import_export": "Importa/Esporta",
         "import_export_set": {
             "export": "Esporta Inventario",
@@ -818,11 +968,19 @@
         "reports_sub": "Genera diversi report per il tuo inventario.",
         "toast": {
             "asset_success": "{ results } assets sono stati aggiornati.",
+            "backup_delete_failed": "Impossibile eliminare il backup.",
+            "backup_start_failed": "Impossibile avviare il backup.",
+            "backup_started": "Avvio del backup: verrà visualizzato nella tabella al termine del processo.",
             "failed_create_missing_thumbnails": "Impossibile creare le miniature mancanti.",
             "failed_ensure_ids": "Impossibile garantire gli ID degli asset.",
             "failed_ensure_import_refs": "Impossibile garantire i riferimenti di importazione.",
             "failed_set_primary_photos": "Impossibile configurare le foto pricipali.",
-            "failed_zero_datetimes": "Impossibile reimpostare i valori di data e ora."
+            "failed_wipe_inventory": "Cancellazione inventario fallita.",
+            "failed_zero_datetimes": "Impossibile reimpostare i valori di data e ora.",
+            "restore_failed": "Ripristino non riuscito.",
+            "restore_requires_empty": "Il ripristino richiede una raccolta senza elementi. Passa a una raccolta appena registrata (le posizioni e i tag predefiniti vanno bene) e riprova.",
+            "restore_started": "Ripristino avviato — aggiorna a breve per vedere gli elementi importati.",
+            "wipe_inventory_success": "Cancellazione inventario eseguita. { results } oggetti cancellati."
         }
     }
 }

@@ -1,0 +1,48 @@
+{
+    "collection": {
+        "copy_invite": "Plunder the Invite Link",
+        "create_invite": "Forge a Summons",
+        "delete_collection": "Scuttle the Hoard",
+        "delete_confirm": "Be ye certain ye want to scuttle this here collection, matey? Once 'tis sent to Davy Jones' locker, there be no bringin' it back!",
+        "deleted_collection": "The haul be scuttled.",
+        "expires_at": "Breathes its last",
+        "invite_token": "Mark",
+        "invite_token_hidden": "Lost to the horizon",
+        "invite_token_warning": "Invite marks be only shown but once, matey. Scrawl down the link now; ye'll not be layin' eyes on this here mark again after weighin' anchor or refreshin' this page.",
+        "invites": "Calls to Quarters",
+        "invites_delete_confirm": "Be ye certain ye want to scuttle this here invite, matey?",
+        "leave_collection": "Walk away from the Hoard",
+        "leave_confirm": "Are ye truly fixin' to walk away from this here hoard, ye scallywag?",
+        "left_collection": "Ye be partin' ways with the hoard.",
+        "manage_collection": "Captain the Hoard",
+        "members": {
+            "cannot_remove_last": "Ye can't maroon the final swabbie.",
+            "email": "Ghostly dispatch",
+            "empty": "Nary a soul in this here hoard yet, matey.",
+            "member": "Matey",
+            "name": "Moniker",
+            "owner": "The Big Fish",
+            "remove_confirm": "Be ye certain ye want to maroon this member, matey?",
+            "removed": "Crewman cast adrift",
+            "role": "Station"
+        },
+        "no_collections": {
+            "create": "Gather a new hoard",
+            "join": "Join a crew's hoard",
+            "message": "Ye be a lone wolf without a hoard, matey. Stake a claim on a new hoard for yer loot, or join a crew that's sent ye a summon.",
+            "title": "Nary a Hoard to be Seen"
+        },
+        "no_invites": "Nay summons",
+        "remaining_uses": "Remaining rations",
+        "tabs": {
+            "invites": "Summons",
+            "members": "Mateys",
+            "notifiers": "Signal Flags",
+            "settings": "Riggin'"
+        }
+    },
+    "languages": {
+        "en": "English"
+    },
+    "languages.en@pirate": "English (Pirate)"
+}

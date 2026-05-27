@@ -11,7 +11,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-API_URL    = 'https://restcountries.com/v3.1/all?fields=name,common,currencies'
+API_URL    = 'https://restcountries.com/v3.1/all?fields=name,currencies'
 # Default to a pinned commit for supply-chain security
 DEFAULT_ISO_4217_URL = 'https://raw.githubusercontent.com/datasets/currency-codes/refs/heads/main/data/codes-all.csv'
 ISO_4217_URL = os.environ.get('ISO_4217_URL', DEFAULT_ISO_4217_URL)
@@ -147,7 +147,11 @@ def fetch_currencies():
 
     results = []
     for country in countries:
-        country_name = country.get('name', {}).get('common') or "Unknown"
+        name_field = country.get('name', {})
+        if isinstance(name_field, dict):
+            country_name = name_field.get('common') or "Unknown"
+        else:
+            country_name = name_field or "Unknown"
         for code, info in country.get('currencies', {}).items():
             # Get decimal places using the helper function
             decimals = get_currency_decimals(code, iso_data)

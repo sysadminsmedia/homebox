@@ -7,10 +7,9 @@
     -->
     <ModalConfirm />
     <OutdatedModal v-if="status" :status="status" />
-    <ItemCreateModal />
+    <EntityCreateModal />
     <WipeInventoryDialog />
     <TagCreateModal />
-    <LocationCreateModal />
     <ItemBarcodeModal />
     <AppQuickMenuModal :actions="quickMenuActions" />
     <AppScannerModal />
@@ -49,7 +48,20 @@
                 v-for="btn in dropdown"
                 :key="btn.id"
                 class="group cursor-pointer text-lg"
-                @click="openDialog(btn.dialogId as NoParamDialogIDs)"
+                @click="
+                  () => {
+                    if (btn.dialogId === DialogID.CreateEntity) {
+                      if (btn.id == 0)
+                        // create item
+                        openDialog(btn.dialogId, { params: { baseType: 'item' } });
+                      else if (btn.id == 1)
+                        // create location
+                        openDialog(btn.dialogId, { params: { baseType: 'location' } });
+                    } else {
+                      openDialog(btn.dialogId as NoParamDialogIDs);
+                    }
+                  }
+                "
               >
                 {{ btn.name.value }}
                 <Shortcut
@@ -227,9 +239,11 @@
   import DOMPurify from "dompurify";
   import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
+  import { useEntityTypeStore } from "~~/stores/entityTypes";
 
   import MdiHome from "~icons/mdi/home";
   import MdiFileTree from "~icons/mdi/file-tree";
+  import MdiTagMultiple from "~icons/mdi/tag-multiple";
   import MdiMagnify from "~icons/mdi/magnify";
   import MdiQrcodeScan from "~icons/mdi/qrcode-scan";
   import MdiAccount from "~icons/mdi/account";
@@ -270,14 +284,12 @@
   import { Input } from "~/components/ui/input";
   import { Button } from "~/components/ui/button";
   import { toast } from "@/components/ui/sonner";
-  import { DialogID, type NoParamDialogIDs, type OptionalDialogIDs } from "~/components/ui/dialog-provider/utils";
+  import { DialogID, type NoParamDialogIDs } from "~/components/ui/dialog-provider/utils";
   import ModalConfirm from "~/components/ModalConfirm.vue";
   import OutdatedModal from "~/components/App/OutdatedModal.vue";
-  import ItemCreateModal from "~/components/Item/CreateModal.vue";
+  import EntityCreateModal from "~/components/Entity/CreateModal.vue";
   import WipeInventoryDialog from "~/components/WipeInventoryDialog.vue";
-
   import TagCreateModal from "~/components/Tag/CreateModal.vue";
-  import LocationCreateModal from "~/components/Location/CreateModal.vue";
   import ItemBarcodeModal from "~/components/Item/BarcodeModal.vue";
   import AppQuickMenuModal from "~/components/App/QuickMenuModal.vue";
   import AppScannerModal from "~/components/App/ScannerModal.vue";
@@ -346,7 +358,7 @@
     id: number;
     name: ComputedRef<string>;
     shortcut: string;
-    dialogId: NoParamDialogIDs | OptionalDialogIDs;
+    dialogId: DialogID;
   };
 
   const dropdown: DropdownItem[] = [
@@ -354,23 +366,24 @@
       id: 0,
       name: computed(() => t("menu.create_item")),
       shortcut: "Shift+1",
-      dialogId: DialogID.CreateItem,
+      dialogId: DialogID.CreateEntity,
     },
     {
       id: 1,
       name: computed(() => t("menu.create_location")),
-      shortcut: "Shift+3",
-      dialogId: DialogID.CreateLocation,
+      shortcut: "Shift+2",
+      dialogId: DialogID.CreateEntity,
     },
     {
       id: 2,
       name: computed(() => t("menu.create_tag")),
-      shortcut: "Shift+2",
+      shortcut: "Shift+3",
       dialogId: DialogID.CreateTag,
     },
   ];
 
   const route = useRoute();
+  const router = useRouter();
 
   const nav: {
     icon: Component;
@@ -400,36 +413,43 @@
       to: "/locations",
     },
     {
-      icon: MdiMagnify,
+      icon: MdiTagMultiple,
       id: 2,
+      active: computed(() => route.path === "/tags"),
+      name: computed(() => t("global.tags")),
+      to: "/tags",
+    },
+    {
+      icon: MdiMagnify,
+      id: 3,
       active: computed(() => route.path === "/items"),
       name: computed(() => t("menu.search")),
       to: "/items",
     },
     {
       icon: MdiFileDocumentMultiple,
-      id: 3,
+      id: 4,
       active: computed(() => route.path === "/templates"),
       name: computed(() => t("menu.templates")),
       to: "/templates",
     },
     {
       icon: MdiWrench,
-      id: 4,
+      id: 5,
       active: computed(() => route.path === "/maintenance"),
       name: computed(() => t("menu.maintenance")),
       to: "/maintenance",
     },
     {
       icon: MdiAccount,
-      id: 5,
+      id: 6,
       active: computed(() => route.path === "/profile"),
       name: computed(() => t("menu.profile")),
       to: "/profile",
     },
     {
       icon: MdiCog,
-      id: 6,
+      id: 7,
       active: computed(() => route.path.includes("/collection")),
       name: computed(() => t("menu.collection")),
       to: "/collection/members",
@@ -460,6 +480,12 @@
         },
         {
           id: 65,
+          active: computed(() => route.path === "/collection/entity-types"),
+          name: computed(() => t("collection.tabs.entity_types")),
+          to: "/collection/entity-types",
+        },
+        {
+          id: 66,
           active: computed(() => route.path === "/collection/tools"),
           name: computed(() => t("collection.tabs.tools")),
           to: "/collection/tools",
@@ -471,8 +497,9 @@
   const quickMenuActions = reactive([
     ...dropdown.map(v => ({
       text: computed(() => v.name.value),
-      dialogId: v.dialogId as NoParamDialogIDs,
+      dialogId: v.dialogId,
       shortcut: v.shortcut.split("+")[1] as string,
+      id: v.id,
       type: "create" as const,
     })),
     ...nav.map(v => ({
@@ -488,26 +515,39 @@
   const locationStore = useLocationStore();
   locationStore.ensureLocationsFetched();
 
+  const entityTypeStore = useEntityTypeStore();
+  entityTypeStore.ensureFetched();
+
   onMounted(() => {
     locationStore.refreshParents();
     locationStore.refreshTree();
+
+    // Auto-open JoinModal when invitation token is in URL
+    const token = route.query.token;
+    if (typeof token === "string" && token.length > 0) {
+      // Remove token from browser URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete("token");
+      window.history.replaceState(history.state, "", url.toString());
+
+      // Sync router's state to clear route.query.token
+      const { token: _, ...cleanQuery } = route.query;
+      router.replace({ query: cleanQuery });
+
+      openDialog(DialogID.JoinCollection, {
+        params: { inviteCode: token },
+      });
+    }
   });
 
   onServerEvent(ServerEvent.TagMutation, () => {
     tagStore.refresh();
   });
 
-  onServerEvent(ServerEvent.LocationMutation, () => {
+  onServerEvent(ServerEvent.EntityMutation, () => {
     locationStore.refreshChildren();
     locationStore.refreshParents();
     locationStore.refreshTree();
-  });
-
-  onServerEvent(ServerEvent.ItemMutation, () => {
-    // item mutations can affect locations counts
-    // so we need to refresh those as well
-    locationStore.refreshChildren();
-    locationStore.refreshParents();
   });
 
   const authCtx = useAuthContext();

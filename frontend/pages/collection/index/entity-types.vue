@@ -1,0 +1,270 @@
+<script setup lang="ts">
+  import { useI18n } from "vue-i18n";
+  import { toast } from "@/components/ui/sonner";
+  import type {
+    EntityTypeCreate,
+    EntityTypeSummary,
+    EntityTypeUpdate,
+    EntityTemplateSummary,
+  } from "~~/lib/api/types/data-contracts";
+  import MdiPlus from "~icons/mdi/plus";
+  import MdiPencil from "~icons/mdi/pencil";
+  import MdiDelete from "~icons/mdi/delete";
+  import MdiMapMarkerOutline from "~icons/mdi/map-marker-outline";
+  import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
+  import { Button } from "@/components/ui/button";
+  import { Badge } from "@/components/ui/badge";
+  import { Card } from "@/components/ui/card";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { useDialog } from "@/components/ui/dialog-provider";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormCheckbox from "~/components/Form/Checkbox.vue";
+  import TemplateSelector from "~/components/Template/Selector.vue";
+  import { useEntityTypeStore } from "~/stores/entityTypes";
+
+  const { t } = useI18n();
+
+  useHead({ title: `HomeBox | ${t("collection.tabs.entity_types")}` });
+
+  const api = useUserApi();
+  const confirm = useConfirm();
+  const { openDialog, closeDialog } = useDialog();
+  const entityTypeStore = useEntityTypeStore();
+
+  const entityTypes = computed(() => entityTypeStore.allTypes);
+
+  // Create form
+  const createForm = reactive({
+    name: "",
+    icon: "",
+    isLocation: false,
+  });
+  const createTemplate = ref<EntityTemplateSummary | null>(null);
+
+  function resetCreateForm() {
+    createForm.name = "";
+    createForm.icon = "";
+    createForm.isLocation = false;
+    createTemplate.value = null;
+  }
+
+  async function create() {
+    if (!createForm.name.trim()) {
+      toast.error(t("components.entityTypes.toasts.name_required"));
+      return;
+    }
+
+    const payload = {
+      name: createForm.name,
+      icon: createForm.icon,
+      isLocation: createForm.isLocation,
+      ...(createTemplate.value?.id ? { defaultTemplateId: createTemplate.value.id } : {}),
+    } as EntityTypeCreate;
+
+    const { error } = await api.entityTypes.create(payload);
+    if (error) {
+      toast.error(t("components.entityTypes.toasts.create_failed"));
+      return;
+    }
+
+    toast.success(t("components.entityTypes.toasts.create_success"));
+    resetCreateForm();
+    closeDialog(DialogID.CreateEntityType);
+    entityTypeStore.refresh();
+  }
+
+  // Update form
+  const updateForm = reactive({
+    id: "",
+    name: "",
+    icon: "",
+    isLocation: false,
+    originalIsItem: false,
+  });
+  const updateTemplate = ref<EntityTemplateSummary | null>(null);
+
+  function openEdit(et: EntityTypeSummary) {
+    updateForm.id = et.id;
+    updateForm.name = et.name;
+    updateForm.icon = et.icon;
+    updateForm.isLocation = et.isLocation;
+    updateForm.originalIsItem = !et.isLocation;
+    updateTemplate.value = et.defaultTemplate
+      ? ({
+          id: et.defaultTemplate.id,
+          name: et.defaultTemplate.name,
+          description: et.defaultTemplate.description,
+        } as EntityTemplateSummary)
+      : null;
+    openDialog(DialogID.UpdateEntityType);
+  }
+
+  async function update() {
+    if (!updateForm.name.trim()) {
+      toast.error(t("components.entityTypes.toasts.name_required"));
+      return;
+    }
+
+    const payload = {
+      id: updateForm.id,
+      name: updateForm.name,
+      icon: updateForm.icon,
+      isLocation: updateForm.isLocation,
+      ...(updateTemplate.value?.id ? { defaultTemplateId: updateTemplate.value.id } : {}),
+    } as EntityTypeUpdate;
+
+    if (updateForm.originalIsItem && updateForm.isLocation) {
+      const { isCanceled } = await confirm.open(t("components.entityTypes.confirm.convert_item_to_location"));
+      if (isCanceled) return;
+    }
+
+    const { error } = await api.entityTypes.update(updateForm.id, payload);
+    if (error) {
+      toast.error(t("components.entityTypes.toasts.update_failed"));
+      return;
+    }
+
+    toast.success(t("components.entityTypes.toasts.update_success"));
+    closeDialog(DialogID.UpdateEntityType);
+    entityTypeStore.refresh();
+  }
+
+  async function deleteEntityType(et: EntityTypeSummary) {
+    const { isCanceled } = await confirm.open(
+      t("components.entityTypes.confirm.delete_entity_type", { name: et.name })
+    );
+    if (isCanceled) return;
+
+    const { error } = await api.entityTypes.delete(et.id);
+    if (error) {
+      toast.error(t("components.entityTypes.toasts.delete_confirm_failed"));
+      return;
+    }
+
+    toast.success(t("components.entityTypes.toasts.delete_success"));
+    entityTypeStore.refresh();
+  }
+</script>
+
+<template>
+  <div>
+    <!-- Create Dialog -->
+    <Dialog :dialog-id="DialogID.CreateEntityType">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{{ t("components.entityTypes.create_dialog.title") }}</DialogTitle>
+        </DialogHeader>
+        <form class="flex flex-col gap-3" @submit.prevent="create">
+          <FormTextField
+            v-model="createForm.name"
+            :autofocus="true"
+            :label="t('components.entityTypes.create_dialog.name_label')"
+            :max-length="255"
+            :min-length="1"
+          />
+          <FormCheckbox
+            v-model="createForm.isLocation"
+            :label="t('components.entityTypes.create_dialog.is_container_location_type_label')"
+          />
+          <TemplateSelector v-if="!createForm.isLocation" v-model="createTemplate" />
+
+          <DialogFooter>
+            <Button type="submit">{{ t("components.entityTypes.create_dialog.button") }}</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+
+    <!-- Update Dialog -->
+    <Dialog :dialog-id="DialogID.UpdateEntityType">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{{ t("components.entityTypes.update_dialog.title") }}</DialogTitle>
+        </DialogHeader>
+        <form class="flex flex-col gap-3" @submit.prevent="update">
+          <FormTextField
+            v-model="updateForm.name"
+            :autofocus="true"
+            :label="t('components.entityTypes.update_dialog.name_label')"
+            :max-length="255"
+            :min-length="1"
+          />
+          <FormCheckbox
+            v-model="updateForm.isLocation"
+            :label="t('components.entityTypes.update_dialog.is_container_location_type_label')"
+          />
+          <TemplateSelector v-if="!updateForm.isLocation" v-model="updateTemplate" />
+
+          <DialogFooter>
+            <Button type="submit">{{ t("components.entityTypes.update_dialog.button") }}</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+
+    <!-- Page Content -->
+    <div class="mb-4 flex items-center justify-between">
+      <h3 class="text-lg font-medium">{{ t("components.entityTypes.page.title") }}</h3>
+      <Button size="sm" @click="openDialog(DialogID.CreateEntityType)">
+        <MdiPlus class="mr-1 size-4" />
+        {{ t("components.entityTypes.page.create") }}
+      </Button>
+    </div>
+
+    <div v-if="entityTypes && entityTypes.length > 0" class="flex flex-col gap-2">
+      <Card v-for="et in entityTypes" :key="et.id" class="p-4">
+        <div class="flex items-center gap-3">
+          <div
+            class="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground"
+          >
+            <MdiMapMarkerOutline v-if="et.isLocation" class="size-5" />
+            <MdiPackageVariantClosed v-else class="size-5" />
+          </div>
+
+          <div class="mr-auto min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="font-medium">{{ t(et.name) }}</span>
+              <Badge v-if="et.isLocation" variant="secondary" class="text-xs">
+                {{ t("components.entityTypes.card.badge_container") }}
+              </Badge>
+            </div>
+            <p v-if="et.defaultTemplate && !et.isLocation" class="text-xs text-muted-foreground">
+              {{ t("components.entityTypes.card.default_template", { name: et.defaultTemplate.name }) }}
+            </p>
+          </div>
+
+          <TooltipProvider :delay-duration="0">
+            <div class="flex gap-1">
+              <Tooltip>
+                <TooltipTrigger as-child>
+                  <Button variant="ghost" size="icon" class="size-8" @click="openEdit(et)">
+                    <MdiPencil class="size-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{{ t("components.entityTypes.card.tooltip.edit") }}</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger as-child>
+                  <Button variant="ghost" size="icon" class="size-8 text-destructive" @click="deleteEntityType(et)">
+                    <MdiDelete class="size-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{{ t("components.entityTypes.card.tooltip.delete") }}</TooltipContent>
+              </Tooltip>
+            </div>
+          </TooltipProvider>
+        </div>
+      </Card>
+    </div>
+
+    <div v-else class="flex flex-col items-center justify-center py-12 text-center">
+      <p class="mb-4 text-muted-foreground">{{ t("components.entityTypes.page.empty_title") }}</p>
+      <Button @click="openDialog(DialogID.CreateEntityType)">
+        <MdiPlus class="mr-2" />
+        {{ t("components.entityTypes.page.empty_button") }}
+      </Button>
+    </div>
+  </div>
+</template>

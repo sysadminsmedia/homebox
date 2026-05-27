@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
 	"github.com/pressly/goose/v3"
 )
 
@@ -13,13 +14,12 @@ func init() {
 }
 
 func Up20250112202302(ctx context.Context, tx *sql.Tx) error {
-	columnName := "sync_child_items_locations"
 	query := `
 		SELECT column_name 
 		FROM information_schema.columns
 		WHERE table_name = 'items' AND column_name = 'sync_child_items_locations';
 	`
-	err := tx.QueryRowContext(ctx, query).Scan(&columnName)
+	err := tx.QueryRowContext(ctx, query).Scan(new("sync_child_items_locations"))
 	if err != nil {
 		// Column does not exist, proceed with migration
 		_, err = tx.ExecContext(ctx, `

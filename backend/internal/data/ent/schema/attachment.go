@@ -32,7 +32,7 @@ func (Attachment) Fields() []ent.Field {
 // Edges of the Attachment.
 func (Attachment) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("item", Item.Type).
+		edge.From("entity", Entity.Type).
 			Ref("attachments").
 			Unique(),
 		edge.To("thumbnail", Attachment.Type).

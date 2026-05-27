@@ -14,6 +14,7 @@ import (
 	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 const (
@@ -101,28 +102,37 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 	})
 
 	return func(w http.ResponseWriter, r *http.Request) error {
-		// Extract provider query
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleAuthLogin")
+		defer span.End()
+
 		provider := r.URL.Query().Get("provider")
 		if provider == "" {
 			provider = "local"
 		}
+		span.SetAttributes(attribute.String("auth.provider", provider))
 
-		// Block local only when disabled
 		if provider == "local" && !ctrl.config.Options.AllowLocalLogin {
+			span.SetAttributes(attribute.String("auth.outcome", "local_disabled"))
 			return validate.NewRequestError(fmt.Errorf("local login is not enabled"), http.StatusForbidden)
 		}
 
-		// Get the provider
 		p, ok := providers[provider]
 		if !ok {
+			span.SetAttributes(attribute.String("auth.outcome", "unknown_provider"))
 			return validate.NewRequestError(errors.New("invalid auth provider"), http.StatusBadRequest)
 		}
 
-		newToken, err := p.Authenticate(w, r)
+		newToken, err := p.Authenticate(w, r.WithContext(spanCtx))
 		if err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("auth.outcome", "authenticate_failed"))
 			log.Warn().Err(err).Msg("authentication failed")
 			return validate.NewUnauthorizedError()
 		}
+		span.SetAttributes(
+			attribute.String("auth.outcome", "success"),
+			attribute.String("auth.session.expires_at", newToken.ExpiresAt.Format(time.RFC3339)),
+		)
 
 		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, true, newToken.AttachmentToken)
 		return server.JSON(w, http.StatusOK, TokenResponse{
@@ -130,6 +140,174 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 			ExpiresAt:       newToken.ExpiresAt,
 			AttachmentToken: newToken.AttachmentToken,
 		})
+	}
+}
+
+type (
+	ForgotPasswordRequest struct {
+		Email string `json:"email" validate:"required" example:"user@example.com"`
+	}
+
+	// ResetPasswordRequest carries the token from the email link and the new
+	// password. The constraints below feed the OpenAPI spec via swaggo and
+	// are also enforced by the handler so the spec doesn't over-promise.
+	//
+	// password min=6 matches the frontend's PASSWORD_MIN_LENGTH. No max:
+	// argon2id has no practical input limit, and the inbound body is already
+	// bounded by mid.MaxBodySize. Token min=20 fits the 26-char base32 output
+	// of hasher.GenerateToken with a little slack; it's spec-only since the
+	// lookup itself rejects anything that doesn't match a stored hash.
+	ResetPasswordRequest struct {
+		Token       string `json:"token"    validate:"required,min=20"`
+		NewPassword string `json:"password" validate:"required,min=6"`
+	}
+)
+
+// resetPasswordMinLength is enforced server-side to keep the OpenAPI spec
+// honest about its minLength constraint.
+const resetPasswordMinLength = 6
+
+// HandleForgotPassword godoc
+//
+//	@Summary		Request Password Reset
+//	@Description	Sends a password reset email if the address is associated with a local account.
+//	@Description	Always returns 204 on success to avoid leaking whether the email is registered.
+//	@Tags			Authentication
+//	@Accept			application/json
+//	@Produce		json
+//	@Param			payload	body	ForgotPasswordRequest	true	"Email"
+//	@Success		204
+//	@Failure		400	{string}	string	"missing or invalid request body, or empty email field"
+//	@Failure		403	{string}	string	"demo mode is enabled or local login is disabled"
+//	@Failure		500	{string}	string	"internal error while processing the request"
+//	@Router			/v1/users/forgot-password [POST]
+func (ctrl *V1Controller) HandleForgotPassword() errchain.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleForgotPassword")
+		defer span.End()
+
+		if ctrl.isDemo {
+			span.SetAttributes(attribute.String("forgot.outcome", "demo_blocked"))
+			return validate.NewRequestError(nil, http.StatusForbidden)
+		}
+
+		if !ctrl.config.Options.AllowLocalLogin {
+			span.SetAttributes(attribute.String("forgot.outcome", "local_login_disabled"))
+			return validate.NewRequestError(errors.New("local login is not enabled"), http.StatusForbidden)
+		}
+
+		var body ForgotPasswordRequest
+		if err := server.Decode(r, &body); err != nil {
+			span.SetAttributes(attribute.String("forgot.outcome", "decode_failed"))
+			return validate.NewRequestError(err, http.StatusBadRequest)
+		}
+		body.Email = strings.TrimSpace(body.Email)
+		span.SetAttributes(attribute.Int("user.email.length", len(body.Email)))
+		if body.Email == "" {
+			span.SetAttributes(attribute.String("forgot.outcome", "missing_email"))
+			return validate.NewRequestError(errors.New("email is required"), http.StatusBadRequest)
+		}
+
+		// SECURITY: The two configuration failures below (SMTP not ready,
+		// no safe base URL) MUST NOT be reported to the client. The whole
+		// point of the "always 204" response is that an unauthenticated
+		// caller can't probe the server for state — including configuration
+		// state. Returning 503 here would let an attacker fingerprint
+		// whether the instance has SMTP configured or what HBOX_OPTIONS_*
+		// values are set, which is reconnaissance info we deliberately
+		// withhold. Operators discover these via server logs instead.
+		if !ctrl.svc.User.MailerReady() {
+			span.SetAttributes(attribute.String("forgot.outcome", "mailer_not_configured"))
+			log.Warn().Msg("forgot-password requested but SMTP mailer is not configured; no email will be sent")
+			return server.JSON(w, http.StatusNoContent, nil)
+		}
+
+		// SecureBaseURL refuses Referer-based fallback so an attacker can't
+		// poison the link in the victim's email by sending a forged Referer.
+		baseURL := SecureBaseURL(r, &ctrl.config.Options)
+		if baseURL == "" {
+			span.SetAttributes(attribute.String("forgot.outcome", "no_safe_base_url"))
+			log.Warn().Msg("forgot-password requested but no safe base URL is available; set HBOX_OPTIONS_HOSTNAME to enable")
+			return server.JSON(w, http.StatusNoContent, nil)
+		}
+
+		if err := ctrl.svc.User.RequestPasswordReset(spanCtx, body.Email, baseURL); err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("forgot.outcome", "service_failed"))
+			log.Err(err).Msg("password reset request failed")
+			// Don't leak the underlying error to the client; respond with 500
+			// but no details.
+			return validate.NewRequestError(errors.New("internal error"), http.StatusInternalServerError)
+		}
+
+		span.SetAttributes(attribute.String("forgot.outcome", "ok"))
+		return server.JSON(w, http.StatusNoContent, nil)
+	}
+}
+
+// HandleResetPassword godoc
+//
+//	@Summary		Reset Password
+//	@Description	Consumes a single-use reset token and changes the user's password.
+//	@Description	On success, all existing sessions for the user are revoked.
+//	@Tags			Authentication
+//	@Accept			application/json
+//	@Produce		json
+//	@Param			payload	body	ResetPasswordRequest	true	"Token + new password"
+//	@Success		204
+//	@Failure		400	{string}	string	"invalid request body, password shorter than the minimum length, or token that is invalid / expired / already used"
+//	@Failure		403	{string}	string	"demo mode is enabled or local login is disabled"
+//	@Failure		500	{string}	string	"internal error while processing the request"
+//	@Router			/v1/users/reset-password [POST]
+func (ctrl *V1Controller) HandleResetPassword() errchain.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleResetPassword")
+		defer span.End()
+
+		if ctrl.isDemo {
+			span.SetAttributes(attribute.String("reset.outcome", "demo_blocked"))
+			return validate.NewRequestError(nil, http.StatusForbidden)
+		}
+
+		if !ctrl.config.Options.AllowLocalLogin {
+			span.SetAttributes(attribute.String("reset.outcome", "local_login_disabled"))
+			return validate.NewRequestError(errors.New("local login is not enabled"), http.StatusForbidden)
+		}
+
+		var body ResetPasswordRequest
+		if err := server.Decode(r, &body); err != nil {
+			span.SetAttributes(attribute.String("reset.outcome", "decode_failed"))
+			return validate.NewRequestError(err, http.StatusBadRequest)
+		}
+		span.SetAttributes(
+			attribute.Int("token.length", len(body.Token)),
+			attribute.Int("password.new.length", len(body.NewPassword)),
+		)
+
+		// Enforce the documented minimum so the OpenAPI spec's minLength on
+		// `password` is honored. Token bounds are spec-only (the hash lookup
+		// naturally rejects bad tokens), so we don't re-check them here.
+		if len(body.NewPassword) < resetPasswordMinLength {
+			span.SetAttributes(attribute.String("reset.outcome", "password_too_short"))
+			return validate.NewRequestError(
+				fmt.Errorf("password must be at least %d characters", resetPasswordMinLength),
+				http.StatusBadRequest,
+			)
+		}
+
+		if err := ctrl.svc.User.ResetPassword(spanCtx, body.Token, body.NewPassword); err != nil {
+			if errors.Is(err, services.ErrorPasswordResetInvalid) {
+				span.SetAttributes(attribute.String("reset.outcome", "token_invalid"))
+				return validate.NewRequestError(err, http.StatusBadRequest)
+			}
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("reset.outcome", "service_failed"))
+			log.Err(err).Msg("password reset failed")
+			return validate.NewRequestError(errors.New("internal error"), http.StatusInternalServerError)
+		}
+
+		span.SetAttributes(attribute.String("reset.outcome", "success"))
+		return server.JSON(w, http.StatusNoContent, nil)
 	}
 }
 
@@ -142,16 +320,34 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleAuthLogout() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		token := services.UseTokenCtx(r.Context())
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleAuthLogout")
+		defer span.End()
+
+		token := services.UseTokenCtx(spanCtx)
 		if token == "" {
+			span.SetAttributes(attribute.String("logout.outcome", "no_token"))
 			return validate.NewRequestError(errors.New("no token within request context"), http.StatusUnauthorized)
 		}
 
-		err := ctrl.svc.User.Logout(r.Context(), token)
+		// API keys are not session tokens — they live in their own table and
+		// are managed from the profile page. Returning 204 here would silently
+		// delete zero rows from auth_tokens and mislead the caller.
+		if services.IsAPIKeyAuth(spanCtx) {
+			span.SetAttributes(attribute.String("logout.outcome", "api_key_rejected"))
+			return validate.NewRequestError(
+				errors.New("API keys cannot be logged out; revoke them from the API keys page"),
+				http.StatusBadRequest,
+			)
+		}
+
+		err := ctrl.svc.User.Logout(spanCtx, token)
 		if err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("logout.outcome", "delete_failed"))
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
+		span.SetAttributes(attribute.String("logout.outcome", "success"))
 		ctrl.unsetCookies(w, noPort(r.Host))
 		return server.JSON(w, http.StatusNoContent, nil)
 	}
@@ -168,16 +364,37 @@ func (ctrl *V1Controller) HandleAuthLogout() errchain.HandlerFunc {
 //	@Security		Bearer
 func (ctrl *V1Controller) HandleAuthRefresh() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		requestToken := services.UseTokenCtx(r.Context())
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleAuthRefresh")
+		defer span.End()
+
+		requestToken := services.UseTokenCtx(spanCtx)
 		if requestToken == "" {
+			span.SetAttributes(attribute.String("refresh.outcome", "no_token"))
 			return validate.NewRequestError(errors.New("no token within request context"), http.StatusUnauthorized)
 		}
 
-		newToken, err := ctrl.svc.User.RenewToken(r.Context(), requestToken)
+		// API keys are long-lived and don't go through the session refresh
+		// flow. Reject the request with a clear error rather than the generic
+		// 401 RenewToken would otherwise produce.
+		if services.IsAPIKeyAuth(spanCtx) {
+			span.SetAttributes(attribute.String("refresh.outcome", "api_key_rejected"))
+			return validate.NewRequestError(
+				errors.New("API keys do not require refresh"),
+				http.StatusBadRequest,
+			)
+		}
+
+		newToken, err := ctrl.svc.User.RenewToken(spanCtx, requestToken)
 		if err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("refresh.outcome", "renew_failed"))
 			return validate.NewUnauthorizedError()
 		}
 
+		span.SetAttributes(
+			attribute.String("refresh.outcome", "success"),
+			attribute.String("refresh.expires_at", newToken.ExpiresAt.Format(time.RFC3339)),
+		)
 		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, false, newToken.AttachmentToken)
 		return server.JSON(w, http.StatusOK, newToken)
 	}
@@ -295,19 +512,27 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 //	@Router		/v1/users/login/oidc [GET]
 func (ctrl *V1Controller) HandleOIDCLogin() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		// Forbidden if OIDC is not enabled
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleOIDCLogin")
+		defer span.End()
+
 		if !ctrl.config.OIDC.Enabled {
+			span.SetAttributes(attribute.String("oidc.outcome", "disabled"))
 			return validate.NewRequestError(fmt.Errorf("OIDC is not enabled"), http.StatusForbidden)
 		}
 
-		// Check if OIDC provider is available
 		if ctrl.oidcProvider == nil {
+			span.SetAttributes(attribute.String("oidc.outcome", "provider_unavailable"))
 			log.Error().Msg("OIDC provider not initialized")
 			return validate.NewRequestError(errors.New("OIDC provider not available"), http.StatusInternalServerError)
 		}
 
-		// Initiate OIDC flow
-		_, err := ctrl.oidcProvider.InitiateOIDCFlow(w, r)
+		_, err := ctrl.oidcProvider.InitiateOIDCFlow(w, r.WithContext(spanCtx))
+		if err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("oidc.outcome", "initiate_failed"))
+		} else {
+			span.SetAttributes(attribute.String("oidc.outcome", "initiated"))
+		}
 		return err
 	}
 }
@@ -322,26 +547,36 @@ func (ctrl *V1Controller) HandleOIDCLogin() errchain.HandlerFunc {
 //	@Router		/v1/users/login/oidc/callback [GET]
 func (ctrl *V1Controller) HandleOIDCCallback() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		// Forbidden if OIDC is not enabled
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleOIDCCallback",
+			attribute.Bool("oidc.has_code", r.URL.Query().Get("code") != ""),
+			attribute.Bool("oidc.has_state", r.URL.Query().Get("state") != ""),
+		)
+		defer span.End()
+
 		if !ctrl.config.OIDC.Enabled {
+			span.SetAttributes(attribute.String("oidc.outcome", "disabled"))
 			return validate.NewRequestError(fmt.Errorf("OIDC is not enabled"), http.StatusForbidden)
 		}
 
-		// Check if OIDC provider is available
 		if ctrl.oidcProvider == nil {
+			span.SetAttributes(attribute.String("oidc.outcome", "provider_unavailable"))
 			log.Error().Msg("OIDC provider not initialized")
 			return validate.NewRequestError(errors.New("OIDC provider not available"), http.StatusInternalServerError)
 		}
 
-		// Handle callback
-		newToken, err := ctrl.oidcProvider.HandleCallback(w, r)
+		newToken, err := ctrl.oidcProvider.HandleCallback(w, r.WithContext(spanCtx))
 		if err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("oidc.outcome", "callback_failed"))
 			log.Err(err).Msg("OIDC callback failed")
 			http.Redirect(w, r, "/?oidc_error=oidc_auth_failed", http.StatusFound)
 			return nil
 		}
 
-		// Set cookies and redirect to home
+		span.SetAttributes(
+			attribute.String("oidc.outcome", "success"),
+			attribute.String("session.expires_at", newToken.ExpiresAt.Format(time.RFC3339)),
+		)
 		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, true, newToken.AttachmentToken)
 		http.Redirect(w, r, "/home", http.StatusFound)
 		return nil

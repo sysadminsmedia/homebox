@@ -1,6 +1,7 @@
 @layer base, starlight, nova, theme, components, utilities;
 
 @import '@astrojs/starlight-tailwind';
+@import 'starlight-theme-nova/tailwind.css';
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
 
@@ -90,7 +91,8 @@
 
 /* LIGHT MODE - STARLIGHT OVERRIDES (Header should be dark (secondary color) in light mode) */
 
-:root {
+:root,
+:root[data-theme='light'] {
   --sl-color-bg-nav: hsl(77 8% 17%);
 }
 
@@ -240,20 +242,33 @@ astro-theme-toggle {
   --sl-color-bg-nav: hsl(75 14% 8%);
   --sl-color-bg-sidebar: hsl(75 14% 8%);
   --sl-color-bg-inline-code: hsl(75 14% 18%);
-  
+
   --sl-color-hairline: hsl(75 10% 22%);
   --sl-color-hairline-light: hsl(75 10% 18%);
   --sl-color-hairline-shade: hsl(75 10% 15%);
-  
+
   --sl-color-text: hsl(60 20% 95%);
   --sl-color-text-accent: hsl(139 25% 70%);
-  
+
   --sl-color-white: hsl(60 20% 95%);
   --sl-color-black: hsl(75 14% 8%);
-  
+
   --sl-color-accent-low: hsl(139 20% 18%);
   --sl-color-accent: hsl(139 25% 55%);
   --sl-color-accent-high: hsl(139 30% 80%);
+
+  /* Starlight gray scale. We can't inherit Nova's defaults because Nova maps
+     these from --color-gray-*, and our --color-gray-* is inverted in dark mode
+     to keep Tailwind utility classes semantically consistent (e.g., bg-gray-200
+     stays "subtle" in both themes). Setting these explicitly restores
+     Starlight's expected scale (gray-1 = text, gray-6/7 = subtle bg). */
+  --sl-color-gray-1: hsl(60 20% 95%);
+  --sl-color-gray-2: hsl(70 6% 85%);
+  --sl-color-gray-3: hsl(72 5% 65%);
+  --sl-color-gray-4: hsl(75 6% 45%);
+  --sl-color-gray-5: hsl(75 10% 21%);
+  --sl-color-gray-6: hsl(75 14% 14%);
+  --sl-color-gray-7: hsl(75 18% 10%);
 }
 
 /* DARK MODE - SIDEBAR */
@@ -370,51 +385,41 @@ astro-theme-toggle {
 /* DARK MODE - Changelog */
 
 :root[data-theme="dark"] .sl-changelogs-version-list-icon {
-  color: var(--sl-color-gray-6) !important;
+  color: var(--sl-color-gray-2) !important;
 }
 
 :root[data-theme="dark"] starlight-changelogs-versions-list > form > input {
   background-color: hsl(75 14% 10%) !important;
 }
 :root[data-theme="dark"] starlight-changelogs-versions-list > form > input::placeholder {
-  color: var(--sl-color-gray-5) !important;
+  color: var(--sl-color-gray-3) !important;
 }
 
 /* DARK MODE - Pagination Links */
 :root[data-theme="dark"] .nova-pagination-link {
-  color: var(--sl-color-gray-6);
+  color: var(--sl-color-gray-2);
 }
 
 /* DARK MODE - File Tree */
-:root[data-theme="dark"] starlight-file-tree{
-  background: var(--sl-color-gray-1);
-  border: 1px solid var(--sl-color-gray-1);
+:root[data-theme="dark"] starlight-file-tree {
+  background: var(--sl-color-gray-6);
+  border: 1px solid var(--sl-color-gray-5);
 }
 
 /* DARK MODE - API DOCS */
-:root[data-theme="dark"] div.panel {
-  background-color: var(--sl-color-gray-1);
-  border: 1px solid var(--sl-color-gray-1);
-}
-
-:root[data-theme="dark"] div > details > summary, :root[data-theme="dark"]  details ul li input {
-  background-color: var(--sl-color-gray-1);
-  color: var(--sl-color-gray-6);
-}
-
 :root[data-theme="dark"] .required {
   color: var(--color-red-300);
 }
 
 /* DARK MODE - Search */
 :root[data-theme="dark"] #starlight__search .pagefind-ui__result-excerpt {
-  color: var(--sl-color-gray-6);
+  color: var(--sl-color-gray-2);
 }
 
 :root[data-theme="dark"] .pagefind-ui__message {
-  color: var(--sl-color-gray-6);
+  color: var(--sl-color-gray-2);
 }
 
 :root[data-theme="dark"] #starlight__search .pagefind-ui__search-input::placeholder {
-  color: var(--sl-color-gray-6);
+  color: var(--sl-color-gray-2);
 }

@@ -34,7 +34,19 @@ func (svc *GroupService) CreateGroup(ctx Context, name string) (repo.Group, erro
 		return repo.Group{}, errors.New("user ID cannot be empty when creating a group")
 	}
 
-	return svc.repos.Groups.GroupCreate(ctx.Context, name, ctx.UID)
+	group, err := svc.repos.Groups.GroupCreate(ctx.Context, name, ctx.UID)
+	if err != nil {
+		return repo.Group{}, err
+	}
+
+	// Unlike registration, this path doesn't seed default locations/tags, so
+	// nothing would lazily create the entity types — leaving the collection
+	// unable to create items or locations until a type was added by hand.
+	if err := ensureDefaultEntityTypes(ctx.Context, svc.repos, group.ID); err != nil {
+		return repo.Group{}, err
+	}
+
+	return group, nil
 }
 
 func (svc *GroupService) DeleteGroup(ctx Context) error {
@@ -56,20 +68,38 @@ func (svc *GroupService) NewInvitation(ctx Context, uses int, expiresAt time.Tim
 	return invitation, token.Raw, nil
 }
 
-func (svc *GroupService) AddMember(ctx Context, userID uuid.UUID) error {
-	if userID == uuid.Nil {
-		return errors.New("user ID cannot be empty")
-	}
-
-	return svc.repos.Groups.AddMember(ctx.Context, ctx.GID, userID)
-}
-
 func (svc *GroupService) RemoveMember(ctx Context, userID uuid.UUID) error {
 	if userID == uuid.Nil {
 		return errors.New("user ID cannot be empty")
 	}
 
-	return svc.repos.Groups.RemoveMember(ctx.Context, ctx.GID, userID)
+	err := svc.repos.Groups.RemoveMember(ctx.Context, ctx.GID, userID)
+	if err != nil {
+		return err
+	}
+
+	// If the removed group was the user's default group, reassign to another group
+	removedUser, err := svc.repos.Users.GetOneID(ctx.Context, userID)
+	if err != nil {
+		return err
+	}
+
+	if removedUser.DefaultGroupID == ctx.GID {
+		// Find another group the user is still a member of
+		var newDefaultGroupID uuid.UUID
+		for _, gid := range removedUser.GroupIDs {
+			if gid != ctx.GID {
+				newDefaultGroupID = gid
+				break
+			}
+		}
+		// Update to another group, or uuid.Nil if the user has no remaining groups
+		if err := svc.repos.Users.UpdateDefaultGroup(ctx.Context, userID, newDefaultGroupID); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (svc *GroupService) DeleteInvitation(ctx Context, id uuid.UUID) error {
