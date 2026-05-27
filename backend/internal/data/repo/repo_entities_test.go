@@ -445,11 +445,11 @@ func TestEntityRepository_Patch_RejectsParentCycles(t *testing.T) {
 
 	err = tRepos.Entities.Patch(ctx, tGroup.ID, parent.ID, EntityPatch{ParentID: parent.ID})
 	require.Error(t, err)
-	assert.ErrorIs(t, err, ErrEntityParentCycle)
+	require.ErrorIs(t, err, ErrEntityParentCycle)
 
 	err = tRepos.Entities.Patch(ctx, tGroup.ID, parent.ID, EntityPatch{ParentID: child.ID})
 	require.Error(t, err)
-	assert.ErrorIs(t, err, ErrEntityParentCycle)
+	require.ErrorIs(t, err, ErrEntityParentCycle)
 }
 
 func TestEntityRepository_CreateFromTemplate_RejectsNonFiniteQuantity(t *testing.T) {
