@@ -5,7 +5,7 @@
   import { filterZeroValues } from "~~/components/global/DetailsSection/types";
   import type { ItemAttachment } from "~~/lib/api/types/data-contracts";
   import { useLocationStore } from "~~/stores/locations";
-  import MdiPackageVariant from "~icons/mdi/package-variant";
+  import MdiMapMarker from "~icons/mdi/map-marker";
   import MdiPlus from "~icons/mdi/plus";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiDelete from "~icons/mdi/delete";

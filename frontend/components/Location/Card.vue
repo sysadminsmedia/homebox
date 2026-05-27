@@ -12,7 +12,17 @@
             <div
               class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover/location-card:-rotate-90"
             >
-              <MdiMapMarkerOutline class="size-6 group-hover/location-card:hidden" />
+              <div
+                v-if="location.entityType"
+                class="group-hover/location-card:hidden"
+                :style="
+                  location.entityType.color
+                    ? { color: location.entityType.color }
+                    : { color: 'hsl(var(--accent-foreground))' }
+                "
+              >
+                <component :is="getIconComponent(location.entityType.icon, MdiMapMarkerOutline)" class="size-6" />
+              </div>
               <MdiArrowUp class="hidden size-6 group-hover/location-card:block" />
             </div>
           </div>
@@ -34,6 +44,7 @@
   import MdiMapMarkerOutline from "~icons/mdi/map-marker-outline";
   import { Card } from "@/components/ui/card";
   import { Badge } from "@/components/ui/badge";
+  import { getIconComponent } from "~/lib/icons";
 
   const props = defineProps({
     location: {

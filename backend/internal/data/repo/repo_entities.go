@@ -2399,7 +2399,8 @@ func (r *EntityRepository) GetAllContainers(ctx context.Context, gid uuid.UUID, 
 					child.entity_children = e.id
 					AND child.archived = false
 					AND ct.is_location = false
-			) as item_count
+			) as item_count,
+			et
 		FROM
 			entities e
 		JOIN
@@ -2431,7 +2432,7 @@ func (r *EntityRepository) GetAllContainers(ctx context.Context, gid uuid.UUID, 
 
 		var maybeCount *float64
 
-		err := rows.Scan(&ct.ID, &ct.Name, &ct.Description, &ct.CreatedAt, &ct.UpdatedAt, &maybeCount)
+		err := rows.Scan(&ct.ID, &ct.Name, &ct.Description, &ct.CreatedAt, &ct.UpdatedAt, &maybeCount, &ct.EntityType)
 		if err != nil {
 			recordSpanError(span, err)
 			return nil, err

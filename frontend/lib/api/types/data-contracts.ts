@@ -843,6 +843,8 @@ export interface EntitySummary {
   /** Container-specific (populated when querying locations) */
   itemCount: number;
   name: string;
+  color: string | null;
+  icon: string | null;
   /** Edges */
   parent?: EntitySummary | null;
   purchasePrice: number;
