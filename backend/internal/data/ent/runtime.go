@@ -380,6 +380,8 @@ func init() {
 	_ = entitytypeMixinFields0
 	entitytypeMixinFields1 := entitytypeMixin[1].Fields()
 	_ = entitytypeMixinFields1
+	entitytypeMixinFields2 := entitytypeMixin[2].Fields()
+	_ = entitytypeMixinFields2
 	entitytypeFields := schema.EntityType{}.Fields()
 	_ = entitytypeFields
 	// entitytypeDescCreatedAt is the schema descriptor for created_at field.
@@ -418,6 +420,10 @@ func init() {
 	entitytypeDescIsLocation := entitytypeFields[0].Descriptor()
 	// entitytype.DefaultIsLocation holds the default value on creation for the is_location field.
 	entitytype.DefaultIsLocation = entitytypeDescIsLocation.Default.(bool)
+	// entitytypeDescColor is the schema descriptor for color field.
+	entitytypeDescColor := entitytypeFields[2].Descriptor()
+	// entitytype.ColorValidator is a validator for the "color" field. It is called by the builders before save.
+	entitytype.ColorValidator = entitytypeDescColor.Validators[0].(func(string) error)
 	// entitytypeDescIcon is the schema descriptor for icon field.
 	entitytypeDescIcon := entitytypeFields[1].Descriptor()
 	// entitytype.IconValidator is a validator for the "icon" field. It is called by the builders before save.

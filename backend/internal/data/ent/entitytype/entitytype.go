@@ -25,6 +25,8 @@ const (
 	FieldDescription = "description"
 	// FieldIsLocation holds the string denoting the is_location field in the database.
 	FieldIsLocation = "is_location"
+	// FieldColor holds the string denoting the color field in the database.
+	FieldColor = "color"
 	// FieldIcon holds the string denoting the icon field in the database.
 	FieldIcon = "icon"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
@@ -66,6 +68,7 @@ var Columns = []string{
 	FieldName,
 	FieldDescription,
 	FieldIsLocation,
+	FieldColor,
 	FieldIcon,
 }
 
@@ -104,6 +107,8 @@ var (
 	DescriptionValidator func(string) error
 	// DefaultIsLocation holds the default value on creation for the "is_location" field.
 	DefaultIsLocation bool
+	// ColorValidator is a validator for the "color" field. It is called by the builders before save.
+	ColorValidator func(string) error
 	// IconValidator is a validator for the "icon" field. It is called by the builders before save.
 	IconValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
@@ -141,6 +146,11 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 // ByIsLocation orders the results by the is_location field.
 func ByIsLocation(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsLocation, opts...).ToFunc()
+}
+
+// ByColor orders the results by the color field.
+func ByColor(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldColor, opts...).ToFunc()
 }
 
 // ByIcon orders the results by the icon field.

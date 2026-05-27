@@ -21,6 +21,7 @@ type (
 	EntityTypeCreate struct {
 		Name              string     `json:"name"`
 		IsLocation        bool       `json:"isLocation"`
+		Color              string     `json:"color"`
 		Icon              string     `json:"icon"`
 		DefaultTemplateID *uuid.UUID `json:"defaultTemplateId,omitempty"`
 	}
@@ -29,6 +30,7 @@ type (
 		ID                uuid.UUID  `json:"id"`
 		Name              string     `json:"name"`
 		IsLocation        bool       `json:"isLocation"`
+		Color             string     `json:"color"`
 		Icon              string     `json:"icon"`
 		DefaultTemplateID *uuid.UUID `json:"defaultTemplateId,omitempty"`
 	}
@@ -38,6 +40,7 @@ type (
 		Name              string                 `json:"name"`
 		Description       string                 `json:"description"`
 		IsLocation        bool                   `json:"isLocation"`
+		Color             string                 `json:"color"`
 		Icon              string                 `json:"icon"`
 		DefaultTemplateID *uuid.UUID             `json:"defaultTemplateId,omitempty"`
 		DefaultTemplate   *EntityTemplateSummary `json:"defaultTemplate,omitempty"`
@@ -52,6 +55,7 @@ func mapEntityTypeSummary(et *ent.EntityType) EntityTypeSummary {
 		Name:        et.Name,
 		Description: et.Description,
 		IsLocation:  et.IsLocation,
+		Color:       et.Color,
 		Icon:        et.Icon,
 		CreatedAt:   et.CreatedAt,
 		UpdatedAt:   et.UpdatedAt,
@@ -107,6 +111,7 @@ func (r *EntityTypeRepository) Create(ctx context.Context, gid uuid.UUID, data E
 	q := r.db.EntityType.Create().
 		SetName(data.Name).
 		SetIsLocation(data.IsLocation).
+		SetColor(data.Color).
 		SetIcon(data.Icon).
 		SetGroupID(gid)
 
@@ -138,6 +143,7 @@ func (r *EntityTypeRepository) Update(ctx context.Context, gid uuid.UUID, data E
 		).
 		SetName(data.Name).
 		SetIsLocation(data.IsLocation).
+		SetColor(data.Color).
 		SetIcon(data.Icon)
 
 	if data.DefaultTemplateID != nil && *data.DefaultTemplateID != uuid.Nil {

@@ -7723,6 +7723,7 @@ type EntityTypeMutation struct {
 	name                    *string
 	description             *string
 	is_location             *bool
+	color                    *string
 	icon                    *string
 	clearedFields           map[string]struct{}
 	group                   *uuid.UUID
@@ -8032,6 +8033,55 @@ func (m *EntityTypeMutation) OldIsLocation(ctx context.Context) (v bool, err err
 // ResetIsLocation resets all changes to the "is_location" field.
 func (m *EntityTypeMutation) ResetIsLocation() {
 	m.is_location = nil
+}
+
+// SetColor sets the "color" field.
+func (m *EntityTypeMutation) SetColor(s string) {
+	m.color = &s
+}
+
+// Color returns the value of the "color" field in the mutation.
+func (m *EntityTypeMutation) Color() (r string, exists bool) {
+	v := m.color
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldColor returns the old "color" field's value of the Tag entity.
+// If the Tag object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntityTypeMutation) OldColor(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldColor is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldColor requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldColor: %w", err)
+	}
+	return oldValue.Color, nil
+}
+
+// ClearColor clears the value of the "color" field.
+func (m *EntityTypeMutation) ClearColor() {
+	m.color = nil
+	m.clearedFields[entitytype.FieldColor] = struct{}{}
+}
+
+// ColorCleared returns if the "color" field was cleared in this mutation.
+func (m *EntityTypeMutation) ColorCleared() bool {
+	_, ok := m.clearedFields[entitytype.FieldColor]
+	return ok
+}
+
+// ResetColor resets all changes to the "color" field.
+func (m *EntityTypeMutation) ResetColor() {
+	m.color = nil
+	delete(m.clearedFields, entitytype.FieldColor)
 }
 
 // SetIcon sets the "icon" field.

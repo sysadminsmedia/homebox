@@ -29,6 +29,9 @@ func (EntityType) Fields() []ent.Field {
 		field.String("icon").
 			MaxLen(255).
 			Optional(),
+		field.String("Color").
+			MaxLen(255).
+			Optional(),
 	}
 }
 

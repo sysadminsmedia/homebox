@@ -86,6 +86,20 @@ func (_c *EntityTypeCreate) SetNillableIsLocation(v *bool) *EntityTypeCreate {
 	return _c
 }
 
+// SetColor sets the "color" field.
+func (_c *EntityTypeCreate) SetColor(v string) *EntityTypeCreate {
+	_c.mutation.SetColor(v)
+	return _c
+}
+
+// SetNillableColor sets the "color" field if the given value is not nil.
+func (_c *EntityTypeCreate) SetNillableColor(v *string) *EntityTypeCreate {
+	if v != nil {
+		_c.SetColor(*v)
+	}
+	return _c
+}
+
 // SetIcon sets the "icon" field.
 func (_c *EntityTypeCreate) SetIcon(v string) *EntityTypeCreate {
 	_c.mutation.SetIcon(v)
@@ -236,6 +250,11 @@ func (_c *EntityTypeCreate) check() error {
 	if _, ok := _c.mutation.IsLocation(); !ok {
 		return &ValidationError{Name: "is_location", err: errors.New(`ent: missing required field "EntityType.is_location"`)}
 	}
+	if v, ok := _c.mutation.Color(); ok {
+		if err := entitytype.ColorValidator(v); err != nil {
+			return &ValidationError{Name: "color", err: fmt.Errorf(`ent: validator failed for field "EntityType.color": %w`, err)}
+		}
+	}
 	if v, ok := _c.mutation.Icon(); ok {
 		if err := entitytype.IconValidator(v); err != nil {
 			return &ValidationError{Name: "icon", err: fmt.Errorf(`ent: validator failed for field "EntityType.icon": %w`, err)}
@@ -298,6 +317,10 @@ func (_c *EntityTypeCreate) createSpec() (*EntityType, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.IsLocation(); ok {
 		_spec.SetField(entitytype.FieldIsLocation, field.TypeBool, value)
 		_node.IsLocation = value
+	}
+	if value, ok := _c.mutation.Color(); ok {
+		_spec.SetField(entitytype.FieldColor, field.TypeString, value)
+		_node.Color = value
 	}
 	if value, ok := _c.mutation.Icon(); ok {
 		_spec.SetField(entitytype.FieldIcon, field.TypeString, value)
