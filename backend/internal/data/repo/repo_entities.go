@@ -2680,20 +2680,21 @@ func (r *EntityRepository) PathForEntity(ctx context.Context, gid, entityID uuid
 	defer span.End()
 
 	query := `WITH RECURSIVE entity_path AS (
-		SELECT id, name, entity_children
+		SELECT id, name, entity_children, entity_type_entities
 		FROM entities
 		WHERE id = $1
 		AND group_entities = $2
 
 		UNION ALL
 
-		SELECT e.id, e.name, e.entity_children
+		SELECT e.id, e.name, e.entity_children, e.entity_type_entities
 		FROM entities e
 		JOIN entity_path ep ON e.id = ep.entity_children
 	  )
 
-	  SELECT id, name
-	  FROM entity_path`
+	  SELECT ep.id, ep.name, et.is_location
+	  FROM entity_path ep
+	  JOIN entity_types et ON et.id = ep.entity_type_entities`
 
 	queryCtx, querySpan := entityTracer().Start(ctx, "repo.EntityRepository.PathForEntity.query")
 	rows, err := r.db.Sql().QueryContext(queryCtx, query, entityID, gid)
@@ -2709,12 +2710,17 @@ func (r *EntityRepository) PathForEntity(ctx context.Context, gid, entityID uuid
 
 	for rows.Next() {
 		var entry EntityPath
-		entry.Type = EntityPathTypeLocation
-		if err := rows.Scan(&entry.ID, &entry.Name); err != nil {
+		var isLocation bool
+		if err := rows.Scan(&entry.ID, &entry.Name, &isLocation); err != nil {
 			recordSpanError(querySpan, err)
 			querySpan.End()
 			recordSpanError(span, err)
 			return nil, err
+		}
+		if isLocation {
+			entry.Type = EntityPathTypeLocation
+		} else {
+			entry.Type = EntityPathTypeItem
 		}
 		path = append(path, entry)
 	}

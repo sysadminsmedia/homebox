@@ -205,20 +205,27 @@ func (s *IOSheet) ReadItems(ctx context.Context, entities []repo.EntityOut, gid 
 	s.Rows = make([]ExportCSVRow, len(entities))
 
 	extraHeaders := map[string]struct{}{}
+	importRefByID := lo.SliceToMap(entities, func(item repo.EntityOut) (uuid.UUID, string) {
+		return item.ID, exportImportRef(item.ImportRef, item.ID)
+	})
 
 	for i := range entities {
 		item := entities[i]
 
-		// Resolve parent (location) path
+		// Resolve parent path. Locations remain in HB.location; item parents
+		// are represented by HB.parent_import_ref so child relationships can
+		// round-trip through CSV import/export.
 		var locString LocationString
+		parentImportRef := ""
 		if item.Parent != nil {
-			locPaths, err := repos.Entities.PathForEntity(ctx, gid, item.Parent.ID)
+			parentPath, err := repos.Entities.PathForEntity(ctx, gid, item.Parent.ID)
 			if err != nil {
 				log.Error().Err(err).Msg("could not get entity path")
 				return err
 			}
 
-			locString = fromPathSlice(locPaths)
+			locString = locationStringFromPath(parentPath)
+			parentImportRef = itemParentImportRef(parentPath, importRefByID)
 		}
 
 		tagString := lo.Map(item.Tags, func(l repo.TagSummary, _ int) string {
@@ -237,10 +244,11 @@ func (s *IOSheet) ReadItems(ctx context.Context, entities []repo.EntityOut, gid 
 
 		s.Rows[i] = ExportCSVRow{
 			// fill struct
-			Location: locString,
-			TagStr:   tagString,
+			Location:        locString,
+			ParentImportRef: parentImportRef,
+			TagStr:          tagString,
 
-			ImportRef:   item.ImportRef,
+			ImportRef:   exportImportRef(item.ImportRef, item.ID),
 			AssetID:     item.AssetID,
 			Name:        item.Name,
 			Quantity:    item.Quantity,
@@ -294,6 +302,39 @@ func (s *IOSheet) ReadItems(ctx context.Context, entities []repo.EntityOut, gid 
 	}
 
 	return nil
+}
+
+func exportImportRef(importRef string, id uuid.UUID) string {
+	if importRef != "" {
+		return importRef
+	}
+	if id == uuid.Nil {
+		return ""
+	}
+	return id.String()
+}
+
+func locationStringFromPath(path []repo.EntityPath) LocationString {
+	locations := lo.Filter(path, func(p repo.EntityPath, _ int) bool {
+		return p.Type == repo.EntityPathTypeLocation
+	})
+
+	return fromPathSlice(locations)
+}
+
+func itemParentImportRef(path []repo.EntityPath, importRefByID map[uuid.UUID]string) string {
+	for i := len(path) - 1; i >= 0; i-- {
+		entry := path[i]
+		if entry.Type != repo.EntityPathTypeItem {
+			continue
+		}
+		if ref := importRefByID[entry.ID]; ref != "" {
+			return ref
+		}
+		return entry.ID.String()
+	}
+
+	return ""
 }
 
 func generateEntityURL(entity repo.EntityOut, d string) string {

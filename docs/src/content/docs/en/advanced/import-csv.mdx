@@ -9,7 +9,6 @@ to import any large number of items and provides the most flexibility when it co
 - Imports only support importing items, locations, and labels
 - Imports and Exports do not support attachments. Attachments must be uploaded after import
 - CSV Exports do not support nested path exports (e.g., Home / Office / Desk) and will only export the Items direct parent (though imports do support nested paths)
-- Cannot specify item-to-item relationships (e.g. `Item A` is a child of `Item B`)
 
 > [!NOTE]
 > The CSV import supports both CSV and TSV files. The only difference is the delimiter used. CSV files use commas as the delimiter,
@@ -40,6 +39,15 @@ items in your database on later imports.
 This is the location of the item that will be created. These are deduplicated and won't create another instance when reused.
 
 Supports Path Separators for nested locations (e.g. `Home / Office / Desk`)
+
+`HB.parent_import_ref`
+
+This is the import ref of another item that should become the imported item's parent. Use this when importing nested
+items, for example when `Battery` should be a child item of `Camera`.
+
+- The parent item must be present in the same CSV or already exist in Homebox with the matching `HB.import_ref`.
+- Row order does not matter; parent links are resolved after all rows are imported.
+- If this column is empty, the item is placed under `HB.location`.
 
 `HB.label`
 List of labels to apply to the item separated by a comma can be an existing or new label.

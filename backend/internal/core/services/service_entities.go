@@ -172,6 +172,12 @@ func serializeLocation[T ~[]string](location T) string {
 	return strings.Join(location, "/")
 }
 
+type csvParentImportLink struct {
+	childID         uuid.UUID
+	parentImportRef string
+	rowIndex        int
+}
+
 // CsvImport imports entities from a CSV file using the standard defined format.
 //
 // CsvImport applies the following rules/operations
@@ -274,6 +280,8 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 	defer importSpan.End()
 
 	finished := 0
+	entityIDByImportRef := make(map[string]uuid.UUID, len(sheet.Rows))
+	parentLinks := make([]csvParentImportLink, 0)
 
 	for i := range sheet.Rows {
 		row := sheet.Rows[i]
@@ -288,22 +296,13 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 			))
 		ctx := rowCtx
 
-		createRequired := true
-
-		if row.ImportRef != "" {
-			exists, err := svc.repo.Entities.CheckRef(ctx, gid, row.ImportRef)
-			if err != nil {
-				wrapped := fmt.Errorf("error checking for existing entity with ref %q: %w", row.ImportRef, err)
-				recordServiceSpanError(rowSpan, wrapped)
-				rowSpan.End()
-				recordServiceSpanError(importSpan, wrapped)
-				recordServiceSpanError(span, wrapped)
-				return 0, wrapped
-			}
-
-			if exists {
-				createRequired = false
-			}
+		createRequired, err := svc.csvImportCreateRequired(ctx, gid, row.ImportRef)
+		if err != nil {
+			recordServiceSpanError(rowSpan, err)
+			rowSpan.End()
+			recordServiceSpanError(importSpan, err)
+			recordServiceSpanError(span, err)
+			return 0, err
 		}
 		rowSpan.SetAttributes(attribute.Bool("row.create_required", createRequired))
 
@@ -447,6 +446,16 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 			return 0, wrapped
 		}
 		rowSpan.SetAttributes(attribute.String("entity.id", entity.ID.String()))
+		if row.ImportRef != "" {
+			entityIDByImportRef[row.ImportRef] = entity.ID
+		}
+		if row.ParentImportRef != "" {
+			parentLinks = append(parentLinks, csvParentImportLink{
+				childID:         entity.ID,
+				parentImportRef: row.ParentImportRef,
+				rowIndex:        i,
+			})
+		}
 
 		fields := lo.Map(row.Fields, func(f reporting.ExportItemFields, _ int) repo.EntityFieldData {
 			return repo.EntityFieldData{
@@ -502,9 +511,70 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 		rowSpan.End()
 	}
 
+	linked, err := svc.linkCsvParentImportRefs(importCtx, gid, entityIDByImportRef, parentLinks)
+	if err != nil {
+		recordServiceSpanError(importSpan, err)
+		recordServiceSpanError(span, err)
+		return 0, err
+	}
+	importSpan.SetAttributes(attribute.Int("parent_links.updated.count", linked))
+
 	importSpan.SetAttributes(attribute.Int("rows.imported.count", finished))
 	span.SetAttributes(attribute.Int("rows.imported.count", finished))
 	return finished, nil
+}
+
+func (svc *EntityService) csvImportCreateRequired(ctx context.Context, gid uuid.UUID, importRef string) (bool, error) {
+	if importRef == "" {
+		return true, nil
+	}
+
+	exists, err := svc.repo.Entities.CheckRef(ctx, gid, importRef)
+	if err != nil {
+		return false, fmt.Errorf("error checking for existing entity with ref %q: %w", importRef, err)
+	}
+
+	return !exists, nil
+}
+
+func (svc *EntityService) linkCsvParentImportRefs(
+	ctx context.Context,
+	gid uuid.UUID,
+	entityIDByImportRef map[string]uuid.UUID,
+	parentLinks []csvParentImportLink,
+) (int, error) {
+	if len(parentLinks) == 0 {
+		return 0, nil
+	}
+
+	parentCtx, parentSpan := entityServiceTracer().Start(ctx, "service.EntityService.CsvImport.parentLinks",
+		trace.WithAttributes(attribute.Int("parent_links.count", len(parentLinks))))
+	defer parentSpan.End()
+
+	linked := 0
+	for _, link := range parentLinks {
+		parentID, ok := entityIDByImportRef[link.parentImportRef]
+		if !ok {
+			parent, err := svc.repo.Entities.GetByRef(parentCtx, gid, link.parentImportRef)
+			if err != nil {
+				wrapped := fmt.Errorf("row %d parent import ref %q could not be resolved: %w", link.rowIndex, link.parentImportRef, err)
+				recordServiceSpanError(parentSpan, wrapped)
+				return 0, wrapped
+			}
+			parentID = parent.ID
+			entityIDByImportRef[link.parentImportRef] = parentID
+		}
+
+		err := svc.repo.Entities.Patch(parentCtx, gid, link.childID, repo.EntityPatch{ParentID: parentID})
+		if err != nil {
+			wrapped := fmt.Errorf("row %d failed to set parent import ref %q: %w", link.rowIndex, link.parentImportRef, err)
+			recordServiceSpanError(parentSpan, wrapped)
+			return 0, wrapped
+		}
+		linked++
+	}
+	parentSpan.SetAttributes(attribute.Int("parent_links.updated.count", linked))
+	return linked, nil
 }
 
 func (svc *EntityService) ExportCSV(ctx context.Context, gid uuid.UUID, hbURL string) ([][]string, error) {
