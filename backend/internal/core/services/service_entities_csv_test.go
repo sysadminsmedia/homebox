@@ -17,6 +17,9 @@ func TestEntityService_CsvImportParentImportRef(t *testing.T) {
 
 	g, err := tRepos.Groups.GroupCreate(ctx, "csv-parent-"+fk.Str(4), uuid.Nil)
 	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = tRepos.Groups.GroupDelete(context.Background(), g.ID)
+	})
 
 	data := strings.NewReader(strings.Join([]string{
 		"HB.location,HB.import_ref,HB.parent_import_ref,HB.name,HB.quantity",
@@ -53,6 +56,9 @@ func TestEntityService_CsvImportParentImportRefRejectsSelfParent(t *testing.T) {
 
 	g, err := tRepos.Groups.GroupCreate(ctx, "csv-parent-self-"+fk.Str(4), uuid.Nil)
 	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = tRepos.Groups.GroupDelete(context.Background(), g.ID)
+	})
 
 	data := strings.NewReader(strings.Join([]string{
 		"HB.location,HB.import_ref,HB.parent_import_ref,HB.name,HB.quantity",
