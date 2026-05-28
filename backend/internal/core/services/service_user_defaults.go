@@ -4,13 +4,15 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 )
 
+const defaultLocationGarage = "Garage"
+
 func defaultLocations() []repo.EntityCreate {
 	return []repo.EntityCreate{
 		{
 			Name: "Living Room",
 		},
 		{
-			Name: "Garage",
+			Name: defaultLocationGarage,
 		},
 		{
 			Name: "Kitchen",
