@@ -2672,8 +2672,6 @@ const (
 
 type EntityPath struct {
 	Type EntityPathType `json:"type"`
-	Color    *string      `json:"color,omitempty"`
-	Icon     *string      `json:"icon,omitempty"`
 	ID   uuid.UUID      `json:"id"`
 	Name string         `json:"name"`
 }

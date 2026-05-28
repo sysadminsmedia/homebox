@@ -21,7 +21,7 @@ type (
 	EntityTypeCreate struct {
 		Name              string     `json:"name"`
 		IsLocation        bool       `json:"isLocation"`
-		Color              string     `json:"color"`
+		Color             string     `json:"color"`
 		Icon              string     `json:"icon"`
 		DefaultTemplateID *uuid.UUID `json:"defaultTemplateId,omitempty"`
 	}
@@ -40,8 +40,8 @@ type (
 		Name              string                 `json:"name"`
 		Description       string                 `json:"description"`
 		IsLocation        bool                   `json:"isLocation"`
-		Color             string                 `json:"color"`
-		Icon              string                 `json:"icon"`
+		Color             string                `json:"color"`
+		Icon              string                `json:"icon"`
 		DefaultTemplateID *uuid.UUID             `json:"defaultTemplateId,omitempty"`
 		DefaultTemplate   *EntityTemplateSummary `json:"defaultTemplate,omitempty"`
 		CreatedAt         time.Time              `json:"createdAt"`

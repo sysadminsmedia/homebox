@@ -41,7 +41,7 @@
         <Button
           v-for="icon in availableIcons"
           :key="icon.name"
-          size="xl"
+          type="button"
           :variant="value === icon.name ? 'default' : 'outline'"
           class="flex size-10 items-center justify-center p-0 text-lg [&_svg]:size-6"
           :aria-label="`Select ${icon.name} icon`"
