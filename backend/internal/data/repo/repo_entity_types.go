@@ -10,6 +10,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
 
 type EntityTypeRepository struct {
@@ -21,8 +22,8 @@ type (
 	EntityTypeCreate struct {
 		Name              string     `json:"name"`
 		IsLocation        bool       `json:"isLocation"`
-		Color             string     `json:"color"`
-		Icon              string     `json:"icon"`
+		Color             *string    `json:"color,omitempty"`
+		Icon              *string    `json:"icon,omitempty"`
 		DefaultTemplateID *uuid.UUID `json:"defaultTemplateId,omitempty"`
 	}
 
@@ -30,8 +31,8 @@ type (
 		ID                uuid.UUID  `json:"id"`
 		Name              string     `json:"name"`
 		IsLocation        bool       `json:"isLocation"`
-		Color             string     `json:"color"`
-		Icon              string     `json:"icon"`
+		Color             *string    `json:"color,omitempty"`
+		Icon              *string    `json:"icon,omitempty"`
 		DefaultTemplateID *uuid.UUID `json:"defaultTemplateId,omitempty"`
 	}
 
@@ -40,8 +41,8 @@ type (
 		Name              string                 `json:"name"`
 		Description       string                 `json:"description"`
 		IsLocation        bool                   `json:"isLocation"`
-		Color             string                `json:"color"`
-		Icon              string                `json:"icon"`
+		Color             *string                `json:"color,omitempty"`
+		Icon              *string                `json:"icon,omitempty"`
 		DefaultTemplateID *uuid.UUID             `json:"defaultTemplateId,omitempty"`
 		DefaultTemplate   *EntityTemplateSummary `json:"defaultTemplate,omitempty"`
 		CreatedAt         time.Time              `json:"createdAt"`
@@ -55,10 +56,15 @@ func mapEntityTypeSummary(et *ent.EntityType) EntityTypeSummary {
 		Name:        et.Name,
 		Description: et.Description,
 		IsLocation:  et.IsLocation,
-		Color:       et.Color,
-		Icon:        et.Icon,
 		CreatedAt:   et.CreatedAt,
 		UpdatedAt:   et.UpdatedAt,
+	}
+
+	if et.Color != "" {
+		s.Color = lo.ToPtr(et.Color)
+	}
+	if et.Icon != "" {
+		s.Icon = lo.ToPtr(et.Icon)
 	}
 
 	if et.Edges.DefaultTemplate != nil {
@@ -102,6 +108,11 @@ func (r *EntityTypeRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]Ent
 
 // Create creates a new entity type for a group.
 func (r *EntityTypeRepository) Create(ctx context.Context, gid uuid.UUID, data EntityTypeCreate) (EntityTypeSummary, error) {
+	normalizedColor, err := validate.NormalizeHexColor(data.Color)
+	if err != nil {
+		return EntityTypeSummary{}, err
+	}
+
 	if data.DefaultTemplateID != nil {
 		if err := assertEntityTemplateInGroup(ctx, r.db.EntityTemplate, gid, *data.DefaultTemplateID); err != nil {
 			return EntityTypeSummary{}, err
@@ -111,8 +122,8 @@ func (r *EntityTypeRepository) Create(ctx context.Context, gid uuid.UUID, data E
 	q := r.db.EntityType.Create().
 		SetName(data.Name).
 		SetIsLocation(data.IsLocation).
-		SetColor(data.Color).
-		SetIcon(data.Icon).
+		SetNillableColor(normalizedColor).
+		SetNillableIcon(data.Icon).
 		SetGroupID(gid)
 
 	if data.DefaultTemplateID != nil && *data.DefaultTemplateID != uuid.Nil {
@@ -130,6 +141,11 @@ func (r *EntityTypeRepository) Create(ctx context.Context, gid uuid.UUID, data E
 
 // Update updates an existing entity type.
 func (r *EntityTypeRepository) Update(ctx context.Context, gid uuid.UUID, data EntityTypeUpdate) (EntityTypeSummary, error) {
+	normalizedColor, err := validate.NormalizeHexColor(data.Color)
+	if err != nil {
+		return EntityTypeSummary{}, err
+	}
+
 	if data.DefaultTemplateID != nil {
 		if err := assertEntityTemplateInGroup(ctx, r.db.EntityTemplate, gid, *data.DefaultTemplateID); err != nil {
 			return EntityTypeSummary{}, err
@@ -142,9 +158,18 @@ func (r *EntityTypeRepository) Update(ctx context.Context, gid uuid.UUID, data E
 			entitytype.HasGroupWith(group.ID(gid)),
 		).
 		SetName(data.Name).
-		SetIsLocation(data.IsLocation).
-		SetColor(data.Color).
-		SetIcon(data.Icon)
+		SetIsLocation(data.IsLocation)
+
+	if normalizedColor != nil {
+		q.SetColor(*normalizedColor)
+	} else {
+		q.ClearColor()
+	}
+	if data.Icon != nil {
+		q.SetIcon(*data.Icon)
+	} else {
+		q.ClearIcon()
+	}
 
 	if data.DefaultTemplateID != nil && *data.DefaultTemplateID != uuid.Nil {
 		q.SetDefaultTemplateID(*data.DefaultTemplateID)
@@ -152,7 +177,7 @@ func (r *EntityTypeRepository) Update(ctx context.Context, gid uuid.UUID, data E
 		q.ClearDefaultTemplate()
 	}
 
-	_, err := q.Save(ctx)
+	_, err = q.Save(ctx)
 	if err != nil {
 		return EntityTypeSummary{}, err
 	}
