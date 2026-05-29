@@ -311,7 +311,9 @@
             "create_modal": {
                 "tag_color": "Цвет метки",
                 "tag_description": "Описание метки",
+                "tag_icon": "Значок метки",
                 "tag_name": "Имя метки",
+                "tag_parent": "Родительская метка",
                 "title": "Создать метку",
                 "toast": {
                     "already_creating": "Метка уже создана",
@@ -321,6 +323,8 @@
                 }
             },
             "selector": {
+                "clear": "Очистить",
+                "no_tags_found": "Метки не найдены",
                 "select_tags": "Выбрать метку"
             }
         },
