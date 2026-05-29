@@ -117,10 +117,10 @@
             "randomize": "Zufällige Farbe"
         },
         "form": {
+            "min_length": "mind. {min}",
             "password": {
                 "toggle_show": "Passwort anzeigen"
-            },
-            "min_length": "mind. {min}"
+            }
         },
         "global": {
             "copy_text": {
@@ -323,6 +323,8 @@
                 }
             },
             "selector": {
+                "clear": "Entfernen",
+                "no_tags_found": "Keine Labels gefunden",
                 "select_tags": "Label auswählen"
             }
         },
@@ -395,6 +397,7 @@
         "archived": "Archiviert",
         "build": "Erstellt: { build }",
         "cancel": "Abbrechen",
+        "close": "Schließen",
         "confirm": "Bestätigen",
         "create": "Erstellen",
         "create_and_add": "Erstellen und weiteren hinzufügen",
@@ -429,9 +432,13 @@
         "return_home": "Startbildschirm",
         "save": "Speichern",
         "search": "Suche",
+        "select": "Auswählen...",
+        "show_less": "Weniger anzeigen",
+        "show_more": "Mehr anzeigen",
         "sign_out": "Abmelden",
         "submit": "Einreichen",
         "tags": "Tags",
+        "type": "Typ",
         "unknown": "Unbekannt",
         "update": "Aktualisieren",
         "updating": "Aktualisiere",
@@ -451,13 +458,18 @@
         "total_value": "Gesamtwert"
     },
     "index": {
+        "back_to_login": "Zurück zur Anmeldung",
         "disabled_registration": "Registrierung deaktiviert",
         "dont_join_group": "Möchtest du nicht einer Gruppe beitreten?",
+        "forgot_password": "Passwort vergessen?",
         "joining_group": "Du trittst einer bereits bestehenden Gruppe bei!",
         "login": "Anmelden",
         "or": "oder",
         "register": "Registrieren",
         "remember_me": "Angemeldet bleiben",
+        "reset_password_invalid": "Der Link zum zurücksetzen des Kennworts ist abgelaufen. Bitte fordere einen Neuen an.",
+        "reset_password_subtitle": "Wähle ein neues Kennwort für dein Konto.",
+        "reset_password_success": "Dein Kennwort wurde zurückgesetzt. Melde dich mit deinem neuen Kennwort an.",
         "set_email": "Was ist deine E-Mail?",
         "set_name": "Wie heißt du?",
         "set_password": "Setze dein Passwort",
@@ -716,6 +728,13 @@
     },
     "profile": {
         "active": "Aktiv",
+        "api_key_copied": "Zur Zwischenablage hinzugefügt",
+        "api_key_copy": "Kopieren",
+        "api_key_last_used": "Zuletzt verwendet",
+        "api_key_name_placeholder": "z.B. Home Assistant",
+        "api_key_never_used": "Niemals",
+        "api_key_no_expiration": "Unbegrenzt",
+        "api_key_set_expiration": "Setze ein Ablaufdatum",
         "change_password": "Passwort ändern",
         "currency_format": "Währungsformat",
         "current_password": "Aktuelles Passwort",
@@ -817,6 +836,15 @@
         "select_video_source": "Wählen Sie eine Videoquelle",
         "title": "Der Scanner",
         "unsupported": "Media Stream API wird nicht unterstützt ohne HTTPS/SSL"
+    },
+    "scanner_ar": {
+        "ar_mode": "AR Modus",
+        "back": "Zurück",
+        "more": "mehr",
+        "not_found": "Gegenstand nicht gefunden",
+        "qty": "Menge",
+        "retry": "Wiederholen",
+        "switch_camera": "Kamera wechseln"
     },
     "tags": {
         "no_results": "Keine Tags gefunden",

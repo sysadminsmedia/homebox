@@ -123,6 +123,7 @@
         },
         "global": {
             "copy_text": {
+                "continue": "continuer",
                 "documentation": "la documentation",
                 "failed_to_copy": "Impossible de copier le lien dans le presse-papiers",
                 "https_required": "parce que HTTPS est requis",
@@ -214,6 +215,7 @@
                 "error_exception": "Une erreur s'est produite lors de la récupération du code-barre ",
                 "error_invalid_barcode": "Le code-barre fourni est invalide",
                 "error_not_found": "Aucun produit trouvé pour le barre-code fourni.",
+                "import_selected": "import sélectionner",
                 "search_item": "Rechercher un produit",
                 "title": "Importer un produit"
             },
@@ -301,6 +303,11 @@
             "no_results": "Aucun résultat trouvé.",
             "shortcut_hint": "Utilisez les touches numériques pour sélectionner rapidement une action."
         },
+        "search": {
+            "filter": {
+                "search_placeholder": "recherche…"
+            }
+        },
         "tag": {
             "create_modal": {
                 "tag_color": "Couleur de l'étiquette",
@@ -387,6 +394,7 @@
         "archived": "Archivé",
         "build": "Build : { build }",
         "cancel": "Annuler",
+        "close": "Fermer",
         "confirm": "Confirmer",
         "create": "Créer",
         "create_and_add": "Créer et en ajouter un autre",
@@ -421,9 +429,13 @@
         "return_home": "Retour à l'accueil",
         "save": "Enregistrer",
         "search": "Rechercher",
+        "select": "Sélectionner...",
+        "show_less": "Voir moins",
+        "show_more": "Voir plus",
         "sign_out": "Se déconnecter",
         "submit": "Soumettre",
         "tags": "Balises",
+        "type": "Type",
         "unknown": "Inconnu",
         "update": "Mettre à jour",
         "updating": "Mise à jour en cours",
@@ -511,6 +523,7 @@
             "view_image": "Voir l'image"
         },
         "edit_details": "Éditez les détails",
+        "field": "champ",
         "field_selector": "Sélecteur de champ",
         "field_value": "Valeur du champ",
         "first": "Premier",
@@ -550,8 +563,10 @@
         "reset_search": "Réinitialiser la recherche",
         "results": "{ total } résultats",
         "select_field": "Sélectionner un champ",
+        "select_value": "sélectionner une valeur",
         "serial_number": "Numéro de série",
         "show_advanced_view_options": "Afficher les options d'affichage avancées",
+        "show_empty": "Afficher vide",
         "sold_at": "Vendu le",
         "sold_details": "Détails de la vente",
         "sold_price": "Prix de vente",
@@ -635,8 +650,10 @@
         "child_locations": "Sous-emplacements",
         "collapse_tree": "Minimiser la liste",
         "expand_tree": "Ouvrir l’arborescence",
+        "hide_items": "Masquer les éléments",
         "location_items_delete_confirm": "Êtes-vous certain de vouloir supprimer cet emplacement et tous ses articles ? Cette action est irréversible.",
-        "no_results": "Aucun emplacement",
+        "no_results": "aucun emplacement trouver",
+        "show_items": "afficher les elements",
         "toast": {
             "failed_delete_location": "Échec de la suppression de l'emplacement",
             "failed_load_location": "Échec du chargement de l'emplacement",
