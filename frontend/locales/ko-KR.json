@@ -48,7 +48,7 @@
     "app": {
       "create_modal": {
         "enter": "Enter",
-        "shift": "Sjoft"
+        "shift": "Shift"
       },
       "import_dialog": {
         "title": "CSV 파일 들여오기",
@@ -86,7 +86,7 @@
         "last-year": "작년",
         "minute": "분",
         "minutes": "분",
-        "months": "월",
+        "months": "개월",
         "next-month": "다음 달",
         "next-week": "다음 주",
         "tomorrow": "내일",
@@ -102,7 +102,7 @@
         "qr_tooltip": "QR 코드 표시"
       },
       "password_score": {
-        "password_strength": "암호 강도"
+        "password_strength": "비밀번호 강도"
       }
     },
     "item": {
