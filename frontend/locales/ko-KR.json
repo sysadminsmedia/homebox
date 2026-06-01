@@ -1,69 +1,163 @@
 {
-    "components": {
-        "app": {
-            "create_modal": {
-                "enter": "Enter",
-                "shift": "Sjoft"
-            },
-            "import_dialog": {
-                "title": "CSV 파일 들여오기",
-                "toast": {
-                    "import_failed": "들여오지 못했습니다. 나중에 다시 시도해 주세요.",
-                    "import_success": "들여오기 성공!",
-                    "please_select_file": "들여올 파일을 선택해 주세요."
-                }
-            },
-            "outdated": {
-                "current_version": "현재 버전",
-                "latest_version": "최신 버전",
-                "new_version_available": "새 버전이 있습니다",
-                "new_version_available_link": "릴리스 노트를 보려면 여기를 클릭하세요"
-            }
-        },
-        "form": {
-            "password": {
-                "toggle_show": "비밀번호 보기"
-            }
-        },
-        "global": {
-            "copy_text": {
-                "failed_to_copy": "클립보드에 복사하지 못했습니다",
-                "https_required": "HTTPS 연결이 필요합니다"
-            },
-            "date_time": {
-                "ago": "{0} 전",
-                "days": "일",
-                "hour": "시간",
-                "hours": "시간",
-                "just-now": "지금",
-                "last-month": "지난 달",
-                "last-week": "지난 주",
-                "last-year": "작년",
-                "minute": "분",
-                "minutes": "분",
-                "months": "월",
-                "next-month": "다음 달",
-                "next-week": "다음 주",
-                "tomorrow": "내일",
-                "week": "주",
-                "weeks": "주",
-                "years": "년",
-                "yesterday": "어제"
-            },
-            "label_maker": {
-                "browser_print": "브라우저에서 인쇄"
-            },
-            "page_qr_code": {
-                "qr_tooltip": "QR 코드 표시"
-            },
-            "password_score": {
-                "password_strength": "암호 강도"
-            }
-        },
-        "item": {
-            "attachments_list": {
-                "download": "내려받기"
-            }
+  "collection": {
+    "copy_invite": "초대 링크 복사",
+    "create_invite": "초대 만들기",
+    "delete_collection": "컬렉션 삭제",
+    "delete_confirm": "이 컬렉션을 삭제하시겠습니까? 되돌릴 수 없습니다.",
+    "deleted_collection": "컬렉션이 삭제되었습니다.",
+    "expires_at": "만료일",
+    "invite_token": "토큰",
+    "invite_token_hidden": "더 이상 표시 안 됨",
+    "invite_token_warning": "초대 토큰은 한 번만 표시됩니다. 지금 링크를 복사하세요. 페이지를 떠나거나 새로고침하면 다시 볼 수 없습니다.",
+    "invites": "초대",
+    "invites_delete_confirm": "이 초대를 삭제하시겠습니까?",
+    "leave_collection": "컬렉션 나가기",
+    "leave_confirm": "이 컬렉션에서 나가시겠습니까?",
+    "left_collection": "컬렉션에서 나갔습니다.",
+    "manage_collection": "컬렉션 관리",
+    "members": {
+      "cannot_remove_last": "마지막 구성원은 제거할 수 없습니다.",
+      "email": "이메일",
+      "empty": "이 컬렉션에 아직 구성원이 없습니다.",
+      "member": "구성원",
+      "name": "이름",
+      "owner": "소유자",
+      "remove_confirm": "이 구성원을 제거하시겠습니까?",
+      "removed": "구성원 제거됨",
+      "role": "역할"
+    },
+    "no_collections": {
+      "create": "새 컬렉션 만들기",
+      "join": "기존 컬렉션 가입",
+      "message": "아직 컬렉션에 속해 있지 않습니다. 새 컬렉션을 만들거나 초대받은 컬렉션에 가입하세요.",
+      "title": "컬렉션 없음"
+    },
+    "no_invites": "초대 없음",
+    "remaining_uses": "남은 사용 횟수",
+    "tabs": {
+      "entity_types": "엔티티 유형",
+      "invites": "초대",
+      "members": "구성원",
+      "notifiers": "알림",
+      "settings": "설정",
+      "tools": "도구"
+    },
+    "uses": "사용 횟수"
+  },
+  "components": {
+    "app": {
+      "create_modal": {
+        "enter": "Enter",
+        "shift": "Shift"
+      },
+      "import_dialog": {
+        "title": "CSV 파일 들여오기",
+        "toast": {
+          "import_failed": "들여오지 못했습니다. 나중에 다시 시도해 주세요.",
+          "import_success": "들여오기 성공!",
+          "please_select_file": "들여올 파일을 선택해 주세요."
         }
+      },
+      "outdated": {
+        "current_version": "현재 버전",
+        "latest_version": "최신 버전",
+        "new_version_available": "새 버전이 있습니다",
+        "new_version_available_link": "릴리스 노트를 보려면 여기를 클릭하세요"
+      }
+    },
+    "form": {
+      "password": {
+        "toggle_show": "비밀번호 보기"
+      }
+    },
+    "global": {
+      "copy_text": {
+        "failed_to_copy": "클립보드에 복사하지 못했습니다",
+        "https_required": "HTTPS 연결이 필요합니다"
+      },
+      "date_time": {
+        "ago": "{0} 전",
+        "days": "일",
+        "hour": "시간",
+        "hours": "시간",
+        "just-now": "지금",
+        "last-month": "지난 달",
+        "last-week": "지난 주",
+        "last-year": "작년",
+        "minute": "분",
+        "minutes": "분",
+        "months": "개월",
+        "next-month": "다음 달",
+        "next-week": "다음 주",
+        "tomorrow": "내일",
+        "week": "주",
+        "weeks": "주",
+        "years": "년",
+        "yesterday": "어제"
+      },
+      "label_maker": {
+        "browser_print": "브라우저에서 인쇄"
+      },
+      "page_qr_code": {
+        "qr_tooltip": "QR 코드 표시"
+      },
+      "password_score": {
+        "password_strength": "비밀번호 강도"
+      }
+    },
+    "item": {
+      "attachments_list": {
+        "download": "내려받기"
+      },
+      "view": {
+        "table": {
+          "dropdown": {
+            "open_menu": "메뉴 열기"
+          }
+        }
+      }
+    },
+    "quick_menu": {
+      "no_results": "검색 결과가 없습니다.",
+      "shortcut_hint": "숫자 키를 사용해 빠르게 동작을 선택할 수 있습니다."
     }
+  },
+  "global": {
+    "add": "추가",
+    "cancel": "취소",
+    "close": "닫기",
+    "confirm": "확인",
+    "create": "만들기",
+    "delete": "삭제",
+    "edit": "편집",
+    "loading": "불러오는 중…",
+    "navigate": "이동",
+    "no": "아니오",
+    "save": "저장",
+    "search": "검색",
+    "update": "업데이트",
+    "welcome": "환영합니다",
+    "yes": "예"
+  },
+  "home": {
+    "quick_statistics": "빠른 통계",
+    "recently_added": "최근 추가됨",
+    "storage_locations": "저장 위치",
+    "total_items": "총 항목 수",
+    "total_locations": "총 위치 수",
+    "total_tags": "총 태그 수",
+    "total_value": "총 가치"
+  },
+  "menu": {
+    "collection": "컬렉션",
+    "create_item": "항목 / 자산",
+    "create_location": "위치",
+    "create_tag": "태그",
+    "home": "홈",
+    "locations": "위치",
+    "maintenance": "유지보수",
+    "profile": "프로필",
+    "search": "검색",
+    "templates": "템플릿"
+  }
 }
