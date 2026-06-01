@@ -39,21 +39,45 @@ export type TreeQuery = {
   withItems: boolean;
 };
 
+function buildAttachmentForm(
+  file: File | Blob,
+  filename: string,
+  type: AttachmentTypes | null,
+  primary: boolean | undefined
+): FormData {
+  const formData = new FormData();
+  formData.append("file", file);
+  if (type) formData.append("type", type);
+  formData.append("name", filename);
+  if (primary !== undefined) formData.append("primary", primary.toString());
+  return formData;
+}
+
 export class AttachmentsAPI extends BaseAPI {
   add(id: string, file: File | Blob, filename: string, type: AttachmentTypes | null = null, primary?: boolean) {
-    const formData = new FormData();
-    formData.append("file", file);
-    if (type) {
-      formData.append("type", type);
-    }
-    formData.append("name", filename);
-    if (primary !== undefined) {
-      formData.append("primary", primary.toString());
-    }
-
     return this.http.post<FormData, EntityOut>({
       url: route(`/entities/${id}/attachments`),
-      data: formData,
+      data: buildAttachmentForm(file, filename, type, primary),
+    });
+  }
+
+  /**
+   * Same payload as `add`, but uses an XHR transport so the caller can subscribe to
+   * real upload progress via `onProgress(fraction)`. Use this when the UI needs to
+   * render a percentage; otherwise `add` is fine.
+   */
+  addWithProgress(
+    id: string,
+    file: File | Blob,
+    filename: string,
+    type: AttachmentTypes | null = null,
+    primary: boolean | undefined,
+    onProgress: (fraction: number) => void
+  ) {
+    return this.http.postWithProgress<EntityOut>({
+      url: route(`/entities/${id}/attachments`),
+      data: buildAttachmentForm(file, filename, type, primary),
+      onProgress,
     });
   }
 

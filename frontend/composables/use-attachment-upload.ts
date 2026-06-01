@@ -31,9 +31,18 @@ export function useAttachmentUpload(options: RetryOptions = {}) {
     file: File | Blob,
     filename: string,
     type: AttachmentTypes | null = null,
-    primary?: boolean
+    primary?: boolean,
+    onProgress?: (fraction: number) => void
   ): Promise<UploadResult> {
-    return track(() => withRetries(() => api.items.attachments.add(itemId, file, filename, type, primary), options));
+    return track(() =>
+      withRetries(
+        () =>
+          onProgress
+            ? api.items.attachments.addWithProgress(itemId, file, filename, type, primary, onProgress)
+            : api.items.attachments.add(itemId, file, filename, type, primary),
+        options
+      )
+    );
   }
 
   function uploadExternalLink(

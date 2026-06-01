@@ -292,6 +292,8 @@
   const { isOverDropZone: attDropZoneActive } = useDropZone(attDropZone);
 
   const { uploading: attachmentUploading, uploadFile, uploadExternalLink } = useAttachmentUpload();
+  // 0..1 fraction of the current attachment's body uploaded; null when idle.
+  const attachmentProgress = ref<number | null>(null);
 
   const refAttachmentInput = ref<HTMLInputElement>();
 
@@ -394,7 +396,11 @@
     }
 
     const file = files[0];
-    const result = await uploadFile(itemId.value, file, file.name, type);
+    attachmentProgress.value = 0;
+    const result = await uploadFile(itemId.value, file, file.name, type, undefined, f => {
+      attachmentProgress.value = f;
+    });
+    attachmentProgress.value = null;
 
     if (!result.ok) {
       toast.error(t("items.toast.failed_upload_attachment_reason", { reason: result.reason }));
@@ -765,7 +771,10 @@
               class="flex h-24 w-full items-center justify-center gap-2 border-2 border-dashed border-primary"
             >
               <MdiLoading class="size-5 animate-spin" />
-              <p>{{ $t("items.toast.uploading_attachment") }}</p>
+              <p>
+                {{ $t("items.toast.uploading_attachment") }}
+                <span v-if="attachmentProgress !== null">({{ Math.round(attachmentProgress * 100) }}%)</span>
+              </p>
             </div>
             <div v-else-if="attDropZoneActive" class="grid grid-cols-4 gap-4">
               <DropZone data-link-type="photo" @drop="dropPhoto"> {{ $t("items.photos") }} </DropZone>

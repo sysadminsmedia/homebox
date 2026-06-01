@@ -209,6 +209,7 @@
                 $t("components.item.create_modal.uploading_progress", {
                   current: uploadProgress.current,
                   total: uploadProgress.total,
+                  percent: Math.round(uploadProgress.percent * 100),
                 })
               }}
             </span>
@@ -439,7 +440,8 @@
   // submit re-uploads the remaining photos to this item instead of creating a duplicate.
   const pendingItemId = ref<string | null>(null);
   // Per-photo progress counter shown on the submit button while photos upload.
-  const uploadProgress = ref<{ current: number; total: number } | null>(null);
+  // `percent` is the fraction (0..1) of the current photo's body uploaded.
+  const uploadProgress = ref<{ current: number; total: number; percent: number } | null>(null);
   const { uploadFile } = useAttachmentUpload();
   const form = reactive({
     location: locations.value && locations.value.length > 0 ? locations.value[0] : ({} as EntityOut),
@@ -712,8 +714,17 @@
 
         for (let i = 0; i < total; i++) {
           const photo = form.photos[i]!;
-          uploadProgress.value = { current: i + 1, total };
-          const result = await uploadFile(itemId, photo.file, photo.photoName, AttachmentTypes.Photo, photo.primary);
+          uploadProgress.value = { current: i + 1, total, percent: 0 };
+          const result = await uploadFile(
+            itemId,
+            photo.file,
+            photo.photoName,
+            AttachmentTypes.Photo,
+            photo.primary,
+            fraction => {
+              if (uploadProgress.value) uploadProgress.value.percent = fraction;
+            }
+          );
           if (!result.ok) {
             failed.push(photo);
             toast.error(

@@ -212,7 +212,7 @@
                     "uploading_photos": "{count, plural, =0 {No photos to upload} =1 {Uploading 1 photo…} other {Uploading {count} photos…}}"
                 },
                 "upload_photos": "Upload Photos",
-                "uploading_progress": "Uploading { current } / { total }…",
+                "uploading_progress": "Uploading { current } / { total } ({ percent }%)",
                 "uploaded": "Uploaded Photo"
             },
             "product_import": {
