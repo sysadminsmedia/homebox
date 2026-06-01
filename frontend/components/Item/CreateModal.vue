@@ -195,16 +195,26 @@
         <ButtonGroup>
           <Button :disabled="loading" type="submit" class="group">
             <div class="relative mx-2">
+              <MdiLoading v-if="loading" class="size-5 animate-spin" />
               <div
+                v-else
                 class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:rotate-[360deg]"
               >
                 <MdiPackageVariant class="size-5 group-hover:hidden" />
                 <MdiPackageVariantClosed class="hidden size-5 group-hover:block" />
               </div>
             </div>
-            {{ $t("global.create") }}
+            <span v-if="loading && uploadProgress">
+              {{
+                $t("components.item.create_modal.uploading_progress", {
+                  current: uploadProgress.current,
+                  total: uploadProgress.total,
+                })
+              }}
+            </span>
+            <span v-else>{{ pendingItemId ? $t("global.retry_upload") : $t("global.create") }}</span>
           </Button>
-          <Button variant="outline" :disabled="loading" type="button" @click="create(false)">
+          <Button v-if="!pendingItemId" variant="outline" :disabled="loading" type="button" @click="create(false)">
             {{ $t("global.create_and_add") }}
           </Button>
         </ButtonGroup>
@@ -304,6 +314,7 @@
   import MdiBarcodeScan from "~icons/mdi/barcode-scan";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
+  import MdiLoading from "~icons/mdi/loading";
   import MdiDelete from "~icons/mdi/delete";
   import MdiRotateClockwise from "~icons/mdi/rotate-clockwise";
   import MdiStarOutline from "~icons/mdi/star-outline";
@@ -424,6 +435,12 @@
   const selectedTemplate = ref<EntityTemplateSummary | null>(null);
   const templateData = ref<EntityTemplateOut | null>(null);
   const showTemplateDetails = ref(false);
+  // Set when the item was created but one or more photo uploads failed. While set, the next
+  // submit re-uploads the remaining photos to this item instead of creating a duplicate.
+  const pendingItemId = ref<string | null>(null);
+  // Per-photo progress counter shown on the submit button while photos upload.
+  const uploadProgress = ref<{ current: number; total: number } | null>(null);
+  const { uploadFile } = useAttachmentUpload();
   const form = reactive({
     location: locations.value && locations.value.length > 0 ? locations.value[0] : ({} as EntityOut),
     parentId: null,
@@ -569,6 +586,8 @@
 
   onMounted(() => {
     const cleanup = registerOpenDialogCallback(DialogID.CreateItem, async params => {
+      // Abandon any leftover retry state from a previous session — opening the modal means starting fresh.
+      pendingItemId.value = null;
       // needed since URL will be cleared in the next step => ParentId Selection should stay though
       subItemCreate.value = subItemCreateParam.value === "y";
       let parentItemLocationId = null;
@@ -649,85 +668,98 @@
 
     if (shift?.value) close = false;
 
-    let createResponse;
+    try {
+      let itemId = pendingItemId.value;
 
-    // If a template is selected, use the template creation endpoint
-    if (templateData.value) {
-      const templateRequest = {
-        name: form.name,
-        description: form.description,
-        parentId: form.location.id as string,
-        tagIds: form.tags,
-        quantity: form.quantity,
-      };
-
-      createResponse = await api.templates.createItem(templateData.value.id, templateRequest);
-    } else {
-      // Normal item creation without template
-      const out: EntityCreate = {
-        parentId: form.parentId || (form.location.id as string),
-        name: form.name,
-        quantity: form.quantity,
-        description: form.description,
-        tagIds: form.tags,
-        entityTypeId: selectedEntityType.value?.id,
-      };
-
-      createResponse = await api.items.create(out);
-    }
-
-    const { error, data } = createResponse;
-
-    if (error) {
-      loading.value = false;
-      const reason = extractErrorMessage(createResponse);
-      toast.error(t("components.item.create_modal.toast.create_failed_reason", { reason }));
-      console.error("Item create failed", createResponse);
-      return;
-    }
-
-    toast.success(t("components.item.create_modal.toast.create_success"));
-
-    if (form.photos.length > 0) {
-      toast.info(t("components.item.create_modal.toast.uploading_photos", { count: form.photos.length }));
-      let uploadError = false;
-      for (const photo of form.photos) {
-        const { error: attachError } = await api.items.attachments.add(
-          data.id,
-          photo.file,
-          photo.photoName,
-          AttachmentTypes.Photo,
-          photo.primary
-        );
-
-        if (attachError) {
-          uploadError = true;
-          toast.error(t("components.item.create_modal.toast.upload_failed", { photoName: photo.photoName }));
-          console.error(attachError);
+      // Skip creation when retrying a partial-success state — the item already exists.
+      if (!itemId) {
+        let createResponse;
+        if (templateData.value) {
+          const templateRequest = {
+            name: form.name,
+            description: form.description,
+            parentId: form.location.id as string,
+            tagIds: form.tags,
+            quantity: form.quantity,
+          };
+          createResponse = await api.templates.createItem(templateData.value.id, templateRequest);
+        } else {
+          const out: EntityCreate = {
+            parentId: form.parentId || (form.location.id as string),
+            name: form.name,
+            quantity: form.quantity,
+            description: form.description,
+            tagIds: form.tags,
+            entityTypeId: selectedEntityType.value?.id,
+          };
+          createResponse = await api.items.create(out);
         }
-      }
-      if (uploadError) {
-        toast.warning(t("components.item.create_modal.toast.some_photos_failed", { count: form.photos.length }));
-      } else {
-        toast.success(t("components.item.create_modal.toast.upload_success", { count: form.photos.length }));
-      }
-    }
 
-    form.name = "";
-    form.quantity = 1;
-    form.description = "";
-    form.color = "";
-    form.photos = [];
-    form.tags = [];
-    selectedTemplate.value = null;
-    templateData.value = null;
-    showTemplateDetails.value = false;
-    focused.value = false;
-    loading.value = false;
+        if (createResponse.error || !createResponse.data?.id) {
+          const reason = extractErrorMessage(createResponse);
+          toast.error(t("components.item.create_modal.toast.create_failed_reason", { reason }));
+          console.error("Item create failed", createResponse);
+          return;
+        }
 
-    if (close) {
-      closeDialog(DialogID.CreateItem);
-      navigateTo(`/item/${data.id}`);
+        itemId = createResponse.data.id;
+        toast.success(t("components.item.create_modal.toast.create_success"));
+      }
+
+      if (form.photos.length > 0) {
+        const total = form.photos.length;
+        const failed: PhotoPreview[] = [];
+
+        for (let i = 0; i < total; i++) {
+          const photo = form.photos[i]!;
+          uploadProgress.value = { current: i + 1, total };
+          const result = await uploadFile(itemId, photo.file, photo.photoName, AttachmentTypes.Photo, photo.primary);
+          if (!result.ok) {
+            failed.push(photo);
+            toast.error(
+              t("components.item.create_modal.toast.upload_failed_reason", {
+                photoName: photo.photoName,
+                reason: result.reason,
+              })
+            );
+            console.error("Photo upload failed", result);
+          }
+        }
+
+        if (failed.length > 0) {
+          // Keep only the failed photos so the user retries without re-uploading the successful ones.
+          form.photos = failed;
+          pendingItemId.value = itemId;
+          toast.warning(t("components.item.create_modal.toast.some_photos_failed", { count: failed.length }));
+          return;
+        }
+
+        toast.success(t("components.item.create_modal.toast.upload_success", { count: total }));
+      }
+
+      form.name = "";
+      form.quantity = 1;
+      form.description = "";
+      form.color = "";
+      form.photos = [];
+      form.tags = [];
+      selectedTemplate.value = null;
+      templateData.value = null;
+      showTemplateDetails.value = false;
+      focused.value = false;
+      pendingItemId.value = null;
+
+      if (close) {
+        closeDialog(DialogID.CreateItem);
+        navigateTo(`/item/${itemId}`);
+      }
+    } catch (err: unknown) {
+      const reason = err instanceof Error && err.message ? err.message : String(err);
+      toast.error(t("components.item.create_modal.toast.unexpected_error", { reason }));
+      console.error("Item create flow threw", err);
+    } finally {
+      loading.value = false;
+      uploadProgress.value = null;
     }
   }
 
