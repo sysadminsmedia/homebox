@@ -618,6 +618,8 @@
             "failed_search_items": "Failed to search items",
             "failed_update_attachment": "Failed to update attachment",
             "failed_upload_attachment": "Failed to upload attachment",
+            "failed_upload_attachment_reason": "Failed to upload attachment: { reason }",
+            "uploading_attachment": "Uploading attachment…",
             "item_deleted": "Item deleted",
             "item_saved": "Item saved",
             "quantity_cannot_negative": "Quantity cannot be negative",
