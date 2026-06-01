@@ -197,6 +197,7 @@
                 "toast": {
                     "already_creating": "Already creating an item",
                     "create_failed": "Couldn't create item",
+                    "create_failed_reason": "Couldn't create item: { reason }",
                     "create_success": "Item created",
                     "failed_load_parent": "Failed to load parent item - please select manually",
                     "no_canvas_support": "Your browser doesn't support canvas operations",

@@ -287,6 +287,7 @@
   import { useI18n } from "vue-i18n";
   import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { toast } from "@/components/ui/sonner";
+  import { extractErrorMessage } from "~~/lib/requests/extract-error";
   import { Button, ButtonGroup } from "~/components/ui/button";
   import BaseModal from "@/components/App/CreateModal.vue";
   import { Label } from "@/components/ui/label";
@@ -648,7 +649,7 @@
 
     if (shift?.value) close = false;
 
-    let error, data;
+    let createResponse;
 
     // If a template is selected, use the template creation endpoint
     if (templateData.value) {
@@ -660,9 +661,7 @@
         quantity: form.quantity,
       };
 
-      const result = await api.templates.createItem(templateData.value.id, templateRequest);
-      error = result.error;
-      data = result.data;
+      createResponse = await api.templates.createItem(templateData.value.id, templateRequest);
     } else {
       // Normal item creation without template
       const out: EntityCreate = {
@@ -674,14 +673,16 @@
         entityTypeId: selectedEntityType.value?.id,
       };
 
-      const result = await api.items.create(out);
-      error = result.error;
-      data = result.data;
+      createResponse = await api.items.create(out);
     }
+
+    const { error, data } = createResponse;
 
     if (error) {
       loading.value = false;
-      toast.error(t("components.item.create_modal.toast.create_failed"));
+      const reason = extractErrorMessage(createResponse);
+      toast.error(t("components.item.create_modal.toast.create_failed_reason", { reason }));
+      console.error("Item create failed", createResponse);
       return;
     }
 
