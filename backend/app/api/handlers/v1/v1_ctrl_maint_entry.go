@@ -42,7 +42,7 @@ func (ctrl *V1Controller) HandleMaintenanceLogGet() errchain.HandlerFunc {
 func (ctrl *V1Controller) HandleMaintenanceEntryCreate() errchain.HandlerFunc {
 	fn := func(r *http.Request, itemID uuid.UUID, body repo.MaintenanceEntryCreate) (repo.MaintenanceEntry, error) {
 		auth := services.NewContext(r.Context())
-		return ctrl.repo.MaintEntry.Create(auth, itemID, body)
+		return ctrl.repo.MaintEntry.Create(auth, auth.GID, itemID, body)
 	}
 
 	return adapters.ActionID("id", fn, http.StatusCreated)

@@ -11,6 +11,7 @@
   import MdiPencil from "~icons/mdi/pencil";
   import MdiContentSaveOutline from "~icons/mdi/content-save-outline";
   import MdiImageOutline from "~icons/mdi/image-outline";
+  import MdiOpenInNew from "~icons/mdi/open-in-new";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { Button } from "@/components/ui/button";
   import { useDialog } from "@/components/ui/dialog-provider";
@@ -64,7 +65,7 @@
       return;
     }
 
-    if (data.parent) {
+    if (data.parent && data.parent.entityType && !data.parent.entityType.isLocation) {
       parent.value = data.parent;
     }
 
@@ -115,7 +116,9 @@
       assetId: item.value.assetId,
       purchasePrice,
       soldPrice,
-      purchaseTime: item.value.purchaseTime as Date,
+      // Date-only fields stay as YYYY-MM-DD strings — see types.Date on the
+      // backend. The form/picker hold strings; sending the spread above is
+      // sufficient.
       syncChildEntityLocations: item.value.syncChildEntityLocations,
     };
 
@@ -242,7 +245,7 @@
     {
       type: "date",
       label: "items.purchase_date",
-      ref: "purchaseTime",
+      ref: "purchaseDate",
     },
   ];
 
@@ -280,7 +283,7 @@
     {
       type: "date",
       label: "items.sold_at",
-      ref: "soldTime",
+      ref: "soldDate",
     },
   ];
 
@@ -316,6 +319,77 @@
   const dropWarranty = (files: File[] | null) => uploadAttachment(files, AttachmentTypes.Warranty);
   const dropManual = (files: File[] | null) => uploadAttachment(files, AttachmentTypes.Manual);
   const dropReceipt = (files: File[] | null) => uploadAttachment(files, AttachmentTypes.Receipt);
+
+  function getDroppedURL(event: DragEvent): string {
+    const dt = event.dataTransfer;
+    if (!dt) return "";
+
+    const mozUrl = dt.getData("text/x-moz-url").split("\n")[0]?.trim() || "";
+    const uriList = dt
+      .getData("text/uri-list")
+      .split("\n")
+      .find(u => u.trim() && !u.startsWith("#"))
+      ?.trim();
+
+    return (mozUrl || uriList || dt.getData("text/plain").trim()).trim();
+  }
+
+  function isValidHttpURL(value: string): boolean {
+    try {
+      const parsed = new URL(value);
+      return parsed.protocol === "http:" || parsed.protocol === "https:";
+    } catch {
+      return false;
+    }
+  }
+
+  function fallbackLinkTitle(value: string): string {
+    try {
+      const parsed = new URL(value);
+      return parsed.hostname + parsed.pathname;
+    } catch {
+      return value;
+    }
+  }
+
+  async function handleAttachmentCardDrop(event: DragEvent) {
+    event.preventDefault();
+    const dt = event.dataTransfer;
+    if (!dt) return;
+
+    if (dt.files && dt.files.length > 0) {
+      return;
+    }
+
+    const droppedURL = getDroppedURL(event);
+    if (!droppedURL) return;
+
+    if (!isValidHttpURL(droppedURL)) {
+      toast.error(t("items.toast.failed_upload_attachment"));
+      return;
+    }
+
+    const targetEl = event.target as Element | null;
+    const zoneEl = targetEl?.closest("[data-link-type]");
+    const attachmentType = zoneEl?.getAttribute("data-link-type") || "attachment";
+
+    const title = fallbackLinkTitle(droppedURL);
+    const { data, error } = await api.items.attachments.addExternalLink(
+      itemId.value,
+      "link",
+      droppedURL,
+      title,
+      attachmentType
+    );
+
+    if (error) {
+      toast.error(t("items.toast.failed_upload_attachment"));
+      return;
+    }
+
+    toast.success(t("items.toast.attachment_uploaded"));
+    item.value.attachments = data.attachments;
+  }
 
   async function uploadAttachment(files: File[] | null, type: AttachmentTypes | null) {
     if (!files || files.length === 0 || !files[0]) {
@@ -636,6 +710,7 @@
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
                   :label="$t(field.label)"
+                  date-only
                   inline
                 />
                 <FormCheckbox
@@ -677,21 +752,27 @@
           </div>
         </BaseCard>
 
-        <Card ref="attDropZone" class="overflow-visible shadow-xl">
+        <Card
+          ref="attDropZone"
+          class="overflow-visible shadow-xl"
+          @dragover.prevent
+          @drop.prevent="handleAttachmentCardDrop"
+        >
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">{{ $t("items.attachments") }}</h3>
             <p class="text-xs">{{ $t("items.changes_persisted_immediately") }}</p>
           </div>
           <div class="border-t p-4">
             <div v-if="attDropZoneActive" class="grid grid-cols-4 gap-4">
-              <DropZone @drop="dropPhoto"> {{ $t("items.photos") }} </DropZone>
-              <DropZone @drop="dropWarranty"> {{ $t("items.warranty") }} </DropZone>
-              <DropZone @drop="dropManual"> {{ $t("items.manuals") }} </DropZone>
-              <DropZone @drop="dropAttachment"> {{ $t("items.attachments") }} </DropZone>
-              <DropZone @drop="dropReceipt"> {{ $t("items.receipts") }} </DropZone>
+              <DropZone data-link-type="photo" @drop="dropPhoto"> {{ $t("items.photos") }} </DropZone>
+              <DropZone data-link-type="warranty" @drop="dropWarranty"> {{ $t("items.warranty") }} </DropZone>
+              <DropZone data-link-type="manual" @drop="dropManual"> {{ $t("items.manuals") }} </DropZone>
+              <DropZone data-link-type="attachment" @drop="dropAttachment"> {{ $t("items.attachments") }} </DropZone>
+              <DropZone data-link-type="receipt" @drop="dropReceipt"> {{ $t("items.receipts") }} </DropZone>
             </div>
             <button
               v-else
+              data-link-type="attachment"
               class="grid h-24 w-full place-content-center border-2 border-dashed border-primary"
               @click="clickUpload"
             >
@@ -740,6 +821,24 @@
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>{{ $t("items.edit.view_image") }}</TooltipContent>
+                  </Tooltip>
+                  <Tooltip
+                    v-if="
+                      attachment.mimeType === 'link/url' ||
+                      (attachment.path ?? '').startsWith('http://') ||
+                      (attachment.path ?? '').startsWith('https://')
+                    "
+                  >
+                    <TooltipTrigger as-child>
+                      <a :href="attachment.path" target="_blank" rel="noopener noreferrer">
+                        <Button variant="outline" size="icon">
+                          <MdiOpenInNew />
+                        </Button>
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {{ $t("components.item.attachments_list.open_new_tab") }}
+                    </TooltipContent>
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger as-child>
@@ -798,6 +897,7 @@
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
                   :label="$t(field.label)"
+                  date-only
                   inline
                 />
                 <FormCheckbox
@@ -846,6 +946,7 @@
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
                   :label="$t(field.label)"
+                  date-only
                   inline
                 />
                 <FormCheckbox
@@ -894,6 +995,7 @@
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
                   :label="$t(field.label)"
+                  date-only
                   inline
                 />
                 <FormCheckbox

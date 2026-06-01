@@ -36,7 +36,7 @@
       <!-- Photo upload -->
       <div class="flex w-full flex-col gap-1.5">
         <Label for="location-create-photo" class="flex w-full px-1">
-          {{ $t("components.item.create_modal.item_photo") }}
+          {{ $t("components.location.create_modal.location_photo") }}
         </Label>
         <div class="relative inline-block">
           <Button type="button" variant="outline" class="w-full" aria-hidden="true" @click.prevent="">
@@ -67,11 +67,7 @@
 
       <template v-if="showAdvanced">
         <TagSelector v-model="form.tags" :tags="tags ?? []" />
-        <FormTextArea
-          v-model="form.notes"
-          label="Notes"
-          :max-length="1000"
-        />
+        <FormTextArea v-model="form.notes" label="Notes" :max-length="1000" />
       </template>
 
       <div class="mt-4 flex flex-row-reverse">
@@ -142,8 +138,7 @@
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
   import BaseModal from "@/components/App/CreateModal.vue";
-  import type { EntityTypeSummary } from "~~/lib/api/types/data-contracts";
-  import type { EntitySummary } from "~~/lib/api/types/data-contracts";
+  import type { EntityTypeSummary, EntitySummary } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
   import { useTagStore } from "~/stores/tags";

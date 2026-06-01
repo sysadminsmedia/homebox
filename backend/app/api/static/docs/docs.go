@@ -688,6 +688,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/entities/{id}/attachments/external": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Links an entity to a document or URL in an external system without copying",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entities Attachments"
+                ],
+                "summary": "Create External Link Attachment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "External document reference",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.externalAttachmentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityOut"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/validate.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/entities/{id}/attachments/{attachment_id}": {
             "get": {
                 "security": [
@@ -1103,6 +1155,183 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/group/exports": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Returns export job rows for the caller's group, newest first.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Group"
+                ],
+                "summary": "List Collection Exports",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.Results-repo_ExportOut"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Creates a pending export row and enqueues the build job. Poll the listing endpoint or watch the WebSocket for completion.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Start a Collection Export",
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/repo.ExportOut"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/group/exports/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Get an Export",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Export ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.ExportOut"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Deletes the export row and its blob artifact.",
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Delete an Export",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Export ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/group/exports/{id}/download": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/zip"
+                ],
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Download an Export Artifact",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Export ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/group/import": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Uploads a collection-export zip and enqueues the import job. The destination group must be empty. Returns the tracked import row so clients can poll for progress.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Import a Collection Zip",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Export zip",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/repo.ExportOut"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/groups": {
             "get": {
                 "security": [
@@ -1385,36 +1614,6 @@ const docTemplate = `{
                                 "$ref": "#/definitions/repo.UserSummary"
                             }
                         }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Group"
-                ],
-                "summary": "Add User to Group",
-                "parameters": [
-                    {
-                        "description": "User ID",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.GroupMemberAdd"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
                     }
                 }
             }
@@ -2453,6 +2652,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/users/forgot-password": {
+            "post": {
+                "description": "Sends a password reset email if the address is associated with a local account.\nAlways returns 204 on success to avoid leaking whether the email is registered.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Request Password Reset",
+                "parameters": [
+                    {
+                        "description": "Email",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.ForgotPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "missing or invalid request body, or empty email field",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "demo mode is enabled or local login is disabled",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal error while processing the request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/users/login": {
             "post": {
                 "consumes": [
@@ -2608,6 +2856,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/users/reset-password": {
+            "post": {
+                "description": "Consumes a single-use reset token and changes the user's password.\nOn success, all existing sessions for the user are revoked.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Reset Password",
+                "parameters": [
+                    {
+                        "description": "Token + new password",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.ResetPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "invalid request body, password shorter than the minimum length, or token that is invalid / expired / already used",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "demo mode is enabled or local login is disabled",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal error while processing the request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/users/self": {
             "get": {
                 "security": [
@@ -2701,6 +2998,93 @@ const docTemplate = `{
                     "User"
                 ],
                 "summary": "Delete Account",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/users/self/api-keys": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "List API Keys",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.APIKeyOut"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Create API Key",
+                "parameters": [
+                    {
+                        "description": "API Key Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.APIKeyCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.APIKeyCreatedOut"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/users/self/api-keys/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete API Key",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "API Key ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "No Content"
@@ -2847,6 +3231,60 @@ const docTemplate = `{
                 },
                 "symbol": {
                     "type": "string"
+                }
+            }
+        },
+        "ent.APIKey": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the APIKeyQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.APIKeyEdges"
+                        }
+                    ]
+                },
+                "expires_at": {
+                    "description": "ExpiresAt holds the value of the \"expires_at\" field.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "last_used_at": {
+                    "description": "LastUsedAt holds the value of the \"last_used_at\" field.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "UserID holds the value of the \"user_id\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.APIKeyEdges": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "description": "User holds the value of the user edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.User"
+                        }
+                    ]
                 }
             }
         },
@@ -3074,6 +3512,10 @@ const docTemplate = `{
                     "description": "Notes holds the value of the \"notes\" field.",
                     "type": "string"
                 },
+                "purchase_date": {
+                    "description": "PurchaseDate holds the value of the \"purchase_date\" field.",
+                    "type": "string"
+                },
                 "purchase_from": {
                     "description": "PurchaseFrom holds the value of the \"purchase_from\" field.",
                     "type": "string"
@@ -3081,10 +3523,6 @@ const docTemplate = `{
                 "purchase_price": {
                     "description": "PurchasePrice holds the value of the \"purchase_price\" field.",
                     "type": "number"
-                },
-                "purchase_time": {
-                    "description": "PurchaseTime holds the value of the \"purchase_time\" field.",
-                    "type": "string"
                 },
                 "quantity": {
                     "description": "Quantity holds the value of the \"quantity\" field.",
@@ -3094,6 +3532,10 @@ const docTemplate = `{
                     "description": "SerialNumber holds the value of the \"serial_number\" field.",
                     "type": "string"
                 },
+                "sold_date": {
+                    "description": "SoldDate holds the value of the \"sold_date\" field.",
+                    "type": "string"
+                },
                 "sold_notes": {
                     "description": "SoldNotes holds the value of the \"sold_notes\" field.",
                     "type": "string"
@@ -3101,10 +3543,6 @@ const docTemplate = `{
                 "sold_price": {
                     "description": "SoldPrice holds the value of the \"sold_price\" field.",
                     "type": "number"
-                },
-                "sold_time": {
-                    "description": "SoldTime holds the value of the \"sold_time\" field.",
-                    "type": "string"
                 },
                 "sold_to": {
                     "description": "SoldTo holds the value of the \"sold_to\" field.",
@@ -3447,6 +3885,80 @@ const docTemplate = `{
                 }
             }
         },
+        "ent.Export": {
+            "type": "object",
+            "properties": {
+                "artifact_path": {
+                    "description": "ArtifactPath holds the value of the \"artifact_path\" field.",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the ExportQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.ExportEdges"
+                        }
+                    ]
+                },
+                "error": {
+                    "description": "Error holds the value of the \"error\" field.",
+                    "type": "string"
+                },
+                "group_id": {
+                    "description": "GroupID holds the value of the \"group_id\" field.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "kind": {
+                    "description": "Kind holds the value of the \"kind\" field.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/export.Kind"
+                        }
+                    ]
+                },
+                "progress": {
+                    "description": "Progress holds the value of the \"progress\" field.",
+                    "type": "integer"
+                },
+                "size_bytes": {
+                    "description": "SizeBytes holds the value of the \"size_bytes\" field.",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "Status holds the value of the \"status\" field.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/export.Status"
+                        }
+                    ]
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.ExportEdges": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                }
+            }
+        },
         "ent.Group": {
             "type": "object",
             "properties": {
@@ -3504,6 +4016,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/ent.EntityType"
                     }
                 },
+                "exports": {
+                    "description": "Exports holds the value of the exports edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Export"
+                    }
+                },
                 "invitation_tokens": {
                     "description": "InvitationTokens holds the value of the invitation_tokens edge.",
                     "type": "array",
@@ -3523,6 +4042,13 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/ent.Tag"
+                    }
+                },
+                "user_groups": {
+                    "description": "UserGroups holds the value of the user_groups edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.UserGroup"
                     }
                 },
                 "users": {
@@ -3701,6 +4227,59 @@ const docTemplate = `{
                         }
                     ]
                 },
+                "user": {
+                    "description": "User holds the value of the user edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.User"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.PasswordResetTokens": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the PasswordResetTokensQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.PasswordResetTokensEdges"
+                        }
+                    ]
+                },
+                "expires_at": {
+                    "description": "ExpiresAt holds the value of the \"expires_at\" field.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "token": {
+                    "description": "Token holds the value of the \"token\" field.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                },
+                "used_at": {
+                    "description": "UsedAt holds the value of the \"used_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.PasswordResetTokensEdges": {
+            "type": "object",
+            "properties": {
                 "user": {
                     "description": "User holds the value of the user edge.",
                     "allOf": [
@@ -3904,14 +4483,6 @@ const docTemplate = `{
                     "description": "OidcSubject holds the value of the \"oidc_subject\" field.",
                     "type": "string"
                 },
-                "role": {
-                    "description": "Role holds the value of the \"role\" field.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/user.Role"
-                        }
-                    ]
-                },
                 "settings": {
                     "description": "Settings holds the value of the \"settings\" field.",
                     "type": "object",
@@ -3930,6 +4501,13 @@ const docTemplate = `{
         "ent.UserEdges": {
             "type": "object",
             "properties": {
+                "api_keys": {
+                    "description": "APIKeys holds the value of the api_keys edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.APIKey"
+                    }
+                },
                 "auth_tokens": {
                     "description": "AuthTokens holds the value of the auth_tokens edge.",
                     "type": "array",
@@ -3950,6 +4528,70 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/ent.Notifier"
                     }
+                },
+                "password_reset_tokens": {
+                    "description": "PasswordResetTokens holds the value of the password_reset_tokens edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.PasswordResetTokens"
+                    }
+                },
+                "user_groups": {
+                    "description": "UserGroups holds the value of the user_groups edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.UserGroup"
+                    }
+                }
+            }
+        },
+        "ent.UserGroup": {
+            "type": "object",
+            "properties": {
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the UserGroupQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.UserGroupEdges"
+                        }
+                    ]
+                },
+                "group_id": {
+                    "description": "GroupID holds the value of the \"group_id\" field.",
+                    "type": "string"
+                },
+                "role": {
+                    "description": "Role holds the value of the \"role\" field.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/usergroup.Role"
+                        }
+                    ]
+                },
+                "user_id": {
+                    "description": "UserID holds the value of the \"user_id\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.UserGroupEdges": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                },
+                "user": {
+                    "description": "User holds the value of the user edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.User"
+                        }
+                    ]
                 }
             }
         },
@@ -3967,6 +4609,106 @@ const docTemplate = `{
                 "TypeBoolean",
                 "TypeTime"
             ]
+        },
+        "export.Kind": {
+            "type": "string",
+            "enum": [
+                "export",
+                "export",
+                "import"
+            ],
+            "x-enum-varnames": [
+                "DefaultKind",
+                "KindExport",
+                "KindImport"
+            ]
+        },
+        "export.Status": {
+            "type": "string",
+            "enum": [
+                "pending",
+                "pending",
+                "running",
+                "completed",
+                "failed"
+            ],
+            "x-enum-varnames": [
+                "DefaultStatus",
+                "StatusPending",
+                "StatusRunning",
+                "StatusCompleted",
+                "StatusFailed"
+            ]
+        },
+        "repo.APIKeyCreate": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "expiresAt": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                }
+            }
+        },
+        "repo.APIKeyCreatedOut": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "expiresAt": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lastUsedAt": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "name": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.APIKeyOut": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "expiresAt": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lastUsedAt": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "name": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
         },
         "repo.BarcodeProduct": {
             "type": "object",
@@ -4182,15 +4924,15 @@ const docTemplate = `{
                     "x-nullable": true,
                     "x-omitempty": true
                 },
+                "purchaseDate": {
+                    "description": "Purchase",
+                    "type": "string"
+                },
                 "purchaseFrom": {
                     "type": "string"
                 },
                 "purchasePrice": {
                     "type": "number"
-                },
-                "purchaseTime": {
-                    "description": "Purchase",
-                    "type": "string"
                 },
                 "quantity": {
                     "type": "number"
@@ -4198,15 +4940,15 @@ const docTemplate = `{
                 "serialNumber": {
                     "type": "string"
                 },
+                "soldDate": {
+                    "description": "Sold",
+                    "type": "string"
+                },
                 "soldNotes": {
                     "type": "string"
                 },
                 "soldPrice": {
                     "type": "number"
-                },
-                "soldTime": {
-                    "description": "Sold",
-                    "type": "string"
                 },
                 "soldTo": {
                     "type": "string"
@@ -4354,7 +5096,7 @@ const docTemplate = `{
                 "quantity": {
                     "type": "number"
                 },
-                "soldTime": {
+                "soldDate": {
                     "description": "Sale details",
                     "type": "string"
                 },
@@ -4772,6 +5514,10 @@ const docTemplate = `{
                     "x-nullable": true,
                     "x-omitempty": true
                 },
+                "purchaseDate": {
+                    "description": "Purchase",
+                    "type": "string"
+                },
                 "purchaseFrom": {
                     "type": "string",
                     "maxLength": 255
@@ -4781,15 +5527,15 @@ const docTemplate = `{
                     "x-nullable": true,
                     "x-omitempty": true
                 },
-                "purchaseTime": {
-                    "description": "Purchase",
-                    "type": "string"
-                },
                 "quantity": {
                     "type": "number"
                 },
                 "serialNumber": {
                     "description": "Identifications",
+                    "type": "string"
+                },
+                "soldDate": {
+                    "description": "Sold",
                     "type": "string"
                 },
                 "soldNotes": {
@@ -4799,10 +5545,6 @@ const docTemplate = `{
                     "type": "number",
                     "x-nullable": true,
                     "x-omitempty": true
-                },
-                "soldTime": {
-                    "description": "Sold",
-                    "type": "string"
                 },
                 "soldTo": {
                     "type": "string",
@@ -4822,6 +5564,42 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "warrantyExpires": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.ExportOut": {
+            "type": "object",
+            "properties": {
+                "artifactPath": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "groupId": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "kind": {
+                    "description": "Kind is \"export\" for server-produced backup artifacts, \"import\" for\nuser-uploaded restore zips. The lifecycle fields below behave the\nsame for both.",
+                    "type": "string"
+                },
+                "progress": {
+                    "type": "integer"
+                },
+                "sizeBytes": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
                     "type": "string"
                 }
             }
@@ -5377,9 +6155,6 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "isOwner": {
-                    "type": "boolean"
-                },
                 "isSuperuser": {
                     "type": "boolean"
                 },
@@ -5402,9 +6177,6 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
-                },
-                "isOwner": {
-                    "type": "boolean"
                 },
                 "name": {
                     "type": "string"
@@ -5502,7 +6274,7 @@ const docTemplate = `{
                 "TypeTime"
             ]
         },
-        "user.Role": {
+        "usergroup.Role": {
             "type": "string",
             "enum": [
                 "user",
@@ -5630,6 +6402,18 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.ForgotPasswordRequest": {
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                }
+            }
+        },
         "v1.GroupAcceptInvitationResponse": {
             "type": "object",
             "properties": {
@@ -5674,17 +6458,6 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.GroupMemberAdd": {
-            "type": "object",
-            "required": [
-                "userId"
-            ],
-            "properties": {
-                "userId": {
-                    "type": "string"
-                }
-            }
-        },
         "v1.LoginForm": {
             "type": "object",
             "properties": {
@@ -5715,6 +6488,34 @@ const docTemplate = `{
                 },
                 "enabled": {
                     "type": "boolean"
+                }
+            }
+        },
+        "v1.ResetPasswordRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "token"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "minLength": 6
+                },
+                "token": {
+                    "type": "string",
+                    "minLength": 20
+                }
+            }
+        },
+        "v1.Results-repo_ExportOut": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.ExportOut"
+                    }
                 }
             }
         },
@@ -5760,6 +6561,23 @@ const docTemplate = `{
                 "item": {}
             }
         },
+        "v1.externalAttachmentRequest": {
+            "type": "object",
+            "properties": {
+                "attachment_type": {
+                    "type": "string"
+                },
+                "external_id": {
+                    "type": "string"
+                },
+                "source_type": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "validate.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -5785,7 +6603,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "demo.homebox.software",
+	Host:             "",
 	BasePath:         "/api",
 	Schemes:          []string{"https", "http"},
 	Title:            "Homebox API",

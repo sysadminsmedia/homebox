@@ -120,7 +120,8 @@
         "form": {
             "password": {
                 "toggle_show": "Toggle Password Show"
-            }
+            },
+            "min_length": "min {min}"
         },
         "global": {
             "copy_text": {
@@ -282,6 +283,7 @@
             "create_modal": {
                 "location_description": "Location Description",
                 "location_name": "Location Name",
+                "location_photo": "Location Photo 📷",
                 "title": "Create Location",
                 "toast": {
                     "already_creating": "Already creating a location",
@@ -399,6 +401,7 @@
         "archived": "Archived",
         "build": "Build: { build }",
         "cancel": "Cancel",
+        "close": "Close",
         "confirm": "Confirm",
         "create": "Create",
         "create_and_add": "Create and Add Another",
@@ -459,13 +462,25 @@
         "total_value": "Total Value"
     },
     "index": {
+        "back_to_login": "Back to login",
         "disabled_registration": "Registration Disabled",
         "dont_join_group": "Don't want to join a group?",
+        "forgot_password": "Forgot your password?",
+        "forgot_password_check_email": "If that email is associated with an account, a reset link is on its way. The link expires in one hour.",
+        "forgot_password_send": "Send reset link",
+        "forgot_password_subtitle": "Enter the email for your account and we'll send you a link to reset your password.",
+        "forgot_password_title": "Reset your password",
         "joining_group": "You're Joining an Existing Group!",
         "login": "Login",
         "or": "or",
         "register": "Register",
         "remember_me": "Remember Me",
+        "reset_password_invalid": "This reset link is invalid or has expired. Request a new one.",
+        "reset_password_missing_token": "Missing reset token. Open the link from your email again, or request a new one.",
+        "reset_password_set": "Set new password",
+        "reset_password_subtitle": "Choose a new password for your account.",
+        "reset_password_success": "Your password has been reset. Sign in with the new password.",
+        "reset_password_title": "Reset your password",
         "set_email": "What's your email?",
         "set_name": "What's your name?",
         "set_password": "Set your password",
@@ -736,6 +751,23 @@
     },
     "profile": {
         "active": "Active",
+        "api_keys": "API Keys",
+        "api_keys_sub": "Static tokens for programmatic access. Each key has the same permissions as your account.",
+        "api_key_create": "Create API Key",
+        "api_key_name": "Name",
+        "api_key_name_placeholder": "e.g. Home Assistant",
+        "api_key_expires_at": "Expires",
+        "api_key_no_expiration": "No expiration",
+        "api_key_set_expiration": "Set an expiration date",
+        "api_key_last_used": "Last used",
+        "api_key_never_used": "Never",
+        "api_key_created": "Created",
+        "api_key_token_label": "Your new API key",
+        "api_key_token_warning": "Copy this token now. For your security, it will not be shown again.",
+        "api_key_copy": "Copy",
+        "api_key_copied": "Copied to clipboard",
+        "api_key_delete_confirm": "Are you sure you want to revoke this API key? Any clients using it will lose access immediately.",
+        "no_api_keys": "No API keys yet",
         "change_password": "Change Password",
         "currency_format": "Currency Format",
         "current_password": "Current Password",
@@ -769,6 +801,10 @@
         "theme_settings_sub": "Theme settings are stored in your browser's local storage. You can change the theme at any time. If you're\n having trouble setting your theme try refreshing your browser.",
         "toast": {
             "account_deleted": "Your account has been deleted.",
+            "api_key_created": "API key created.",
+            "api_key_deleted": "API key revoked.",
+            "failed_api_key_create": "Failed to create API key.",
+            "failed_api_key_delete": "Failed to revoke API key.",
             "failed_change_password": "Failed to change password.",
             "failed_create_notifier": "Failed to create notifier.",
             "failed_delete_account": "Failed to delete your account.",
@@ -898,6 +934,26 @@
             "zero_datetimes_sub": "Resets the time value for all date time fields in your inventory to the beginning of the date. This is to fix a bug that was introduced early on in the development of the site that caused the time value to be stored with the time which caused issues with date fields displaying accurate values. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
         },
         "actions_sub": "Apply Actions to your inventory in bulk. These are irreversible actions. '<b>'Be careful.'</b>'",
+        "backups": "Backup & Restore",
+        "backups_sub": "Export your entire collection — entities, tags, attachments, and metadata — to a portable zip archive. Restore an archive into a freshly registered, empty collection on this or another server.",
+        "backups_set": {
+            "create": "Create Backup",
+            "create_button": "Start Backup",
+            "create_sub": "Builds a zip with every entity, tag, custom field, attachment, and maintenance record in this collection. The job runs in the background; the artifact will appear in the table below when it's ready.",
+            "delete_confirm": "Delete this backup artifact? This cannot be undone.",
+            "download": "Download",
+            "failed": "Backup failed. Check server logs for details.",
+            "list_empty": "No backups yet.",
+            "restore": "Restore from Backup",
+            "restore_button": "Upload & Restore",
+            "restore_sub": "Upload a backup zip to populate this collection. The collection must contain no items yet — default locations and tags are wiped automatically as part of the restore.",
+            "table": {
+                "actions": "Actions",
+                "created": "Created",
+                "size": "Size",
+                "status": "Status"
+            }
+        },
         "demo_mode_error": {
             "wipe_inventory": "Inventory, tags, locations and maintenance records cannot be wiped whilst Homebox is in demo mode. Please ensure that you are not in demo mode and try again."
         },
@@ -924,6 +980,12 @@
         "reports_sub": "Generate different reports for your inventory.",
         "toast": {
             "asset_success": "{ results } assets have been updated.",
+            "backup_started": "Backup started — it will appear in the table when ready.",
+            "backup_start_failed": "Failed to start backup.",
+            "backup_delete_failed": "Failed to delete backup.",
+            "restore_started": "Restore started — refresh shortly to see imported items.",
+            "restore_failed": "Restore failed.",
+            "restore_requires_empty": "Restore requires a collection with no items. Switch to a freshly registered collection (default locations and tags are fine) and try again.",
             "failed_create_missing_thumbnails": "Failed to create missing thumbnails.",
             "failed_ensure_ids": "Failed to ensure asset IDs.",
             "failed_ensure_import_refs": "Failed to ensure import refs.",

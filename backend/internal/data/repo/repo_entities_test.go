@@ -347,10 +347,10 @@ func TestEntityRepository_Update(t *testing.T) {
 		TagIDs:           nil,
 		ModelNumber:      fk.Str(10),
 		Manufacturer:     fk.Str(10),
-		PurchaseTime:     types.DateFromTime(time.Now()),
+		PurchaseDate:     types.DateFromTime(time.Now()),
 		PurchaseFrom:     fk.Str(10),
 		PurchasePrice:    300.99,
-		SoldTime:         types.DateFromTime(time.Now()),
+		SoldDate:         types.DateFromTime(time.Now()),
 		SoldTo:           fk.Str(10),
 		SoldPrice:        300.99,
 		SoldNotes:        fk.Str(10),
@@ -628,7 +628,7 @@ func TestEntityRepository_WipeInventory(t *testing.T) {
 	require.NoError(t, err)
 
 	// Create maintenance entries
-	_, err = tRepos.MaintEntry.Create(context.Background(), entity1.ID, MaintenanceEntryCreate{
+	_, err = tRepos.MaintEntry.Create(context.Background(), tGroup.ID, entity1.ID, MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now()),
 		Name:          "Test Maintenance 1",
 		Description:   "Test maintenance entry",
@@ -636,7 +636,7 @@ func TestEntityRepository_WipeInventory(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	_, err = tRepos.MaintEntry.Create(context.Background(), entity2.ID, MaintenanceEntryCreate{
+	_, err = tRepos.MaintEntry.Create(context.Background(), tGroup.ID, entity2.ID, MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now()),
 		Name:          "Test Maintenance 2",
 		Description:   "Another test maintenance entry",
@@ -702,7 +702,7 @@ func TestEntityRepository_WipeInventory_OnlyItems(t *testing.T) {
 	e, err := tRepos.Entities.Create(context.Background(), tGroup.ID, ef)
 	require.NoError(t, err)
 
-	_, err = tRepos.MaintEntry.Create(context.Background(), e.ID, MaintenanceEntryCreate{
+	_, err = tRepos.MaintEntry.Create(context.Background(), tGroup.ID, e.ID, MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now()),
 		Name:          "Test Maintenance",
 		Description:   "Test maintenance entry",

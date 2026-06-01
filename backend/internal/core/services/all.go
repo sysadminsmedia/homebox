@@ -3,8 +3,11 @@ package services
 
 import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/currencies"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/mailer"
 )
 
 type AllServices struct {
@@ -12,6 +15,7 @@ type AllServices struct {
 	Group             *GroupService
 	Entities          *EntityService
 	BackgroundService *BackgroundService
+	Exports           *ExportService
 	Currencies        *currencies.CurrencyRegistry
 }
 
@@ -21,6 +25,12 @@ type options struct {
 	autoIncrementAssetID bool
 	currencies           []currencies.Currency
 	notifierConfig       *config.NotifierConf
+	bus                  *eventbus.EventBus
+	db                   *ent.Client
+	storage              config.Storage
+	pubSubConn           string
+	dialect              string
+	mailer               *mailer.Mailer
 }
 
 func WithAutoIncrementAssetID(v bool) func(*options) {
@@ -40,6 +50,27 @@ func WithNotifierConfig(v *config.NotifierConf) func(*options) {
 		if v != nil {
 			o.notifierConfig = v
 		}
+	}
+}
+
+// WithExportPlumbing wires the dependencies the ExportService needs to dump
+// raw SQL through the ent client and to publish job messages.
+func WithExportPlumbing(bus *eventbus.EventBus, db *ent.Client, storage config.Storage, pubSubConn, dialect string) func(*options) {
+	return func(o *options) {
+		o.bus = bus
+		o.db = db
+		o.storage = storage
+		o.pubSubConn = pubSubConn
+		o.dialect = dialect
+	}
+}
+
+// WithMailer hands the SMTP mailer to services that send mail (currently only
+// password reset). A nil or unconfigured mailer disables those code paths
+// rather than panicking.
+func WithMailer(m *mailer.Mailer) func(*options) {
+	return func(o *options) {
+		o.mailer = m
 	}
 }
 
@@ -75,7 +106,7 @@ func New(repos *repo.AllRepos, opts ...OptionsFunc) *AllServices {
 	}
 
 	return &AllServices{
-		User:  &UserService{repos},
+		User:  &UserService{repos: repos, mailer: options.mailer},
 		Group: &GroupService{repos},
 		Entities: &EntityService{
 			repo:                 repos,
@@ -85,6 +116,14 @@ func New(repos *repo.AllRepos, opts ...OptionsFunc) *AllServices {
 			repos:          repos,
 			latest:         Latest{},
 			notifierConfig: options.notifierConfig,
+		},
+		Exports: &ExportService{
+			db:         options.db,
+			repos:      repos,
+			bus:        options.bus,
+			storage:    options.storage,
+			pubSubConn: options.pubSubConn,
+			dialect:    options.dialect,
 		},
 		Currencies: currencies.NewCurrencyService(options.currencies),
 	}

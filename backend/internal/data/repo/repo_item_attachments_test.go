@@ -2,6 +2,8 @@ package repo
 
 import (
 	"context"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -12,6 +14,16 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 )
+
+func TestMimeTypeForSourceType(t *testing.T) {
+	mime, ok := MimeTypeForSourceType("link")
+	assert.True(t, ok)
+	assert.Equal(t, MimeTypeLinkURL, mime)
+
+	mime, ok = MimeTypeForSourceType("unknown")
+	assert.False(t, ok)
+	assert.Empty(t, mime)
+}
 
 func TestAttachmentRepo_Create(t *testing.T) {
 	entity := useEntities(t, 1)[0]
@@ -124,6 +136,73 @@ func TestAttachmentRepo_Delete(t *testing.T) {
 
 	_, err = tRepos.Attachments.Get(context.Background(), tGroup.ID, entity.ID)
 	require.Error(t, err)
+}
+
+func TestAttachmentRepo_CreateExternalLink(t *testing.T) {
+	ctx := context.Background()
+	entity := useEntities(t, 1)[0]
+
+	att, err := tRepos.Attachments.CreateExternalLink(
+		ctx,
+		entity.ID,
+		"https://example.com/manual",
+		"Example Manual",
+		MimeTypeLinkURL,
+		attachment.TypeManual,
+	)
+	require.NoError(t, err)
+	require.NotNil(t, att)
+
+	t.Cleanup(func() {
+		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, att.ID)
+	})
+
+	assert.Equal(t, "https://example.com/manual", att.Path)
+	assert.Equal(t, "Example Manual", att.Title)
+	assert.Equal(t, MimeTypeLinkURL, att.MimeType)
+	assert.Equal(t, attachment.TypeManual, att.Type)
+	assert.False(t, att.Primary)
+}
+
+func TestAttachmentRepo_DeleteExternalLink(t *testing.T) {
+	ctx := context.Background()
+	entity := useEntities(t, 1)[0]
+
+	att, err := tRepos.Attachments.CreateExternalLink(
+		ctx,
+		entity.ID,
+		"https://example.com/receipt",
+		"Example Receipt",
+		MimeTypeLinkURL,
+		attachment.TypeReceipt,
+	)
+	require.NoError(t, err)
+
+	err = tRepos.Attachments.Delete(ctx, tGroup.ID, att.ID)
+	require.NoError(t, err)
+
+	_, err = tRepos.Attachments.Get(ctx, tGroup.ID, att.ID)
+	require.Error(t, err)
+}
+
+func TestAttachmentRepo_DeleteExternalLink_DoesNotRequireBlobStorage(t *testing.T) {
+	ctx := context.Background()
+
+	repos := New(tClient, tbus, config.Storage{PrefixPath: "/", ConnString: "mem://"}, "mem://{{ .Topic }}", config.Thumbnail{Enabled: false})
+	entity := useEntities(t, 1)[0]
+
+	att, err := repos.Attachments.CreateExternalLink(
+		ctx,
+		entity.ID,
+		"https://example.com/no-blob",
+		"No Blob",
+		MimeTypeLinkURL,
+		attachment.TypeAttachment,
+	)
+	require.NoError(t, err)
+
+	err = repos.Attachments.Delete(ctx, tGroup.ID, att.ID)
+	require.NoError(t, err)
 }
 
 func TestAttachmentRepo_EnsureSinglePrimaryAttachment(t *testing.T) {
@@ -330,4 +409,66 @@ func TestAttachmentRepo_PathNormalization(t *testing.T) {
 	fullPathSlashPrefix := repoSlashPrefix.fullPath("eb6bf410-a1a8-478d-a803-ca3948368a0c/documents/f295eb01-18a9-4631-a797-70bd9623edd4.png")
 	assert.Equal(t, "eb6bf410-a1a8-478d-a803-ca3948368a0c/documents/f295eb01-18a9-4631-a797-70bd9623edd4.png", fullPathSlashPrefix)
 	assert.NotContains(t, fullPathSlashPrefix, "//", "fullPath() should not have double slashes")
+}
+
+func TestAttachmentRepo_MigrateLegacyFlatPaths(t *testing.T) {
+	root := t.TempDir()
+
+	// Legacy flat-encoded files written by pre-v0.22.1 homebox on Windows.
+	legacy1 := ".data__0x5c__eb6bf410-a1a8-478d-a803-ca3948368a0c__0x5c__documents__0x5c__hash1.png"
+	legacy2 := ".data__0x5c__eb6bf410-a1a8-478d-a803-ca3948368a0c__0x5c__documents__0x5c__hash2.png"
+	require.NoError(t, os.WriteFile(filepath.Join(root, legacy1), []byte("one"), 0o644))
+	require.NoError(t, os.WriteFile(filepath.Join(root, legacy2), []byte("two"), 0o644))
+
+	// Unrelated file at the bucket root must be left alone.
+	other := filepath.Join(root, "homebox.db")
+	require.NoError(t, os.WriteFile(other, []byte("db"), 0o644))
+
+	r := &AttachmentRepo{storage: config.Storage{ConnString: "file://" + root, PrefixPath: ".data"}}
+
+	require.NoError(t, r.MigrateLegacyFlatPaths())
+
+	for _, name := range []string{legacy1, legacy2} {
+		_, err := os.Stat(filepath.Join(root, name))
+		assert.True(t, os.IsNotExist(err), "legacy file %s should have been moved", name)
+	}
+	for _, hash := range []string{"hash1.png", "hash2.png"} {
+		want := filepath.Join(root, ".data", "eb6bf410-a1a8-478d-a803-ca3948368a0c", "documents", hash)
+		_, err := os.Stat(want)
+		require.NoError(t, err, "expected migrated file at %s", want)
+	}
+	_, err := os.Stat(other)
+	require.NoError(t, err, "unrelated files at the bucket root should be left in place")
+
+	// Idempotent: running again should be a no-op and not error.
+	require.NoError(t, r.MigrateLegacyFlatPaths())
+}
+
+func TestAttachmentRepo_MigrateLegacyFlatPaths_NoOpForCloudBackend(t *testing.T) {
+	r := &AttachmentRepo{storage: config.Storage{ConnString: "s3://my-bucket"}}
+	require.NoError(t, r.MigrateLegacyFlatPaths())
+}
+
+func TestAttachmentRepo_MigrateLegacyFlatPaths_TargetExistsKeepsSource(t *testing.T) {
+	root := t.TempDir()
+
+	legacy := "uuid__0x5c__documents__0x5c__hash.png"
+	require.NoError(t, os.WriteFile(filepath.Join(root, legacy), []byte("legacy"), 0o644))
+
+	// Pre-existing target — migration should leave the source in place rather
+	// than overwrite the (presumably-correct) target.
+	target := filepath.Join(root, "uuid", "documents", "hash.png")
+	require.NoError(t, os.MkdirAll(filepath.Dir(target), 0o755))
+	require.NoError(t, os.WriteFile(target, []byte("new"), 0o644))
+
+	r := &AttachmentRepo{storage: config.Storage{ConnString: "file://" + root}}
+	require.NoError(t, r.MigrateLegacyFlatPaths())
+
+	src, err := os.ReadFile(filepath.Join(root, legacy))
+	require.NoError(t, err)
+	assert.Equal(t, "legacy", string(src), "source file should remain untouched when target exists")
+
+	dst, err := os.ReadFile(target)
+	require.NoError(t, err)
+	assert.Equal(t, "new", string(dst), "target file should not be overwritten")
 }

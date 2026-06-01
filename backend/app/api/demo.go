@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"os"
 	"strings"
 	"time"
 
@@ -11,8 +12,19 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 )
 
+const (
+	// demoPasswordEnv is the env var operators set when running demo mode in
+	// production, overriding the hardcoded development default below.
+	// When set, the value is accepted verbatim regardless of length —
+	// PasswordMinLength is bypassed for demo seeding (see SetupDemo).
+	demoPasswordEnv = "HBOX_DEMO_PASSWORD"
+	// demoPasswordDefault is the password used when demoPasswordEnv is unset.
+	// Public knowledge — only safe to leave at the default in development.
+	demoPasswordDefault = "demodemo"
+)
+
 func (a *app) SetupDemo() error {
-	csvText := `HB.import_ref,HB.location,HB.tags,HB.quantity,HB.name,HB.description,HB.insured,HB.serial_number,HB.model_number,HB.manufacturer,HB.notes,HB.purchase_from,HB.purchase_price,HB.purchase_time,HB.lifetime_warranty,HB.warranty_expires,HB.warranty_details,HB.sold_to,HB.sold_price,HB.sold_time,HB.sold_notes
+	csvText := `HB.import_ref,HB.location,HB.tags,HB.quantity,HB.name,HB.description,HB.insured,HB.serial_number,HB.model_number,HB.manufacturer,HB.notes,HB.purchase_from,HB.purchase_price,HB.purchase_date,HB.lifetime_warranty,HB.warranty_expires,HB.warranty_details,HB.sold_to,HB.sold_price,HB.sold_date,HB.sold_notes
 ,Garage,IOT;Home Assistant; Z-Wave,1,Zooz Universal Relay ZEN17,"Zooz 700 Series Z-Wave Universal Relay ZEN17 for Awnings, Garage Doors, Sprinklers, and More | 2 NO-C-NC Relays (20A, 10A) | Signal Repeater | Hub Required (Compatible with SmartThings and Hubitat)",,,ZEN17,Zooz,,Amazon,39.95,10/13/2021,,,,,,,
 ,Living Room,IOT;Home Assistant; Z-Wave,1,Zooz Motion Sensor,"Zooz Z-Wave Plus S2 Motion Sensor ZSE18 with Magnetic Mount, Works with Vera and SmartThings",,,ZSE18,Zooz,,Amazon,29.95,10/15/2021,,,,,,,
 ,Office,IOT; Home Assistant; Z-Wave,1,Zooz 110v Power Switch,"Zooz Z-Wave Plus Power Switch ZEN15 for 110V AC Units, Sump Pumps, Humidifiers, and More",,,ZEN15,Zooz,,Amazon,39.95,10/13/2021,,,,,,,
@@ -24,10 +36,15 @@ func (a *app) SetupDemo() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
+	demoPassword := os.Getenv(demoPasswordEnv)
+	if demoPassword == "" {
+		demoPassword = demoPasswordDefault
+	}
+
 	registration := services.UserRegistration{
 		Email:    "demo@example.com",
 		Name:     "Demo",
-		Password: "demo",
+		Password: demoPassword,
 	}
 
 	// If demo user already exists, skip all demo seeding tasks
@@ -36,9 +53,10 @@ func (a *app) SetupDemo() error {
 		return nil
 	}
 
-	// Otherwise, register the demo user
+	// Otherwise, register the demo user. Skip PasswordMinLength so operators
+	// can use any HBOX_DEMO_PASSWORD; public registration still enforces it.
 	log.Debug().Msg("Registering demo user")
-	_, err := a.services.User.RegisterUser(ctx, registration)
+	_, err := a.services.User.RegisterUser(ctx, registration, services.SkipPasswordValidation())
 	if err != nil {
 		if ent.IsConstraintError(err) {
 			// Concurrent creation race: treat as exists and skip

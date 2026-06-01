@@ -77,7 +77,7 @@ func (Entity) Fields() []ent.Field {
 
 		// ------------------------------------
 		// item purchase
-		field.Time("purchase_time").
+		field.Time("purchase_date").
 			Optional(),
 		field.String("purchase_from").
 			Optional(),
@@ -86,7 +86,7 @@ func (Entity) Fields() []ent.Field {
 
 		// ------------------------------------
 		// Sold Details
-		field.Time("sold_time").
+		field.Time("sold_date").
 			Optional(),
 		field.String("sold_to").
 			Optional(),

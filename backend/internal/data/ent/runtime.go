@@ -6,17 +6,20 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/apikey"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/export"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceplan"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/passwordresettokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
@@ -27,6 +30,43 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	apikeyMixin := schema.APIKey{}.Mixin()
+	apikeyMixinFields0 := apikeyMixin[0].Fields()
+	_ = apikeyMixinFields0
+	apikeyFields := schema.APIKey{}.Fields()
+	_ = apikeyFields
+	// apikeyDescCreatedAt is the schema descriptor for created_at field.
+	apikeyDescCreatedAt := apikeyMixinFields0[1].Descriptor()
+	// apikey.DefaultCreatedAt holds the default value on creation for the created_at field.
+	apikey.DefaultCreatedAt = apikeyDescCreatedAt.Default.(func() time.Time)
+	// apikeyDescUpdatedAt is the schema descriptor for updated_at field.
+	apikeyDescUpdatedAt := apikeyMixinFields0[2].Descriptor()
+	// apikey.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	apikey.DefaultUpdatedAt = apikeyDescUpdatedAt.Default.(func() time.Time)
+	// apikey.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	apikey.UpdateDefaultUpdatedAt = apikeyDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// apikeyDescName is the schema descriptor for name field.
+	apikeyDescName := apikeyFields[0].Descriptor()
+	// apikey.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	apikey.NameValidator = func() func(string) error {
+		validators := apikeyDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// apikeyDescID is the schema descriptor for id field.
+	apikeyDescID := apikeyMixinFields0[0].Descriptor()
+	// apikey.DefaultID holds the default value on creation for the id field.
+	apikey.DefaultID = apikeyDescID.Default.(func() uuid.UUID)
 	attachmentMixin := schema.Attachment{}.Mixin()
 	attachmentMixinFields0 := attachmentMixin[0].Fields()
 	_ = attachmentMixinFields0
@@ -387,6 +427,37 @@ func init() {
 	entitytypeDescID := entitytypeMixinFields0[0].Descriptor()
 	// entitytype.DefaultID holds the default value on creation for the id field.
 	entitytype.DefaultID = entitytypeDescID.Default.(func() uuid.UUID)
+	exportMixin := schema.Export{}.Mixin()
+	exportMixinFields0 := exportMixin[0].Fields()
+	_ = exportMixinFields0
+	exportFields := schema.Export{}.Fields()
+	_ = exportFields
+	// exportDescCreatedAt is the schema descriptor for created_at field.
+	exportDescCreatedAt := exportMixinFields0[1].Descriptor()
+	// export.DefaultCreatedAt holds the default value on creation for the created_at field.
+	export.DefaultCreatedAt = exportDescCreatedAt.Default.(func() time.Time)
+	// exportDescUpdatedAt is the schema descriptor for updated_at field.
+	exportDescUpdatedAt := exportMixinFields0[2].Descriptor()
+	// export.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	export.DefaultUpdatedAt = exportDescUpdatedAt.Default.(func() time.Time)
+	// export.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	export.UpdateDefaultUpdatedAt = exportDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// exportDescProgress is the schema descriptor for progress field.
+	exportDescProgress := exportFields[2].Descriptor()
+	// export.DefaultProgress holds the default value on creation for the progress field.
+	export.DefaultProgress = exportDescProgress.Default.(int)
+	// exportDescSizeBytes is the schema descriptor for size_bytes field.
+	exportDescSizeBytes := exportFields[4].Descriptor()
+	// export.DefaultSizeBytes holds the default value on creation for the size_bytes field.
+	export.DefaultSizeBytes = exportDescSizeBytes.Default.(int64)
+	// exportDescError is the schema descriptor for error field.
+	exportDescError := exportFields[5].Descriptor()
+	// export.ErrorValidator is a validator for the "error" field. It is called by the builders before save.
+	export.ErrorValidator = exportDescError.Validators[0].(func(string) error)
+	// exportDescID is the schema descriptor for id field.
+	exportDescID := exportMixinFields0[0].Descriptor()
+	// export.DefaultID holds the default value on creation for the id field.
+	export.DefaultID = exportDescID.Default.(func() uuid.UUID)
 	groupMixin := schema.Group{}.Mixin()
 	groupMixinFields0 := groupMixin[0].Fields()
 	_ = groupMixinFields0
@@ -608,6 +679,29 @@ func init() {
 	notifierDescID := notifierMixinFields0[0].Descriptor()
 	// notifier.DefaultID holds the default value on creation for the id field.
 	notifier.DefaultID = notifierDescID.Default.(func() uuid.UUID)
+	passwordresettokensMixin := schema.PasswordResetTokens{}.Mixin()
+	passwordresettokensMixinFields0 := passwordresettokensMixin[0].Fields()
+	_ = passwordresettokensMixinFields0
+	passwordresettokensFields := schema.PasswordResetTokens{}.Fields()
+	_ = passwordresettokensFields
+	// passwordresettokensDescCreatedAt is the schema descriptor for created_at field.
+	passwordresettokensDescCreatedAt := passwordresettokensMixinFields0[1].Descriptor()
+	// passwordresettokens.DefaultCreatedAt holds the default value on creation for the created_at field.
+	passwordresettokens.DefaultCreatedAt = passwordresettokensDescCreatedAt.Default.(func() time.Time)
+	// passwordresettokensDescUpdatedAt is the schema descriptor for updated_at field.
+	passwordresettokensDescUpdatedAt := passwordresettokensMixinFields0[2].Descriptor()
+	// passwordresettokens.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	passwordresettokens.DefaultUpdatedAt = passwordresettokensDescUpdatedAt.Default.(func() time.Time)
+	// passwordresettokens.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	passwordresettokens.UpdateDefaultUpdatedAt = passwordresettokensDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// passwordresettokensDescExpiresAt is the schema descriptor for expires_at field.
+	passwordresettokensDescExpiresAt := passwordresettokensFields[1].Descriptor()
+	// passwordresettokens.DefaultExpiresAt holds the default value on creation for the expires_at field.
+	passwordresettokens.DefaultExpiresAt = passwordresettokensDescExpiresAt.Default.(func() time.Time)
+	// passwordresettokensDescID is the schema descriptor for id field.
+	passwordresettokensDescID := passwordresettokensMixinFields0[0].Descriptor()
+	// passwordresettokens.DefaultID holds the default value on creation for the id field.
+	passwordresettokens.DefaultID = passwordresettokensDescID.Default.(func() uuid.UUID)
 	tagMixin := schema.Tag{}.Mixin()
 	tagMixinFields0 := tagMixin[0].Fields()
 	_ = tagMixinFields0
@@ -781,4 +875,6 @@ func init() {
 	userDescID := userMixinFields0[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.
 	user.DefaultID = userDescID.Default.(func() uuid.UUID)
+	usergroupFields := schema.UserGroup{}.Fields()
+	_ = usergroupFields
 }

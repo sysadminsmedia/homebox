@@ -4,6 +4,10 @@ package ent
 
 import "github.com/google/uuid"
 
+func (_m *APIKey) GetID() uuid.UUID {
+	return _m.ID
+}
+
 func (_m *Attachment) GetID() uuid.UUID {
 	return _m.ID
 }
@@ -32,6 +36,10 @@ func (_m *EntityType) GetID() uuid.UUID {
 	return _m.ID
 }
 
+func (_m *Export) GetID() uuid.UUID {
+	return _m.ID
+}
+
 func (_m *Group) GetID() uuid.UUID {
 	return _m.ID
 }
@@ -49,6 +57,10 @@ func (_m *MaintenancePlan) GetID() uuid.UUID {
 }
 
 func (_m *Notifier) GetID() uuid.UUID {
+	return _m.ID
+}
+
+func (_m *PasswordResetTokens) GetID() uuid.UUID {
 	return _m.ID
 }
 

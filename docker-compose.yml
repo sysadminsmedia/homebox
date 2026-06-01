@@ -13,7 +13,6 @@ services:
             - linux/arm64
             - linux/arm
     environment:
-      - HBOX_DEBUG=true
       - HBOX_LOGGER_LEVEL=-1
     ports:
       - 3100:7745

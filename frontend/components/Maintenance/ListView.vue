@@ -27,6 +27,7 @@
   import ItemSelector from "~/components/Item/Selector.vue";
   import { toast } from "@/components/ui/sonner";
   import { useDialog } from "@/components/ui/dialog-provider";
+  import { toDateOnlyString } from "~/lib/datelib/dateOnly";
   import { DialogID } from "../ui/dialog-provider/utils";
   import { useDebounceFn } from "@vueuse/core";
 
@@ -115,8 +116,8 @@
   async function completeEntry(maintenanceEntry: MaintenanceEntry) {
     const { error } = await api.maintenance.update(maintenanceEntry.id, {
       name: maintenanceEntry.name,
-      completedDate: new Date(Date.now()),
-      scheduledDate: maintenanceEntry.scheduledDate ?? "null",
+      completedDate: toDateOnlyString(new Date()),
+      scheduledDate: (maintenanceEntry.scheduledDate as string) ?? "",
       planID: maintenanceEntry.planID,
       description: maintenanceEntry.description,
       cost: maintenanceEntry.cost,

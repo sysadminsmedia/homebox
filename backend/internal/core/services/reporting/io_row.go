@@ -14,12 +14,13 @@ type ExportItemFields struct {
 }
 
 type ExportCSVRow struct {
-	ImportRef string         `csv:"HB.import_ref"`
-	Location  LocationString `csv:"HB.location"`
-	TagStr    TagString      `csv:"HB.tags|HB.labels"`
-	AssetID   repo.AssetID   `csv:"HB.asset_id"`
-	Archived  bool           `csv:"HB.archived"`
-	URL       string         `csv:"HB.url"`
+	ImportRef       string         `csv:"HB.import_ref"`
+	ParentImportRef string         `csv:"HB.parent_import_ref"`
+	Location        LocationString `csv:"HB.location"`
+	TagStr          TagString      `csv:"HB.tags|HB.labels"`
+	AssetID         repo.AssetID   `csv:"HB.asset_id"`
+	Archived        bool           `csv:"HB.archived"`
+	URL             string         `csv:"HB.url"`
 
 	Name        string  `csv:"HB.name"`
 	Quantity    float64 `csv:"HB.quantity"`
@@ -29,7 +30,7 @@ type ExportCSVRow struct {
 
 	PurchasePrice float64    `csv:"HB.purchase_price"`
 	PurchaseFrom  string     `csv:"HB.purchase_from"`
-	PurchaseTime  types.Date `csv:"HB.purchase_time"`
+	PurchaseDate  types.Date `csv:"HB.purchase_date|HB.purchase_time"`
 
 	Manufacturer string `csv:"HB.manufacturer"`
 	ModelNumber  string `csv:"HB.model_number"`
@@ -41,7 +42,7 @@ type ExportCSVRow struct {
 
 	SoldTo    string     `csv:"HB.sold_to"`
 	SoldPrice float64    `csv:"HB.sold_price"`
-	SoldTime  types.Date `csv:"HB.sold_time"`
+	SoldDate  types.Date `csv:"HB.sold_date|HB.sold_time"`
 	SoldNotes string     `csv:"HB.sold_notes"`
 
 	Fields []ExportItemFields `csv:"-"`

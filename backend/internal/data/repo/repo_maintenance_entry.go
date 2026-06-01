@@ -109,7 +109,21 @@ func (r *MaintenanceEntryRepository) GetScheduled(ctx context.Context, gid uuid.
 	return mapEachMaintenanceEntry(entries), nil
 }
 
-func (r *MaintenanceEntryRepository) Create(ctx context.Context, itemID uuid.UUID, input MaintenanceEntryCreate) (MaintenanceEntry, error) {
+func (r *MaintenanceEntryRepository) Create(ctx context.Context, gid, itemID uuid.UUID, input MaintenanceEntryCreate) (MaintenanceEntry, error) {
+	// Verify the target item belongs to the caller's group before creating an
+	// entry against it. Without this check, a caller in group A could POST a
+	// maintenance entry to any item UUID guessed in group B; the entry would
+	// then surface in B's maintenance log with no audit trail.
+	owned, err := r.db.Entity.Query().
+		Where(entity.ID(itemID), entity.HasGroupWith(group.ID(gid))).
+		Exist(ctx)
+	if err != nil {
+		return MaintenanceEntry{}, err
+	}
+	if !owned {
+		return MaintenanceEntry{}, &ent.NotFoundError{}
+	}
+
 	item, err := r.db.MaintenanceEntry.Create().
 		SetEntityID(itemID).
 		SetDate(input.CompletedDate.Time()).
@@ -131,8 +145,11 @@ func (r *MaintenanceEntryRepository) Create(ctx context.Context, itemID uuid.UUI
 	return mapMaintenanceEntryErr(item, err)
 }
 
-func (r *MaintenanceEntryRepository) Update(ctx context.Context, id uuid.UUID, input MaintenanceEntryUpdate) (MaintenanceEntry, error) {
-	current, err := r.db.MaintenanceEntry.Query().Where(maintenanceentry.IDEQ(id)).Only(ctx)
+func (r *MaintenanceEntryRepository) Update(ctx context.Context, gid uuid.UUID, id uuid.UUID, input MaintenanceEntryUpdate) (MaintenanceEntry, error) {
+	current, err := r.db.MaintenanceEntry.Query().Where(
+		maintenanceentry.ID(id),
+		maintenanceentry.HasEntityWith(entity.HasGroupWith(group.ID(gid))),
+	).Only(ctx)
 	if err != nil {
 		return MaintenanceEntry{}, err
 	}
@@ -257,6 +274,16 @@ func isEntryOverdue(completedDate, scheduledDate time.Time) bool {
 	return false
 }
 
-func (r *MaintenanceEntryRepository) Delete(ctx context.Context, id uuid.UUID) error {
-	return r.db.MaintenanceEntry.DeleteOneID(id).Exec(ctx)
+func (r *MaintenanceEntryRepository) Delete(ctx context.Context, gid uuid.UUID, id uuid.UUID) error {
+	deleted, err := r.db.MaintenanceEntry.Delete().Where(
+		maintenanceentry.ID(id),
+		maintenanceentry.HasEntityWith(entity.HasGroupWith(group.ID(gid))),
+	).Exec(ctx)
+	if err != nil {
+		return err
+	}
+	if deleted == 0 {
+		return &ent.NotFoundError{}
+	}
+	return nil
 }

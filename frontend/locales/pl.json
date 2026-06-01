@@ -281,6 +281,7 @@
             "create_modal": {
                 "location_description": "Opis lokalizacji",
                 "location_name": "Nazwa lokalizacji",
+                "location_photo": "Zdjęcie lokalizacji",
                 "title": "Utwórz lokalizację",
                 "toast": {
                     "already_creating": "Lokalizacja jest w trakcie tworzenia",
@@ -312,7 +313,9 @@
             "create_modal": {
                 "tag_color": "Kolor tagu",
                 "tag_description": "Opis tagu",
+                "tag_icon": "Ikona tagu",
                 "tag_name": "Nazwa tagu",
+                "tag_parent": "Tag nadrzędny",
                 "title": "Utwórz tag",
                 "toast": {
                     "already_creating": "Tag w trakcie tworzenia",
@@ -322,6 +325,8 @@
                 }
             },
             "selector": {
+                "clear": "Wyczyść",
+                "no_tags_found": "Nie znaleziono tagu",
                 "select_tags": "Wybierz tagi"
             }
         },
@@ -394,6 +399,7 @@
         "archived": "Zarchiwizowane",
         "build": "Kompilacja: {build}",
         "cancel": "Anuluj",
+        "close": "Zamknij",
         "confirm": "Potwierdź",
         "create": "Utwórz",
         "create_and_add": "Utwórz i dodaj kolejny",
@@ -428,9 +434,13 @@
         "return_home": "Powrót do strony głównej",
         "save": "Zapisz",
         "search": "Wyszukaj",
+        "select": "Wybierz...",
+        "show_less": "Mniej",
+        "show_more": "Więcej",
         "sign_out": "Wyloguj się",
         "submit": "Wyślij",
         "tags": "Tagi",
+        "type": "Typ",
         "unknown": "Nieznany",
         "update": "Aktualizuj",
         "updating": "Aktualizacja",
@@ -450,8 +460,11 @@
         "total_value": "Łączna wartość"
     },
     "index": {
+        "back_to_login": "Powrót do strony logowania",
         "disabled_registration": "Rejestracja jest wyłączona",
         "dont_join_group": "Nie chcesz dołączyć do grupy?",
+        "forgot_password": "Zapomniane hasło?",
+        "forgot_password_send": "Wyślij link do resetu hasła",
         "joining_group": "Dołączasz do istniejącej grupy!",
         "login": "Zaloguj się",
         "or": "lub",

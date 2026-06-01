@@ -64,7 +64,7 @@ func TestMaintenanceEntryRepository_GetLog(t *testing.T) {
 	}
 
 	for _, entry := range created {
-		_, err := tRepos.MaintEntry.Create(context.Background(), item.ID, entry)
+		_, err := tRepos.MaintEntry.Create(context.Background(), tGroup.ID, item.ID, entry)
 		if err != nil {
 			t.Fatalf("failed to create maintenance entry: %v", err)
 		}
@@ -79,7 +79,7 @@ func TestMaintenanceEntryRepository_GetLog(t *testing.T) {
 	assert.Len(t, log, 10)
 
 	for _, entry := range log {
-		err := tRepos.MaintEntry.Delete(context.Background(), entry.ID)
+		err := tRepos.MaintEntry.Delete(context.Background(), tGroup.ID, entry.ID)
 		require.NoError(t, err)
 	}
 }
@@ -87,7 +87,7 @@ func TestMaintenanceEntryRepository_GetLog(t *testing.T) {
 func TestMaintenanceEntryRepository_GetLog_Overdue(t *testing.T) {
 	item := useEntities(t, 1)[0]
 
-	_, err := tRepos.MaintEntry.Create(context.Background(), item.ID, MaintenanceEntryCreate{
+	_, err := tRepos.MaintEntry.Create(context.Background(), tGroup.ID, item.ID, MaintenanceEntryCreate{
 		ScheduledDate: types.DateFromTime(time.Now().AddDate(0, 0, -2)),
 		Name:          "Filter replacement",
 		Description:   "Overdue task",
@@ -110,7 +110,7 @@ func TestMaintenanceEntryRepository_Update_ScheduledCanBeCompleted(t *testing.T)
 	item := useEntities(t, 1)[0]
 	scheduledDate := time.Now().UTC().AddDate(0, 0, 2)
 
-	created, err := tRepos.MaintEntry.Create(context.Background(), item.ID, MaintenanceEntryCreate{
+	created, err := tRepos.MaintEntry.Create(context.Background(), tGroup.ID, item.ID, MaintenanceEntryCreate{
 		ScheduledDate: types.DateFromTime(scheduledDate),
 		Name:          "Oil change",
 		Description:   "Scheduled maintenance",
@@ -119,7 +119,7 @@ func TestMaintenanceEntryRepository_Update_ScheduledCanBeCompleted(t *testing.T)
 	require.NoError(t, err)
 
 	completedDate := types.DateFromTime(time.Now().UTC())
-	updated, err := tRepos.MaintEntry.Update(context.Background(), created.ID, MaintenanceEntryUpdate{
+	updated, err := tRepos.MaintEntry.Update(context.Background(), tGroup.ID, created.ID, MaintenanceEntryUpdate{
 		Name:          created.Name,
 		Description:   created.Description,
 		Cost:          created.Cost,
@@ -154,7 +154,7 @@ func TestMaintenanceEntryRepository_Update_RecurringCompletionCreatesNextEntry(t
 	require.NoError(t, err)
 
 	completedAt := types.DateFromTime(time.Now().UTC())
-	_, err = tRepos.MaintEntry.Update(context.Background(), initialEntry.ID, MaintenanceEntryUpdate{
+	_, err = tRepos.MaintEntry.Update(context.Background(), tGroup.ID, initialEntry.ID, MaintenanceEntryUpdate{
 		Name:          initialEntry.Name,
 		Description:   initialEntry.Description,
 		Cost:          initialEntry.Cost,

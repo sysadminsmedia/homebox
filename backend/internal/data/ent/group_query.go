@@ -16,12 +16,14 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/export"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/usergroup"
 )
 
 // GroupQuery is the builder for querying Group entities.
@@ -38,6 +40,8 @@ type GroupQuery struct {
 	withInvitationTokens *GroupInvitationTokenQuery
 	withNotifiers        *NotifierQuery
 	withEntityTemplates  *EntityTemplateQuery
+	withExports          *ExportQuery
+	withUserGroups       *UserGroupQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -221,6 +225,50 @@ func (_q *GroupQuery) QueryEntityTemplates() *EntityTemplateQuery {
 			sqlgraph.From(group.Table, group.FieldID, selector),
 			sqlgraph.To(entitytemplate.Table, entitytemplate.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, group.EntityTemplatesTable, group.EntityTemplatesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryExports chains the current query on the "exports" edge.
+func (_q *GroupQuery) QueryExports() *ExportQuery {
+	query := (&ExportClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(export.Table, export.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.ExportsTable, group.ExportsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryUserGroups chains the current query on the "user_groups" edge.
+func (_q *GroupQuery) QueryUserGroups() *UserGroupQuery {
+	query := (&UserGroupClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(usergroup.Table, usergroup.GroupColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, group.UserGroupsTable, group.UserGroupsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -427,6 +475,8 @@ func (_q *GroupQuery) Clone() *GroupQuery {
 		withInvitationTokens: _q.withInvitationTokens.Clone(),
 		withNotifiers:        _q.withNotifiers.Clone(),
 		withEntityTemplates:  _q.withEntityTemplates.Clone(),
+		withExports:          _q.withExports.Clone(),
+		withUserGroups:       _q.withUserGroups.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -510,6 +560,28 @@ func (_q *GroupQuery) WithEntityTemplates(opts ...func(*EntityTemplateQuery)) *G
 	return _q
 }
 
+// WithExports tells the query-builder to eager-load the nodes that are connected to
+// the "exports" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *GroupQuery) WithExports(opts ...func(*ExportQuery)) *GroupQuery {
+	query := (&ExportClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withExports = query
+	return _q
+}
+
+// WithUserGroups tells the query-builder to eager-load the nodes that are connected to
+// the "user_groups" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *GroupQuery) WithUserGroups(opts ...func(*UserGroupQuery)) *GroupQuery {
+	query := (&UserGroupClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withUserGroups = query
+	return _q
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -588,7 +660,7 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 	var (
 		nodes       = []*Group{}
 		_spec       = _q.querySpec()
-		loadedTypes = [7]bool{
+		loadedTypes = [9]bool{
 			_q.withUsers != nil,
 			_q.withEntityTypes != nil,
 			_q.withEntities != nil,
@@ -596,6 +668,8 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 			_q.withInvitationTokens != nil,
 			_q.withNotifiers != nil,
 			_q.withEntityTemplates != nil,
+			_q.withExports != nil,
+			_q.withUserGroups != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -664,6 +738,20 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 		if err := _q.loadEntityTemplates(ctx, query, nodes,
 			func(n *Group) { n.Edges.EntityTemplates = []*EntityTemplate{} },
 			func(n *Group, e *EntityTemplate) { n.Edges.EntityTemplates = append(n.Edges.EntityTemplates, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withExports; query != nil {
+		if err := _q.loadExports(ctx, query, nodes,
+			func(n *Group) { n.Edges.Exports = []*Export{} },
+			func(n *Group, e *Export) { n.Edges.Exports = append(n.Edges.Exports, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withUserGroups; query != nil {
+		if err := _q.loadUserGroups(ctx, query, nodes,
+			func(n *Group) { n.Edges.UserGroups = []*UserGroup{} },
+			func(n *Group, e *UserGroup) { n.Edges.UserGroups = append(n.Edges.UserGroups, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -911,6 +999,66 @@ func (_q *GroupQuery) loadEntityTemplates(ctx context.Context, query *EntityTemp
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "group_entity_templates" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *GroupQuery) loadExports(ctx context.Context, query *ExportQuery, nodes []*Group, init func(*Group), assign func(*Group, *Export)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Group)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(export.FieldGroupID)
+	}
+	query.Where(predicate.Export(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(group.ExportsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.GroupID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "group_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *GroupQuery) loadUserGroups(ctx context.Context, query *UserGroupQuery, nodes []*Group, init func(*Group), assign func(*Group, *UserGroup)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Group)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(usergroup.FieldGroupID)
+	}
+	query.Where(predicate.UserGroup(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(group.UserGroupsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.GroupID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "group_id" returned %v for node %v`, fk, n)
 		}
 		assign(node, n)
 	}

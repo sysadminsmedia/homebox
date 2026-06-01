@@ -371,7 +371,7 @@
     if (preferences.value.showEmpty) {
       return true;
     }
-    return item.value?.purchaseFrom || item.value?.purchasePrice !== 0 || validDate(item.value?.purchaseTime);
+    return item.value?.purchaseFrom || item.value?.purchasePrice !== 0 || validDate(item.value?.purchaseDate);
   });
 
   const purchaseDetails = computed<Details>(() => {
@@ -387,7 +387,7 @@
       },
       {
         name: "items.purchase_date",
-        text: item.value?.purchaseTime || "",
+        text: item.value?.purchaseDate || "",
         type: "date",
         date: true,
       },
@@ -404,7 +404,7 @@
     if (preferences.value.showEmpty) {
       return true;
     }
-    return item.value?.soldTo || item.value?.soldPrice !== 0 || validDate(item.value?.soldTime);
+    return item.value?.soldTo || item.value?.soldPrice !== 0 || validDate(item.value?.soldDate);
   });
 
   const soldDetails = computed<Details>(() => {
@@ -420,7 +420,7 @@
       },
       {
         name: "items.sold_at",
-        text: item.value?.soldTime || "",
+        text: item.value?.soldDate || "",
         type: "date",
         date: true,
       },
@@ -598,8 +598,8 @@
         item.value.lifetimeWarranty ||
         item.value.warrantyExpires
       ),
-      includePurchaseFields: !!(item.value.purchaseFrom || item.value.purchasePrice || item.value.purchaseTime),
-      includeSoldFields: !!(item.value.soldTo || item.value.soldPrice || item.value.soldTime),
+      includePurchaseFields: !!(item.value.purchaseFrom || item.value.purchasePrice || item.value.purchaseDate),
+      includeSoldFields: !!(item.value.soldTo || item.value.soldPrice || item.value.soldDate),
       fields: item.value.fields.map(field => ({
         id: NIL_UUID,
         name: field.name,

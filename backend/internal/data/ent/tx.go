@@ -12,6 +12,8 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// APIKey is the client for interacting with the APIKey builders.
+	APIKey *APIKeyClient
 	// Attachment is the client for interacting with the Attachment builders.
 	Attachment *AttachmentClient
 	// AuthRoles is the client for interacting with the AuthRoles builders.
@@ -26,6 +28,8 @@ type Tx struct {
 	EntityTemplate *EntityTemplateClient
 	// EntityType is the client for interacting with the EntityType builders.
 	EntityType *EntityTypeClient
+	// Export is the client for interacting with the Export builders.
+	Export *ExportClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// GroupInvitationToken is the client for interacting with the GroupInvitationToken builders.
@@ -36,12 +40,16 @@ type Tx struct {
 	MaintenancePlan *MaintenancePlanClient
 	// Notifier is the client for interacting with the Notifier builders.
 	Notifier *NotifierClient
+	// PasswordResetTokens is the client for interacting with the PasswordResetTokens builders.
+	PasswordResetTokens *PasswordResetTokensClient
 	// Tag is the client for interacting with the Tag builders.
 	Tag *TagClient
 	// TemplateField is the client for interacting with the TemplateField builders.
 	TemplateField *TemplateFieldClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserGroup is the client for interacting with the UserGroup builders.
+	UserGroup *UserGroupClient
 
 	// lazily loaded.
 	client     *Client
@@ -173,6 +181,7 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.APIKey = NewAPIKeyClient(tx.config)
 	tx.Attachment = NewAttachmentClient(tx.config)
 	tx.AuthRoles = NewAuthRolesClient(tx.config)
 	tx.AuthTokens = NewAuthTokensClient(tx.config)
@@ -180,14 +189,17 @@ func (tx *Tx) init() {
 	tx.EntityField = NewEntityFieldClient(tx.config)
 	tx.EntityTemplate = NewEntityTemplateClient(tx.config)
 	tx.EntityType = NewEntityTypeClient(tx.config)
+	tx.Export = NewExportClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
 	tx.GroupInvitationToken = NewGroupInvitationTokenClient(tx.config)
 	tx.MaintenanceEntry = NewMaintenanceEntryClient(tx.config)
 	tx.MaintenancePlan = NewMaintenancePlanClient(tx.config)
 	tx.Notifier = NewNotifierClient(tx.config)
+	tx.PasswordResetTokens = NewPasswordResetTokensClient(tx.config)
 	tx.Tag = NewTagClient(tx.config)
 	tx.TemplateField = NewTemplateFieldClient(tx.config)
 	tx.User = NewUserClient(tx.config)
+	tx.UserGroup = NewUserGroupClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.
@@ -197,7 +209,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Attachment.QueryXXX(), the query will be executed
+// applies a query, for example: APIKey.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

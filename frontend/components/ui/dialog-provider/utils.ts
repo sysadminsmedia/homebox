@@ -12,6 +12,8 @@ import type {
 export enum DialogID {
   AttachmentEdit = "attachment-edit",
   ChangePassword = "changePassword",
+  CreateApiKey = "create-api-key",
+  CreateApiKeyResult = "create-api-key-result",
   CreateItem = "create-item",
   CreateLocation = "create-location",
   CreateTag = "create-tag",

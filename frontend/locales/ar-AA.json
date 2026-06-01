@@ -1,0 +1,986 @@
+{
+    "collection": {
+        "copy_invite": "نسخ رابط الدعوة",
+        "create_invite": "إنشاء دعوة",
+        "delete_collection": "حذف المجموعة",
+        "delete_confirm": "هل أنت متأكد من رغبتك في حذف هذه المجموعة؟ لا يمكن التراجع عن هذا الإجراء.",
+        "deleted_collection": "تم حذف المجموعة.",
+        "expires_at": "تنتهي الصلاحية في",
+        "invite_token": "الرمز",
+        "invite_token_hidden": "لم يعد مرئيًا",
+        "invite_token_warning": "تظهر رموز الدعوة مرة واحدة فقط. انسخ الرابط الآن؛ لن تتمكن من عرض هذا الرمز مرة أخرى بعد مغادرة هذه الصفحة أو تحديثها.",
+        "invites": "الدعوات",
+        "invites_delete_confirm": "هل أنت متأكد من رغبتك في حذف هذه الدعوة؟",
+        "leave_collection": "مغادرة المجموعة",
+        "leave_confirm": "هل أنت متأكد من رغبتك في مغادرة هذه المجموعة؟",
+        "left_collection": "لقد غادرت المجموعة.",
+        "manage_collection": "إدارة المجموعة",
+        "members": {
+            "cannot_remove_last": "لا يمكنك إزالة آخر عضو.",
+            "email": "البريد الإلكتروني",
+            "empty": "لا يوجد أعضاء في هذه المجموعة بعد.",
+            "member": "عضو",
+            "name": "الاسم",
+            "owner": "المالك",
+            "remove_confirm": "هل أنت متأكد من رغبتك في إزالة هذا العضو؟",
+            "removed": "تمت إزالة العضو",
+            "role": "الدور"
+        },
+        "no_collections": {
+            "create": "إنشاء مجموعة جديدة",
+            "join": "الانضمام إلى مجموعة موجودة",
+            "message": "يبدو أنك لست ضمن أي مجموعة. أنشئ مجموعة جديدة لأغراضك، أو انضم إلى مجموعة تمت دعوتك إليها.",
+            "title": "لم يتم العثور على مجموعات"
+        },
+        "no_invites": "لا توجد دعوات",
+        "remaining_uses": "الاستخدامات المتبقية",
+        "tabs": {
+            "entity_types": "أنواع الكيانات",
+            "invites": "Invites",
+            "members": "الأعضاء",
+            "notifiers": "وسائل الإشعار",
+            "settings": "الإعدادات",
+            "tools": "الأدوات"
+        },
+        "uses": "الاستخدامات"
+    },
+    "components": {
+        "app": {
+            "create_modal": {
+                "createAndAddAnother": "استخدم {shiftKey} + {enterKey} للإنشاء وإضافة عنصر آخر.",
+                "enter": "إدخال",
+                "shift": "Shift"
+            },
+            "import_dialog": {
+                "change_warning": "تغيّر سلوك الاستيراد عند وجود import_refs. إذا كان import_ref موجودًا في ملف CSV، فسيتم تحديث العنصر بالقيم الموجودة في ملف CSV.",
+                "description": "استورد ملف CSV يحتوي على عناصرك وتسمياتك ومواقعك. راجع التوثيق لمزيد من المعلومات حول التنسيق المطلوب.",
+                "title": "استيراد ملف CSV",
+                "toast": {
+                    "import_failed": "فشل الاستيراد. يُرجى المحاولة لاحقًا.",
+                    "import_success": "تم الاستيراد بنجاح!",
+                    "please_select_file": "يُرجى اختيار ملف لاستيراده."
+                }
+            },
+            "outdated": {
+                "current_version": "الإصدار الحالي",
+                "dismiss": "إغلاق",
+                "latest_version": "أحدث إصدار",
+                "new_version_available": "يتوفر إصدار جديد",
+                "new_version_available_link": "انقر هنا لعرض ملاحظات الإصدار"
+            }
+        },
+        "collection": {
+            "create_modal": {
+                "name_label": "اسم المجموعة",
+                "title": "إنشاء مجموعة",
+                "toast": {
+                    "already_creating": "يتم إنشاء مجموعة بالفعل",
+                    "create_failed": "فشل إنشاء المجموعة",
+                    "create_success": "تم إنشاء المجموعة",
+                    "please_enter_name": "يُرجى إدخال اسم المجموعة"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "يُرجى اختيار تاريخ ووقت انتهاء الصلاحية.",
+                    "invalid_expiry_past": "يجب أن يكون تاريخ انتهاء الصلاحية في المستقبل.",
+                    "invalid_uses": "يجب أن يكون عدد الاستخدامات رقمًا بين 1 و100."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "رمز دعوة المجموعة",
+                "invites_should_look_like": "يجب أن تبدو الدعوات كما يلي:",
+                "join": "الانضمام إلى المجموعة",
+                "no_invite_code_create_one": "لا يوجد رمز دعوة؟ أنشئ مجموعة جديدة بدلًا من ذلك",
+                "title": "الانضمام إلى المجموعة",
+                "toast": {
+                    "already_joining": "يتم الانضمام إلى مجموعة بالفعل",
+                    "join_failed": "فشل الانضمام إلى المجموعة",
+                    "join_success": "تم الانضمام إلى المجموعة",
+                    "please_enter_valid_join_code": "يُرجى إدخال رمز دعوة مجموعة صالح"
+                }
+            },
+            "selector": {
+                "collection_options": "خيارات المجموعة",
+                "create_collection": "إنشاء مجموعة جديدة",
+                "join_collection": "الانضمام إلى مجموعة موجودة",
+                "no_collection_found": "لم يتم العثور على مجموعة",
+                "search_collections": "البحث في المجموعات…",
+                "select_collection": "اختر مجموعة",
+                "your_collections": "مجموعاتك"
+            }
+        },
+        "color_selector": {
+            "clear": "مسح اللون",
+            "color": "اللون",
+            "no_color": "بلا لون",
+            "no_color_selected": "لم يتم اختيار لون",
+            "randomize": "اختيار لون عشوائي"
+        },
+        "form": {
+            "min_length": "الحد الأدنى {min}",
+            "password": {
+                "toggle_show": "تبديل إظهار كلمة المرور"
+            }
+        },
+        "global": {
+            "copy_text": {
+                "continue": "متابعة",
+                "documentation": "التوثيق",
+                "failed_to_copy": "فشل نسخ النص إلى الحافظة",
+                "https_required": "لأن HTTPS مطلوب",
+                "learn_more": "تعرّف على المزيد في"
+            },
+            "date_time": {
+                "ago": "منذ {0}",
+                "days": "أيام",
+                "hour": "ساعة",
+                "hours": "ساعات",
+                "in": "خلال {0}",
+                "just-now": "الآن",
+                "last-month": "الشهر الماضي",
+                "last-week": "الأسبوع الماضي",
+                "last-year": "العام الماضي",
+                "minute": "دقيقة",
+                "minutes": "دقائق",
+                "months": "أشهر",
+                "next-month": "الشهر القادم",
+                "next-week": "الأسبوع القادم",
+                "next-year": "العام القادم",
+                "second": "ثانية",
+                "seconds": "ثوانٍ",
+                "tomorrow": "غدًا",
+                "week": "أسبوع",
+                "weeks": "أسابيع",
+                "years": "سنوات",
+                "yesterday": "أمس"
+            },
+            "label_maker": {
+                "browser_print": "الطباعة من المتصفح",
+                "confirm_description": "هل أنت متأكد من رغبتك في طباعة هذه التسمية؟",
+                "download": "تنزيل التسمية",
+                "print": "طباعة التسمية",
+                "server_print": "الطباعة على الخادم",
+                "titles": "التسميات",
+                "toast": {
+                    "load_status_failed": "فشل تحميل الحالة",
+                    "print_failed": "فشلت طباعة التسمية",
+                    "print_success": "تمت طباعة التسمية"
+                }
+            },
+            "page_qr_code": {
+                "page_url": "رابط الصفحة",
+                "qr_tooltip": "عرض رمز QR"
+            },
+            "password_score": {
+                "password_strength": "قوة كلمة المرور"
+            }
+        },
+        "item": {
+            "attachments_list": {
+                "download": "تنزيل",
+                "open_new_tab": "فتح في علامة تبويب جديدة"
+            },
+            "create_modal": {
+                "clear_template": "مسح القالب",
+                "delete_photo": "حذف الصورة",
+                "item_description": "وصف العنصر",
+                "item_name": "اسم العنصر",
+                "item_photo": "صورة العنصر 📷",
+                "item_quantity": "كمية العنصر",
+                "parent_item": "العنصر الأب",
+                "product_tooltip_input_barcode": "ملء تلقائي باستخدام باركود مُدخل يدويًا",
+                "product_tooltip_scan_barcode": "ملء تلقائي باستخدام باركود من 📷",
+                "rotate_photo": "تدوير الصورة",
+                "set_as_primary_photo": "تعيين كصورة { isPrimary, select, true {غير } false {} other {}}رئيسية",
+                "title": "إنشاء عنصر",
+                "toast": {
+                    "already_creating": "يتم إنشاء عنصر بالفعل",
+                    "create_failed": "تعذر إنشاء العنصر",
+                    "create_success": "تم إنشاء العنصر",
+                    "failed_load_parent": "فشل تحميل العنصر الأب - يُرجى الاختيار يدويًا",
+                    "no_canvas_support": "متصفحك لا يدعم عمليات canvas",
+                    "please_select_location": "يُرجى اختيار موقع.",
+                    "rotate_failed": "فشل تدوير الصورة: { error }",
+                    "rotate_process_failed": "فشلت معالجة الصورة المُدوّرة",
+                    "some_photos_failed": "{count, plural, =0 {لا توجد صور لرفعها.} =1 {فشل رفع صورة واحدة.} other {فشل رفع بعض الصور.}}",
+                    "upload_failed": "فشل رفع الصورة: { photoName }",
+                    "upload_success": "{count, plural, =0 {لم يتم رفع أي صور.} =1 {تم رفع الصورة بنجاح.} other {تم رفع جميع الصور بنجاح.}}",
+                    "uploading_photos": "{count, plural, =0 {لا توجد صور لرفعها} =1 {جارٍ رفع صورة واحدة…} other {جارٍ رفع {count} صورة…}}"
+                },
+                "upload_photos": "رفع الصور",
+                "uploaded": "الصورة المرفوعة"
+            },
+            "product_import": {
+                "barcode": "باركود المنتج",
+                "db_source": "مصدر قاعدة البيانات",
+                "error_exception": "Exception occured while retrieving item barcode: ",
+                "error_invalid_barcode": "تم إدخال باركود غير صالح",
+                "error_not_found": "لم يتم العثور على منتج بهذا الباركود.",
+                "import_selected": "استيراد المحدد",
+                "search_item": "البحث عن منتج",
+                "title": "استيراد منتج"
+            },
+            "selector": {
+                "clear": "مسح اختيار العنصر",
+                "no_results": "لم يتم العثور على نتائج",
+                "placeholder": "اختر…",
+                "search_placeholder": "اكتب للبحث…",
+                "searching": "جارٍ البحث…"
+            },
+            "view": {
+                "change_details": {
+                    "add_tags": "إضافة وسوم",
+                    "failed_to_update_item": "فشل تحديث العنصر",
+                    "remove_tags": "إزالة الوسوم",
+                    "title": "تغيير تفاصيل العنصر"
+                },
+                "selectable": {
+                    "card": "بطاقة",
+                    "items": "العناصر",
+                    "no_items": "لا توجد عناصر للعرض",
+                    "select_all": "تحديد الكل",
+                    "select_card": "تحديد البطاقة",
+                    "select_row": "تحديد الصف",
+                    "table": "جدول"
+                },
+                "table": {
+                    "dropdown": {
+                        "actions": "الإجراءات",
+                        "change_location": "تغيير الموقع",
+                        "change_location_success": "تم تغيير الموقع",
+                        "change_tags": "تغيير الوسوم",
+                        "change_tags_success": "تم تغيير الوسوم",
+                        "create_maintenance_item": "إنشاء إدخال صيانة للعنصر",
+                        "create_maintenance_selected": "إنشاء إدخال صيانة للعناصر المحددة",
+                        "create_maintenance_success": "تم إنشاء إدخالات الصيانة",
+                        "delete_confirmation": "هل أنت متأكد من رغبتك في حذف العناصر المحددة؟ لا يمكن التراجع عن هذا الإجراء.",
+                        "delete_item": "حذف العنصر",
+                        "delete_selected": "حذف العناصر المحددة",
+                        "download_csv": "تنزيل الجدول بصيغة CSV",
+                        "download_json": "تنزيل الجدول بصيغة JSON",
+                        "duplicate_item": "تكرار العنصر",
+                        "duplicate_selected": "تكرار العناصر المحددة",
+                        "error_deleting": "خطأ أثناء حذف العنصر",
+                        "error_duplicating": "خطأ أثناء تكرار العنصر",
+                        "open_menu": "فتح القائمة",
+                        "open_multi_tab_warning": "لأسباب أمنية، لا تسمح المتصفحات افتراضيًا بفتح عدة علامات تبويب دفعة واحدة. لتغيير ذلك، يُرجى اتباع التوثيق:",
+                        "toggle_expand": "تبديل التوسيع",
+                        "view_item": "عرض العنصر",
+                        "view_items": "عرض العناصر"
+                    },
+                    "headers": "العناوين",
+                    "page": "الصفحة",
+                    "quick_actions": "تفعيل الإجراءات السريعة والتحديد",
+                    "rows_per_page": "الصفوف في كل صفحة",
+                    "selected_rows": "تم تحديد {selected} من {total} صف.",
+                    "table_settings": "إعدادات الجدول",
+                    "view_item": "عرض العنصر"
+                }
+            }
+        },
+        "location": {
+            "create_modal": {
+                "location_description": "وصف الموقع",
+                "location_name": "اسم الموقع",
+                "location_photo": "صورة الموقع 📷",
+                "title": "إنشاء موقع",
+                "toast": {
+                    "already_creating": "يتم إنشاء موقع بالفعل",
+                    "create_failed": "تعذر إنشاء الموقع",
+                    "create_success": "تم إنشاء الموقع"
+                }
+            },
+            "selector": {
+                "clear": "مسح اختيار الموقع",
+                "no_location_found": "لم يتم العثور على موقع",
+                "parent_location": "الموقع الأب",
+                "search_location": "البحث في المواقع",
+                "select_location": "اختر موقعًا"
+            },
+            "tree": {
+                "no_locations": "لا توجد مواقع متاحة. استخدم زر الإنشاء لإضافة موقع جديد."
+            }
+        },
+        "quick_menu": {
+            "no_results": "لم يتم العثور على نتائج.",
+            "shortcut_hint": "استخدم مفاتيح الأرقام لتحديد إجراء بسرعة."
+        },
+        "search": {
+            "filter": {
+                "search_placeholder": "بحث…"
+            }
+        },
+        "tag": {
+            "create_modal": {
+                "tag_color": "لون الوسم",
+                "tag_description": "وصف الوسم",
+                "tag_icon": "أيقونة الوسم",
+                "tag_name": "اسم الوسم",
+                "tag_parent": "الوسم الأب",
+                "title": "إنشاء وسم",
+                "toast": {
+                    "already_creating": "يتم إنشاء وسم بالفعل",
+                    "create_failed": "تعذر إنشاء الوسم",
+                    "create_success": "تم إنشاء الوسم",
+                    "tag_name_too_long": "يجب ألا يتجاوز اسم الوسم 50 حرفًا"
+                }
+            },
+            "selector": {
+                "clear": "مسح",
+                "no_tags_found": "لم يتم العثور على وسوم",
+                "select_tags": "اختر الوسوم"
+            }
+        },
+        "template": {
+            "apply_template": "تطبيق قالب",
+            "card": {
+                "delete": "حذف القالب",
+                "duplicate": "تكرار القالب",
+                "edit": "تعديل القالب"
+            },
+            "confirm_delete": "هل تريد حذف هذا القالب؟",
+            "create_modal": {
+                "title": "إنشاء قالب"
+            },
+            "detail": {
+                "default_values": "القيم الافتراضية",
+                "updated": "تم التحديث"
+            },
+            "edit_modal": {
+                "title": "تعديل القالب"
+            },
+            "empty_value": "(فارغ)",
+            "form": {
+                "custom_fields": "الحقول المخصصة",
+                "default_item_values": "قيم العنصر الافتراضية",
+                "default_location": "الموقع الافتراضي",
+                "default_value": "القيمة الافتراضية",
+                "field_name": "اسم الحقل",
+                "item_description": "وصف العنصر",
+                "item_name": "اسم العنصر",
+                "lifetime_warranty": "ضمان مدى الحياة",
+                "location": "الموقع",
+                "manufacturer": "الشركة المصنعة",
+                "model_number": "رقم الطراز",
+                "no_custom_fields": "لا توجد حقول مخصصة.",
+                "template_description": "وصف القالب",
+                "template_name": "اسم القالب"
+            },
+            "hide_defaults": "إخفاء الافتراضيات",
+            "save_as_template": "حفظ كقالب",
+            "selector": {
+                "clear": "مسح اختيار القالب",
+                "label": "القالب (اختياري)",
+                "not_found": "لم يتم العثور على قالب",
+                "search": "البحث في القوالب…",
+                "select": "اختر قالبًا…"
+            },
+            "show_defaults": "إظهار الافتراضيات",
+            "toast": {
+                "applied": "تم تطبيق القالب \"{name}\"",
+                "create_failed": "فشل إنشاء القالب",
+                "created": "تم إنشاء القالب",
+                "delete_failed": "فشل حذف القالب",
+                "deleted": "تم حذف القالب",
+                "duplicate_failed": "فشل تكرار القالب",
+                "duplicated": "تم تكرار القالب باسم \"{name}\"",
+                "load_failed": "فشل تحميل تفاصيل القالب",
+                "saved_as_template": "تم حفظ العنصر كقالب \"{name}\"",
+                "update_failed": "فشل تحديث القالب",
+                "updated": "تم تحديث القالب"
+            },
+            "using_template": "استخدام القالب: {name}"
+        }
+    },
+    "errors": {
+        "api_failure": "فشل استدعاء واجهة API الخلفية: "
+    },
+    "global": {
+        "add": "إضافة",
+        "archived": "مؤرشف",
+        "build": "البناء: { build }",
+        "cancel": "إلغاء",
+        "close": "إغلاق",
+        "confirm": "تأكيد",
+        "create": "إنشاء",
+        "create_and_add": "إنشاء وإضافة آخر",
+        "create_subitem": "إنشاء عنصر فرعي",
+        "created": "تم الإنشاء",
+        "delete": "حذف",
+        "delete_confirm": "هل أنت متأكد من رغبتك في حذف هذا العنصر؟ ",
+        "demo_instance": "هذه نسخة تجريبية",
+        "details": "التفاصيل",
+        "duplicate": "تكرار",
+        "edit": "تعديل",
+        "email": "البريد الإلكتروني",
+        "follow_dev": "تابع المطوّر",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'واجهة API'</a>'",
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' الإصدار: { version } البناء: { build } '</a>'"
+        },
+        "github": "مشروع GitHub",
+        "insured": "مؤمّن",
+        "items": "العناصر",
+        "join_discord": "الانضمام إلى Discord",
+        "loading": "جارٍ التحميل…",
+        "locations": "المواقع",
+        "maintenance": "الصيانة",
+        "name": "الاسم",
+        "navigate": "انتقال",
+        "no": "لا",
+        "password": "كلمة المرور",
+        "preview": "معاينة",
+        "quantity": "الكمية",
+        "read_docs": "قراءة التوثيق",
+        "return_home": "العودة إلى الرئيسية",
+        "save": "حفظ",
+        "search": "بحث",
+        "select": "اختر...",
+        "show_less": "عرض أقل",
+        "show_more": "عرض المزيد",
+        "sign_out": "تسجيل الخروج",
+        "submit": "إرسال",
+        "tags": "الوسوم",
+        "type": "النوع",
+        "unknown": "غير معروف",
+        "update": "تحديث",
+        "updating": "جارٍ التحديث",
+        "value": "القيمة",
+        "version": "الإصدار: { version }",
+        "welcome": "مرحبًا، { username }",
+        "yes": "نعم"
+    },
+    "home": {
+        "quick_statistics": "إحصاءات سريعة",
+        "recently_added": "أُضيفت مؤخرًا",
+        "storage_locations": "مواقع التخزين",
+        "tags": "الوسوم",
+        "total_items": "إجمالي العناصر",
+        "total_locations": "إجمالي المواقع",
+        "total_tags": "إجمالي الوسوم",
+        "total_value": "القيمة الإجمالية"
+    },
+    "index": {
+        "back_to_login": "العودة إلى تسجيل الدخول",
+        "disabled_registration": "التسجيل معطّل",
+        "dont_join_group": "لا تريد الانضمام إلى مجموعة؟",
+        "forgot_password": "هل نسيت كلمة المرور؟",
+        "forgot_password_check_email": "إذا كان هذا البريد مرتبطًا بحساب، فسيتم إرسال رابط إعادة التعيين. تنتهي صلاحية الرابط خلال ساعة واحدة.",
+        "forgot_password_send": "إرسال رابط إعادة التعيين",
+        "forgot_password_subtitle": "أدخل البريد الإلكتروني لحسابك وسنرسل لك رابطًا لإعادة تعيين كلمة المرور.",
+        "forgot_password_title": "إعادة تعيين كلمة المرور",
+        "joining_group": "أنت تنضم إلى مجموعة موجودة!",
+        "login": "تسجيل الدخول",
+        "or": "أو",
+        "register": "تسجيل",
+        "remember_me": "تذكرني",
+        "reset_password_invalid": "رابط إعادة التعيين غير صالح أو انتهت صلاحيته. اطلب رابطًا جديدًا.",
+        "reset_password_missing_token": "رمز إعادة التعيين مفقود. افتح الرابط من بريدك الإلكتروني مرة أخرى، أو اطلب رابطًا جديدًا.",
+        "reset_password_set": "تعيين كلمة مرور جديدة",
+        "reset_password_subtitle": "اختر كلمة مرور جديدة لحسابك.",
+        "reset_password_success": "تمت إعادة تعيين كلمة المرور. سجّل الدخول باستخدام كلمة المرور الجديدة.",
+        "reset_password_title": "إعادة تعيين كلمة المرور",
+        "set_email": "ما بريدك الإلكتروني؟",
+        "set_name": "ما اسمك؟",
+        "set_password": "عيّن كلمة المرور",
+        "tagline": "تتبّع أغراضك ونظّمها وأدرها.",
+        "title": "نظّم أغراضك وأضف لها وسومًا",
+        "toast": {
+            "invalid_email": "عنوان البريد الإلكتروني غير صالح",
+            "invalid_email_password": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+            "login_success": "تم تسجيل الدخول بنجاح",
+            "oidc_access_denied": "تم رفض الوصول: لا يملك حسابك الدور أو عضوية المجموعة المطلوبة",
+            "oidc_auth_failed": "فشلت مصادقة OIDC",
+            "oidc_invalid_response": "تم استلام استجابة OIDC غير صالحة",
+            "oidc_provider_error": "أرجع مزود OIDC خطأً",
+            "oidc_security_error": "خطأ أمني في OIDC - هجوم CSRF محتمل",
+            "oidc_session_expired": "انتهت صلاحية جلسة OIDC",
+            "oidc_token_expired": "انتهت صلاحية رمز OIDC",
+            "oidc_token_invalid": "توقيع رمز OIDC غير صالح",
+            "problem_registering": "حدثت مشكلة أثناء تسجيل المستخدم",
+            "user_registered": "تم تسجيل المستخدم"
+        }
+    },
+    "items": {
+        "add": "إضافة",
+        "advanced": "متقدم",
+        "archived": "مؤرشف",
+        "asset_id": "معرف الأصل",
+        "associated_with_multiple": "معرف الأصل هذا مرتبط بعدة عناصر",
+        "attachment": "مرفق",
+        "attachments": "المرفقات",
+        "changes_persisted_immediately": "سيتم حفظ تغييرات المرفقات فورًا",
+        "created_at": "تاريخ الإنشاء",
+        "custom_fields": "الحقول المخصصة",
+        "delete_attachment_confirm": "هل أنت متأكد من رغبتك في حذف هذا المرفق؟",
+        "delete_item_confirm": "هل أنت متأكد من رغبتك في حذف هذا العنصر؟",
+        "description": "الوصف",
+        "details": "التفاصيل",
+        "drag_and_drop": "اسحب الملفات وأفلتها هنا أو انقر لاختيار الملفات",
+        "duplicate": {
+            "copy_attachments": "نسخ المرفقات",
+            "copy_custom_fields": "نسخ الحقول المخصصة",
+            "copy_maintenance": "نسخ الصيانة",
+            "custom_prefix": "بادئة النسخة",
+            "enable_custom_prefix": "تفعيل بادئة مخصصة",
+            "override_instructions": "اضغط مع الاستمرار على Shift عند النقر على زر التكرار لتجاوز هذه الإعدادات.",
+            "prefix": "نسخة من ",
+            "prefix_instructions": "ستُضاف هذه البادئة إلى بداية اسم العنصر المكرر. أضف مسافة في نهاية البادئة لإضافة مسافة بينها وبين اسم العنصر.",
+            "temporary_title": "إعدادات مؤقتة",
+            "title": "إعدادات التكرار"
+        },
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "عنوان المرفق",
+                "attachment_type": "نوع المرفق",
+                "primary_photo": "الصورة الرئيسية",
+                "primary_photo_sub": "يتوفر هذا الخيار للصور فقط. يمكن أن تكون صورة واحدة فقط رئيسية. إذا اخترت هذا الخيار، فسيتم إلغاء تحديد الصورة الرئيسية الحالية إن وُجدت.",
+                "select_type": "اختر نوعًا",
+                "title": "تعديل المرفق"
+            },
+            "view_image": "عرض الصورة"
+        },
+        "edit_details": "تعديل التفاصيل",
+        "field": "الحقل",
+        "field_selector": "محدد الحقل",
+        "field_value": "قيمة الحقل",
+        "first": "الأول",
+        "include_archive": "تضمين العناصر المؤرشفة",
+        "insured": "مؤمّن",
+        "invalid_asset_id": "معرف الأصل غير صالح",
+        "last": "الأخير",
+        "lifetime_warranty": "ضمان مدى الحياة",
+        "location": "الموقع",
+        "manual": "دليل",
+        "manuals": "الأدلة",
+        "manufacturer": "الشركة المصنعة",
+        "model_number": "رقم الطراز",
+        "name": "الاسم",
+        "negate_tags": "استبعاد الوسوم المحددة",
+        "next_page": "الصفحة التالية",
+        "no_attachments": "لم يتم العثور على مرفقات",
+        "no_results": "لم يتم العثور على عناصر",
+        "notes": "ملاحظات",
+        "only_with_photo": "العناصر التي تحتوي على صورة فقط",
+        "only_without_photo": "العناصر التي لا تحتوي على صورة فقط",
+        "options": "الخيارات",
+        "order_by": "ترتيب حسب",
+        "pages": "الصفحة { page } من { totalPages }",
+        "parent_item": "العنصر الأب",
+        "photo": "صورة",
+        "photos": "الصور",
+        "prev_page": "الصفحة السابقة",
+        "purchase_date": "تاريخ الشراء",
+        "purchase_details": "تفاصيل الشراء",
+        "purchase_price": "سعر الشراء",
+        "purchased_from": "تم الشراء من",
+        "quantity": "الكمية",
+        "query_id": "جارٍ الاستعلام عن رقم معرف الأصل: { id }",
+        "receipt": "إيصال",
+        "receipts": "الإيصالات",
+        "reset_search": "إعادة ضبط البحث",
+        "results": "{ total } نتيجة",
+        "select_field": "اختر حقلًا",
+        "select_value": "اختر قيمة",
+        "serial_number": "الرقم التسلسلي",
+        "show_advanced_view_options": "عرض خيارات العرض المتقدمة",
+        "show_empty": "عرض الفارغ",
+        "sold_at": "تاريخ البيع",
+        "sold_details": "تفاصيل البيع",
+        "sold_price": "سعر البيع",
+        "sold_to": "بيع إلى",
+        "sync_child_locations": "مزامنة مواقع العناصر الفرعية",
+        "tip_1": "تستخدم عوامل تصفية المواقع والوسوم عملية \"أو\". إذا تم اختيار أكثر من عامل، فسيكفي تطابق واحد فقط.",
+        "tip_2": "عمليات البحث التي تبدأ بـ \"#\" ستستعلم عن معرف أصل (مثال: \"#000-001\")",
+        "tip_3": "تستخدم عوامل تصفية الحقول عملية \"أو\". إذا تم اختيار أكثر من عامل، فسيكفي تطابق واحد فقط.",
+        "tips": "نصائح",
+        "tips_sub": "نصائح البحث",
+        "toast": {
+            "asset_not_found": "لم يتم العثور على الأصل",
+            "attachment_deleted": "تم حذف المرفق",
+            "attachment_updated": "تم تحديث المرفق",
+            "attachment_uploaded": "تم رفع المرفق",
+            "child_items_location_no_longer_synced": "لن تتم مزامنة مواقع العناصر الفرعية مع هذا العنصر بعد الآن.",
+            "child_items_location_synced": "تمت مزامنة مواقع العناصر الفرعية مع هذا العنصر",
+            "child_location_desync": "سيؤدي تغيير الموقع إلى إلغاء مزامنته مع موقع العنصر الأب",
+            "error_loading_parent_data": "حدث خطأ أثناء محاولة تحميل بيانات العنصر الأب",
+            "failed_adjust_quantity": "فشل تعديل الكمية",
+            "failed_delete_attachment": "فشل حذف المرفق",
+            "failed_delete_item": "فشل حذف العنصر",
+            "failed_duplicate_item": "فشل تكرار العنصر",
+            "failed_load_asset": "فشل تحميل الأصل",
+            "failed_load_item": "فشل تحميل العنصر",
+            "failed_load_items": "فشل تحميل العناصر",
+            "failed_save": "فشل حفظ العنصر",
+            "failed_save_no_location": "فشل حفظ العنصر: لم يتم اختيار موقع",
+            "failed_search_items": "فشل البحث في العناصر",
+            "failed_update_attachment": "فشل تحديث المرفق",
+            "failed_upload_attachment": "فشل رفع المرفق",
+            "item_deleted": "تم حذف العنصر",
+            "item_saved": "تم حفظ العنصر",
+            "quantity_cannot_negative": "لا يمكن أن تكون الكمية سالبة",
+            "sync_child_location": "العنصر الأب المحدد يزامن مواقع عناصره الفرعية مع موقعه. تم تحديث الموقع."
+        },
+        "updated_at": "تاريخ التحديث",
+        "warranty": "الضمان",
+        "warranty_details": "تفاصيل الضمان",
+        "warranty_expires": "انتهاء الضمان"
+    },
+    "languages": {
+        "bs-BA": "البوسنية (البوسنة والهرسك)",
+        "ca": "الكتالونية",
+        "cs-CZ": "التشيكية",
+        "da-DK": "الدنماركية",
+        "de": "الألمانية",
+        "en": "الإنجليزية",
+        "es": "الإسبانية",
+        "fi-FI": "الفنلندية",
+        "fr": "الفرنسية",
+        "hu": "المجرية",
+        "id-ID": "الإندونيسية",
+        "it": "الإيطالية",
+        "ja-JP": "اليابانية",
+        "ko-KR": "الكورية",
+        "lb-LU": "اللوكسمبورغية (لوكسمبورغ)",
+        "lt-LT": "الليتوانية (ليتوانيا)",
+        "nb-NO": "النرويجية بوكمول",
+        "nl": "الهولندية",
+        "pl": "البولندية",
+        "pt-BR": "البرتغالية (البرازيل)",
+        "pt-PT": "البرتغالية (البرتغال)",
+        "ro-RO": "الرومانية",
+        "ru": "الروسية",
+        "sk-SK": "السلوفاكية",
+        "sl": "السلوفينية",
+        "sq-AL": "الألبانية",
+        "sv": "السويدية",
+        "ta-IN": "التاميلية",
+        "th-TH": "التايلاندية",
+        "tr": "التركية",
+        "uk-UA": "الأوكرانية",
+        "vi-VN": "الفيتنامية",
+        "zh-CN": "الصينية (المبسطة)",
+        "zh-HK": "الصينية (هونغ كونغ)",
+        "zh-MO": "الصينية (ماكاو)",
+        "zh-TW": "الصينية (التقليدية)"
+    },
+    "languages.sr-RS": "الصربية (صربيا)",
+    "locations": {
+        "child_locations": "المواقع الفرعية",
+        "collapse_tree": "طي الشجرة",
+        "expand_tree": "توسيع الشجرة",
+        "hide_items": "إخفاء العناصر",
+        "location_items_delete_confirm": "هل أنت متأكد من رغبتك في حذف هذا الموقع وجميع عناصره؟ لا يمكن التراجع عن هذا الإجراء.",
+        "no_results": "لم يتم العثور على مواقع",
+        "show_items": "إظهار العناصر",
+        "toast": {
+            "failed_delete_location": "فشل حذف الموقع",
+            "failed_load_location": "فشل تحميل الموقع",
+            "failed_update_location": "فشل تحديث الموقع",
+            "location_deleted": "تم حذف الموقع",
+            "location_updated": "تم تحديث الموقع"
+        },
+        "update_location": "تحديث الموقع"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "كلاهما",
+            "completed": "مكتمل",
+            "scheduled": "مجدول"
+        },
+        "list": {
+            "complete": "إكمال",
+            "create_first": "أنشئ أول إدخال",
+            "delete": "حذف",
+            "duplicate": "تكرار",
+            "edit": "تعديل",
+            "new": "جديد"
+        },
+        "modal": {
+            "completed_date": "تاريخ الإكمال",
+            "cost": "التكلفة",
+            "delete_confirmation": "هل أنت متأكد من رغبتك في حذف هذا الإدخال؟",
+            "edit_action": "تحديث",
+            "edit_title": "تعديل الإدخال",
+            "entry_name": "اسم الإدخال",
+            "new_action": "إنشاء",
+            "new_title": "إدخال جديد",
+            "notes": "ملاحظات",
+            "scheduled_date": "التاريخ المجدول"
+        },
+        "monthly_average": "المتوسط الشهري",
+        "toast": {
+            "failed_to_create": "فشل إنشاء الإدخال",
+            "failed_to_delete": "فشل حذف الإدخال",
+            "failed_to_update": "فشل تحديث الإدخال"
+        },
+        "total_cost": "إجمالي التكلفة",
+        "total_entries": "إجمالي الإدخالات"
+    },
+    "menu": {
+        "collection": "المجموعة",
+        "create_item": "عنصر / أصل",
+        "create_location": "موقع",
+        "create_tag": "وسم",
+        "home": "الرئيسية",
+        "locations": "المواقع",
+        "maintenance": "الصيانة",
+        "profile": "الملف الشخصي",
+        "scanner": "الماسح",
+        "search": "بحث",
+        "templates": "القوالب"
+    },
+    "pages": {
+        "templates": {
+            "no_templates": "لا توجد قوالب بعد.",
+            "title": "القوالب"
+        }
+    },
+    "profile": {
+        "active": "نشط",
+        "api_key_copied": "تم النسخ إلى الحافظة",
+        "api_key_copy": "نسخ",
+        "api_key_create": "إنشاء مفتاح API",
+        "api_key_created": "تم الإنشاء",
+        "api_key_delete_confirm": "هل أنت متأكد من رغبتك في إلغاء مفتاح API هذا؟ سيفقد أي عميل يستخدمه إمكانية الوصول فورًا.",
+        "api_key_expires_at": "تنتهي الصلاحية في",
+        "api_key_last_used": "آخر استخدام",
+        "api_key_name": "الاسم",
+        "api_key_name_placeholder": "مثلًا: Home Assistant",
+        "api_key_never_used": "أبدًا",
+        "api_key_no_expiration": "بلا انتهاء صلاحية",
+        "api_key_set_expiration": "تعيين تاريخ انتهاء الصلاحية",
+        "api_key_token_label": "مفتاح API الجديد الخاص بك",
+        "api_key_token_warning": "انسخ هذا الرمز الآن. حفاظًا على أمانك، لن يظهر مرة أخرى.",
+        "api_keys": "مفاتيح API",
+        "api_keys_sub": "رموز ثابتة للوصول البرمجي. يملك كل مفتاح الصلاحيات نفسها التي يملكها حسابك.",
+        "change_password": "تغيير كلمة المرور",
+        "currency_format": "تنسيق العملة",
+        "current_password": "كلمة المرور الحالية",
+        "delete_account": "حذف الحساب",
+        "delete_account_confirm": "هل أنت متأكد من رغبتك في حذف حسابك؟ إذا كنت آخر عضو في مجموعتك، فسيتم حذف جميع بياناتك. لا يمكن التراجع عن هذا الإجراء.",
+        "delete_account_sub": "احذف حسابك وجميع البيانات المرتبطة به. لا يمكن التراجع عن ذلك.",
+        "delete_notifier_confirm": "هل أنت متأكد من رغبتك في حذف وسيلة الإشعار هذه؟",
+        "display_legacy_header": "{ currentValue, select, true {تعطيل الرأس القديم} false {تفعيل الرأس القديم} other {غير مطابق}}",
+        "enabled": "مفعّل",
+        "example": "مثال",
+        "group_settings": "إعدادات المجموعة",
+        "group_settings_sub": "إعدادات المجموعة المشتركة. قد تحتاج إلى تحديث المتصفح لتطبيق بعض الإعدادات.",
+        "inactive": "غير نشط",
+        "language": "اللغة",
+        "legacy_image_fit": "{ currentValue, select, true {تعطيل الملاءمة القديمة: ملاءمة الصورة مع أشرطة} false {تفعيل الملاءمة القديمة: ملء الصورة مع القص} other {غير مطابق}}",
+        "moved_notice_body": "تم نقل وسائل الإشعار والدعوات وإعدادات العملة إلى صفحات المجموعة.",
+        "moved_notice_description": "تتم إدارة هذه الإعدادات الآن لكل مجموعة.",
+        "moved_notice_link_invites": "دعوات المجموعة",
+        "moved_notice_link_notifiers": "وسائل إشعار المجموعة",
+        "moved_notice_link_settings": "إعدادات عملة المجموعة",
+        "moved_notice_title": "هل تبحث عن وسائل الإشعار أو الدعوات أو إعدادات العملة؟",
+        "new_password": "كلمة المرور الجديدة",
+        "no_api_keys": "لا توجد مفاتيح API بعد",
+        "no_notifiers": "لا توجد وسائل إشعار مُكوّنة",
+        "no_override": "لا يوجد تجاوز",
+        "notifier_modal": "{ type, select, true {تعديل} false {إنشاء} other {آخر}} وسيلة إشعار",
+        "notifiers": "وسائل الإشعار",
+        "notifiers_sub": "استلم إشعارات لتذكيرات الصيانة القادمة",
+        "override_locale": "تجاوز لغة التاريخ والعملة",
+        "test": "اختبار",
+        "theme_settings": "إعدادات السمة",
+        "theme_settings_sub": "تُخزّن إعدادات السمة في التخزين المحلي لمتصفحك. يمكنك تغيير السمة في أي وقت. إذا واجهت مشكلة في تعيين السمة، فجرّب تحديث المتصفح.",
+        "toast": {
+            "account_deleted": "تم حذف حسابك.",
+            "api_key_created": "تم إنشاء مفتاح API.",
+            "api_key_deleted": "تم إلغاء مفتاح API.",
+            "failed_api_key_create": "فشل إنشاء مفتاح API.",
+            "failed_api_key_delete": "فشل إلغاء مفتاح API.",
+            "failed_change_password": "فشل تغيير كلمة المرور.",
+            "failed_create_notifier": "فشل إنشاء وسيلة الإشعار.",
+            "failed_delete_account": "فشل حذف حسابك.",
+            "failed_delete_notifier": "فشل حذف وسيلة الإشعار.",
+            "failed_get_currencies": "فشل جلب العملات",
+            "failed_test_notifier": "فشل اختبار وسيلة الإشعار.",
+            "failed_update_group": "فشل تحديث المجموعة",
+            "failed_update_notifier": "فشل تحديث وسيلة الإشعار.",
+            "group_updated": "تم تحديث المجموعة",
+            "notifier_test_success": "نجح اختبار وسيلة الإشعار.",
+            "password_changed": "تم تغيير كلمة المرور بنجاح."
+        },
+        "update_group": "تحديث المجموعة",
+        "update_language": "تحديث اللغة",
+        "url": "الرابط",
+        "user_profile": "الملف الشخصي للمستخدم",
+        "user_profile_sub": "ادعُ المستخدمين وأدر حسابك."
+    },
+    "reports": {
+        "label_generator": {
+            "asset_end": "نهاية الأصل",
+            "asset_start": "بداية الأصل",
+            "base_url": "الرابط الأساسي",
+            "bordered_labels": "تسميات بحدود",
+            "generate_page": "إنشاء صفحة",
+            "input_placeholder": "اكتب هنا",
+            "instruction_1": "مولّد تسميات HomeBox هو أداة تساعدك على طباعة تسميات لمخزون HomeBox. هذه التسميات مخصصة للطباعة المسبقة، بحيث يمكنك طباعة العديد منها وتجهيزها للاستخدام.",
+            "instruction_2": "لذلك تعمل هذه التسميات عبر طباعة رمز QR للرابط ومعلومات معرف الأصل على التسمية. إذا عطّلت معرفات الأصول في إعدادات HomeBox، فلا يزال بإمكانك استخدام هذه الأداة، لكن معرفات الأصول لن تشير إلى أي عنصر.",
+            "instruction_3": "هذه الميزة في مراحل التطوير المبكرة وقد تتغير في الإصدارات المستقبلية. إذا كانت لديك ملاحظات، يُرجى تقديمها في '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'نقاش GitHub'</a>'",
+            "label_height": "ارتفاع التسمية",
+            "label_width": "عرض التسمية",
+            "measure_type": "نوع القياس",
+            "page_bottom_padding": "حشوة أسفل الصفحة",
+            "page_height": "ارتفاع الصفحة",
+            "page_left_padding": "حشوة يسار الصفحة",
+            "page_right_padding": "حشوة يمين الصفحة",
+            "page_top_padding": "حشوة أعلى الصفحة",
+            "page_width": "عرض الصفحة",
+            "print_location_row": "طباعة صف الموقع",
+            "qr_code_example": "مثال رمز QR",
+            "replace_homebox_behavior": "سلوك استبدال نص \"HomeBox\"",
+            "replace_homebox_behavior_always_replace": "استبدال \"HomeBox\" دائمًا",
+            "replace_homebox_behavior_item_no_location": "استبدال \"HomeBox\" عندما لا يكون للعنصر موقع",
+            "replace_homebox_behavior_item_no_name": "استبدال \"HomeBox\" عندما لا يكون للعنصر اسم",
+            "replace_homebox_behavior_item_no_name_no_location": "استبدال \"HomeBox\" عندما لا يكون للعنصر اسم ولا موقع",
+            "replace_homebox_behavior_show_homebox": "إظهار \"HomeBox\"",
+            "replace_homebox_text": "النص البديل",
+            "skip_first_labels": "تخطي التسميات الأولى",
+            "tip_1": "تم إعداد القيم الافتراضية هنا لأوراق التسميات '<a href=\"https://www.avery.com/templates/5260\">'Avery 5260'</a>'. إذا كنت تستخدم ورقة مختلفة، فستحتاج إلى تعديل الإعدادات لتطابق ورقتك.",
+            "tip_2": "إذا كنت تخصّص ورقتك، فالأبعاد بالبوصة. عند إعداد ورقة 5260، وجدت أن الأبعاد المستخدمة في قالبهم لا تطابق ما يلزم للطباعة داخل المربعات. '<b>'استعد لبعض التجربة والخطأ.'</b>'",
+            "tip_3": "عند الطباعة تأكد من: '<ol><li>'ضبط الهوامش على 0 أو بلا'</li><li>'ضبط التحجيم على 100%'</li><li>'تعطيل الطباعة على الوجهين'</li><li>'طباعة صفحة اختبار قبل طباعة عدة صفحات'</li></ol>'",
+            "tips": "نصائح",
+            "title": "مولّد التسميات",
+            "toast": {
+                "page_too_small_card": "حجم الصفحة أصغر من حجم البطاقة"
+            }
+        }
+    },
+    "scanner": {
+        "barcode_detected_message": "تم اكتشاف باركود المنتج",
+        "barcode_fetch_data": "جلب بيانات المنتج",
+        "error": "حدث خطأ أثناء المسح",
+        "invalid_url": "رابط الباركود غير صالح",
+        "no_sources": "لا توجد مصادر فيديو متاحة",
+        "permission_denied": "تم رفض إذن الكاميرا، يُرجى السماح بالوصول إلى الكاميرا من إعدادات المتصفح",
+        "select_video_source": "اختر مصدر فيديو",
+        "title": "الماسح",
+        "unsupported": "واجهة Media Stream API غير مدعومة دون HTTPS"
+    },
+    "scanner_ar": {
+        "ar_mode": "وضع الواقع المعزز",
+        "back": "رجوع",
+        "child_items": "{count, plural, one {عنصر فرعي} other {عناصر فرعية}}",
+        "children": "{count, plural, one {موقع فرعي} other {مواقع فرعية}}",
+        "items": "{count, plural, one {عنصر} other {عناصر}}",
+        "items_in_location": "{count, plural, one {عنصر} other {عناصر}}",
+        "more": "المزيد",
+        "not_found": "لم يتم العثور على العنصر",
+        "qty": "الكمية",
+        "retry": "إعادة المحاولة",
+        "scanning": "جارٍ المسح",
+        "switch_camera": "تبديل الكاميرا",
+        "title": "ماسح الواقع المعزز",
+        "unsupported": "المسح بالواقع المعزز غير مدعوم في هذا المتصفح"
+    },
+    "tags": {
+        "no_results": "لم يتم العثور على وسوم",
+        "tag_delete_confirm": "هل أنت متأكد من رغبتك في حذف هذا الوسم؟ لا يمكن التراجع عن هذا الإجراء.",
+        "toast": {
+            "failed_delete_tag": "فشل حذف الوسم",
+            "failed_load_tag": "فشل تحميل الوسم",
+            "failed_update_tag": "فشل تحديث الوسم",
+            "tag_deleted": "تم حذف الوسم",
+            "tag_updated": "تم تحديث الوسم"
+        },
+        "update_tag": "تحديث الوسم"
+    },
+    "tools": {
+        "actions": "إجراءات المخزون",
+        "actions_set": {
+            "create_missing_thumbnails": "إنشاء الصور المصغرة المفقودة",
+            "create_missing_thumbnails_button": "إنشاء الصور المصغرة",
+            "create_missing_thumbnails_confirm": "هل أنت متأكد من رغبتك في إنشاء الصور المصغرة المفقودة؟ قد يستغرق ذلك بعض الوقت ولا يمكن إيقافه مؤقتًا.",
+            "create_missing_thumbnails_sub": "ينشئ صورًا مصغرة لجميع المرفقات المدعومة في الإعداد الحالي. يفيد ذلك للمرفقات التي رُفعت قبل إصدار Homebox v0.20.0. لن يستبدل هذا الصور المصغرة الموجودة، بل سينشئ صورًا جديدة فقط للمرفقات التي لا تملك صورة مصغرة. يُرجى ملاحظة أن الصور المصغرة تُنشأ في الخلفية وقد تستغرق بعض الوقت حتى تكتمل.",
+            "ensure_ids": "ضمان معرفات الأصول",
+            "ensure_ids_button": "ضمان معرفات الأصول",
+            "ensure_ids_confirm": "هل أنت متأكد من رغبتك في ضمان أن كل الأصول لديها معرف؟ قد يستغرق ذلك بعض الوقت ولا يمكن التراجع عنه.",
+            "ensure_ids_sub": "يضمن أن جميع العناصر في مخزونك لديها حقل asset_id صالح. يتم ذلك بالعثور على أعلى قيمة حالية لحقل asset_id في قاعدة البيانات وتطبيق القيمة التالية على كل عنصر لم يتم تعيين حقل asset_id له. يتم ذلك وفق ترتيب حقل created_at.",
+            "ensure_import_refs": "ضمان مراجع الاستيراد",
+            "ensure_import_refs_button": "ضمان مراجع الاستيراد",
+            "ensure_import_refs_sub": "يضمن أن جميع العناصر في مخزونك لديها حقل import_ref صالح. يتم ذلك بإنشاء سلسلة عشوائية مكونة من 8 أحرف لكل عنصر لم يتم تعيين حقل import_ref له.",
+            "set_primary_photo": "تعيين الصورة الرئيسية",
+            "set_primary_photo_button": "تعيين الصورة الرئيسية",
+            "set_primary_photo_confirm": "هل أنت متأكد من رغبتك في تعيين الصور الرئيسية؟ قد يستغرق ذلك بعض الوقت ولا يمكن التراجع عنه.",
+            "set_primary_photo_sub": "في الإصدار v0.10.0 من Homebox، أُضيف حقل الصورة الرئيسية إلى المرفقات من نوع صورة. سيعيّن هذا الإجراء حقل الصورة الرئيسية على أول صورة في مصفوفة المرفقات في قاعدة البيانات، إذا لم يكن معيّنًا بالفعل. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'راجع طلب السحب GitHub PR #576'</a>'",
+            "wipe_inventory": "مسح المخزون",
+            "wipe_inventory_button": "مسح المخزون",
+            "wipe_inventory_confirm": "هل أنت متأكد من رغبتك في مسح مخزونك بالكامل؟ سيؤدي ذلك إلى حذف جميع العناصر ولا يمكن التراجع عنه.",
+            "wipe_inventory_locations": "مسح جميع المواقع أيضًا",
+            "wipe_inventory_maintenance": "مسح جميع سجلات الصيانة أيضًا",
+            "wipe_inventory_note": "ملاحظة: يمكن لمالكي المجموعة فقط تنفيذ هذا الإجراء.",
+            "wipe_inventory_sub": "يحذف جميع العناصر في مخزونك نهائيًا. هذا الإجراء غير قابل للتراجع وسيزيل جميع بيانات العناصر بما في ذلك المرفقات والصور.",
+            "wipe_inventory_tags": "مسح جميع الوسوم أيضًا",
+            "zero_datetimes": "تصفير أوقات تواريخ العناصر",
+            "zero_datetimes_button": "تصفير أوقات تواريخ العناصر",
+            "zero_datetimes_confirm": "هل أنت متأكد من رغبتك في إعادة تعيين جميع قيم التاريخ والوقت؟ قد يستغرق ذلك بعض الوقت ولا يمكن التراجع عنه.",
+            "zero_datetimes_sub": "يعيد تعيين قيمة الوقت لجميع حقول التاريخ والوقت في مخزونك إلى بداية التاريخ. يهدف ذلك إلى إصلاح خطأ ظهر مبكرًا أثناء تطوير الموقع، حيث كانت قيمة الوقت تُخزّن مع الوقت مما سبب مشكلات في عرض حقول التاريخ لقيم دقيقة. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'راجع مشكلة GitHub رقم #236 لمزيد من التفاصيل.'</a>'"
+        },
+        "actions_sub": "طبّق الإجراءات على مخزونك دفعة واحدة. هذه الإجراءات غير قابلة للتراجع. '<b>'كن حذرًا.'</b>'",
+        "backups": "النسخ الاحتياطي والاستعادة",
+        "backups_set": {
+            "create": "إنشاء نسخة احتياطية",
+            "create_button": "بدء النسخ الاحتياطي",
+            "create_sub": "ينشئ ملف zip يحتوي على كل كيان ووسم وحقل مخصص ومرفق وسجل صيانة في هذه المجموعة. تعمل المهمة في الخلفية؛ وسيظهر الملف في الجدول أدناه عندما يصبح جاهزًا.",
+            "delete_confirm": "هل تريد حذف ملف النسخة الاحتياطية هذا؟ لا يمكن التراجع عن ذلك.",
+            "download": "تنزيل",
+            "failed": "فشل النسخ الاحتياطي. راجع سجلات الخادم للتفاصيل.",
+            "list_empty": "لا توجد نسخ احتياطية بعد.",
+            "restore": "الاستعادة من نسخة احتياطية",
+            "restore_button": "رفع واستعادة",
+            "restore_sub": "ارفع ملف zip للنسخة الاحتياطية لملء هذه المجموعة. يجب ألا تحتوي المجموعة على أي عناصر بعد — تُمسح المواقع والوسوم الافتراضية تلقائيًا كجزء من الاستعادة.",
+            "table": {
+                "actions": "الإجراءات",
+                "created": "تاريخ الإنشاء",
+                "size": "الحجم",
+                "status": "الحالة"
+            }
+        },
+        "backups_sub": "صدّر مجموعتك بالكامل — الكيانات والوسوم والمرفقات والبيانات الوصفية — إلى أرشيف zip قابل للنقل. استعد أرشيفًا إلى مجموعة فارغة ومسجلة حديثًا على هذا الخادم أو خادم آخر.",
+        "demo_mode_error": {
+            "wipe_inventory": "لا يمكن مسح المخزون والوسوم والمواقع وسجلات الصيانة أثناء وجود Homebox في الوضع التجريبي. يُرجى التأكد من أنك لست في الوضع التجريبي ثم المحاولة مرة أخرى."
+        },
+        "import_export": "استيراد/تصدير",
+        "import_export_set": {
+            "export": "تصدير المخزون",
+            "export_button": "تصدير المخزون",
+            "export_sub": "يصدّر تنسيق CSV القياسي الخاص بـ Homebox. سيؤدي ذلك إلى تصدير جميع العناصر في مخزونك.",
+            "import": "استيراد المخزون",
+            "import_button": "استيراد المخزون",
+            "import_ref_confirm": "هل أنت متأكد من رغبتك في ضمان أن كل الأصول لديها import_ref؟ قد يستغرق ذلك بعض الوقت ولا يمكن التراجع عنه.",
+            "import_sub": "يستورد تنسيق CSV القياسي الخاص بـ Homebox. بدون عمود '<code>'HB.import_ref'</code>'، فلن يؤدي ذلك إلى '<b>'استبدال'</b>' أي عناصر موجودة في مخزونك، بل سيضيف عناصر جديدة فقط. يتم دمج الصفوف التي تحتوي على عمود '<code>'HB.import_ref'</code>' في العناصر الموجودة التي لها نفس import_ref، إن وُجدت."
+        },
+        "import_export_sub": "استورد مخزونك وصدّره من وإلى ملف CSV. يفيد ذلك في ترحيل مخزونك إلى نسخة جديدة من Homebox.",
+        "reports": "التقارير",
+        "reports_set": {
+            "asset_labels": "تسميات معرف الأصل",
+            "asset_labels_button": "مولّد التسميات",
+            "asset_labels_sub": "ينشئ ملف PDF قابلًا للطباعة لتسميات نطاق من معرفات الأصول. هذه التسميات ليست خاصة بمخزونك، لذا يمكنك طباعة التسميات مسبقًا وتطبيقها على مخزونك عند استلامها.",
+            "bill_of_materials": "قائمة المواد",
+            "bill_of_materials_button": "إنشاء قائمة المواد",
+            "bill_of_materials_sub": "ينشئ ملف CSV (قيم مفصولة بفواصل) يمكن استيراده إلى برنامج جداول بيانات. هذا ملخص لمخزونك يتضمن معلومات أساسية عن العناصر والأسعار."
+        },
+        "reports_sub": "أنشئ تقارير مختلفة لمخزونك.",
+        "toast": {
+            "asset_success": "تم تحديث { results } أصل.",
+            "backup_delete_failed": "فشل حذف النسخة الاحتياطية.",
+            "backup_start_failed": "فشل بدء النسخ الاحتياطي.",
+            "backup_started": "بدأ النسخ الاحتياطي — سيظهر في الجدول عندما يصبح جاهزًا.",
+            "failed_create_missing_thumbnails": "فشل إنشاء الصور المصغرة المفقودة.",
+            "failed_ensure_ids": "فشل ضمان معرفات الأصول.",
+            "failed_ensure_import_refs": "فشل ضمان مراجع الاستيراد.",
+            "failed_set_primary_photos": "فشل تعيين الصور الرئيسية.",
+            "failed_wipe_inventory": "فشل مسح المخزون.",
+            "failed_zero_datetimes": "فشل إعادة تعيين قيم التاريخ والوقت.",
+            "restore_failed": "فشلت الاستعادة.",
+            "restore_requires_empty": "تتطلب الاستعادة مجموعة بلا عناصر. انتقل إلى مجموعة مسجلة حديثًا (لا مشكلة في وجود المواقع والوسوم الافتراضية) ثم حاول مرة أخرى.",
+            "restore_started": "بدأت الاستعادة — حدّث الصفحة بعد قليل لرؤية العناصر المستوردة.",
+            "wipe_inventory_success": "تم مسح المخزون بنجاح. تم حذف { results } عنصرًا."
+        }
+    }
+}

@@ -1,0 +1,9 @@
+{
+    "collection": {
+        "copy_invite": "Plunder the Invite Link",
+        "create_invite": "Forge a Summons",
+        "delete_collection": "Scuttle the Hoard",
+        "delete_confirm": "Be ye certain ye want to scuttle this here collection, matey? Once 'tis sent to Davy Jones' locker, there be no bringin' it back!",
+        "deleted_collection": "The haul be scuttled."
+    }
+}

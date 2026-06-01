@@ -441,6 +441,42 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/validate.ErrorResponse"
+  "/v1/entities/{id}/attachments/external":
+    post:
+      security:
+        - Bearer: []
+      description: Links an entity to a document or URL in an external system without
+        copying
+      tags:
+        - Entities Attachments
+      summary: Create External Link Attachment
+      parameters:
+        - description: Entity ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/v1.externalAttachmentRequest"
+        description: External document reference
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/repo.EntityOut"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/validate.ErrorResponse"
   "/v1/entities/{id}/attachments/{attachment_id}":
     get:
       security:
@@ -717,6 +753,126 @@ paths:
       responses:
         "204":
           description: No Content
+  /v1/group/exports:
+    get:
+      security:
+        - Bearer: []
+      description: Returns export job rows for the caller's group, newest first.
+      tags:
+        - Group
+      summary: List Collection Exports
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1.Results-repo_ExportOut"
+    post:
+      security:
+        - Bearer: []
+      description: Creates a pending export row and enqueues the build job. Poll the
+        listing endpoint or watch the WebSocket for completion.
+      tags:
+        - Group
+      summary: Start a Collection Export
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/repo.ExportOut"
+  "/v1/group/exports/{id}":
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Get an Export
+      parameters:
+        - description: Export ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/repo.ExportOut"
+    delete:
+      security:
+        - Bearer: []
+      description: Deletes the export row and its blob artifact.
+      tags:
+        - Group
+      summary: Delete an Export
+      parameters:
+        - description: Export ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+  "/v1/group/exports/{id}/download":
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Download an Export Artifact
+      parameters:
+        - description: Export ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+  /v1/group/import:
+    post:
+      security:
+        - Bearer: []
+      description: Uploads a collection-export zip and enqueues the import job. The
+        destination group must be empty. Returns the tracked import row so
+        clients can poll for progress.
+      tags:
+        - Group
+      summary: Import a Collection Zip
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  description: Export zip
+                  type: string
+                  format: binary
+              required:
+                - file
+        required: true
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/repo.ExportOut"
   /v1/groups:
     get:
       security:
@@ -887,22 +1043,6 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/repo.UserSummary"
-    post:
-      security:
-        - Bearer: []
-      tags:
-        - Group
-      summary: Add User to Group
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/v1.GroupMemberAdd"
-        description: User ID
-        required: true
-      responses:
-        "204":
-          description: No Content
   "/v1/groups/members/{user_id}":
     delete:
       security:
@@ -1552,6 +1692,44 @@ paths:
       responses:
         "204":
           description: No Content
+  /v1/users/forgot-password:
+    post:
+      description: >-
+        Sends a password reset email if the address is associated with a local
+        account.
+
+        Always returns 204 on success to avoid leaking whether the email is registered.
+      tags:
+        - Authentication
+      summary: Request Password Reset
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/v1.ForgotPasswordRequest"
+        description: Email
+        required: true
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: missing or invalid request body, or empty email field
+          content:
+            application/json:
+              schema:
+                type: string
+        "403":
+          description: demo mode is enabled or local login is disabled
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: internal error while processing the request
+          content:
+            application/json:
+              schema:
+                type: string
   /v1/users/login:
     post:
       tags:
@@ -1655,6 +1833,43 @@ paths:
             application/json:
               schema:
                 type: string
+  /v1/users/reset-password:
+    post:
+      description: |-
+        Consumes a single-use reset token and changes the user's password.
+        On success, all existing sessions for the user are revoked.
+      tags:
+        - Authentication
+      summary: Reset Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/v1.ResetPasswordRequest"
+        description: Token + new password
+        required: true
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: invalid request body, password shorter than the minimum length, or
+            token that is invalid / expired / already used
+          content:
+            application/json:
+              schema:
+                type: string
+        "403":
+          description: demo mode is enabled or local login is disabled
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: internal error while processing the request
+          content:
+            application/json:
+              schema:
+                type: string
   /v1/users/self:
     get:
       security:
@@ -1708,6 +1923,59 @@ paths:
       responses:
         "204":
           description: No Content
+  /v1/users/self/api-keys:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - User
+      summary: List API Keys
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/repo.APIKeyOut"
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - User
+      summary: Create API Key
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/repo.APIKeyCreate"
+        description: API Key Data
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/repo.APIKeyCreatedOut"
+  "/v1/users/self/api-keys/{id}":
+    delete:
+      security:
+        - Bearer: []
+      tags:
+        - User
+      summary: Delete API Key
+      parameters:
+        - description: API Key ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
   /v1/users/self/settings:
     get:
       security:
@@ -1756,8 +2024,7 @@ paths:
                         type: object
                         additionalProperties: true
 servers:
-  - url: https://demo.homebox.software/api
-  - url: http://demo.homebox.software/api
+  - url: /api
 components:
   securitySchemes:
     Bearer:
@@ -1809,6 +2076,44 @@ components:
           type: string
         symbol:
           type: string
+    ent.APIKey:
+      type: object
+      properties:
+        created_at:
+          description: CreatedAt holds the value of the "created_at" field.
+          type: string
+        edges:
+          description: >-
+            Edges holds the relations/edges for other nodes in the graph.
+
+            The values are being populated by the APIKeyQuery when eager-loading is set.
+          allOf:
+            - $ref: "#/components/schemas/ent.APIKeyEdges"
+        expires_at:
+          description: ExpiresAt holds the value of the "expires_at" field.
+          type: string
+        id:
+          description: ID of the ent.
+          type: string
+        last_used_at:
+          description: LastUsedAt holds the value of the "last_used_at" field.
+          type: string
+        name:
+          description: Name holds the value of the "name" field.
+          type: string
+        updated_at:
+          description: UpdatedAt holds the value of the "updated_at" field.
+          type: string
+        user_id:
+          description: UserID holds the value of the "user_id" field.
+          type: string
+    ent.APIKeyEdges:
+      type: object
+      properties:
+        user:
+          description: User holds the value of the user edge.
+          allOf:
+            - $ref: "#/components/schemas/ent.User"
     ent.Attachment:
       type: object
       properties:
@@ -1963,20 +2268,23 @@ components:
         notes:
           description: Notes holds the value of the "notes" field.
           type: string
+        purchase_date:
+          description: PurchaseDate holds the value of the "purchase_date" field.
+          type: string
         purchase_from:
           description: PurchaseFrom holds the value of the "purchase_from" field.
           type: string
         purchase_price:
           description: PurchasePrice holds the value of the "purchase_price" field.
           type: number
-        purchase_time:
-          description: PurchaseTime holds the value of the "purchase_time" field.
-          type: string
         quantity:
           description: Quantity holds the value of the "quantity" field.
           type: number
         serial_number:
           description: SerialNumber holds the value of the "serial_number" field.
+          type: string
+        sold_date:
+          description: SoldDate holds the value of the "sold_date" field.
           type: string
         sold_notes:
           description: SoldNotes holds the value of the "sold_notes" field.
@@ -1984,9 +2292,6 @@ components:
         sold_price:
           description: SoldPrice holds the value of the "sold_price" field.
           type: number
-        sold_time:
-          description: SoldTime holds the value of the "sold_time" field.
-          type: string
         sold_to:
           description: SoldTo holds the value of the "sold_to" field.
           type: string
@@ -2225,6 +2530,55 @@ components:
           description: Group holds the value of the group edge.
           allOf:
             - $ref: "#/components/schemas/ent.Group"
+    ent.Export:
+      type: object
+      properties:
+        artifact_path:
+          description: ArtifactPath holds the value of the "artifact_path" field.
+          type: string
+        created_at:
+          description: CreatedAt holds the value of the "created_at" field.
+          type: string
+        edges:
+          description: >-
+            Edges holds the relations/edges for other nodes in the graph.
+
+            The values are being populated by the ExportQuery when eager-loading is set.
+          allOf:
+            - $ref: "#/components/schemas/ent.ExportEdges"
+        error:
+          description: Error holds the value of the "error" field.
+          type: string
+        group_id:
+          description: GroupID holds the value of the "group_id" field.
+          type: string
+        id:
+          description: ID of the ent.
+          type: string
+        kind:
+          description: Kind holds the value of the "kind" field.
+          allOf:
+            - $ref: "#/components/schemas/export.Kind"
+        progress:
+          description: Progress holds the value of the "progress" field.
+          type: integer
+        size_bytes:
+          description: SizeBytes holds the value of the "size_bytes" field.
+          type: integer
+        status:
+          description: Status holds the value of the "status" field.
+          allOf:
+            - $ref: "#/components/schemas/export.Status"
+        updated_at:
+          description: UpdatedAt holds the value of the "updated_at" field.
+          type: string
+    ent.ExportEdges:
+      type: object
+      properties:
+        group:
+          description: Group holds the value of the group edge.
+          allOf:
+            - $ref: "#/components/schemas/ent.Group"
     ent.Group:
       type: object
       properties:
@@ -2268,6 +2622,11 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ent.EntityType"
+        exports:
+          description: Exports holds the value of the exports edge.
+          type: array
+          items:
+            $ref: "#/components/schemas/ent.Export"
         invitation_tokens:
           description: InvitationTokens holds the value of the invitation_tokens edge.
           type: array
@@ -2283,6 +2642,11 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ent.Tag"
+        user_groups:
+          description: UserGroups holds the value of the user_groups edge.
+          type: array
+          items:
+            $ref: "#/components/schemas/ent.UserGroup"
         users:
           description: Users holds the value of the users edge.
           type: array
@@ -2407,6 +2771,43 @@ components:
           description: Group holds the value of the group edge.
           allOf:
             - $ref: "#/components/schemas/ent.Group"
+        user:
+          description: User holds the value of the user edge.
+          allOf:
+            - $ref: "#/components/schemas/ent.User"
+    ent.PasswordResetTokens:
+      type: object
+      properties:
+        created_at:
+          description: CreatedAt holds the value of the "created_at" field.
+          type: string
+        edges:
+          description: >-
+            Edges holds the relations/edges for other nodes in the graph.
+
+            The values are being populated by the PasswordResetTokensQuery when eager-loading is set.
+          allOf:
+            - $ref: "#/components/schemas/ent.PasswordResetTokensEdges"
+        expires_at:
+          description: ExpiresAt holds the value of the "expires_at" field.
+          type: string
+        id:
+          description: ID of the ent.
+          type: string
+        token:
+          description: Token holds the value of the "token" field.
+          type: array
+          items:
+            type: integer
+        updated_at:
+          description: UpdatedAt holds the value of the "updated_at" field.
+          type: string
+        used_at:
+          description: UsedAt holds the value of the "used_at" field.
+          type: string
+    ent.PasswordResetTokensEdges:
+      type: object
+      properties:
         user:
           description: User holds the value of the user edge.
           allOf:
@@ -2548,10 +2949,6 @@ components:
         oidc_subject:
           description: OidcSubject holds the value of the "oidc_subject" field.
           type: string
-        role:
-          description: Role holds the value of the "role" field.
-          allOf:
-            - $ref: "#/components/schemas/user.Role"
         settings:
           description: Settings holds the value of the "settings" field.
           type: object
@@ -2565,6 +2962,11 @@ components:
     ent.UserEdges:
       type: object
       properties:
+        api_keys:
+          description: APIKeys holds the value of the api_keys edge.
+          type: array
+          items:
+            $ref: "#/components/schemas/ent.APIKey"
         auth_tokens:
           description: AuthTokens holds the value of the auth_tokens edge.
           type: array
@@ -2580,6 +2982,48 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ent.Notifier"
+        password_reset_tokens:
+          description: PasswordResetTokens holds the value of the password_reset_tokens
+            edge.
+          type: array
+          items:
+            $ref: "#/components/schemas/ent.PasswordResetTokens"
+        user_groups:
+          description: UserGroups holds the value of the user_groups edge.
+          type: array
+          items:
+            $ref: "#/components/schemas/ent.UserGroup"
+    ent.UserGroup:
+      type: object
+      properties:
+        edges:
+          description: >-
+            Edges holds the relations/edges for other nodes in the graph.
+
+            The values are being populated by the UserGroupQuery when eager-loading is set.
+          allOf:
+            - $ref: "#/components/schemas/ent.UserGroupEdges"
+        group_id:
+          description: GroupID holds the value of the "group_id" field.
+          type: string
+        role:
+          description: Role holds the value of the "role" field.
+          allOf:
+            - $ref: "#/components/schemas/usergroup.Role"
+        user_id:
+          description: UserID holds the value of the "user_id" field.
+          type: string
+    ent.UserGroupEdges:
+      type: object
+      properties:
+        group:
+          description: Group holds the value of the group edge.
+          allOf:
+            - $ref: "#/components/schemas/ent.Group"
+        user:
+          description: User holds the value of the user edge.
+          allOf:
+            - $ref: "#/components/schemas/ent.User"
     entityfield.Type:
       type: string
       enum:
@@ -2592,6 +3036,78 @@ components:
         - TypeNumber
         - TypeBoolean
         - TypeTime
+    export.Kind:
+      type: string
+      enum:
+        - export
+        - export
+        - import
+      x-enum-varnames:
+        - DefaultKind
+        - KindExport
+        - KindImport
+    export.Status:
+      type: string
+      enum:
+        - pending
+        - pending
+        - running
+        - completed
+        - failed
+      x-enum-varnames:
+        - DefaultStatus
+        - StatusPending
+        - StatusRunning
+        - StatusCompleted
+        - StatusFailed
+    repo.APIKeyCreate:
+      type: object
+      required:
+        - name
+      properties:
+        expiresAt:
+          type: string
+          nullable: true
+        name:
+          type: string
+          maxLength: 255
+          minLength: 1
+    repo.APIKeyCreatedOut:
+      type: object
+      properties:
+        createdAt:
+          type: string
+        expiresAt:
+          type: string
+          nullable: true
+        id:
+          type: string
+        lastUsedAt:
+          type: string
+          nullable: true
+        name:
+          type: string
+        token:
+          type: string
+        userId:
+          type: string
+    repo.APIKeyOut:
+      type: object
+      properties:
+        createdAt:
+          type: string
+        expiresAt:
+          type: string
+          nullable: true
+        id:
+          type: string
+        lastUsedAt:
+          type: string
+          nullable: true
+        name:
+          type: string
+        userId:
+          type: string
     repo.BarcodeProduct:
       type: object
       properties:
@@ -2738,24 +3254,24 @@ components:
             - $ref: "#/components/schemas/repo.EntitySummary"
           x-omitempty: true
           nullable: true
+        purchaseDate:
+          description: Purchase
+          type: string
         purchaseFrom:
           type: string
         purchasePrice:
           type: number
-        purchaseTime:
-          description: Purchase
-          type: string
         quantity:
           type: number
         serialNumber:
+          type: string
+        soldDate:
+          description: Sold
           type: string
         soldNotes:
           type: string
         soldPrice:
           type: number
-        soldTime:
-          description: Sold
-          type: string
         soldTo:
           type: string
         syncChildEntityLocations:
@@ -2856,7 +3372,7 @@ components:
           type: number
         quantity:
           type: number
-        soldTime:
+        soldDate:
           description: Sale details
           type: string
         tags:
@@ -3149,6 +3665,9 @@ components:
           type: string
           x-omitempty: true
           nullable: true
+        purchaseDate:
+          description: Purchase
+          type: string
         purchaseFrom:
           type: string
           maxLength: 255
@@ -3156,13 +3675,13 @@ components:
           type: number
           x-omitempty: true
           nullable: true
-        purchaseTime:
-          description: Purchase
-          type: string
         quantity:
           type: number
         serialNumber:
           description: Identifications
+          type: string
+        soldDate:
+          description: Sold
           type: string
         soldNotes:
           type: string
@@ -3170,9 +3689,6 @@ components:
           type: number
           x-omitempty: true
           nullable: true
-        soldTime:
-          description: Sold
-          type: string
         soldTo:
           type: string
           maxLength: 255
@@ -3186,6 +3702,33 @@ components:
         warrantyDetails:
           type: string
         warrantyExpires:
+          type: string
+    repo.ExportOut:
+      type: object
+      properties:
+        artifactPath:
+          type: string
+        createdAt:
+          type: string
+        error:
+          type: string
+        groupId:
+          type: string
+        id:
+          type: string
+        kind:
+          description: |-
+            Kind is "export" for server-produced backup artifacts, "import" for
+            user-uploaded restore zips. The lifecycle fields below behave the
+            same for both.
+          type: string
+        progress:
+          type: integer
+        sizeBytes:
+          type: integer
+        status:
+          type: string
+        updatedAt:
           type: string
     repo.Group:
       type: object
@@ -3555,8 +4098,6 @@ components:
             type: string
         id:
           type: string
-        isOwner:
-          type: boolean
         isSuperuser:
           type: boolean
         name:
@@ -3572,8 +4113,6 @@ components:
           type: string
         id:
           type: string
-        isOwner:
-          type: boolean
         name:
           type: string
     repo.UserUpdate:
@@ -3637,7 +4176,7 @@ components:
         - TypeNumber
         - TypeBoolean
         - TypeTime
-    user.Role:
+    usergroup.Role:
       type: string
       enum:
         - user
@@ -3723,6 +4262,14 @@ components:
           type: array
           items:
             type: string
+    v1.ForgotPasswordRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          example: user@example.com
     v1.GroupAcceptInvitationResponse:
       type: object
       properties:
@@ -3752,13 +4299,6 @@ components:
           type: integer
           maximum: 100
           minimum: 1
-    v1.GroupMemberAdd:
-      type: object
-      required:
-        - userId
-      properties:
-        userId:
-          type: string
     v1.LoginForm:
       type: object
       properties:
@@ -3781,6 +4321,25 @@ components:
           type: string
         enabled:
           type: boolean
+    v1.ResetPasswordRequest:
+      type: object
+      required:
+        - password
+        - token
+      properties:
+        password:
+          type: string
+          minLength: 6
+        token:
+          type: string
+          minLength: 20
+    v1.Results-repo_ExportOut:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/repo.ExportOut"
     v1.TelemetryStatus:
       type: object
       properties:
@@ -3808,6 +4367,17 @@ components:
       type: object
       properties:
         item: {}
+    v1.externalAttachmentRequest:
+      type: object
+      properties:
+        attachment_type:
+          type: string
+        external_id:
+          type: string
+        source_type:
+          type: string
+        title:
+          type: string
     validate.ErrorResponse:
       type: object
       properties:

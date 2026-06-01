@@ -6,6 +6,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// APIKey is the predicate function for apikey builders.
+type APIKey func(*sql.Selector)
+
 // Attachment is the predicate function for attachment builders.
 type Attachment func(*sql.Selector)
 
@@ -27,6 +30,9 @@ type EntityTemplate func(*sql.Selector)
 // EntityType is the predicate function for entitytype builders.
 type EntityType func(*sql.Selector)
 
+// Export is the predicate function for export builders.
+type Export func(*sql.Selector)
+
 // Group is the predicate function for group builders.
 type Group func(*sql.Selector)
 
@@ -42,6 +48,9 @@ type MaintenancePlan func(*sql.Selector)
 // Notifier is the predicate function for notifier builders.
 type Notifier func(*sql.Selector)
 
+// PasswordResetTokens is the predicate function for passwordresettokens builders.
+type PasswordResetTokens func(*sql.Selector)
+
 // Tag is the predicate function for tag builders.
 type Tag func(*sql.Selector)
 
@@ -50,3 +59,6 @@ type TemplateField func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
+
+// UserGroup is the predicate function for usergroup builders.
+type UserGroup func(*sql.Selector)

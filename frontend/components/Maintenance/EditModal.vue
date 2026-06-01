@@ -9,8 +9,8 @@
 
       <form class="flex flex-col gap-2" @submit.prevent="dispatchFormSubmit">
         <FormTextField v-model="entry.name" autofocus :label="$t('maintenance.modal.entry_name')" />
-        <DatePicker v-model="entry.completedDate" :label="$t('maintenance.modal.completed_date')" />
-        <DatePicker v-model="entry.scheduledDate" :label="$t('maintenance.modal.scheduled_date')" />
+        <DatePicker v-model="entry.completedDate" date-only :label="$t('maintenance.modal.completed_date')" />
+        <DatePicker v-model="entry.scheduledDate" date-only :label="$t('maintenance.modal.scheduled_date')" />
         <label class="flex items-center gap-2 text-sm">
           <input v-model="entry.isRecurring" type="checkbox" :true-value="true" :false-value="false" />
           {{ $t("maintenance.modal.recurring") }}
@@ -60,6 +60,7 @@
   import { MaintenancePlanIntervalUnit } from "~~/lib/api/types/data-contracts";
   import type { MaintenanceEntryWithDetails, MaintenancePlanUpdate } from "~~/lib/api/types/data-contracts";
   import { getNextNDueDates } from "~/lib/maintenance/recurrence";
+  import { parseDateOnly, toDateOnlyString } from "~/lib/datelib/dateOnly";
   import Button from "@/components/ui/button/Button.vue";
 
   const { closeDialog, registerOpenDialogCallback } = useDialog();
@@ -70,8 +71,8 @@
   const entry = reactive({
     id: null as string | null,
     name: "",
-    completedDate: null as Date | null,
-    scheduledDate: null as Date | null,
+    completedDate: "",
+    scheduledDate: "",
     description: "",
     cost: "",
     planID: null as string | null,
@@ -84,31 +85,21 @@
 
   /** Snapshot when the dialog opened / plan hydrated — used to avoid overwriting plan nextDueAt when unchanged */
   const planFieldBaseline = reactive({
-    scheduledDate: null as Date | null,
-    completedDate: null as Date | null,
+    scheduledDate: "",
+    completedDate: "",
     intervalValue: "30",
     intervalUnit: MaintenancePlanIntervalUnit.Day,
   });
 
-  function cloneDate(d: Date | null): Date | null {
-    return d ? new Date(d.getTime()) : null;
-  }
-
   function capturePlanFieldBaseline() {
-    planFieldBaseline.scheduledDate = cloneDate(entry.scheduledDate);
-    planFieldBaseline.completedDate = cloneDate(entry.completedDate);
+    planFieldBaseline.scheduledDate = entry.scheduledDate;
+    planFieldBaseline.completedDate = entry.completedDate;
     planFieldBaseline.intervalValue = entry.intervalValue;
     planFieldBaseline.intervalUnit = entry.intervalUnit;
   }
 
-  function sameCalendarDate(a: Date | null, b: Date | null): boolean {
-    if (!a && !b) {
-      return true;
-    }
-    if (!a || !b) {
-      return false;
-    }
-    return dateToApiValue(a, "") === dateToApiValue(b, "");
+  function sameCalendarDate(a: string, b: string): boolean {
+    return a === b;
   }
 
   function planScheduleOrRecurrenceChanged(): boolean {
@@ -126,7 +117,7 @@
     }
 
     const intervalValue = Math.max(parseInt(entry.intervalValue, 10) || 1, 1);
-    const baseDate = entry.scheduledDate ?? entry.completedDate ?? new Date(Date.now());
+    const baseDate = parseDateOnly(entry.scheduledDate) ?? parseDateOnly(entry.completedDate) ?? new Date();
 
     return getNextNDueDates(baseDate, intervalValue, entry.intervalUnit, 3);
   });
@@ -140,15 +131,6 @@
     return typeof candidate === "string" && candidate.length > 0 ? candidate : null;
   }
 
-  function parseDateOrNull(value: Date | string | null | undefined): Date | null {
-    if (!value) {
-      return null;
-    }
-
-    const parsed = new Date(value);
-    return Number.isNaN(parsed.getTime()) ? null : parsed;
-  }
-
   function normalizePlanId(planId: unknown): string | null {
     if (typeof planId !== "string") {
       return null;
@@ -160,17 +142,6 @@
     }
 
     return planId;
-  }
-
-  function dateToApiValue(value: Date | null, nullFallback: "null" | ""): string {
-    if (!value) {
-      return nullFallback;
-    }
-
-    const year = value.getFullYear();
-    const month = `${value.getMonth() + 1}`.padStart(2, "0");
-    const day = `${value.getDate()}`.padStart(2, "0");
-    return `${year}-${month}-${day}`;
   }
 
   async function hydrateRecurringPlan() {
@@ -216,14 +187,14 @@
     await Promise.allSettled(
       entry.itemIds.map(async itemId => {
         if (isRecurring) {
-          const firstDueDate = entry.scheduledDate ?? entry.completedDate ?? new Date(Date.now());
+          const firstDueDate = entry.scheduledDate || entry.completedDate || toDateOnlyString(new Date());
           const { error: planError } = await api.items.maintenance.createPlan(itemId, {
             name: entry.name,
             description: entry.description,
             active: true,
             intervalValue: parseInt(entry.intervalValue, 10) || 1,
             intervalUnit: entry.intervalUnit,
-            startDate: dateToApiValue(firstDueDate, ""),
+            startDate: firstDueDate,
           });
 
           if (planError) {
@@ -235,8 +206,8 @@
 
         const { error } = await api.items.maintenance.create(itemId, {
           name: entry.name,
-          completedDate: dateToApiValue(entry.completedDate, ""),
-          scheduledDate: dateToApiValue(entry.scheduledDate, ""),
+          completedDate: entry.completedDate,
+          scheduledDate: entry.scheduledDate,
           description: entry.description,
           cost: parseFloat(entry.cost) ? entry.cost : "0",
         });
@@ -262,14 +233,14 @@
     const shouldCreateRecurringPlan = isRecurring && !recurringPlanId && !!entry.itemIdForPlanLookup;
 
     if (shouldCreateRecurringPlan && entry.itemIdForPlanLookup && entry.id) {
-      const firstDueDate = entry.scheduledDate ?? entry.completedDate ?? new Date(Date.now());
+      const firstDueDate = entry.scheduledDate || entry.completedDate || toDateOnlyString(new Date());
       const { data: createdPlan, error: createPlanError } = await api.items.maintenance.createPlan(entry.itemIdForPlanLookup, {
         name: entry.name,
         description: entry.description,
         active: true,
         intervalValue: Math.max(parseInt(entry.intervalValue, 10) || 1, 1),
         intervalUnit: entry.intervalUnit,
-        startDate: dateToApiValue(firstDueDate, ""),
+        startDate: firstDueDate,
         linkExistingEntryID: entry.id,
       });
 
@@ -283,11 +254,11 @@
 
     const { error } = await api.maintenance.update(entry.id, {
       name: entry.name,
-      completedDate: dateToApiValue(entry.completedDate, "null"),
-      scheduledDate: dateToApiValue(entry.scheduledDate, "null"),
+      completedDate: entry.completedDate,
+      scheduledDate: entry.scheduledDate,
       planID: isRecurring ? entry.planID ?? undefined : undefined,
       description: entry.description,
-      cost: entry.cost,
+      cost: parseFloat(entry.cost) ? entry.cost : "0",
     });
 
     if (error) {
@@ -313,8 +284,8 @@
         intervalUnit: entry.intervalUnit,
       };
       if (planScheduleOrRecurrenceChanged()) {
-        const firstDueDate = entry.scheduledDate ?? entry.completedDate ?? new Date(Date.now());
-        planPayload.nextDueAt = dateToApiValue(firstDueDate, "");
+        const firstDueDate = entry.scheduledDate || entry.completedDate || toDateOnlyString(new Date());
+        planPayload.nextDueAt = firstDueDate;
       }
       const { error: planError } = await api.maintenance.updatePlan(entry.planID, planPayload);
 
@@ -333,8 +304,8 @@
         case "create":
           entry.id = null;
           entry.name = "";
-          entry.completedDate = null;
-          entry.scheduledDate = null;
+          entry.completedDate = "";
+          entry.scheduledDate = "";
           entry.description = "";
           entry.cost = "";
           entry.isRecurring = false;
@@ -347,8 +318,8 @@
         case "update":
           entry.id = params.maintenanceEntry.id;
           entry.name = params.maintenanceEntry.name;
-          entry.completedDate = parseDateOrNull(params.maintenanceEntry.completedDate);
-          entry.scheduledDate = parseDateOrNull(params.maintenanceEntry.scheduledDate);
+          entry.completedDate = (params.maintenanceEntry.completedDate as string) ?? "";
+          entry.scheduledDate = (params.maintenanceEntry.scheduledDate as string) ?? "";
           entry.description = params.maintenanceEntry.description;
           entry.cost = params.maintenanceEntry.cost;
           entry.planID = normalizePlanId(params.maintenanceEntry.planID);
@@ -365,8 +336,8 @@
         case "duplicate":
           entry.id = null;
           entry.name = params.maintenanceEntry.name;
-          entry.completedDate = null;
-          entry.scheduledDate = null;
+          entry.completedDate = "";
+          entry.scheduledDate = "";
           entry.description = params.maintenanceEntry.description;
           entry.cost = params.maintenanceEntry.cost;
           entry.planID = null;

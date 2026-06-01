@@ -11,7 +11,7 @@
  * ---------------------------------------------------------------
  */
 
-export enum UserRole {
+export enum UsergroupRole {
   DefaultRole = "user",
   RoleUser = "user",
   RoleOwner = "owner",
@@ -44,6 +44,20 @@ export enum EntityPathType {
   EntityPathTypeItem = "item",
 }
 
+export enum ExportStatus {
+  DefaultStatus = "pending",
+  StatusPending = "pending",
+  StatusRunning = "running",
+  StatusCompleted = "completed",
+  StatusFailed = "failed",
+}
+
+export enum ExportKind {
+  DefaultKind = "export",
+  KindExport = "export",
+  KindImport = "import",
+}
+
 export enum EntityfieldType {
   TypeText = "text",
   TypeNumber = "number",
@@ -74,6 +88,33 @@ export interface CurrenciesCurrency {
   local: string;
   name: string;
   symbol: string;
+}
+
+export interface EntAPIKey {
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the APIKeyQuery when eager-loading is set.
+   */
+  edges: EntAPIKeyEdges;
+  /** ExpiresAt holds the value of the "expires_at" field. */
+  expires_at: string;
+  /** ID of the ent. */
+  id: string;
+  /** LastUsedAt holds the value of the "last_used_at" field. */
+  last_used_at: string;
+  /** Name holds the value of the "name" field. */
+  name: string;
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+  /** UserID holds the value of the "user_id" field. */
+  user_id: string;
+}
+
+export interface EntAPIKeyEdges {
+  /** User holds the value of the user edge. */
+  user: EntUser;
 }
 
 export interface EntAttachment {
@@ -179,22 +220,22 @@ export interface EntEntity {
   name: string;
   /** Notes holds the value of the "notes" field. */
   notes: string;
+  /** PurchaseDate holds the value of the "purchase_date" field. */
+  purchase_date: Date | string;
   /** PurchaseFrom holds the value of the "purchase_from" field. */
   purchase_from: string;
   /** PurchasePrice holds the value of the "purchase_price" field. */
   purchase_price: number;
-  /** PurchaseTime holds the value of the "purchase_time" field. */
-  purchase_time: string;
   /** Quantity holds the value of the "quantity" field. */
   quantity: number;
   /** SerialNumber holds the value of the "serial_number" field. */
   serial_number: string;
+  /** SoldDate holds the value of the "sold_date" field. */
+  sold_date: Date | string;
   /** SoldNotes holds the value of the "sold_notes" field. */
   sold_notes: string;
   /** SoldPrice holds the value of the "sold_price" field. */
   sold_price: number;
-  /** SoldTime holds the value of the "sold_time" field. */
-  sold_time: string;
   /** SoldTo holds the value of the "sold_to" field. */
   sold_to: string;
   /** SyncChildEntityLocations holds the value of the "sync_child_entity_locations" field. */
@@ -343,6 +384,39 @@ export interface EntEntityTypeEdges {
   group: EntGroup;
 }
 
+export interface EntExport {
+  /** ArtifactPath holds the value of the "artifact_path" field. */
+  artifact_path: string;
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the ExportQuery when eager-loading is set.
+   */
+  edges: EntExportEdges;
+  /** Error holds the value of the "error" field. */
+  error: string;
+  /** GroupID holds the value of the "group_id" field. */
+  group_id: string;
+  /** ID of the ent. */
+  id: string;
+  /** Kind holds the value of the "kind" field. */
+  kind: ExportKind;
+  /** Progress holds the value of the "progress" field. */
+  progress: number;
+  /** SizeBytes holds the value of the "size_bytes" field. */
+  size_bytes: number;
+  /** Status holds the value of the "status" field. */
+  status: ExportStatus;
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+}
+
+export interface EntExportEdges {
+  /** Group holds the value of the group edge. */
+  group: EntGroup;
+}
+
 export interface EntGroup {
   /** CreatedAt holds the value of the "created_at" field. */
   created_at: string;
@@ -368,12 +442,16 @@ export interface EntGroupEdges {
   entity_templates: EntEntityTemplate[];
   /** EntityTypes holds the value of the entity_types edge. */
   entity_types: EntEntityType[];
+  /** Exports holds the value of the exports edge. */
+  exports: EntExport[];
   /** InvitationTokens holds the value of the invitation_tokens edge. */
   invitation_tokens: EntGroupInvitationToken[];
   /** Notifiers holds the value of the notifiers edge. */
   notifiers: EntNotifier[];
   /** Tags holds the value of the tags edge. */
   tags: EntTag[];
+  /** UserGroups holds the value of the user_groups edge. */
+  user_groups: EntUserGroup[];
   /** Users holds the value of the users edge. */
   users: EntUser[];
 }
@@ -459,6 +537,31 @@ export interface EntNotifier {
 export interface EntNotifierEdges {
   /** Group holds the value of the group edge. */
   group: EntGroup;
+  /** User holds the value of the user edge. */
+  user: EntUser;
+}
+
+export interface EntPasswordResetTokens {
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the PasswordResetTokensQuery when eager-loading is set.
+   */
+  edges: EntPasswordResetTokensEdges;
+  /** ExpiresAt holds the value of the "expires_at" field. */
+  expires_at: string;
+  /** ID of the ent. */
+  id: string;
+  /** Token holds the value of the "token" field. */
+  token: number[];
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+  /** UsedAt holds the value of the "used_at" field. */
+  used_at: string;
+}
+
+export interface EntPasswordResetTokensEdges {
   /** User holds the value of the user edge. */
   user: EntUser;
 }
@@ -553,8 +656,6 @@ export interface EntUser {
   oidc_issuer: string;
   /** OidcSubject holds the value of the "oidc_subject" field. */
   oidc_subject: string;
-  /** Role holds the value of the "role" field. */
-  role: UserRole;
   /** Settings holds the value of the "settings" field. */
   settings: Record<string, any>;
   /** Superuser holds the value of the "superuser" field. */
@@ -564,12 +665,67 @@ export interface EntUser {
 }
 
 export interface EntUserEdges {
+  /** APIKeys holds the value of the api_keys edge. */
+  api_keys: EntAPIKey[];
   /** AuthTokens holds the value of the auth_tokens edge. */
   auth_tokens: EntAuthTokens[];
   /** Groups holds the value of the groups edge. */
   groups: EntGroup[];
   /** Notifiers holds the value of the notifiers edge. */
   notifiers: EntNotifier[];
+  /** PasswordResetTokens holds the value of the password_reset_tokens edge. */
+  password_reset_tokens: EntPasswordResetTokens[];
+  /** UserGroups holds the value of the user_groups edge. */
+  user_groups: EntUserGroup[];
+}
+
+export interface EntUserGroup {
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the UserGroupQuery when eager-loading is set.
+   */
+  edges: EntUserGroupEdges;
+  /** GroupID holds the value of the "group_id" field. */
+  group_id: string;
+  /** Role holds the value of the "role" field. */
+  role: UsergroupRole;
+  /** UserID holds the value of the "user_id" field. */
+  user_id: string;
+}
+
+export interface EntUserGroupEdges {
+  /** Group holds the value of the group edge. */
+  group: EntGroup;
+  /** User holds the value of the user edge. */
+  user: EntUser;
+}
+
+export interface APIKeyCreate {
+  expiresAt?: string | null;
+  /**
+   * @minLength 1
+   * @maxLength 255
+   */
+  name: string;
+}
+
+export interface APIKeyCreatedOut {
+  createdAt: Date | string;
+  expiresAt?: string | null;
+  id: string;
+  lastUsedAt?: string | null;
+  name: string;
+  token: string;
+  userId: string;
+}
+
+export interface APIKeyOut {
+  createdAt: Date | string;
+  expiresAt?: string | null;
+  id: string;
+  lastUsedAt?: string | null;
+  name: string;
+  userId: string;
 }
 
 export interface BarcodeProduct {
@@ -649,16 +805,16 @@ export interface EntityOut {
   notes: string;
   /** Edges */
   parent?: EntitySummary | null;
+  /** Purchase */
+  purchaseDate: Date | string;
   purchaseFrom: string;
   purchasePrice: number;
-  /** Purchase */
-  purchaseTime: Date | string;
   quantity: number;
   serialNumber: string;
+  /** Sold */
+  soldDate: Date | string;
   soldNotes: string;
   soldPrice: number;
-  /** Sold */
-  soldTime: Date | string;
   soldTo: string;
   syncChildEntityLocations: boolean;
   tags: TagSummary[];
@@ -701,7 +857,7 @@ export interface EntitySummary {
   purchasePrice: number;
   quantity: number;
   /** Sale details */
-  soldTime: Date | string;
+  soldDate: Date | string;
   tags: TagSummary[];
   thumbnailId?: string | null;
   updatedAt: Date | string;
@@ -861,18 +1017,18 @@ export interface EntityUpdate {
   /** Extras */
   notes: string;
   parentId?: string | null;
+  /** Purchase */
+  purchaseDate: Date | string;
   /** @maxLength 255 */
   purchaseFrom: string;
   purchasePrice?: number | null;
-  /** Purchase */
-  purchaseTime: Date | string;
   quantity: number;
   /** Identifications */
   serialNumber: string;
+  /** Sold */
+  soldDate: Date | string;
   soldNotes: string;
   soldPrice?: number | null;
-  /** Sold */
-  soldTime: Date | string;
   /** @maxLength 255 */
   soldTo: string;
   syncChildEntityLocations: boolean;
@@ -880,6 +1036,24 @@ export interface EntityUpdate {
   tagIds: string[];
   warrantyDetails: string;
   warrantyExpires: Date | string;
+}
+
+export interface ExportOut {
+  artifactPath: string;
+  createdAt: Date | string;
+  error: string;
+  groupId: string;
+  id: string;
+  /**
+   * Kind is "export" for server-produced backup artifacts, "import" for
+   * user-uploaded restore zips. The lifecycle fields below behave the
+   * same for both.
+   */
+  kind: string;
+  progress: number;
+  sizeBytes: number;
+  status: string;
+  updatedAt: Date | string;
 }
 
 export interface Group {
@@ -1138,7 +1312,6 @@ export interface UserOut {
   email: string;
   groupIds: string[];
   id: string;
-  isOwner: boolean;
   isSuperuser: boolean;
   name: string;
   oidcIssuer: string;
@@ -1148,7 +1321,6 @@ export interface UserOut {
 export interface UserSummary {
   email: string;
   id: string;
-  isOwner: boolean;
   name: string;
 }
 
@@ -1229,6 +1401,11 @@ export interface EntityTemplateCreateItemRequest {
   tagIds: string[];
 }
 
+export interface ForgotPasswordRequest {
+  /** @example "user@example.com" */
+  email: string;
+}
+
 export interface GroupAcceptInvitationResponse {
   id: string;
   name: string;
@@ -1250,10 +1427,6 @@ export interface GroupInvitationCreate {
   uses: number;
 }
 
-export interface GroupMemberAdd {
-  userId: string;
-}
-
 export interface LoginForm {
   /** @example "admin" */
   password: string;
@@ -1267,6 +1440,17 @@ export interface OIDCStatus {
   autoRedirect: boolean;
   buttonText: string;
   enabled: boolean;
+}
+
+export interface ResetPasswordRequest {
+  /** @minLength 6 */
+  password: string;
+  /** @minLength 20 */
+  token: string;
+}
+
+export interface ResultsRepoExportOut {
+  items: ExportOut[];
 }
 
 export interface TelemetryStatus {
@@ -1287,6 +1471,13 @@ export interface WipeInventoryOptions {
 
 export interface Wrapped {
   item: any;
+}
+
+export interface ExternalAttachmentRequest {
+  attachment_type: string;
+  external_id: string;
+  source_type: string;
+  title: string;
 }
 
 export interface ValidateErrorResponse {

@@ -9,6 +9,18 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 )
 
+// The APIKeyFunc type is an adapter to allow the use of ordinary
+// function as APIKey mutator.
+type APIKeyFunc func(context.Context, *ent.APIKeyMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f APIKeyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.APIKeyMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.APIKeyMutation", m)
+}
+
 // The AttachmentFunc type is an adapter to allow the use of ordinary
 // function as Attachment mutator.
 type AttachmentFunc func(context.Context, *ent.AttachmentMutation) (ent.Value, error)
@@ -93,6 +105,18 @@ func (f EntityTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EntityTypeMutation", m)
 }
 
+// The ExportFunc type is an adapter to allow the use of ordinary
+// function as Export mutator.
+type ExportFunc func(context.Context, *ent.ExportMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ExportFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ExportMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ExportMutation", m)
+}
+
 // The GroupFunc type is an adapter to allow the use of ordinary
 // function as Group mutator.
 type GroupFunc func(context.Context, *ent.GroupMutation) (ent.Value, error)
@@ -153,6 +177,18 @@ func (f NotifierFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NotifierMutation", m)
 }
 
+// The PasswordResetTokensFunc type is an adapter to allow the use of ordinary
+// function as PasswordResetTokens mutator.
+type PasswordResetTokensFunc func(context.Context, *ent.PasswordResetTokensMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PasswordResetTokensFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PasswordResetTokensMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PasswordResetTokensMutation", m)
+}
+
 // The TagFunc type is an adapter to allow the use of ordinary
 // function as Tag mutator.
 type TagFunc func(context.Context, *ent.TagMutation) (ent.Value, error)
@@ -187,6 +223,18 @@ func (f UserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserMutation", m)
+}
+
+// The UserGroupFunc type is an adapter to allow the use of ordinary
+// function as UserGroup mutator.
+type UserGroupFunc func(context.Context, *ent.UserGroupMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserGroupFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.UserGroupMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserGroupMutation", m)
 }
 
 // Condition is a hook condition function.
