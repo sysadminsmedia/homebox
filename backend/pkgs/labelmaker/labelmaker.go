@@ -34,6 +34,15 @@ const (
 	FontTypeBold
 )
 
+// ItemMetadata holds structured metadata about the item or location being labelled.
+// All fields are passed to the print subprocess as LABEL_* environment variables.
+type ItemMetadata struct {
+	Name        string
+	Description string
+	Location    string
+	AssetID     string
+}
+
 type GenerateParameters struct {
 	Width                 int
 	Height                int
@@ -48,10 +57,7 @@ type GenerateParameters struct {
 	Dpi                   float64
 	URL                   string
 	DynamicLength         bool
-	Name        string
-	Description string
-	Location    string
-	AssetID     string
+	ItemMetadata
 }
 
 func (p *GenerateParameters) Validate() error {
@@ -70,7 +76,7 @@ func (p *GenerateParameters) Validate() error {
 	return nil
 }
 
-func NewGenerateParams(width int, height int, margin int, padding int, fontSize float64, title string, description string, url string, dynamicLength bool, additionalInformation *string, itemName string, itemDescription string, itemLocation string, itemAssetID string) GenerateParameters {
+func NewGenerateParams(width int, height int, margin int, padding int, fontSize float64, title string, description string, url string, dynamicLength bool, additionalInformation *string, meta ItemMetadata) GenerateParameters {
 	return GenerateParameters{
 		Width:                 width,
 		Height:                height,
@@ -85,10 +91,7 @@ func NewGenerateParams(width int, height int, margin int, padding int, fontSize 
 		URL:                   url,
 		AdditionalInformation: additionalInformation,
 		DynamicLength:         dynamicLength,
-		Name:        itemName,
-		Description: itemDescription,
-		Location:    itemLocation,
-		AssetID:     itemAssetID,
+		ItemMetadata:          meta,
 	}
 }
 

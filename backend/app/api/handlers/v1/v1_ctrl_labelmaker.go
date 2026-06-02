@@ -15,8 +15,8 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/pkgs/labelmaker"
 )
 
-func generateOrPrint(ctrl *V1Controller, w http.ResponseWriter, r *http.Request, title string, labelDesc string, url string, name string, description string, location string, assetID string) error {
-	params := labelmaker.NewGenerateParams(int(ctrl.config.LabelMaker.Width), int(ctrl.config.LabelMaker.Height), int(ctrl.config.LabelMaker.Margin), int(ctrl.config.LabelMaker.Padding), ctrl.config.LabelMaker.FontSize, title, labelDesc, url, ctrl.config.LabelMaker.DynamicLength, ctrl.config.LabelMaker.AdditionalInformation, name, description, location, assetID)
+func generateOrPrint(ctrl *V1Controller, w http.ResponseWriter, r *http.Request, title string, labelDesc string, url string, meta labelmaker.ItemMetadata) error {
+	params := labelmaker.NewGenerateParams(int(ctrl.config.LabelMaker.Width), int(ctrl.config.LabelMaker.Height), int(ctrl.config.LabelMaker.Margin), int(ctrl.config.LabelMaker.Padding), ctrl.config.LabelMaker.FontSize, title, labelDesc, url, ctrl.config.LabelMaker.DynamicLength, ctrl.config.LabelMaker.AdditionalInformation, meta)
 
 	print := queryBool(r.URL.Query().Get("print"))
 
@@ -57,7 +57,7 @@ func (ctrl *V1Controller) HandleGetLocationLabel() errchain.HandlerFunc {
 		}
 
 		hbURL := GetHBURL(r, &ctrl.config.Options, ctrl.url)
-		return generateOrPrint(ctrl, w, r, location.Name, "Homebox Location", fmt.Sprintf("%s/location/%s", hbURL, location.ID), location.Name, "", "", "")
+		return generateOrPrint(ctrl, w, r, location.Name, "Homebox Location", fmt.Sprintf("%s/location/%s", hbURL, location.ID), labelmaker.ItemMetadata{Name: location.Name})
 	}
 }
 
@@ -93,7 +93,7 @@ func (ctrl *V1Controller) HandleGetItemLabel() errchain.HandlerFunc {
 		}
 
 		hbURL := GetHBURL(r, &ctrl.config.Options, ctrl.url)
-		return generateOrPrint(ctrl, w, r, item.Name, description, fmt.Sprintf("%s/item/%s", hbURL, item.ID), item.Name, item.Description, parentName, "")
+		return generateOrPrint(ctrl, w, r, item.Name, description, fmt.Sprintf("%s/item/%s", hbURL, item.ID), labelmaker.ItemMetadata{Name: item.Name, Description: item.Description, Location: parentName})
 	}
 }
 
@@ -133,6 +133,6 @@ func (ctrl *V1Controller) HandleGetAssetLabel() errchain.HandlerFunc {
 
 		hbURL := GetHBURL(r, &ctrl.config.Options, ctrl.url)
 		assetIDStr := item.Items[0].AssetID.String()
-		return generateOrPrint(ctrl, w, r, assetIDStr, item.Items[0].Name, fmt.Sprintf("%s/a/%s", hbURL, assetIDStr), item.Items[0].Name, item.Items[0].Description, parentName, assetIDStr)
+		return generateOrPrint(ctrl, w, r, assetIDStr, item.Items[0].Name, fmt.Sprintf("%s/a/%s", hbURL, assetIDStr), labelmaker.ItemMetadata{Name: item.Items[0].Name, Description: item.Items[0].Description, Location: parentName, AssetID: assetIDStr})
 	}
 }
