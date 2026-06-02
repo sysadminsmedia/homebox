@@ -485,8 +485,9 @@ func PrintLabel(cfg *config.Config, params *GenerateParameters) error {
 
 	command := exec.Command(commandParts[0], commandParts[1:]...)
 
-	_, err = command.CombinedOutput()
+	output, err := command.CombinedOutput()
 	if err != nil {
+		log.Printf("label print command failed: %v\noutput: %s", err, string(output))
 		return err
 	}
 
