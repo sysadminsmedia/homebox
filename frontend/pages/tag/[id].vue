@@ -68,7 +68,8 @@
       return;
     }
     toast.success(t("tags.toast.tag_deleted"));
-    navigateTo("/home");
+    await tagStore.refresh();
+    navigateTo("/tags");
   }
 
   const updating = ref(false);
