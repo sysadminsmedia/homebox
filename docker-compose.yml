@@ -7,18 +7,13 @@ services:
       args:
         - COMMIT=head
         - BUILD_TIME=0001-01-01T00:00:00Z
-      # x-bake:
-      #   platforms:
-      #       - linux/amd64
-      #       - linux/arm64
-      #       - linux/arm
+      x-bake:
+        platforms:
+            - linux/amd64
+            - linux/arm64
+            - linux/arm
     environment:
+      - HBOX_DEBUG=true
       - HBOX_LOGGER_LEVEL=-1
-      - HBOX_OPTIONS_HOSTNAME=http://localhost:3100
-      - HBOX_LABEL_MAKER_PRINT_COMMAND=/scripts/print-label.sh --host brother-label.lan --media W18
-      - HBOX_AUTH_API_KEY_PEPPER=gPbYNGEsSSVIr0e2WjFQlLanzjOjyZm/cgtCRgGmMf7nTl8xhwGU5MnVvDgwqX+z
-    volumes:
-      - ./homebox-data:/data/
-      - ./print-label.sh:/scripts/print-label.sh
     ports:
-      - "0.0.0.0:3100:7745"
+      - 3100:7745
