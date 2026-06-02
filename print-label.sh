@@ -121,57 +121,19 @@ class ImageItem(Item):
     def render(self):
         return self._image
 
-import sys
-
-# Reassemble arguments split across spaces by Go's strings.Fields:
-# tokens not starting with -- are continuations of the previous flag value.
-def reassemble_args(tokens):
-    result = []
-    current = None
-    for token in tokens:
-        if token.startswith("--"):
-            if current is not None:
-                result.append(current)
-            current = token
-        else:
-            current = (current + " " + token) if current is not None else token
-    if current is not None:
-        result.append(current)
-    return result
-
-argv = reassemble_args(sys.argv[1:])
-
 parser = argparse.ArgumentParser()
 parser.add_argument("--host", required=True)
 parser.add_argument("--port", type=int, default=9100)
 parser.add_argument("--model", default="P750W", choices=list(PRINTER_MAP))
 parser.add_argument("--media", default="W18", choices=list(MEDIA_MAP))
-parser.add_argument("--labelname", default="")
-parser.add_argument("--labelurl", default="")
-parser.add_argument("--itemdescription", default="")
-args = parser.parse_args(argv)
+args = parser.parse_args()
 
-url = args.labelurl or os.environ.get("LABEL_LABELURL", "")
+url = os.environ.get("LABEL_URL", "")
 if not url:
-    raise SystemExit("ERROR: LABEL_LABELURL env var or --labelurl arg is not set")
+    raise SystemExit("ERROR: LABEL_URL env var is not set")
 
-name = args.labelname or os.environ.get("LABEL_LABELNAME", "")
-
-def extract_asset_id_from_url(url):
-    """Extract asset ID from URL path like /a/000001 -> 000-001"""
-    import re
-    match = re.search(r'/a/(\S+)', url)
-    if match:
-        asset_id_hex = match.group(1)
-        if len(asset_id_hex) >= 6:
-            return f"{asset_id_hex[:3]}-{asset_id_hex[3:6]}-{asset_id_hex[6:]}"
-    return ""
-
-asset_id = extract_asset_id_from_url(url) or os.environ.get("LABEL_ITEMASSETID", "")
-
-# If we found an asset ID from the URL, use the description as the title
-if asset_id:
-    name = args.itemdescription or os.environ.get("LABEL_ITEMDESCRIPTION", "")
+asset_id = os.environ.get("LABEL_AssetID", "")
+name = os.environ.get("LABEL_Name", "")
 
 media = MEDIA_MAP[args.media]
 printable_width = media.value.printarea  # pixels tall (tape feeds horizontally)
@@ -230,56 +192,69 @@ def wrap_text(text, font, max_px_wide):
 
 asset_w = int(dummy_draw.textlength(asset_id, font=asset_font)) if asset_id else 0
 
-# Determine the narrowest width that keeps name to ≤3 lines.
-# Start from the single-line width and tighten until we hit 3 lines or a floor.
-name_w_single = int(dummy_draw.textlength(name, font=name_font)) if name else 0
-name_floor    = max(asset_w, name_size * 4)  # never narrower than ~4 chars wide
-name_max_w    = name_w_single
-name_lines    = [name] if name else []
-if name:
-    step = name_size // 2
-    while name_max_w - step >= name_floor:
-        candidate = wrap_text(name, name_font, name_max_w - step)
-        if len(candidate) <= 3:
-            name_max_w -= step
-            name_lines  = candidate
-        else:
-            break
+def best_wrap(text, font, max_lines=3):
+    """
+    Find the narrowest canvas width that wraps text into at most max_lines,
+    distributing line lengths as evenly as possible.
+    Returns (lines, width_px).
+    A single word that won't fit is never dropped — the width expands to fit it.
+    """
+    words = text.split()
+    if not words:
+        return [], 0
 
-text_w_ss = max(name_max_w, asset_w) + padding_ss * 2
+    # Measure each word so we know the minimum possible line width.
+    word_widths = [int(dummy_draw.textlength(w, font=font)) for w in words]
+    min_word_w  = max(word_widths)  # no line can be narrower than the widest word
+
+    # Single-line width is the upper bound.
+    single_w = int(dummy_draw.textlength(text, font=font))
+
+    best_lines = [text]
+    best_w     = single_w
+
+    # Binary-search for the narrowest width that still wraps into ≤ max_lines.
+    lo, hi = min_word_w, single_w
+    while lo < hi:
+        mid = (lo + hi) // 2
+        candidate = wrap_text(text, font, mid)
+        if len(candidate) <= max_lines:
+            best_lines = candidate
+            best_w     = mid
+            hi         = mid - 1
+        else:
+            lo = mid + 1
+
+    return best_lines, best_w
+
+name_lines, name_content_w = best_wrap(name, name_font) if name else ([], 0)
+text_w_ss = max(name_content_w, asset_w) + padding_ss * 2
 
 # --- Render text block at SS resolution. ---
 # Layout: asset ID pinned to bottom, name fills the space above it.
 text_img = Image.new("L", (text_w_ss, pw_ss), 255)
 draw     = ImageDraw.Draw(text_img)
 
-top_margin = max(padding_ss // 2, line_gap_ss)
-asset_y    = pw_ss - padding_ss // 2 - asset_size
-name_budget = asset_y - top_margin - line_gap_ss  # px available for name lines
-
-# Minimum name font: 40% of the original size, but never below 8px (pre-SS).
-name_size_min = max(8 * SS, int(name_size * 0.40))
+top_margin  = max(padding_ss // 2, line_gap_ss)
+asset_y     = pw_ss - padding_ss // 2 - asset_size
+name_budget = asset_y - top_margin - line_gap_ss
 
 total_name_h = lambda n, sz: n * sz + (n - 1) * line_gap_ss
 
-# 1. Shrink font until name lines fit the budget, down to the minimum size.
+# Shrink font size until the name lines fit the vertical budget.
+name_size_min     = max(8 * SS, int(name_size * 0.40))
 current_name_size = name_size
 current_name_font = name_font
-while total_name_h(len(name_lines), current_name_size) > name_budget:
-    next_size = current_name_size - (SS * 1)
+while name_lines and total_name_h(len(name_lines), current_name_size) > name_budget:
+    next_size = current_name_size - SS
     if next_size < name_size_min:
         break
     current_name_size = next_size
     current_name_font = load_font(
         "/usr/share/fonts/liberation/LiberationSans-Bold.ttf", current_name_size
     )
-    # Re-wrap at the new font size so lines may consolidate.
-    name_lines = wrap_text(name, current_name_font, text_w_ss - padding_ss * 2)
-    name_lines = name_lines[:3]
-
-# 2. Only drop lines if shrinking alone wasn't enough.
-while len(name_lines) > 1 and total_name_h(len(name_lines), current_name_size) > name_budget:
-    name_lines = name_lines[:-1]
+    # Re-wrap at new size; the optimal width may also change.
+    name_lines, _ = best_wrap(name, current_name_font)
 
 y = top_margin
 for line in name_lines:

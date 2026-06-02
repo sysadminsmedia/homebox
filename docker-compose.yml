@@ -15,7 +15,7 @@ services:
     environment:
       - HBOX_LOGGER_LEVEL=-1
       - HBOX_OPTIONS_HOSTNAME=http://localhost:3100
-      - HBOX_LABEL_MAKER_PRINT_COMMAND=/scripts/print-label.sh --host brother-label.lan --media W18 --labelname {{.TitleText}} --labelurl {{.URL}} --itemdescription {{.DescriptionText}}
+      - HBOX_LABEL_MAKER_PRINT_COMMAND=/scripts/print-label.sh --host brother-label.lan --media W18
       - HBOX_AUTH_API_KEY_PEPPER=gPbYNGEsSSVIr0e2WjFQlLanzjOjyZm/cgtCRgGmMf7nTl8xhwGU5MnVvDgwqX+z
     volumes:
       - ./homebox-data:/data/

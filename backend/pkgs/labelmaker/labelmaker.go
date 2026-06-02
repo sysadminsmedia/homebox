@@ -48,6 +48,10 @@ type GenerateParameters struct {
 	Dpi                   float64
 	URL                   string
 	DynamicLength         bool
+	Name        string
+	Description string
+	Location    string
+	AssetID     string
 }
 
 func (p *GenerateParameters) Validate() error {
@@ -66,7 +70,7 @@ func (p *GenerateParameters) Validate() error {
 	return nil
 }
 
-func NewGenerateParams(width int, height int, margin int, padding int, fontSize float64, title string, description string, url string, dynamicLength bool, additionalInformation *string) GenerateParameters {
+func NewGenerateParams(width int, height int, margin int, padding int, fontSize float64, title string, description string, url string, dynamicLength bool, additionalInformation *string, itemName string, itemDescription string, itemLocation string, itemAssetID string) GenerateParameters {
 	return GenerateParameters{
 		Width:                 width,
 		Height:                height,
@@ -81,6 +85,10 @@ func NewGenerateParams(width int, height int, margin int, padding int, fontSize 
 		URL:                   url,
 		AdditionalInformation: additionalInformation,
 		DynamicLength:         dynamicLength,
+		Name:        itemName,
+		Description: itemDescription,
+		Location:    itemLocation,
+		AssetID:     itemAssetID,
 	}
 }
 
@@ -459,7 +467,7 @@ func PrintLabel(cfg *config.Config, params *GenerateParameters) error {
 		}
 		return ""
 	}()
-	if err := commandTemplate.Execute(builder, map[string]string{
+	templateVars := map[string]string{
 		"FileName":              f.Name(),
 		"Width":                 fmt.Sprintf("%d", params.Width),
 		"Height":                fmt.Sprintf("%d", params.Height),
@@ -474,7 +482,13 @@ func PrintLabel(cfg *config.Config, params *GenerateParameters) error {
 		"Dpi":                   fmt.Sprintf("%f", params.Dpi),
 		"URL":                   params.URL,
 		"DynamicLength":         fmt.Sprintf("%t", params.DynamicLength),
-	}); err != nil {
+		"Name":        params.Name,
+		"Description": params.Description,
+		"Location":    params.Location,
+		"AssetID":     params.AssetID,
+	}
+
+	if err := commandTemplate.Execute(builder, templateVars); err != nil {
 		return err
 	}
 
@@ -483,7 +497,13 @@ func PrintLabel(cfg *config.Config, params *GenerateParameters) error {
 		return nil
 	}
 
+	env := os.Environ()
+	for k, v := range templateVars {
+		env = append(env, "LABEL_"+k+"="+v)
+	}
+
 	command := exec.Command(commandParts[0], commandParts[1:]...)
+	command.Env = env
 
 	output, err := command.CombinedOutput()
 	if err != nil {
