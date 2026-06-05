@@ -132,6 +132,8 @@ export function useViewPreferencesSync() {
   let pauseServerSaves = true;
   let applyingServerSnapshot = false;
   let saveInFlight = false;
+  let refreshInFlight = false;
+  let refreshRequested = false;
   let localRevision = 0;
   let syncedRevision = 0;
   let retryTimer: ReturnType<typeof setTimeout> | null = null;
@@ -185,17 +187,31 @@ export function useViewPreferencesSync() {
   }, 400);
 
   const refreshFromServer = async () => {
-    pauseServerSaves = true;
-    applyingServerSnapshot = true;
-    try {
-      await refreshViewPreferencesFromServer(preferences);
-    } finally {
-      applyingServerSnapshot = false;
+    refreshRequested = true;
+    if (refreshInFlight) {
+      return;
     }
-    pauseServerSaves = false;
 
-    if (syncedRevision < localRevision) {
-      void saveToServer();
+    refreshInFlight = true;
+    try {
+      while (refreshRequested) {
+        refreshRequested = false;
+
+        pauseServerSaves = true;
+        applyingServerSnapshot = true;
+        try {
+          await refreshViewPreferencesFromServer(preferences);
+        } finally {
+          applyingServerSnapshot = false;
+        }
+        pauseServerSaves = false;
+
+        if (syncedRevision < localRevision) {
+          await saveToServer();
+        }
+      }
+    } finally {
+      refreshInFlight = false;
     }
   };
 

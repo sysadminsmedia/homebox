@@ -203,6 +203,7 @@ func (ctrl *V1Controller) HandleCacheWS() errchain.HandlerFunc {
 	}
 
 	m := melody.New()
+	m.Upgrader.Subprotocols = []string{"hb-auth"}
 
 	m.HandleConnect(func(s *melody.Session) {
 		auth := services.NewContext(s.Request.Context())
