@@ -4,6 +4,7 @@
   import { route } from "../../lib/api/base";
   import {
     buildPageCss,
+    buildRotateCss,
     calculateGridData,
     calculateMakerGrid,
     fmtAssetID,
@@ -11,6 +12,7 @@
     presetFor,
     type GridData,
     type LabelMode,
+    type PrintRotation,
   } from "../../lib/reports/label-generator";
   import { Toaster, toast } from "@/components/ui/sonner";
   import { Separator } from "@/components/ui/separator";
@@ -34,6 +36,9 @@
 
   const bordered = ref(false);
   const printLocationRow = ref(true);
+  // Rotation applied to maker labels when printing, for printers (e.g. Brother QL) that rotate the page onto the tape.
+  const printRotation = ref<PrintRotation>(0);
+  const PRINT_ROTATIONS: PrintRotation[] = [0, 90, 180, 270];
   const labelBlankLine = "_______________";
 
   // Behavior constants for HomeBox text replacement
@@ -368,6 +373,13 @@
     pages.value = calc;
   }
 
+  // Regenerate so the print reflects current settings, then open the print dialog (the form is print:hidden).
+  async function printLabels() {
+    calcPages();
+    await nextTick();
+    window.print();
+  }
+
   // Seed the dimension fields with the preset for the chosen mode (custom keeps the current values).
   watch(mode, newMode => {
     const preset = presetFor(newMode);
@@ -389,7 +401,13 @@
   );
 
   useHead(() => ({
-    style: [{ innerHTML: buildPageCss(mode.value, makerSize.value) }],
+    style: [
+      {
+        innerHTML:
+          buildPageCss(mode.value, makerSize.value, printRotation.value) +
+          buildRotateCss(mode.value, makerSize.value, printRotation.value),
+      },
+    ],
   }));
 
   onMounted(() => {
@@ -447,7 +465,7 @@
         </p>
       </div>
       <div class="mx-auto grid grid-cols-2 gap-3">
-        <div v-for="(prop, i) in propertyInputs" :key="i" class="flex w-full max-w-xs flex-col">
+        <div v-for="prop in propertyInputs" :key="prop.ref" class="flex w-full max-w-xs flex-col">
           <Label :for="`input-${prop.ref}`">
             {{ prop.label }}
           </Label>
@@ -515,21 +533,49 @@
             {{ $t("reports.label_generator.print_location_row") }}
           </Label>
         </div>
+        <div v-if="mode === MODE_MAKER" class="flex flex-col py-4">
+          <Label for="select-printRotation">
+            {{ $t("reports.label_generator.rotate_print") }}
+          </Label>
+          <Select id="select-printRotation" v-model="printRotation" class="w-full max-w-xs">
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="deg in PRINT_ROTATIONS" :key="deg" :value="deg">
+                {{ deg === 0 ? $t("reports.label_generator.rotate_none") : `${deg}°` }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div>
         <p>{{ $t("reports.label_generator.qr_code_example") }} {{ displayProperties.baseURL }}/a/{asset_id}</p>
-        <Button size="lg" class="my-4 w-full" @click="calcPages">
-          {{ $t("reports.label_generator.generate_page") }}
-        </Button>
+        <div class="my-4 flex gap-2">
+          <Button size="lg" variant="outline" class="flex-1" @click="calcPages">
+            {{ $t("reports.label_generator.generate_page") }}
+          </Button>
+          <Button size="lg" class="flex-1" :disabled="pages.length === 0" @click="printLabels">
+            {{ $t("reports.label_generator.print_page") }}
+          </Button>
+        </div>
       </div>
     </div>
   </div>
-  <div class="flex flex-col items-center">
+  <div
+    class="flex"
+    :class="
+      mode === MODE_MAKER
+        ? 'flex-row flex-wrap content-start justify-center gap-2 print:block print:gap-0'
+        : 'flex-col items-center'
+    "
+  >
     <section
       v-for="(page, pi) in pages"
       :key="pi"
       class="border-2 print:border-none"
+      :class="mode === MODE_MAKER ? 'maker-label print:[&:not(:last-child)]:break-after-page' : ''"
       :style="{
         paddingTop: `${out.page.pt}${out.measure}`,
         paddingBottom: `${out.page.pb}${out.measure}`,

@@ -86,13 +86,13 @@ export const SHEET_PRESET: LabelPreset = {
   labelGap: 0,
 };
 
-// Brother 62mm continuous tape (DK-22205). Dimensions are editable in the UI.
+// Brother QL DK-2205 62mm continuous tape: 2.4" tape width, default 1" length. Dimensions are editable in the UI.
 export const MAKER_PRESET: LabelPreset = {
-  measure: "mm",
-  cardHeight: 62,
-  cardWidth: 90,
-  pageWidth: 90,
-  pageHeight: 62,
+  measure: "in",
+  cardHeight: 1,
+  cardWidth: 2.4,
+  pageWidth: 2.4,
+  pageHeight: 1,
   pageTopPadding: 0,
   pageBottomPadding: 0,
   pageLeftPadding: 0,
@@ -200,11 +200,31 @@ export function calculateMakerGrid(input: LabelMakerInput): GridData {
   };
 }
 
+// Rotation applied to maker labels when printing, to match how the printer feeds the tape.
+export type PrintRotation = 0 | 90 | 180 | 270;
+
 // CSS @page rule. Sheet/custom keep the historical behavior (no rule, user sets printer margins).
 // Label maker sizes each printed page to one tape segment so labels feed correctly.
-export function buildPageCss(mode: LabelMode, size: MakerPageSize): string {
+// 90/270 swap the page to portrait since the rotated label is taller than wide.
+export function buildPageCss(mode: LabelMode, size: MakerPageSize, rotation: PrintRotation = 0): string {
   if (mode !== "maker") {
     return "";
   }
-  return `@page { size: ${size.width}${size.measure} ${size.height}${size.measure}; margin: 0; }`;
+  const swap = rotation === 90 || rotation === 270;
+  const w = swap ? size.height : size.width;
+  const h = swap ? size.width : size.height;
+  return `@page { size: ${w}${size.measure} ${h}${size.measure}; margin: 0; }`;
+}
+
+// Print-only transform that rotates each maker label to match the chosen rotation, re-centering it on the page.
+export function buildRotateCss(mode: LabelMode, size: MakerPageSize, rotation: PrintRotation): string {
+  if (mode !== "maker" || rotation === 0) {
+    return "";
+  }
+  if (rotation === 180) {
+    return `@media print { .maker-label { transform: rotate(180deg); transform-origin: center center; } }`;
+  }
+  const m = size.measure;
+  const shift = (size.width - size.height) / 2;
+  return `@media print { .maker-label { width: ${size.width}${m}; height: ${size.height}${m}; transform: translate(${-shift}${m}, ${shift}${m}) rotate(${rotation}deg); transform-origin: center center; } }`;
 }

@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
   buildPageCss,
+  buildRotateCss,
   calculateGridData,
   calculateMakerGrid,
   fmtAssetID,
@@ -140,6 +141,42 @@ describe("buildPageCss", () => {
 
   test("custom mode emits no rule", () => {
     expect(buildPageCss("custom", size)).toBe("");
+  });
+
+  test("180 rotation keeps the page dimensions", () => {
+    expect(buildPageCss("maker", size, 180)).toBe("@page { size: 90mm 62mm; margin: 0; }");
+  });
+
+  test("90 rotation swaps the page dimensions", () => {
+    expect(buildPageCss("maker", size, 90)).toBe("@page { size: 62mm 90mm; margin: 0; }");
+  });
+
+  test("270 rotation swaps the page dimensions", () => {
+    expect(buildPageCss("maker", size, 270)).toBe("@page { size: 62mm 90mm; margin: 0; }");
+  });
+});
+
+describe("buildRotateCss", () => {
+  const size = { measure: "mm" as const, width: 90, height: 62 };
+
+  test("no rotation emits no rule", () => {
+    expect(buildRotateCss("maker", size, 0)).toBe("");
+  });
+
+  test("sheet mode emits no rule", () => {
+    expect(buildRotateCss("sheet", size, 90)).toBe("");
+  });
+
+  test("180 rotation flips in place without resizing", () => {
+    expect(buildRotateCss("maker", size, 180)).toBe(
+      "@media print { .maker-label { transform: rotate(180deg); transform-origin: center center; } }"
+    );
+  });
+
+  test("90 rotation sizes and re-centers the label onto the swapped page", () => {
+    expect(buildRotateCss("maker", size, 90)).toBe(
+      "@media print { .maker-label { width: 90mm; height: 62mm; transform: translate(-14mm, 14mm) rotate(90deg); transform-origin: center center; } }"
+    );
   });
 });
 
