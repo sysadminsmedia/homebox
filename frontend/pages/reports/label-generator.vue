@@ -317,6 +317,7 @@
 
       if (!result.ok) {
         toast.error(t(`reports.label_generator.toast.${result.error}`));
+        pages.value = [];
         return;
       }
 
@@ -377,6 +378,10 @@
   async function printLabels() {
     calcPages();
     await nextTick();
+    // A failed geometry recalculation clears pages (and toasts); don't open the print dialog on stale/empty output.
+    if (pages.value.length === 0) {
+      return;
+    }
     window.print();
   }
 

@@ -138,7 +138,7 @@ export function calculateGridData(input: LabelOptionInput): GridResult {
   const rows = Math.floor(availablePageHeight / cardHeight);
   // Guard single-column / single-row layouts so the gap stays 0 instead of NaN/Infinity.
   const gapX = cols > 1 ? (availablePageWidth - cols * cardWidth) / (cols - 1) : 0;
-  const gapY = rows > 1 ? (page.height - rows * cardHeight) / (rows - 1) : 0;
+  const gapY = rows > 1 ? (availablePageHeight - rows * cardHeight) / (rows - 1) : 0;
 
   return {
     ok: true,

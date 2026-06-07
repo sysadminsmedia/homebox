@@ -178,6 +178,14 @@ describe("buildRotateCss", () => {
       "@media print { .maker-label { width: 90mm; height: 62mm; transform: translate(-14mm, 14mm) rotate(90deg); transform-origin: center center; } }"
     );
   });
+
+  test("270 rotation sizes and re-centers the label onto the swapped page", () => {
+    // Re-centering moves the box center onto the swapped page center, which is independent of rotation direction,
+    // so 270 shares the 90 translate offsets.
+    expect(buildRotateCss("maker", size, 270)).toBe(
+      "@media print { .maker-label { width: 90mm; height: 62mm; transform: translate(-14mm, 14mm) rotate(270deg); transform-origin: center center; } }"
+    );
+  });
 });
 
 describe("presetFor", () => {
