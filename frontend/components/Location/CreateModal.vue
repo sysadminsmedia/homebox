@@ -301,7 +301,7 @@
       parentId: form.parent ? form.parent.id : null,
       entityTypeId: selectedEntityType.value.id,
       quantity: 1,
-      tagIds: [],
+      tagIds: form.tags,
     });
 
     if (error) {

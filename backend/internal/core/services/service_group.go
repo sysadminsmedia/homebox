@@ -34,12 +34,8 @@ func (svc *GroupService) CreateGroup(ctx Context, name string) (repo.Group, erro
 		return repo.Group{}, errors.New("user ID cannot be empty when creating a group")
 	}
 
-	group, err := svc.repos.Groups.GroupCreate(ctx.Context, name, ctx.UID)
+	group, err := svc.repos.Groups.GroupCreateWithEntityTypeDefaults(ctx.Context, name, ctx.UID)
 	if err != nil {
-		return repo.Group{}, err
-	}
-
-	if err := svc.repos.EntityTypes.EnsureDefaults(ctx.Context, group.ID); err != nil {
 		return repo.Group{}, err
 	}
 
