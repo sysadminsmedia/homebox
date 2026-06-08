@@ -138,7 +138,7 @@
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
   import BaseModal from "@/components/App/CreateModal.vue";
-  import type { EntityTypeSummary, EntitySummary } from "~~/lib/api/types/data-contracts";
+  import type { EntitySummary } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
   import { useTagStore } from "~/stores/tags";
