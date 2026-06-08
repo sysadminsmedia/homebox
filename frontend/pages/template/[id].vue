@@ -20,7 +20,8 @@
   import LocationSelector from "~/components/Location/Selector.vue";
   import TagSelector from "~/components/Tag/Selector.vue";
   import { useTagStore } from "~/stores/tags";
-  import type { EntityOut } from "~~/lib/api/types/data-contracts";
+  import { newTemplateField } from "~/lib/template-fields";
+  import type { EntityOut, TemplateField } from "~~/lib/api/types/data-contracts";
 
   definePageMeta({
     middleware: ["auth"],
@@ -80,7 +81,7 @@
     includeWarrantyFields: false,
     includePurchaseFields: false,
     includeSoldFields: false,
-    fields: [] as Array<{ id: string; name: string; type: "text"; textValue: string }>,
+    fields: [] as TemplateField[],
   });
 
   function openUpdate() {
@@ -107,7 +108,10 @@
         id: f.id,
         name: f.name,
         type: "text" as const,
+        booleanValue: f.booleanValue,
+        numberValue: f.numberValue,
         textValue: f.textValue,
+        timeValue: f.timeValue,
       })),
     });
     openDialog(DialogID.UpdateTemplate);
@@ -134,8 +138,6 @@
     updating.value = false;
     refresh();
   }
-
-  const NIL_UUID = "00000000-0000-0000-0000-000000000000";
 </script>
 
 <template>
@@ -214,7 +216,7 @@
             type="button"
             size="sm"
             variant="outline"
-            @click="updateData.fields.push({ id: NIL_UUID, name: '', type: 'text', textValue: '' })"
+            @click="updateData.fields.push(newTemplateField())"
           >
             <MdiPlus class="mr-1 size-4" />
             {{ $t("global.add") }}

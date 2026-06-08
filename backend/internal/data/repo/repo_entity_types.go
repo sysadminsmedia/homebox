@@ -96,6 +96,18 @@ func (r *EntityTypeRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]Ent
 	}), nil
 }
 
+// EnsureDefaults creates the default item and location entity types for a group
+// when they do not already exist.
+func (r *EntityTypeRepository) EnsureDefaults(ctx context.Context, gid uuid.UUID) error {
+	if _, err := r.GetDefault(ctx, gid, false); err != nil {
+		return err
+	}
+	if _, err := r.GetDefault(ctx, gid, true); err != nil {
+		return err
+	}
+	return nil
+}
+
 // Create creates a new entity type for a group.
 func (r *EntityTypeRepository) Create(ctx context.Context, gid uuid.UUID, data EntityTypeCreate) (EntityTypeSummary, error) {
 	if data.DefaultTemplateID != nil {

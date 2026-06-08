@@ -113,7 +113,8 @@
   import LocationSelector from "~/components/Location/Selector.vue";
   import TagSelector from "~/components/Tag/Selector.vue";
   import { useTagStore } from "~/stores/tags";
-  import type { EntitySummary } from "~~/lib/api/types/data-contracts";
+  import { newTemplateField } from "~/lib/template-fields";
+  import type { EntitySummary, TemplateField } from "~~/lib/api/types/data-contracts";
 
   const emit = defineEmits<{ created: [] }>();
   const { closeDialog } = useDialog();
@@ -140,13 +141,11 @@
     includeWarrantyFields: false,
     includePurchaseFields: false,
     includeSoldFields: false,
-    fields: [] as Array<{ id: string; name: string; type: "text"; textValue: string }>,
+    fields: [] as TemplateField[],
   });
 
-  const NIL_UUID = "00000000-0000-0000-0000-000000000000";
-
   function addField() {
-    form.fields.push({ id: NIL_UUID, name: "", type: "text", textValue: "" });
+    form.fields.push(newTemplateField());
   }
 
   function reset() {
