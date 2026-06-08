@@ -213,10 +213,10 @@
   // ---------------------------------------------------------------------------
   // Integration settings
 
-  const integrationSettings = reactive<Record<string, string> & { loading: boolean; saving: boolean }>({
+  const integrationSettings = reactive({
     loading: false,
     saving: false,
-  });
+  } as Record<string, string> & { loading: boolean; saving: boolean });
 
   async function loadIntegrationSettings() {
     integrationSettings.loading = true;

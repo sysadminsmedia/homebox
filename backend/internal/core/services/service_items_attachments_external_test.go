@@ -127,7 +127,7 @@ func TestEntityService_AttachmentAddExternalLink_MultipleAttachments(t *testing.
 
 	latest, err := svc.repo.Entities.GetOneByGroup(tCtx, tCtx.GID, entity.ID)
 	require.NoError(t, err)
-	assert.Equal(t, len(knownSources), len(latest.Attachments))
+	assert.Len(t, latest.Attachments, len(knownSources))
 }
 
 // TestEntityService_AttachmentAddExternalLink_InvalidEntity verifies that

@@ -13,6 +13,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/export"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
@@ -425,6 +426,37 @@ func init() {
 	entitytypeDescID := entitytypeMixinFields0[0].Descriptor()
 	// entitytype.DefaultID holds the default value on creation for the id field.
 	entitytype.DefaultID = entitytypeDescID.Default.(func() uuid.UUID)
+	exportMixin := schema.Export{}.Mixin()
+	exportMixinFields0 := exportMixin[0].Fields()
+	_ = exportMixinFields0
+	exportFields := schema.Export{}.Fields()
+	_ = exportFields
+	// exportDescCreatedAt is the schema descriptor for created_at field.
+	exportDescCreatedAt := exportMixinFields0[1].Descriptor()
+	// export.DefaultCreatedAt holds the default value on creation for the created_at field.
+	export.DefaultCreatedAt = exportDescCreatedAt.Default.(func() time.Time)
+	// exportDescUpdatedAt is the schema descriptor for updated_at field.
+	exportDescUpdatedAt := exportMixinFields0[2].Descriptor()
+	// export.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	export.DefaultUpdatedAt = exportDescUpdatedAt.Default.(func() time.Time)
+	// export.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	export.UpdateDefaultUpdatedAt = exportDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// exportDescProgress is the schema descriptor for progress field.
+	exportDescProgress := exportFields[2].Descriptor()
+	// export.DefaultProgress holds the default value on creation for the progress field.
+	export.DefaultProgress = exportDescProgress.Default.(int)
+	// exportDescSizeBytes is the schema descriptor for size_bytes field.
+	exportDescSizeBytes := exportFields[4].Descriptor()
+	// export.DefaultSizeBytes holds the default value on creation for the size_bytes field.
+	export.DefaultSizeBytes = exportDescSizeBytes.Default.(int64)
+	// exportDescError is the schema descriptor for error field.
+	exportDescError := exportFields[5].Descriptor()
+	// export.ErrorValidator is a validator for the "error" field. It is called by the builders before save.
+	export.ErrorValidator = exportDescError.Validators[0].(func(string) error)
+	// exportDescID is the schema descriptor for id field.
+	exportDescID := exportMixinFields0[0].Descriptor()
+	// export.DefaultID holds the default value on creation for the id field.
+	export.DefaultID = exportDescID.Default.(func() uuid.UUID)
 	groupMixin := schema.Group{}.Mixin()
 	groupMixinFields0 := groupMixin[0].Fields()
 	_ = groupMixinFields0

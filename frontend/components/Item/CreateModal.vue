@@ -584,9 +584,8 @@
           parent.value = data;
         }
 
-        if (data.location || data.parent) {
-          const loc = data.location || data.parent;
-          parentItemLocationId = loc.id;
+        if (data.parent) {
+          parentItemLocationId = data.parent.id;
         }
 
         // clear URL Parameter (subItemCreate) since intention was communicated and received
@@ -665,13 +664,19 @@
       data = result.data;
     } else {
       // Normal item creation without template
+      if (!selectedEntityType.value?.id) {
+        loading.value = false;
+        toast.error(t("components.item.create_modal.toast.create_failed"));
+        return;
+      }
+
       const out: EntityCreate = {
         parentId: form.parentId || (form.location.id as string),
         name: form.name,
         quantity: form.quantity,
         description: form.description,
         tagIds: form.tags,
-        entityTypeId: selectedEntityType.value?.id,
+        entityTypeId: selectedEntityType.value.id,
       };
 
       const result = await api.items.create(out);

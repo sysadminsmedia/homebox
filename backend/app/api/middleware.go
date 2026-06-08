@@ -148,6 +148,25 @@ func getQuery(r *http.Request) (string, error) {
 	return token, nil
 }
 
+func getWebSocketProtocolToken(r *http.Request) (string, error) {
+	raw := r.Header.Get("Sec-WebSocket-Protocol")
+	if raw == "" {
+		return "", errors.New("websocket protocol token is required")
+	}
+
+	parts := strings.Split(raw, ",")
+	if len(parts) < 2 {
+		return "", errors.New("websocket protocol token is required")
+	}
+
+	token := strings.TrimSpace(parts[1])
+	if token == "" {
+		return "", errors.New("websocket protocol token is required")
+	}
+
+	return token, nil
+}
+
 // mwAuthToken is a middleware that will check the database for a stateful token
 // and attach it's user to the request context, or return an appropriate error.
 // Authorization support is by token via Headers or Query Parameter
@@ -181,6 +200,7 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 				fn   KeyFunc
 			}{
 				{"bearer", getBearer},
+				{"ws_protocol", getWebSocketProtocolToken},
 				{"query", getQuery},
 			}
 

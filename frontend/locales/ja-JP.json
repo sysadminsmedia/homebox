@@ -1,15 +1,50 @@
 {
     "collection": {
         "copy_invite": "招待リンクをコピー",
-        "delete_collection": "コレクション削除",
-        "delete_confirm": "このコレクションを削除しますか？取り消しはできません。",
-        "deleted_collection": "コレクションを削除しました。"
+        "create_invite": "招待を作成",
+        "delete_collection": "プロファイルの削除",
+        "delete_confirm": "このプロファイルを削除してもよろしいですか？操作は取り消せません。",
+        "deleted_collection": "プロファイルを削除しました",
+        "expires_at": "有効期限",
+        "invite_token": "招待コード",
+        "invite_token_hidden": "このコードは表示されません",
+        "invite_token_warning": "招待コードは一度しか表示されません。コードをコピーしてください。ページを離れたり、更新したりすると、招待コードは確認できなくなります。",
+        "invites": "招待",
+        "invites_delete_confirm": "招待を削除しますか？",
+        "leave_collection": "プロファイルとの紐付けを解除",
+        "leave_confirm": "このプロファイルのメンバーから離脱してもよろしいですか？",
+        "left_collection": "プロファイルの登録を解除しました",
+        "manage_collection": "プロファイルの管理",
+        "members": {
+            "cannot_remove_last": "最後のメンバーのため、登録解除ができません。",
+            "email": "メール",
+            "empty": "プロファイルにメンバーが存在しません",
+            "member": "メンバー",
+            "name": "名前",
+            "owner": "管理者",
+            "remove_confirm": "このメンバーを削除してもよろしいですか？",
+            "removed": "メンバーを削除しました"
+        },
+        "no_collections": {
+            "create": "プロファイルの新規作成",
+            "title": "プロファイルが見つかりません"
+        },
+        "no_invites": "招待コードはありません",
+        "remaining_uses": "残りの使用可能回数",
+        "tabs": {
+            "invites": "招待",
+            "members": "メンバー",
+            "notifiers": "通知機能",
+            "settings": "設定",
+            "tools": "ツール"
+        },
+        "uses": "使用可能回数"
     },
     "components": {
         "app": {
             "create_modal": {
                 "createAndAddAnother": "{shiftKey} + {enterKey}を使用すると、別のアイテムをそのまま追加できます。",
-                "enter": "入る",
+                "enter": "Enter",
                 "shift": "シフト"
             },
             "import_dialog": {
@@ -28,6 +63,44 @@
                 "latest_version": "最新バージョン",
                 "new_version_available": "利用可能な更新があります",
                 "new_version_available_link": "クリックしてリリースノートを表示"
+            }
+        },
+        "collection": {
+            "create_modal": {
+                "name_label": "プロファイル名",
+                "title": "プロファイルの新規作成",
+                "toast": {
+                    "already_creating": "既にこのプロファイルは作成されています",
+                    "create_failed": "プロファイルの作成に失敗しました",
+                    "create_success": "プロファイルを作成しました",
+                    "please_enter_name": "プロファイル名を入力してください"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_uses": "1から100までの数字を入力してください"
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "招待コード",
+                "invites_should_look_like": "招待コードは以下のような形式です",
+                "join": "参加する",
+                "title": "参加する",
+                "toast": {
+                    "already_joining": "既に参加しています",
+                    "join_failed": "招待を受けることができませんでした",
+                    "join_success": "参加しました",
+                    "please_enter_valid_join_code": "招待コードの形式が間違っています"
+                }
+            },
+            "selector": {
+                "collection_options": "プロファイル設定",
+                "create_collection": "プロファイルの新規作成",
+                "join_collection": "プロファイルに参加",
+                "no_collection_found": "プロファイルが見つかりません",
+                "search_collections": "プロファイルの検索",
+                "select_collection": "プロファイルの選択",
+                "your_collections": "あなたのプロファイル"
             }
         },
         "color_selector": {
@@ -110,7 +183,7 @@
                 "product_tooltip_scan_barcode": "バーコードを撮影して自動取得を試みる",
                 "rotate_photo": "写真を回転",
                 "set_as_primary_photo": "{isPrimary, select, true {non} false {} other {}} サムネイルに設定",
-                "title": "アイテム情報の追加",
+                "title": "アイテムの追加",
                 "toast": {
                     "already_creating": "既に同じアイテムがあります",
                     "create_failed": "アイテムを作成できませんでした",
@@ -133,7 +206,7 @@
                 "db_source": "情報提供元",
                 "error_exception": "バーコード情報を取得できませんでした ",
                 "error_invalid_barcode": "このバーコードは使えません",
-                "error_not_found": "入力されたバーコードの製品が見つかりません。手動登録が必要です。",
+                "error_not_found": "一致するバーコードが見つかりませんでした。",
                 "search_item": "商品を検索",
                 "title": "商品をインポート"
             },
@@ -154,6 +227,7 @@
                     "headers": "ヘッダー",
                     "page": "ページ",
                     "rows_per_page": "表示件数",
+                    "selected_rows": "{total} 件中 {selected} 件選択済み",
                     "table_settings": "テーブル表示の設定",
                     "view_item": "アイテムを見る"
                 }
@@ -183,6 +257,11 @@
         "quick_menu": {
             "no_results": "一致する項目はありません",
             "shortcut_hint": "数字キーを入力することで対応する操作を実行できます"
+        },
+        "template": {
+            "form": {
+                "template_name": "テンプレート名"
+            }
         }
     },
     "errors": {
@@ -236,7 +315,7 @@
     },
     "home": {
         "quick_statistics": "統計",
-        "recently_added": "最近の追加",
+        "recently_added": "最近追加したアイテム",
         "storage_locations": "ロケーション",
         "total_items": "アイテム数",
         "total_locations": "合計ロケーション数",
@@ -312,7 +391,7 @@
         "options": "オプション",
         "order_by": "並べ替え",
         "pages": "{ page } / { totalPages } ページ",
-        "parent_item": "関連するアイテム",
+        "parent_item": "関連アイテム",
         "photo": "画像",
         "photos": "画像",
         "prev_page": "前のページ",
@@ -459,6 +538,7 @@
         "total_entries": "合計項目数"
     },
     "menu": {
+        "collection": "プロファイル",
         "create_item": "アイテム",
         "create_location": "場所",
         "home": "ホーム",
@@ -467,6 +547,11 @@
         "profile": "ユーザー設定",
         "scanner": "スキャナー",
         "search": "検索"
+    },
+    "pages": {
+        "templates": {
+            "title": "テンプレート"
+        }
     },
     "profile": {
         "active": "有効",
@@ -484,6 +569,11 @@
         "group_settings_sub": "一部の設定の反映には再読み込みが必要です",
         "inactive": "停止中",
         "language": "言語",
+        "moved_notice_body": "通知、招待、通貨の設定はプロファイルページに移動しました。",
+        "moved_notice_description": "設定は、プロファイルごと管理されるようになりました。",
+        "moved_notice_link_invites": "プロファイルに招待する",
+        "moved_notice_link_notifiers": "通知機能",
+        "moved_notice_link_settings": "通貨設定",
         "new_password": "新しいパスワード",
         "no_notifiers": "通知機能は設定されていません",
         "no_override": "既定の言語",
@@ -593,9 +683,9 @@
         "import_export_sub": "登録されたアイテムをCSVファイルにインポートおよびエクスポートします。Homeboxのソフトウェアを切り替える場合などに便利です。",
         "reports": "レポート",
         "reports_set": {
-            "asset_labels": "【Beta】アイテム管理シールの作成",
-            "asset_labels_button": "【BETA】作成ページに移動",
-            "asset_labels_sub": "アイテムの管理などに使用できるラベルシールを印刷可能なPDFファイル形式で出力する機能です。'<br>'まだ使用されていないAsset IDと対応するQRコードのみを印刷し、新しいものを買ったときなどに手書きして使用することも可能です。'<br>'これらはまだ開発の初期段階にあり、正常に機能しないまたは全く機能しないなど致命的な不具合が残っている可能性があります。",
+            "asset_labels": "管理ラベルの作成",
+            "asset_labels_button": "作成ページへ移動",
+            "asset_labels_sub": "備品管理などに使用できるラベルシールを印刷可能なPDFファイル形式で出力できます。'<br>'まだ使用されていないAsset IDに対応するQRコードを印刷し、新しいものを登録したときに使用することも可能です。",
             "bill_of_materials": "部品表",
             "bill_of_materials_button": "部品表(BOM)を生成する",
             "bill_of_materials_sub": "CSV形式のファイルを出力します。基本的なアイテム情報と価格情報を含むアイテムの概要が含まれています。'<br>'UTF-8形式で出力されるため、Microsoft OfficeのExcelで開くと文字化けする恐れがあります。"

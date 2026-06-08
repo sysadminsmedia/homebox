@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import type { EntityTemplateOut } from "../../types/data-contracts";
 import type { UserClient } from "../../user";
 import { factories } from "../factories";
-import { sharedUserClient } from "../test-utils";
+import { sharedEntityTypeIds, sharedUserClient } from "../test-utils";
 
 describe("templates lifecycle (create, update, delete)", () => {
   /**
@@ -129,8 +129,24 @@ describe("templates lifecycle (create, update, delete)", () => {
 
     const templateData = factories.template();
     templateData.fields = [
-      { id: NIL_UUID, name: "Custom Field 1", type: "text", textValue: "Value 1" },
-      { id: NIL_UUID, name: "Custom Field 2", type: "text", textValue: "Value 2" },
+      {
+        id: NIL_UUID,
+        name: "Custom Field 1",
+        type: "text",
+        booleanValue: false,
+        numberValue: 0,
+        textValue: "Value 1",
+        timeValue: "1970-01-01T00:00:00.000Z",
+      },
+      {
+        id: NIL_UUID,
+        name: "Custom Field 2",
+        type: "text",
+        booleanValue: false,
+        numberValue: 0,
+        textValue: "Value 2",
+        timeValue: "1970-01-01T00:00:00.000Z",
+      },
     ];
 
     const { response, data } = await api.templates.create(templateData);
@@ -153,7 +169,17 @@ describe("templates lifecycle (create, update, delete)", () => {
 
     // Create template with a field
     const templateData = factories.template();
-    templateData.fields = [{ id: NIL_UUID, name: "Original Field", type: "text", textValue: "Original Value" }];
+    templateData.fields = [
+      {
+        id: NIL_UUID,
+        name: "Original Field",
+        type: "text",
+        booleanValue: false,
+        numberValue: 0,
+        textValue: "Original Value",
+        timeValue: "1970-01-01T00:00:00.000Z",
+      },
+    ];
 
     const { response: createResponse, data: createdTemplate } = await api.templates.create(templateData);
     expect(createResponse.status).toBe(201);
@@ -179,8 +205,24 @@ describe("templates lifecycle (create, update, delete)", () => {
       includePurchaseFields: createdTemplate.includePurchaseFields,
       includeSoldFields: createdTemplate.includeSoldFields,
       fields: [
-        { id: createdTemplate.fields![0]!.id, name: "Updated Field", type: "text", textValue: "Updated Value" },
-        { id: NIL_UUID, name: "New Field", type: "text", textValue: "New Value" },
+        {
+          id: createdTemplate.fields![0]!.id,
+          name: "Updated Field",
+          type: "text",
+          booleanValue: false,
+          numberValue: 0,
+          textValue: "Updated Value",
+          timeValue: "1970-01-01T00:00:00.000Z",
+        },
+        {
+          id: NIL_UUID,
+          name: "New Field",
+          type: "text",
+          booleanValue: false,
+          numberValue: 0,
+          textValue: "New Value",
+          timeValue: "1970-01-01T00:00:00.000Z",
+        },
       ],
     };
 
@@ -200,9 +242,10 @@ describe("templates lifecycle (create, update, delete)", () => {
 describe("templates with location and tags", () => {
   test("user should be able to create a template with a default location", async () => {
     const api = await sharedUserClient();
+    const { locationTypeId } = await sharedEntityTypeIds(api);
 
     // First create a location
-    const locationData = factories.location();
+    const locationData = factories.location(locationTypeId);
     const { response: locResponse, data: location } = await api.items.createLocation(locationData);
     expect(locResponse.status).toBe(201);
 
@@ -251,9 +294,12 @@ describe("templates with location and tags", () => {
 
   test("user should be able to update template to remove location", async () => {
     const api = await sharedUserClient();
+    const { locationTypeId } = await sharedEntityTypeIds(api);
 
     // Create a location
-    const { response: locResponse, data: location } = await api.items.createLocation(factories.location());
+    const { response: locResponse, data: location } = await api.items.createLocation(
+      factories.location(locationTypeId)
+    );
     expect(locResponse.status).toBe(201);
 
     // Create template with location

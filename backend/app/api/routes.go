@@ -68,6 +68,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		a.bus,
 		a.conf,
 		v1.WithMaxUploadSize(a.conf.Web.MaxUploadSize),
+		v1.WithMaxImportSize(a.conf.Web.MaxImportSize),
 		v1.WithRegistration(a.conf.Options.AllowRegistration),
 		v1.WithDemoStatus(a.conf.Demo), // Disable Password Change in Demo Mode
 		v1.WithURL(fmt.Sprintf("%s:%s", a.conf.Web.Host, a.conf.Web.Port)),
@@ -133,6 +134,14 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Post("/groups/invitations", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsCreate(), userMW...))
 		r.Delete("/groups/invitations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsDelete(), userMW...))
 		r.Post("/groups/invitations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsAccept(), userMW...))
+
+		// Collection export/import (group-scoped)
+		r.Post("/group/exports", chain.ToHandlerFunc(v1Ctrl.HandleExportsCreate(), userMW...))
+		r.Get("/group/exports", chain.ToHandlerFunc(v1Ctrl.HandleExportsList(), userMW...))
+		r.Get("/group/exports/{id}", chain.ToHandlerFunc(v1Ctrl.HandleExportGet(), userMW...))
+		r.Get("/group/exports/{id}/download", chain.ToHandlerFunc(v1Ctrl.HandleExportDownload(), userMW...))
+		r.Delete("/group/exports/{id}", chain.ToHandlerFunc(v1Ctrl.HandleExportDelete(), userMW...))
+		r.Post("/group/import", chain.ToHandlerFunc(v1Ctrl.HandleCollectionImport(), userMW...))
 
 		r.Get("/groups/statistics", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatistics(), userMW...))
 		r.Get("/groups/statistics/purchase-price", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatisticsPriceOverTime(), userMW...))

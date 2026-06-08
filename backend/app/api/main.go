@@ -122,19 +122,6 @@ func run(cfg *config.Config) error {
 	}
 	hasher.SetAPIKeyPepper([]byte(cfg.Auth.APIKeyPepper))
 
-	// Demo mode seeds a known user (demo@example.com). In production mode the
-	// hardcoded "demo" password would be publicly guessable, so require an
-	// explicit non-trivial HBOX_DEMO_PASSWORD before letting the app start.
-	if cfg.Demo && cfg.Mode == config.ModeProduction {
-		if len(os.Getenv(demoPasswordEnv)) < demoPasswordMinLength {
-			return fmt.Errorf(
-				"refusing to start: demo mode enabled in production but %s is unset or shorter than %d characters. "+
-					"Set %s to a strong password or disable demo mode (HBOX_DEMO=false)",
-				demoPasswordEnv, demoPasswordMinLength, demoPasswordEnv,
-			)
-		}
-	}
-
 	// =========================================================================
 	// Initialize OpenTelemetry
 	otelProvider, err := otel.NewProvider(context.Background(), &cfg.Otel, version)
@@ -149,7 +136,7 @@ func run(cfg *config.Config) error {
 
 	// =========================================================================
 	// Initialize Database & Repos
-	c, err := setupDatabase(cfg, otelProvider)
+	c, sqlDialect, err := setupDatabase(cfg, otelProvider)
 	if err != nil {
 		return err
 	}
@@ -191,6 +178,7 @@ func run(cfg *config.Config) error {
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),
 		services.WithCurrencies(currencyData),
 		services.WithNotifierConfig(&cfg.Notifier),
+		services.WithExportPlumbing(app.bus, app.db, cfg.Storage, cfg.Database.PubSubConnString, sqlDialect),
 		services.WithMailer(&app.mailer),
 	)
 
@@ -214,11 +202,15 @@ func run(cfg *config.Config) error {
 
 	router.Use(
 		middleware.RequestID,
-		middleware.RealIP,
 		mid.Logger(logger),
 		mid.SecurityHeaders(),
-		// Restrict the max body size to the upload limit + 1MB (for overhead)
-		mid.MaxBodySize(cfg.Web.MaxUploadSize+1),
+		// Restrict the max body size to the upload limit + 1MB (for overhead).
+		// Collection-import uploads carry the full inventory zip and have
+		// their own much larger cap; everything else falls through to the
+		// default.
+		mid.MaxBodySizeByPath(cfg.Web.MaxUploadSize+1, map[string]int64{
+			"/api/v1/group/import": cfg.Web.MaxImportSize + 1,
+		}),
 		middleware.Recoverer,
 		middleware.StripSlashes,
 	)

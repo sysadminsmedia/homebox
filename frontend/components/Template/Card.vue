@@ -67,7 +67,10 @@
         id: NIL_UUID,
         name: field.name,
         type: field.type,
+        booleanValue: field.booleanValue,
+        numberValue: field.numberValue,
         textValue: field.textValue,
+        timeValue: field.timeValue,
       })),
     };
 

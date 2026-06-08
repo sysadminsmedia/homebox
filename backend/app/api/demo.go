@@ -15,13 +15,12 @@ import (
 const (
 	// demoPasswordEnv is the env var operators set when running demo mode in
 	// production, overriding the hardcoded development default below.
+	// When set, the value is accepted verbatim regardless of length —
+	// PasswordMinLength is bypassed for demo seeding (see SetupDemo).
 	demoPasswordEnv = "HBOX_DEMO_PASSWORD"
-	// demoPasswordDefault is the password used when demo mode runs outside
-	// production. Public knowledge — never used unless cfg.Mode is development.
-	demoPasswordDefault = "demo"
-	// demoPasswordMinLength is the minimum acceptable length for a demo
-	// password supplied via demoPasswordEnv in production mode.
-	demoPasswordMinLength = 12
+	// demoPasswordDefault is the password used when demoPasswordEnv is unset.
+	// Public knowledge — only safe to leave at the default in development.
+	demoPasswordDefault = "demodemo"
 )
 
 func (a *app) SetupDemo() error {
@@ -54,9 +53,10 @@ func (a *app) SetupDemo() error {
 		return nil
 	}
 
-	// Otherwise, register the demo user
+	// Otherwise, register the demo user. Skip PasswordMinLength so operators
+	// can use any HBOX_DEMO_PASSWORD; public registration still enforces it.
 	log.Debug().Msg("Registering demo user")
-	_, err := a.services.User.RegisterUser(ctx, registration)
+	_, err := a.services.User.RegisterUser(ctx, registration, services.SkipPasswordValidation())
 	if err != nil {
 		if ent.IsConstraintError(err) {
 			// Concurrent creation race: treat as exists and skip

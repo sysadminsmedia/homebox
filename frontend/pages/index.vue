@@ -62,7 +62,7 @@
 
     if (data.demo) {
       username.value = "demo@example.com";
-      password.value = "demo";
+      password.value = "demodemo";
     }
     return data;
   });
@@ -70,7 +70,7 @@
   whenever(status, status => {
     if (status?.demo) {
       email.value = "demo@example.com";
-      loginPassword.value = "demo";
+      loginPassword.value = "demodemo";
     }
 
     // Auto-redirect to OIDC if autoRedirect is enabled, but not if there's an OIDC initialization error
@@ -382,7 +382,7 @@
                       <b>{{ $t("global.email") }}</b> demo@example.com
                     </p>
                     <p class="text-center text-xs">
-                      <b>{{ $t("global.password") }}</b> demo
+                      <b>{{ $t("global.password") }}</b> demodemo
                     </p>
                   </template>
                   <FormTextField

@@ -166,8 +166,8 @@
   useDialogHotkey(DialogID.CreateLocation, { code: "Digit3", shift: true });
 
   // Entity type selection
-  const locationTypes = ref<import("~~/lib/api/types/data-contracts").EntityTypeSummary[]>([]);
-  const selectedEntityType = ref<import("~~/lib/api/types/data-contracts").EntityTypeSummary | null>(null);
+  const locationTypes = ref<EntityTypeSummary[]>([]);
+  const selectedEntityType = ref<EntityTypeSummary | null>(null);
   const showEntityTypeSelector = computed(() => locationTypes.value.length > 1);
 
   onMounted(async () => {
@@ -289,11 +289,19 @@
 
     if (shift?.value) close = false;
 
+    if (!selectedEntityType.value?.id) {
+      loading.value = false;
+      toast.error(t("components.location.create_modal.toast.create_failed"));
+      return;
+    }
+
     const { data, error } = await api.items.createLocation({
       name: form.name,
       description: form.description,
       parentId: form.parent ? form.parent.id : null,
-      entityTypeId: selectedEntityType.value?.id,
+      entityTypeId: selectedEntityType.value.id,
+      quantity: 1,
+      tagIds: [],
     });
 
     if (error) {

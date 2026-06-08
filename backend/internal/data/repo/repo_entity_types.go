@@ -82,6 +82,13 @@ func (r *EntityTypeRepository) publishMutationEvent(gid uuid.UUID) {
 
 // GetAll returns all entity types for a group.
 func (r *EntityTypeRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]EntityTypeSummary, error) {
+	if _, err := r.GetDefault(ctx, gid, false); err != nil {
+		return nil, err
+	}
+	if _, err := r.GetDefault(ctx, gid, true); err != nil {
+		return nil, err
+	}
+
 	types, err := r.db.EntityType.Query().
 		Where(entitytype.HasGroupWith(group.ID(gid))).
 		WithDefaultTemplate().

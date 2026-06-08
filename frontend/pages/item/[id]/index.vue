@@ -591,7 +591,7 @@
       defaultModelNumber: item.value.modelNumber || "",
       defaultLifetimeWarranty: item.value.lifetimeWarranty,
       defaultWarrantyDetails: item.value.warrantyDetails || "",
-      defaultLocationId: item.value.location?.id || item.value.parent?.id || "",
+      defaultLocationId: item.value.parent?.id || "",
       defaultTagIds: item.value.tags?.map(l => l.id) || [],
       includeWarrantyFields: !!(
         item.value.warrantyDetails ||
@@ -604,7 +604,10 @@
         id: NIL_UUID,
         name: field.name,
         type: "text",
+        booleanValue: field.booleanValue,
+        numberValue: field.numberValue,
         textValue: field.textValue || "",
+        timeValue: "1970-01-01T00:00:00.000Z",
       })),
     };
 

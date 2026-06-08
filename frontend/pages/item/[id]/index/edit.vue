@@ -112,6 +112,7 @@
       parentId: parent.value?.id || item.value.parent?.id || null,
       tagIds: item.value.tagIds,
       assetId: item.value.assetId,
+      entityTypeId: item.value.entityType?.id ?? "",
       purchasePrice,
       soldPrice,
       // Date-only fields stay as YYYY-MM-DD strings — see types.Date on the
@@ -376,7 +377,9 @@
     const title = fallbackLinkTitle(droppedURL);
 
     const store = useIntegrationCacheStore();
-    const settingsForClassify = Object.fromEntries(SERVICE_ADAPTERS.map(a => [a.settingsUrlKey, store.serviceUrls[a.name] ?? ""]));
+    const settingsForClassify = Object.fromEntries(
+      SERVICE_ADAPTERS.map(a => [a.settingsUrlKey, store.serviceUrls[a.name] ?? ""])
+    );
     const classified = classifyDroppedUrl(droppedURL, settingsForClassify);
 
     const { data, error } = await api.items.attachments.addExternalLink(
@@ -562,6 +565,7 @@
       parentId: parent.value?.id || item.value.parent?.id || null,
       tagIds: item.value.tagIds,
       assetId: item.value.assetId,
+      entityTypeId: item.value.entityType?.id ?? "",
       syncChildEntityLocations: item.value.syncChildEntityLocations,
     };
 

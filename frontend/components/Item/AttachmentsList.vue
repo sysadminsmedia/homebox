@@ -72,9 +72,7 @@
             <p class="flex items-center gap-2 text-xs text-muted-foreground">
               <span v-if="paperlessDoc(attachment)?.created_date">{{ paperlessDoc(attachment)?.created_date }}</span>
               <span v-if="paperlessDoc(attachment)?.page_count" class="text-muted-foreground/40">·</span>
-              <span v-if="paperlessDoc(attachment)?.page_count"
-                >{{ paperlessDoc(attachment)?.page_count }} pages</span
-              >
+              <span v-if="paperlessDoc(attachment)?.page_count">{{ paperlessDoc(attachment)?.page_count }} pages</span>
             </p>
           </div>
 
@@ -184,6 +182,7 @@
 
 <script setup lang="ts">
   import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+  import { useI18n } from "vue-i18n";
   import type { ItemAttachment } from "~~/lib/api/types/data-contracts";
   import { useIntegrationCacheStore } from "~/stores/integration-cache";
   import type { AttachmentFetchState } from "~/stores/integration-cache";
@@ -335,7 +334,6 @@
     if (!base) return "#";
     return `${base}/documents/${attachment.path}/details`;
   }
-
 
   function isLink(attachment: ItemAttachment): boolean {
     return attachment.mimeType === MIME_LINK;

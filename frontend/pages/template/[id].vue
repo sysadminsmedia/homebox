@@ -20,7 +20,7 @@
   import LocationSelector from "~/components/Location/Selector.vue";
   import TagSelector from "~/components/Tag/Selector.vue";
   import { useTagStore } from "~/stores/tags";
-  import type { EntityOut } from "~~/lib/api/types/data-contracts";
+  import type { EntityOut, TemplateField } from "~~/lib/api/types/data-contracts";
 
   definePageMeta({
     middleware: ["auth"],
@@ -62,6 +62,7 @@
   }
 
   const updating = ref(false);
+  const NIL_UUID = "00000000-0000-0000-0000-000000000000";
   const updateData = reactive({
     id: "",
     name: "",
@@ -80,8 +81,22 @@
     includeWarrantyFields: false,
     includePurchaseFields: false,
     includeSoldFields: false,
-    fields: [] as Array<{ id: string; name: string; type: "text"; textValue: string }>,
+    fields: [] as TemplateField[],
   });
+
+  const DEFAULT_TIME_VALUE = "1970-01-01T00:00:00.000Z";
+
+  function newTemplateField(): TemplateField {
+    return {
+      id: NIL_UUID,
+      name: "",
+      type: "text",
+      booleanValue: false,
+      numberValue: 0,
+      textValue: "",
+      timeValue: DEFAULT_TIME_VALUE,
+    };
+  }
 
   function openUpdate() {
     if (!template.value) return;
@@ -107,7 +122,10 @@
         id: f.id,
         name: f.name,
         type: "text" as const,
+        booleanValue: f.booleanValue,
+        numberValue: f.numberValue,
         textValue: f.textValue,
+        timeValue: f.timeValue,
       })),
     });
     openDialog(DialogID.UpdateTemplate);
@@ -134,8 +152,6 @@
     updating.value = false;
     refresh();
   }
-
-  const NIL_UUID = "00000000-0000-0000-0000-000000000000";
 </script>
 
 <template>
@@ -210,12 +226,7 @@
         <Separator class="my-2" />
         <div class="flex items-center justify-between">
           <h3 class="text-sm font-medium">{{ $t("components.template.form.custom_fields") }}</h3>
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            @click="updateData.fields.push({ id: NIL_UUID, name: '', type: 'text', textValue: '' })"
-          >
+          <Button type="button" size="sm" variant="outline" @click="updateData.fields.push(newTemplateField())">
             <MdiPlus class="mr-1 size-4" />
             {{ $t("global.add") }}
           </Button>

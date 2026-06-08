@@ -447,6 +447,29 @@ func HasEntityTemplatesWith(preds ...predicate.EntityTemplate) predicate.Group {
 	})
 }
 
+// HasExports applies the HasEdge predicate on the "exports" edge.
+func HasExports() predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ExportsTable, ExportsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasExportsWith applies the HasEdge predicate on the "exports" edge with a given conditions (other predicates).
+func HasExportsWith(preds ...predicate.Export) predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := newExportsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasUserGroups applies the HasEdge predicate on the "user_groups" edge.
 func HasUserGroups() predicate.Group {
 	return predicate.Group(func(s *sql.Selector) {

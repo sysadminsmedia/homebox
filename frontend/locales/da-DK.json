@@ -18,7 +18,7 @@
         "members": {
             "cannot_remove_last": "Du kan ikke slette det sidste medlem.",
             "email": "E-mail",
-            "empty": "Endu ingen medlemmer i denne samling.",
+            "empty": "Endnu ingen medlemmer i denne samling.",
             "member": "Medlem",
             "name": "Navn",
             "owner": "Ejer",
@@ -35,10 +35,12 @@
         "no_invites": "Ingen invitationer",
         "remaining_uses": "Resterende anvendelser",
         "tabs": {
+            "entity_types": "Enhedstyper",
             "invites": "Invitationer",
             "members": "Medlemmer",
+            "notifiers": "Notifikationer",
             "settings": "Indstillinger",
-            "tools": "Værktøjer"
+            "tools": "Funktioner"
         },
         "uses": "Anvendelser"
     },
@@ -122,6 +124,7 @@
         },
         "global": {
             "copy_text": {
+                "continue": "Fortsæt",
                 "documentation": "Dokumentation",
                 "failed_to_copy": "Kunne ikke kopiere tekst til Udklipsholder",
                 "https_required": "fordi HTTPS er nødvendig",
@@ -213,6 +216,7 @@
                 "error_exception": "Der opstod en fejl under hentning af genstandens stregkode: ",
                 "error_invalid_barcode": "Ugyldig stregkode angivet",
                 "error_not_found": "Intet produkt fundet med den angivne stregkode.",
+                "import_selected": "Importer valgte",
                 "search_item": "Søg produkt",
                 "title": "Importér produkt"
             },
@@ -300,11 +304,18 @@
             "no_results": "Ingen resultater fundet.",
             "shortcut_hint": "Brug de numeriske taster til hurtigt at vælge en handling."
         },
+        "search": {
+            "filter": {
+                "search_placeholder": "Søg…"
+            }
+        },
         "tag": {
             "create_modal": {
                 "tag_color": "Tag-farve",
                 "tag_description": "Tag beskrivelse",
+                "tag_icon": "Tag ikon",
                 "tag_name": "Tag-navn",
+                "tag_parent": "Overordnet Tag",
                 "title": "Opret tag",
                 "toast": {
                     "already_creating": "Er allerede ved at oprette et tag",
@@ -314,6 +325,8 @@
                 }
             },
             "selector": {
+                "clear": "Ryd",
+                "no_tags_found": "Der blev ikke fundet nogen tags",
                 "select_tags": "Vælg tags"
             }
         },
@@ -420,9 +433,13 @@
         "return_home": "Vend hjem",
         "save": "Gem",
         "search": "Søg",
+        "select": "Vælg...",
+        "show_less": "Vis mindre",
+        "show_more": "Vis mere",
         "sign_out": "Log ud",
         "submit": "Indsend",
         "tags": "Tags",
+        "type": "Type",
         "unknown": "Ukendt",
         "update": "Opdater",
         "updating": "Opdaterer",
@@ -510,6 +527,7 @@
             "view_image": "Vis billede"
         },
         "edit_details": "Rediger detaljer",
+        "field": "Felt",
         "field_selector": "Feltvælger",
         "field_value": "Feltværdi",
         "first": "Første",
@@ -524,6 +542,7 @@
         "manufacturer": "Producent",
         "model_number": "Modelnummer",
         "name": "Navn",
+        "negate_tags": "Vis uden valgte tags",
         "next_page": "Næste side",
         "no_attachments": "Ingen vedhæftede filer fundet",
         "no_results": "Ingen elementer fundet",
@@ -548,8 +567,10 @@
         "reset_search": "Nulstil søgning",
         "results": "{ total } resultater",
         "select_field": "Vælg et felt",
+        "select_value": "Vælg en værdi",
         "serial_number": "Serienummer",
         "show_advanced_view_options": "vis avancerede indstillinger",
+        "show_empty": "Vis tomme",
         "sold_at": "Salgsdato",
         "sold_details": "Salgsdetaljer",
         "sold_price": "Salgspris",
@@ -629,12 +650,15 @@
     "languages.da-DK": "Dansk",
     "languages.ro-RO": "Rumænsk",
     "languages.sk-SK": "Slovakisk",
+    "languages.sr-RS": "Serbisk (Serbien)",
     "locations": {
         "child_locations": "Underordnede placeringer",
         "collapse_tree": "Kollaps træ",
         "expand_tree": "Udvid træ",
+        "hide_items": "Skjul genstande",
         "location_items_delete_confirm": "Er du sikker på, at du vil slette denne placering og alle dens elementer? Denne handling kan ikke fortrydes.",
         "no_results": "Ingen placeringer fundet",
+        "show_items": "Vis genstande",
         "toast": {
             "failed_delete_location": "Kunne ikke slette placeringen",
             "failed_load_location": "Placeringen kunne ikke indlæses",
@@ -770,6 +794,7 @@
             "page_right_padding": "Højre sidepolstring",
             "page_top_padding": "Sidetoppolstring",
             "page_width": "Sidebredde",
+            "print_location_row": "Tilføj lokation",
             "qr_code_example": "Eksempel på QR-kode",
             "replace_homebox_behavior": "Erstat \"HomeBox\" tekst",
             "replace_homebox_behavior_always_replace": "Udskift altid \"HomeBox\"",
@@ -778,6 +803,7 @@
             "replace_homebox_behavior_item_no_name_no_location": "Udskift \"HomeBox\" når genstanden ikke har navn eller lokation",
             "replace_homebox_behavior_show_homebox": "Vis \"HomeBox\"",
             "replace_homebox_text": "Erstatningstekst",
+            "skip_first_labels": "Spring de første Labels over",
             "tip_1": "Standardindstillingerne her er konfigureret for\n'<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 etiketark'</a>'. Hvis du bruger et andet ark,\nskal du justere indstillingerne, så de passer til dit ark.",
             "tip_2": "Hvis du tilpasser dit ark, er dimensionerne i tommer. Da jeg byggede 5260-arket, opdagede jeg, at de\ndimensioner, der blev brugt i deres skabelon, ikke matchede det, der var nødvendigt for at udskrive i felterne.\n'<b>'Vær forberedt på nogle forsøg og fejl.'</b>'",
             "tip_3": "Ved printning sørg for at:\n'<ol><li>'Indstil margenerne til 0 eller Ingen'</li><li>'Indstil skaleringen til 100%'</li><li>'Deaktiver dobbeltsidet udskrivning'</li><li>'Udskriv en testside, før du udskriver flere sider'</li></ol>'",
@@ -798,6 +824,18 @@
         "select_video_source": "Vælg en videokilde",
         "title": "Skanner",
         "unsupported": "Media Stream API understøttes ikke uden HTTPS"
+    },
+    "scanner_ar": {
+        "ar_mode": "AR tilstand",
+        "back": "Tilbage",
+        "more": "mere",
+        "not_found": "Genstand ikke fundet",
+        "qty": "Antal",
+        "retry": "Forsøg igen",
+        "scanning": "Scanner",
+        "switch_camera": "Vælg kamera",
+        "title": "AR Scanner",
+        "unsupported": "Denne browser understøtter ikke AR scanning"
     },
     "tags": {
         "no_results": "Ingen tags fundet",
@@ -843,6 +881,9 @@
             "zero_datetimes_sub": "Nulstiller klokkeslætsværdien for alle dato- og klokkeslætsfelter i lageret til begyndelsen af datoen. Dette er for at rette en fejl, der blev introduceret tidligt i udviklingen af webstedet, der forårsagede, at tidsværdien blev gemt med tiden, hvilket forårsagede problemer med datofelter, der viste nøjagtige værdier. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Se Github-udgave #236 for flere detaljer.'</a>'"
         },
         "actions_sub": "Anvend flere handlinger på din beholdning på én gang. Det er uigenkaldelige handlinger. '<b>'Vær forsigtig.'</b>'",
+        "demo_mode_error": {
+            "wipe_inventory": "Lagerbeholdning, tags, lokationer og vedligeholdelse kan ikke slettes, når Homebox er i demo tilstand. Tjek at du ikke er i demo tilstand, og prøv igen."
+        },
         "import_export": "Importer/Eksporter",
         "import_export_set": {
             "export": "Eksporter inventar",

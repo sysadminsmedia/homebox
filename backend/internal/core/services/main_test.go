@@ -58,6 +58,10 @@ func MainNoExit(m *testing.M) int {
 		log.Fatalf("failed opening connection to sqlite: %v", err)
 	}
 
+	go func() {
+		_ = tbus.Run(context.Background())
+	}()
+
 	err = client.Schema.Create(context.Background())
 	if err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
@@ -82,7 +86,13 @@ func MainNoExit(m *testing.M) int {
 		currencies.CollectDefaults(),
 	)
 
-	tSvc = New(tRepos, WithCurrencies(defaults))
+	tSvc = New(tRepos,
+		WithCurrencies(defaults),
+		WithExportPlumbing(tbus, tClient, config.Storage{
+			PrefixPath: "/",
+			ConnString: "file://" + os.TempDir(),
+		}, "mem://{{ .Topic }}", "sqlite3"),
+	)
 	defer func() { _ = client.Close() }()
 
 	bootstrap()

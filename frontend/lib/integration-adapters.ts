@@ -166,5 +166,3 @@ export function classifyDroppedUrl(
 
   return { adapter, id };
 }
-
-
