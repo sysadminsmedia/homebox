@@ -227,7 +227,7 @@ export class ItemsApi extends BaseAPI {
     return {
       ...resp,
       data: resp.data?.items ?? [],
-    } as { data: EntitySummary[]; error: any; status: number };
+    };
   }
 
   getTree(tq: TreeQuery = { withItems: false }) {
