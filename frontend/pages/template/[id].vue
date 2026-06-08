@@ -107,7 +107,7 @@
       fields: template.value.fields.map(f => ({
         id: f.id,
         name: f.name,
-        type: "text" as const,
+        type: f.type,
         booleanValue: f.booleanValue,
         numberValue: f.numberValue,
         textValue: f.textValue,

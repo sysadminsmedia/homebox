@@ -28,6 +28,18 @@ func TestEntityTypeRepository_EnsureDefaults(t *testing.T) {
 
 	entityTypes, err := tRepos.EntityTypes.GetAll(ctx, group.ID)
 	require.NoError(t, err)
+	assertDefaultEntityTypes(t, entityTypes)
+
+	require.NoError(t, tRepos.EntityTypes.EnsureDefaults(ctx, group.ID))
+
+	entityTypes, err = tRepos.EntityTypes.GetAll(ctx, group.ID)
+	require.NoError(t, err)
+	assertDefaultEntityTypes(t, entityTypes)
+}
+
+func assertDefaultEntityTypes(t *testing.T, entityTypes []EntityTypeSummary) {
+	t.Helper()
+
 	require.Len(t, entityTypes, 2)
 
 	seen := map[string]bool{}
