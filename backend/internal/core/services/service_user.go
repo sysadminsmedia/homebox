@@ -195,6 +195,14 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration,
 	// Create the default tags and locations for the group.
 	if creatingGroup {
 		bootstrapCtx, bootstrapSpan := entityServiceTracer().Start(ctx, "service.UserService.RegisterUser.bootstrap")
+		log.Debug().Msg("creating default entity types")
+		if err := svc.repos.EntityTypes.EnsureDefaults(bootstrapCtx, usr.DefaultGroupID); err != nil {
+			recordServiceSpanError(bootstrapSpan, err)
+			bootstrapSpan.End()
+			recordServiceSpanError(span, err)
+			return repo.UserOut{}, err
+		}
+
 		log.Debug().Msg("creating default tags")
 		tagsCreated := 0
 		for _, tag := range defaultTags() {
@@ -551,6 +559,14 @@ func (svc *UserService) registerOIDCUser(ctx context.Context, issuer, subject, e
 	span.SetAttributes(attribute.String("user.id", entUser.ID.String()))
 
 	bootstrapCtx, bootstrapSpan := entityServiceTracer().Start(ctx, "service.UserService.registerOIDCUser.bootstrap")
+	log.Debug().Str("issuer", issuer).Str("subject", subject).Msg("creating default entity types for OIDC user")
+	if err := svc.repos.EntityTypes.EnsureDefaults(bootstrapCtx, group.ID); err != nil {
+		recordServiceSpanError(bootstrapSpan, err)
+		bootstrapSpan.End()
+		recordServiceSpanError(span, err)
+		return repo.UserOut{}, err
+	}
+
 	log.Debug().Str("issuer", issuer).Str("subject", subject).Msg("creating default tags for OIDC user")
 	tagsCreated := 0
 	for _, tag := range defaultTags() {

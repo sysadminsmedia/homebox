@@ -5,14 +5,14 @@
 
       <!-- Entity Type selector (shown when multiple location types exist) -->
       <div v-if="showEntityTypeSelector" class="flex w-full flex-col gap-1.5">
-        <Label for="location-type-select" class="px-1">Type</Label>
+        <Label for="location-type-select" class="px-1">{{ $t("global.type") }}</Label>
         <select
           id="location-type-select"
           class="w-full rounded-md border bg-background px-3 py-2 text-sm"
           :value="selectedEntityType?.id || ''"
           @change="onEntityTypeChanged(($event.target as HTMLSelectElement).value)"
         >
-          <option value="">Select type...</option>
+          <option value="">{{ $t("global.select") }}</option>
           <option v-for="et in locationTypes" :key="et.id" :value="et.id">{{ et.name }}</option>
         </select>
       </div>
@@ -67,7 +67,7 @@
 
       <template v-if="showAdvanced">
         <TagSelector v-model="form.tags" :tags="tags ?? []" />
-        <FormTextArea v-model="form.notes" label="Notes" :max-length="1000" />
+        <FormTextArea v-model="form.notes" :label="$t('global.notes')" :max-length="1000" />
       </template>
 
       <div class="mt-4 flex flex-row-reverse">

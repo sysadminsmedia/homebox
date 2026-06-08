@@ -45,6 +45,7 @@
   import DetailsSection from "~/components/global/DetailsSection/DetailsSection.vue";
   import ItemAttachmentsList from "~/components/Item/AttachmentsList.vue";
   import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
+  import { DEFAULT_TEMPLATE_FIELD_TIME_VALUE, NIL_UUID } from "~/lib/template-fields";
 
   const { t } = useI18n();
 
@@ -576,8 +577,6 @@
       return;
     }
 
-    const NIL_UUID = "00000000-0000-0000-0000-000000000000";
-
     // Create template from item data
     const templateData = {
       name: `Template: ${item.value.name}`,
@@ -607,7 +606,7 @@
         booleanValue: field.booleanValue,
         numberValue: field.numberValue,
         textValue: field.textValue || "",
-        timeValue: "1970-01-01T00:00:00.000Z",
+        timeValue: DEFAULT_TEMPLATE_FIELD_TIME_VALUE,
       })),
     };
 

@@ -82,13 +82,6 @@ func (r *EntityTypeRepository) publishMutationEvent(gid uuid.UUID) {
 
 // GetAll returns all entity types for a group.
 func (r *EntityTypeRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]EntityTypeSummary, error) {
-	if _, err := r.GetDefault(ctx, gid, false); err != nil {
-		return nil, err
-	}
-	if _, err := r.GetDefault(ctx, gid, true); err != nil {
-		return nil, err
-	}
-
 	types, err := r.db.EntityType.Query().
 		Where(entitytype.HasGroupWith(group.ID(gid))).
 		WithDefaultTemplate().
@@ -101,6 +94,18 @@ func (r *EntityTypeRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]Ent
 	return lo.Map(types, func(et *ent.EntityType, _ int) EntityTypeSummary {
 		return mapEntityTypeSummary(et)
 	}), nil
+}
+
+// EnsureDefaults creates the default item and location entity types for a group
+// when they do not already exist.
+func (r *EntityTypeRepository) EnsureDefaults(ctx context.Context, gid uuid.UUID) error {
+	if _, err := r.GetDefault(ctx, gid, false); err != nil {
+		return err
+	}
+	if _, err := r.GetDefault(ctx, gid, true); err != nil {
+		return err
+	}
+	return nil
 }
 
 // Create creates a new entity type for a group.

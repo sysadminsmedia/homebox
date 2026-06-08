@@ -113,6 +113,7 @@
   import LocationSelector from "~/components/Location/Selector.vue";
   import TagSelector from "~/components/Tag/Selector.vue";
   import { useTagStore } from "~/stores/tags";
+  import { newTemplateField } from "~/lib/template-fields";
   import type { EntitySummary, TemplateField } from "~~/lib/api/types/data-contracts";
 
   const emit = defineEmits<{ created: [] }>();
@@ -142,21 +143,6 @@
     includeSoldFields: false,
     fields: [] as TemplateField[],
   });
-
-  const NIL_UUID = "00000000-0000-0000-0000-000000000000";
-  const DEFAULT_TIME_VALUE = "1970-01-01T00:00:00.000Z";
-
-  function newTemplateField(): TemplateField {
-    return {
-      id: NIL_UUID,
-      name: "",
-      type: "text",
-      booleanValue: false,
-      numberValue: 0,
-      textValue: "",
-      timeValue: DEFAULT_TIME_VALUE,
-    };
-  }
 
   function addField() {
     form.fields.push(newTemplateField());
