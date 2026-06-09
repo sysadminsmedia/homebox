@@ -46,7 +46,7 @@ func TestRedactExternalIdentifierForTrace(t *testing.T) {
 	assert.Equal(t, "42", redactExternalIdentifierForTrace("paperless", "42"))
 	assert.Equal(
 		t,
-		"https://example.com/doc",
+		"https://example.com/path:baf62c0924b5c759",
 		redactExternalIdentifierForTrace("link", "https://user:secret@example.com/doc?token=secret#fragment"),
 	)
 }
