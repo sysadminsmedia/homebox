@@ -44,9 +44,9 @@
       return;
     }
 
-    // Create a duplicate with "(Copy)" suffix
+    // Create a duplicate with a localized copy suffix.
     const duplicateData: EntityTemplateCreate = {
-      name: `${fullTemplate.name} (Copy)`,
+      name: t("components.template.name_copy_suffix", { name: fullTemplate.name }),
       description: fullTemplate.description,
       notes: fullTemplate.notes,
       defaultName: fullTemplate.defaultName,
