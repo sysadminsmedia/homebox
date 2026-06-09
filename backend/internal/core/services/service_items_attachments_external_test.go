@@ -42,6 +42,15 @@ var knownSources = []struct {
 	{"link", "https://example.com/doc"},
 }
 
+func TestRedactExternalIdentifierForTrace(t *testing.T) {
+	assert.Equal(t, "42", redactExternalIdentifierForTrace("paperless", "42"))
+	assert.Equal(
+		t,
+		"https://example.com/doc",
+		redactExternalIdentifierForTrace("link", "https://user:secret@example.com/doc?token=secret#fragment"),
+	)
+}
+
 // TestEntityService_AttachmentAddExternalLink_SourceTypes verifies that every
 // known source type is accepted and that the stored mimeType and path match the
 // contract defined by repo.MimeTypeForSourceType.
