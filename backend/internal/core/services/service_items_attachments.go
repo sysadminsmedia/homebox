@@ -2,6 +2,8 @@ package services
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"net/url"
@@ -28,7 +30,9 @@ func redactExternalIdentifierForTrace(sourceType, externalID string) string {
 	u.User = nil
 	u.RawQuery = ""
 	u.Fragment = ""
-	return u.String()
+
+	pathHash := sha256.Sum256([]byte(u.EscapedPath()))
+	return fmt.Sprintf("%s://%s/path:%s", u.Scheme, u.Host, hex.EncodeToString(pathHash[:8]))
 }
 
 func (svc *EntityService) AttachmentPath(ctx context.Context, gid uuid.UUID, attachmentID uuid.UUID) (*ent.Attachment, error) {
