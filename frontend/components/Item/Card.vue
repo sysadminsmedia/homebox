@@ -1,11 +1,15 @@
 <template>
   <Card class="relative overflow-hidden">
-    <div v-if="tableRow" class="absolute left-1 top-1 z-10">
+    <div
+      v-if="tableRow"
+      class="absolute left-0 top-0 z-10 cursor-pointer p-1 pointer-coarse:p-2.5"
+      @click.stop="tableRow.toggleSelected()"
+      @pointerdown.stop
+    >
       <Checkbox
-        class="size-5 bg-accent hover:bg-background-accent"
+        class="pointer-events-none size-5 bg-accent hover:bg-background-accent"
         :model-value="tableRow.getIsSelected()"
         :aria-label="$t('components.item.view.selectable.select_card')"
-        @update:model-value="tableRow.toggleSelected()"
       />
     </div>
     <NuxtLink :to="`/item/${item.id}`">
