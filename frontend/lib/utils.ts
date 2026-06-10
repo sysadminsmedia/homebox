@@ -44,3 +44,49 @@ export function getContrastTextColor(bgColor: string): string {
 }
 
 export const camelToSnakeCase = (str: string) => str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+
+export function getNameOrValue(value: unknown): string | unknown {
+  const nameEvaluation: string | false =
+    value !== null &&
+    value !== undefined &&
+    typeof value === "object" &&
+    "name" in value &&
+    typeof value.name === "string" &&
+    value.name;
+
+  return nameEvaluation ? nameEvaluation : value;
+}
+
+export function formatArrayAsString(value: unknown): string {
+  let str = "";
+
+  if (Array.isArray(value)) {
+    value.map(item => {
+      str = `${str}${str ? "," : ""}${formatArrayAsString(item)}`;
+    });
+  } else {
+    str = String(getNameOrValue(value) ?? "");
+  }
+
+  return str;
+}
+
+export function formatValueAsCsvField(value: unknown): string {
+  let str = "";
+
+  if (Array.isArray(value)) {
+    str = formatArrayAsString(value);
+  } else {
+    str = String(getNameOrValue(value) ?? "");
+  }
+
+  // Mitigate formula injection
+  if (/^[\t\r\n ]*[=+\-@]/.test(str)) {
+    str = "'" + str;
+  }
+  // Escape double quotes
+  str = str.replace(/"/g, '""');
+
+  // Wrap in double quotes
+  return `"${str}"`;
+}

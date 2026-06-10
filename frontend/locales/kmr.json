@@ -1,0 +1,986 @@
+{
+    "collection": {
+        "copy_invite": "Girêdana vexwendinê kopî bike",
+        "create_invite": "Vexwendinê çêbike",
+        "delete_collection": "Komê jê bibe",
+        "delete_confirm": "Tu piştrastî dixwazî vê komê jê bibî? Ev kiryar nayê vegerandin.",
+        "deleted_collection": "Kom hat jêbirin.",
+        "expires_at": "Dawî dibe",
+        "invite_token": "Token",
+        "invite_token_hidden": "Êdî xuya nake",
+        "invite_token_warning": "Tokenên vexwendinê tenê carekê tên nîşandan. Niha girêdanê kopî bike; piştî derketin an nûkirina vê rûpelê tu ê nikaribî careke din vê tokenê bibînî.",
+        "invites": "Vexwendin",
+        "invites_delete_confirm": "Tu piştrastî dixwazî vê vexwendinê jê bibî?",
+        "leave_collection": "Ji komê derkeve",
+        "leave_confirm": "Tu piştrastî dixwazî ji vê komê derkevî?",
+        "left_collection": "Tu ji komê derketî.",
+        "manage_collection": "Komê bi rê ve bibe",
+        "members": {
+            "cannot_remove_last": "Tu nikarî endamê dawî rake.",
+            "email": "E-name",
+            "empty": "Hêj di vê komê de endam tune ne.",
+            "member": "Endam",
+            "name": "Nav",
+            "owner": "Xwedî",
+            "remove_confirm": "Tu piştrastî dixwazî vî/vê endamî rake?",
+            "removed": "Endam hat rakirin",
+            "role": "Rêl"
+        },
+        "no_collections": {
+            "create": "Komeke nû çêbike",
+            "join": "Tevlî komeke heyî bibe",
+            "message": "Wisa xuya dike ku tu beşek ji komekê nînî. Ji bo tiştên xwe komeke nû çêbike, an tevlî komekê bibe ku tu vexwendî wê bûyî.",
+            "title": "Tu kom nehat dîtin"
+        },
+        "no_invites": "Vexwendin tune ne",
+        "remaining_uses": "Bikaranînên mayî",
+        "tabs": {
+            "entity_types": "Cureyên hebûnê",
+            "invites": "Vexwendin",
+            "members": "Endam",
+            "notifiers": "Agahker",
+            "settings": "Mîheng",
+            "tools": "Amûr"
+        },
+        "uses": "Bikaranîn"
+    },
+    "components": {
+        "app": {
+            "create_modal": {
+                "createAndAddAnother": "Ji bo çêkirin û lêzêdekirina yek din {shiftKey} + {enterKey} bikar bîne.",
+                "enter": "Enter",
+                "shift": "Shift"
+            },
+            "import_dialog": {
+                "change_warning": "Tevgera importkirinê ji bo import_ref-ên heyî hatiye guhertin. Heke import_ref di pelê CSV de hebe,\ntişt dê bi nirxên di pelê CSV de were nûkirin.",
+                "description": "Pelekî CSV ku tişt, etîket û cihên te tê de ne import bike. Ji bo agahiyên zêdetir li ser formata pêwîst li belgekirinê binêre.",
+                "title": "Pelê CSV import bike",
+                "toast": {
+                    "import_failed": "Importkirin bi ser neket. Ji kerema xwe paşê dîsa biceribîne.",
+                    "import_success": "Importkirin serketî bû!",
+                    "please_select_file": "Ji kerema xwe pelekî ji bo importkirinê hilbijêre."
+                }
+            },
+            "outdated": {
+                "current_version": "Guhertoya heyî",
+                "dismiss": "Bigire",
+                "latest_version": "Guhertoya herî dawî",
+                "new_version_available": "Guhertoyeke nû heye",
+                "new_version_available_link": "Ji bo dîtina notên weşanê li vir bitikîne"
+            }
+        },
+        "collection": {
+            "create_modal": {
+                "name_label": "Navê komê",
+                "title": "Komê çêbike",
+                "toast": {
+                    "already_creating": "Kom jixwe tê çêkirin",
+                    "create_failed": "Çêkirina komê bi ser neket",
+                    "create_success": "Kom hate çêkirin",
+                    "please_enter_name": "Ji kerema xwe navê komê binivîse"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Ji kerema xwe dîrok û demeke dawîbûnê hilbijêre.",
+                    "invalid_expiry_past": "Dîroka dawîbûnê divê di pêşerojê de be.",
+                    "invalid_uses": "Bikaranîn divê hejmarek di navbera 1 û 100 de be."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Koda vexwendina komê",
+                "invites_should_look_like": "Vexwendin divê wisa xuya bikin:",
+                "join": "Tevlî komê bibe",
+                "no_invite_code_create_one": "Koda vexwendinê tune ye? Li şûna wê komeke nû çêbike",
+                "title": "Tevlî komê bibe",
+                "toast": {
+                    "already_joining": "Jixwe tevlî komekê dibî",
+                    "join_failed": "Tevlîbûna komê bi ser neket",
+                    "join_success": "Tevlî komê bû",
+                    "please_enter_valid_join_code": "Ji kerema xwe kodeke derbasdar a vexwendina komê binivîse"
+                }
+            },
+            "selector": {
+                "collection_options": "Vebijêrkên komê",
+                "create_collection": "Komeke nû çêbike",
+                "join_collection": "Tevlî komeke heyî bibe",
+                "no_collection_found": "Tu kom nehat dîtin",
+                "search_collections": "Di koman de bigere…",
+                "select_collection": "Komê hilbijêre",
+                "your_collections": "Komên te"
+            }
+        },
+        "color_selector": {
+            "clear": "Rengê paqij bike",
+            "color": "Reng",
+            "no_color": "Bê reng",
+            "no_color_selected": "Tu reng nehat hilbijartin",
+            "randomize": "Rengekî tesadufî bike"
+        },
+        "form": {
+            "min_length": "kêmî {min}",
+            "password": {
+                "toggle_show": "Nîşandana şîfreyê veguherîne"
+            }
+        },
+        "global": {
+            "copy_text": {
+                "continue": "Bidomîne",
+                "documentation": "belgekirin",
+                "failed_to_copy": "Kopîkirina nivîsê bo panoya kopîkirinê bi ser neket",
+                "https_required": "ji ber ku HTTPS pêwîst e",
+                "learn_more": "Zêdetir fêr bibe di"
+            },
+            "date_time": {
+                "ago": "berî {0}",
+                "days": "roj",
+                "hour": "saet",
+                "hours": "saet",
+                "in": "di {0} de",
+                "just-now": "niha nû",
+                "last-month": "meha borî",
+                "last-week": "hefteya borî",
+                "last-year": "sala borî",
+                "minute": "xulek",
+                "minutes": "xulek",
+                "months": "meh",
+                "next-month": "meha bê",
+                "next-week": "hefteya bê",
+                "next-year": "sala bê",
+                "second": "çirke",
+                "seconds": "çirke",
+                "tomorrow": "sibê",
+                "week": "hefte",
+                "weeks": "hefte",
+                "years": "sal",
+                "yesterday": "duh"
+            },
+            "label_maker": {
+                "browser_print": "Ji gerokê çap bike",
+                "confirm_description": "Tu piştrastî dixwazî vê etîketê çap bikî?",
+                "download": "Etîketê daxîne",
+                "print": "Etîketê çap bike",
+                "server_print": "Li ser serverê çap bike",
+                "titles": "Etîket",
+                "toast": {
+                    "load_status_failed": "Barkirina rewşê bi ser neket",
+                    "print_failed": "Çapkirina etîketê bi ser neket",
+                    "print_success": "Etîket hate çapkirin"
+                }
+            },
+            "page_qr_code": {
+                "page_url": "URL-a rûpelê",
+                "qr_tooltip": "Koda QR nîşan bide"
+            },
+            "password_score": {
+                "password_strength": "Hêza şîfreyê"
+            }
+        },
+        "item": {
+            "attachments_list": {
+                "download": "Daxîne",
+                "open_new_tab": "Di tabeke nû de veke"
+            },
+            "create_modal": {
+                "clear_template": "Şablonê paqij bike",
+                "delete_photo": "Wêneyê jê bibe",
+                "item_description": "Danasîna tiştê",
+                "item_name": "Navê tiştê",
+                "item_photo": "Wêneyê tiştê 📷",
+                "item_quantity": "Hejmara tiştê",
+                "parent_item": "Tiştê dêûbav",
+                "product_tooltip_input_barcode": "Bi barkodeke bi destî hatiye dayîn bixwe dagire",
+                "product_tooltip_scan_barcode": "Bi barkodekê ji 📷 bixwe dagire",
+                "rotate_photo": "Wêneyê bizivirîne",
+                "set_as_primary_photo": "Weke wêneyê { isPrimary, select, true {ne-} false {} other {}}sereke saz bike",
+                "title": "Tişt çêbike",
+                "toast": {
+                    "already_creating": "Tişt jixwe tê çêkirin",
+                    "create_failed": "Tişt nehate çêkirin",
+                    "create_success": "Tişt hate çêkirin",
+                    "failed_load_parent": "Barkirina tiştê dêûbav bi ser neket - ji kerema xwe bi destî hilbijêre",
+                    "no_canvas_support": "Geroka te piştgirî nade operasyonên canvas",
+                    "please_select_location": "Ji kerema xwe cihê hilbijêre.",
+                    "rotate_failed": "Zivirandina wêneyê bi ser neket: { error }",
+                    "rotate_process_failed": "Pêvajoya wêneyê zivirandî bi ser neket",
+                    "some_photos_failed": "{count, plural, =0 {Wêne tune ne ku werin barkirin.} =1 {Barkirina 1 wêne bi ser neket.} other {Barkirina hin wêneyan bi ser neket.}}",
+                    "upload_failed": "Barkirina wêneyê bi ser neket: { photoName }",
+                    "upload_success": "{count, plural, =0 {Tu wêne nehat barkirin.} =1 {Wêne bi serkeftî hate barkirin.} other {Hemû wêne bi serkeftî hatin barkirin.}}",
+                    "uploading_photos": "{count, plural, =0 {Wêne tune ne ku werin barkirin} =1 {1 wêne tê barkirin…} other {{count} wêne tên barkirin…}}"
+                },
+                "upload_photos": "Wêneyan bar bike",
+                "uploaded": "Wêneyê barkirî"
+            },
+            "product_import": {
+                "barcode": "Barkoda hilberê",
+                "db_source": "Çavkaniya DB",
+                "error_exception": "Di dema wergirtina barkoda tiştê de çewtî çêbû: ",
+                "error_invalid_barcode": "Barkoda hatî dayîn nederbasdar e",
+                "error_not_found": "Bi barkoda dayî tu hilber nehat dîtin.",
+                "import_selected": "Yê hilbijartî import bike",
+                "search_item": "Hilberê bigere",
+                "title": "Hilberê import bike"
+            },
+            "selector": {
+                "clear": "Hilbijartina tiştê paqij bike",
+                "no_results": "Tu encam nehat dîtin",
+                "placeholder": "Hilbijêre…",
+                "search_placeholder": "Ji bo lêgerînê binivîse…",
+                "searching": "Tê lêgerîn…"
+            },
+            "view": {
+                "change_details": {
+                    "add_tags": "Etîketan lê zêde bike",
+                    "failed_to_update_item": "Nûkirina tiştê bi ser neket",
+                    "remove_tags": "Etîketan rake",
+                    "title": "Hûrgiliyên tiştê biguherîne"
+                },
+                "selectable": {
+                    "card": "Kart",
+                    "items": "Tişt",
+                    "no_items": "Tişt tune ne ku werin nîşandan",
+                    "select_all": "Hemûyan hilbijêre",
+                    "select_card": "Kartê hilbijêre",
+                    "select_row": "Rêzê hilbijêre",
+                    "table": "Tablo"
+                },
+                "table": {
+                    "dropdown": {
+                        "actions": "Çalakî",
+                        "change_location": "Cihê biguherîne",
+                        "change_location_success": "Cih hat guhertin",
+                        "change_tags": "Etîketan biguherîne",
+                        "change_tags_success": "Etîket hatin guhertin",
+                        "create_maintenance_item": "Ji bo tiştê tomara lênêrînê çêbike",
+                        "create_maintenance_selected": "Ji bo tiştên hilbijartî tomara lênêrînê çêbike",
+                        "create_maintenance_success": "Tomarên lênêrînê hatin çêkirin",
+                        "delete_confirmation": "Tu piştrastî dixwazî tiştên hilbijartî jê bibî? Ev kiryar nayê vegerandin.",
+                        "delete_item": "Tiştê jê bibe",
+                        "delete_selected": "Tiştên hilbijartî jê bibe",
+                        "download_csv": "Tablo wek CSV daxîne",
+                        "download_json": "Tablo wek JSON daxîne",
+                        "duplicate_item": "Tiştê kopî bike",
+                        "duplicate_selected": "Tiştên hilbijartî kopî bike",
+                        "error_deleting": "Di jêbirina tiştê de çewtî",
+                        "error_duplicating": "Di kopîkirina tiştê de çewtî",
+                        "open_menu": "Menuyê veke",
+                        "open_multi_tab_warning": "Ji ber sedemên ewlehiyê, gerok bi pêşdanasînê destûr nadin ku çend tab bi carekê vebin; ji bo guhartina vê yekê ji kerema xwe belgekirinê bişopîne:",
+                        "toggle_expand": "Firehbûnê veguherîne",
+                        "view_item": "Tiştê bibîne",
+                        "view_items": "Tiştan bibîne"
+                    },
+                    "headers": "Sernav",
+                    "page": "Rûpel",
+                    "quick_actions": "Çalakiyên bilez û hilbijartinê çalak bike",
+                    "rows_per_page": "Rêz di her rûpelê de",
+                    "selected_rows": "{selected} ji {total} rêzan hatin hilbijartin.",
+                    "table_settings": "Mîhengên tabloyê",
+                    "view_item": "Tiştê bibîne"
+                }
+            }
+        },
+        "location": {
+            "create_modal": {
+                "location_description": "Danasîna cihê",
+                "location_name": "Navê cihê",
+                "location_photo": "Wêneyê cihê 📷",
+                "title": "Cihê çêbike",
+                "toast": {
+                    "already_creating": "Cih jixwe tê çêkirin",
+                    "create_failed": "Cih nehate çêkirin",
+                    "create_success": "Cih hate çêkirin"
+                }
+            },
+            "selector": {
+                "clear": "Hilbijartina cihê paqij bike",
+                "no_location_found": "Tu cih nehat dîtin",
+                "parent_location": "Cihê dêûbav",
+                "search_location": "Cihan bigere",
+                "select_location": "Cihekî hilbijêre"
+            },
+            "tree": {
+                "no_locations": "Cihên berdest tune ne. Ji bo lêzêdekirina cihekî nû bişkoka Çêbike bikar bîne."
+            }
+        },
+        "quick_menu": {
+            "no_results": "Tu encam nehat dîtin.",
+            "shortcut_hint": "Ji bo hilbijartina bilez a çalakiyekê bişkojkên hejmaran bikar bîne."
+        },
+        "search": {
+            "filter": {
+                "search_placeholder": "Bigere…"
+            }
+        },
+        "tag": {
+            "create_modal": {
+                "tag_color": "Rengê etîketê",
+                "tag_description": "Danasîna etîketê",
+                "tag_icon": "Îkona etîketê",
+                "tag_name": "Navê etîketê",
+                "tag_parent": "Etîketa dêûbav",
+                "title": "Etîketê çêbike",
+                "toast": {
+                    "already_creating": "Etîket jixwe tê çêkirin",
+                    "create_failed": "Etîket nehate çêkirin",
+                    "create_success": "Etîket hate çêkirin",
+                    "tag_name_too_long": "Navê etîketê divê ji 50 tîpan dirêjtir nebe"
+                }
+            },
+            "selector": {
+                "clear": "Paqij bike",
+                "no_tags_found": "Tu etîket nehat dîtin",
+                "select_tags": "Etîketan hilbijêre"
+            }
+        },
+        "template": {
+            "apply_template": "Şablonekê bi kar bîne",
+            "card": {
+                "delete": "Şablonê jê bibe",
+                "duplicate": "Şablonê kopî bike",
+                "edit": "Şablonê sererast bike"
+            },
+            "confirm_delete": "Vê şablonê jê bibî?",
+            "create_modal": {
+                "title": "Şablonê çêbike"
+            },
+            "detail": {
+                "default_values": "Nirxên pêşdanasînî",
+                "updated": "Nûkirî"
+            },
+            "edit_modal": {
+                "title": "Şablonê sererast bike"
+            },
+            "empty_value": "(vala)",
+            "form": {
+                "custom_fields": "Qadên taybet",
+                "default_item_values": "Nirxên pêşdanasînî yên tiştê",
+                "default_location": "Cihê pêşdanasînî",
+                "default_value": "Nirxa pêşdanasînî",
+                "field_name": "Navê qadê",
+                "item_description": "Danasîna tiştê",
+                "item_name": "Navê tiştê",
+                "lifetime_warranty": "Garantîya temenê hemû",
+                "location": "Cih",
+                "manufacturer": "Çêker",
+                "model_number": "Hejmara modelê",
+                "no_custom_fields": "Qadên taybet tune ne.",
+                "template_description": "Danasîna şablonê",
+                "template_name": "Navê şablonê"
+            },
+            "hide_defaults": "Pêşdanasînan veşêre",
+            "save_as_template": "Wek şablon tomar bike",
+            "selector": {
+                "clear": "Hilbijartina şablonê paqij bike",
+                "label": "Şablon (ne mecbûrî)",
+                "not_found": "Tu şablon nehat dîtin",
+                "search": "Şablonan bigere…",
+                "select": "Şablonê hilbijêre…"
+            },
+            "show_defaults": "Pêşdanasînan nîşan bide",
+            "toast": {
+                "applied": "Şablona \"{name}\" hate bikaranîn",
+                "create_failed": "Çêkirina şablonê bi ser neket",
+                "created": "Şablon hate çêkirin",
+                "delete_failed": "Jêbirina şablonê bi ser neket",
+                "deleted": "Şablon hate jêbirin",
+                "duplicate_failed": "Kopîkirina şablonê bi ser neket",
+                "duplicated": "Şablon wek \"{name}\" hate kopîkirin",
+                "load_failed": "Barkirina hûrgiliyên şablonê bi ser neket",
+                "saved_as_template": "Tişt wek şablona \"{name}\" hate tomar kirin",
+                "update_failed": "Nûkirina şablonê bi ser neket",
+                "updated": "Şablon hate nûkirin"
+            },
+            "using_template": "Şablon tê bikaranîn: {name}"
+        }
+    },
+    "errors": {
+        "api_failure": "Bangkirina API ya backend bi ser neket: "
+    },
+    "global": {
+        "add": "Lê zêde bike",
+        "archived": "Arşîvkirî",
+        "build": "Avakirin: { build }",
+        "cancel": "Betal bike",
+        "close": "Bigire",
+        "confirm": "Piştrast bike",
+        "create": "Çêbike",
+        "create_and_add": "Çêbike û yek din lê zêde bike",
+        "create_subitem": "Bin-tişt çêbike",
+        "created": "Çêkirî",
+        "delete": "Jê bibe",
+        "delete_confirm": "Tu piştrastî dixwazî vî tiştî jê bibî? ",
+        "demo_instance": "Ev nimûneyeke demo ye",
+        "details": "Hûrgilî",
+        "duplicate": "Kopî bike",
+        "edit": "Sererast bike",
+        "email": "E-name",
+        "follow_dev": "Pêşdebir bişopîne",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' Guherto: { version } Avakirin: { build } '</a>'"
+        },
+        "github": "Projeya GitHub",
+        "insured": "Bîmeya wê heye",
+        "items": "Tişt",
+        "join_discord": "Tevlî Discordê bibe",
+        "loading": "Tê barkirin…",
+        "locations": "Cih",
+        "maintenance": "Lênêrîn",
+        "name": "Nav",
+        "navigate": "Rêberî bike",
+        "no": "Na",
+        "password": "Şîfre",
+        "preview": "Pêşdîtin",
+        "quantity": "Hejmar",
+        "read_docs": "Belgeyan bixwîne",
+        "return_home": "Vegere malê",
+        "save": "Tomar bike",
+        "search": "Bigere",
+        "select": "Hilbijêre...",
+        "show_less": "Kêmtir nîşan bide",
+        "show_more": "Zêdetir nîşan bide",
+        "sign_out": "Derkeve",
+        "submit": "Şandin",
+        "tags": "Etîket",
+        "type": "Cure",
+        "unknown": "Nenas",
+        "update": "Nû bike",
+        "updating": "Tê nûkirin",
+        "value": "Nirx",
+        "version": "Guherto: { version }",
+        "welcome": "Bi xêr hatî, { username }",
+        "yes": "Erê"
+    },
+    "home": {
+        "quick_statistics": "Statîstîkên bilez",
+        "recently_added": "Nû hatine zêdekirin",
+        "storage_locations": "Cihên hilanînê",
+        "tags": "Etîket",
+        "total_items": "Hemû tişt",
+        "total_locations": "Hemû cih",
+        "total_tags": "Hemû etîket",
+        "total_value": "Hemû nirx"
+    },
+    "index": {
+        "back_to_login": "Vegere têketinê",
+        "disabled_registration": "Tomarkirin neçalak e",
+        "dont_join_group": "Naxwazî tevlî komekê bibî?",
+        "forgot_password": "Şîfreya xwe ji bîr kir?",
+        "forgot_password_check_email": "Heke ew e-name bi hesabekê ve girêdayî be, girêdaneke resetkirinê li rê ye. Girêdan di yek saetê de dawî dibe.",
+        "forgot_password_send": "Girêdana resetkirinê bişîne",
+        "forgot_password_subtitle": "E-nameya hesabê xwe binivîse û em ê girêdanekê ji bo resetkirina şîfreyê ji te re bişînin.",
+        "forgot_password_title": "Şîfreya xwe reset bike",
+        "joining_group": "Tu tevlî komeke heyî dibî!",
+        "login": "Têkeve",
+        "or": "an",
+        "register": "Tomar bibe",
+        "remember_me": "Min bi bîr bîne",
+        "reset_password_invalid": "Ev girêdana resetkirinê nederbasdar e an dawî bûye. Yeke nû bixwaze.",
+        "reset_password_missing_token": "Tokena resetkirinê tune ye. Girêdanê ji e-nameya xwe careke din veke, an yeke nû bixwaze.",
+        "reset_password_set": "Şîfreyeke nû saz bike",
+        "reset_password_subtitle": "Ji bo hesabê xwe şîfreyeke nû hilbijêre.",
+        "reset_password_success": "Şîfreya te hat resetkirin. Bi şîfreya nû têkeve.",
+        "reset_password_title": "Şîfreya xwe reset bike",
+        "set_email": "E-nameya te çi ye?",
+        "set_name": "Navê te çi ye?",
+        "set_password": "Şîfreya xwe saz bike",
+        "tagline": "Tiştên xwe bişopîne, rêxistin bike û bi rê ve bibe.",
+        "title": "Tiştên xwe rêxistin bike û etîket lê bike",
+        "toast": {
+            "invalid_email": "Navnîşana e-nameyê nederbasdar e",
+            "invalid_email_password": "E-name an şîfre nederbasdar e",
+            "login_success": "Bi serkeftî ketî hundir",
+            "oidc_access_denied": "Gihîştin hate redkirin: hesabê te rêla/endametiya komê ya pêwîst tune ye",
+            "oidc_auth_failed": "Erêkirina OIDC bi ser neket",
+            "oidc_invalid_response": "Bersiva OIDC nederbasdar hate wergirtin",
+            "oidc_provider_error": "Pêşkêşkerê OIDC çewtiyek vegerand",
+            "oidc_security_error": "Çewtiya ewlehiya OIDC - êrîşa CSRF gengaz e",
+            "oidc_session_expired": "Danişîna OIDC dawî bûye",
+            "oidc_token_expired": "Tokena OIDC dawî bûye",
+            "oidc_token_invalid": "Îmzeya tokena OIDC nederbasdar e",
+            "problem_registering": "Di tomarkirina bikarhêner de pirsgirêk",
+            "user_registered": "Bikarhêner hate tomar kirin"
+        }
+    },
+    "items": {
+        "add": "Lê zêde bike",
+        "advanced": "Pêşketî",
+        "archived": "Arşîvkirî",
+        "asset_id": "ID-ya sermayeyê",
+        "associated_with_multiple": "Ev ID-ya sermayeyê bi çend tiştan ve girêdayî ye",
+        "attachment": "Pêvek",
+        "attachments": "Pêvek",
+        "changes_persisted_immediately": "Guhertinên pêvekan dê tavilê werin tomar kirin",
+        "created_at": "Di dema çêkirinê de",
+        "custom_fields": "Qadên taybet",
+        "delete_attachment_confirm": "Tu piştrastî dixwazî vê pêvekê jê bibî?",
+        "delete_item_confirm": "Tu piştrastî dixwazî vî tiştî jê bibî?",
+        "description": "Danasîn",
+        "details": "Hûrgilî",
+        "drag_and_drop": "Pelan li vir bikişîne û bavêje, an ji bo hilbijartina pelan bitikîne",
+        "duplicate": {
+            "copy_attachments": "Pêvekan kopî bike",
+            "copy_custom_fields": "Qadên taybet kopî bike",
+            "copy_maintenance": "Lênêrînê kopî bike",
+            "custom_prefix": "Pêşgira kopîkirinê",
+            "enable_custom_prefix": "Pêşgira taybet çalak bike",
+            "override_instructions": "Dema li bişkoka kopîkirinê ditikînî Shiftê bigire da ku van mîhengan derbas bikî.",
+            "prefix": "Kopiya ",
+            "prefix_instructions": "Ev pêşgir dê li destpêka navê tiştê kopîkirî were zêdekirin. Ji bo danîna valahiyê di navbera pêşgir û navê tiştê de valahiyek li dawiya pêşgirê zêde bike.",
+            "temporary_title": "Mîhengên demkî",
+            "title": "Mîhengên kopîkirinê"
+        },
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "Sernavê pêvekê",
+                "attachment_type": "Cureya pêvekê",
+                "primary_photo": "Wêneyê sereke",
+                "primary_photo_sub": "Ev vebijêrk tenê ji bo wêneyan berdest e. Tenê yek wêne dikare sereke be. Heke tu vê vebijêrkê hilbijêrî, wêneyê sereke yê heyî hebe dê nehilbijartî bibe.",
+                "select_type": "Cureyekê hilbijêre",
+                "title": "Sererastkirina pêvekê"
+            },
+            "view_image": "Wêneyê bibîne"
+        },
+        "edit_details": "Hûrgiliyan sererast bike",
+        "field": "Qad",
+        "field_selector": "Hilbijêrê qadê",
+        "field_value": "Nirxa qadê",
+        "first": "Yekem",
+        "include_archive": "Tiştên arşîvkirî jî tê de bike",
+        "insured": "Bîmeya wê heye",
+        "invalid_asset_id": "ID-ya sermayeyê nederbasdar e",
+        "last": "Dawî",
+        "lifetime_warranty": "Garantîya temenê hemû",
+        "location": "Cih",
+        "manual": "Destî",
+        "manuals": "Rêbername",
+        "manufacturer": "Çêker",
+        "model_number": "Hejmara modelê",
+        "name": "Nav",
+        "negate_tags": "Etîketên hilbijartî berevajî bike",
+        "next_page": "Rûpela bê",
+        "no_attachments": "Tu pêvek nehat dîtin",
+        "no_results": "Tu tişt nehat dîtin",
+        "notes": "Têbînî",
+        "only_with_photo": "Tenê tiştên bi wêne",
+        "only_without_photo": "Tenê tiştên bê wêne",
+        "options": "Vebijêrk",
+        "order_by": "Li gorî rêz bike",
+        "pages": "Rûpel { page } ji { totalPages }",
+        "parent_item": "Tiştê dêûbav",
+        "photo": "Wêne",
+        "photos": "Wêne",
+        "prev_page": "Rûpela berê",
+        "purchase_date": "Dîroka kirînê",
+        "purchase_details": "Hûrgiliyên kirînê",
+        "purchase_price": "Bihayê kirînê",
+        "purchased_from": "Ji kê hat kirîn",
+        "quantity": "Hejmar",
+        "query_id": "Li hejmara ID-ya sermayeyê tê pirsîn: { id }",
+        "receipt": "Qebz",
+        "receipts": "Qebz",
+        "reset_search": "Lêgerînê reset bike",
+        "results": "{ total } encam",
+        "select_field": "Qadekê hilbijêre",
+        "select_value": "Nirxekê hilbijêre",
+        "serial_number": "Hejmara serialê",
+        "show_advanced_view_options": "Vebijêrkên dîtina pêşketî nîşan bide",
+        "show_empty": "Valayan nîşan bide",
+        "sold_at": "Dîroka firotinê",
+        "sold_details": "Hûrgiliyên firotinê",
+        "sold_price": "Bihayê firotinê",
+        "sold_to": "Ji kê re hate firotin",
+        "sync_child_locations": "Cihên bin-tiştan hevdem bike",
+        "tip_1": "Parzûnên cih û etîketan operasyona 'OR' bikar tînin. Heke zêdetir ji yekê were hilbijartin, tenê yek ji wan ji bo lihevhatinê pêwîst e.",
+        "tip_2": "Lêgerînên bi pêşgira '#'' dê ji bo ID-ya sermayeyê bipirsin (mînak '#000-001')",
+        "tip_3": "Parzûnên qadê operasyona 'OR' bikar tînin. Heke zêdetir ji yekê were hilbijartin, tenê yek ji wan ji bo lihevhatinê pêwîst e.",
+        "tips": "Şîret",
+        "tips_sub": "Şîretên lêgerînê",
+        "toast": {
+            "asset_not_found": "Sermaye nehat dîtin",
+            "attachment_deleted": "Pêvek hate jêbirin",
+            "attachment_updated": "Pêvek hate nûkirin",
+            "attachment_uploaded": "Pêvek hate barkirin",
+            "child_items_location_no_longer_synced": "Cihên bin-tiştan êdî bi vî tiştî re hevdem nabin.",
+            "child_items_location_synced": "Cihên bin-tiştan bi vî tiştî re hatin hevdemkirin",
+            "child_location_desync": "Guhertina cihê wê ji cihê dêûbavê nehevdem bike",
+            "error_loading_parent_data": "Dema daneyên dêûbav têne barkirin tiştek çewt çû",
+            "failed_adjust_quantity": "Sererastkirina hejmarê bi ser neket",
+            "failed_delete_attachment": "Jêbirina pêvekê bi ser neket",
+            "failed_delete_item": "Jêbirina tiştê bi ser neket",
+            "failed_duplicate_item": "Kopîkirina tiştê bi ser neket",
+            "failed_load_asset": "Barkirina sermayeyê bi ser neket",
+            "failed_load_item": "Barkirina tiştê bi ser neket",
+            "failed_load_items": "Barkirina tiştan bi ser neket",
+            "failed_save": "Tomarkirina tiştê bi ser neket",
+            "failed_save_no_location": "Tomarkirina tiştê bi ser neket: tu cih nehat hilbijartin",
+            "failed_search_items": "Lêgerîna tiştan bi ser neket",
+            "failed_update_attachment": "Nûkirina pêvekê bi ser neket",
+            "failed_upload_attachment": "Barkirina pêvekê bi ser neket",
+            "item_deleted": "Tişt hate jêbirin",
+            "item_saved": "Tişt hate tomar kirin",
+            "quantity_cannot_negative": "Hejmar nikare neyînî be",
+            "sync_child_location": "Dêûbavê hilbijartî cihên zarokên xwe bi cihê xwe re hevdem dike. Cih hate nûkirin."
+        },
+        "updated_at": "Di dema nûkirinê de",
+        "warranty": "Garantî",
+        "warranty_details": "Hûrgiliyên garantiyê",
+        "warranty_expires": "Garantî dawî dibe"
+    },
+    "languages": {
+        "bs-BA": "Bosnî (Bosna û Herzegovina)",
+        "ca": "Katalanî",
+        "cs-CZ": "Çekî",
+        "da-DK": "Danîmarkî",
+        "de": "Almanî",
+        "en": "Îngilîzî",
+        "es": "Spanî",
+        "fi-FI": "Fînî",
+        "fr": "Fransî",
+        "hu": "Macarî",
+        "id-ID": "Endonezî",
+        "it": "Îtalî",
+        "ja-JP": "Japonî",
+        "ko-KR": "Koreyî",
+        "lb-LU": "Luksemburgî (Luksemburg)",
+        "lt-LT": "Lîtwanî (Lîtwanya)",
+        "nb-NO": "Norwecî Bokmål",
+        "nl": "Holandî",
+        "pl": "Polonî",
+        "pt-BR": "Portekîzî (Brazîl)",
+        "pt-PT": "Portekîzî (Portekîz)",
+        "ro-RO": "Romanî",
+        "ru": "Rûsî",
+        "sk-SK": "Slovakî",
+        "sl": "Slovenî",
+        "sq-AL": "Arnavutî",
+        "sv": "Swêdî",
+        "ta-IN": "Tamîlî",
+        "th-TH": "Tayî",
+        "tr": "Tirkî",
+        "uk-UA": "Ukraynî",
+        "vi-VN": "Viyetnamî",
+        "zh-CN": "Çînî (sade)",
+        "zh-HK": "Çînî (Hong Kong)",
+        "zh-MO": "Çînî (Macau)",
+        "zh-TW": "Çînî (kevneşopî)"
+    },
+    "languages.sr-RS": "Sirbî (Sirbistan)",
+    "locations": {
+        "child_locations": "Cihên zarok",
+        "collapse_tree": "Darê bigire",
+        "expand_tree": "Darê fireh bike",
+        "hide_items": "Tiştan veşêre",
+        "location_items_delete_confirm": "Tu piştrastî dixwazî vî cihî û hemû tiştên wî jê bibî? Ev kiryar nayê vegerandin.",
+        "no_results": "Tu cih nehat dîtin",
+        "show_items": "Tiştan nîşan bide",
+        "toast": {
+            "failed_delete_location": "Jêbirina cihê bi ser neket",
+            "failed_load_location": "Barkirina cihê bi ser neket",
+            "failed_update_location": "Nûkirina cihê bi ser neket",
+            "location_deleted": "Cih hate jêbirin",
+            "location_updated": "Cih hate nûkirin"
+        },
+        "update_location": "Cihê nû bike"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Herdu",
+            "completed": "Temam bû",
+            "scheduled": "Plansazkirî"
+        },
+        "list": {
+            "complete": "Temam bike",
+            "create_first": "Tomara xwe ya yekem çêbike",
+            "delete": "Jê bibe",
+            "duplicate": "Kopî bike",
+            "edit": "Sererast bike",
+            "new": "Nû"
+        },
+        "modal": {
+            "completed_date": "Dîroka temambûnê",
+            "cost": "Mesref",
+            "delete_confirmation": "Tu piştrastî dixwazî vê tomarê jê bibî?",
+            "edit_action": "Nû bike",
+            "edit_title": "Tomarê sererast bike",
+            "entry_name": "Navê tomarê",
+            "new_action": "Çêbike",
+            "new_title": "Tomara nû",
+            "notes": "Têbînî",
+            "scheduled_date": "Dîroka plansazkirî"
+        },
+        "monthly_average": "Navînîya mehane",
+        "toast": {
+            "failed_to_create": "Çêkirina tomarê bi ser neket",
+            "failed_to_delete": "Jêbirina tomarê bi ser neket",
+            "failed_to_update": "Nûkirina tomarê bi ser neket"
+        },
+        "total_cost": "Hemû mesref",
+        "total_entries": "Hemû tomar"
+    },
+    "menu": {
+        "collection": "Kom",
+        "create_item": "Tişt / Sermaye",
+        "create_location": "Cih",
+        "create_tag": "Etîket",
+        "home": "Mal",
+        "locations": "Cih",
+        "maintenance": "Lênêrîn",
+        "profile": "Profîl",
+        "scanner": "Scanner",
+        "search": "Bigere",
+        "templates": "Şablon"
+    },
+    "pages": {
+        "templates": {
+            "no_templates": "Hêj şablon tune ne.",
+            "title": "Şablon"
+        }
+    },
+    "profile": {
+        "active": "Çalak",
+        "api_key_copied": "Li panoya kopîkirinê hate kopîkirin",
+        "api_key_copy": "Kopî bike",
+        "api_key_create": "Mifteya API çêbike",
+        "api_key_created": "Çêkirî",
+        "api_key_delete_confirm": "Tu piştrastî dixwazî vê mifteya API betal bikî? Her klientek ku wê bikar tîne dê tavilê gihîştinê ji dest bide.",
+        "api_key_expires_at": "Dawî dibe",
+        "api_key_last_used": "Cara dawî hat bikaranîn",
+        "api_key_name": "Nav",
+        "api_key_name_placeholder": "mînak Home Assistant",
+        "api_key_never_used": "Qet",
+        "api_key_no_expiration": "Bê dawîbûn",
+        "api_key_set_expiration": "Dîrokeke dawîbûnê saz bike",
+        "api_key_token_label": "Mifteya API ya nû ya te",
+        "api_key_token_warning": "Niha vê tokenê kopî bike. Ji bo ewlehiya te, careke din nayê nîşandan.",
+        "api_keys": "Mifteyên API",
+        "api_keys_sub": "Tokenên sabît ji bo gihîştina bernameyî. Her mifte xwedî heman destûran e wek hesabê te.",
+        "change_password": "Şîfreyê biguherîne",
+        "currency_format": "Formata diravê",
+        "current_password": "Şîfreya heyî",
+        "delete_account": "Hesabê jê bibe",
+        "delete_account_confirm": "Tu piştrastî dixwazî hesabê xwe jê bibî? Heke tu endamê dawî yê koma xwe bî, hemû daneyên te dê werin jêbirin. Ev kiryar nayê vegerandin.",
+        "delete_account_sub": "Hesabê xwe û hemû daneyên girêdayî jê bibe. Ev nayê vegerandin.",
+        "delete_notifier_confirm": "Tu piştrastî dixwazî vî agahkerî jê bibî?",
+        "display_legacy_header": "{ currentValue, select, true {Sernavê kevn neçalak bike} false {Sernavê kevn çalak bike} other {Nehat girtin}}",
+        "enabled": "Çalak",
+        "example": "Mînak",
+        "group_settings": "Mîhengên komê",
+        "group_settings_sub": "Mîhengên hevpar ên komê. Dibe ku ji bo sepandina hin mîhengan pêwîst be geroka xwe nû bikî.",
+        "inactive": "Neçalak",
+        "language": "Ziman",
+        "legacy_image_fit": "{ currentValue, select, true {Lihevhatina kevn neçalak bike: wêne bi stûnkan biguncîne} false {Lihevhatina kevn çalak bike: wêne bi birînê dagire} other {Nehat girtin}}",
+        "moved_notice_body": "Agahker, vexwendin û mîhengên diravê hatine veguhestin bo rûpelên komê.",
+        "moved_notice_description": "Ev mîheng niha li gorî her komê têne rêvebirin.",
+        "moved_notice_link_invites": "Vexwendinên komê",
+        "moved_notice_link_notifiers": "Agahkerên komê",
+        "moved_notice_link_settings": "Mîhengên diravê yên komê",
+        "moved_notice_title": "Li agahkeran, vexwendinan an mîhengên diravê digerî?",
+        "new_password": "Şîfreya nû",
+        "no_api_keys": "Hêj mifteyên API tune ne",
+        "no_notifiers": "Tu agahker nehatine mîhengkirin",
+        "no_override": "Tu derbasdar nekirin tune ye",
+        "notifier_modal": "{ type, select, true {Sererast bike} false {Çêbike} other {Yên din}} agahker",
+        "notifiers": "Agahker",
+        "notifiers_sub": "Agahdariyan ji bo bîranînên lênêrînê yên bê werbigire",
+        "override_locale": "Zimanê dîrok û diravê derbas bike",
+        "test": "Ceribandin",
+        "theme_settings": "Mîhengên tema",
+        "theme_settings_sub": "Mîhengên tema di hilanîna herêmî ya geroka te de têne tomar kirin. Tu dikarî her dem tema biguherînî. Heke di saz kirina temayê de pirsgirêk heye, geroka xwe nû bike.",
+        "toast": {
+            "account_deleted": "Hesabê te hate jêbirin.",
+            "api_key_created": "Mifteya API hate çêkirin.",
+            "api_key_deleted": "Mifteya API hate betalkirin.",
+            "failed_api_key_create": "Çêkirina mifteya API bi ser neket.",
+            "failed_api_key_delete": "Betalkirina mifteya API bi ser neket.",
+            "failed_change_password": "Guhertina şîfreyê bi ser neket.",
+            "failed_create_notifier": "Çêkirina agahkerê bi ser neket.",
+            "failed_delete_account": "Jêbirina hesabê te bi ser neket.",
+            "failed_delete_notifier": "Jêbirina agahkerê bi ser neket.",
+            "failed_get_currencies": "Wergirtina diravan bi ser neket",
+            "failed_test_notifier": "Ceribandina agahkerê bi ser neket.",
+            "failed_update_group": "Nûkirina komê bi ser neket",
+            "failed_update_notifier": "Nûkirina agahkerê bi ser neket.",
+            "group_updated": "Kom hate nûkirin",
+            "notifier_test_success": "Ceribandina agahkerê serketî bû.",
+            "password_changed": "Şîfre bi serkeftî hate guhertin."
+        },
+        "update_group": "Komê nû bike",
+        "update_language": "Zimanê nû bike",
+        "url": "URL",
+        "user_profile": "Profîla bikarhêner",
+        "user_profile_sub": "Bikarhêneran vexwîne û hesabê xwe bi rê ve bibe."
+    },
+    "reports": {
+        "label_generator": {
+            "asset_end": "Dawiya sermayeyê",
+            "asset_start": "Destpêka sermayeyê",
+            "base_url": "URL-a bingehîn",
+            "bordered_labels": "Etîketên bi sînor",
+            "generate_page": "Rûpelê biafirîne",
+            "input_placeholder": "Li vir binivîse",
+            "instruction_1": "Çêkerê etîketên HomeBox amûrek e ku alîkariya te dike etîketên envantera HomeBox çap bikî. Ev ji bo etîketên pêşçapkirî ne, da ku tu gelek etîketan çap bikî û amade bikî ku li envantera xwe bisepînî",
+            "instruction_2": "Ji ber vê yekê, ev etîket bi çapkirina Koda QR ya URL û agahiyên AssetID li ser etîketê dixebitin. Heke te AssetID di mîhengên HomeBox de neçalak kiribe, tu hîn jî dikarî vê amûrê bikar bînî, lê AssetID dê tu tiştê nîşan nedin",
+            "instruction_3": "Ev taybetmendî hîn di qonaxên destpêkê yên pêşdebirinê de ye û dibe ku di weşanên bê de biguhere. Heke te bersiv/feedback hebe, ji kerema xwe wê di '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'Gotûbêja GitHub'</a>' de parve bike",
+            "label_height": "Bilindiya etîketê",
+            "label_width": "Firehiya etîketê",
+            "measure_type": "Cureya pîvanê",
+            "page_bottom_padding": "Navberiya binê rûpelê",
+            "page_height": "Bilindiya rûpelê",
+            "page_left_padding": "Navberiya çepê ya rûpelê",
+            "page_right_padding": "Navberiya rastê ya rûpelê",
+            "page_top_padding": "Navberiya jorê ya rûpelê",
+            "page_width": "Firehiya rûpelê",
+            "print_location_row": "Rêza cihê çap bike",
+            "qr_code_example": "Mînaka Koda QR",
+            "replace_homebox_behavior": "Tevgera guhertina nivîsa \"HomeBox\"",
+            "replace_homebox_behavior_always_replace": "Her dem \"HomeBox\" biguherîne",
+            "replace_homebox_behavior_item_no_location": "Dema tişt cih tune be \"HomeBox\" biguherîne",
+            "replace_homebox_behavior_item_no_name": "Dema tişt nav tune be \"HomeBox\" biguherîne",
+            "replace_homebox_behavior_item_no_name_no_location": "Dema tişt ne nav û ne cih hebe \"HomeBox\" biguherîne",
+            "replace_homebox_behavior_show_homebox": "\"HomeBox\" nîşan bide",
+            "replace_homebox_text": "Nivîsa cîgir",
+            "skip_first_labels": "Etîketên destpêkê derbas bike",
+            "tip_1": "Nirxên pêşdanasînî yên vir ji bo '<a href=\"https://www.avery.com/templates/5260\">'pelên etîketên Avery 5260'</a>' hatine saz kirin. Heke tu pelekî cuda bikar tînî, pêwîst e mîhengan li gorî pelê xwe biguncînî.",
+            "tip_2": "Heke tu pela xwe taybet dikî, pîvan bi înç in. Dema pelê 5260 ava dikir, min dît ku pîvanên di şablona wan de bi ya pêwîst ji bo çapkirina di nav qutiyan de lihev nakirin. '<b>'Ji bo ceribandin û çewtiyan amade be.'</b>'",
+            "tip_3": "Dema çap dikî piştrast be ku:\n '<ol><li>'Kenarî li 0 an None saz bike'</li><li>'Pîvandinê li 100% saz bike'</li><li>'Çapkirina du-alî neçalak bike'</li><li>'Berî çapkirina çend rûpelan rûpelek ceribandinê çap bike'</li></ol>'",
+            "tips": "Şîret",
+            "title": "Çêkerê etîketan",
+            "toast": {
+                "page_too_small_card": "Mezinahiya rûpelê ji bo mezinahiya kartê pir biçûk e"
+            }
+        }
+    },
+    "scanner": {
+        "barcode_detected_message": "barkoda hilberê hate dîtin",
+        "barcode_fetch_data": "Daneyên hilberê bîne",
+        "error": "Di dema scannerkirinê de çewtiyek çêbû",
+        "invalid_url": "URL-a barkodê nederbasdar e",
+        "no_sources": "Çavkaniyên vîdeoyê berdest tune ne",
+        "permission_denied": "Destûra kamerayê hate redkirin; ji kerema xwe di mîhengên gerokê de destûra gihîştina kamerayê bide",
+        "select_video_source": "Çavkaniyek vîdeoyê hilbijêre",
+        "title": "Scanner",
+        "unsupported": "API ya Media Stream bê HTTPS nayê piştgirîkirin"
+    },
+    "scanner_ar": {
+        "ar_mode": "Moda AR",
+        "back": "Vegere",
+        "child_items": "{count, plural, one {bin-tişt} other {bin-tişt}}",
+        "children": "{count, plural, one {bin-cih} other {bin-cih}}",
+        "items": "{count, plural, one {tişt} other {tişt}}",
+        "items_in_location": "{count, plural, one {tişt} other {tişt}}",
+        "more": "zêdetir",
+        "not_found": "Tişt nehat dîtin",
+        "qty": "Hej",
+        "retry": "Dîsa biceribîne",
+        "scanning": "Tê scannerkirin",
+        "switch_camera": "Kamerayê biguherîne",
+        "title": "Scannera AR",
+        "unsupported": "Scankirina AR di vê gerokê de nayê piştgirîkirin"
+    },
+    "tags": {
+        "no_results": "Tu etîket nehat dîtin",
+        "tag_delete_confirm": "Tu piştrastî dixwazî vê etîketê jê bibî? Ev kiryar nayê vegerandin.",
+        "toast": {
+            "failed_delete_tag": "Jêbirina etîketê bi ser neket",
+            "failed_load_tag": "Barkirina etîketê bi ser neket",
+            "failed_update_tag": "Nûkirina etîketê bi ser neket",
+            "tag_deleted": "Etîket hate jêbirin",
+            "tag_updated": "Etîket hate nûkirin"
+        },
+        "update_tag": "Etîketê nû bike"
+    },
+    "tools": {
+        "actions": "Çalakiyên envanterê",
+        "actions_set": {
+            "create_missing_thumbnails": "Wêneyên piçûk ên winda çêbike",
+            "create_missing_thumbnails_button": "Wêneyên piçûk çêbike",
+            "create_missing_thumbnails_confirm": "Tu piştrastî dixwazî wêneyên piçûk ên winda çêbikî? Ev dikare demekê bistîne û nayê rawestandin.",
+            "create_missing_thumbnails_sub": "Ji bo hemû pêvekên ku mîhengên heyî piştgirî dikin wêneyên piçûk çêdike. Ev ji bo pêvekên berî weşana v0.20.0 ya Homebox hatine barkirin bikêr e. Ev wêneyên piçûk ên heyî li ser nanivîse, tenê ji bo pêvekên bê wêneyê piçûk yên nû çêdike. Ji kerema xwe hay jê hebin ku wêneyên piçûk li paşxaneyê têne çêkirin û dikare demekê bistîne.",
+            "ensure_ids": "ID-yên sermayeyê piştrast bike",
+            "ensure_ids_button": "ID-yên sermayeyê piştrast bike",
+            "ensure_ids_confirm": "Tu piştrastî dixwazî piştrast bikî ku hemû sermaye xwedî ID ne? Ev dikare demekê bistîne û nayê vegerandin.",
+            "ensure_ids_sub": "Piştrast dike ku hemû tiştên di envantera te de xwedî qada asset_id ya derbasdar in. Ev bi dîtina mezintirîn asset_id ya heyî di danegehê de û sepandina nirxa bê li ser her tiştê ku qada asset_id nehatibe saz kirin tê kirin. Ev li gorî rêza qada created_at tê kirin.",
+            "ensure_import_refs": "Import_ref-an piştrast bike",
+            "ensure_import_refs_button": "Import_ref-an piştrast bike",
+            "ensure_import_refs_sub": "Piştrast dike ku hemû tiştên di envantera te de xwedî qada import_ref ya derbasdar in. Ev bi afirandina rêzeke 8-tîpî ya tesadufî ji bo her tiştê ku qada import_ref nehatibe saz kirin tê kirin.",
+            "set_primary_photo": "Wêneyê sereke saz bike",
+            "set_primary_photo_button": "Wêneyê sereke saz bike",
+            "set_primary_photo_confirm": "Tu piştrastî dixwazî wêneyên sereke saz bikî? Ev dikare demekê bistîne û nayê vegerandin.",
+            "set_primary_photo_sub": "Di guhertoya v0.10.0 ya Homebox de, qada wêneyê sereke li pêvekên cureya wêne hate zêdekirin. Ev kiryar dê qada wêneyê sereke li ser wêneyê yekem di rêza pêvekan a danegehê de saz bike, heke jixwe nehatibe saz kirin. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'GitHub PR #576 bibîne'</a>'",
+            "wipe_inventory": "Envanterê paqij bike",
+            "wipe_inventory_button": "Envanterê paqij bike",
+            "wipe_inventory_confirm": "Tu piştrastî dixwazî hemû envantera xwe paqij bikî? Ev dê hemû tiştan jê bibe û nayê vegerandin.",
+            "wipe_inventory_locations": "Hemû cihan jî paqij bike",
+            "wipe_inventory_maintenance": "Hemû tomarên lênêrînê jî paqij bike",
+            "wipe_inventory_note": "Têbînî: Tenê xwediyên komê dikarin vê kiryarê bikin.",
+            "wipe_inventory_sub": "Hemû tiştên di envantera te de bi mayînde jê dibe. Ev kiryar nayê vegerandin û hemû daneyên tiştan, tevî pêvek û wêneyan, radike.",
+            "wipe_inventory_tags": "Hemû etîketan jî paqij bike",
+            "zero_datetimes": "Demên dîroka tiştan sifir bike",
+            "zero_datetimes_button": "Demên dîroka tiştan sifir bike",
+            "zero_datetimes_confirm": "Tu piştrastî dixwazî hemû nirxên dîrok û demê reset bikî? Ev dikare demekê bistîne û nayê vegerandin.",
+            "zero_datetimes_sub": "Nirxa demê ya hemû qadên dîrok-demê di envantera te de vedigerîne destpêka dîrokê. Ev ji bo sererastkirina bug-ekê ye ku di destpêka pêşdebirina malperê de derketibû û bû sedem ku nirxa demê bi demê re were tomar kirin, ku pirsgirêk bi nîşandana nirxên rast ên qadên dîrokê çêdikir. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Ji bo hûrgiliyên zêdetir GitHub Issue #236 bibîne.'</a>'"
+        },
+        "actions_sub": "Çalakiyan bi komî li envantera xwe bisepîne. Ev çalakî nayên vegerandin. '<b>'Hişyar be.'</b>'",
+        "backups": "Piştgirî û vegerandin",
+        "backups_set": {
+            "create": "Piştgirî çêbike",
+            "create_button": "Piştgiriyê dest pê bike",
+            "create_sub": "Zip-ekê bi her hebûn, etîket, qada taybet, pêvek û tomara lênêrînê ya vê komê ava dike. Kar li paşxaneyê dimeşe; dema amade bibe, berhem dê di tabloya jêr de xuya bike.",
+            "delete_confirm": "Vê berhema piştgiriyê jê bibî? Ev nayê vegerandin.",
+            "download": "Daxîne",
+            "failed": "Piştgirî bi ser neket. Ji bo hûrgiliyan logên serverê kontrol bike.",
+            "list_empty": "Hêj piştgirî tune ne.",
+            "restore": "Ji piştgiriyê vegerîne",
+            "restore_button": "Bar bike û vegerîne",
+            "restore_sub": "Zip-a piştgiriyê bar bike da ku vê komê tijî bikî. Divê kom hêj tu tişt nehewîne — cih û etîketên pêşdanasînî wek beşek ji vegerandinê bixweber têne paqijkirin.",
+            "table": {
+                "actions": "Çalakî",
+                "created": "Çêkirî",
+                "size": "Mezinahî",
+                "status": "Rewş"
+            }
+        },
+        "backups_sub": "Hemû koma xwe — hebûn, etîket, pêvek û metadata — wek arşîveke zip a veguhêz export bike. Arşîvekê vegerîne nav komeke vala û nû-tomarkirî li ser vê serverê an serverekî din.",
+        "demo_mode_error": {
+            "wipe_inventory": "Dema Homebox di moda demo de ye, envanter, etîket, cih û tomarên lênêrînê nayên paqijkirin. Ji kerema xwe piştrast bike ku tu di moda demo de nînî û dîsa biceribîne."
+        },
+        "import_export": "Import/Export",
+        "import_export_set": {
+            "export": "Envanterê export bike",
+            "export_button": "Envanterê export bike",
+            "export_sub": "Formata CSV ya standard ji bo Homebox export dike. Ev dê hemû tiştên di envantera te de export bike.",
+            "import": "Envanterê import bike",
+            "import_button": "Envanterê import bike",
+            "import_ref_confirm": "Tu piştrastî dixwazî piştrast bikî ku hemû sermaye xwedî import_ref in? Ev dikare demekê bistîne û nayê vegerandin.",
+            "import_sub": "Formata CSV ya standard ji bo Homebox import dike. Bê stûna '<code>'HB.import_ref'</code>', ev '<b>'li ser'</b>' tiştên heyî yên di envantera te de nanivîse, tenê tiştên nû lê zêde dike. Rêzên bi stûna '<code>'HB.import_ref'</code>' bi tiştên heyî yên xwedî heman import_ref re têne yekgirtin, heke hebe."
+        },
+        "import_export_sub": "Envantera xwe bo û ji pelê CSV import û export bike. Ev ji bo veguhestina envantera te bo nimûneyeke nû ya Homebox bikêr e.",
+        "reports": "Rapor",
+        "reports_set": {
+            "asset_labels": "Etîketên ID-ya sermayeyê",
+            "asset_labels_button": "Çêkerê etîketan",
+            "asset_labels_sub": "PDF-ek çapbar a etîketan ji bo qadeke ID-ya sermayeyê çêdike. Ev taybetî ji envantera te re nînin, ji ber vê yekê tu dikarî etîketan pêşwext çap bikî û dema tiştan werdigirî li envantera xwe bisepînî.",
+            "bill_of_materials": "Lîsteya materyalan",
+            "bill_of_materials_button": "BOM çêbike",
+            "bill_of_materials_sub": "Pelekî CSV (Nirxên bi komayê veqetandî) çêdike ku dikare were importkirin nav bernameyeke spreadsheet. Ev kurtasîya envantera te ye bi agahiyên bingehîn ên tişt û bihayan."
+        },
+        "reports_sub": "Ji bo envantera xwe raporên cuda çêbike.",
+        "toast": {
+            "asset_success": "{ results } sermaye hatin nûkirin.",
+            "backup_delete_failed": "Jêbirina piştgiriyê bi ser neket.",
+            "backup_start_failed": "Destpêkirina piştgiriyê bi ser neket.",
+            "backup_started": "Piştgirî dest pê kir — dema amade bibe dê di tabloyê de xuya bike.",
+            "failed_create_missing_thumbnails": "Çêkirina wêneyên piçûk ên winda bi ser neket.",
+            "failed_ensure_ids": "Piştrastkirina ID-yên sermayeyê bi ser neket.",
+            "failed_ensure_import_refs": "Piştrastkirina import_ref-an bi ser neket.",
+            "failed_set_primary_photos": "Sazkirina wêneyên sereke bi ser neket.",
+            "failed_wipe_inventory": "Paqijkirina envanterê bi ser neket.",
+            "failed_zero_datetimes": "Resetkirina nirxên dîrok û demê bi ser neket.",
+            "restore_failed": "Vegerandin bi ser neket.",
+            "restore_requires_empty": "Vegerandinê komeke bê tişt pêwîst e. Veguherîne komeke nû-tomarkirî (cih û etîketên pêşdanasînî baş in) û dîsa biceribîne.",
+            "restore_started": "Vegerandin dest pê kir — demeke kin paşê nû bike da ku tiştên importkirî bibînî.",
+            "wipe_inventory_success": "Envanter bi serkeftî hate paqijkirin. { results } tişt hatin jêbirin."
+        }
+    }
+}

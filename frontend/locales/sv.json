@@ -8,6 +8,7 @@
         "expires_at": "Upphör",
         "invite_token": "Token",
         "invite_token_hidden": "Inte längre synlig",
+        "invite_token_warning": "Denna inbjudningstoken visas endast en gång av säkerhetsskäl. Kopiera länken nu – token kan inte visas igen efter att sidan lämnas eller uppdateras.",
         "invites": "Inbjudningar",
         "invites_delete_confirm": "Är du säker på att du vill ta bort detta?",
         "leave_collection": "Lämna samling",
@@ -34,6 +35,7 @@
         "no_invites": "Inga inbjudningar",
         "remaining_uses": "Kvarvarande användningar",
         "tabs": {
+            "entity_types": "Entitetstyper",
             "invites": "Inbjudningar",
             "members": "Medlemmar",
             "notifiers": "Notishanterare",
@@ -116,6 +118,7 @@
             "randomize": "Slumpad färg"
         },
         "form": {
+            "min_length": "min {min}",
             "password": {
                 "toggle_show": "Visa/dölj lösenord"
             }
@@ -280,6 +283,7 @@
             "create_modal": {
                 "location_description": "Platsbeskrivning",
                 "location_name": "Platsnamn",
+                "location_photo": "Platsfoto 📷",
                 "title": "Skapa plats",
                 "toast": {
                     "already_creating": "Skapar redan en plats",
@@ -311,7 +315,9 @@
             "create_modal": {
                 "tag_color": "Taggfärg",
                 "tag_description": "Taggbeskrivning",
+                "tag_icon": "Taggikon",
                 "tag_name": "Taggnamn",
+                "tag_parent": "Överordnad tagg",
                 "title": "Skapa tagg",
                 "toast": {
                     "already_creating": "Skapar redan en tagg",
@@ -321,6 +327,8 @@
                 }
             },
             "selector": {
+                "clear": "Rensa",
+                "no_tags_found": "Inga taggar hittades",
                 "select_tags": "Välj taggar"
             }
         },
@@ -344,8 +352,45 @@
             },
             "empty_value": "(tom)",
             "form": {
-                "custom_fields": "Anpassade fält"
-            }
+                "custom_fields": "Anpassade fält",
+                "default_item_values": "Standardvärden",
+                "default_location": "Standardplats",
+                "default_value": "Standardvärden",
+                "field_name": "Fältnamn",
+                "item_description": "Objektbeskrivning",
+                "item_name": "Objektnamn",
+                "lifetime_warranty": "Livstidsgaranti",
+                "location": "Plats",
+                "manufacturer": "Tillverkare",
+                "model_number": "Modellnummer",
+                "no_custom_fields": "Inga anpassade fält.",
+                "template_description": "Mallbeskrivning",
+                "template_name": "Mallnamn"
+            },
+            "hide_defaults": "Dölj standardvärden",
+            "save_as_template": "Spara som mall",
+            "selector": {
+                "clear": "Rensa mallval",
+                "label": "Mall (valfritt)",
+                "not_found": "Ingen mall hittades",
+                "search": "Sök mallar…",
+                "select": "Välj mall…"
+            },
+            "show_defaults": "Visa standardvärden",
+            "toast": {
+                "applied": "Mallen \"{name}\" har tillämpats",
+                "create_failed": "Det gick inte att skapa mallen",
+                "created": "Mall skapad",
+                "delete_failed": "Det gick inte att ta bort mallen",
+                "deleted": "Mall borttagen",
+                "duplicate_failed": "Det gick inte att duplicera mallen",
+                "duplicated": "Mallen duplicerades som \"{name}\"",
+                "load_failed": "Det gick inte att läsa in malldetaljer",
+                "saved_as_template": "Objektet sparades som mallen \"{name}\"",
+                "update_failed": "Det gick inte att uppdatera mallen",
+                "updated": "Mall uppdaterad"
+            },
+            "using_template": "Använder mall: {name}"
         }
     },
     "errors": {
@@ -356,6 +401,7 @@
         "archived": "Arkiverad",
         "build": "Byggd: { build }",
         "cancel": "Avbryta",
+        "close": "Stäng",
         "confirm": "Godkänn",
         "create": "Skapa",
         "create_and_add": "Skapa och lägg till en till",
@@ -382,6 +428,7 @@
         "maintenance": "Underhåll",
         "name": "Namn",
         "navigate": "Navigera",
+        "no": "Nej",
         "password": "Lösenord",
         "preview": "Förhandsvisning",
         "quantity": "Kvantitet",
@@ -389,30 +436,51 @@
         "return_home": "Till startsidan",
         "save": "Spara",
         "search": "Sök",
+        "select": "Välj...",
+        "show_less": "Visa mindre",
+        "show_more": "Visa mer",
         "sign_out": "Logga ut",
         "submit": "Skicka",
+        "tags": "Taggar",
+        "type": "Typ",
         "unknown": "Okänd",
         "update": "Uppdatera",
         "updating": "Uppdaterar",
         "value": "Värde",
         "version": "Version: { version }",
-        "welcome": "Välkommen, { username }"
+        "welcome": "Välkommen, { username }",
+        "yes": "Ja"
     },
     "home": {
         "quick_statistics": "Snabb statistik",
         "recently_added": "Nyligen tillagda",
         "storage_locations": "Förvaringsplatser",
+        "tags": "Taggar",
         "total_items": "Totalt antal objekt",
         "total_locations": "Totalt antal platser",
+        "total_tags": "Totalt antal taggar",
         "total_value": "Totalt Värde"
     },
     "index": {
+        "back_to_login": "Tillbaka till inloggning",
         "disabled_registration": "Registrering avaktiverad",
         "dont_join_group": "Vill du inte gå med i en grupp?",
+        "forgot_password": "Glömt ditt lösenord?",
+        "forgot_password_check_email": "Om e-postadressen är kopplad till ett konto är en återställningslänk på väg. Länken upphör att gälla efter en timme.",
+        "forgot_password_send": "Skicka återställningslänk",
+        "forgot_password_subtitle": "Ange e-postadressen för ditt konto så skickar vi en länk för att återställa lösenordet.",
+        "forgot_password_title": "Återställ ditt lösenord",
         "joining_group": "Du går med i en befintlig grupp!",
         "login": "Logga in",
+        "or": "eller",
         "register": "Registrera",
         "remember_me": "Kom ihåg mig",
+        "reset_password_invalid": "Den här återställningslänken är ogiltig eller har gått ut. Begär en ny.",
+        "reset_password_missing_token": "Återställningstoken saknas. Öppna länken från ditt e‑postmeddelande igen eller begär en ny.",
+        "reset_password_set": "Ange nytt lösenord",
+        "reset_password_subtitle": "Välj ett nytt lösenord för ditt konto.",
+        "reset_password_success": "Ditt lösenord har återställts. Logga in med det nya lösenordet.",
+        "reset_password_title": "Återställ ditt lösenord",
         "set_email": "Vad är din e-post?",
         "set_name": "Vad heter du?",
         "set_password": "Ställ in ditt lösenord",
@@ -422,6 +490,14 @@
             "invalid_email": "Ogiltig e-postadress",
             "invalid_email_password": "Ogiltig e-post eller lösenord",
             "login_success": "Du har loggat in",
+            "oidc_access_denied": "Åtkomst nekad: Ditt konto har inte den roll- eller gruppbehörighet som krävs",
+            "oidc_auth_failed": "OIDC-autentisering misslyckades",
+            "oidc_invalid_response": "Ogiltigt OIDC-svar mottaget",
+            "oidc_provider_error": "OIDC-leverantören returnerade ett fel",
+            "oidc_security_error": "OIDC-säkerhetsfel – möjlig CSRF-attack",
+            "oidc_session_expired": "OIDC-sessionen har löpt ut",
+            "oidc_token_expired": "OIDC-token har löpt ut",
+            "oidc_token_invalid": "OIDC-tokensignaturen är ogiltig",
             "problem_registering": "Problem med att registrera användare",
             "user_registered": "Användare registrerad"
         }
@@ -466,6 +542,7 @@
             "view_image": "Visa bild"
         },
         "edit_details": "Ändra detaljer",
+        "field": "Fält",
         "field_selector": "Fält alternativ",
         "field_value": "Fält värde",
         "first": "Första",
@@ -480,6 +557,7 @@
         "manufacturer": "Tillverkare",
         "model_number": "Modellnummer",
         "name": "Namn",
+        "negate_tags": "Negera valda taggar",
         "next_page": "Nästa sida",
         "no_attachments": "Inga bilagor hittades",
         "no_results": "Inga föremål hittades",
@@ -504,8 +582,10 @@
         "reset_search": "Återställ sökning",
         "results": "{ total } Resultat",
         "select_field": "Välj ett fält",
+        "select_value": "Välj ett värde",
         "serial_number": "Serienummer",
         "show_advanced_view_options": "Visa avancerade vyalternativ",
+        "show_empty": "Visa tomma",
         "sold_at": "Såld den",
         "sold_details": "Försäljningsdetaljer",
         "sold_price": "Försäljningspris",
@@ -585,12 +665,15 @@
     "languages.ro-RO": "Rumänska",
     "languages.sk-SK": "Slovakiska",
     "languages.sq-AL": "Albanska",
+    "languages.sr-RS": "Serbiska (Serbien)",
     "locations": {
         "child_locations": "Underordnade platser",
         "collapse_tree": "Dra ihop träd",
         "expand_tree": "Expandera Träd",
+        "hide_items": "Dölj objekt",
         "location_items_delete_confirm": "Är du säker på att du vill ta bort den här platsen och alla dess objekt? Denna åtgärd kan inte ångras.",
         "no_results": "Inga platser hittades",
+        "show_items": "Visa objekt",
         "toast": {
             "failed_delete_location": "Det gick inte att ta bort platsen",
             "failed_load_location": "Det gick inte att ladda platsen",
@@ -636,17 +719,42 @@
         "total_entries": "Totalt antal inlämningar"
     },
     "menu": {
+        "collection": "Samling",
         "create_item": "Artikel / Tillgång",
         "create_location": "Plats",
+        "create_tag": "Tagg",
         "home": "Hem",
         "locations": "Platser",
         "maintenance": "Underhåll",
         "profile": "Profil",
         "scanner": "Skanner",
-        "search": "Sök"
+        "search": "Sök",
+        "templates": "Mallar"
+    },
+    "pages": {
+        "templates": {
+            "no_templates": "Inga mallar ännu.",
+            "title": "Mallar"
+        }
     },
     "profile": {
         "active": "Aktiv",
+        "api_key_copied": "Kopierad till urklipp",
+        "api_key_copy": "Kopiera",
+        "api_key_create": "Skapa API-nyckel",
+        "api_key_created": "Skapad",
+        "api_key_delete_confirm": "Är du säker på att du vill återkalla denna API-nyckel? Alla klienter som använder den kommer omedelbart att förlora åtkomst.",
+        "api_key_expires_at": "Upphör",
+        "api_key_last_used": "Senast använd",
+        "api_key_name": "Namn",
+        "api_key_name_placeholder": "t.ex. Home Assistant",
+        "api_key_never_used": "Aldrig",
+        "api_key_no_expiration": "Ingen utgångstid",
+        "api_key_set_expiration": "Ange utgångsdatum",
+        "api_key_token_label": "Din nya API-nyckel",
+        "api_key_token_warning": "Kopiera denna token nu. Av säkerhetsskäl visas den inte igen.",
+        "api_keys": "API-nycklar",
+        "api_keys_sub": "Statiska tokens för åtkomst. Varje nyckel har samma behörigheter som ditt konto.",
         "change_password": "Ändra Lösenord",
         "currency_format": "Valuta format",
         "current_password": "Nuvarande lösenord",
@@ -662,7 +770,14 @@
         "inactive": "Inaktiv",
         "language": "Språk",
         "legacy_image_fit": "{ currentValue, select, true {Inaktivera äldre passform: Anpassa bild med staplar} false {Aktivera äldre passform: Fyll bild med beskärning} other {Inte träff}}",
+        "moved_notice_body": "Notifieringar, inbjudningar och valutainställningar har flyttats till samlingssidorna.",
+        "moved_notice_description": "Dessa inställningar hanteras nu per samling.",
+        "moved_notice_link_invites": "Samlingsinbjudningar",
+        "moved_notice_link_notifiers": "Samlingsnotifieringar",
+        "moved_notice_link_settings": "Samlingsinställningar för valuta",
+        "moved_notice_title": "Letar du efter notifieringar, inbjudningar eller valutainställningar?",
         "new_password": "Nytt lösenord",
+        "no_api_keys": "Inga API-nycklar ännu",
         "no_notifiers": "Inga notifierare konfigurerade",
         "no_override": "Ingen åsidosättning",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Anmälare",
@@ -674,6 +789,10 @@
         "theme_settings_sub": "Temainställningar sparas i din webbläsares lokala lagring. Du kan ändra tema när du vill. Om du\nhar problem att ställa in tema, pröva att ladda om din webbläsare.",
         "toast": {
             "account_deleted": "Ditt konto har raderats.",
+            "api_key_created": "API-nyckel skapad.",
+            "api_key_deleted": "API-nyckel återkallad.",
+            "failed_api_key_create": "Det gick inte att skapa API-nyckel.",
+            "failed_api_key_delete": "Det gick inte att återkalla API-nyckel.",
             "failed_change_password": "Misslyckades ändra lösenord.",
             "failed_create_notifier": "Det gick inte att skapa avisering.",
             "failed_delete_account": "Det gick inte att ta bort ditt konto.",
@@ -712,7 +831,16 @@
             "page_right_padding": "Sidans högra utfyllnad",
             "page_top_padding": "Sidans övre utfyllnad",
             "page_width": "Sidbredd",
+            "print_location_row": "Skriv ut platsrad",
             "qr_code_example": "QR-kod exempel",
+            "replace_homebox_behavior": "Beteende för att ersätta \"HomeBox\"-text",
+            "replace_homebox_behavior_always_replace": "Ersätt alltid \"HomeBox\"",
+            "replace_homebox_behavior_item_no_location": "Ersätt \"HomeBox\" när objekt saknar plats",
+            "replace_homebox_behavior_item_no_name": "Ersätt \"HomeBox\" när objekt saknar namn",
+            "replace_homebox_behavior_item_no_name_no_location": "Ersätt \"HomeBox\" när objekt saknar både namn och plats",
+            "replace_homebox_behavior_show_homebox": "Visa \"HomeBox\"",
+            "replace_homebox_text": "Ersättningstext",
+            "skip_first_labels": "Hoppa över första etiketterna",
             "tip_1": "Standardvärdena här är inställda för\n'<a href=\"https://www.avery.com/templates/5260\">'Avery 5260-etikettark'</a>'. Om du använder andra ark\nbehöver du ändra inställningarna för att matcha ditt ark.",
             "tip_2": "Om du anpassar ditt ark är dimensionerna i tum. När vi skapade 5260-arket upptäckte vi\natt dimensionerna i deras dokument inte stämde överens med vad som krävdes för att skriva ut innanför boxen.\n'<b>'Var beredd på att försöka flera gånger.'</b>'",
             "tip_3": "När du skriver ut, se till att:\n '<ol><li>'Ställa in marginalerna till 0 eller Ingen'</li><li>'Ställ in skalningen på 100%'</li><li>'Inaktivera dubbelsidig utskrift'</li><li>'Skriv ut en testsida innan du skriver ut flera sidor'</li></ol>'",
@@ -734,6 +862,34 @@
         "title": "Skanner",
         "unsupported": "Media Stream API stöds inte utan HTTPS"
     },
+    "scanner_ar": {
+        "ar_mode": "AR-läge",
+        "back": "Tillbaka",
+        "child_items": "{count, plural, one {underordnat objekt} other {underordnade objekt}}",
+        "children": "{count, plural, one {underplats} other {underplatser}}",
+        "items": "{count, plural, one {objekt} other {objekt}}",
+        "items_in_location": "{count, plural, one {objekt} other {objekt}}",
+        "more": "fler",
+        "not_found": "Objekt hittades inte",
+        "qty": "Antal",
+        "retry": "Försök igen",
+        "scanning": "Skannar",
+        "switch_camera": "Byt kamera",
+        "title": "AR-skanner",
+        "unsupported": "AR-skanning stöds inte i denna webbläsare"
+    },
+    "tags": {
+        "no_results": "Inga taggar hittades",
+        "tag_delete_confirm": "Är du säker på att du vill ta bort denna tagg? Denna åtgärd kan inte ångras.",
+        "toast": {
+            "failed_delete_tag": "Det gick inte att ta bort taggen",
+            "failed_load_tag": "Det gick inte att läsa in taggen",
+            "failed_update_tag": "Det gick inte att uppdatera taggen",
+            "tag_deleted": "Tagg borttagen",
+            "tag_updated": "Tagg uppdaterad"
+        },
+        "update_tag": "Uppdatera tagg"
+    },
     "tools": {
         "actions": "Lageråtgärder",
         "actions_set": {
@@ -752,12 +908,43 @@
             "set_primary_photo_button": "Ställ in primärt foto",
             "set_primary_photo_confirm": "Är du säker på att du vill ställa in primära foton? Detta kan ta en stund och kan inte ångras.",
             "set_primary_photo_sub": "I version v0.10.0 av Homebox lades det primära bildfältet till i bilagor av typen foto. Denna åtgärd kommer att sätta primära bild fältet till den första bilden i bifigade filer listan i databasen, om inte det redan är åtgärdat. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Se GitHub PR #576'</a>'",
+            "wipe_inventory": "Radera lager",
+            "wipe_inventory_button": "Radera lager",
+            "wipe_inventory_confirm": "Är du säker på att du vill radera hela ditt lager? Alla objekt kommer att tas bort och detta kan inte ångras.",
+            "wipe_inventory_locations": "Radera även alla platser",
+            "wipe_inventory_maintenance": "Radera även alla underhållsposter",
+            "wipe_inventory_note": "Obs: Endast gruppägare kan utföra denna åtgärd.",
+            "wipe_inventory_sub": "Raderar permanent alla objekt i ditt lager. Denna åtgärd går inte att ångra och tar bort all objektdata inklusive bilagor och foton.",
+            "wipe_inventory_tags": "Radera även alla taggar",
             "zero_datetimes": "Noll objekt datumtider",
             "zero_datetimes_button": "Noll objekt datumtider",
             "zero_datetimes_confirm": "Är du säker på att du vill återställa alla datum- och tidsvärden? Detta kan ta en stund och kan inte ångras.",
             "zero_datetimes_sub": "Återstället tidsvärdet för alla datumtidsfält i ditt lager till början av datumet. Detta är för att fixa en bugg som upptäcktes tidigare i utvecklingen på sidan som orsakade tidsvärden att bli sparade med tid, vilket orsakade problem med datum fält att visa korrekta värden. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Se Github Issue #236 för mer information.'</a>'"
         },
         "actions_sub": "Utför åtgärder på dina objekt i bulk. Dessa är oåterkalleliga. '<b>'Var försiktig.'</b>'",
+        "backups": "Säkerhetskopiering och återställning",
+        "backups_set": {
+            "create": "Skapa säkerhetskopia",
+            "create_button": "Starta säkerhetskopiering",
+            "create_sub": "Skapar en zip-fil med varje entitet, tagg, anpassat fält, bilaga och underhållspost i denna samling. Jobbet körs i bakgrunden och artefakten visas i tabellen nedan när den är klar.",
+            "delete_confirm": "Ta bort denna säkerhetskopia? Detta kan inte ångras.",
+            "download": "Ladda ner",
+            "failed": "Säkerhetskopiering misslyckades. Kontrollera serverloggarna för detaljer.",
+            "list_empty": "Inga säkerhetskopior ännu.",
+            "restore": "Återställ från säkerhetskopia",
+            "restore_button": "Ladda upp och återställ",
+            "restore_sub": "Ladda upp en zip-säkerhetskopia för att fylla denna samling. Samlingen får inte innehålla några objekt ännu — standardplatser och taggar rensas automatiskt som en del av återställningen.",
+            "table": {
+                "actions": "Funktioner",
+                "created": "Skapad",
+                "size": "Storlek",
+                "status": "Status"
+            }
+        },
+        "backups_sub": "Exportera hela din samling — entiteter, taggar, bilagor och metadata — till ett portabelt zip-arkiv. Återställ ett arkiv till en nyregistrerad, tom samling på denna eller en annan server.",
+        "demo_mode_error": {
+            "wipe_inventory": "Inventering, taggar, platser och underhållsposter kan inte raderas när HomeBox körs i demoläge. Kontrollera att du inte är i demoläge och försök igen."
+        },
         "import_export": "Import/Export",
         "import_export_set": {
             "export": "Exportera varulager",
@@ -781,11 +968,19 @@
         "reports_sub": "Generera olika rapporter för ditt lager.",
         "toast": {
             "asset_success": "{ results } objekt har uppdaterats.",
+            "backup_delete_failed": "Det gick inte att ta bort säkerhetskopian.",
+            "backup_start_failed": "Det gick inte att starta säkerhetskopieringen.",
+            "backup_started": "Säkerhetskopiering startad — säkerhetskopian visas i tabellen när den är klar.",
             "failed_create_missing_thumbnails": "Det gick inte att skapa saknade miniatyrer.",
             "failed_ensure_ids": "Det gick inte att säkerställa tillgångs-ID.",
             "failed_ensure_import_refs": "Det gick inte att säkerställa importreferenser.",
             "failed_set_primary_photos": "Det gick inte att ställa in primära foton.",
-            "failed_zero_datetimes": "Det gick inte att återställa datum- och tidsvärden."
+            "failed_wipe_inventory": "Det gick inte att radera lagret.",
+            "failed_zero_datetimes": "Det gick inte att återställa datum- och tidsvärden.",
+            "restore_failed": "Återställningen misslyckades.",
+            "restore_requires_empty": "Återställning kräver en samling utan objekt. Byt till en nyregistrerad samling (standardplatser och taggar går bra) och försök igen.",
+            "restore_started": "Återställning startad — uppdatera sidan för att se importerade objekt.",
+            "wipe_inventory_success": "Lagret har raderats. { results } objekt togs bort."
         }
     }
 }

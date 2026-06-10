@@ -15,6 +15,7 @@ var (
 	ContextUser      = &contextKeys{name: "User"}
 	ContextUserToken = &contextKeys{name: "UserToken"}
 	ContextTenant    = &contextKeys{name: "Tenant"}
+	ContextAPIKey    = &contextKeys{name: "APIKey"}
 )
 
 type Context struct {
@@ -88,4 +89,18 @@ func UseTenantCtx(ctx context.Context) uuid.UUID {
 // SetTenantCtx is a helper function that sets the ContextTenant in the context.
 func SetTenantCtx(ctx context.Context, tenantID uuid.UUID) context.Context {
 	return context.WithValue(ctx, ContextTenant, tenantID)
+}
+
+// SetAPIKeyAuth marks the request context as authenticated via a static API
+// key rather than a session token. Handlers that are session-specific (logout,
+// refresh) consult this flag via IsAPIKeyAuth.
+func SetAPIKeyAuth(ctx context.Context) context.Context {
+	return context.WithValue(ctx, ContextAPIKey, true)
+}
+
+// IsAPIKeyAuth reports whether the current request was authenticated via a
+// static API key.
+func IsAPIKeyAuth(ctx context.Context) bool {
+	v, _ := ctx.Value(ContextAPIKey).(bool)
+	return v
 }

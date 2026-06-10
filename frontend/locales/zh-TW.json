@@ -312,7 +312,9 @@
             "create_modal": {
                 "tag_color": "標籤顏色",
                 "tag_description": "標籤描述",
+                "tag_icon": "標籤圖示",
                 "tag_name": "標籤名稱",
+                "tag_parent": "母標籤",
                 "title": "建立標籤",
                 "toast": {
                     "already_creating": "已正在建立標籤",
@@ -322,6 +324,8 @@
                 }
             },
             "selector": {
+                "clear": "清除",
+                "no_tags_found": "找不到標籤",
                 "select_tags": "選擇標籤"
             }
         },

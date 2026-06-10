@@ -43,8 +43,8 @@ type Tag struct {
 type TagEdges struct {
 	// Group holds the value of the group edge.
 	Group *Group `json:"group,omitempty"`
-	// Items holds the value of the items edge.
-	Items []*Item `json:"items,omitempty"`
+	// Entities holds the value of the entities edge.
+	Entities []*Entity `json:"entities,omitempty"`
 	// Parent holds the value of the parent edge.
 	Parent *Tag `json:"parent,omitempty"`
 	// Children holds the value of the children edge.
@@ -65,13 +65,13 @@ func (e TagEdges) GroupOrErr() (*Group, error) {
 	return nil, &NotLoadedError{edge: "group"}
 }
 
-// ItemsOrErr returns the Items value or an error if the edge
+// EntitiesOrErr returns the Entities value or an error if the edge
 // was not loaded in eager-loading.
-func (e TagEdges) ItemsOrErr() ([]*Item, error) {
+func (e TagEdges) EntitiesOrErr() ([]*Entity, error) {
 	if e.loadedTypes[1] {
-		return e.Items, nil
+		return e.Entities, nil
 	}
-	return nil, &NotLoadedError{edge: "items"}
+	return nil, &NotLoadedError{edge: "entities"}
 }
 
 // ParentOrErr returns the Parent value or an error if the edge
@@ -198,9 +198,9 @@ func (_m *Tag) QueryGroup() *GroupQuery {
 	return NewTagClient(_m.config).QueryGroup(_m)
 }
 
-// QueryItems queries the "items" edge of the Tag entity.
-func (_m *Tag) QueryItems() *ItemQuery {
-	return NewTagClient(_m.config).QueryItems(_m)
+// QueryEntities queries the "entities" edge of the Tag entity.
+func (_m *Tag) QueryEntities() *EntityQuery {
+	return NewTagClient(_m.config).QueryEntities(_m)
 }
 
 // QueryParent queries the "parent" edge of the Tag entity.

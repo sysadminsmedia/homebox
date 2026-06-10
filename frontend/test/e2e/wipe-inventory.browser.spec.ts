@@ -27,7 +27,7 @@ async function mockStatus(page: Page, demo: boolean) {
   });
 }
 
-async function login(page: Page, email = "demo@example.com", password = "demo") {
+async function login(page: Page, email = "demo@example.com", password = "demodemo") {
   await page.goto("/home");
   await expect(page).toHaveURL("/");
   await page.fill("input[type='text']", email);

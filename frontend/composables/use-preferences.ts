@@ -1,5 +1,5 @@
 import type { Ref } from "vue";
-import type { ItemSummary } from "~/lib/api/types/data-contracts";
+import type { EntitySummary } from "~/lib/api/types/data-contracts";
 import type { DaisyTheme } from "~~/lib/data/themes";
 
 export type ViewType = "table" | "card";
@@ -19,7 +19,7 @@ export type LocationViewPreferences = {
   theme: DaisyTheme;
   itemsPerTablePage: number;
   tableHeaders?: {
-    value: keyof ItemSummary;
+    value: keyof EntitySummary;
     enabled: boolean;
   }[];
   displayLegacyHeader: boolean;
@@ -132,6 +132,8 @@ export function useViewPreferencesSync() {
   let pauseServerSaves = true;
   let applyingServerSnapshot = false;
   let saveInFlight = false;
+  let refreshInFlight = false;
+  let refreshRequested = false;
   let localRevision = 0;
   let syncedRevision = 0;
   let retryTimer: ReturnType<typeof setTimeout> | null = null;
@@ -185,17 +187,31 @@ export function useViewPreferencesSync() {
   }, 400);
 
   const refreshFromServer = async () => {
-    pauseServerSaves = true;
-    applyingServerSnapshot = true;
-    try {
-      await refreshViewPreferencesFromServer(preferences);
-    } finally {
-      applyingServerSnapshot = false;
+    refreshRequested = true;
+    if (refreshInFlight) {
+      return;
     }
-    pauseServerSaves = false;
 
-    if (syncedRevision < localRevision) {
-      void saveToServer();
+    refreshInFlight = true;
+    try {
+      while (refreshRequested) {
+        refreshRequested = false;
+
+        pauseServerSaves = true;
+        applyingServerSnapshot = true;
+        try {
+          await refreshViewPreferencesFromServer(preferences);
+        } finally {
+          applyingServerSnapshot = false;
+        }
+        pauseServerSaves = false;
+
+        if (syncedRevision < localRevision) {
+          await saveToServer();
+        }
+      }
+    } finally {
+      refreshInFlight = false;
     }
   };
 

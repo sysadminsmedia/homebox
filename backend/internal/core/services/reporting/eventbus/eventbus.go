@@ -11,10 +11,11 @@ import (
 type Event string
 
 const (
-	EventTagMutation      Event = "tags.mutation"
-	EventLocationMutation Event = "location.mutation"
-	EventItemMutation     Event = "item.mutation"
-	EventUserMutation     Event = "user.mutation"
+	EventTagMutation    Event = "tags.mutation"
+	EventEntityMutation Event = "entity.mutation"
+	EventUserMutation   Event = "user.mutation"
+	EventExportMutation Event = "export.mutation"
+	EventImportMutation Event = "import.mutation"
 )
 
 type GroupMutationEvent struct {
@@ -38,10 +39,11 @@ func New() *EventBus {
 	return &EventBus{
 		ch: make(chan eventData, 100),
 		subscribers: map[Event][]func(any){
-			EventTagMutation:      {},
-			EventLocationMutation: {},
-			EventItemMutation:     {},
-			EventUserMutation:     {},
+			EventTagMutation:    {},
+			EventEntityMutation: {},
+			EventUserMutation:   {},
+			EventExportMutation: {},
+			EventImportMutation: {},
 		},
 	}
 }
