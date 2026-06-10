@@ -24,6 +24,9 @@
   import TemplateSelector from "~/components/Template/Selector.vue";
 
   const { t } = useI18n();
+
+  useHead({ title: `HomeBox | ${t("collection.tabs.entity_types")}` });
+
   const api = useUserApi();
   const confirm = useConfirm();
   const { openDialog, closeDialog } = useDialog();
@@ -190,7 +193,7 @@
       </Button>
     </div>
 
-    <div v-if="entityTypes && entityTypes.length > 0" class="space-y-2">
+    <div v-if="entityTypes && entityTypes.length > 0" class="flex flex-col gap-2">
       <Card v-for="et in entityTypes" :key="et.id" class="p-4">
         <div class="flex items-center gap-3">
           <div
