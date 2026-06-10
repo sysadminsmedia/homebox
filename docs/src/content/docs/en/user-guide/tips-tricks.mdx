@@ -20,6 +20,16 @@ Custom fields are appended to the main details section of your item.
 > automatically converted to a clickable link in the UI. Optionally, you can also use Markdown syntax to add a custom
 > text to the button. `[Google](https://google.com)`
 
+## Search Syntax
+
+The search bar splits your input into individual terms, and every term must match somewhere in the item (name,
+description, serial number, model number, manufacturer, or notes). Each additional term narrows the results: searching
+`drill cordless` only returns items that match both `drill` and `cordless`, even if the words appear in different
+fields or in a different order.
+
+To match an exact phrase, wrap it in double quotes: `"blue storage box"` only matches items containing that exact
+text. Quoted phrases and plain terms can be combined, e.g. `drill "18 V"`.
+
 ## Managing Asset IDs
 
 Homebox provides the option to auto-set asset IDs; this is the default behavior. These can be used for tracking assets
