@@ -94,12 +94,14 @@
   } from "@/components/ui/tags-input";
   import type { TagOut } from "~/lib/api/types/data-contracts";
   import { Label } from "@/components/ui/label";
+  import { useTagStore } from "~/stores/tags";
 
   const { t } = useI18n();
 
   const id = useId();
 
   const api = useUserApi();
+  const tagStore = useTagStore();
 
   const emit = defineEmits(["update:modelValue"]);
   const props = defineProps({
@@ -184,6 +186,10 @@
     }
 
     toast.success(t("components.tag.create_modal.toast.create_success"));
+
+    // Without this the parent's `props.tags` array doesn't contain the new tag, so
+    // `display-value` falls through to "Loading..." and the chip is stuck.
+    await tagStore.refresh();
 
     modelValue.value = [...modelValue.value, data.id];
   };

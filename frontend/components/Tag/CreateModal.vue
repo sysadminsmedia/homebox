@@ -115,6 +115,7 @@
     }
 
     toast.success(t("components.tag.create_modal.toast.create_success"));
+    await tagStore.refresh();
     reset();
 
     if (close) {

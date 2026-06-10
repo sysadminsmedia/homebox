@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import type {
     EntityTypeCreate,
@@ -23,7 +22,6 @@
   import FormCheckbox from "~/components/Form/Checkbox.vue";
   import TemplateSelector from "~/components/Template/Selector.vue";
 
-  const { t } = useI18n();
   const api = useUserApi();
   const confirm = useConfirm();
   const { openDialog, closeDialog } = useDialog();
