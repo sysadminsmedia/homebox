@@ -1,4 +1,46 @@
 {
+    "collection": {
+        "copy_invite": "Copiar Link Convite",
+        "create_invite": "Criar Convite",
+        "delete_collection": "Eliminar Coleção",
+        "delete_confirm": "Tem a certeza que quer eliminar esta coleção? Esta ação não pode ser revertida.",
+        "deleted_collection": "Coleção eliminada.",
+        "expires_at": "Expira",
+        "invite_token": "Token",
+        "invite_token_hidden": "Já não é visível",
+        "invite_token_warning": "Tokens de convite só são mostrados uma vez. Copie este link agora: não poderá voltar a consultar este token depois de sair ou atualizar esta página.",
+        "invites": "Convites",
+        "invites_delete_confirm": "Tem a certeza que quer eliminar este convite?",
+        "leave_collection": "Sair da coleção",
+        "leave_confirm": "Tem a certeza que quer sair desta coleção?",
+        "left_collection": "Você saiu da coleção.",
+        "manage_collection": "Gerir Coleção",
+        "members": {
+            "cannot_remove_last": "Não pode remover o último membro.",
+            "email": "Email",
+            "empty": "Esta Coleção ainda não tem nenhum membro.",
+            "member": "Membro",
+            "name": "Nome",
+            "owner": "Dono",
+            "remove_confirm": "Tem a certeza que quer remover este membro?",
+            "removed": "Membro removido",
+            "role": "Papel"
+        },
+        "no_collections": {
+            "create": "Criar nova Coleção",
+            "join": "Entrar numa Cole­ção existente",
+            "message": "Parece que você não faz parte de uma Coleção. Por favor crie uma nova Coleção para as suas coisas, ou junte-se a uma para a qual tenha sido convidado.",
+            "title": "Nenhuma Coleção encontrada"
+        },
+        "no_invites": "Nenhum convite",
+        "remaining_uses": "Usos restantes",
+        "tabs": {
+            "invites": "Convites",
+            "members": "Membros",
+            "notifiers": "Notificadores",
+            "settings": "Definições"
+        }
+    },
     "components": {
         "app": {
             "create_modal": {

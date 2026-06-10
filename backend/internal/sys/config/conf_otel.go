@@ -1,5 +1,7 @@
 package config
 
+import "encoding/json"
+
 // OTelConfig contains OpenTelemetry configuration options.
 // All standard OpenTelemetry environment variables are also supported via the SDK.
 type OTelConfig struct {
@@ -50,4 +52,13 @@ type OTelConfig struct {
 
 	// ProxyEnabled enables the telemetry proxy endpoint for frontend tracing
 	ProxyEnabled bool `yaml:"proxy_enabled" conf:"default:true"`
+}
+
+func (o OTelConfig) MarshalJSON() ([]byte, error) {
+	type alias OTelConfig
+	a := alias(o)
+	if a.Headers != "" {
+		a.Headers = redactedValue
+	}
+	return json.Marshal(a)
 }

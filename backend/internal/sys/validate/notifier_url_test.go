@@ -6,6 +6,13 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 )
 
+// Repeated fixture values used across many test cases.
+const (
+	cidrPrivate24       = "192.168.1.0/24"
+	urlGenericIPv6Local = "generic://http://[fd00::1]/webhook"
+	urlGenericIPv4Local = "generic://http://192.168.1.100/webhook"
+)
+
 func TestValidateNotifierURL(t *testing.T) {
 	tests := []struct {
 		name        string
@@ -24,6 +31,17 @@ func TestValidateNotifierURL(t *testing.T) {
 		{
 			name: "generic notifier with public IP passes",
 			url:  "generic://https://example.com/webhook",
+			config: config.NotifierConf{
+				BlockLocalhost:     true,
+				BlockLocalNets:     true,
+				BlockBogonNets:     true,
+				BlockCloudMetadata: true,
+			},
+			expectError: false,
+		},
+		{
+			name: "generic notifier shorthand host/path passes",
+			url:  "generic://example.com/webhook",
 			config: config.NotifierConf{
 				BlockLocalhost:     true,
 				BlockLocalNets:     true,
@@ -108,7 +126,7 @@ func TestValidateNotifierURL(t *testing.T) {
 			name: "allow list permits private IP",
 			url:  "generic://http://192.168.1.1/webhook",
 			config: config.NotifierConf{
-				AllowNets:      []string{"192.168.1.0/24"},
+				AllowNets:      []string{cidrPrivate24},
 				BlockLocalNets: true,
 			},
 			expectError: false,
@@ -117,7 +135,7 @@ func TestValidateNotifierURL(t *testing.T) {
 			name: "allow list blocks non-matching IP",
 			url:  "generic://http://10.0.0.1/webhook",
 			config: config.NotifierConf{
-				AllowNets: []string{"192.168.1.0/24"},
+				AllowNets: []string{cidrPrivate24},
 			},
 			expectError: true,
 		},
@@ -133,7 +151,7 @@ func TestValidateNotifierURL(t *testing.T) {
 			name: "block_nets blocks specific network",
 			url:  "generic://http://192.168.1.1/webhook",
 			config: config.NotifierConf{
-				BlockNets: []string{"192.168.1.0/24"},
+				BlockNets: []string{cidrPrivate24},
 			},
 			expectError: true,
 		},
@@ -141,7 +159,7 @@ func TestValidateNotifierURL(t *testing.T) {
 			name: "block_nets allows non-matching network",
 			url:  "generic://http://10.0.0.1/webhook",
 			config: config.NotifierConf{
-				BlockNets: []string{"192.168.1.0/24"},
+				BlockNets: []string{cidrPrivate24},
 			},
 			expectError: false,
 		},
@@ -165,8 +183,8 @@ func TestValidateNotifierURL(t *testing.T) {
 			name: "allow_nets takes precedence over block_nets",
 			url:  "generic://http://192.168.1.1/webhook",
 			config: config.NotifierConf{
-				AllowNets: []string{"192.168.1.0/24"},
-				BlockNets: []string{"192.168.1.0/24"},
+				AllowNets: []string{cidrPrivate24},
+				BlockNets: []string{cidrPrivate24},
 			},
 			expectError: false,
 		},
@@ -189,7 +207,7 @@ func TestValidateNotifierURL(t *testing.T) {
 		},
 		{
 			name: "ipv6_ula_blocked_by_bogon_nets",
-			url:  "generic://http://[fd00::1]/webhook",
+			url:  urlGenericIPv6Local,
 			config: config.NotifierConf{
 				BlockBogonNets: true,
 			},
@@ -197,7 +215,7 @@ func TestValidateNotifierURL(t *testing.T) {
 		},
 		{
 			name: "ipv6_ula_allowed_when_bogon_nets_not_blocked",
-			url:  "generic://http://[fd00::1]/webhook",
+			url:  urlGenericIPv6Local,
 			config: config.NotifierConf{
 				BlockBogonNets: false,
 			},
@@ -205,7 +223,7 @@ func TestValidateNotifierURL(t *testing.T) {
 		},
 		{
 			name: "ipv6_ula_allowed_via_allow_nets",
-			url:  "generic://http://[fd00::1]/webhook",
+			url:  urlGenericIPv6Local,
 			config: config.NotifierConf{
 				AllowNets:      []string{"fd00::/8"},
 				BlockBogonNets: true,
@@ -262,7 +280,7 @@ func TestValidateNotifierURL(t *testing.T) {
 		},
 		{
 			name: "ipv6_ula_blocked_by_local_nets",
-			url:  "generic://http://[fd00::1]/webhook",
+			url:  urlGenericIPv6Local,
 			config: config.NotifierConf{
 				BlockLocalNets: true,
 			},
@@ -270,7 +288,7 @@ func TestValidateNotifierURL(t *testing.T) {
 		},
 		{
 			name: "ipv6_ula_allowed_when_local_nets_not_blocked",
-			url:  "generic://http://[fd00::1]/webhook",
+			url:  urlGenericIPv6Local,
 			config: config.NotifierConf{
 				BlockLocalNets: false,
 			},
@@ -329,6 +347,12 @@ func TestExtractGenericURL(t *testing.T) {
 			expectError: false,
 		},
 		{
+			name:        "generic:// shorthand defaults to https",
+			url:         "generic://example.com/webhook",
+			expected:    "https://example.com/webhook",
+			expectError: false,
+		},
+		{
 			name:        "generic+https://",
 			url:         "generic+https://example.com/webhook",
 			expected:    "https://example.com/webhook",
@@ -375,11 +399,11 @@ func TestValidateNotifierURL_InvalidCIDR_AllowNets(t *testing.T) {
 	}{
 		{
 			name: "invalid CIDR in AllowNets is skipped",
-			url:  "generic://http://192.168.1.100/webhook",
+			url:  urlGenericIPv4Local,
 			config: config.NotifierConf{
 				AllowNets: []string{
-					"invalid-cidr",   // Invalid - should be logged and skipped
-					"192.168.1.0/24", // Valid - should match
+					"invalid-cidr", // Invalid - should be logged and skipped
+					cidrPrivate24,  // Valid - should match
 				},
 			},
 			expectError: false,
@@ -387,7 +411,7 @@ func TestValidateNotifierURL_InvalidCIDR_AllowNets(t *testing.T) {
 		},
 		{
 			name: "all CIDRs invalid in AllowNets",
-			url:  "generic://http://192.168.1.100/webhook",
+			url:  urlGenericIPv4Local,
 			config: config.NotifierConf{
 				AllowNets: []string{
 					"invalid-cidr-1",
@@ -437,7 +461,7 @@ func TestValidateNotifierURL_InvalidCIDR_BlockNets(t *testing.T) {
 	}{
 		{
 			name: "invalid CIDR in BlockNets is skipped",
-			url:  "generic://http://192.168.1.100/webhook",
+			url:  urlGenericIPv4Local,
 			config: config.NotifierConf{
 				BlockNets: []string{
 					"invalid-cidr", // Invalid - should be logged and skipped
@@ -449,11 +473,11 @@ func TestValidateNotifierURL_InvalidCIDR_BlockNets(t *testing.T) {
 		},
 		{
 			name: "invalid CIDR doesn't prevent valid blocking",
-			url:  "generic://http://192.168.1.100/webhook",
+			url:  urlGenericIPv4Local,
 			config: config.NotifierConf{
 				BlockNets: []string{
 					"not-a-cidr",
-					"192.168.1.0/24", // Valid - should block
+					cidrPrivate24, // Valid - should block
 					"also-invalid",
 				},
 			},
@@ -462,7 +486,7 @@ func TestValidateNotifierURL_InvalidCIDR_BlockNets(t *testing.T) {
 		},
 		{
 			name: "all CIDRs invalid in BlockNets",
-			url:  "generic://http://192.168.1.100/webhook",
+			url:  urlGenericIPv4Local,
 			config: config.NotifierConf{
 				BlockNets: []string{
 					"invalid-1",

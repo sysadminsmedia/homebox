@@ -4,7 +4,8 @@ import DropdownAction from "./data-table-dropdown.vue";
 import { ArrowDown, ArrowUpDown, Check, X } from "lucide-vue-next";
 import Button from "~/components/ui/button/Button.vue";
 import Checkbox from "~/components/Form/Checkbox.vue";
-import type { ItemSummary } from "~/lib/api/types/data-contracts";
+import type { EntitySummary } from "~/lib/api/types/data-contracts";
+
 import Currency from "~/components/global/Currency.vue";
 import DateTime from "~/components/global/DateTime.vue";
 import { cn } from "~/lib/utils";
@@ -21,8 +22,8 @@ export function makeColumns({
   t: (key: string) => string;
   refresh?: () => void;
   disableSort?: boolean;
-}): ColumnDef<ItemSummary>[] {
-  const sortable = (column: Column<ItemSummary, unknown>, key: string) => {
+}): ColumnDef<EntitySummary>[] {
+  const sortable = (column: Column<EntitySummary, unknown>, key: string) => {
     const sortState = column.getIsSorted(); // 'asc' | 'desc' | false
     if (!sortState) {
       // show the neutral up/down icon when not sorted
@@ -153,7 +154,8 @@ export function makeColumns({
           () => sortable(column, "items.location")
         ),
       cell: ({ row }) => {
-        const loc = (row.original as ItemSummary).location as { id: string; name: string } | null;
+        const item = row.original as EntitySummary;
+        const loc = (item.location || item.parent) as { id: string; name: string } | null;
         if (loc) {
           return h("a", { href: `/location/${loc.id}`, class: "hover:underline text-sm" }, loc.name);
         }

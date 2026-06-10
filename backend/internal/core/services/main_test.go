@@ -82,7 +82,13 @@ func MainNoExit(m *testing.M) int {
 		currencies.CollectDefaults(),
 	)
 
-	tSvc = New(tRepos, WithCurrencies(defaults))
+	tSvc = New(tRepos,
+		WithCurrencies(defaults),
+		WithExportPlumbing(tbus, tClient, config.Storage{
+			PrefixPath: "/",
+			ConnString: "file://" + os.TempDir(),
+		}, "mem://{{ .Topic }}", "sqlite3"),
+	)
 	defer func() { _ = client.Close() }()
 
 	bootstrap()

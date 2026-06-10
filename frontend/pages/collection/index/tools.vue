@@ -53,6 +53,77 @@
       <BaseCard>
         <template #title>
           <BaseSectionHeader>
+            <MdiPackageVariant class="mr-2" />
+            <span> {{ $t("tools.backups") }} </span>
+            <template #description> {{ $t("tools.backups_sub") }} </template>
+          </BaseSectionHeader>
+        </template>
+        <div class="divide-y border-t px-6 pb-3">
+          <DetailAction @action="startBackup">
+            <template #title>{{ $t("tools.backups_set.create") }}</template>
+            {{ $t("tools.backups_set.create_sub") }}
+            <template #button> {{ $t("tools.backups_set.create_button") }} </template>
+          </DetailAction>
+          <div class="py-3">
+            <table v-if="backups.length > 0" class="w-full text-sm">
+              <thead>
+                <tr class="text-left text-muted-foreground">
+                  <th class="py-1">{{ $t("tools.backups_set.table.created") }}</th>
+                  <th class="py-1">{{ $t("tools.backups_set.table.status") }}</th>
+                  <th class="py-1">{{ $t("tools.backups_set.table.size") }}</th>
+                  <th class="py-1 text-right">{{ $t("tools.backups_set.table.actions") }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="b in backups" :key="b.id" class="border-t">
+                  <td class="py-2">{{ formatCreated(b.createdAt) }}</td>
+                  <td class="py-2">
+                    <span>{{ b.status }}</span>
+                    <span v-if="b.status === 'running'"> ({{ b.progress }}%)</span>
+                    <span
+                      v-if="b.status === 'failed' && b.error"
+                      class="block text-xs text-destructive"
+                      :title="b.error"
+                    >
+                      {{ $t("tools.backups_set.failed") }}
+                    </span>
+                  </td>
+                  <td class="py-2">{{ b.status === "completed" ? formatBytes(b.sizeBytes) : "—" }}</td>
+                  <td class="space-x-2 py-2 text-right">
+                    <a
+                      v-if="b.status === 'completed'"
+                      :href="downloadUrl(b.id)"
+                      class="text-primary underline"
+                      :download="`homebox-export-${b.id}.zip`"
+                    >
+                      {{ $t("tools.backups_set.download") }}
+                    </a>
+                    <button class="text-destructive underline" @click="deleteBackup(b.id)">
+                      {{ $t("global.delete") }}
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p v-else class="text-sm text-muted-foreground">
+              {{ $t("tools.backups_set.list_empty") }}
+            </p>
+          </div>
+          <DetailAction>
+            <template #title>{{ $t("tools.backups_set.restore") }}</template>
+            {{ $t("tools.backups_set.restore_sub") }}
+            <template #button>
+              <input ref="restoreInput" type="file" accept=".zip" class="hidden" @change="onRestoreFile" />
+              <button class="rounded bg-primary px-3 py-1 text-primary-foreground" @click="restoreInput?.click()">
+                {{ $t("tools.backups_set.restore_button") }}
+              </button>
+            </template>
+          </DetailAction>
+        </div>
+      </BaseCard>
+      <BaseCard>
+        <template #title>
+          <BaseSectionHeader>
             <MdiAlert class="mr-2" />
             <span> {{ $t("tools.actions") }} </span>
             <template #description>
@@ -110,6 +181,9 @@
   import MdiArrowRight from "~icons/mdi/arrow-right";
   import MdiDatabase from "~icons/mdi/database";
   import MdiAlert from "~icons/mdi/alert";
+  import MdiPackageVariant from "~icons/mdi/package-variant";
+  import { ServerEvent, onServerEvent } from "@/composables/use-server-events";
+  import type { CollectionExport } from "@/lib/api/classes/backups";
   import { useDialog } from "~/components/ui/dialog-provider";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
   import AppImportDialog from "@/components/App/ImportDialog.vue";
@@ -232,6 +306,90 @@
 
     toast.success(t("tools.toast.asset_success", { results: result.data.completed }));
   };
+
+  // ---------------------------------------------------------------------------
+  // Backup & Restore
+  // ---------------------------------------------------------------------------
+
+  const backups = ref<CollectionExport[]>([]);
+  const restoreInput = ref<HTMLInputElement | null>(null);
+
+  async function refreshBackups() {
+    const { data, error } = await api.backups.list();
+    if (error || !data) {
+      return;
+    }
+    backups.value = data.items ?? [];
+  }
+
+  // Initial fetch + live refresh on export/import lifecycle events.
+  refreshBackups();
+  onServerEvent(ServerEvent.ExportMutation, refreshBackups);
+  onServerEvent(ServerEvent.ImportMutation, refreshBackups);
+
+  function downloadUrl(id: string): string {
+    return api.backups.downloadURL(id);
+  }
+
+  function formatBytes(n: number): string {
+    if (!n) return "0 B";
+    const units = ["B", "KB", "MB", "GB"];
+    let i = 0;
+    let v = n;
+    while (v >= 1024 && i < units.length - 1) {
+      v /= 1024;
+      i++;
+    }
+    return `${v.toFixed(v >= 10 || i === 0 ? 0 : 1)} ${units[i]}`;
+  }
+
+  function formatCreated(iso: string): string {
+    return new Date(iso).toLocaleString();
+  }
+
+  async function startBackup() {
+    const { error } = await api.backups.startExport();
+    if (error) {
+      toast.error(t("tools.toast.backup_start_failed"));
+      return;
+    }
+    toast.success(t("tools.toast.backup_started"));
+    await refreshBackups();
+  }
+
+  async function deleteBackup(id: string) {
+    const { isCanceled } = await confirm.open(t("tools.backups_set.delete_confirm"));
+    if (isCanceled) {
+      return;
+    }
+    const { error } = await api.backups.delete(id);
+    if (error) {
+      toast.error(t("tools.toast.backup_delete_failed"));
+      return;
+    }
+    await refreshBackups();
+  }
+
+  async function onRestoreFile(e: Event) {
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
+    // Reset so the user can re-pick the same file later if needed.
+    input.value = "";
+    if (!file) {
+      return;
+    }
+    const { error, status } = await api.backups.importZip(file);
+    if (error) {
+      // 409 = empty-group precondition failed.
+      if (status === 409) {
+        toast.error(t("tools.toast.restore_requires_empty"));
+      } else {
+        toast.error(t("tools.toast.restore_failed"));
+      }
+      return;
+    }
+    toast.success(t("tools.toast.restore_started"));
+  }
 
   const wipeInventory = async () => {
     if (status.value?.demo) {

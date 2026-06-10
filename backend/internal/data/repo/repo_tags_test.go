@@ -141,7 +141,7 @@ func TestTagRepository_ParentChild(t *testing.T) {
 	// Fetch parent again, should have no children
 	foundParent, err = tRepos.Tags.GetOne(context.Background(), tGroup.ID, parentTag.ID)
 	require.NoError(t, err)
-	assert.Len(t, foundParent.Children, 0)
+	assert.Empty(t, foundParent.Children)
 }
 
 func TestTagRepository_MaxDepth(t *testing.T) {

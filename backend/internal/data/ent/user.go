@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -32,8 +33,6 @@ type User struct {
 	IsSuperuser bool `json:"is_superuser,omitempty"`
 	// Superuser holds the value of the "superuser" field.
 	Superuser bool `json:"superuser,omitempty"`
-	// Role holds the value of the "role" field.
-	Role user.Role `json:"role,omitempty"`
 	// ActivatedOn holds the value of the "activated_on" field.
 	ActivatedOn time.Time `json:"activated_on,omitempty"`
 	// OidcIssuer holds the value of the "oidc_issuer" field.
@@ -42,6 +41,8 @@ type User struct {
 	OidcSubject *string `json:"oidc_subject,omitempty"`
 	// DefaultGroupID holds the value of the "default_group_id" field.
 	DefaultGroupID *uuid.UUID `json:"default_group_id,omitempty"`
+	// Settings holds the value of the "settings" field.
+	Settings map[string]interface{} `json:"settings,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -54,11 +55,17 @@ type UserEdges struct {
 	Groups []*Group `json:"groups,omitempty"`
 	// AuthTokens holds the value of the auth_tokens edge.
 	AuthTokens []*AuthTokens `json:"auth_tokens,omitempty"`
+	// PasswordResetTokens holds the value of the password_reset_tokens edge.
+	PasswordResetTokens []*PasswordResetTokens `json:"password_reset_tokens,omitempty"`
+	// APIKeys holds the value of the api_keys edge.
+	APIKeys []*APIKey `json:"api_keys,omitempty"`
 	// Notifiers holds the value of the notifiers edge.
 	Notifiers []*Notifier `json:"notifiers,omitempty"`
+	// UserGroups holds the value of the user_groups edge.
+	UserGroups []*UserGroup `json:"user_groups,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [6]bool
 }
 
 // GroupsOrErr returns the Groups value or an error if the edge
@@ -79,13 +86,40 @@ func (e UserEdges) AuthTokensOrErr() ([]*AuthTokens, error) {
 	return nil, &NotLoadedError{edge: "auth_tokens"}
 }
 
+// PasswordResetTokensOrErr returns the PasswordResetTokens value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) PasswordResetTokensOrErr() ([]*PasswordResetTokens, error) {
+	if e.loadedTypes[2] {
+		return e.PasswordResetTokens, nil
+	}
+	return nil, &NotLoadedError{edge: "password_reset_tokens"}
+}
+
+// APIKeysOrErr returns the APIKeys value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) APIKeysOrErr() ([]*APIKey, error) {
+	if e.loadedTypes[3] {
+		return e.APIKeys, nil
+	}
+	return nil, &NotLoadedError{edge: "api_keys"}
+}
+
 // NotifiersOrErr returns the Notifiers value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) NotifiersOrErr() ([]*Notifier, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[4] {
 		return e.Notifiers, nil
 	}
 	return nil, &NotLoadedError{edge: "notifiers"}
+}
+
+// UserGroupsOrErr returns the UserGroups value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) UserGroupsOrErr() ([]*UserGroup, error) {
+	if e.loadedTypes[5] {
+		return e.UserGroups, nil
+	}
+	return nil, &NotLoadedError{edge: "user_groups"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -95,9 +129,11 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldDefaultGroupID:
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
+		case user.FieldSettings:
+			values[i] = new([]byte)
 		case user.FieldIsSuperuser, user.FieldSuperuser:
 			values[i] = new(sql.NullBool)
-		case user.FieldName, user.FieldEmail, user.FieldPassword, user.FieldRole, user.FieldOidcIssuer, user.FieldOidcSubject:
+		case user.FieldName, user.FieldEmail, user.FieldPassword, user.FieldOidcIssuer, user.FieldOidcSubject:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldActivatedOn:
 			values[i] = new(sql.NullTime)
@@ -167,12 +203,6 @@ func (_m *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Superuser = value.Bool
 			}
-		case user.FieldRole:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field role", values[i])
-			} else if value.Valid {
-				_m.Role = user.Role(value.String)
-			}
 		case user.FieldActivatedOn:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field activated_on", values[i])
@@ -200,6 +230,14 @@ func (_m *User) assignValues(columns []string, values []any) error {
 				_m.DefaultGroupID = new(uuid.UUID)
 				*_m.DefaultGroupID = *value.S.(*uuid.UUID)
 			}
+		case user.FieldSettings:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field settings", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.Settings); err != nil {
+					return fmt.Errorf("unmarshal field settings: %w", err)
+				}
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -223,9 +261,24 @@ func (_m *User) QueryAuthTokens() *AuthTokensQuery {
 	return NewUserClient(_m.config).QueryAuthTokens(_m)
 }
 
+// QueryPasswordResetTokens queries the "password_reset_tokens" edge of the User entity.
+func (_m *User) QueryPasswordResetTokens() *PasswordResetTokensQuery {
+	return NewUserClient(_m.config).QueryPasswordResetTokens(_m)
+}
+
+// QueryAPIKeys queries the "api_keys" edge of the User entity.
+func (_m *User) QueryAPIKeys() *APIKeyQuery {
+	return NewUserClient(_m.config).QueryAPIKeys(_m)
+}
+
 // QueryNotifiers queries the "notifiers" edge of the User entity.
 func (_m *User) QueryNotifiers() *NotifierQuery {
 	return NewUserClient(_m.config).QueryNotifiers(_m)
+}
+
+// QueryUserGroups queries the "user_groups" edge of the User entity.
+func (_m *User) QueryUserGroups() *UserGroupQuery {
+	return NewUserClient(_m.config).QueryUserGroups(_m)
 }
 
 // Update returns a builder for updating this User.
@@ -271,9 +324,6 @@ func (_m *User) String() string {
 	builder.WriteString("superuser=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Superuser))
 	builder.WriteString(", ")
-	builder.WriteString("role=")
-	builder.WriteString(fmt.Sprintf("%v", _m.Role))
-	builder.WriteString(", ")
 	builder.WriteString("activated_on=")
 	builder.WriteString(_m.ActivatedOn.Format(time.ANSIC))
 	builder.WriteString(", ")
@@ -291,6 +341,9 @@ func (_m *User) String() string {
 		builder.WriteString("default_group_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
+	builder.WriteString(", ")
+	builder.WriteString("settings=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Settings))
 	builder.WriteByte(')')
 	return builder.String()
 }

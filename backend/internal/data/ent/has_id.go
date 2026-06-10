@@ -4,6 +4,10 @@ package ent
 
 import "github.com/google/uuid"
 
+func (_m *APIKey) GetID() uuid.UUID {
+	return _m.ID
+}
+
 func (_m *Attachment) GetID() uuid.UUID {
 	return _m.ID
 }
@@ -16,6 +20,26 @@ func (_m *AuthTokens) GetID() uuid.UUID {
 	return _m.ID
 }
 
+func (_m *Entity) GetID() uuid.UUID {
+	return _m.ID
+}
+
+func (_m *EntityField) GetID() uuid.UUID {
+	return _m.ID
+}
+
+func (_m *EntityTemplate) GetID() uuid.UUID {
+	return _m.ID
+}
+
+func (_m *EntityType) GetID() uuid.UUID {
+	return _m.ID
+}
+
+func (_m *Export) GetID() uuid.UUID {
+	return _m.ID
+}
+
 func (_m *Group) GetID() uuid.UUID {
 	return _m.ID
 }
@@ -24,27 +48,15 @@ func (_m *GroupInvitationToken) GetID() uuid.UUID {
 	return _m.ID
 }
 
-func (_m *Item) GetID() uuid.UUID {
-	return _m.ID
-}
-
-func (_m *ItemField) GetID() uuid.UUID {
-	return _m.ID
-}
-
-func (_m *ItemTemplate) GetID() uuid.UUID {
-	return _m.ID
-}
-
-func (_m *Location) GetID() uuid.UUID {
-	return _m.ID
-}
-
 func (_m *MaintenanceEntry) GetID() uuid.UUID {
 	return _m.ID
 }
 
 func (_m *Notifier) GetID() uuid.UUID {
+	return _m.ID
+}
+
+func (_m *PasswordResetTokens) GetID() uuid.UUID {
 	return _m.ID
 }
 

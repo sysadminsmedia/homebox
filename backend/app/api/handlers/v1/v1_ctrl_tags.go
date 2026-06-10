@@ -15,7 +15,7 @@ import (
 //	@Summary	Get All Tags
 //	@Tags		Tags
 //	@Produce	json
-//	@Success	200	{object}	[]repo.TagOut
+//	@Success	200	{array}		repo.TagSummary
 //	@Router		/v1/tags [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleTagsGetAll() errchain.HandlerFunc {
@@ -33,7 +33,7 @@ func (ctrl *V1Controller) HandleTagsGetAll() errchain.HandlerFunc {
 //	@Tags		Tags
 //	@Produce	json
 //	@Param		payload	body		repo.TagCreate	true	"Tag Data"
-//	@Success	200		{object}	repo.TagSummary
+//	@Success	201		{object}	repo.TagOut
 //	@Router		/v1/tags [POST]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleTagsCreate() errchain.HandlerFunc {
@@ -87,8 +87,9 @@ func (ctrl *V1Controller) HandleTagGet() errchain.HandlerFunc {
 //	@Summary	Update Tag
 //	@Tags		Tags
 //	@Produce	json
-//	@Param		id	path		string	true	"Tag ID"
-//	@Success	200	{object}	repo.TagOut
+//	@Param		id		path		string			true	"Tag ID"
+//	@Param		payload	body		repo.TagUpdate	true	"Tag Data"
+//	@Success	200		{object}	repo.TagOut
 //	@Router		/v1/tags/{id} [PUT]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleTagUpdate() errchain.HandlerFunc {

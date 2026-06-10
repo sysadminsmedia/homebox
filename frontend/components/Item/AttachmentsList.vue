@@ -5,34 +5,66 @@
       :key="attachment.id"
       class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
     >
-      <div class="flex w-0 flex-1 items-center">
-        <MdiPaperclip class="size-5 shrink-0 text-gray-400" aria-hidden="true" />
-        <span class="ml-2 w-0 flex-1 truncate"> {{ attachment.title }}</span>
-      </div>
-      <div class="ml-4 flex shrink-0 gap-2">
-        <TooltipProvider :delay-duration="0">
-          <Tooltip>
-            <TooltipTrigger as-child>
-              <a
-                :class="buttonVariants({ size: 'icon' })"
-                :href="attachmentURL(attachment.id)"
-                :download="attachment.title"
-              >
-                <MdiDownload />
-              </a>
-            </TooltipTrigger>
-            <TooltipContent> {{ $t("components.item.attachments_list.download") }} </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger as-child>
-              <a :class="buttonVariants({ size: 'icon' })" :href="attachmentURL(attachment.id)" target="_blank">
-                <MdiOpenInNew />
-              </a>
-            </TooltipTrigger>
-            <TooltipContent> {{ $t("components.item.attachments_list.open_new_tab") }} </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
+      <template v-if="isExternalURLAttachment(attachment)">
+        <div class="flex w-0 flex-1 items-center">
+          <MdiLinkVariant class="size-5 shrink-0 text-gray-400" aria-hidden="true" />
+          <a
+            class="ml-2 w-0 flex-1 truncate text-primary underline"
+            :href="attachment.path"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {{ attachment.title }}
+          </a>
+        </div>
+        <div class="ml-4 flex shrink-0 gap-2">
+          <TooltipProvider :delay-duration="0">
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <a
+                  :class="buttonVariants({ size: 'icon' })"
+                  :href="attachment.path"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <MdiOpenInNew />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent> {{ $t("components.item.attachments_list.open_new_tab") }} </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      </template>
+      <template v-else>
+        <div class="flex w-0 flex-1 items-center">
+          <MdiPaperclip class="size-5 shrink-0 text-gray-400" aria-hidden="true" />
+          <span class="ml-2 w-0 flex-1 truncate"> {{ attachment.title }}</span>
+        </div>
+        <div class="ml-4 flex shrink-0 gap-2">
+          <TooltipProvider :delay-duration="0">
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <a
+                  :class="buttonVariants({ size: 'icon' })"
+                  :href="attachmentURL(attachment.id)"
+                  :download="attachment.title"
+                >
+                  <MdiDownload />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent> {{ $t("components.item.attachments_list.download") }} </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <a :class="buttonVariants({ size: 'icon' })" :href="attachmentURL(attachment.id)" target="_blank">
+                  <MdiOpenInNew />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent> {{ $t("components.item.attachments_list.open_new_tab") }} </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      </template>
     </li>
   </ul>
 </template>
@@ -40,6 +72,7 @@
 <script setup lang="ts">
   import type { ItemAttachment } from "~~/lib/api/types/data-contracts";
   import MdiPaperclip from "~icons/mdi/paperclip";
+  import MdiLinkVariant from "~icons/mdi/link-variant";
   import MdiDownload from "~icons/mdi/download";
   import MdiOpenInNew from "~icons/mdi/open-in-new";
   import { buttonVariants } from "@/components/ui/button";
@@ -59,7 +92,14 @@
   const api = useUserApi();
 
   function attachmentURL(attachmentId: string) {
-    return api.authURL(`/items/${props.itemId}/attachments/${attachmentId}`);
+    return api.authURL(`/entities/${props.itemId}/attachments/${attachmentId}`);
+  }
+
+  function isExternalURLAttachment(attachment: ItemAttachment) {
+    if (attachment.mimeType === "link/url") {
+      return true;
+    }
+    return attachment.path.startsWith("http://") || attachment.path.startsWith("https://");
   }
 </script>
 

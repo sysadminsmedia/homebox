@@ -230,6 +230,7 @@
 
   import MdiHome from "~icons/mdi/home";
   import MdiFileTree from "~icons/mdi/file-tree";
+  import MdiTagMultiple from "~icons/mdi/tag-multiple";
   import MdiMagnify from "~icons/mdi/magnify";
   import MdiQrcodeScan from "~icons/mdi/qrcode-scan";
   import MdiAccount from "~icons/mdi/account";
@@ -371,6 +372,7 @@
   ];
 
   const route = useRoute();
+  const router = useRouter();
 
   const nav: {
     icon: Component;
@@ -400,36 +402,43 @@
       to: "/locations",
     },
     {
-      icon: MdiMagnify,
+      icon: MdiTagMultiple,
       id: 2,
+      active: computed(() => route.path === "/tags"),
+      name: computed(() => t("global.tags")),
+      to: "/tags",
+    },
+    {
+      icon: MdiMagnify,
+      id: 3,
       active: computed(() => route.path === "/items"),
       name: computed(() => t("menu.search")),
       to: "/items",
     },
     {
       icon: MdiFileDocumentMultiple,
-      id: 3,
+      id: 4,
       active: computed(() => route.path === "/templates"),
       name: computed(() => t("menu.templates")),
       to: "/templates",
     },
     {
       icon: MdiWrench,
-      id: 4,
+      id: 5,
       active: computed(() => route.path === "/maintenance"),
       name: computed(() => t("menu.maintenance")),
       to: "/maintenance",
     },
     {
       icon: MdiAccount,
-      id: 5,
+      id: 6,
       active: computed(() => route.path === "/profile"),
       name: computed(() => t("menu.profile")),
       to: "/profile",
     },
     {
       icon: MdiCog,
-      id: 6,
+      id: 7,
       active: computed(() => route.path.includes("/collection")),
       name: computed(() => t("menu.collection")),
       to: "/collection/members",
@@ -460,6 +469,12 @@
         },
         {
           id: 65,
+          active: computed(() => route.path === "/collection/entity-types"),
+          name: computed(() => t("collection.tabs.entity_types")),
+          to: "/collection/entity-types",
+        },
+        {
+          id: 66,
           active: computed(() => route.path === "/collection/tools"),
           name: computed(() => t("collection.tabs.tools")),
           to: "/collection/tools",
@@ -491,23 +506,33 @@
   onMounted(() => {
     locationStore.refreshParents();
     locationStore.refreshTree();
+
+    // Auto-open JoinModal when invitation token is in URL
+    const token = route.query.token;
+    if (typeof token === "string" && token.length > 0) {
+      // Remove token from browser URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete("token");
+      window.history.replaceState(history.state, "", url.toString());
+
+      // Sync router's state to clear route.query.token
+      const { token: _, ...cleanQuery } = route.query;
+      router.replace({ query: cleanQuery });
+
+      openDialog(DialogID.JoinCollection, {
+        params: { inviteCode: token },
+      });
+    }
   });
 
   onServerEvent(ServerEvent.TagMutation, () => {
     tagStore.refresh();
   });
 
-  onServerEvent(ServerEvent.LocationMutation, () => {
+  onServerEvent(ServerEvent.EntityMutation, () => {
     locationStore.refreshChildren();
     locationStore.refreshParents();
     locationStore.refreshTree();
-  });
-
-  onServerEvent(ServerEvent.ItemMutation, () => {
-    // item mutations can affect locations counts
-    // so we need to refresh those as well
-    locationStore.refreshChildren();
-    locationStore.refreshParents();
   });
 
   const authCtx = useAuthContext();

@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import { computed } from "vue";
-  import type { ItemSummary } from "~/lib/api/types/data-contracts";
+  import type { EntitySummary } from "~/lib/api/types/data-contracts";
   import TagChip from "@/components/Tag/Chip.vue";
   import Badge from "~/components/ui/badge/Badge.vue";
 
   const props = defineProps<{
-    item: ItemSummary;
+    item: EntitySummary;
   }>();
 
   const itemTags = computed(() => {
@@ -19,9 +19,9 @@
       return "/no-image.jpg";
     }
     if (props.item.thumbnailId) {
-      return api.authURL(`/items/${props.item.id}/attachments/${props.item.thumbnailId}`);
+      return api.authURL(`/entities/${props.item.id}/attachments/${props.item.thumbnailId}`);
     } else {
-      return api.authURL(`/items/${props.item.id}/attachments/${props.item.imageId}`);
+      return api.authURL(`/entities/${props.item.id}/attachments/${props.item.imageId}`);
     }
   });
 </script>

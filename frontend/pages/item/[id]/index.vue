@@ -146,12 +146,12 @@
       item.value.attachments.reduce((acc, cur) => {
         if (cur.type === "photo") {
           const photo: Photo = {
-            originalSrc: api.authURL(`/items/${item.value!.id}/attachments/${cur.id}`),
+            originalSrc: api.authURL(`/entities/${item.value!.id}/attachments/${cur.id}`),
             originalType: cur.mimeType,
             attachmentId: cur.id,
           };
           if (cur.thumbnail) {
-            photo.thumbnailSrc = api.authURL(`/items/${item.value!.id}/attachments/${cur.thumbnail.id}`);
+            photo.thumbnailSrc = api.authURL(`/entities/${item.value!.id}/attachments/${cur.thumbnail.id}`);
           } else {
             photo.thumbnailSrc = photo.originalSrc; // fallback to itself if no thumbnail
           }
@@ -371,7 +371,7 @@
     if (preferences.value.showEmpty) {
       return true;
     }
-    return item.value?.purchaseFrom || item.value?.purchasePrice !== 0 || validDate(item.value?.purchaseTime);
+    return item.value?.purchaseFrom || item.value?.purchasePrice !== 0 || validDate(item.value?.purchaseDate);
   });
 
   const purchaseDetails = computed<Details>(() => {
@@ -387,7 +387,7 @@
       },
       {
         name: "items.purchase_date",
-        text: item.value?.purchaseTime || "",
+        text: item.value?.purchaseDate || "",
         type: "date",
         date: true,
       },
@@ -404,7 +404,7 @@
     if (preferences.value.showEmpty) {
       return true;
     }
-    return item.value?.soldTo || item.value?.soldPrice !== 0 || validDate(item.value?.soldTime);
+    return item.value?.soldTo || item.value?.soldPrice !== 0 || validDate(item.value?.soldDate);
   });
 
   const soldDetails = computed<Details>(() => {
@@ -420,7 +420,7 @@
       },
       {
         name: "items.sold_at",
-        text: item.value?.soldTime || "",
+        text: item.value?.soldDate || "",
         type: "date",
         date: true,
       },
@@ -591,15 +591,15 @@
       defaultModelNumber: item.value.modelNumber || "",
       defaultLifetimeWarranty: item.value.lifetimeWarranty,
       defaultWarrantyDetails: item.value.warrantyDetails || "",
-      defaultLocationId: item.value.location?.id || "",
+      defaultLocationId: item.value.location?.id || item.value.parent?.id || "",
       defaultTagIds: item.value.tags?.map(l => l.id) || [],
       includeWarrantyFields: !!(
         item.value.warrantyDetails ||
         item.value.lifetimeWarranty ||
         item.value.warrantyExpires
       ),
-      includePurchaseFields: !!(item.value.purchaseFrom || item.value.purchasePrice || item.value.purchaseTime),
-      includeSoldFields: !!(item.value.soldTo || item.value.soldPrice || item.value.soldTime),
+      includePurchaseFields: !!(item.value.purchaseFrom || item.value.purchasePrice || item.value.purchaseDate),
+      includeSoldFields: !!(item.value.soldTo || item.value.soldPrice || item.value.soldDate),
       fields: item.value.fields.map(field => ({
         id: NIL_UUID,
         name: field.name,

@@ -1,14 +1,20 @@
 import { format, formatDistance } from "date-fns";
+import { reactive } from "vue";
 /* eslint import/namespace: ['error', { allowComputed: true }] */
 import * as Locales from "date-fns/locale";
+import { isDateOnlyString, parseDateOnly } from "~/lib/datelib/dateOnly";
 import { fmtCurrency, fmtCurrencyAsync } from "./utils";
 
-const cache = {
+const cache = reactive({
   currency: "",
-};
+});
 
 export function resetCurrency() {
   cache.currency = "";
+}
+
+export function setCurrency(currency: string) {
+  cache.currency = currency;
 }
 
 export async function useFormatCurrency() {
@@ -17,7 +23,7 @@ export async function useFormatCurrency() {
 
     const { data: group } = await client.group.get();
 
-    if (group) {
+    if (group && cache.currency === "") {
       cache.currency = group.currency;
     }
   }
@@ -60,7 +66,17 @@ export function fmtDate(
   fmt: DateTimeFormat = "human",
   type: DateTimeType = "date"
 ): string {
-  const dt = typeof value === "string" || typeof value === "number" ? new Date(value) : value;
+  // YYYY-MM-DD must be parsed via local components — `new Date("2026-04-17")`
+  // is UTC midnight, which renders as the previous day in any timezone west
+  // of UTC.
+  let dt: Date | null;
+  if (isDateOnlyString(value)) {
+    dt = parseDateOnly(value);
+  } else if (typeof value === "string" || typeof value === "number") {
+    dt = new Date(value);
+  } else {
+    dt = value;
+  }
 
   if (!dt || !validDate(dt)) {
     return "";

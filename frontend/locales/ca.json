@@ -1,9 +1,54 @@
 {
+    "collection": {
+        "copy_invite": "Copiar enllaç d'invitació",
+        "create_invite": "Crear invitació",
+        "delete_collection": "Eliminar la col·lecció",
+        "delete_confirm": "N'estàs segur que vols eliminar aquesta col·lecció? Aquesta acció no es pot desfer",
+        "deleted_collection": "Col·lecció eliminada.",
+        "expires_at": "Caduca",
+        "invite_token": "Token",
+        "invite_token_hidden": "Ja no està disponible",
+        "invite_token_warning": "Els tokens d'invitació només es mostren una vegada. Copia el link ara; no podràs tornar a veure el token de nou després d'abandonar o refrescar aquesta pàgina.",
+        "invites": "Invitacions",
+        "invites_delete_confirm": "Estàs segur que vols eliminar aquesta invitació?",
+        "leave_collection": "Abandonar la Col·lecció",
+        "leave_confirm": "N'estàs segur que vols abandonar aquesta col·lecció?",
+        "left_collection": "Has abandonat la col·lecció.",
+        "manage_collection": "Gestiona la col·lecció",
+        "members": {
+            "cannot_remove_last": "No pots eliminar l'últim membre.",
+            "email": "Correu electrònic",
+            "empty": "Encara no hi ha membres a aquesta col·lecció.",
+            "member": "Membre",
+            "name": "Nom",
+            "owner": "Propietari",
+            "remove_confirm": "N'estàs segur que vols eliminar aquest membre?",
+            "removed": "Membre eliminat",
+            "role": "Rol"
+        },
+        "no_collections": {
+            "create": "Crea una col·lecció nova",
+            "join": "Uneix-te a una col·lecció existent",
+            "message": "Sembla que no formes part de cap col·lecció. Crea'n una de nova per les teves coses, o uneix-te'n a alguna que hi hagis estat convidat.",
+            "title": "No s'han trobat col·leccions"
+        },
+        "no_invites": "No hi ha invitacions",
+        "remaining_uses": "Usos restants",
+        "tabs": {
+            "invites": "Invitacions",
+            "members": "Membres",
+            "notifiers": "Notificadors",
+            "settings": "Configuració",
+            "tools": "Eines"
+        },
+        "uses": "Usos"
+    },
     "components": {
         "app": {
             "create_modal": {
                 "createAndAddAnother": "Utilitza {shiftKey} + {enterKey} per crear i afegir-ne un altre.",
-                "enter": "Entrar"
+                "enter": "Entrar",
+                "shift": "Canvi"
             },
             "import_dialog": {
                 "change_warning": "El comportament de les importacions amb import_refs existents ha canviat. Si hi ha un import_refs al fitxer CSV, \nl'article s'actualitzarà amb els valors del fitxer CSV.",
@@ -23,9 +68,53 @@
                 "new_version_available_link": "Fes clic aquí per veure les notes de la versió"
             }
         },
+        "collection": {
+            "create_modal": {
+                "name_label": "Nom de la col·lecció",
+                "title": "Crear col·lecció",
+                "toast": {
+                    "already_creating": "Ja s'està creant una col·lecció",
+                    "create_failed": "No s'ha pogut crear la col·lecció",
+                    "create_success": "Col·lecció creada",
+                    "please_enter_name": "Si us plau, introdueix un nom de col·lecció"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Si us plau, tria una data i hora de caducitat.",
+                    "invalid_expiry_past": "La data de caducitat ha de ser futura.",
+                    "invalid_uses": "Els usos ha de ser un nombre entre 1 i 100."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Code d'invitació a la col·lecció",
+                "invites_should_look_like": "Les invitacions haurien de tenir aquest aspecte:",
+                "join": "Uneix-te a la col·lecció",
+                "no_invite_code_create_one": "No tens codi d'invitació? Crea una col·lecció nova",
+                "title": "Uneix-te a la col·lecció",
+                "toast": {
+                    "already_joining": "Ja t'has unit a una col·lecció",
+                    "join_failed": "No s'ha pogut unir a la col·lecció",
+                    "join_success": "T'has unit a la col·lecció",
+                    "please_enter_valid_join_code": "Si us plau, entra un codi d'invitació vàlid"
+                }
+            },
+            "selector": {
+                "collection_options": "Opcions de la col·lecció",
+                "create_collection": "Crea una nova col·lecció",
+                "join_collection": "Uneix-te a la col·lecció existent",
+                "no_collection_found": "No s'ha trobat cap col·lecció",
+                "search_collections": "Cerca col·leccions…",
+                "select_collection": "Selecciona una col·lecció",
+                "your_collections": "Les teves col·leccions"
+            }
+        },
         "color_selector": {
             "clear": "Netejar color",
-            "color": "Color"
+            "color": "Color",
+            "no_color": "Sense color",
+            "no_color_selected": "No s'ha seleccionat cap color",
+            "randomize": "Color aleatori"
         },
         "form": {
             "password": {
@@ -34,6 +123,7 @@
         },
         "global": {
             "copy_text": {
+                "continue": "Continuar",
                 "documentation": "documentació",
                 "failed_to_copy": "No s'ha pogut copiar el text al porta-retalls",
                 "https_required": "perquè es requereix HTTPS",
@@ -65,6 +155,8 @@
             },
             "label_maker": {
                 "browser_print": "Imprimeix des del navegador",
+                "confirm_description": "N'estàs segur que vols imprimir aquesta etiqueta?",
+                "download": "Descarregar l'etiqueta",
                 "print": "Imprimir etiqueta",
                 "server_print": "Imprimeix al servidor",
                 "titles": "Etiquetes",
@@ -83,23 +175,84 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "Descarregar",
+                "open_new_tab": "Obrir a una pestanya nova"
+            },
             "create_modal": {
+                "clear_template": "Buidar la plantilla",
+                "delete_photo": "Suprimir la foto",
                 "item_description": "Descripció de l'article",
                 "item_name": "Nom de l'article",
                 "item_photo": "Foto de l'article 📷",
                 "item_quantity": "Quantitat de l'article",
                 "parent_item": "Article pare",
                 "product_tooltip_input_barcode": "Omplir automàticament amb un codi de barres proporcionat manualment",
-                "title": "Crea un article"
+                "product_tooltip_scan_barcode": "Auto-completar amb un codi de barres des de 📷",
+                "rotate_photo": "Girar la foto",
+                "set_as_primary_photo": "Establir com a { isPrimary, select, true {non-} false {} other {}} foto principal",
+                "title": "Crea un article",
+                "toast": {
+                    "already_creating": "Ja s'està creant un element",
+                    "create_failed": "No s'ha pogut crear l'element",
+                    "create_success": "Element creat",
+                    "failed_load_parent": "No s'ha pogut carregar l'element pare - selecciona-ho manualment",
+                    "no_canvas_support": "El teu navegador no té suport per operacions de canvas",
+                    "please_select_location": "Si us plau, selecciona una ubicació.",
+                    "rotate_failed": "No s'ha pogut girar la imatge: { error }",
+                    "rotate_process_failed": "No s'ha pogur processar la imatge girada",
+                    "some_photos_failed": "{count, plural, =0 {No hi ha fotos per carregar.} =1 {No s'ha pogut carregar 1 foto.} other {No s'han pogut carregar les fotos.}}",
+                    "upload_failed": "No s'ha pogut carregar la foto: { photoName }",
+                    "upload_success": "{count, plural, =0 {No s'han carregat fotos.} =1 {Fotografia carregada correctament.} other {Totes les fotos carregades correctament.}}",
+                    "uploading_photos": "{count, plural, =0 {No hi ha fotos per carregar} =1 {Carregat 1 foto…} other {Carregant {count} fotos…}}"
+                },
+                "upload_photos": "Carregar fotos",
+                "uploaded": "Foto carregada"
+            },
+            "product_import": {
+                "barcode": "Codi de barres del producte",
+                "db_source": "Font de la BBDD",
+                "error_exception": "S'ha produït un error al recuperar el codi de barres de l'article: ",
+                "error_invalid_barcode": "El codi de barres proporcionat no és vàlid",
+                "error_not_found": "No s'ha trobat cap producte amb el codi de barres indicat.",
+                "search_item": "Cerca un producte",
+                "title": "Importa un producte"
+            },
+            "selector": {
+                "clear": "Neteja la selecció d'elements",
+                "no_results": "No s'han trobat resultats",
+                "placeholder": "Selecciona…",
+                "search_placeholder": "Escriu per cercar…",
+                "searching": "Cercant…"
             },
             "view": {
+                "change_details": {
+                    "add_tags": "Afegir etiquetes",
+                    "failed_to_update_item": "No s'ha pogut carregar l'element",
+                    "remove_tags": "Eliminar etiquetes",
+                    "title": "Modificar els detalls de l'element"
+                },
                 "selectable": {
                     "card": "Targeta",
                     "items": "Articles",
                     "no_items": "No hi ha articles a mostrar",
+                    "select_all": "Seleccionar tots",
+                    "select_card": "Seleccionar la tarjeta",
+                    "select_row": "Seleccionar la fila",
                     "table": "Taula"
                 },
                 "table": {
+                    "dropdown": {
+                        "actions": "Accions",
+                        "change_location": "Canviar la ubicació",
+                        "change_location_success": "Ubicació modificada",
+                        "change_tags": "Modificar etiquetes",
+                        "change_tags_success": "Etiquetes modificades",
+                        "create_maintenance_item": "Crear entrada de manteniment per a l'article",
+                        "create_maintenance_selected": "Crear entrada de manteniment per als elements seleccionats",
+                        "create_maintenance_success": "Entrades de manteniment creades",
+                        "delete_confirmation": "N'estàs segur que vols suprimir els elements seleccionats? Aquesta acció no es pot desfer."
+                    },
                     "page": "Pàgina",
                     "rows_per_page": "Files per pàgina"
                 }
