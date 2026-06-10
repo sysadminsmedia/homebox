@@ -11,6 +11,7 @@
   import MdiPlusBoxMultipleOutline from "~icons/mdi/plus-box-multiple-outline";
   import MdiContentSaveEdit from "~icons/mdi/content-save-edit";
   import MdiDotsVertical from "~icons/mdi/dots-vertical";
+  import MdiShareVariant from "~icons/mdi/share-variant";
   import { Separator } from "@/components/ui/separator";
   import {
     DropdownMenu,
@@ -45,6 +46,7 @@
   import DetailsSection from "~/components/global/DetailsSection/DetailsSection.vue";
   import ItemAttachmentsList from "~/components/Item/AttachmentsList.vue";
   import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
+  import ItemSharePanel from "~/components/Item/SharePanel.vue";
 
   const { t } = useI18n();
 
@@ -57,6 +59,7 @@
   const route = useRoute();
   const router = useRouter();
   const api = useUserApi();
+  const { can } = usePermissions();
 
   const itemId = computed<string>(() => route.params.id as string);
   const preferences = useViewPreferences();
@@ -459,8 +462,12 @@
     return route.path;
   });
 
+  const canUpdateItem = computed(() => item.value?.capabilities?.includes("update") ?? false);
+  const canDeleteItem = computed(() => item.value?.capabilities?.includes("delete") ?? false);
+  const canManageItemPermissions = computed(() => item.value?.capabilities?.includes("permissions") ?? false);
+
   const tabs = computed(() => {
-    return [
+    const list = [
       {
         id: "details",
         name: "global.details",
@@ -471,12 +478,17 @@
         name: "global.maintenance",
         to: `/item/${itemId.value}/maintenance`,
       },
-      {
+    ];
+
+    if (canUpdateItem.value) {
+      list.push({
         id: "edit",
         name: "global.edit",
         to: `/item/${itemId.value}/edit`,
-      },
-    ];
+      });
+    }
+
+    return list;
   });
 
   const fullpath = computedAsync(async () => {
@@ -636,6 +648,14 @@
     <Title>{{ item.name }}</Title>
 
     <ItemImageDialog />
+    <Dialog v-if="canManageItemPermissions" :dialog-id="DialogID.ItemShare">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{{ $t("items.sharing.title") }}</DialogTitle>
+        </DialogHeader>
+        <ItemSharePanel :entity-id="itemId" />
+      </DialogContent>
+    </Dialog>
     <Dialog :dialog-id="DialogID.DuplicateTemporarySettings">
       <DialogContent>
         <DialogHeader>
@@ -709,32 +729,45 @@
                 type="asset"
               />
               <LabelMaker v-else :id="item.id" type="item" />
-              <Button class="w-9 md:w-auto" :aria-label="$t('global.create_subitem')" @click="createSubitem">
+              <Button
+                v-if="can('entity:create')"
+                class="w-9 md:w-auto"
+                :aria-label="$t('global.create_subitem')"
+                @click="createSubitem"
+              >
                 <MdiPlus />
                 <span class="hidden md:inline">{{ $t("global.create_subitem") }}</span>
               </Button>
 
               <!-- More actions dropdown -->
-              <DropdownMenu>
+              <DropdownMenu
+                v-if="can('entity:create') || can('template:manage') || canManageItemPermissions || canDeleteItem"
+              >
                 <DropdownMenuTrigger as-child>
                   <Button variant="outline" size="icon" :aria-label="$t('global.more_actions')">
                     <MdiDotsVertical class="size-5" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" class="w-48">
-                  <DropdownMenuItem @click="handleDuplicateClick">
+                  <DropdownMenuItem v-if="can('entity:create')" @click="handleDuplicateClick">
                     <MdiPlusBoxMultipleOutline class="mr-2 size-4" />
                     {{ $t("global.duplicate") }}
                   </DropdownMenuItem>
-                  <DropdownMenuItem @click="saveAsTemplate">
+                  <DropdownMenuItem v-if="can('template:manage')" @click="saveAsTemplate">
                     <MdiContentSaveEdit class="mr-2 size-4" />
                     {{ $t("components.template.save_as_template") }}
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem class="text-destructive focus:text-destructive" @click="deleteItem">
-                    <MdiDelete class="mr-2 size-4" />
-                    {{ $t("global.delete") }}
+                  <DropdownMenuItem v-if="canManageItemPermissions" @click="openDialog(DialogID.ItemShare)">
+                    <MdiShareVariant class="mr-2 size-4" />
+                    {{ $t("items.sharing.title") }}
                   </DropdownMenuItem>
+                  <template v-if="canDeleteItem">
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem class="text-destructive focus:text-destructive" @click="deleteItem">
+                      <MdiDelete class="mr-2 size-4" />
+                      {{ $t("global.delete") }}
+                    </DropdownMenuItem>
+                  </template>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

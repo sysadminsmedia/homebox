@@ -15,6 +15,7 @@ import (
 	"gocloud.dev/blob"
 
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authz"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
@@ -206,12 +207,8 @@ func (ctrl *V1Controller) HandleCollectionImport() errchain.HandlerFunc {
 
 		ctx := services.NewContext(r.Context())
 
-		isOwner, err := ctrl.repo.Groups.IsOwnerOf(ctx, ctx.UID, ctx.GID)
-		if err != nil {
-			return validate.NewRequestError(err, http.StatusInternalServerError)
-		}
-		if !isOwner {
-			return validate.NewRequestError(errors.New("only group owners can import"), http.StatusForbidden)
+		if !ctx.Viewer.Has(authz.PermDataImport) {
+			return validate.NewRequestError(errors.New("missing required permission: "+string(authz.PermDataImport)), http.StatusForbidden)
 		}
 
 		// Precondition: no items yet. Default seeded locations/tags are fine —

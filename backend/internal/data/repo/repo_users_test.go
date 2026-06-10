@@ -1,7 +1,6 @@
 package repo
 
 import (
-	"context"
 	"testing"
 
 	"github.com/google/uuid"
@@ -22,7 +21,7 @@ func userFactory() UserCreate {
 func TestUserRepo_GetOneEmail(t *testing.T) {
 	assert := assert.New(t)
 	user := userFactory()
-	ctx := context.Background()
+	ctx := testCtx()
 
 	_, err := tRepos.Users.Create(ctx, user)
 	require.NoError(t, err)
@@ -42,7 +41,7 @@ func TestUserRepo_GetOneEmail(t *testing.T) {
 func TestUserRepo_GetOneId(t *testing.T) {
 	assert := assert.New(t)
 	user := userFactory()
-	ctx := context.Background()
+	ctx := testCtx()
 
 	userOut, _ := tRepos.Users.Create(ctx, user)
 	foundUser, err := tRepos.Users.GetOneID(ctx, userOut.ID)
@@ -66,7 +65,7 @@ func TestUserRepo_GetAll(t *testing.T) {
 		userFactory(),
 	}
 
-	ctx := context.Background()
+	ctx := testCtx()
 
 	created := []UserOut{}
 
@@ -103,7 +102,7 @@ func TestUserRepo_GetAll(t *testing.T) {
 }
 
 func TestUserRepo_Update(t *testing.T) {
-	user, err := tRepos.Users.Create(context.Background(), userFactory())
+	user, err := tRepos.Users.Create(testCtx(), userFactory())
 	require.NoError(t, err)
 
 	updateData := UserUpdate{
@@ -112,11 +111,11 @@ func TestUserRepo_Update(t *testing.T) {
 	}
 
 	// Update
-	err = tRepos.Users.Update(context.Background(), user.ID, updateData)
+	err = tRepos.Users.Update(testCtx(), user.ID, updateData)
 	require.NoError(t, err)
 
 	// Validate
-	updated, err := tRepos.Users.GetOneID(context.Background(), user.ID)
+	updated, err := tRepos.Users.GetOneID(testCtx(), user.ID)
 	require.NoError(t, err)
 	assert.NotEqual(t, user.Name, updated.Name)
 	assert.NotEqual(t, user.Email, updated.Email)
@@ -126,12 +125,12 @@ func TestUserRepo_Delete(t *testing.T) {
 	// Create 10 Users
 	for i := 0; i < 10; i++ {
 		user := userFactory()
-		ctx := context.Background()
+		ctx := testCtx()
 		_, _ = tRepos.Users.Create(ctx, user)
 	}
 
 	// Delete all
-	ctx := context.Background()
+	ctx := testCtx()
 	allUsers, _ := tRepos.Users.GetAll(ctx)
 
 	assert.NotEmpty(t, allUsers)
@@ -149,7 +148,7 @@ func TestUserRepo_GetSuperusers(t *testing.T) {
 
 	for i := 0; i < 10; i++ {
 		user := userFactory()
-		ctx := context.Background()
+		ctx := testCtx()
 		_, _ = tRepos.Users.Create(ctx, user)
 
 		if user.IsSuperuser {
@@ -160,7 +159,7 @@ func TestUserRepo_GetSuperusers(t *testing.T) {
 	}
 
 	// Delete all
-	ctx := context.Background()
+	ctx := testCtx()
 
 	superUsers, err := tRepos.Users.GetSuperusers(ctx)
 	require.NoError(t, err)

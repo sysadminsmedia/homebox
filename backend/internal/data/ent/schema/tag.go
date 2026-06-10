@@ -4,6 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authzrules"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
@@ -40,4 +41,15 @@ func (Tag) Edges() []ent.Edge {
 			From("parent").
 			Unique(),
 	}
+}
+
+// Policy of the Tag: mutations require the matching permission and are
+// pinned to the viewer's tenant; reads are filtered by Interceptors.
+func (Tag) Policy() ent.Policy {
+	return authzrules.NewPolicy(authzrules.TagMutationRule())
+}
+
+// Interceptors of the Tag scope every read to the request viewer.
+func (Tag) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{authzrules.FilterTag()}
 }

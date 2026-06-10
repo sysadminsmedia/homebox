@@ -254,8 +254,19 @@ func (ctrl *V1Controller) HandleEntityGet() errchain.HandlerFunc {
 		out, err := ctrl.repo.Entities.GetOneByGroup(auth, auth.GID, ID)
 		if err != nil {
 			recordCtrlSpanError(span, err)
+			return out, err
 		}
-		return out, err
+
+		// Tell the UI what the caller may do with this entity (tenant-wide
+		// permissions plus row-level grants).
+		caps, err := ctrl.repo.Permissions.EntityCapabilities(auth, auth.Viewer, ID)
+		if err != nil {
+			recordCtrlSpanError(span, err)
+			return out, err
+		}
+		out.Capabilities = caps
+
+		return out, nil
 	}
 
 	return adapters.CommandID("id", fn, http.StatusOK)

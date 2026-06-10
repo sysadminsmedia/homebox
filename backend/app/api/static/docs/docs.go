@@ -1025,6 +1025,168 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/entities/{id}/permissions": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Lists the row-level access grants on one entity.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Get Entity Access Grants",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.AccessGrantOut"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Grants a user or permission group row-level access to one entity.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Create Entity Access Grant",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Grant Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.AccessGrantCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.AccessGrantOut"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/{id}/permissions/{grant_id}": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Update Entity Access Grant",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Grant ID",
+                        "name": "grant_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Grant Actions",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.AccessGrantUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.AccessGrantOut"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Delete Entity Access Grant",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Grant ID",
+                        "name": "grant_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
         "/v1/entity-types": {
             "get": {
                 "security": [
@@ -1648,6 +1810,309 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/groups/members/{user_id}/permissions": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Returns a member's direct permissions, permission groups, and effective set.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Get Member Permissions",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.MemberPermissions"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Set Member Direct Permissions",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Permissions",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.MemberPermissionsSet"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.MemberPermissions"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/groups/permission-groups": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Get All Permission Groups",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.PermissionGroupOut"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Create Permission Group",
+                "parameters": [
+                    {
+                        "description": "Permission Group Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.PermissionGroupCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.PermissionGroupOut"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/groups/permission-groups/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Get Permission Group",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Permission Group ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.PermissionGroupOut"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Update Permission Group",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Permission Group ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Permission Group Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.PermissionGroupUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.PermissionGroupOut"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Delete Permission Group",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Permission Group ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/groups/permission-groups/{id}/members": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Replaces the member list of a permission group. Every member must belong to the tenant.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Set Permission Group Members",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Permission Group ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Member List",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.PermissionGroupSetMembers"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.PermissionGroupOut"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/groups/permissions/self": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Returns the caller's effective permission set for the active tenant.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Get Caller's Effective Permissions",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/services.EffectivePermissionsOut"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/groups/statistics": {
             "get": {
                 "security": [
@@ -2145,6 +2610,33 @@ const docTemplate = `{
                 "responses": {
                     "204": {
                         "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/permissions/catalog": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Get Permission Catalog",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/services.PermissionDefinition"
+                            }
+                        }
                     }
                 }
             }
@@ -3288,6 +3780,100 @@ const docTemplate = `{
                 }
             }
         },
+        "ent.AccessGrant": {
+            "type": "object",
+            "properties": {
+                "can_attachments": {
+                    "description": "CanAttachments holds the value of the \"can_attachments\" field.",
+                    "type": "boolean"
+                },
+                "can_delete": {
+                    "description": "CanDelete holds the value of the \"can_delete\" field.",
+                    "type": "boolean"
+                },
+                "can_read": {
+                    "description": "CanRead holds the value of the \"can_read\" field.",
+                    "type": "boolean"
+                },
+                "can_update": {
+                    "description": "CanUpdate holds the value of the \"can_update\" field.",
+                    "type": "boolean"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the AccessGrantQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.AccessGrantEdges"
+                        }
+                    ]
+                },
+                "entity_id": {
+                    "description": "EntityID holds the value of the \"entity_id\" field.",
+                    "type": "string"
+                },
+                "group_id": {
+                    "description": "GroupID holds the value of the \"group_id\" field.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "permission_group_id": {
+                    "description": "PermissionGroupID holds the value of the \"permission_group_id\" field.",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "UserID holds the value of the \"user_id\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.AccessGrantEdges": {
+            "type": "object",
+            "properties": {
+                "entity": {
+                    "description": "Entity holds the value of the entity edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Entity"
+                        }
+                    ]
+                },
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                },
+                "permission_group": {
+                    "description": "PermissionGroup holds the value of the permission_group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.PermissionGroup"
+                        }
+                    ]
+                },
+                "user": {
+                    "description": "User holds the value of the user edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.User"
+                        }
+                    ]
+                }
+            }
+        },
         "ent.Attachment": {
             "type": "object",
             "properties": {
@@ -3569,6 +4155,13 @@ const docTemplate = `{
         "ent.EntityEdges": {
             "type": "object",
             "properties": {
+                "access_grants": {
+                    "description": "AccessGrants holds the value of the access_grants edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.AccessGrant"
+                    }
+                },
                 "attachments": {
                     "description": "Attachments holds the value of the attachments edge.",
                     "type": "array",
@@ -3995,6 +4588,13 @@ const docTemplate = `{
         "ent.GroupEdges": {
             "type": "object",
             "properties": {
+                "access_grants": {
+                    "description": "AccessGrants holds the value of the access_grants edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.AccessGrant"
+                    }
+                },
                 "entities": {
                     "description": "Entities holds the value of the entities edge.",
                     "type": "array",
@@ -4035,6 +4635,13 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/ent.Notifier"
+                    }
+                },
+                "permission_groups": {
+                    "description": "PermissionGroups holds the value of the permission_groups edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.PermissionGroup"
                     }
                 },
                 "tags": {
@@ -4082,6 +4689,13 @@ const docTemplate = `{
                 "id": {
                     "description": "ID of the ent.",
                     "type": "string"
+                },
+                "permissions": {
+                    "description": "Permissions holds the value of the \"permissions\" field.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "token": {
                     "description": "Token holds the value of the \"token\" field.",
@@ -4287,6 +4901,70 @@ const docTemplate = `{
                             "$ref": "#/definitions/ent.User"
                         }
                     ]
+                }
+            }
+        },
+        "ent.PermissionGroup": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description holds the value of the \"description\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the PermissionGroupQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.PermissionGroupEdges"
+                        }
+                    ]
+                },
+                "group_id": {
+                    "description": "GroupID holds the value of the \"group_id\" field.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "permissions": {
+                    "description": "Permissions holds the value of the \"permissions\" field.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.PermissionGroupEdges": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                },
+                "users": {
+                    "description": "Users holds the value of the users edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.User"
+                    }
                 }
             }
         },
@@ -4536,6 +5214,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/ent.PasswordResetTokens"
                     }
                 },
+                "permission_groups": {
+                    "description": "PermissionGroups holds the value of the permission_groups edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.PermissionGroup"
+                    }
+                },
                 "user_groups": {
                     "description": "UserGroups holds the value of the user_groups edge.",
                     "type": "array",
@@ -4559,6 +5244,13 @@ const docTemplate = `{
                 "group_id": {
                     "description": "GroupID holds the value of the \"group_id\" field.",
                     "type": "string"
+                },
+                "permissions": {
+                    "description": "Permissions holds the value of the \"permissions\" field.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "role": {
                     "description": "Role holds the value of the \"role\" field.",
@@ -4710,6 +5402,66 @@ const docTemplate = `{
                 }
             }
         },
+        "repo.AccessGrantCreate": {
+            "type": "object",
+            "required": [
+                "actions",
+                "targetId",
+                "targetType"
+            ],
+            "properties": {
+                "actions": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "targetId": {
+                    "type": "string"
+                },
+                "targetType": {
+                    "type": "string",
+                    "enum": [
+                        "user",
+                        "permissionGroup"
+                    ]
+                }
+            }
+        },
+        "repo.AccessGrantOut": {
+            "type": "object",
+            "properties": {
+                "actions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "entityId": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "targetId": {
+                    "type": "string"
+                },
+                "targetName": {
+                    "type": "string"
+                },
+                "targetType": {
+                    "type": "string",
+                    "enum": [
+                        "user",
+                        "permissionGroup"
+                    ]
+                }
+            }
+        },
         "repo.BarcodeProduct": {
             "type": "object",
             "properties": {
@@ -4852,6 +5604,13 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/repo.ItemAttachment"
+                    }
+                },
+                "capabilities": {
+                    "description": "Capabilities lists the actions the caller may perform on this\nentity (read, update, delete, attachments, permissions). Populated\nonly on single-entity fetches.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
                     }
                 },
                 "children": {
@@ -5636,6 +6395,12 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "uses": {
                     "type": "integer"
                 }
@@ -5833,6 +6598,35 @@ const docTemplate = `{
                 "MaintenanceFilterStatusBoth"
             ]
         },
+        "repo.MemberPermissions": {
+            "type": "object",
+            "properties": {
+                "direct": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "effective": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "permissionGroups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.PermissionGroupSummary"
+                    }
+                },
+                "role": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
         "repo.NotifierCreate": {
             "type": "object",
             "required": [
@@ -5919,6 +6713,99 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "repo.PermissionGroupCreate": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "repo.PermissionGroupOut": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "members": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.UserSummary"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.PermissionGroupSummary": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "repo.PermissionGroupUpdate": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -6231,6 +7118,26 @@ const docTemplate = `{
                 }
             }
         },
+        "services.EffectivePermissionsOut": {
+            "type": "object",
+            "properties": {
+                "groupId": {
+                    "type": "string"
+                },
+                "isOwner": {
+                    "type": "boolean"
+                },
+                "isSuperuser": {
+                    "type": "boolean"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "services.Latest": {
             "type": "object",
             "properties": {
@@ -6238,6 +7145,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "services.PermissionDefinition": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "resource": {
                     "type": "string"
                 }
             }
@@ -6322,6 +7243,21 @@ const docTemplate = `{
                 },
                 "versions": {
                     "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "v1.AccessGrantUpdate": {
+            "type": "object",
+            "required": [
+                "actions"
+            ],
+            "properties": {
+                "actions": {
+                    "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "string"
                     }
@@ -6434,6 +7370,12 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "token": {
                     "type": "string"
                 },
@@ -6450,6 +7392,13 @@ const docTemplate = `{
             "properties": {
                 "expiresAt": {
                     "type": "string"
+                },
+                "permissions": {
+                    "description": "Permissions applied to the membership created on acceptance.\nEmpty means full access (matches pre-permission behavior).",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "uses": {
                     "type": "integer",
@@ -6474,6 +7423,17 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.MemberPermissionsSet": {
+            "type": "object",
+            "properties": {
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "v1.OIDCStatus": {
             "type": "object",
             "properties": {
@@ -6488,6 +7448,17 @@ const docTemplate = `{
                 },
                 "enabled": {
                     "type": "boolean"
+                }
+            }
+        },
+        "v1.PermissionGroupSetMembers": {
+            "type": "object",
+            "properties": {
+                "userIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },

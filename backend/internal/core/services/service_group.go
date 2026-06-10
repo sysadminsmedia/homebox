@@ -2,10 +2,14 @@ package services
 
 import (
 	"errors"
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authz"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
 )
 
@@ -34,20 +38,38 @@ func (svc *GroupService) CreateGroup(ctx Context, name string) (repo.Group, erro
 		return repo.Group{}, errors.New("user ID cannot be empty when creating a group")
 	}
 
-	return svc.repos.Groups.GroupCreate(ctx.Context, name, ctx.UID)
+	// Creating a tenant also creates the owner membership in the new tenant,
+	// where the caller has no viewer yet.
+	return svc.repos.Groups.GroupCreate(authz.NewSystemContext(ctx.Context), name, ctx.UID)
 }
 
 func (svc *GroupService) DeleteGroup(ctx Context) error {
 	return svc.repos.Groups.GroupDelete(ctx.Context, ctx.GID)
 }
 
-func (svc *GroupService) NewInvitation(ctx Context, uses int, expiresAt time.Time) (repo.GroupInvitation, string, error) {
+// NewInvitation creates an invitation token. permissions selects the
+// tenant-wide permissions applied to the membership created on acceptance;
+// nil/empty means full access (pre-permission-system behavior). The ORM layer
+// additionally rejects invitations carrying permissions the inviter does not
+// hold (unless the inviter has permissions:manage).
+func (svc *GroupService) NewInvitation(ctx Context, uses int, expiresAt time.Time, permissions []string) (repo.GroupInvitation, string, error) {
+	if invalid := authz.ValidateStrings(permissions); len(invalid) > 0 {
+		return repo.GroupInvitation{}, "", validate.NewFieldErrors(validate.FieldError{
+			Field: "permissions",
+			Error: "unknown permissions: " + strings.Join(invalid, ", "),
+		})
+	}
+	if len(permissions) == 0 {
+		permissions = authz.FullAccess()
+	}
+
 	token := hasher.GenerateToken()
 
 	invitation, err := svc.repos.Groups.InvitationCreate(ctx, ctx.GID, repo.GroupInvitationCreate{
-		Token:     token.Hash,
-		Uses:      uses,
-		ExpiresAt: expiresAt,
+		Token:       token.Hash,
+		Uses:        uses,
+		ExpiresAt:   expiresAt,
+		Permissions: permissions,
 	})
 	if err != nil {
 		return repo.GroupInvitation{}, "", err
@@ -61,13 +83,28 @@ func (svc *GroupService) RemoveMember(ctx Context, userID uuid.UUID) error {
 		return errors.New("user ID cannot be empty")
 	}
 
-	err := svc.repos.Groups.RemoveMember(ctx.Context, ctx.GID, userID)
+	removeCtx := ctx.Context
+	if userID == ctx.UID {
+		// Self-leave: any member may leave a tenant without members:manage.
+		// The privacy layer would deny the membership delete, so this runs
+		// under a system context after the identity check above.
+		removeCtx = authz.NewSystemContext(removeCtx)
+	}
+
+	err := svc.repos.Groups.RemoveMember(removeCtx, ctx.GID, userID)
 	if err != nil {
+		if errors.Is(err, repo.ErrLastAdmin) {
+			return validate.NewRequestError(err, http.StatusConflict)
+		}
 		return err
 	}
 
+	// Post-removal bookkeeping runs under a system context: the removed user
+	// may no longer share a tenant with the caller and would be invisible.
+	sysCtx := authz.NewSystemContext(ctx.Context)
+
 	// If the removed group was the user's default group, reassign to another group
-	removedUser, err := svc.repos.Users.GetOneID(ctx.Context, userID)
+	removedUser, err := svc.repos.Users.GetOneID(sysCtx, userID)
 	if err != nil {
 		return err
 	}
@@ -82,7 +119,7 @@ func (svc *GroupService) RemoveMember(ctx Context, userID uuid.UUID) error {
 			}
 		}
 		// Update to another group, or uuid.Nil if the user has no remaining groups
-		if err := svc.repos.Users.UpdateDefaultGroup(ctx.Context, userID, newDefaultGroupID); err != nil {
+		if err := svc.repos.Users.UpdateDefaultGroup(sysCtx, userID, newDefaultGroupID); err != nil {
 			return err
 		}
 	}
@@ -96,5 +133,7 @@ func (svc *GroupService) DeleteInvitation(ctx Context, id uuid.UUID) error {
 
 func (svc *GroupService) AcceptInvitation(ctx Context, token string) (repo.Group, error) {
 	hashedToken := hasher.HashToken(token)
-	return svc.repos.Groups.InvitationAccept(ctx.Context, hashedToken, ctx.UID)
+	// The invitation token is the authorization: it creates a membership in a
+	// tenant the caller is not yet a member of.
+	return svc.repos.Groups.InvitationAccept(authz.NewSystemContext(ctx.Context), hashedToken, ctx.UID)
 }

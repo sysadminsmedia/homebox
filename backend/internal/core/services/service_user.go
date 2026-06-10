@@ -4,14 +4,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"strings"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authz"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/mailer"
 	"go.opentelemetry.io/otel/attribute"
@@ -73,6 +76,9 @@ func SkipPasswordValidation() RegisterOption {
 // RegisterUser creates a new user and group in the data with the provided data. It also bootstraps the user's group
 // with default Tags and Locations.
 func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration, opts ...RegisterOption) (repo.UserOut, error) {
+	// Authentication flow: runs before any viewer exists; the token or
+	// credentials in the arguments are the authorization.
+	ctx = authz.NewSystemContext(ctx)
 	options := registerOptions{}
 	for _, o := range opts {
 		o(&options)
@@ -182,6 +188,8 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration,
 		IsSuperuser:    false,
 		DefaultGroupID: group.ID,
 		IsOwner:        creatingGroup,
+		// Invited members get the permissions chosen at invite time.
+		Permissions: token.Permissions,
 	}
 
 	usr, err := svc.repos.Users.Create(ctx, usrCreate)
@@ -247,6 +255,9 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration,
 
 // GetSelf returns the user that is currently logged in based of the token provided within
 func (svc *UserService) GetSelf(ctx context.Context, requestToken string) (repo.UserOut, error) {
+	// Authentication flow: runs before any viewer exists; the token or
+	// credentials in the arguments are the authorization.
+	ctx = authz.NewSystemContext(ctx)
 	ctx, span := entityServiceTracer().Start(ctx, "service.UserService.GetSelf",
 		trace.WithAttributes(attribute.Int("token.length", len(requestToken))))
 	defer span.End()
@@ -348,6 +359,9 @@ func (svc *UserService) createSessionToken(ctx context.Context, userID uuid.UUID
 // every branch (user-not-found, OIDC-only user, password mismatch, password rehash)
 // so an intermittent password rejection trace points directly at the failing step.
 func (svc *UserService) Login(ctx context.Context, username, password string, extendedSession bool) (UserAuthTokenDetail, error) {
+	// Authentication flow: runs before any viewer exists; the token or
+	// credentials in the arguments are the authorization.
+	ctx = authz.NewSystemContext(ctx)
 	ctx, span := entityServiceTracer().Start(ctx, "service.UserService.Login",
 		trace.WithAttributes(
 			attribute.Int("user.email.length", len(username)),
@@ -431,6 +445,9 @@ func (svc *UserService) Login(ctx context.Context, username, password string, ex
 // It now uses issuer + subject for identity association (OIDC spec compliance).
 // If the user doesn't exist, it will create one.
 func (svc *UserService) LoginOIDC(ctx context.Context, issuer, subject, email, name string) (UserAuthTokenDetail, error) {
+	// Authentication flow: runs before any viewer exists; the token or
+	// credentials in the arguments are the authorization.
+	ctx = authz.NewSystemContext(ctx)
 	ctx, span := entityServiceTracer().Start(ctx, "service.UserService.LoginOIDC",
 		trace.WithAttributes(
 			attribute.String("oidc.issuer", issuer),
@@ -584,6 +601,9 @@ func (svc *UserService) registerOIDCUser(ctx context.Context, issuer, subject, e
 }
 
 func (svc *UserService) Logout(ctx context.Context, token string) error {
+	// Authentication flow: runs before any viewer exists; the token or
+	// credentials in the arguments are the authorization.
+	ctx = authz.NewSystemContext(ctx)
 	ctx, span := entityServiceTracer().Start(ctx, "service.UserService.Logout",
 		trace.WithAttributes(attribute.Int("token.length", len(token))))
 	defer span.End()
@@ -595,6 +615,9 @@ func (svc *UserService) Logout(ctx context.Context, token string) error {
 }
 
 func (svc *UserService) RenewToken(ctx context.Context, token string) (UserAuthTokenDetail, error) {
+	// Authentication flow: runs before any viewer exists; the token or
+	// credentials in the arguments are the authorization.
+	ctx = authz.NewSystemContext(ctx)
 	ctx, span := entityServiceTracer().Start(ctx, "service.UserService.RenewToken",
 		trace.WithAttributes(attribute.Int("token.length", len(token))))
 	defer span.End()
@@ -644,7 +667,36 @@ func (svc *UserService) DeleteSelf(ctx context.Context, id uuid.UUID) error {
 		trace.WithAttributes(attribute.String("user.id", id.String())))
 	defer span.End()
 
-	err := svc.repos.Users.Delete(ctx, id)
+	// Last-admin guard: deleting this account must not orphan a tenant that
+	// still has other members but would lose its only permissions admin.
+	sysCtx := authz.NewSystemContext(ctx)
+	usr, err := svc.repos.Users.GetOneID(sysCtx, id)
+	if err != nil {
+		recordServiceSpanError(span, err)
+		return err
+	}
+	for _, gid := range usr.GroupIDs {
+		members, err := svc.repos.Permissions.MemberCount(sysCtx, gid)
+		if err != nil {
+			recordServiceSpanError(span, err)
+			return err
+		}
+		if members <= 1 {
+			continue // sole member: nothing to orphan
+		}
+		holders, err := svc.repos.Permissions.AdminHolders(sysCtx, gid, id)
+		if err != nil {
+			recordServiceSpanError(span, err)
+			return err
+		}
+		if holders == 0 {
+			err := validate.NewRequestError(repo.ErrLastAdmin, http.StatusConflict)
+			recordServiceSpanError(span, err)
+			return err
+		}
+	}
+
+	err = svc.repos.Users.Delete(ctx, id)
 	recordServiceSpanError(span, err)
 	return err
 }
@@ -747,6 +799,7 @@ func (svc *UserService) SetSettings(ctx context.Context, uid uuid.UUID, settings
 // EnsureUserPassword ensures that the user with the given email has the specified password. If the password does not match, it updates the user's password to the new value.
 // WARNING: This method bypasses normal checks, it should only be used for demos and/or superuser level administrative processes.
 func (svc *UserService) EnsureUserPassword(ctx context.Context, email, password string) error {
+	ctx = authz.NewSystemContext(ctx) // pre-auth flow
 	ctx, span := entityServiceTracer().Start(ctx, "service.UserService.EnsureUserPassword",
 		trace.WithAttributes(
 			attribute.Int("user.email.length", len(email)),
@@ -848,6 +901,7 @@ func (svc *UserService) DeleteAPIKey(ctx context.Context, userID, id uuid.UUID) 
 
 // ExistsByEmail returns true if a user with the given email exists.
 func (svc *UserService) ExistsByEmail(ctx context.Context, email string) bool {
+	ctx = authz.NewSystemContext(ctx) // pre-auth flow
 	ctx, span := entityServiceTracer().Start(ctx, "service.UserService.ExistsByEmail",
 		trace.WithAttributes(attribute.Int("user.email.length", len(email))))
 	defer span.End()

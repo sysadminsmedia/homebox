@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authzrules"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
@@ -53,6 +54,8 @@ func (Group) Edges() []ent.Edge {
 		owned("notifiers", Notifier.Type),
 		owned("entity_templates", EntityTemplate.Type),
 		owned("exports", Export.Type),
+		owned("permission_groups", PermissionGroup.Type),
+		owned("access_grants", AccessGrant.Type),
 		// $scaffold_edge
 	}
 }
@@ -86,4 +89,15 @@ func (g GroupMixin) Edges() []ent.Edge {
 	}
 
 	return []ent.Edge{e}
+}
+
+// Policy of the Group: mutations require the matching permission and are
+// pinned to the viewer's tenant; reads are filtered by Interceptors.
+func (Group) Policy() ent.Policy {
+	return authzrules.NewPolicy(authzrules.GroupMutationRule())
+}
+
+// Interceptors of the Group scope every read to the request viewer.
+func (Group) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{authzrules.FilterGroup()}
 }

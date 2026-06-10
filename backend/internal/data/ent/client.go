@@ -16,6 +16,7 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/accessgrant"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/apikey"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
@@ -30,6 +31,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/passwordresettokens"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/permissiongroup"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
@@ -43,6 +45,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// APIKey is the client for interacting with the APIKey builders.
 	APIKey *APIKeyClient
+	// AccessGrant is the client for interacting with the AccessGrant builders.
+	AccessGrant *AccessGrantClient
 	// Attachment is the client for interacting with the Attachment builders.
 	Attachment *AttachmentClient
 	// AuthRoles is the client for interacting with the AuthRoles builders.
@@ -69,6 +73,8 @@ type Client struct {
 	Notifier *NotifierClient
 	// PasswordResetTokens is the client for interacting with the PasswordResetTokens builders.
 	PasswordResetTokens *PasswordResetTokensClient
+	// PermissionGroup is the client for interacting with the PermissionGroup builders.
+	PermissionGroup *PermissionGroupClient
 	// Tag is the client for interacting with the Tag builders.
 	Tag *TagClient
 	// TemplateField is the client for interacting with the TemplateField builders.
@@ -89,6 +95,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.APIKey = NewAPIKeyClient(c.config)
+	c.AccessGrant = NewAccessGrantClient(c.config)
 	c.Attachment = NewAttachmentClient(c.config)
 	c.AuthRoles = NewAuthRolesClient(c.config)
 	c.AuthTokens = NewAuthTokensClient(c.config)
@@ -102,6 +109,7 @@ func (c *Client) init() {
 	c.MaintenanceEntry = NewMaintenanceEntryClient(c.config)
 	c.Notifier = NewNotifierClient(c.config)
 	c.PasswordResetTokens = NewPasswordResetTokensClient(c.config)
+	c.PermissionGroup = NewPermissionGroupClient(c.config)
 	c.Tag = NewTagClient(c.config)
 	c.TemplateField = NewTemplateFieldClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -199,6 +207,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:                  ctx,
 		config:               cfg,
 		APIKey:               NewAPIKeyClient(cfg),
+		AccessGrant:          NewAccessGrantClient(cfg),
 		Attachment:           NewAttachmentClient(cfg),
 		AuthRoles:            NewAuthRolesClient(cfg),
 		AuthTokens:           NewAuthTokensClient(cfg),
@@ -212,6 +221,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		MaintenanceEntry:     NewMaintenanceEntryClient(cfg),
 		Notifier:             NewNotifierClient(cfg),
 		PasswordResetTokens:  NewPasswordResetTokensClient(cfg),
+		PermissionGroup:      NewPermissionGroupClient(cfg),
 		Tag:                  NewTagClient(cfg),
 		TemplateField:        NewTemplateFieldClient(cfg),
 		User:                 NewUserClient(cfg),
@@ -236,6 +246,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:                  ctx,
 		config:               cfg,
 		APIKey:               NewAPIKeyClient(cfg),
+		AccessGrant:          NewAccessGrantClient(cfg),
 		Attachment:           NewAttachmentClient(cfg),
 		AuthRoles:            NewAuthRolesClient(cfg),
 		AuthTokens:           NewAuthTokensClient(cfg),
@@ -249,6 +260,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		MaintenanceEntry:     NewMaintenanceEntryClient(cfg),
 		Notifier:             NewNotifierClient(cfg),
 		PasswordResetTokens:  NewPasswordResetTokensClient(cfg),
+		PermissionGroup:      NewPermissionGroupClient(cfg),
 		Tag:                  NewTagClient(cfg),
 		TemplateField:        NewTemplateFieldClient(cfg),
 		User:                 NewUserClient(cfg),
@@ -282,10 +294,10 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.APIKey, c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity, c.EntityField,
-		c.EntityTemplate, c.EntityType, c.Export, c.Group, c.GroupInvitationToken,
-		c.MaintenanceEntry, c.Notifier, c.PasswordResetTokens, c.Tag, c.TemplateField,
-		c.User, c.UserGroup,
+		c.APIKey, c.AccessGrant, c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity,
+		c.EntityField, c.EntityTemplate, c.EntityType, c.Export, c.Group,
+		c.GroupInvitationToken, c.MaintenanceEntry, c.Notifier, c.PasswordResetTokens,
+		c.PermissionGroup, c.Tag, c.TemplateField, c.User, c.UserGroup,
 	} {
 		n.Use(hooks...)
 	}
@@ -295,10 +307,10 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.APIKey, c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity, c.EntityField,
-		c.EntityTemplate, c.EntityType, c.Export, c.Group, c.GroupInvitationToken,
-		c.MaintenanceEntry, c.Notifier, c.PasswordResetTokens, c.Tag, c.TemplateField,
-		c.User, c.UserGroup,
+		c.APIKey, c.AccessGrant, c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity,
+		c.EntityField, c.EntityTemplate, c.EntityType, c.Export, c.Group,
+		c.GroupInvitationToken, c.MaintenanceEntry, c.Notifier, c.PasswordResetTokens,
+		c.PermissionGroup, c.Tag, c.TemplateField, c.User, c.UserGroup,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -309,6 +321,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *APIKeyMutation:
 		return c.APIKey.mutate(ctx, m)
+	case *AccessGrantMutation:
+		return c.AccessGrant.mutate(ctx, m)
 	case *AttachmentMutation:
 		return c.Attachment.mutate(ctx, m)
 	case *AuthRolesMutation:
@@ -335,6 +349,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Notifier.mutate(ctx, m)
 	case *PasswordResetTokensMutation:
 		return c.PasswordResetTokens.mutate(ctx, m)
+	case *PermissionGroupMutation:
+		return c.PermissionGroup.mutate(ctx, m)
 	case *TagMutation:
 		return c.Tag.mutate(ctx, m)
 	case *TemplateFieldMutation:
@@ -474,12 +490,14 @@ func (c *APIKeyClient) QueryUser(_m *APIKey) *UserQuery {
 
 // Hooks returns the client hooks.
 func (c *APIKeyClient) Hooks() []Hook {
-	return c.hooks.APIKey
+	hooks := c.hooks.APIKey
+	return append(hooks[:len(hooks):len(hooks)], apikey.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *APIKeyClient) Interceptors() []Interceptor {
-	return c.inters.APIKey
+	inters := c.inters.APIKey
+	return append(inters[:len(inters):len(inters)], apikey.Interceptors[:]...)
 }
 
 func (c *APIKeyClient) mutate(ctx context.Context, m *APIKeyMutation) (Value, error) {
@@ -494,6 +512,205 @@ func (c *APIKeyClient) mutate(ctx context.Context, m *APIKeyMutation) (Value, er
 		return (&APIKeyDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown APIKey mutation op: %q", m.Op())
+	}
+}
+
+// AccessGrantClient is a client for the AccessGrant schema.
+type AccessGrantClient struct {
+	config
+}
+
+// NewAccessGrantClient returns a client for the AccessGrant from the given config.
+func NewAccessGrantClient(c config) *AccessGrantClient {
+	return &AccessGrantClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `accessgrant.Hooks(f(g(h())))`.
+func (c *AccessGrantClient) Use(hooks ...Hook) {
+	c.hooks.AccessGrant = append(c.hooks.AccessGrant, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `accessgrant.Intercept(f(g(h())))`.
+func (c *AccessGrantClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AccessGrant = append(c.inters.AccessGrant, interceptors...)
+}
+
+// Create returns a builder for creating a AccessGrant entity.
+func (c *AccessGrantClient) Create() *AccessGrantCreate {
+	mutation := newAccessGrantMutation(c.config, OpCreate)
+	return &AccessGrantCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AccessGrant entities.
+func (c *AccessGrantClient) CreateBulk(builders ...*AccessGrantCreate) *AccessGrantCreateBulk {
+	return &AccessGrantCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AccessGrantClient) MapCreateBulk(slice any, setFunc func(*AccessGrantCreate, int)) *AccessGrantCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AccessGrantCreateBulk{err: fmt.Errorf("calling to AccessGrantClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AccessGrantCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AccessGrantCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AccessGrant.
+func (c *AccessGrantClient) Update() *AccessGrantUpdate {
+	mutation := newAccessGrantMutation(c.config, OpUpdate)
+	return &AccessGrantUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AccessGrantClient) UpdateOne(_m *AccessGrant) *AccessGrantUpdateOne {
+	mutation := newAccessGrantMutation(c.config, OpUpdateOne, withAccessGrant(_m))
+	return &AccessGrantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AccessGrantClient) UpdateOneID(id uuid.UUID) *AccessGrantUpdateOne {
+	mutation := newAccessGrantMutation(c.config, OpUpdateOne, withAccessGrantID(id))
+	return &AccessGrantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AccessGrant.
+func (c *AccessGrantClient) Delete() *AccessGrantDelete {
+	mutation := newAccessGrantMutation(c.config, OpDelete)
+	return &AccessGrantDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AccessGrantClient) DeleteOne(_m *AccessGrant) *AccessGrantDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AccessGrantClient) DeleteOneID(id uuid.UUID) *AccessGrantDeleteOne {
+	builder := c.Delete().Where(accessgrant.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AccessGrantDeleteOne{builder}
+}
+
+// Query returns a query builder for AccessGrant.
+func (c *AccessGrantClient) Query() *AccessGrantQuery {
+	return &AccessGrantQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAccessGrant},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AccessGrant entity by its id.
+func (c *AccessGrantClient) Get(ctx context.Context, id uuid.UUID) (*AccessGrant, error) {
+	return c.Query().Where(accessgrant.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AccessGrantClient) GetX(ctx context.Context, id uuid.UUID) *AccessGrant {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryGroup queries the group edge of a AccessGrant.
+func (c *AccessGrantClient) QueryGroup(_m *AccessGrant) *GroupQuery {
+	query := (&GroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(accessgrant.Table, accessgrant.FieldID, id),
+			sqlgraph.To(group.Table, group.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, accessgrant.GroupTable, accessgrant.GroupColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEntity queries the entity edge of a AccessGrant.
+func (c *AccessGrantClient) QueryEntity(_m *AccessGrant) *EntityQuery {
+	query := (&EntityClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(accessgrant.Table, accessgrant.FieldID, id),
+			sqlgraph.To(entity.Table, entity.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, accessgrant.EntityTable, accessgrant.EntityColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUser queries the user edge of a AccessGrant.
+func (c *AccessGrantClient) QueryUser(_m *AccessGrant) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(accessgrant.Table, accessgrant.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, accessgrant.UserTable, accessgrant.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPermissionGroup queries the permission_group edge of a AccessGrant.
+func (c *AccessGrantClient) QueryPermissionGroup(_m *AccessGrant) *PermissionGroupQuery {
+	query := (&PermissionGroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(accessgrant.Table, accessgrant.FieldID, id),
+			sqlgraph.To(permissiongroup.Table, permissiongroup.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, accessgrant.PermissionGroupTable, accessgrant.PermissionGroupColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AccessGrantClient) Hooks() []Hook {
+	hooks := c.hooks.AccessGrant
+	return append(hooks[:len(hooks):len(hooks)], accessgrant.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *AccessGrantClient) Interceptors() []Interceptor {
+	inters := c.inters.AccessGrant
+	return append(inters[:len(inters):len(inters)], accessgrant.Interceptors[:]...)
+}
+
+func (c *AccessGrantClient) mutate(ctx context.Context, m *AccessGrantMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AccessGrantCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AccessGrantUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AccessGrantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AccessGrantDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AccessGrant mutation op: %q", m.Op())
 	}
 }
 
@@ -639,12 +856,14 @@ func (c *AttachmentClient) QueryThumbnail(_m *Attachment) *AttachmentQuery {
 
 // Hooks returns the client hooks.
 func (c *AttachmentClient) Hooks() []Hook {
-	return c.hooks.Attachment
+	hooks := c.hooks.Attachment
+	return append(hooks[:len(hooks):len(hooks)], attachment.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *AttachmentClient) Interceptors() []Interceptor {
-	return c.inters.Attachment
+	inters := c.inters.Attachment
+	return append(inters[:len(inters):len(inters)], attachment.Interceptors[:]...)
 }
 
 func (c *AttachmentClient) mutate(ctx context.Context, m *AttachmentMutation) (Value, error) {
@@ -788,12 +1007,14 @@ func (c *AuthRolesClient) QueryToken(_m *AuthRoles) *AuthTokensQuery {
 
 // Hooks returns the client hooks.
 func (c *AuthRolesClient) Hooks() []Hook {
-	return c.hooks.AuthRoles
+	hooks := c.hooks.AuthRoles
+	return append(hooks[:len(hooks):len(hooks)], authroles.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *AuthRolesClient) Interceptors() []Interceptor {
-	return c.inters.AuthRoles
+	inters := c.inters.AuthRoles
+	return append(inters[:len(inters):len(inters)], authroles.Interceptors[:]...)
 }
 
 func (c *AuthRolesClient) mutate(ctx context.Context, m *AuthRolesMutation) (Value, error) {
@@ -953,12 +1174,14 @@ func (c *AuthTokensClient) QueryRoles(_m *AuthTokens) *AuthRolesQuery {
 
 // Hooks returns the client hooks.
 func (c *AuthTokensClient) Hooks() []Hook {
-	return c.hooks.AuthTokens
+	hooks := c.hooks.AuthTokens
+	return append(hooks[:len(hooks):len(hooks)], authtokens.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *AuthTokensClient) Interceptors() []Interceptor {
-	return c.inters.AuthTokens
+	inters := c.inters.AuthTokens
+	return append(inters[:len(inters):len(inters)], authtokens.Interceptors[:]...)
 }
 
 func (c *AuthTokensClient) mutate(ctx context.Context, m *AuthTokensMutation) (Value, error) {
@@ -1212,14 +1435,32 @@ func (c *EntityClient) QueryAttachments(_m *Entity) *AttachmentQuery {
 	return query
 }
 
+// QueryAccessGrants queries the access_grants edge of a Entity.
+func (c *EntityClient) QueryAccessGrants(_m *Entity) *AccessGrantQuery {
+	query := (&AccessGrantClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entity.Table, entity.FieldID, id),
+			sqlgraph.To(accessgrant.Table, accessgrant.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, entity.AccessGrantsTable, entity.AccessGrantsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *EntityClient) Hooks() []Hook {
-	return c.hooks.Entity
+	hooks := c.hooks.Entity
+	return append(hooks[:len(hooks):len(hooks)], entity.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *EntityClient) Interceptors() []Interceptor {
-	return c.inters.Entity
+	inters := c.inters.Entity
+	return append(inters[:len(inters):len(inters)], entity.Interceptors[:]...)
 }
 
 func (c *EntityClient) mutate(ctx context.Context, m *EntityMutation) (Value, error) {
@@ -1363,12 +1604,14 @@ func (c *EntityFieldClient) QueryEntity(_m *EntityField) *EntityQuery {
 
 // Hooks returns the client hooks.
 func (c *EntityFieldClient) Hooks() []Hook {
-	return c.hooks.EntityField
+	hooks := c.hooks.EntityField
+	return append(hooks[:len(hooks):len(hooks)], entityfield.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *EntityFieldClient) Interceptors() []Interceptor {
-	return c.inters.EntityField
+	inters := c.inters.EntityField
+	return append(inters[:len(inters):len(inters)], entityfield.Interceptors[:]...)
 }
 
 func (c *EntityFieldClient) mutate(ctx context.Context, m *EntityFieldMutation) (Value, error) {
@@ -1544,12 +1787,14 @@ func (c *EntityTemplateClient) QueryLocation(_m *EntityTemplate) *EntityQuery {
 
 // Hooks returns the client hooks.
 func (c *EntityTemplateClient) Hooks() []Hook {
-	return c.hooks.EntityTemplate
+	hooks := c.hooks.EntityTemplate
+	return append(hooks[:len(hooks):len(hooks)], entitytemplate.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *EntityTemplateClient) Interceptors() []Interceptor {
-	return c.inters.EntityTemplate
+	inters := c.inters.EntityTemplate
+	return append(inters[:len(inters):len(inters)], entitytemplate.Interceptors[:]...)
 }
 
 func (c *EntityTemplateClient) mutate(ctx context.Context, m *EntityTemplateMutation) (Value, error) {
@@ -1725,12 +1970,14 @@ func (c *EntityTypeClient) QueryDefaultTemplate(_m *EntityType) *EntityTemplateQ
 
 // Hooks returns the client hooks.
 func (c *EntityTypeClient) Hooks() []Hook {
-	return c.hooks.EntityType
+	hooks := c.hooks.EntityType
+	return append(hooks[:len(hooks):len(hooks)], entitytype.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *EntityTypeClient) Interceptors() []Interceptor {
-	return c.inters.EntityType
+	inters := c.inters.EntityType
+	return append(inters[:len(inters):len(inters)], entitytype.Interceptors[:]...)
 }
 
 func (c *EntityTypeClient) mutate(ctx context.Context, m *EntityTypeMutation) (Value, error) {
@@ -1874,12 +2121,14 @@ func (c *ExportClient) QueryGroup(_m *Export) *GroupQuery {
 
 // Hooks returns the client hooks.
 func (c *ExportClient) Hooks() []Hook {
-	return c.hooks.Export
+	hooks := c.hooks.Export
+	return append(hooks[:len(hooks):len(hooks)], export.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *ExportClient) Interceptors() []Interceptor {
-	return c.inters.Export
+	inters := c.inters.Export
+	return append(inters[:len(inters):len(inters)], export.Interceptors[:]...)
 }
 
 func (c *ExportClient) mutate(ctx context.Context, m *ExportMutation) (Value, error) {
@@ -2133,6 +2382,38 @@ func (c *GroupClient) QueryExports(_m *Group) *ExportQuery {
 	return query
 }
 
+// QueryPermissionGroups queries the permission_groups edge of a Group.
+func (c *GroupClient) QueryPermissionGroups(_m *Group) *PermissionGroupQuery {
+	query := (&PermissionGroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, id),
+			sqlgraph.To(permissiongroup.Table, permissiongroup.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.PermissionGroupsTable, group.PermissionGroupsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAccessGrants queries the access_grants edge of a Group.
+func (c *GroupClient) QueryAccessGrants(_m *Group) *AccessGrantQuery {
+	query := (&AccessGrantClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, id),
+			sqlgraph.To(accessgrant.Table, accessgrant.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.AccessGrantsTable, group.AccessGrantsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryUserGroups queries the user_groups edge of a Group.
 func (c *GroupClient) QueryUserGroups(_m *Group) *UserGroupQuery {
 	query := (&UserGroupClient{config: c.config}).Query()
@@ -2151,12 +2432,14 @@ func (c *GroupClient) QueryUserGroups(_m *Group) *UserGroupQuery {
 
 // Hooks returns the client hooks.
 func (c *GroupClient) Hooks() []Hook {
-	return c.hooks.Group
+	hooks := c.hooks.Group
+	return append(hooks[:len(hooks):len(hooks)], group.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *GroupClient) Interceptors() []Interceptor {
-	return c.inters.Group
+	inters := c.inters.Group
+	return append(inters[:len(inters):len(inters)], group.Interceptors[:]...)
 }
 
 func (c *GroupClient) mutate(ctx context.Context, m *GroupMutation) (Value, error) {
@@ -2300,12 +2583,14 @@ func (c *GroupInvitationTokenClient) QueryGroup(_m *GroupInvitationToken) *Group
 
 // Hooks returns the client hooks.
 func (c *GroupInvitationTokenClient) Hooks() []Hook {
-	return c.hooks.GroupInvitationToken
+	hooks := c.hooks.GroupInvitationToken
+	return append(hooks[:len(hooks):len(hooks)], groupinvitationtoken.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *GroupInvitationTokenClient) Interceptors() []Interceptor {
-	return c.inters.GroupInvitationToken
+	inters := c.inters.GroupInvitationToken
+	return append(inters[:len(inters):len(inters)], groupinvitationtoken.Interceptors[:]...)
 }
 
 func (c *GroupInvitationTokenClient) mutate(ctx context.Context, m *GroupInvitationTokenMutation) (Value, error) {
@@ -2449,12 +2734,14 @@ func (c *MaintenanceEntryClient) QueryEntity(_m *MaintenanceEntry) *EntityQuery 
 
 // Hooks returns the client hooks.
 func (c *MaintenanceEntryClient) Hooks() []Hook {
-	return c.hooks.MaintenanceEntry
+	hooks := c.hooks.MaintenanceEntry
+	return append(hooks[:len(hooks):len(hooks)], maintenanceentry.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *MaintenanceEntryClient) Interceptors() []Interceptor {
-	return c.inters.MaintenanceEntry
+	inters := c.inters.MaintenanceEntry
+	return append(inters[:len(inters):len(inters)], maintenanceentry.Interceptors[:]...)
 }
 
 func (c *MaintenanceEntryClient) mutate(ctx context.Context, m *MaintenanceEntryMutation) (Value, error) {
@@ -2614,12 +2901,14 @@ func (c *NotifierClient) QueryUser(_m *Notifier) *UserQuery {
 
 // Hooks returns the client hooks.
 func (c *NotifierClient) Hooks() []Hook {
-	return c.hooks.Notifier
+	hooks := c.hooks.Notifier
+	return append(hooks[:len(hooks):len(hooks)], notifier.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *NotifierClient) Interceptors() []Interceptor {
-	return c.inters.Notifier
+	inters := c.inters.Notifier
+	return append(inters[:len(inters):len(inters)], notifier.Interceptors[:]...)
 }
 
 func (c *NotifierClient) mutate(ctx context.Context, m *NotifierMutation) (Value, error) {
@@ -2763,12 +3052,14 @@ func (c *PasswordResetTokensClient) QueryUser(_m *PasswordResetTokens) *UserQuer
 
 // Hooks returns the client hooks.
 func (c *PasswordResetTokensClient) Hooks() []Hook {
-	return c.hooks.PasswordResetTokens
+	hooks := c.hooks.PasswordResetTokens
+	return append(hooks[:len(hooks):len(hooks)], passwordresettokens.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *PasswordResetTokensClient) Interceptors() []Interceptor {
-	return c.inters.PasswordResetTokens
+	inters := c.inters.PasswordResetTokens
+	return append(inters[:len(inters):len(inters)], passwordresettokens.Interceptors[:]...)
 }
 
 func (c *PasswordResetTokensClient) mutate(ctx context.Context, m *PasswordResetTokensMutation) (Value, error) {
@@ -2783,6 +3074,173 @@ func (c *PasswordResetTokensClient) mutate(ctx context.Context, m *PasswordReset
 		return (&PasswordResetTokensDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown PasswordResetTokens mutation op: %q", m.Op())
+	}
+}
+
+// PermissionGroupClient is a client for the PermissionGroup schema.
+type PermissionGroupClient struct {
+	config
+}
+
+// NewPermissionGroupClient returns a client for the PermissionGroup from the given config.
+func NewPermissionGroupClient(c config) *PermissionGroupClient {
+	return &PermissionGroupClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `permissiongroup.Hooks(f(g(h())))`.
+func (c *PermissionGroupClient) Use(hooks ...Hook) {
+	c.hooks.PermissionGroup = append(c.hooks.PermissionGroup, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `permissiongroup.Intercept(f(g(h())))`.
+func (c *PermissionGroupClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PermissionGroup = append(c.inters.PermissionGroup, interceptors...)
+}
+
+// Create returns a builder for creating a PermissionGroup entity.
+func (c *PermissionGroupClient) Create() *PermissionGroupCreate {
+	mutation := newPermissionGroupMutation(c.config, OpCreate)
+	return &PermissionGroupCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PermissionGroup entities.
+func (c *PermissionGroupClient) CreateBulk(builders ...*PermissionGroupCreate) *PermissionGroupCreateBulk {
+	return &PermissionGroupCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PermissionGroupClient) MapCreateBulk(slice any, setFunc func(*PermissionGroupCreate, int)) *PermissionGroupCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PermissionGroupCreateBulk{err: fmt.Errorf("calling to PermissionGroupClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PermissionGroupCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PermissionGroupCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PermissionGroup.
+func (c *PermissionGroupClient) Update() *PermissionGroupUpdate {
+	mutation := newPermissionGroupMutation(c.config, OpUpdate)
+	return &PermissionGroupUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PermissionGroupClient) UpdateOne(_m *PermissionGroup) *PermissionGroupUpdateOne {
+	mutation := newPermissionGroupMutation(c.config, OpUpdateOne, withPermissionGroup(_m))
+	return &PermissionGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PermissionGroupClient) UpdateOneID(id uuid.UUID) *PermissionGroupUpdateOne {
+	mutation := newPermissionGroupMutation(c.config, OpUpdateOne, withPermissionGroupID(id))
+	return &PermissionGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PermissionGroup.
+func (c *PermissionGroupClient) Delete() *PermissionGroupDelete {
+	mutation := newPermissionGroupMutation(c.config, OpDelete)
+	return &PermissionGroupDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PermissionGroupClient) DeleteOne(_m *PermissionGroup) *PermissionGroupDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PermissionGroupClient) DeleteOneID(id uuid.UUID) *PermissionGroupDeleteOne {
+	builder := c.Delete().Where(permissiongroup.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PermissionGroupDeleteOne{builder}
+}
+
+// Query returns a query builder for PermissionGroup.
+func (c *PermissionGroupClient) Query() *PermissionGroupQuery {
+	return &PermissionGroupQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePermissionGroup},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a PermissionGroup entity by its id.
+func (c *PermissionGroupClient) Get(ctx context.Context, id uuid.UUID) (*PermissionGroup, error) {
+	return c.Query().Where(permissiongroup.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PermissionGroupClient) GetX(ctx context.Context, id uuid.UUID) *PermissionGroup {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryGroup queries the group edge of a PermissionGroup.
+func (c *PermissionGroupClient) QueryGroup(_m *PermissionGroup) *GroupQuery {
+	query := (&GroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(permissiongroup.Table, permissiongroup.FieldID, id),
+			sqlgraph.To(group.Table, group.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, permissiongroup.GroupTable, permissiongroup.GroupColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUsers queries the users edge of a PermissionGroup.
+func (c *PermissionGroupClient) QueryUsers(_m *PermissionGroup) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(permissiongroup.Table, permissiongroup.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, permissiongroup.UsersTable, permissiongroup.UsersPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *PermissionGroupClient) Hooks() []Hook {
+	hooks := c.hooks.PermissionGroup
+	return append(hooks[:len(hooks):len(hooks)], permissiongroup.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *PermissionGroupClient) Interceptors() []Interceptor {
+	inters := c.inters.PermissionGroup
+	return append(inters[:len(inters):len(inters)], permissiongroup.Interceptors[:]...)
+}
+
+func (c *PermissionGroupClient) mutate(ctx context.Context, m *PermissionGroupMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PermissionGroupCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PermissionGroupUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PermissionGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PermissionGroupDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown PermissionGroup mutation op: %q", m.Op())
 	}
 }
 
@@ -2960,12 +3418,14 @@ func (c *TagClient) QueryChildren(_m *Tag) *TagQuery {
 
 // Hooks returns the client hooks.
 func (c *TagClient) Hooks() []Hook {
-	return c.hooks.Tag
+	hooks := c.hooks.Tag
+	return append(hooks[:len(hooks):len(hooks)], tag.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *TagClient) Interceptors() []Interceptor {
-	return c.inters.Tag
+	inters := c.inters.Tag
+	return append(inters[:len(inters):len(inters)], tag.Interceptors[:]...)
 }
 
 func (c *TagClient) mutate(ctx context.Context, m *TagMutation) (Value, error) {
@@ -3109,12 +3569,14 @@ func (c *TemplateFieldClient) QueryEntityTemplate(_m *TemplateField) *EntityTemp
 
 // Hooks returns the client hooks.
 func (c *TemplateFieldClient) Hooks() []Hook {
-	return c.hooks.TemplateField
+	hooks := c.hooks.TemplateField
+	return append(hooks[:len(hooks):len(hooks)], templatefield.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *TemplateFieldClient) Interceptors() []Interceptor {
-	return c.inters.TemplateField
+	inters := c.inters.TemplateField
+	return append(inters[:len(inters):len(inters)], templatefield.Interceptors[:]...)
 }
 
 func (c *TemplateFieldClient) mutate(ctx context.Context, m *TemplateFieldMutation) (Value, error) {
@@ -3320,6 +3782,22 @@ func (c *UserClient) QueryNotifiers(_m *User) *NotifierQuery {
 	return query
 }
 
+// QueryPermissionGroups queries the permission_groups edge of a User.
+func (c *UserClient) QueryPermissionGroups(_m *User) *PermissionGroupQuery {
+	query := (&PermissionGroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(permissiongroup.Table, permissiongroup.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, user.PermissionGroupsTable, user.PermissionGroupsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryUserGroups queries the user_groups edge of a User.
 func (c *UserClient) QueryUserGroups(_m *User) *UserGroupQuery {
 	query := (&UserGroupClient{config: c.config}).Query()
@@ -3338,12 +3816,14 @@ func (c *UserClient) QueryUserGroups(_m *User) *UserGroupQuery {
 
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
-	return c.hooks.User
+	hooks := c.hooks.User
+	return append(hooks[:len(hooks):len(hooks)], user.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *UserClient) Interceptors() []Interceptor {
-	return c.inters.User
+	inters := c.inters.User
+	return append(inters[:len(inters):len(inters)], user.Interceptors[:]...)
 }
 
 func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error) {
@@ -3454,12 +3934,14 @@ func (c *UserGroupClient) QueryGroup(_m *UserGroup) *GroupQuery {
 
 // Hooks returns the client hooks.
 func (c *UserGroupClient) Hooks() []Hook {
-	return c.hooks.UserGroup
+	hooks := c.hooks.UserGroup
+	return append(hooks[:len(hooks):len(hooks)], usergroup.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *UserGroupClient) Interceptors() []Interceptor {
-	return c.inters.UserGroup
+	inters := c.inters.UserGroup
+	return append(inters[:len(inters):len(inters)], usergroup.Interceptors[:]...)
 }
 
 func (c *UserGroupClient) mutate(ctx context.Context, m *UserGroupMutation) (Value, error) {
@@ -3480,13 +3962,15 @@ func (c *UserGroupClient) mutate(ctx context.Context, m *UserGroupMutation) (Val
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		APIKey, Attachment, AuthRoles, AuthTokens, Entity, EntityField, EntityTemplate,
-		EntityType, Export, Group, GroupInvitationToken, MaintenanceEntry, Notifier,
-		PasswordResetTokens, Tag, TemplateField, User, UserGroup []ent.Hook
+		APIKey, AccessGrant, Attachment, AuthRoles, AuthTokens, Entity, EntityField,
+		EntityTemplate, EntityType, Export, Group, GroupInvitationToken,
+		MaintenanceEntry, Notifier, PasswordResetTokens, PermissionGroup, Tag,
+		TemplateField, User, UserGroup []ent.Hook
 	}
 	inters struct {
-		APIKey, Attachment, AuthRoles, AuthTokens, Entity, EntityField, EntityTemplate,
-		EntityType, Export, Group, GroupInvitationToken, MaintenanceEntry, Notifier,
-		PasswordResetTokens, Tag, TemplateField, User, UserGroup []ent.Interceptor
+		APIKey, AccessGrant, Attachment, AuthRoles, AuthTokens, Entity, EntityField,
+		EntityTemplate, EntityType, Export, Group, GroupInvitationToken,
+		MaintenanceEntry, Notifier, PasswordResetTokens, PermissionGroup, Tag,
+		TemplateField, User, UserGroup []ent.Interceptor
 	}
 )

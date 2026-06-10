@@ -4,11 +4,14 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authz"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authzrules"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 )
 
@@ -108,4 +111,43 @@ func assertTagsInGroup(ctx context.Context, c *ent.TagClient, gid uuid.UUID, ids
 		return &ent.NotFoundError{}
 	}
 	return nil
+}
+
+// assertEntityActionable verifies, before a mutation with side effects runs,
+// that the request viewer may apply the given write action to the entity. It
+// mirrors the predicate the ent privacy layer pins onto the mutation, so the
+// mutation itself remains the enforcement; this pre-flight exists to surface
+// a clean NotFoundError (404, no existence leak) instead of a silent no-op,
+// and to stop side effects (attachment blob deletion, child updates) from
+// running when the row write would match nothing. System contexts skip it.
+func assertEntityActionable(ctx context.Context, c *ent.EntityClient, id uuid.UUID, writable func(*authz.Viewer) predicate.Entity) error {
+	if authz.IsSystem(ctx) {
+		return nil
+	}
+	v := authz.FromContext(ctx)
+	if v == nil {
+		// No viewer: the privacy layer denies the mutation itself.
+		return nil
+	}
+	exists, err := c.Query().
+		Where(entity.ID(id), writable(v)).
+		Exist(authz.NewSystemContext(ctx))
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return &ent.NotFoundError{}
+	}
+	return nil
+}
+
+// assertEntityUpdatable: the viewer may update the entity (tenant permission
+// or row grant).
+func assertEntityUpdatable(ctx context.Context, c *ent.EntityClient, id uuid.UUID) error {
+	return assertEntityActionable(ctx, c, id, authzrules.EntityUpdatable)
+}
+
+// assertEntityDeletable: the viewer may delete the entity.
+func assertEntityDeletable(ctx context.Context, c *ent.EntityClient, id uuid.UUID) error {
+	return assertEntityActionable(ctx, c, id, authzrules.EntityDeletable)
 }

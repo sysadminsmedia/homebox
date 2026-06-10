@@ -14,6 +14,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/currencies"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authz"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
@@ -304,14 +305,17 @@ func run(cfg *config.Config) error {
 // ensureAssetIDs assigns asset IDs to any entities that don't have one,
 // covering locations that were migrated from the old schema.
 func ensureAssetIDs(app *app) {
-	groups, err := app.repos.Groups.GetAllGroups(context.Background(), uuid.Nil)
+	// Startup maintenance runs before any request viewer exists.
+	ctx := authz.NewSystemContext(context.Background())
+
+	groups, err := app.repos.Groups.GetAllGroups(ctx, uuid.Nil)
 	if err != nil {
 		log.Warn().Err(err).Msg("failed to get groups for asset ID assignment")
 		return
 	}
 
 	for _, g := range groups {
-		n, err := app.services.Entities.EnsureAssetID(context.Background(), g.ID)
+		n, err := app.services.Entities.EnsureAssetID(ctx, g.ID)
 		if err != nil {
 			log.Warn().Err(err).Str("group", g.Name).Msg("failed to ensure asset IDs")
 		} else if n > 0 {

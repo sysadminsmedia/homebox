@@ -5,6 +5,7 @@ package usergroup
 import (
 	"fmt"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -18,6 +19,8 @@ const (
 	FieldGroupID = "group_id"
 	// FieldRole holds the string denoting the role field in the database.
 	FieldRole = "role"
+	// FieldPermissions holds the string denoting the permissions field in the database.
+	FieldPermissions = "permissions"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
@@ -49,6 +52,7 @@ var Columns = []string{
 	FieldUserID,
 	FieldGroupID,
 	FieldRole,
+	FieldPermissions,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -60,6 +64,19 @@ func ValidColumn(column string) bool {
 	}
 	return false
 }
+
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "github.com/sysadminsmedia/homebox/backend/internal/data/ent/runtime"
+var (
+	Hooks        [1]ent.Hook
+	Interceptors [1]ent.Interceptor
+	Policy       ent.Policy
+	// DefaultPermissions holds the default value on creation for the "permissions" field.
+	DefaultPermissions []string
+)
 
 // Role defines the type for the "role" enum field.
 type Role string

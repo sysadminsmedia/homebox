@@ -34,7 +34,7 @@ func tagInGroup(gid uuid.UUID) predicate.Tag {
 // path: anything that doesn't round-trip cleanly (timestamps, UUIDs, JSON
 // columns, self-referential FKs) shows up here.
 func TestExportRoundTrip(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	// --- Source group with data ----------------------------------------
 	src, err := tRepos.Groups.GroupCreate(ctx, "export-src-"+fk.Str(4), uuid.Nil)
@@ -215,7 +215,7 @@ func TestExportRoundTrip(t *testing.T) {
 }
 
 func TestCSVExportImportPreservesItemParent(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	src, err := tRepos.Groups.GroupCreate(ctx, "csv-parent-src-"+fk.Str(4), uuid.Nil)
 	require.NoError(t, err)
@@ -304,7 +304,7 @@ func TestCSVExportImportPreservesItemParent(t *testing.T) {
 }
 
 func TestCSVImportRejectsSelfParentRef(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	dst, err := tRepos.Groups.GroupCreate(ctx, "csv-self-parent-"+fk.Str(4), uuid.Nil)
 	require.NoError(t, err)
@@ -326,7 +326,7 @@ func TestCSVImportRejectsSelfParentRef(t *testing.T) {
 // and custom locations beyond the seeded baseline). The pure-seed and
 // pure-empty cases must still pass.
 func TestIsGroupReadyForImport_BlocksUserCreatedRows(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	t.Run("empty group passes", func(t *testing.T) {
 		g, err := tRepos.Groups.GroupCreate(ctx, "ready-empty-"+fk.Str(4), uuid.Nil)

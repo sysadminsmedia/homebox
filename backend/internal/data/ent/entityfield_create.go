@@ -172,7 +172,9 @@ func (_c *EntityFieldCreate) Mutation() *EntityFieldMutation {
 
 // Save creates the EntityField in the database.
 func (_c *EntityFieldCreate) Save(ctx context.Context) (*EntityField, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -199,12 +201,18 @@ func (_c *EntityFieldCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *EntityFieldCreate) defaults() {
+func (_c *EntityFieldCreate) defaults() error {
 	if _, ok := _c.mutation.CreatedAt(); !ok {
+		if entityfield.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized entityfield.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := entityfield.DefaultCreatedAt()
 		_c.mutation.SetCreatedAt(v)
 	}
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		if entityfield.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized entityfield.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := entityfield.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
 	}
@@ -213,13 +221,20 @@ func (_c *EntityFieldCreate) defaults() {
 		_c.mutation.SetBooleanValue(v)
 	}
 	if _, ok := _c.mutation.TimeValue(); !ok {
+		if entityfield.DefaultTimeValue == nil {
+			return fmt.Errorf("ent: uninitialized entityfield.DefaultTimeValue (forgotten import ent/runtime?)")
+		}
 		v := entityfield.DefaultTimeValue()
 		_c.mutation.SetTimeValue(v)
 	}
 	if _, ok := _c.mutation.ID(); !ok {
+		if entityfield.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized entityfield.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := entityfield.DefaultID()
 		_c.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

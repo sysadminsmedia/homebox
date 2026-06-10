@@ -179,7 +179,9 @@ func (_c *AttachmentCreate) Mutation() *AttachmentMutation {
 
 // Save creates the Attachment in the database.
 func (_c *AttachmentCreate) Save(ctx context.Context) (*Attachment, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -206,12 +208,18 @@ func (_c *AttachmentCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *AttachmentCreate) defaults() {
+func (_c *AttachmentCreate) defaults() error {
 	if _, ok := _c.mutation.CreatedAt(); !ok {
+		if attachment.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized attachment.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := attachment.DefaultCreatedAt()
 		_c.mutation.SetCreatedAt(v)
 	}
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		if attachment.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized attachment.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := attachment.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
 	}
@@ -236,9 +244,13 @@ func (_c *AttachmentCreate) defaults() {
 		_c.mutation.SetMimeType(v)
 	}
 	if _, ok := _c.mutation.ID(); !ok {
+		if attachment.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized attachment.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := attachment.DefaultID()
 		_c.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

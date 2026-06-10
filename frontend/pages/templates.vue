@@ -22,6 +22,7 @@
 
   const api = useUserApi();
   const { openDialog } = useDialog();
+  const { can } = usePermissions();
 
   const { data: templates, refresh } = useAsyncData("templates", async () => {
     const { data, error } = await api.templates.getAll();
@@ -41,7 +42,7 @@
   <BaseContainer>
     <div class="mb-4 flex justify-between">
       <BaseSectionHeader>{{ $t("pages.templates.title") }}</BaseSectionHeader>
-      <Button @click="openDialog(DialogID.CreateTemplate)">
+      <Button v-if="can('template:manage')" @click="openDialog(DialogID.CreateTemplate)">
         <MdiPlus class="mr-2" />
         {{ $t("global.create") }}
       </Button>
@@ -61,7 +62,7 @@
 
     <div v-else class="flex flex-col items-center justify-center py-12 text-center">
       <p class="mb-4 text-muted-foreground">{{ $t("pages.templates.no_templates") }}</p>
-      <Button @click="openDialog(DialogID.CreateTemplate)">
+      <Button v-if="can('template:manage')" @click="openDialog(DialogID.CreateTemplate)">
         <MdiPlus class="mr-2" />
         {{ $t("components.template.create_modal.title") }}
       </Button>

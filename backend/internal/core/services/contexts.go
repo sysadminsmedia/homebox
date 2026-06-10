@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authz"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 )
 
@@ -29,6 +30,12 @@ type Context struct {
 
 	// User is the acting user.
 	User *repo.UserOut
+
+	// Viewer is the resolved permission set for (UID, GID), attached by the
+	// viewer middleware. Enforcement happens in the ent privacy layer; this
+	// field exists for service-level checks and API responses (e.g. the
+	// effective-permissions endpoint). May be nil in system flows.
+	Viewer *authz.Viewer
 }
 
 // NewContext is a helper function that returns the service context from the context.
@@ -50,6 +57,7 @@ func NewContext(ctx context.Context) Context {
 		UID:     uid,
 		GID:     gid,
 		User:    user,
+		Viewer:  authz.FromContext(ctx),
 	}
 }
 

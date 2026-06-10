@@ -1,7 +1,6 @@
 package repo
 
 import (
-	"context"
 	"math"
 	"strings"
 	"testing"
@@ -31,7 +30,7 @@ func entityFactory() EntityCreate {
 // useContainerEntityType creates or gets a default location entity type for the test group.
 func useContainerEntityType(t *testing.T) EntityTypeSummary {
 	t.Helper()
-	et, err := tRepos.EntityTypes.GetDefault(context.Background(), tGroup.ID, true)
+	et, err := tRepos.EntityTypes.GetDefault(testCtx(), tGroup.ID, true)
 	require.NoError(t, err)
 	return et
 }
@@ -39,7 +38,7 @@ func useContainerEntityType(t *testing.T) EntityTypeSummary {
 // useItemEntityType creates or gets a default item entity type for the test group.
 func useItemEntityType(t *testing.T) EntityTypeSummary {
 	t.Helper()
-	et, err := tRepos.EntityTypes.GetDefault(context.Background(), tGroup.ID, false)
+	et, err := tRepos.EntityTypes.GetDefault(testCtx(), tGroup.ID, false)
 	require.NoError(t, err)
 	return et
 }
@@ -53,7 +52,7 @@ func useEntities(t *testing.T, count int) []EntityOut {
 	// Create a container entity
 	cf := containerFactory()
 	cf.EntityTypeID = containerET.ID
-	container, err := tRepos.Entities.Create(context.Background(), tGroup.ID, cf)
+	container, err := tRepos.Entities.Create(testCtx(), tGroup.ID, cf)
 	require.NoError(t, err)
 
 	entities := make([]EntityOut, count)
@@ -62,16 +61,16 @@ func useEntities(t *testing.T, count int) []EntityOut {
 		itm.ParentID = container.ID
 		itm.EntityTypeID = itemET.ID
 
-		e, err := tRepos.Entities.Create(context.Background(), tGroup.ID, itm)
+		e, err := tRepos.Entities.Create(testCtx(), tGroup.ID, itm)
 		require.NoError(t, err)
 		entities[i] = e
 	}
 
 	t.Cleanup(func() {
 		for _, e := range entities {
-			_ = tRepos.Entities.Delete(context.Background(), e.ID)
+			_ = tRepos.Entities.Delete(testCtx(), e.ID)
 		}
-		_ = tRepos.Entities.Delete(context.Background(), container.ID)
+		_ = tRepos.Entities.Delete(testCtx(), container.ID)
 	})
 
 	return entities
@@ -94,21 +93,21 @@ func TestEntityRepository_RecursiveRelationships(t *testing.T) {
 		}
 
 		// Append Parent ID
-		_, err := tRepos.Entities.UpdateByGroup(context.Background(), tGroup.ID, update)
+		_, err := tRepos.Entities.UpdateByGroup(testCtx(), tGroup.ID, update)
 		require.NoError(t, err)
 
 		// Check Parent ID
-		updated, err := tRepos.Entities.GetOne(context.Background(), child.ID)
+		updated, err := tRepos.Entities.GetOne(testCtx(), child.ID)
 		require.NoError(t, err)
 		assert.Equal(t, parent.ID, updated.Parent.ID)
 
 		// Remove Parent ID
 		update.ParentID = uuid.Nil
-		_, err = tRepos.Entities.UpdateByGroup(context.Background(), tGroup.ID, update)
+		_, err = tRepos.Entities.UpdateByGroup(testCtx(), tGroup.ID, update)
 		require.NoError(t, err)
 
 		// Check Parent ID
-		updated, err = tRepos.Entities.GetOne(context.Background(), child.ID)
+		updated, err = tRepos.Entities.GetOne(testCtx(), child.ID)
 		require.NoError(t, err)
 		assert.Nil(t, updated.Parent)
 	}
@@ -118,7 +117,7 @@ func TestEntityRepository_GetOne(t *testing.T) {
 	entities := useEntities(t, 3)
 
 	for _, e := range entities {
-		result, err := tRepos.Entities.GetOne(context.Background(), e.ID)
+		result, err := tRepos.Entities.GetOne(testCtx(), e.ID)
 		require.NoError(t, err)
 		assert.Equal(t, e.ID, result.ID)
 	}
@@ -128,7 +127,7 @@ func TestEntityRepository_GetAll(t *testing.T) {
 	length := 10
 	expected := useEntities(t, length)
 
-	results, err := tRepos.Entities.GetAll(context.Background(), tGroup.ID)
+	results, err := tRepos.Entities.GetAll(testCtx(), tGroup.ID)
 	require.NoError(t, err)
 
 	// Results include the container + the items
@@ -153,21 +152,21 @@ func TestEntityRepository_Create(t *testing.T) {
 
 	cf := containerFactory()
 	cf.EntityTypeID = containerET.ID
-	container, err := tRepos.Entities.Create(context.Background(), tGroup.ID, cf)
+	container, err := tRepos.Entities.Create(testCtx(), tGroup.ID, cf)
 	require.NoError(t, err)
 
 	itm := entityFactory()
 	itm.ParentID = container.ID
 	itm.EntityTypeID = itemET.ID
 
-	result, err := tRepos.Entities.Create(context.Background(), tGroup.ID, itm)
+	result, err := tRepos.Entities.Create(testCtx(), tGroup.ID, itm)
 	require.NoError(t, err)
 	assert.NotEmpty(t, result.ID)
 
 	// Cleanup
-	err = tRepos.Entities.Delete(context.Background(), result.ID)
+	err = tRepos.Entities.Delete(testCtx(), result.ID)
 	require.NoError(t, err)
-	err = tRepos.Entities.Delete(context.Background(), container.ID)
+	err = tRepos.Entities.Delete(testCtx(), container.ID)
 	require.NoError(t, err)
 }
 
@@ -177,7 +176,7 @@ func TestEntityRepository_Create_WithFractionalQuantity(t *testing.T) {
 
 	cf := containerFactory()
 	cf.EntityTypeID = containerET.ID
-	container, err := tRepos.Entities.Create(context.Background(), tGroup.ID, cf)
+	container, err := tRepos.Entities.Create(testCtx(), tGroup.ID, cf)
 	require.NoError(t, err)
 
 	itm := entityFactory()
@@ -185,19 +184,19 @@ func TestEntityRepository_Create_WithFractionalQuantity(t *testing.T) {
 	itm.EntityTypeID = itemET.ID
 	itm.Quantity = 1.25
 
-	result, err := tRepos.Entities.Create(context.Background(), tGroup.ID, itm)
+	result, err := tRepos.Entities.Create(testCtx(), tGroup.ID, itm)
 	require.NoError(t, err)
 	assert.NotEmpty(t, result.ID)
 	assert.InDelta(t, 1.25, result.Quantity, 0.000001)
 
-	fetched, err := tRepos.Entities.GetOne(context.Background(), result.ID)
+	fetched, err := tRepos.Entities.GetOne(testCtx(), result.ID)
 	require.NoError(t, err)
 	assert.InDelta(t, 1.25, fetched.Quantity, 0.000001)
 
 	// Cleanup
-	err = tRepos.Entities.Delete(context.Background(), result.ID)
+	err = tRepos.Entities.Delete(testCtx(), result.ID)
 	require.NoError(t, err)
-	err = tRepos.Entities.Delete(context.Background(), container.ID)
+	err = tRepos.Entities.Delete(testCtx(), container.ID)
 	require.NoError(t, err)
 }
 
@@ -207,7 +206,7 @@ func TestEntityRepository_Create_RejectsNonFiniteQuantity(t *testing.T) {
 
 	cf := containerFactory()
 	cf.EntityTypeID = containerET.ID
-	container, err := tRepos.Entities.Create(context.Background(), tGroup.ID, cf)
+	container, err := tRepos.Entities.Create(testCtx(), tGroup.ID, cf)
 	require.NoError(t, err)
 
 	itm := entityFactory()
@@ -215,12 +214,12 @@ func TestEntityRepository_Create_RejectsNonFiniteQuantity(t *testing.T) {
 	itm.EntityTypeID = itemET.ID
 	itm.Quantity = math.NaN()
 
-	_, err = tRepos.Entities.Create(context.Background(), tGroup.ID, itm)
+	_, err = tRepos.Entities.Create(testCtx(), tGroup.ID, itm)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "invalid quantity: must be a finite number")
 
 	// Cleanup
-	err = tRepos.Entities.Delete(context.Background(), container.ID)
+	err = tRepos.Entities.Delete(testCtx(), container.ID)
 	require.NoError(t, err)
 }
 
@@ -230,7 +229,7 @@ func TestEntityRepository_Create_WithParent(t *testing.T) {
 
 	cf := containerFactory()
 	cf.EntityTypeID = containerET.ID
-	container, err := tRepos.Entities.Create(context.Background(), tGroup.ID, cf)
+	container, err := tRepos.Entities.Create(testCtx(), tGroup.ID, cf)
 	require.NoError(t, err)
 	assert.NotEmpty(t, container.ID)
 
@@ -239,21 +238,21 @@ func TestEntityRepository_Create_WithParent(t *testing.T) {
 	itm.EntityTypeID = itemET.ID
 
 	// Create Resource
-	result, err := tRepos.Entities.Create(context.Background(), tGroup.ID, itm)
+	result, err := tRepos.Entities.Create(testCtx(), tGroup.ID, itm)
 	require.NoError(t, err)
 	assert.NotEmpty(t, result.ID)
 
 	// Get Resource
-	foundEntity, err := tRepos.Entities.GetOne(context.Background(), result.ID)
+	foundEntity, err := tRepos.Entities.GetOne(testCtx(), result.ID)
 	require.NoError(t, err)
 	assert.Equal(t, result.ID, foundEntity.ID)
 	assert.NotNil(t, foundEntity.Parent)
 	assert.Equal(t, container.ID, foundEntity.Parent.ID)
 
 	// Cleanup
-	err = tRepos.Entities.Delete(context.Background(), result.ID)
+	err = tRepos.Entities.Delete(testCtx(), result.ID)
 	require.NoError(t, err)
-	err = tRepos.Entities.Delete(context.Background(), container.ID)
+	err = tRepos.Entities.Delete(testCtx(), container.ID)
 	require.NoError(t, err)
 }
 
@@ -261,11 +260,11 @@ func TestEntityRepository_Delete(t *testing.T) {
 	entities := useEntities(t, 3)
 
 	for _, e := range entities {
-		err := tRepos.Entities.Delete(context.Background(), e.ID)
+		err := tRepos.Entities.Delete(testCtx(), e.ID)
 		require.NoError(t, err)
 	}
 
-	results, err := tRepos.Entities.GetAll(context.Background(), tGroup.ID)
+	results, err := tRepos.Entities.GetAll(testCtx(), tGroup.ID)
 	require.NoError(t, err)
 	// After deleting items, only container(s) remain
 	for _, e := range entities {
@@ -324,7 +323,7 @@ func TestEntityRepository_Update_Tags(t *testing.T) {
 				updateData.EntityTypeID = e.EntityType.ID
 			}
 
-			updated, err := tRepos.Entities.UpdateByGroup(context.Background(), tGroup.ID, updateData)
+			updated, err := tRepos.Entities.UpdateByGroup(testCtx(), tGroup.ID, updateData)
 			require.NoError(t, err)
 			assert.Len(t, tt.want, len(updated.Tags))
 
@@ -363,10 +362,10 @@ func TestEntityRepository_Update(t *testing.T) {
 		updateData.EntityTypeID = e.EntityType.ID
 	}
 
-	updatedEntity, err := tRepos.Entities.UpdateByGroup(context.Background(), tGroup.ID, updateData)
+	updatedEntity, err := tRepos.Entities.UpdateByGroup(testCtx(), tGroup.ID, updateData)
 	require.NoError(t, err)
 
-	got, err := tRepos.Entities.GetOne(context.Background(), updatedEntity.ID)
+	got, err := tRepos.Entities.GetOne(testCtx(), updatedEntity.ID)
 	require.NoError(t, err)
 
 	assert.Equal(t, updateData.ID, got.ID)
@@ -396,10 +395,10 @@ func TestEntityRepository_Update_WithFractionalQuantity(t *testing.T) {
 		updateData.EntityTypeID = e.EntityType.ID
 	}
 
-	updatedEntity, err := tRepos.Entities.UpdateByGroup(context.Background(), tGroup.ID, updateData)
+	updatedEntity, err := tRepos.Entities.UpdateByGroup(testCtx(), tGroup.ID, updateData)
 	require.NoError(t, err)
 
-	got, err := tRepos.Entities.GetOne(context.Background(), updatedEntity.ID)
+	got, err := tRepos.Entities.GetOne(testCtx(), updatedEntity.ID)
 	require.NoError(t, err)
 
 	assert.InDelta(t, 2.75, got.Quantity, 0.000001)
@@ -414,7 +413,7 @@ func TestEntityRepository_Update_RejectsNonFiniteQuantity(t *testing.T) {
 		Quantity: math.Inf(1),
 	}
 
-	_, err := tRepos.Entities.UpdateByGroup(context.Background(), tGroup.ID, updateData)
+	_, err := tRepos.Entities.UpdateByGroup(testCtx(), tGroup.ID, updateData)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "invalid quantity: must be a finite number")
 }
@@ -423,7 +422,7 @@ func TestEntityRepository_Patch_RejectsNonFiniteQuantity(t *testing.T) {
 	e := useEntities(t, 1)[0]
 
 	quantity := math.Inf(-1)
-	err := tRepos.Entities.Patch(context.Background(), tGroup.ID, e.ID, EntityPatch{Quantity: &quantity})
+	err := tRepos.Entities.Patch(testCtx(), tGroup.ID, e.ID, EntityPatch{Quantity: &quantity})
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "invalid quantity: must be a finite number")
 }
@@ -433,10 +432,10 @@ func TestEntityRepository_CreateFromTemplate_RejectsNonFiniteQuantity(t *testing
 
 	cf := containerFactory()
 	cf.EntityTypeID = containerET.ID
-	container, err := tRepos.Entities.Create(context.Background(), tGroup.ID, cf)
+	container, err := tRepos.Entities.Create(testCtx(), tGroup.ID, cf)
 	require.NoError(t, err)
 
-	_, err = tRepos.Entities.CreateFromTemplate(context.Background(), tGroup.ID, EntityCreateFromTemplate{
+	_, err = tRepos.Entities.CreateFromTemplate(testCtx(), tGroup.ID, EntityCreateFromTemplate{
 		Name:        fk.Str(10),
 		Description: fk.Str(20),
 		Quantity:    math.NaN(),
@@ -446,7 +445,7 @@ func TestEntityRepository_CreateFromTemplate_RejectsNonFiniteQuantity(t *testing
 	assert.Contains(t, err.Error(), "invalid quantity: must be a finite number")
 
 	// Cleanup
-	err = tRepos.Entities.Delete(context.Background(), container.ID)
+	err = tRepos.Entities.Delete(testCtx(), container.ID)
 	require.NoError(t, err)
 }
 
@@ -479,19 +478,19 @@ func TestEntityRepository_GetAllCustomFields(t *testing.T) {
 		updateData.EntityTypeID = e.EntityType.ID
 	}
 
-	_, err := tRepos.Entities.UpdateByGroup(context.Background(), tGroup.ID, updateData)
+	_, err := tRepos.Entities.UpdateByGroup(testCtx(), tGroup.ID, updateData)
 	require.NoError(t, err)
 
 	// Test getting all fields
 	{
-		results, err := tRepos.Entities.GetAllCustomFieldNames(context.Background(), tGroup.ID)
+		results, err := tRepos.Entities.GetAllCustomFieldNames(testCtx(), tGroup.ID)
 		require.NoError(t, err)
 		assert.ElementsMatch(t, names, results)
 	}
 
 	// Test getting all values from field
 	{
-		results, err := tRepos.Entities.GetAllCustomFieldValues(context.Background(), tUser.DefaultGroupID, names[0])
+		results, err := tRepos.Entities.GetAllCustomFieldValues(testCtx(), tUser.DefaultGroupID, names[0])
 
 		require.NoError(t, err)
 		assert.ElementsMatch(t, values[:1], results)
@@ -504,7 +503,7 @@ func TestEntityRepository_DeleteWithAttachments(t *testing.T) {
 
 	// Add an attachment to the entity
 	att, err := tRepos.Attachments.Create(
-		context.Background(),
+		testCtx(),
 		e.ID,
 		ItemCreateAttachment{
 			Title:   "test-attachment.txt",
@@ -517,26 +516,26 @@ func TestEntityRepository_DeleteWithAttachments(t *testing.T) {
 	assert.NotNil(t, att)
 
 	// Verify the attachment exists
-	retrievedAttachment, err := tRepos.Attachments.Get(context.Background(), tGroup.ID, att.ID)
+	retrievedAttachment, err := tRepos.Attachments.Get(testCtx(), tGroup.ID, att.ID)
 	require.NoError(t, err)
 	assert.Equal(t, att.ID, retrievedAttachment.ID)
 
 	// Verify the attachment is linked to the entity
-	entityWithAttachments, err := tRepos.Entities.GetOne(context.Background(), e.ID)
+	entityWithAttachments, err := tRepos.Entities.GetOne(testCtx(), e.ID)
 	require.NoError(t, err)
 	assert.Len(t, entityWithAttachments.Attachments, 1)
 	assert.Equal(t, att.ID, entityWithAttachments.Attachments[0].ID)
 
 	// Delete the entity
-	err = tRepos.Entities.Delete(context.Background(), e.ID)
+	err = tRepos.Entities.Delete(testCtx(), e.ID)
 	require.NoError(t, err)
 
 	// Verify the entity is deleted
-	_, err = tRepos.Entities.GetOne(context.Background(), e.ID)
+	_, err = tRepos.Entities.GetOne(testCtx(), e.ID)
 	require.Error(t, err)
 
 	// Verify the attachment is also deleted
-	_, err = tRepos.Attachments.Get(context.Background(), tGroup.ID, att.ID)
+	_, err = tRepos.Attachments.Get(testCtx(), tGroup.ID, att.ID)
 	require.Error(t, err)
 }
 
@@ -546,7 +545,7 @@ func TestEntityRepository_DeleteByGroupWithAttachments(t *testing.T) {
 
 	// Add an attachment to the entity
 	att, err := tRepos.Attachments.Create(
-		context.Background(),
+		testCtx(),
 		e.ID,
 		ItemCreateAttachment{
 			Title:   "test-attachment-by-group.txt",
@@ -559,20 +558,20 @@ func TestEntityRepository_DeleteByGroupWithAttachments(t *testing.T) {
 	assert.NotNil(t, att)
 
 	// Verify the attachment exists
-	retrievedAttachment, err := tRepos.Attachments.Get(context.Background(), tGroup.ID, att.ID)
+	retrievedAttachment, err := tRepos.Attachments.Get(testCtx(), tGroup.ID, att.ID)
 	require.NoError(t, err)
 	assert.Equal(t, att.ID, retrievedAttachment.ID)
 
 	// Delete the entity using DeleteByGroup
-	err = tRepos.Entities.DeleteByGroup(context.Background(), tGroup.ID, e.ID)
+	err = tRepos.Entities.DeleteByGroup(testCtx(), tGroup.ID, e.ID)
 	require.NoError(t, err)
 
 	// Verify the entity is deleted
-	_, err = tRepos.Entities.GetOneByGroup(context.Background(), tGroup.ID, e.ID)
+	_, err = tRepos.Entities.GetOneByGroup(testCtx(), tGroup.ID, e.ID)
 	require.Error(t, err)
 
 	// Verify the attachment is also deleted
-	_, err = tRepos.Attachments.Get(context.Background(), tGroup.ID, att.ID)
+	_, err = tRepos.Attachments.Get(testCtx(), tGroup.ID, att.ID)
 	require.Error(t, err)
 }
 
@@ -585,24 +584,24 @@ func TestEntityRepository_WipeInventory(t *testing.T) {
 	c1f.EntityTypeID = containerET.ID
 	c1f.Name = "Test Container 1"
 	c1f.Description = "Test container for wipe test"
-	container1, err := tRepos.Entities.Create(context.Background(), tGroup.ID, c1f)
+	container1, err := tRepos.Entities.Create(testCtx(), tGroup.ID, c1f)
 	require.NoError(t, err)
 
 	c2f := containerFactory()
 	c2f.EntityTypeID = containerET.ID
 	c2f.Name = "Test Container 2"
 	c2f.Description = "Another test container"
-	container2, err := tRepos.Entities.Create(context.Background(), tGroup.ID, c2f)
+	container2, err := tRepos.Entities.Create(testCtx(), tGroup.ID, c2f)
 	require.NoError(t, err)
 
 	// Create tags
-	tag1, err := tRepos.Tags.Create(context.Background(), tGroup.ID, TagCreate{
+	tag1, err := tRepos.Tags.Create(testCtx(), tGroup.ID, TagCreate{
 		Name:        "Test Tag 1",
 		Description: "Test tag for wipe test",
 	})
 	require.NoError(t, err)
 
-	tag2, err := tRepos.Tags.Create(context.Background(), tGroup.ID, TagCreate{
+	tag2, err := tRepos.Tags.Create(testCtx(), tGroup.ID, TagCreate{
 		Name:        "Test Tag 2",
 		Description: "Another test tag",
 	})
@@ -615,7 +614,7 @@ func TestEntityRepository_WipeInventory(t *testing.T) {
 	i1f.Name = "Test Item 1"
 	i1f.Description = "Test item for wipe test"
 	i1f.TagIDs = []uuid.UUID{tag1.ID}
-	entity1, err := tRepos.Entities.Create(context.Background(), tGroup.ID, i1f)
+	entity1, err := tRepos.Entities.Create(testCtx(), tGroup.ID, i1f)
 	require.NoError(t, err)
 
 	i2f := entityFactory()
@@ -624,11 +623,11 @@ func TestEntityRepository_WipeInventory(t *testing.T) {
 	i2f.Name = "Test Item 2"
 	i2f.Description = "Another test item"
 	i2f.TagIDs = []uuid.UUID{tag2.ID}
-	entity2, err := tRepos.Entities.Create(context.Background(), tGroup.ID, i2f)
+	entity2, err := tRepos.Entities.Create(testCtx(), tGroup.ID, i2f)
 	require.NoError(t, err)
 
 	// Create maintenance entries
-	_, err = tRepos.MaintEntry.Create(context.Background(), tGroup.ID, entity1.ID, MaintenanceEntryCreate{
+	_, err = tRepos.MaintEntry.Create(testCtx(), tGroup.ID, entity1.ID, MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now()),
 		Name:          "Test Maintenance 1",
 		Description:   "Test maintenance entry",
@@ -636,7 +635,7 @@ func TestEntityRepository_WipeInventory(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	_, err = tRepos.MaintEntry.Create(context.Background(), tGroup.ID, entity2.ID, MaintenanceEntryCreate{
+	_, err = tRepos.MaintEntry.Create(testCtx(), tGroup.ID, entity2.ID, MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now()),
 		Name:          "Test Maintenance 2",
 		Description:   "Another test maintenance entry",
@@ -646,31 +645,31 @@ func TestEntityRepository_WipeInventory(t *testing.T) {
 
 	// Test: Wipe inventory with all options enabled
 	t.Run("wipe all including tags, containers, and maintenance", func(t *testing.T) {
-		deleted, err := tRepos.Entities.WipeInventory(context.Background(), tGroup.ID, true, true, true)
+		deleted, err := tRepos.Entities.WipeInventory(testCtx(), tGroup.ID, true, true, true)
 		require.NoError(t, err)
 		assert.Positive(t, deleted, "Should have deleted at least some entities")
 
 		// Verify items are deleted
-		_, err = tRepos.Entities.GetOneByGroup(context.Background(), tGroup.ID, entity1.ID)
+		_, err = tRepos.Entities.GetOneByGroup(testCtx(), tGroup.ID, entity1.ID)
 		require.Error(t, err, "Entity 1 should be deleted")
 
-		_, err = tRepos.Entities.GetOneByGroup(context.Background(), tGroup.ID, entity2.ID)
+		_, err = tRepos.Entities.GetOneByGroup(testCtx(), tGroup.ID, entity2.ID)
 		require.Error(t, err, "Entity 2 should be deleted")
 
 		// Verify maintenance entries are deleted
-		maint1List, err := tRepos.MaintEntry.GetMaintenanceByItemID(context.Background(), tGroup.ID, entity1.ID, MaintenanceFilters{})
+		maint1List, err := tRepos.MaintEntry.GetMaintenanceByItemID(testCtx(), tGroup.ID, entity1.ID, MaintenanceFilters{})
 		require.NoError(t, err)
 		assert.Empty(t, maint1List, "Maintenance entry 1 should be deleted")
 
-		maint2List, err := tRepos.MaintEntry.GetMaintenanceByItemID(context.Background(), tGroup.ID, entity2.ID, MaintenanceFilters{})
+		maint2List, err := tRepos.MaintEntry.GetMaintenanceByItemID(testCtx(), tGroup.ID, entity2.ID, MaintenanceFilters{})
 		require.NoError(t, err)
 		assert.Empty(t, maint2List, "Maintenance entry 2 should be deleted")
 
 		// Verify tags are deleted
-		_, err = tRepos.Tags.GetOneByGroup(context.Background(), tGroup.ID, tag1.ID)
+		_, err = tRepos.Tags.GetOneByGroup(testCtx(), tGroup.ID, tag1.ID)
 		require.Error(t, err, "Tag 1 should be deleted")
 
-		_, err = tRepos.Tags.GetOneByGroup(context.Background(), tGroup.ID, tag2.ID)
+		_, err = tRepos.Tags.GetOneByGroup(testCtx(), tGroup.ID, tag2.ID)
 		require.Error(t, err, "Tag 2 should be deleted")
 	})
 }
@@ -684,10 +683,10 @@ func TestEntityRepository_WipeInventory_OnlyItems(t *testing.T) {
 	cf.EntityTypeID = containerET.ID
 	cf.Name = "Test Container"
 	cf.Description = "Test container for wipe test"
-	container, err := tRepos.Entities.Create(context.Background(), tGroup.ID, cf)
+	container, err := tRepos.Entities.Create(testCtx(), tGroup.ID, cf)
 	require.NoError(t, err)
 
-	tagObj, err := tRepos.Tags.Create(context.Background(), tGroup.ID, TagCreate{
+	tagObj, err := tRepos.Tags.Create(testCtx(), tGroup.ID, TagCreate{
 		Name:        "Test Tag",
 		Description: "Test tag for wipe test",
 	})
@@ -699,10 +698,10 @@ func TestEntityRepository_WipeInventory_OnlyItems(t *testing.T) {
 	ef.Name = "Test Item"
 	ef.Description = "Test item for wipe test"
 	ef.TagIDs = []uuid.UUID{tagObj.ID}
-	e, err := tRepos.Entities.Create(context.Background(), tGroup.ID, ef)
+	e, err := tRepos.Entities.Create(testCtx(), tGroup.ID, ef)
 	require.NoError(t, err)
 
-	_, err = tRepos.MaintEntry.Create(context.Background(), tGroup.ID, e.ID, MaintenanceEntryCreate{
+	_, err = tRepos.MaintEntry.Create(testCtx(), tGroup.ID, e.ID, MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now()),
 		Name:          "Test Maintenance",
 		Description:   "Test maintenance entry",
@@ -711,23 +710,23 @@ func TestEntityRepository_WipeInventory_OnlyItems(t *testing.T) {
 	require.NoError(t, err)
 
 	// Test: Wipe inventory with only items (no tags, containers, or maintenance)
-	deleted, err := tRepos.Entities.WipeInventory(context.Background(), tGroup.ID, false, false, false)
+	deleted, err := tRepos.Entities.WipeInventory(testCtx(), tGroup.ID, false, false, false)
 	require.NoError(t, err)
 	assert.Positive(t, deleted, "Should have deleted at least the entity")
 
 	// Verify item entity is deleted
-	_, err = tRepos.Entities.GetOneByGroup(context.Background(), tGroup.ID, e.ID)
+	_, err = tRepos.Entities.GetOneByGroup(testCtx(), tGroup.ID, e.ID)
 	require.Error(t, err, "Entity should be deleted")
 
 	// Verify maintenance entry is deleted due to cascade
-	maintList, err := tRepos.MaintEntry.GetMaintenanceByItemID(context.Background(), tGroup.ID, e.ID, MaintenanceFilters{})
+	maintList, err := tRepos.MaintEntry.GetMaintenanceByItemID(testCtx(), tGroup.ID, e.ID, MaintenanceFilters{})
 	require.NoError(t, err)
 	assert.Empty(t, maintList, "Maintenance entry should be cascade deleted with entity")
 
 	// Verify tag still exists
-	_, err = tRepos.Tags.GetOneByGroup(context.Background(), tGroup.ID, tagObj.ID)
+	_, err = tRepos.Tags.GetOneByGroup(testCtx(), tGroup.ID, tagObj.ID)
 	require.NoError(t, err, "Tag should still exist")
 
 	// Cleanup
-	_ = tRepos.Tags.DeleteByGroup(context.Background(), tGroup.ID, tagObj.ID)
+	_ = tRepos.Tags.DeleteByGroup(testCtx(), tGroup.ID, tagObj.ID)
 }

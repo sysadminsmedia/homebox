@@ -118,7 +118,10 @@ func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
 		Path:      attachment.Path,
 		Title:     attachment.Title,
 		MimeType:  attachment.MimeType,
-		Thumbnail: attachment.QueryThumbnail().FirstX(context.Background()),
+		// Thumbnail must be eager-loaded (WithThumbnail) by the caller; a
+		// lazy query here would run outside the request's privacy context
+		// and N+1 every listing.
+		Thumbnail: attachment.Edges.Thumbnail,
 	}
 }
 

@@ -1,3 +1,3 @@
 package ent
 
-//go:generate go run -mod=mod entgo.io/ent/cmd/ent generate --feature sql/versioned-migration ./schema --template=./schema/templates/has_id.tmpl
+//go:generate go run -mod=mod entgo.io/ent/cmd/ent generate --feature sql/versioned-migration,privacy,intercept ./schema --template=./schema/templates/has_id.tmpl

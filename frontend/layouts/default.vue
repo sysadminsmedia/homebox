@@ -31,7 +31,7 @@
 
           <CollectionSelector />
 
-          <DropdownMenu>
+          <DropdownMenu v-if="dropdown.length">
             <DropdownMenuTrigger as-child>
               <SidebarMenuButton
                 class="flex justify-center bg-primary text-primary-foreground drop-shadow-md hover:bg-primary/90 active:bg-primary/90 active:text-primary-foreground group-data-[collapsible=icon]:justify-start"
@@ -350,26 +350,35 @@
     dialogId: NoParamDialogIDs | OptionalDialogIDs;
   };
 
-  const dropdown: DropdownItem[] = [
-    {
-      id: 0,
-      name: computed(() => t("menu.create_item")),
-      shortcut: "Shift+1",
-      dialogId: DialogID.CreateItem,
-    },
-    {
-      id: 1,
-      name: computed(() => t("menu.create_location")),
-      shortcut: "Shift+3",
-      dialogId: DialogID.CreateLocation,
-    },
-    {
-      id: 2,
-      name: computed(() => t("menu.create_tag")),
-      shortcut: "Shift+2",
-      dialogId: DialogID.CreateTag,
-    },
-  ];
+  const { can } = usePermissions();
+
+  const dropdown = computed<DropdownItem[]>(() => {
+    const items: (DropdownItem & { visible: boolean })[] = [
+      {
+        id: 0,
+        name: computed(() => t("menu.create_item")),
+        shortcut: "Shift+1",
+        dialogId: DialogID.CreateItem,
+        visible: can("entity:create"),
+      },
+      {
+        id: 1,
+        name: computed(() => t("menu.create_location")),
+        shortcut: "Shift+3",
+        dialogId: DialogID.CreateLocation,
+        visible: can("entity:create"),
+      },
+      {
+        id: 2,
+        name: computed(() => t("menu.create_tag")),
+        shortcut: "Shift+2",
+        dialogId: DialogID.CreateTag,
+        visible: can("tag:manage"),
+      },
+    ];
+
+    return items.filter(item => item.visible);
+  });
 
   const route = useRoute();
   const router = useRouter();
@@ -483,15 +492,15 @@
     },
   ];
 
-  const quickMenuActions = reactive([
-    ...dropdown.map(v => ({
-      text: computed(() => v.name.value),
+  const quickMenuActions = computed(() => [
+    ...dropdown.value.map(v => ({
+      text: v.name.value,
       dialogId: v.dialogId as NoParamDialogIDs,
       shortcut: v.shortcut.split("+")[1] as string,
       type: "create" as const,
     })),
     ...nav.map(v => ({
-      text: computed(() => v.name.value),
+      text: v.name.value,
       href: v.to,
       type: "navigate" as const,
     })),

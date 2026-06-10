@@ -791,6 +791,29 @@ func HasNotifiersWith(preds ...predicate.Notifier) predicate.User {
 	})
 }
 
+// HasPermissionGroups applies the HasEdge predicate on the "permission_groups" edge.
+func HasPermissionGroups() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, PermissionGroupsTable, PermissionGroupsPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPermissionGroupsWith applies the HasEdge predicate on the "permission_groups" edge with a given conditions (other predicates).
+func HasPermissionGroupsWith(preds ...predicate.PermissionGroup) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newPermissionGroupsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasUserGroups applies the HasEdge predicate on the "user_groups" edge.
 func HasUserGroups() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

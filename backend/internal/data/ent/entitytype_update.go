@@ -191,7 +191,9 @@ func (_u *EntityTypeUpdate) ClearDefaultTemplate() *EntityTypeUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *EntityTypeUpdate) Save(ctx context.Context) (int, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -218,11 +220,15 @@ func (_u *EntityTypeUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *EntityTypeUpdate) defaults() {
+func (_u *EntityTypeUpdate) defaults() error {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		if entitytype.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized entitytype.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := entitytype.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -576,7 +582,9 @@ func (_u *EntityTypeUpdateOne) Select(field string, fields ...string) *EntityTyp
 
 // Save executes the query and returns the updated EntityType entity.
 func (_u *EntityTypeUpdateOne) Save(ctx context.Context) (*EntityType, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -603,11 +611,15 @@ func (_u *EntityTypeUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *EntityTypeUpdateOne) defaults() {
+func (_u *EntityTypeUpdateOne) defaults() error {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		if entitytype.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized entitytype.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := entitytype.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

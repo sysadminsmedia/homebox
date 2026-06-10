@@ -14,6 +14,7 @@ type AllServices struct {
 	User              *UserService
 	Group             *GroupService
 	Entities          *EntityService
+	Permissions       *PermissionService
 	BackgroundService *BackgroundService
 	Exports           *ExportService
 	Currencies        *currencies.CurrencyRegistry
@@ -106,8 +107,9 @@ func New(repos *repo.AllRepos, opts ...OptionsFunc) *AllServices {
 	}
 
 	return &AllServices{
-		User:  &UserService{repos: repos, mailer: options.mailer},
-		Group: &GroupService{repos},
+		User:        &UserService{repos: repos, mailer: options.mailer},
+		Group:       &GroupService{repos},
+		Permissions: &PermissionService{repos: repos},
 		Entities: &EntityService{
 			repo:                 repos,
 			autoIncrementAssetID: options.autoIncrementAssetID,

@@ -5,6 +5,7 @@ package group
 import (
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/google/uuid"
@@ -39,6 +40,10 @@ const (
 	EdgeEntityTemplates = "entity_templates"
 	// EdgeExports holds the string denoting the exports edge name in mutations.
 	EdgeExports = "exports"
+	// EdgePermissionGroups holds the string denoting the permission_groups edge name in mutations.
+	EdgePermissionGroups = "permission_groups"
+	// EdgeAccessGrants holds the string denoting the access_grants edge name in mutations.
+	EdgeAccessGrants = "access_grants"
 	// EdgeUserGroups holds the string denoting the user_groups edge name in mutations.
 	EdgeUserGroups = "user_groups"
 	// Table holds the table name of the group in the database.
@@ -97,6 +102,20 @@ const (
 	ExportsInverseTable = "exports"
 	// ExportsColumn is the table column denoting the exports relation/edge.
 	ExportsColumn = "group_id"
+	// PermissionGroupsTable is the table that holds the permission_groups relation/edge.
+	PermissionGroupsTable = "permission_groups"
+	// PermissionGroupsInverseTable is the table name for the PermissionGroup entity.
+	// It exists in this package in order to avoid circular dependency with the "permissiongroup" package.
+	PermissionGroupsInverseTable = "permission_groups"
+	// PermissionGroupsColumn is the table column denoting the permission_groups relation/edge.
+	PermissionGroupsColumn = "group_id"
+	// AccessGrantsTable is the table that holds the access_grants relation/edge.
+	AccessGrantsTable = "access_grants"
+	// AccessGrantsInverseTable is the table name for the AccessGrant entity.
+	// It exists in this package in order to avoid circular dependency with the "accessgrant" package.
+	AccessGrantsInverseTable = "access_grants"
+	// AccessGrantsColumn is the table column denoting the access_grants relation/edge.
+	AccessGrantsColumn = "group_id"
 	// UserGroupsTable is the table that holds the user_groups relation/edge.
 	UserGroupsTable = "user_groups"
 	// UserGroupsInverseTable is the table name for the UserGroup entity.
@@ -131,7 +150,15 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "github.com/sysadminsmedia/homebox/backend/internal/data/ent/runtime"
 var (
+	Hooks        [1]ent.Hook
+	Interceptors [1]ent.Interceptor
+	Policy       ent.Policy
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -286,6 +313,34 @@ func ByExports(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByPermissionGroupsCount orders the results by permission_groups count.
+func ByPermissionGroupsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newPermissionGroupsStep(), opts...)
+	}
+}
+
+// ByPermissionGroups orders the results by permission_groups terms.
+func ByPermissionGroups(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPermissionGroupsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByAccessGrantsCount orders the results by access_grants count.
+func ByAccessGrantsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAccessGrantsStep(), opts...)
+	}
+}
+
+// ByAccessGrants orders the results by access_grants terms.
+func ByAccessGrants(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAccessGrantsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByUserGroupsCount orders the results by user_groups count.
 func ByUserGroupsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -353,6 +408,20 @@ func newExportsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ExportsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ExportsTable, ExportsColumn),
+	)
+}
+func newPermissionGroupsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PermissionGroupsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, PermissionGroupsTable, PermissionGroupsColumn),
+	)
+}
+func newAccessGrantsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AccessGrantsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, AccessGrantsTable, AccessGrantsColumn),
 	)
 }
 func newUserGroupsStep() *sqlgraph.Step {

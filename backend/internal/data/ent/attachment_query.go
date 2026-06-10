@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -399,6 +400,12 @@ func (_q *AttachmentQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if attachment.Policy == nil {
+		return errors.New("ent: uninitialized attachment.Policy (forgotten import ent/runtime?)")
+	}
+	if err := attachment.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

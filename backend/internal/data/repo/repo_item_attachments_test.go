@@ -31,7 +31,7 @@ func TestAttachmentRepo_Create(t *testing.T) {
 	var ids []uuid.UUID
 	t.Cleanup(func() {
 		for _, id := range ids {
-			_ = tRepos.Attachments.Delete(context.Background(), tGroup.ID, id)
+			_ = tRepos.Attachments.Delete(testCtx(), tGroup.ID, id)
 		}
 	})
 
@@ -49,7 +49,7 @@ func TestAttachmentRepo_Create(t *testing.T) {
 		{
 			name: "create attachment",
 			args: args{
-				ctx:      context.Background(),
+				ctx:      testCtx(),
 				entityID: entity.ID,
 				typ:      attachment.TypePhoto,
 			},
@@ -60,7 +60,7 @@ func TestAttachmentRepo_Create(t *testing.T) {
 		{
 			name: "create attachment with invalid entity id",
 			args: args{
-				ctx:      context.Background(),
+				ctx:      testCtx(),
 				entityID: uuid.New(),
 				typ:      "blarg",
 			},
@@ -94,13 +94,13 @@ func useAttachments(t *testing.T, n int) []*ent.Attachment {
 	ids := make([]uuid.UUID, 0, n)
 	t.Cleanup(func() {
 		for _, id := range ids {
-			_ = tRepos.Attachments.Delete(context.Background(), tGroup.ID, id)
+			_ = tRepos.Attachments.Delete(testCtx(), tGroup.ID, id)
 		}
 	})
 
 	attachments := make([]*ent.Attachment, n)
 	for i := 0; i < n; i++ {
-		attach, err := tRepos.Attachments.Create(context.Background(), entity.ID, ItemCreateAttachment{Title: "Test", Content: strings.NewReader("Test String")}, attachment.TypePhoto, true)
+		attach, err := tRepos.Attachments.Create(testCtx(), entity.ID, ItemCreateAttachment{Title: "Test", Content: strings.NewReader("Test String")}, attachment.TypePhoto, true)
 		require.NoError(t, err)
 		attachments[i] = attach
 
@@ -115,13 +115,13 @@ func TestAttachmentRepo_Update(t *testing.T) {
 
 	for _, typ := range []attachment.Type{"photo", "manual", "warranty", "attachment"} {
 		t.Run(string(typ), func(t *testing.T) {
-			_, err := tRepos.Attachments.Update(context.Background(), tGroup.ID, entity.ID, &ItemAttachmentUpdate{
+			_, err := tRepos.Attachments.Update(testCtx(), tGroup.ID, entity.ID, &ItemAttachmentUpdate{
 				Type: string(typ),
 			})
 
 			require.NoError(t, err)
 
-			updated, err := tRepos.Attachments.Get(context.Background(), tGroup.ID, entity.ID)
+			updated, err := tRepos.Attachments.Get(testCtx(), tGroup.ID, entity.ID)
 			require.NoError(t, err)
 			assert.Equal(t, typ, updated.Type)
 		})
@@ -131,15 +131,15 @@ func TestAttachmentRepo_Update(t *testing.T) {
 func TestAttachmentRepo_Delete(t *testing.T) {
 	entity := useAttachments(t, 1)[0]
 
-	err := tRepos.Attachments.Delete(context.Background(), tGroup.ID, entity.ID)
+	err := tRepos.Attachments.Delete(testCtx(), tGroup.ID, entity.ID)
 	require.NoError(t, err)
 
-	_, err = tRepos.Attachments.Get(context.Background(), tGroup.ID, entity.ID)
+	_, err = tRepos.Attachments.Get(testCtx(), tGroup.ID, entity.ID)
 	require.Error(t, err)
 }
 
 func TestAttachmentRepo_CreateExternalLink(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	entity := useEntities(t, 1)[0]
 
 	att, err := tRepos.Attachments.CreateExternalLink(
@@ -165,7 +165,7 @@ func TestAttachmentRepo_CreateExternalLink(t *testing.T) {
 }
 
 func TestAttachmentRepo_DeleteExternalLink(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	entity := useEntities(t, 1)[0]
 
 	att, err := tRepos.Attachments.CreateExternalLink(
@@ -186,7 +186,7 @@ func TestAttachmentRepo_DeleteExternalLink(t *testing.T) {
 }
 
 func TestAttachmentRepo_DeleteExternalLink_DoesNotRequireBlobStorage(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	repos := New(tClient, tbus, config.Storage{PrefixPath: "/", ConnString: "mem://"}, "mem://{{ .Topic }}", config.Thumbnail{Enabled: false})
 	entity := useEntities(t, 1)[0]
@@ -206,7 +206,7 @@ func TestAttachmentRepo_DeleteExternalLink_DoesNotRequireBlobStorage(t *testing.
 }
 
 func TestAttachmentRepo_EnsureSinglePrimaryAttachment(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	attachments := useAttachments(t, 2)
 
 	setAndVerifyPrimary := func(primaryAttachmentID, nonPrimaryAttachmentID uuid.UUID) {
@@ -228,7 +228,7 @@ func TestAttachmentRepo_EnsureSinglePrimaryAttachment(t *testing.T) {
 }
 
 func TestAttachmentRepo_UpdateNonPhotoDoesNotAffectPrimaryPhoto(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	entity := useEntities(t, 1)[0]
 
 	// Create a photo attachment that will be primary
@@ -270,7 +270,7 @@ func TestAttachmentRepo_UpdateNonPhotoDoesNotAffectPrimaryPhoto(t *testing.T) {
 }
 
 func TestAttachmentRepo_AddingPDFAfterPhotoKeepsPhotoAsPrimary(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	entity := useEntities(t, 1)[0]
 
 	// Step 1: Upload a photo first (this should become primary since it's the first photo)
@@ -316,7 +316,7 @@ func TestAttachmentRepo_AddingPDFAfterPhotoKeepsPhotoAsPrimary(t *testing.T) {
 }
 
 func TestAttachmentRepo_SettingPhotoPrimaryStillWorks(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	entity := useEntities(t, 1)[0]
 
 	// Create two photo attachments

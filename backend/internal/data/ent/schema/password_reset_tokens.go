@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authzrules"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
@@ -52,4 +53,15 @@ func (PasswordResetTokens) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("token"),
 	}
+}
+
+// Policy of the PasswordResetTokens: mutations require the matching permission and are
+// pinned to the viewer's tenant; reads are filtered by Interceptors.
+func (PasswordResetTokens) Policy() ent.Policy {
+	return authzrules.NewPolicy()
+}
+
+// Interceptors of the PasswordResetTokens scope every read to the request viewer.
+func (PasswordResetTokens) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{authzrules.FilterPasswordResetTokens()}
 }

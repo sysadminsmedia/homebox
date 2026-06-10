@@ -32,7 +32,7 @@ var (
 func bootstrap() {
 	var (
 		err error
-		ctx = context.Background()
+		ctx = testCtx()
 	)
 
 	tGroup, err = tRepos.Groups.GroupCreate(ctx, "test-group", uuid.Nil)
@@ -58,10 +58,16 @@ func MainNoExit(m *testing.M) int {
 		log.Fatalf("failed opening connection to sqlite: %v", err)
 	}
 
-	err = client.Schema.Create(context.Background())
+	err = client.Schema.Create(testCtx())
 	if err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
+
+	// Drain the event bus like the API server does; without a consumer the
+	// bus channel fills up and entity mutations block in Publish.
+	go func() {
+		_ = tbus.Run(context.Background())
+	}()
 
 	tClient = client
 	tRepos = repo.New(tClient, tbus, config.Storage{
@@ -93,7 +99,7 @@ func MainNoExit(m *testing.M) int {
 
 	bootstrap()
 	tCtx = Context{
-		Context: context.Background(),
+		Context: testCtx(),
 		GID:     tGroup.ID,
 		UID:     tUser.ID,
 	}

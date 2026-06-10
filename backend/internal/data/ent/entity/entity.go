@@ -5,6 +5,7 @@ package entity
 import (
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/google/uuid"
@@ -79,6 +80,8 @@ const (
 	EdgeMaintenanceEntries = "maintenance_entries"
 	// EdgeAttachments holds the string denoting the attachments edge name in mutations.
 	EdgeAttachments = "attachments"
+	// EdgeAccessGrants holds the string denoting the access_grants edge name in mutations.
+	EdgeAccessGrants = "access_grants"
 	// Table holds the table name of the entity in the database.
 	Table = "entities"
 	// GroupTable is the table that holds the group relation/edge.
@@ -129,6 +132,13 @@ const (
 	AttachmentsInverseTable = "attachments"
 	// AttachmentsColumn is the table column denoting the attachments relation/edge.
 	AttachmentsColumn = "entity_attachments"
+	// AccessGrantsTable is the table that holds the access_grants relation/edge.
+	AccessGrantsTable = "access_grants"
+	// AccessGrantsInverseTable is the table name for the AccessGrant entity.
+	// It exists in this package in order to avoid circular dependency with the "accessgrant" package.
+	AccessGrantsInverseTable = "access_grants"
+	// AccessGrantsColumn is the table column denoting the access_grants relation/edge.
+	AccessGrantsColumn = "entity_id"
 )
 
 // Columns holds all SQL columns for entity fields.
@@ -189,7 +199,15 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "github.com/sysadminsmedia/homebox/backend/internal/data/ent/runtime"
 var (
+	Hooks        [1]ent.Hook
+	Interceptors [1]ent.Interceptor
+	Policy       ent.Policy
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -452,6 +470,20 @@ func ByAttachments(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newAttachmentsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByAccessGrantsCount orders the results by access_grants count.
+func ByAccessGrantsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAccessGrantsStep(), opts...)
+	}
+}
+
+// ByAccessGrants orders the results by access_grants terms.
+func ByAccessGrants(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAccessGrantsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newGroupStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -506,5 +538,12 @@ func newAttachmentsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(AttachmentsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, AttachmentsTable, AttachmentsColumn),
+	)
+}
+func newAccessGrantsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AccessGrantsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, AccessGrantsTable, AccessGrantsColumn),
 	)
 }

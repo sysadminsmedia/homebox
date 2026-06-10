@@ -7,6 +7,7 @@ import type {
   EntitySummary,
   MaintenanceEntry,
   MaintenanceEntryWithDetails,
+  PermissionGroupOut,
 } from "~~/lib/api/types/data-contracts";
 
 export enum DialogID {
@@ -40,6 +41,9 @@ export enum DialogID {
   CreateEntityType = "create-entity-type",
   UpdateEntityType = "update-entity-type",
   WipeInventory = "wipe-inventory",
+  ItemShare = "item-share",
+  PermissionGroup = "permission-group",
+  MemberPermissions = "member-permissions",
 }
 
 /**
@@ -78,6 +82,8 @@ export type DialogParamsMap = {
   };
   [DialogID.CreateCollection]?: { redirectTo?: string };
   [DialogID.JoinCollection]?: { redirectTo?: string; inviteCode?: string };
+  [DialogID.PermissionGroup]?: { group?: PermissionGroupOut };
+  [DialogID.MemberPermissions]: { userId: string };
 };
 
 /**

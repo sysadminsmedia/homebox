@@ -387,7 +387,9 @@ func (_u *EntityTemplateUpdate) ClearLocation() *EntityTemplateUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *EntityTemplateUpdate) Save(ctx context.Context) (int, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -414,11 +416,15 @@ func (_u *EntityTemplateUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *EntityTemplateUpdate) defaults() {
+func (_u *EntityTemplateUpdate) defaults() error {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		if entitytemplate.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized entitytemplate.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := entitytemplate.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -1051,7 +1057,9 @@ func (_u *EntityTemplateUpdateOne) Select(field string, fields ...string) *Entit
 
 // Save executes the query and returns the updated EntityTemplate entity.
 func (_u *EntityTemplateUpdateOne) Save(ctx context.Context) (*EntityTemplate, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -1078,11 +1086,15 @@ func (_u *EntityTemplateUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *EntityTemplateUpdateOne) defaults() {
+func (_u *EntityTemplateUpdateOne) defaults() error {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		if entitytemplate.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized entitytemplate.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := entitytemplate.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

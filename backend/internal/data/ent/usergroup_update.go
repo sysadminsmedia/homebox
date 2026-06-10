@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
@@ -69,6 +70,18 @@ func (_u *UserGroupUpdate) SetNillableRole(v *usergroup.Role) *UserGroupUpdate {
 	if v != nil {
 		_u.SetRole(*v)
 	}
+	return _u
+}
+
+// SetPermissions sets the "permissions" field.
+func (_u *UserGroupUpdate) SetPermissions(v []string) *UserGroupUpdate {
+	_u.mutation.SetPermissions(v)
+	return _u
+}
+
+// AppendPermissions appends value to the "permissions" field.
+func (_u *UserGroupUpdate) AppendPermissions(v []string) *UserGroupUpdate {
+	_u.mutation.AppendPermissions(v)
 	return _u
 }
 
@@ -156,6 +169,14 @@ func (_u *UserGroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Role(); ok {
 		_spec.SetField(usergroup.FieldRole, field.TypeEnum, value)
+	}
+	if value, ok := _u.mutation.Permissions(); ok {
+		_spec.SetField(usergroup.FieldPermissions, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedPermissions(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, usergroup.FieldPermissions, value)
+		})
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -277,6 +298,18 @@ func (_u *UserGroupUpdateOne) SetNillableRole(v *usergroup.Role) *UserGroupUpdat
 	return _u
 }
 
+// SetPermissions sets the "permissions" field.
+func (_u *UserGroupUpdateOne) SetPermissions(v []string) *UserGroupUpdateOne {
+	_u.mutation.SetPermissions(v)
+	return _u
+}
+
+// AppendPermissions appends value to the "permissions" field.
+func (_u *UserGroupUpdateOne) AppendPermissions(v []string) *UserGroupUpdateOne {
+	_u.mutation.AppendPermissions(v)
+	return _u
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (_u *UserGroupUpdateOne) SetUser(v *User) *UserGroupUpdateOne {
 	return _u.SetUserID(v.ID)
@@ -393,6 +426,14 @@ func (_u *UserGroupUpdateOne) sqlSave(ctx context.Context) (_node *UserGroup, er
 	}
 	if value, ok := _u.mutation.Role(); ok {
 		_spec.SetField(usergroup.FieldRole, field.TypeEnum, value)
+	}
+	if value, ok := _u.mutation.Permissions(); ok {
+		_spec.SetField(usergroup.FieldPermissions, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedPermissions(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, usergroup.FieldPermissions, value)
+		})
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -80,6 +80,68 @@ definitions:
         - $ref: '#/definitions/ent.User'
         description: User holds the value of the user edge.
     type: object
+  ent.AccessGrant:
+    properties:
+      can_attachments:
+        description: CanAttachments holds the value of the "can_attachments" field.
+        type: boolean
+      can_delete:
+        description: CanDelete holds the value of the "can_delete" field.
+        type: boolean
+      can_read:
+        description: CanRead holds the value of the "can_read" field.
+        type: boolean
+      can_update:
+        description: CanUpdate holds the value of the "can_update" field.
+        type: boolean
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.AccessGrantEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the AccessGrantQuery when eager-loading is set.
+      entity_id:
+        description: EntityID holds the value of the "entity_id" field.
+        type: string
+      group_id:
+        description: GroupID holds the value of the "group_id" field.
+        type: string
+      id:
+        description: ID of the ent.
+        type: string
+      permission_group_id:
+        description: PermissionGroupID holds the value of the "permission_group_id"
+          field.
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      user_id:
+        description: UserID holds the value of the "user_id" field.
+        type: string
+    type: object
+  ent.AccessGrantEdges:
+    properties:
+      entity:
+        allOf:
+        - $ref: '#/definitions/ent.Entity'
+        description: Entity holds the value of the entity edge.
+      group:
+        allOf:
+        - $ref: '#/definitions/ent.Group'
+        description: Group holds the value of the group edge.
+      permission_group:
+        allOf:
+        - $ref: '#/definitions/ent.PermissionGroup'
+        description: PermissionGroup holds the value of the permission_group edge.
+      user:
+        allOf:
+        - $ref: '#/definitions/ent.User'
+        description: User holds the value of the user edge.
+    type: object
   ent.Attachment:
     properties:
       created_at:
@@ -272,6 +334,11 @@ definitions:
     type: object
   ent.EntityEdges:
     properties:
+      access_grants:
+        description: AccessGrants holds the value of the access_grants edge.
+        items:
+          $ref: '#/definitions/ent.AccessGrant'
+        type: array
       attachments:
         description: Attachments holds the value of the attachments edge.
         items:
@@ -564,6 +631,11 @@ definitions:
     type: object
   ent.GroupEdges:
     properties:
+      access_grants:
+        description: AccessGrants holds the value of the access_grants edge.
+        items:
+          $ref: '#/definitions/ent.AccessGrant'
+        type: array
       entities:
         description: Entities holds the value of the entities edge.
         items:
@@ -593,6 +665,11 @@ definitions:
         description: Notifiers holds the value of the notifiers edge.
         items:
           $ref: '#/definitions/ent.Notifier'
+        type: array
+      permission_groups:
+        description: PermissionGroups holds the value of the permission_groups edge.
+        items:
+          $ref: '#/definitions/ent.PermissionGroup'
         type: array
       tags:
         description: Tags holds the value of the tags edge.
@@ -627,6 +704,11 @@ definitions:
       id:
         description: ID of the ent.
         type: string
+      permissions:
+        description: Permissions holds the value of the "permissions" field.
+        items:
+          type: string
+        type: array
       token:
         description: Token holds the value of the "token" field.
         items:
@@ -765,6 +847,50 @@ definitions:
         allOf:
         - $ref: '#/definitions/ent.User'
         description: User holds the value of the user edge.
+    type: object
+  ent.PermissionGroup:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      description:
+        description: Description holds the value of the "description" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.PermissionGroupEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the PermissionGroupQuery when eager-loading is set.
+      group_id:
+        description: GroupID holds the value of the "group_id" field.
+        type: string
+      id:
+        description: ID of the ent.
+        type: string
+      name:
+        description: Name holds the value of the "name" field.
+        type: string
+      permissions:
+        description: Permissions holds the value of the "permissions" field.
+        items:
+          type: string
+        type: array
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  ent.PermissionGroupEdges:
+    properties:
+      group:
+        allOf:
+        - $ref: '#/definitions/ent.Group'
+        description: Group holds the value of the group edge.
+      users:
+        description: Users holds the value of the users edge.
+        items:
+          $ref: '#/definitions/ent.User'
+        type: array
     type: object
   ent.Tag:
     properties:
@@ -938,6 +1064,11 @@ definitions:
         items:
           $ref: '#/definitions/ent.PasswordResetTokens'
         type: array
+      permission_groups:
+        description: PermissionGroups holds the value of the permission_groups edge.
+        items:
+          $ref: '#/definitions/ent.PermissionGroup'
+        type: array
       user_groups:
         description: UserGroups holds the value of the user_groups edge.
         items:
@@ -955,6 +1086,11 @@ definitions:
       group_id:
         description: GroupID holds the value of the "group_id" field.
         type: string
+      permissions:
+        description: Permissions holds the value of the "permissions" field.
+        items:
+          type: string
+        type: array
       role:
         allOf:
         - $ref: '#/definitions/usergroup.Role'
@@ -1058,6 +1194,47 @@ definitions:
       userId:
         type: string
     type: object
+  repo.AccessGrantCreate:
+    properties:
+      actions:
+        items:
+          type: string
+        minItems: 1
+        type: array
+      targetId:
+        type: string
+      targetType:
+        enum:
+        - user
+        - permissionGroup
+        type: string
+    required:
+    - actions
+    - targetId
+    - targetType
+    type: object
+  repo.AccessGrantOut:
+    properties:
+      actions:
+        items:
+          type: string
+        type: array
+      createdAt:
+        type: string
+      entityId:
+        type: string
+      id:
+        type: string
+      targetId:
+        type: string
+      targetName:
+        type: string
+      targetType:
+        enum:
+        - user
+        - permissionGroup
+        type: string
+    type: object
   repo.BarcodeProduct:
     properties:
       barcode:
@@ -1154,6 +1331,14 @@ definitions:
       attachments:
         items:
           $ref: '#/definitions/repo.ItemAttachment'
+        type: array
+      capabilities:
+        description: |-
+          Capabilities lists the actions the caller may perform on this
+          entity (read, update, delete, attachments, permissions). Populated
+          only on single-entity fetches.
+        items:
+          type: string
         type: array
       children:
         description: Container-specific fields (for entities whose entity_type.is_location
@@ -1701,6 +1886,10 @@ definitions:
         $ref: '#/definitions/repo.Group'
       id:
         type: string
+      permissions:
+        items:
+          type: string
+        type: array
       uses:
         type: integer
     type: object
@@ -1832,6 +2021,25 @@ definitions:
     - MaintenanceFilterStatusScheduled
     - MaintenanceFilterStatusCompleted
     - MaintenanceFilterStatusBoth
+  repo.MemberPermissions:
+    properties:
+      direct:
+        items:
+          type: string
+        type: array
+      effective:
+        items:
+          type: string
+        type: array
+      permissionGroups:
+        items:
+          $ref: '#/definitions/repo.PermissionGroupSummary'
+        type: array
+      role:
+        type: string
+      userId:
+        type: string
+    type: object
   repo.NotifierCreate:
     properties:
       isActive:
@@ -1891,6 +2099,68 @@ definitions:
         type: integer
       total:
         type: integer
+    type: object
+  repo.PermissionGroupCreate:
+    properties:
+      description:
+        maxLength: 1000
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      permissions:
+        items:
+          type: string
+        type: array
+    required:
+    - name
+    type: object
+  repo.PermissionGroupOut:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      members:
+        items:
+          $ref: '#/definitions/repo.UserSummary'
+        type: array
+      name:
+        type: string
+      permissions:
+        items:
+          type: string
+        type: array
+      updatedAt:
+        type: string
+    type: object
+  repo.PermissionGroupSummary:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      permissions:
+        items:
+          type: string
+        type: array
+    type: object
+  repo.PermissionGroupUpdate:
+    properties:
+      description:
+        maxLength: 1000
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      permissions:
+        items:
+          type: string
+        type: array
+    required:
+    - name
     type: object
   repo.TagCreate:
     properties:
@@ -2096,11 +2366,33 @@ definitions:
       value:
         type: number
     type: object
+  services.EffectivePermissionsOut:
+    properties:
+      groupId:
+        type: string
+      isOwner:
+        type: boolean
+      isSuperuser:
+        type: boolean
+      permissions:
+        items:
+          type: string
+        type: array
+    type: object
   services.Latest:
     properties:
       date:
         type: string
       version:
+        type: string
+    type: object
+  services.PermissionDefinition:
+    properties:
+      action:
+        type: string
+      key:
+        type: string
+      resource:
         type: string
     type: object
   services.UserRegistration:
@@ -2162,6 +2454,16 @@ definitions:
         items:
           type: string
         type: array
+    type: object
+  v1.AccessGrantUpdate:
+    properties:
+      actions:
+        items:
+          type: string
+        minItems: 1
+        type: array
+    required:
+    - actions
     type: object
   v1.ActionAmountResult:
     properties:
@@ -2233,6 +2535,10 @@ definitions:
         type: string
       id:
         type: string
+      permissions:
+        items:
+          type: string
+        type: array
       token:
         type: string
       uses:
@@ -2242,6 +2548,13 @@ definitions:
     properties:
       expiresAt:
         type: string
+      permissions:
+        description: |-
+          Permissions applied to the membership created on acceptance.
+          Empty means full access (matches pre-permission behavior).
+        items:
+          type: string
+        type: array
       uses:
         maximum: 100
         minimum: 1
@@ -2260,6 +2573,13 @@ definitions:
         example: admin@admin.com
         type: string
     type: object
+  v1.MemberPermissionsSet:
+    properties:
+      permissions:
+        items:
+          type: string
+        type: array
+    type: object
   v1.OIDCStatus:
     properties:
       allowLocal:
@@ -2270,6 +2590,13 @@ definitions:
         type: string
       enabled:
         type: boolean
+    type: object
+  v1.PermissionGroupSetMembers:
+    properties:
+      userIds:
+        items:
+          type: string
+        type: array
     type: object
   v1.ResetPasswordRequest:
     properties:
@@ -2876,6 +3203,108 @@ paths:
       summary: Get the full path of an entity
       tags:
       - Entities
+  /v1/entities/{id}/permissions:
+    get:
+      description: Lists the row-level access grants on one entity.
+      parameters:
+      - description: Entity ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.AccessGrantOut'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get Entity Access Grants
+      tags:
+      - Permissions
+    post:
+      description: Grants a user or permission group row-level access to one entity.
+      parameters:
+      - description: Entity ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Grant Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.AccessGrantCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.AccessGrantOut'
+      security:
+      - Bearer: []
+      summary: Create Entity Access Grant
+      tags:
+      - Permissions
+  /v1/entities/{id}/permissions/{grant_id}:
+    delete:
+      parameters:
+      - description: Entity ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Grant ID
+        in: path
+        name: grant_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete Entity Access Grant
+      tags:
+      - Permissions
+    put:
+      parameters:
+      - description: Entity ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Grant ID
+        in: path
+        name: grant_id
+        required: true
+        type: string
+      - description: Grant Actions
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/v1.AccessGrantUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.AccessGrantOut'
+      security:
+      - Bearer: []
+      summary: Update Entity Access Grant
+      tags:
+      - Permissions
   /v1/entities/export:
     get:
       responses:
@@ -3347,6 +3776,194 @@ paths:
       summary: Remove User from Group
       tags:
       - Group
+  /v1/groups/members/{user_id}/permissions:
+    get:
+      description: Returns a member's direct permissions, permission groups, and effective
+        set.
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.MemberPermissions'
+      security:
+      - Bearer: []
+      summary: Get Member Permissions
+      tags:
+      - Permissions
+    put:
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Permissions
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/v1.MemberPermissionsSet'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.MemberPermissions'
+      security:
+      - Bearer: []
+      summary: Set Member Direct Permissions
+      tags:
+      - Permissions
+  /v1/groups/permission-groups:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.PermissionGroupOut'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get All Permission Groups
+      tags:
+      - Permissions
+    post:
+      parameters:
+      - description: Permission Group Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.PermissionGroupCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.PermissionGroupOut'
+      security:
+      - Bearer: []
+      summary: Create Permission Group
+      tags:
+      - Permissions
+  /v1/groups/permission-groups/{id}:
+    delete:
+      parameters:
+      - description: Permission Group ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete Permission Group
+      tags:
+      - Permissions
+    get:
+      parameters:
+      - description: Permission Group ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.PermissionGroupOut'
+      security:
+      - Bearer: []
+      summary: Get Permission Group
+      tags:
+      - Permissions
+    put:
+      parameters:
+      - description: Permission Group ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Permission Group Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.PermissionGroupUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.PermissionGroupOut'
+      security:
+      - Bearer: []
+      summary: Update Permission Group
+      tags:
+      - Permissions
+  /v1/groups/permission-groups/{id}/members:
+    put:
+      description: Replaces the member list of a permission group. Every member must
+        belong to the tenant.
+      parameters:
+      - description: Permission Group ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Member List
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PermissionGroupSetMembers'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.PermissionGroupOut'
+      security:
+      - Bearer: []
+      summary: Set Permission Group Members
+      tags:
+      - Permissions
+  /v1/groups/permissions/self:
+    get:
+      description: Returns the caller's effective permission set for the active tenant.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.EffectivePermissionsOut'
+      security:
+      - Bearer: []
+      summary: Get Caller's Effective Permissions
+      tags:
+      - Permissions
   /v1/groups/statistics:
     get:
       produces:
@@ -3652,6 +4269,22 @@ paths:
       summary: Test Notifier
       tags:
       - Notifiers
+  /v1/permissions/catalog:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/services.PermissionDefinition'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get Permission Catalog
+      tags:
+      - Permissions
   /v1/products/search-from-barcode:
     get:
       parameters:

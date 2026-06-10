@@ -1,7 +1,6 @@
 package repo
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -61,14 +60,14 @@ func TestMaintenanceEntryRepository_GetLog(t *testing.T) {
 	}
 
 	for _, entry := range created {
-		_, err := tRepos.MaintEntry.Create(context.Background(), tGroup.ID, item.ID, entry)
+		_, err := tRepos.MaintEntry.Create(testCtx(), tGroup.ID, item.ID, entry)
 		if err != nil {
 			t.Fatalf("failed to create maintenance entry: %v", err)
 		}
 	}
 
 	// Get the log for the item
-	log, err := tRepos.MaintEntry.GetMaintenanceByItemID(context.Background(), tGroup.ID, item.ID, MaintenanceFilters{Status: MaintenanceFilterStatusCompleted})
+	log, err := tRepos.MaintEntry.GetMaintenanceByItemID(testCtx(), tGroup.ID, item.ID, MaintenanceFilters{Status: MaintenanceFilterStatusCompleted})
 	if err != nil {
 		t.Fatalf("failed to get maintenance log: %v", err)
 	}
@@ -76,7 +75,7 @@ func TestMaintenanceEntryRepository_GetLog(t *testing.T) {
 	assert.Len(t, log, 10)
 
 	for _, entry := range log {
-		err := tRepos.MaintEntry.Delete(context.Background(), tGroup.ID, entry.ID)
+		err := tRepos.MaintEntry.Delete(testCtx(), tGroup.ID, entry.ID)
 		require.NoError(t, err)
 	}
 }

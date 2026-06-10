@@ -19,13 +19,17 @@ type (
 	GroupInvitationCreate struct {
 		Uses      int       `json:"uses"      validate:"required,min=1,max=100"`
 		ExpiresAt time.Time `json:"expiresAt"`
+		// Permissions applied to the membership created on acceptance.
+		// Empty means full access (matches pre-permission behavior).
+		Permissions []string `json:"permissions"`
 	}
 
 	GroupInvitation struct {
-		ID        uuid.UUID `json:"id"`
-		Token     string    `json:"token"`
-		ExpiresAt time.Time `json:"expiresAt"`
-		Uses      int       `json:"uses"`
+		ID          uuid.UUID `json:"id"`
+		Token       string    `json:"token"`
+		ExpiresAt   time.Time `json:"expiresAt"`
+		Uses        int       `json:"uses"`
+		Permissions []string  `json:"permissions"`
 	}
 
 	GroupAcceptInvitationResponse struct {
@@ -99,16 +103,17 @@ func (ctrl *V1Controller) HandleGroupInvitationsCreate() errchain.HandlerFunc {
 
 		auth := services.NewContext(r.Context())
 
-		invitation, token, err := ctrl.svc.Group.NewInvitation(auth, body.Uses, body.ExpiresAt)
+		invitation, token, err := ctrl.svc.Group.NewInvitation(auth, body.Uses, body.ExpiresAt, body.Permissions)
 		if err != nil {
 			return GroupInvitation{}, err
 		}
 
 		return GroupInvitation{
-			ID:        invitation.ID,
-			Token:     token,
-			ExpiresAt: invitation.ExpiresAt,
-			Uses:      invitation.Uses,
+			ID:          invitation.ID,
+			Token:       token,
+			ExpiresAt:   invitation.ExpiresAt,
+			Uses:        invitation.Uses,
+			Permissions: invitation.Permissions,
 		}, nil
 	}
 

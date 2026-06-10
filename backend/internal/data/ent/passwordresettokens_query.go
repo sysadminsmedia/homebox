@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -364,6 +365,12 @@ func (_q *PasswordResetTokensQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if passwordresettokens.Policy == nil {
+		return errors.New("ent: uninitialized passwordresettokens.Policy (forgotten import ent/runtime?)")
+	}
+	if err := passwordresettokens.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

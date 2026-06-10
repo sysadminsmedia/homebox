@@ -1,7 +1,6 @@
 package services
 
 import (
-	"context"
 	"os"
 	"path"
 	"strings"
@@ -21,7 +20,7 @@ func TestEntityService_AddAttachment(t *testing.T) {
 		filepath: temp,
 	}
 
-	loc, err := tRepos.Entities.CreateContainer(context.Background(), tGroup.ID, repo.EntityCreate{
+	loc, err := tRepos.Entities.CreateContainer(testCtx(), tGroup.ID, repo.EntityCreate{
 		Name: "test",
 	})
 	require.NoError(t, err)
@@ -33,11 +32,11 @@ func TestEntityService_AddAttachment(t *testing.T) {
 		ParentID:    loc.ID,
 	}
 
-	itm, err := svc.repo.Entities.Create(context.Background(), tGroup.ID, itmC)
+	itm, err := svc.repo.Entities.Create(testCtx(), tGroup.ID, itmC)
 	require.NoError(t, err)
 	assert.NotNil(t, itm)
 	t.Cleanup(func() {
-		err := svc.repo.Entities.Delete(context.Background(), itm.ID)
+		err := svc.repo.Entities.Delete(testCtx(), itm.ID)
 		require.NoError(t, err)
 	})
 
@@ -80,7 +79,7 @@ func TestEntityService_AddAttachment_InvalidStorage(t *testing.T) {
 
 	svc.repo = invalidRepos
 
-	loc, err := invalidRepos.Entities.CreateContainer(context.Background(), tGroup.ID, repo.EntityCreate{
+	loc, err := invalidRepos.Entities.CreateContainer(testCtx(), tGroup.ID, repo.EntityCreate{
 		Name: "test-invalid",
 	})
 	require.NoError(t, err)
@@ -92,11 +91,11 @@ func TestEntityService_AddAttachment_InvalidStorage(t *testing.T) {
 		ParentID:    loc.ID,
 	}
 
-	itm, err := invalidRepos.Entities.Create(context.Background(), tGroup.ID, itmC)
+	itm, err := invalidRepos.Entities.Create(testCtx(), tGroup.ID, itmC)
 	require.NoError(t, err)
 	assert.NotNil(t, itm)
 	t.Cleanup(func() {
-		err := invalidRepos.Entities.Delete(context.Background(), itm.ID)
+		err := invalidRepos.Entities.Delete(testCtx(), itm.ID)
 		require.NoError(t, err)
 	})
 

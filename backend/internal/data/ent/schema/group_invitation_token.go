@@ -6,6 +6,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authz"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authzrules"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
@@ -29,6 +31,12 @@ func (GroupInvitationToken) Fields() []ent.Field {
 			Default(func() time.Time { return time.Now().Add(time.Hour * 24 * 7) }),
 		field.Int("uses").
 			Default(0),
+		// Tenant-wide permissions applied to the membership created when the
+		// invitation is accepted. Defaults to the full-access wildcard so
+		// invites behave like they did before the permission system existed
+		// and keep covering permissions added to the catalog later.
+		field.Strings("permissions").
+			Default(authz.FullAccess()),
 	}
 }
 
@@ -39,4 +47,15 @@ func (GroupInvitationToken) Edges() []ent.Edge {
 			Ref("invitation_tokens").
 			Unique(),
 	}
+}
+
+// Policy of the GroupInvitationToken: mutations require the matching permission and are
+// pinned to the viewer's tenant; reads are filtered by Interceptors.
+func (GroupInvitationToken) Policy() ent.Policy {
+	return authzrules.NewPolicy(authzrules.GroupInvitationTokenMutationRule())
+}
+
+// Interceptors of the GroupInvitationToken scope every read to the request viewer.
+func (GroupInvitationToken) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{authzrules.FilterGroupInvitationToken()}
 }

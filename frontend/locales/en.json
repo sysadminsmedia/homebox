@@ -22,6 +22,8 @@
             "member": "Member",
             "name": "Name",
             "owner": "Owner",
+            "permissions": "Permissions",
+            "permissions_title": "Member Permissions",
             "remove_confirm": "Are you sure you want to remove this member?",
             "removed": "Member removed",
             "role": "Role"
@@ -33,12 +35,30 @@
             "title": "No Collections Found"
         },
         "no_invites": "No invites",
+        "permission_groups": {
+            "create_title": "Create Permission Group",
+            "delete_confirm": "Are you sure you want to delete this permission group? Members will lose any permissions granted through it.",
+            "description": "Description",
+            "edit_title": "Edit Permission Group",
+            "empty": "No permission groups yet.",
+            "members": "Members",
+            "name": "Name",
+            "toast": {
+                "created": "Permission group created",
+                "deleted": "Permission group deleted",
+                "members_failed": "Failed to update permission group members",
+                "name_required": "Name is required",
+                "save_failed": "Failed to save permission group",
+                "updated": "Permission group updated"
+            }
+        },
         "remaining_uses": "Remaining uses",
         "tabs": {
             "entity_types": "Entity Types",
             "invites": "Invites",
             "members": "Members",
             "notifiers": "Notifiers",
+            "permission_groups": "Permission Groups",
             "settings": "Settings",
             "tools": "Tools"
         },
@@ -81,6 +101,8 @@
                 }
             },
             "invite_create_modal": {
+                "permissions": "Permissions",
+                "permissions_hint": "New members get the selected permissions when they accept this invite. All permissions are selected by default (full access).",
                 "toast": {
                     "invalid_expiry_missing": "Please choose an expiration date and time.",
                     "invalid_expiry_past": "Expiration date must be in the future.",
@@ -584,6 +606,31 @@
         "select_field": "Select a field",
         "select_value": "Select a value",
         "serial_number": "Serial Number",
+        "sharing": {
+            "actions": {
+                "attachments": "Attachments",
+                "delete": "Delete",
+                "read": "Read",
+                "update": "Update"
+            },
+            "add_grant": "Add access",
+            "delete_confirm": "Are you sure you want to remove this access grant?",
+            "empty": "No one has been granted extra access to this item.",
+            "grant_actions": "Allowed actions",
+            "permission_group": "Permission Group",
+            "read_implied": "Read access is always included.",
+            "target": "Who",
+            "target_type": "Type",
+            "title": "Sharing",
+            "toast": {
+                "create_failed": "Failed to create access grant",
+                "created": "Access grant created",
+                "delete_failed": "Failed to remove access grant",
+                "deleted": "Access grant removed",
+                "load_failed": "Failed to load access grants"
+            },
+            "user": "User"
+        },
         "show_advanced_view_options": "Show Advanced View Options",
         "show_empty": "Show Empty",
         "sold_at": "Sold At",
@@ -619,6 +666,7 @@
             "failed_upload_attachment": "Failed to upload attachment",
             "item_deleted": "Item deleted",
             "item_saved": "Item saved",
+            "no_edit_permission": "You do not have permission to edit this item.",
             "quantity_cannot_negative": "Quantity cannot be negative",
             "sync_child_location": "Selected parent syncs its children's locations to its own. The location has been updated."
         },
@@ -736,6 +784,39 @@
         "templates": {
             "no_templates": "No templates yet.",
             "title": "Templates"
+        }
+    },
+    "permissions": {
+        "action": {
+            "create": "Create",
+            "delete": "Delete",
+            "export": "Export",
+            "import": "Import",
+            "manage": "Manage",
+            "read": "Read",
+            "update": "Update"
+        },
+        "direct_permissions": "Direct Permissions",
+        "effective_permissions": "Effective Permissions",
+        "no_permission_groups": "No permission groups",
+        "no_permissions": "No permissions",
+        "permission_groups": "Permission Groups",
+        "permissions": "Permissions",
+        "resource": {
+            "data": "Data",
+            "entity": "Items & Locations",
+            "entitytype": "Entity Types",
+            "members": "Members",
+            "notifier": "Notifiers",
+            "permissions": "Permissions",
+            "settings": "Settings",
+            "tag": "Tags",
+            "template": "Templates"
+        },
+        "toast": {
+            "load_failed": "Failed to load member permissions",
+            "save_failed": "Failed to save permissions",
+            "saved": "Permissions saved"
         }
     },
     "profile": {

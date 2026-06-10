@@ -1,7 +1,6 @@
 package repo
 
 import (
-	"context"
 	"testing"
 
 	"github.com/google/uuid"
@@ -23,14 +22,14 @@ func useTags(t *testing.T, len int) []TagOut {
 	for i := 0; i < len; i++ {
 		itm := tagFactory()
 
-		item, err := tRepos.Tags.Create(context.Background(), tGroup.ID, itm)
+		item, err := tRepos.Tags.Create(testCtx(), tGroup.ID, itm)
 		require.NoError(t, err)
 		tags[i] = item
 	}
 
 	t.Cleanup(func() {
 		for _, item := range tags {
-			_ = tRepos.Tags.delete(context.Background(), item.ID)
+			_ = tRepos.Tags.delete(testCtx(), item.ID)
 		}
 	})
 
@@ -42,7 +41,7 @@ func TestTagRepository_Get(t *testing.T) {
 	tag := tags[0]
 
 	// Get by ID
-	foundLoc, err := tRepos.Tags.GetOne(context.Background(), tGroup.ID, tag.ID)
+	foundLoc, err := tRepos.Tags.GetOne(testCtx(), tGroup.ID, tag.ID)
 	require.NoError(t, err)
 	assert.Equal(t, tag.ID, foundLoc.ID)
 }
@@ -50,26 +49,26 @@ func TestTagRepository_Get(t *testing.T) {
 func TestTagRepositoryGetAll(t *testing.T) {
 	useTags(t, 10)
 
-	all, err := tRepos.Tags.GetAll(context.Background(), tGroup.ID)
+	all, err := tRepos.Tags.GetAll(testCtx(), tGroup.ID)
 	require.NoError(t, err)
 	assert.Len(t, all, 10)
 }
 
 func TestTagRepository_Create(t *testing.T) {
-	loc, err := tRepos.Tags.Create(context.Background(), tGroup.ID, tagFactory())
+	loc, err := tRepos.Tags.Create(testCtx(), tGroup.ID, tagFactory())
 	require.NoError(t, err)
 
 	// Get by ID
-	foundLoc, err := tRepos.Tags.GetOne(context.Background(), tGroup.ID, loc.ID)
+	foundLoc, err := tRepos.Tags.GetOne(testCtx(), tGroup.ID, loc.ID)
 	require.NoError(t, err)
 	assert.Equal(t, loc.ID, foundLoc.ID)
 
-	err = tRepos.Tags.delete(context.Background(), loc.ID)
+	err = tRepos.Tags.delete(testCtx(), loc.ID)
 	require.NoError(t, err)
 }
 
 func TestTagsRepository_Update(t *testing.T) {
-	loc, err := tRepos.Tags.Create(context.Background(), tGroup.ID, tagFactory())
+	loc, err := tRepos.Tags.Create(testCtx(), tGroup.ID, tagFactory())
 	require.NoError(t, err)
 
 	updateData := TagUpdate{
@@ -78,51 +77,51 @@ func TestTagsRepository_Update(t *testing.T) {
 		Description: fk.Str(100),
 	}
 
-	update, err := tRepos.Tags.UpdateByGroup(context.Background(), tGroup.ID, updateData)
+	update, err := tRepos.Tags.UpdateByGroup(testCtx(), tGroup.ID, updateData)
 	require.NoError(t, err)
 
-	foundLoc, err := tRepos.Tags.GetOne(context.Background(), tGroup.ID, loc.ID)
+	foundLoc, err := tRepos.Tags.GetOne(testCtx(), tGroup.ID, loc.ID)
 	require.NoError(t, err)
 
 	assert.Equal(t, update.ID, foundLoc.ID)
 	assert.Equal(t, update.Name, foundLoc.Name)
 	assert.Equal(t, update.Description, foundLoc.Description)
 
-	err = tRepos.Tags.delete(context.Background(), loc.ID)
+	err = tRepos.Tags.delete(testCtx(), loc.ID)
 	require.NoError(t, err)
 }
 
 func TestTagRepository_Delete(t *testing.T) {
-	loc, err := tRepos.Tags.Create(context.Background(), tGroup.ID, tagFactory())
+	loc, err := tRepos.Tags.Create(testCtx(), tGroup.ID, tagFactory())
 	require.NoError(t, err)
 
-	err = tRepos.Tags.delete(context.Background(), loc.ID)
+	err = tRepos.Tags.delete(testCtx(), loc.ID)
 	require.NoError(t, err)
 
-	_, err = tRepos.Tags.GetOne(context.Background(), tGroup.ID, loc.ID)
+	_, err = tRepos.Tags.GetOne(testCtx(), tGroup.ID, loc.ID)
 	require.Error(t, err)
 }
 
 func TestTagRepository_ParentChild(t *testing.T) {
 	parent := tagFactory()
-	parentTag, err := tRepos.Tags.Create(context.Background(), tGroup.ID, parent)
+	parentTag, err := tRepos.Tags.Create(testCtx(), tGroup.ID, parent)
 	require.NoError(t, err)
 
 	child := tagFactory()
 	child.ParentID = parentTag.ID
-	childTag, err := tRepos.Tags.Create(context.Background(), tGroup.ID, child)
+	childTag, err := tRepos.Tags.Create(testCtx(), tGroup.ID, child)
 	require.NoError(t, err)
 
 	assert.Equal(t, parentTag.ID, childTag.Parent.ID)
 
 	// Fetch parent and check children
-	foundParent, err := tRepos.Tags.GetOne(context.Background(), tGroup.ID, parentTag.ID)
+	foundParent, err := tRepos.Tags.GetOne(testCtx(), tGroup.ID, parentTag.ID)
 	require.NoError(t, err)
 	assert.Len(t, foundParent.Children, 1)
 	assert.Equal(t, childTag.ID, foundParent.Children[0].ID)
 
 	// Fetch child and check parent
-	foundChild, err := tRepos.Tags.GetOne(context.Background(), tGroup.ID, childTag.ID)
+	foundChild, err := tRepos.Tags.GetOne(testCtx(), tGroup.ID, childTag.ID)
 	require.NoError(t, err)
 	assert.NotNil(t, foundChild.Parent)
 	assert.Equal(t, parentTag.ID, foundChild.Parent.ID)
@@ -134,12 +133,12 @@ func TestTagRepository_ParentChild(t *testing.T) {
 		Description: childTag.Description,
 		ParentID:    uuid.Nil,
 	}
-	updatedChild, err := tRepos.Tags.UpdateByGroup(context.Background(), tGroup.ID, updateData)
+	updatedChild, err := tRepos.Tags.UpdateByGroup(testCtx(), tGroup.ID, updateData)
 	require.NoError(t, err)
 	assert.Nil(t, updatedChild.Parent)
 
 	// Fetch parent again, should have no children
-	foundParent, err = tRepos.Tags.GetOne(context.Background(), tGroup.ID, parentTag.ID)
+	foundParent, err = tRepos.Tags.GetOne(testCtx(), tGroup.ID, parentTag.ID)
 	require.NoError(t, err)
 	assert.Empty(t, foundParent.Children)
 }
@@ -152,7 +151,7 @@ func TestTagRepository_MaxDepth(t *testing.T) {
 	for i := 0; i < 5; i++ {
 		tCreate := tagFactory()
 		tCreate.ParentID = prevID
-		created, err := tRepos.Tags.Create(context.Background(), tGroup.ID, tCreate)
+		created, err := tRepos.Tags.Create(testCtx(), tGroup.ID, tCreate)
 		require.NoError(t, err)
 		tags[i] = created
 		prevID = created.ID
@@ -161,14 +160,14 @@ func TestTagRepository_MaxDepth(t *testing.T) {
 	// Try to create 6th level
 	tCreate := tagFactory()
 	tCreate.ParentID = prevID
-	_, err := tRepos.Tags.Create(context.Background(), tGroup.ID, tCreate)
+	_, err := tRepos.Tags.Create(testCtx(), tGroup.ID, tCreate)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "max depth of 5 exceeded")
 
 	// Cleanup
 	for _, item := range tags {
 		if item.ID != uuid.Nil {
-			_ = tRepos.Tags.delete(context.Background(), item.ID)
+			_ = tRepos.Tags.delete(testCtx(), item.ID)
 		}
 	}
 }
@@ -179,26 +178,26 @@ func TestTagRepository_MoveSubtreeMaxDepth(t *testing.T) {
 	// Try to move D under C, but D has children making it too deep.
 
 	// Chain 1: A -> B -> C
-	tagA, err := tRepos.Tags.Create(context.Background(), tGroup.ID, tagFactory())
+	tagA, err := tRepos.Tags.Create(testCtx(), tGroup.ID, tagFactory())
 	require.NoError(t, err)
 
 	tagBOrig := tagFactory()
 	tagBOrig.ParentID = tagA.ID
-	tagB, err := tRepos.Tags.Create(context.Background(), tGroup.ID, tagBOrig)
+	tagB, err := tRepos.Tags.Create(testCtx(), tGroup.ID, tagBOrig)
 	require.NoError(t, err)
 
 	tagCOrig := tagFactory()
 	tagCOrig.ParentID = tagB.ID
-	tagC, err := tRepos.Tags.Create(context.Background(), tGroup.ID, tagCOrig)
+	tagC, err := tRepos.Tags.Create(testCtx(), tGroup.ID, tagCOrig)
 	require.NoError(t, err)
 
 	// Chain 2: D -> E
-	tagD, err := tRepos.Tags.Create(context.Background(), tGroup.ID, tagFactory())
+	tagD, err := tRepos.Tags.Create(testCtx(), tGroup.ID, tagFactory())
 	require.NoError(t, err)
 
 	tagEOrig := tagFactory()
 	tagEOrig.ParentID = tagD.ID
-	tagE, err := tRepos.Tags.Create(context.Background(), tGroup.ID, tagEOrig)
+	tagE, err := tRepos.Tags.Create(testCtx(), tGroup.ID, tagEOrig)
 	require.NoError(t, err)
 
 	// Move D under C. Result depth: 3 (C) + 2 (D->E) = 5. Should succeed.
@@ -208,45 +207,45 @@ func TestTagRepository_MoveSubtreeMaxDepth(t *testing.T) {
 		Description: tagD.Description,
 		ParentID:    tagC.ID,
 	}
-	_, err = tRepos.Tags.UpdateByGroup(context.Background(), tGroup.ID, updateD)
+	_, err = tRepos.Tags.UpdateByGroup(testCtx(), tGroup.ID, updateD)
 	require.NoError(t, err)
 
 	// Reset D to root for next test
 	updateD.ParentID = uuid.Nil
-	_, err = tRepos.Tags.UpdateByGroup(context.Background(), tGroup.ID, updateD)
+	_, err = tRepos.Tags.UpdateByGroup(testCtx(), tGroup.ID, updateD)
 	require.NoError(t, err)
 
 	// Add F to E -> D -> E -> F (depth 3)
 	tagFOrig := tagFactory()
 	tagFOrig.ParentID = tagE.ID
-	tagF, err := tRepos.Tags.Create(context.Background(), tGroup.ID, tagFOrig)
+	tagF, err := tRepos.Tags.Create(testCtx(), tGroup.ID, tagFOrig)
 	require.NoError(t, err)
 
 	// Move D under C. Result depth: 3 (C) + 3 (D->E->F) = 6. Should Fail.
 	updateD.ParentID = tagC.ID
-	_, err = tRepos.Tags.UpdateByGroup(context.Background(), tGroup.ID, updateD)
+	_, err = tRepos.Tags.UpdateByGroup(testCtx(), tGroup.ID, updateD)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "max depth of 5 exceeded")
 
 	// Cleanup
-	_ = tRepos.Tags.delete(context.Background(), tagF.ID)
-	_ = tRepos.Tags.delete(context.Background(), tagE.ID)
-	_ = tRepos.Tags.delete(context.Background(), tagD.ID)
-	_ = tRepos.Tags.delete(context.Background(), tagC.ID)
-	_ = tRepos.Tags.delete(context.Background(), tagB.ID)
-	_ = tRepos.Tags.delete(context.Background(), tagA.ID)
+	_ = tRepos.Tags.delete(testCtx(), tagF.ID)
+	_ = tRepos.Tags.delete(testCtx(), tagE.ID)
+	_ = tRepos.Tags.delete(testCtx(), tagD.ID)
+	_ = tRepos.Tags.delete(testCtx(), tagC.ID)
+	_ = tRepos.Tags.delete(testCtx(), tagB.ID)
+	_ = tRepos.Tags.delete(testCtx(), tagA.ID)
 }
 
 func TestTagRepository_CycleDetection(t *testing.T) {
 	// A -> B
 	// Try to set A's parent to B. Cycle.
 
-	tagA, err := tRepos.Tags.Create(context.Background(), tGroup.ID, tagFactory())
+	tagA, err := tRepos.Tags.Create(testCtx(), tGroup.ID, tagFactory())
 	require.NoError(t, err)
 
 	tagBOrig := tagFactory()
 	tagBOrig.ParentID = tagA.ID
-	tagB, err := tRepos.Tags.Create(context.Background(), tGroup.ID, tagBOrig)
+	tagB, err := tRepos.Tags.Create(testCtx(), tGroup.ID, tagBOrig)
 	require.NoError(t, err)
 
 	updateA := TagUpdate{
@@ -255,12 +254,12 @@ func TestTagRepository_CycleDetection(t *testing.T) {
 		Description: tagA.Description,
 		ParentID:    tagB.ID,
 	}
-	_, err = tRepos.Tags.UpdateByGroup(context.Background(), tGroup.ID, updateA)
+	_, err = tRepos.Tags.UpdateByGroup(testCtx(), tGroup.ID, updateA)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "cycle detected")
 
-	_ = tRepos.Tags.delete(context.Background(), tagB.ID)
-	_ = tRepos.Tags.delete(context.Background(), tagA.ID)
+	_ = tRepos.Tags.delete(testCtx(), tagB.ID)
+	_ = tRepos.Tags.delete(testCtx(), tagA.ID)
 }
 
 func TestTagRepository_Create_NoParent(t *testing.T) {
@@ -268,7 +267,7 @@ func TestTagRepository_Create_NoParent(t *testing.T) {
 	tagData := tagFactory()
 	tagData.ParentID = uuid.Nil // Explicitly set to nil, though factory defaults to it
 
-	createdTag, err := tRepos.Tags.Create(context.Background(), tGroup.ID, tagData)
+	createdTag, err := tRepos.Tags.Create(testCtx(), tGroup.ID, tagData)
 	require.NoError(t, err)
 
 	assert.Equal(t, tagData.Name, createdTag.Name)
@@ -276,23 +275,23 @@ func TestTagRepository_Create_NoParent(t *testing.T) {
 	assert.Equal(t, uuid.Nil, createdTag.ParentID)
 
 	// Verify persistence
-	foundTag, err := tRepos.Tags.GetOne(context.Background(), tGroup.ID, createdTag.ID)
+	foundTag, err := tRepos.Tags.GetOne(testCtx(), tGroup.ID, createdTag.ID)
 	require.NoError(t, err)
 	assert.Nil(t, foundTag.Parent)
 	assert.Equal(t, uuid.Nil, foundTag.ParentID)
 
-	_ = tRepos.Tags.delete(context.Background(), createdTag.ID)
+	_ = tRepos.Tags.delete(testCtx(), createdTag.ID)
 }
 
 func TestTagRepository_Update_RemoveParent(t *testing.T) {
 	// 1. Create Parent
-	parent, err := tRepos.Tags.Create(context.Background(), tGroup.ID, tagFactory())
+	parent, err := tRepos.Tags.Create(testCtx(), tGroup.ID, tagFactory())
 	require.NoError(t, err)
 
 	// 2. Create Child
 	childData := tagFactory()
 	childData.ParentID = parent.ID
-	child, err := tRepos.Tags.Create(context.Background(), tGroup.ID, childData)
+	child, err := tRepos.Tags.Create(testCtx(), tGroup.ID, childData)
 	require.NoError(t, err)
 
 	assert.NotNil(t, child.Parent)
@@ -305,18 +304,18 @@ func TestTagRepository_Update_RemoveParent(t *testing.T) {
 		Description: child.Description,
 		ParentID:    uuid.Nil, // Remove parent
 	}
-	updatedChild, err := tRepos.Tags.UpdateByGroup(context.Background(), tGroup.ID, updateData)
+	updatedChild, err := tRepos.Tags.UpdateByGroup(testCtx(), tGroup.ID, updateData)
 	require.NoError(t, err)
 
 	assert.Nil(t, updatedChild.Parent)
 	assert.Equal(t, uuid.Nil, updatedChild.ParentID)
 
 	// 4. Verify persistence
-	foundChild, err := tRepos.Tags.GetOne(context.Background(), tGroup.ID, child.ID)
+	foundChild, err := tRepos.Tags.GetOne(testCtx(), tGroup.ID, child.ID)
 	require.NoError(t, err)
 	assert.Nil(t, foundChild.Parent)
 	assert.Equal(t, uuid.Nil, foundChild.ParentID)
 
-	_ = tRepos.Tags.delete(context.Background(), child.ID)
-	_ = tRepos.Tags.delete(context.Background(), parent.ID)
+	_ = tRepos.Tags.delete(testCtx(), child.ID)
+	_ = tRepos.Tags.delete(testCtx(), parent.ID)
 }

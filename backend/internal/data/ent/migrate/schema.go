@@ -46,6 +46,74 @@ var (
 			},
 		},
 	}
+	// AccessGrantsColumns holds the columns for the "access_grants" table.
+	AccessGrantsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "can_read", Type: field.TypeBool, Default: false},
+		{Name: "can_update", Type: field.TypeBool, Default: false},
+		{Name: "can_delete", Type: field.TypeBool, Default: false},
+		{Name: "can_attachments", Type: field.TypeBool, Default: false},
+		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "permission_group_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "entity_id", Type: field.TypeUUID},
+		{Name: "group_id", Type: field.TypeUUID},
+	}
+	// AccessGrantsTable holds the schema information for the "access_grants" table.
+	AccessGrantsTable = &schema.Table{
+		Name:       "access_grants",
+		Columns:    AccessGrantsColumns,
+		PrimaryKey: []*schema.Column{AccessGrantsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "access_grants_users_user",
+				Columns:    []*schema.Column{AccessGrantsColumns[7]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "access_grants_permission_groups_permission_group",
+				Columns:    []*schema.Column{AccessGrantsColumns[8]},
+				RefColumns: []*schema.Column{PermissionGroupsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "access_grants_entities_access_grants",
+				Columns:    []*schema.Column{AccessGrantsColumns[9]},
+				RefColumns: []*schema.Column{EntitiesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "access_grants_groups_access_grants",
+				Columns:    []*schema.Column{AccessGrantsColumns[10]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "accessgrant_entity_id_user_id",
+				Unique:  true,
+				Columns: []*schema.Column{AccessGrantsColumns[9], AccessGrantsColumns[7]},
+			},
+			{
+				Name:    "accessgrant_entity_id_permission_group_id",
+				Unique:  true,
+				Columns: []*schema.Column{AccessGrantsColumns[9], AccessGrantsColumns[8]},
+			},
+			{
+				Name:    "accessgrant_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{AccessGrantsColumns[7]},
+			},
+			{
+				Name:    "accessgrant_permission_group_id",
+				Unique:  false,
+				Columns: []*schema.Column{AccessGrantsColumns[8]},
+			},
+		},
+	}
 	// AttachmentsColumns holds the columns for the "attachments" table.
 	AttachmentsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -389,6 +457,7 @@ var (
 		{Name: "token", Type: field.TypeBytes, Unique: true},
 		{Name: "expires_at", Type: field.TypeTime},
 		{Name: "uses", Type: field.TypeInt, Default: 0},
+		{Name: "permissions", Type: field.TypeJSON},
 		{Name: "group_invitation_tokens", Type: field.TypeUUID, Nullable: true},
 	}
 	// GroupInvitationTokensTable holds the schema information for the "group_invitation_tokens" table.
@@ -399,7 +468,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "group_invitation_tokens_groups_invitation_tokens",
-				Columns:    []*schema.Column{GroupInvitationTokensColumns[6]},
+				Columns:    []*schema.Column{GroupInvitationTokensColumns[7]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -515,6 +584,37 @@ var (
 			},
 		},
 	}
+	// PermissionGroupsColumns holds the columns for the "permission_groups" table.
+	PermissionGroupsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 255},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "permissions", Type: field.TypeJSON},
+		{Name: "group_id", Type: field.TypeUUID},
+	}
+	// PermissionGroupsTable holds the schema information for the "permission_groups" table.
+	PermissionGroupsTable = &schema.Table{
+		Name:       "permission_groups",
+		Columns:    PermissionGroupsColumns,
+		PrimaryKey: []*schema.Column{PermissionGroupsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "permission_groups_groups_permission_groups",
+				Columns:    []*schema.Column{PermissionGroupsColumns[6]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "permissiongroup_name_group_id",
+				Unique:  true,
+				Columns: []*schema.Column{PermissionGroupsColumns[3], PermissionGroupsColumns[6]},
+			},
+		},
+	}
 	// TagsColumns holds the columns for the "tags" table.
 	TagsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -607,6 +707,7 @@ var (
 	// UserGroupsColumns holds the columns for the "user_groups" table.
 	UserGroupsColumns = []*schema.Column{
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"user", "owner"}, Default: "user"},
+		{Name: "permissions", Type: field.TypeJSON},
 		{Name: "user_id", Type: field.TypeUUID},
 		{Name: "group_id", Type: field.TypeUUID},
 	}
@@ -614,18 +715,43 @@ var (
 	UserGroupsTable = &schema.Table{
 		Name:       "user_groups",
 		Columns:    UserGroupsColumns,
-		PrimaryKey: []*schema.Column{UserGroupsColumns[1], UserGroupsColumns[2]},
+		PrimaryKey: []*schema.Column{UserGroupsColumns[2], UserGroupsColumns[3]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "user_groups_users_user",
-				Columns:    []*schema.Column{UserGroupsColumns[1]},
+				Columns:    []*schema.Column{UserGroupsColumns[2]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "user_groups_groups_group",
-				Columns:    []*schema.Column{UserGroupsColumns[2]},
+				Columns:    []*schema.Column{UserGroupsColumns[3]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// PermissionGroupUsersColumns holds the columns for the "permission_group_users" table.
+	PermissionGroupUsersColumns = []*schema.Column{
+		{Name: "permission_group_id", Type: field.TypeUUID},
+		{Name: "user_id", Type: field.TypeUUID},
+	}
+	// PermissionGroupUsersTable holds the schema information for the "permission_group_users" table.
+	PermissionGroupUsersTable = &schema.Table{
+		Name:       "permission_group_users",
+		Columns:    PermissionGroupUsersColumns,
+		PrimaryKey: []*schema.Column{PermissionGroupUsersColumns[0], PermissionGroupUsersColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "permission_group_users_permission_group_id",
+				Columns:    []*schema.Column{PermissionGroupUsersColumns[0]},
+				RefColumns: []*schema.Column{PermissionGroupsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "permission_group_users_user_id",
+				Columns:    []*schema.Column{PermissionGroupUsersColumns[1]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
@@ -658,6 +784,7 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		APIKeysTable,
+		AccessGrantsTable,
 		AttachmentsTable,
 		AuthRolesTable,
 		AuthTokensTable,
@@ -671,16 +798,22 @@ var (
 		MaintenanceEntriesTable,
 		NotifiersTable,
 		PasswordResetTokensTable,
+		PermissionGroupsTable,
 		TagsTable,
 		TemplateFieldsTable,
 		UsersTable,
 		UserGroupsTable,
+		PermissionGroupUsersTable,
 		TagEntitiesTable,
 	}
 )
 
 func init() {
 	APIKeysTable.ForeignKeys[0].RefTable = UsersTable
+	AccessGrantsTable.ForeignKeys[0].RefTable = UsersTable
+	AccessGrantsTable.ForeignKeys[1].RefTable = PermissionGroupsTable
+	AccessGrantsTable.ForeignKeys[2].RefTable = EntitiesTable
+	AccessGrantsTable.ForeignKeys[3].RefTable = GroupsTable
 	AttachmentsTable.ForeignKeys[0].RefTable = AttachmentsTable
 	AttachmentsTable.ForeignKeys[1].RefTable = EntitiesTable
 	AuthRolesTable.ForeignKeys[0].RefTable = AuthTokensTable
@@ -699,6 +832,7 @@ func init() {
 	NotifiersTable.ForeignKeys[0].RefTable = GroupsTable
 	NotifiersTable.ForeignKeys[1].RefTable = UsersTable
 	PasswordResetTokensTable.ForeignKeys[0].RefTable = UsersTable
+	PermissionGroupsTable.ForeignKeys[0].RefTable = GroupsTable
 	TagsTable.ForeignKeys[0].RefTable = GroupsTable
 	TagsTable.ForeignKeys[1].RefTable = TagsTable
 	TemplateFieldsTable.ForeignKeys[0].RefTable = EntityTemplatesTable
@@ -707,6 +841,8 @@ func init() {
 	UserGroupsTable.Annotation = &entsql.Annotation{
 		Table: "user_groups",
 	}
+	PermissionGroupUsersTable.ForeignKeys[0].RefTable = PermissionGroupsTable
+	PermissionGroupUsersTable.ForeignKeys[1].RefTable = UsersTable
 	TagEntitiesTable.ForeignKeys[0].RefTable = TagsTable
 	TagEntitiesTable.ForeignKeys[1].RefTable = EntitiesTable
 }

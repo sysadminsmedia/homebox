@@ -1,0 +1,388 @@
+---
+title: Permissions & Authorization
+---
+
+
+import {Aside, FileTree, Steps} from '@astrojs/starlight/components';
+
+Homebox enforces authorization **inside the ORM** using [Ent's privacy layer](https://entgo.io/docs/privacy)
+and [query interceptors](https://entgo.io/docs/interceptors). Every query and every mutation that goes through
+the Ent client is checked against the caller's permissions — a repository method *cannot* forget an
+authorization check, because the check does not live in the repository.
+
+This page explains the model, the enforcement machinery, and — most importantly — what you must do when you
+add a new permission, a new entity, or a new endpoint.
+
+## Concepts
+
+### Tenants vs. permissions
+
+These are two different systems. Don't confuse them:
+
+- **`Group` is a tenant.** It is the hard isolation boundary: all inventory data belongs to exactly one
+group, and users join groups through the `user_groups` membership table. Nothing in the permission system
+ever crosses a tenant boundary.
+- **The permission system controls what a member can do *inside* a tenant.** Before it existed, any member
+could do anything in their group. Now each membership carries a permission set.
+
+A user's permissions are always scoped to one `(user, tenant)` pair. The same user can be a full
+administrator in one group and read-only in another.
+
+### The permission catalog
+
+Permissions are `resource:action` strings defined as constants in
+`backend/internal/data/authz/permissions.go`:
+
+| Permission           | Grants                                                                                                  |
+|----------------------|---------------------------------------------------------------------------------------------------------|
+| `entity:read`        | View items/locations, their attachments, maintenance logs, custom fields, statistics, the location tree |
+| `entity:create`      | Create items/locations, duplicate items, create items from templates                                    |
+| `entity:update`      | Edit items/locations, manage attachments, maintenance entries, custom fields, run bulk actions          |
+| `entity:delete`      | Delete items/locations                                                                                  |
+| `tag:manage`         | Create/edit/delete tags (reading tags requires only membership)                                         |
+| `entitytype:manage`  | Create/edit/delete entity types                                                                         |
+| `template:manage`    | Create/edit/delete templates and template fields                                                        |
+| `notifier:manage`    | Manage the caller's own notifiers                                                                       |
+| `data:export`        | Create/download collection exports, CSV export, bill of materials                                       |
+| `data:import`        | Collection import, CSV import                                                                           |
+| `settings:manage`    | Edit/delete the tenant, wipe inventory                                                                  |
+| `members:manage`     | Create/revoke invitations, remove members                                                               |
+| `permissions:manage` | Permission groups, member permission edits, row-level grants — *the* administrative permission          |
+
+The catalog is the **single source of truth**: the frontend renders its permission matrices from
+`GET /api/v1/permissions/catalog` at runtime, validation rejects unknown keys, and stored wildcards expand
+against it (see below).
+
+<Aside type="note">
+    Reading **reference data** (tags, entity types, templates, the member list, permission groups) requires only
+    tenant membership, no permission. Members need this data to render entities they can see.
+</Aside>
+
+### How a user gets permissions
+
+A member's **effective permission set** is the union of three sources, resolved per request:
+
+1. **Direct permissions** — a JSON list on their `user_groups` membership row.
+2. **Permission groups** — tenant-scoped bundles (`permission_groups` table) with their own permission list
+and an M:M user membership. A user holds the union of all their permission groups' permissions.
+<Aside type="caution">Permission groups are **not** tenants. `Group` = tenant; `PermissionGroup` = a named
+    permission bundle inside a tenant.</Aside>
+3. **Row-level access grants** — an `access_grants` row ties one entity to either a user **or** a permission
+group and grants per-row actions (`read`, `update`, `delete`, `attachments`). This is how a user with *no*
+tenant-wide entity permissions can still see or edit one specific item — including its attachments,
+maintenance entries, and custom fields, which inherit the parent entity's access.
+
+### Wildcards — how the catalog stays maintainable
+
+Stored permission lists support wildcards so that assignments don't become stale snapshots:
+
+- `"*"` — every permission, **including ones added to the catalog in the future**
+- `"entity:*"` — every action on one resource
+
+Full access is always persisted as `["*"]` (helper: `authz.FullAccess()`), never as an enumerated list.
+Wildcards are expanded against the *current* catalog at request time (`authz.Expand`), so when you add a new
+permission to the catalog, every full-access member has it on their next request — **no migration needed**.
+Explicitly restricted lists do *not* grow: a member with `["entity:read"]` does not gain new permissions
+automatically, which is the fail-closed direction.
+
+When evaluating raw stored lists (not a resolved viewer), always use `authz.SetHas(perms, perm)` — never
+compare strings directly, or you will miss wildcard holders.
+
+### Roles, owners, and superusers
+
+- **`user_groups.role` (`user`/`owner`)** is informational/historical. Owners do **not** bypass the
+permission system — their access comes from their permission set like everyone else (they're just created
+with `["*"]`). The only protection against lock-out is the [last-admin invariant](#the-last-admin-invariant).
+- **`users.is_superuser`** marks an *instance operator*. Superusers pass every permission check
+(`Viewer.Has` returns true for everything) but remain **tenant-scoped on reads** — they still only see data
+in tenants they are a member of, under the tenant they have selected. This is the operator escape hatch if
+a tenant misconfigures itself.
+
+## Architecture
+
+### Request pipeline
+
+```
+HTTP Request
+    ↓
+mwAuthToken   — authenticates the token, loads the user
+    ↓
+mwTenant      — resolves the active tenant (X-Tenant header or default group), verifies membership
+    ↓
+mwViewer      — resolves the authz.Viewer: direct perms ∪ permission-group perms for (user, tenant)
+    ↓           and attaches it to the request context
+mwRoles       — legacy token-capability check (admin/user/attachments), unrelated to this system
+    ↓
+[mwPermission(...)] — optional fast-fail 403 on management routes (UX only, never the real protection)
+    ↓
+Handler → Service → Repository → Ent client
+                                    ↓
+                          ╔═══════════════════════╗
+                          ║  ENT PRIVACY LAYER    ║   ← the actual enforcement
+                          ║  policies+interceptors║
+                          ╚═══════════════════════╝
+```
+
+The `authz.Viewer` carries `UserID`, `TenantID`, `Superuser`, the expanded permission set, and the IDs of the
+permission groups the user belongs to (used by row-grant SQL predicates). Services can also reach it via
+`services.Context.Viewer` for response shaping, but **enforcement never depends on handler or service code**.
+
+### Enforcement: interceptors filter reads, policies gate writes
+
+Every Ent schema is wired with both (see `backend/internal/data/authzrules/`):
+
+**Query side — interceptors.** Each schema's `Interceptors()` injects a WHERE clause scoping results to what
+the viewer may read. For `Entity` that predicate is:
+
+```
+(viewer has entity:read AND entity.group == viewer.tenant)
+OR EXISTS access_grant ON entity WHERE can_read
+       AND (grant.user_id == viewer OR grant.permission_group_id IN viewer's groups)
+```
+
+Child resources (`Attachment`, `MaintenanceEntry`, `EntityField`) filter through
+`HasEntityWith(EntityReadable(viewer))` — they inherit the parent's visibility. Because interceptors also run
+on graph traversals, an eager-loaded edge is filtered exactly like a direct query.
+
+A row the viewer cannot read is **invisible**: single-row lookups return `ent.NotFoundError`, which the API
+maps to **404**. Existence is never leaked.
+
+**Mutation side — privacy policies.** Each schema's `Policy()` is built with `authzrules.NewPolicy(...)`,
+which produces a uniform shape:
+
+```
+Mutation: AllowIfSystem → DenyIfNoViewer → schema-specific rules → AlwaysDeny
+```
+
+Mutations are default-deny: a rule must explicitly allow. The schema rules do two things:
+
+1. **Check the permission** for the operation (e.g. tag mutations require `tag:manage`).
+2. **Pin the mutation** by appending predicates to it (`m.Where(...)`). An update/delete is rewritten to
+only match rows the viewer may write — the viewer's tenant, or grant-covered rows for entities. A
+cross-tenant or ungranted write therefore matches **zero rows at the SQL level**, no matter what the
+repository passed in.
+
+### 403 vs 404 semantics
+
+| Situation                                                            | Result  | Why                                                                     |
+|----------------------------------------------------------------------|---------|-------------------------------------------------------------------------|
+| Row invisible to the viewer (other tenant, no read access)           | **404** | Don't leak existence                                                    |
+| Row visible, write not covered (e.g. read-only member edits an item) | **404** | The pin matches nothing; treated like invisible to avoid a probe oracle |
+| Category denied outright (e.g. creating a tag without `tag:manage`)  | **403** | `privacy.Deny` errors map to 403 in `internal/web/mid/errors.go`        |
+| Route-level `mwPermission` fast-fail                                 | **403** | Cosmetic early exit on management routes                                |
+| Last-admin invariant violated                                        | **409** | `repo.ErrLastAdmin`                                                     |
+
+Entity mutation repo methods call `assertEntityUpdatable` / `assertEntityDeletable`
+(`repo_authz.go`) *before* running, for two reasons: a pinned no-op would otherwise return a misleading
+200/204, and side effects (attachment blob deletion) must not run when the row write would match nothing.
+These asserts mirror the pin predicate exactly — they are UX, the pin remains the enforcement.
+
+### System contexts
+
+Some flows legitimately run without a viewer: login, registration, password reset, invitation acceptance,
+startup tasks, background jobs (notifiers, export/import workers, token purges), and test bootstrapping.
+These wrap their context with `authz.NewSystemContext(ctx)`, which bypasses the privacy layer entirely.
+
+<Aside type="danger">
+    **Rules for `NewSystemContext`:**
+    - Only in services, startup code, or background workers — **never in HTTP handlers**.
+    - Only for flows whose inputs are already authenticated by other means (a token *is* the credential) or that
+    are not user-driven at all.
+    - Apply it at the top of the flow and document *why* with a comment. Every existing call site has one —
+    follow that pattern.
+
+    A context with neither a viewer nor a system marker is **denied** for everything. This is deliberate: if you
+    forget to attach a viewer, things fail loudly instead of silently skipping authorization.
+</Aside>
+
+### The last-admin invariant
+
+A tenant that still has members must never lose its last holder of `permissions:manage` (directly or through
+a permission group — wildcards count). Otherwise the tenant is permanently locked.
+
+The invariant is enforced **inside transactions** in the repository layer: every mutation that can shrink the
+holder set (`MemberPermissionsSet`, `PermissionGroupUpdate/Delete/SetMembers`, `RemoveMember`, user
+self-deletion) recomputes `CountAdminHolders` post-change and rolls back with `repo.ErrLastAdmin` (→ HTTP
+409) if it would hit zero. If you add a new code path that can remove permissions or members, route it
+through these guarded repo methods or add the same transaction-guarded check.
+
+## Code map
+
+<FileTree>
+    - backend
+    - internal
+    - data
+    - authz/ permission catalog, wildcards, Viewer, contexts (dependency-free)
+    - permissions.go Permission constants, All(), Valid(), SetHas(), Expand(), FullAccess()
+    - grants.go row-grant actions (read/update/delete/attachments)
+    - viewer.go Viewer, NewContext/FromContext, NewSystemContext/IsSystem
+    - authzrules/ the enforcement rules (imports generated ent packages)
+    - authzrules.go NewPolicy(), AllowIfSystem, DenyIfNoViewer
+    - entity.go EntityReadable/Updatable/Deletable predicates, entity mutation rule
+    - resources.go rules for child resources + reference data (tags, types, templates…)
+    - admin.go rules for Group, UserGroup, PermissionGroup, AccessGrant, User, tokens…
+    - filters.go one read-filter interceptor per schema
+    - ent
+    - schema/ every schema wires Policy() + Interceptors() from authzrules
+    - permission_group.go
+    - access_grant.go
+    - policy_test.go meta-test, fails if a schema ships unprotected
+    - repo
+    - repo_permissions.go ResolveViewer, CountAdminHolders, permission-group/grant CRUD
+    - repo_authz.go assertEntity* helpers (404 + side-effect protection)
+    - enforcement_test.go the authorization test suite
+    - privacy_canary_test.go no-viewer-is-denied canary
+    - app
+    - api
+    - middleware.go mwViewer, mwPermission
+    - routes.go withPerm(...) fast-fail gates
+    - handlers/v1
+    - v1_ctrl_permissions.go permission API endpoints
+</FileTree>
+
+## How-to guides
+
+### Add a new permission
+
+<Steps>
+    1. Add the constant and catalog entry in `backend/internal/data/authz/permissions.go` (append to the
+    resource's block in `allPermissions` — order is the API/UI display order).
+    2. Reference it wherever it is enforced: a mutation rule in `authzrules/`, and/or a `withPerm(...)` route
+    gate in `routes.go` for raw-SQL or management routes.
+    3. Optionally add display labels in `frontend/locales/en.json` under `permissions.resource.*` /
+    `permissions.action.*` (the UI matrix renders from the catalog endpoint regardless).
+    4. Run `task go:test`. Done — **no migration is needed**: full-access members hold `["*"]` and pick the new
+    permission up on their next request. Members with enumerated lists do *not* get it until granted, which
+    is intentional.
+</Steps>
+
+### Add a new Ent schema
+
+Every schema **must** participate in the authorization layer. `policy_test.go` fails the build if you skip
+this.
+
+<Steps>
+    1. Define the schema as usual (see [Database & ORM](/en/contribute/development/backend/database)). If it's
+    tenant data, scope it with `GroupMixin`.
+    2. Add a read filter in `authzrules/filters.go`. Tenant reference data is usually
+    `q.Where(yourtype.HasGroupWith(group.ID(v.TenantID)))`; entity-owned children filter via
+    `HasEntityWith(EntityReadable(v))`.
+    3. Add a mutation rule (in `resources.go` or `admin.go`): decide which permission gates each operation,
+    verify tenant on create (`allowIfTenantCreate`), and **pin** non-create ops with
+    `m.Where(...tenant or ownership predicate...)`.
+    4. Wire both into the schema:
+
+       ```go
+       func (YourType) Policy() ent.Policy {
+           return authzrules.NewPolicy(authzrules.YourTypeMutationRule())
+       }
+
+       func (YourType) Interceptors() []ent.Interceptor {
+           return []ent.Interceptor{authzrules.FilterYourType()}
+       }
+       ```
+    5. Add the schema to the `protected` map in `schema/policy_test.go`.
+    6. Run `task db:generate` (policies/interceptors are stitched through the generated `ent/runtime` package),
+    then `task go:test`.
+</Steps>
+
+<Aside type="caution">
+    The `ent/runtime` package must be blank-imported by every binary and test main
+    (`_ ".../internal/data/ent/runtime"`). Without it, policies are not registered and every query fails with
+    `uninitialized interceptor (forgotten import ent/runtime?)`. `app/api/setup.go` and the repo/services test
+    mains already do this; the `TestPrivacyDeniesWithoutViewer` canary catches regressions.
+</Aside>
+
+### Add a new endpoint
+
+Usually you need to do **nothing** for authorization: if your handler reads/writes through the Ent client
+with the request context, the privacy layer applies automatically. Checklist:
+
+- Always pass the request context down. Never `context.Background()` inside a request path — it will be
+denied (and that's the system working).
+- Add `withPerm(authz.PermX)` in `routes.go` only for (a) management endpoints where a clean early 403 is
+better UX than a late 404, or (b) **raw-SQL endpoints** (see below). Never rely on it as the only
+protection, and never put it on entity CRUD routes — row-level grants make tenant-wide permissions
+non-decisive there.
+- If the endpoint must run without a viewer (auth flows), wrap in `authz.NewSystemContext` at the *service*
+layer with a justification comment.
+
+### Raw SQL is not covered
+
+A handful of read paths use `db.Sql().QueryContext(...)` directly (statistics, the location tree, custom
+field values, export dumps). **The privacy layer cannot see raw SQL.** These queries are tenant-scoped by
+`gid` parameters, but row-level grants do not apply to them, so their routes are gated with
+`withPerm(authz.PermEntityRead)` (grant-only users get a 403 there rather than partially-filtered data).
+
+If you write a new raw-SQL query: scope it by `gid`, gate its route with the appropriate permission, and ask
+yourself whether it leaks rows a grant-only viewer shouldn't see.
+
+### Work with row-level grants
+
+- A grant targets exactly one of `user_id` / `permission_group_id` (enforced by a schema hook *and* a SQL
+`CHECK` constraint) and lives in the entity's tenant (denormalized `group_id` for cheap predicates).
+- Actions are boolean columns (`can_read`, `can_update`, `can_delete`, `can_attachments`) so they can be used
+in SQL predicates. `update`/`delete`/`attachments` imply `read`; a hook normalizes `can_read = true`, so
+read checks only ever test `can_read`.
+- One grant per `(entity, target)` — unique indexes enforce it.
+- Grants are managed via `POST/PUT/DELETE /api/v1/entities/{id}/permissions[/{grant_id}]` and require
+`permissions:manage`. Removing a member from a tenant also deletes their grants and permission-group
+memberships (see `GroupRepository.RemoveMember`).
+- The single-item endpoint (`GET /entities/{id}`) returns `capabilities` — the caller's concrete actions on
+that row (`read`, `update`, `delete`, `attachments`, `permissions`) — which is what the item UI gates on.
+
+## Testing authorization
+
+The business-logic test suites run under a privacy-bypassing system context (`testCtx()` in the repo and
+services packages), so they do **not** exercise authorization. Authorization has its own suite:
+`backend/internal/data/repo/enforcement_test.go`. If you change anything in this system, add a test there.
+
+The helpers make scenarios cheap to build:
+
+```go
+func TestEnforcement_MyScenario(t *testing.T) {
+    tn := newAuthzTenant(t)                                       // fresh tenant + full-access admin
+    e := newAuthzEntity(t, tn.group.ID)                           // an entity in it
+    user := newAuthzMember(t, tn.group.ID, []string{"entity:read"}, false)
+
+    ctx := viewerCtx(t, user.ID, tn.group.ID, false)              // a real resolved viewer context
+
+    // read works, write surfaces as NotFound (pinned to zero rows)
+    _, err := tClient.Entity.Get(ctx, e.ID)
+    require.NoError(t, err)
+    err = tClient.Entity.UpdateOneID(e.ID).SetNotes("nope").Exec(ctx)
+    require.True(t, ent.IsNotFound(err))
+}
+```
+
+Three guard tests protect the system's foundations — do not delete them:
+
+- `TestPrivacyDeniesWithoutViewer` (canary): a bare context is denied; catches `ent/runtime` wiring breakage.
+- `TestEverySchemaIsProtected` (meta-test): parses the schema package and fails if any schema lacks
+`Policy()`/`Interceptors()` or isn't in the protected list.
+- `TestSqliteMigrations` (`internal/data/migrations/migcheck`): goose up from empty, down, re-up.
+
+## Frontend integration
+
+- `usePermissions()` (`frontend/composables/use-permissions.ts`) caches the caller's **expanded** effective
+set from `GET /groups/permissions/self` per active tenant; `can("entity:update")` gates UI affordances.
+This is cosmetic — the backend enforces regardless.
+- Item pages gate per-row actions on `EntityOut.capabilities`, not on tenant-wide permissions, so row grants
+light up the right buttons.
+- Permission-editing dialogs use `frontend/lib/api/permissions-utils.ts`: stored wildcards are *expanded* to
+concrete checkboxes for display, and a fully-checked matrix is *normalized* back to `["*"]` on save so
+full-access assignments stay future-proof. If you build new permission-editing UI, use these helpers.
+
+## Data model reference
+
+| Table                     | Purpose                             | Notable columns                                                                                                                                |
+|---------------------------|-------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| `user_groups`             | Tenant membership                   | `role` (`user`/`owner`), `permissions` (JSON list, may contain wildcards)                                                                      |
+| `permission_groups`       | Permission bundles inside a tenant  | `name` (unique per tenant), `permissions` (JSON), `group_id`                                                                                   |
+| `permission_group_users`  | M:M membership in permission groups | composite PK                                                                                                                                   |
+| `access_grants`           | Row-level ACL on one entity         | `entity_id`, `user_id` ⊕ `permission_group_id` (CHECK), `can_read/update/delete/attachments`, `group_id`                                       |
+| `group_invitation_tokens` | Invitations                         | `permissions` (JSON) applied to the membership on acceptance; inviters cannot grant beyond their own set unless they hold `permissions:manage` |
+
+Migrations are hand-written goose SQL for both SQLite and PostgreSQL — see
+[Database & ORM](/en/contribute/development/backend/database). The permission-system migration backfills
+existing memberships with `'["*"]'` so upgrades change nothing for current users.

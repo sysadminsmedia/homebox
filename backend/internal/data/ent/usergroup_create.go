@@ -48,6 +48,12 @@ func (_c *UserGroupCreate) SetNillableRole(v *usergroup.Role) *UserGroupCreate {
 	return _c
 }
 
+// SetPermissions sets the "permissions" field.
+func (_c *UserGroupCreate) SetPermissions(v []string) *UserGroupCreate {
+	_c.mutation.SetPermissions(v)
+	return _c
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (_c *UserGroupCreate) SetUser(v *User) *UserGroupCreate {
 	return _c.SetUserID(v.ID)
@@ -65,7 +71,9 @@ func (_c *UserGroupCreate) Mutation() *UserGroupMutation {
 
 // Save creates the UserGroup in the database.
 func (_c *UserGroupCreate) Save(ctx context.Context) (*UserGroup, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -92,11 +100,16 @@ func (_c *UserGroupCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *UserGroupCreate) defaults() {
+func (_c *UserGroupCreate) defaults() error {
 	if _, ok := _c.mutation.Role(); !ok {
 		v := usergroup.DefaultRole
 		_c.mutation.SetRole(v)
 	}
+	if _, ok := _c.mutation.Permissions(); !ok {
+		v := usergroup.DefaultPermissions
+		_c.mutation.SetPermissions(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -114,6 +127,9 @@ func (_c *UserGroupCreate) check() error {
 		if err := usergroup.RoleValidator(v); err != nil {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`ent: validator failed for field "UserGroup.role": %w`, err)}
 		}
+	}
+	if _, ok := _c.mutation.Permissions(); !ok {
+		return &ValidationError{Name: "permissions", err: errors.New(`ent: missing required field "UserGroup.permissions"`)}
 	}
 	if len(_c.mutation.UserIDs()) == 0 {
 		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "UserGroup.user"`)}
@@ -146,6 +162,10 @@ func (_c *UserGroupCreate) createSpec() (*UserGroup, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Role(); ok {
 		_spec.SetField(usergroup.FieldRole, field.TypeEnum, value)
 		_node.Role = value
+	}
+	if value, ok := _c.mutation.Permissions(); ok {
+		_spec.SetField(usergroup.FieldPermissions, field.TypeJSON, value)
+		_node.Permissions = value
 	}
 	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

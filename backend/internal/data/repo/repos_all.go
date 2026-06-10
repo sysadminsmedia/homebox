@@ -22,6 +22,7 @@ type AllRepos struct {
 	MaintEntry          *MaintenanceEntryRepository
 	Notifiers           *NotifierRepository
 	Exports             *ExportRepository
+	Permissions         *PermissionsRepository
 }
 
 func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubConn string, thumbnail config.Thumbnail) *AllRepos {
@@ -40,5 +41,6 @@ func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubC
 		MaintEntry:          &MaintenanceEntryRepository{db},
 		Notifiers:           NewNotifierRepository(db),
 		Exports:             &ExportRepository{db},
+		Permissions:         &PermissionsRepository{db},
 	}
 }

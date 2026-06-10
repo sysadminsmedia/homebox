@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authzrules"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
@@ -46,4 +47,15 @@ func (TemplateField) Edges() []ent.Edge {
 			Ref("fields").
 			Unique(),
 	}
+}
+
+// Policy of the TemplateField: mutations require the matching permission and are
+// pinned to the viewer's tenant; reads are filtered by Interceptors.
+func (TemplateField) Policy() ent.Policy {
+	return authzrules.NewPolicy(authzrules.TemplateFieldMutationRule())
+}
+
+// Interceptors of the TemplateField scope every read to the request viewer.
+func (TemplateField) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{authzrules.FilterTemplateField()}
 }

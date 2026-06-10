@@ -11,6 +11,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authz"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
 
@@ -122,12 +123,8 @@ func (ctrl *V1Controller) HandleWipeInventory() errchain.HandlerFunc {
 
 		ctx := services.NewContext(r.Context())
 
-		isOwner, err := ctrl.repo.Groups.IsOwnerOf(ctx, ctx.UID, ctx.GID)
-		if err != nil {
-			return validate.NewRequestError(err, http.StatusInternalServerError)
-		}
-		if !isOwner {
-			return validate.NewRequestError(errors.New("only group owners can wipe inventory"), http.StatusForbidden)
+		if !ctx.Viewer.Has(authz.PermSettingsManage) {
+			return validate.NewRequestError(errors.New("missing required permission: "+string(authz.PermSettingsManage)), http.StatusForbidden)
 		}
 
 		// Parse options from request body

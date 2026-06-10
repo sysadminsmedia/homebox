@@ -10,12 +10,15 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/samber/lo"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authz"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/accessgrant"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/permissiongroup"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/usergroup"
@@ -41,10 +44,11 @@ func NewGroupRepository(db *ent.Client) *GroupRepository {
 
 	imap := func(i *ent.GroupInvitationToken) GroupInvitation {
 		return GroupInvitation{
-			ID:        i.ID,
-			ExpiresAt: i.ExpiresAt,
-			Uses:      i.Uses,
-			Group:     gmap(i.Edges.Group),
+			ID:          i.ID,
+			ExpiresAt:   i.ExpiresAt,
+			Uses:        i.Uses,
+			Permissions: i.Permissions,
+			Group:       gmap(i.Edges.Group),
 		}
 	}
 
@@ -70,16 +74,18 @@ type (
 	}
 
 	GroupInvitationCreate struct {
-		Token     []byte    `json:"-"`
-		ExpiresAt time.Time `json:"expiresAt"`
-		Uses      int       `json:"uses"`
+		Token       []byte    `json:"-"`
+		ExpiresAt   time.Time `json:"expiresAt"`
+		Uses        int       `json:"uses"`
+		Permissions []string  `json:"permissions"`
 	}
 
 	GroupInvitation struct {
-		ID        uuid.UUID `json:"id"`
-		ExpiresAt time.Time `json:"expiresAt"`
-		Uses      int       `json:"uses"`
-		Group     Group     `json:"group"`
+		ID          uuid.UUID `json:"id"`
+		ExpiresAt   time.Time `json:"expiresAt"`
+		Uses        int       `json:"uses"`
+		Permissions []string  `json:"permissions"`
+		Group       Group     `json:"group"`
 	}
 
 	GroupStatistics struct {
@@ -295,11 +301,13 @@ func (r *GroupRepository) GroupCreate(ctx context.Context, name string, userID u
 	}
 
 	// The user creating a group is its owner. This is the only place a fresh
-	// owner membership comes from outside registration.
+	// owner membership comes from outside registration. Owners start with the
+	// full permission catalog (they do not bypass the permission system).
 	if _, err := tx.UserGroup.Create().
 		SetUserID(userID).
 		SetGroupID(g.ID).
 		SetRole(usergroup.RoleOwner).
+		SetPermissions(authz.FullAccess()).
 		Save(ctx); err != nil {
 		_ = tx.Rollback()
 		return Group{}, err
@@ -333,7 +341,7 @@ func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) error {
 	itm, err := tx.Entity.Query().
 		Where(entity.HasGroupWith(group.ID(id))).
 		WithGroup().
-		WithAttachments().
+		WithAttachments(func(aq *ent.AttachmentQuery) { aq.WithThumbnail() }).
 		All(ctx)
 	if err != nil {
 		return err
@@ -400,12 +408,15 @@ func (r *GroupRepository) InvitationGetAll(ctx context.Context, groupID uuid.UUI
 }
 
 func (r *GroupRepository) InvitationCreate(ctx context.Context, groupID uuid.UUID, invite GroupInvitationCreate) (GroupInvitation, error) {
-	entity, err := r.db.GroupInvitationToken.Create().
+	create := r.db.GroupInvitationToken.Create().
 		SetGroupID(groupID).
 		SetToken(invite.Token).
 		SetExpiresAt(invite.ExpiresAt).
-		SetUses(invite.Uses).
-		Save(ctx)
+		SetUses(invite.Uses)
+	if invite.Permissions != nil {
+		create.SetPermissions(invite.Permissions)
+	}
+	entity, err := create.Save(ctx)
 	if err != nil {
 		return GroupInvitation{}, err
 	}
@@ -466,7 +477,70 @@ func (r *GroupRepository) IsOwnerOf(ctx context.Context, userID, groupID uuid.UU
 }
 
 func (r *GroupRepository) RemoveMember(ctx context.Context, groupID, userID uuid.UUID) error {
-	return r.db.Group.UpdateOneID(groupID).RemoveUserIDs(userID).Exec(ctx)
+	tx, err := r.db.Tx(ctx)
+	if err != nil {
+		return err
+	}
+	rollback := func(err error) error {
+		_ = tx.Rollback()
+		return err
+	}
+
+	n, err := tx.UserGroup.Delete().
+		Where(usergroup.UserID(userID), usergroup.GroupID(groupID)).
+		Exec(ctx)
+	if err != nil {
+		return rollback(err)
+	}
+	if n == 0 {
+		return rollback(&ent.NotFoundError{})
+	}
+
+	// Membership cleanup runs under a system context: the removal itself was
+	// already authorized above.
+	sysCtx := authz.NewSystemContext(ctx)
+
+	// Drop the user from the tenant's permission groups and revoke their
+	// row-level grants in this tenant.
+	pgroups, err := tx.PermissionGroup.Query().
+		Where(
+			permissiongroup.GroupID(groupID),
+			permissiongroup.HasUsersWith(user.ID(userID)),
+		).
+		All(sysCtx)
+	if err != nil {
+		return rollback(err)
+	}
+	for _, pg := range pgroups {
+		if err := tx.PermissionGroup.UpdateOneID(pg.ID).RemoveUserIDs(userID).Exec(sysCtx); err != nil {
+			return rollback(err)
+		}
+	}
+	if _, err := tx.AccessGrant.Delete().
+		Where(accessgrant.GroupID(groupID), accessgrant.UserID(userID)).
+		Exec(sysCtx); err != nil {
+		return rollback(err)
+	}
+
+	// Last-admin invariant: the tenant must not be left with members but no
+	// permissions administrator.
+	members, err := tx.UserGroup.Query().
+		Where(usergroup.GroupID(groupID)).
+		Count(sysCtx)
+	if err != nil {
+		return rollback(err)
+	}
+	if members > 0 {
+		holders, err := CountAdminHolders(ctx, tx.Client(), groupID)
+		if err != nil {
+			return rollback(err)
+		}
+		if holders == 0 {
+			return rollback(ErrLastAdmin)
+		}
+	}
+
+	return tx.Commit()
 }
 
 func (r *GroupRepository) InvitationDecrement(ctx context.Context, id uuid.UUID) error {
@@ -535,11 +609,14 @@ func (r *GroupRepository) InvitationAccept(ctx context.Context, token []byte, us
 		return Group{}, fmt.Errorf("user already a member of this group")
 	}
 
-	// 4. Add member with role=user; ownership is reserved for whoever created the group.
+	// 4. Add member with role=user; ownership is reserved for whoever created
+	// the group. The membership starts with the permissions chosen when the
+	// invitation was created (defaults to the full catalog).
 	if _, err := tx.UserGroup.Create().
 		SetUserID(userID).
 		SetGroupID(invitation.Edges.Group.ID).
 		SetRole(usergroup.RoleUser).
+		SetPermissions(invitation.Permissions).
 		Save(ctx); err != nil {
 		if err := tx.Rollback(); err != nil {
 			log.Warn().Err(err).Msg("failed to rollback transaction")

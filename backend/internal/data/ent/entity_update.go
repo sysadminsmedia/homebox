@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/accessgrant"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
@@ -571,6 +572,21 @@ func (_u *EntityUpdate) AddAttachments(v ...*Attachment) *EntityUpdate {
 	return _u.AddAttachmentIDs(ids...)
 }
 
+// AddAccessGrantIDs adds the "access_grants" edge to the AccessGrant entity by IDs.
+func (_u *EntityUpdate) AddAccessGrantIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.AddAccessGrantIDs(ids...)
+	return _u
+}
+
+// AddAccessGrants adds the "access_grants" edges to the AccessGrant entity.
+func (_u *EntityUpdate) AddAccessGrants(v ...*AccessGrant) *EntityUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddAccessGrantIDs(ids...)
+}
+
 // Mutation returns the EntityMutation object of the builder.
 func (_u *EntityUpdate) Mutation() *EntityMutation {
 	return _u.mutation
@@ -699,9 +715,32 @@ func (_u *EntityUpdate) RemoveAttachments(v ...*Attachment) *EntityUpdate {
 	return _u.RemoveAttachmentIDs(ids...)
 }
 
+// ClearAccessGrants clears all "access_grants" edges to the AccessGrant entity.
+func (_u *EntityUpdate) ClearAccessGrants() *EntityUpdate {
+	_u.mutation.ClearAccessGrants()
+	return _u
+}
+
+// RemoveAccessGrantIDs removes the "access_grants" edge to AccessGrant entities by IDs.
+func (_u *EntityUpdate) RemoveAccessGrantIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.RemoveAccessGrantIDs(ids...)
+	return _u
+}
+
+// RemoveAccessGrants removes "access_grants" edges to AccessGrant entities.
+func (_u *EntityUpdate) RemoveAccessGrants(v ...*AccessGrant) *EntityUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveAccessGrantIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *EntityUpdate) Save(ctx context.Context) (int, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -728,11 +767,15 @@ func (_u *EntityUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *EntityUpdate) defaults() {
+func (_u *EntityUpdate) defaults() error {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		if entity.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized entity.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := entity.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -1228,6 +1271,51 @@ func (_u *EntityUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.AccessGrantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.AccessGrantsTable,
+			Columns: []string{entity.AccessGrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(accessgrant.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedAccessGrantsIDs(); len(nodes) > 0 && !_u.mutation.AccessGrantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.AccessGrantsTable,
+			Columns: []string{entity.AccessGrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(accessgrant.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.AccessGrantsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.AccessGrantsTable,
+			Columns: []string{entity.AccessGrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(accessgrant.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -1791,6 +1879,21 @@ func (_u *EntityUpdateOne) AddAttachments(v ...*Attachment) *EntityUpdateOne {
 	return _u.AddAttachmentIDs(ids...)
 }
 
+// AddAccessGrantIDs adds the "access_grants" edge to the AccessGrant entity by IDs.
+func (_u *EntityUpdateOne) AddAccessGrantIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.AddAccessGrantIDs(ids...)
+	return _u
+}
+
+// AddAccessGrants adds the "access_grants" edges to the AccessGrant entity.
+func (_u *EntityUpdateOne) AddAccessGrants(v ...*AccessGrant) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddAccessGrantIDs(ids...)
+}
+
 // Mutation returns the EntityMutation object of the builder.
 func (_u *EntityUpdateOne) Mutation() *EntityMutation {
 	return _u.mutation
@@ -1919,6 +2022,27 @@ func (_u *EntityUpdateOne) RemoveAttachments(v ...*Attachment) *EntityUpdateOne 
 	return _u.RemoveAttachmentIDs(ids...)
 }
 
+// ClearAccessGrants clears all "access_grants" edges to the AccessGrant entity.
+func (_u *EntityUpdateOne) ClearAccessGrants() *EntityUpdateOne {
+	_u.mutation.ClearAccessGrants()
+	return _u
+}
+
+// RemoveAccessGrantIDs removes the "access_grants" edge to AccessGrant entities by IDs.
+func (_u *EntityUpdateOne) RemoveAccessGrantIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.RemoveAccessGrantIDs(ids...)
+	return _u
+}
+
+// RemoveAccessGrants removes "access_grants" edges to AccessGrant entities.
+func (_u *EntityUpdateOne) RemoveAccessGrants(v ...*AccessGrant) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveAccessGrantIDs(ids...)
+}
+
 // Where appends a list predicates to the EntityUpdate builder.
 func (_u *EntityUpdateOne) Where(ps ...predicate.Entity) *EntityUpdateOne {
 	_u.mutation.Where(ps...)
@@ -1934,7 +2058,9 @@ func (_u *EntityUpdateOne) Select(field string, fields ...string) *EntityUpdateO
 
 // Save executes the query and returns the updated Entity entity.
 func (_u *EntityUpdateOne) Save(ctx context.Context) (*Entity, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -1961,11 +2087,15 @@ func (_u *EntityUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *EntityUpdateOne) defaults() {
+func (_u *EntityUpdateOne) defaults() error {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		if entity.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized entity.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := entity.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -2478,6 +2608,51 @@ func (_u *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err erro
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.AccessGrantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.AccessGrantsTable,
+			Columns: []string{entity.AccessGrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(accessgrant.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedAccessGrantsIDs(); len(nodes) > 0 && !_u.mutation.AccessGrantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.AccessGrantsTable,
+			Columns: []string{entity.AccessGrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(accessgrant.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.AccessGrantsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.AccessGrantsTable,
+			Columns: []string{entity.AccessGrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(accessgrant.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/rs/zerolog/log"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authz"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
@@ -38,6 +39,7 @@ func (svc *UserService) MailerReady() bool {
 // GetHBURL — so a forged Referer or untrusted X-Forwarded-Host can't poison
 // the link in the victim's email.
 func (svc *UserService) RequestPasswordReset(ctx context.Context, email, baseURL string) error {
+	ctx = authz.NewSystemContext(ctx) // unauthenticated reset flow; the token/email is the credential
 	_, span := entityServiceTracer().Start(ctx, "service.UserService.RequestPasswordReset",
 		trace.WithAttributes(
 			attribute.Int("user.email.length", len(email)),
@@ -60,7 +62,7 @@ func (svc *UserService) RequestPasswordReset(ctx context.Context, email, baseURL
 }
 
 func (svc *UserService) processResetRequest(email, baseURL string) {
-	ctx, span := entityServiceTracer().Start(context.Background(), "service.UserService.processResetRequest",
+	ctx, span := entityServiceTracer().Start(authz.NewSystemContext(context.Background()), "service.UserService.processResetRequest",
 		trace.WithAttributes(attribute.Int("user.email.length", len(email))))
 	defer span.End()
 
@@ -97,6 +99,7 @@ func (svc *UserService) processResetRequest(email, baseURL string) {
 // ent.NotFound for an unknown email — the caller is the operator, who needs
 // to know if they typed the address wrong.
 func (svc *UserService) GenerateResetLink(ctx context.Context, email, baseURL string) (string, error) {
+	ctx = authz.NewSystemContext(ctx) // unauthenticated reset flow; the token/email is the credential
 	ctx, span := entityServiceTracer().Start(ctx, "service.UserService.GenerateResetLink",
 		trace.WithAttributes(
 			attribute.Int("user.email.length", len(email)),
@@ -122,6 +125,7 @@ func (svc *UserService) GenerateResetLink(ctx context.Context, email, baseURL st
 // be holding. Returns ErrorPasswordResetInvalid for any invalid/expired/used
 // token, deliberately conflating the three cases.
 func (svc *UserService) ResetPassword(ctx context.Context, rawToken, newPassword string) error {
+	ctx = authz.NewSystemContext(ctx) // unauthenticated reset flow; the token/email is the credential
 	ctx, span := entityServiceTracer().Start(ctx, "service.UserService.ResetPassword",
 		trace.WithAttributes(
 			attribute.Int("token.length", len(rawToken)),

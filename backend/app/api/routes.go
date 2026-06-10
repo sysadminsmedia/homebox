@@ -17,6 +17,7 @@ import (
 	v1 "github.com/sysadminsmedia/homebox/backend/app/api/handlers/v1"
 	"github.com/sysadminsmedia/homebox/backend/app/api/providers"
 	docs "github.com/sysadminsmedia/homebox/backend/app/api/static/docs"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authz"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 )
@@ -100,7 +101,18 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		userMW := []errchain.Middleware{
 			a.mwAuthToken,
 			a.mwTenant,
+			a.mwViewer,
 			a.mwRoles(RoleModeOr, authroles.RoleUser.String()),
+		}
+
+		// withPerm appends a fast-fail permission check to the user chain.
+		// The ent privacy layer remains the source of truth; this only gives
+		// management routes a clean 403 before the handler runs, and gates
+		// the few raw-SQL read paths the ORM cannot filter.
+		withPerm := func(p authz.Permission) []errchain.Middleware {
+			mw := make([]errchain.Middleware, len(userMW), len(userMW)+1)
+			copy(mw, userMW)
+			return append(mw, a.mwPermission(p))
 		}
 
 		r.Get("/ws/events", chain.ToHandlerFunc(v1Ctrl.HandleCacheWS(), userMW...))
@@ -124,37 +136,51 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Get("/groups/all", chain.ToHandlerFunc(v1Ctrl.HandleGroupsGetAll(), userMW...))
 		r.Post("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupCreate(), userMW...))
 		r.Get("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupGet(), userMW...))
-		r.Put("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupUpdate(), userMW...))
-		r.Delete("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupDelete(), userMW...))
+		r.Put("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupUpdate(), withPerm(authz.PermSettingsManage)...))
+		r.Delete("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupDelete(), withPerm(authz.PermSettingsManage)...))
 
 		r.Get("/groups/members", chain.ToHandlerFunc(v1Ctrl.HandleGroupMembersGetAll(), userMW...))
 		r.Delete("/groups/members/{user_id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupMemberRemove(), userMW...))
 
+		// Permission system endpoints
+		r.Get("/permissions/catalog", chain.ToHandlerFunc(v1Ctrl.HandlePermissionsCatalog(), userMW...))
+		r.Get("/groups/permissions/self", chain.ToHandlerFunc(v1Ctrl.HandleGroupPermissionsSelf(), userMW...))
+
+		r.Get("/groups/permission-groups", chain.ToHandlerFunc(v1Ctrl.HandlePermissionGroupsGetAll(), userMW...))
+		r.Post("/groups/permission-groups", chain.ToHandlerFunc(v1Ctrl.HandlePermissionGroupCreate(), withPerm(authz.PermPermissionsManage)...))
+		r.Get("/groups/permission-groups/{id}", chain.ToHandlerFunc(v1Ctrl.HandlePermissionGroupGet(), userMW...))
+		r.Put("/groups/permission-groups/{id}", chain.ToHandlerFunc(v1Ctrl.HandlePermissionGroupUpdate(), withPerm(authz.PermPermissionsManage)...))
+		r.Delete("/groups/permission-groups/{id}", chain.ToHandlerFunc(v1Ctrl.HandlePermissionGroupDelete(), withPerm(authz.PermPermissionsManage)...))
+		r.Put("/groups/permission-groups/{id}/members", chain.ToHandlerFunc(v1Ctrl.HandlePermissionGroupMembersSet(), withPerm(authz.PermPermissionsManage)...))
+
+		r.Get("/groups/members/{user_id}/permissions", chain.ToHandlerFunc(v1Ctrl.HandleGroupMemberPermissionsGet(), userMW...))
+		r.Put("/groups/members/{user_id}/permissions", chain.ToHandlerFunc(v1Ctrl.HandleGroupMemberPermissionsSet(), withPerm(authz.PermPermissionsManage)...))
+
 		r.Get("/groups/invitations", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsGetAll(), userMW...))
-		r.Post("/groups/invitations", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsCreate(), userMW...))
-		r.Delete("/groups/invitations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsDelete(), userMW...))
+		r.Post("/groups/invitations", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsCreate(), withPerm(authz.PermMembersManage)...))
+		r.Delete("/groups/invitations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsDelete(), withPerm(authz.PermMembersManage)...))
 		r.Post("/groups/invitations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsAccept(), userMW...))
 
 		// Collection export/import (group-scoped)
-		r.Post("/group/exports", chain.ToHandlerFunc(v1Ctrl.HandleExportsCreate(), userMW...))
+		r.Post("/group/exports", chain.ToHandlerFunc(v1Ctrl.HandleExportsCreate(), withPerm(authz.PermDataExport)...))
 		r.Get("/group/exports", chain.ToHandlerFunc(v1Ctrl.HandleExportsList(), userMW...))
 		r.Get("/group/exports/{id}", chain.ToHandlerFunc(v1Ctrl.HandleExportGet(), userMW...))
-		r.Get("/group/exports/{id}/download", chain.ToHandlerFunc(v1Ctrl.HandleExportDownload(), userMW...))
+		r.Get("/group/exports/{id}/download", chain.ToHandlerFunc(v1Ctrl.HandleExportDownload(), withPerm(authz.PermDataExport)...))
 		r.Delete("/group/exports/{id}", chain.ToHandlerFunc(v1Ctrl.HandleExportDelete(), userMW...))
-		r.Post("/group/import", chain.ToHandlerFunc(v1Ctrl.HandleCollectionImport(), userMW...))
+		r.Post("/group/import", chain.ToHandlerFunc(v1Ctrl.HandleCollectionImport(), withPerm(authz.PermDataImport)...))
 
-		r.Get("/groups/statistics", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatistics(), userMW...))
-		r.Get("/groups/statistics/purchase-price", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatisticsPriceOverTime(), userMW...))
-		r.Get("/groups/statistics/locations", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatisticsLocations(), userMW...))
-		r.Get("/groups/statistics/tags", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatisticsTags(), userMW...))
+		r.Get("/groups/statistics", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatistics(), withPerm(authz.PermEntityRead)...))
+		r.Get("/groups/statistics/purchase-price", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatisticsPriceOverTime(), withPerm(authz.PermEntityRead)...))
+		r.Get("/groups/statistics/locations", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatisticsLocations(), withPerm(authz.PermEntityRead)...))
+		r.Get("/groups/statistics/tags", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatisticsTags(), withPerm(authz.PermEntityRead)...))
 
 		// Action endpoints
-		r.Post("/actions/ensure-asset-ids", chain.ToHandlerFunc(v1Ctrl.HandleEnsureAssetID(), userMW...))
-		r.Post("/actions/zero-item-time-fields", chain.ToHandlerFunc(v1Ctrl.HandleItemDateZeroOut(), userMW...))
-		r.Post("/actions/ensure-import-refs", chain.ToHandlerFunc(v1Ctrl.HandleEnsureImportRefs(), userMW...))
-		r.Post("/actions/set-primary-photos", chain.ToHandlerFunc(v1Ctrl.HandleSetPrimaryPhotos(), userMW...))
-		r.Post("/actions/create-missing-thumbnails", chain.ToHandlerFunc(v1Ctrl.HandleCreateMissingThumbnails(), userMW...))
-		r.Post("/actions/wipe-inventory", chain.ToHandlerFunc(v1Ctrl.HandleWipeInventory(), userMW...))
+		r.Post("/actions/ensure-asset-ids", chain.ToHandlerFunc(v1Ctrl.HandleEnsureAssetID(), withPerm(authz.PermEntityUpdate)...))
+		r.Post("/actions/zero-item-time-fields", chain.ToHandlerFunc(v1Ctrl.HandleItemDateZeroOut(), withPerm(authz.PermEntityUpdate)...))
+		r.Post("/actions/ensure-import-refs", chain.ToHandlerFunc(v1Ctrl.HandleEnsureImportRefs(), withPerm(authz.PermEntityUpdate)...))
+		r.Post("/actions/set-primary-photos", chain.ToHandlerFunc(v1Ctrl.HandleSetPrimaryPhotos(), withPerm(authz.PermEntityUpdate)...))
+		r.Post("/actions/create-missing-thumbnails", chain.ToHandlerFunc(v1Ctrl.HandleCreateMissingThumbnails(), withPerm(authz.PermEntityUpdate)...))
+		r.Post("/actions/wipe-inventory", chain.ToHandlerFunc(v1Ctrl.HandleWipeInventory(), withPerm(authz.PermSettingsManage)...))
 
 		// Tags endpoints
 		r.Get("/tags", chain.ToHandlerFunc(v1Ctrl.HandleTagsGetAll(), userMW...))
@@ -172,11 +198,11 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		// Entity endpoints (primary)
 		r.Get("/entities", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesGetAll(), userMW...))
 		r.Post("/entities", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesCreate(), userMW...))
-		r.Post("/entities/import", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesImport(), userMW...))
-		r.Get("/entities/export", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesExport(), userMW...))
-		r.Get("/entities/fields", chain.ToHandlerFunc(v1Ctrl.HandleGetAllCustomFieldNames(), userMW...))
-		r.Get("/entities/fields/values", chain.ToHandlerFunc(v1Ctrl.HandleGetAllCustomFieldValues(), userMW...))
-		r.Get("/entities/tree", chain.ToHandlerFunc(v1Ctrl.HandleLocationTreeQuery(), userMW...))
+		r.Post("/entities/import", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesImport(), withPerm(authz.PermDataImport)...))
+		r.Get("/entities/export", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesExport(), withPerm(authz.PermDataExport)...))
+		r.Get("/entities/fields", chain.ToHandlerFunc(v1Ctrl.HandleGetAllCustomFieldNames(), withPerm(authz.PermEntityRead)...))
+		r.Get("/entities/fields/values", chain.ToHandlerFunc(v1Ctrl.HandleGetAllCustomFieldValues(), withPerm(authz.PermEntityRead)...))
+		r.Get("/entities/tree", chain.ToHandlerFunc(v1Ctrl.HandleLocationTreeQuery(), withPerm(authz.PermEntityRead)...))
 
 		r.Get("/entities/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityGet(), userMW...))
 		r.Get("/entities/{id}/path", chain.ToHandlerFunc(v1Ctrl.HandleEntityFullPath(), userMW...))
@@ -184,6 +210,12 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Patch("/entities/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityPatch(), userMW...))
 		r.Delete("/entities/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityDelete(), userMW...))
 		r.Post("/entities/{id}/duplicate", chain.ToHandlerFunc(v1Ctrl.HandleEntityDuplicate(), userMW...))
+
+		// Entity row-level access grants
+		r.Get("/entities/{id}/permissions", chain.ToHandlerFunc(v1Ctrl.HandleEntityGrantsGetAll(), userMW...))
+		r.Post("/entities/{id}/permissions", chain.ToHandlerFunc(v1Ctrl.HandleEntityGrantCreate(), withPerm(authz.PermPermissionsManage)...))
+		r.Put("/entities/{id}/permissions/{grant_id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityGrantUpdate(), withPerm(authz.PermPermissionsManage)...))
+		r.Delete("/entities/{id}/permissions/{grant_id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityGrantDelete(), withPerm(authz.PermPermissionsManage)...))
 
 		// Entity attachment endpoints
 		r.Post("/entities/{id}/attachments", chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentCreate(), userMW...))
@@ -221,6 +253,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		assetMW := []errchain.Middleware{
 			a.mwAuthToken,
 			a.mwTenant,
+			a.mwViewer,
 			a.mwRoles(RoleModeOr, authroles.RoleUser.String(), authroles.RoleAttachments.String()),
 		}
 
@@ -239,7 +272,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Get("/labelmaker/asset/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGetAssetLabel(), userMW...))
 
 		// Reporting Services
-		r.Get("/reporting/bill-of-materials", chain.ToHandlerFunc(v1Ctrl.HandleBillOfMaterialsExport(), userMW...))
+		r.Get("/reporting/bill-of-materials", chain.ToHandlerFunc(v1Ctrl.HandleBillOfMaterialsExport(), withPerm(authz.PermDataExport)...))
 
 		// OpenTelemetry proxy endpoint for frontend telemetry (requires auth)
 		if a.otel != nil && a.otel.IsEnabled() && a.conf.Otel.ProxyEnabled {

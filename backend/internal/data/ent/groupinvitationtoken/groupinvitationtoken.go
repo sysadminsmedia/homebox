@@ -5,6 +5,7 @@ package groupinvitationtoken
 import (
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/google/uuid"
@@ -25,6 +26,8 @@ const (
 	FieldExpiresAt = "expires_at"
 	// FieldUses holds the string denoting the uses field in the database.
 	FieldUses = "uses"
+	// FieldPermissions holds the string denoting the permissions field in the database.
+	FieldPermissions = "permissions"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
 	// Table holds the table name of the groupinvitationtoken in the database.
@@ -46,6 +49,7 @@ var Columns = []string{
 	FieldToken,
 	FieldExpiresAt,
 	FieldUses,
+	FieldPermissions,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "group_invitation_tokens"
@@ -69,7 +73,15 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "github.com/sysadminsmedia/homebox/backend/internal/data/ent/runtime"
 var (
+	Hooks        [1]ent.Hook
+	Interceptors [1]ent.Interceptor
+	Policy       ent.Policy
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -80,6 +92,8 @@ var (
 	DefaultExpiresAt func() time.Time
 	// DefaultUses holds the default value on creation for the "uses" field.
 	DefaultUses int
+	// DefaultPermissions holds the default value on creation for the "permissions" field.
+	DefaultPermissions []string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

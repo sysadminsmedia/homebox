@@ -20,6 +20,7 @@
   const api = useUserApi();
   const confirm = useConfirm();
   const { t } = useI18n();
+  const { can } = usePermissions();
 
   async function handleDelete() {
     const { isCanceled } = await confirm.open(t("components.template.confirm_delete"));
@@ -97,6 +98,7 @@
         </NuxtLink>
       </Button>
       <Button
+        v-if="can('template:manage')"
         size="icon"
         variant="outline"
         class="size-8"
@@ -106,6 +108,7 @@
         <MdiContentCopy class="size-4" />
       </Button>
       <Button
+        v-if="can('template:manage')"
         size="icon"
         variant="destructive"
         class="size-8"

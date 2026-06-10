@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authzrules"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
@@ -48,4 +49,15 @@ func (Notifier) Indexes() []ent.Index {
 		index.Fields("group_id"),
 		index.Fields("group_id", "is_active"),
 	}
+}
+
+// Policy of the Notifier: mutations require the matching permission and are
+// pinned to the viewer's tenant; reads are filtered by Interceptors.
+func (Notifier) Policy() ent.Policy {
+	return authzrules.NewPolicy(authzrules.NotifierMutationRule())
+}
+
+// Interceptors of the Notifier scope every read to the request viewer.
+func (Notifier) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{authzrules.FilterNotifier()}
 }

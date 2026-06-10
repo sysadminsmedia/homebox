@@ -4,6 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authzrules"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
@@ -38,4 +39,15 @@ func (Attachment) Edges() []ent.Edge {
 		edge.To("thumbnail", Attachment.Type).
 			Unique(),
 	}
+}
+
+// Policy of the Attachment: mutations require the matching permission and are
+// pinned to the viewer's tenant; reads are filtered by Interceptors.
+func (Attachment) Policy() ent.Policy {
+	return authzrules.NewPolicy(authzrules.AttachmentMutationRule())
+}
+
+// Interceptors of the Attachment scope every read to the request viewer.
+func (Attachment) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{authzrules.FilterAttachment()}
 }

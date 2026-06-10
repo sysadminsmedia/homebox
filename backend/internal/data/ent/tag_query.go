@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"database/sql/driver"
+	"errors"
 	"fmt"
 	"math"
 
@@ -471,6 +472,12 @@ func (_q *TagQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if tag.Policy == nil {
+		return errors.New("ent: uninitialized tag.Policy (forgotten import ent/runtime?)")
+	}
+	if err := tag.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authz"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
@@ -30,6 +31,9 @@ type (
 		// IsOwner controls the role on the membership row created for
 		// (user, DefaultGroupID). It does not grant any cross-group privilege.
 		IsOwner bool `json:"isOwner"`
+		// Permissions for the membership row. Empty means the full catalog
+		// (owners always get the full catalog).
+		Permissions []string `json:"permissions"`
 	}
 
 	UserUpdate struct {
@@ -220,10 +224,17 @@ func (r *UserRepository) createUserWithMembership(
 		return uuid.Nil, err
 	}
 
+	perms := usr.Permissions
+	if usr.IsOwner || len(perms) == 0 {
+		// Stored as the wildcard, not an enumerated snapshot, so future
+		// catalog additions automatically reach full-access members.
+		perms = authz.FullAccess()
+	}
 	if _, err := tx.UserGroup.Create().
 		SetUserID(entUser.ID).
 		SetGroupID(usr.DefaultGroupID).
 		SetRole(membershipRole(usr.IsOwner)).
+		SetPermissions(perms).
 		Save(ctx); err != nil {
 		_ = tx.Rollback()
 		return uuid.Nil, err

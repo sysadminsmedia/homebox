@@ -34,7 +34,7 @@ func countUserSessions(t *testing.T, ctx context.Context, uid uuid.UUID) int {
 // one valid afterward. Without this guarantee a leaked refresh request keeps
 // the prior bearer alive in parallel with its replacement.
 func TestRenewToken_InvalidatesPriorToken(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	usr := newTestUserWithPassword(t, "renew-pw-1")
 
 	old, err := tSvc.User.createSessionToken(ctx, usr.ID, false)
@@ -61,7 +61,7 @@ func TestRenewToken_InvalidatesPriorToken(t *testing.T) {
 // making the request. Other devices / stolen cookies are killed atomically
 // with the password change; the caller stays logged in.
 func TestChangePassword_RevokesOtherSessions_KeepsCurrent(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	usr := newTestUserWithPassword(t, "old-cp-pw")
 
 	current, err := tSvc.User.createSessionToken(ctx, usr.ID, false)
@@ -97,7 +97,7 @@ func TestChangePassword_RevokesOtherSessions_KeepsCurrent(t *testing.T) {
 // M2 fallback: when there's no session token in context (e.g. API-key auth),
 // ChangePassword must still revoke every session token — nothing to preserve.
 func TestChangePassword_NoSessionToken_RevokesAll(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	usr := newTestUserWithPassword(t, "no-sess-pw")
 
 	_, err := tSvc.User.createSessionToken(ctx, usr.ID, false)
@@ -116,7 +116,7 @@ func TestChangePassword_NoSessionToken_RevokesAll(t *testing.T) {
 
 // M4: RegisterUser must reject passwords shorter than PasswordMinLength.
 func TestRegisterUser_RejectsShortPassword(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	short := strings.Repeat("a", PasswordMinLength-1)
 
 	_, err := tSvc.User.RegisterUser(ctx, UserRegistration{
@@ -128,7 +128,7 @@ func TestRegisterUser_RejectsShortPassword(t *testing.T) {
 }
 
 func TestRegisterUser_RejectsEmptyPassword(t *testing.T) {
-	_, err := tSvc.User.RegisterUser(context.Background(), UserRegistration{
+	_, err := tSvc.User.RegisterUser(testCtx(), UserRegistration{
 		Name:     "Empty Pwd User",
 		Email:    fk.Email(),
 		Password: "",
@@ -137,7 +137,7 @@ func TestRegisterUser_RejectsEmptyPassword(t *testing.T) {
 }
 
 func TestRegisterUser_AcceptsMinLengthPassword(t *testing.T) {
-	usr, err := tSvc.User.RegisterUser(context.Background(), UserRegistration{
+	usr, err := tSvc.User.RegisterUser(testCtx(), UserRegistration{
 		Name:     "Min Pwd User",
 		Email:    fk.Email(),
 		Password: strings.Repeat("a", PasswordMinLength),

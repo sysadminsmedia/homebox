@@ -1,7 +1,6 @@
 package repo
 
 import (
-	"context"
 	"log"
 	"os"
 	"testing"
@@ -27,7 +26,7 @@ var (
 func bootstrap() {
 	var (
 		err error
-		ctx = context.Background()
+		ctx = testCtx()
 	)
 
 	tGroup, err = tRepos.Groups.GroupCreate(ctx, "test-group", uuid.Nil)
@@ -48,10 +47,10 @@ func MainNoExit(m *testing.M) int {
 	}
 
 	go func() {
-		_ = tbus.Run(context.Background())
+		_ = tbus.Run(testCtx())
 	}()
 
-	err = client.Schema.Create(context.Background())
+	err = client.Schema.Create(testCtx())
 	if err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}

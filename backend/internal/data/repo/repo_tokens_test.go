@@ -1,7 +1,6 @@
 package repo
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -11,7 +10,7 @@ import (
 )
 
 func TestAuthTokenRepo_CreateToken(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	user := userFactory()
 
 	userOut, err := tRepos.Users.Create(ctx, user)
@@ -38,7 +37,7 @@ func TestAuthTokenRepo_CreateToken(t *testing.T) {
 }
 
 func TestAuthTokenRepo_DeleteToken(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	user := userFactory()
 
 	userOut, err := tRepos.Users.Create(ctx, user)
@@ -61,7 +60,7 @@ func TestAuthTokenRepo_DeleteToken(t *testing.T) {
 }
 
 func TestAuthTokenRepo_GetUserByToken(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	user := userFactory()
 	userOut, _ := tRepos.Users.Create(ctx, user)
@@ -92,7 +91,7 @@ func TestAuthTokenRepo_GetUserByToken(t *testing.T) {
 }
 
 func TestAuthTokenRepo_PurgeExpiredTokens(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	user := userFactory()
 	userOut, _ := tRepos.Users.Create(ctx, user)

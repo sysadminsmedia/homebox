@@ -214,6 +214,11 @@ type (
 		// Container-specific fields (for entities whose entity_type.is_location = true)
 		Children   []EntitySummary `json:"children,omitempty"`
 		TotalPrice float64         `json:"totalPrice,omitempty"`
+
+		// Capabilities lists the actions the caller may perform on this
+		// entity (read, update, delete, attachments, permissions). Populated
+		// only on single-entity fetches.
+		Capabilities []string `json:"capabilities,omitempty"`
 	}
 
 	// EntityOutCount is used for container listing with child count.
@@ -438,7 +443,7 @@ func (r *EntityRepository) getOneTx(ctx context.Context, tx *ent.Tx, where ...pr
 		WithChildren(func(eq *ent.EntityQuery) {
 			eq.WithEntityType()
 		}).
-		WithAttachments().
+		WithAttachments(func(aq *ent.AttachmentQuery) { aq.WithThumbnail() }).
 		Only(ctx),
 	)
 	if err != nil {
@@ -1201,6 +1206,9 @@ func (r *EntityRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID
 }
 
 func (r *EntityRepository) Delete(ctx context.Context, id uuid.UUID) error {
+	if err := assertEntityDeletable(ctx, r.db.Entity, id); err != nil {
+		return err
+	}
 	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.Delete",
 		trace.WithAttributes(attribute.String("entity.id", id.String())))
 	defer span.End()
@@ -1209,7 +1217,7 @@ func (r *EntityRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	e, err := r.db.Entity.Query().
 		Where(entity.ID(id)).
 		WithGroup().
-		WithAttachments().
+		WithAttachments(func(aq *ent.AttachmentQuery) { aq.WithThumbnail() }).
 		Only(loadCtx)
 	if err != nil {
 		recordSpanError(loadSpan, err)
@@ -1257,6 +1265,11 @@ func (r *EntityRepository) Delete(ctx context.Context, id uuid.UUID) error {
 }
 
 func (r *EntityRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) error {
+	// Checked before attachment blobs are removed: a viewer without delete
+	// rights must not trigger any side effects.
+	if err := assertEntityDeletable(ctx, r.db.Entity, id); err != nil {
+		return err
+	}
 	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.DeleteByGroup",
 		trace.WithAttributes(
 			attribute.String("group.id", gid.String()),
@@ -1270,7 +1283,7 @@ func (r *EntityRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID)
 			entity.ID(id),
 			entity.HasGroupWith(group.ID(gid)),
 		).
-		WithAttachments().
+		WithAttachments(func(aq *ent.AttachmentQuery) { aq.WithThumbnail() }).
 		Only(loadCtx)
 	if err != nil {
 		recordSpanError(loadSpan, err)
@@ -1347,7 +1360,7 @@ func (r *EntityRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wip
 	loadCtx, loadSpan := entityTracer().Start(ctx, "repo.EntityRepository.WipeInventory.loadEntities")
 	entities, err := r.db.Entity.Query().
 		Where(entity.HasGroupWith(group.ID(gid))).
-		WithAttachments().
+		WithAttachments(func(aq *ent.AttachmentQuery) { aq.WithThumbnail() }).
 		All(loadCtx)
 	if err != nil {
 		recordSpanError(loadSpan, err)
@@ -1450,6 +1463,13 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 	defer span.End()
 
 	if err := validateQuantity("update entity", data.Quantity); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+
+	// The viewer must be able to update this row (tenant permission or row
+	// grant); otherwise the pinned mutation would silently match nothing.
+	if err := assertEntityUpdatable(ctx, r.db.Entity, data.ID); err != nil {
 		recordSpanError(span, err)
 		return EntityOut{}, err
 	}
@@ -1834,6 +1854,11 @@ func (r *EntityRepository) Patch(ctx context.Context, gid, id uuid.UUID, data En
 			recordSpanError(span, err)
 			return err
 		}
+	}
+
+	if err := assertEntityUpdatable(ctx, r.db.Entity, id); err != nil {
+		recordSpanError(span, err)
+		return err
 	}
 
 	tx, err := r.db.Tx(ctx)
@@ -2591,6 +2616,11 @@ func (r *EntityRepository) UpdateContainer(ctx context.Context, gid, id uuid.UUI
 		validateSpan.End()
 	}
 
+	if err := assertEntityUpdatable(ctx, r.db.Entity, id); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+
 	q := r.db.Entity.Update().
 		Where(
 			entity.ID(id),
@@ -2626,10 +2656,18 @@ func (r *EntityRepository) DeleteContainerByGroup(ctx context.Context, gid, id u
 		))
 	defer span.End()
 
-	_, err := r.db.Entity.Delete().Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).Exec(ctx)
+	if err := assertEntityDeletable(ctx, r.db.Entity, id); err != nil {
+		recordSpanError(span, err)
+		return err
+	}
+
+	n, err := r.db.Entity.Delete().Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).Exec(ctx)
 	if err != nil {
 		recordSpanError(span, err)
 		return err
+	}
+	if n == 0 {
+		return &ent.NotFoundError{}
 	}
 	r.publishMutationEvent(gid)
 	return nil
