@@ -225,7 +225,10 @@
     return route(`/qrcode`, { data: encodeURIComponent(data) });
   }
 
-  function getItem(n: number, item: { assetId: string; name: string; location: { name: string } } | null): LabelData {
+  function getItem(
+    n: number,
+    item: { assetId: string; name: string; parent?: { name: string } | null } | null
+  ): LabelData {
     // format n into - seperated string with leading zeros
     const assetID = fmtAssetID(item?.assetId ?? n + 1);
 
@@ -233,7 +236,7 @@
       url: getQRCodeUrl(assetID),
       assetID: item?.assetId ?? assetID,
       name: item?.name ?? labelBlankLine,
-      location: item?.location?.name ?? labelBlankLine,
+      location: item?.parent?.name ?? labelBlankLine,
     };
   }
 
@@ -263,8 +266,8 @@
     const items: LabelData[] = [];
     for (let i = displayProperties.assetRange - 1; i < displayProperties.assetRangeMax - 1; i++) {
       const item = allFields?.value?.items?.[i];
-      if (item?.location) {
-        items.push(getItem(i, item as { assetId: string; location: { name: string }; name: string }));
+      if (item?.parent) {
+        items.push(getItem(i, item));
       } else {
         items.push(getItem(i, null));
       }

@@ -20,8 +20,8 @@
     <div v-else-if="entity.item" class="flex flex-col gap-1">
       <span class="truncate text-sm font-semibold text-foreground">{{ entity.item.name }}</span>
       <div class="flex flex-wrap items-center gap-1.5">
-        <Badge v-if="entity.item.location" variant="secondary" class="text-xs">
-          {{ entity.item.location.name }}
+        <Badge v-if="entity.item.parent" variant="secondary" class="text-xs">
+          {{ entity.item.parent.name }}
         </Badge>
         <span v-if="entity.item.quantity > 1" class="text-xs text-muted-foreground">
           {{ t("scanner_ar.qty") }}: {{ entity.item.quantity }}

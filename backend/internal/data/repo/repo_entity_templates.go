@@ -305,6 +305,9 @@ func (r *EntityTemplatesRepository) Create(ctx context.Context, gid uuid.UUID, d
 			SetType(templatefield.Type(field.Type)).
 			SetName(field.Name).
 			SetTextValue(field.TextValue).
+			SetNumberValue(field.NumberValue).
+			SetBooleanValue(field.BooleanValue).
+			SetTimeValue(field.TimeValue).
 			Save(ctx)
 
 		if err != nil {
@@ -392,6 +395,9 @@ func (r *EntityTemplatesRepository) Update(ctx context.Context, gid uuid.UUID, d
 				SetType(templatefield.Type(field.Type)).
 				SetName(field.Name).
 				SetTextValue(field.TextValue).
+				SetNumberValue(field.NumberValue).
+				SetBooleanValue(field.BooleanValue).
+				SetTimeValue(field.TimeValue).
 				Save(ctx)
 
 			if err != nil {
@@ -409,6 +415,9 @@ func (r *EntityTemplatesRepository) Update(ctx context.Context, gid uuid.UUID, d
 				SetType(templatefield.Type(field.Type)).
 				SetName(field.Name).
 				SetTextValue(field.TextValue).
+				SetNumberValue(field.NumberValue).
+				SetBooleanValue(field.BooleanValue).
+				SetTimeValue(field.TimeValue).
 				Save(ctx)
 
 			if err != nil {

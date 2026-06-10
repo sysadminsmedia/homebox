@@ -202,7 +202,6 @@ func run(cfg *config.Config) error {
 
 	router.Use(
 		middleware.RequestID,
-		middleware.RealIP,
 		mid.Logger(logger),
 		mid.SecurityHeaders(),
 		// Restrict the max body size to the upload limit + 1MB (for overhead).

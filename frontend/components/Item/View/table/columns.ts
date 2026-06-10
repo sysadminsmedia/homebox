@@ -155,7 +155,7 @@ export function makeColumns({
         ),
       cell: ({ row }) => {
         const item = row.original as EntitySummary;
-        const loc = (item.location || item.parent) as { id: string; name: string } | null;
+        const loc = item.parent;
         if (loc) {
           return h("a", { href: `/location/${loc.id}`, class: "hover:underline text-sm" }, loc.name);
         }

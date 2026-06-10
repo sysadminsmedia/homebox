@@ -5,7 +5,8 @@
   import type { ItemAttachment, EntityFieldData, EntityOut, EntityUpdate } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useTagStore } from "~/stores/tags";
-  import { useLocationStore } from "~~/stores/locations";
+  import { classifyDroppedUrl, SERVICE_ADAPTERS } from "~/lib/integration-adapters";
+  import { useIntegrationCacheStore } from "~/stores/integration-cache";
   import MdiLoading from "~icons/mdi/loading";
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
@@ -46,9 +47,6 @@
   const preferences = useViewPreferences();
 
   const itemId = computed<string>(() => route.params.id as string);
-
-  const locationStore = useLocationStore();
-  const locations = computed(() => locationStore.allLocations);
 
   const tagStore = useTagStore();
   const tags = computed(() => tagStore.tags);
@@ -114,6 +112,7 @@
       parentId: parent.value?.id || item.value.parent?.id || null,
       tagIds: item.value.tagIds,
       assetId: item.value.assetId,
+      entityTypeId: item.value.entityType?.id ?? "",
       purchasePrice,
       soldPrice,
       // Date-only fields stay as YYYY-MM-DD strings — see types.Date on the
@@ -373,7 +372,16 @@
     const zoneEl = targetEl?.closest("[data-link-type]");
     const attachmentType = zoneEl?.getAttribute("data-link-type") || "attachment";
 
+    // Always use the URL-based title as fallback; the real document title is
+    // fetched from the service API at display time (hydration in AttachmentsList.vue).
     const title = fallbackLinkTitle(droppedURL);
+
+    const store = useIntegrationCacheStore();
+    const settingsForClassify = Object.fromEntries(
+      SERVICE_ADAPTERS.map(a => [a.settingsUrlKey, store.serviceUrls[a.name] ?? ""])
+    );
+    const classified = classifyDroppedUrl(droppedURL, settingsForClassify);
+
     const { data, error } = await api.items.attachments.addExternalLink(
       itemId.value,
       "link",
@@ -387,7 +395,12 @@
       return;
     }
 
-    toast.success(t("items.toast.attachment_uploaded"));
+    if (classified) {
+      const serviceName = classified.adapter.name.charAt(0).toUpperCase() + classified.adapter.name.slice(1);
+      toast.success(t("items.toast.service_linked", { service: serviceName }));
+    } else {
+      toast.success(t("items.toast.attachment_uploaded"));
+    }
     item.value.attachments = data.attachments;
   }
 
@@ -552,6 +565,7 @@
       parentId: parent.value?.id || item.value.parent?.id || null,
       tagIds: item.value.tagIds,
       assetId: item.value.assetId,
+      entityTypeId: item.value.entityType?.id ?? "",
       syncChildEntityLocations: item.value.syncChildEntityLocations,
     };
 
@@ -822,13 +836,7 @@
                     </TooltipTrigger>
                     <TooltipContent>{{ $t("items.edit.view_image") }}</TooltipContent>
                   </Tooltip>
-                  <Tooltip
-                    v-if="
-                      attachment.mimeType === 'link/url' ||
-                      (attachment.path ?? '').startsWith('http://') ||
-                      (attachment.path ?? '').startsWith('https://')
-                    "
-                  >
+                  <Tooltip v-if="isValidHttpURL(attachment.path ?? '')">
                     <TooltipTrigger as-child>
                       <a :href="attachment.path" target="_blank" rel="noopener noreferrer">
                         <Button variant="outline" size="icon">

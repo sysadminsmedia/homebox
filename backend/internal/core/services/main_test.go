@@ -63,6 +63,19 @@ func MainNoExit(m *testing.M) int {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
+	busCtx, cancelBus := context.WithCancel(context.Background())
+	busErr := make(chan error, 1)
+	go func() {
+		busErr <- tbus.Run(busCtx)
+	}()
+	defer func() {
+		cancelBus()
+		if err := <-busErr; err != nil {
+			log.Printf("event bus error: %v", err)
+		}
+		_ = client.Close()
+	}()
+
 	tClient = client
 	tRepos = repo.New(tClient, tbus, config.Storage{
 		PrefixPath: "/",
@@ -89,8 +102,6 @@ func MainNoExit(m *testing.M) int {
 			ConnString: "file://" + os.TempDir(),
 		}, "mem://{{ .Topic }}", "sqlite3"),
 	)
-	defer func() { _ = client.Close() }()
-
 	bootstrap()
 	tCtx = Context{
 		Context: context.Background(),
