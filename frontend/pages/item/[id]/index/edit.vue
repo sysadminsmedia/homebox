@@ -5,7 +5,6 @@
   import type { ItemAttachment, EntityFieldData, EntityOut, EntityUpdate } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useTagStore } from "~/stores/tags";
-  import { useLocationStore } from "~~/stores/locations";
   import MdiLoading from "~icons/mdi/loading";
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
@@ -46,9 +45,6 @@
   const preferences = useViewPreferences();
 
   const itemId = computed<string>(() => route.params.id as string);
-
-  const locationStore = useLocationStore();
-  const locations = computed(() => locationStore.allLocations);
 
   const tagStore = useTagStore();
   const tags = computed(() => tagStore.tags);
@@ -291,6 +287,10 @@
   const attDropZone = ref<HTMLDivElement>();
   const { isOverDropZone: attDropZoneActive } = useDropZone(attDropZone);
 
+  const { uploading: attachmentUploading, uploadFile, uploadExternalLink } = useAttachmentUpload();
+  // 0..1 fraction of the current attachment's body uploaded; null when idle.
+  const attachmentProgress = ref<number | null>(null);
+
   const refAttachmentInput = ref<HTMLInputElement>();
 
   function clickUpload() {
@@ -374,21 +374,16 @@
     const attachmentType = zoneEl?.getAttribute("data-link-type") || "attachment";
 
     const title = fallbackLinkTitle(droppedURL);
-    const { data, error } = await api.items.attachments.addExternalLink(
-      itemId.value,
-      "link",
-      droppedURL,
-      title,
-      attachmentType
-    );
+    const result = await uploadExternalLink(itemId.value, "link", droppedURL, title, attachmentType);
 
-    if (error) {
-      toast.error(t("items.toast.failed_upload_attachment"));
+    if (!result.ok) {
+      toast.error(t("items.toast.failed_upload_attachment_reason", { reason: result.reason }));
+      console.error("External link upload failed", result);
       return;
     }
 
     toast.success(t("items.toast.attachment_uploaded"));
-    item.value.attachments = data.attachments;
+    item.value.attachments = result.data.attachments;
   }
 
   async function uploadAttachment(files: File[] | null, type: AttachmentTypes | null) {
@@ -396,18 +391,22 @@
       return;
     }
 
-    const { data, error } = await api.items.attachments.add(itemId.value, files[0], files[0].name, type);
+    const file = files[0];
+    attachmentProgress.value = 0;
+    const result = await uploadFile(itemId.value, file, file.name, type, undefined, f => {
+      attachmentProgress.value = f;
+    });
+    attachmentProgress.value = null;
 
-    if (error) {
-      toast.error(t("items.toast.failed_upload_attachment"));
+    if (!result.ok) {
+      toast.error(t("items.toast.failed_upload_attachment_reason", { reason: result.reason }));
+      console.error("Attachment upload failed", result);
       return;
     }
 
     toast.success(t("items.toast.attachment_uploaded"));
-
     await saveItem(false);
-
-    item.value.attachments = data.attachments;
+    item.value.attachments = result.data.attachments;
   }
 
   const confirm = useConfirm();
@@ -763,7 +762,17 @@
             <p class="text-xs">{{ $t("items.changes_persisted_immediately") }}</p>
           </div>
           <div class="border-t p-4">
-            <div v-if="attDropZoneActive" class="grid grid-cols-4 gap-4">
+            <div
+              v-if="attachmentUploading"
+              class="flex h-24 w-full items-center justify-center gap-2 border-2 border-dashed border-primary"
+            >
+              <MdiLoading class="size-5 animate-spin" />
+              <p>
+                {{ $t("items.toast.uploading_attachment") }}
+                <span v-if="attachmentProgress !== null">({{ Math.round(attachmentProgress * 100) }}%)</span>
+              </p>
+            </div>
+            <div v-else-if="attDropZoneActive" class="grid grid-cols-4 gap-4">
               <DropZone data-link-type="photo" @drop="dropPhoto"> {{ $t("items.photos") }} </DropZone>
               <DropZone data-link-type="warranty" @drop="dropWarranty"> {{ $t("items.warranty") }} </DropZone>
               <DropZone data-link-type="manual" @drop="dropManual"> {{ $t("items.manuals") }} </DropZone>

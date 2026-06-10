@@ -22,6 +22,14 @@ export type RequestArgs<T> = {
   headers?: Record<string, string>;
 };
 
+export type ProgressUploadArgs = {
+  url: string;
+  data: FormData;
+  headers?: Record<string, string>;
+  /** Called with the fraction (0..1) of the body uploaded. The final call is always 1. */
+  onProgress?: (fraction: number) => void;
+};
+
 export class Requests {
   private baseUrl: string;
   private token: () => string;
@@ -64,6 +72,28 @@ export class Requests {
 
   public delete<T>(args: RequestArgs<T>): Promise<TResponse<T>> {
     return this.do<T>(Method.DELETE, args);
+  }
+
+  /**
+   * POST a FormData body with real upload progress via XHR. Mirrors `post`'s `TResponse<U>`
+   * shape so call sites can opt in to progress without restructuring their result handling.
+   * Resolves on every HTTP status (the `error` flag distinguishes 2xx from 4xx/5xx); rejects
+   * only when the transport itself fails (network drop, abort) — same as `post()`.
+   */
+  public async postWithProgress<U>(args: ProgressUploadArgs): Promise<TResponse<U>> {
+    const { xhrUpload } = await import("./xhr-upload");
+    const headers: Record<string, string> = { ...args.headers, ...this.headers };
+    const token = this.token();
+    if (token !== "") headers["Authorization"] = token;
+
+    const result = await xhrUpload<U>({
+      url: this.url(args.url),
+      data: args.data,
+      headers,
+      onProgress: args.onProgress,
+    });
+    this.callResponseInterceptors(result.response);
+    return result;
   }
 
   private methodSupportsBody(method: Method): boolean {

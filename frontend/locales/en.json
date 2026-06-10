@@ -197,6 +197,7 @@
                 "toast": {
                     "already_creating": "Already creating an item",
                     "create_failed": "Couldn't create item",
+                    "create_failed_reason": "Couldn't create item: { reason }",
                     "create_success": "Item created",
                     "failed_load_parent": "Failed to load parent item - please select manually",
                     "no_canvas_support": "Your browser doesn't support canvas operations",
@@ -204,11 +205,14 @@
                     "rotate_failed": "Failed to rotate image: { error }",
                     "rotate_process_failed": "Failed to process rotated image",
                     "some_photos_failed": "{count, plural, =0 {No photos to upload.} =1 {1 photo failed to upload.} other {Some photos failed to upload.}}",
+                    "unexpected_error": "Something went wrong: { reason }",
                     "upload_failed": "Failed to upload photo: { photoName }",
+                    "upload_failed_reason": "Failed to upload { photoName }: { reason }",
                     "upload_success": "{count, plural, =0 {No photos uploaded.} =1 {Photo uploaded successfully.} other {All photos uploaded successfully.}}",
                     "uploading_photos": "{count, plural, =0 {No photos to upload} =1 {Uploading 1 photo…} other {Uploading {count} photos…}}"
                 },
                 "upload_photos": "Upload Photos",
+                "uploading_progress": "Uploading { current } / { total } ({ percent }%)",
                 "uploaded": "Uploaded Photo"
             },
             "product_import": {
@@ -405,6 +409,7 @@
         "confirm": "Confirm",
         "create": "Create",
         "create_and_add": "Create and Add Another",
+        "retry_upload": "Retry photo upload",
         "create_subitem": "Create Subitem",
         "created": "Created",
         "delete": "Delete",
@@ -617,6 +622,8 @@
             "failed_search_items": "Failed to search items",
             "failed_update_attachment": "Failed to update attachment",
             "failed_upload_attachment": "Failed to upload attachment",
+            "failed_upload_attachment_reason": "Failed to upload attachment: { reason }",
+            "uploading_attachment": "Uploading attachment…",
             "item_deleted": "Item deleted",
             "item_saved": "Item saved",
             "quantity_cannot_negative": "Quantity cannot be negative",
