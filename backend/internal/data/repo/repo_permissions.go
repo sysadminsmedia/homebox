@@ -399,10 +399,15 @@ func (r *PermissionsRepository) MemberPermissionsGet(ctx context.Context, gid, u
 		return MemberPermissions{}, err
 	}
 
+	direct := membership.Permissions
+	if direct == nil {
+		direct = []string{}
+	}
 	out := MemberPermissions{
-		UserID: userID,
-		Role:   membership.Role.String(),
-		Direct: membership.Permissions,
+		UserID:           userID,
+		Role:             membership.Role.String(),
+		Direct:           direct,
+		PermissionGroups: make([]PermissionGroupSummary, 0, len(pgroups)),
 	}
 
 	effective := authz.NewViewer(userID, gid, false, membership.Permissions, nil)
