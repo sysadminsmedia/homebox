@@ -22,6 +22,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/textutils"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -583,16 +584,23 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 	}
 
 	if q.Search != "" {
-		qb.Where(
-			entity.Or(
-				entity.NameContainsFold(q.Search),
-				entity.DescriptionContainsFold(q.Search),
-				entity.SerialNumberContainsFold(q.Search),
-				entity.ModelNumberContainsFold(q.Search),
-				entity.ManufacturerContainsFold(q.Search),
-				entity.NotesContainsFold(q.Search),
-			),
-		)
+		// Tokenized search: every token (or quoted phrase) must match at
+		// least one of the searchable fields, so "item blue" finds an item
+		// named "Item, long description, blue".
+		tokens := textutils.TokenizeSearchQuery(q.Search)
+		if len(tokens) > 0 {
+			tokenPredicates := lo.Map(tokens, func(tok string, _ int) predicate.Entity {
+				return entity.Or(
+					entity.NameContainsFold(tok),
+					entity.DescriptionContainsFold(tok),
+					entity.SerialNumberContainsFold(tok),
+					entity.ModelNumberContainsFold(tok),
+					entity.ManufacturerContainsFold(tok),
+					entity.NotesContainsFold(tok),
+				)
+			})
+			qb = qb.Where(entity.And(tokenPredicates...))
+		}
 	}
 
 	if !q.AssetID.Nil() {

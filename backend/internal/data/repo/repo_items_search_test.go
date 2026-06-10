@@ -1,9 +1,12 @@
 package repo
 
 import (
+	"context"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/textutils"
 )
 
@@ -211,6 +214,128 @@ func TestNormalizeSearchQueryIntegration(t *testing.T) {
 		t.Run(tc.input, func(t *testing.T) {
 			result := textutils.NormalizeSearchQuery(tc.input)
 			assert.Equal(t, tc.expected, result, "Normalization should work correctly")
+		})
+	}
+}
+
+// useNamedEntity creates an item entity with a fixed name (and optional
+// manufacturer) for search tests, cleaning it up when the test ends.
+func useNamedEntity(t *testing.T, name string, manufacturer string) EntityOut {
+	t.Helper()
+	ctx := context.Background()
+
+	create := entityFactory()
+	create.Name = name
+	create.EntityTypeID = useItemEntityType(t).ID
+
+	e, err := tRepos.Entities.Create(ctx, tGroup.ID, create)
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = tRepos.Entities.Delete(ctx, e.ID)
+	})
+
+	if manufacturer != "" {
+		update := EntityUpdate{
+			ID:           e.ID,
+			Name:         e.Name,
+			Description:  e.Description,
+			EntityTypeID: create.EntityTypeID,
+			Manufacturer: manufacturer,
+		}
+		_, err = tRepos.Entities.UpdateByGroup(ctx, tGroup.ID, update)
+		require.NoError(t, err)
+	}
+
+	return e
+}
+
+func TestEntityRepository_TokenizedSearch(t *testing.T) {
+	blueItem := useNamedEntity(t, "Item, long description, blue", "")
+	redItem := useNamedEntity(t, "Item, long description, red", "")
+	blueObject := useNamedEntity(t, "Object, long description, blue", "")
+	drill := useNamedEntity(t, "Cordless Drill", "Acme")
+
+	searchIDs := func(t *testing.T, search string) map[uuid.UUID]bool {
+		t.Helper()
+		res, err := tRepos.Entities.QueryByGroup(context.Background(), tGroup.ID, EntityQuery{
+			Page:     -1,
+			PageSize: -1,
+			Search:   search,
+		})
+		require.NoError(t, err)
+
+		ids := make(map[uuid.UUID]bool, len(res.Items))
+		for _, item := range res.Items {
+			ids[item.ID] = true
+		}
+		return ids
+	}
+
+	testCases := []struct {
+		name     string
+		search   string
+		contains []EntityOut
+		excludes []EntityOut
+	}{
+		{
+			name:     "single token matches substring as before",
+			search:   "blue",
+			contains: []EntityOut{blueItem, blueObject},
+			excludes: []EntityOut{redItem, drill},
+		},
+		{
+			name:     "all tokens must match (issue 397 example)",
+			search:   "Item blue",
+			contains: []EntityOut{blueItem},
+			excludes: []EntityOut{redItem, blueObject, drill},
+		},
+		{
+			name:     "token order does not matter",
+			search:   "blue Item",
+			contains: []EntityOut{blueItem},
+			excludes: []EntityOut{redItem, blueObject, drill},
+		},
+		{
+			name:     "tokens are case-insensitive",
+			search:   "ITEM BLUE",
+			contains: []EntityOut{blueItem},
+			excludes: []EntityOut{redItem, blueObject, drill},
+		},
+		{
+			name:     "tokens may match different fields",
+			search:   "drill acme",
+			contains: []EntityOut{drill},
+			excludes: []EntityOut{blueItem, redItem, blueObject},
+		},
+		{
+			name:     "quoted phrase matches exact substring",
+			search:   `"long description, blue"`,
+			contains: []EntityOut{blueItem, blueObject},
+			excludes: []EntityOut{redItem, drill},
+		},
+		{
+			name:     "quoted phrase requires contiguous match",
+			search:   `"blue Item"`,
+			contains: nil,
+			excludes: []EntityOut{blueItem, redItem, blueObject, drill},
+		},
+		{
+			name:     "no tokens match nothing relevant",
+			search:   "doesnotexistanywhere",
+			contains: nil,
+			excludes: []EntityOut{blueItem, redItem, blueObject, drill},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			ids := searchIDs(t, tc.search)
+			for _, e := range tc.contains {
+				assert.True(t, ids[e.ID], "expected %q to match search %q", e.Name, tc.search)
+			}
+			for _, e := range tc.excludes {
+				assert.False(t, ids[e.ID], "expected %q to NOT match search %q", e.Name, tc.search)
+			}
 		})
 	}
 }
