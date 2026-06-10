@@ -543,6 +543,29 @@ func entityQuerySpanAttrs(gid uuid.UUID, q EntityQuery) []attribute.KeyValue {
 	}
 }
 
+// entitySearchPredicate builds a predicate for a tokenized search query.
+// Every token (or double-quoted phrase) must match at least one searchable
+// field, so "item blue" finds an item named "Item, long description, blue".
+// Returns nil when the query contains no tokens.
+func entitySearchPredicate(search string) predicate.Entity {
+	tokens := textutils.TokenizeSearchQuery(search)
+	if len(tokens) == 0 {
+		return nil
+	}
+
+	tokenPredicates := lo.Map(tokens, func(tok string, _ int) predicate.Entity {
+		return entity.Or(
+			entity.NameContainsFold(tok),
+			entity.DescriptionContainsFold(tok),
+			entity.SerialNumberContainsFold(tok),
+			entity.ModelNumberContainsFold(tok),
+			entity.ManufacturerContainsFold(tok),
+			entity.NotesContainsFold(tok),
+		)
+	})
+	return entity.And(tokenPredicates...)
+}
+
 // QueryByGroup returns a list of entities that belong to a specific group based on the provided query.
 func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q EntityQuery) (PaginationResult[EntitySummary], error) {
 	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.QueryByGroup",
@@ -583,24 +606,8 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 		qb = qb.Where(entity.Archived(false))
 	}
 
-	if q.Search != "" {
-		// Tokenized search: every token (or quoted phrase) must match at
-		// least one of the searchable fields, so "item blue" finds an item
-		// named "Item, long description, blue".
-		tokens := textutils.TokenizeSearchQuery(q.Search)
-		if len(tokens) > 0 {
-			tokenPredicates := lo.Map(tokens, func(tok string, _ int) predicate.Entity {
-				return entity.Or(
-					entity.NameContainsFold(tok),
-					entity.DescriptionContainsFold(tok),
-					entity.SerialNumberContainsFold(tok),
-					entity.ModelNumberContainsFold(tok),
-					entity.ManufacturerContainsFold(tok),
-					entity.NotesContainsFold(tok),
-				)
-			})
-			qb = qb.Where(entity.And(tokenPredicates...))
-		}
+	if searchPredicate := entitySearchPredicate(q.Search); searchPredicate != nil {
+		qb = qb.Where(searchPredicate)
 	}
 
 	if !q.AssetID.Nil() {
