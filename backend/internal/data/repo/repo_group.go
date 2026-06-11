@@ -29,9 +29,12 @@ type GroupRepository struct {
 	groupMapper      MapFunc[*ent.Group, Group]
 	invitationMapper MapFunc[*ent.GroupInvitationToken, GroupInvitation]
 	attachments      *AttachmentRepo
+	// dialect is the ent dialect name, used to take a PostgreSQL row lock when
+	// enforcing the last-admin invariant on member removal (lockTenantAdmins).
+	dialect string
 }
 
-func NewGroupRepository(db *ent.Client) *GroupRepository {
+func NewGroupRepository(db *ent.Client, dialect string) *GroupRepository {
 	gmap := func(g *ent.Group) Group {
 		return Group{
 			ID:        g.ID,
@@ -56,6 +59,7 @@ func NewGroupRepository(db *ent.Client) *GroupRepository {
 		db:               db,
 		groupMapper:      gmap,
 		invitationMapper: imap,
+		dialect:          dialect,
 	}
 }
 
@@ -484,6 +488,12 @@ func (r *GroupRepository) RemoveMember(ctx context.Context, groupID, userID uuid
 	rollback := func(err error) error {
 		_ = tx.Rollback()
 		return err
+	}
+
+	// Serialize against other admin-affecting transactions for this tenant so
+	// the last-admin check below cannot be defeated by a write-skew.
+	if err := lockTenantAdmins(ctx, tx.Client(), r.dialect, groupID); err != nil {
+		return rollback(err)
 	}
 
 	n, err := tx.UserGroup.Delete().

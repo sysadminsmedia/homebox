@@ -379,6 +379,13 @@ func (s *ExportService) buildArtifact(ctx context.Context, exportID, gid uuid.UU
 
 	zw := zip.NewWriter(tmp)
 
+	// Exports are a tenant-wide dump: dumpTable reads via raw SQL scoped to gid
+	// only, so it deliberately bypasses the ent privacy layer and row-level
+	// access grants. This is by design — the data:export permission (checked at
+	// the route and the Export privacy policy) is a coarse "read everything in
+	// this tenant" capability. A member restricted to a subset of entities via
+	// row grants must NOT be given data:export unless they are trusted with the
+	// whole tenant's data.
 	counts := make(map[string]int)
 	dbSql := s.db.Sql()
 	for i, spec := range exportTables {

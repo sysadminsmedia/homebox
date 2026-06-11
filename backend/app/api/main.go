@@ -163,7 +163,7 @@ func run(cfg *config.Config) error {
 
 	app.bus = eventbus.New()
 	app.db = c
-	app.repos = repo.New(c, app.bus, cfg.Storage, cfg.Database.PubSubConnString, cfg.Thumbnail)
+	app.repos = repo.New(c, app.bus, cfg.Storage, cfg.Database.PubSubConnString, cfg.Thumbnail, sqlDialect)
 
 	// Attachment-key escaping in fileblob only flattens paths on Windows
 	// (where os.PathSeparator is "\"), so the legacy-path rename is a Windows-
@@ -203,7 +203,9 @@ func run(cfg *config.Config) error {
 
 	router.Use(
 		middleware.RequestID,
-		middleware.RealIP,
+		// Only honor X-Real-IP / X-Forwarded-For when a trusted reverse proxy
+		// is configured; otherwise clients could spoof their source IP.
+		mid.RealIP(cfg.Options.TrustProxy),
 		mid.Logger(logger),
 		mid.SecurityHeaders(),
 		// Restrict the max body size to the upload limit + 1MB (for overhead).

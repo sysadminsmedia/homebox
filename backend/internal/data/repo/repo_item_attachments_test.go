@@ -188,7 +188,7 @@ func TestAttachmentRepo_DeleteExternalLink(t *testing.T) {
 func TestAttachmentRepo_DeleteExternalLink_DoesNotRequireBlobStorage(t *testing.T) {
 	ctx := testCtx()
 
-	repos := New(tClient, tbus, config.Storage{PrefixPath: "/", ConnString: "mem://"}, "mem://{{ .Topic }}", config.Thumbnail{Enabled: false})
+	repos := New(tClient, tbus, config.Storage{PrefixPath: "/", ConnString: "mem://"}, "mem://{{ .Topic }}", config.Thumbnail{Enabled: false}, "sqlite3")
 	entity := useEntities(t, 1)[0]
 
 	att, err := repos.Attachments.CreateExternalLink(

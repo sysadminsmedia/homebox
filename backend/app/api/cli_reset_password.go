@@ -118,7 +118,7 @@ func generateResetLinkOffline(cfg *config.Config, email string) (string, error) 
 	}
 
 	bus := eventbus.New()
-	repos := repo.New(c, bus, cfg.Storage, cfg.Database.PubSubConnString, cfg.Thumbnail)
+	repos := repo.New(c, bus, cfg.Storage, cfg.Database.PubSubConnString, cfg.Thumbnail, dialectName)
 	svc := services.New(repos)
 
 	baseURL := strings.TrimSuffix(cfg.Options.Hostname, "/")

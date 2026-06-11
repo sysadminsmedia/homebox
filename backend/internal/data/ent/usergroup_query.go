@@ -9,6 +9,7 @@ import (
 	"math"
 
 	"entgo.io/ent"
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/google/uuid"
@@ -27,6 +28,7 @@ type UserGroupQuery struct {
 	predicates []predicate.UserGroup
 	withUser   *UserQuery
 	withGroup  *GroupQuery
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -355,6 +357,9 @@ func (_q *UserGroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Us
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(_q.modifiers) > 0 {
+		_spec.Modifiers = _q.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -440,6 +445,9 @@ func (_q *UserGroupQuery) loadGroup(ctx context.Context, query *GroupQuery, node
 
 func (_q *UserGroupQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
+	if len(_q.modifiers) > 0 {
+		_spec.Modifiers = _q.modifiers
+	}
 	_spec.Unique = false
 	_spec.Node.Columns = nil
 	return sqlgraph.CountNodes(ctx, _q.driver, _spec)
@@ -503,6 +511,9 @@ func (_q *UserGroupQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if _q.ctx.Unique != nil && *_q.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range _q.modifiers {
+		m(selector)
+	}
 	for _, p := range _q.predicates {
 		p(selector)
 	}
@@ -518,6 +529,32 @@ func (_q *UserGroupQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// ForUpdate locks the selected rows against concurrent updates, and prevent them from being
+// updated, deleted or "selected ... for update" by other sessions, until the transaction is
+// either committed or rolled-back.
+func (_q *UserGroupQuery) ForUpdate(opts ...sql.LockOption) *UserGroupQuery {
+	if _q.driver.Dialect() == dialect.Postgres {
+		_q.Unique(false)
+	}
+	_q.modifiers = append(_q.modifiers, func(s *sql.Selector) {
+		s.ForUpdate(opts...)
+	})
+	return _q
+}
+
+// ForShare behaves similarly to ForUpdate, except that it acquires a shared mode lock
+// on any rows that are read. Other sessions can read the rows, but cannot modify them
+// until your transaction commits.
+func (_q *UserGroupQuery) ForShare(opts ...sql.LockOption) *UserGroupQuery {
+	if _q.driver.Dialect() == dialect.Postgres {
+		_q.Unique(false)
+	}
+	_q.modifiers = append(_q.modifiers, func(s *sql.Selector) {
+		s.ForShare(opts...)
+	})
+	return _q
 }
 
 // UserGroupGroupBy is the group-by builder for UserGroup entities.

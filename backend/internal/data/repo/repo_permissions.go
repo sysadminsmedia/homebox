@@ -34,6 +34,9 @@ type (
 	// transactions.
 	PermissionsRepository struct {
 		db *ent.Client
+		// dialect is the ent dialect name, used to take a PostgreSQL row lock
+		// when enforcing the last-admin invariant (see lockTenantAdmins).
+		dialect string
 	}
 
 	PermissionGroupCreate struct {
@@ -249,6 +252,12 @@ func (r *PermissionsRepository) withTxGuard(ctx context.Context, gid uuid.UUID, 
 	rollback := func(err error) error {
 		_ = tx.Rollback()
 		return err
+	}
+
+	// Serialize concurrent admin-affecting transactions for this tenant before
+	// mutating, so the holder count below cannot be defeated by a write-skew.
+	if err := lockTenantAdmins(ctx, tx.Client(), r.dialect, gid); err != nil {
+		return rollback(err)
 	}
 
 	if err := fn(tx); err != nil {

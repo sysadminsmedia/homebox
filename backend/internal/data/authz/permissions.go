@@ -25,7 +25,10 @@ const (
 	PermTemplateManage   Permission = "template:manage"
 	PermNotifierManage   Permission = "notifier:manage"
 
-	// Bulk data movement.
+	// Bulk data movement. NOTE: data:export is a coarse "read everything in the
+	// tenant" capability — the export job dumps all tenant rows via raw SQL and
+	// intentionally bypasses row-level access grants. Do not grant it to members
+	// who are meant to be restricted to a subset of entities.
 	PermDataExport Permission = "data:export"
 	PermDataImport Permission = "data:import"
 

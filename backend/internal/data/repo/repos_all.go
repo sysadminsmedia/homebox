@@ -25,14 +25,17 @@ type AllRepos struct {
 	Permissions         *PermissionsRepository
 }
 
-func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubConn string, thumbnail config.Thumbnail) *AllRepos {
+// New builds the repository set. dialect is the ent dialect name ("postgres"
+// or "sqlite3"); it lets the permission/membership repositories take a
+// PostgreSQL row lock when enforcing the last-admin invariant.
+func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubConn string, thumbnail config.Thumbnail, dialect string) *AllRepos {
 	attachments := &AttachmentRepo{db, storage, pubSubConn, thumbnail}
 	return &AllRepos{
 		Users:               &UserRepository{db},
 		AuthTokens:          &TokenRepository{db},
 		PasswordResetTokens: &PasswordResetTokenRepository{db},
 		APIKeys:             NewAPIKeyRepository(db),
-		Groups:              NewGroupRepository(db),
+		Groups:              NewGroupRepository(db, dialect),
 		Entities:            &EntityRepository{db, bus, attachments},
 		EntityTypes:         &EntityTypeRepository{db, bus},
 		EntityTemplates:     &EntityTemplatesRepository{db, bus},
@@ -41,6 +44,6 @@ func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubC
 		MaintEntry:          &MaintenanceEntryRepository{db},
 		Notifiers:           NewNotifierRepository(db),
 		Exports:             &ExportRepository{db},
-		Permissions:         &PermissionsRepository{db},
+		Permissions:         &PermissionsRepository{db: db, dialect: dialect},
 	}
 }

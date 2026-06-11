@@ -75,7 +75,7 @@ func TestEntityService_AddAttachment_InvalidStorage(t *testing.T) {
 		Enabled: false,
 		Width:   0,
 		Height:  0,
-	})
+	}, "sqlite3")
 
 	svc.repo = invalidRepos
 

@@ -13,7 +13,6 @@ package repo
 
 import (
 	"context"
-	"errors"
 	"testing"
 	"time"
 
@@ -347,13 +346,22 @@ func TestEnforcement_InvitationEscalationDenied(t *testing.T) {
 	require.ErrorIs(t, err, privacy.Deny, "expected privacy deny, got %v", err)
 
 	// Inviting within the inviter's own permissions works.
-	_, err = tRepos.Groups.InvitationCreate(ctx, tn.group.ID, GroupInvitationCreate{
+	invite, err := tRepos.Groups.InvitationCreate(ctx, tn.group.ID, GroupInvitationCreate{
 		Token:       []byte(fk.Str(32)),
 		ExpiresAt:   time.Now().Add(time.Hour),
 		Uses:        1,
 		Permissions: []string{"entity:read"},
 	})
 	require.NoError(t, err)
+
+	// Escalation via the *append* path is denied too: the rule inspects both
+	// set and appended permission values, not just Set. (Regression guard:
+	// AppendPermissions must not bypass the subset check.)
+	err = tClient.GroupInvitationToken.UpdateOneID(invite.ID).
+		AppendPermissions([]string{"settings:manage"}).
+		Exec(ctx)
+	require.Error(t, err)
+	require.ErrorIs(t, err, privacy.Deny, "expected privacy deny on append, got %v", err)
 }
 
 func TestEnforcement_PermissionManagementGate(t *testing.T) {
@@ -422,5 +430,5 @@ func TestEnforcement_WildcardMemberships(t *testing.T) {
 	ctx := viewerCtx(t, user.ID, tn.group.ID, false)
 	require.NoError(t, tClient.Entity.UpdateOneID(e.ID).SetNotes("entity:* holder").Exec(ctx))
 	_, err = tClient.Tag.Create().SetName("nope").SetGroupID(tn.group.ID).Save(ctx)
-	require.True(t, errors.Is(err, privacy.Deny), "expected privacy deny, got %v", err)
+	require.ErrorIs(t, err, privacy.Deny, "expected privacy deny, got %v", err)
 }

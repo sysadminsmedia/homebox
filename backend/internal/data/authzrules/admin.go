@@ -137,10 +137,23 @@ func GroupInvitationTokenMutationRule() privacy.MutationRule {
 		if !v.Has(authz.PermMembersManage) {
 			return privacy.Denyf("authz: missing %s", authz.PermMembersManage)
 		}
-		if perms, ok := m.Permissions(); ok && !v.Has(authz.PermPermissionsManage) {
+		// Inspect both the set and appended permission values: an inviter
+		// without permissions:manage may not grant, via either path, any
+		// permission they do not themselves hold. (UserGroupMutationRule
+		// guards direct membership edits the same way.)
+		if !v.Has(authz.PermPermissionsManage) {
+			set, setOK := m.Permissions()
+			appended, appendedOK := m.AppendedPermissions()
+			invited := make([]string, 0, len(set)+len(appended))
+			if setOK {
+				invited = append(invited, set...)
+			}
+			if appendedOK {
+				invited = append(invited, appended...)
+			}
 			// Expand wildcards so ["*"] is compared by what it covers, not
 			// by string equality.
-			for _, p := range authz.Expand(perms) {
+			for _, p := range authz.Expand(invited) {
 				if !v.Has(p) {
 					return privacy.Denyf("authz: cannot grant %s via invitation", p)
 				}
