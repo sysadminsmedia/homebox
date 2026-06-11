@@ -227,6 +227,7 @@
   import DOMPurify from "dompurify";
   import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
+  import { useEntityTypeStore } from "~~/stores/entityTypes";
 
   import MdiHome from "~icons/mdi/home";
   import MdiFileTree from "~icons/mdi/file-tree";
@@ -502,6 +503,9 @@
 
   const locationStore = useLocationStore();
   locationStore.ensureLocationsFetched();
+
+  const entityTypeStore = useEntityTypeStore();
+  entityTypeStore.ensureFetched();
 
   onMounted(() => {
     locationStore.refreshParents();

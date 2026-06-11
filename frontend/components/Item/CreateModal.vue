@@ -172,25 +172,12 @@
         :max-length="1000"
       />
       <TagSelector v-model="form.tags" :tags="tags ?? []" />
-      <div class="flex w-full flex-col gap-1.5">
-        <Label for="image-create-photo" class="flex w-full px-1">
-          {{ $t("components.item.create_modal.item_photo") }}
-        </Label>
-        <div class="relative inline-block">
-          <Button type="button" variant="outline" class="w-full" aria-hidden="true" @click.prevent="">
-            {{ $t("components.item.create_modal.upload_photos") }}
-          </Button>
-          <Input
-            id="image-create-photo"
-            ref="fileInput"
-            class="absolute left-0 top-0 size-full cursor-pointer opacity-0"
-            type="file"
-            accept="image/png,image/jpeg,image/gif,image/avif,image/webp,android/force-camera-workaround"
-            multiple
-            @change="previewImage"
-          />
-        </div>
-      </div>
+      <PhotoUploader
+        :label="$t('components.item.create_modal.item_photo')"
+        :button-label="$t('components.item.create_modal.upload_photos')"
+        :existing-count="form.photos.length"
+        @selected="appendPhotos"
+      />
       <div class="mt-4 flex flex-row-reverse">
         <ButtonGroup>
           <Button :disabled="loading" type="submit" class="group">
@@ -210,75 +197,12 @@
         </ButtonGroup>
       </div>
 
-      <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
-      <div v-if="form.photos.length > 0" class="mt-4 border-t px-4 pb-4">
-        <div v-for="(photo, index) in form.photos" :key="index">
-          <div class="mt-8 w-full">
-            <img
-              :src="photo.fileBase64"
-              class="w-full rounded object-fill shadow-sm"
-              :alt="$t('components.item.create_modal.uploaded')"
-            />
-          </div>
-          <div class="mt-2 flex items-center gap-2">
-            <TooltipProvider class="flex gap-2" :delay-duration="0">
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button size="icon" type="button" variant="destructive" @click.prevent="deleteImage(index)">
-                    <MdiDelete />
-                    <div class="sr-only">{{ $t("components.item.create_modal.delete_photo") }}</div>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{{ $t("components.item.create_modal.delete_photo") }}</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button
-                    size="icon"
-                    type="button"
-                    variant="default"
-                    @click.prevent="
-                      async () => {
-                        await rotateBase64Image90Deg(photo.fileBase64, index);
-                      }
-                    "
-                  >
-                    <MdiRotateClockwise />
-                    <div class="sr-only">{{ $t("components.item.create_modal.rotate_photo") }}</div>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{{ $t("components.item.create_modal.rotate_photo") }}</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button
-                    size="icon"
-                    type="button"
-                    :variant="photo.primary ? 'default' : 'outline'"
-                    @click.prevent="setPrimary(index)"
-                  >
-                    <MdiStar v-if="photo.primary" />
-                    <MdiStarOutline v-else />
-                    <div class="sr-only">
-                      {{ $t("components.item.create_modal.set_as_primary_photo", { isPrimary: photo.primary }) }}
-                    </div>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>
-                    {{ $t("components.item.create_modal.set_as_primary_photo", { isPrimary: photo.primary }) }}
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <p class="mt-1 text-sm" style="overflow-wrap: anywhere">{{ photo.photoName }}</p>
-          </div>
-        </div>
-      </div>
+      <PhotoUploaderPreview
+        :photos="form.photos"
+        @delete="deletePhotoAt"
+        @rotate="rotatePhotoAt"
+        @set-primary="setPrimaryPhotoAt"
+      />
     </form>
   </BaseModal>
 </template>
@@ -290,7 +214,6 @@
   import { Button, ButtonGroup } from "~/components/ui/button";
   import BaseModal from "@/components/App/CreateModal.vue";
   import { Label } from "@/components/ui/label";
-  import { Input } from "@/components/ui/input";
   import type {
     EntityCreate,
     EntityTemplateOut,
@@ -303,10 +226,6 @@
   import MdiBarcodeScan from "~icons/mdi/barcode-scan";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
-  import MdiDelete from "~icons/mdi/delete";
-  import MdiRotateClockwise from "~icons/mdi/rotate-clockwise";
-  import MdiStarOutline from "~icons/mdi/star-outline";
-  import MdiStar from "~icons/mdi/star";
   import MdiFileDocumentOutline from "~icons/mdi/file-document-outline";
   import MdiChevronDown from "~icons/mdi/chevron-down";
   import MdiClose from "~icons/mdi/close";
@@ -319,18 +238,23 @@
   import LocationSelector from "~/components/Location/Selector.vue";
   import FormTextField from "~/components/Form/TextField.vue";
   import FormTextArea from "~/components/Form/TextArea.vue";
-
-  interface PhotoPreview {
-    photoName: string;
-    file: File;
-    fileBase64: string;
-    primary: boolean;
-  }
+  import PhotoUploader from "~/components/Form/PhotoUploader.vue";
+  import PhotoUploaderPreview from "~/components/Form/PhotoUploaderPreview.vue";
+  import {
+    deletePhoto,
+    dataURLtoFile,
+    rotatePhotoPreview,
+    setPrimaryPhoto,
+    type PhotoPreview,
+  } from "~/components/Form/photo-uploader";
+  import { useEntityTypeStore } from "~~/stores/entityTypes";
 
   const { t } = useI18n();
   const { openDialog, closeDialog, registerOpenDialogCallback } = useDialog();
 
   useDialogHotkey(DialogID.CreateItem, { code: "Digit1", shift: true });
+
+  const entityTypeStore = useEntityTypeStore();
 
   const api = useUserApi();
 
@@ -372,20 +296,9 @@
   const nameInput = ref<HTMLInputElement | null>(null);
 
   // Entity type selection
-  const itemTypes = ref<import("~~/lib/api/types/data-contracts").EntityTypeSummary[]>([]);
+  const itemTypes = computed(() => entityTypeStore.itemTypes);
   const selectedEntityType = ref<import("~~/lib/api/types/data-contracts").EntityTypeSummary | null>(null);
   const showEntityTypeSelector = computed(() => itemTypes.value.length > 1);
-
-  onMounted(async () => {
-    const { data, error } = await api.entityTypes.getAll();
-    if (!error && data) {
-      itemTypes.value = data.filter(et => !et.isLocation);
-      // Auto-select first if only one
-      if (itemTypes.value.length === 1) {
-        selectedEntityType.value = itemTypes.value[0]!;
-      }
-    }
-  });
 
   async function onEntityTypeChanged(typeId: string) {
     const et = itemTypes.value.find(t => t.id === typeId);
@@ -535,34 +448,27 @@
   );
 
   const { shift } = useMagicKeys();
-
-  function deleteImage(index: number) {
-    form.photos.splice(index, 1);
+  function appendPhotos(photos: PhotoPreview[]) {
+    form.photos.push(...photos);
   }
 
-  function setPrimary(index: number) {
-    const primary = form.photos.findIndex(p => p.primary);
-
-    if (primary !== -1) form.photos[primary]!.primary = false;
-    if (primary !== index) form.photos[index]!.primary = true;
+  function deletePhotoAt(index: number) {
+    form.photos = deletePhoto(form.photos, index);
   }
 
-  function previewImage(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      for (const file of input.files) {
-        const reader = new FileReader();
-        reader.onload = e => {
-          form.photos.push({
-            photoName: file.name,
-            fileBase64: e.target?.result as string,
-            file,
-            primary: form.photos.length === 0,
-          });
-        };
-        reader.readAsDataURL(file);
-      }
-      input.value = "";
+  function setPrimaryPhotoAt(index: number) {
+    form.photos = setPrimaryPhoto(form.photos, index);
+  }
+
+  async function rotatePhotoAt(index: number) {
+    const photo = form.photos[index];
+    if (!photo) return;
+
+    try {
+      form.photos[index] = await rotatePhotoPreview(photo);
+    } catch (error) {
+      toast.error(t("components.item.create_modal.toast.rotate_process_failed"));
+      console.error(error);
     }
   }
 
@@ -584,8 +490,8 @@
           parent.value = data;
         }
 
-        if (data.location || data.parent) {
-          const loc = data.location || data.parent;
+        if (data.parent) {
+          const loc = data.parent;
           parentItemLocationId = loc.id;
         }
 
@@ -613,12 +519,14 @@
         form.description = params.product.item.description;
 
         if (params.product.imageURL) {
-          form.photos.push({
-            photoName: "product_view.jpg",
-            fileBase64: params.product.imageBase64,
-            primary: form.photos.length === 0,
-            file: dataURLtoFile(params.product.imageBase64, "product_view.jpg"),
-          });
+          appendPhotos([
+            {
+              photoName: "product_view.jpg",
+              fileBase64: params.product.imageBase64,
+              primary: form.photos.length === 0,
+              file: dataURLtoFile(params.product.imageBase64, "product_view.jpg"),
+            },
+          ]);
         }
       }
 
@@ -671,7 +579,7 @@
         quantity: form.quantity,
         description: form.description,
         tagIds: form.tags,
-        entityTypeId: selectedEntityType.value?.id,
+        entityTypeId: selectedEntityType.value?.id || "",
       };
 
       const result = await api.items.create(out);
@@ -727,81 +635,6 @@
     if (close) {
       closeDialog(DialogID.CreateItem);
       navigateTo(`/item/${data.id}`);
-    }
-  }
-
-  function dataURLtoFile(dataURL: string, fileName: string) {
-    try {
-      const arr = dataURL.split(",");
-      const mimeMatch = arr[0]!.match(/:(.*?);/);
-      if (!mimeMatch || !mimeMatch[1]) {
-        throw new Error("Invalid data URL format");
-      }
-      const mime = mimeMatch[1];
-
-      // Validate mime type is an image
-      if (!mime.startsWith("image/")) {
-        throw new Error("Invalid mime type, expected image");
-      }
-
-      const bstr = atob(arr[arr.length - 1]!);
-      let n = bstr.length;
-      const u8arr = new Uint8Array(n);
-      while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-      }
-      return new File([u8arr], fileName, { type: mime });
-    } catch (error) {
-      console.error("Error converting data URL to file:", error);
-      // Return a fallback or rethrow based on your error handling strategy
-      throw error;
-    }
-  }
-
-  async function rotateBase64Image90Deg(base64Image: string, index: number) {
-    // Create an off-screen canvas
-    const offScreenCanvas = document.createElement("canvas");
-    const offScreenCanvasCtx = offScreenCanvas.getContext("2d");
-
-    if (!offScreenCanvasCtx) {
-      toast.error(t("components.item.create_modal.toast.no_canvas_support"));
-      return;
-    }
-
-    // Create an image
-    const img = new Image();
-
-    // Create a promise to handle the image loading
-    await new Promise<void>((resolve, reject) => {
-      img.onload = () => resolve();
-      img.onerror = () => reject(new Error("Failed to load image"));
-      img.src = base64Image;
-    }).catch(error => {
-      toast.error(t("components.item.create_modal.toast.rotate_failed", { error: error.message }));
-    });
-
-    // Set its dimensions to rotated size
-    offScreenCanvas.height = img.width;
-    offScreenCanvas.width = img.height;
-
-    // Rotate and draw source image into the off-screen canvas
-    offScreenCanvasCtx.rotate((90 * Math.PI) / 180);
-    offScreenCanvasCtx.translate(0, -offScreenCanvas.width);
-    offScreenCanvasCtx.drawImage(img, 0, 0);
-
-    const imageType = base64Image.match(/^data:(.+);base64/)?.[1] || "image/jpeg";
-
-    // Encode image to data-uri with base64
-    try {
-      form.photos[index]!.fileBase64 = offScreenCanvas.toDataURL(imageType, 100);
-      form.photos[index]!.file = dataURLtoFile(form.photos[index]!.fileBase64, form.photos[index]!.photoName);
-    } catch (error) {
-      toast.error(t("components.item.create_modal.toast.rotate_process_failed"));
-      console.error(error);
-    } finally {
-      // Clean up resources
-      offScreenCanvas.width = 0;
-      offScreenCanvas.height = 0;
     }
   }
 
