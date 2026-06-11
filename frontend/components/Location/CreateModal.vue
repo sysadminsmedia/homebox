@@ -33,28 +33,13 @@
         :max-length="1000"
       />
 
+      <TagSelector v-model="form.tags" :tags="tags ?? []" />
       <PhotoUploader
         :label="$t('components.location.create_modal.location_photo')"
         :button-label="$t('components.item.create_modal.upload_photos')"
         :existing-count="form.photos.length"
         @selected="appendPhotos"
       />
-
-      <!-- Expanded fields (collapsible) -->
-      <button
-        type="button"
-        class="mt-1 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-        @click="showAdvanced = !showAdvanced"
-      >
-        <span v-if="!showAdvanced">{{ $t("global.show_more") }}</span>
-        <span v-else>{{ $t("global.show_less") }}</span>
-        <MdiChevronDown class="size-4 transition-transform" :class="{ 'rotate-180': showAdvanced }" />
-      </button>
-
-      <template v-if="showAdvanced">
-        <TagSelector v-model="form.tags" :tags="tags ?? []" />
-        <FormTextArea v-model="form.notes" label="Notes" :max-length="1000" />
-      </template>
 
       <div class="mt-4 flex flex-row-reverse">
         <ButtonGroup>
@@ -90,7 +75,6 @@
   import TagSelector from "~/components/Tag/Selector.vue";
   import FormTextField from "~/components/Form/TextField.vue";
   import FormTextArea from "~/components/Form/TextArea.vue";
-  import MdiChevronDown from "~icons/mdi/chevron-down";
   import { useEntityTypeStore } from "~~/stores/entityTypes";
   import PhotoUploader from "~/components/Form/PhotoUploader.vue";
   import PhotoUploaderPreview from "~/components/Form/PhotoUploaderPreview.vue";
@@ -134,13 +118,11 @@
 
   const loading = ref(false);
   const focused = ref(false);
-  const showAdvanced = ref(false);
   const form = reactive({
     name: "",
     description: "",
     parent: null as EntitySummary | null,
     tags: [] as string[],
-    notes: "",
     photos: [] as PhotoPreview[],
   });
 
@@ -160,7 +142,6 @@
     form.name = "";
     form.description = "";
     form.tags = [];
-    form.notes = "";
     form.photos = [];
     focused.value = false;
     loading.value = false;
