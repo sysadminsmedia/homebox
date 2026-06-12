@@ -79,7 +79,11 @@
   }
 
   function openCreateItem() {
-    openDialog(DialogID.CreateItem);
+    openDialog(DialogID.CreateEntity, {
+      params: {
+        baseType: "item",
+      },
+    });
   }
 
   function goToEdit() {

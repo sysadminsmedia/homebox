@@ -22,6 +22,7 @@
   import FormTextField from "~/components/Form/TextField.vue";
   import FormCheckbox from "~/components/Form/Checkbox.vue";
   import TemplateSelector from "~/components/Template/Selector.vue";
+  import { useEntityTypeStore } from "~/stores/entityTypes";
 
   const { t } = useI18n();
 
@@ -30,15 +31,9 @@
   const api = useUserApi();
   const confirm = useConfirm();
   const { openDialog, closeDialog } = useDialog();
+  const entityTypeStore = useEntityTypeStore();
 
-  const { data: entityTypes, refresh } = useAsyncData("entity-types", async () => {
-    const { data, error } = await api.entityTypes.getAll();
-    if (error) {
-      toast.error("Failed to load entity types");
-      return [];
-    }
-    return data;
-  });
+  const entityTypes = computed(() => entityTypeStore.allTypes);
 
   // Create form
   const createForm = reactive({
@@ -77,7 +72,7 @@
     toast.success("Entity type created");
     resetCreateForm();
     closeDialog(DialogID.CreateEntityType);
-    refresh();
+    entityTypeStore.refresh();
   }
 
   // Update form
@@ -86,6 +81,7 @@
     name: "",
     icon: "",
     isLocation: false,
+    originalIsItem: false,
   });
   const updateTemplate = ref<EntityTemplateSummary | null>(null);
 
@@ -94,6 +90,7 @@
     updateForm.name = et.name;
     updateForm.icon = et.icon;
     updateForm.isLocation = et.isLocation;
+    updateForm.originalIsItem = !et.isLocation;
     updateTemplate.value = et.defaultTemplate
       ? ({
           id: et.defaultTemplate.id,
@@ -118,6 +115,13 @@
       ...(updateTemplate.value?.id ? { defaultTemplateId: updateTemplate.value.id } : {}),
     } as EntityTypeUpdate;
 
+    if (updateForm.originalIsItem && updateForm.isLocation) {
+      const { isCanceled } = await confirm.open(
+        "Converting an item type to a location type will result in a loss of fields for entities using this type. Are you sure you want to continue?"
+      );
+      if (isCanceled) return;
+    }
+
     const { error } = await api.entityTypes.update(updateForm.id, payload);
     if (error) {
       toast.error("Failed to update entity type");
@@ -126,7 +130,7 @@
 
     toast.success("Entity type updated");
     closeDialog(DialogID.UpdateEntityType);
-    refresh();
+    entityTypeStore.refresh();
   }
 
   async function deleteEntityType(et: EntityTypeSummary) {
@@ -142,7 +146,7 @@
     }
 
     toast.success("Entity type deleted");
-    refresh();
+    entityTypeStore.refresh();
   }
 </script>
 
@@ -157,7 +161,7 @@
         <form class="flex flex-col gap-3" @submit.prevent="create">
           <FormTextField v-model="createForm.name" :autofocus="true" label="Name" :max-length="255" :min-length="1" />
           <FormCheckbox v-model="createForm.isLocation" label="Is a container / location type" />
-          <TemplateSelector v-model="createTemplate" />
+          <TemplateSelector v-if="!createForm.isLocation" v-model="createTemplate" />
 
           <DialogFooter>
             <Button type="submit">Create</Button>
@@ -175,7 +179,7 @@
         <form class="flex flex-col gap-3" @submit.prevent="update">
           <FormTextField v-model="updateForm.name" :autofocus="true" label="Name" :max-length="255" :min-length="1" />
           <FormCheckbox v-model="updateForm.isLocation" label="Is a container / location type" />
-          <TemplateSelector v-model="updateTemplate" />
+          <TemplateSelector v-if="!updateForm.isLocation" v-model="updateTemplate" />
 
           <DialogFooter>
             <Button type="submit">Update</Button>
@@ -208,7 +212,7 @@
               <span class="font-medium">{{ et.name }}</span>
               <Badge v-if="et.isLocation" variant="secondary" class="text-xs">Container</Badge>
             </div>
-            <p v-if="et.defaultTemplate" class="text-xs text-muted-foreground">
+            <p v-if="et.defaultTemplate && !et.isLocation" class="text-xs text-muted-foreground">
               Default template: {{ et.defaultTemplate.name }}
             </p>
           </div>

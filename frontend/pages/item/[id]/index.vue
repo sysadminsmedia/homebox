@@ -626,7 +626,11 @@
       },
     });
 
-    openDialog(DialogID.CreateItem);
+    openDialog(DialogID.CreateEntity, {
+      params: {
+        baseType: "item",
+      },
+    });
   }
 </script>
 

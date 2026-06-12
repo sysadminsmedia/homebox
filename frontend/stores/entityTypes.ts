@@ -21,19 +21,28 @@ export const useEntityTypeStore = defineStore("entityTypes", {
   actions: {
     async ensureFetched() {
       if (this.types !== null) return;
+
       if (this.refreshPromise === null) {
-        this.refreshPromise = this.refresh().then(() => {});
+        this.refreshPromise = this.refresh();
       }
+
       await this.refreshPromise;
     },
 
     async refresh() {
-      const result = await this.client.entityTypes.getAll();
-      if (result.error) {
-        return result;
+      if (this.refreshPromise !== null) return this.refreshPromise;
+
+      this.refreshPromise = (async () => {
+        const result = await this.client.entityTypes.getAll();
+        if (result.error) throw result.error;
+        this.types = result.data ?? [];
+      })();
+
+      try {
+        await this.refreshPromise;
+      } finally {
+        this.refreshPromise = null;
       }
-      this.types = result.data ?? [];
-      return result;
     },
 
     findById(id: string) {

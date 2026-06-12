@@ -40,7 +40,7 @@
         size="sm"
         type="button"
         :aria-label="$t('components.location.create_modal.title') || $t('global.create')"
-        @click="openDialog(DialogID.CreateLocation)"
+        @click="openDialog(DialogID.CreateEntity, { params: { baseType: 'location' } })"
       >
         {{ $t("components.location.create_modal.title") || $t("global.create") }}
       </Button>

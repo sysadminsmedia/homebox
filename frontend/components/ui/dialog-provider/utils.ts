@@ -14,8 +14,7 @@ export enum DialogID {
   ChangePassword = "changePassword",
   CreateApiKey = "create-api-key",
   CreateApiKeyResult = "create-api-key-result",
-  CreateItem = "create-item",
-  CreateLocation = "create-location",
+  CreateEntity = "create-entity",
   CreateTag = "create-tag",
   CreateCollection = "create-collection",
   CreateGroupInvite = "create-group-invite",
@@ -64,7 +63,7 @@ export type DialogParamsMap = {
     itemId: string;
     attachmentId: string;
   };
-  [DialogID.CreateItem]?: { product?: BarcodeProduct };
+  [DialogID.CreateEntity]: { baseType: "item"; product?: BarcodeProduct; subItem?: true } | { baseType: "location" };
   [DialogID.ProductImport]?: { barcode?: string };
   [DialogID.EditMaintenance]:
     | { type: "create"; itemId: string | string[] }

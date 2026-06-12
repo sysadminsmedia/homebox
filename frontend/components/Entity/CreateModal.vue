@@ -1,10 +1,34 @@
 <template>
-  <BaseModal :dialog-id="DialogID.CreateItem" :title="$t('components.item.create_modal.title')">
+  <BaseModal :dialog-id="DialogID.CreateEntity" :title="$t('components.item.create_modal.title')">
+    <template #title>
+      <div class="flex items-center gap-2 text-nowrap">
+        <!-- TODO: translate this stuff!!!! -->
+        <!-- TODO: show an indicator of whether something is a location or an item -->
+        <!-- TODO: change the text for labels based on type name -->
+        <!-- TODO: when open to create child item ban the use of locations -->
+        <span>Create</span>
+        <Select :model-value="selectedEntityType?.id">
+          <SelectTrigger class="h-7 p-1">
+            <SelectValue class="text-xl" placeholder="Select type..." />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem
+              v-for="type in entityTypes"
+              :key="type.id"
+              :value="type.id"
+              @click="onEntityTypeChanged(type.id)"
+            >
+              {{ type.name }}
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </template>
     <template #header-actions>
       <div class="flex gap-2">
         <TooltipProvider :delay-duration="0">
           <!-- Template selector button -->
-          <Tooltip>
+          <Tooltip v-if="!selectedEntityType?.isLocation">
             <TooltipTrigger>
               <TemplateSelector v-model="selectedTemplate" compact @template-selected="handleTemplateSelected" />
             </TooltipTrigger>
@@ -41,19 +65,6 @@
 
     <form class="flex min-w-0 flex-col gap-2" @submit.prevent="create()">
       <LocationSelector v-model="form.location" />
-
-      <!-- Entity Type selector (shown when multiple item types exist) -->
-      <div v-if="showEntityTypeSelector" class="flex w-full flex-col gap-1.5">
-        <Label class="px-1">{{ $t("global.type") || "Type" }}</Label>
-        <select
-          class="w-full rounded-md border bg-background px-3 py-2 text-sm"
-          :value="selectedEntityType?.id || ''"
-          @change="onEntityTypeChanged(($event.target as HTMLSelectElement).value)"
-        >
-          <option value="">{{ $t("global.select") || "Select type..." }}</option>
-          <option v-for="et in itemTypes" :key="et.id" :value="et.id">{{ et.name }}</option>
-        </select>
-      </div>
 
       <!-- Template Info Display - Collapsible banner with distinct styling -->
       <div v-if="templateData" class="rounded-lg border-l-4 border-l-primary bg-primary/5 p-3">
@@ -161,6 +172,7 @@
         :min-length="1"
       />
       <FormTextField
+        v-if="!selectedEntityType?.isLocation"
         v-model.number="form.quantity"
         :label="$t('components.item.create_modal.item_quantity')"
         type="number"
@@ -213,12 +225,13 @@
   import { toast } from "@/components/ui/sonner";
   import { Button, ButtonGroup } from "~/components/ui/button";
   import BaseModal from "@/components/App/CreateModal.vue";
-  import { Label } from "@/components/ui/label";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import type {
     EntityCreate,
     EntityTemplateOut,
     EntityTemplateSummary,
     EntityOut,
+    EntityTypeSummary,
   } from "~~/lib/api/types/data-contracts";
   import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
@@ -252,7 +265,12 @@
   const { t } = useI18n();
   const { openDialog, closeDialog, registerOpenDialogCallback } = useDialog();
 
-  useDialogHotkey(DialogID.CreateItem, { code: "Digit1", shift: true });
+  useDialogHotkey(DialogID.CreateEntity, { code: "Digit1", shift: true }, () => ({
+    baseType: "item",
+  }));
+  useDialogHotkey(DialogID.CreateEntity, { code: "Digit2", shift: true }, () => ({
+    baseType: "location",
+  }));
 
   const entityTypeStore = useEntityTypeStore();
 
@@ -265,11 +283,9 @@
   const tags = computed(() => tagStore.tags);
 
   const route = useRoute();
-  const router = useRouter();
 
   const parent = ref();
   const { query, results, isLoading, triggerSearch } = useItemSearch(api, { immediate: false });
-  const subItemCreateParam = useRouteQuery("subItemCreate", "n");
   const subItemCreate = ref();
 
   const tagId = computed(() => {
@@ -296,16 +312,17 @@
   const nameInput = ref<HTMLInputElement | null>(null);
 
   // Entity type selection
-  const itemTypes = computed(() => entityTypeStore.itemTypes);
-  const selectedEntityType = ref<import("~~/lib/api/types/data-contracts").EntityTypeSummary | null>(null);
-  const showEntityTypeSelector = computed(() => itemTypes.value.length > 1);
+  const entityTypes = computed(() => entityTypeStore.allTypes);
+  const selectedEntityType = ref<EntityTypeSummary | null>(null);
 
   async function onEntityTypeChanged(typeId: string) {
-    const et = itemTypes.value.find(t => t.id === typeId);
+    const et = entityTypes.value.find(t => t.id === typeId);
     selectedEntityType.value = et || null;
 
-    // If the selected type has a default template, auto-apply it
-    if (et?.defaultTemplateId && et.defaultTemplate) {
+    // If the selected type has a default template and is not a location, auto-apply it
+    if (et?.isLocation || !et?.defaultTemplateId || !et.defaultTemplate) {
+      clearTemplate();
+    } else {
       const { data, error } = await api.templates.get(et.defaultTemplateId);
       if (!error && data) {
         selectedTemplate.value = {
@@ -473,36 +490,55 @@
   }
 
   onMounted(() => {
-    const cleanup = registerOpenDialogCallback(DialogID.CreateItem, async params => {
-      // needed since URL will be cleared in the next step => ParentId Selection should stay though
-      subItemCreate.value = subItemCreateParam.value === "y";
+    const cleanup = registerOpenDialogCallback(DialogID.CreateEntity, async params => {
+      subItemCreate.value = false;
       let parentItemLocationId = null;
+      parent.value = {};
+      form.parentId = null;
 
-      if (subItemCreate.value && itemId.value) {
-        const itemIdRead = typeof itemId.value === "string" ? (itemId.value as string) : itemId.value[0]!;
-        const { data, error } = await api.items.get(itemIdRead);
-        if (error || !data) {
-          toast.error(t("components.item.create_modal.toast.failed_load_parent"));
-          console.error("Parent item fetch error:", error);
+      if (params.baseType === "item") {
+        selectedEntityType.value = entityTypes.value.find(t => !t.isLocation) || null;
+
+        subItemCreate.value = params.subItem;
+
+        if (subItemCreate.value && itemId.value) {
+          const itemIdRead = typeof itemId.value === "string" ? (itemId.value as string) : itemId.value[0]!;
+          const { data, error } = await api.items.get(itemIdRead);
+          if (error || !data) {
+            toast.error(t("components.item.create_modal.toast.failed_load_parent"));
+            console.error("Parent item fetch error:", error);
+          }
+
+          if (data) {
+            parent.value = data;
+          }
+
+          if (data.parent) {
+            const loc = data.parent;
+            parentItemLocationId = loc.id;
+          }
         }
 
-        if (data) {
-          parent.value = data;
+        if (params.product) {
+          form.name = params.product.item.name;
+          form.description = params.product.item.description;
+
+          if (params.product.imageURL) {
+            appendPhotos([
+              {
+                photoName: "product_view.jpg",
+                fileBase64: params.product.imageBase64,
+                primary: form.photos.length === 0,
+                file: dataURLtoFile(params.product.imageBase64, "product_view.jpg"),
+              },
+            ]);
+          }
         }
 
-        if (data.parent) {
-          const loc = data.parent;
-          parentItemLocationId = loc.id;
-        }
-
-        // clear URL Parameter (subItemCreate) since intention was communicated and received
-        const currentQuery = { ...route.query };
-        delete currentQuery.subItemCreate;
-        await router.push({ query: currentQuery });
+        // Restore last used template if available
+        await restoreLastTemplate();
       } else {
-        // since Input is hidden in this case, make sure no accidental parent information is sent out
-        parent.value = {};
-        form.parentId = null;
+        selectedEntityType.value = entityTypes.value.find(t => t.isLocation) || null;
       }
 
       const locId = locationId.value ? locationId.value : parentItemLocationId;
@@ -514,28 +550,9 @@
         }
       }
 
-      if (params?.product) {
-        form.name = params.product.item.name;
-        form.description = params.product.item.description;
-
-        if (params.product.imageURL) {
-          appendPhotos([
-            {
-              photoName: "product_view.jpg",
-              fileBase64: params.product.imageBase64,
-              primary: form.photos.length === 0,
-              file: dataURLtoFile(params.product.imageBase64, "product_view.jpg"),
-            },
-          ]);
-        }
-      }
-
       if (tagId.value) {
         form.tags = tags.value.filter(l => l.id === tagId.value).map(l => l.id);
       }
-
-      // Restore last used template if available
-      await restoreLastTemplate();
     });
 
     onUnmounted(cleanup);
@@ -558,8 +575,20 @@
 
     let error, data;
 
-    // If a template is selected, use the template creation endpoint
-    if (templateData.value) {
+    // If the selected entity type is a location, use the location creation endpoint
+    if (selectedEntityType.value?.isLocation) {
+      const result = await api.items.createLocation({
+        name: form.name,
+        description: form.description,
+        parentId: form.location ? form.location.id : null,
+        entityTypeId: selectedEntityType.value?.id || "",
+        quantity: 1,
+        tagIds: form.tags,
+      });
+      error = result.error;
+      data = result.data;
+    } else if (templateData.value) {
+      // If a template is selected, use the template creation endpoint
       const templateRequest = {
         name: form.name,
         description: form.description,
@@ -633,8 +662,12 @@
     loading.value = false;
 
     if (close) {
-      closeDialog(DialogID.CreateItem);
-      navigateTo(`/item/${data.id}`);
+      closeDialog(DialogID.CreateEntity);
+      if (selectedEntityType.value?.isLocation) {
+        navigateTo(`/location/${data.id}`);
+      } else {
+        navigateTo(`/item/${data.id}`);
+      }
     }
   }
 
