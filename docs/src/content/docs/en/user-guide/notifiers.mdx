@@ -112,7 +112,7 @@ All security options apply only to generic webhook notifiers. Other notification
 The most secure approach is to use an allow list. When configured, **only** the specified networks are allowed, and all block rules are bypassed.
 
 ```bash
-HBOX_NOTIFIER_ALLOW_NETS="192.168.1.0/24,10.0.50.0/24"
+HBOX_NOTIFIER_ALLOW_NETS="192.168.1.0/24;10.0.50.0/24"
 ```
 
 **Use Case:** You have specific internal webhook endpoints at known IP ranges and want to only allow those.
@@ -181,7 +181,7 @@ HBOX_NOTIFIER_BLOCK_CLOUD_METADATA=true
 Allows you to block specific network ranges using CIDR notation. This provides fine-grained control without needing to enable the blanket `BLOCK_LOCAL_NETS` or `BLOCK_BOGON_NETS` options.
 
 ```bash
-HBOX_NOTIFIER_BLOCK_NETS="192.168.1.0/24,172.16.0.0/12,10.10.0.0/16"
+HBOX_NOTIFIER_BLOCK_NETS="192.168.1.0/24;172.16.0.0/12;10.10.0.0/16"
 ```
 
 **Default:** (empty, no networks blocked)
@@ -200,10 +200,30 @@ HBOX_NOTIFIER_BLOCK_NETS="192.168.1.100/32"
 
 Block multiple networks:
 ```bash
-HBOX_NOTIFIER_BLOCK_NETS="192.168.0.0/16,172.16.0.0/12,10.10.0.0/16"
+HBOX_NOTIFIER_BLOCK_NETS="192.168.0.0/16;172.16.0.0/12;10.10.0.0/16"
 ```
 
 **Note:** `HBOX_NOTIFIER_ALLOW_NETS` takes precedence over `HBOX_NOTIFIER_BLOCK_NETS`. If an IP is in the allow list, it will not be blocked even if it matches a network in the block list.
+
+#### DNS64 Prefixes
+
+On networks using DNS64/NAT64, hostnames resolve to IPv6 addresses with an IPv4 address embedded inside a translation prefix (RFC 6052). Without special handling, such an address would bypass all of the IPv4 rules above even though the NAT64 gateway ultimately delivers the request to the embedded IPv4 address — for example, `64:ff9b::a9fe:a9fe` is translated to `169.254.169.254`, the cloud metadata endpoint.
+
+Homebox extracts the embedded IPv4 address from any resolved IPv6 address that falls within a configured DNS64 prefix and validates it against all of the allow/block rules above, in addition to the original IPv6 address.
+
+```bash
+HBOX_NOTIFIER_DNS64_NETS="64:ff9b::/96;64:ff9b:1::/48"
+```
+
+**Default:** `64:ff9b::/96;64:ff9b:1::/48` (the RFC 6052 well-known prefix and the RFC 8215 local-use prefix)
+
+**Use Case:** If your network's NAT64 deployment uses a custom translation prefix instead of the well-known ones, set it here so the embedded IPv4 addresses are still validated:
+
+```bash
+HBOX_NOTIFIER_DNS64_NETS="2001:db8:64::/96"
+```
+
+**Note:** When using `HBOX_NOTIFIER_ALLOW_NETS` on a DNS64/NAT64 network, the allow list must contain both the DNS64 prefix itself and the IPv4 networks of your webhook endpoints, since every address (original and embedded) must be allowed.
 
 ### Recommended Security Configurations
 
@@ -223,7 +243,7 @@ HBOX_NOTIFIER_BLOCK_CLOUD_METADATA=true
 For internal deployments where you want to allow specific webhook endpoints:
 
 ```bash
-HBOX_NOTIFIER_ALLOW_NETS="192.168.1.100/32,10.0.20.0/24"
+HBOX_NOTIFIER_ALLOW_NETS="192.168.1.100/32;10.0.20.0/24"
 ```
 
 Note: When using the allow list, all block rules are bypassed. Only the specified networks will be permitted.
@@ -233,7 +253,7 @@ Note: When using the allow list, all block rules are bypassed. Only the specifie
 For environments where you want to block specific networks without blocking all private networks:
 
 ```bash
-HBOX_NOTIFIER_BLOCK_NETS="192.168.1.0/24,10.10.0.0/16"
+HBOX_NOTIFIER_BLOCK_NETS="192.168.1.0/24;10.10.0.0/16"
 HBOX_NOTIFIER_BLOCK_LOCALHOST=true
 HBOX_NOTIFIER_BLOCK_BOGON_NETS=true
 HBOX_NOTIFIER_BLOCK_CLOUD_METADATA=true

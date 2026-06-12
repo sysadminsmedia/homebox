@@ -51,6 +51,21 @@ func ValidateNotifierURL(notifierURL string, cfg *config.NotifierConf) error {
 		return fmt.Errorf("hostname did not resolve to any IP addresses")
 	}
 
+	// Expand DNS64-synthesized IPv6 addresses (RFC 6052) into their embedded
+	// IPv4 addresses so the allow/block rules below are applied to the IPv4
+	// destination the NAT64 gateway will actually reach. The original IPv6
+	// address stays in the list so IPv6 rules still apply to it.
+	checkIPs := make([]net.IP, 0, len(ips))
+	for _, ip := range ips {
+		checkIPs = append(checkIPs, ip)
+		embedded, inDNS64Range := dns64EmbeddedIPv4s(ip, cfg.Dns64Nets)
+		if inDNS64Range && len(embedded) == 0 {
+			return fmt.Errorf("IP %s is in a DNS64 range but no valid embedded IPv4 address could be extracted", ip.String())
+		}
+		checkIPs = append(checkIPs, embedded...)
+	}
+	ips = checkIPs
+
 	// If AllowNets is configured, only allow IPs in those networks
 	if len(cfg.AllowNets) > 0 {
 		for _, ip := range ips {
@@ -153,6 +168,102 @@ func extractGenericURL(notifierURL string) (string, error) {
 		return strings.TrimPrefix(notifierURL, "generic+"), nil
 	}
 	return "", fmt.Errorf("not a generic notifier URL")
+}
+
+// rfc6052PrefixLens are the prefix lengths at which RFC 6052 permits embedding
+// an IPv4 address into an IPv6 address.
+var rfc6052PrefixLens = []int{32, 40, 48, 56, 64, 96}
+
+// embeddedIPv4 extracts the IPv4 address embedded in ip using the RFC 6052
+// layout for the given prefix length. It returns nil if the address is not
+// well-formed at that layout: the "u" octet (bits 64-71) and the suffix bits
+// after the embedded address must both be zero.
+func embeddedIPv4(ip net.IP, prefixLen int) net.IP {
+	b := ip.To16()
+	if b == nil {
+		return nil
+	}
+
+	var v4 [4]byte
+	var suffix []byte
+	switch prefixLen {
+	case 32:
+		copy(v4[:], b[4:8])
+		suffix = b[9:]
+	case 40:
+		copy(v4[:3], b[5:8])
+		v4[3] = b[9]
+		suffix = b[10:]
+	case 48:
+		copy(v4[:2], b[6:8])
+		copy(v4[2:], b[9:11])
+		suffix = b[11:]
+	case 56:
+		v4[0] = b[7]
+		copy(v4[1:], b[9:12])
+		suffix = b[12:]
+	case 64:
+		copy(v4[:], b[9:13])
+		suffix = b[13:]
+	case 96:
+		copy(v4[:], b[12:16])
+	default:
+		return nil
+	}
+
+	if prefixLen < 96 && b[8] != 0 {
+		return nil
+	}
+	for _, sb := range suffix {
+		if sb != 0 {
+			return nil
+		}
+	}
+
+	return net.IPv4(v4[0], v4[1], v4[2], v4[3])
+}
+
+// dns64EmbeddedIPv4s returns the IPv4 addresses embedded in ip when it falls
+// inside one of the configured DNS64/NAT64 prefixes, along with whether the
+// address is inside any such prefix at all. A configured prefix may be shorter
+// than the prefix the NAT64 gateway actually translates with (e.g. the RFC 8215
+// 64:ff9b:1::/48 space holds deployment prefixes of /48 through /96), so every
+// RFC 6052 layout at or beyond the configured length is tried and all
+// well-formed extractions are returned for checking.
+func dns64EmbeddedIPv4s(ip net.IP, dns64Nets []string) ([]net.IP, bool) {
+	if ip.To4() != nil {
+		return nil, false
+	}
+
+	inRange := false
+	var candidates []net.IP
+	for _, dns64Net := range dns64Nets {
+		_, ipNet, err := net.ParseCIDR(dns64Net)
+		if err != nil {
+			log.Warn().
+				Err(err).
+				Str("cidr", dns64Net).
+				Str("config", "Dns64Nets").
+				Msg("invalid CIDR in notifier Dns64Nets configuration, skipping")
+			continue
+		}
+		if !ipNet.Contains(ip) {
+			continue
+		}
+		inRange = true
+
+		prefixLen, _ := ipNet.Mask.Size()
+		for _, layoutLen := range rfc6052PrefixLens {
+			if layoutLen < prefixLen {
+				continue
+			}
+			if v4 := embeddedIPv4(ip, layoutLen); v4 != nil {
+				candidates = append(candidates, v4)
+			}
+		}
+	}
+
+	return candidates, inRange
 }
 
 // isLocalhost checks if an IP is a localhost address
