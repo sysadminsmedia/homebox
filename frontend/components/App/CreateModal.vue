@@ -62,7 +62,7 @@
 
   defineProps<{
     dialogId: DialogID;
-    title: string;
+    title?: string;
     hideFooter?: boolean;
   }>();
 </script>

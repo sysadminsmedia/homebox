@@ -51,8 +51,8 @@
   const { t } = useI18n();
   const fileInput = ref<HTMLInputElement | null>(null);
 
-  const label = computed(() => props.label || t("components.item.create_modal.item_photo"));
-  const buttonLabel = computed(() => props.buttonLabel || t("components.item.create_modal.upload_photos"));
+  const label = computed(() => props.label || t("components.entity.create_modal.item_photo"));
+  const buttonLabel = computed(() => props.buttonLabel || t("components.entity.create_modal.upload_photos"));
 
   function openFilePicker() {
     fileInput.value?.click();

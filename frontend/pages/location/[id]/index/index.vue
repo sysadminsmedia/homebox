@@ -49,7 +49,7 @@
 
   const locationId = computed<string>(() => route.params.id as string);
 
-  const { data: location, refresh } = useAsyncData(locationId.value, async () => {
+  const { data: location } = useAsyncData(locationId.value, async () => {
     const { data, error } = await api.items.getLocation(locationId.value);
     if (error) {
       toast.error(t("locations.toast.failed_load_location"));
@@ -89,8 +89,6 @@
   function goToEdit() {
     navigateTo(`/location/${locationId.value}/edit`);
   }
-
-  const locationStore = useLocationStore();
 
   // Photos
   type Photo = {
@@ -289,7 +287,7 @@
               <Button class="w-9 md:w-auto" @click="openCreateItem">
                 <MdiPlus name="mdi-plus" />
                 <span class="hidden md:inline">
-                  {{ $t("components.item.create_modal.title") }}
+                  {{ $t("components.location.create_item") }}
                 </span>
               </Button>
               <Button class="w-9 md:w-auto" @click="goToEdit">

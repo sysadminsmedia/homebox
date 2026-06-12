@@ -52,7 +52,7 @@
 
   async function create() {
     if (!createForm.name.trim()) {
-      toast.error("Name is required");
+      toast.error(t("components.entityTypes.toasts.name_required"));
       return;
     }
 
@@ -65,11 +65,11 @@
 
     const { error } = await api.entityTypes.create(payload);
     if (error) {
-      toast.error("Failed to create entity type");
+      toast.error(t("components.entityTypes.toasts.create_failed"));
       return;
     }
 
-    toast.success("Entity type created");
+    toast.success(t("components.entityTypes.toasts.create_success"));
     resetCreateForm();
     closeDialog(DialogID.CreateEntityType);
     entityTypeStore.refresh();
@@ -103,7 +103,7 @@
 
   async function update() {
     if (!updateForm.name.trim()) {
-      toast.error("Name is required");
+      toast.error(t("components.entityTypes.toasts.name_required"));
       return;
     }
 
@@ -116,36 +116,34 @@
     } as EntityTypeUpdate;
 
     if (updateForm.originalIsItem && updateForm.isLocation) {
-      const { isCanceled } = await confirm.open(
-        "Converting an item type to a location type will result in a loss of fields for entities using this type. Are you sure you want to continue?"
-      );
+      const { isCanceled } = await confirm.open(t("components.entityTypes.confirm.convert_item_to_location"));
       if (isCanceled) return;
     }
 
     const { error } = await api.entityTypes.update(updateForm.id, payload);
     if (error) {
-      toast.error("Failed to update entity type");
+      toast.error(t("components.entityTypes.toasts.update_failed"));
       return;
     }
 
-    toast.success("Entity type updated");
+    toast.success(t("components.entityTypes.toasts.update_success"));
     closeDialog(DialogID.UpdateEntityType);
     entityTypeStore.refresh();
   }
 
   async function deleteEntityType(et: EntityTypeSummary) {
     const { isCanceled } = await confirm.open(
-      `Are you sure you want to delete "${et.name}"? Entities using this type will need to be reassigned.`
+      t("components.entityTypes.confirm.delete_entity_type", { name: et.name })
     );
     if (isCanceled) return;
 
     const { error } = await api.entityTypes.delete(et.id);
     if (error) {
-      toast.error("Failed to delete entity type. Make sure no entities are using it.");
+      toast.error(t("components.entityTypes.toasts.delete_confirm_failed"));
       return;
     }
 
-    toast.success("Entity type deleted");
+    toast.success(t("components.entityTypes.toasts.delete_success"));
     entityTypeStore.refresh();
   }
 </script>
@@ -156,15 +154,24 @@
     <Dialog :dialog-id="DialogID.CreateEntityType">
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Entity Type</DialogTitle>
+          <DialogTitle>{{ t("components.entityTypes.create_dialog.title") }}</DialogTitle>
         </DialogHeader>
         <form class="flex flex-col gap-3" @submit.prevent="create">
-          <FormTextField v-model="createForm.name" :autofocus="true" label="Name" :max-length="255" :min-length="1" />
-          <FormCheckbox v-model="createForm.isLocation" label="Is a container / location type" />
+          <FormTextField
+            v-model="createForm.name"
+            :autofocus="true"
+            :label="t('components.entityTypes.create_dialog.name_label')"
+            :max-length="255"
+            :min-length="1"
+          />
+          <FormCheckbox
+            v-model="createForm.isLocation"
+            :label="t('components.entityTypes.create_dialog.is_container_location_type_label')"
+          />
           <TemplateSelector v-if="!createForm.isLocation" v-model="createTemplate" />
 
           <DialogFooter>
-            <Button type="submit">Create</Button>
+            <Button type="submit">{{ t("components.entityTypes.create_dialog.button") }}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
@@ -174,15 +181,24 @@
     <Dialog :dialog-id="DialogID.UpdateEntityType">
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Update Entity Type</DialogTitle>
+          <DialogTitle>{{ t("components.entityTypes.update_dialog.title") }}</DialogTitle>
         </DialogHeader>
         <form class="flex flex-col gap-3" @submit.prevent="update">
-          <FormTextField v-model="updateForm.name" :autofocus="true" label="Name" :max-length="255" :min-length="1" />
-          <FormCheckbox v-model="updateForm.isLocation" label="Is a container / location type" />
+          <FormTextField
+            v-model="updateForm.name"
+            :autofocus="true"
+            :label="t('components.entityTypes.update_dialog.name_label')"
+            :max-length="255"
+            :min-length="1"
+          />
+          <FormCheckbox
+            v-model="updateForm.isLocation"
+            :label="t('components.entityTypes.update_dialog.is_container_location_type_label')"
+          />
           <TemplateSelector v-if="!updateForm.isLocation" v-model="updateTemplate" />
 
           <DialogFooter>
-            <Button type="submit">Update</Button>
+            <Button type="submit">{{ t("components.entityTypes.update_dialog.button") }}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
@@ -190,10 +206,10 @@
 
     <!-- Page Content -->
     <div class="mb-4 flex items-center justify-between">
-      <h3 class="text-lg font-medium">Entity Types</h3>
+      <h3 class="text-lg font-medium">{{ t("components.entityTypes.page.title") }}</h3>
       <Button size="sm" @click="openDialog(DialogID.CreateEntityType)">
         <MdiPlus class="mr-1 size-4" />
-        Create
+        {{ t("components.entityTypes.page.create") }}
       </Button>
     </div>
 
@@ -209,11 +225,13 @@
 
           <div class="mr-auto min-w-0">
             <div class="flex items-center gap-2">
-              <span class="font-medium">{{ et.name }}</span>
-              <Badge v-if="et.isLocation" variant="secondary" class="text-xs">Container</Badge>
+              <span class="font-medium">{{ t(et.name) }}</span>
+              <Badge v-if="et.isLocation" variant="secondary" class="text-xs">
+                {{ t("components.entityTypes.card.badge_container") }}
+              </Badge>
             </div>
             <p v-if="et.defaultTemplate && !et.isLocation" class="text-xs text-muted-foreground">
-              Default template: {{ et.defaultTemplate.name }}
+              {{ t("components.entityTypes.card.default_template", { name: et.defaultTemplate.name }) }}
             </p>
           </div>
 
@@ -225,7 +243,7 @@
                     <MdiPencil class="size-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Edit</TooltipContent>
+                <TooltipContent>{{ t("components.entityTypes.card.tooltip.edit") }}</TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger as-child>
@@ -233,7 +251,7 @@
                     <MdiDelete class="size-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Delete</TooltipContent>
+                <TooltipContent>{{ t("components.entityTypes.card.tooltip.delete") }}</TooltipContent>
               </Tooltip>
             </div>
           </TooltipProvider>
@@ -242,10 +260,10 @@
     </div>
 
     <div v-else class="flex flex-col items-center justify-center py-12 text-center">
-      <p class="mb-4 text-muted-foreground">No entity types defined yet.</p>
+      <p class="mb-4 text-muted-foreground">{{ t("components.entityTypes.page.empty_title") }}</p>
       <Button @click="openDialog(DialogID.CreateEntityType)">
         <MdiPlus class="mr-2" />
-        Create Entity Type
+        {{ t("components.entityTypes.page.empty_button") }}
       </Button>
     </div>
   </div>

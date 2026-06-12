@@ -1,24 +1,27 @@
 <template>
-  <BaseModal :dialog-id="DialogID.CreateEntity" :title="$t('components.item.create_modal.title')">
+  <BaseModal :dialog-id="DialogID.CreateEntity">
     <template #title>
       <div class="flex items-center gap-2 text-nowrap">
-        <!-- TODO: translate this stuff!!!! -->
-        <!-- TODO: show an indicator of whether something is a location or an item -->
-        <!-- TODO: change the text for labels based on type name -->
-        <!-- TODO: when open to create child item ban the use of locations -->
         <span>Create</span>
         <Select :model-value="selectedEntityType?.id">
           <SelectTrigger class="h-7 p-1">
-            <SelectValue class="text-xl" placeholder="Select type..." />
+            <SelectValue
+              class="text-xl"
+              :placeholder="$t('components.entity.create_modal.type_selector_placeholder')"
+            />
           </SelectTrigger>
           <SelectContent>
             <SelectItem
-              v-for="type in entityTypes"
+              v-for="type in subItemCreate ? entityTypes.filter(t => !t.isLocation) : entityTypes"
               :key="type.id"
               :value="type.id"
               @click="onEntityTypeChanged(type.id)"
             >
-              {{ type.name }}
+              <div class="flex items-center gap-2">
+                <MdiMapMarkerOutline v-if="type.isLocation" class="size-4" />
+                <MdiPackageVariantClosed v-else class="size-4" />
+                <span>{{ t(type.name) }}</span>
+              </div>
             </SelectItem>
           </SelectContent>
         </Select>
@@ -45,7 +48,7 @@
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>{{ $t("components.item.create_modal.product_tooltip_scan_barcode") }}</p>
+                <p>{{ $t("components.entity.create_modal.product_tooltip_scan_barcode") }}</p>
               </TooltipContent>
             </Tooltip>
             <Tooltip>
@@ -55,7 +58,7 @@
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>{{ $t("components.item.create_modal.product_tooltip_input_barcode") }}</p>
+                <p>{{ $t("components.entity.create_modal.product_tooltip_input_barcode") }}</p>
               </TooltipContent>
             </Tooltip>
           </ButtonGroup>
@@ -91,7 +94,7 @@
             variant="ghost"
             size="icon"
             class="size-7 shrink-0"
-            :aria-label="$t('components.item.create_modal.clear_template')"
+            :aria-label="$t('components.entity.create_modal.clear_template')"
             @click="clearTemplate"
           >
             <MdiClose class="size-4" />
@@ -155,10 +158,10 @@
         v-if="subItemCreate"
         v-model="parent"
         v-model:search="query"
-        :label="$t('components.item.create_modal.parent_item')"
+        :label="$t('components.entity.create_modal.parent_item')"
         :items="results"
         item-text="name"
-        no-results-text="Type to search..."
+        :no-results-text="$t('components.entity.create_modal.item_selector_no_results_text')"
         :is-loading="isLoading"
         :trigger-search="triggerSearch"
       />
@@ -167,26 +170,42 @@
         v-model="form.name"
         :trigger-focus="focused"
         :autofocus="true"
-        :label="$t('components.item.create_modal.item_name')"
+        :label="
+          $t('components.entity.create_modal.entity_name', {
+            type: selectedEntityType ? t(selectedEntityType.name) : '',
+          })
+        "
         :max-length="255"
         :min-length="1"
       />
       <FormTextField
         v-if="!selectedEntityType?.isLocation"
         v-model.number="form.quantity"
-        :label="$t('components.item.create_modal.item_quantity')"
+        :label="
+          $t('components.entity.create_modal.entity_quantity', {
+            type: t(selectedEntityType ? selectedEntityType.name : 'global.entity'),
+          })
+        "
         type="number"
         step="any"
       />
       <FormTextArea
         v-model="form.description"
-        :label="$t('components.item.create_modal.item_description')"
+        :label="
+          $t('components.entity.create_modal.entity_description', {
+            type: t(selectedEntityType ? selectedEntityType.name : 'global.entity'),
+          })
+        "
         :max-length="1000"
       />
       <TagSelector v-model="form.tags" :tags="tags ?? []" />
       <PhotoUploader
-        :label="$t('components.item.create_modal.item_photo')"
-        :button-label="$t('components.item.create_modal.upload_photos')"
+        :label="
+          $t('components.entity.create_modal.entity_photo', {
+            type: t(selectedEntityType ? selectedEntityType.name : 'global.entity'),
+          })
+        "
+        :button-label="$t('components.entity.create_modal.upload_photos')"
         :existing-count="form.photos.length"
         @selected="appendPhotos"
       />
@@ -242,6 +261,7 @@
   import MdiFileDocumentOutline from "~icons/mdi/file-document-outline";
   import MdiChevronDown from "~icons/mdi/chevron-down";
   import MdiClose from "~icons/mdi/close";
+  import MdiMapMarkerOutline from "~icons/mdi/map-marker-outline";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
   import TagSelector from "~/components/Tag/Selector.vue";
@@ -484,7 +504,7 @@
     try {
       form.photos[index] = await rotatePhotoPreview(photo);
     } catch (error) {
-      toast.error(t("components.item.create_modal.toast.rotate_process_failed"));
+      toast.error(t("components.entity.create_modal.toast.rotate_process_failed"));
       console.error(error);
     }
   }
@@ -505,7 +525,7 @@
           const itemIdRead = typeof itemId.value === "string" ? (itemId.value as string) : itemId.value[0]!;
           const { data, error } = await api.items.get(itemIdRead);
           if (error || !data) {
-            toast.error(t("components.item.create_modal.toast.failed_load_parent"));
+            toast.error(t("components.entity.create_modal.toast.failed_load_parent"));
             console.error("Parent item fetch error:", error);
           }
 
@@ -560,12 +580,16 @@
 
   async function create(close = true) {
     if (!form.location?.id) {
-      toast.error(t("components.item.create_modal.toast.please_select_location"));
+      toast.error(t("components.entity.create_modal.toast.please_select_location"));
       return;
     }
 
     if (loading.value) {
-      toast.error(t("components.item.create_modal.toast.already_creating"));
+      toast.error(
+        t("components.entity.create_modal.toast.already_creating", {
+          type: t(selectedEntityType.value ? selectedEntityType.value.name : "global.entity"),
+        })
+      );
       return;
     }
 
@@ -618,14 +642,22 @@
 
     if (error) {
       loading.value = false;
-      toast.error(t("components.item.create_modal.toast.create_failed"));
+      toast.error(
+        t("components.entity.create_modal.toast.create_failed", {
+          type: t(selectedEntityType.value ? selectedEntityType.value.name : "global.entity"),
+        })
+      );
       return;
     }
 
-    toast.success(t("components.item.create_modal.toast.create_success"));
+    toast.success(
+      t("components.entity.create_modal.toast.create_success", {
+        type: t(selectedEntityType.value ? selectedEntityType.value.name : "global.entity"),
+      })
+    );
 
     if (form.photos.length > 0) {
-      toast.info(t("components.item.create_modal.toast.uploading_photos", { count: form.photos.length }));
+      toast.info(t("components.entity.create_modal.toast.uploading_photos", { count: form.photos.length }));
       let uploadError = false;
       for (const photo of form.photos) {
         const { error: attachError } = await api.items.attachments.add(
@@ -638,14 +670,14 @@
 
         if (attachError) {
           uploadError = true;
-          toast.error(t("components.item.create_modal.toast.upload_failed", { photoName: photo.photoName }));
+          toast.error(t("components.entity.create_modal.toast.upload_failed", { photoName: photo.photoName }));
           console.error(attachError);
         }
       }
       if (uploadError) {
-        toast.warning(t("components.item.create_modal.toast.some_photos_failed", { count: form.photos.length }));
+        toast.warning(t("components.entity.create_modal.toast.some_photos_failed", { count: form.photos.length }));
       } else {
-        toast.success(t("components.item.create_modal.toast.upload_success", { count: form.photos.length }));
+        toast.success(t("components.entity.create_modal.toast.upload_success", { count: form.photos.length }));
       }
     }
 

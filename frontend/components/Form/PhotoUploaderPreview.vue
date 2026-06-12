@@ -5,7 +5,7 @@
         <img
           :src="photo.fileBase64"
           class="w-full rounded object-fill shadow-sm"
-          :alt="$t('components.item.create_modal.uploaded')"
+          :alt="$t('components.entity.create_modal.uploaded')"
         />
       </div>
 
@@ -15,11 +15,11 @@
             <TooltipTrigger>
               <Button size="icon" type="button" variant="destructive" @click.prevent="emit('delete', index)">
                 <MdiDelete />
-                <div class="sr-only">{{ $t("components.item.create_modal.delete_photo") }}</div>
+                <div class="sr-only">{{ $t("components.entity.create_modal.delete_photo") }}</div>
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{{ $t("components.item.create_modal.delete_photo") }}</p>
+              <p>{{ $t("components.entity.create_modal.delete_photo") }}</p>
             </TooltipContent>
           </Tooltip>
 
@@ -27,11 +27,11 @@
             <TooltipTrigger>
               <Button size="icon" type="button" variant="default" @click.prevent="emit('rotate', index)">
                 <MdiRotateClockwise />
-                <div class="sr-only">{{ $t("components.item.create_modal.rotate_photo") }}</div>
+                <div class="sr-only">{{ $t("components.entity.create_modal.rotate_photo") }}</div>
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{{ $t("components.item.create_modal.rotate_photo") }}</p>
+              <p>{{ $t("components.entity.create_modal.rotate_photo") }}</p>
             </TooltipContent>
           </Tooltip>
 
@@ -46,12 +46,12 @@
                 <MdiStar v-if="photo.primary" />
                 <MdiStarOutline v-else />
                 <div class="sr-only">
-                  {{ $t("components.item.create_modal.set_as_primary_photo", { isPrimary: photo.primary }) }}
+                  {{ $t("components.entity.create_modal.set_as_primary_photo", { isPrimary: photo.primary }) }}
                 </div>
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{{ $t("components.item.create_modal.set_as_primary_photo", { isPrimary: photo.primary }) }}</p>
+              <p>{{ $t("components.entity.create_modal.set_as_primary_photo", { isPrimary: photo.primary }) }}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
