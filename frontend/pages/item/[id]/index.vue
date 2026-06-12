@@ -55,7 +55,6 @@
   });
 
   const route = useRoute();
-  const router = useRouter();
   const api = useUserApi();
 
   const itemId = computed<string>(() => route.params.id as string);

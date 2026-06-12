@@ -4,7 +4,6 @@
   import type { AnyDetail, Details } from "~~/components/global/DetailsSection/types";
   import { filterZeroValues } from "~~/components/global/DetailsSection/types";
   import type { ItemAttachment } from "~~/lib/api/types/data-contracts";
-  import { useLocationStore } from "~~/stores/locations";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPlus from "~icons/mdi/plus";
   import MdiPencil from "~icons/mdi/pencil";
@@ -231,7 +230,7 @@
           <button
             v-for="(photo, i) in photos"
             :key="i"
-            class="aspect-square group relative overflow-hidden rounded-lg border bg-muted"
+            class="group relative overflow-hidden rounded-lg border bg-muted h-32 aspect-1"
             @click="openImageDialog(photo, location.id)"
           >
             <img
