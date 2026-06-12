@@ -5,14 +5,17 @@
 // predicate that selects the matching entities. The default engine
 // (DriverDatabase) performs tokenized, case- and accent-insensitive matching
 // directly in the database and works on both SQLite and PostgreSQL with no
-// extra infrastructure.
+// extra infrastructure. The Meilisearch engine (DriverMeilisearch) delegates
+// matching to an external Meilisearch instance for typo-tolerant,
+// relevance-ranked search.
 //
-// To add a new engine (e.g. Meilisearch or Elasticsearch):
+// To add a new engine (e.g. Elasticsearch):
 //
 //  1. Implement the Engine interface. An external engine typically queries
 //     its own index scoped to the group ID and returns
 //     entity.IDIn(matchedIDs...) as the predicate, which preserves the
-//     repository's filtering, pagination, and eager-loading behavior.
+//     repository's filtering, pagination, and eager-loading behavior. See
+//     MeilisearchEngine for the reference implementation.
 //  2. Keep the engine's index up to date by subscribing to entity mutations
 //     (the repositories publish events on the event bus).
 //  3. Register a new driver constant and construction case in NewEngine, and
@@ -25,13 +28,16 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 )
 
 // Supported search drivers.
 const (
-	DriverDatabase = "database"
+	DriverDatabase    = "database"
+	DriverMeilisearch = "meilisearch"
 )
 
 // Engine translates free-text queries into entity predicates.
@@ -47,13 +53,16 @@ type Engine interface {
 	Predicate(ctx context.Context, gid uuid.UUID, query string) (predicate.Entity, error)
 }
 
-// NewEngine constructs the search engine selected by driver. An empty driver
-// selects the database engine.
-func NewEngine(driver string, db *ent.Client) (Engine, error) {
-	switch strings.ToLower(strings.TrimSpace(driver)) {
+// NewEngine constructs the search engine selected by cfg.Driver. An empty
+// driver selects the database engine. The event bus may be nil, in which case
+// external engines fall back to startup-only index builds.
+func NewEngine(cfg config.SearchConf, db *ent.Client, bus *eventbus.EventBus) (Engine, error) {
+	switch strings.ToLower(strings.TrimSpace(cfg.Driver)) {
 	case "", DriverDatabase:
 		return NewDatabaseEngine(db), nil
+	case DriverMeilisearch:
+		return NewMeilisearchEngine(cfg.Meilisearch, db, bus)
 	default:
-		return nil, fmt.Errorf("unsupported search driver: %q (supported: %s)", driver, DriverDatabase)
+		return nil, fmt.Errorf("unsupported search driver: %q (supported: %s, %s)", cfg.Driver, DriverDatabase, DriverMeilisearch)
 	}
 }

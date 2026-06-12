@@ -164,7 +164,7 @@ func run(cfg *config.Config) error {
 	app.bus = eventbus.New()
 	app.db = c
 
-	searchEngine, err := search.NewEngine(cfg.Search.Driver, c)
+	searchEngine, err := search.NewEngine(cfg.Search, c, app.bus)
 	if err != nil {
 		log.Error().Err(err).Str("driver", cfg.Search.Driver).Msg("failed to create search engine")
 		return err

@@ -6,9 +6,11 @@ By default, Homebox will use an SQLite database. This allows for quick setup and
 However, you can configure Homebox to use a PostgreSQL database instead. We highly recommend this for larger installations,
 as it will allow you to scale Homebox horizontally.
 
-> [!WARNING]
-> PostgreSQL is **HIGHLY** recommended if you're using a complex character set language such as Russian, Chinese, etc.
-> (basically any language that requires non-ASCII characters) as SQLite has very poor search support for these languages.
+> [!NOTE]
+> Search is fully Unicode-aware on both databases: Homebox implements its own
+> case- and accent-insensitive matching on SQLite, so non-ASCII languages
+> (Cyrillic, Greek, etc.) work out of the box. See the [Search](./search) page
+> for details and optional external search engines.
 
 ## SQLite
 This is the default; generally speaking, there is no need to change anything here. We've already configured it with our

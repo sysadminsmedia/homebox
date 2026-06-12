@@ -67,10 +67,33 @@ type Config struct {
 
 // SearchConf selects and configures the free-text search engine. The default
 // "database" driver searches directly in SQLite/PostgreSQL and needs no extra
-// services; the driver abstraction exists so external engines (e.g.
-// Meilisearch, Elasticsearch) can be added later.
+// services. The "meilisearch" driver delegates matching to an external
+// Meilisearch instance for typo-tolerant, relevance-ranked search.
 type SearchConf struct {
-	Driver string `yaml:"driver" conf:"default:database"`
+	Driver      string          `yaml:"driver"      conf:"default:database"`
+	Meilisearch MeilisearchConf `yaml:"meilisearch"`
+}
+
+// MeilisearchConf configures the connection to a Meilisearch instance when
+// SearchConf.Driver is "meilisearch".
+type MeilisearchConf struct {
+	Host   string `yaml:"host"    conf:"default:http://localhost:7700"`
+	APIKey string `yaml:"api_key"`
+	// Index is the Meilisearch index uid entities are stored in.
+	Index string `yaml:"index" conf:"default:homebox_entities"`
+	// MaxHits caps how many matching entity IDs a single search retrieves
+	// from Meilisearch before the database applies its own filters and
+	// pagination.
+	MaxHits int64 `yaml:"max_hits" conf:"default:1000"`
+}
+
+func (c MeilisearchConf) MarshalJSON() ([]byte, error) {
+	type alias MeilisearchConf
+	a := alias(c)
+	if a.APIKey != "" {
+		a.APIKey = redactedValue
+	}
+	return json.Marshal(a)
 }
 
 type Options struct {
