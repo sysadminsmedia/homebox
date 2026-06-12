@@ -31,6 +31,8 @@
   import BaseCard from "@/components/Base/Card.vue";
   import { Card } from "~/components/ui/card";
   import DropZone from "~/components/global/DropZone.vue";
+  import EntitySelector from "~/components/Entity/Selector.vue";
+  import { useEntityTypeStore } from "~/stores/entityTypes";
 
   const { t } = useI18n();
 
@@ -43,6 +45,8 @@
   const route = useRoute();
   const api = useUserApi();
   const preferences = useViewPreferences();
+
+  const entityTypeStore = useEntityTypeStore();
 
   const itemId = computed<string>(() => route.params.id as string);
 
@@ -92,6 +96,14 @@
     }
 
     saving.value = true;
+    const isConvertingToLocation = item.value.entityType?.isLocation;
+    if (isConvertingToLocation) {
+      const { isCanceled } = await confirm.open(t("items.edit.change_entity_type_confirm"));
+      if (isCanceled) {
+        saving.value = false;
+        return;
+      }
+    }
 
     let purchasePrice = 0;
     let soldPrice = 0;
@@ -116,6 +128,7 @@
       // backend. The form/picker hold strings; sending the spread above is
       // sufficient.
       syncChildEntityLocations: item.value.syncChildEntityLocations,
+      entityTypeId: item.value.entityType!.id,
     };
 
     const { error } = await api.items.update(itemId.value, payload);
@@ -128,7 +141,9 @@
     }
 
     toast.success(t("items.toast.item_saved"));
-    if (redirect) {
+    if (isConvertingToLocation) {
+      navigateTo("/location/" + itemId.value);
+    } else if (redirect) {
       navigateTo("/item/" + itemId.value);
     }
   }
@@ -665,6 +680,14 @@
               <Switch v-model="item.syncChildEntityLocations" @update:model-value="syncChildEntityLocations()" />
             </div>
             <TagSelector v-model="item.tagIds" :tags="tags" />
+            <div class="flex flex-col gap-1">
+              <Label class="px-1">{{ $t("global.entity_type") }}</Label>
+              <EntitySelector
+                :entity-types="entityTypeStore.allTypes"
+                :selected-entity-type="item.entityType?.id"
+                @entity-type-changed="id => (item.entityType = entityTypeStore.findById(id))"
+              />
+            </div>
           </div>
 
           <div class="border-t sm:p-0">
