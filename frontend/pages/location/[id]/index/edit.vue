@@ -514,6 +514,10 @@
                             onClose: result => {
                               if (result?.action === 'delete') {
                                 item.attachments = item.attachments.filter(a => a.id !== result.id);
+                              } else if (result?.action === 'replace') {
+                                item.attachments = item.attachments.map(a =>
+                                  a.id === result.oldId ? result.attachment : a
+                                );
                               }
                             },
                           })

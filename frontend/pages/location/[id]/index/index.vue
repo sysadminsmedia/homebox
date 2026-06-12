@@ -129,8 +129,20 @@
         itemId: entityId,
       },
       onClose: result => {
+        if (!location.value) {
+          return;
+        }
+
         if (result?.action === "delete") {
-          location.value!.attachments = location.value!.attachments.filter(a => a.id !== result.id);
+          location.value = {
+            ...location.value,
+            attachments: location.value.attachments.filter(a => a.id !== result.id),
+          };
+        } else if (result?.action === "replace") {
+          location.value = {
+            ...location.value,
+            attachments: location.value.attachments.map(a => (a.id === result.oldId ? result.attachment : a)),
+          };
         }
       },
     });
