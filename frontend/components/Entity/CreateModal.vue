@@ -1,10 +1,37 @@
 <template>
-  <BaseModal :dialog-id="DialogID.CreateItem" :title="$t('components.item.create_modal.title')">
+  <BaseModal :dialog-id="DialogID.CreateEntity">
+    <template #title>
+      <div class="flex items-center gap-2 text-nowrap">
+        <span>Create</span>
+        <Select :model-value="selectedEntityType?.id">
+          <SelectTrigger class="h-7 p-1">
+            <SelectValue
+              class="text-xl"
+              :placeholder="$t('components.entity.create_modal.type_selector_placeholder')"
+            />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem
+              v-for="type in subItemCreate ? entityTypes.filter(t => !t.isLocation) : entityTypes"
+              :key="type.id"
+              :value="type.id"
+              @click="onEntityTypeChanged(type.id)"
+            >
+              <div class="flex items-center gap-2">
+                <MdiMapMarkerOutline v-if="type.isLocation" class="size-4" />
+                <MdiPackageVariantClosed v-else class="size-4" />
+                <span>{{ t(type.name) }}</span>
+              </div>
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </template>
     <template #header-actions>
       <div class="flex gap-2">
         <TooltipProvider :delay-duration="0">
           <!-- Template selector button -->
-          <Tooltip>
+          <Tooltip v-if="!selectedEntityType?.isLocation">
             <TooltipTrigger>
               <TemplateSelector v-model="selectedTemplate" compact @template-selected="handleTemplateSelected" />
             </TooltipTrigger>
@@ -21,7 +48,7 @@
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>{{ $t("components.item.create_modal.product_tooltip_scan_barcode") }}</p>
+                <p>{{ $t("components.entity.create_modal.product_tooltip_scan_barcode") }}</p>
               </TooltipContent>
             </Tooltip>
             <Tooltip>
@@ -31,7 +58,7 @@
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>{{ $t("components.item.create_modal.product_tooltip_input_barcode") }}</p>
+                <p>{{ $t("components.entity.create_modal.product_tooltip_input_barcode") }}</p>
               </TooltipContent>
             </Tooltip>
           </ButtonGroup>
@@ -41,19 +68,6 @@
 
     <form class="flex min-w-0 flex-col gap-2" @submit.prevent="create()">
       <LocationSelector v-model="form.location" />
-
-      <!-- Entity Type selector (shown when multiple item types exist) -->
-      <div v-if="showEntityTypeSelector" class="flex w-full flex-col gap-1.5">
-        <Label class="px-1">{{ $t("global.type") || "Type" }}</Label>
-        <select
-          class="w-full rounded-md border bg-background px-3 py-2 text-sm"
-          :value="selectedEntityType?.id || ''"
-          @change="onEntityTypeChanged(($event.target as HTMLSelectElement).value)"
-        >
-          <option value="">{{ $t("global.select") || "Select type..." }}</option>
-          <option v-for="et in itemTypes" :key="et.id" :value="et.id">{{ et.name }}</option>
-        </select>
-      </div>
 
       <!-- Template Info Display - Collapsible banner with distinct styling -->
       <div v-if="templateData" class="rounded-lg border-l-4 border-l-primary bg-primary/5 p-3">
@@ -80,7 +94,7 @@
             variant="ghost"
             size="icon"
             class="size-7 shrink-0"
-            :aria-label="$t('components.item.create_modal.clear_template')"
+            :aria-label="$t('components.entity.create_modal.clear_template')"
             @click="clearTemplate"
           >
             <MdiClose class="size-4" />
@@ -144,10 +158,10 @@
         v-if="subItemCreate"
         v-model="parent"
         v-model:search="query"
-        :label="$t('components.item.create_modal.parent_item')"
+        :label="$t('components.entity.create_modal.parent_item')"
         :items="results"
         item-text="name"
-        no-results-text="Type to search..."
+        :no-results-text="$t('components.entity.create_modal.item_selector_no_results_text')"
         :is-loading="isLoading"
         :trigger-search="triggerSearch"
       />
@@ -156,41 +170,45 @@
         v-model="form.name"
         :trigger-focus="focused"
         :autofocus="true"
-        :label="$t('components.item.create_modal.item_name')"
+        :label="
+          $t('components.entity.create_modal.entity_name', {
+            type: selectedEntityType ? t(selectedEntityType.name) : '',
+          })
+        "
         :max-length="255"
         :min-length="1"
       />
       <FormTextField
+        v-if="!selectedEntityType?.isLocation"
         v-model.number="form.quantity"
-        :label="$t('components.item.create_modal.item_quantity')"
+        :label="
+          $t('components.entity.create_modal.entity_quantity', {
+            type: t(selectedEntityType ? selectedEntityType.name : 'global.entity'),
+          })
+        "
         type="number"
         step="any"
       />
       <FormTextArea
         v-model="form.description"
-        :label="$t('components.item.create_modal.item_description')"
+        :label="
+          $t('components.entity.create_modal.entity_description', {
+            type: t(selectedEntityType ? selectedEntityType.name : 'global.entity'),
+          })
+        "
         :max-length="1000"
       />
       <TagSelector v-model="form.tags" :tags="tags ?? []" />
-      <div class="flex w-full flex-col gap-1.5">
-        <Label for="image-create-photo" class="flex w-full px-1">
-          {{ $t("components.item.create_modal.item_photo") }}
-        </Label>
-        <div class="relative inline-block">
-          <Button type="button" variant="outline" class="w-full" aria-hidden="true" @click.prevent="">
-            {{ $t("components.item.create_modal.upload_photos") }}
-          </Button>
-          <Input
-            id="image-create-photo"
-            ref="fileInput"
-            class="absolute left-0 top-0 size-full cursor-pointer opacity-0"
-            type="file"
-            accept="image/png,image/jpeg,image/gif,image/avif,image/webp,android/force-camera-workaround"
-            multiple
-            @change="previewImage"
-          />
-        </div>
-      </div>
+      <PhotoUploader
+        :label="
+          $t('components.entity.create_modal.entity_photo', {
+            type: t(selectedEntityType ? selectedEntityType.name : 'global.entity'),
+          })
+        "
+        :button-label="$t('components.entity.create_modal.upload_photos')"
+        :existing-count="form.photos.length"
+        @selected="appendPhotos"
+      />
       <div class="mt-4 flex flex-row-reverse">
         <ButtonGroup>
           <Button :disabled="loading" type="submit" class="group">
@@ -210,75 +228,12 @@
         </ButtonGroup>
       </div>
 
-      <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
-      <div v-if="form.photos.length > 0" class="mt-4 border-t px-4 pb-4">
-        <div v-for="(photo, index) in form.photos" :key="index">
-          <div class="mt-8 w-full">
-            <img
-              :src="photo.fileBase64"
-              class="w-full rounded object-fill shadow-sm"
-              :alt="$t('components.item.create_modal.uploaded')"
-            />
-          </div>
-          <div class="mt-2 flex items-center gap-2">
-            <TooltipProvider class="flex gap-2" :delay-duration="0">
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button size="icon" type="button" variant="destructive" @click.prevent="deleteImage(index)">
-                    <MdiDelete />
-                    <div class="sr-only">{{ $t("components.item.create_modal.delete_photo") }}</div>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{{ $t("components.item.create_modal.delete_photo") }}</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button
-                    size="icon"
-                    type="button"
-                    variant="default"
-                    @click.prevent="
-                      async () => {
-                        await rotateBase64Image90Deg(photo.fileBase64, index);
-                      }
-                    "
-                  >
-                    <MdiRotateClockwise />
-                    <div class="sr-only">{{ $t("components.item.create_modal.rotate_photo") }}</div>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{{ $t("components.item.create_modal.rotate_photo") }}</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button
-                    size="icon"
-                    type="button"
-                    :variant="photo.primary ? 'default' : 'outline'"
-                    @click.prevent="setPrimary(index)"
-                  >
-                    <MdiStar v-if="photo.primary" />
-                    <MdiStarOutline v-else />
-                    <div class="sr-only">
-                      {{ $t("components.item.create_modal.set_as_primary_photo", { isPrimary: photo.primary }) }}
-                    </div>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>
-                    {{ $t("components.item.create_modal.set_as_primary_photo", { isPrimary: photo.primary }) }}
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <p class="mt-1 text-sm" style="overflow-wrap: anywhere">{{ photo.photoName }}</p>
-          </div>
-        </div>
-      </div>
+      <PhotoUploaderPreview
+        :photos="form.photos"
+        @delete="deletePhotoAt"
+        @rotate="rotatePhotoAt"
+        @set-primary="setPrimaryPhotoAt"
+      />
     </form>
   </BaseModal>
 </template>
@@ -289,13 +244,13 @@
   import { toast } from "@/components/ui/sonner";
   import { Button, ButtonGroup } from "~/components/ui/button";
   import BaseModal from "@/components/App/CreateModal.vue";
-  import { Label } from "@/components/ui/label";
-  import { Input } from "@/components/ui/input";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import type {
     EntityCreate,
     EntityTemplateOut,
     EntityTemplateSummary,
     EntityOut,
+    EntityTypeSummary,
   } from "~~/lib/api/types/data-contracts";
   import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
@@ -303,13 +258,10 @@
   import MdiBarcodeScan from "~icons/mdi/barcode-scan";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
-  import MdiDelete from "~icons/mdi/delete";
-  import MdiRotateClockwise from "~icons/mdi/rotate-clockwise";
-  import MdiStarOutline from "~icons/mdi/star-outline";
-  import MdiStar from "~icons/mdi/star";
   import MdiFileDocumentOutline from "~icons/mdi/file-document-outline";
   import MdiChevronDown from "~icons/mdi/chevron-down";
   import MdiClose from "~icons/mdi/close";
+  import MdiMapMarkerOutline from "~icons/mdi/map-marker-outline";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
   import TagSelector from "~/components/Tag/Selector.vue";
@@ -319,18 +271,28 @@
   import LocationSelector from "~/components/Location/Selector.vue";
   import FormTextField from "~/components/Form/TextField.vue";
   import FormTextArea from "~/components/Form/TextArea.vue";
-
-  interface PhotoPreview {
-    photoName: string;
-    file: File;
-    fileBase64: string;
-    primary: boolean;
-  }
+  import PhotoUploader from "~/components/Form/PhotoUploader.vue";
+  import PhotoUploaderPreview from "~/components/Form/PhotoUploaderPreview.vue";
+  import {
+    deletePhoto,
+    dataURLtoFile,
+    rotatePhotoPreview,
+    setPrimaryPhoto,
+    type PhotoPreview,
+  } from "~/components/Form/photo-uploader";
+  import { useEntityTypeStore } from "~~/stores/entityTypes";
 
   const { t } = useI18n();
   const { openDialog, closeDialog, registerOpenDialogCallback } = useDialog();
 
-  useDialogHotkey(DialogID.CreateItem, { code: "Digit1", shift: true });
+  useDialogHotkey(DialogID.CreateEntity, { code: "Digit1", shift: true }, () => ({
+    baseType: "item",
+  }));
+  useDialogHotkey(DialogID.CreateEntity, { code: "Digit2", shift: true }, () => ({
+    baseType: "location",
+  }));
+
+  const entityTypeStore = useEntityTypeStore();
 
   const api = useUserApi();
 
@@ -341,11 +303,9 @@
   const tags = computed(() => tagStore.tags);
 
   const route = useRoute();
-  const router = useRouter();
 
   const parent = ref();
   const { query, results, isLoading, triggerSearch } = useItemSearch(api, { immediate: false });
-  const subItemCreateParam = useRouteQuery("subItemCreate", "n");
   const subItemCreate = ref();
 
   const tagId = computed(() => {
@@ -372,27 +332,17 @@
   const nameInput = ref<HTMLInputElement | null>(null);
 
   // Entity type selection
-  const itemTypes = ref<import("~~/lib/api/types/data-contracts").EntityTypeSummary[]>([]);
-  const selectedEntityType = ref<import("~~/lib/api/types/data-contracts").EntityTypeSummary | null>(null);
-  const showEntityTypeSelector = computed(() => itemTypes.value.length > 1);
-
-  onMounted(async () => {
-    const { data, error } = await api.entityTypes.getAll();
-    if (!error && data) {
-      itemTypes.value = data.filter(et => !et.isLocation);
-      // Auto-select first if only one
-      if (itemTypes.value.length === 1) {
-        selectedEntityType.value = itemTypes.value[0]!;
-      }
-    }
-  });
+  const entityTypes = computed(() => entityTypeStore.allTypes);
+  const selectedEntityType = ref<EntityTypeSummary | null>(null);
 
   async function onEntityTypeChanged(typeId: string) {
-    const et = itemTypes.value.find(t => t.id === typeId);
+    const et = entityTypes.value.find(t => t.id === typeId);
     selectedEntityType.value = et || null;
 
-    // If the selected type has a default template, auto-apply it
-    if (et?.defaultTemplateId && et.defaultTemplate) {
+    // If the selected type has a default template and is not a location, auto-apply it
+    if (et?.isLocation || !et?.defaultTemplateId || !et.defaultTemplate) {
+      clearTemplate();
+    } else {
       const { data, error } = await api.templates.get(et.defaultTemplateId);
       if (!error && data) {
         selectedTemplate.value = {
@@ -535,68 +485,80 @@
   );
 
   const { shift } = useMagicKeys();
-
-  function deleteImage(index: number) {
-    form.photos.splice(index, 1);
+  function appendPhotos(photos: PhotoPreview[]) {
+    form.photos.push(...photos);
   }
 
-  function setPrimary(index: number) {
-    const primary = form.photos.findIndex(p => p.primary);
-
-    if (primary !== -1) form.photos[primary]!.primary = false;
-    if (primary !== index) form.photos[index]!.primary = true;
+  function deletePhotoAt(index: number) {
+    form.photos = deletePhoto(form.photos, index);
   }
 
-  function previewImage(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      for (const file of input.files) {
-        const reader = new FileReader();
-        reader.onload = e => {
-          form.photos.push({
-            photoName: file.name,
-            fileBase64: e.target?.result as string,
-            file,
-            primary: form.photos.length === 0,
-          });
-        };
-        reader.readAsDataURL(file);
-      }
-      input.value = "";
+  function setPrimaryPhotoAt(index: number) {
+    form.photos = setPrimaryPhoto(form.photos, index);
+  }
+
+  async function rotatePhotoAt(index: number) {
+    const photo = form.photos[index];
+    if (!photo) return;
+
+    try {
+      form.photos[index] = await rotatePhotoPreview(photo);
+    } catch (error) {
+      toast.error(t("components.entity.create_modal.toast.rotate_process_failed"));
+      console.error(error);
     }
   }
 
   onMounted(() => {
-    const cleanup = registerOpenDialogCallback(DialogID.CreateItem, async params => {
-      // needed since URL will be cleared in the next step => ParentId Selection should stay though
-      subItemCreate.value = subItemCreateParam.value === "y";
+    const cleanup = registerOpenDialogCallback(DialogID.CreateEntity, async params => {
+      subItemCreate.value = false;
       let parentItemLocationId = null;
+      parent.value = {};
+      form.parentId = null;
 
-      if (subItemCreate.value && itemId.value) {
-        const itemIdRead = typeof itemId.value === "string" ? (itemId.value as string) : itemId.value[0]!;
-        const { data, error } = await api.items.get(itemIdRead);
-        if (error || !data) {
-          toast.error(t("components.item.create_modal.toast.failed_load_parent"));
-          console.error("Parent item fetch error:", error);
+      if (params.baseType === "item") {
+        selectedEntityType.value = entityTypes.value.find(t => !t.isLocation) || null;
+
+        subItemCreate.value = params.subItem;
+
+        if (subItemCreate.value && itemId.value) {
+          const itemIdRead = typeof itemId.value === "string" ? (itemId.value as string) : itemId.value[0]!;
+          const { data, error } = await api.items.get(itemIdRead);
+          if (error || !data) {
+            toast.error(t("components.entity.create_modal.toast.failed_load_parent"));
+            console.error("Parent item fetch error:", error);
+          }
+
+          if (data) {
+            parent.value = data;
+          }
+
+          if (data.parent) {
+            const loc = data.parent;
+            parentItemLocationId = loc.id;
+          }
         }
 
-        if (data) {
-          parent.value = data;
+        if (params.product) {
+          form.name = params.product.item.name;
+          form.description = params.product.item.description;
+
+          if (params.product.imageURL) {
+            appendPhotos([
+              {
+                photoName: "product_view.jpg",
+                fileBase64: params.product.imageBase64,
+                primary: form.photos.length === 0,
+                file: dataURLtoFile(params.product.imageBase64, "product_view.jpg"),
+              },
+            ]);
+          }
         }
 
-        if (data.location || data.parent) {
-          const loc = data.location || data.parent;
-          parentItemLocationId = loc.id;
-        }
-
-        // clear URL Parameter (subItemCreate) since intention was communicated and received
-        const currentQuery = { ...route.query };
-        delete currentQuery.subItemCreate;
-        await router.push({ query: currentQuery });
+        // Restore last used template if available
+        await restoreLastTemplate();
       } else {
-        // since Input is hidden in this case, make sure no accidental parent information is sent out
-        parent.value = {};
-        form.parentId = null;
+        selectedEntityType.value = entityTypes.value.find(t => t.isLocation) || null;
       }
 
       const locId = locationId.value ? locationId.value : parentItemLocationId;
@@ -608,26 +570,9 @@
         }
       }
 
-      if (params?.product) {
-        form.name = params.product.item.name;
-        form.description = params.product.item.description;
-
-        if (params.product.imageURL) {
-          form.photos.push({
-            photoName: "product_view.jpg",
-            fileBase64: params.product.imageBase64,
-            primary: form.photos.length === 0,
-            file: dataURLtoFile(params.product.imageBase64, "product_view.jpg"),
-          });
-        }
-      }
-
       if (tagId.value) {
         form.tags = tags.value.filter(l => l.id === tagId.value).map(l => l.id);
       }
-
-      // Restore last used template if available
-      await restoreLastTemplate();
     });
 
     onUnmounted(cleanup);
@@ -635,12 +580,16 @@
 
   async function create(close = true) {
     if (!form.location?.id) {
-      toast.error(t("components.item.create_modal.toast.please_select_location"));
+      toast.error(t("components.entity.create_modal.toast.please_select_location"));
       return;
     }
 
     if (loading.value) {
-      toast.error(t("components.item.create_modal.toast.already_creating"));
+      toast.error(
+        t("components.entity.create_modal.toast.already_creating", {
+          type: t(selectedEntityType.value ? selectedEntityType.value.name : "global.entity"),
+        })
+      );
       return;
     }
 
@@ -650,8 +599,20 @@
 
     let error, data;
 
-    // If a template is selected, use the template creation endpoint
-    if (templateData.value) {
+    // If the selected entity type is a location, use the location creation endpoint
+    if (selectedEntityType.value?.isLocation) {
+      const result = await api.items.createLocation({
+        name: form.name,
+        description: form.description,
+        parentId: form.location ? form.location.id : null,
+        entityTypeId: selectedEntityType.value?.id || "",
+        quantity: 1,
+        tagIds: form.tags,
+      });
+      error = result.error;
+      data = result.data;
+    } else if (templateData.value) {
+      // If a template is selected, use the template creation endpoint
       const templateRequest = {
         name: form.name,
         description: form.description,
@@ -671,7 +632,7 @@
         quantity: form.quantity,
         description: form.description,
         tagIds: form.tags,
-        entityTypeId: selectedEntityType.value?.id,
+        entityTypeId: selectedEntityType.value?.id || "",
       };
 
       const result = await api.items.create(out);
@@ -681,14 +642,22 @@
 
     if (error) {
       loading.value = false;
-      toast.error(t("components.item.create_modal.toast.create_failed"));
+      toast.error(
+        t("components.entity.create_modal.toast.create_failed", {
+          type: t(selectedEntityType.value ? selectedEntityType.value.name : "global.entity"),
+        })
+      );
       return;
     }
 
-    toast.success(t("components.item.create_modal.toast.create_success"));
+    toast.success(
+      t("components.entity.create_modal.toast.create_success", {
+        type: t(selectedEntityType.value ? selectedEntityType.value.name : "global.entity"),
+      })
+    );
 
     if (form.photos.length > 0) {
-      toast.info(t("components.item.create_modal.toast.uploading_photos", { count: form.photos.length }));
+      toast.info(t("components.entity.create_modal.toast.uploading_photos", { count: form.photos.length }));
       let uploadError = false;
       for (const photo of form.photos) {
         const { error: attachError } = await api.items.attachments.add(
@@ -701,14 +670,14 @@
 
         if (attachError) {
           uploadError = true;
-          toast.error(t("components.item.create_modal.toast.upload_failed", { photoName: photo.photoName }));
+          toast.error(t("components.entity.create_modal.toast.upload_failed", { photoName: photo.photoName }));
           console.error(attachError);
         }
       }
       if (uploadError) {
-        toast.warning(t("components.item.create_modal.toast.some_photos_failed", { count: form.photos.length }));
+        toast.warning(t("components.entity.create_modal.toast.some_photos_failed", { count: form.photos.length }));
       } else {
-        toast.success(t("components.item.create_modal.toast.upload_success", { count: form.photos.length }));
+        toast.success(t("components.entity.create_modal.toast.upload_success", { count: form.photos.length }));
       }
     }
 
@@ -725,83 +694,12 @@
     loading.value = false;
 
     if (close) {
-      closeDialog(DialogID.CreateItem);
-      navigateTo(`/item/${data.id}`);
-    }
-  }
-
-  function dataURLtoFile(dataURL: string, fileName: string) {
-    try {
-      const arr = dataURL.split(",");
-      const mimeMatch = arr[0]!.match(/:(.*?);/);
-      if (!mimeMatch || !mimeMatch[1]) {
-        throw new Error("Invalid data URL format");
+      closeDialog(DialogID.CreateEntity);
+      if (selectedEntityType.value?.isLocation) {
+        navigateTo(`/location/${data.id}`);
+      } else {
+        navigateTo(`/item/${data.id}`);
       }
-      const mime = mimeMatch[1];
-
-      // Validate mime type is an image
-      if (!mime.startsWith("image/")) {
-        throw new Error("Invalid mime type, expected image");
-      }
-
-      const bstr = atob(arr[arr.length - 1]!);
-      let n = bstr.length;
-      const u8arr = new Uint8Array(n);
-      while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-      }
-      return new File([u8arr], fileName, { type: mime });
-    } catch (error) {
-      console.error("Error converting data URL to file:", error);
-      // Return a fallback or rethrow based on your error handling strategy
-      throw error;
-    }
-  }
-
-  async function rotateBase64Image90Deg(base64Image: string, index: number) {
-    // Create an off-screen canvas
-    const offScreenCanvas = document.createElement("canvas");
-    const offScreenCanvasCtx = offScreenCanvas.getContext("2d");
-
-    if (!offScreenCanvasCtx) {
-      toast.error(t("components.item.create_modal.toast.no_canvas_support"));
-      return;
-    }
-
-    // Create an image
-    const img = new Image();
-
-    // Create a promise to handle the image loading
-    await new Promise<void>((resolve, reject) => {
-      img.onload = () => resolve();
-      img.onerror = () => reject(new Error("Failed to load image"));
-      img.src = base64Image;
-    }).catch(error => {
-      toast.error(t("components.item.create_modal.toast.rotate_failed", { error: error.message }));
-    });
-
-    // Set its dimensions to rotated size
-    offScreenCanvas.height = img.width;
-    offScreenCanvas.width = img.height;
-
-    // Rotate and draw source image into the off-screen canvas
-    offScreenCanvasCtx.rotate((90 * Math.PI) / 180);
-    offScreenCanvasCtx.translate(0, -offScreenCanvas.width);
-    offScreenCanvasCtx.drawImage(img, 0, 0);
-
-    const imageType = base64Image.match(/^data:(.+);base64/)?.[1] || "image/jpeg";
-
-    // Encode image to data-uri with base64
-    try {
-      form.photos[index]!.fileBase64 = offScreenCanvas.toDataURL(imageType, 100);
-      form.photos[index]!.file = dataURLtoFile(form.photos[index]!.fileBase64, form.photos[index]!.photoName);
-    } catch (error) {
-      toast.error(t("components.item.create_modal.toast.rotate_process_failed"));
-      console.error(error);
-    } finally {
-      // Clean up resources
-      offScreenCanvas.width = 0;
-      offScreenCanvas.height = 0;
     }
   }
 

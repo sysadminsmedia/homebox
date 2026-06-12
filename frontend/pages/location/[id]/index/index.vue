@@ -4,7 +4,6 @@
   import type { AnyDetail, Details } from "~~/components/global/DetailsSection/types";
   import { filterZeroValues } from "~~/components/global/DetailsSection/types";
   import type { ItemAttachment } from "~~/lib/api/types/data-contracts";
-  import { useLocationStore } from "~~/stores/locations";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPlus from "~icons/mdi/plus";
   import MdiPencil from "~icons/mdi/pencil";
@@ -49,7 +48,7 @@
 
   const locationId = computed<string>(() => route.params.id as string);
 
-  const { data: location, refresh } = useAsyncData(locationId.value, async () => {
+  const { data: location } = useAsyncData(locationId.value, async () => {
     const { data, error } = await api.items.getLocation(locationId.value);
     if (error) {
       toast.error(t("locations.toast.failed_load_location"));
@@ -79,14 +78,16 @@
   }
 
   function openCreateItem() {
-    openDialog(DialogID.CreateItem);
+    openDialog(DialogID.CreateEntity, {
+      params: {
+        baseType: "item",
+      },
+    });
   }
 
   function goToEdit() {
     navigateTo(`/location/${locationId.value}/edit`);
   }
-
-  const locationStore = useLocationStore();
 
   // Photos
   type Photo = {
@@ -229,7 +230,7 @@
           <button
             v-for="(photo, i) in photos"
             :key="i"
-            class="aspect-square group relative overflow-hidden rounded-lg border bg-muted"
+            class="group relative overflow-hidden rounded-lg border bg-muted h-32 aspect-1"
             @click="openImageDialog(photo, location.id)"
           >
             <img
@@ -285,7 +286,7 @@
               <Button class="w-9 md:w-auto" @click="openCreateItem">
                 <MdiPlus name="mdi-plus" />
                 <span class="hidden md:inline">
-                  {{ $t("components.item.create_modal.title") }}
+                  {{ $t("components.location.create_item") }}
                 </span>
               </Button>
               <Button class="w-9 md:w-auto" @click="goToEdit">

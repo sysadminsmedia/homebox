@@ -203,6 +203,7 @@ export class ItemsApi extends BaseAPI {
     return {
       ...resp,
       data: resp.data?.items ?? [],
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as { data: EntitySummary[]; error: any; status: number };
   }
 
