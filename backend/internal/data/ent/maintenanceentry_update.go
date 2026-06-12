@@ -14,6 +14,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceplan"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 )
 
@@ -47,6 +48,26 @@ func (_u *MaintenanceEntryUpdate) SetNillableEntityID(v *uuid.UUID) *Maintenance
 	if v != nil {
 		_u.SetEntityID(*v)
 	}
+	return _u
+}
+
+// SetPlanID sets the "plan_id" field.
+func (_u *MaintenanceEntryUpdate) SetPlanID(v uuid.UUID) *MaintenanceEntryUpdate {
+	_u.mutation.SetPlanID(v)
+	return _u
+}
+
+// SetNillablePlanID sets the "plan_id" field if the given value is not nil.
+func (_u *MaintenanceEntryUpdate) SetNillablePlanID(v *uuid.UUID) *MaintenanceEntryUpdate {
+	if v != nil {
+		_u.SetPlanID(*v)
+	}
+	return _u
+}
+
+// ClearPlanID clears the value of the "plan_id" field.
+func (_u *MaintenanceEntryUpdate) ClearPlanID() *MaintenanceEntryUpdate {
+	_u.mutation.ClearPlanID()
 	return _u
 }
 
@@ -150,6 +171,11 @@ func (_u *MaintenanceEntryUpdate) SetEntity(v *Entity) *MaintenanceEntryUpdate {
 	return _u.SetEntityID(v.ID)
 }
 
+// SetPlan sets the "plan" edge to the MaintenancePlan entity.
+func (_u *MaintenanceEntryUpdate) SetPlan(v *MaintenancePlan) *MaintenanceEntryUpdate {
+	return _u.SetPlanID(v.ID)
+}
+
 // Mutation returns the MaintenanceEntryMutation object of the builder.
 func (_u *MaintenanceEntryUpdate) Mutation() *MaintenanceEntryMutation {
 	return _u.mutation
@@ -158,6 +184,12 @@ func (_u *MaintenanceEntryUpdate) Mutation() *MaintenanceEntryMutation {
 // ClearEntity clears the "entity" edge to the Entity entity.
 func (_u *MaintenanceEntryUpdate) ClearEntity() *MaintenanceEntryUpdate {
 	_u.mutation.ClearEntity()
+	return _u
+}
+
+// ClearPlan clears the "plan" edge to the MaintenancePlan entity.
+func (_u *MaintenanceEntryUpdate) ClearPlan() *MaintenanceEntryUpdate {
+	_u.mutation.ClearPlan()
 	return _u
 }
 
@@ -286,6 +318,35 @@ func (_u *MaintenanceEntryUpdate) sqlSave(ctx context.Context) (_node int, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.PlanCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   maintenanceentry.PlanTable,
+			Columns: []string{maintenanceentry.PlanColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenanceplan.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.PlanIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   maintenanceentry.PlanTable,
+			Columns: []string{maintenanceentry.PlanColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenanceplan.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{maintenanceentry.Label}
@@ -323,6 +384,26 @@ func (_u *MaintenanceEntryUpdateOne) SetNillableEntityID(v *uuid.UUID) *Maintena
 	if v != nil {
 		_u.SetEntityID(*v)
 	}
+	return _u
+}
+
+// SetPlanID sets the "plan_id" field.
+func (_u *MaintenanceEntryUpdateOne) SetPlanID(v uuid.UUID) *MaintenanceEntryUpdateOne {
+	_u.mutation.SetPlanID(v)
+	return _u
+}
+
+// SetNillablePlanID sets the "plan_id" field if the given value is not nil.
+func (_u *MaintenanceEntryUpdateOne) SetNillablePlanID(v *uuid.UUID) *MaintenanceEntryUpdateOne {
+	if v != nil {
+		_u.SetPlanID(*v)
+	}
+	return _u
+}
+
+// ClearPlanID clears the value of the "plan_id" field.
+func (_u *MaintenanceEntryUpdateOne) ClearPlanID() *MaintenanceEntryUpdateOne {
+	_u.mutation.ClearPlanID()
 	return _u
 }
 
@@ -426,6 +507,11 @@ func (_u *MaintenanceEntryUpdateOne) SetEntity(v *Entity) *MaintenanceEntryUpdat
 	return _u.SetEntityID(v.ID)
 }
 
+// SetPlan sets the "plan" edge to the MaintenancePlan entity.
+func (_u *MaintenanceEntryUpdateOne) SetPlan(v *MaintenancePlan) *MaintenanceEntryUpdateOne {
+	return _u.SetPlanID(v.ID)
+}
+
 // Mutation returns the MaintenanceEntryMutation object of the builder.
 func (_u *MaintenanceEntryUpdateOne) Mutation() *MaintenanceEntryMutation {
 	return _u.mutation
@@ -434,6 +520,12 @@ func (_u *MaintenanceEntryUpdateOne) Mutation() *MaintenanceEntryMutation {
 // ClearEntity clears the "entity" edge to the Entity entity.
 func (_u *MaintenanceEntryUpdateOne) ClearEntity() *MaintenanceEntryUpdateOne {
 	_u.mutation.ClearEntity()
+	return _u
+}
+
+// ClearPlan clears the "plan" edge to the MaintenancePlan entity.
+func (_u *MaintenanceEntryUpdateOne) ClearPlan() *MaintenanceEntryUpdateOne {
+	_u.mutation.ClearPlan()
 	return _u
 }
 
@@ -585,6 +677,35 @@ func (_u *MaintenanceEntryUpdateOne) sqlSave(ctx context.Context) (_node *Mainte
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.PlanCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   maintenanceentry.PlanTable,
+			Columns: []string{maintenanceentry.PlanColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenanceplan.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.PlanIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   maintenanceentry.PlanTable,
+			Columns: []string{maintenanceentry.PlanColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(maintenanceplan.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

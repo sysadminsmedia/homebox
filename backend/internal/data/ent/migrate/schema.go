@@ -416,6 +416,7 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2500},
 		{Name: "cost", Type: field.TypeFloat64, Default: 0},
 		{Name: "entity_id", Type: field.TypeUUID},
+		{Name: "plan_id", Type: field.TypeUUID, Nullable: true},
 	}
 	// MaintenanceEntriesTable holds the schema information for the "maintenance_entries" table.
 	MaintenanceEntriesTable = &schema.Table{
@@ -426,6 +427,40 @@ var (
 			{
 				Symbol:     "maintenance_entries_entities_maintenance_entries",
 				Columns:    []*schema.Column{MaintenanceEntriesColumns[8]},
+				RefColumns: []*schema.Column{EntitiesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "maintenance_entries_maintenance_plans_maintenance_entries",
+				Columns:    []*schema.Column{MaintenanceEntriesColumns[9]},
+				RefColumns: []*schema.Column{MaintenancePlansColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// MaintenancePlansColumns holds the columns for the "maintenance_plans" table.
+	MaintenancePlansColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 255},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2500},
+		{Name: "interval_value", Type: field.TypeInt},
+		{Name: "interval_unit", Type: field.TypeEnum, Enums: []string{"hour", "day", "week", "month", "year"}},
+		{Name: "active", Type: field.TypeBool, Default: true},
+		{Name: "last_completed_at", Type: field.TypeTime, Nullable: true},
+		{Name: "next_due_at", Type: field.TypeTime, Nullable: true},
+		{Name: "entity_id", Type: field.TypeUUID},
+	}
+	// MaintenancePlansTable holds the schema information for the "maintenance_plans" table.
+	MaintenancePlansTable = &schema.Table{
+		Name:       "maintenance_plans",
+		Columns:    MaintenancePlansColumns,
+		PrimaryKey: []*schema.Column{MaintenancePlansColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "maintenance_plans_entities_maintenance_plans",
+				Columns:    []*schema.Column{MaintenancePlansColumns[10]},
 				RefColumns: []*schema.Column{EntitiesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -669,6 +704,7 @@ var (
 		GroupsTable,
 		GroupInvitationTokensTable,
 		MaintenanceEntriesTable,
+		MaintenancePlansTable,
 		NotifiersTable,
 		PasswordResetTokensTable,
 		TagsTable,
@@ -696,6 +732,8 @@ func init() {
 	ExportsTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupInvitationTokensTable.ForeignKeys[0].RefTable = GroupsTable
 	MaintenanceEntriesTable.ForeignKeys[0].RefTable = EntitiesTable
+	MaintenanceEntriesTable.ForeignKeys[1].RefTable = MaintenancePlansTable
+	MaintenancePlansTable.ForeignKeys[0].RefTable = EntitiesTable
 	NotifiersTable.ForeignKeys[0].RefTable = GroupsTable
 	NotifiersTable.ForeignKeys[1].RefTable = UsersTable
 	PasswordResetTokensTable.ForeignKeys[0].RefTable = UsersTable

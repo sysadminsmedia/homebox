@@ -93,11 +93,13 @@ type EntityEdges struct {
 	Fields []*EntityField `json:"fields,omitempty"`
 	// MaintenanceEntries holds the value of the maintenance_entries edge.
 	MaintenanceEntries []*MaintenanceEntry `json:"maintenance_entries,omitempty"`
+	// MaintenancePlans holds the value of the maintenance_plans edge.
+	MaintenancePlans []*MaintenancePlan `json:"maintenance_plans,omitempty"`
 	// Attachments holds the value of the attachments edge.
 	Attachments []*Attachment `json:"attachments,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [8]bool
+	loadedTypes [9]bool
 }
 
 // GroupOrErr returns the Group value or an error if the edge
@@ -169,10 +171,19 @@ func (e EntityEdges) MaintenanceEntriesOrErr() ([]*MaintenanceEntry, error) {
 	return nil, &NotLoadedError{edge: "maintenance_entries"}
 }
 
+// MaintenancePlansOrErr returns the MaintenancePlans value or an error if the edge
+// was not loaded in eager-loading.
+func (e EntityEdges) MaintenancePlansOrErr() ([]*MaintenancePlan, error) {
+	if e.loadedTypes[7] {
+		return e.MaintenancePlans, nil
+	}
+	return nil, &NotLoadedError{edge: "maintenance_plans"}
+}
+
 // AttachmentsOrErr returns the Attachments value or an error if the edge
 // was not loaded in eager-loading.
 func (e EntityEdges) AttachmentsOrErr() ([]*Attachment, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[8] {
 		return e.Attachments, nil
 	}
 	return nil, &NotLoadedError{edge: "attachments"}
@@ -433,6 +444,11 @@ func (_m *Entity) QueryFields() *EntityFieldQuery {
 // QueryMaintenanceEntries queries the "maintenance_entries" edge of the Entity entity.
 func (_m *Entity) QueryMaintenanceEntries() *MaintenanceEntryQuery {
 	return NewEntityClient(_m.config).QueryMaintenanceEntries(_m)
+}
+
+// QueryMaintenancePlans queries the "maintenance_plans" edge of the Entity entity.
+func (_m *Entity) QueryMaintenancePlans() *MaintenancePlanQuery {
+	return NewEntityClient(_m.config).QueryMaintenancePlans(_m)
 }
 
 // QueryAttachments queries the "attachments" edge of the Entity entity.

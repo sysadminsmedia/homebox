@@ -8,7 +8,8 @@
 
   const activeDialog = ref<DialogID | null>(null);
   const activeAlerts = reactive<string[]>([]);
-  const openDialogCallbacks = new Map<DialogID, (params: any) => void>();
+  /** Multiple components may register for the same dialog (e.g. two MaintenanceEditModal trees); invoke all. */
+  const openDialogCallbacks = new Map<DialogID, Set<(params: any) => void>>();
 
   // onClose for the currently-open dialog (only one dialog can be active)
   let activeOnCloseCallback: ((result?: any) => void) | undefined;
@@ -17,9 +18,22 @@
     dialogId: T,
     callback: (params?: T extends keyof DialogParamsMap ? DialogParamsMap[T] : undefined) => void
   ) => {
-    openDialogCallbacks.set(dialogId, callback as (params: any) => void);
+    const cb = callback as (params: any) => void;
+    let set = openDialogCallbacks.get(dialogId);
+    if (!set) {
+      set = new Set();
+      openDialogCallbacks.set(dialogId, set);
+    }
+    set.add(cb);
     return () => {
-      openDialogCallbacks.delete(dialogId);
+      const s = openDialogCallbacks.get(dialogId);
+      if (!s) {
+        return;
+      }
+      s.delete(cb);
+      if (s.size === 0) {
+        openDialogCallbacks.delete(dialogId);
+      }
     };
   };
 
@@ -29,9 +43,11 @@
     activeDialog.value = dialogId;
     activeOnCloseCallback = options?.onClose;
 
-    const openCallback = openDialogCallbacks.get(dialogId);
-    if (openCallback) {
-      openCallback(options?.params);
+    const callbacks = openDialogCallbacks.get(dialogId);
+    if (callbacks) {
+      for (const openCallback of callbacks) {
+        openCallback(options?.params);
+      }
     }
   };
 

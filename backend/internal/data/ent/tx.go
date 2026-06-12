@@ -36,6 +36,8 @@ type Tx struct {
 	GroupInvitationToken *GroupInvitationTokenClient
 	// MaintenanceEntry is the client for interacting with the MaintenanceEntry builders.
 	MaintenanceEntry *MaintenanceEntryClient
+	// MaintenancePlan is the client for interacting with the MaintenancePlan builders.
+	MaintenancePlan *MaintenancePlanClient
 	// Notifier is the client for interacting with the Notifier builders.
 	Notifier *NotifierClient
 	// PasswordResetTokens is the client for interacting with the PasswordResetTokens builders.
@@ -191,6 +193,7 @@ func (tx *Tx) init() {
 	tx.Group = NewGroupClient(tx.config)
 	tx.GroupInvitationToken = NewGroupInvitationTokenClient(tx.config)
 	tx.MaintenanceEntry = NewMaintenanceEntryClient(tx.config)
+	tx.MaintenancePlan = NewMaintenancePlanClient(tx.config)
 	tx.Notifier = NewNotifierClient(tx.config)
 	tx.PasswordResetTokens = NewPasswordResetTokensClient(tx.config)
 	tx.Tag = NewTagClient(tx.config)

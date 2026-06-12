@@ -52,6 +52,10 @@ func (_m *MaintenanceEntry) GetID() uuid.UUID {
 	return _m.ID
 }
 
+func (_m *MaintenancePlan) GetID() uuid.UUID {
+	return _m.ID
+}
+
 func (_m *Notifier) GetID() uuid.UUID {
 	return _m.ID
 }

@@ -194,6 +194,8 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		// Entity maintenance endpoints
 		r.Get("/entities/{id}/maintenance", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceLogGet(), userMW...))
 		r.Post("/entities/{id}/maintenance", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceEntryCreate(), userMW...))
+		r.Get("/entities/{id}/maintenance/plans", chain.ToHandlerFunc(v1Ctrl.HandleMaintenancePlanGetAll(), userMW...))
+		r.Post("/entities/{id}/maintenance/plans", chain.ToHandlerFunc(v1Ctrl.HandleMaintenancePlanCreate(), userMW...))
 
 		r.Get("/assets/{id}", chain.ToHandlerFunc(v1Ctrl.HandleAssetGet(), userMW...))
 
@@ -209,6 +211,8 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Get("/maintenance", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceGetAll(), userMW...))
 		r.Put("/maintenance/{id}", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceEntryUpdate(), userMW...))
 		r.Delete("/maintenance/{id}", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceEntryDelete(), userMW...))
+		r.Put("/maintenance/plans/{id}", chain.ToHandlerFunc(v1Ctrl.HandleMaintenancePlanUpdate(), userMW...))
+		r.Delete("/maintenance/plans/{id}", chain.ToHandlerFunc(v1Ctrl.HandleMaintenancePlanDelete(), userMW...))
 
 		// Notifiers
 		r.Get("/notifiers", chain.ToHandlerFunc(v1Ctrl.HandleGetUserNotifiers(), userMW...))

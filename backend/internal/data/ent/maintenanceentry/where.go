@@ -71,6 +71,11 @@ func EntityID(v uuid.UUID) predicate.MaintenanceEntry {
 	return predicate.MaintenanceEntry(sql.FieldEQ(FieldEntityID, v))
 }
 
+// PlanID applies equality check predicate on the "plan_id" field. It's identical to PlanIDEQ.
+func PlanID(v uuid.UUID) predicate.MaintenanceEntry {
+	return predicate.MaintenanceEntry(sql.FieldEQ(FieldPlanID, v))
+}
+
 // Date applies equality check predicate on the "date" field. It's identical to DateEQ.
 func Date(v time.Time) predicate.MaintenanceEntry {
 	return predicate.MaintenanceEntry(sql.FieldEQ(FieldDate, v))
@@ -194,6 +199,36 @@ func EntityIDIn(vs ...uuid.UUID) predicate.MaintenanceEntry {
 // EntityIDNotIn applies the NotIn predicate on the "entity_id" field.
 func EntityIDNotIn(vs ...uuid.UUID) predicate.MaintenanceEntry {
 	return predicate.MaintenanceEntry(sql.FieldNotIn(FieldEntityID, vs...))
+}
+
+// PlanIDEQ applies the EQ predicate on the "plan_id" field.
+func PlanIDEQ(v uuid.UUID) predicate.MaintenanceEntry {
+	return predicate.MaintenanceEntry(sql.FieldEQ(FieldPlanID, v))
+}
+
+// PlanIDNEQ applies the NEQ predicate on the "plan_id" field.
+func PlanIDNEQ(v uuid.UUID) predicate.MaintenanceEntry {
+	return predicate.MaintenanceEntry(sql.FieldNEQ(FieldPlanID, v))
+}
+
+// PlanIDIn applies the In predicate on the "plan_id" field.
+func PlanIDIn(vs ...uuid.UUID) predicate.MaintenanceEntry {
+	return predicate.MaintenanceEntry(sql.FieldIn(FieldPlanID, vs...))
+}
+
+// PlanIDNotIn applies the NotIn predicate on the "plan_id" field.
+func PlanIDNotIn(vs ...uuid.UUID) predicate.MaintenanceEntry {
+	return predicate.MaintenanceEntry(sql.FieldNotIn(FieldPlanID, vs...))
+}
+
+// PlanIDIsNil applies the IsNil predicate on the "plan_id" field.
+func PlanIDIsNil() predicate.MaintenanceEntry {
+	return predicate.MaintenanceEntry(sql.FieldIsNull(FieldPlanID))
+}
+
+// PlanIDNotNil applies the NotNil predicate on the "plan_id" field.
+func PlanIDNotNil() predicate.MaintenanceEntry {
+	return predicate.MaintenanceEntry(sql.FieldNotNull(FieldPlanID))
 }
 
 // DateEQ applies the EQ predicate on the "date" field.
@@ -491,6 +526,29 @@ func HasEntity() predicate.MaintenanceEntry {
 func HasEntityWith(preds ...predicate.Entity) predicate.MaintenanceEntry {
 	return predicate.MaintenanceEntry(func(s *sql.Selector) {
 		step := newEntityStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasPlan applies the HasEdge predicate on the "plan" edge.
+func HasPlan() predicate.MaintenanceEntry {
+	return predicate.MaintenanceEntry(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, PlanTable, PlanColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPlanWith applies the HasEdge predicate on the "plan" edge with a given conditions (other predicates).
+func HasPlanWith(preds ...predicate.MaintenancePlan) predicate.MaintenanceEntry {
+	return predicate.MaintenanceEntry(func(s *sql.Selector) {
+		step := newPlanStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

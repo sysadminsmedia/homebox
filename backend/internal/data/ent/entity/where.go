@@ -1582,6 +1582,29 @@ func HasMaintenanceEntriesWith(preds ...predicate.MaintenanceEntry) predicate.En
 	})
 }
 
+// HasMaintenancePlans applies the HasEdge predicate on the "maintenance_plans" edge.
+func HasMaintenancePlans() predicate.Entity {
+	return predicate.Entity(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, MaintenancePlansTable, MaintenancePlansColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMaintenancePlansWith applies the HasEdge predicate on the "maintenance_plans" edge with a given conditions (other predicates).
+func HasMaintenancePlansWith(preds ...predicate.MaintenancePlan) predicate.Entity {
+	return predicate.Entity(func(s *sql.Selector) {
+		step := newMaintenancePlansStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasAttachments applies the HasEdge predicate on the "attachments" edge.
 func HasAttachments() predicate.Entity {
 	return predicate.Entity(func(s *sql.Selector) {
