@@ -25,6 +25,7 @@ export type ItemsQuery = {
   parentIds?: string[];
   tags?: string[];
   negateTags?: boolean;
+  matchAllTags?: boolean;
   onlyWithoutPhoto?: boolean;
   onlyWithPhoto?: boolean;
   q?: string;

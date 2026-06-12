@@ -2474,7 +2474,9 @@ paths:
   /v1/entities:
     get:
       parameters:
-      - description: search string
+      - description: 'search string; matches names, descriptions, serial/model numbers,
+          manufacturers, notes, purchase sources, tag names, and custom field values.
+          Use #<assetId> to look up by asset ID and double quotes for exact phrases'
         in: query
         name: q
         type: string
@@ -2493,6 +2495,10 @@ paths:
           type: string
         name: tags
         type: array
+      - description: require all selected tags to match (AND) instead of any (OR)
+        in: query
+        name: matchAllTags
+        type: boolean
       - collectionFormat: multi
         description: parent Ids
         in: query

@@ -21,6 +21,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/search"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -44,6 +45,7 @@ type EntityRepository struct {
 	db          *ent.Client
 	bus         *eventbus.EventBus
 	attachments *AttachmentRepo
+	search      search.Engine
 }
 
 type (
@@ -60,6 +62,7 @@ type (
 		ParentIDs        []uuid.UUID  `json:"parentIds"`
 		TagIDs           []uuid.UUID  `json:"tagIds"`
 		NegateTags       bool         `json:"negateTags"`
+		MatchAllTags     bool         `json:"matchAllTags"` // require every selected tag (AND) instead of any (OR); ignored when NegateTags is set
 		OnlyWithoutPhoto bool         `json:"onlyWithoutPhoto"`
 		OnlyWithPhoto    bool         `json:"onlyWithPhoto"`
 		ParentItemIDs    []uuid.UUID  `json:"parentItemIds"`
@@ -528,6 +531,7 @@ func entityQuerySpanAttrs(gid uuid.UUID, q EntityQuery) []attribute.KeyValue {
 		attribute.String("query.search", q.Search),
 		attribute.Int("query.tag_ids.count", len(q.TagIDs)),
 		attribute.Bool("query.negate_tags", q.NegateTags),
+		attribute.Bool("query.match_all_tags", q.MatchAllTags),
 		attribute.Int("query.parent_ids.count", len(q.ParentIDs)),
 		attribute.Int("query.parent_item_ids.count", len(q.ParentItemIDs)),
 		attribute.Int("query.fields.count", len(q.Fields)),
@@ -539,6 +543,58 @@ func entityQuerySpanAttrs(gid uuid.UUID, q EntityQuery) []attribute.KeyValue {
 		attribute.Bool("query.is_location.set", isLocSet),
 		attribute.Bool("query.is_location.value", isLocValue),
 		attribute.Bool("query.asset_id.set", !q.AssetID.Nil()),
+	}
+}
+
+// tagPredicates translates the tag filter portion of q into predicates that
+// QueryByGroup ANDs with the rest of the query. Selected tags also match any
+// of their descendant tags.
+func (r *EntityRepository) tagPredicates(ctx context.Context, q EntityQuery) []predicate.Entity {
+	tagRepo := &TagRepository{r.db, r.bus}
+	ctxDescendants, descSpan := entityTracer().Start(ctx, "repo.EntityRepository.QueryByGroup.tagDescendants",
+		trace.WithAttributes(attribute.Int("query.tag_ids.count", len(q.TagIDs))))
+	defer descSpan.End()
+
+	// expandTags returns the given tags plus all their descendant tags,
+	// falling back to just the given tags when expansion fails.
+	expandTags := func(ids []uuid.UUID) []uuid.UUID {
+		descendants, err := tagRepo.GetDescendantTagIDs(ctxDescendants, ids)
+		if err != nil {
+			recordSpanError(descSpan, err)
+			log.Warn().Err(err).Msg("failed to get descendant tags, using only direct tags")
+			return ids
+		}
+		if len(descendants) == 0 {
+			return ids
+		}
+		return descendants
+	}
+
+	hasTag := func(l uuid.UUID, _ int) predicate.Entity {
+		return entity.HasTagWith(tag.ID(l))
+	}
+
+	switch {
+	case q.NegateTags:
+		descendants := expandTags(q.TagIDs)
+		descSpan.SetAttributes(attribute.Int("query.tag_descendants.count", len(descendants)))
+		notTag := lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
+			return entity.Not(entity.HasTagWith(tag.ID(l)))
+		})
+		return []predicate.Entity{entity.And(notTag...)}
+	case q.MatchAllTags:
+		// Every selected tag must be present, where each tag also counts as
+		// matched by any of its descendants.
+		preds := make([]predicate.Entity, 0, len(q.TagIDs))
+		for _, id := range q.TagIDs {
+			expanded := expandTags([]uuid.UUID{id})
+			preds = append(preds, entity.Or(lo.Map(expanded, hasTag)...))
+		}
+		return preds
+	default:
+		descendants := expandTags(q.TagIDs)
+		descSpan.SetAttributes(attribute.Int("query.tag_descendants.count", len(descendants)))
+		return []predicate.Entity{entity.Or(lo.Map(descendants, hasTag)...)}
 	}
 }
 
@@ -583,16 +639,14 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 	}
 
 	if q.Search != "" {
-		qb.Where(
-			entity.Or(
-				entity.NameContainsFold(q.Search),
-				entity.DescriptionContainsFold(q.Search),
-				entity.SerialNumberContainsFold(q.Search),
-				entity.ModelNumberContainsFold(q.Search),
-				entity.ManufacturerContainsFold(q.Search),
-				entity.NotesContainsFold(q.Search),
-			),
-		)
+		searchPred, err := r.search.Predicate(ctx, gid, q.Search)
+		if err != nil {
+			recordSpanError(span, err)
+			return PaginationResult[EntitySummary]{}, err
+		}
+		if searchPred != nil {
+			qb = qb.Where(searchPred)
+		}
 	}
 
 	if !q.AssetID.Nil() {
@@ -602,32 +656,7 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 	var andPredicates []predicate.Entity
 	{
 		if len(q.TagIDs) > 0 {
-			tagRepo := &TagRepository{r.db, r.bus}
-			ctxDescendants, descSpan := entityTracer().Start(ctx, "repo.EntityRepository.QueryByGroup.tagDescendants",
-				trace.WithAttributes(attribute.Int("query.tag_ids.count", len(q.TagIDs))))
-			descendants, err := tagRepo.GetDescendantTagIDs(ctxDescendants, q.TagIDs)
-			if err != nil {
-				recordSpanError(descSpan, err)
-				log.Warn().Err(err).Msg("failed to get descendant tags, using only direct tags")
-				descendants = q.TagIDs
-			} else if len(descendants) == 0 {
-				descendants = q.TagIDs
-			}
-			descSpan.SetAttributes(attribute.Int("query.tag_descendants.count", len(descendants)))
-			descSpan.End()
-
-			var tagPredicates []predicate.Entity
-			if !q.NegateTags {
-				tagPredicates = lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
-					return entity.HasTagWith(tag.ID(l))
-				})
-				andPredicates = append(andPredicates, entity.Or(tagPredicates...))
-			} else {
-				tagPredicates = lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
-					return entity.Not(entity.HasTagWith(tag.ID(l)))
-				})
-				andPredicates = append(andPredicates, entity.And(tagPredicates...))
-			}
+			andPredicates = append(andPredicates, r.tagPredicates(ctx, q)...)
 		}
 
 		if q.OnlyWithoutPhoto {

@@ -53,3 +53,18 @@ Optionally, you can also add the following environment variable to the Homebox s
 - `HBOX_DATABASE_SSL_ROOT_CERT=path/to/root.crt` (path to the root certificate file)
 - `HBOX_DATABASE_SSL_CERT=path/to/server.crt` (path to the server certificate file)
 - `HBOX_DATABASE_SSL_KEY=path/to/server.key` (path to the server key file)
+
+## Accent-insensitive search on PostgreSQL
+
+Search is case-insensitive on both databases. To make it accent-insensitive on
+PostgreSQL as well (e.g. so `cafe` matches `café`), Homebox uses the standard
+[`unaccent`](https://www.postgresql.org/docs/current/unaccent.html) extension.
+Homebox tries to enable it automatically on startup; if the database user
+lacks the privilege to create extensions, enable it once as a superuser:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS unaccent;
+```
+
+Without the extension, search still works but treats accented characters as
+distinct. SQLite needs no setup — accent-insensitive search is built in.

@@ -75,7 +75,7 @@ func MainNoExit(m *testing.M) int {
 		Enabled: false,
 		Width:   0,
 		Height:  0,
-	})
+	}, nil)
 
 	err = os.MkdirAll(os.TempDir()+"/homebox", 0o755)
 	if err != nil {

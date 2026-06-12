@@ -16,6 +16,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/search"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/otel"
@@ -162,7 +163,13 @@ func run(cfg *config.Config) error {
 
 	app.bus = eventbus.New()
 	app.db = c
-	app.repos = repo.New(c, app.bus, cfg.Storage, cfg.Database.PubSubConnString, cfg.Thumbnail)
+
+	searchEngine, err := search.NewEngine(cfg.Search.Driver, c)
+	if err != nil {
+		log.Error().Err(err).Str("driver", cfg.Search.Driver).Msg("failed to create search engine")
+		return err
+	}
+	app.repos = repo.New(c, app.bus, cfg.Storage, cfg.Database.PubSubConnString, cfg.Thumbnail, searchEngine)
 
 	// Attachment-key escaping in fileblob only flattens paths on Windows
 	// (where os.PathSeparator is "\"), so the legacy-path rename is a Windows-

@@ -62,6 +62,15 @@ type Config struct {
 	Otel       OTelConfig     `yaml:"otel"`
 	Auth       AuthConfig     `yaml:"auth"`
 	Notifier   NotifierConf   `yaml:"notifier"`
+	Search     SearchConf     `yaml:"search"`
+}
+
+// SearchConf selects and configures the free-text search engine. The default
+// "database" driver searches directly in SQLite/PostgreSQL and needs no extra
+// services; the driver abstraction exists so external engines (e.g.
+// Meilisearch, Elasticsearch) can be added later.
+type SearchConf struct {
+	Driver string `yaml:"driver" conf:"default:database"`
 }
 
 type Options struct {
