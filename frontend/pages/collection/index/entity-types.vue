@@ -10,8 +10,8 @@
   import MdiPlus from "~icons/mdi/plus";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiDelete from "~icons/mdi/delete";
-  import MdiMapMarkerOutline from "~icons/mdi/map-marker-outline";
-  import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
+  import MdiMapMarker from "~icons/mdi/map-marker";
+  import MdiPackageVariant from "~icons/mdi/package-variant";
   import { Button } from "@/components/ui/button";
   import { Badge } from "@/components/ui/badge";
   import { Card } from "@/components/ui/card";
@@ -22,6 +22,10 @@
   import FormTextField from "~/components/Form/TextField.vue";
   import FormCheckbox from "~/components/Form/Checkbox.vue";
   import TemplateSelector from "~/components/Template/Selector.vue";
+  import IconSelector from "@/components/Form/IconSelector.vue";
+  import { getIconComponent } from "~/lib/icons";
+  import ColorSelector from "@/components/Form/ColorSelector.vue";
+  import { getContrastTextColor } from "~/lib/utils";
 
   const { t } = useI18n();
 
@@ -44,6 +48,7 @@
   const createForm = reactive({
     name: "",
     icon: "",
+    color: "",
     isLocation: false,
   });
   const createTemplate = ref<EntityTemplateSummary | null>(null);
@@ -51,6 +56,7 @@
   function resetCreateForm() {
     createForm.name = "";
     createForm.icon = "";
+    createForm.color = "";
     createForm.isLocation = false;
     createTemplate.value = null;
   }
@@ -64,6 +70,7 @@
     const payload = {
       name: createForm.name,
       icon: createForm.icon,
+      color: createForm.color,
       isLocation: createForm.isLocation,
       ...(createTemplate.value?.id ? { defaultTemplateId: createTemplate.value.id } : {}),
     } as EntityTypeCreate;
@@ -85,6 +92,7 @@
     id: "",
     name: "",
     icon: "",
+    color: "",
     isLocation: false,
   });
   const updateTemplate = ref<EntityTemplateSummary | null>(null);
@@ -93,6 +101,7 @@
     updateForm.id = et.id;
     updateForm.name = et.name;
     updateForm.icon = et.icon;
+    updateForm.color = et.color;
     updateForm.isLocation = et.isLocation;
     updateTemplate.value = et.defaultTemplate
       ? ({
@@ -114,6 +123,7 @@
       id: updateForm.id,
       name: updateForm.name,
       icon: updateForm.icon,
+      color: updateForm.color,
       isLocation: updateForm.isLocation,
       ...(updateTemplate.value?.id ? { defaultTemplateId: updateTemplate.value.id } : {}),
     } as EntityTypeUpdate;
@@ -157,6 +167,8 @@
         <form class="flex flex-col gap-3" @submit.prevent="create">
           <FormTextField v-model="createForm.name" :autofocus="true" label="Name" :max-length="255" :min-length="1" />
           <FormCheckbox v-model="createForm.isLocation" label="Is a container / location type" />
+          <ColorSelector v-model="createForm.color" label="Entity Type Color" :show-hex="true" />
+          <IconSelector v-model="createForm.icon" label="Entity Type Icon" />
           <TemplateSelector v-model="createTemplate" />
 
           <DialogFooter>
@@ -175,6 +187,8 @@
         <form class="flex flex-col gap-3" @submit.prevent="update">
           <FormTextField v-model="updateForm.name" :autofocus="true" label="Name" :max-length="255" :min-length="1" />
           <FormCheckbox v-model="updateForm.isLocation" label="Is a container / location type" />
+          <ColorSelector v-model="updateForm.color" label="Entity Type Color" :show-hex="true" />
+          <IconSelector v-model="updateForm.icon" label="Entity Type Icon" />
           <TemplateSelector v-model="updateTemplate" />
 
           <DialogFooter>
@@ -197,10 +211,15 @@
       <Card v-for="et in entityTypes" :key="et.id" class="p-4">
         <div class="flex items-center gap-3">
           <div
-            class="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground"
+            class="flex size-10 shrink-0 items-center justify-center rounded-full"
+            :style="
+              et.color
+                ? { backgroundColor: et.color, color: getContrastTextColor(et.color) }
+                : { backgroundColor: 'hsl(var(--accent))', color: 'hsl(var(--accent-foreground))' }
+            "
           >
-            <MdiMapMarkerOutline v-if="et.isLocation" class="size-5" />
-            <MdiPackageVariantClosed v-else class="size-5" />
+            <component :is="getIconComponent(et.icon, MdiMapMarker)" v-if="et.isLocation" class="size-5" />
+            <component :is="getIconComponent(et.icon, MdiPackageVariant)" v-else class="size-5" />
           </div>
 
           <div class="mr-auto min-w-0">

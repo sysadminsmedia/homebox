@@ -2399,7 +2399,8 @@ func (r *EntityRepository) GetAllContainers(ctx context.Context, gid uuid.UUID, 
 					child.entity_children = e.id
 					AND child.archived = false
 					AND ct.is_location = false
-			) as item_count
+			) as item_count,
+			et
 		FROM
 			entities e
 		JOIN
@@ -2431,7 +2432,7 @@ func (r *EntityRepository) GetAllContainers(ctx context.Context, gid uuid.UUID, 
 
 		var maybeCount *float64
 
-		err := rows.Scan(&ct.ID, &ct.Name, &ct.Description, &ct.CreatedAt, &ct.UpdatedAt, &maybeCount)
+		err := rows.Scan(&ct.ID, &ct.Name, &ct.Description, &ct.CreatedAt, &ct.UpdatedAt, &maybeCount, &ct.EntityType)
 		if err != nil {
 			recordSpanError(span, err)
 			return nil, err
@@ -2643,6 +2644,8 @@ type TreeItem struct {
 	ID       uuid.UUID   `json:"id"`
 	Name     string      `json:"name"`
 	Type     string      `json:"type"`
+	Color    *string      `json:"color,omitempty"`
+	Icon     *string      `json:"icon,omitempty"`
 	Children []*TreeItem `json:"children"`
 }
 
@@ -2650,6 +2653,8 @@ type FlatTreeItem struct {
 	ID       uuid.UUID
 	Name     string
 	Type     string
+	Color	 *string
+	Icon	 *string
 	ParentID uuid.UUID
 	Level    int
 }
@@ -2744,13 +2749,15 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 	defer span.End()
 
 	query := `
-		WITH recursive entity_tree(id, NAME, parent_id, level, node_type) AS
+		WITH recursive entity_tree(id, NAME, parent_id, level, node_type, color, icon) AS
 		(
 			SELECT  e.id,
 					e.NAME,
 					e.entity_children AS parent_id,
 					0 AS level,
-					CASE WHEN et.is_location THEN 'location' ELSE 'item' END AS node_type
+					CASE WHEN et.is_location THEN 'location' ELSE 'item' END AS node_type,
+					et.color as color,
+					et.icon as icon
 			FROM    entities e
 			JOIN    entity_types et ON et.id = e.entity_type_entities
 			WHERE   e.entity_children IS NULL
@@ -2762,7 +2769,9 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 					c.NAME,
 					c.entity_children AS parent_id,
 					level + 1,
-					CASE WHEN ct.is_location THEN 'location' ELSE 'item' END AS node_type
+					CASE WHEN ct.is_location THEN 'location' ELSE 'item' END AS node_type,
+					ct.color as color,
+					ct.icon as icon
 			FROM   entities c
 			JOIN   entity_types ct ON ct.id = c.entity_type_entities
 			JOIN   entity_tree p
@@ -2775,7 +2784,9 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 				 NAME,
 				 level,
 				 parent_id,
-				 node_type
+				 node_type,
+				 color,
+				 icon
 		FROM    (
 					SELECT  *
 					FROM    entity_tree
@@ -2788,13 +2799,15 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 				 lower(NAME)`
 
 	if tq.WithItems {
-		itemQuery := `, item_tree(id, NAME, parent_id, level, node_type) AS
+		itemQuery := `, item_tree(id, NAME, parent_id, level, node_type, color, icon) AS
 		(
 			SELECT  e.id,
 					e.NAME,
 					e.entity_children as parent_id,
 					0 AS level,
-					'item' AS node_type
+					'item' AS node_type,
+					et.color AS color,
+					et.icon AS icon
 			FROM    entities e
 			JOIN    entity_types et ON et.id = e.entity_type_entities
 			WHERE   et.is_location = false
@@ -2806,7 +2819,9 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 					c.NAME,
 					c.entity_children AS parent_id,
 					level + 1,
-					'item' AS node_type
+					'item' AS node_type,
+					ct.color AS color,
+					ct.icon AS icon
 			FROM    entities c
 			JOIN    entity_types ct ON ct.id = c.entity_type_entities
 			JOIN    item_tree p
@@ -2840,7 +2855,7 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 	var flatItems []FlatTreeItem
 	for rows.Next() {
 		var item FlatTreeItem
-		if err := rows.Scan(&item.ID, &item.Name, &item.Level, &item.ParentID, &item.Type); err != nil {
+		if err := rows.Scan(&item.ID, &item.Name, &item.Level, &item.ParentID, &item.Type, &item.Color, &item.Icon); err != nil {
 			recordSpanError(querySpan, err)
 			querySpan.End()
 			recordSpanError(span, err)
@@ -2881,6 +2896,8 @@ func ConvertEntitiesToTree(items []FlatTreeItem) []TreeItem {
 			ID:       item.ID,
 			Name:     item.Name,
 			Type:     item.Type,
+			Color:    item.Color,
+			Icon:     item.Icon,
 			Children: []*TreeItem{},
 		}
 

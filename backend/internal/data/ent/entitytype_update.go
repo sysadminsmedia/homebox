@@ -86,6 +86,26 @@ func (_u *EntityTypeUpdate) SetNillableIsLocation(v *bool) *EntityTypeUpdate {
 	return _u
 }
 
+// SetColor sets the "color" field.
+func (_u *EntityTypeUpdate) SetColor(v string) *EntityTypeUpdate {
+	_u.mutation.SetColor(v)
+	return _u
+}
+
+// SetNillableColor sets the "color" field if the given value is not nil.
+func (_u *EntityTypeUpdate) SetNillableColor(v *string) *EntityTypeUpdate {
+	if v != nil {
+		_u.SetColor(*v)
+	}
+	return _u
+}
+
+// ClearColor clears the value of the "color" field.
+func (_u *EntityTypeUpdate) ClearColor() *EntityTypeUpdate {
+	_u.mutation.ClearColor()
+	return _u
+}
+
 // SetIcon sets the "icon" field.
 func (_u *EntityTypeUpdate) SetIcon(v string) *EntityTypeUpdate {
 	_u.mutation.SetIcon(v)
@@ -237,6 +257,11 @@ func (_u *EntityTypeUpdate) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "EntityType.description": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.Color(); ok {
+		if err := entitytype.ColorValidator(v); err != nil {
+			return &ValidationError{Name: "color", err: fmt.Errorf(`ent: validator failed for field "EntityType.color": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Icon(); ok {
 		if err := entitytype.IconValidator(v); err != nil {
 			return &ValidationError{Name: "icon", err: fmt.Errorf(`ent: validator failed for field "EntityType.icon": %w`, err)}
@@ -274,6 +299,12 @@ func (_u *EntityTypeUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	}
 	if value, ok := _u.mutation.IsLocation(); ok {
 		_spec.SetField(entitytype.FieldIsLocation, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.Color(); ok {
+		_spec.SetField(entitytype.FieldColor, field.TypeString, value)
+	}
+	if _u.mutation.ColorCleared() {
+		_spec.ClearField(entitytype.FieldColor, field.TypeString)
 	}
 	if value, ok := _u.mutation.Icon(); ok {
 		_spec.SetField(entitytype.FieldIcon, field.TypeString, value)
@@ -458,6 +489,26 @@ func (_u *EntityTypeUpdateOne) SetNillableIsLocation(v *bool) *EntityTypeUpdateO
 	return _u
 }
 
+// SetColor sets the "color" field.
+func (_u *EntityTypeUpdateOne) SetColor(v string) *EntityTypeUpdateOne {
+	_u.mutation.SetColor(v)
+	return _u
+}
+
+// SetNillableColor sets the "color" field if the given value is not nil.
+func (_u *EntityTypeUpdateOne) SetNillableColor(v *string) *EntityTypeUpdateOne {
+	if v != nil {
+		_u.SetColor(*v)
+	}
+	return _u
+}
+
+// ClearColor clears the value of the "color" field.
+func (_u *EntityTypeUpdateOne) ClearColor() *EntityTypeUpdateOne {
+	_u.mutation.ClearColor()
+	return _u
+}
+
 // SetIcon sets the "icon" field.
 func (_u *EntityTypeUpdateOne) SetIcon(v string) *EntityTypeUpdateOne {
 	_u.mutation.SetIcon(v)
@@ -622,6 +673,11 @@ func (_u *EntityTypeUpdateOne) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "EntityType.description": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.Color(); ok {
+		if err := entitytype.ColorValidator(v); err != nil {
+			return &ValidationError{Name: "color", err: fmt.Errorf(`ent: validator failed for field "EntityType.color": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Icon(); ok {
 		if err := entitytype.IconValidator(v); err != nil {
 			return &ValidationError{Name: "icon", err: fmt.Errorf(`ent: validator failed for field "EntityType.icon": %w`, err)}
@@ -676,6 +732,12 @@ func (_u *EntityTypeUpdateOne) sqlSave(ctx context.Context) (_node *EntityType, 
 	}
 	if value, ok := _u.mutation.IsLocation(); ok {
 		_spec.SetField(entitytype.FieldIsLocation, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.Color(); ok {
+		_spec.SetField(entitytype.FieldColor, field.TypeString, value)
+	}
+	if _u.mutation.ColorCleared() {
+		_spec.ClearField(entitytype.FieldColor, field.TypeString)
 	}
 	if value, ok := _u.mutation.Icon(); ok {
 		_spec.SetField(entitytype.FieldIcon, field.TypeString, value)

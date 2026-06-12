@@ -14,19 +14,31 @@ import MdiWrenchOutline from "~icons/mdi/wrench-outline";
 import MdiDumbbellOutline from "~icons/mdi/dumbbell";
 import MdiSofaOutline from "~icons/mdi/sofa-outline";
 import MdiPalleteOutline from "~icons/mdi/palette-outline";
+import MdiBathtubOutline from "~icons/mdi/bathtub-outline";
+import MdiMapMarkerOutline from "~icons/mdi/map-marker-outline";
+import MdiBunkBedOutline from "~icons/mdi/bunk-bed-outline";
+import MdiGarageVariant from "~icons/mdi/garage-variant";
+import MdiPackageVariant from "~icons/mdi/package-variant";
+import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
 
 export const availableIcons = [
   { name: "tag-outline", component: MdiTagOutline },
   { name: "tree-outline", component: MdiTreeOutline },
   { name: "bag-suitcase-outline", component: MdiBagSuitcaseOutline },
   { name: "bed-outline", component: MdiBedOutline },
+  { name: "bunk-bed-outline", component: MdiBunkBedOutline },
+  { name: "bathtub-outline", component: MdiBathtubOutline },
   { name: "kitchen-counter-outline", component: MdiKitchenCounterOutline },
+  { name: "sofa-outline", component: MdiSofaOutline },
+  { name: "dresser-outline", component: MdiDresserOutline },
+  { name: "file-cabinet-outline", component: MdiFileCabinetOutline },
+  { name: "garage-variant", component: MdiGarageVariant },
+  { name: "map-marker-outline", component: MdiMapMarkerOutline },
+  { name: "package-variant", component: MdiPackageVariant },
+  { name: "package-variant-closed", component: MdiPackageVariantClosed },
   { name: "book-open-variant-outline", component: MdiBookOpenVariantOutline },
   { name: "laptop", component: MdiLaptopOutline },
-  { name: "sofa-outline", component: MdiSofaOutline },
   { name: "toolbox-outline", component: MdiToolboxOutline },
-  { name: "file-cabinet-outline", component: MdiFileCabinetOutline },
-  { name: "dresser-outline", component: MdiDresserOutline },
   { name: "lightbulb-outline", component: MdiLightbulbOutline },
   { name: "power-plug-outline", component: MdiPowerPlugOutline },
   { name: "wrench-outline", component: MdiWrenchOutline },
@@ -37,12 +49,12 @@ export const availableIcons = [
 export type IconName = (typeof availableIcons)[number]["name"];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getIconComponent(iconName: string | undefined): any {
+export function getIconComponent(iconName: string | undefined, defaultIcon: any | undefined): any {
   if (!iconName) {
-    return defaultIcon;
+    return defaultIcon || defaultTagIcon;
   }
   const icon = availableIcons.find(i => i.name === iconName);
-  return icon ? icon.component : defaultIcon;
+  return icon ? icon.component : defaultIcon || defaultTagIcon;
 }
 
-export const defaultIcon = MdiTagOutline;
+export const defaultTagIcon = MdiTagOutline;

@@ -5,6 +5,8 @@
   import MdiMapMarker from "~icons/mdi/map-marker";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import LocationTreeNode from "./Node.vue";
+  import { getIconComponent } from "~/lib/icons";
+  import { getContrastTextColor } from "~/lib/utils";
 
   type Props = {
     treeId: string;
@@ -78,8 +80,17 @@
           </div>
         </div>
       </div>
-      <MdiMapMarker v-if="item.type === 'location'" class="size-4" />
-      <MdiPackageVariant v-else class="size-4" />
+      <div
+        class="mr-1 flex size-5 items-center justify-center rounded-full"
+        :style="
+          item.color
+            ? { backgroundColor: item.color, color: getContrastTextColor(item.color) }
+            : { backgroundColor: 'hsl(var(--accent))', color: 'hsl(var(--accent-foreground))' }
+        "
+      >
+        <component :is="getIconComponent(item.icon, MdiMapMarker)" v-if="item.type === 'location'" class="size-3" />
+        <component :is="getIconComponent(item.icon, MdiPackageVariant)" v-else class="size-3" />
+      </div>
       <NuxtLink class="text-lg hover:underline" :to="link" @click.stop>{{ item.name }} </NuxtLink>
     </div>
     <div v-if="openRef" class="ml-4">

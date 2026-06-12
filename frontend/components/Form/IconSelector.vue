@@ -37,18 +37,17 @@
     </Label>
     <div class="flex flex-col gap-1">
       <!-- Grid of icon buttons -->
-      <div class="grid w-fit grid-cols-4 gap-1">
+      <div class="grid w-fit grid-cols-6 gap-1">
         <Button
           v-for="icon in availableIcons"
           :key="icon.name"
           type="button"
           :variant="value === icon.name ? 'default' : 'outline'"
-          size="sm"
-          class="flex size-10 items-center justify-center p-0"
+          class="flex size-10 items-center justify-center p-0 text-lg [&_svg]:size-6"
           :aria-label="`Select ${icon.name} icon`"
           @click="selectIcon(icon.name)"
         >
-          <component :is="icon.component" class="size-5" />
+          <component :is="icon.component" />
         </Button>
       </div>
     </div>
