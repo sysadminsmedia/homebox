@@ -3,28 +3,12 @@
     <template #title>
       <div class="flex items-center gap-2 text-nowrap">
         <span>Create</span>
-        <Select :model-value="selectedEntityType?.id">
-          <SelectTrigger class="h-7 p-1">
-            <SelectValue
-              class="text-xl"
-              :placeholder="$t('components.entity.create_modal.type_selector_placeholder')"
-            />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem
-              v-for="type in subItemCreate ? entityTypes.filter(t => !t.isLocation) : entityTypes"
-              :key="type.id"
-              :value="type.id"
-              @click="onEntityTypeChanged(type.id)"
-            >
-              <div class="flex items-center gap-2">
-                <MdiMapMarkerOutline v-if="type.isLocation" class="size-4" />
-                <MdiPackageVariantClosed v-else class="size-4" />
-                <span>{{ t(type.name) }}</span>
-              </div>
-            </SelectItem>
-          </SelectContent>
-        </Select>
+        <EntitySelector
+          :selected-entity-type="selectedEntityType?.id"
+          :entity-types="subItemCreate ? entityTypes.filter(t => !t.isLocation) : entityTypes"
+          size="sm"
+          @entity-type-changed="onEntityTypeChanged"
+        />
       </div>
     </template>
     <template #header-actions>
@@ -244,7 +228,6 @@
   import { toast } from "@/components/ui/sonner";
   import { Button, ButtonGroup } from "~/components/ui/button";
   import BaseModal from "@/components/App/CreateModal.vue";
-  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import type {
     EntityCreate,
     EntityTemplateOut,
@@ -261,7 +244,6 @@
   import MdiFileDocumentOutline from "~icons/mdi/file-document-outline";
   import MdiChevronDown from "~icons/mdi/chevron-down";
   import MdiClose from "~icons/mdi/close";
-  import MdiMapMarkerOutline from "~icons/mdi/map-marker-outline";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
   import TagSelector from "~/components/Tag/Selector.vue";
@@ -281,6 +263,7 @@
     type PhotoPreview,
   } from "~/components/Form/photo-uploader";
   import { useEntityTypeStore } from "~~/stores/entityTypes";
+  import EntitySelector from "~/components/Entity/Selector.vue";
 
   const { t } = useI18n();
   const { openDialog, closeDialog, registerOpenDialogCallback } = useDialog();

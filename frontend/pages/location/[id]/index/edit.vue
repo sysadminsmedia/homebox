@@ -28,6 +28,8 @@
   import BaseCard from "@/components/Base/Card.vue";
   import { Card } from "~/components/ui/card";
   import DropZone from "~/components/global/DropZone.vue";
+  import EntitySelector from "~/components/Entity/Selector.vue";
+  import { useEntityTypeStore } from "~/stores/entityTypes";
 
   const { t } = useI18n();
 
@@ -40,6 +42,8 @@
   const route = useRoute();
   const api = useUserApi();
   const preferences = useViewPreferences();
+
+  const entityTypeStore = useEntityTypeStore();
 
   const locationId = computed<string>(() => route.params.id as string);
 
@@ -86,6 +90,8 @@
   async function saveLocation(redirect: boolean) {
     saving.value = true;
 
+    const isConvertingToItem = !item.value.entityType?.isLocation;
+
     const payload: EntityUpdate = {
       ...item.value,
       parentId: parent.value?.id || null,
@@ -95,6 +101,7 @@
       soldPrice: item.value.soldPrice || 0,
       // Date-only fields stay as YYYY-MM-DD strings via the spread above.
       syncChildEntityLocations: item.value.syncChildEntityLocations,
+      entityTypeId: item.value.entityType!.id,
     };
 
     const { error } = await api.items.update(locationId.value, payload);
@@ -107,7 +114,9 @@
     }
 
     toast.success(t("locations.toast.location_updated"));
-    if (redirect) {
+    if (isConvertingToItem) {
+      navigateTo("/item/" + locationId.value);
+    } else if (redirect) {
       navigateTo("/location/" + locationId.value);
     }
   }
@@ -384,6 +393,14 @@
           <div class="mb-6 grid gap-4 border-t px-5 pt-2 md:grid-cols-2">
             <LocationSelector v-model="parent" label="Parent Location" :current-location="item" />
             <TagSelector v-model="item.tagIds" :tags="tags" />
+            <div class="flex flex-col gap-1">
+              <Label class="px-1">{{ $t("global.entity_type") }}</Label>
+              <EntitySelector
+                :entity-types="entityTypeStore.allTypes"
+                :selected-entity-type="item.entityType?.id"
+                @entity-type-changed="id => (item.entityType = entityTypeStore.findById(id))"
+              />
+            </div>
           </div>
 
           <div class="border-t sm:p-0">

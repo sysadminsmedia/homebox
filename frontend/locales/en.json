@@ -177,6 +177,9 @@
             }
         },
         "entity": {
+            "selector": {
+                "placeholder": "Select a type…"
+            },
             "create_modal": {
                 "entity_name": "{type} Name",
                 "entity_quantity": "{type} Quantity",
@@ -205,7 +208,6 @@
                 "product_tooltip_scan_barcode": "Autofill with a barcode from 📷",
                 "rotate_photo": "Rotate photo",
                 "set_as_primary_photo": "Set as { isPrimary, select, true {non-} false {} other {}}primary photo",
-                "type_selector_placeholder": "Select a type…",
                 "item_selector_no_results_text": "Type to search…"
             }
         },
@@ -489,7 +491,8 @@
         "yes": "Yes",
         "item": "Item",
         "location": "Location",
-        "entity": "Entity"
+        "entity": "Entity",
+        "entity_type": "Entity Type"
     },
     "home": {
         "quick_statistics": "Quick Statistics",
@@ -579,7 +582,8 @@
                 "select_type": "Select a type",
                 "title": "Attachment Edit"
             },
-            "view_image": "View Image"
+            "view_image": "View Image",
+            "change_entity_type_confirm": "Changing the entity type may cause loss of data in fields that are not shared between the current and new entity types. Are you sure you want to change the entity type?"
         },
         "edit_details": "Edit Details",
         "field": "Field",
