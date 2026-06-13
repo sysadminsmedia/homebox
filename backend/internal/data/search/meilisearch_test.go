@@ -156,6 +156,69 @@ func TestMeilisearchEngine_Integration(t *testing.T) {
 		require.NoError(t, err)
 		assert.Nil(t, pred)
 	})
+
+	t.Run("tag facet search", func(t *testing.T) {
+		// the only tagged entity in g1 carries "Электроника"
+		facets, err := engine.SearchTags(ctx, g1.ID, "")
+		require.NoError(t, err)
+		byName := make(map[string]int, len(facets))
+		for _, f := range facets {
+			byName[f.Name] = f.Count
+		}
+		assert.Equal(t, 1, byName["Электроника"], "facet should report the tag and its entity count")
+
+		// facetQuery narrows by tag name (case-insensitive substring)
+		filtered, err := engine.SearchTags(ctx, g1.ID, "электро")
+		require.NoError(t, err)
+		require.Len(t, filtered, 1)
+		assert.Equal(t, "Электроника", filtered[0].Name)
+
+		// the tag belongs to g1, so g2's facets must not include it
+		other, err := engine.SearchTags(ctx, g2.ID, "")
+		require.NoError(t, err)
+		for _, f := range other {
+			assert.NotEqual(t, "Электроника", f.Name, "facets must be scoped to the group")
+		}
+	})
+
+	t.Run("custom field facets", func(t *testing.T) {
+		// three entities sharing one field name ("Condition") with two values,
+		// plus a field name with a space to exercise nested facet attributes
+		clean1 := db.EntityField.Create().SetName("Condition").SetType("text").SetTextValue("Clean").SaveX(ctx)
+		clean2 := db.EntityField.Create().SetName("Condition").SetType("text").SetTextValue("Clean").SaveX(ctx)
+		dirty := db.EntityField.Create().SetName("Condition").SetType("text").SetTextValue("Dirty").SaveX(ctx)
+		special := db.EntityField.Create().SetName("Special Field").SetType("text").SetTextValue("Clean").SaveX(ctx)
+		newItem(g1, et1, "Sofa").AddFields(clean1).SaveX(ctx)
+		newItem(g1, et1, "Rug").AddFields(clean2, special).SaveX(ctx)
+		newItem(g1, et1, "Doormat").AddFields(dirty).SaveX(ctx)
+		require.NoError(t, engine.ReindexGroup(ctx, g1.ID))
+
+		// discovery: each field is its own facet with per-value counts
+		facets, err := engine.FieldFacets(ctx, g1.ID)
+		require.NoError(t, err)
+		require.Contains(t, facets, "Condition")
+		require.Contains(t, facets, "Special Field", "field names with spaces are faceted")
+		require.Contains(t, facets, "IMEI", "fields are independent of one another")
+
+		counts := map[string]int{}
+		for _, f := range facets["Condition"] {
+			counts[f.Value] = f.Count
+		}
+		assert.Equal(t, 2, counts["Clean"])
+		assert.Equal(t, 1, counts["Dirty"])
+
+		// per-field value autocomplete, scoped and narrowed by query
+		vals, err := engine.SearchFieldValues(ctx, g1.ID, "Condition", "cle")
+		require.NoError(t, err)
+		require.Len(t, vals, 1)
+		assert.Equal(t, "Clean", vals[0].Value)
+		assert.Equal(t, 2, vals[0].Count)
+
+		// g2 has none of these fields
+		g2facets, err := engine.FieldFacets(ctx, g2.ID)
+		require.NoError(t, err)
+		assert.NotContains(t, g2facets, "Condition", "facets must be scoped to the group")
+	})
 }
 
 func TestMeilisearchEngine_EventDrivenReindex(t *testing.T) {

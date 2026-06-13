@@ -53,6 +53,56 @@ type Engine interface {
 	Predicate(ctx context.Context, gid uuid.UUID, query string) (predicate.Entity, error)
 }
 
+// TagFacet is a tag value present on a group's entities together with how many
+// of them carry it, e.g. {"Electronics", 12}. The json tags decode a
+// Meilisearch facet hit; the database engine populates the fields directly.
+type TagFacet struct {
+	Name  string `json:"value"`
+	Count int    `json:"count"`
+}
+
+// FieldFacet is one value of a custom field together with the number of a
+// group's entities that carry that value, e.g. {"Clean", 12}.
+type FieldFacet struct {
+	Value string `json:"value"`
+	Count int    `json:"count"`
+}
+
+// Faceter is an optional capability for engines that can enumerate the values
+// available for filtering — tag names and per-custom-field values, each with
+// the number of matching entities. It backs the search UI's filter sidebar
+// (filter by tag, by "Special Field = Clean", ...). Both the database and
+// Meilisearch engines implement it; callers type-assert for it:
+//
+//	if f, ok := engine.(search.Faceter); ok {
+//		tags, err := f.SearchTags(ctx, gid, "")
+//	}
+//
+// Like Predicate, these methods only enumerate facet values; applying a chosen
+// filter to the result set remains the repository's job.
+type Faceter interface {
+	// SearchTags returns the tag names used within a group ranked by entity
+	// count, optionally narrowed to those matching query (a case-insensitive
+	// substring of the tag name). An empty query returns the most-used tags.
+	SearchTags(ctx context.Context, gid uuid.UUID, query string) ([]TagFacet, error)
+
+	// FieldFacets returns every custom field present on a group's entities
+	// mapped to its value distribution (value -> entity count). It is the
+	// discovery call: which fields can be filtered on and what values each has.
+	FieldFacets(ctx context.Context, gid uuid.UUID) (map[string][]FieldFacet, error)
+
+	// SearchFieldValues returns the distinct values of a single custom field
+	// within a group ranked by entity count, optionally narrowed to those whose
+	// value matches query (a case-insensitive substring).
+	SearchFieldValues(ctx context.Context, gid uuid.UUID, field, query string) ([]FieldFacet, error)
+}
+
+// Both engines provide the faceting capability.
+var (
+	_ Faceter = (*DatabaseEngine)(nil)
+	_ Faceter = (*MeilisearchEngine)(nil)
+)
+
 // NewEngine constructs the search engine selected by cfg.Driver. An empty
 // driver selects the database engine. The event bus may be nil, in which case
 // external engines fall back to startup-only index builds.

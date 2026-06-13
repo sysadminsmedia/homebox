@@ -2,6 +2,7 @@ package search
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"sync"
@@ -26,6 +27,12 @@ const (
 	// meiliReindexBatch is the number of entities loaded from the database
 	// and pushed to Meilisearch per request during reindexing.
 	meiliReindexBatch = 1000
+
+	// meiliFieldFacetPrefix namespaces the per-field facet attributes
+	// (field_facets.<field name>). Each custom field becomes its own facet
+	// under this prefix so the search UI can offer an independent value filter
+	// per field. See FieldFacets/SearchFieldValues.
+	meiliFieldFacetPrefix = "field_facets"
 )
 
 // meiliReindexDebounce coalesces bursts of mutation events (e.g. a CSV
@@ -35,18 +42,26 @@ var meiliReindexDebounce = 2 * time.Second
 // meiliDocument is the shape of an entity stored in the Meilisearch index.
 // It mirrors the surfaces the database engine searches: the entity columns in
 // entityColumns plus tag names and custom field text values.
+//
+// Custom fields are stored twice, for two different jobs:
+//   - Fields (an array) is searchable, so a field's value matches free-text
+//     queries just like the database engine.
+//   - FieldFacets (an object keyed by field name) is filterable, so each field
+//     becomes its own facet — "Special Field" and "Color" are independent
+//     filters rather than one undifferentiated bucket of values.
 type meiliDocument struct {
-	ID           string       `json:"id"`
-	GroupID      string       `json:"group_id"`
-	Name         string       `json:"name"`
-	Description  string       `json:"description"`
-	SerialNumber string       `json:"serial_number"`
-	ModelNumber  string       `json:"model_number"`
-	Manufacturer string       `json:"manufacturer"`
-	Notes        string       `json:"notes"`
-	PurchaseFrom string       `json:"purchase_from"`
-	Tags         []string     `json:"tags"`
-	Fields       []meiliField `json:"fields"`
+	ID           string            `json:"id"`
+	GroupID      string            `json:"group_id"`
+	Name         string            `json:"name"`
+	Description  string            `json:"description"`
+	SerialNumber string            `json:"serial_number"`
+	ModelNumber  string            `json:"model_number"`
+	Manufacturer string            `json:"manufacturer"`
+	Notes        string            `json:"notes"`
+	PurchaseFrom string            `json:"purchase_from"`
+	Tags         []string          `json:"tags"`
+	Fields       []meiliField      `json:"fields"`
+	FieldFacets  map[string]string `json:"field_facets"`
 }
 
 // meiliField is a custom field on an entity. The name is stored for
@@ -172,8 +187,122 @@ func (e *MeilisearchEngine) Predicate(ctx context.Context, gid uuid.UUID, query 
 	return entity.IDIn(ids...), nil
 }
 
+// SearchTags returns the tag values used within a group, ranked by how many
+// entities carry each tag, optionally narrowed to those matching query (a
+// prefix/substring of the tag name). It powers the tag filter in the search UI:
+// an empty query lists a group's most-used tags, and a non-empty one
+// autocompletes as the user types.
+//
+// This relies on tags being a filterable, facet-searched attribute (see
+// ensureIndex). Unlike Predicate it does not return entities; the UI feeds the
+// chosen tags back into its own tag filter.
+func (e *MeilisearchEngine) SearchTags(ctx context.Context, gid uuid.UUID, query string) ([]TagFacet, error) {
+	raw, err := e.index.FacetSearchWithContext(ctx, &meilisearch.FacetSearchRequest{
+		FacetName:  "tags",
+		FacetQuery: strings.TrimSpace(query),
+		// uuid.String() emits only [0-9a-f-], so inlining it is safe
+		Filter: fmt.Sprintf("group_id = %q", gid.String()),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("meilisearch facet search failed: %w", err)
+	}
+
+	var resp struct {
+		FacetHits []TagFacet `json:"facetHits"`
+	}
+	if err := json.Unmarshal(*raw, &resp); err != nil {
+		return nil, fmt.Errorf("meilisearch returned an undecodable facet response: %w", err)
+	}
+	return resp.FacetHits, nil
+}
+
+// FieldFacets returns every custom field present on a group's entities mapped
+// to its value distribution (value -> entity count). It drives the search UI's
+// filter sidebar: which fields can be filtered on and what values each one
+// currently has. Values within a field are unordered.
+//
+// It reads the facet distribution of every field_facets.<name> attribute in a
+// single request, so the UI need not know the field names in advance.
+func (e *MeilisearchEngine) FieldFacets(ctx context.Context, gid uuid.UUID) (map[string][]FieldFacet, error) {
+	resp, err := e.index.SearchWithContext(ctx, "", &meilisearch.SearchRequest{
+		// uuid.String() emits only [0-9a-f-], so inlining it is safe
+		Filter: fmt.Sprintf("group_id = %q", gid.String()),
+		// "*" expands to every filterable attribute; we keep only the
+		// field_facets.<name> ones below. Distribution is computed over the
+		// whole filtered set, independent of the (unused) hit page.
+		Facets:               []string{"*"},
+		AttributesToRetrieve: []string{"id"},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("meilisearch field facet distribution failed: %w", err)
+	}
+	if len(resp.FacetDistribution) == 0 {
+		return map[string][]FieldFacet{}, nil
+	}
+
+	var dist map[string]map[string]int
+	if err := json.Unmarshal(resp.FacetDistribution, &dist); err != nil {
+		return nil, fmt.Errorf("meilisearch returned an undecodable facet distribution: %w", err)
+	}
+
+	prefix := meiliFieldFacetPrefix + "."
+	out := make(map[string][]FieldFacet)
+	for attr, values := range dist {
+		name, ok := strings.CutPrefix(attr, prefix)
+		if !ok {
+			continue // group_id, tags, the empty field_facets parent, ...
+		}
+		// "*" enumerates every field_facets.<name> in the whole index, so a
+		// field used only by *other* groups shows up here with an empty
+		// distribution (the group filter zeroes its counts). Skipping empties
+		// is what scopes the result to fields this group actually uses.
+		if len(values) == 0 {
+			continue
+		}
+		facets := make([]FieldFacet, 0, len(values))
+		for v, c := range values {
+			facets = append(facets, FieldFacet{Value: v, Count: c})
+		}
+		out[name] = facets
+	}
+	return out, nil
+}
+
+// SearchFieldValues returns the distinct values of a single custom field within
+// a group, ranked by how many entities carry each value and optionally narrowed
+// to those whose value matches query (a prefix/substring). It powers a per-field
+// value picker in the search UI, e.g. field "Special Field" -> [{"Clean",12}].
+//
+// Like SearchTags it only enumerates facet values; applying the chosen filter
+// to the result set remains the repository's job.
+func (e *MeilisearchEngine) SearchFieldValues(ctx context.Context, gid uuid.UUID, field, query string) ([]FieldFacet, error) {
+	raw, err := e.index.FacetSearchWithContext(ctx, &meilisearch.FacetSearchRequest{
+		FacetName:  meiliFieldFacetPrefix + "." + field,
+		FacetQuery: strings.TrimSpace(query),
+		// uuid.String() emits only [0-9a-f-], so inlining it is safe
+		Filter: fmt.Sprintf("group_id = %q", gid.String()),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("meilisearch field facet search failed: %w", err)
+	}
+
+	var resp struct {
+		FacetHits []FieldFacet `json:"facetHits"`
+	}
+	if err := json.Unmarshal(*raw, &resp); err != nil {
+		return nil, fmt.Errorf("meilisearch returned an undecodable facet response: %w", err)
+	}
+	return resp.FacetHits, nil
+}
+
 // ensureIndex creates the index (ignoring "already exists") and applies the
 // searchable/filterable attribute settings.
+//
+// tags is both searchable (so a tag name matches in free-text queries) and
+// filterable. Filterability is what makes it a facet: it lets the index be
+// queried for the tag values present in a group and narrowed by tag via the
+// facet-search endpoint (see SearchTags). The forthcoming "e-commerce" search
+// UI builds its tag filter from those facets, so facetSearch is enabled here.
 func (e *MeilisearchEngine) ensureIndex(ctx context.Context, uid string) error {
 	task, err := e.client.CreateIndexWithContext(ctx, &meilisearch.IndexConfig{Uid: uid, PrimaryKey: "id"})
 	if err != nil {
@@ -192,7 +321,14 @@ func (e *MeilisearchEngine) ensureIndex(ctx context.Context, uid string) error {
 			"name", "description", "serial_number", "model_number",
 			"manufacturer", "notes", "purchase_from", "tags", "fields.value",
 		},
-		FilterableAttributes: []string{"group_id"},
+		// group_id scopes every query; tags and the per-field facets under
+		// field_facets.* are faceted for the tag/field filter UI. Marking the
+		// field_facets parent filterable makes every nested field_facets.<name>
+		// a facet without having to enumerate field names up front.
+		FilterableAttributes: []string{"group_id", "tags", meiliFieldFacetPrefix},
+		// facet search is disabled by default in Meilisearch >= 1.12; enable it
+		// so SearchTags/SearchFieldValues can resolve/autocomplete facet values.
+		FacetSearch: true,
 	})
 	if err != nil {
 		return fmt.Errorf("meilisearch update settings: %w", err)
@@ -357,9 +493,10 @@ func buildMeiliDocument(e *ent.Entity) meiliDocument {
 		Manufacturer: e.Manufacturer,
 		Notes:        e.Notes,
 		PurchaseFrom: e.PurchaseFrom,
-		// empty slices (not nil) so documents serialize as [] instead of null
-		Tags:   []string{},
-		Fields: []meiliField{},
+		// empty slices/maps (not nil) so documents serialize as []/{} not null
+		Tags:        []string{},
+		Fields:      []meiliField{},
+		FieldFacets: map[string]string{},
 	}
 	if e.Edges.Group != nil {
 		doc.GroupID = e.Edges.Group.ID.String()
@@ -370,6 +507,9 @@ func buildMeiliDocument(e *ent.Entity) meiliDocument {
 	for _, f := range e.Edges.Fields {
 		if f.TextValue != "" {
 			doc.Fields = append(doc.Fields, meiliField{Name: f.Name, Value: f.TextValue})
+			// last value wins if a field name repeats on one entity; a facet
+			// only needs one value per (entity, field) anyway
+			doc.FieldFacets[f.Name] = f.TextValue
 		}
 	}
 	return doc

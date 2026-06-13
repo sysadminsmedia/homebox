@@ -2,6 +2,7 @@ package search
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"sync"
 
@@ -90,36 +91,40 @@ func (e *DatabaseEngine) Predicate(ctx context.Context, _ uuid.UUID, query strin
 // the table being selected (entity, tag, entity_fields), qualifying the
 // column through the active selector.
 func (e *DatabaseEngine) matcher(ctx context.Context) func(col, token string) func(*entsql.Selector) {
+	return func(col, token string) func(*entsql.Selector) {
+		return func(s *entsql.Selector) {
+			s.Where(e.foldContains(ctx, s.C(col), token))
+		}
+	}
+}
+
+// foldContains builds a dialect-appropriate, case- and (where available)
+// accent-insensitive "qualified column contains token" predicate. col must
+// already be qualified (e.g. via Selector.C or SelectTable.C). It is the shared
+// core behind both free-text matching and facet-value narrowing.
+func (e *DatabaseEngine) foldContains(ctx context.Context, col, token string) *entsql.Predicate {
 	if e.dialect == dialect.Postgres {
 		unaccent := e.unaccentAvailable(ctx)
-		return func(col, token string) func(*entsql.Selector) {
-			pattern := "%" + escapeLike(token) + "%"
-			return func(s *entsql.Selector) {
-				s.Where(entsql.P(func(b *entsql.Builder) {
-					if unaccent {
-						b.WriteString("unaccent(").WriteString(s.C(col)).WriteString(") ILIKE unaccent(")
-						b.Arg(pattern)
-						b.WriteString(")")
-					} else {
-						b.WriteString(s.C(col)).WriteString(" ILIKE ")
-						b.Arg(pattern)
-					}
-				}))
+		pattern := "%" + escapeLike(token) + "%"
+		return entsql.P(func(b *entsql.Builder) {
+			if unaccent {
+				b.WriteString("unaccent(").WriteString(col).WriteString(") ILIKE unaccent(")
+				b.Arg(pattern)
+				b.WriteString(")")
+			} else {
+				b.WriteString(col).WriteString(" ILIKE ")
+				b.Arg(pattern)
 			}
-		}
+		})
 	}
 
 	// SQLite
-	return func(col, token string) func(*entsql.Selector) {
-		pattern := "%" + escapeLike(textutils.Fold(token)) + "%"
-		return func(s *entsql.Selector) {
-			s.Where(entsql.P(func(b *entsql.Builder) {
-				b.WriteString("hb_fold(").WriteString(s.C(col)).WriteString(") LIKE ")
-				b.Arg(pattern)
-				b.WriteString(" ESCAPE '\\'")
-			}))
-		}
-	}
+	pattern := "%" + escapeLike(textutils.Fold(token)) + "%"
+	return entsql.P(func(b *entsql.Builder) {
+		b.WriteString("hb_fold(").WriteString(col).WriteString(") LIKE ")
+		b.Arg(pattern)
+		b.WriteString(" ESCAPE '\\'")
+	})
 }
 
 // unaccentAvailable reports whether the PostgreSQL unaccent extension can be
@@ -157,4 +162,143 @@ func (e *DatabaseEngine) unaccentAvailable(ctx context.Context) bool {
 func escapeLike(s string) string {
 	r := strings.NewReplacer(`\`, `\\`, `%`, `\%`, `_`, `\_`)
 	return r.Replace(s)
+}
+
+// --- Faceter implementation -------------------------------------------------
+//
+// These mirror the Meilisearch engine's facet methods so the search UI behaves
+// the same regardless of driver. Counts are entity counts within the group; the
+// grouping key (tag name / field value) keeps its original casing while the
+// optional narrowing query matches case- and accent-insensitively, matching
+// both the free-text search and Meilisearch's facetQuery.
+
+// notEmpty is the "<col> is a non-empty string" predicate, used to mirror the
+// Meilisearch document builder, which only facets fields that have a text value.
+func notEmpty(col string) *entsql.Predicate {
+	return entsql.P(func(b *entsql.Builder) {
+		b.WriteString(col).WriteString(" <> ''")
+	})
+}
+
+// SearchTags implements Faceter.
+func (e *DatabaseEngine) SearchTags(ctx context.Context, gid uuid.UUID, query string) ([]TagFacet, error) {
+	t := entsql.Table(tag.Table).As("t")
+	te := entsql.Table(entity.TagTable).As("te")
+	// entity.TagPrimaryKey is {tag_id, entity_id}; count distinct entities.
+	cnt := entsql.Count(entsql.Distinct(te.C(entity.TagPrimaryKey[1])))
+
+	sel := entsql.Dialect(e.dialect).
+		Select(t.C(tag.FieldName), entsql.As(cnt, "count")).
+		From(t).
+		Join(te).On(te.C(entity.TagPrimaryKey[0]), t.C(tag.FieldID)).
+		Where(entsql.EQ(t.C(tag.GroupColumn), gid)).
+		GroupBy(t.C(tag.FieldName)).
+		OrderBy(entsql.Desc(cnt), entsql.Asc(t.C(tag.FieldName)))
+	if q := strings.TrimSpace(query); q != "" {
+		sel.Where(e.foldContains(ctx, t.C(tag.FieldName), q))
+	}
+
+	rows, err := e.scanFacets(ctx, sel)
+	if err != nil {
+		return nil, fmt.Errorf("database tag facets: %w", err)
+	}
+	out := make([]TagFacet, len(rows))
+	for i, r := range rows {
+		out[i] = TagFacet{Name: r.key, Count: r.count}
+	}
+	return out, nil
+}
+
+// SearchFieldValues implements Faceter.
+func (e *DatabaseEngine) SearchFieldValues(ctx context.Context, gid uuid.UUID, field, query string) ([]FieldFacet, error) {
+	f := entsql.Table(entityfield.Table).As("f")
+	en := entsql.Table(entity.Table).As("e")
+	cnt := entsql.Count(entsql.Distinct(f.C(entityfield.EntityColumn)))
+
+	sel := entsql.Dialect(e.dialect).
+		Select(f.C(entityfield.FieldTextValue), entsql.As(cnt, "count")).
+		From(f).
+		Join(en).On(f.C(entityfield.EntityColumn), en.C(entity.FieldID)).
+		Where(entsql.EQ(en.C(entity.GroupColumn), gid)).
+		Where(entsql.EQ(f.C(entityfield.FieldName), field)).
+		Where(notEmpty(f.C(entityfield.FieldTextValue))).
+		GroupBy(f.C(entityfield.FieldTextValue)).
+		OrderBy(entsql.Desc(cnt), entsql.Asc(f.C(entityfield.FieldTextValue)))
+	if q := strings.TrimSpace(query); q != "" {
+		sel.Where(e.foldContains(ctx, f.C(entityfield.FieldTextValue), q))
+	}
+
+	rows, err := e.scanFacets(ctx, sel)
+	if err != nil {
+		return nil, fmt.Errorf("database field value facets: %w", err)
+	}
+	out := make([]FieldFacet, len(rows))
+	for i, r := range rows {
+		out[i] = FieldFacet{Value: r.key, Count: r.count}
+	}
+	return out, nil
+}
+
+// FieldFacets implements Faceter. A single grouped query yields every
+// (field name, value) pair with its entity count, which is then bucketed by
+// field name.
+func (e *DatabaseEngine) FieldFacets(ctx context.Context, gid uuid.UUID) (map[string][]FieldFacet, error) {
+	f := entsql.Table(entityfield.Table).As("f")
+	en := entsql.Table(entity.Table).As("e")
+	cnt := entsql.Count(entsql.Distinct(f.C(entityfield.EntityColumn)))
+
+	sel := entsql.Dialect(e.dialect).
+		Select(f.C(entityfield.FieldName), f.C(entityfield.FieldTextValue), entsql.As(cnt, "count")).
+		From(f).
+		Join(en).On(f.C(entityfield.EntityColumn), en.C(entity.FieldID)).
+		Where(entsql.EQ(en.C(entity.GroupColumn), gid)).
+		Where(notEmpty(f.C(entityfield.FieldTextValue))).
+		GroupBy(f.C(entityfield.FieldName), f.C(entityfield.FieldTextValue)).
+		OrderBy(entsql.Asc(f.C(entityfield.FieldName)), entsql.Desc(cnt), entsql.Asc(f.C(entityfield.FieldTextValue)))
+
+	q, args := sel.Query()
+	rows, err := e.db.Sql().QueryContext(ctx, q, args...)
+	if err != nil {
+		return nil, fmt.Errorf("database field facets: %w", err)
+	}
+	defer func() { _ = rows.Close() }()
+
+	out := make(map[string][]FieldFacet)
+	for rows.Next() {
+		var name, value string
+		var count int
+		if err := rows.Scan(&name, &value, &count); err != nil {
+			return nil, fmt.Errorf("database field facets: %w", err)
+		}
+		out[name] = append(out[name], FieldFacet{Value: value, Count: count})
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("database field facets: %w", err)
+	}
+	return out, nil
+}
+
+// facetRow is a (grouping key, entity count) pair from a two-column facet query.
+type facetRow struct {
+	key   string
+	count int
+}
+
+func (e *DatabaseEngine) scanFacets(ctx context.Context, sel *entsql.Selector) ([]facetRow, error) {
+	q, args := sel.Query()
+	rows, err := e.db.Sql().QueryContext(ctx, q, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = rows.Close() }()
+
+	var out []facetRow
+	for rows.Next() {
+		var r facetRow
+		if err := rows.Scan(&r.key, &r.count); err != nil {
+			return nil, err
+		}
+		out = append(out, r)
+	}
+	return out, rows.Err()
 }
