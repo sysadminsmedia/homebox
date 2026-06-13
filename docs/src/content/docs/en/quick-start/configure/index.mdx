@@ -7,6 +7,7 @@ import {Tabs, TabItem} from "@astrojs/starlight/components";
 
 <Tabs>
     <TabItem label="Environment Variables">
+
 | Variable                                | Default                                                                                        | Description                                                                                                                                                                               |
 |-----------------------------------------|------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | HBOX_MODE                               | `development`                                                                                  | application mode used for runtime behavior  can be one of: `development`, `production`                                                                                                    |
@@ -75,7 +76,7 @@ import {Tabs, TabItem} from "@astrojs/starlight/components";
 | HBOX_LABEL_MAKER_MARGIN                 | 32                                                                                             | margin around label                                                                                                                                                                       |
 | HBOX_LABEL_MAKER_PADDING                | 32                                                                                             | space between elements on label                                                                                                                                                           |
 | HBOX_LABEL_MAKER_FONT_SIZE              | 32.0                                                                                           | font size for label text                                                                                                                                                                  |
-| HBOX_LABEL_MAKER_PRINT_COMMAND          |                                                                                                | the command to use for printing labels. if empty, label printing is disabled. <span v-pre>`{{.FileName}}`</span> in the command will be replaced with the png filename of the label       |
+| HBOX_LABEL_MAKER_PRINT_COMMAND          |                                                                                                | the command to use for printing labels. if empty, label printing is disabled. `{{.FileName}}` in the command will be replaced with the png filename of the label       |
 | HBOX_LABEL_MAKER_DYNAMIC_LENGTH         | true                                                                                           | allow label generation with open length. `HBOX_LABEL_MAKER_HEIGHT` is still used for layout and minimal height. If not used, long text may be cut off, but all labels have the same size. |
 | HBOX_LABEL_MAKER_ADDITIONAL_INFORMATION |                                                                                                | Additional information added to the label like name or phone number                                                                                                                       |
 | HBOX_LABEL_MAKER_REGULAR_FONT_PATH      |                                                                                                | path to regular font file for label generation (e.g., `/fonts/NotoSansKR-Regular.ttf`). If not set, uses embedded font. Supports TTF format.                                              |
@@ -110,6 +111,7 @@ import {Tabs, TabItem} from "@astrojs/starlight/components";
 | HBOX_OTEL_ENABLE_DATABASE_TRACING       | true                                                                                           | emit spans for database operations                                                                                                                                                        |
 | HBOX_OTEL_ENABLE_HTTP_TRACING           | true                                                                                           | emit spans for HTTP requests                                                                                                                                                              |
 | HBOX_OTEL_PROXY_ENABLED                 | true                                                                                           | enable the in-process telemetry proxy endpoint that forwards frontend trace data to the configured exporter                                                                               |
+
     </TabItem>
     <TabItem label="CLI Options">
 
@@ -225,6 +227,7 @@ OPTIONS
 </Tabs>
 
 ### HBOX_WEB_HOST examples
+
 | Value                       | Notes                                                      |
 |-----------------------------|------------------------------------------------------------|
 | 0.0.0.0                     | Visible all interfaces (default behaviour)                 |
