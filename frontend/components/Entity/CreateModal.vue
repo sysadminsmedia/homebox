@@ -322,6 +322,13 @@
     const et = entityTypes.value.find(t => t.id === typeId);
     selectedEntityType.value = et || null;
 
+    // A template the user picked explicitly takes precedence over the entity
+    // type's default template, so don't overwrite it when the type changes.
+    // (Locations don't use templates, so they still clear it below.)
+    if (templateUserSelected.value && !et?.isLocation) {
+      return;
+    }
+
     // If the selected type has a default template and is not a location, auto-apply it
     if (et?.isLocation || !et?.defaultTemplateId || !et.defaultTemplate) {
       clearTemplate();
@@ -355,6 +362,9 @@
   const focused = ref(false);
   const selectedTemplate = ref<EntityTemplateSummary | null>(null);
   const templateData = ref<EntityTemplateOut | null>(null);
+  // Tracks whether the current template was chosen explicitly by the user (vs.
+  // auto-applied from an entity type's default template). User selections win.
+  const templateUserSelected = ref(false);
   const showTemplateDetails = ref(false);
   const form = reactive({
     location: locations.value && locations.value.length > 0 ? locations.value[0] : ({} as EntityOut),
@@ -371,10 +381,13 @@
     if (!template) {
       // Template was deselected, clear template data and remove from storage
       templateData.value = null;
+      templateUserSelected.value = false;
       form.quantity = 1;
       localStorage.removeItem(LAST_TEMPLATE_KEY);
       return;
     }
+
+    templateUserSelected.value = true;
 
     // Load full template details
     const { data, error } = await api.templates.get(template.id);
@@ -424,9 +437,11 @@
       return;
     }
 
-    // Set the template
+    // Set the template. A restored template reflects the user's last explicit
+    // choice, so treat it as user-selected for override purposes.
     selectedTemplate.value = { id: data.id, name: data.name, description: data.description } as EntityTemplateSummary;
     templateData.value = data;
+    templateUserSelected.value = true;
     form.quantity = data.defaultQuantity;
     if (data.defaultName) {
       form.name = data.defaultName;
@@ -450,6 +465,7 @@
   function clearTemplate() {
     selectedTemplate.value = null;
     templateData.value = null;
+    templateUserSelected.value = false;
     showTemplateDetails.value = false;
     form.quantity = 1;
     localStorage.removeItem(LAST_TEMPLATE_KEY);
@@ -562,7 +578,9 @@
   });
 
   async function create(close = true) {
-    if (!form.location?.id) {
+    // Items must live somewhere, but a top-level location has no parent, so the
+    // parent location selector is optional when creating a location.
+    if (!selectedEntityType.value?.isLocation && !form.location?.id) {
       toast.error(t("components.entity.create_modal.toast.please_select_location"));
       return;
     }
@@ -587,7 +605,7 @@
       const result = await api.items.createLocation({
         name: form.name,
         description: form.description,
-        parentId: form.location ? form.location.id : null,
+        parentId: form.location?.id || null,
         entityTypeId: selectedEntityType.value?.id || "",
         quantity: 1,
         tagIds: form.tags,
@@ -602,6 +620,7 @@
         parentId: form.location.id as string,
         tagIds: form.tags,
         quantity: form.quantity,
+        entityTypeId: selectedEntityType.value?.id || "",
       };
 
       const result = await api.templates.createItem(templateData.value.id, templateRequest);
@@ -672,6 +691,7 @@
     form.tags = [];
     selectedTemplate.value = null;
     templateData.value = null;
+    templateUserSelected.value = false;
     showTemplateDetails.value = false;
     focused.value = false;
     loading.value = false;
