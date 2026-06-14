@@ -511,18 +511,19 @@ func TestExtractGenericURL(t *testing.T) {
 
 func TestEmbeddedIPv4(t *testing.T) {
 	// Layout examples are taken from RFC 6052 section 2.4, all embedding 192.0.2.33.
+	const rfc6052Embedded = "192.0.2.33"
 	tests := []struct {
 		name      string
 		ip        string
 		prefixLen int
 		expected  string // empty means extraction must fail
 	}{
-		{"rfc6052_example_32", "2001:db8:c000:221::", 32, "192.0.2.33"},
-		{"rfc6052_example_40", "2001:db8:1c0:2:21::", 40, "192.0.2.33"},
-		{"rfc6052_example_48", "2001:db8:122:c000:2:2100::", 48, "192.0.2.33"},
-		{"rfc6052_example_56", "2001:db8:122:3c0:0:221::", 56, "192.0.2.33"},
-		{"rfc6052_example_64", "2001:db8:122:344:c0:2:2100::", 64, "192.0.2.33"},
-		{"rfc6052_example_96", "2001:db8:122:344::c000:221", 96, "192.0.2.33"},
+		{"rfc6052_example_32", "2001:db8:c000:221::", 32, rfc6052Embedded},
+		{"rfc6052_example_40", "2001:db8:1c0:2:21::", 40, rfc6052Embedded},
+		{"rfc6052_example_48", "2001:db8:122:c000:2:2100::", 48, rfc6052Embedded},
+		{"rfc6052_example_56", "2001:db8:122:3c0:0:221::", 56, rfc6052Embedded},
+		{"rfc6052_example_64", "2001:db8:122:344:c0:2:2100::", 64, rfc6052Embedded},
+		{"rfc6052_example_96", "2001:db8:122:344::c000:221", 96, rfc6052Embedded},
 		{"well_known_prefix_96", "64:ff9b::a9fe:a9fe", 96, "169.254.169.254"},
 		{"nonzero_u_octet_rejected", "2001:db8:122:344:ffc0:2:2100::", 64, ""},
 		{"nonzero_suffix_rejected", "2001:db8:122:344:c0:2:2100:1", 64, ""},

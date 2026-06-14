@@ -492,7 +492,7 @@ var (
 		{Name: "token", Type: field.TypeBytes, Unique: true},
 		{Name: "expires_at", Type: field.TypeTime},
 		{Name: "used_at", Type: field.TypeTime, Nullable: true},
-		{Name: "user_password_reset_tokens", Type: field.TypeUUID},
+		{Name: "user_id", Type: field.TypeUUID},
 	}
 	// PasswordResetTokensTable holds the schema information for the "password_reset_tokens" table.
 	PasswordResetTokensTable = &schema.Table{

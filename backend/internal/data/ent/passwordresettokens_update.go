@@ -36,6 +36,20 @@ func (_u *PasswordResetTokensUpdate) SetUpdatedAt(v time.Time) *PasswordResetTok
 	return _u
 }
 
+// SetUserID sets the "user_id" field.
+func (_u *PasswordResetTokensUpdate) SetUserID(v uuid.UUID) *PasswordResetTokensUpdate {
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *PasswordResetTokensUpdate) SetNillableUserID(v *uuid.UUID) *PasswordResetTokensUpdate {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
 // SetToken sets the "token" field.
 func (_u *PasswordResetTokensUpdate) SetToken(v []byte) *PasswordResetTokensUpdate {
 	_u.mutation.SetToken(v)
@@ -73,12 +87,6 @@ func (_u *PasswordResetTokensUpdate) SetNillableUsedAt(v *time.Time) *PasswordRe
 // ClearUsedAt clears the value of the "used_at" field.
 func (_u *PasswordResetTokensUpdate) ClearUsedAt() *PasswordResetTokensUpdate {
 	_u.mutation.ClearUsedAt()
-	return _u
-}
-
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_u *PasswordResetTokensUpdate) SetUserID(id uuid.UUID) *PasswordResetTokensUpdate {
-	_u.mutation.SetUserID(id)
 	return _u
 }
 
@@ -224,6 +232,20 @@ func (_u *PasswordResetTokensUpdateOne) SetUpdatedAt(v time.Time) *PasswordReset
 	return _u
 }
 
+// SetUserID sets the "user_id" field.
+func (_u *PasswordResetTokensUpdateOne) SetUserID(v uuid.UUID) *PasswordResetTokensUpdateOne {
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *PasswordResetTokensUpdateOne) SetNillableUserID(v *uuid.UUID) *PasswordResetTokensUpdateOne {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
 // SetToken sets the "token" field.
 func (_u *PasswordResetTokensUpdateOne) SetToken(v []byte) *PasswordResetTokensUpdateOne {
 	_u.mutation.SetToken(v)
@@ -261,12 +283,6 @@ func (_u *PasswordResetTokensUpdateOne) SetNillableUsedAt(v *time.Time) *Passwor
 // ClearUsedAt clears the value of the "used_at" field.
 func (_u *PasswordResetTokensUpdateOne) ClearUsedAt() *PasswordResetTokensUpdateOne {
 	_u.mutation.ClearUsedAt()
-	return _u
-}
-
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_u *PasswordResetTokensUpdateOne) SetUserID(id uuid.UUID) *PasswordResetTokensUpdateOne {
-	_u.mutation.SetUserID(id)
 	return _u
 }
 

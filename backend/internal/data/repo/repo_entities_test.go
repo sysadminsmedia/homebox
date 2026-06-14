@@ -450,6 +450,69 @@ func TestEntityRepository_CreateFromTemplate_RejectsNonFiniteQuantity(t *testing
 	require.NoError(t, err)
 }
 
+// TestEntityRepository_CreateFromTemplate_DefaultsEntityType verifies that
+// creating an entity from a template without an explicit entity type still
+// succeeds and resolves the group's default item type, rather than failing the
+// required entity_type edge (regression test for #1548).
+func TestEntityRepository_CreateFromTemplate_DefaultsEntityType(t *testing.T) {
+	containerET := useContainerEntityType(t)
+
+	cf := containerFactory()
+	cf.EntityTypeID = containerET.ID
+	container, err := tRepos.Entities.Create(context.Background(), tGroup.ID, cf)
+	require.NoError(t, err)
+
+	out, err := tRepos.Entities.CreateFromTemplate(context.Background(), tGroup.ID, EntityCreateFromTemplate{
+		Name:        fk.Str(10),
+		Description: fk.Str(20),
+		Quantity:    1,
+		ParentID:    container.ID,
+		// EntityTypeID intentionally left zero to exercise the fallback.
+	})
+	require.NoError(t, err)
+	require.NotNil(t, out.EntityType)
+	assert.False(t, out.EntityType.IsLocation)
+
+	// Cleanup
+	err = tRepos.Entities.Delete(context.Background(), out.ID)
+	require.NoError(t, err)
+	err = tRepos.Entities.Delete(context.Background(), container.ID)
+	require.NoError(t, err)
+}
+
+// TestEntityRepository_CreateFromTemplate_UsesSelectedEntityType verifies that
+// the user-selected entity type takes precedence over the default fallback.
+func TestEntityRepository_CreateFromTemplate_UsesSelectedEntityType(t *testing.T) {
+	containerET := useContainerEntityType(t)
+
+	cf := containerFactory()
+	cf.EntityTypeID = containerET.ID
+	container, err := tRepos.Entities.Create(context.Background(), tGroup.ID, cf)
+	require.NoError(t, err)
+
+	selectedET, err := tRepos.EntityTypes.Create(context.Background(), tGroup.ID, EntityTypeCreate{
+		Name: fk.Str(10),
+	})
+	require.NoError(t, err)
+
+	out, err := tRepos.Entities.CreateFromTemplate(context.Background(), tGroup.ID, EntityCreateFromTemplate{
+		Name:         fk.Str(10),
+		Description:  fk.Str(20),
+		Quantity:     1,
+		ParentID:     container.ID,
+		EntityTypeID: selectedET.ID,
+	})
+	require.NoError(t, err)
+	require.NotNil(t, out.EntityType)
+	assert.Equal(t, selectedET.ID, out.EntityType.ID)
+
+	// Cleanup
+	err = tRepos.Entities.Delete(context.Background(), out.ID)
+	require.NoError(t, err)
+	err = tRepos.Entities.Delete(context.Background(), container.ID)
+	require.NoError(t, err)
+}
+
 func TestEntityRepository_GetAllCustomFields(t *testing.T) {
 	const FieldsCount = 5
 
