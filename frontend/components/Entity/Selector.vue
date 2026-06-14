@@ -1,10 +1,10 @@
 <template>
-  <Select :model-value="selectedEntityType">
+  <Select :model-value="selectedEntityType" @update:model-value="id => onEntityTypeChanged(id as string)">
     <SelectTrigger :class="{ 'h-7 p-1': size === 'sm' }">
       <SelectValue :class="{ 'text-xl': size === 'sm' }" :placeholder="$t('components.entity.selector.placeholder')" />
     </SelectTrigger>
     <SelectContent>
-      <SelectItem v-for="type in entityTypes" :key="type.id" :value="type.id" @click="onEntityTypeChanged(type.id)">
+      <SelectItem v-for="type in entityTypes" :key="type.id" :value="type.id">
         <div class="flex items-center gap-2">
           <MdiMapMarkerOutline v-if="type.isLocation" class="size-4" />
           <MdiPackageVariantClosed v-else class="size-4" />
