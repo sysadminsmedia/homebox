@@ -193,6 +193,7 @@
                     "create_success": "{type} created",
                     "failed_load_parent": "Failed to load parent item - please select manually",
                     "no_canvas_support": "Your browser doesn't support canvas operations",
+                    "please_select_entity_type": "Please select an entity type.",
                     "please_select_location": "Please select a location.",
                     "rotate_failed": "Failed to rotate image: { error }",
                     "rotate_process_failed": "Failed to process rotated image",

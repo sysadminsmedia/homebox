@@ -202,7 +202,11 @@ func run(cfg *config.Config) error {
 
 	router.Use(
 		middleware.RequestID,
-		middleware.RealIP,
+		// middleware.RealIP is intentionally omitted: it unconditionally rewrites
+		// r.RemoteAddr from X-Forwarded-For / X-Real-IP / True-Client-IP headers,
+		// which is spoofable and bypasses our trustProxy gate. Client IP is
+		// resolved instead by extractClientIP, which only trusts those headers
+		// when the operator has enabled trustProxy.
 		mid.Logger(logger),
 		mid.SecurityHeaders(),
 		// Restrict the max body size to the upload limit + 1MB (for overhead).

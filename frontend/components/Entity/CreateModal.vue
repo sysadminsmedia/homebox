@@ -578,6 +578,13 @@
   });
 
   async function create(close = true) {
+    // An empty entityTypeId serializes to "" and fails UUID unmarshalling on the
+    // backend, so block creation up front rather than firing a doomed request.
+    if (!selectedEntityType.value?.id) {
+      toast.error(t("components.entity.create_modal.toast.please_select_entity_type"));
+      return;
+    }
+
     // Items must live somewhere, but a top-level location has no parent, so the
     // parent location selector is optional when creating a location.
     if (!selectedEntityType.value?.isLocation && !form.location?.id) {
