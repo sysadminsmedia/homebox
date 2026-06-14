@@ -13124,6 +13124,42 @@ func (m *PasswordResetTokensMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 }
 
+// SetUserID sets the "user_id" field.
+func (m *PasswordResetTokensMutation) SetUserID(u uuid.UUID) {
+	m.user = &u
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *PasswordResetTokensMutation) UserID() (r uuid.UUID, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the PasswordResetTokens entity.
+// If the PasswordResetTokens object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PasswordResetTokensMutation) OldUserID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *PasswordResetTokensMutation) ResetUserID() {
+	m.user = nil
+}
+
 // SetToken sets the "token" field.
 func (m *PasswordResetTokensMutation) SetToken(b []byte) {
 	m.token = &b
@@ -13245,27 +13281,15 @@ func (m *PasswordResetTokensMutation) ResetUsedAt() {
 	delete(m.clearedFields, passwordresettokens.FieldUsedAt)
 }
 
-// SetUserID sets the "user" edge to the User entity by id.
-func (m *PasswordResetTokensMutation) SetUserID(id uuid.UUID) {
-	m.user = &id
-}
-
 // ClearUser clears the "user" edge to the User entity.
 func (m *PasswordResetTokensMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[passwordresettokens.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
 func (m *PasswordResetTokensMutation) UserCleared() bool {
 	return m.cleareduser
-}
-
-// UserID returns the "user" edge ID in the mutation.
-func (m *PasswordResetTokensMutation) UserID() (id uuid.UUID, exists bool) {
-	if m.user != nil {
-		return *m.user, true
-	}
-	return
 }
 
 // UserIDs returns the "user" edge IDs in the mutation.
@@ -13318,12 +13342,15 @@ func (m *PasswordResetTokensMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PasswordResetTokensMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.created_at != nil {
 		fields = append(fields, passwordresettokens.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, passwordresettokens.FieldUpdatedAt)
+	}
+	if m.user != nil {
+		fields = append(fields, passwordresettokens.FieldUserID)
 	}
 	if m.token != nil {
 		fields = append(fields, passwordresettokens.FieldToken)
@@ -13346,6 +13373,8 @@ func (m *PasswordResetTokensMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case passwordresettokens.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case passwordresettokens.FieldUserID:
+		return m.UserID()
 	case passwordresettokens.FieldToken:
 		return m.Token()
 	case passwordresettokens.FieldExpiresAt:
@@ -13365,6 +13394,8 @@ func (m *PasswordResetTokensMutation) OldField(ctx context.Context, name string)
 		return m.OldCreatedAt(ctx)
 	case passwordresettokens.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case passwordresettokens.FieldUserID:
+		return m.OldUserID(ctx)
 	case passwordresettokens.FieldToken:
 		return m.OldToken(ctx)
 	case passwordresettokens.FieldExpiresAt:
@@ -13393,6 +13424,13 @@ func (m *PasswordResetTokensMutation) SetField(name string, value ent.Value) err
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case passwordresettokens.FieldUserID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
 		return nil
 	case passwordresettokens.FieldToken:
 		v, ok := value.([]byte)
@@ -13478,6 +13516,9 @@ func (m *PasswordResetTokensMutation) ResetField(name string) error {
 		return nil
 	case passwordresettokens.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case passwordresettokens.FieldUserID:
+		m.ResetUserID()
 		return nil
 	case passwordresettokens.FieldToken:
 		m.ResetToken()
