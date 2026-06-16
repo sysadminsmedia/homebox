@@ -147,8 +147,7 @@ tasks:
     desc: Run Entgo.io Code Generation
     dir: backend/internal/
     cmds:
-      - |
-        go generate ./...
+      - CGO_ENABLED=0 go generate ./...
     sources:
       - "./backend/internal/data/ent/schema/**/*"
 
