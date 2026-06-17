@@ -74,6 +74,27 @@ Homebox has a built-in QR code reader that can be used to scan QR codes for your
 
 Homebox also has a built-in one-off-label generator for those with proper label makers. This can be accessed via the "Labels" button on the right-hand side under the main details on the item page. Locations can also be printed in the same way, although the labels button is located next to the edit icon.
 
+## Custom Label Printing
+
+Homebox can send generated labels directly to a printer by configuring `HBOX_LABEL_MAKER_PRINT_COMMAND`. When set, a **Print** button appears alongside the label preview. The command is executed as a shell command with the label passed as a temporary PNG file.
+
+### Template Variables
+
+The command string supports Go template syntax. These values are substituted before the command is executed:
+
+| Variable | Description |
+|---|---|
+| `{{.FileName}}` | Path to the generated PNG temp file |
+| `{{.URL}}` | URL to the item, location, or asset page |
+| `{{.TitleText}}` | Label title (asset ID for asset labels, name otherwise) |
+| `{{.DescriptionText}}` | Description text as rendered on the label — `"Homebox Location"` for locations, `"Location: <parent>"` for items (empty if no parent), item name for asset labels |
+| `{{.Name}}` | Name of the item or location |
+| `{{.Description}}` | Item description (empty for location labels) |
+| `{{.Location}}` | Parent location name (empty for location labels) |
+| `{{.AssetID}}` | Asset ID, e.g. `000-001` (empty for non-asset labels) |
+
+All of the above are also available as environment variables prefixed with `LABEL_`, e.g. `LABEL_URL`, `LABEL_Name`, `LABEL_AssetID`.
+
 ## Scheduled Maintenance Notifications
 
 <Icon name="fluent-emoji-flat:label" is:inline="true"/>  v0.9.0
