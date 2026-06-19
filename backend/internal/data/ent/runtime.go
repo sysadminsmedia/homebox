@@ -645,7 +645,7 @@ func init() {
 	// passwordresettokens.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	passwordresettokens.UpdateDefaultUpdatedAt = passwordresettokensDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// passwordresettokensDescExpiresAt is the schema descriptor for expires_at field.
-	passwordresettokensDescExpiresAt := passwordresettokensFields[1].Descriptor()
+	passwordresettokensDescExpiresAt := passwordresettokensFields[2].Descriptor()
 	// passwordresettokens.DefaultExpiresAt holds the default value on creation for the expires_at field.
 	passwordresettokens.DefaultExpiresAt = passwordresettokensDescExpiresAt.Default.(func() time.Time)
 	// passwordresettokensDescID is the schema descriptor for id field.

@@ -71,7 +71,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "passwordresettokens" package.
 	PasswordResetTokensInverseTable = "password_reset_tokens"
 	// PasswordResetTokensColumn is the table column denoting the password_reset_tokens relation/edge.
-	PasswordResetTokensColumn = "user_password_reset_tokens"
+	PasswordResetTokensColumn = "user_id"
 	// APIKeysTable is the table that holds the api_keys relation/edge.
 	APIKeysTable = "api_keys"
 	// APIKeysInverseTable is the table name for the APIKey entity.

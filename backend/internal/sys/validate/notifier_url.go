@@ -66,53 +66,73 @@ func ValidateNotifierURL(notifierURL string, cfg *config.NotifierConf) error {
 	}
 	ips = checkIPs
 
-	// If AllowNets is configured, only allow IPs in those networks
+	// If AllowNets is configured it acts as an allowlist: every IP must match,
+	// and passing skips the remaining block checks.
 	if len(cfg.AllowNets) > 0 {
-		for _, ip := range ips {
-			allowed := false
-			for _, allowNet := range cfg.AllowNets {
-				_, ipNet, err := net.ParseCIDR(allowNet)
-				if err != nil {
-					log.Warn().
-						Err(err).
-						Str("cidr", allowNet).
-						Str("config", "AllowNets").
-						Msg("invalid CIDR in notifier AllowNets configuration, skipping")
-					continue // Skip invalid CIDR
-				}
-				if ipNet.Contains(ip) {
-					allowed = true
-					break
-				}
-			}
-			if !allowed {
-				return fmt.Errorf("IP %s is not in the allowed networks", ip.String())
-			}
-		}
-		// If explicitly allowed, skip other checks
-		return nil
+		return checkAllowNets(ips, cfg.AllowNets)
 	}
 
 	// Check BlockNets - block specific networks if configured
 	if len(cfg.BlockNets) > 0 {
-		for _, ip := range ips {
-			for _, blockNet := range cfg.BlockNets {
-				_, ipNet, err := net.ParseCIDR(blockNet)
-				if err != nil {
-					log.Warn().
-						Err(err).
-						Str("cidr", blockNet).
-						Str("config", "BlockNets").
-						Msg("invalid CIDR in notifier BlockNets configuration, skipping")
-					continue // Skip invalid CIDR
-				}
-				if ipNet.Contains(ip) {
-					return fmt.Errorf("IP %s is in a blocked network (%s)", ip.String(), blockNet)
-				}
-			}
+		if err := checkBlockNets(ips, cfg.BlockNets); err != nil {
+			return err
 		}
 	}
 
+	return checkBlockedCategories(ips, cfg)
+}
+
+// checkAllowNets verifies every IP falls within one of the allowNets. A nil
+// return means validation is complete and no further block checks are needed.
+func checkAllowNets(ips []net.IP, allowNets []string) error {
+	for _, ip := range ips {
+		allowed := false
+		for _, allowNet := range allowNets {
+			_, ipNet, err := net.ParseCIDR(allowNet)
+			if err != nil {
+				log.Warn().
+					Err(err).
+					Str("cidr", allowNet).
+					Str("config", "AllowNets").
+					Msg("invalid CIDR in notifier AllowNets configuration, skipping")
+				continue // Skip invalid CIDR
+			}
+			if ipNet.Contains(ip) {
+				allowed = true
+				break
+			}
+		}
+		if !allowed {
+			return fmt.Errorf("IP %s is not in the allowed networks", ip.String())
+		}
+	}
+	return nil
+}
+
+// checkBlockNets returns an error if any IP falls within one of the blockNets.
+func checkBlockNets(ips []net.IP, blockNets []string) error {
+	for _, ip := range ips {
+		for _, blockNet := range blockNets {
+			_, ipNet, err := net.ParseCIDR(blockNet)
+			if err != nil {
+				log.Warn().
+					Err(err).
+					Str("cidr", blockNet).
+					Str("config", "BlockNets").
+					Msg("invalid CIDR in notifier BlockNets configuration, skipping")
+				continue // Skip invalid CIDR
+			}
+			if ipNet.Contains(ip) {
+				return fmt.Errorf("IP %s is in a blocked network (%s)", ip.String(), blockNet)
+			}
+		}
+	}
+	return nil
+}
+
+// checkBlockedCategories applies the configured category-based blocks
+// (localhost, RFC1918, bogon, cloud metadata) to every IP.
+func checkBlockedCategories(ips []net.IP, cfg *config.NotifierConf) error {
 	for _, ip := range ips {
 		// Block localhost if configured
 		if cfg.BlockLocalhost && isLocalhost(ip) {

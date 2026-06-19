@@ -10,7 +10,7 @@
             <template #description> {{ $t("tools.reports_sub") }} </template>
           </BaseSectionHeader>
         </template>
-        <div class="divide-y border-t p-4">
+        <div class="divide-y border-t px-6 pb-3">
           <DetailAction to="/reports/label-generator">
             <template #title>{{ $t("tools.reports_set.asset_labels") }}</template>
             {{ $t("tools.reports_set.asset_labels_sub") }}

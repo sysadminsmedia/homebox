@@ -33,6 +33,12 @@ export default defineConfig({
     },
 
     site: 'https://homebox.software',
+    // Astro 6 no longer defaults `markdown.gfm`; @astrojs/mdx reads this value
+    // directly, so it must be set explicitly or GFM tables/strikethrough won't
+    // render in .mdx files.
+    markdown: {
+        gfm: true,
+    },
     integrations: [
         starlight({
             components: {

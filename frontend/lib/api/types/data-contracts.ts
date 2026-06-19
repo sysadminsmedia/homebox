@@ -1343,6 +1343,11 @@ export interface EntityTemplateCreateItemRequest {
   /** @maxLength 1000 */
   description: string;
   /**
+   * EntityTypeID is the entity type selected by the user. When set it takes
+   * precedence; when empty the repository falls back to the group's default.
+   */
+  entityTypeId: string;
+  /**
    * @minLength 1
    * @maxLength 255
    */

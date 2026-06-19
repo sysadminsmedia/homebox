@@ -1130,6 +1130,18 @@ func (r *EntityRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID
 		return EntityOut{}, err
 	}
 
+	// entity_type is a required edge. The user-selected type takes precedence;
+	// fall back to the group's default item type when none was provided so
+	// creation from a template doesn't fail the required-edge validation.
+	if data.EntityTypeID == uuid.Nil {
+		etID, err := r.resolveDefaultEntityType(ctx, gid, false)
+		if err != nil {
+			recordSpanError(span, err)
+			return EntityOut{}, err
+		}
+		data.EntityTypeID = etID
+	}
+
 	tx, err := r.db.Tx(ctx)
 	if err != nil {
 		recordSpanError(span, err)
@@ -1175,9 +1187,7 @@ func (r *EntityRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID
 		entityBuilder.SetParentID(data.ParentID)
 	}
 
-	if data.EntityTypeID != uuid.Nil {
-		entityBuilder.SetEntityTypeID(data.EntityTypeID)
-	}
+	entityBuilder.SetEntityTypeID(data.EntityTypeID)
 
 	if len(data.TagIDs) > 0 {
 		entityBuilder.AddTagIDs(data.TagIDs...)

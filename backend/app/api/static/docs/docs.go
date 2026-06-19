@@ -6389,6 +6389,10 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 1000
                 },
+                "entityTypeId": {
+                    "description": "EntityTypeID is the entity type selected by the user. When set it takes\nprecedence; when empty the repository falls back to the group's default.",
+                    "type": "string"
+                },
                 "name": {
                     "type": "string",
                     "maxLength": 255,

@@ -2196,6 +2196,11 @@ definitions:
       description:
         maxLength: 1000
         type: string
+      entityTypeId:
+        description: |-
+          EntityTypeID is the entity type selected by the user. When set it takes
+          precedence; when empty the repository falls back to the group's default.
+        type: string
       name:
         maxLength: 255
         minLength: 1

@@ -55,7 +55,6 @@
   });
 
   const route = useRoute();
-  const router = useRouter();
   const api = useUserApi();
 
   const itemId = computed<string>(() => route.params.id as string);
@@ -619,14 +618,12 @@
   }
 
   async function createSubitem() {
-    // setting URL Parameter that is read and immidiately removed in the Item-CreateModal
-    await router.push({
-      query: {
-        subItemCreate: "y",
+    openDialog(DialogID.CreateEntity, {
+      params: {
+        baseType: "item",
+        subItem: true,
       },
     });
-
-    openDialog(DialogID.CreateItem);
   }
 </script>
 

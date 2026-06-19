@@ -72,7 +72,7 @@ export function formatArrayAsString(value: unknown): string {
 }
 
 export function formatValueAsCsvField(value: unknown): string {
-  let str = "";
+  let str: string;
 
   if (Array.isArray(value)) {
     str = formatArrayAsString(value);
