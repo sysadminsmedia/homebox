@@ -220,6 +220,17 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration,
 			}
 			locsCreated++
 		}
+
+		// Seeding locations lazily creates the "Location" entity type, but the
+		// "Item" type isn't created until the first item — leaving the new group
+		// unable to create items via the UI. Ensure both exist up front.
+		if err := ensureDefaultEntityTypes(bootstrapCtx, svc.repos, usr.DefaultGroupID); err != nil {
+			recordServiceSpanError(bootstrapSpan, err)
+			bootstrapSpan.End()
+			recordServiceSpanError(span, err)
+			return repo.UserOut{}, err
+		}
+
 		bootstrapSpan.SetAttributes(
 			attribute.Int("tags.created.count", tagsCreated),
 			attribute.Int("locations.created.count", locsCreated),
@@ -574,6 +585,14 @@ func (svc *UserService) registerOIDCUser(ctx context.Context, issuer, subject, e
 		}
 		locsCreated++
 	}
+
+	// Ensure both default entity types exist (see RegisterUser): seeding
+	// locations only creates the "Location" type, not "Item".
+	if err := ensureDefaultEntityTypes(bootstrapCtx, svc.repos, group.ID); err != nil {
+		recordServiceSpanError(bootstrapSpan, err)
+		log.Err(err).Msg("Failed to ensure default entity types")
+	}
+
 	bootstrapSpan.SetAttributes(
 		attribute.Int("tags.created.count", tagsCreated),
 		attribute.Int("locations.created.count", locsCreated),

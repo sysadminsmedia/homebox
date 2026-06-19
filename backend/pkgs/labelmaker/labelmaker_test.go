@@ -3,6 +3,8 @@ package labelmaker
 import (
 	"os"
 	"path/filepath"
+	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -182,4 +184,75 @@ func TestLoadFont_CJKRendering(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestSplitCommandTemplate(t *testing.T) {
+	tests := []struct {
+		name string
+		in   string
+		want []string
+	}{
+		{"empty", "", nil},
+		{"whitespace only", "   \t ", nil},
+		{"simple", "lp -d printer file.png", []string{"lp", "-d", "printer", "file.png"}},
+		{"collapses runs", "lp    -d   printer", []string{"lp", "-d", "printer"}},
+		{
+			"placeholder without inner space",
+			"lp -t {{.TitleText}} {{.FileName}}",
+			[]string{"lp", "-t", "{{.TitleText}}", "{{.FileName}}"},
+		},
+		{
+			"placeholder with inner space stays one token",
+			"lp -o {{ .FileName }}",
+			[]string{"lp", "-o", "{{ .FileName }}"},
+		},
+		{
+			"placeholder glued to literal stays one token",
+			"convert prefix-{{.TitleText}}-suffix",
+			[]string{"convert", "prefix-{{.TitleText}}-suffix"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, splitCommandTemplate(tt.in))
+		})
+	}
+}
+
+// TestPrintLabel_ArgumentInjection is the regression test for the argument
+// injection where a user-controlled item name containing whitespace could
+// smuggle extra argv entries into the print binary. The fix renders each argv
+// token independently, so a malicious TitleText must arrive as a single
+// argument.
+func TestPrintLabel_ArgumentInjection(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("recorder script relies on a POSIX shell")
+	}
+
+	dir := t.TempDir()
+	argsFile := filepath.Join(dir, "args.txt")
+	recorder := filepath.Join(dir, "recorder.sh")
+	script := "#!/bin/sh\n: > '" + argsFile + "'\nfor a in \"$@\"; do printf '%s\\n' \"$a\" >> '" + argsFile + "'; done\n"
+	require.NoError(t, os.WriteFile(recorder, []byte(script), 0o700))
+
+	// The admin template separates two arguments: the (attacker-controlled)
+	// title and the generated file name.
+	printCommand := recorder + " {{.TitleText}} {{.FileName}}"
+
+	cfg := &config.Config{}
+	cfg.LabelMaker.PrintCommand = &printCommand
+
+	const maliciousTitle = "evil title --output /etc/passwd"
+	params := NewGenerateParams(400, 200, 10, 5, 32, maliciousTitle, "desc", "http://localhost/item/1", false, nil)
+
+	require.NoError(t, PrintLabel(cfg, &params))
+
+	raw, err := os.ReadFile(argsFile)
+	require.NoError(t, err)
+	got := strings.Split(strings.TrimRight(string(raw), "\n"), "\n")
+
+	// Exactly two arguments: the whole title as one entry, then the file name.
+	require.Len(t, got, 2, "argv must not be split on whitespace inside the title")
+	assert.Equal(t, maliciousTitle, got[0])
+	assert.True(t, strings.HasSuffix(got[1], ".png"), "second arg should be the generated label file, got %q", got[1])
 }
