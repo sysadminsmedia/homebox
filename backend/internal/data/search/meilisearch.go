@@ -355,30 +355,51 @@ func (e *MeilisearchEngine) ReindexGroup(ctx context.Context, gid uuid.UUID) err
 // entities, then deletes that scope's documents that no longer correspond to
 // a database row.
 func (e *MeilisearchEngine) reindex(ctx context.Context, gid *uuid.UUID) error {
-	q := e.db.Entity.Query().
-		WithGroup().
-		WithTag().
-		WithFields().
-		Order(ent.Asc(entity.FieldID))
+	idQuery := e.db.Entity.Query().Order(ent.Asc(entity.FieldID))
 	if gid != nil {
-		q = q.Where(entity.HasGroupWith(group.ID(*gid)))
+		idQuery = idQuery.Where(entity.HasGroupWith(group.ID(*gid)))
 	}
 
-	indexed := make(map[string]struct{})
-	for offset := 0; ; offset += meiliReindexBatch {
-		entities, err := q.Clone().Offset(offset).Limit(meiliReindexBatch).All(ctx)
+	// Capture a stable snapshot of the target entity IDs up front. Paging the
+	// full-entity query by offset is not a stable snapshot: a concurrent insert
+	// or delete shifts later offsets and can skip a live entity, which would
+	// then be absent from `indexed` and wrongly pruned as stale. Iterating a
+	// fixed ID slice removes that race — `indexed` is derived from the snapshot,
+	// so pruning only targets documents whose entity was absent at snapshot time.
+	ids, err := idQuery.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("meilisearch reindex: loading entity ids: %w", err)
+	}
+
+	indexed := make(map[string]struct{}, len(ids))
+	for _, id := range ids {
+		indexed[id.String()] = struct{}{}
+	}
+
+	for start := 0; start < len(ids); start += meiliReindexBatch {
+		end := start + meiliReindexBatch
+		if end > len(ids) {
+			end = len(ids)
+		}
+
+		entities, err := e.db.Entity.Query().
+			Where(entity.IDIn(ids[start:end]...)).
+			WithGroup().
+			WithTag().
+			WithFields().
+			All(ctx)
 		if err != nil {
 			return fmt.Errorf("meilisearch reindex: loading entities: %w", err)
 		}
 		if len(entities) == 0 {
-			break
+			// Every entity in this batch was deleted after the snapshot; their
+			// documents (if any) are left for pruneStale's live-DB intersection.
+			continue
 		}
 
 		docs := make([]meiliDocument, 0, len(entities))
 		for _, row := range entities {
-			doc := buildMeiliDocument(row)
-			docs = append(docs, doc)
-			indexed[doc.ID] = struct{}{}
+			docs = append(docs, buildMeiliDocument(row))
 		}
 
 		task, err := e.index.AddDocumentsWithContext(ctx, docs, nil)
@@ -387,10 +408,6 @@ func (e *MeilisearchEngine) reindex(ctx context.Context, gid *uuid.UUID) error {
 		}
 		if err := e.waitForTask(ctx, task, "add documents"); err != nil {
 			return err
-		}
-
-		if len(entities) < meiliReindexBatch {
-			break
 		}
 	}
 

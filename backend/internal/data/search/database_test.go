@@ -64,8 +64,7 @@ func TestDatabaseEngine_PostgresSQL(t *testing.T) {
 }
 
 func TestDatabaseEngine_PostgresUnaccentSQL(t *testing.T) {
-	e := &DatabaseEngine{dialect: dialect.Postgres, unaccent: true}
-	e.unaccentOnce.Do(func() {}) // mark probed
+	e := &DatabaseEngine{dialect: dialect.Postgres, unaccent: true, unaccentChecked: true} // mark probed
 
 	pred, err := e.Predicate(context.Background(), uuid.Nil, "café")
 	require.NoError(t, err)

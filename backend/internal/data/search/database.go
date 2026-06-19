@@ -2,6 +2,7 @@ package search
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -50,8 +51,9 @@ type DatabaseEngine struct {
 	dialect string
 	db      *ent.Client
 
-	unaccentOnce sync.Once
-	unaccent     bool
+	unaccentMu      sync.Mutex
+	unaccentChecked bool
+	unaccent        bool
 }
 
 // NewDatabaseEngine returns a database-backed search engine querying through
@@ -131,28 +133,43 @@ func (e *DatabaseEngine) foldContains(ctx context.Context, col, token string) *e
 // used. On first call it tries to enable the extension (ignoring permission
 // errors) and caches the result for the lifetime of the engine.
 func (e *DatabaseEngine) unaccentAvailable(ctx context.Context) bool {
-	e.unaccentOnce.Do(func() {
-		if e.db == nil {
-			return
-		}
-		if _, err := e.db.Sql().ExecContext(ctx, "CREATE EXTENSION IF NOT EXISTS unaccent"); err != nil {
-			log.Debug().Err(err).Msg("could not create unaccent extension (insufficient privileges?), checking if it already exists")
-		}
+	e.unaccentMu.Lock()
+	defer e.unaccentMu.Unlock()
 
-		var count int
-		row := e.db.Sql().QueryRowContext(ctx, "SELECT COUNT(*) FROM pg_extension WHERE extname = 'unaccent'")
-		if err := row.Scan(&count); err != nil {
-			log.Warn().Err(err).Msg("failed to check for unaccent extension; search will be accent-sensitive")
-			return
-		}
+	if e.unaccentChecked {
+		return e.unaccent
+	}
+	if e.db == nil {
+		return false
+	}
 
-		e.unaccent = count > 0
-		if e.unaccent {
-			log.Info().Msg("postgres unaccent extension available; search is accent-insensitive")
-		} else {
-			log.Info().Msg("postgres unaccent extension not available; search will be accent-sensitive (install it with: CREATE EXTENSION unaccent)")
+	if _, err := e.db.Sql().ExecContext(ctx, "CREATE EXTENSION IF NOT EXISTS unaccent"); err != nil {
+		log.Debug().Err(err).Msg("could not create unaccent extension (insufficient privileges?), checking if it already exists")
+	}
+
+	var count int
+	row := e.db.Sql().QueryRowContext(ctx, "SELECT COUNT(*) FROM pg_extension WHERE extname = 'unaccent'")
+	if err := row.Scan(&count); err != nil {
+		// A caller-context cancellation or deadline is transient: leave the
+		// probe unmarked so a later call retries, rather than permanently
+		// caching accent-sensitive search from a one-off timeout.
+		if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+			log.Debug().Err(err).Msg("unaccent probe interrupted by context; will retry on next search")
+			return false
 		}
-	})
+		// Any other failure is treated as a definitive negative result.
+		log.Warn().Err(err).Msg("failed to check for unaccent extension; search will be accent-sensitive")
+		e.unaccentChecked = true
+		return false
+	}
+
+	e.unaccent = count > 0
+	e.unaccentChecked = true
+	if e.unaccent {
+		log.Info().Msg("postgres unaccent extension available; search is accent-insensitive")
+	} else {
+		log.Info().Msg("postgres unaccent extension not available; search will be accent-sensitive (install it with: CREATE EXTENSION unaccent)")
+	}
 	return e.unaccent
 }
 

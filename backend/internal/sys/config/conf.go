@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/ardanlabs/conf/v3"
@@ -94,6 +95,33 @@ func (c MeilisearchConf) MarshalJSON() ([]byte, error) {
 		a.APIKey = redactedValue
 	}
 	return json.Marshal(a)
+}
+
+// Validate enforces secure transport for the Meilisearch connection. The API
+// key is sent on every request, so a non-local endpoint reached over plaintext
+// http would leak it on the wire. https is always allowed; http is permitted
+// only for loopback hosts.
+func (c MeilisearchConf) Validate() error {
+	if c.Host == "" {
+		return errors.New("search.meilisearch.host must not be empty")
+	}
+	u, err := url.Parse(c.Host)
+	if err != nil {
+		return fmt.Errorf("search.meilisearch.host is not a valid URL: %w", err)
+	}
+	switch u.Scheme {
+	case "https":
+		return nil
+	case "http":
+		switch strings.ToLower(u.Hostname()) {
+		case "localhost", "127.0.0.1", "::1":
+			return nil
+		default:
+			return fmt.Errorf("search.meilisearch.host uses insecure http for non-local host %q: use https", u.Host)
+		}
+	default:
+		return fmt.Errorf("search.meilisearch.host has unsupported scheme %q: must be http or https", u.Scheme)
+	}
 }
 
 type Options struct {
@@ -234,6 +262,14 @@ func New(buildstr string, description string) (*Config, error) {
 			os.Exit(0)
 		}
 		return &cfg, fmt.Errorf("parsing config: %w", err)
+	}
+
+	// Only enforce Meilisearch transport rules when that driver is selected;
+	// the unused default host is otherwise irrelevant.
+	if cfg.Search.Driver == "meilisearch" {
+		if err := cfg.Search.Meilisearch.Validate(); err != nil {
+			return &cfg, fmt.Errorf("invalid meilisearch config: %w", err)
+		}
 	}
 
 	return &cfg, nil
