@@ -211,7 +211,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/currency": {
+        "/v1/currencies": {
             "get": {
                 "produces": [
                     "application/json"
@@ -4273,6 +4273,10 @@ const docTemplate = `{
                 },
                 "used_at": {
                     "description": "UsedAt holds the value of the \"used_at\" field.",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "UserID holds the value of the \"user_id\" field.",
                     "type": "string"
                 }
             }

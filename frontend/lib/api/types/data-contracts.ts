@@ -550,6 +550,8 @@ export interface EntPasswordResetTokens {
   updated_at: string;
   /** UsedAt holds the value of the "used_at" field. */
   used_at: string;
+  /** UserID holds the value of the "user_id" field. */
+  user_id: string;
 }
 
 export interface EntPasswordResetTokensEdges {

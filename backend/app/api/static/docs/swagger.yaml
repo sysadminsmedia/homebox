@@ -758,6 +758,9 @@ definitions:
       used_at:
         description: UsedAt holds the value of the "used_at" field.
         type: string
+      user_id:
+        description: UserID holds the value of the "user_id" field.
+        type: string
     type: object
   ent.PasswordResetTokensEdges:
     properties:
@@ -2464,7 +2467,7 @@ paths:
       summary: Get Item by Asset ID
       tags:
       - Items
-  /v1/currency:
+  /v1/currencies:
     get:
       produces:
       - application/json
