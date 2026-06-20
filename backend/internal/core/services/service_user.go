@@ -590,7 +590,10 @@ func (svc *UserService) registerOIDCUser(ctx context.Context, issuer, subject, e
 	// locations only creates the "Location" type, not "Item".
 	if err := ensureDefaultEntityTypes(bootstrapCtx, svc.repos, group.ID); err != nil {
 		recordServiceSpanError(bootstrapSpan, err)
+		bootstrapSpan.End()
+		recordServiceSpanError(span, err)
 		log.Err(err).Msg("Failed to ensure default entity types")
+		return repo.UserOut{}, err
 	}
 
 	bootstrapSpan.SetAttributes(
