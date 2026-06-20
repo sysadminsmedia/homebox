@@ -34,7 +34,19 @@ func (svc *GroupService) CreateGroup(ctx Context, name string) (repo.Group, erro
 		return repo.Group{}, errors.New("user ID cannot be empty when creating a group")
 	}
 
-	return svc.repos.Groups.GroupCreate(ctx.Context, name, ctx.UID)
+	group, err := svc.repos.Groups.GroupCreate(ctx.Context, name, ctx.UID)
+	if err != nil {
+		return repo.Group{}, err
+	}
+
+	// Unlike registration, this path doesn't seed default locations/tags, so
+	// nothing would lazily create the entity types — leaving the collection
+	// unable to create items or locations until a type was added by hand.
+	if err := ensureDefaultEntityTypes(ctx.Context, svc.repos, group.ID); err != nil {
+		return repo.Group{}, err
+	}
+
+	return group, nil
 }
 
 func (svc *GroupService) DeleteGroup(ctx Context) error {

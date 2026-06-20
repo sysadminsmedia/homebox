@@ -66,13 +66,13 @@ func (ctrl *V1Controller) HandleExportsCreate() errchain.HandlerFunc {
 
 // HandleExportGet godoc
 //
-//	@Summary		Get an Export
-//	@Tags			Group
-//	@Produce		json
-//	@Param			id	path	string	true	"Export ID"
-//	@Success		200	{object}	repo.ExportOut
-//	@Router			/v1/group/exports/{id} [GET]
-//	@Security		Bearer
+//	@Summary	Get an Export
+//	@Tags		Group
+//	@Produce	json
+//	@Param		id	path		string	true	"Export ID"
+//	@Success	200	{object}	repo.ExportOut
+//	@Router		/v1/group/exports/{id} [GET]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleExportGet() errchain.HandlerFunc {
 	fn := func(r *http.Request, id uuid.UUID) (repo.ExportOut, error) {
 		ctx := services.NewContext(r.Context())
@@ -84,13 +84,13 @@ func (ctrl *V1Controller) HandleExportGet() errchain.HandlerFunc {
 
 // HandleExportDownload godoc
 //
-//	@Summary		Download an Export Artifact
-//	@Tags			Group
-//	@Produce		application/zip
-//	@Param			id	path		string	true	"Export ID"
-//	@Success		200	{file}		file
-//	@Router			/v1/group/exports/{id}/download [GET]
-//	@Security		Bearer
+//	@Summary	Download an Export Artifact
+//	@Tags		Group
+//	@Produce	application/zip
+//	@Param		id	path	string	true	"Export ID"
+//	@Success	200	{file}	file
+//	@Router		/v1/group/exports/{id}/download [GET]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleExportDownload() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		ctx := services.NewContext(r.Context())
@@ -195,7 +195,7 @@ func (ctrl *V1Controller) HandleExportDelete() errchain.HandlerFunc {
 //	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			file	formData	file	true	"Export zip"
-//	@Success		202	{object}	repo.ExportOut
+//	@Success		202		{object}	repo.ExportOut
 //	@Router			/v1/group/import [POST]
 //	@Security		Bearer
 func (ctrl *V1Controller) HandleCollectionImport() errchain.HandlerFunc {

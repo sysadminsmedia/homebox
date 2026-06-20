@@ -15,7 +15,7 @@ import (
 //	@Summary	Get All Tags
 //	@Tags		Tags
 //	@Produce	json
-//	@Success	200	{array}		repo.TagSummary
+//	@Success	200	{array}	repo.TagSummary
 //	@Router		/v1/tags [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleTagsGetAll() errchain.HandlerFunc {

@@ -17,6 +17,7 @@ import (
 	"strings"
 	"text/template"
 	"time"
+	"unicode"
 
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
@@ -429,6 +430,45 @@ func fetchLabelFromURL(w io.Writer, serviceURL string, params *GenerateParameter
 	return nil
 }
 
+// splitCommandTemplate splits a print-command template into argv tokens on
+// whitespace, treating any `{{ ... }}` template action as opaque so that
+// whitespace *inside* an action (e.g. `{{ .FileName }}`) does not split the
+// token. This lets the admin's spacing define argument boundaries up front,
+// before any user-controlled value is substituted in.
+func splitCommandTemplate(s string) []string {
+	var (
+		parts    []string
+		cur      strings.Builder
+		inAction bool
+	)
+	runes := []rune(s)
+	for i := 0; i < len(runes); i++ {
+		switch {
+		case !inAction && i+1 < len(runes) && runes[i] == '{' && runes[i+1] == '{':
+			inAction = true
+			cur.WriteRune(runes[i])
+			cur.WriteRune(runes[i+1])
+			i++
+		case inAction && i+1 < len(runes) && runes[i] == '}' && runes[i+1] == '}':
+			inAction = false
+			cur.WriteRune(runes[i])
+			cur.WriteRune(runes[i+1])
+			i++
+		case !inAction && unicode.IsSpace(runes[i]):
+			if cur.Len() > 0 {
+				parts = append(parts, cur.String())
+				cur.Reset()
+			}
+		default:
+			cur.WriteRune(runes[i])
+		}
+	}
+	if cur.Len() > 0 {
+		parts = append(parts, cur.String())
+	}
+	return parts
+}
+
 func PrintLabel(cfg *config.Config, params *GenerateParameters) error {
 	tmpFile := filepath.Join(os.TempDir(), fmt.Sprintf("label-%d.png", time.Now().UnixNano()))
 	f, err := os.OpenFile(tmpFile, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
@@ -451,15 +491,13 @@ func PrintLabel(cfg *config.Config, params *GenerateParameters) error {
 		return fmt.Errorf("no print command specified")
 	}
 
-	commandTemplate := template.Must(template.New("command").Parse(*cfg.LabelMaker.PrintCommand))
-	builder := &strings.Builder{}
 	additionalInformation := func() string {
 		if params.AdditionalInformation != nil {
 			return *params.AdditionalInformation
 		}
 		return ""
 	}()
-	if err := commandTemplate.Execute(builder, map[string]string{
+	templateData := map[string]string{
 		"FileName":              f.Name(),
 		"Width":                 fmt.Sprintf("%d", params.Width),
 		"Height":                fmt.Sprintf("%d", params.Height),
@@ -474,11 +512,33 @@ func PrintLabel(cfg *config.Config, params *GenerateParameters) error {
 		"Dpi":                   fmt.Sprintf("%f", params.Dpi),
 		"URL":                   params.URL,
 		"DynamicLength":         fmt.Sprintf("%t", params.DynamicLength),
-	}); err != nil {
-		return err
 	}
 
-	commandParts := strings.Fields(builder.String())
+	// SECURITY: split the admin-configured command into argv tokens *before*
+	// substituting any values, then render each token independently. Several of
+	// these fields (TitleText/DescriptionText, derived from item and location
+	// names) are controlled by any authenticated user. If we rendered first and
+	// split on whitespace afterwards, a user could embed spaces in an item name
+	// to smuggle extra arguments into the print binary (argument injection).
+	// Per-token rendering keeps every substituted value confined to the single
+	// argv entry the admin placed it in, regardless of its contents.
+	var commandParts []string
+	for _, rawPart := range splitCommandTemplate(*cfg.LabelMaker.PrintCommand) {
+		tmpl, err := template.New("command").Parse(rawPart)
+		if err != nil {
+			return fmt.Errorf("invalid print command template: %w", err)
+		}
+		builder := &strings.Builder{}
+		if err := tmpl.Execute(builder, templateData); err != nil {
+			return err
+		}
+		// Drop tokens that render empty so an unset placeholder doesn't become a
+		// stray empty argument — matching the previous whitespace-collapsing
+		// behavior without re-splitting rendered output.
+		if rendered := builder.String(); rendered != "" {
+			commandParts = append(commandParts, rendered)
+		}
+	}
 	if len(commandParts) == 0 {
 		return nil
 	}
