@@ -151,9 +151,9 @@ func (ctrl *V1Controller) HandleEntityAttachmentCreate() errchain.HandlerFunc {
 //	@Summary	Get Entity Attachment
 //	@Tags		Entities Attachments
 //	@Produce	application/octet-stream
-//	@Param		id				path		string	true	"Entity ID"
-//	@Param		attachment_id	path		string	true	"Attachment ID"
-//	@Success	200				{file}		file
+//	@Param		id				path	string	true	"Entity ID"
+//	@Param		attachment_id	path	string	true	"Attachment ID"
+//	@Success	200				{file}	file
 //	@Router		/v1/entities/{id}/attachments/{attachment_id} [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityAttachmentGet() errchain.HandlerFunc {

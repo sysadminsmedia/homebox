@@ -232,7 +232,7 @@ func (ctrl *V1Controller) HandleGroupMembersGetAll() errchain.HandlerFunc {
 //	@Summary	Remove User from Group
 //	@Tags		Group
 //	@Produce	json
-//	@Param		user_id	path		string	true	"User ID"
+//	@Param		user_id	path	string	true	"User ID"
 //	@Success	204
 //	@Router		/v1/groups/members/{user_id} [Delete]
 //	@Security	Bearer
@@ -286,7 +286,7 @@ func (ctrl *V1Controller) HandleGroupInvitationsDelete() errchain.HandlerFunc {
 //	@ID			groupInvitationAccept
 //	@Tags		Group
 //	@Produce	json
-//	@Param		id	path	string	true	"Invitation Token"
+//	@Param		id	path		string	true	"Invitation Token"
 //	@Success	200	{object}	GroupAcceptInvitationResponse
 //	@Router		/v1/groups/invitations/{id} [Post]
 //	@Security	Bearer

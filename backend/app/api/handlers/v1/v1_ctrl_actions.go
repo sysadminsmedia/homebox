@@ -110,8 +110,8 @@ type WipeInventoryOptions struct {
 //	@Description	Deletes all items in the inventory
 //	@Tags			Actions
 //	@Produce		json
-//	@Param			options	body	WipeInventoryOptions	false	"Wipe options"
-//	@Success		200	{object}	ActionAmountResult
+//	@Param			options	body		WipeInventoryOptions	false	"Wipe options"
+//	@Success		200		{object}	ActionAmountResult
 //	@Router			/v1/actions/wipe-inventory [Post]
 //	@Security		Bearer
 func (ctrl *V1Controller) HandleWipeInventory() errchain.HandlerFunc {
