@@ -175,11 +175,11 @@ const resetPasswordMinLength = 6
 //	@Tags			Authentication
 //	@Accept			application/json
 //	@Produce		json
-//	@Param			payload	body		ForgotPasswordRequest	true	"Email"
+//	@Param			payload	body	ForgotPasswordRequest	true	"Email"
 //	@Success		204
-//	@Failure		400		{string}	string					"missing or invalid request body, or empty email field"
-//	@Failure		403		{string}	string					"demo mode is enabled or local login is disabled"
-//	@Failure		500		{string}	string					"internal error while processing the request"
+//	@Failure		400	{string}	string	"missing or invalid request body, or empty email field"
+//	@Failure		403	{string}	string	"demo mode is enabled or local login is disabled"
+//	@Failure		500	{string}	string	"internal error while processing the request"
 //	@Router			/v1/users/forgot-password [POST]
 func (ctrl *V1Controller) HandleForgotPassword() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
@@ -253,11 +253,11 @@ func (ctrl *V1Controller) HandleForgotPassword() errchain.HandlerFunc {
 //	@Tags			Authentication
 //	@Accept			application/json
 //	@Produce		json
-//	@Param			payload	body		ResetPasswordRequest	true	"Token + new password"
+//	@Param			payload	body	ResetPasswordRequest	true	"Token + new password"
 //	@Success		204
-//	@Failure		400		{string}	string					"invalid request body, password shorter than the minimum length, or token that is invalid / expired / already used"
-//	@Failure		403		{string}	string					"demo mode is enabled or local login is disabled"
-//	@Failure		500		{string}	string					"internal error while processing the request"
+//	@Failure		400	{string}	string	"invalid request body, password shorter than the minimum length, or token that is invalid / expired / already used"
+//	@Failure		403	{string}	string	"demo mode is enabled or local login is disabled"
+//	@Failure		500	{string}	string	"internal error while processing the request"
 //	@Router			/v1/users/reset-password [POST]
 func (ctrl *V1Controller) HandleResetPassword() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {

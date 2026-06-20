@@ -16,7 +16,7 @@ import (
 //	@Summary	Get All Entity Templates
 //	@Tags		Entity Templates
 //	@Produce	json
-//	@Success	200	{array}		repo.EntityTemplateSummary
+//	@Success	200	{array}	repo.EntityTemplateSummary
 //	@Router		/v1/templates [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityTemplatesGetAll() errchain.HandlerFunc {
@@ -104,9 +104,9 @@ func (ctrl *V1Controller) HandleEntityTemplatesDelete() errchain.HandlerFunc {
 }
 
 type EntityTemplateCreateItemRequest struct {
-	Name        string    `json:"name"         validate:"required,min=1,max=255"`
-	Description string    `json:"description"  validate:"max=1000"`
-	ParentID    uuid.UUID `json:"parentId"     validate:"required"`
+	Name        string    `json:"name"        validate:"required,min=1,max=255"`
+	Description string    `json:"description" validate:"max=1000"`
+	ParentID    uuid.UUID `json:"parentId"    validate:"required"`
 	// EntityTypeID is the entity type selected by the user. When set it takes
 	// precedence; when empty the repository falls back to the group's default.
 	EntityTypeID uuid.UUID   `json:"entityTypeId"`
@@ -119,8 +119,8 @@ type EntityTemplateCreateItemRequest struct {
 //	@Summary	Create Entity from Template
 //	@Tags		Entity Templates
 //	@Produce	json
-//	@Param		id		path		string								true	"Template ID"
-//	@Param		payload	body		EntityTemplateCreateItemRequest		true	"Entity Data"
+//	@Param		id		path		string							true	"Template ID"
+//	@Param		payload	body		EntityTemplateCreateItemRequest	true	"Entity Data"
 //	@Success	201		{object}	repo.EntityOut
 //	@Router		/v1/templates/{id}/create-item [POST]
 //	@Security	Bearer
