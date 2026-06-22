@@ -74,29 +74,25 @@ function lerpCorners(prev: Point2D[], next: Point2D[], t: number): Point2D[] {
 function parseHomeboxUrl(rawValue: string): { entityType: "item" | "location" | "asset"; id: string } | null {
   try {
     let pathname: string;
-    try {
-      const url = new URL(rawValue);
-      if (url.origin !== globalThis.location?.origin) {
-        return null;
-      }
+    if (rawValue.startsWith("/")) {
+      pathname = rawValue;
+    } else {
+      const url = parseScanResult(rawValue);
+      if (!url) return null;
+      if (url.origin !== globalThis.location?.origin) return null;
       pathname = url.pathname;
-    } catch {
-      if (rawValue.startsWith("/")) {
-        pathname = rawValue;
-      } else {
-        return null;
-      }
     }
 
     const sanitized = pathname.replace(/[^a-zA-Z0-9-_/]/g, "");
 
-    const assetMatch = sanitized.match(/^\/a\/([a-zA-Z0-9-_]+)/);
+    // Case-insensitive so uppercase-encoded codes resolve to the right entity.
+    const assetMatch = sanitized.match(/^\/a\/([a-zA-Z0-9-_]+)/i);
     if (assetMatch) return { entityType: "asset", id: assetMatch[1]! };
 
-    const itemMatch = sanitized.match(/^\/item\/([a-zA-Z0-9-_]+)/);
+    const itemMatch = sanitized.match(/^\/item\/([a-zA-Z0-9-_]+)/i);
     if (itemMatch) return { entityType: "item", id: itemMatch[1]! };
 
-    const locationMatch = sanitized.match(/^\/location\/([a-zA-Z0-9-_]+)/);
+    const locationMatch = sanitized.match(/^\/location\/([a-zA-Z0-9-_]+)/i);
     if (locationMatch) return { entityType: "location", id: locationMatch[1]! };
 
     return null;
