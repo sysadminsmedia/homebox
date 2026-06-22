@@ -1398,6 +1398,7 @@ export interface OIDCStatus {
   autoRedirect: boolean;
   buttonText: string;
   enabled: boolean;
+  initialized: boolean;
 }
 
 export interface ResetPasswordRequest {
