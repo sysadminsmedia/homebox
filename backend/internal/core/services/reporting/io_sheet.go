@@ -250,6 +250,16 @@ func (s *IOSheet) ReadItems(ctx context.Context, entities []repo.EntityOut, gid 
 			}
 		})
 
+		// Resolve parent import ref for CSV output
+		var parentImportRef string
+		if item.Parent != nil {
+			// Find the parent entity to get its import_ref
+			parentEntity, err := repos.Entities.GetByID(ctx, gid, item.Parent.ID)
+			if err == nil && parentEntity.ImportRef != "" {
+				parentImportRef = parentEntity.ImportRef
+			}
+		}
+
 		s.Rows[i] = ExportCSVRow{
 			// fill struct
 			Location: locString,
