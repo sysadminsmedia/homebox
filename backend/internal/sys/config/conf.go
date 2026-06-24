@@ -96,10 +96,14 @@ type WebConfig struct {
 	// (POST /v1/group/import). Set independently because a full collection
 	// backup including attachments can be much larger than a single asset
 	// upload. Defaults to 1 GB.
-	MaxImportSize int64         `yaml:"max_import_upload" conf:"default:1024"`
-	ReadTimeout   time.Duration `yaml:"read_timeout"      conf:"default:10s"`
-	WriteTimeout  time.Duration `yaml:"write_timeout"     conf:"default:10s"`
-	IdleTimeout   time.Duration `yaml:"idle_timeout"      conf:"default:30s"`
+	MaxImportSize int64 `yaml:"max_import_size" conf:"default:1024"`
+	// MaxParseMemory is the amount of memory used when parsing multipart form
+	// the data that does not fit into this memory will spil to temp files.
+	// Defaults to 64 MB.
+	MaxParseMemory int64         `yaml:"max_parse_memory" conf:"default:64"`
+	ReadTimeout    time.Duration `yaml:"read_timeout"      conf:"default:10s"`
+	WriteTimeout   time.Duration `yaml:"write_timeout"     conf:"default:10s"`
+	IdleTimeout    time.Duration `yaml:"idle_timeout"      conf:"default:30s"`
 }
 
 type LabelMakerConf struct {
