@@ -228,9 +228,9 @@ func (ctrl *V1Controller) HandleCollectionImport() errchain.HandlerFunc {
 		}
 
 		// maxImportSize is in MB and applies to the whole request body via the
-		// path-aware middleware; here we pass it to ParseMultipartForm as the
-		// memory-vs-disk threshold so larger archives spool gracefully.
-		if err := r.ParseMultipartForm(ctrl.maxImportSize << 20); err != nil {
+		// path-aware middleware; here we pass `maxParseMemory` to ParseMultipartForm
+		// as the memory-vs-disk threshold so larger archives spool gracefully.
+		if err := r.ParseMultipartForm(ctrl.maxParseMemory << 20); err != nil {
 			log.Err(err).Msg("import: parse multipart")
 			return validate.NewRequestError(err, http.StatusBadRequest)
 		}
