@@ -277,6 +277,11 @@
       ref: "warrantyDetails",
       maxLength: 1000,
     },
+    {
+      type: "checkbox",
+      label: "items.notify_warranty_expiration",
+      ref: "notifyWarrantyExpiration",
+    },
   ];
 
   const soldFields: FormField[] = [
