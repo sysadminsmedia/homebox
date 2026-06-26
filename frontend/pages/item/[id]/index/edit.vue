@@ -288,8 +288,12 @@
     () => !!item.value && !item.value.lifetimeWarranty && !!item.value.warrantyExpires
   );
 
-  watch(canNotifyWarrantyExpiration, can => {
-    if (!can && item.value?.notifyWarrantyExpiration) {
+  watchEffect(() => {
+    if (!item.value) {
+      return;
+    }
+
+    if (!canNotifyWarrantyExpiration.value && item.value.notifyWarrantyExpiration) {
       item.value.notifyWarrantyExpiration = false;
     }
   });
