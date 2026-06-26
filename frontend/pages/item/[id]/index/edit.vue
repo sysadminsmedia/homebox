@@ -284,6 +284,16 @@
     },
   ];
 
+  const canNotifyWarrantyExpiration = computed(
+    () => !!item.value && !item.value.lifetimeWarranty && !!item.value.warrantyExpires
+  );
+
+  watch(canNotifyWarrantyExpiration, can => {
+    if (!can && item.value?.notifyWarrantyExpiration) {
+      item.value.notifyWarrantyExpiration = false;
+    }
+  });
+
   const soldFields: FormField[] = [
     {
       type: "text",
@@ -941,7 +951,10 @@
           </div>
           <div class="border-t sm:p-0">
             <div v-for="field in warrantyFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y">
-              <div class="border-b px-4 pb-4 pt-2 sm:px-6">
+              <div
+                v-if="field.ref !== 'notifyWarrantyExpiration' || canNotifyWarrantyExpiration"
+                class="border-b px-4 pb-4 pt-2 sm:px-6"
+              >
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
