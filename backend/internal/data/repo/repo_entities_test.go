@@ -794,3 +794,50 @@ func TestEntityRepository_WipeInventory_OnlyItems(t *testing.T) {
 	// Cleanup
 	_ = tRepos.Tags.DeleteByGroup(context.Background(), tGroup.ID, tagObj.ID)
 }
+
+func TestEntityRepository_GetWarrantyExpiringOn(t *testing.T) {
+	ctx := context.Background()
+	target := types.DateFromTime(time.Now().AddDate(0, 0, 30))
+
+	entities := useEntities(t, 5)
+
+	set := func(e EntityOut, expires types.Date, notify, lifetime bool) {
+		u := EntityUpdate{
+			ID:                       e.ID,
+			Name:                     e.Name,
+			WarrantyExpires:          expires,
+			NotifyWarrantyExpiration: notify,
+			LifetimeWarranty:         lifetime,
+		}
+		if e.EntityType != nil {
+			u.EntityTypeID = e.EntityType.ID
+		}
+		_, err := tRepos.Entities.UpdateByGroup(ctx, tGroup.ID, u)
+		require.NoError(t, err)
+	}
+
+	// 0: opted-in, expires on the target day -> should match
+	set(entities[0], target, true, false)
+	// 1: opted-in, expires the day before the target -> no match
+	set(entities[1], types.DateFromTime(target.Time().AddDate(0, 0, -1)), true, false)
+	// 2: opted-in, expires the day after the target -> no match
+	set(entities[2], types.DateFromTime(target.Time().AddDate(0, 0, 1)), true, false)
+	// 3: notifications off, expires on the target day -> no match
+	set(entities[3], target, false, false)
+	// 4: lifetime warranty, opted-in, expires on the target day -> no match
+	set(entities[4], target, true, true)
+
+	results, err := tRepos.Entities.GetWarrantyExpiringOn(ctx, tGroup.ID, target)
+	require.NoError(t, err)
+
+	ids := make([]uuid.UUID, len(results))
+	for i, r := range results {
+		ids[i] = r.ID
+	}
+
+	assert.Contains(t, ids, entities[0].ID)
+	assert.NotContains(t, ids, entities[1].ID)
+	assert.NotContains(t, ids, entities[2].ID)
+	assert.NotContains(t, ids, entities[3].ID)
+	assert.NotContains(t, ids, entities[4].ID)
+}
