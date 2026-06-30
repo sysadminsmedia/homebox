@@ -101,7 +101,8 @@
   }
 
   const filteredLocations = computed(() => {
-    const filtered = fuzzysort.go(search.value, locations.value, { key: "name", all: true }).map(i => i.obj);
+    const keys = ["name", "treeString"];
+    const filtered = fuzzysort.go(search.value, locations.value, { keys, all: true }).map(i => i.obj);
 
     return filtered;
   });
