@@ -101,9 +101,9 @@ type WebConfig struct {
 	// the data that does not fit into this memory will spil to temp files.
 	// Defaults to 64 MB.
 	MaxParseMemory int64         `yaml:"max_parse_memory" conf:"default:64"`
-	ReadTimeout    time.Duration `yaml:"read_timeout"      conf:"default:10s"`
-	WriteTimeout   time.Duration `yaml:"write_timeout"     conf:"default:10s"`
-	IdleTimeout    time.Duration `yaml:"idle_timeout"      conf:"default:30s"`
+	ReadTimeout    time.Duration `yaml:"read_timeout"     conf:"default:10s"`
+	WriteTimeout   time.Duration `yaml:"write_timeout"    conf:"default:10s"`
+	IdleTimeout    time.Duration `yaml:"idle_timeout"     conf:"default:30s"`
 }
 
 type LabelMakerConf struct {

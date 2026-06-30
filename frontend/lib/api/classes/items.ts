@@ -139,7 +139,7 @@ export class ItemsApi extends BaseAPI {
   }
 
   async update(id: string, item: EntityUpdate) {
-    return this.http.put<EntityCreate, EntityOut>({
+    return this.http.put<EntityUpdate, EntityOut>({
       url: route(`/entities/${id}`),
       body: this.dropFields(item),
     });

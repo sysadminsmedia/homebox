@@ -45,6 +45,7 @@
   import DetailsSection from "~/components/global/DetailsSection/DetailsSection.vue";
   import ItemAttachmentsList from "~/components/Item/AttachmentsList.vue";
   import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
+  import { DEFAULT_TEMPLATE_FIELD_TIME_VALUE, NIL_UUID } from "~/lib/template-fields";
 
   const { t } = useI18n();
 
@@ -575,8 +576,6 @@
       return;
     }
 
-    const NIL_UUID = "00000000-0000-0000-0000-000000000000";
-
     // Create template from item data
     const templateData = {
       name: `Template: ${item.value.name}`,
@@ -590,7 +589,7 @@
       defaultModelNumber: item.value.modelNumber || "",
       defaultLifetimeWarranty: item.value.lifetimeWarranty,
       defaultWarrantyDetails: item.value.warrantyDetails || "",
-      defaultLocationId: item.value.location?.id || item.value.parent?.id || "",
+      defaultLocationId: item.value.parent?.entityType?.isLocation ? item.value.parent.id : null,
       defaultTagIds: item.value.tags?.map(l => l.id) || [],
       includeWarrantyFields: !!(
         item.value.warrantyDetails ||
@@ -603,7 +602,10 @@
         id: NIL_UUID,
         name: field.name,
         type: "text",
+        booleanValue: field.booleanValue,
+        numberValue: field.numberValue,
         textValue: field.textValue || "",
+        timeValue: DEFAULT_TEMPLATE_FIELD_TIME_VALUE,
       })),
     };
 

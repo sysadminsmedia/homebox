@@ -343,7 +343,7 @@
     return `${v.toFixed(v >= 10 || i === 0 ? 0 : 1)} ${units[i]}`;
   }
 
-  function formatCreated(iso: string): string {
+  function formatCreated(iso: string | Date): string {
     return new Date(iso).toLocaleString();
   }
 

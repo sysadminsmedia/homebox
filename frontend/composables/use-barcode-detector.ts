@@ -1,12 +1,12 @@
 import { ref, type Ref, watch, onUnmounted } from "vue";
 import { useDocumentVisibility } from "@vueuse/core";
-import type { ItemOut, ItemSummary, LocationOut } from "~~/lib/api/types/data-contracts";
+import type { EntityOut, EntitySummary } from "~~/lib/api/types/data-contracts";
 import type { WorkerResponse } from "~~/workers/barcode-detector";
 
 export interface EntityData {
-  item?: ItemOut;
-  location?: LocationOut;
-  childItems?: ItemSummary[];
+  item?: EntityOut;
+  location?: EntityOut;
+  childItems?: EntitySummary[];
 }
 
 export interface Point2D {
@@ -416,7 +416,7 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
           return null;
         }
 
-        const [locRes, itemsRes] = await Promise.all([api.locations.get(id), api.items.getAll({ locations: [id] })]);
+        const [locRes, itemsRes] = await Promise.all([api.locations.get(id), api.items.getAll({ parentIds: [id] })]);
         if (locRes.data) {
           const result: EntityData = { location: locRes.data, childItems: itemsRes.data?.items ?? [] };
           entityCache.set(cacheKey, { data: result, fetchedAt: Date.now() });

@@ -311,6 +311,42 @@ func (r *GroupRepository) GroupCreate(ctx context.Context, name string, userID u
 	return r.groupMapper.Map(g), nil
 }
 
+func (r *GroupRepository) GroupCreateWithEntityTypeDefaults(ctx context.Context, name string, userID uuid.UUID) (Group, error) {
+	tx, err := r.db.Tx(ctx)
+	if err != nil {
+		return Group{}, err
+	}
+
+	g, err := tx.Group.Create().SetName(name).Save(ctx)
+	if err != nil {
+		_ = tx.Rollback()
+		return Group{}, err
+	}
+
+	if userID != uuid.Nil {
+		if _, err := tx.UserGroup.Create().
+			SetUserID(userID).
+			SetGroupID(g.ID).
+			SetRole(usergroup.RoleOwner).
+			Save(ctx); err != nil {
+			_ = tx.Rollback()
+			return Group{}, err
+		}
+	}
+
+	for _, isLocation := range []bool{false, true} {
+		if _, _, err := ensureDefaultEntityType(ctx, tx.EntityType, g.ID, isLocation); err != nil {
+			_ = tx.Rollback()
+			return Group{}, err
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return Group{}, err
+	}
+	return r.groupMapper.Map(g), nil
+}
+
 func (r *GroupRepository) GroupUpdate(ctx context.Context, id uuid.UUID, data GroupUpdate) (Group, error) {
 	entity, err := r.db.Group.UpdateOneID(id).
 		SetName(data.Name).

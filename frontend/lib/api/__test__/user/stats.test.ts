@@ -38,10 +38,9 @@ function toCsv(data: ImportObj[]): string {
 function importFileGenerator(entries: number): ImportObj[] {
   const imports: Partial<ImportObj>[] = [];
 
-  const pick = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
-
-  const tags = faker.word.words(5).split(" ").join(";");
-  const locations = faker.word.words(3).split(" ");
+  const suffix = faker.string.alphanumeric(8).toLowerCase();
+  const tags = Array.from({ length: 5 }, (_, i) => `stats-tag-${suffix}-${i}`).join(";");
+  const locations = Array.from({ length: 3 }, (_, i) => `stats-location-${suffix}-${i}`);
 
   const half = Math.floor(entries / 2);
 
@@ -51,7 +50,7 @@ function importFileGenerator(entries: number): ImportObj[] {
   for (let i = 0; i < entries; i++) {
     imports.push({
       [`HB.import_ref`]: faker.database.mongodbObjectId(),
-      [`HB.location`]: pick(locations),
+      [`HB.location`]: locations[i % locations.length]!,
       [`HB.tags`]: tags,
       [`HB.quantity`]: Number(faker.number.int(2)),
       [`HB.name`]: faker.word.words(3),

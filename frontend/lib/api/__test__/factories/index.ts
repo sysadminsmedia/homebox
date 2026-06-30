@@ -39,11 +39,14 @@ function user(): UserRegistration {
   };
 }
 
-function location(parentId: string | null = null): Partial<EntityCreate> & { name: string; description: string } {
+function location(entityTypeId: string, parentId: string | null = null): EntityCreate {
   return {
     parentId,
     name: faker.location.city(),
     description: faker.lorem.sentence(),
+    entityTypeId,
+    quantity: 1,
+    tagIds: [],
   };
 }
 
@@ -52,6 +55,7 @@ function tag(): TagCreate {
     name: faker.lorem.word(),
     description: faker.lorem.sentence(),
     color: faker.color.rgb(),
+    icon: "",
   };
 }
 

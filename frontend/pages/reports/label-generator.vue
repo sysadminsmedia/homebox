@@ -9,6 +9,7 @@
   import { Input } from "@/components/ui/input";
   import { Checkbox } from "@/components/ui/checkbox";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import type { EntitySummary } from "~/lib/api/types/data-contracts";
 
   const { t } = useI18n();
 
@@ -225,15 +226,16 @@
     return route(`/qrcode`, { data: encodeURIComponent(data) });
   }
 
-  function getItem(n: number, item: { assetId: string; name: string; location: { name: string } } | null): LabelData {
+  function getItem(n: number, item: EntitySummary | null): LabelData {
     // format n into - seperated string with leading zeros
     const assetID = fmtAssetID(item?.assetId ?? n + 1);
+    const location = item?.parent?.entityType?.isLocation ? item.parent.name : labelBlankLine;
 
     return {
       url: getQRCodeUrl(assetID),
       assetID: item?.assetId ?? assetID,
       name: item?.name ?? labelBlankLine,
-      location: item?.location?.name ?? labelBlankLine,
+      location,
     };
   }
 
@@ -263,8 +265,8 @@
     const items: LabelData[] = [];
     for (let i = displayProperties.assetRange - 1; i < displayProperties.assetRangeMax - 1; i++) {
       const item = allFields?.value?.items?.[i];
-      if (item?.location) {
-        items.push(getItem(i, item as { assetId: string; location: { name: string }; name: string }));
+      if (item?.parent) {
+        items.push(getItem(i, item));
       } else {
         items.push(getItem(i, null));
       }

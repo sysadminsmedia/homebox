@@ -2,6 +2,8 @@ package services
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"strings"
@@ -36,6 +38,25 @@ const PasswordMinLength = 6
 type UserService struct {
 	repos  *repo.AllRepos
 	mailer *mailer.Mailer
+}
+
+func oidcSubjectHash(subject string) string {
+	sum := sha256.Sum256([]byte(subject))
+	return hex.EncodeToString(sum[:])
+}
+
+func (svc *UserService) retryEntityTypeDefaults(ctx context.Context, gid uuid.UUID, source string) {
+	go func() {
+		retryCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), time.Minute)
+		defer cancel()
+
+		if err := svc.repos.EntityTypes.EnsureDefaults(retryCtx, gid); err != nil {
+			log.Err(err).
+				Str("group_id", gid.String()).
+				Str("source", source).
+				Msg("failed to create default entity types on retry")
+		}
+	}()
 }
 
 type (
@@ -195,6 +216,15 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration,
 	// Create the default tags and locations for the group.
 	if creatingGroup {
 		bootstrapCtx, bootstrapSpan := entityServiceTracer().Start(ctx, "service.UserService.RegisterUser.bootstrap")
+		log.Debug().Msg("creating default entity types")
+		if err := svc.repos.EntityTypes.EnsureDefaults(bootstrapCtx, usr.DefaultGroupID); err != nil {
+			recordServiceSpanError(bootstrapSpan, err)
+			log.Err(err).
+				Str("group_id", usr.DefaultGroupID.String()).
+				Msg("failed to create default entity types; scheduling retry")
+			svc.retryEntityTypeDefaults(ctx, usr.DefaultGroupID, "register_user")
+		}
+
 		log.Debug().Msg("creating default tags")
 		tagsCreated := 0
 		for _, tag := range defaultTags() {
@@ -455,9 +485,10 @@ func (svc *UserService) LoginOIDC(ctx context.Context, issuer, subject, email, n
 	subject = strings.TrimSpace(subject)
 	email = strings.ToLower(strings.TrimSpace(email))
 	name = strings.TrimSpace(name)
+	subjectHash := oidcSubjectHash(subject)
 
 	if issuer == "" || subject == "" {
-		log.Warn().Str("issuer", issuer).Str("subject", subject).Msg("OIDC login missing issuer or subject")
+		log.Warn().Str("issuer", issuer).Str("subject_hash", subjectHash).Msg("OIDC login missing issuer or subject")
 		span.SetAttributes(attribute.String("oidc.outcome", "missing_issuer_or_subject"))
 		return UserAuthTokenDetail{}, ErrorInvalidLogin
 	}
@@ -467,7 +498,7 @@ func (svc *UserService) LoginOIDC(ctx context.Context, issuer, subject, email, n
 	if err != nil {
 		if !ent.IsNotFound(err) {
 			recordServiceSpanError(span, err)
-			log.Err(err).Str("issuer", issuer).Str("subject", subject).Msg("failed to lookup user by OIDC identity")
+			log.Err(err).Str("issuer", issuer).Str("subject_hash", subjectHash).Msg("failed to lookup user by OIDC identity")
 			return UserAuthTokenDetail{}, err
 		}
 		// Not found: attempt migration path by email (legacy) if email provided
@@ -475,7 +506,7 @@ func (svc *UserService) LoginOIDC(ctx context.Context, issuer, subject, email, n
 			migrationCtx, migrationSpan := entityServiceTracer().Start(ctx, "service.UserService.LoginOIDC.legacyEmailMigration")
 			legacyUsr, lerr := svc.repos.Users.GetOneEmail(migrationCtx, email)
 			if lerr == nil {
-				log.Info().Str("email", email).Str("issuer", issuer).Str("subject", subject).Msg("migrating legacy email-based OIDC user to issuer+subject")
+				log.Info().Str("email", email).Str("issuer", issuer).Str("subject_hash", subjectHash).Msg("migrating legacy email-based OIDC user to issuer+subject")
 				if uerr := svc.repos.Users.SetOIDCIdentity(migrationCtx, legacyUsr.ID, issuer, subject); uerr == nil {
 					usr = legacyUsr
 					migrationSpan.SetAttributes(
@@ -496,23 +527,23 @@ func (svc *UserService) LoginOIDC(ctx context.Context, issuer, subject, email, n
 
 	// Create user if still not resolved
 	if usr.ID == uuid.Nil {
-		log.Debug().Str("issuer", issuer).Str("subject", subject).Msg("OIDC user not found, creating new user")
+		log.Debug().Str("issuer", issuer).Str("subject_hash", subjectHash).Msg("OIDC user not found, creating new user")
 		span.SetAttributes(attribute.String("oidc.outcome", "creating_user"))
 		usr, err = svc.registerOIDCUser(ctx, issuer, subject, email, name)
 		if err != nil {
 			if ent.IsConstraintError(err) {
 				if usr2, gerr := svc.repos.Users.GetOneOIDC(ctx, issuer, subject); gerr == nil {
-					log.Info().Str("issuer", issuer).Str("subject", subject).Msg("OIDC user created concurrently; proceeding")
+					log.Info().Str("issuer", issuer).Str("subject_hash", subjectHash).Msg("OIDC user created concurrently; proceeding")
 					usr = usr2
 					span.SetAttributes(attribute.String("oidc.outcome", "concurrent_create_resolved"))
 				} else {
 					recordServiceSpanError(span, gerr)
-					log.Err(gerr).Str("issuer", issuer).Str("subject", subject).Msg("failed to fetch user after constraint error")
+					log.Err(gerr).Str("issuer", issuer).Str("subject_hash", subjectHash).Msg("failed to fetch user after constraint error")
 					return UserAuthTokenDetail{}, gerr
 				}
 			} else {
 				recordServiceSpanError(span, err)
-				log.Err(err).Str("issuer", issuer).Str("subject", subject).Msg("failed to create OIDC user")
+				log.Err(err).Str("issuer", issuer).Str("subject_hash", subjectHash).Msg("failed to create OIDC user")
 				return UserAuthTokenDetail{}, err
 			}
 		}
@@ -530,6 +561,7 @@ func (svc *UserService) LoginOIDC(ctx context.Context, issuer, subject, email, n
 
 // registerOIDCUser creates a new user for OIDC authentication with issuer+subject identity.
 func (svc *UserService) registerOIDCUser(ctx context.Context, issuer, subject, email, name string) (repo.UserOut, error) {
+	subjectHash := oidcSubjectHash(subject)
 	ctx, span := entityServiceTracer().Start(ctx, "service.UserService.registerOIDCUser",
 		trace.WithAttributes(
 			attribute.String("oidc.issuer", issuer),
@@ -562,7 +594,19 @@ func (svc *UserService) registerOIDCUser(ctx context.Context, issuer, subject, e
 	span.SetAttributes(attribute.String("user.id", entUser.ID.String()))
 
 	bootstrapCtx, bootstrapSpan := entityServiceTracer().Start(ctx, "service.UserService.registerOIDCUser.bootstrap")
-	log.Debug().Str("issuer", issuer).Str("subject", subject).Msg("creating default tags for OIDC user")
+	log.Debug().Str("issuer", issuer).Str("subject_hash", subjectHash).Msg("creating default entity types for OIDC user")
+	if err := svc.repos.EntityTypes.EnsureDefaults(bootstrapCtx, group.ID); err != nil {
+		recordServiceSpanError(bootstrapSpan, err)
+		recordServiceSpanError(span, err)
+		log.Err(err).
+			Str("issuer", issuer).
+			Str("subject_hash", subjectHash).
+			Str("group_id", group.ID.String()).
+			Msg("failed to create default entity types for OIDC user; scheduling retry")
+		svc.retryEntityTypeDefaults(ctx, group.ID, "oidc_register")
+	}
+
+	log.Debug().Str("issuer", issuer).Str("subject_hash", subjectHash).Msg("creating default tags for OIDC user")
 	tagsCreated := 0
 	for _, tag := range defaultTags() {
 		_, err := svc.repos.Tags.Create(bootstrapCtx, group.ID, tag)
@@ -574,7 +618,7 @@ func (svc *UserService) registerOIDCUser(ctx context.Context, issuer, subject, e
 		tagsCreated++
 	}
 
-	log.Debug().Str("issuer", issuer).Str("subject", subject).Msg("creating default locations for OIDC user")
+	log.Debug().Str("issuer", issuer).Str("subject_hash", subjectHash).Msg("creating default locations for OIDC user")
 	locsCreated := 0
 	for _, loc := range defaultLocations() {
 		_, err := svc.repos.Entities.CreateContainer(bootstrapCtx, group.ID, loc)

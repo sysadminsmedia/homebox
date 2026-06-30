@@ -1,14 +1,19 @@
 package validate
 
 import (
+	"context"
 	"fmt"
 	"net"
+	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 )
+
+const outboundResolveTimeout = 5 * time.Second
 
 // ValidateNotifierURL validates a notifier URL against the configured block/allow lists.
 // This only applies to generic:// notifier URLs which can make arbitrary HTTP requests.
@@ -18,21 +23,40 @@ func ValidateNotifierURL(notifierURL string, cfg *config.NotifierConf) error {
 		return nil
 	}
 
-	// Defensively guard against nil cfg
-	if cfg == nil {
-		return fmt.Errorf("notifier configuration is nil, cannot validate URL")
-	}
-
 	// Extract the actual URL from the generic:// wrapper
 	actualURL, err := extractGenericURL(notifierURL)
 	if err != nil {
 		return fmt.Errorf("invalid generic notifier URL: %w", err)
 	}
 
-	// Parse the URL to extract the hostname
-	parsedURL, err := url.Parse(actualURL)
+	return ValidateOutboundHTTPURL(actualURL, cfg)
+}
+
+// ValidateOutboundHTTPURL validates an outbound HTTP(S) URL against the
+// configured SSRF allow/block policy.
+func ValidateOutboundHTTPURL(rawURL string, cfg *config.NotifierConf) error {
+	return ValidateOutboundHTTPURLWithContext(context.Background(), rawURL, cfg)
+}
+
+// ValidateOutboundHTTPURLWithContext validates an outbound HTTP(S) URL using the
+// caller's cancellation context and a bounded DNS lookup timeout.
+func ValidateOutboundHTTPURLWithContext(ctx context.Context, rawURL string, cfg *config.NotifierConf) error {
+	if cfg == nil {
+		return fmt.Errorf("outbound URL validation configuration is nil")
+	}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	ctx, cancel := context.WithTimeout(ctx, outboundResolveTimeout)
+	defer cancel()
+
+	parsedURL, err := url.Parse(rawURL)
 	if err != nil {
-		return fmt.Errorf("invalid URL in generic notifier: %w", err)
+		return fmt.Errorf("invalid outbound URL: %w", err)
+	}
+	scheme := strings.ToLower(parsedURL.Scheme)
+	if scheme != "http" && scheme != "https" {
+		return fmt.Errorf("outbound URL must use http:// or https:// scheme")
 	}
 
 	host := parsedURL.Hostname()
@@ -40,15 +64,120 @@ func ValidateNotifierURL(notifierURL string, cfg *config.NotifierConf) error {
 		return fmt.Errorf("no hostname found in URL")
 	}
 
-	// Resolve the hostname to an IP address
-	// NOTE: DNS responses can change after validation; consider re-validating at request time.
-	ips, err := net.LookupIP(host)
+	ips, err := resolveOutboundHost(ctx, host)
 	if err != nil {
-		return fmt.Errorf("failed to resolve hostname: %w", err)
+		return err
 	}
 
-	if len(ips) == 0 {
-		return fmt.Errorf("hostname did not resolve to any IP addresses")
+	return validateOutboundIPs(ips, cfg)
+}
+
+// NewOutboundHTTPTransport returns an HTTP transport that enforces the shared
+// outbound URL policy when the transport dials the final connection target.
+// Callers should still validate request URLs before sending so policy failures
+// can be reported as request validation errors instead of transport errors.
+// The transport deliberately enforces the supplied NotifierConf as-is so generic
+// webhooks and integrations share one operator-controlled outbound policy.
+func NewOutboundHTTPTransport(cfg *config.NotifierConf) *http.Transport {
+	dialer := &net.Dialer{
+		Timeout:   30 * time.Second,
+		KeepAlive: 30 * time.Second,
+	}
+
+	return &http.Transport{
+		DialContext:           outboundDialContext(cfg, dialer),
+		ForceAttemptHTTP2:     true,
+		MaxIdleConns:          10,
+		IdleConnTimeout:       90 * time.Second,
+		TLSHandshakeTimeout:   10 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
+	}
+}
+
+func outboundDialContext(cfg *config.NotifierConf, dialer *net.Dialer) func(context.Context, string, string) (net.Conn, error) {
+	if dialer == nil {
+		dialer = &net.Dialer{}
+	}
+
+	return func(ctx context.Context, network, address string) (net.Conn, error) {
+		host, port, err := net.SplitHostPort(address)
+		if err != nil {
+			return nil, fmt.Errorf("invalid outbound dial address %q: %w", address, err)
+		}
+
+		ips, err := resolveOutboundHost(ctx, host)
+		if err != nil {
+			return nil, err
+		}
+
+		filteredIPs := filterOutboundIPsByNetwork(network, ips)
+		if len(filteredIPs) == 0 {
+			return nil, fmt.Errorf("no resolved IPs for %s match network %s", host, network)
+		}
+		if err := validateOutboundIPs(filteredIPs, cfg); err != nil {
+			return nil, fmt.Errorf("outbound dial blocked: %w", err)
+		}
+
+		var lastErr error
+		for _, ip := range filteredIPs {
+			conn, err := dialer.DialContext(ctx, network, net.JoinHostPort(ip.String(), port))
+			if err == nil {
+				return conn, nil
+			}
+			lastErr = err
+		}
+
+		if lastErr != nil {
+			return nil, fmt.Errorf("outbound dial failed for %s: %w", host, lastErr)
+		}
+		return nil, fmt.Errorf("no resolved IPs for %s match network %s", host, network)
+	}
+}
+
+func filterOutboundIPsByNetwork(network string, ips []net.IP) []net.IP {
+	filtered := make([]net.IP, 0, len(ips))
+	for _, ip := range ips {
+		if ipMatchesNetwork(network, ip) {
+			filtered = append(filtered, ip)
+		}
+	}
+	return filtered
+}
+
+func resolveOutboundHost(ctx context.Context, host string) ([]net.IP, error) {
+	if ip := net.ParseIP(host); ip != nil {
+		return []net.IP{ip}, nil
+	}
+
+	addrs, err := net.DefaultResolver.LookupIPAddr(ctx, host)
+	if err != nil {
+		return nil, fmt.Errorf("failed to resolve hostname: %w", err)
+	}
+	if len(addrs) == 0 {
+		return nil, fmt.Errorf("hostname did not resolve to any IP addresses")
+	}
+
+	ips := make([]net.IP, 0, len(addrs))
+	for _, addr := range addrs {
+		ips = append(ips, addr.IP)
+	}
+	return ips, nil
+}
+
+func ipMatchesNetwork(network string, ip net.IP) bool {
+	switch network {
+	case "tcp4":
+		return ip.To4() != nil
+	case "tcp6":
+		return ip.To4() == nil
+	default:
+		return true
+	}
+}
+
+func validateOutboundIPs(ips []net.IP, cfg *config.NotifierConf) error {
+	if cfg == nil {
+		return fmt.Errorf("outbound URL validation configuration is nil")
 	}
 
 	// Expand DNS64-synthesized IPv6 addresses (RFC 6052) into their embedded
@@ -134,27 +263,19 @@ func checkBlockNets(ips []net.IP, blockNets []string) error {
 // (localhost, RFC1918, bogon, cloud metadata) to every IP.
 func checkBlockedCategories(ips []net.IP, cfg *config.NotifierConf) error {
 	for _, ip := range ips {
-		// Block localhost if configured
 		if cfg.BlockLocalhost && isLocalhost(ip) {
 			return fmt.Errorf("localhost addresses are blocked")
 		}
-
-		// Block RFC1918 private networks if configured
 		if cfg.BlockLocalNets && isPrivateNetwork(ip) {
 			return fmt.Errorf("private network addresses (RFC1918) are blocked")
 		}
-
-		// Block bogon networks (reserved IPs) if configured
 		if cfg.BlockBogonNets && isBogonNetwork(ip) {
 			return fmt.Errorf("bogon/reserved network addresses are blocked")
 		}
-
-		// Block cloud metadata endpoints if configured
 		if cfg.BlockCloudMetadata && isCloudMetadata(ip) {
 			return fmt.Errorf("cloud metadata endpoints are blocked")
 		}
 	}
-
 	return nil
 }
 
