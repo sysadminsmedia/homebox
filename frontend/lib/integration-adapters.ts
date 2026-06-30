@@ -1,10 +1,11 @@
 /**
  * Integration adapter registry for external link services (Paperless, …).
  *
- * To add a new service:
+ * To add a new frontend service:
  *  1. Add an `extractXyzId` function below using `extractWithPattern`.
  *  2. Push a new `ServiceAdapter` entry to `SERVICE_ADAPTERS`.
- *  That's it – drop detection, classification, and hydration are all registry-driven.
+ * Backend MIME/source registration and proxy authentication may still need
+ * service-specific support.
  */
 
 // ---------------------------------------------------------------------------

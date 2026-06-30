@@ -43,12 +43,11 @@ func (ctrl *V1Controller) integrationProxyHTTPClient() *http.Client {
 // HandleIntegrationProxy godoc
 //
 //	@Summary		Integration Reverse Proxy
-//	@Description	Proxies a single GET request to the configured external integration.
+//	@Description	Proxies a single GET request to a configured external integration.
 //				The integration's credentials (base URL + API token) are read from
 //				user settings ({name}_url / {name}_token) and never exposed to the
-//				frontend.  This single generic endpoint replaces all per-integration
-//				proxy handlers: adding a new integration only requires a Vue component
-//				and a settings entry — no new Go code.
+//				frontend. The current frontend uses this for Paperless-style token
+//				authentication.
 //	@Tags			Integrations
 //	@Produce		*/*
 //	@Param			name	path	string	true	"Integration name, e.g. paperless"
