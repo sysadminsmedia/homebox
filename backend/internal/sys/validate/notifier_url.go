@@ -18,21 +18,29 @@ func ValidateNotifierURL(notifierURL string, cfg *config.NotifierConf) error {
 		return nil
 	}
 
-	// Defensively guard against nil cfg
-	if cfg == nil {
-		return fmt.Errorf("notifier configuration is nil, cannot validate URL")
-	}
-
 	// Extract the actual URL from the generic:// wrapper
 	actualURL, err := extractGenericURL(notifierURL)
 	if err != nil {
 		return fmt.Errorf("invalid generic notifier URL: %w", err)
 	}
 
-	// Parse the URL to extract the hostname
-	parsedURL, err := url.Parse(actualURL)
+	return ValidateOutboundHTTPURL(actualURL, cfg)
+}
+
+// ValidateOutboundHTTPURL validates an outbound HTTP(S) URL against the
+// configured SSRF allow/block policy.
+func ValidateOutboundHTTPURL(rawURL string, cfg *config.NotifierConf) error {
+	if cfg == nil {
+		return fmt.Errorf("outbound URL validation configuration is nil")
+	}
+
+	parsedURL, err := url.Parse(rawURL)
 	if err != nil {
-		return fmt.Errorf("invalid URL in generic notifier: %w", err)
+		return fmt.Errorf("invalid outbound URL: %w", err)
+	}
+	scheme := strings.ToLower(parsedURL.Scheme)
+	if scheme != "http" && scheme != "https" {
+		return fmt.Errorf("outbound URL must use http:// or https:// scheme")
 	}
 
 	host := parsedURL.Hostname()
@@ -134,27 +142,19 @@ func checkBlockNets(ips []net.IP, blockNets []string) error {
 // (localhost, RFC1918, bogon, cloud metadata) to every IP.
 func checkBlockedCategories(ips []net.IP, cfg *config.NotifierConf) error {
 	for _, ip := range ips {
-		// Block localhost if configured
 		if cfg.BlockLocalhost && isLocalhost(ip) {
 			return fmt.Errorf("localhost addresses are blocked")
 		}
-
-		// Block RFC1918 private networks if configured
 		if cfg.BlockLocalNets && isPrivateNetwork(ip) {
 			return fmt.Errorf("private network addresses (RFC1918) are blocked")
 		}
-
-		// Block bogon networks (reserved IPs) if configured
 		if cfg.BlockBogonNets && isBogonNetwork(ip) {
 			return fmt.Errorf("bogon/reserved network addresses are blocked")
 		}
-
-		// Block cloud metadata endpoints if configured
 		if cfg.BlockCloudMetadata && isCloudMetadata(ip) {
 			return fmt.Errorf("cloud metadata endpoints are blocked")
 		}
 	}
-
 	return nil
 }
 

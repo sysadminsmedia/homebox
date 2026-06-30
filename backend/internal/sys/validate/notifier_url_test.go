@@ -34,7 +34,7 @@ func TestValidateNotifierURL(t *testing.T) {
 		},
 		{
 			name: "generic notifier with public IP passes",
-			url:  "generic://https://example.com/webhook",
+			url:  "generic://https://8.8.8.8/webhook",
 			config: config.NotifierConf{
 				BlockLocalhost:     true,
 				BlockLocalNets:     true,
@@ -45,7 +45,7 @@ func TestValidateNotifierURL(t *testing.T) {
 		},
 		{
 			name: "generic notifier shorthand host/path passes",
-			url:  "generic://example.com/webhook",
+			url:  "generic://8.8.8.8/webhook",
 			config: config.NotifierConf{
 				BlockLocalhost:     true,
 				BlockLocalNets:     true,
@@ -420,6 +420,63 @@ func TestValidateNotifierURL(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := ValidateNotifierURL(tt.url, &tt.config)
+			if tt.expectError && err == nil {
+				t.Errorf("expected error but got none")
+			}
+			if !tt.expectError && err != nil {
+				t.Errorf("expected no error but got: %v", err)
+			}
+		})
+	}
+}
+
+func TestValidateOutboundHTTPURL(t *testing.T) {
+	tests := []struct {
+		name        string
+		url         string
+		config      config.NotifierConf
+		expectError bool
+	}{
+		{
+			name: "plain http public URL passes",
+			url:  "http://8.8.8.8/webhook",
+			config: config.NotifierConf{
+				BlockLocalhost:     true,
+				BlockLocalNets:     true,
+				BlockBogonNets:     true,
+				BlockCloudMetadata: true,
+				Dns64Nets:          dns64DefaultNets,
+			},
+			expectError: false,
+		},
+		{
+			name: "plain http private URL obeys shared policy",
+			url:  "http://192.168.1.1/webhook",
+			config: config.NotifierConf{
+				BlockLocalNets: true,
+			},
+			expectError: true,
+		},
+		{
+			name:        "non-http URL is rejected",
+			url:         "ftp://example.com/file",
+			config:      config.NotifierConf{},
+			expectError: true,
+		},
+		{
+			name: "plain http DNS64 metadata URL is blocked",
+			url:  "http://[64:ff9b::a9fe:a9fe]/webhook",
+			config: config.NotifierConf{
+				BlockCloudMetadata: true,
+				Dns64Nets:          dns64DefaultNets,
+			},
+			expectError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := ValidateOutboundHTTPURL(tt.url, &tt.config)
 			if tt.expectError && err == nil {
 				t.Errorf("expected error but got none")
 			}

@@ -1,10 +1,8 @@
 package v1
 
 import (
-	"context"
 	"fmt"
 	"io"
-	"net"
 	"net/http"
 	"net/url"
 	"path"
@@ -24,92 +22,24 @@ import (
 // preventing settings-key injection (e.g. "../../evil").
 var validIntegrationName = regexp.MustCompile(`^[a-z][a-z0-9_-]{0,31}$`)
 
-// blockedCIDRs lists address ranges the proxy must never reach.
-// Prevents SSRF attacks against cloud metadata services (e.g. AWS IMDS at
-// 169.254.169.254), loopback services, and internal infrastructure.
-// Public hostnames are unrestricted; only private/reserved IPs are rejected.
-var blockedCIDRs = func() []*net.IPNet {
-	blocks := []string{
-		"127.0.0.0/8",    // IPv4 loopback
-		"::1/128",        // IPv6 loopback
-		"169.254.0.0/16", // IPv4 link-local (AWS/GCP/Azure IMDS)
-		"fe80::/10",      // IPv6 link-local
-		"10.0.0.0/8",     // RFC1918
-		"172.16.0.0/12",  // RFC1918
-		"192.168.0.0/16", // RFC1918
-		"0.0.0.0/8",      // Unspecified
-		"::/128",         // IPv6 unspecified
-		"100.64.0.0/10",  // Shared address space (RFC6598)
-		"fc00::/7",       // IPv6 unique-local (ULA)
-	}
-	nets := make([]*net.IPNet, 0, len(blocks))
-	for _, cidr := range blocks {
-		_, ipNet, _ := net.ParseCIDR(cidr)
-		nets = append(nets, ipNet)
-	}
-	return nets
-}()
-
-// checkBlockedIP returns an error if ip falls within any of the blocked ranges
-// (loopback, link-local, RFC1918, cloud metadata, etc.).
-func checkBlockedIP(ip net.IP) error {
-	for _, block := range blockedCIDRs {
-		if block.Contains(ip) {
-			return fmt.Errorf("integration proxy: address %s is in a blocked range", ip)
-		}
-	}
-	return nil
+// proxyHTTPTransport is shared across per-request clients so connection pooling
+// is reused while redirect checks can still use the controller configuration.
+var proxyHTTPTransport = &http.Transport{
+	MaxIdleConns:    10,
+	IdleConnTimeout: 90 * time.Second,
 }
 
-// ssrfSafeDialContext is a DialContext for proxyHTTPClient that rejects
-// connections to private, loopback, link-local and other reserved ranges.
-// Both literal-IP hosts and DNS-resolved hostnames are validated before dialing.
-func ssrfSafeDialContext(ctx context.Context, network, addr string) (net.Conn, error) {
-	host, port, err := net.SplitHostPort(addr)
-	if err != nil {
-		return nil, fmt.Errorf("integration proxy: invalid address %q: %w", addr, err)
+func (ctrl *V1Controller) integrationProxyHTTPClient() *http.Client {
+	return &http.Client{
+		Timeout:   30 * time.Second,
+		Transport: proxyHTTPTransport,
+		CheckRedirect: func(req *http.Request, _ []*http.Request) error {
+			if err := validate.ValidateOutboundHTTPURL(req.URL.String(), &ctrl.config.Notifier); err != nil {
+				return fmt.Errorf("integration proxy redirect blocked: %w", err)
+			}
+			return nil
+		},
 	}
-	d := &net.Dialer{}
-	// Fast path: literal IP — validate directly, no DNS lookup or rebinding window.
-	if ip := net.ParseIP(host); ip != nil {
-		if err := checkBlockedIP(ip); err != nil {
-			return nil, err
-		}
-		return d.DialContext(ctx, network, net.JoinHostPort(ip.String(), port))
-	}
-	// Hostname: resolve all addresses and validate each before dialing.
-	ips, lookupErr := net.DefaultResolver.LookupIPAddr(ctx, host)
-	if lookupErr != nil {
-		return nil, fmt.Errorf("integration proxy: DNS lookup failed: %w", lookupErr)
-	}
-	if len(ips) == 0 {
-		return nil, fmt.Errorf("integration proxy: no addresses resolved for %q", host)
-	}
-	var lastErr error
-	for _, ia := range ips {
-		if err := checkBlockedIP(ia.IP); err != nil {
-			lastErr = err
-			continue
-		}
-		conn, dialErr := d.DialContext(ctx, network, net.JoinHostPort(ia.IP.String(), port))
-		if dialErr == nil {
-			return conn, nil
-		}
-		lastErr = dialErr
-	}
-	return nil, lastErr
-}
-
-// proxyHTTPClient is a shared client with a hard timeout and bounded pool.
-// Using a dedicated client (not http.DefaultClient) prevents upstream services
-// from hanging the server indefinitely.
-var proxyHTTPClient = &http.Client{
-	Timeout: 30 * time.Second,
-	Transport: &http.Transport{
-		MaxIdleConns:    10,
-		IdleConnTimeout: 90 * time.Second,
-		DialContext:     ssrfSafeDialContext,
-	},
 }
 
 // HandleIntegrationProxy godoc
@@ -176,11 +106,10 @@ func (ctrl *V1Controller) HandleIntegrationProxy() errchain.HandlerFunc {
 				http.StatusBadRequest,
 			)
 		}
-		if !strings.HasPrefix(baseURL, "http://") && !strings.HasPrefix(baseURL, "https://") {
-			return validate.NewRequestError(
-				fmt.Errorf("%s_url must use http:// or https:// scheme", name),
-				http.StatusBadRequest,
-			)
+
+		upstream := strings.TrimRight(baseURL, "/") + cleanPath
+		if err := validate.ValidateOutboundHTTPURL(upstream, &ctrl.config.Notifier); err != nil {
+			return validate.NewRequestError(err, http.StatusBadRequest)
 		}
 
 		token, _ := settings[name+"_token"].(string)
@@ -191,15 +120,13 @@ func (ctrl *V1Controller) HandleIntegrationProxy() errchain.HandlerFunc {
 			)
 		}
 
-		upstream := strings.TrimRight(baseURL, "/") + cleanPath
-
 		req, err := http.NewRequestWithContext(r.Context(), http.MethodGet, upstream, nil)
 		if err != nil {
 			return validate.NewRequestError(err, http.StatusBadRequest)
 		}
 		req.Header.Set("Authorization", "Token "+token)
 
-		resp, err := proxyHTTPClient.Do(req)
+		resp, err := ctrl.integrationProxyHTTPClient().Do(req)
 		if err != nil {
 			// Log only host+path to avoid leaking query strings or embedded credentials.
 			var safeURL string
