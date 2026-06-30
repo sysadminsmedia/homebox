@@ -212,12 +212,7 @@
         <Separator class="my-2" />
         <div class="flex items-center justify-between">
           <h3 class="text-sm font-medium">{{ $t("components.template.form.custom_fields") }}</h3>
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            @click="updateData.fields.push(newTemplateField())"
-          >
+          <Button type="button" size="sm" variant="outline" @click="updateData.fields.push(newTemplateField())">
             <MdiPlus class="mr-1 size-4" />
             {{ $t("global.add") }}
           </Button>

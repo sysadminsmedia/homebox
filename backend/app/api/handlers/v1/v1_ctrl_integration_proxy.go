@@ -22,17 +22,15 @@ import (
 // preventing settings-key injection (e.g. "../../evil").
 var validIntegrationName = regexp.MustCompile(`^[a-z][a-z0-9_-]{0,31}$`)
 
-// proxyHTTPTransport is shared across per-request clients so connection pooling
-// is reused while redirect checks can still use the controller configuration.
-var proxyHTTPTransport = &http.Transport{
-	MaxIdleConns:    10,
-	IdleConnTimeout: 90 * time.Second,
-}
-
 func (ctrl *V1Controller) integrationProxyHTTPClient() *http.Client {
+	transport := ctrl.integrationProxyTransport
+	if transport == nil {
+		transport = validate.NewOutboundHTTPTransport(&ctrl.config.Notifier)
+	}
+
 	return &http.Client{
 		Timeout:   30 * time.Second,
-		Transport: proxyHTTPTransport,
+		Transport: transport,
 		CheckRedirect: func(req *http.Request, _ []*http.Request) error {
 			if err := validate.ValidateOutboundHTTPURL(req.URL.String(), &ctrl.config.Notifier); err != nil {
 				return fmt.Errorf("integration proxy redirect blocked: %w", err)
@@ -44,22 +42,22 @@ func (ctrl *V1Controller) integrationProxyHTTPClient() *http.Client {
 
 // HandleIntegrationProxy godoc
 //
-//	@Summary	Integration Reverse Proxy
+//	@Summary		Integration Reverse Proxy
 //	@Description	Proxies a single GET request to the configured external integration.
 //				The integration's credentials (base URL + API token) are read from
 //				user settings ({name}_url / {name}_token) and never exposed to the
 //				frontend.  This single generic endpoint replaces all per-integration
 //				proxy handlers: adding a new integration only requires a Vue component
 //				and a settings entry — no new Go code.
-//	@Tags		Integrations
-//	@Produce	*/*
-//	@Param		name	path	string	true	"Integration name, e.g. paperless"
-//	@Param		path	query	string	true	"Relative API path on the upstream service, must start with /"
-//	@Success	200
-//	@Failure	400	{object}	validate.ErrorResponse
-//	@Failure	502	{object}	validate.ErrorResponse
-//	@Router		/v1/integrations/{name}/proxy [GET]
-//	@Security	Bearer
+//	@Tags			Integrations
+//	@Produce		*/*
+//	@Param			name	path	string	true	"Integration name, e.g. paperless"
+//	@Param			path	query	string	true	"Relative API path on the upstream service, must start with /"
+//	@Success		200
+//	@Failure		400	{object}	validate.ErrorResponse
+//	@Failure		502	{object}	validate.ErrorResponse
+//	@Router			/v1/integrations/{name}/proxy [GET]
+//	@Security		Bearer
 func (ctrl *V1Controller) HandleIntegrationProxy() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleIntegrationProxy")

@@ -1,10 +1,13 @@
 package validate
 
 import (
+	"context"
 	"fmt"
 	"net"
+	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
@@ -48,15 +51,106 @@ func ValidateOutboundHTTPURL(rawURL string, cfg *config.NotifierConf) error {
 		return fmt.Errorf("no hostname found in URL")
 	}
 
-	// Resolve the hostname to an IP address
-	// NOTE: DNS responses can change after validation; consider re-validating at request time.
-	ips, err := net.LookupIP(host)
+	ips, err := resolveOutboundHost(context.Background(), host)
 	if err != nil {
-		return fmt.Errorf("failed to resolve hostname: %w", err)
+		return err
 	}
 
-	if len(ips) == 0 {
-		return fmt.Errorf("hostname did not resolve to any IP addresses")
+	return validateOutboundIPs(ips, cfg)
+}
+
+// NewOutboundHTTPTransport returns an HTTP transport that enforces the shared
+// outbound URL policy when the transport dials the final connection target.
+// Callers should still validate request URLs before sending so policy failures
+// can be reported as request validation errors instead of transport errors.
+func NewOutboundHTTPTransport(cfg *config.NotifierConf) *http.Transport {
+	dialer := &net.Dialer{
+		Timeout:   30 * time.Second,
+		KeepAlive: 30 * time.Second,
+	}
+
+	return &http.Transport{
+		DialContext:           outboundDialContext(cfg, dialer),
+		ForceAttemptHTTP2:     true,
+		MaxIdleConns:          10,
+		IdleConnTimeout:       90 * time.Second,
+		TLSHandshakeTimeout:   10 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
+	}
+}
+
+func outboundDialContext(cfg *config.NotifierConf, dialer *net.Dialer) func(context.Context, string, string) (net.Conn, error) {
+	if dialer == nil {
+		dialer = &net.Dialer{}
+	}
+
+	return func(ctx context.Context, network, address string) (net.Conn, error) {
+		host, port, err := net.SplitHostPort(address)
+		if err != nil {
+			return nil, fmt.Errorf("invalid outbound dial address %q: %w", address, err)
+		}
+
+		ips, err := resolveOutboundHost(ctx, host)
+		if err != nil {
+			return nil, err
+		}
+		if err := validateOutboundIPs(ips, cfg); err != nil {
+			return nil, fmt.Errorf("outbound dial blocked: %w", err)
+		}
+
+		var lastErr error
+		for _, ip := range ips {
+			if !ipMatchesNetwork(network, ip) {
+				continue
+			}
+			conn, err := dialer.DialContext(ctx, network, net.JoinHostPort(ip.String(), port))
+			if err == nil {
+				return conn, nil
+			}
+			lastErr = err
+		}
+
+		if lastErr != nil {
+			return nil, fmt.Errorf("outbound dial failed for %s: %w", host, lastErr)
+		}
+		return nil, fmt.Errorf("no resolved IPs for %s match network %s", host, network)
+	}
+}
+
+func resolveOutboundHost(ctx context.Context, host string) ([]net.IP, error) {
+	if ip := net.ParseIP(host); ip != nil {
+		return []net.IP{ip}, nil
+	}
+
+	addrs, err := net.DefaultResolver.LookupIPAddr(ctx, host)
+	if err != nil {
+		return nil, fmt.Errorf("failed to resolve hostname: %w", err)
+	}
+	if len(addrs) == 0 {
+		return nil, fmt.Errorf("hostname did not resolve to any IP addresses")
+	}
+
+	ips := make([]net.IP, 0, len(addrs))
+	for _, addr := range addrs {
+		ips = append(ips, addr.IP)
+	}
+	return ips, nil
+}
+
+func ipMatchesNetwork(network string, ip net.IP) bool {
+	switch network {
+	case "tcp4":
+		return ip.To4() != nil
+	case "tcp6":
+		return ip.To4() == nil
+	default:
+		return true
+	}
+}
+
+func validateOutboundIPs(ips []net.IP, cfg *config.NotifierConf) error {
+	if cfg == nil {
+		return fmt.Errorf("outbound URL validation configuration is nil")
 	}
 
 	// Expand DNS64-synthesized IPv6 addresses (RFC 6052) into their embedded

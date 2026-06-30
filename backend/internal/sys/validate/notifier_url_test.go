@@ -1,6 +1,7 @@
 package validate
 
 import (
+	"context"
 	"net"
 	"testing"
 
@@ -484,6 +485,18 @@ func TestValidateOutboundHTTPURL(t *testing.T) {
 				t.Errorf("expected no error but got: %v", err)
 			}
 		})
+	}
+}
+
+func TestOutboundHTTPTransportBlocksDialTarget(t *testing.T) {
+	transport := NewOutboundHTTPTransport(&config.NotifierConf{
+		BlockLocalhost: true,
+	})
+
+	conn, err := transport.DialContext(context.Background(), "tcp", "127.0.0.1:80")
+	if err == nil {
+		_ = conn.Close()
+		t.Fatal("expected localhost dial target to be blocked")
 	}
 }
 

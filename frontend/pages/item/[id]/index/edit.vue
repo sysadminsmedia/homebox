@@ -98,8 +98,10 @@
     }
 
     saving.value = true;
-    const isConvertingToLocation = item.value.entityType?.isLocation;
-    if (isConvertingToLocation) {
+    const wasLocation = nullableItem.value?.entityType?.isLocation ?? false;
+    const isLocation = item.value.entityType?.isLocation ?? false;
+    const changedLocationKind = wasLocation !== isLocation;
+    if (changedLocationKind) {
       const { isCanceled } = await confirm.open(t("items.edit.change_entity_type_confirm"));
       if (isCanceled) {
         saving.value = false;
@@ -143,10 +145,8 @@
     }
 
     toast.success(t("items.toast.item_saved"));
-    if (isConvertingToLocation) {
-      navigateTo("/location/" + itemId.value);
-    } else if (redirect) {
-      navigateTo("/item/" + itemId.value);
+    if (changedLocationKind || redirect) {
+      navigateTo((isLocation ? "/location/" : "/item/") + itemId.value);
     }
   }
 
@@ -391,7 +391,9 @@
     const title = fallbackLinkTitle(droppedURL);
 
     const store = useIntegrationCacheStore();
-    const settingsForClassify = Object.fromEntries(SERVICE_ADAPTERS.map(a => [a.settingsUrlKey, store.serviceUrls[a.name] ?? ""]));
+    const settingsForClassify = Object.fromEntries(
+      SERVICE_ADAPTERS.map(a => [a.settingsUrlKey, store.serviceUrls[a.name] ?? ""])
+    );
     const classified = classifyDroppedUrl(droppedURL, settingsForClassify);
 
     const { data, error } = await api.items.attachments.addExternalLink(

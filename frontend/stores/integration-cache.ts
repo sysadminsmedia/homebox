@@ -96,7 +96,7 @@ export const useIntegrationCacheStore = defineStore("integrationCache", () => {
   }
 
   function isConfigured(adapter: ServiceAdapter): boolean {
-    return !!(serviceUrls[adapter.name]?.trim());
+    return !!serviceUrls[adapter.name]?.trim();
   }
 
   function getUrl(adapter: ServiceAdapter): string {
@@ -123,7 +123,7 @@ export const useIntegrationCacheStore = defineStore("integrationCache", () => {
 
   function invalidateEnrichedData(serviceName: string, id: string): void {
     const key = `${serviceName}:${id}`;
-    delete enrichedData[key];
+    Reflect.deleteProperty(enrichedData, key);
     lsDelete(key);
   }
 
@@ -137,8 +137,8 @@ export const useIntegrationCacheStore = defineStore("integrationCache", () => {
   }
 
   function clearAttachmentState(attachmentId: string): void {
-    delete fetchStates[attachmentId];
-    delete fetchErrors[attachmentId];
+    Reflect.deleteProperty(fetchStates, attachmentId);
+    Reflect.deleteProperty(fetchErrors, attachmentId);
   }
 
   /**
