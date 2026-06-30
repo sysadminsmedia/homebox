@@ -211,6 +211,8 @@ export interface EntEntity {
   name: string;
   /** Notes holds the value of the "notes" field. */
   notes: string;
+  /** NotifyWarrantyExpiration holds the value of the "notify_warranty_expiration" field. */
+  notify_warranty_expiration: boolean;
   /** PurchaseDate holds the value of the "purchase_date" field. */
   purchase_date: Date | string;
   /** PurchaseFrom holds the value of the "purchase_from" field. */
@@ -796,6 +798,7 @@ export interface EntityOut {
   name: string;
   /** Extras */
   notes: string;
+  notifyWarrantyExpiration: boolean;
   /** Edges */
   parent?: EntitySummary | null;
   /** Purchase */
@@ -1009,6 +1012,7 @@ export interface EntityUpdate {
   name: string;
   /** Extras */
   notes: string;
+  notifyWarrantyExpiration: boolean;
   parentId?: string | null;
   /** Purchase */
   purchaseDate: Date | string;

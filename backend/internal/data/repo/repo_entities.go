@@ -121,9 +121,10 @@ type (
 		Manufacturer string `json:"manufacturer"`
 
 		// Warranty
-		LifetimeWarranty bool       `json:"lifetimeWarranty"`
-		WarrantyExpires  types.Date `json:"warrantyExpires"`
-		WarrantyDetails  string     `json:"warrantyDetails"`
+		LifetimeWarranty         bool       `json:"lifetimeWarranty"`
+		WarrantyExpires          types.Date `json:"warrantyExpires"`
+		WarrantyDetails          string     `json:"warrantyDetails"`
+		NotifyWarrantyExpiration bool       `json:"notifyWarrantyExpiration"`
 
 		// Purchase
 		PurchaseDate  types.Date `json:"purchaseDate"`
@@ -191,9 +192,10 @@ type (
 		Manufacturer string `json:"manufacturer"`
 
 		// Warranty
-		LifetimeWarranty bool       `json:"lifetimeWarranty"`
-		WarrantyExpires  types.Date `json:"warrantyExpires"`
-		WarrantyDetails  string     `json:"warrantyDetails"`
+		LifetimeWarranty         bool       `json:"lifetimeWarranty"`
+		WarrantyExpires          types.Date `json:"warrantyExpires"`
+		WarrantyDetails          string     `json:"warrantyDetails"`
+		NotifyWarrantyExpiration bool       `json:"notifyWarrantyExpiration"`
 
 		// Purchase
 		PurchaseDate types.Date `json:"purchaseDate"`
@@ -333,6 +335,7 @@ func mapEntityOut(e *ent.Entity) EntityOut {
 		LifetimeWarranty:         e.LifetimeWarranty,
 		WarrantyExpires:          types.DateFromTime(e.WarrantyExpires),
 		WarrantyDetails:          e.WarrantyDetails,
+		NotifyWarrantyExpiration: e.NotifyWarrantyExpiration,
 		SyncChildEntityLocations: e.SyncChildEntityLocations,
 
 		// Identification
@@ -356,6 +359,28 @@ func mapEntityOut(e *ent.Entity) EntityOut {
 		Fields:      fields,
 		Children:    children,
 	}
+}
+
+// GetWarrantyExpiringOn returns the entities in a group whose warranty expires
+// on the given date and that have opted in to warranty-expiration notifications.
+func (r *EntityRepository) GetWarrantyExpiringOn(ctx context.Context, gid uuid.UUID, dt types.Date) ([]EntityOut, error) {
+	start := dt.Time()
+	end := start.AddDate(0, 0, 1)
+
+	entities, err := r.db.Entity.Query().
+		Where(
+			entity.HasGroupWith(group.ID(gid)),
+			entity.NotifyWarrantyExpiration(true),
+			entity.LifetimeWarranty(false),
+			entity.WarrantyExpiresGTE(start),
+			entity.WarrantyExpiresLT(end),
+		).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return mapEach(entities, mapEntityOut), nil
 }
 
 // resolveDefaultEntityType finds or creates the default entity type for a group.
@@ -1494,6 +1519,7 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		SetSoldNotes(data.SoldNotes).
 		SetNotes(data.Notes).
 		SetLifetimeWarranty(data.LifetimeWarranty).
+		SetNotifyWarrantyExpiration(data.NotifyWarrantyExpiration).
 		SetInsured(data.Insured).
 		SetWarrantyDetails(data.WarrantyDetails).
 		SetQuantity(data.Quantity).

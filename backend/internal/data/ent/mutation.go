@@ -2633,6 +2633,7 @@ type EntityMutation struct {
 	lifetime_warranty           *bool
 	warranty_expires            *time.Time
 	warranty_details            *string
+	notify_warranty_expiration  *bool
 	purchase_date               *time.Time
 	purchase_from               *string
 	purchase_price              *float64
@@ -3529,6 +3530,42 @@ func (m *EntityMutation) ResetWarrantyDetails() {
 	delete(m.clearedFields, entity.FieldWarrantyDetails)
 }
 
+// SetNotifyWarrantyExpiration sets the "notify_warranty_expiration" field.
+func (m *EntityMutation) SetNotifyWarrantyExpiration(b bool) {
+	m.notify_warranty_expiration = &b
+}
+
+// NotifyWarrantyExpiration returns the value of the "notify_warranty_expiration" field in the mutation.
+func (m *EntityMutation) NotifyWarrantyExpiration() (r bool, exists bool) {
+	v := m.notify_warranty_expiration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNotifyWarrantyExpiration returns the old "notify_warranty_expiration" field's value of the Entity entity.
+// If the Entity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntityMutation) OldNotifyWarrantyExpiration(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNotifyWarrantyExpiration is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNotifyWarrantyExpiration requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNotifyWarrantyExpiration: %w", err)
+	}
+	return oldValue.NotifyWarrantyExpiration, nil
+}
+
+// ResetNotifyWarrantyExpiration resets all changes to the "notify_warranty_expiration" field.
+func (m *EntityMutation) ResetNotifyWarrantyExpiration() {
+	m.notify_warranty_expiration = nil
+}
+
 // SetPurchaseDate sets the "purchase_date" field.
 func (m *EntityMutation) SetPurchaseDate(t time.Time) {
 	m.purchase_date = &t
@@ -4307,7 +4344,7 @@ func (m *EntityMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EntityMutation) Fields() []string {
-	fields := make([]string, 0, 24)
+	fields := make([]string, 0, 25)
 	if m.created_at != nil {
 		fields = append(fields, entity.FieldCreatedAt)
 	}
@@ -4358,6 +4395,9 @@ func (m *EntityMutation) Fields() []string {
 	}
 	if m.warranty_details != nil {
 		fields = append(fields, entity.FieldWarrantyDetails)
+	}
+	if m.notify_warranty_expiration != nil {
+		fields = append(fields, entity.FieldNotifyWarrantyExpiration)
 	}
 	if m.purchase_date != nil {
 		fields = append(fields, entity.FieldPurchaseDate)
@@ -4422,6 +4462,8 @@ func (m *EntityMutation) Field(name string) (ent.Value, bool) {
 		return m.WarrantyExpires()
 	case entity.FieldWarrantyDetails:
 		return m.WarrantyDetails()
+	case entity.FieldNotifyWarrantyExpiration:
+		return m.NotifyWarrantyExpiration()
 	case entity.FieldPurchaseDate:
 		return m.PurchaseDate()
 	case entity.FieldPurchaseFrom:
@@ -4479,6 +4521,8 @@ func (m *EntityMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldWarrantyExpires(ctx)
 	case entity.FieldWarrantyDetails:
 		return m.OldWarrantyDetails(ctx)
+	case entity.FieldNotifyWarrantyExpiration:
+		return m.OldNotifyWarrantyExpiration(ctx)
 	case entity.FieldPurchaseDate:
 		return m.OldPurchaseDate(ctx)
 	case entity.FieldPurchaseFrom:
@@ -4620,6 +4664,13 @@ func (m *EntityMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetWarrantyDetails(v)
+		return nil
+	case entity.FieldNotifyWarrantyExpiration:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNotifyWarrantyExpiration(v)
 		return nil
 	case entity.FieldPurchaseDate:
 		v, ok := value.(time.Time)
@@ -4901,6 +4952,9 @@ func (m *EntityMutation) ResetField(name string) error {
 		return nil
 	case entity.FieldWarrantyDetails:
 		m.ResetWarrantyDetails()
+		return nil
+	case entity.FieldNotifyWarrantyExpiration:
+		m.ResetNotifyWarrantyExpiration()
 		return nil
 	case entity.FieldPurchaseDate:
 		m.ResetPurchaseDate()
