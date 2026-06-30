@@ -579,6 +579,7 @@
       parentId: parent.value?.id || item.value.parent?.id || null,
       tagIds: item.value.tagIds,
       assetId: item.value.assetId,
+      entityTypeId: item.value.entityType?.id || "",
       syncChildEntityLocations: item.value.syncChildEntityLocations,
     };
 

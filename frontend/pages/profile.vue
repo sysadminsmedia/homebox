@@ -213,9 +213,33 @@
   // ---------------------------------------------------------------------------
   // Integration settings
 
-  const integrationSettings = reactive<Record<string, string> & { loading: boolean; saving: boolean }>({
+  type IntegrationSettingsState = Record<string, string | boolean> & {
+    loading: boolean;
+    saving: boolean;
+  };
+
+  const integrationSettings = reactive<IntegrationSettingsState>({
     loading: false,
     saving: false,
+  });
+
+  function integrationSetting(key: string): string {
+    const value = integrationSettings[key];
+    return typeof value === "string" ? value : "";
+  }
+
+  const paperlessUrl = computed({
+    get: () => integrationSetting("paperless_url"),
+    set: value => {
+      integrationSettings.paperless_url = value;
+    },
+  });
+
+  const paperlessToken = computed({
+    get: () => integrationSetting("paperless_token"),
+    set: value => {
+      integrationSettings.paperless_token = value;
+    },
   });
 
   async function loadIntegrationSettings() {
@@ -246,8 +270,8 @@
 
     const integrationPatch: Record<string, string> = {};
     for (const adapter of SERVICE_ADAPTERS) {
-      integrationPatch[adapter.settingsUrlKey] = integrationSettings[adapter.settingsUrlKey] ?? "";
-      integrationPatch[adapter.settingsTokenKey] = integrationSettings[adapter.settingsTokenKey] ?? "";
+      integrationPatch[adapter.settingsUrlKey] = integrationSetting(adapter.settingsUrlKey);
+      integrationPatch[adapter.settingsTokenKey] = integrationSetting(adapter.settingsTokenKey);
     }
 
     const { error } = await api.user.setSettings({
@@ -265,7 +289,7 @@
     // immediately promote or demote service attachments.
     const integrationCacheStore = useIntegrationCacheStore();
     for (const adapter of SERVICE_ADAPTERS) {
-      integrationCacheStore.setServiceUrl(adapter.name, integrationSettings[adapter.settingsUrlKey] ?? "");
+      integrationCacheStore.setServiceUrl(adapter.name, integrationSetting(adapter.settingsUrlKey));
     }
 
     toast.success(t("profile.toast.settings_saved"));
@@ -514,14 +538,14 @@
           <div class="space-y-2">
             <h4 class="font-semibold">{{ $t("profile.paperless_settings") }}</h4>
             <FormTextField
-              v-model="integrationSettings['paperless_url']"
+              v-model="paperlessUrl"
               :label="$t('profile.paperless_url')"
               :placeholder="$t('profile.paperless_url_placeholder')"
               type="url"
               class="mb-2"
             />
             <FormTextField
-              v-model="integrationSettings['paperless_token']"
+              v-model="paperlessToken"
               :label="$t('profile.paperless_token')"
               :placeholder="$t('profile.paperless_token_placeholder')"
               type="password"

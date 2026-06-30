@@ -182,6 +182,7 @@
 
 <script setup lang="ts">
   import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+  import { useI18n } from "vue-i18n";
   import type { ItemAttachment } from "~~/lib/api/types/data-contracts";
   import { useIntegrationCacheStore } from "~/stores/integration-cache";
   import type { AttachmentFetchState } from "~/stores/integration-cache";
@@ -224,12 +225,8 @@
   const paperlessConfigured = computed(() => !!store.serviceUrls["paperless"]?.trim());
 
   // ---------------------------------------------------------------------------
-  // Runtime lift: treat link/url attachments as their service type when the
-  // URL matches.
-  //  - Configured service + host matches → lifted (full card + hydration)
-  //  - No configured service URL + pattern matches → lifted (demoted plain
-  //    paperclip, no hydration because service is unconfigured)
-  //  - Configured service + host doesn't match → NOT lifted (URL link, safe)
+  // Runtime lift: treat link/url attachments as their service type only when
+  // the configured service URL matches.
   // ---------------------------------------------------------------------------
 
   function liftAttachment(attachment: ItemAttachment): ItemAttachment {

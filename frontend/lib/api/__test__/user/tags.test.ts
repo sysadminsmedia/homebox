@@ -51,6 +51,7 @@ describe("tags lifecycle (create, update, delete)", () => {
       name: "test-tag",
       description: "test-description",
       color: "",
+      icon: "",
     };
 
     const { response, data } = await api.tags.update(tag.id, tagData);

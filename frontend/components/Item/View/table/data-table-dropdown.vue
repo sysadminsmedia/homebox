@@ -60,7 +60,7 @@
     items.forEach(item => window.open(`/item/${item}`, "_blank"));
   };
 
-  const downloadCsv = (items: Row<ItemSummary>[], columns: Column<ItemSummary>[]) => {
+  const downloadCsv = (items: Row<EntitySummary>[], columns: Column<EntitySummary>[]) => {
     // get enabled columns
     const enabledColumns = columns.filter(c => c.id !== undefined && c.getIsVisible() && c.getCanHide()).map(c => c.id);
 
@@ -69,7 +69,7 @@
 
     // map each item to a row matching enabled columns order, escaping each field
     const rows = items.map(item =>
-      enabledColumns.map(col => formatValueAsCsvField(item.original[col as keyof ItemSummary])).join(",")
+      enabledColumns.map(col => formatValueAsCsvField(item.original[col as keyof EntitySummary])).join(",")
     );
 
     const csv = [header, ...rows].join("\n");
