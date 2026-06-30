@@ -500,6 +500,22 @@ func TestOutboundHTTPTransportBlocksDialTarget(t *testing.T) {
 	}
 }
 
+func TestFilterOutboundIPsByNetworkBeforePolicyValidation(t *testing.T) {
+	ips := []net.IP{net.ParseIP("::1"), net.ParseIP("8.8.8.8")}
+	filtered := filterOutboundIPsByNetwork("tcp4", ips)
+
+	if len(filtered) != 1 || !filtered[0].Equal(net.ParseIP("8.8.8.8")) {
+		t.Fatalf("expected only the IPv4 address after filtering, got %#v", filtered)
+	}
+
+	err := validateOutboundIPs(filtered, &config.NotifierConf{
+		BlockLocalhost: true,
+	})
+	if err != nil {
+		t.Fatalf("expected filtered IPv4 target to pass localhost policy: %v", err)
+	}
+}
+
 func TestIsGenericNotifier(t *testing.T) {
 	tests := []struct {
 		name     string

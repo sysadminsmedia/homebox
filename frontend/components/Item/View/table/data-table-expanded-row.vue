@@ -12,7 +12,9 @@
     return useTagStore().withAncestors(props.item.tags);
   });
 
-  const location = computed(() => props.item.parent);
+  const location = computed(() => {
+    return props.item.parent?.entityType?.isLocation ? props.item.parent : null;
+  });
 
   const api = useUserApi();
 
@@ -35,8 +37,11 @@
     </div>
     <div class="flex min-w-0 flex-1 flex-col gap-2">
       <h2 class="truncate text-xl font-bold">{{ item.name }}</h2>
-      <Badge class="w-min text-nowrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline">
-        <NuxtLink v-if="location" :to="`/location/${location.id}`">
+      <Badge
+        v-if="location"
+        class="w-min text-nowrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline"
+      >
+        <NuxtLink :to="`/location/${location.id}`">
           {{ location.name }}
         </NuxtLink>
       </Badge>

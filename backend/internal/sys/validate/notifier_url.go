@@ -13,6 +13,8 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 )
 
+const outboundResolveTimeout = 5 * time.Second
+
 // ValidateNotifierURL validates a notifier URL against the configured block/allow lists.
 // This only applies to generic:// notifier URLs which can make arbitrary HTTP requests.
 func ValidateNotifierURL(notifierURL string, cfg *config.NotifierConf) error {
@@ -33,9 +35,20 @@ func ValidateNotifierURL(notifierURL string, cfg *config.NotifierConf) error {
 // ValidateOutboundHTTPURL validates an outbound HTTP(S) URL against the
 // configured SSRF allow/block policy.
 func ValidateOutboundHTTPURL(rawURL string, cfg *config.NotifierConf) error {
+	return ValidateOutboundHTTPURLWithContext(context.Background(), rawURL, cfg)
+}
+
+// ValidateOutboundHTTPURLWithContext validates an outbound HTTP(S) URL using the
+// caller's cancellation context and a bounded DNS lookup timeout.
+func ValidateOutboundHTTPURLWithContext(ctx context.Context, rawURL string, cfg *config.NotifierConf) error {
 	if cfg == nil {
 		return fmt.Errorf("outbound URL validation configuration is nil")
 	}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	ctx, cancel := context.WithTimeout(ctx, outboundResolveTimeout)
+	defer cancel()
 
 	parsedURL, err := url.Parse(rawURL)
 	if err != nil {
@@ -51,7 +64,7 @@ func ValidateOutboundHTTPURL(rawURL string, cfg *config.NotifierConf) error {
 		return fmt.Errorf("no hostname found in URL")
 	}
 
-	ips, err := resolveOutboundHost(context.Background(), host)
+	ips, err := resolveOutboundHost(ctx, host)
 	if err != nil {
 		return err
 	}
@@ -63,6 +76,8 @@ func ValidateOutboundHTTPURL(rawURL string, cfg *config.NotifierConf) error {
 // outbound URL policy when the transport dials the final connection target.
 // Callers should still validate request URLs before sending so policy failures
 // can be reported as request validation errors instead of transport errors.
+// The transport deliberately enforces the supplied NotifierConf as-is so generic
+// webhooks and integrations share one operator-controlled outbound policy.
 func NewOutboundHTTPTransport(cfg *config.NotifierConf) *http.Transport {
 	dialer := &net.Dialer{
 		Timeout:   30 * time.Second,
@@ -94,15 +109,17 @@ func outboundDialContext(cfg *config.NotifierConf, dialer *net.Dialer) func(cont
 		if err != nil {
 			return nil, err
 		}
-		if err := validateOutboundIPs(ips, cfg); err != nil {
+
+		filteredIPs := filterOutboundIPsByNetwork(network, ips)
+		if len(filteredIPs) == 0 {
+			return nil, fmt.Errorf("no resolved IPs for %s match network %s", host, network)
+		}
+		if err := validateOutboundIPs(filteredIPs, cfg); err != nil {
 			return nil, fmt.Errorf("outbound dial blocked: %w", err)
 		}
 
 		var lastErr error
-		for _, ip := range ips {
-			if !ipMatchesNetwork(network, ip) {
-				continue
-			}
+		for _, ip := range filteredIPs {
 			conn, err := dialer.DialContext(ctx, network, net.JoinHostPort(ip.String(), port))
 			if err == nil {
 				return conn, nil
@@ -115,6 +132,16 @@ func outboundDialContext(cfg *config.NotifierConf, dialer *net.Dialer) func(cont
 		}
 		return nil, fmt.Errorf("no resolved IPs for %s match network %s", host, network)
 	}
+}
+
+func filterOutboundIPsByNetwork(network string, ips []net.IP) []net.IP {
+	filtered := make([]net.IP, 0, len(ips))
+	for _, ip := range ips {
+		if ipMatchesNetwork(network, ip) {
+			filtered = append(filtered, ip)
+		}
+	}
+	return filtered
 }
 
 func resolveOutboundHost(ctx context.Context, host string) ([]net.IP, error) {

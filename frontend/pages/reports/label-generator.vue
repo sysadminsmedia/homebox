@@ -9,6 +9,7 @@
   import { Input } from "@/components/ui/input";
   import { Checkbox } from "@/components/ui/checkbox";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import type { EntitySummary } from "~/lib/api/types/data-contracts";
 
   const { t } = useI18n();
 
@@ -225,18 +226,16 @@
     return route(`/qrcode`, { data: encodeURIComponent(data) });
   }
 
-  function getItem(
-    n: number,
-    item: { assetId: string; name: string; parent?: { name: string } | null } | null
-  ): LabelData {
+  function getItem(n: number, item: EntitySummary | null): LabelData {
     // format n into - seperated string with leading zeros
     const assetID = fmtAssetID(item?.assetId ?? n + 1);
+    const location = item?.parent?.entityType?.isLocation ? item.parent.name : labelBlankLine;
 
     return {
       url: getQRCodeUrl(assetID),
       assetID: item?.assetId ?? assetID,
       name: item?.name ?? labelBlankLine,
-      location: item?.parent?.name ?? labelBlankLine,
+      location,
     };
   }
 

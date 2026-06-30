@@ -32,7 +32,7 @@ func (ctrl *V1Controller) integrationProxyHTTPClient() *http.Client {
 		Timeout:   30 * time.Second,
 		Transport: transport,
 		CheckRedirect: func(req *http.Request, _ []*http.Request) error {
-			if err := validate.ValidateOutboundHTTPURL(req.URL.String(), &ctrl.config.Notifier); err != nil {
+			if err := validate.ValidateOutboundHTTPURLWithContext(req.Context(), req.URL.String(), &ctrl.config.Notifier); err != nil {
 				return fmt.Errorf("integration proxy redirect blocked: %w", err)
 			}
 			return nil
@@ -105,7 +105,7 @@ func (ctrl *V1Controller) HandleIntegrationProxy() errchain.HandlerFunc {
 		}
 
 		upstream := strings.TrimRight(baseURL, "/") + cleanPath
-		if err := validate.ValidateOutboundHTTPURL(upstream, &ctrl.config.Notifier); err != nil {
+		if err := validate.ValidateOutboundHTTPURLWithContext(r.Context(), upstream, &ctrl.config.Notifier); err != nil {
 			return validate.NewRequestError(err, http.StatusBadRequest)
 		}
 
