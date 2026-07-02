@@ -129,11 +129,11 @@ func TestThumbnailContentType(t *testing.T) {
 		contentType string
 		want        string
 	}{
-		{name: "png", contentType: "image/png", want: "image/png"},
+		{name: "png", contentType: thumbnailPNGContentType, want: thumbnailPNGContentType},
 		{name: "jpeg with charset", contentType: "image/jpeg; charset=binary", want: "image/jpeg"},
-		{name: "html", contentType: "text/html", want: "application/octet-stream"},
-		{name: "empty", contentType: "", want: "application/octet-stream"},
-		{name: "svg", contentType: "image/svg+xml", want: "application/octet-stream"},
+		{name: "html", contentType: "text/html", want: thumbnailFallbackContentType},
+		{name: "empty", contentType: "", want: thumbnailFallbackContentType},
+		{name: "svg", contentType: "image/svg+xml", want: thumbnailFallbackContentType},
 	}
 
 	for _, tt := range tests {

@@ -81,6 +81,11 @@ var paperlessEndpointPattern = regexp.MustCompile(`^/(?:documents/(\d+)(?:/detai
 
 const integrationCardBuildTimeout = 15 * time.Second
 
+const (
+	thumbnailFallbackContentType = "application/octet-stream"
+	thumbnailPNGContentType      = "image/png"
+)
+
 func newPaperlessCardCache() *paperlessCardCache {
 	return &paperlessCardCache{
 		correspondents: make(map[int]cachedIntegrationLabel),
@@ -379,14 +384,14 @@ func (ctrl *V1Controller) HandleEntityAttachmentIntegrationCards() errchain.Hand
 func thumbnailContentType(contentType string) string {
 	mediaType, _, err := mime.ParseMediaType(contentType)
 	if err != nil {
-		return "application/octet-stream"
+		return thumbnailFallbackContentType
 	}
 
 	switch strings.ToLower(mediaType) {
-	case "image/avif", "image/bmp", "image/gif", "image/jpeg", "image/png", "image/webp":
+	case "image/avif", "image/bmp", "image/gif", "image/jpeg", thumbnailPNGContentType, "image/webp":
 		return mediaType
 	default:
-		return "application/octet-stream"
+		return thumbnailFallbackContentType
 	}
 }
 
