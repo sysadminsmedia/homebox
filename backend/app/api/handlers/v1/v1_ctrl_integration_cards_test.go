@@ -2,6 +2,8 @@ package v1
 
 import "testing"
 
+const paperlessTestBaseURL = "https://paperless.local"
+
 func TestParsePaperlessAttachmentLink(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -14,7 +16,7 @@ func TestParsePaperlessAttachmentLink(t *testing.T) {
 		{
 			name:    "document page",
 			rawURL:  "https://paperless.local/documents/42/details",
-			baseURL: "https://paperless.local",
+			baseURL: paperlessTestBaseURL,
 			docID:   "42",
 			openURL: "https://paperless.local/documents/42/details",
 			matches: true,
@@ -22,7 +24,7 @@ func TestParsePaperlessAttachmentLink(t *testing.T) {
 		{
 			name:    "document page without details suffix",
 			rawURL:  "https://paperless.local/documents/42",
-			baseURL: "https://paperless.local",
+			baseURL: paperlessTestBaseURL,
 			docID:   "42",
 			openURL: "https://paperless.local/documents/42",
 			matches: true,
@@ -38,7 +40,7 @@ func TestParsePaperlessAttachmentLink(t *testing.T) {
 		{
 			name:    "download endpoint",
 			rawURL:  "https://paperless.local/api/documents/7/download",
-			baseURL: "https://paperless.local",
+			baseURL: paperlessTestBaseURL,
 			docID:   "7",
 			openURL: "https://paperless.local/api/documents/7/download",
 			matches: true,
@@ -46,13 +48,13 @@ func TestParsePaperlessAttachmentLink(t *testing.T) {
 		{
 			name:    "foreign host",
 			rawURL:  "https://paperless.local.evil/documents/42",
-			baseURL: "https://paperless.local",
+			baseURL: paperlessTestBaseURL,
 			matches: false,
 		},
 		{
 			name:    "wrong scheme",
 			rawURL:  "http://paperless.local/documents/42",
-			baseURL: "https://paperless.local",
+			baseURL: paperlessTestBaseURL,
 			matches: false,
 		},
 		{
@@ -86,7 +88,7 @@ func TestParsePaperlessAttachmentLink(t *testing.T) {
 }
 
 func TestIntegrationScopeChangesWithBaseURL(t *testing.T) {
-	a := integrationScope("paperless", "https://paperless.local")
+	a := integrationScope("paperless", paperlessTestBaseURL)
 	b := integrationScope("paperless", "https://paperless.local/")
 	c := integrationScope("paperless", "https://other.local")
 
