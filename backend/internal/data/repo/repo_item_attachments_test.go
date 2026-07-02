@@ -22,7 +22,7 @@ func TestMimeTypeForSourceType(t *testing.T) {
 		expectedOk   bool
 	}{
 		{"link", MimeTypeLinkURL, true},
-		{"paperless", MimeTypePaperlessDocument, true},
+		{"paperless", "", false},
 		{"unknown", "", false},
 	}
 	for _, tc := range cases {
@@ -232,6 +232,20 @@ func TestAttachmentRepo_CreateExternalLink_InvalidEntityID(t *testing.T) {
 	tc := externalLinkMimeTypeCases[0]
 
 	_, err := tRepos.Attachments.CreateExternalLink(context.Background(), uuid.New(), tc.externalID, "Orphan", tc.mimeType, attachment.TypeAttachment)
+	assert.Error(t, err)
+}
+
+func TestAttachmentRepo_CreateExternalLink_InvalidMimeType(t *testing.T) {
+	entity := useEntities(t, 1)[0]
+
+	_, err := tRepos.Attachments.CreateExternalLink(
+		context.Background(),
+		entity.ID,
+		"https://example.com/doc",
+		"Bad MIME",
+		"application/pdf",
+		attachment.TypeAttachment,
+	)
 	assert.Error(t, err)
 }
 

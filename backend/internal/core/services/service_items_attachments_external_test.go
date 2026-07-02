@@ -38,7 +38,6 @@ var knownSources = []struct {
 	sourceType string
 	externalID string
 }{
-	{"paperless", "42"},
 	{"link", "https://example.com/doc"},
 }
 
@@ -46,7 +45,7 @@ func TestRedactExternalIdentifierForTrace(t *testing.T) {
 	assert.Equal(t, "42", redactExternalIdentifierForTrace("paperless", "42"))
 	assert.Equal(
 		t,
-		"https://example.com/path:baf62c0924b5c759",
+		"https://host:a379a6f6eeafb9a5/path:baf62c0924b5c759",
 		redactExternalIdentifierForTrace("link", "https://user:secret@example.com/doc?token=secret#fragment"),
 	)
 }

@@ -1,14 +1,16 @@
 import type { Ref } from "vue";
 import {
+  type DuplicateSettings,
   type LocationViewPreferences,
   type PreferenceSyncConfig,
+  type ViewType,
   DEFAULT_PREFERENCES,
   buildSyncedSettings,
   mergeSyncedSettings,
-} from "./preferences-utils";
+} from "../lib/preferences-utils";
 
-export type { ViewType, DuplicateSettings, LocationViewPreferences, PreferenceSyncConfig } from "./preferences-utils";
-export { DEFAULT_PREFERENCES, buildSyncedSettings, mergeSyncedSettings } from "./preferences-utils";
+export type { ViewType, DuplicateSettings, LocationViewPreferences, PreferenceSyncConfig };
+export { DEFAULT_PREFERENCES, buildSyncedSettings, mergeSyncedSettings };
 
 let syncConfig: PreferenceSyncConfig = {
   itemDisplayView: false,
@@ -85,7 +87,11 @@ export function useViewPreferencesSync() {
     try {
       while (syncedRevision < localRevision && !pauseServerSaves && auth.isAuthorized()) {
         const targetRevision = localRevision;
-        const { data: current } = await api.user.getSettings();
+        const { data: current, error: currentError } = await api.user.getSettings();
+        if (currentError || !current?.item) {
+          scheduleRetry();
+          return;
+        }
         const merged = { ...(current?.item ?? {}), ...buildSyncedSettings(preferences.value, syncConfig) };
         const { error } = await api.user.setSettings(merged);
         if (error) {

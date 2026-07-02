@@ -256,9 +256,11 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration,
 		// unable to create items via the UI. Ensure both exist up front.
 		if err := ensureDefaultEntityTypes(bootstrapCtx, svc.repos, usr.DefaultGroupID); err != nil {
 			recordServiceSpanError(bootstrapSpan, err)
-			bootstrapSpan.End()
 			recordServiceSpanError(span, err)
-			return repo.UserOut{}, err
+			log.Err(err).
+				Str("group_id", usr.DefaultGroupID.String()).
+				Msg("failed to ensure default entity types; scheduling retry")
+			svc.retryEntityTypeDefaults(ctx, usr.DefaultGroupID, "register_user_final")
 		}
 
 		bootstrapSpan.SetAttributes(
@@ -634,10 +636,13 @@ func (svc *UserService) registerOIDCUser(ctx context.Context, issuer, subject, e
 	// locations only creates the "Location" type, not "Item".
 	if err := ensureDefaultEntityTypes(bootstrapCtx, svc.repos, group.ID); err != nil {
 		recordServiceSpanError(bootstrapSpan, err)
-		bootstrapSpan.End()
 		recordServiceSpanError(span, err)
-		log.Err(err).Msg("Failed to ensure default entity types")
-		return repo.UserOut{}, err
+		log.Err(err).
+			Str("issuer", issuer).
+			Str("subject_hash", subjectHash).
+			Str("group_id", group.ID.String()).
+			Msg("failed to ensure default entity types for OIDC user; scheduling retry")
+		svc.retryEntityTypeDefaults(ctx, group.ID, "oidc_register_final")
 	}
 
 	bootstrapSpan.SetAttributes(

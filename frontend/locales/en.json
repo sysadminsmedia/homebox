@@ -216,6 +216,8 @@
             "attachments_list": {
                 "download": "Download",
                 "open_new_tab": "Open in new tab",
+                "integration_error": "Integration error",
+                "page_count": "{count, plural, =1 {1 page} other {# pages}}",
                 "configure_service": "Configure {service} URL in Profile Settings to access this attachment",
                 "request_failed": "Request to {url} failed",
                 "request_failed_stale": "Showing cached data — request to {url} failed",
@@ -674,6 +676,7 @@
             "failed_upload_attachment": "Failed to upload attachment",
             "item_deleted": "Item deleted",
             "item_saved": "Item saved",
+            "link_attachment_saved": "Link attachment saved",
             "quantity_cannot_negative": "Quantity cannot be negative",
             "service_linked": "{service} linked",
             "sync_child_location": "Selected parent syncs its children's locations to its own. The location has been updated."

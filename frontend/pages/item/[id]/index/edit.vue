@@ -5,8 +5,6 @@
   import type { ItemAttachment, EntityFieldData, EntityOut, EntityUpdate } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useTagStore } from "~/stores/tags";
-  import { classifyDroppedUrl, SERVICE_ADAPTERS } from "~/lib/integration-adapters";
-  import { useIntegrationCacheStore } from "~/stores/integration-cache";
   import MdiLoading from "~icons/mdi/loading";
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
@@ -390,12 +388,6 @@
     // fetched from the service API at display time (hydration in AttachmentsList.vue).
     const title = fallbackLinkTitle(droppedURL);
 
-    const store = useIntegrationCacheStore();
-    const settingsForClassify = Object.fromEntries(
-      SERVICE_ADAPTERS.map(a => [a.settingsUrlKey, store.serviceUrls[a.name] ?? ""])
-    );
-    const classified = classifyDroppedUrl(droppedURL, settingsForClassify);
-
     const { data, error } = await api.items.attachments.addExternalLink(
       itemId.value,
       "link",
@@ -409,12 +401,7 @@
       return;
     }
 
-    if (classified) {
-      const serviceName = classified.adapter.name.charAt(0).toUpperCase() + classified.adapter.name.slice(1);
-      toast.success(t("items.toast.service_linked", { service: serviceName }));
-    } else {
-      toast.success(t("items.toast.attachment_uploaded"));
-    }
+    toast.success(t("items.toast.link_attachment_saved"));
     item.value.attachments = data.attachments;
   }
 

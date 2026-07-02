@@ -20,14 +20,12 @@
   import FormCheckbox from "~/components/Form/Checkbox.vue";
   import BaseContainer from "@/components/Base/Container.vue";
   import BaseCard from "@/components/Base/Card.vue";
-  import { useIntegrationCacheStore } from "~/stores/integration-cache";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import DetailsSection from "@/components/global/DetailsSection/DetailsSection.vue";
   import DateTime from "@/components/global/DateTime.vue";
   import PasswordScore from "~/components/global/PasswordScore.vue";
   import { PASSWORD_MIN_LENGTH, PASSWORD_RULES } from "~/lib/passwords";
   import type { APIKeyOut } from "~~/lib/api/types/data-contracts";
-  import { SERVICE_ADAPTERS } from "~/lib/integration-adapters";
 
   const { t } = useI18n();
 
@@ -253,10 +251,8 @@
     }
 
     const settings = data.item as Record<string, unknown>;
-    for (const adapter of SERVICE_ADAPTERS) {
-      integrationSettings[adapter.settingsUrlKey] = (settings[adapter.settingsUrlKey] as string) || "";
-      integrationSettings[adapter.settingsTokenKey] = (settings[adapter.settingsTokenKey] as string) || "";
-    }
+    integrationSettings.paperless_url = (settings.paperless_url as string) || "";
+    integrationSettings.paperless_token = (settings.paperless_token as string) || "";
   }
 
   async function saveIntegrationSettings() {
@@ -268,28 +264,16 @@
       return;
     }
 
-    const integrationPatch: Record<string, string> = {};
-    for (const adapter of SERVICE_ADAPTERS) {
-      integrationPatch[adapter.settingsUrlKey] = integrationSetting(adapter.settingsUrlKey);
-      integrationPatch[adapter.settingsTokenKey] = integrationSetting(adapter.settingsTokenKey);
-    }
-
     const { error } = await api.user.setSettings({
       ...(current?.item ?? {}),
-      ...integrationPatch,
+      paperless_url: integrationSetting("paperless_url"),
+      paperless_token: integrationSetting("paperless_token"),
     });
     integrationSettings.saving = false;
 
     if (error) {
       toast.error(t("profile.toast.failed_settings_save"));
       return;
-    }
-
-    // Push new URLs into the shared store so mounted AttachmentsList components
-    // immediately promote or demote service attachments.
-    const integrationCacheStore = useIntegrationCacheStore();
-    for (const adapter of SERVICE_ADAPTERS) {
-      integrationCacheStore.setServiceUrl(adapter.name, integrationSetting(adapter.settingsUrlKey));
     }
 
     toast.success(t("profile.toast.settings_saved"));

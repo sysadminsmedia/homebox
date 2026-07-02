@@ -620,7 +620,7 @@
       error = result.error;
       data = result.data;
     } else if (templateData.value) {
-      const parentId = form.location?.id;
+      const parentId = form.parentId || form.location?.id;
       if (!parentId) {
         toast.error(t("components.entity.create_modal.toast.please_select_location"));
         loading.value = false;

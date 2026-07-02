@@ -57,6 +57,7 @@
       enabled.changeLocation = params.changeLocation ?? false;
       enabled.addTags = params.addTags ?? false;
       enabled.removeTags = params.removeTags ?? false;
+      newLocation.value = null;
 
       if (params.changeLocation && params.items.length > 0) {
         const firstParent = params.items[0]!.parent;

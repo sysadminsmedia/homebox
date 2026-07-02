@@ -189,6 +189,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		// Entity attachment endpoints
 		r.Post("/entities/{id}/attachments", chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentCreate(), userMW...))
 		r.Post("/entities/{id}/attachments/external", chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentExternalCreate(), userMW...))
+		r.Get("/entities/{id}/attachments/integration-cards", chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentIntegrationCards(), userMW...))
 		r.Put("/entities/{id}/attachments/{attachment_id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentUpdate(), userMW...))
 		r.Delete("/entities/{id}/attachments/{attachment_id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentDelete(), userMW...))
 
@@ -218,9 +219,6 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Delete("/notifiers/{id}", chain.ToHandlerFunc(v1Ctrl.HandleDeleteNotifier(), userMW...))
 		r.Post("/notifiers/test", chain.ToHandlerFunc(v1Ctrl.HandlerNotifierTest(), append(userMW, a.notifierTestLimiter.middleware)...))
 
-		// Integration proxy endpoints
-		r.Get("/integrations/{name}/proxy", chain.ToHandlerFunc(v1Ctrl.HandleIntegrationProxy(), userMW...))
-
 		// Asset-Like endpoints
 		assetMW := []errchain.Middleware{
 			a.mwAuthToken,
@@ -231,6 +229,10 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Get("/products/search-from-barcode", chain.ToHandlerFunc(v1Ctrl.HandleProductSearchFromBarcode(a.conf.Barcode), userMW...))
 
 		r.Get("/qrcode", chain.ToHandlerFunc(v1Ctrl.HandleGenerateQRCode(), assetMW...))
+		r.Get(
+			"/entities/{id}/attachments/{attachment_id}/integration-thumbnail",
+			chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentIntegrationThumbnail(), assetMW...),
+		)
 		r.Get(
 			"/entities/{id}/attachments/{attachment_id}",
 			chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentGet(), assetMW...),

@@ -265,11 +265,7 @@
     const items: LabelData[] = [];
     for (let i = displayProperties.assetRange - 1; i < displayProperties.assetRangeMax - 1; i++) {
       const item = allFields?.value?.items?.[i];
-      if (item?.parent) {
-        items.push(getItem(i, item));
-      } else {
-        items.push(getItem(i, null));
-      }
+      items.push(getItem(i, item ?? null));
     }
     return items;
   });

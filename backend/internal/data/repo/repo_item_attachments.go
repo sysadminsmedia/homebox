@@ -87,20 +87,18 @@ type (
 // MimeTypeLinkURL is the MIME type for generic HTTP/HTTPS URL links.
 const MimeTypeLinkURL = "link/url"
 
-// MimeTypePaperlessDocument is the MIME type for Paperless-ngx document links.
+// MimeTypePaperlessDocument is the legacy MIME type for Paperless-ngx document
+// links. New Paperless links are stored as MimeTypeLinkURL and promoted at
+// display time when the configured Paperless base URL recognizes them.
 const MimeTypePaperlessDocument = "paperless/document"
 
-// sourceTypeMIMEs maps user-facing source-type names to their internal MIME
-// discriminators. It is the single source of truth: both MimeTypeForSourceType
-// and isExternalLink derive from it.
 var sourceTypeMIMEs = map[string]string{
-	"link":      MimeTypeLinkURL,
-	"paperless": MimeTypePaperlessDocument,
+	"link": MimeTypeLinkURL,
 }
 
-// MimeTypeForSourceType maps a user-facing integration source-type name (e.g. "paperless")
-// to the internal MIME discriminator stored in the attachments table.
-// Returns ("", false) for unknown source types.
+// MimeTypeForSourceType maps a user-facing source-type name to the internal MIME
+// discriminator stored in the attachments table. Returns ("", false) for
+// unknown source types.
 func MimeTypeForSourceType(sourceType string) (string, bool) {
 	mime, ok := sourceTypeMIMEs[sourceType]
 	return mime, ok
@@ -109,12 +107,7 @@ func MimeTypeForSourceType(sourceType string) (string, bool) {
 // isExternalLink reports whether mimeType belongs to the set of registered
 // external-link MIME types (i.e. records stored by path reference, not blob).
 func isExternalLink(mimeType string) bool {
-	for _, m := range sourceTypeMIMEs {
-		if m == mimeType {
-			return true
-		}
-	}
-	return false
+	return mimeType == MimeTypeLinkURL || mimeType == MimeTypePaperlessDocument
 }
 
 func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
@@ -438,8 +431,8 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 }
 
 // CreateExternalLink persists a new attachment that references an external
-// resource by externalID (e.g. a Paperless document ID or a URL) rather than
-// uploading a blob. mimeType must be a value registered in externalLinkMimeTypes.
+// resource by externalID rather than uploading a blob. New callers store HTTP(S)
+// URLs as MimeTypeLinkURL; the Paperless MIME type is accepted for legacy rows.
 func (r *AttachmentRepo) CreateExternalLink(ctx context.Context, entityID uuid.UUID, externalID string, title string, mimeType string, attType attachment.Type) (*ent.Attachment, error) {
 	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.CreateExternalLink")
 	defer span.End()

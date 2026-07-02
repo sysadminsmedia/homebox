@@ -10,12 +10,11 @@
  * The tests below verify the invariants that make the merge safe.
  */
 import { describe, expect, it } from "vitest";
-import { DEFAULT_PREFERENCES, buildSyncedSettings, mergeSyncedSettings } from "./preferences-utils";
-import { SERVICE_ADAPTERS } from "../lib/integration-adapters";
+import { DEFAULT_PREFERENCES, buildSyncedSettings, mergeSyncedSettings } from "../lib/preferences-utils";
 
 // Keys that live in the settings object but are NOT preferences and must never
 // be overwritten by a bare preferences save.
-const INTEGRATION_KEYS = SERVICE_ADAPTERS.flatMap(a => [a.settingsUrlKey, a.settingsTokenKey]);
+const INTEGRATION_KEYS = ["paperless_url", "paperless_token"];
 
 // Default sync config (all preference keys synced).
 const SYNC_ALL = {};

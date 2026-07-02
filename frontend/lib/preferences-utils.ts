@@ -62,7 +62,23 @@ export const DEFAULT_PREFERENCES: LocationViewPreferences = {
   },
 };
 
-const preferenceKeys = Object.keys(DEFAULT_PREFERENCES) as (keyof LocationViewPreferences)[];
+const preferenceKeys: (keyof LocationViewPreferences)[] = [
+  "showDetails",
+  "showEmpty",
+  "editorAdvancedView",
+  "itemDisplayView",
+  "theme",
+  "itemsPerTablePage",
+  "tableHeaders",
+  "displayLegacyHeader",
+  "legacyImageFit",
+  "language",
+  "overrideFormatLocale",
+  "collectionId",
+  "duplicateSettings",
+  "shownMultiTabWarning",
+  "quickActions",
+];
 
 export function forEachSyncedPreference(
   syncConfig: PreferenceSyncConfig,
@@ -94,6 +110,8 @@ export function mergeSyncedSettings(
   const nextPreferences = { ...preferences };
   forEachSyncedPreference(syncConfig, key => {
     if (key in settings) {
+      // Server settings are schemaless JSON; key selection above limits assignment
+      // to known preference fields.
       nextPreferences[key] = settings[key] as never;
     }
   });

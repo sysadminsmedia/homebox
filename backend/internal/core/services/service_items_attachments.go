@@ -31,8 +31,9 @@ func redactExternalIdentifierForTrace(sourceType, externalID string) string {
 	u.RawQuery = ""
 	u.Fragment = ""
 
+	hostHash := sha256.Sum256([]byte(strings.ToLower(u.Host)))
 	pathHash := sha256.Sum256([]byte(u.EscapedPath()))
-	return fmt.Sprintf("%s://%s/path:%s", u.Scheme, u.Host, hex.EncodeToString(pathHash[:8]))
+	return fmt.Sprintf("%s://host:%s/path:%s", u.Scheme, hex.EncodeToString(hostHash[:8]), hex.EncodeToString(pathHash[:8]))
 }
 
 func (svc *EntityService) AttachmentPath(ctx context.Context, gid uuid.UUID, attachmentID uuid.UUID) (*ent.Attachment, error) {
