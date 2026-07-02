@@ -1,11 +1,13 @@
 package v1
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
+	"mime"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -47,6 +49,22 @@ type integrationTag struct {
 	TextColor string `json:"textColor"`
 }
 
+type cachedIntegrationLabel struct {
+	label integrationLabel
+	ok    bool
+}
+
+type cachedIntegrationTag struct {
+	tag integrationTag
+	ok  bool
+}
+
+type paperlessCardCache struct {
+	correspondents map[int]cachedIntegrationLabel
+	documentTypes  map[int]cachedIntegrationLabel
+	tags           map[int]cachedIntegrationTag
+}
+
 type paperlessRef struct {
 	docID   string
 	openURL string
@@ -60,6 +78,16 @@ type paperlessConfig struct {
 }
 
 var paperlessEndpointPattern = regexp.MustCompile(`^/(?:documents/(\d+)(?:/details)?|api/documents/(\d+)(?:/(?:preview|download))?)/?$`)
+
+const integrationCardBuildTimeout = 15 * time.Second
+
+func newPaperlessCardCache() *paperlessCardCache {
+	return &paperlessCardCache{
+		correspondents: make(map[int]cachedIntegrationLabel),
+		documentTypes:  make(map[int]cachedIntegrationLabel),
+		tags:           make(map[int]cachedIntegrationTag),
+	}
+}
 
 func (ctrl *V1Controller) integrationHTTPClient() *http.Client {
 	transport := ctrl.integrationTransport
@@ -175,6 +203,9 @@ func (ctrl *V1Controller) paperlessRequest(ctx services.Context, cfg paperlessCo
 	if err != nil {
 		return nil, err
 	}
+	// Use the shared operator-controlled outbound policy as-is. Self-hosted
+	// Paperless instances commonly live on private networks, so integrations do
+	// not impose stricter defaults than the configured outbound policy.
 	if err := validate.ValidateOutboundHTTPURLWithContext(ctx.Context, upstream, &ctrl.config.Notifier); err != nil {
 		return nil, err
 	}
@@ -201,7 +232,42 @@ func (ctrl *V1Controller) paperlessJSON(ctx services.Context, cfg paperlessConfi
 	return json.NewDecoder(io.LimitReader(resp.Body, maxJSONResponseSize)).Decode(target)
 }
 
-func (ctrl *V1Controller) buildPaperlessCard(ctx services.Context, cfg paperlessConfig, entityID uuid.UUID, attachment repo.ItemAttachment, ref paperlessRef) integrationCardOut {
+func (ctrl *V1Controller) paperlessCachedLabel(ctx services.Context, cfg paperlessConfig, cache map[int]cachedIntegrationLabel, endpoint string, id int) (integrationLabel, bool) {
+	if cached, ok := cache[id]; ok {
+		return cached.label, cached.ok
+	}
+
+	var label integrationLabel
+	err := ctrl.paperlessJSON(ctx, cfg, fmt.Sprintf(endpoint, id), &label)
+	cached := cachedIntegrationLabel{label: label, ok: err == nil}
+	cache[id] = cached
+	return cached.label, cached.ok
+}
+
+func (ctrl *V1Controller) paperlessCachedTag(ctx services.Context, cfg paperlessConfig, cache map[int]cachedIntegrationTag, id int) (integrationTag, bool) {
+	if cached, ok := cache[id]; ok {
+		return cached.tag, cached.ok
+	}
+
+	var raw struct {
+		ID        int    `json:"id"`
+		Name      string `json:"name"`
+		Color     string `json:"color"`
+		TextColor string `json:"text_color"`
+	}
+	err := ctrl.paperlessJSON(ctx, cfg, fmt.Sprintf("/api/tags/%d/", id), &raw)
+	tag := integrationTag{
+		ID:        raw.ID,
+		Name:      raw.Name,
+		Color:     raw.Color,
+		TextColor: raw.TextColor,
+	}
+	cached := cachedIntegrationTag{tag: tag, ok: err == nil}
+	cache[id] = cached
+	return cached.tag, cached.ok
+}
+
+func (ctrl *V1Controller) buildPaperlessCard(ctx services.Context, cfg paperlessConfig, entityID uuid.UUID, attachment repo.ItemAttachment, ref paperlessRef, cache *paperlessCardCache) integrationCardOut {
 	card := integrationCardOut{
 		AttachmentID: attachment.ID,
 		Provider:     "paperless",
@@ -236,33 +302,20 @@ func (ctrl *V1Controller) buildPaperlessCard(ctx services.Context, cfg paperless
 	}
 
 	if raw.Correspondent != 0 {
-		var c integrationLabel
-		if err := ctrl.paperlessJSON(ctx, cfg, fmt.Sprintf("/api/correspondents/%d/", raw.Correspondent), &c); err == nil {
+		if c, ok := ctrl.paperlessCachedLabel(ctx, cfg, cache.correspondents, "/api/correspondents/%d/", raw.Correspondent); ok {
 			card.Fields["correspondent"] = c
 		}
 	}
 	if raw.DocumentType != 0 {
-		var d integrationLabel
-		if err := ctrl.paperlessJSON(ctx, cfg, fmt.Sprintf("/api/document_types/%d/", raw.DocumentType), &d); err == nil {
+		if d, ok := ctrl.paperlessCachedLabel(ctx, cfg, cache.documentTypes, "/api/document_types/%d/", raw.DocumentType); ok {
 			card.Fields["documentType"] = d
 		}
 	}
 
 	tags := make([]integrationTag, 0, len(raw.Tags))
 	for _, tagID := range raw.Tags {
-		var tag struct {
-			ID        int    `json:"id"`
-			Name      string `json:"name"`
-			Color     string `json:"color"`
-			TextColor string `json:"text_color"`
-		}
-		if err := ctrl.paperlessJSON(ctx, cfg, fmt.Sprintf("/api/tags/%d/", tagID), &tag); err == nil {
-			tags = append(tags, integrationTag{
-				ID:        tag.ID,
-				Name:      tag.Name,
-				Color:     tag.Color,
-				TextColor: tag.TextColor,
-			})
+		if tag, ok := ctrl.paperlessCachedTag(ctx, cfg, cache.tags, tagID); ok {
+			tags = append(tags, tag)
 		}
 	}
 	if len(tags) > 0 {
@@ -299,6 +352,10 @@ func (ctrl *V1Controller) HandleEntityAttachmentIntegrationCards() errchain.Hand
 			return server.JSON(w, http.StatusOK, Results[integrationCardOut]{Items: []integrationCardOut{}})
 		}
 
+		cardCtx, cancel := context.WithTimeout(ctx.Context, integrationCardBuildTimeout)
+		defer cancel()
+		cardSvcCtx := services.NewContext(cardCtx)
+		cache := newPaperlessCardCache()
 		cards := make([]integrationCardOut, 0)
 		for _, attachment := range entity.Attachments {
 			if attachment.MimeType != repo.MimeTypeLinkURL && attachment.MimeType != repo.MimeTypePaperlessDocument {
@@ -308,11 +365,28 @@ func (ctrl *V1Controller) HandleEntityAttachmentIntegrationCards() errchain.Hand
 			if !ok {
 				continue
 			}
-			cards = append(cards, ctrl.buildPaperlessCard(ctx, cfg, id, attachment, ref))
+			if cardCtx.Err() != nil {
+				break
+			}
+			cards = append(cards, ctrl.buildPaperlessCard(cardSvcCtx, cfg, id, attachment, ref, cache))
 		}
 
 		span.SetAttributes(attribute.Int("integration.cards.count", len(cards)))
 		return server.JSON(w, http.StatusOK, Results[integrationCardOut]{Items: cards})
+	}
+}
+
+func thumbnailContentType(contentType string) string {
+	mediaType, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		return "application/octet-stream"
+	}
+
+	switch strings.ToLower(mediaType) {
+	case "image/avif", "image/bmp", "image/gif", "image/jpeg", "image/png", "image/webp":
+		return mediaType
+	default:
+		return "application/octet-stream"
 	}
 }
 
@@ -370,9 +444,8 @@ func (ctrl *V1Controller) HandleEntityAttachmentIntegrationThumbnail() errchain.
 		if resp.StatusCode >= 400 {
 			return validate.NewRequestError(fmt.Errorf("upstream returned %d", resp.StatusCode), http.StatusBadGateway)
 		}
-		if ct := resp.Header.Get("Content-Type"); ct != "" {
-			w.Header().Set("Content-Type", ct)
-		}
+		w.Header().Set("Content-Type", thumbnailContentType(resp.Header.Get("Content-Type")))
+		w.Header().Set("X-Content-Type-Options", "nosniff")
 		_, err = io.Copy(w, resp.Body)
 		if err != nil {
 			log.Err(err).Msg("failed to stream integration thumbnail")

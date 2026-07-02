@@ -122,3 +122,25 @@ func TestParseExternalHTTPURL(t *testing.T) {
 		})
 	}
 }
+
+func TestThumbnailContentType(t *testing.T) {
+	tests := []struct {
+		name        string
+		contentType string
+		want        string
+	}{
+		{name: "png", contentType: "image/png", want: "image/png"},
+		{name: "jpeg with charset", contentType: "image/jpeg; charset=binary", want: "image/jpeg"},
+		{name: "html", contentType: "text/html", want: "application/octet-stream"},
+		{name: "empty", contentType: "", want: "application/octet-stream"},
+		{name: "svg", contentType: "image/svg+xml", want: "application/octet-stream"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := thumbnailContentType(tt.contentType); got != tt.want {
+				t.Fatalf("thumbnailContentType(%q) = %q, want %q", tt.contentType, got, tt.want)
+			}
+		})
+	}
+}

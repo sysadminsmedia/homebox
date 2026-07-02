@@ -251,8 +251,8 @@
     }
 
     const settings = data.item as Record<string, unknown>;
-    integrationSettings.paperless_url = (settings.paperless_url as string) || "";
-    integrationSettings.paperless_token = (settings.paperless_token as string) || "";
+    integrationSettings.paperless_url = typeof settings.paperless_url === "string" ? settings.paperless_url : "";
+    integrationSettings.paperless_token = typeof settings.paperless_token === "string" ? settings.paperless_token : "";
   }
 
   async function saveIntegrationSettings() {

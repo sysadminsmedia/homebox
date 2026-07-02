@@ -193,6 +193,7 @@
 
   const api = useUserApi();
   const cards = ref<Record<string, IntegrationAttachmentCard>>({});
+  let integrationCardsLoadSeq = 0;
 
   const attachmentSignature = computed(() =>
     props.attachments.map(a => `${a.id}:${a.mimeType}:${a.path}:${a.updatedAt}`).join("|")
@@ -203,13 +204,14 @@
   }
 
   async function loadIntegrationCards(): Promise<void> {
+    const seq = ++integrationCardsLoadSeq;
     if (!hasIntegrationCandidates()) {
       cards.value = {};
       return;
     }
 
     const { data, error } = await api.items.attachments.integrationCards(props.itemId);
-    if (error) return;
+    if (error || seq !== integrationCardsLoadSeq) return;
     cards.value = Object.fromEntries(data.items.map(card => [card.attachmentId, card]));
   }
 
