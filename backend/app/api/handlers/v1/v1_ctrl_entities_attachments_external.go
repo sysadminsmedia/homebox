@@ -25,7 +25,7 @@ type externalAttachmentRequest struct {
 }
 
 func parseExternalHTTPURL(raw string) (*url.URL, bool) {
-	u, err := url.Parse(strings.TrimSpace(raw))
+	u, err := url.ParseRequestURI(strings.TrimSpace(raw))
 	if err != nil {
 		return nil, false
 	}
