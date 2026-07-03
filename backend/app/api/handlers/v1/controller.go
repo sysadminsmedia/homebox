@@ -79,18 +79,19 @@ func WithURL(url string) func(*V1Controller) {
 }
 
 type V1Controller struct {
-	cookieSecure         bool
-	repo                 *repo.AllRepos
-	svc                  *services.AllServices
-	maxUploadSize        int64
-	maxImportSize        int64
-	maxParseMemory       int64
-	isDemo               bool
-	allowRegistration    bool
-	bus                  *eventbus.EventBus
-	url                  string
-	config               *config.Config
-	oidcProvider         *providers.OIDCProvider
+	cookieSecure      bool
+	repo              *repo.AllRepos
+	svc               *services.AllServices
+	maxUploadSize     int64
+	maxImportSize     int64
+	maxParseMemory    int64
+	isDemo            bool
+	allowRegistration bool
+	bus               *eventbus.EventBus
+	url               string
+	config            *config.Config
+	oidcProvider      *providers.OIDCProvider
+
 	integrationTransport *http.Transport
 }
 
@@ -131,11 +132,12 @@ type (
 
 func NewControllerV1(svc *services.AllServices, repos *repo.AllRepos, bus *eventbus.EventBus, config *config.Config, options ...func(*V1Controller)) *V1Controller {
 	ctrl := &V1Controller{
-		repo:                 repos,
-		svc:                  svc,
-		allowRegistration:    true,
-		bus:                  bus,
-		config:               config,
+		repo:              repos,
+		svc:               svc,
+		allowRegistration: true,
+		bus:               bus,
+		config:            config,
+
 		integrationTransport: validate.NewOutboundHTTPTransport(&config.Notifier),
 	}
 

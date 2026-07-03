@@ -274,9 +274,8 @@ describe("templates with location and tags", () => {
     const locationEntityTypeId = await getLocationEntityTypeId(api);
 
     // Create a location
-    const { response: locResponse, data: location } = await api.items.createLocation(
-      factories.location(locationEntityTypeId)
-    );
+    const locationData = factories.location(locationEntityTypeId);
+    const { response: locResponse, data: location } = await api.items.createLocation(locationData);
     expect(locResponse.status).toBe(201);
 
     // Create template with location

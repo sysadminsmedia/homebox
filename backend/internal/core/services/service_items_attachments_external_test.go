@@ -30,10 +30,6 @@ func newExternalLinkEntity(t *testing.T) repo.EntityOut {
 	return entity
 }
 
-// knownSources lists every registered external-link source type together with a
-// representative external ID. To add or remove a service integration from the
-// test matrix, update this slice only — all table-driven tests pick up the
-// change automatically.
 var knownSources = []struct {
 	sourceType string
 	externalID string
@@ -50,9 +46,6 @@ func TestRedactExternalIdentifierForTrace(t *testing.T) {
 	)
 }
 
-// TestEntityService_AttachmentAddExternalLink_SourceTypes verifies that every
-// known source type is accepted and that the stored mimeType and path match the
-// contract defined by repo.MimeTypeForSourceType.
 func TestEntityService_AttachmentAddExternalLink_SourceTypes(t *testing.T) {
 	svc := &EntityService{repo: tRepos}
 
@@ -81,11 +74,6 @@ func TestEntityService_AttachmentAddExternalLink_SourceTypes(t *testing.T) {
 	}
 }
 
-// TestEntityService_AttachmentAddExternalLink_AttachmentTypes verifies that all
-// attachment type variants (Manual, Warranty, Receipt) are stored correctly.
-// The source-type matrix is already covered by
-// TestEntityService_AttachmentAddExternalLink_SourceTypes, so a single
-// representative source type is sufficient here.
 func TestEntityService_AttachmentAddExternalLink_AttachmentTypes(t *testing.T) {
 	src := knownSources[0]
 	expectedMime, _ := repo.MimeTypeForSourceType(src.sourceType)
@@ -121,9 +109,6 @@ func TestEntityService_AttachmentAddExternalLink_AttachmentTypes(t *testing.T) {
 	}
 }
 
-// TestEntityService_AttachmentAddExternalLink_MultipleAttachments verifies that
-// multiple external-link attachments (one per registered source type) can coexist
-// on a single entity.
 func TestEntityService_AttachmentAddExternalLink_MultipleAttachments(t *testing.T) {
 	svc := &EntityService{repo: tRepos}
 	entity := newExternalLinkEntity(t)
@@ -138,8 +123,6 @@ func TestEntityService_AttachmentAddExternalLink_MultipleAttachments(t *testing.
 	assert.Len(t, latest.Attachments, len(knownSources))
 }
 
-// TestEntityService_AttachmentAddExternalLink_InvalidEntity verifies that
-// using a non-existent entity ID returns an error.
 func TestEntityService_AttachmentAddExternalLink_InvalidEntity(t *testing.T) {
 	svc := &EntityService{repo: tRepos}
 	src := knownSources[0]
@@ -148,8 +131,6 @@ func TestEntityService_AttachmentAddExternalLink_InvalidEntity(t *testing.T) {
 	assert.Error(t, err)
 }
 
-// TestEntityService_AttachmentAddExternalLink_UnknownSourceType verifies that
-// an unregistered source type is rejected before any DB write.
 func TestEntityService_AttachmentAddExternalLink_UnknownSourceType(t *testing.T) {
 	svc := &EntityService{repo: tRepos}
 	entity := newExternalLinkEntity(t)
@@ -158,8 +139,6 @@ func TestEntityService_AttachmentAddExternalLink_UnknownSourceType(t *testing.T)
 	assert.Error(t, err)
 }
 
-// TestEntityService_AttachmentDelete_ExternalLink verifies that an external-link
-// attachment can be deleted and is no longer retrievable afterwards.
 func TestEntityService_AttachmentDelete_ExternalLink(t *testing.T) {
 	svc := &EntityService{repo: tRepos}
 	entity := newExternalLinkEntity(t)

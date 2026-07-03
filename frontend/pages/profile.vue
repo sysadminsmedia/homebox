@@ -15,6 +15,7 @@
   import { DialogID } from "~/components/ui/dialog-provider/utils";
   import ThemePicker from "~/components/App/ThemePicker.vue";
   import ItemDuplicateSettings from "~/components/Item/DuplicateSettings.vue";
+  import ProfileIntegrationSettings from "~/components/Profile/IntegrationSettings.vue";
   import FormPassword from "~/components/Form/Password.vue";
   import FormTextField from "~/components/Form/TextField.vue";
   import FormCheckbox from "~/components/Form/Checkbox.vue";
@@ -207,81 +208,6 @@
     toast.success(t("profile.toast.api_key_deleted"));
     await loadApiKeys();
   }
-
-  // ---------------------------------------------------------------------------
-  // Integration settings
-
-  type IntegrationSettingsState = Record<string, string | boolean> & {
-    loading: boolean;
-    saving: boolean;
-  };
-
-  const integrationSettings = reactive<IntegrationSettingsState>({
-    loading: false,
-    saving: false,
-  });
-
-  function integrationSetting(key: string): string {
-    const value = integrationSettings[key];
-    return typeof value === "string" ? value : "";
-  }
-
-  const paperlessUrl = computed({
-    get: () => integrationSetting("paperless_url"),
-    set: value => {
-      integrationSettings.paperless_url = value;
-    },
-  });
-
-  const paperlessToken = computed({
-    get: () => integrationSetting("paperless_token"),
-    set: value => {
-      integrationSettings.paperless_token = value;
-    },
-  });
-
-  async function loadIntegrationSettings() {
-    integrationSettings.loading = true;
-    const { data, error } = await api.user.getSettings();
-    integrationSettings.loading = false;
-
-    if (error || !data?.item) {
-      toast.error(t("errors.api_failure"));
-      return;
-    }
-
-    const settings = data.item as Record<string, unknown>;
-    integrationSettings.paperless_url = typeof settings.paperless_url === "string" ? settings.paperless_url : "";
-    integrationSettings.paperless_token = typeof settings.paperless_token === "string" ? settings.paperless_token : "";
-  }
-
-  async function saveIntegrationSettings() {
-    integrationSettings.saving = true;
-    const { data: current, error: currentError } = await api.user.getSettings();
-    if (currentError) {
-      integrationSettings.saving = false;
-      toast.error(t("profile.toast.failed_settings_save"));
-      return;
-    }
-
-    const { error } = await api.user.setSettings({
-      ...(current?.item ?? {}),
-      paperless_url: integrationSetting("paperless_url"),
-      paperless_token: integrationSetting("paperless_token"),
-    });
-    integrationSettings.saving = false;
-
-    if (error) {
-      toast.error(t("profile.toast.failed_settings_save"));
-      return;
-    }
-
-    toast.success(t("profile.toast.settings_saved"));
-  }
-
-  onMounted(() => {
-    void loadIntegrationSettings();
-  });
 </script>
 
 <template>
@@ -507,46 +433,7 @@
         </div>
       </BaseCard>
 
-      <BaseCard>
-        <template #title>
-          <BaseSectionHeader>
-            <span> {{ $t("profile.integrations") }} </span>
-            <template #description>
-              {{ $t("profile.integrations_sub") }}
-            </template>
-          </BaseSectionHeader>
-        </template>
-
-        <div class="space-y-6 px-4 pb-4">
-          <!-- Paperless Settings -->
-          <div class="space-y-2">
-            <h4 class="font-semibold">{{ $t("profile.paperless_settings") }}</h4>
-            <FormTextField
-              v-model="paperlessUrl"
-              :label="$t('profile.paperless_url')"
-              :placeholder="$t('profile.paperless_url_placeholder')"
-              type="url"
-              class="mb-2"
-            />
-            <FormTextField
-              v-model="paperlessToken"
-              :label="$t('profile.paperless_token')"
-              :placeholder="$t('profile.paperless_token_placeholder')"
-              type="password"
-            />
-          </div>
-
-          <div class="border-t pt-4">
-            <Button
-              :disabled="integrationSettings.saving || integrationSettings.loading"
-              @click="saveIntegrationSettings"
-            >
-              <MdiLoading v-if="integrationSettings.saving" class="animate-spin" />
-              {{ $t("global.save") }}
-            </Button>
-          </div>
-        </div>
-      </BaseCard>
+      <ProfileIntegrationSettings />
 
       <BaseCard>
         <template #title>

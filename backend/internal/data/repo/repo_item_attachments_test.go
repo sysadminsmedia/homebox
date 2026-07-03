@@ -147,9 +147,6 @@ func TestAttachmentRepo_Delete(t *testing.T) {
 	require.Error(t, err)
 }
 
-// externalLinkMimeTypeCases covers every registered external-link MIME type.
-// Adding a new integration only requires a new entry here — all table-driven
-// tests below pick it up automatically.
 var externalLinkMimeTypeCases = []struct {
 	mimeType   string
 	externalID string
@@ -158,9 +155,6 @@ var externalLinkMimeTypeCases = []struct {
 	{MimeTypePaperlessDocument, "42"},
 }
 
-// TestAttachmentRepo_CreateExternalLink_PerMimeType verifies that path, title,
-// and mimeType are stored and returned verbatim for every known external-link
-// MIME type.
 func TestAttachmentRepo_CreateExternalLink_PerMimeType(t *testing.T) {
 	ctx := context.Background()
 
@@ -183,9 +177,6 @@ func TestAttachmentRepo_CreateExternalLink_PerMimeType(t *testing.T) {
 	}
 }
 
-// TestAttachmentRepo_CreateExternalLink_AttachmentTypes verifies that all
-// attachment type variants are stored correctly. A single representative MIME
-// type is sufficient since the MIME type coverage is handled above.
 func TestAttachmentRepo_CreateExternalLink_AttachmentTypes(t *testing.T) {
 	ctx := context.Background()
 	mimeType := externalLinkMimeTypeCases[0].mimeType
@@ -212,8 +203,6 @@ func TestAttachmentRepo_CreateExternalLink_AttachmentTypes(t *testing.T) {
 	}
 }
 
-// TestAttachmentRepo_CreateExternalLink_EmptyTypeDefaultsToAttachment verifies
-// that passing an empty attachment type string results in TypeAttachment.
 func TestAttachmentRepo_CreateExternalLink_EmptyTypeDefaultsToAttachment(t *testing.T) {
 	ctx := context.Background()
 	tc := externalLinkMimeTypeCases[0]
@@ -226,8 +215,6 @@ func TestAttachmentRepo_CreateExternalLink_EmptyTypeDefaultsToAttachment(t *test
 	assert.Equal(t, attachment.TypeAttachment, att.Type)
 }
 
-// TestAttachmentRepo_CreateExternalLink_InvalidEntityID verifies that using a
-// non-existent entity ID returns an error.
 func TestAttachmentRepo_CreateExternalLink_InvalidEntityID(t *testing.T) {
 	tc := externalLinkMimeTypeCases[0]
 
@@ -249,8 +236,6 @@ func TestAttachmentRepo_CreateExternalLink_InvalidMimeType(t *testing.T) {
 	assert.Error(t, err)
 }
 
-// TestAttachmentRepo_DeleteExternalLink verifies that a created external-link
-// attachment can be deleted and is no longer retrievable.
 func TestAttachmentRepo_DeleteExternalLink(t *testing.T) {
 	ctx := context.Background()
 	entity := useEntities(t, 1)[0]
@@ -266,8 +251,6 @@ func TestAttachmentRepo_DeleteExternalLink(t *testing.T) {
 	require.Error(t, err)
 }
 
-// TestAttachmentRepo_DeleteExternalLink_DoesNotRequireBlobStorage verifies that
-// deleting an external-link attachment does not attempt blob-storage I/O.
 func TestAttachmentRepo_DeleteExternalLink_DoesNotRequireBlobStorage(t *testing.T) {
 	ctx := context.Background()
 	repos := New(tClient, tbus, config.Storage{PrefixPath: "/", ConnString: "mem://"}, "mem://{{ .Topic }}", config.Thumbnail{Enabled: false})

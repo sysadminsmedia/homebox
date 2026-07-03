@@ -72,8 +72,9 @@ export class BaseAPI {
     this.attachmentToken = attachmentToken;
   }
 
-  // If an attachmentToken is present, it is added to the URL as a query param.
-  // Existing query params are preserved by the route helper.
+  // if an attachmentToken is present, it will be added to URL as a query param
+  // this is done with a simple appending of the query param to the URL. If your
+  // URL already has a query param, this will not work.
   authURL(url: string): string {
     if (this.attachmentToken) {
       const params: Record<string, string> = { access_token: this.attachmentToken };
