@@ -313,6 +313,20 @@ func (_u *EntityUpdate) ClearWarrantyDetails() *EntityUpdate {
 	return _u
 }
 
+// SetNotifyWarrantyExpiration sets the "notify_warranty_expiration" field.
+func (_u *EntityUpdate) SetNotifyWarrantyExpiration(v bool) *EntityUpdate {
+	_u.mutation.SetNotifyWarrantyExpiration(v)
+	return _u
+}
+
+// SetNillableNotifyWarrantyExpiration sets the "notify_warranty_expiration" field if the given value is not nil.
+func (_u *EntityUpdate) SetNillableNotifyWarrantyExpiration(v *bool) *EntityUpdate {
+	if v != nil {
+		_u.SetNotifyWarrantyExpiration(*v)
+	}
+	return _u
+}
+
 // SetPurchaseDate sets the "purchase_date" field.
 func (_u *EntityUpdate) SetPurchaseDate(v time.Time) *EntityUpdate {
 	_u.mutation.SetPurchaseDate(v)
@@ -880,6 +894,9 @@ func (_u *EntityUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.WarrantyDetailsCleared() {
 		_spec.ClearField(entity.FieldWarrantyDetails, field.TypeString)
+	}
+	if value, ok := _u.mutation.NotifyWarrantyExpiration(); ok {
+		_spec.SetField(entity.FieldNotifyWarrantyExpiration, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.PurchaseDate(); ok {
 		_spec.SetField(entity.FieldPurchaseDate, field.TypeTime, value)
@@ -1533,6 +1550,20 @@ func (_u *EntityUpdateOne) ClearWarrantyDetails() *EntityUpdateOne {
 	return _u
 }
 
+// SetNotifyWarrantyExpiration sets the "notify_warranty_expiration" field.
+func (_u *EntityUpdateOne) SetNotifyWarrantyExpiration(v bool) *EntityUpdateOne {
+	_u.mutation.SetNotifyWarrantyExpiration(v)
+	return _u
+}
+
+// SetNillableNotifyWarrantyExpiration sets the "notify_warranty_expiration" field if the given value is not nil.
+func (_u *EntityUpdateOne) SetNillableNotifyWarrantyExpiration(v *bool) *EntityUpdateOne {
+	if v != nil {
+		_u.SetNotifyWarrantyExpiration(*v)
+	}
+	return _u
+}
+
 // SetPurchaseDate sets the "purchase_date" field.
 func (_u *EntityUpdateOne) SetPurchaseDate(v time.Time) *EntityUpdateOne {
 	_u.mutation.SetPurchaseDate(v)
@@ -2130,6 +2161,9 @@ func (_u *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err erro
 	}
 	if _u.mutation.WarrantyDetailsCleared() {
 		_spec.ClearField(entity.FieldWarrantyDetails, field.TypeString)
+	}
+	if value, ok := _u.mutation.NotifyWarrantyExpiration(); ok {
+		_spec.SetField(entity.FieldNotifyWarrantyExpiration, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.PurchaseDate(); ok {
 		_spec.SetField(entity.FieldPurchaseDate, field.TypeTime, value)

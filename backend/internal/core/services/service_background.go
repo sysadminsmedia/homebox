@@ -17,6 +17,9 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
 
+// number of days before warranty expiry to send notification
+const warrantyNotifyLeadDays = 30
+
 type Latest struct {
 	Version string `json:"version"`
 	Date    string `json:"date"`
@@ -36,6 +39,8 @@ func (svc *BackgroundService) SendNotifiersToday(ctx context.Context) error {
 
 	today := types.DateFromTime(time.Now())
 
+	warrantyTarget := types.DateFromTime(time.Now().AddDate(0, 0, warrantyNotifyLeadDays))
+
 	for i := range groups {
 		group := groups[i]
 
@@ -44,11 +49,16 @@ func (svc *BackgroundService) SendNotifiersToday(ctx context.Context) error {
 			return err
 		}
 
-		if len(entries) == 0 {
+		warrantyItems, err := svc.repos.Entities.GetWarrantyExpiringOn(ctx, group.ID, warrantyTarget)
+		if err != nil {
+			return err
+		}
+
+		if len(entries) == 0 && len(warrantyItems) == 0 {
 			log.Debug().
 				Str("group_name", group.Name).
 				Str("group_id", group.ID.String()).
-				Msg("No scheduled maintenance for today")
+				Msg("No scheduled maintenance or expiring warranties for today")
 			continue
 		}
 
@@ -67,15 +77,32 @@ func (svc *BackgroundService) SendNotifiersToday(ctx context.Context) error {
 
 		bldr := strings.Builder{}
 
-		bldr.WriteString("Homebox Maintenance for (")
-		bldr.WriteString(today.String())
-		bldr.WriteString("):\n")
+		if len(entries) > 0 {
+			bldr.WriteString("Homebox Maintenance for (")
+			bldr.WriteString(today.String())
+			bldr.WriteString("):\n")
 
-		for i := range entries {
-			entry := entries[i]
-			bldr.WriteString(" - ")
-			bldr.WriteString(entry.Name)
-			bldr.WriteString("\n")
+			for i := range entries {
+				entry := entries[i]
+				bldr.WriteString(" - ")
+				bldr.WriteString(entry.Name)
+				bldr.WriteString("\n")
+			}
+		}
+
+		if len(warrantyItems) > 0 {
+			if bldr.Len() > 0 {
+				bldr.WriteString("\n")
+			}
+			bldr.WriteString("Homebox Warranties expiring on (")
+			bldr.WriteString(warrantyTarget.String())
+			bldr.WriteString("):\n")
+
+			for i := range warrantyItems {
+				bldr.WriteString(" - ")
+				bldr.WriteString(warrantyItems[i].Name)
+				bldr.WriteString("\n")
+			}
 		}
 
 		var sendErrs []error
