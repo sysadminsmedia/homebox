@@ -420,6 +420,22 @@ func TestIsGroupReadyForImport_BlocksUserCreatedRows(t *testing.T) {
 	})
 }
 
+// TestPublishJobsTopicReuse guards against #1592: the mem:// pubsub driver
+// returns a shared singleton topic per URL, so the old per-publish Shutdown
+// permanently broke every publish after the first ("pubsub: Topic has been
+// Shutdown") until the process restarted. Publishing twice on each topic
+// must succeed.
+func TestPublishJobsTopicReuse(t *testing.T) {
+	ctx := context.Background()
+
+	for i := 1; i <= 2; i++ {
+		require.NoError(t, tSvc.Exports.publishExportJob(ctx, uuid.New(), uuid.New()),
+			"export publish attempt %d", i)
+		require.NoError(t, tSvc.Exports.publishImportJob(ctx, uuid.New(), uuid.New(), uuid.New()),
+			"import publish attempt %d", i)
+	}
+}
+
 // copyBlobUnderTest reuses the export service's bucket plumbing to copy a
 // blob from one key to another in the same backing store. Used to "stage"
 // the just-produced export under the destination group's import prefix.

@@ -60,7 +60,7 @@ func (ctrl *V1Controller) HandleEntityAttachmentCreate() errchain.HandlerFunc {
 			parseSpan.End()
 			recordCtrlSpanError(span, err)
 			log.Err(err).Msg("failed to parse multipart form")
-			return validate.NewRequestError(errors.New("failed to parse multipart form"), http.StatusBadRequest)
+			return multipartFormError(err)
 		}
 
 		errs := validate.NewFieldErrors()

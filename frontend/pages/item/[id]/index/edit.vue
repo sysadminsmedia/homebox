@@ -69,6 +69,12 @@
       parent.value = data.parent;
     }
 
+    // The "Location" selector shows the derived location (nearest ancestor
+    // that is a location-type entity), not the direct parent — when the item
+    // sits inside another item, the parent is shown in "Parent Item" and the
+    // location stays e.g. "Attic" (#1589).
+    location.value = data.location ?? (data.parent?.entityType?.isLocation ? data.parent : null);
+
     return data;
   });
 
@@ -90,7 +96,7 @@
   const saving = ref(false);
 
   async function saveItem(redirect: boolean) {
-    if (!item.value.parent?.id && !parent.value?.id) {
+    if (!location.value?.id && !parent.value?.id) {
       toast.error(t("items.toast.failed_save_no_location"));
       return;
     }
@@ -119,7 +125,9 @@
 
     const payload: EntityUpdate = {
       ...item.value,
-      parentId: parent.value?.id || item.value.parent?.id || null,
+      // A selected parent item is the entity's real parent; otherwise the
+      // item hangs directly off the chosen location.
+      parentId: parent.value?.id || location.value?.id || null,
       tagIds: item.value.tagIds,
       assetId: item.value.assetId,
       purchasePrice,
@@ -165,6 +173,7 @@
     type: "number";
     label: string;
     ref: NonNullableNumberKeys<EntityOut> | NonNullableStringKeys<EntityOut>;
+    min?: number;
   };
 
   interface BoolFormField {
@@ -193,6 +202,7 @@
       type: "number",
       label: "items.quantity",
       ref: "quantity",
+      min: 0,
     },
     {
       type: "markdown",
@@ -407,10 +417,10 @@
       return;
     }
 
-    const { data, error } = await api.items.attachments.add(itemId.value, files[0], files[0].name, type);
+    const { data, error, status } = await api.items.attachments.add(itemId.value, files[0], files[0].name, type);
 
     if (error) {
-      toast.error(t("items.toast.failed_upload_attachment"));
+      toast.error(status === 413 ? t("items.toast.attachment_too_large") : t("items.toast.failed_upload_attachment"));
       return;
     }
 
@@ -506,6 +516,11 @@
 
   const { query, results, isLoading, triggerSearch } = useItemSearch(api, { immediate: false });
   const parent = ref();
+  // Derived location shown in the "Location" selector. Kept separate from
+  // `parent` (the "Parent Item" selector): when a parent item is chosen it
+  // becomes the entity's real parent, while this stays the location the item
+  // ultimately lives in (#1589).
+  const location = ref();
 
   async function keyboardSave(e: KeyboardEvent) {
     // Cmd + S
@@ -530,37 +545,34 @@
         return;
       }
 
+      // The item now lives inside the parent item, so its location follows
+      // the parent's derived location — reflect that in the selector instead
+      // of showing the parent item itself as the "location" (#1589).
+      location.value = data.location ?? (data.parent?.entityType?.isLocation ? data.parent : null);
       if (data.syncChildEntityLocations) {
         toast.info(t("items.toast.sync_child_location"));
-        item.value.parent = data.parent;
       }
     }
   }
 
-  async function informAboutDesyncingLocationFromParent() {
+  function onLocationChanged() {
+    // Picking a location explicitly moves the item there: clear any selected
+    // parent item so the chosen location actually takes effect on save.
     if (parent.value && parent.value.id) {
-      const { data, error } = await api.items.get(parent.value.id);
-
-      if (error) {
-        toast.error(t("items.toast.error_loading_parent_data"));
-        return;
-      }
-
-      if (data.syncChildEntityLocations) {
-        toast.info(t("items.toast.child_location_desync"));
-      }
+      parent.value = null;
+      toast.info(t("items.toast.child_location_desync"));
     }
   }
 
   async function syncChildEntityLocations() {
-    if (!item.value.parent?.id && !parent.value?.id) {
+    if (!location.value?.id && !parent.value?.id) {
       toast.error(t("items.toast.failed_save_no_location"));
       return;
     }
 
     const payload: EntityUpdate = {
       ...item.value,
-      parentId: parent.value?.id || item.value.parent?.id || null,
+      parentId: parent.value?.id || location.value?.id || null,
       tagIds: item.value.tagIds,
       assetId: item.value.assetId,
       syncChildEntityLocations: item.value.syncChildEntityLocations,
@@ -662,7 +674,7 @@
         <BaseCard class="overflow-visible">
           <template #title> {{ $t("items.edit_details") }} </template>
           <div class="mb-6 grid gap-4 border-t px-5 pt-2 md:grid-cols-2">
-            <LocationSelector v-model="item.parent" @update:model-value="informAboutDesyncingLocationFromParent()" />
+            <LocationSelector v-model="location" @update:model-value="onLocationChanged()" />
             <ItemSelector
               v-model="parent"
               v-model:search="query"
@@ -722,6 +734,7 @@
                   v-model.number="item[field.ref]"
                   type="number"
                   step="any"
+                  :min="field.min"
                   :label="$t(field.label)"
                   inline
                 />
@@ -909,6 +922,7 @@
                   v-model.number="item[field.ref]"
                   type="number"
                   step="any"
+                  :min="field.min"
                   :label="$t(field.label)"
                   inline
                 />
@@ -958,6 +972,7 @@
                   v-model.number="item[field.ref]"
                   type="number"
                   step="any"
+                  :min="field.min"
                   :label="$t(field.label)"
                   inline
                 />
@@ -1007,6 +1022,7 @@
                   v-model.number="item[field.ref]"
                   type="number"
                   step="any"
+                  :min="field.min"
                   :label="$t(field.label)"
                   inline
                 />
