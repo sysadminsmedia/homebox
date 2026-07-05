@@ -620,11 +620,18 @@
       error = result.error;
       data = result.data;
     } else if (templateData.value) {
+      const parentId = form.parentId || form.location?.id;
+      if (!parentId) {
+        toast.error(t("components.entity.create_modal.toast.please_select_location"));
+        loading.value = false;
+        return;
+      }
+
       // If a template is selected, use the template creation endpoint
       const templateRequest = {
         name: form.name,
         description: form.description,
-        parentId: form.location.id as string,
+        parentId,
         tagIds: form.tags,
         quantity: form.quantity,
         entityTypeId: selectedEntityType.value?.id || "",
@@ -634,9 +641,16 @@
       error = result.error;
       data = result.data;
     } else {
+      const parentId = form.parentId || form.location?.id;
+      if (!parentId) {
+        toast.error(t("components.entity.create_modal.toast.please_select_location"));
+        loading.value = false;
+        return;
+      }
+
       // Normal item creation without template
       const out: EntityCreate = {
-        parentId: form.parentId || (form.location.id as string),
+        parentId,
         name: form.name,
         quantity: form.quantity,
         description: form.description,

@@ -39,6 +39,24 @@ export type TreeQuery = {
   withItems: boolean;
 };
 
+export type IntegrationAttachmentCard = {
+  attachmentId: string;
+  provider: string;
+  scope: string;
+  title: string;
+  openUrl: string;
+  thumbnailUrl?: string;
+  state: "loading" | "ok" | "stale" | "error";
+  error?: string;
+  fields?: {
+    createdDate?: string;
+    pageCount?: number;
+    correspondent?: { id: number; name: string };
+    documentType?: { id: number; name: string };
+    tags?: Array<{ id: number; name: string; color: string; textColor: string }>;
+  };
+};
+
 export class AttachmentsAPI extends BaseAPI {
   add(id: string, file: File | Blob, filename: string, type: AttachmentTypes | null = null, primary?: boolean) {
     const formData = new FormData();
@@ -75,6 +93,12 @@ export class AttachmentsAPI extends BaseAPI {
     >({
       url: route(`/entities/${id}/attachments/external`),
       body: { source_type: sourceType, external_id: externalId, title, attachment_type: attachmentType },
+    });
+  }
+
+  integrationCards(id: string) {
+    return this.http.get<{ items: IntegrationAttachmentCard[] }>({
+      url: route(`/entities/${id}/attachments/integration-cards`),
     });
   }
 }
@@ -139,7 +163,7 @@ export class ItemsApi extends BaseAPI {
   }
 
   async update(id: string, item: EntityUpdate) {
-    return this.http.put<EntityCreate, EntityOut>({
+    return this.http.put<EntityUpdate, EntityOut>({
       url: route(`/entities/${id}`),
       body: this.dropFields(item),
     });

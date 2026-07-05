@@ -178,6 +178,8 @@
         "item": {
             "attachments_list": {
                 "download": "Herunterladen",
+                "integration_error": "Integrationsfehler",
+                "page_count": "{count, plural, =1 {1 Seite} other {# Seiten}}",
                 "open_new_tab": "In einem neuen Tab öffnen"
             },
             "create_modal": {
@@ -608,6 +610,7 @@
             "failed_upload_attachment": "Hochladen des Anhangs ist fehlgeschlagen",
             "item_deleted": "Artikel gelöscht",
             "item_saved": "Artikel gespeichert",
+            "link_attachment_saved": "Link-Anhang gespeichert",
             "quantity_cannot_negative": "Die Anzahl darf nicht negativ sein",
             "sync_child_location": "Das ausgewählte übergeordnete Element synchronisiert die Lagerorte seiner untergeordneten Elemente mit seinen eigenen. Der Lagerort wurde aktualisiert."
         },

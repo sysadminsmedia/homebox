@@ -96,8 +96,10 @@
     }
 
     saving.value = true;
-    const isConvertingToLocation = item.value.entityType?.isLocation;
-    if (isConvertingToLocation) {
+    const wasLocation = nullableItem.value?.entityType?.isLocation ?? false;
+    const isLocation = item.value.entityType?.isLocation ?? false;
+    const changedLocationKind = wasLocation !== isLocation;
+    if (changedLocationKind) {
       const { isCanceled } = await confirm.open(t("items.edit.change_entity_type_confirm"));
       if (isCanceled) {
         saving.value = false;
@@ -141,10 +143,8 @@
     }
 
     toast.success(t("items.toast.item_saved"));
-    if (isConvertingToLocation) {
-      navigateTo("/location/" + itemId.value);
-    } else if (redirect) {
-      navigateTo("/item/" + itemId.value);
+    if (changedLocationKind || redirect) {
+      navigateTo((isLocation ? "/location/" : "/item/") + itemId.value);
     }
   }
 
@@ -384,7 +384,10 @@
     const zoneEl = targetEl?.closest("[data-link-type]");
     const attachmentType = zoneEl?.getAttribute("data-link-type") || "attachment";
 
+    // Always use the URL-based title as fallback; the real document title is
+    // fetched from the service API at display time (hydration in AttachmentsList.vue).
     const title = fallbackLinkTitle(droppedURL);
+
     const { data, error } = await api.items.attachments.addExternalLink(
       itemId.value,
       "link",
@@ -398,7 +401,7 @@
       return;
     }
 
-    toast.success(t("items.toast.attachment_uploaded"));
+    toast.success(t("items.toast.link_attachment_saved"));
     item.value.attachments = data.attachments;
   }
 
@@ -563,6 +566,7 @@
       parentId: parent.value?.id || item.value.parent?.id || null,
       tagIds: item.value.tagIds,
       assetId: item.value.assetId,
+      entityTypeId: item.value.entityType?.id || "",
       syncChildEntityLocations: item.value.syncChildEntityLocations,
     };
 
@@ -841,13 +845,7 @@
                     </TooltipTrigger>
                     <TooltipContent>{{ $t("items.edit.view_image") }}</TooltipContent>
                   </Tooltip>
-                  <Tooltip
-                    v-if="
-                      attachment.mimeType === 'link/url' ||
-                      (attachment.path ?? '').startsWith('http://') ||
-                      (attachment.path ?? '').startsWith('https://')
-                    "
-                  >
+                  <Tooltip v-if="isValidHttpURL(attachment.path ?? '')">
                     <TooltipTrigger as-child>
                       <a :href="attachment.path" target="_blank" rel="noopener noreferrer">
                         <Button variant="outline" size="icon">

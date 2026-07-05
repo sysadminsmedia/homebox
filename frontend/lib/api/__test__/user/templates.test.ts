@@ -1,8 +1,32 @@
 import { describe, expect, test } from "vitest";
-import type { EntityTemplateOut } from "../../types/data-contracts";
+import type { EntityTemplateOut, TemplateField } from "../../types/data-contracts";
 import type { UserClient } from "../../user";
 import { factories } from "../factories";
 import { sharedUserClient } from "../test-utils";
+
+const NIL_UUID = "00000000-0000-0000-0000-000000000000";
+const DEFAULT_TEMPLATE_FIELD_TIME_VALUE = "1970-01-01T00:00:00.000Z";
+
+function templateField(name: string, textValue: string, id = NIL_UUID): TemplateField {
+  return {
+    id,
+    name,
+    type: "text",
+    textValue,
+    booleanValue: false,
+    numberValue: 0,
+    timeValue: DEFAULT_TEMPLATE_FIELD_TIME_VALUE,
+  };
+}
+
+async function getLocationEntityTypeId(api: UserClient): Promise<string> {
+  const { response, data } = await api.entityTypes.getAll();
+  expect(response.status).toBe(200);
+
+  const locationType = data.find(t => t.isLocation);
+  expect(locationType).toBeTruthy();
+  return locationType!.id;
+}
 
 describe("templates lifecycle (create, update, delete)", () => {
   /**
@@ -125,13 +149,9 @@ describe("templates lifecycle (create, update, delete)", () => {
 
   test("user should be able to create a template with custom fields", async () => {
     const api = await sharedUserClient();
-    const NIL_UUID = "00000000-0000-0000-0000-000000000000";
 
     const templateData = factories.template();
-    templateData.fields = [
-      { id: NIL_UUID, name: "Custom Field 1", type: "text", textValue: "Value 1" },
-      { id: NIL_UUID, name: "Custom Field 2", type: "text", textValue: "Value 2" },
-    ];
+    templateData.fields = [templateField("Custom Field 1", "Value 1"), templateField("Custom Field 2", "Value 2")];
 
     const { response, data } = await api.templates.create(templateData);
 
@@ -149,11 +169,10 @@ describe("templates lifecycle (create, update, delete)", () => {
 
   test("user should be able to update template custom fields", async () => {
     const api = await sharedUserClient();
-    const NIL_UUID = "00000000-0000-0000-0000-000000000000";
 
     // Create template with a field
     const templateData = factories.template();
-    templateData.fields = [{ id: NIL_UUID, name: "Original Field", type: "text", textValue: "Original Value" }];
+    templateData.fields = [templateField("Original Field", "Original Value")];
 
     const { response: createResponse, data: createdTemplate } = await api.templates.create(templateData);
     expect(createResponse.status).toBe(201);
@@ -179,8 +198,8 @@ describe("templates lifecycle (create, update, delete)", () => {
       includePurchaseFields: createdTemplate.includePurchaseFields,
       includeSoldFields: createdTemplate.includeSoldFields,
       fields: [
-        { id: createdTemplate.fields![0]!.id, name: "Updated Field", type: "text", textValue: "Updated Value" },
-        { id: NIL_UUID, name: "New Field", type: "text", textValue: "New Value" },
+        templateField("Updated Field", "Updated Value", createdTemplate.fields![0]!.id),
+        templateField("New Field", "New Value"),
       ],
     };
 
@@ -200,9 +219,10 @@ describe("templates lifecycle (create, update, delete)", () => {
 describe("templates with location and tags", () => {
   test("user should be able to create a template with a default location", async () => {
     const api = await sharedUserClient();
+    const locationEntityTypeId = await getLocationEntityTypeId(api);
 
     // First create a location
-    const locationData = factories.location();
+    const locationData = factories.location(locationEntityTypeId);
     const { response: locResponse, data: location } = await api.items.createLocation(locationData);
     expect(locResponse.status).toBe(201);
 
@@ -251,9 +271,11 @@ describe("templates with location and tags", () => {
 
   test("user should be able to update template to remove location", async () => {
     const api = await sharedUserClient();
+    const locationEntityTypeId = await getLocationEntityTypeId(api);
 
     // Create a location
-    const { response: locResponse, data: location } = await api.items.createLocation(factories.location());
+    const locationData = factories.location(locationEntityTypeId);
+    const { response: locResponse, data: location } = await api.items.createLocation(locationData);
     expect(locResponse.status).toBe(201);
 
     // Create template with location

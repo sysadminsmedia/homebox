@@ -2,8 +2,12 @@ package services
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"io"
+	"net/url"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
@@ -13,6 +17,24 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
+
+func redactExternalIdentifierForTrace(sourceType, externalID string) string {
+	if sourceType != "link" {
+		return externalID
+	}
+
+	u, err := url.Parse(strings.TrimSpace(externalID))
+	if err != nil {
+		return ""
+	}
+	u.User = nil
+	u.RawQuery = ""
+	u.Fragment = ""
+
+	hostHash := sha256.Sum256([]byte(strings.ToLower(u.Host)))
+	pathHash := sha256.Sum256([]byte(u.EscapedPath()))
+	return fmt.Sprintf("%s://host:%s/path:%s", u.Scheme, hex.EncodeToString(hostHash[:8]), hex.EncodeToString(pathHash[:8]))
+}
 
 func (svc *EntityService) AttachmentPath(ctx context.Context, gid uuid.UUID, attachmentID uuid.UUID) (*ent.Attachment, error) {
 	ctx, span := entityServiceTracer().Start(ctx, "service.EntityService.AttachmentPath",
@@ -120,7 +142,7 @@ func (svc *EntityService) AttachmentAddExternalLink(ctx Context, entityID uuid.U
 			attribute.String("group.id", ctx.GID.String()),
 			attribute.String("entity.id", entityID.String()),
 			attribute.String("integration.source_type", sourceType),
-			attribute.String("integration.external_id", externalID),
+			attribute.String("integration.external_id", redactExternalIdentifierForTrace(sourceType, externalID)),
 		))
 	defer span.End()
 	ctx.Context = spanCtx

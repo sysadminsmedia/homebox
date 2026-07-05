@@ -15,6 +15,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 
 	"github.com/olahol/melody"
 )
@@ -90,6 +91,8 @@ type V1Controller struct {
 	url               string
 	config            *config.Config
 	oidcProvider      *providers.OIDCProvider
+
+	integrationTransport *http.Transport
 }
 
 type (
@@ -134,6 +137,8 @@ func NewControllerV1(svc *services.AllServices, repos *repo.AllRepos, bus *event
 		allowRegistration: true,
 		bus:               bus,
 		config:            config,
+
+		integrationTransport: validate.NewOutboundHTTPTransport(&config.Notifier),
 	}
 
 	for _, opt := range options {

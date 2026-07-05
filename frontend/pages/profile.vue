@@ -15,6 +15,7 @@
   import { DialogID } from "~/components/ui/dialog-provider/utils";
   import ThemePicker from "~/components/App/ThemePicker.vue";
   import ItemDuplicateSettings from "~/components/Item/DuplicateSettings.vue";
+  import ProfileIntegrationSettings from "~/components/Profile/IntegrationSettings.vue";
   import FormPassword from "~/components/Form/Password.vue";
   import FormTextField from "~/components/Form/TextField.vue";
   import FormCheckbox from "~/components/Form/Checkbox.vue";
@@ -431,6 +432,9 @@
           </div>
         </div>
       </BaseCard>
+
+      <ProfileIntegrationSettings />
+
       <BaseCard>
         <template #title>
           <BaseSectionHeader>

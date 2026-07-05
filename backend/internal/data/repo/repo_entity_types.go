@@ -80,6 +80,42 @@ func (r *EntityTypeRepository) publishMutationEvent(gid uuid.UUID) {
 	}
 }
 
+func defaultEntityTypeName(isLocation bool) string {
+	if isLocation {
+		return "Location"
+	}
+	return "Item"
+}
+
+func ensureDefaultEntityType(
+	ctx context.Context,
+	entityTypes *ent.EntityTypeClient,
+	gid uuid.UUID,
+	isLocation bool,
+) (*ent.EntityType, bool, error) {
+	et, err := entityTypes.Query().
+		Where(
+			entitytype.HasGroupWith(group.ID(gid)),
+			entitytype.IsLocation(isLocation),
+		).
+		WithDefaultTemplate().
+		Order(entitytype.ByCreatedAt()).
+		First(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			et, createErr := entityTypes.Create().
+				SetName(defaultEntityTypeName(isLocation)).
+				SetIsLocation(isLocation).
+				SetGroupID(gid).
+				Save(ctx)
+			return et, true, createErr
+		}
+		return nil, false, err
+	}
+
+	return et, false, nil
+}
+
 // GetAll returns all entity types for a group.
 func (r *EntityTypeRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]EntityTypeSummary, error) {
 	types, err := r.db.EntityType.Query().
@@ -94,6 +130,18 @@ func (r *EntityTypeRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]Ent
 	return lo.Map(types, func(et *ent.EntityType, _ int) EntityTypeSummary {
 		return mapEntityTypeSummary(et)
 	}), nil
+}
+
+// EnsureDefaults creates the default item and location entity types for a group
+// when they do not already exist.
+func (r *EntityTypeRepository) EnsureDefaults(ctx context.Context, gid uuid.UUID) error {
+	if _, err := r.GetDefault(ctx, gid, false); err != nil {
+		return err
+	}
+	if _, err := r.GetDefault(ctx, gid, true); err != nil {
+		return err
+	}
+	return nil
 }
 
 // Create creates a new entity type for a group.
@@ -181,27 +229,12 @@ func (r *EntityTypeRepository) Delete(ctx context.Context, gid uuid.UUID, id uui
 // GetDefault returns the first entity type matching the isLocation flag for the group.
 // If none exists, it creates a default one.
 func (r *EntityTypeRepository) GetDefault(ctx context.Context, gid uuid.UUID, isLocation bool) (EntityTypeSummary, error) {
-	et, err := r.db.EntityType.Query().
-		Where(
-			entitytype.HasGroupWith(group.ID(gid)),
-			entitytype.IsLocation(isLocation),
-		).
-		WithDefaultTemplate().
-		Order(entitytype.ByCreatedAt()).
-		First(ctx)
+	et, created, err := ensureDefaultEntityType(ctx, r.db.EntityType, gid, isLocation)
 	if err != nil {
-		if ent.IsNotFound(err) {
-			// Create a default entity type
-			name := "Item"
-			if isLocation {
-				name = "Location"
-			}
-			return r.Create(ctx, gid, EntityTypeCreate{
-				Name:       name,
-				IsLocation: isLocation,
-			})
-		}
 		return EntityTypeSummary{}, err
+	}
+	if created {
+		r.publishMutationEvent(gid)
 	}
 
 	return mapEntityTypeSummary(et), nil

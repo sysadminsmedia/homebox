@@ -6,6 +6,7 @@
   import MdiContentCopy from "~icons/mdi/content-copy";
   import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
   import { Button } from "@/components/ui/button";
+  import { NIL_UUID } from "~/lib/template-fields";
   import type { EntityTemplateSummary, EntityTemplateCreate } from "~/lib/api/types/data-contracts";
 
   const props = defineProps<{
@@ -43,11 +44,9 @@
       return;
     }
 
-    const NIL_UUID = "00000000-0000-0000-0000-000000000000";
-
-    // Create a duplicate with "(Copy)" suffix
+    // Create a duplicate with a localized copy suffix.
     const duplicateData: EntityTemplateCreate = {
-      name: `${fullTemplate.name} (Copy)`,
+      name: t("components.template.name_copy_suffix", { name: fullTemplate.name }),
       description: fullTemplate.description,
       notes: fullTemplate.notes,
       defaultName: fullTemplate.defaultName,
@@ -67,7 +66,10 @@
         id: NIL_UUID,
         name: field.name,
         type: field.type,
+        booleanValue: field.booleanValue,
+        numberValue: field.numberValue,
         textValue: field.textValue,
+        timeValue: field.timeValue,
       })),
     };
 

@@ -1,62 +1,17 @@
 import type { Ref } from "vue";
-import type { EntitySummary } from "~/lib/api/types/data-contracts";
-import type { DaisyTheme } from "~~/lib/data/themes";
+import {
+  type DuplicateSettings,
+  type LocationViewPreferences,
+  type PreferenceSyncConfig,
+  type ViewType,
+  DEFAULT_PREFERENCES,
+  buildSyncedSettings,
+  mergeSyncedSettings,
+} from "../lib/preferences-utils";
 
-export type ViewType = "table" | "card";
+export type { ViewType, DuplicateSettings, LocationViewPreferences, PreferenceSyncConfig };
+export { DEFAULT_PREFERENCES, buildSyncedSettings, mergeSyncedSettings };
 
-export type DuplicateSettings = {
-  copyMaintenance: boolean;
-  copyAttachments: boolean;
-  copyCustomFields: boolean;
-  copyPrefixOverride: string | null;
-};
-
-export type LocationViewPreferences = {
-  showDetails: boolean;
-  showEmpty: boolean;
-  editorAdvancedView: boolean;
-  itemDisplayView: ViewType;
-  theme: DaisyTheme;
-  itemsPerTablePage: number;
-  tableHeaders?: {
-    value: keyof EntitySummary;
-    enabled: boolean;
-  }[];
-  displayLegacyHeader: boolean;
-  legacyImageFit: boolean;
-  language?: string | null;
-  overrideFormatLocale?: string | null;
-  collectionId?: string | null;
-  duplicateSettings: DuplicateSettings;
-  shownMultiTabWarning: boolean;
-  quickActions: {
-    enabled: boolean;
-  };
-};
-export type PreferenceSyncConfig = Partial<Record<keyof LocationViewPreferences, boolean>>;
-
-const DEFAULT_PREFERENCES: LocationViewPreferences = {
-  showDetails: true,
-  showEmpty: true,
-  editorAdvancedView: false,
-  itemDisplayView: "card",
-  theme: "homebox",
-  itemsPerTablePage: 10,
-  displayLegacyHeader: false,
-  legacyImageFit: false,
-  language: null,
-  overrideFormatLocale: null,
-  duplicateSettings: {
-    copyMaintenance: false,
-    copyAttachments: true,
-    copyCustomFields: true,
-    copyPrefixOverride: null,
-  },
-  shownMultiTabWarning: false,
-  quickActions: {
-    enabled: true,
-  },
-};
 let syncConfig: PreferenceSyncConfig = {
   itemDisplayView: false,
   shownMultiTabWarning: false,
@@ -64,40 +19,7 @@ let syncConfig: PreferenceSyncConfig = {
 
 let syncInitialized = false;
 
-const preferenceKeys = Object.keys(DEFAULT_PREFERENCES) as (keyof LocationViewPreferences)[];
-
 const results = useLocalStorage("homebox/preferences/location", DEFAULT_PREFERENCES, { mergeDefaults: true });
-
-function forEachSyncedPreference(callback: (key: keyof LocationViewPreferences) => void) {
-  for (const key of preferenceKeys) {
-    if (syncConfig[key] !== false) {
-      callback(key);
-    }
-  }
-}
-
-function buildSyncedSettings(preferences: LocationViewPreferences): Record<string, unknown> {
-  const payload: Record<string, unknown> = {};
-  forEachSyncedPreference(key => {
-    payload[key] = preferences[key];
-  });
-  return payload;
-}
-
-function mergeSyncedSettings(
-  settings: Record<string, unknown>,
-  preferences: LocationViewPreferences
-): LocationViewPreferences {
-  const nextPreferences = { ...preferences };
-
-  forEachSyncedPreference(key => {
-    if (key in settings) {
-      nextPreferences[key] = settings[key] as never;
-    }
-  });
-
-  return nextPreferences;
-}
 
 export function configureViewPreferenceSync(config: PreferenceSyncConfig) {
   syncConfig = {
@@ -118,7 +40,7 @@ async function refreshViewPreferencesFromServer(preferences: Ref<LocationViewPre
     return;
   }
 
-  preferences.value = mergeSyncedSettings(data.item, preferences.value);
+  preferences.value = mergeSyncedSettings(data.item, preferences.value, syncConfig);
 }
 export function useViewPreferencesSync() {
   if (syncInitialized || !import.meta.client) {
@@ -165,7 +87,13 @@ export function useViewPreferencesSync() {
     try {
       while (syncedRevision < localRevision && !pauseServerSaves && auth.isAuthorized()) {
         const targetRevision = localRevision;
-        const { error } = await api.user.setSettings(buildSyncedSettings(preferences.value));
+        const { data: current, error: currentError } = await api.user.getSettings();
+        if (currentError || !current?.item) {
+          scheduleRetry();
+          return;
+        }
+        const merged = { ...(current?.item ?? {}), ...buildSyncedSettings(preferences.value, syncConfig) };
+        const { error } = await api.user.setSettings(merged);
         if (error) {
           scheduleRetry();
           return;
