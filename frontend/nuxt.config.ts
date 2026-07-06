@@ -64,11 +64,11 @@ export default defineNuxtConfig({
 
   pwa: {
     workbox: {
-      navigateFallbackDenylist: [/\/api\/v\d/],
+      navigateFallbackDenylist: [/\/api\/v\d+/],
       cleanupOutdatedCaches: true,
       runtimeCaching: [
         {
-          urlPattern: /\/api\/v\d/,
+          urlPattern: /\/api\/v\d+/,
           handler: "NetworkFirst",
           method: "GET",
           options: {
