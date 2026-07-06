@@ -14,5 +14,6 @@ services:
             - linux/arm
     environment:
       - HBOX_LOGGER_LEVEL=-1
+      # - HBOX_WEB_APP_BASE=/homebox  # Serve under a sub-path (default: /, trailing slash auto-added)
     ports:
       - 3100:7745

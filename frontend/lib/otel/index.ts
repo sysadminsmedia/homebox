@@ -152,6 +152,8 @@ class BackendProxyExporter implements SpanExporter {
   }
 }
 
+import { route } from "~~/lib/api/base/urls";
+
 /**
  * Initialize OpenTelemetry tracing for the frontend.
  * Should be called once during app startup.
@@ -178,7 +180,7 @@ export function initializeOTel(config: Partial<OTelConfig> = {}): void {
   });
 
   // Configure exporter - always use backend proxy for authentication
-  const exporter: SpanExporter = new BackendProxyExporter("/api/v1/telemetry", finalConfig.debug);
+  const exporter: SpanExporter = new BackendProxyExporter(route("/telemetry"), finalConfig.debug);
 
   // Use batch processor for better performance
   const batchProcessor = new BatchSpanProcessor(exporter);

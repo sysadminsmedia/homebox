@@ -4,14 +4,17 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+	"html"
 	"io"
 	"mime"
 	"net/http"
 	"path"
 	"path/filepath"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/hay-kot/httpkit/errchain"
+	"github.com/rs/zerolog/log"
 	httpSwagger "github.com/swaggo/http-swagger/v2" // http-swagger middleware
 	"github.com/sysadminsmedia/homebox/backend/app/api/handlers/debughandlers"
 	v1 "github.com/sysadminsmedia/homebox/backend/app/api/handlers/v1"
@@ -41,9 +44,11 @@ func (a *app) debugRouter() *http.ServeMux {
 func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllRepos) {
 	registerMimes()
 
+	base := a.conf.Web.AppBase
+
 	// Serve doc.json dynamically so the Swagger UI "Base URL" reflects the
 	// actual host of the user's instance rather than a hardcoded value.
-	r.Get("/swagger/doc.json", func(w http.ResponseWriter, r *http.Request) {
+	r.Get(base+"swagger/doc.json", func(w http.ResponseWriter, r *http.Request) {
 		host := r.Host
 		if fwdHost := r.Header.Get("X-Forwarded-Host"); fwdHost != "" {
 			host = fwdHost
@@ -55,8 +60,8 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		_, _ = w.Write([]byte(doc))
 	})
 
-	r.Get("/swagger/*", httpSwagger.Handler(
-		httpSwagger.URL("/swagger/doc.json"),
+	r.Get(base+"swagger/*", httpSwagger.Handler(
+		httpSwagger.URL(base+"swagger/doc.json"),
 	))
 
 	// =========================================================================
@@ -75,7 +80,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		v1.WithURL(fmt.Sprintf("%s:%s", a.conf.Web.Host, a.conf.Web.Port)),
 	)
 
-	r.Route(prefix+"/v1", func(r chi.Router) {
+	r.Route(strings.TrimRight(base, "/") + prefix + "/v1", func(r chi.Router) {
 		r.Get("/status", chain.ToHandlerFunc(v1Ctrl.HandleBase(func() bool { return true }, v1.Build{
 			Version:   version,
 			Commit:    commit,
@@ -253,7 +258,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.NotFound(http.NotFound)
 	})
 
-	r.NotFound(chain.ToHandlerFunc(notFoundHandler()))
+	r.NotFound(chain.ToHandlerFunc(notFoundHandler(base)))
 }
 
 func registerMimes() {
@@ -270,7 +275,7 @@ func registerMimes() {
 
 // notFoundHandler perform the main logic around handling the internal SPA embed and ensuring that
 // the client side routing is handled correctly.
-func notFoundHandler() errchain.HandlerFunc {
+func notFoundHandler(base string) errchain.HandlerFunc {
 	tryRead := func(fs embed.FS, prefix, requestedPath string, w http.ResponseWriter) error {
 		f, err := fs.Open(path.Join(prefix, requestedPath))
 		if err != nil {
@@ -289,15 +294,64 @@ func notFoundHandler() errchain.HandlerFunc {
 		return err
 	}
 
-	return func(w http.ResponseWriter, r *http.Request) error {
-		err := tryRead(public, "static/public", r.URL.Path, w)
-		if err != nil {
-			// Fallback to the index.html file.
-			// should succeed in all cases.
-			err = tryRead(public, "static/public", "index.html", w)
-			if err != nil {
-				return err
+	// Pre-build the patched index.html with <base href> and config script.
+	// Safety: base is validated by normalizePath (alphanumeric + /.-_ only),
+	// but we HTML-escape anyway as defense in depth.
+	var indexHTML []byte
+	if f, err := public.Open("static/public/index.html"); err == nil {
+		raw, _ := io.ReadAll(f)
+		_ = f.Close()
+		escaped := html.EscapeString(base)
+		injection := `<base href="` + escaped + `"><script>window.__HOMEBOX_BASE__="` + escaped + `";</script>`
+		content := strings.Replace(string(raw), "<head>", "<head>"+injection, 1)
+		if base != "/" && !strings.Contains(content, `baseURL:"`+base+`"`) {
+			// Patch Nuxt's runtime config so Vue Router knows the app's base path.
+			// Without this, client-side routing breaks on page reload (router sees
+			// /homebox/home but expects /home). This relies on the exact string format
+			// Nuxt produces — if it changes, the warning below fires.
+			content = strings.Replace(content, `baseURL:"/"`, `baseURL:"`+base+`"`, 1)
+			if !strings.Contains(content, `baseURL:"`+base+`"`) {
+				log.Warn().Msg("could not patch baseURL in index.html — Nuxt router may not work under subpath")
 			}
+		}
+		indexHTML = []byte(content)
+	} else {
+		log.Error().Err(err).Msg("failed to open embedded index.html — SPA fallback will not work")
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) error {
+		// Redirect root to app base when running under a subpath
+		if base != "/" && (r.URL.Path == "/" || r.URL.Path == strings.TrimSuffix(base, "/")) {
+			http.Redirect(w, r, base, http.StatusFound)
+			return nil
+		}
+
+		// Reject requests outside the base path with 404
+		if base != "/" && !strings.HasPrefix(r.URL.Path, base) {
+			http.NotFound(w, r)
+			return nil
+		}
+
+		// Strip the base prefix for file lookups
+		filePath := r.URL.Path
+		if base != "/" && strings.HasPrefix(filePath, base) {
+			filePath = "/" + strings.TrimPrefix(filePath, base)
+		}
+
+		// Try to serve the actual file
+		err := tryRead(public, "static/public", filePath, w)
+		if err != nil {
+			// SPA fallback: serve patched index.html
+			if indexHTML == nil {
+				http.Error(w, "index.html not available", http.StatusInternalServerError)
+				return nil
+			}
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.Header().Set("Cache-Control", "no-cache")
+			w.Header().Set("X-Content-Type-Options", "nosniff")
+			w.Header().Set("Content-Length", fmt.Sprintf("%d", len(indexHTML)))
+			_, err = w.Write(indexHTML)
+			return err
 		}
 		return nil
 	}
