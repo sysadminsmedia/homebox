@@ -14,6 +14,7 @@ import type { Span, Attributes } from "@opentelemetry/api";
 import { trace, context, propagation, SpanKind, SpanStatusCode } from "@opentelemetry/api";
 import { ExportResultCode } from "@opentelemetry/core";
 import type { ExportResult } from "@opentelemetry/core";
+import { route } from "~~/lib/api/base/urls";
 
 // Types for the telemetry configuration
 export interface OTelConfig {
@@ -151,8 +152,6 @@ class BackendProxyExporter implements SpanExporter {
     return result;
   }
 }
-
-import { route } from "~~/lib/api/base/urls";
 
 /**
  * Initialize OpenTelemetry tracing for the frontend.

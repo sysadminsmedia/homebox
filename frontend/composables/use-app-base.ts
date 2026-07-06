@@ -11,5 +11,6 @@
  */
 export function useAppBase(): string {
   if (typeof window === "undefined") return "/";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (window as any).__HOMEBOX_BASE__ || "/";
 }

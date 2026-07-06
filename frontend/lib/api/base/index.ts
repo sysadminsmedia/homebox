@@ -1,2 +1,2 @@
 export { BaseAPI } from "./base-api";
-export { route } from "./urls";
+export { overrideParts, route } from "./urls";

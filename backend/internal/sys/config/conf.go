@@ -89,8 +89,8 @@ type DebugConf struct {
 }
 
 type WebConfig struct {
-	Port string `yaml:"port" conf:"default:7745"`
-	Host string `yaml:"host"`
+	Port    string `yaml:"port"     conf:"default:7745"`
+	Host    string `yaml:"host"`
 	AppBase string `yaml:"app_base" conf:"default:/"`
 	// MaxUploadSize is the body cap (in MB) applied to ordinary upload
 	// endpoints (attachments, item imports, etc.). Defaults to 10 MB.
@@ -235,7 +235,7 @@ func normalizePath(p string) (string, error) {
 		p = "/" + p
 	}
 	if !strings.HasSuffix(p, "/") {
-		p = p + "/"
+		p += "/"
 	}
 	return p, nil
 }

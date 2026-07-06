@@ -2,6 +2,8 @@ package config
 
 import "testing"
 
+const testHomebox = "/homebox/"
+
 func Test_normalizePath(t *testing.T) {
 	tests := []struct {
 		input string
@@ -9,10 +11,10 @@ func Test_normalizePath(t *testing.T) {
 	}{
 		{"", "/"},
 		{"/", "/"},
-		{"homebox", "/homebox/"},
-		{"/homebox", "/homebox/"},
-		{"homebox/", "/homebox/"},
-		{"/homebox/", "/homebox/"},
+		{"homebox", testHomebox},
+		{"/homebox", testHomebox},
+		{"homebox/", testHomebox},
+		{"/homebox/", testHomebox},
 		{"/app/inventory", "/app/inventory/"},
 		{"app/inventory/", "/app/inventory/"},
 	}
