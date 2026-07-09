@@ -572,6 +572,22 @@ func (s *ExportService) openTopic(ctx context.Context, name string) (*pubsub.Top
 	return topic, nil
 }
 
+// Shutdown flushes and closes every cached publisher topic. It is called
+// once from the app's graceful-shutdown path; publishes after Shutdown
+// would reopen topics, so it must only run at service teardown.
+func (s *ExportService) Shutdown(ctx context.Context) error {
+	s.topicsMu.Lock()
+	defer s.topicsMu.Unlock()
+	var errs []error
+	for name, topic := range s.topics {
+		if err := topic.Shutdown(ctx); err != nil {
+			errs = append(errs, fmt.Errorf("shutdown topic %q: %w", name, err))
+		}
+	}
+	s.topics = nil
+	return errors.Join(errs...)
+}
+
 // publishExportJob sends a message on the export topic.
 func (s *ExportService) publishExportJob(ctx context.Context, gid, exportID uuid.UUID) error {
 	topic, err := s.openTopic(ctx, TopicCollectionExport)

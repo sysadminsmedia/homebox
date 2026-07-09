@@ -173,7 +173,8 @@
                 "qr_tooltip": "Show QR Code"
             },
             "password_score": {
-                "password_strength": "Password Strength"
+                "password_strength": "Password Strength",
+                "does_not_meet_requirement": "Doesn't meet password strength requirement"
             }
         },
         "entity": {
