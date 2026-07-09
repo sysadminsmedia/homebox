@@ -153,9 +153,13 @@ export type MaybeUrlResult = {
   text: string;
 };
 
+function isHttpUrl(str: string): boolean {
+  return str.startsWith("http://") || str.startsWith("https://");
+}
+
 export function maybeUrl(str: string): MaybeUrlResult {
   const result: MaybeUrlResult = {
-    isUrl: str.startsWith("http://") || str.startsWith("https://"),
+    isUrl: isHttpUrl(str),
     url: "",
     text: "",
   };
@@ -167,9 +171,15 @@ export function maybeUrl(str: string): MaybeUrlResult {
   if (str.startsWith("[")) {
     const match = str.match(/\[(.*)\]\((.*)\)/);
     if (match && match.length === 3) {
-      result.isUrl = true;
-      result.text = match[1]!;
-      result.url = match[2]!;
+      // Only http(s) may become a clickable link; any other scheme
+      // (javascript:, data:, ...) must stay plain text — the result is
+      // bound directly to an anchor href.
+      const url = match[2]!.trim();
+      if (isHttpUrl(url)) {
+        result.isUrl = true;
+        result.text = match[1]!;
+        result.url = url;
+      }
     }
   } else {
     result.url = str;
