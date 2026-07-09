@@ -11,6 +11,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -203,6 +204,14 @@ type ExportService struct {
 	storage    config.Storage
 	pubSubConn string
 	dialect    string // "sqlite3" or "postgres"
+
+	// topics caches the publisher topic per topic name so it is opened once
+	// and reused for the lifetime of the process. Publishers must never call
+	// Shutdown on these: the default mem:// driver returns a shared singleton
+	// per URL, so shutting it down after one send permanently breaks every
+	// later publish until restart (#1592).
+	topicsMu sync.Mutex
+	topics   map[string]*pubsub.Topic
 }
 
 // Enqueue creates a pending Export row for gid and publishes a job to the
@@ -538,17 +547,53 @@ func (s *ExportService) copyAttachmentBlobs(ctx context.Context, zw *zip.Writer,
 	return nil
 }
 
-// publishExportJob sends a message on the export topic.
-func (s *ExportService) publishExportJob(ctx context.Context, gid, exportID uuid.UUID) error {
-	conn, err := utils.GenerateSubPubConn(s.pubSubConn, TopicCollectionExport)
+// openTopic returns the long-lived publisher topic for name, opening and
+// caching it on first use. The topic is reused across publishes and stays
+// open for the process lifetime — see the topics field doc for why a
+// per-publish Shutdown must not be reintroduced here.
+func (s *ExportService) openTopic(ctx context.Context, name string) (*pubsub.Topic, error) {
+	s.topicsMu.Lock()
+	defer s.topicsMu.Unlock()
+	if topic, ok := s.topics[name]; ok {
+		return topic, nil
+	}
+	conn, err := utils.GenerateSubPubConn(s.pubSubConn, name)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	topic, err := pubsub.OpenTopic(ctx, conn)
 	if err != nil {
+		return nil, err
+	}
+	if s.topics == nil {
+		s.topics = make(map[string]*pubsub.Topic)
+	}
+	s.topics[name] = topic
+	return topic, nil
+}
+
+// Shutdown flushes and closes every cached publisher topic. It is called
+// once from the app's graceful-shutdown path; publishes after Shutdown
+// would reopen topics, so it must only run at service teardown.
+func (s *ExportService) Shutdown(ctx context.Context) error {
+	s.topicsMu.Lock()
+	defer s.topicsMu.Unlock()
+	var errs []error
+	for name, topic := range s.topics {
+		if err := topic.Shutdown(ctx); err != nil {
+			errs = append(errs, fmt.Errorf("shutdown topic %q: %w", name, err))
+		}
+	}
+	s.topics = nil
+	return errors.Join(errs...)
+}
+
+// publishExportJob sends a message on the export topic.
+func (s *ExportService) publishExportJob(ctx context.Context, gid, exportID uuid.UUID) error {
+	topic, err := s.openTopic(ctx, TopicCollectionExport)
+	if err != nil {
 		return err
 	}
-	defer func() { _ = topic.Shutdown(ctx) }()
 	return topic.Send(ctx, &pubsub.Message{
 		Body: []byte("collection_export:" + exportID.String()),
 		Metadata: map[string]string{
@@ -563,15 +608,10 @@ func (s *ExportService) publishExportJob(ctx context.Context, gid, exportID uuid
 // storage at the row's artifact_path, unzips, restores into the group
 // identified by gid, then deletes the staged upload.
 func (s *ExportService) publishImportJob(ctx context.Context, gid, userID, importID uuid.UUID) error {
-	conn, err := utils.GenerateSubPubConn(s.pubSubConn, TopicCollectionImport)
+	topic, err := s.openTopic(ctx, TopicCollectionImport)
 	if err != nil {
 		return err
 	}
-	topic, err := pubsub.OpenTopic(ctx, conn)
-	if err != nil {
-		return err
-	}
-	defer func() { _ = topic.Shutdown(ctx) }()
 	return topic.Send(ctx, &pubsub.Message{
 		Body: []byte("collection_import:" + gid.String()),
 		Metadata: map[string]string{

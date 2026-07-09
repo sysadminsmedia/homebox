@@ -745,6 +745,14 @@ export interface EntityCreate {
   /** @maxLength 1000 */
   description: string;
   entityTypeId: string;
+  /** @maxLength 255 */
+  manufacturer?: string | null;
+  /**
+   * Identifications — optional at create time; populated e.g. by the
+   * barcode product-search import flow (#1578).
+   * @maxLength 255
+   */
+  modelNumber?: string | null;
   /**
    * @minLength 1
    * @maxLength 255
@@ -791,6 +799,13 @@ export interface EntityOut {
   itemCount: number;
   /** Warranty */
   lifetimeWarranty: boolean;
+  /**
+   * Location is the nearest ancestor whose entity type is a location.
+   * When the direct parent is already a location it equals Parent; when
+   * the entity is nested inside other items it is the location those
+   * items ultimately live in. Nil for top-level entities.
+   */
+  location?: EntitySummary | null;
   manufacturer: string;
   modelNumber: string;
   name: string;

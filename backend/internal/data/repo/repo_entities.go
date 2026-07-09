@@ -96,6 +96,11 @@ type (
 		AssetID      AssetID   `json:"-"`
 		EntityTypeID uuid.UUID `json:"entityTypeId"`
 
+		// Identifications — optional at create time; populated e.g. by the
+		// barcode product-search import flow (#1578).
+		ModelNumber  string `json:"modelNumber"  validate:"max=255" extensions:"x-nullable,x-omitempty"`
+		Manufacturer string `json:"manufacturer" validate:"max=255" extensions:"x-nullable,x-omitempty"`
+
 		// Edges
 		TagIDs []uuid.UUID `json:"tagIds"`
 	}
@@ -181,6 +186,11 @@ type (
 
 	EntityOut struct {
 		Parent *EntitySummary `json:"parent,omitempty" extensions:"x-nullable,x-omitempty"`
+		// Location is the nearest ancestor whose entity type is a location.
+		// When the direct parent is already a location it equals Parent; when
+		// the entity is nested inside other items it is the location those
+		// items ultimately live in. Nil for top-level entities.
+		Location *EntitySummary `json:"location,omitempty" extensions:"x-nullable,x-omitempty"`
 		EntitySummary
 		AssetID AssetID `json:"assetId,string"`
 
@@ -427,7 +437,7 @@ func (r *EntityRepository) getOneTx(ctx context.Context, tx *ent.Tx, where ...pr
 		q = r.db.Entity.Query().Where(where...)
 	}
 
-	out, err := mapEntityOutErr(q.
+	e, err := q.
 		WithFields().
 		WithTag().
 		WithParent(func(eq *ent.EntityQuery) {
@@ -439,12 +449,27 @@ func (r *EntityRepository) getOneTx(ctx context.Context, tx *ent.Tx, where ...pr
 			eq.WithEntityType()
 		}).
 		WithAttachments().
-		Only(ctx),
-	)
+		Only(ctx)
 	if err != nil {
 		recordSpanError(span, err)
-		return out, err
+		return EntityOut{}, err
 	}
+
+	out := mapEntityOut(e)
+
+	var client *ent.EntityClient
+	if tx != nil {
+		client = tx.Entity
+	} else {
+		client = r.db.Entity
+	}
+	loc, err := nearestLocationAncestor(ctx, client, e.Edges.Parent)
+	if err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+	out.Location = loc
+
 	span.SetAttributes(
 		attribute.String("entity.id", out.ID.String()),
 		attribute.Int("entity.fields.count", len(out.Fields)),
@@ -453,6 +478,38 @@ func (r *EntityRepository) getOneTx(ctx context.Context, tx *ent.Tx, where ...pr
 		attribute.Int("entity.children.count", len(out.Children)),
 	)
 	return out, nil
+}
+
+// maxAncestorDepth bounds the parent-chain walk in nearestLocationAncestor so
+// a corrupted tree with a cycle can't spin forever.
+const maxAncestorDepth = 64
+
+// nearestLocationAncestor walks up the parent chain starting at start (an
+// already-loaded direct parent, or nil) and returns the first ancestor whose
+// entity type is a location. Returns nil when the chain runs out without
+// hitting a location. start must have its EntityType edge loaded; ancestors
+// above it are fetched one level at a time.
+func nearestLocationAncestor(ctx context.Context, client *ent.EntityClient, start *ent.Entity) (*EntitySummary, error) {
+	cur := start
+	for depth := 0; cur != nil && depth < maxAncestorDepth; depth++ {
+		if cur.Edges.EntityType != nil && cur.Edges.EntityType.IsLocation {
+			s := mapEntitySummary(cur)
+			return &s, nil
+		}
+		next, err := client.Query().
+			Where(entity.ID(cur.ID)).
+			QueryParent().
+			WithEntityType().
+			First(ctx)
+		if err != nil {
+			if ent.IsNotFound(err) {
+				return nil, nil
+			}
+			return nil, err
+		}
+		cur = next
+	}
+	return nil, nil
 }
 
 func (r *EntityRepository) getOne(ctx context.Context, where ...predicate.Entity) (EntityOut, error) {
@@ -971,6 +1028,9 @@ func validateQuantity(op string, quantity float64) error {
 	if math.IsNaN(quantity) || math.IsInf(quantity, 0) {
 		return fmt.Errorf("%s: invalid quantity: must be a finite number", op)
 	}
+	if quantity < 0 {
+		return fmt.Errorf("%s: invalid quantity: must not be negative", op)
+	}
 
 	return nil
 }
@@ -1015,6 +1075,8 @@ func (r *EntityRepository) Create(ctx context.Context, gid uuid.UUID, data Entit
 		SetName(data.Name).
 		SetQuantity(data.Quantity).
 		SetDescription(data.Description).
+		SetModelNumber(data.ModelNumber).
+		SetManufacturer(data.Manufacturer).
 		SetGroupID(gid).
 		SetAssetID(int64(data.AssetID))
 
@@ -1560,36 +1622,11 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		q.ClearParent()
 	}
 
-	if data.SyncChildEntityLocations {
-		syncCtx, syncSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.syncChildLocations")
-		children, err := r.db.Entity.Query().Where(entity.ID(data.ID)).QueryChildren().All(syncCtx)
-		if err != nil {
-			recordSpanError(syncSpan, err)
-			syncSpan.End()
-			recordSpanError(span, err)
-			return EntityOut{}, err
-		}
-
-		syncSpan.SetAttributes(attribute.Int("children.count", len(children)))
-		updatedCount := 0
-		for _, child := range children {
-			if data.ParentID != uuid.Nil {
-				childParent, err := child.QueryParent().First(syncCtx)
-				if err != nil || childParent.ID != data.ParentID {
-					err = child.Update().SetParentID(data.ParentID).Exec(syncCtx)
-					if err != nil {
-						recordSpanError(syncSpan, err)
-						syncSpan.End()
-						recordSpanError(span, err)
-						return EntityOut{}, err
-					}
-					updatedCount++
-				}
-			}
-		}
-		syncSpan.SetAttributes(attribute.Int("children.updated.count", updatedCount))
-		syncSpan.End()
-	}
+	// Note: SyncChildEntityLocations intentionally triggers no child updates
+	// here. In the single-parent entity model a child's location is derived
+	// from its ancestor chain, so children follow a moved parent
+	// automatically. The old behavior reparented this entity's children onto
+	// its *new parent* — flattening the hierarchy on every save (#1591).
 
 	_, execSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.exec")
 	err = q.Exec(ctx)
@@ -1763,57 +1800,6 @@ func patchSyncTags(ctx context.Context, tx *ent.Tx, gid, id uuid.UUID, want []uu
 	return nil
 }
 
-// patchSyncChildLocations propagates a parent move down to children when the
-// entity has SyncChildEntityLocations enabled. No-op when the flag is off.
-func patchSyncChildLocations(ctx context.Context, tx *ent.Tx, gid, id, parentID uuid.UUID) error {
-	syncCtx, syncSpan := entityTracer().Start(ctx, "repo.EntityRepository.Patch.syncChildLocations")
-	defer syncSpan.End()
-
-	entityEnt, err := tx.Entity.Query().Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).Only(syncCtx)
-	if err != nil {
-		recordSpanError(syncSpan, err)
-		return err
-	}
-	syncSpan.SetAttributes(attribute.Bool("entity.sync_child_locations", entityEnt.SyncChildEntityLocations))
-	if !entityEnt.SyncChildEntityLocations {
-		return nil
-	}
-
-	children, err := tx.Entity.Query().Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).QueryChildren().All(syncCtx)
-	if err != nil {
-		recordSpanError(syncSpan, err)
-		return err
-	}
-	updatedCount := 0
-	for _, child := range children {
-		childParent, err := child.QueryParent().First(syncCtx)
-		switch {
-		case err == nil:
-			if childParent.ID == parentID {
-				continue
-			}
-		case ent.IsNotFound(err):
-			// Child has no parent yet — treat as "needs the new parent."
-		default:
-			// Any other error (transient DB failure, context cancel, etc.)
-			// must NOT be interpreted as "missing parent → reparent" — that
-			// would silently move rows on a network blip.
-			recordSpanError(syncSpan, err)
-			return err
-		}
-		if err := child.Update().SetParentID(parentID).Exec(syncCtx); err != nil {
-			recordSpanError(syncSpan, err)
-			return err
-		}
-		updatedCount++
-	}
-	syncSpan.SetAttributes(
-		attribute.Int("children.count", len(children)),
-		attribute.Int("children.updated.count", updatedCount),
-	)
-	return nil
-}
-
 func (r *EntityRepository) Patch(ctx context.Context, gid, id uuid.UUID, data EntityPatch) error {
 	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.Patch",
 		trace.WithAttributes(
@@ -1904,12 +1890,8 @@ func (r *EntityRepository) Patch(ctx context.Context, gid, id uuid.UUID, data En
 		}
 	}
 
-	if data.ParentID != uuid.Nil {
-		if err := patchSyncChildLocations(ctx, tx, gid, id, data.ParentID); err != nil {
-			recordSpanError(span, err)
-			return err
-		}
-	}
+	// A parent change deliberately leaves children alone: they stay attached
+	// to this entity and follow it through the ancestor chain (#1591).
 
 	_, commitSpan := entityTracer().Start(ctx, "repo.EntityRepository.Patch.commit")
 	if err := tx.Commit(); err != nil {

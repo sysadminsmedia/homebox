@@ -3,6 +3,8 @@ package v1
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -15,9 +17,24 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 
 	"github.com/olahol/melody"
 )
+
+// multipartFormError translates a ParseMultipartForm failure into a
+// RequestError. A body that tripped the MaxBytesReader cap installed by the
+// body-size middleware surfaces as 413 with an explicit message instead of a
+// misleading 400 "failed to parse multipart form" (#1538).
+func multipartFormError(err error) error {
+	var maxBytesErr *http.MaxBytesError
+	if errors.As(err, &maxBytesErr) {
+		return validate.NewRequestError(
+			fmt.Errorf("uploaded file exceeds the size limit of %d bytes", maxBytesErr.Limit),
+			http.StatusRequestEntityTooLarge)
+	}
+	return validate.NewRequestError(errors.New("failed to parse multipart form"), http.StatusBadRequest)
+}
 
 type Results[T any] struct {
 	Items []T `json:"items"`
