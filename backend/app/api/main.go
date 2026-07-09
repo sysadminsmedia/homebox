@@ -236,6 +236,15 @@ func run(cfg *config.Config) error {
 		})
 	}
 
+	// Flush and close the export service's cached publisher topics on exit
+	// so buffered messages are not silently dropped.
+	runner.AddFunc("export-topics-shutdown", func(ctx context.Context) error {
+		<-ctx.Done()
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		return app.services.Exports.Shutdown(shutdownCtx)
+	})
+
 	runner.AddFunc("server", func(ctx context.Context) error {
 		httpserver := http.Server{
 			Addr:         fmt.Sprintf("%s:%s", cfg.Web.Host, cfg.Web.Port),

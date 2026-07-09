@@ -1100,6 +1100,19 @@ definitions:
         type: string
       entityTypeId:
         type: string
+      manufacturer:
+        maxLength: 255
+        type: string
+        x-nullable: true
+        x-omitempty: true
+      modelNumber:
+        description: |-
+          Identifications — optional at create time; populated e.g. by the
+          barcode product-search import flow (#1578).
+        maxLength: 255
+        type: string
+        x-nullable: true
+        x-omitempty: true
       name:
         maxLength: 255
         minLength: 1
@@ -1191,6 +1204,16 @@ definitions:
       lifetimeWarranty:
         description: Warranty
         type: boolean
+      location:
+        allOf:
+        - $ref: '#/definitions/repo.EntitySummary'
+        description: |-
+          Location is the nearest ancestor whose entity type is a location.
+          When the direct parent is already a location it equals Parent; when
+          the entity is nested inside other items it is the location those
+          items ultimately live in. Nil for top-level entities.
+        x-nullable: true
+        x-omitempty: true
       manufacturer:
         type: string
       modelNumber:

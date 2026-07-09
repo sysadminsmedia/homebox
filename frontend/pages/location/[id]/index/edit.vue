@@ -209,10 +209,10 @@
       return;
     }
 
-    const { data, error } = await api.items.attachments.add(locationId.value, files[0], files[0].name, type);
+    const { data, error, status } = await api.items.attachments.add(locationId.value, files[0], files[0].name, type);
 
     if (error) {
-      toast.error(t("items.toast.failed_upload_attachment"));
+      toast.error(status === 413 ? t("items.toast.attachment_too_large") : t("items.toast.failed_upload_attachment"));
       return;
     }
 

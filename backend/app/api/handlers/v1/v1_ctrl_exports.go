@@ -232,7 +232,7 @@ func (ctrl *V1Controller) HandleCollectionImport() errchain.HandlerFunc {
 		// as the memory-vs-disk threshold so larger archives spool gracefully.
 		if err := r.ParseMultipartForm(ctrl.maxParseMemory << 20); err != nil {
 			log.Err(err).Msg("import: parse multipart")
-			return validate.NewRequestError(err, http.StatusBadRequest)
+			return multipartFormError(err)
 		}
 		// Remove any spooled temp files the multipart parser may have created.
 		// Registered before file.Close so the close (LIFO) runs first — on
