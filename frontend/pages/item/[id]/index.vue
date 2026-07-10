@@ -804,10 +804,7 @@
             <template #title> {{ $t("items.photos") }} </template>
             <div class="scroll-bg container mx-auto flex max-h-[500px] flex-wrap gap-2 overflow-y-scroll border-t p-4">
               <button v-for="(img, i) in photos" :key="i" @click="openImageDialog(img, item.id)">
-                <picture>
-                  <source :srcset="img.originalSrc" :type="img.originalType" />
-                  <img class="max-h-[200px] rounded" :src="img.thumbnailSrc" alt="attachment image" />
-                </picture>
+                <img class="max-h-[200px] rounded" :src="img.thumbnailSrc" alt="attachment image" loading="lazy" />
               </button>
             </div>
           </BaseCard>
