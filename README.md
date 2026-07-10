@@ -22,6 +22,9 @@
     <img src="https://img.shields.io/lemmy/homebox%40lemmy.world?label=lemmy"/>
 </p>
 <p align="center" style="width: 100%;">
+  <a href="https://zenith.hosting/host/homebox"><img src="https://cdn.zenith.hosting/buttons/deploy-with-zenith.svg" alt="Deploy with Zenith"/></a>
+</p>
+<p align="center" style="width: 100%;">
   <a href="https://www.pikapods.com/pods?run=homebox"><img src="https://www.pikapods.com/static/run-button.svg"/></a>
 </p>
 
