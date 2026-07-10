@@ -111,6 +111,23 @@ tasks:
     cmds:
       - go test {{ .CLI_ARGS }} ./...
 
+  go:test:meilisearch:
+    desc: Runs the Meilisearch search engine integration tests against a dockerized instance
+    dir: backend
+    cmds:
+      - docker run -d --rm --name homebox-meili-test -p 7711:7700 -e MEILI_MASTER_KEY=test-master-key -e MEILI_NO_ANALYTICS=true getmeili/meilisearch:v1.22
+      - defer: docker stop homebox-meili-test
+      - |
+        i=0
+        while [ "$i" -lt 60 ]; do
+          if curl -sf http://localhost:7711/health > /dev/null; then exit 0; fi
+          i=$((i + 1))
+          sleep 0.5
+        done
+        echo "Meilisearch did not become healthy within 30s" >&2
+        exit 1
+      - TEST_MEILISEARCH_URL=http://localhost:7711 TEST_MEILISEARCH_KEY=test-master-key go test ./internal/data/search/ -v -count=1
+
   go:coverage:
     desc: Runs all go tests with -race flag and generates a coverage report
     dir: backend

@@ -1,0 +1,73 @@
+---
+title: Search
+---
+
+Homebox ships with a built-in search engine and optionally integrates with
+[Meilisearch](https://www.meilisearch.com/) for typo-tolerant,
+relevance-ranked search. The engine is selected with `HBOX_SEARCH_DRIVER`.
+
+## Database search (default)
+
+`HBOX_SEARCH_DRIVER=database` needs no extra services and works on both SQLite
+and PostgreSQL. Searches match item names, descriptions, serial numbers, model
+numbers, manufacturers, notes, purchase sources, tag names, and custom field
+values:
+
+- Every word in the query must match somewhere on the item (in any field).
+- Wrap words in double quotes to match an exact phrase: `"tool box"`.
+- Matching is case-insensitive across the full Unicode range (Cyrillic,
+  Greek, etc.) and accent-insensitive (`cafe` matches `café`).
+- Prefix the query with `#` to look an item up by asset ID (`#000-001`).
+
+Accent-insensitivity on PostgreSQL uses the `unaccent` extension; see the
+[Database](./database#accent-insensitive-search-on-postgresql) page.
+
+## Meilisearch
+
+`HBOX_SEARCH_DRIVER=meilisearch` delegates text matching to a Meilisearch
+instance. On top of everything the database engine does, Meilisearch adds typo
+tolerance (`smartphnoe` still finds "Smartphone") and relevance-based
+matching. Homebox keeps the index up to date automatically: it rebuilds the
+index in the background at startup and re-indexes after items or tags change.
+
+Example compose setup:
+
+```yaml
+services:
+  homebox:
+    image: ghcr.io/sysadminsmedia/homebox:latest
+    environment:
+      - HBOX_SEARCH_DRIVER=meilisearch
+      - HBOX_SEARCH_MEILISEARCH_HOST=http://meilisearch:7700
+      - HBOX_SEARCH_MEILISEARCH_API_KEY=your_master_key
+    depends_on:
+      - meilisearch
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.22
+    environment:
+      - MEILI_MASTER_KEY=your_master_key
+      - MEILI_NO_ANALYTICS=true
+    volumes:
+      - meilisearch:/meili_data
+
+volumes:
+  meilisearch:
+```
+
+| Variable                            | Default                 | Description                                                                  |
+| ----------------------------------- | ----------------------- | ---------------------------------------------------------------------------- |
+| HBOX_SEARCH_DRIVER                  | database                | search engine: `database` or `meilisearch`                                    |
+| HBOX_SEARCH_MEILISEARCH_HOST        | `http://localhost:7700` | URL of the Meilisearch instance                                               |
+| HBOX_SEARCH_MEILISEARCH_API_KEY     |                         | Meilisearch API key (the master key, or a key with index read/write access)   |
+| HBOX_SEARCH_MEILISEARCH_INDEX       | homebox_entities        | index uid Homebox stores entity documents in                                  |
+| HBOX_SEARCH_MEILISEARCH_MAX_HITS    | 1000                    | maximum matches retrieved per search before filters/pagination are applied    |
+
+Notes:
+
+- Homebox fails to start when the driver is `meilisearch` and the instance is
+  unreachable, so misconfigurations surface immediately.
+- The index is rebuilt automatically; no manual reindexing is needed. If the
+  index is deleted or Meilisearch data is lost, restart Homebox to rebuild it.
+- Searches never leak across homes/groups: every query is filtered by group,
+  and results are re-validated against the database.
