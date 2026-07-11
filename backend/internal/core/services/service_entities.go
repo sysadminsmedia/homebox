@@ -397,8 +397,12 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 			}
 		}
 
+		// Auto-incrementing an asset ID is only appropriate when a brand new
+		// entity is being created. Re-importing a row whose import ref already
+		// exists must not consume a new asset ID, otherwise repeated imports of
+		// the same file keep bumping the item's asset ID (#1100).
 		var effAID repo.AssetID
-		if svc.autoIncrementAssetID && row.AssetID.Nil() {
+		if svc.autoIncrementAssetID && row.AssetID.Nil() && createRequired {
 			effAID = highestAID + 1
 			highestAID++
 		} else {
@@ -447,6 +451,13 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 			return 0, wrapped
 		}
 		rowSpan.SetAttributes(attribute.String("entity.id", entity.ID.String()))
+
+		// When updating an existing entity that was matched by import ref and the
+		// CSV row does not carry its own asset ID, keep the entity's current asset
+		// ID rather than overwriting it with a zero/reassigned value (#1100).
+		if !createRequired && row.AssetID.Nil() {
+			effAID = entity.AssetID
+		}
 
 		fields := lo.Map(row.Fields, func(f reporting.ExportItemFields, _ int) repo.EntityFieldData {
 			return repo.EntityFieldData{
