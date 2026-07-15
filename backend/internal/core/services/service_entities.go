@@ -343,58 +343,13 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 
 		// ========================================
 		// Pre-Create Locations as necessary
-		path := serializeLocation(row.Location)
-
-		locationID, ok := locationMap[path]
-		if !ok {
-			locsCtx, locsSpan := entityServiceTracer().Start(rowCtx, "service.EntityService.CsvImport.row.locations",
-				trace.WithAttributes(attribute.Int("location.depth", len(row.Location))))
-			locsCreated := 0
-			paths := []string{}
-			for i, pathElement := range row.Location {
-				paths = append(paths, pathElement)
-				path := serializeLocation(paths)
-
-				locationID, ok = locationMap[path]
-				if !ok {
-					parentID := uuid.Nil
-
-					if i > 0 {
-						parentPath := serializeLocation(row.Location[:i])
-						parentID = locationMap[parentPath]
-					}
-
-					newLocation, err := svc.repo.Entities.CreateContainer(locsCtx, gid, repo.EntityCreate{
-						ParentID: parentID,
-						Name:     pathElement,
-					})
-					if err != nil {
-						recordServiceSpanError(locsSpan, err)
-						locsSpan.End()
-						recordServiceSpanError(rowSpan, err)
-						rowSpan.End()
-						recordServiceSpanError(importSpan, err)
-						recordServiceSpanError(span, err)
-						return 0, err
-					}
-					locationID = newLocation.ID
-					locsCreated++
-				}
-
-				locationMap[path] = locationID
-			}
-			locsSpan.SetAttributes(attribute.Int("locations.created.count", locsCreated))
-			locsSpan.End()
-
-			locationID, ok = locationMap[path]
-			if !ok {
-				err := errors.New("failed to create location")
-				recordServiceSpanError(rowSpan, err)
-				rowSpan.End()
-				recordServiceSpanError(importSpan, err)
-				recordServiceSpanError(span, err)
-				return 0, err
-			}
+		locationID, err := svc.csvImportRowLocation(rowCtx, gid, row, locationMap)
+		if err != nil {
+			recordServiceSpanError(rowSpan, err)
+			rowSpan.End()
+			recordServiceSpanError(importSpan, err)
+			recordServiceSpanError(span, err)
+			return 0, err
 		}
 
 		// Auto-incrementing an asset ID is only appropriate when a brand new
@@ -522,6 +477,61 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 	importSpan.SetAttributes(attribute.Int("rows.imported.count", finished))
 	span.SetAttributes(attribute.Int("rows.imported.count", finished))
 	return finished, nil
+}
+
+// csvImportRowLocation resolves the leaf location for a CSV import row, creating
+// any missing locations in the row's location path as it goes. locationMap acts
+// as a cache of already-known location paths and is updated in place with any
+// locations that are created. It returns the ID of the row's leaf location.
+func (svc *EntityService) csvImportRowLocation(ctx context.Context, gid uuid.UUID, row reporting.ExportCSVRow, locationMap map[string]uuid.UUID) (uuid.UUID, error) {
+	path := serializeLocation(row.Location)
+
+	locationID, ok := locationMap[path]
+	if ok {
+		return locationID, nil
+	}
+
+	locsCtx, locsSpan := entityServiceTracer().Start(ctx, "service.EntityService.CsvImport.row.locations",
+		trace.WithAttributes(attribute.Int("location.depth", len(row.Location))))
+	defer locsSpan.End()
+
+	locsCreated := 0
+	paths := []string{}
+	for i, pathElement := range row.Location {
+		paths = append(paths, pathElement)
+		subPath := serializeLocation(paths)
+
+		locationID, ok = locationMap[subPath]
+		if !ok {
+			parentID := uuid.Nil
+
+			if i > 0 {
+				parentPath := serializeLocation(row.Location[:i])
+				parentID = locationMap[parentPath]
+			}
+
+			newLocation, err := svc.repo.Entities.CreateContainer(locsCtx, gid, repo.EntityCreate{
+				ParentID: parentID,
+				Name:     pathElement,
+			})
+			if err != nil {
+				recordServiceSpanError(locsSpan, err)
+				return uuid.Nil, err
+			}
+			locationID = newLocation.ID
+			locsCreated++
+		}
+
+		locationMap[subPath] = locationID
+	}
+	locsSpan.SetAttributes(attribute.Int("locations.created.count", locsCreated))
+
+	locationID, ok = locationMap[path]
+	if !ok {
+		return uuid.Nil, errors.New("failed to create location")
+	}
+
+	return locationID, nil
 }
 
 func (svc *EntityService) patchCSVParentRefs(ctx context.Context, gid uuid.UUID, rows []reporting.ExportCSVRow) error {
