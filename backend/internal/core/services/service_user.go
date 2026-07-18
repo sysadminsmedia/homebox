@@ -373,10 +373,12 @@ func (svc *UserService) Login(ctx context.Context, username, password string, ex
 			attribute.Bool("user.found", false),
 			attribute.String("login.outcome", "user_not_found"),
 		)
-		// SECURITY: Perform hash to ensure response times are the same
+		// SECURITY: Perform a real argon2id comparison against a valid dummy hash so
+		// response timing matches the "user found" path and accounts cannot be
+		// enumerated by measuring how long login takes.
 		_, dummySpan := entityServiceTracer().Start(ctx, "service.UserService.Login.timingDummy",
 			trace.WithAttributes(attribute.String("reason", "user_not_found")))
-		hasher.CheckPasswordHashCtx(ctx, "not-a-real-password", "not-a-real-password")
+		hasher.CheckDummyPasswordHashCtx(ctx)
 		dummySpan.End()
 		return UserAuthTokenDetail{}, ErrorInvalidLogin
 	}
@@ -393,7 +395,7 @@ func (svc *UserService) Login(ctx context.Context, username, password string, ex
 		span.SetAttributes(attribute.String("login.outcome", "blocked_no_password_hash"))
 		_, dummySpan := entityServiceTracer().Start(ctx, "service.UserService.Login.timingDummy",
 			trace.WithAttributes(attribute.String("reason", "no_password_hash")))
-		hasher.CheckPasswordHashCtx(ctx, "not-a-real-password", "not-a-real-password")
+		hasher.CheckDummyPasswordHashCtx(ctx)
 		dummySpan.End()
 		return UserAuthTokenDetail{}, ErrorInvalidLogin
 	}
