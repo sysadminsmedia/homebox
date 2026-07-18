@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/ardanlabs/conf/v3"
@@ -87,8 +89,9 @@ type DebugConf struct {
 }
 
 type WebConfig struct {
-	Port string `yaml:"port" conf:"default:7745"`
-	Host string `yaml:"host"`
+	Port    string `yaml:"port"     conf:"default:7745"`
+	Host    string `yaml:"host"`
+	AppBase string `yaml:"app_base" conf:"default:/"`
 	// MaxUploadSize is the body cap (in MB) applied to ordinary upload
 	// endpoints (attachments, item imports, etc.). Defaults to 10 MB.
 	MaxUploadSize int64 `yaml:"max_file_upload" conf:"default:10"`
@@ -208,7 +211,33 @@ func New(buildstr string, description string) (*Config, error) {
 		return &cfg, fmt.Errorf("parsing config: %w", err)
 	}
 
+	cfg.Web.AppBase, err = normalizePath(cfg.Web.AppBase)
+	if err != nil {
+		return &cfg, err
+	}
+
 	return &cfg, nil
+}
+
+var validPathRe = regexp.MustCompile(`^[a-zA-Z0-9/\-_.]+$`)
+
+// normalizePath ensures the path always has a leading and trailing slash,
+// so it can safely be used as a URL path prefix.
+// Only allows alphanumeric characters, hyphens, underscores, dots, and slashes.
+func normalizePath(p string) (string, error) {
+	if p == "" {
+		return "/", nil
+	}
+	if !validPathRe.MatchString(p) {
+		return "", fmt.Errorf("HBOX_WEB_APP_BASE contains invalid characters (%q); only a-z, 0-9, /, -, _, . are allowed", p)
+	}
+	if !strings.HasPrefix(p, "/") {
+		p = "/" + p
+	}
+	if !strings.HasSuffix(p, "/") {
+		p += "/"
+	}
+	return p, nil
 }
 
 // Print prints the configuration to stdout as an indented JSON document.

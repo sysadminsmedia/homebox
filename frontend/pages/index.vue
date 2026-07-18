@@ -214,7 +214,8 @@
   }
 
   function loginWithOIDC() {
-    window.location.href = "/api/v1/users/login/oidc";
+    const base = useAppBase();
+    window.location.href = base + "api/v1/users/login/oidc";
   }
 
   const [registerForm, toggleLogin] = useToggle();

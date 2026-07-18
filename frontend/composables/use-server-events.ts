@@ -72,8 +72,10 @@ function connect(onmessage: (m: EventMessage) => void) {
   const dev = import.meta.dev;
 
   const host = dev ? window.location.host.replace("3000", "7745") : window.location.host;
+  // In dev mode, the backend runs without subpath config; base only applies in production.
+  const base = dev ? "/" : useAppBase();
 
-  let url = `${protocol}://${host}/api/v1/ws/events`;
+  let url = `${protocol}://${host}${base}api/v1/ws/events`;
   if (currentTenantId) {
     url += `?tenant=${currentTenantId}`;
   }

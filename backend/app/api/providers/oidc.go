@@ -24,6 +24,7 @@ type OIDCProvider struct {
 	service      *services.UserService
 	config       *config.OIDCConf
 	options      *config.Options
+	webConfig    *config.WebConfig
 	cookieSecure bool
 	provider     *oidc.Provider
 	verifier     *oidc.IDTokenVerifier
@@ -39,7 +40,7 @@ type OIDCClaims struct {
 	EmailVerified *bool
 }
 
-func NewOIDCProvider(service *services.UserService, config *config.OIDCConf, options *config.Options, cookieSecure bool) (*OIDCProvider, error) {
+func NewOIDCProvider(service *services.UserService, config *config.OIDCConf, options *config.Options, webConfig *config.WebConfig, cookieSecure bool) (*OIDCProvider, error) {
 	if !config.Enabled {
 		return nil, fmt.Errorf("OIDC is not enabled")
 	}
@@ -106,6 +107,7 @@ func NewOIDCProvider(service *services.UserService, config *config.OIDCConf, opt
 		service:      service,
 		config:       config,
 		options:      options,
+		webConfig:    webConfig,
 		cookieSecure: cookieSecure,
 		provider:     provider,
 		verifier:     verifier,
@@ -361,8 +363,10 @@ func (p *OIDCProvider) GetAuthURL(baseURL, state, nonce, pkceVerifier string) st
 }
 
 func (p *OIDCProvider) getOAuth2Config(baseURL string) oauth2.Config {
-	// Construct full redirect URL with dedicated callback endpoint
-	redirectURL, err := url.JoinPath(baseURL, "/api/v1/users/login/oidc/callback")
+	// Construct full redirect URL with dedicated callback endpoint.
+	// Note: baseURL from getBaseURL() is scheme://host only (no path),
+	// so AppBase must be added separately to form the correct callback path.
+	redirectURL, err := url.JoinPath(baseURL, p.webConfig.AppBase, "api/v1/users/login/oidc/callback")
 	if err != nil {
 		log.Err(err).Msg("failed to construct redirect URL")
 		return oauth2.Config{}
@@ -416,7 +420,7 @@ func (p *OIDCProvider) initiateOIDCFlow(w http.ResponseWriter, r *http.Request) 
 		Domain:   domain,
 		Secure:   p.isSecure(r),
 		HttpOnly: true,
-		Path:     "/",
+		Path:     p.webConfig.AppBase,
 		SameSite: http.SameSiteLaxMode,
 	})
 
@@ -428,7 +432,7 @@ func (p *OIDCProvider) initiateOIDCFlow(w http.ResponseWriter, r *http.Request) 
 		Domain:   domain,
 		Secure:   p.isSecure(r),
 		HttpOnly: true,
-		Path:     "/",
+		Path:     p.webConfig.AppBase,
 		SameSite: http.SameSiteLaxMode,
 	})
 
@@ -440,7 +444,7 @@ func (p *OIDCProvider) initiateOIDCFlow(w http.ResponseWriter, r *http.Request) 
 		Domain:   domain,
 		Secure:   p.isSecure(r),
 		HttpOnly: true,
-		Path:     "/",
+		Path:     p.webConfig.AppBase,
 		SameSite: http.SameSiteLaxMode,
 	})
 
@@ -470,7 +474,7 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 			MaxAge:   -1,
 			Secure:   p.isSecure(r),
 			HttpOnly: true,
-			Path:     "/",
+			Path:     p.webConfig.AppBase,
 			SameSite: http.SameSiteLaxMode,
 		})
 		http.SetCookie(w, &http.Cookie{
@@ -481,7 +485,7 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 			MaxAge:   -1,
 			Secure:   p.isSecure(r),
 			HttpOnly: true,
-			Path:     "/",
+			Path:     p.webConfig.AppBase,
 			SameSite: http.SameSiteLaxMode,
 		})
 		http.SetCookie(w, &http.Cookie{
@@ -492,7 +496,7 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 			MaxAge:   -1,
 			Secure:   p.isSecure(r),
 			HttpOnly: true,
-			Path:     "/",
+			Path:     p.webConfig.AppBase,
 			SameSite: http.SameSiteLaxMode,
 		})
 	}
