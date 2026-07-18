@@ -6,7 +6,6 @@ require (
 	entgo.io/ent v0.14.6
 	github.com/XSAM/otelsql v0.42.0
 	github.com/ardanlabs/conf/v3 v3.12.0
-	github.com/containrrr/shoutrrr v0.8.0
 	github.com/coreos/go-oidc/v3 v3.18.0
 	github.com/evanoberholster/imagemeta v0.3.1
 	github.com/gen2brain/avif v0.4.4
@@ -21,6 +20,7 @@ require (
 	github.com/gorilla/schema v1.4.1
 	github.com/hay-kot/httpkit v0.0.11
 	github.com/jackc/pgx/v5 v5.10.0
+	github.com/nicholas-fedor/shoutrrr v0.16.1
 	github.com/olahol/melody v1.4.0
 	github.com/pkg/errors v0.9.1
 	github.com/pressly/goose/v3 v3.27.1
@@ -125,9 +125,9 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/eapache/go-resiliency v1.7.0 // indirect
 	github.com/ebitengine/purego v0.10.1 // indirect
+	github.com/eclipse/paho.golang v0.23.0 // indirect
 	github.com/envoyproxy/go-control-plane/envoy v1.37.0 // indirect
 	github.com/envoyproxy/protoc-gen-validate v1.3.3 // indirect
-	github.com/fatih/color v1.19.0 // indirect
 	github.com/felixge/httpsnoop v1.1.0 // indirect
 	github.com/fogleman/gg v1.3.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.13 // indirect
@@ -210,6 +210,7 @@ require (
 	golang.org/x/net v0.56.0 // indirect
 	golang.org/x/sync v0.21.0 // indirect
 	golang.org/x/sys v0.46.0 // indirect
+	golang.org/x/term v0.44.0 // indirect
 	golang.org/x/time v0.15.0 // indirect
 	golang.org/x/tools v0.46.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
