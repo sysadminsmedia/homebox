@@ -65,14 +65,14 @@ type Config struct {
 }
 
 type Options struct {
+	CurrencyConfig       string `yaml:"currencies"`
+	Hostname             string `yaml:"hostname"`
 	AllowRegistration    bool   `yaml:"disable_registration"    conf:"default:true"`
 	AutoIncrementAssetID bool   `yaml:"auto_increment_asset_id" conf:"default:true"`
-	CurrencyConfig       string `yaml:"currencies"`
 	GithubReleaseCheck   bool   `yaml:"check_github_release"    conf:"default:true"`
 	AllowAnalytics       bool   `yaml:"allow_analytics"         conf:"default:false"`
 	AllowLocalLogin      bool   `yaml:"allow_local_login"       conf:"default:true"`
 	TrustProxy           bool   `yaml:"trust_proxy"             conf:"default:false"`
-	Hostname             string `yaml:"hostname"`
 }
 
 type Thumbnail struct {
@@ -122,14 +122,11 @@ type LabelMakerConf struct {
 }
 
 type OIDCConf struct {
-	Enabled            bool          `yaml:"enabled"              conf:"default:false"`
 	IssuerURL          string        `yaml:"issuer_url"`
 	ClientID           string        `yaml:"client_id"`
 	ClientSecret       string        `yaml:"client_secret"`
 	Scope              string        `yaml:"scope"                conf:"default:openid profile email"`
 	AllowedGroups      string        `yaml:"allowed_groups"`
-	AutoRedirect       bool          `yaml:"auto_redirect"        conf:"default:false"`
-	VerifyEmail        bool          `yaml:"verify_email"         conf:"default:false"`
 	GroupClaim         string        `yaml:"group_claim"          conf:"default:groups"`
 	EmailClaim         string        `yaml:"email_claim"          conf:"default:email"`
 	NameClaim          string        `yaml:"name_claim"           conf:"default:name"`
@@ -137,6 +134,9 @@ type OIDCConf struct {
 	ButtonText         string        `yaml:"button_text"          conf:"default:Sign in with OIDC"`
 	StateExpiry        time.Duration `yaml:"state_expiry"         conf:"default:10m"`
 	RequestTimeout     time.Duration `yaml:"request_timeout"      conf:"default:30s"`
+	Enabled            bool          `yaml:"enabled"              conf:"default:false"`
+	AutoRedirect       bool          `yaml:"auto_redirect"        conf:"default:false"`
+	VerifyEmail        bool          `yaml:"verify_email"         conf:"default:false"`
 }
 
 func (c OIDCConf) MarshalJSON() ([]byte, error) {

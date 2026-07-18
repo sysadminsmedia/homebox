@@ -95,18 +95,18 @@ func WithURL(url string) func(*V1Controller) {
 }
 
 type V1Controller struct {
-	cookieSecure      bool
 	repo              *repo.AllRepos
 	svc               *services.AllServices
+	bus               *eventbus.EventBus
+	config            *config.Config
+	oidcProvider      *providers.OIDCProvider
+	url               string
 	maxUploadSize     int64
 	maxImportSize     int64
 	maxParseMemory    int64
+	cookieSecure      bool
 	isDemo            bool
 	allowRegistration bool
-	bus               *eventbus.EventBus
-	url               string
-	config            *config.Config
-	oidcProvider      *providers.OIDCProvider
 }
 
 type (
@@ -133,8 +133,8 @@ type (
 	}
 
 	OIDCStatus struct {
-		Enabled      bool   `json:"enabled"`
 		ButtonText   string `json:"buttonText,omitempty"`
+		Enabled      bool   `json:"enabled"`
 		AutoRedirect bool   `json:"autoRedirect,omitempty"`
 		AllowLocal   bool   `json:"allowLocal"`
 	}

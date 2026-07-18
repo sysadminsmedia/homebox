@@ -53,22 +53,22 @@ type (
 	}
 
 	EntityQuery struct {
-		Page             int
-		PageSize         int
+		IsLocation       *bool        `json:"isLocation"` // nil=all, true=locations only, false=items only
 		Search           string       `json:"search"`
-		AssetID          AssetID      `json:"assetId"`
+		SortBy           string       `json:"sortBy"`
+		OrderBy          string       `json:"orderBy"`
 		ParentIDs        []uuid.UUID  `json:"parentIds"`
 		TagIDs           []uuid.UUID  `json:"tagIds"`
-		NegateTags       bool         `json:"negateTags"`
-		OnlyWithoutPhoto bool         `json:"onlyWithoutPhoto"`
-		OnlyWithPhoto    bool         `json:"onlyWithPhoto"`
 		ParentItemIDs    []uuid.UUID  `json:"parentItemIds"`
-		SortBy           string       `json:"sortBy"`
-		IncludeArchived  bool         `json:"includeArchived"`
-		IsLocation       *bool        `json:"isLocation"`     // nil=all, true=locations only, false=items only
-		FilterChildren   bool         `json:"filterChildren"` // when true, only return root entities (no parent)
 		Fields           []FieldQuery `json:"fields"`
-		OrderBy          string       `json:"orderBy"`
+		Page             int
+		PageSize         int
+		AssetID          AssetID `json:"assetId"`
+		NegateTags       bool    `json:"negateTags"`
+		OnlyWithoutPhoto bool    `json:"onlyWithoutPhoto"`
+		OnlyWithPhoto    bool    `json:"onlyWithPhoto"`
+		IncludeArchived  bool    `json:"includeArchived"`
+		FilterChildren   bool    `json:"filterChildren"` // when true, only return root entities (no parent)
 	}
 
 	DuplicateOptions struct {
@@ -106,44 +106,38 @@ type (
 	}
 
 	EntityUpdate struct {
-		ParentID                 uuid.UUID `json:"parentId"                 extensions:"x-nullable,x-omitempty"`
-		ID                       uuid.UUID `json:"id"`
-		AssetID                  AssetID   `json:"assetId"                  swaggertype:"string"`
-		Name                     string    `json:"name"                     validate:"required,min=1,max=255"`
-		Description              string    `json:"description"              validate:"max=1000"`
-		Quantity                 float64   `json:"quantity"`
-		Insured                  bool      `json:"insured"`
-		Archived                 bool      `json:"archived"`
-		SyncChildEntityLocations bool      `json:"syncChildEntityLocations"`
-		EntityTypeID             uuid.UUID `json:"entityTypeId"`
-
-		// Edges
-		TagIDs []uuid.UUID `json:"tagIds"`
-
-		// Identifications
-		SerialNumber string `json:"serialNumber"`
-		ModelNumber  string `json:"modelNumber"`
-		Manufacturer string `json:"manufacturer"`
-
-		// Warranty
-		LifetimeWarranty bool       `json:"lifetimeWarranty"`
-		WarrantyExpires  types.Date `json:"warrantyExpires"`
-		WarrantyDetails  string     `json:"warrantyDetails"`
-
+		WarrantyExpires types.Date `json:"warrantyExpires"`
 		// Purchase
-		PurchaseDate  types.Date `json:"purchaseDate"`
-		PurchaseFrom  string     `json:"purchaseFrom"  validate:"max=255"`
-		PurchasePrice float64    `json:"purchasePrice" extensions:"x-nullable,x-omitempty"`
-
+		PurchaseDate types.Date `json:"purchaseDate"`
 		// Sold
-		SoldDate  types.Date `json:"soldDate"`
-		SoldTo    string     `json:"soldTo"    validate:"max=255"`
-		SoldPrice float64    `json:"soldPrice" extensions:"x-nullable,x-omitempty"`
-		SoldNotes string     `json:"soldNotes"`
-
+		SoldDate    types.Date `json:"soldDate"`
+		Name        string     `json:"name"                     validate:"required,min=1,max=255"`
+		Description string     `json:"description"              validate:"max=1000"`
+		// Identifications
+		SerialNumber    string `json:"serialNumber"`
+		ModelNumber     string `json:"modelNumber"`
+		Manufacturer    string `json:"manufacturer"`
+		WarrantyDetails string `json:"warrantyDetails"`
+		PurchaseFrom    string `json:"purchaseFrom"  validate:"max=255"`
+		SoldTo          string `json:"soldTo"    validate:"max=255"`
+		SoldNotes       string `json:"soldNotes"`
 		// Extras
-		Notes  string            `json:"notes"`
-		Fields []EntityFieldData `json:"fields"`
+		Notes string `json:"notes"`
+		// Edges
+		TagIDs                   []uuid.UUID       `json:"tagIds"`
+		Fields                   []EntityFieldData `json:"fields"`
+		AssetID                  AssetID           `json:"assetId"                  swaggertype:"string"`
+		Quantity                 float64           `json:"quantity"`
+		PurchasePrice            float64           `json:"purchasePrice" extensions:"x-nullable,x-omitempty"`
+		SoldPrice                float64           `json:"soldPrice" extensions:"x-nullable,x-omitempty"`
+		ParentID                 uuid.UUID         `json:"parentId"                 extensions:"x-nullable,x-omitempty"`
+		ID                       uuid.UUID         `json:"id"`
+		EntityTypeID             uuid.UUID         `json:"entityTypeId"`
+		Insured                  bool              `json:"insured"`
+		Archived                 bool              `json:"archived"`
+		SyncChildEntityLocations bool              `json:"syncChildEntityLocations"`
+		// Warranty
+		LifetimeWarranty bool `json:"lifetimeWarranty"`
 	}
 
 	EntityPatch struct {
@@ -1117,16 +1111,16 @@ func (r *EntityRepository) Create(ctx context.Context, gid uuid.UUID, data Entit
 type EntityCreateFromTemplate struct {
 	Name             string
 	Description      string
+	Manufacturer     string
+	ModelNumber      string
+	WarrantyDetails  string
+	TagIDs           []uuid.UUID
+	Fields           []EntityFieldData
 	Quantity         float64
 	ParentID         uuid.UUID
 	EntityTypeID     uuid.UUID
-	TagIDs           []uuid.UUID
 	Insured          bool
-	Manufacturer     string
-	ModelNumber      string
 	LifetimeWarranty bool
-	WarrantyDetails  string
-	Fields           []EntityFieldData
 }
 
 // CreateFromTemplate creates an entity with all template data in a single transaction.
