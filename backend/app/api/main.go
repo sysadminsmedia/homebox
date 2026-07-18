@@ -19,6 +19,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/otel"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
 
@@ -121,6 +122,13 @@ func run(cfg *config.Config) error {
 		)
 	}
 	hasher.SetAPIKeyPepper([]byte(cfg.Auth.APIKeyPepper))
+
+	// Harden http.DefaultClient so notifier redirects are re-validated against the
+	// SSRF policy on every hop. shoutrrr's generic service delivers via
+	// http.DefaultClient with no CheckRedirect, so without this a notifier that
+	// passes the initial URL gate could be 30x-redirected to localhost / cloud
+	// metadata / other blocked destinations. Installed before any notifier can fire.
+	validate.InstallNotifierRedirectGuard(&cfg.Notifier)
 
 	// =========================================================================
 	// Initialize OpenTelemetry
