@@ -353,6 +353,41 @@ func (ctrl *V1Controller) HandleAuthLogout() errchain.HandlerFunc {
 	}
 }
 
+// HandleAuthLogoutAll godoc
+//
+//	@Summary		Log Out Of All Sessions
+//	@Description	Revokes every session token for the authenticated user across all
+//	@Description	devices, including the current one. Use this to invalidate a session
+//	@Description	token that may have been leaked or stolen. API keys are stored
+//	@Description	separately and are not affected; revoke them from the API keys page.
+//	@Tags			Authentication
+//	@Success		204
+//	@Router			/v1/users/logout/all [POST]
+//	@Security		Bearer
+func (ctrl *V1Controller) HandleAuthLogoutAll() errchain.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleAuthLogoutAll")
+		defer span.End()
+
+		auth := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("user.id", auth.UID.String()))
+
+		revoked, err := ctrl.svc.User.LogoutAll(spanCtx, auth.UID)
+		if err != nil {
+			recordCtrlSpanError(span, err)
+			span.SetAttributes(attribute.String("logout_all.outcome", "delete_failed"))
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+
+		span.SetAttributes(
+			attribute.Int("logout_all.sessions_revoked", revoked),
+			attribute.String("logout_all.outcome", "success"),
+		)
+		ctrl.unsetCookies(w, noPort(r.Host))
+		return server.JSON(w, http.StatusNoContent, nil)
+	}
+}
+
 // HandleAuthRefresh godoc
 //
 //	@Summary		User Token Refresh

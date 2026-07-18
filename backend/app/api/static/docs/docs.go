@@ -2804,6 +2804,25 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/users/logout/all": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Revokes every session token for the authenticated user across all\ndevices, including the current one. Use this to invalidate a session\ntoken that may have been leaked or stolen. API keys are stored\nseparately and are not affected; revoke them from the API keys page.",
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Log Out Of All Sessions",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
         "/v1/users/refresh": {
             "get": {
                 "security": [

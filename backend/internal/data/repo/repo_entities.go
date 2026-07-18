@@ -1713,7 +1713,11 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 	fieldsSpan.End()
 
 	r.publishMutationEvent(gid)
-	out, err := r.GetOne(ctx, data.ID)
+	// Fetch the returned record scoped to the caller's group. The update above is
+	// group-scoped and a no-op across tenants, so an unscoped GetOne would return
+	// another group's entity in the response body. GetOneByGroup returns not-found
+	// for a foreign entity, matching the 404 behavior of GET/DELETE.
+	out, err := r.GetOneByGroup(ctx, gid, data.ID)
 	recordSpanError(span, err)
 	return out, err
 }
@@ -2598,7 +2602,10 @@ func (r *EntityRepository) UpdateContainer(ctx context.Context, gid, id uuid.UUI
 	}
 
 	r.publishMutationEvent(gid)
-	out, err := r.GetOne(ctx, id)
+	// Scope the returned record to the caller's group (see UpdateByGroup). The update
+	// is group-scoped, so an unscoped GetOne would return a foreign group's entity
+	// when id belongs to another tenant.
+	out, err := r.GetOneByGroup(ctx, gid, id)
 	recordSpanError(span, err)
 	return out, err
 }

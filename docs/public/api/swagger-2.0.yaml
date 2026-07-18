@@ -4087,6 +4087,21 @@ paths:
       summary: User Logout
       tags:
       - Authentication
+  /v1/users/logout/all:
+    post:
+      description: |-
+        Revokes every session token for the authenticated user across all
+        devices, including the current one. Use this to invalidate a session
+        token that may have been leaked or stolen. API keys are stored
+        separately and are not affected; revoke them from the API keys page.
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Log Out Of All Sessions
+      tags:
+      - Authentication
   /v1/users/refresh:
     get:
       description: |-

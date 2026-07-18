@@ -818,6 +818,8 @@
         "inactive": "Inactive",
         "language": "Language",
         "legacy_image_fit": "{ currentValue, select, true {Disable Legacy Fit: Fit Image with Bars} false {Enable Legacy Fit: Fill Image with Crop} other {Not Hit}}",
+        "logout_all_confirm": "This signs you out on every device, including this one. You will need to log in again. Continue?",
+        "logout_all_devices": "Log Out of All Devices",
         "moved_notice_body": "Notifiers, invites, and currency settings have been moved to the collection pages.",
         "moved_notice_description": "These settings are now managed per collection.",
         "moved_notice_link_invites": "Collection invites",
@@ -849,7 +851,9 @@
             "failed_test_notifier": "Failed to test notifier.",
             "failed_update_group": "Failed to update group",
             "failed_update_notifier": "Failed to update notifier.",
+            "failed_logout_all": "Failed to sign out of all devices.",
             "group_updated": "Group updated",
+            "logout_all_success": "Signed out of all devices.",
             "notifier_test_success": "Notifier test successful.",
             "password_changed": "Password changed successfully."
         },

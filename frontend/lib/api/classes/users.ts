@@ -11,6 +11,12 @@ export class UserApi extends BaseAPI {
     return this.http.post<object, void>({ url: route("/users/logout") });
   }
 
+  /** Revokes every session token for the current user across all devices,
+   * including this one. Use to invalidate a session that may have been leaked. */
+  public logoutAll() {
+    return this.http.post<object, void>({ url: route("/users/logout/all") });
+  }
+
   public delete() {
     return this.http.delete<void>({ url: route("/users/self") });
   }
