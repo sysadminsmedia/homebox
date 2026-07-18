@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
@@ -15,6 +16,17 @@ import (
 
 type UserRepository struct {
 	db *ent.Client
+}
+
+// normalizeEmail canonicalizes an email address for storage and lookup. Emails are
+// treated case-insensitively throughout the app (login uses a case-folding lookup),
+// but the database UNIQUE constraint on users.email is case-sensitive. Storing a
+// lowercased, trimmed form makes that constraint reject case-variant duplicates —
+// without it an attacker could register USER@EXAMPLE.COM against an existing
+// user@example.com, after which the case-insensitive login lookup matches >1 row
+// and denies both accounts access.
+func normalizeEmail(email string) string {
+	return strings.ToLower(strings.TrimSpace(email))
 }
 
 type (
@@ -120,7 +132,7 @@ func (r *UserRepository) GetOneEmail(ctx context.Context, email string) (UserOut
 	defer span.End()
 
 	out, err := mapUserOutErr(r.db.User.Query().
-		Where(user.EmailEqualFold(email)).
+		Where(user.EmailEqualFold(normalizeEmail(email))).
 		WithGroups().
 		Only(ctx),
 	)
@@ -148,7 +160,7 @@ func (r *UserRepository) GetOneEmailNoEdges(ctx context.Context, email string) (
 	defer span.End()
 
 	out, err := mapUserOutErr(r.db.User.Query().
-		Where(user.EmailEqualFold(email)).
+		Where(user.EmailEqualFold(normalizeEmail(email))).
 		Only(ctx),
 	)
 	if err != nil {
@@ -203,7 +215,7 @@ func (r *UserRepository) createUserWithMembership(
 	q := tx.User.
 		Create().
 		SetName(usr.Name).
-		SetEmail(usr.Email).
+		SetEmail(normalizeEmail(usr.Email)).
 		SetIsSuperuser(usr.IsSuperuser).
 		SetDefaultGroupID(usr.DefaultGroupID)
 
@@ -295,7 +307,7 @@ func (r *UserRepository) Update(ctx context.Context, id uuid.UUID, data UserUpda
 	q := r.db.User.Update().
 		Where(user.ID(id)).
 		SetName(data.Name).
-		SetEmail(data.Email)
+		SetEmail(normalizeEmail(data.Email))
 
 	_, err := q.Save(ctx)
 	recordSpanError(span, err)
