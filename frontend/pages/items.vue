@@ -18,6 +18,7 @@
   import SearchFilter from "~/components/Search/Filter.vue";
   import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
   import type { LocationQueryRaw } from "vue-router";
+  import type { WatchSource } from "vue";
 
   const { t } = useI18n();
 
@@ -87,6 +88,7 @@
   const negateTags = useOptionalRouteQuery("negateTags", false);
   const onlyWithoutPhoto = useOptionalRouteQuery("onlyWithoutPhoto", false);
   const onlyWithPhoto = useOptionalRouteQuery("onlyWithPhoto", false);
+  const isLocation = useOptionalRouteQuery("isLocation", false);
   const orderBy = useOptionalRouteQuery("orderBy", "name");
   const qLoc = useOptionalRouteQuery("loc", []);
   const qTag = useOptionalRouteQuery("tag", []);
@@ -189,21 +191,19 @@
     return data;
   });
 
-  watch(includeArchived, (newV, oldV) => {
-    if (newV !== oldV) {
-      search();
-    }
-  });
+  const watchSearch = (source: WatchSource<boolean | string>) => {
+    watch(source, (newV, oldV) => {
+      if (newV !== oldV) {
+        search();
+      }
+    });
+  };
+
+  [includeArchived, negateTags, isLocation, orderBy].map(watchSearch);
 
   watch(fieldSelector, (newV, oldV) => {
     if (newV === false && oldV === true) {
       fieldTuples.value = [];
-    }
-  });
-
-  watch(negateTags, (newV, oldV) => {
-    if (newV !== oldV) {
-      search();
     }
   });
 
@@ -221,12 +221,6 @@
       // this triggers the watch on onlyWithoutPhoto
       onlyWithoutPhoto.value = false;
     } else if (newV !== oldV) {
-      search();
-    }
-  });
-
-  watch(orderBy, (newV, oldV) => {
-    if (newV !== oldV) {
       search();
     }
   });
@@ -277,6 +271,7 @@
       negateTags: negateTags.value,
       onlyWithoutPhoto: onlyWithoutPhoto.value,
       onlyWithPhoto: onlyWithPhoto.value,
+      isLocation: isLocation.value,
       orderBy: orderBy.value,
       page: page.value,
       q: query.value,
@@ -314,6 +309,7 @@
       negateTags: negateTags.value,
       onlyWithoutPhoto: onlyWithoutPhoto.value,
       onlyWithPhoto: onlyWithPhoto.value,
+      isLocation: isLocation.value,
       includeArchived: includeArchived.value,
       page: page.value,
       pageSize: pageSize.value,
@@ -435,6 +431,11 @@
               <Switch v-model="onlyWithPhoto" class="ml-auto" />
               <div class="grow" />
               <span class="text-right"> {{ $t("items.only_with_photo") }} </span>
+            </Label>
+            <Label class="flex cursor-pointer items-center">
+              <Switch v-model="isLocation" class="ml-auto" />
+              <div class="grow" />
+              <span class="text-right"> {{ $t("items.is_location") }} </span>
             </Label>
             <Label class="flex cursor-pointer flex-col gap-2">
               <span class="text-right">

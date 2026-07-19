@@ -27,6 +27,7 @@ export type ItemsQuery = {
   negateTags?: boolean;
   onlyWithoutPhoto?: boolean;
   onlyWithPhoto?: boolean;
+  isLocation?: boolean;
   q?: string;
   fields?: string[];
 };
