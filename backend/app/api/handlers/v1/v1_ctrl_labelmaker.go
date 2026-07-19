@@ -86,7 +86,7 @@ func (ctrl *V1Controller) HandleGetItemLabel() errchain.HandlerFunc {
 
 		description := ""
 
-		if item.Parent != nil {
+		if item.Parent != nil && !ctrl.config.LabelMaker.HideLocation {
 			description += fmt.Sprintf("\nLocation: %s", item.Parent.Name)
 		}
 
@@ -124,13 +124,21 @@ func (ctrl *V1Controller) HandleGetAssetLabel() errchain.HandlerFunc {
 			return validate.NewRequestError(fmt.Errorf("failed to find asset id"), http.StatusNotFound)
 		}
 
-		description := item.Items[0].Name
+		asset := item.Items[0]
 
-		if item.Items[0].Parent != nil {
-			description += fmt.Sprintf("\nLocation: %s", item.Items[0].Parent.Name)
+		title := asset.AssetID.String()
+		description := asset.Name
+
+		if ctrl.config.LabelMaker.HideAssetID {
+			title = asset.Name
+			description = ""
+		}
+
+		if asset.Parent != nil && !ctrl.config.LabelMaker.HideLocation {
+			description += fmt.Sprintf("\nLocation: %s", asset.Parent.Name)
 		}
 
 		hbURL := GetHBURL(r, &ctrl.config.Options, ctrl.url)
-		return generateOrPrint(ctrl, w, r, item.Items[0].AssetID.String(), description, fmt.Sprintf("%s/a/%s", hbURL, item.Items[0].AssetID.String()))
+		return generateOrPrint(ctrl, w, r, title, description, fmt.Sprintf("%s/a/%s", hbURL, asset.AssetID.String()))
 	}
 }
