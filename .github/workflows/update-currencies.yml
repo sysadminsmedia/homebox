@@ -31,8 +31,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r .github/workflows/update-currencies/requirements.txt
 
+      - name: Test currency update script
+        run: python -m unittest discover -s .github/scripts -p "test_*.py"
+
       - name: Run currency update script
         run: python .github/scripts/update_currencies.py
+        env:
+          RESTCOUNTRIES_API_KEY: ${{ secrets.RESTCOUNTRIES_API_KEY }}
 
       - name: Check for currencies.json changes
         run: |
