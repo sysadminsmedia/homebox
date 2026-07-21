@@ -91,6 +91,18 @@ class FetchCurrenciesTests(unittest.TestCase):
             self.calls.append((url, kwargs))
             return FetchCurrenciesTests.FakeResponse(next(self.payloads))
 
+    def fetch_with_pages(self, pages, iso_data=None):
+        session = self.FakeSession(pages)
+        with mock.patch.dict(update_currencies.os.environ, {
+            update_currencies.API_KEY_ENV: 'test-key',
+        }), mock.patch.object(update_currencies, 'create_session', return_value=session), \
+                mock.patch.object(
+                    update_currencies,
+                    'fetch_iso_4217_data',
+                    return_value=iso_data or {},
+                ):
+            return update_currencies.fetch_currencies(), session
+
     def test_fetches_every_page_with_authentication(self):
         pages = [
             {
@@ -120,13 +132,7 @@ class FetchCurrenciesTests(unittest.TestCase):
                 }
             },
         ]
-        session = self.FakeSession(pages)
-
-        with mock.patch.dict(update_currencies.os.environ, {
-            update_currencies.API_KEY_ENV: 'test-key',
-        }), mock.patch.object(update_currencies, 'create_session', return_value=session), \
-                mock.patch.object(update_currencies, 'fetch_iso_4217_data', return_value={'CAD': 2}):
-            result = update_currencies.fetch_currencies()
+        result, session = self.fetch_with_pages(pages, {'CAD': 2})
 
         self.assertEqual(['CAD', 'JPY'], [currency['code'] for currency in result])
         self.assertEqual(2, len(session.calls))
@@ -141,6 +147,65 @@ class FetchCurrenciesTests(unittest.TestCase):
 
         self.assertIsNone(result)
         create_session.assert_not_called()
+
+    def test_stops_when_more_is_true_after_reaching_total(self):
+        result, session = self.fetch_with_pages([{
+            'data': {
+                'objects': [{
+                    'names': {'common': 'Canada'},
+                    'currencies': [],
+                }],
+                'meta': {'more': True, 'total': 1},
+            }
+        }])
+
+        self.assertIsNone(result)
+        self.assertEqual(1, len(session.calls))
+
+    def test_rejects_total_changing_between_pages(self):
+        country = {'names': {'common': 'Canada'}, 'currencies': []}
+        result, session = self.fetch_with_pages([
+            {
+                'data': {
+                    'objects': [country],
+                    'meta': {'more': True, 'total': 3},
+                }
+            },
+            {
+                'data': {
+                    'objects': [country],
+                    'meta': {'more': False, 'total': 2},
+                }
+            },
+        ])
+
+        self.assertIsNone(result)
+        self.assertEqual(2, len(session.calls))
+
+    def test_rejects_final_count_mismatch(self):
+        result, session = self.fetch_with_pages([{
+            'data': {
+                'objects': [{
+                    'names': {'common': 'Canada'},
+                    'currencies': [],
+                }],
+                'meta': {'more': False, 'total': 2},
+            }
+        }])
+
+        self.assertIsNone(result)
+        self.assertEqual(1, len(session.calls))
+
+    def test_rejects_empty_page_when_more_is_true(self):
+        result, session = self.fetch_with_pages([{
+            'data': {
+                'objects': [],
+                'meta': {'more': True, 'total': 1},
+            }
+        }])
+
+        self.assertIsNone(result)
+        self.assertEqual(1, len(session.calls))
 
 
 if __name__ == '__main__':

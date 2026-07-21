@@ -257,6 +257,9 @@ def fetch_currencies():
         if not page:
             logging.error("Countries API returned an empty page while more data was expected")
             return None
+        if len(countries) >= expected_total:
+            logging.error("Countries API reported more pages than the declared total")
+            return None
         offset += len(page)
 
     if len(countries) != expected_total:
