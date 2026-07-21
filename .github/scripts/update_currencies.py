@@ -11,7 +11,9 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-API_URL    = 'https://restcountries.com/v3.1/all?fields=name,currencies'
+API_URL = 'https://api.restcountries.com/countries/v5'
+API_KEY_ENV = 'RESTCOUNTRIES_API_KEY'
+API_PAGE_LIMIT = 100
 # Default to a pinned commit for supply-chain security
 DEFAULT_ISO_4217_URL = 'https://raw.githubusercontent.com/datasets/currency-codes/refs/heads/main/data/codes-all.csv'
 ISO_4217_URL = os.environ.get('ISO_4217_URL', DEFAULT_ISO_4217_URL)
@@ -34,6 +36,18 @@ def setup_logging():
         level=logging.INFO,
         format='%(asctime)s %(levelname)s: %(message)s'
     )
+
+
+def create_session():
+    session = requests.Session()
+    retries = Retry(
+        total=3,
+        backoff_factor=1,
+        status_forcelist=[429, 500, 502, 503, 504],
+        allowed_methods=frozenset(['GET'])
+    )
+    session.mount('https://', HTTPAdapter(max_retries=retries))
+    return session
 
 
 def get_currency_decimals(code, iso_data):
@@ -75,14 +89,7 @@ def fetch_iso_4217_data():
         logging.error("Refusing non-HTTPS ISO_4217_URL: %s", ISO_4217_URL)
         return {}
     
-    session = requests.Session()
-    retries = Retry(
-        total=3,
-        backoff_factor=1,
-        status_forcelist=[429, 500, 502, 503, 504],
-        allowed_methods=frozenset(['GET'])
-    )
-    session.mount('https://', HTTPAdapter(max_retries=retries))
+    session = create_session()
 
     try:
         # Add Accept header for CSV content
@@ -119,58 +126,151 @@ def fetch_iso_4217_data():
         return {}
 
 
-def fetch_currencies():
-    # First, fetch ISO 4217 data for decimal places
-    iso_data = fetch_iso_4217_data()
-    
-    session = requests.Session()
-    retries = Retry(
-        total=3,
-        backoff_factor=1,
-        status_forcelist=[429, 500, 502, 503, 504],
-        allowed_methods=frozenset(['GET'])
-    )
-    session.mount('https://', HTTPAdapter(max_retries=retries))
+def parse_country_page(payload):
+    if not isinstance(payload, dict):
+        raise ValueError("response must be a JSON object")
 
-    try:
-        resp = session.get(API_URL, timeout=TIMEOUT)
-        resp.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        logging.error("API request failed: %s", e)
-        return None  # signal fatal
+    errors = payload.get('errors')
+    if errors:
+        messages = [
+            error.get('message', str(error)) if isinstance(error, dict) else str(error)
+            for error in errors
+        ]
+        raise ValueError("API returned errors: %s" % "; ".join(messages))
 
-    try:
-        countries = resp.json()
-    except ValueError as e:
-        logging.error("Failed to parse JSON response: %s", e)
-        return None  # signal fatal
+    data = payload.get('data')
+    if not isinstance(data, dict):
+        raise ValueError("response is missing the data object")
 
+    countries = data.get('objects')
+    meta = data.get('meta')
+    if not isinstance(countries, list):
+        raise ValueError("response data is missing the objects list")
+    if not isinstance(meta, dict):
+        raise ValueError("response data is missing pagination metadata")
+    if not isinstance(meta.get('more'), bool):
+        raise ValueError("pagination metadata is missing the more flag")
+    if isinstance(meta.get('total'), bool) or not isinstance(meta.get('total'), int):
+        raise ValueError("pagination metadata is missing the total count")
+
+    return countries, meta
+
+
+def countries_to_currencies(countries, iso_data):
     results = []
     for country in countries:
-        name_field = country.get('name', {})
-        if isinstance(name_field, dict):
-            country_name = name_field.get('common') or "Unknown"
-        else:
-            country_name = name_field or "Unknown"
-        for code, info in country.get('currencies', {}).items():
+        if not isinstance(country, dict):
+            raise ValueError("country entry must be a JSON object")
+
+        names = country.get('names') or {}
+        currencies = country.get('currencies') or []
+        if not isinstance(names, dict):
+            raise ValueError("country names must be a JSON object")
+        if not isinstance(currencies, list):
+            raise ValueError("country currencies must be a JSON list")
+        country_name = names.get('common') or "Unknown"
+        if not isinstance(country_name, str):
+            raise ValueError("country common name must be a string")
+
+        for info in currencies:
+            if not isinstance(info, dict):
+                raise ValueError("currency entry must be a JSON object")
+            code = info.get('code') or ''
+            if not isinstance(code, str):
+                raise ValueError("currency code must be a string")
+            if not code:
+                logging.warning("Skipping currency without a code for %s", country_name)
+                continue
+
             # Get decimal places using the helper function
             decimals = get_currency_decimals(code, iso_data)
             
             # Capitalize the first letter of the currency name
-            currency_name = info.get('name', '')
+            currency_name = info.get('name') or ''
+            if not isinstance(currency_name, str):
+                raise ValueError("currency name must be a string")
             if currency_name:
                 currency_name = currency_name[0].upper() + currency_name[1:]
+
+            symbol = info.get('symbol') or ''
+            if not isinstance(symbol, str):
+                raise ValueError("currency symbol must be a string")
 
             results.append({
                 'code':     code,
                 'local':    country_name,
-                'symbol':   info.get('symbol', ''),
+                'symbol':   symbol,
                 'name':     currency_name,
                 'decimals': decimals
             })
 
     # sort by country name for consistency
     return sorted(results, key=lambda x: x['local'].lower())
+
+
+def fetch_currencies():
+    api_key = os.environ.get(API_KEY_ENV, '').strip()
+    if not api_key:
+        logging.error("Missing required %s environment variable", API_KEY_ENV)
+        return None
+
+    # First, fetch ISO 4217 data for decimal places
+    iso_data = fetch_iso_4217_data()
+    session = create_session()
+    countries = []
+    offset = 0
+    expected_total = None
+
+    while True:
+        try:
+            resp = session.get(
+                API_URL,
+                timeout=TIMEOUT,
+                headers={'Authorization': 'Bearer %s' % api_key},
+                params={
+                    'response_fields': 'names.common,currencies',
+                    'limit': API_PAGE_LIMIT,
+                    'offset': offset,
+                }
+            )
+            resp.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            logging.error("Countries API request failed: %s", e)
+            return None  # signal fatal
+
+        try:
+            payload = resp.json()
+            page, meta = parse_country_page(payload)
+        except (ValueError, TypeError) as e:
+            logging.error("Failed to parse Countries API response: %s", e)
+            return None  # signal fatal
+
+        countries.extend(page)
+        page_total = meta['total']
+        if expected_total is None:
+            expected_total = page_total
+        elif page_total != expected_total:
+            logging.error("Countries API total changed while fetching pages")
+            return None
+        if not meta.get('more'):
+            break
+        if not page:
+            logging.error("Countries API returned an empty page while more data was expected")
+            return None
+        offset += len(page)
+
+    if len(countries) != expected_total:
+        logging.error(
+            "Countries API returned %d of %d expected countries",
+            len(countries), expected_total
+        )
+        return None
+
+    try:
+        return countries_to_currencies(countries, iso_data)
+    except (ValueError, TypeError) as e:
+        logging.error("Failed to parse country data: %s", e)
+        return None
 
 
 def load_existing(path: Path):
@@ -203,10 +303,10 @@ def main():
         logging.error("Aborting: failed to fetch or parse API data.")
         sys.exit(1)
 
-    # Empty array → log & exit zero (no file change)
+    # Empty array means an incomplete or malformed all-countries response.
     if not new:
-        logging.warning("API returned empty list; skipping write.")
-        sys.exit(0)
+        logging.error("Aborting: Countries API returned no currencies.")
+        sys.exit(1)
 
     # Identical to existing → nothing to do
     if new == existing:
