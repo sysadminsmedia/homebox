@@ -4,7 +4,7 @@
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import { Label } from "@/components/ui/label";
   import { fmtDate } from "~~/composables/use-formatters";
-  import { useViewPreferences } from "~~/composables/use-preferences";
+  import { useViewPreferences, type WeekStart } from "~~/composables/use-preferences";
 
   const preferences = useViewPreferences();
 
@@ -33,6 +33,13 @@
     } else {
       preferences.value.overrideFormatLocale = locale;
     }
+  }
+
+  function setFirstDayOfWeek(val: string | undefined) {
+    if (val === undefined) {
+      return;
+    }
+    preferences.value.firstDayOfWeek = val === "auto" ? "auto" : (Number(val) as WeekStart);
   }
 
   const dateExample = computed(() => {
@@ -85,6 +92,26 @@
         </SelectContent>
       </Select>
       <p class="m-2 text-sm">{{ $t("profile.example") }}: {{ $t("global.created") }} {{ dateExample }}</p>
+      <Label for="firstDayOfWeek"> {{ $t("profile.first_day_of_week") }} </Label>
+      <Select
+        id="firstDayOfWeek"
+        :model-value="String(preferences.firstDayOfWeek)"
+        @update:model-value="
+          val => {
+            setFirstDayOfWeek(val?.toString());
+          }
+        "
+      >
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="auto">{{ $t("profile.first_day_auto") }}</SelectItem>
+          <SelectItem value="0">{{ $t("profile.first_day_sunday") }}</SelectItem>
+          <SelectItem value="1">{{ $t("profile.first_day_monday") }}</SelectItem>
+          <SelectItem value="6">{{ $t("profile.first_day_saturday") }}</SelectItem>
+        </SelectContent>
+      </Select>
     </template>
   </div>
 </template>

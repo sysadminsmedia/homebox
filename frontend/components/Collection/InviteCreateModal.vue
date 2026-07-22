@@ -7,6 +7,7 @@
         <Label class="cursor-pointer">{{ $t("collection.expires_at") }}</Label>
         <VueDatePicker
           v-model="form.expiresAt"
+          :week-start="weekStart"
           :enable-time-picker="true"
           clearable
           :dark="isDark"
@@ -38,6 +39,7 @@
   import { toast } from "@/components/ui/sonner";
   import { useUserApi } from "~/composables/use-api";
   import { darkThemes } from "~/lib/data/themes";
+  import { useViewPreferences, resolveWeekStart } from "~~/composables/use-preferences";
 
   const { t } = useI18n();
   const { activeDialog, closeDialog } = useDialog();
@@ -50,6 +52,11 @@
   });
 
   const isDark = useIsThemeInList(darkThemes);
+
+  const preferences = useViewPreferences();
+  const weekStart = computed(() =>
+    resolveWeekStart(preferences.value.firstDayOfWeek, preferences.value.overrideFormatLocale ?? preferences.value.language)
+  );
 
   const formatDateTime = (date: Date | string | number) => fmtDate(date, "human", "datetime");
 
