@@ -17,4 +17,14 @@ describe("resolveWeekStart", () => {
   test("'auto' falls back to Monday (1) for an invalid locale tag", () => {
     expect(resolveWeekStart("auto", "!!!")).toBe(1);
   });
+
+  test("clamps malformed persisted values to Monday (1)", () => {
+    // firstDayOfWeek is read back from schemaless storage, so bad values can
+    // reach here despite the WeekStart type; they must not leak into the picker.
+    expect(resolveWeekStart(9 as never)).toBe(1);
+    expect(resolveWeekStart(-1 as never)).toBe(1);
+    expect(resolveWeekStart(1.5 as never)).toBe(1);
+    expect(resolveWeekStart("mon" as never)).toBe(1);
+    expect(resolveWeekStart(null as never)).toBe(1);
+  });
 });
