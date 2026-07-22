@@ -9504,6 +9504,7 @@ type GroupMutation struct {
 	updated_at               *time.Time
 	name                     *string
 	currency                 *string
+	external_ids_enabled     *bool
 	clearedFields            map[string]struct{}
 	users                    map[uuid.UUID]struct{}
 	removedusers             map[uuid.UUID]struct{}
@@ -9780,6 +9781,42 @@ func (m *GroupMutation) OldCurrency(ctx context.Context) (v string, err error) {
 // ResetCurrency resets all changes to the "currency" field.
 func (m *GroupMutation) ResetCurrency() {
 	m.currency = nil
+}
+
+// SetExternalIdsEnabled sets the "external_ids_enabled" field.
+func (m *GroupMutation) SetExternalIdsEnabled(b bool) {
+	m.external_ids_enabled = &b
+}
+
+// ExternalIdsEnabled returns the value of the "external_ids_enabled" field in the mutation.
+func (m *GroupMutation) ExternalIdsEnabled() (r bool, exists bool) {
+	v := m.external_ids_enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExternalIdsEnabled returns the old "external_ids_enabled" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldExternalIdsEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExternalIdsEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExternalIdsEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExternalIdsEnabled: %w", err)
+	}
+	return oldValue.ExternalIdsEnabled, nil
+}
+
+// ResetExternalIdsEnabled resets all changes to the "external_ids_enabled" field.
+func (m *GroupMutation) ResetExternalIdsEnabled() {
+	m.external_ids_enabled = nil
 }
 
 // AddUserIDs adds the "users" edge to the User entity by ids.
@@ -10248,7 +10285,7 @@ func (m *GroupMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.created_at != nil {
 		fields = append(fields, group.FieldCreatedAt)
 	}
@@ -10260,6 +10297,9 @@ func (m *GroupMutation) Fields() []string {
 	}
 	if m.currency != nil {
 		fields = append(fields, group.FieldCurrency)
+	}
+	if m.external_ids_enabled != nil {
+		fields = append(fields, group.FieldExternalIdsEnabled)
 	}
 	return fields
 }
@@ -10277,6 +10317,8 @@ func (m *GroupMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case group.FieldCurrency:
 		return m.Currency()
+	case group.FieldExternalIdsEnabled:
+		return m.ExternalIdsEnabled()
 	}
 	return nil, false
 }
@@ -10294,6 +10336,8 @@ func (m *GroupMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldName(ctx)
 	case group.FieldCurrency:
 		return m.OldCurrency(ctx)
+	case group.FieldExternalIdsEnabled:
+		return m.OldExternalIdsEnabled(ctx)
 	}
 	return nil, fmt.Errorf("unknown Group field %s", name)
 }
@@ -10330,6 +10374,13 @@ func (m *GroupMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCurrency(v)
+		return nil
+	case group.FieldExternalIdsEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExternalIdsEnabled(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Group field %s", name)
@@ -10391,6 +10442,9 @@ func (m *GroupMutation) ResetField(name string) error {
 		return nil
 	case group.FieldCurrency:
 		m.ResetCurrency()
+		return nil
+	case group.FieldExternalIdsEnabled:
+		m.ResetExternalIdsEnabled()
 		return nil
 	}
 	return fmt.Errorf("unknown Group field %s", name)

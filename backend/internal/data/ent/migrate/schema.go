@@ -196,6 +196,11 @@ var (
 				Unique:  false,
 				Columns: []*schema.Column{EntitiesColumns[14]},
 			},
+{
+				Name:    "entity_external_id",
+				Unique:  false,
+				Columns: []*schema.Column{EntitiesColumns[15]},
+			},
 			{
 				Name:    "entity_model_number",
 				Unique:  false,
@@ -374,6 +379,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Size: 255},
 		{Name: "currency", Type: field.TypeString, Default: "usd"},
+		{Name: "external_ids_enabled", Type: field.TypeBool, Default: false},
 	}
 	// GroupsTable holds the schema information for the "groups" table.
 	GroupsTable = &schema.Table{
