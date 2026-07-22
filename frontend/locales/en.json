@@ -183,6 +183,7 @@
             },
             "create_modal": {
                 "entity_name": "{type} Name",
+                "external_id": "External Id",
                 "entity_quantity": "{type} Quantity",
                 "entity_description": "{type} Description",
                 "entity_photo": "{type} Photo 📷",
@@ -208,6 +209,7 @@
                 "parent_item": "Parent Item",
                 "product_tooltip_input_barcode": "Autofill with a manually provided barcode",
                 "product_tooltip_scan_barcode": "Autofill with a barcode from 📷",
+                "product_tooltip_add_external": "Create product from external id",
                 "rotate_photo": "Rotate photo",
                 "set_as_primary_photo": "Set as { isPrimary, select, true {non-} false {} other {}}primary photo",
                 "item_selector_no_results_text": "Type to search…"
@@ -861,7 +863,8 @@
         "update_language": "Update Language",
         "url": "URL",
         "user_profile": "User Profile",
-        "user_profile_sub": "Invite users, and manage your account."
+        "user_profile_sub": "Invite users, and manage your account.",
+        "enable_external_ids" : "Enable external ids"
     },
     "reports": {
         "label_generator": {
