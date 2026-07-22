@@ -1,10 +1,7 @@
 <script setup lang="ts">
-  import { ref, reactive, computed } from 'vue';
-  import {
-    provideDialogContext,
-    type DialogID,
-    type DialogParamsMap,
-  } from './utils';
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  import { ref, reactive, computed } from "vue";
+  import { provideDialogContext, type DialogID, type DialogParamsMap } from "./utils";
 
   const activeDialog = ref<DialogID | null>(null);
   const activeAlerts = reactive<string[]>([]);
