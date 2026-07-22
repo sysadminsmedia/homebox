@@ -418,6 +418,8 @@ export interface EntGroup {
    * The values are being populated by the GroupQuery when eager-loading is set.
    */
   edges: EntGroupEdges;
+  /** ExternalIdsEnabled holds the value of the "external_ids_enabled" field. */
+  external_ids_enabled: boolean;
   /** ID of the ent. */
   id: string;
   /** Name holds the value of the "name" field. */
@@ -1067,6 +1069,7 @@ export interface ExportOut {
 export interface Group {
   createdAt: Date | string;
   currency: string;
+  external_ids_enabled: boolean;
   id: string;
   name: string;
   updatedAt: Date | string;
@@ -1090,6 +1093,7 @@ export interface GroupStatistics {
 
 export interface GroupUpdate {
   currency: string;
+  external_ids_enabled: boolean;
   name: string;
 }
 
