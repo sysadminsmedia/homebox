@@ -588,15 +588,14 @@ func (ctrl *V1Controller) HandleEntitiesExport() errchain.HandlerFunc {
 
 // HandleEntityGetByExternalId godoc
 //
-//		@Summary    Get Entity by External ID
-//		@Tags       Entities
-//		@Produce    json
-//	 @Param      external_id  path        string  true    "External ID"
-//		@Success    200 {object}    repo.EntityOut
-//		@Router     /v1/entities/external/{id} [GET]
-//		@Security   Bearer
+//	@Summary	Get Entity by External ID
+//	@Tags		Entities
+//	@Produce	json
+//	@Param		external_id	path		string	true	"External ID"
+//	@Success	200			{object}	repo.EntityOut
+//	@Router		/v1/entities/external/{external_id} [GET]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityGetByExternalId() errchain.HandlerFunc {
-
 	fn := func(r *http.Request) (repo.EntityOut, error) {
 		extID := chi.URLParam(r, "external_id")
 		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntityGetByExternalId",
