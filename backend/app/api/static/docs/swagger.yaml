@@ -205,6 +205,9 @@ definitions:
         description: |-
           Edges holds the relations/edges for other nodes in the graph.
           The values are being populated by the EntityQuery when eager-loading is set.
+      external_id:
+        description: ExternalID holds the value of the "external_id" field.
+        type: string
       id:
         description: ID of the ent.
         type: string
@@ -552,6 +555,10 @@ definitions:
         description: |-
           Edges holds the relations/edges for other nodes in the graph.
           The values are being populated by the GroupQuery when eager-loading is set.
+      external_ids_enabled:
+        description: ExternalIdsEnabled holds the value of the "external_ids_enabled"
+          field.
+        type: boolean
       id:
         description: ID of the ent.
         type: string
@@ -1100,6 +1107,11 @@ definitions:
         type: string
       entityTypeId:
         type: string
+      externalId:
+        maxLength: 255
+        type: string
+        x-nullable: true
+        x-omitempty: true
       manufacturer:
         maxLength: 255
         type: string
@@ -1186,6 +1198,8 @@ definitions:
         - $ref: '#/definitions/repo.EntityTypeSummary'
         x-nullable: true
         x-omitempty: true
+      externalId:
+        type: string
       fields:
         items:
           $ref: '#/definitions/repo.EntityFieldData'
@@ -1712,6 +1726,8 @@ definitions:
         type: string
       currency:
         type: string
+      external_ids_enabled:
+        type: boolean
       id:
         type: string
       name:
@@ -1749,6 +1765,8 @@ definitions:
     properties:
       currency:
         type: string
+      external_ids_enabled:
+        type: boolean
       name:
         type: string
     type: object
@@ -2917,6 +2935,26 @@ paths:
       security:
       - Bearer: []
       summary: Export Entities
+      tags:
+      - Entities
+  /v1/entities/external/{id}:
+    get:
+      parameters:
+      - description: External ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.EntityOut'
+      security:
+      - Bearer: []
+      summary: Get Entity by External ID
       tags:
       - Entities
   /v1/entities/fields:

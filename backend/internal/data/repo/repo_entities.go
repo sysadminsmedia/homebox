@@ -100,6 +100,7 @@ type (
 		// barcode product-search import flow (#1578).
 		ModelNumber  string `json:"modelNumber"  validate:"max=255" extensions:"x-nullable,x-omitempty"`
 		Manufacturer string `json:"manufacturer" validate:"max=255" extensions:"x-nullable,x-omitempty"`
+		ExternalID   string `json:"externalId"   validate:"max=255" extensions:"x-nullable,x-omitempty"`
 
 		// Edges
 		TagIDs []uuid.UUID `json:"tagIds"`
@@ -193,6 +194,7 @@ type (
 		SerialNumber string `json:"serialNumber"`
 		ModelNumber  string `json:"modelNumber"`
 		Manufacturer string `json:"manufacturer"`
+		ExternalID   string `json:"externalId"`
 
 		// Warranty
 		LifetimeWarranty bool       `json:"lifetimeWarranty"`
@@ -343,6 +345,7 @@ func mapEntityOut(e *ent.Entity) EntityOut {
 		SerialNumber: e.SerialNumber,
 		ModelNumber:  e.ModelNumber,
 		Manufacturer: e.Manufacturer,
+		ExternalID:   e.ExternalID,
 
 		// Purchase
 		PurchaseDate: types.DateFromTime(e.PurchaseDate),
@@ -548,6 +551,20 @@ func (r *EntityRepository) GetByRef(ctx context.Context, gid uuid.UUID, ref stri
 	defer span.End()
 
 	out, err := r.getOne(ctx, entity.ImportRef(ref), entity.HasGroupWith(group.ID(gid)))
+	recordSpanError(span, err)
+	return out, err
+}
+
+// GetOneByExternalID returns a single entity by External ID, verified to belong to a specific group.
+func (r *EntityRepository) GetOneByExternalID(ctx context.Context, gid uuid.UUID, externalID string) (EntityOut, error) {
+	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.GetOneByExternalID",
+		trace.WithAttributes(
+			attribute.String("group.id", gid.String()),
+			attribute.String("entity.external_id", externalID),
+		))
+	defer span.End()
+
+	out, err := r.getOne(ctx, entity.ExternalID(externalID), entity.HasGroupWith(group.ID(gid)))
 	recordSpanError(span, err)
 	return out, err
 }
@@ -1071,6 +1088,7 @@ func (r *EntityRepository) Create(ctx context.Context, gid uuid.UUID, data Entit
 		SetDescription(data.Description).
 		SetModelNumber(data.ModelNumber).
 		SetManufacturer(data.Manufacturer).
+		SetExternalID(data.ExternalID).
 		SetGroupID(gid).
 		SetAssetID(int64(data.AssetID))
 

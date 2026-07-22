@@ -2630,6 +2630,7 @@ type EntityMutation struct {
 	serial_number               *string
 	model_number                *string
 	manufacturer                *string
+	external_id                 *string
 	lifetime_warranty           *bool
 	warranty_expires            *time.Time
 	warranty_details            *string
@@ -3393,6 +3394,55 @@ func (m *EntityMutation) ManufacturerCleared() bool {
 func (m *EntityMutation) ResetManufacturer() {
 	m.manufacturer = nil
 	delete(m.clearedFields, entity.FieldManufacturer)
+}
+
+// SetExternalID sets the "external_id" field.
+func (m *EntityMutation) SetExternalID(s string) {
+	m.external_id = &s
+}
+
+// ExternalID returns the value of the "external_id" field in the mutation.
+func (m *EntityMutation) ExternalID() (r string, exists bool) {
+	v := m.external_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExternalID returns the old "external_id" field's value of the Entity entity.
+// If the Entity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntityMutation) OldExternalID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExternalID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExternalID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExternalID: %w", err)
+	}
+	return oldValue.ExternalID, nil
+}
+
+// ClearExternalID clears the value of the "external_id" field.
+func (m *EntityMutation) ClearExternalID() {
+	m.external_id = nil
+	m.clearedFields[entity.FieldExternalID] = struct{}{}
+}
+
+// ExternalIDCleared returns if the "external_id" field was cleared in this mutation.
+func (m *EntityMutation) ExternalIDCleared() bool {
+	_, ok := m.clearedFields[entity.FieldExternalID]
+	return ok
+}
+
+// ResetExternalID resets all changes to the "external_id" field.
+func (m *EntityMutation) ResetExternalID() {
+	m.external_id = nil
+	delete(m.clearedFields, entity.FieldExternalID)
 }
 
 // SetLifetimeWarranty sets the "lifetime_warranty" field.
@@ -4307,7 +4357,7 @@ func (m *EntityMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EntityMutation) Fields() []string {
-	fields := make([]string, 0, 24)
+	fields := make([]string, 0, 25)
 	if m.created_at != nil {
 		fields = append(fields, entity.FieldCreatedAt)
 	}
@@ -4349,6 +4399,9 @@ func (m *EntityMutation) Fields() []string {
 	}
 	if m.manufacturer != nil {
 		fields = append(fields, entity.FieldManufacturer)
+	}
+	if m.external_id != nil {
+		fields = append(fields, entity.FieldExternalID)
 	}
 	if m.lifetime_warranty != nil {
 		fields = append(fields, entity.FieldLifetimeWarranty)
@@ -4416,6 +4469,8 @@ func (m *EntityMutation) Field(name string) (ent.Value, bool) {
 		return m.ModelNumber()
 	case entity.FieldManufacturer:
 		return m.Manufacturer()
+	case entity.FieldExternalID:
+		return m.ExternalID()
 	case entity.FieldLifetimeWarranty:
 		return m.LifetimeWarranty()
 	case entity.FieldWarrantyExpires:
@@ -4473,6 +4528,8 @@ func (m *EntityMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldModelNumber(ctx)
 	case entity.FieldManufacturer:
 		return m.OldManufacturer(ctx)
+	case entity.FieldExternalID:
+		return m.OldExternalID(ctx)
 	case entity.FieldLifetimeWarranty:
 		return m.OldLifetimeWarranty(ctx)
 	case entity.FieldWarrantyExpires:
@@ -4599,6 +4656,13 @@ func (m *EntityMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetManufacturer(v)
+		return nil
+	case entity.FieldExternalID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExternalID(v)
 		return nil
 	case entity.FieldLifetimeWarranty:
 		v, ok := value.(bool)
@@ -4769,6 +4833,9 @@ func (m *EntityMutation) ClearedFields() []string {
 	if m.FieldCleared(entity.FieldManufacturer) {
 		fields = append(fields, entity.FieldManufacturer)
 	}
+	if m.FieldCleared(entity.FieldExternalID) {
+		fields = append(fields, entity.FieldExternalID)
+	}
 	if m.FieldCleared(entity.FieldWarrantyExpires) {
 		fields = append(fields, entity.FieldWarrantyExpires)
 	}
@@ -4821,6 +4888,9 @@ func (m *EntityMutation) ClearField(name string) error {
 		return nil
 	case entity.FieldManufacturer:
 		m.ClearManufacturer()
+		return nil
+	case entity.FieldExternalID:
+		m.ClearExternalID()
 		return nil
 	case entity.FieldWarrantyExpires:
 		m.ClearWarrantyExpires()
@@ -4892,6 +4962,9 @@ func (m *EntityMutation) ResetField(name string) error {
 		return nil
 	case entity.FieldManufacturer:
 		m.ResetManufacturer()
+		return nil
+	case entity.FieldExternalID:
+		m.ResetExternalID()
 		return nil
 	case entity.FieldLifetimeWarranty:
 		m.ResetLifetimeWarranty()

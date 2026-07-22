@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/server"
@@ -213,6 +214,7 @@ func (ctrl *V1Controller) HandleEntitiesCreate() errchain.HandlerFunc {
 	fn := func(r *http.Request, body repo.EntityCreate) (repo.EntityOut, error) {
 		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntitiesCreate",
 			attribute.String("entity.name", body.Name),
+			attribute.String("entity.external_id", body.ExternalID),
 			attribute.Float64("entity.quantity", body.Quantity),
 			attribute.Bool("entity.parent_id.set", body.ParentID != uuid.Nil),
 			attribute.Bool("entity.entity_type_id.set", body.EntityTypeID != uuid.Nil),
@@ -582,4 +584,33 @@ func (ctrl *V1Controller) HandleEntitiesExport() errchain.HandlerFunc {
 		}
 		return nil
 	}
+}
+
+// HandleEntityGetByExternalId godoc
+//
+//		@Summary    Get Entity by External ID
+//		@Tags       Entities
+//		@Produce    json
+//	 @Param      external_id  path        string  true    "External ID"
+//		@Success    200 {object}    repo.EntityOut
+//		@Router     /v1/entities/external/{id} [GET]
+//		@Security   Bearer
+func (ctrl *V1Controller) HandleEntityGetByExternalId() errchain.HandlerFunc {
+
+	fn := func(r *http.Request) (repo.EntityOut, error) {
+		extID := chi.URLParam(r, "external_id")
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntityGetByExternalId",
+			attribute.String("entity.external_id", extID))
+		defer span.End()
+
+		auth := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("group.id", auth.GID.String()))
+
+		out, err := ctrl.repo.Entities.GetOneByExternalID(auth, auth.GID, extID)
+		if err != nil {
+			recordCtrlSpanError(span, err)
+		}
+		return out, err // <-- Just returns the error!
+	}
+	return adapters.Command(fn, http.StatusOK)
 }

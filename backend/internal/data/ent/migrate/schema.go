@@ -146,6 +146,7 @@ var (
 		{Name: "serial_number", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "model_number", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "manufacturer", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "external_id", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "lifetime_warranty", Type: field.TypeBool, Default: false},
 		{Name: "warranty_expires", Type: field.TypeTime, Nullable: true},
 		{Name: "warranty_details", Type: field.TypeString, Nullable: true, Size: 1000},
@@ -168,19 +169,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "entities_entities_children",
-				Columns:    []*schema.Column{EntitiesColumns[25]},
+				Columns:    []*schema.Column{EntitiesColumns[26]},
 				RefColumns: []*schema.Column{EntitiesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "entities_entity_types_entities",
-				Columns:    []*schema.Column{EntitiesColumns[26]},
+				Columns:    []*schema.Column{EntitiesColumns[27]},
 				RefColumns: []*schema.Column{EntityTypesColumns[0]},
 				OnDelete:   schema.Restrict,
 			},
 			{
 				Symbol:     "entities_groups_entities",
-				Columns:    []*schema.Column{EntitiesColumns[27]},
+				Columns:    []*schema.Column{EntitiesColumns[28]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -196,7 +197,7 @@ var (
 				Unique:  false,
 				Columns: []*schema.Column{EntitiesColumns[14]},
 			},
-{
+			{
 				Name:    "entity_external_id",
 				Unique:  false,
 				Columns: []*schema.Column{EntitiesColumns[15]},

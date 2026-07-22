@@ -215,6 +215,20 @@ func (_c *EntityCreate) SetNillableManufacturer(v *string) *EntityCreate {
 	return _c
 }
 
+// SetExternalID sets the "external_id" field.
+func (_c *EntityCreate) SetExternalID(v string) *EntityCreate {
+	_c.mutation.SetExternalID(v)
+	return _c
+}
+
+// SetNillableExternalID sets the "external_id" field if the given value is not nil.
+func (_c *EntityCreate) SetNillableExternalID(v *string) *EntityCreate {
+	if v != nil {
+		_c.SetExternalID(*v)
+	}
+	return _c
+}
+
 // SetLifetimeWarranty sets the "lifetime_warranty" field.
 func (_c *EntityCreate) SetLifetimeWarranty(v bool) *EntityCreate {
 	_c.mutation.SetLifetimeWarranty(v)
@@ -627,6 +641,11 @@ func (_c *EntityCreate) check() error {
 			return &ValidationError{Name: "manufacturer", err: fmt.Errorf(`ent: validator failed for field "Entity.manufacturer": %w`, err)}
 		}
 	}
+	if v, ok := _c.mutation.ExternalID(); ok {
+		if err := entity.ExternalIDValidator(v); err != nil {
+			return &ValidationError{Name: "external_id", err: fmt.Errorf(`ent: validator failed for field "Entity.external_id": %w`, err)}
+		}
+	}
 	if _, ok := _c.mutation.LifetimeWarranty(); !ok {
 		return &ValidationError{Name: "lifetime_warranty", err: errors.New(`ent: missing required field "Entity.lifetime_warranty"`)}
 	}
@@ -742,6 +761,10 @@ func (_c *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Manufacturer(); ok {
 		_spec.SetField(entity.FieldManufacturer, field.TypeString, value)
 		_node.Manufacturer = value
+	}
+	if value, ok := _c.mutation.ExternalID(); ok {
+		_spec.SetField(entity.FieldExternalID, field.TypeString, value)
+		_node.ExternalID = value
 	}
 	if value, ok := _c.mutation.LifetimeWarranty(); ok {
 		_spec.SetField(entity.FieldLifetimeWarranty, field.TypeBool, value)
