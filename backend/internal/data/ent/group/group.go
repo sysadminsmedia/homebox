@@ -23,6 +23,8 @@ const (
 	FieldName = "name"
 	// FieldCurrency holds the string denoting the currency field in the database.
 	FieldCurrency = "currency"
+	// FieldExternalIdsEnabled holds the string denoting the external_ids_enabled field in the database.
+	FieldExternalIdsEnabled = "external_ids_enabled"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
 	EdgeUsers = "users"
 	// EdgeEntityTypes holds the string denoting the entity_types edge name in mutations.
@@ -113,6 +115,7 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldName,
 	FieldCurrency,
+	FieldExternalIdsEnabled,
 }
 
 var (
@@ -142,6 +145,8 @@ var (
 	NameValidator func(string) error
 	// DefaultCurrency holds the default value on creation for the "currency" field.
 	DefaultCurrency string
+	// DefaultExternalIdsEnabled holds the default value on creation for the "external_ids_enabled" field.
+	DefaultExternalIdsEnabled bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
@@ -172,6 +177,11 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // ByCurrency orders the results by the currency field.
 func ByCurrency(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCurrency, opts...).ToFunc()
+}
+
+// ByExternalIdsEnabled orders the results by the external_ids_enabled field.
+func ByExternalIdsEnabled(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExternalIdsEnabled, opts...).ToFunc()
 }
 
 // ByUsersCount orders the results by users count.

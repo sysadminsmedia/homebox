@@ -24,6 +24,23 @@
             </TooltipContent>
           </Tooltip>
 
+          <Tooltip v-if="selectedCollection?.external_ids_enabled">
+            <TooltipTrigger>
+              <Button
+                variant="outline"
+                :disabled="loading"
+                size="icon"
+                data-pos="start"
+                @click="openQrScannerPage('external_id')"
+              >
+                <MdiQrCodeScan class="size-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{{ $t("components.entity.create_modal.product_tooltip_add_external") }}</p>
+            </TooltipContent>
+          </Tooltip>
+
           <ButtonGroup>
             <Tooltip>
               <TooltipTrigger>
@@ -149,6 +166,7 @@
         :is-loading="isLoading"
         :trigger-search="triggerSearch"
       />
+
       <FormTextField
         ref="nameInput"
         v-model="form.name"
@@ -162,6 +180,14 @@
         :max-length="255"
         :min-length="1"
       />
+
+      <FormTextField
+        v-if="selectedCollection?.external_ids_enabled"
+        v-model="form.externalId"
+        :label="$t('components.entity.create_modal.external_id')"
+        :max-length="255"
+      />
+
       <FormTextField
         v-if="!selectedEntityType?.isLocation"
         v-model.number="form.quantity"
@@ -240,6 +266,7 @@
   import { useLocationStore } from "~~/stores/locations";
   import MdiBarcode from "~icons/mdi/barcode";
   import MdiBarcodeScan from "~icons/mdi/barcode-scan";
+  import MdiQrCodeScan from "~icons/mdi/qrcode-scan";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
   import MdiFileDocumentOutline from "~icons/mdi/file-document-outline";
@@ -279,6 +306,8 @@
   const entityTypeStore = useEntityTypeStore();
 
   const api = useUserApi();
+
+  const { selectedCollection } = useCollections();
 
   const locationsStore = useLocationStore();
   const locations = computed(() => locationsStore.allLocations);
@@ -374,6 +403,7 @@
     quantity: 1,
     description: "",
     color: "",
+    externalId: "",
     // Populated by the barcode product-import flow; passed through on create (#1578).
     manufacturer: "",
     modelNumber: "",
@@ -567,6 +597,10 @@
           // endpoint has no way to carry manufacturer/model (#1578).
           await restoreLastTemplate();
         }
+
+        if (params.externalId) {
+          form.externalId = params.externalId;
+        }
       } else {
         selectedEntityType.value = entityTypes.value.find(t => t.isLocation) || null;
       }
@@ -650,6 +684,7 @@
         parentId: form.parentId || (form.location.id as string),
         name: form.name,
         quantity: form.quantity,
+        externalId: form.externalId,
         description: form.description,
         manufacturer: form.manufacturer,
         modelNumber: form.modelNumber,
@@ -733,8 +768,8 @@
     }
   }
 
-  function openQrScannerPage() {
-    openDialog(DialogID.Scanner);
+  function openQrScannerPage(mode?: string) {
+    openDialog(DialogID.Scanner, { params: { mode: mode } });
   }
 
   function openBarcodeDialog() {

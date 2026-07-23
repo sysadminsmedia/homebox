@@ -216,6 +216,27 @@ paths:
             "*/*":
               schema:
                 type: string
+  "/v1/entities/external/{external_id}":
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Entities
+      summary: Get Entity by External ID
+      parameters:
+        - description: External ID
+          name: external_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/repo.EntityOut"
   /v1/entities/fields:
     get:
       security:
@@ -2259,6 +2280,9 @@ components:
             The values are being populated by the EntityQuery when eager-loading is set.
           allOf:
             - $ref: "#/components/schemas/ent.EntityEdges"
+        external_id:
+          description: ExternalID holds the value of the "external_id" field.
+          type: string
         id:
           description: ID of the ent.
           type: string
@@ -2610,6 +2634,10 @@ components:
             The values are being populated by the GroupQuery when eager-loading is set.
           allOf:
             - $ref: "#/components/schemas/ent.GroupEdges"
+        external_ids_enabled:
+          description: ExternalIdsEnabled holds the value of the "external_ids_enabled"
+            field.
+          type: boolean
         id:
           description: ID of the ent.
           type: string
@@ -3168,6 +3196,11 @@ components:
           maxLength: 1000
         entityTypeId:
           type: string
+        externalId:
+          type: string
+          maxLength: 255
+          x-omitempty: true
+          nullable: true
         manufacturer:
           type: string
           maxLength: 255
@@ -3252,6 +3285,8 @@ components:
             - $ref: "#/components/schemas/repo.EntityTypeSummary"
           x-omitempty: true
           nullable: true
+        externalId:
+          type: string
         fields:
           type: array
           items:
@@ -3778,6 +3813,8 @@ components:
           type: string
         currency:
           type: string
+        external_ids_enabled:
+          type: boolean
         id:
           type: string
         name:
@@ -3815,6 +3852,8 @@ components:
       properties:
         currency:
           type: string
+        external_ids_enabled:
+          type: boolean
         name:
           type: string
     repo.ItemAttachment:

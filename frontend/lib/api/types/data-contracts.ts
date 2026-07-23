@@ -195,6 +195,8 @@ export interface EntEntity {
    * The values are being populated by the EntityQuery when eager-loading is set.
    */
   edges: EntEntityEdges;
+  /** ExternalID holds the value of the "external_id" field. */
+  external_id: string;
   /** ID of the ent. */
   id: string;
   /** ImportRef holds the value of the "import_ref" field. */
@@ -418,6 +420,8 @@ export interface EntGroup {
    * The values are being populated by the GroupQuery when eager-loading is set.
    */
   edges: EntGroupEdges;
+  /** ExternalIdsEnabled holds the value of the "external_ids_enabled" field. */
+  external_ids_enabled: boolean;
   /** ID of the ent. */
   id: string;
   /** Name holds the value of the "name" field. */
@@ -746,6 +750,8 @@ export interface EntityCreate {
   description: string;
   entityTypeId: string;
   /** @maxLength 255 */
+  externalId?: string | null;
+  /** @maxLength 255 */
   manufacturer?: string | null;
   /**
    * Identifications — optional at create time; populated e.g. by the
@@ -791,6 +797,7 @@ export interface EntityOut {
   createdAt: Date | string;
   description: string;
   entityType?: EntityTypeSummary | null;
+  externalId: string;
   fields: EntityFieldData[];
   id: string;
   imageId?: string | null;
@@ -1067,6 +1074,7 @@ export interface ExportOut {
 export interface Group {
   createdAt: Date | string;
   currency: string;
+  external_ids_enabled: boolean;
   id: string;
   name: string;
   updatedAt: Date | string;
@@ -1090,6 +1098,7 @@ export interface GroupStatistics {
 
 export interface GroupUpdate {
   currency: string;
+  external_ids_enabled: boolean;
   name: string;
 }
 

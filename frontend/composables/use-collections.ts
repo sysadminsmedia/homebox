@@ -6,6 +6,7 @@ import { useRoute, navigateTo } from "#imports";
 export type CollectionSummary = {
   id: string;
   name: string;
+  external_ids_enabled: boolean;
 };
 
 const collections = ref<CollectionSummary[]>([]);
@@ -38,7 +39,11 @@ export const useCollections = () => {
       console.debug("[useCollections] Fetching all groups");
       const { data: allGroups } = await api.group.getAll();
       const available = Array.isArray(allGroups)
-        ? (allGroups as Array<{ id: string; name: string }>).map(g => ({ id: g.id, name: g.name }))
+        ? (allGroups as Array<{ id: string; name: string; external_ids_enabled?: boolean }>).map(g => ({
+            id: g.id,
+            name: g.name,
+            external_ids_enabled: g.external_ids_enabled === true,
+          }))
         : [];
 
       collections.value = available;

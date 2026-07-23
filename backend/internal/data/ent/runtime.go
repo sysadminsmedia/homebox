@@ -205,24 +205,28 @@ func init() {
 	entityDescManufacturer := entityFields[9].Descriptor()
 	// entity.ManufacturerValidator is a validator for the "manufacturer" field. It is called by the builders before save.
 	entity.ManufacturerValidator = entityDescManufacturer.Validators[0].(func(string) error)
+	// entityDescExternalID is the schema descriptor for external_id field.
+	entityDescExternalID := entityFields[10].Descriptor()
+	// entity.ExternalIDValidator is a validator for the "external_id" field. It is called by the builders before save.
+	entity.ExternalIDValidator = entityDescExternalID.Validators[0].(func(string) error)
 	// entityDescLifetimeWarranty is the schema descriptor for lifetime_warranty field.
-	entityDescLifetimeWarranty := entityFields[10].Descriptor()
+	entityDescLifetimeWarranty := entityFields[11].Descriptor()
 	// entity.DefaultLifetimeWarranty holds the default value on creation for the lifetime_warranty field.
 	entity.DefaultLifetimeWarranty = entityDescLifetimeWarranty.Default.(bool)
 	// entityDescWarrantyDetails is the schema descriptor for warranty_details field.
-	entityDescWarrantyDetails := entityFields[12].Descriptor()
+	entityDescWarrantyDetails := entityFields[13].Descriptor()
 	// entity.WarrantyDetailsValidator is a validator for the "warranty_details" field. It is called by the builders before save.
 	entity.WarrantyDetailsValidator = entityDescWarrantyDetails.Validators[0].(func(string) error)
 	// entityDescPurchasePrice is the schema descriptor for purchase_price field.
-	entityDescPurchasePrice := entityFields[15].Descriptor()
+	entityDescPurchasePrice := entityFields[16].Descriptor()
 	// entity.DefaultPurchasePrice holds the default value on creation for the purchase_price field.
 	entity.DefaultPurchasePrice = entityDescPurchasePrice.Default.(float64)
 	// entityDescSoldPrice is the schema descriptor for sold_price field.
-	entityDescSoldPrice := entityFields[18].Descriptor()
+	entityDescSoldPrice := entityFields[19].Descriptor()
 	// entity.DefaultSoldPrice holds the default value on creation for the sold_price field.
 	entity.DefaultSoldPrice = entityDescSoldPrice.Default.(float64)
 	// entityDescSoldNotes is the schema descriptor for sold_notes field.
-	entityDescSoldNotes := entityFields[19].Descriptor()
+	entityDescSoldNotes := entityFields[20].Descriptor()
 	// entity.SoldNotesValidator is a validator for the "sold_notes" field. It is called by the builders before save.
 	entity.SoldNotesValidator = entityDescSoldNotes.Validators[0].(func(string) error)
 	// entityDescID is the schema descriptor for id field.
@@ -494,6 +498,10 @@ func init() {
 	groupDescCurrency := groupFields[1].Descriptor()
 	// group.DefaultCurrency holds the default value on creation for the currency field.
 	group.DefaultCurrency = groupDescCurrency.Default.(string)
+	// groupDescExternalIdsEnabled is the schema descriptor for external_ids_enabled field.
+	groupDescExternalIdsEnabled := groupFields[2].Descriptor()
+	// group.DefaultExternalIdsEnabled holds the default value on creation for the external_ids_enabled field.
+	group.DefaultExternalIdsEnabled = groupDescExternalIdsEnabled.Default.(bool)
 	// groupDescID is the schema descriptor for id field.
 	groupDescID := groupMixinFields0[0].Descriptor()
 	// group.DefaultID holds the default value on creation for the id field.

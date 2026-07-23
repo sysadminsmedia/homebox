@@ -56,6 +56,7 @@
 
   const route = useRoute();
   const api = useUserApi();
+  const { selectedCollection } = useCollections();
 
   const itemId = computed<string>(() => route.params.id as string);
   const preferences = useViewPreferences();
@@ -229,6 +230,15 @@
         text: item.value?.serialNumber,
         copyable: true,
       },
+      ...(selectedCollection.value?.external_ids_enabled
+        ? [
+            {
+              name: "items.external_id",
+              text: item.value?.externalId,
+              copyable: true,
+            },
+          ]
+        : []),
       {
         name: "items.model_number",
         text: item.value?.modelNumber,

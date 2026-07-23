@@ -259,6 +259,26 @@ func (_u *EntityUpdate) ClearManufacturer() *EntityUpdate {
 	return _u
 }
 
+// SetExternalID sets the "external_id" field.
+func (_u *EntityUpdate) SetExternalID(v string) *EntityUpdate {
+	_u.mutation.SetExternalID(v)
+	return _u
+}
+
+// SetNillableExternalID sets the "external_id" field if the given value is not nil.
+func (_u *EntityUpdate) SetNillableExternalID(v *string) *EntityUpdate {
+	if v != nil {
+		_u.SetExternalID(*v)
+	}
+	return _u
+}
+
+// ClearExternalID clears the value of the "external_id" field.
+func (_u *EntityUpdate) ClearExternalID() *EntityUpdate {
+	_u.mutation.ClearExternalID()
+	return _u
+}
+
 // SetLifetimeWarranty sets the "lifetime_warranty" field.
 func (_u *EntityUpdate) SetLifetimeWarranty(v bool) *EntityUpdate {
 	_u.mutation.SetLifetimeWarranty(v)
@@ -772,6 +792,11 @@ func (_u *EntityUpdate) check() error {
 			return &ValidationError{Name: "manufacturer", err: fmt.Errorf(`ent: validator failed for field "Entity.manufacturer": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.ExternalID(); ok {
+		if err := entity.ExternalIDValidator(v); err != nil {
+			return &ValidationError{Name: "external_id", err: fmt.Errorf(`ent: validator failed for field "Entity.external_id": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.WarrantyDetails(); ok {
 		if err := entity.WarrantyDetailsValidator(v); err != nil {
 			return &ValidationError{Name: "warranty_details", err: fmt.Errorf(`ent: validator failed for field "Entity.warranty_details": %w`, err)}
@@ -865,6 +890,12 @@ func (_u *EntityUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.ManufacturerCleared() {
 		_spec.ClearField(entity.FieldManufacturer, field.TypeString)
+	}
+	if value, ok := _u.mutation.ExternalID(); ok {
+		_spec.SetField(entity.FieldExternalID, field.TypeString, value)
+	}
+	if _u.mutation.ExternalIDCleared() {
+		_spec.ClearField(entity.FieldExternalID, field.TypeString)
 	}
 	if value, ok := _u.mutation.LifetimeWarranty(); ok {
 		_spec.SetField(entity.FieldLifetimeWarranty, field.TypeBool, value)
@@ -1479,6 +1510,26 @@ func (_u *EntityUpdateOne) ClearManufacturer() *EntityUpdateOne {
 	return _u
 }
 
+// SetExternalID sets the "external_id" field.
+func (_u *EntityUpdateOne) SetExternalID(v string) *EntityUpdateOne {
+	_u.mutation.SetExternalID(v)
+	return _u
+}
+
+// SetNillableExternalID sets the "external_id" field if the given value is not nil.
+func (_u *EntityUpdateOne) SetNillableExternalID(v *string) *EntityUpdateOne {
+	if v != nil {
+		_u.SetExternalID(*v)
+	}
+	return _u
+}
+
+// ClearExternalID clears the value of the "external_id" field.
+func (_u *EntityUpdateOne) ClearExternalID() *EntityUpdateOne {
+	_u.mutation.ClearExternalID()
+	return _u
+}
+
 // SetLifetimeWarranty sets the "lifetime_warranty" field.
 func (_u *EntityUpdateOne) SetLifetimeWarranty(v bool) *EntityUpdateOne {
 	_u.mutation.SetLifetimeWarranty(v)
@@ -2005,6 +2056,11 @@ func (_u *EntityUpdateOne) check() error {
 			return &ValidationError{Name: "manufacturer", err: fmt.Errorf(`ent: validator failed for field "Entity.manufacturer": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.ExternalID(); ok {
+		if err := entity.ExternalIDValidator(v); err != nil {
+			return &ValidationError{Name: "external_id", err: fmt.Errorf(`ent: validator failed for field "Entity.external_id": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.WarrantyDetails(); ok {
 		if err := entity.WarrantyDetailsValidator(v); err != nil {
 			return &ValidationError{Name: "warranty_details", err: fmt.Errorf(`ent: validator failed for field "Entity.warranty_details": %w`, err)}
@@ -2115,6 +2171,12 @@ func (_u *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err erro
 	}
 	if _u.mutation.ManufacturerCleared() {
 		_spec.ClearField(entity.FieldManufacturer, field.TypeString)
+	}
+	if value, ok := _u.mutation.ExternalID(); ok {
+		_spec.SetField(entity.FieldExternalID, field.TypeString, value)
+	}
+	if _u.mutation.ExternalIDCleared() {
+		_spec.ClearField(entity.FieldExternalID, field.TypeString)
 	}
 	if value, ok := _u.mutation.LifetimeWarranty(); ok {
 		_spec.SetField(entity.FieldLifetimeWarranty, field.TypeBool, value)
