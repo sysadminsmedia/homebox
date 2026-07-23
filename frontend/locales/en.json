@@ -624,6 +624,7 @@
         "purchase_price": "Purchase Price",
         "purchased_from": "Purchased From",
         "quantity": "Quantity",
+        "external_id":"External Id",
         "query_id": "Querying Asset ID Number: { id }",
         "receipt": "Receipt",
         "receipts": "Receipts",
