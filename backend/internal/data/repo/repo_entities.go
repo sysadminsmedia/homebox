@@ -111,15 +111,15 @@ type (
 		PurchaseDate types.Date `json:"purchaseDate"`
 		// Sold
 		SoldDate    types.Date `json:"soldDate"`
-		Name        string     `json:"name"                     validate:"required,min=1,max=255"`
-		Description string     `json:"description"              validate:"max=1000"`
+		Name        string     `json:"name"        validate:"required,min=1,max=255"`
+		Description string     `json:"description" validate:"max=1000"`
 		// Identifications
 		SerialNumber    string `json:"serialNumber"`
 		ModelNumber     string `json:"modelNumber"`
 		Manufacturer    string `json:"manufacturer"`
 		WarrantyDetails string `json:"warrantyDetails"`
-		PurchaseFrom    string `json:"purchaseFrom"  validate:"max=255"`
-		SoldTo          string `json:"soldTo"    validate:"max=255"`
+		PurchaseFrom    string `json:"purchaseFrom"    validate:"max=255"`
+		SoldTo          string `json:"soldTo"          validate:"max=255"`
 		SoldNotes       string `json:"soldNotes"`
 		// Extras
 		Notes string `json:"notes"`
@@ -128,8 +128,8 @@ type (
 		Fields                   []EntityFieldData `json:"fields"`
 		AssetID                  AssetID           `json:"assetId"                  swaggertype:"string"`
 		Quantity                 float64           `json:"quantity"`
-		PurchasePrice            float64           `json:"purchasePrice" extensions:"x-nullable,x-omitempty"`
-		SoldPrice                float64           `json:"soldPrice" extensions:"x-nullable,x-omitempty"`
+		PurchasePrice            float64           `json:"purchasePrice"            extensions:"x-nullable,x-omitempty"`
+		SoldPrice                float64           `json:"soldPrice"                extensions:"x-nullable,x-omitempty"`
 		ParentID                 uuid.UUID         `json:"parentId"                 extensions:"x-nullable,x-omitempty"`
 		ID                       uuid.UUID         `json:"id"`
 		EntityTypeID             uuid.UUID         `json:"entityTypeId"`

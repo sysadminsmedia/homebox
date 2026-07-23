@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -33,12 +32,12 @@ func TestLogin_EndToEnd(t *testing.T) {
 	t.Run("wrong password is rejected with generic error", func(t *testing.T) {
 		_, err := tSvc.User.Login(ctx, reg.Email, "wrong-password", false)
 		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrorInvalidLogin))
+		assert.ErrorIs(t, err, ErrorInvalidLogin)
 	})
 
 	t.Run("nonexistent user is rejected with the same generic error", func(t *testing.T) {
 		_, err := tSvc.User.Login(ctx, "does-not-exist@example.test", "any-password", false)
 		require.Error(t, err)
-		assert.True(t, errors.Is(err, ErrorInvalidLogin))
+		assert.ErrorIs(t, err, ErrorInvalidLogin)
 	})
 }
