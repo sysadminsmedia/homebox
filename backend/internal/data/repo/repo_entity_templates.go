@@ -44,15 +44,15 @@ type (
 	EntityTemplateCreate struct {
 		// Default values for entities
 		DefaultQuantity        *float64     `json:"defaultQuantity,omitempty"        extensions:"x-nullable"`
-		DefaultName            *string      `json:"defaultName,omitempty"            validate:"omitempty,max=255"  extensions:"x-nullable"`
-		DefaultDescription     *string      `json:"defaultDescription,omitempty"     validate:"omitempty,max=1000" extensions:"x-nullable"`
-		DefaultManufacturer    *string      `json:"defaultManufacturer,omitempty"    validate:"omitempty,max=255"  extensions:"x-nullable"`
-		DefaultModelNumber     *string      `json:"defaultModelNumber,omitempty"     validate:"omitempty,max=255"  extensions:"x-nullable"`
-		DefaultWarrantyDetails *string      `json:"defaultWarrantyDetails,omitempty" validate:"omitempty,max=1000" extensions:"x-nullable"`
-		DefaultTagIDs          *[]uuid.UUID `json:"defaultTagIds,omitempty"     extensions:"x-nullable"`
-		Name                   string       `json:"name"        validate:"required,min=1,max=255"`
-		Description            string       `json:"description" validate:"max=1000"`
-		Notes                  string       `json:"notes"       validate:"max=1000"`
+		DefaultName            *string      `json:"defaultName,omitempty"            validate:"omitempty,max=255"      extensions:"x-nullable"`
+		DefaultDescription     *string      `json:"defaultDescription,omitempty"     validate:"omitempty,max=1000"     extensions:"x-nullable"`
+		DefaultManufacturer    *string      `json:"defaultManufacturer,omitempty"    validate:"omitempty,max=255"      extensions:"x-nullable"`
+		DefaultModelNumber     *string      `json:"defaultModelNumber,omitempty"     validate:"omitempty,max=255"      extensions:"x-nullable"`
+		DefaultWarrantyDetails *string      `json:"defaultWarrantyDetails,omitempty" validate:"omitempty,max=1000"     extensions:"x-nullable"`
+		DefaultTagIDs          *[]uuid.UUID `json:"defaultTagIds,omitempty"          extensions:"x-nullable"`
+		Name                   string       `json:"name"                             validate:"required,min=1,max=255"`
+		Description            string       `json:"description"                      validate:"max=1000"`
+		Notes                  string       `json:"notes"                            validate:"max=1000"`
 		// Custom fields
 		Fields []TemplateField `json:"fields"`
 		// Default location and tags
@@ -68,15 +68,15 @@ type (
 	EntityTemplateUpdate struct {
 		// Default values for entities
 		DefaultQuantity        *float64     `json:"defaultQuantity,omitempty"        extensions:"x-nullable"`
-		DefaultName            *string      `json:"defaultName,omitempty"            validate:"omitempty,max=255"  extensions:"x-nullable"`
-		DefaultDescription     *string      `json:"defaultDescription,omitempty"     validate:"omitempty,max=1000" extensions:"x-nullable"`
-		DefaultManufacturer    *string      `json:"defaultManufacturer,omitempty"    validate:"omitempty,max=255"  extensions:"x-nullable"`
-		DefaultModelNumber     *string      `json:"defaultModelNumber,omitempty"     validate:"omitempty,max=255"  extensions:"x-nullable"`
-		DefaultWarrantyDetails *string      `json:"defaultWarrantyDetails,omitempty" validate:"omitempty,max=1000" extensions:"x-nullable"`
-		DefaultTagIDs          *[]uuid.UUID `json:"defaultTagIds,omitempty"     extensions:"x-nullable"`
-		Name                   string       `json:"name"        validate:"required,min=1,max=255"`
-		Description            string       `json:"description" validate:"max=1000"`
-		Notes                  string       `json:"notes"       validate:"max=1000"`
+		DefaultName            *string      `json:"defaultName,omitempty"            validate:"omitempty,max=255"      extensions:"x-nullable"`
+		DefaultDescription     *string      `json:"defaultDescription,omitempty"     validate:"omitempty,max=1000"     extensions:"x-nullable"`
+		DefaultManufacturer    *string      `json:"defaultManufacturer,omitempty"    validate:"omitempty,max=255"      extensions:"x-nullable"`
+		DefaultModelNumber     *string      `json:"defaultModelNumber,omitempty"     validate:"omitempty,max=255"      extensions:"x-nullable"`
+		DefaultWarrantyDetails *string      `json:"defaultWarrantyDetails,omitempty" validate:"omitempty,max=1000"     extensions:"x-nullable"`
+		DefaultTagIDs          *[]uuid.UUID `json:"defaultTagIds,omitempty"          extensions:"x-nullable"`
+		Name                   string       `json:"name"                             validate:"required,min=1,max=255"`
+		Description            string       `json:"description"                      validate:"max=1000"`
+		Notes                  string       `json:"notes"                            validate:"max=1000"`
 		// Custom fields
 		Fields []TemplateField `json:"fields"`
 		ID     uuid.UUID       `json:"id"`
