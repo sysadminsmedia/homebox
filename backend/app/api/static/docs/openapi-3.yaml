@@ -216,7 +216,7 @@ paths:
             "*/*":
               schema:
                 type: string
-  "/v1/entities/external/{id}":
+  "/v1/entities/external/{external_id}":
     get:
       security:
         - Bearer: []
@@ -225,7 +225,7 @@ paths:
       summary: Get Entity by External ID
       parameters:
         - description: External ID
-          name: id
+          name: external_id
           in: path
           required: true
           schema:

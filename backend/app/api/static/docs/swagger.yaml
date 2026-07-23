@@ -2937,12 +2937,12 @@ paths:
       summary: Export Entities
       tags:
       - Entities
-  /v1/entities/external/{id}:
+  /v1/entities/external/{external_id}:
     get:
       parameters:
       - description: External ID
         in: path
-        name: id
+        name: external_id
         required: true
         type: string
       produces:

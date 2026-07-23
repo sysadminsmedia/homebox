@@ -348,7 +348,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/entities/external/{id}": {
+        "/v1/entities/external/{external_id}": {
             "get": {
                 "security": [
                     {
@@ -366,7 +366,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "External ID",
-                        "name": "id",
+                        "name": "external_id",
                         "in": "path",
                         "required": true
                     }
