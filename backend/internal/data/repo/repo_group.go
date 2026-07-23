@@ -28,7 +28,7 @@ type GroupRepository struct {
 	attachments      *AttachmentRepo
 }
 
-func NewGroupRepository(db *ent.Client) *GroupRepository {
+func NewGroupRepository(db *ent.Client, attachments *AttachmentRepo) *GroupRepository {
 	gmap := func(g *ent.Group) Group {
 		return Group{
 			ID:        g.ID,
@@ -52,6 +52,7 @@ func NewGroupRepository(db *ent.Client) *GroupRepository {
 		db:               db,
 		groupMapper:      gmap,
 		invitationMapper: imap,
+		attachments:      attachments,
 	}
 }
 
@@ -325,28 +326,29 @@ func (r *GroupRepository) GroupByID(ctx context.Context, id uuid.UUID) (Group, e
 }
 
 func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) error {
-	tx, err := r.db.Tx(ctx)
-	if err != nil {
-		return err
-	}
-
-	itm, err := tx.Entity.Query().
+	// Delete attachments (and their blobs) before opening the tx: AttachmentRepo.Delete
+	// runs on the base connection, so calling it while the tx holds the write lock
+	// deadlocks on single-writer SQLite. The rows also cascade with the entity delete.
+	itm, err := r.db.Entity.Query().
 		Where(entity.HasGroupWith(group.ID(id))).
-		WithGroup().
 		WithAttachments().
 		All(ctx)
 	if err != nil {
 		return err
 	}
 
-	// Delete all attachments (and their files) before deleting the entities
 	for _, it := range itm {
 		for _, att := range it.Edges.Attachments {
 			if err := r.attachments.Delete(ctx, id, att.ID); err != nil {
-				log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during entity deletion")
-				// Continue with other attachments even if one fails
+				log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during group deletion")
+				// Continue with other attachments even if one fails.
 			}
 		}
+	}
+
+	tx, err := r.db.Tx(ctx)
+	if err != nil {
+		return err
 	}
 
 	// Delete all entities from the database

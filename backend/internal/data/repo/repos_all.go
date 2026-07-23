@@ -31,7 +31,7 @@ func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubC
 		AuthTokens:          &TokenRepository{db},
 		PasswordResetTokens: &PasswordResetTokenRepository{db},
 		APIKeys:             NewAPIKeyRepository(db),
-		Groups:              NewGroupRepository(db),
+		Groups:              NewGroupRepository(db, attachments),
 		Entities:            &EntityRepository{db, bus, attachments},
 		EntityTypes:         &EntityTypeRepository{db, bus},
 		EntityTemplates:     &EntityTemplatesRepository{db, bus},
