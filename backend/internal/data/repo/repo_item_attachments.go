@@ -322,7 +322,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 
 	if typ == attachment.TypePhoto && primary {
 		bldr = bldr.SetPrimary(true)
-		err := r.db.Attachment.Update().
+		err := tx.Attachment.Update().
 			Where(
 				attachment.HasEntityWith(entity.ID(itemID)),
 				attachment.IDNEQ(bldrId),
