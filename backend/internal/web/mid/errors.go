@@ -25,7 +25,7 @@ func Errors(log zerolog.Logger) errchain.ErrorHandler {
 				var resp ErrorResponse
 				var code int
 
-				traceID := r.Context().Value(middleware.RequestIDKey).(string)
+				traceID, _ := r.Context().Value(middleware.RequestIDKey).(string)
 				log.Err(err).
 					Ctx(r.Context()).
 					Stack().
