@@ -326,29 +326,34 @@ func (r *GroupRepository) GroupByID(ctx context.Context, id uuid.UUID) (Group, e
 }
 
 func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) error {
-	// Delete attachments (and their blobs) before opening the tx: AttachmentRepo.Delete
-	// runs on the base connection, so calling it while the tx holds the write lock
-	// deadlocks on single-writer SQLite. The rows also cascade with the entity delete.
-	itm, err := r.db.Entity.Query().
+	tx, err := r.db.Tx(ctx)
+	if err != nil {
+		return err
+	}
+
+	itm, err := tx.Entity.Query().
 		Where(entity.HasGroupWith(group.ID(id))).
 		WithAttachments().
 		All(ctx)
 	if err != nil {
+		if rerr := tx.Rollback(); rerr != nil {
+			log.Error().Err(rerr).Msg("failed to rollback transaction")
+		}
 		return err
 	}
 
+	// Keep attachment row operations on the same transaction.
+	attachments := *r.attachments
+	attachments.db = tx.Client()
+
+	// Delete all attachments (and their files) before deleting the entities.
 	for _, it := range itm {
 		for _, att := range it.Edges.Attachments {
-			if err := r.attachments.Delete(ctx, id, att.ID); err != nil {
+			if err := attachments.Delete(ctx, id, att.ID); err != nil {
 				log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during group deletion")
 				// Continue with other attachments even if one fails.
 			}
 		}
-	}
-
-	tx, err := r.db.Tx(ctx)
-	if err != nil {
-		return err
 	}
 
 	// Delete all entities from the database
