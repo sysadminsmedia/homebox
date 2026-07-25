@@ -15,7 +15,10 @@ func SecurityHeaders() func(http.Handler) http.Handler {
 			w.Header().Set("Content-Origin-Embedder-Policy", "require-corp")
 			w.Header().Set("Content-Origin-Opener-Policy", "same-origin")
 			w.Header().Set("Content-Origin-Resource-Policy", "same-site")
-			w.Header().Set("Permissions-Policy", "accelerometer=(), autoplay=(), camera=(self), cross-origin-isolated=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=(), clipboard-read=(), clipboard-write=(self), gamepad=(), hid=(), idle-detection=(), interest-cohort=(), serial=(), unload=()")
+			// clipboard-read is granted to self so the "paste image" button can pull an
+			// image out of the clipboard. The browser still requires a user gesture and
+			// its own permission prompt, and cross-origin frames remain blocked.
+			w.Header().Set("Permissions-Policy", "accelerometer=(), autoplay=(), camera=(self), cross-origin-isolated=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(self), usb=(), web-share=(), xr-spatial-tracking=(), clipboard-read=(self), clipboard-write=(self), gamepad=(), hid=(), idle-detection=(), interest-cohort=(), serial=(), unload=()")
 			w.Header().Set("Referrer-Policy", "no-referrer")
 			w.Header().Set("X-Content-Type-Options", "nosniff")
 			w.Header().Set("X-Frame-Options", "DENY")
