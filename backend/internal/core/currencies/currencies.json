@@ -1,5 +1,12 @@
 [
     {
+        "code": "RUB",
+        "local": "Abkhazia",
+        "symbol": "₽",
+        "name": "Russian ruble",
+        "decimals": 2
+    },
+    {
         "code": "AFN",
         "local": "Afghanistan",
         "symbol": "؋",
@@ -238,10 +245,10 @@
         "decimals": 2
     },
     {
-        "code": "BGN",
+        "code": "EUR",
         "local": "Bulgaria",
-        "symbol": "лв",
-        "name": "Bulgarian lev",
+        "symbol": "€",
+        "name": "Euro",
         "decimals": 2
     },
     {
@@ -257,6 +264,13 @@
         "symbol": "Fr",
         "name": "Burundian franc",
         "decimals": 0
+    },
+    {
+        "code": "CVE",
+        "local": "Cabo Verde",
+        "symbol": "Esc",
+        "name": "Cape Verdean escudo",
+        "decimals": 2
     },
     {
         "code": "KHR",
@@ -284,13 +298,6 @@
         "local": "Canada",
         "symbol": "$",
         "name": "Canadian dollar",
-        "decimals": 2
-    },
-    {
-        "code": "CVE",
-        "local": "Cape Verde",
-        "symbol": "Esc",
-        "name": "Cape Verdean escudo",
         "decimals": 2
     },
     {
@@ -361,6 +368,13 @@
         "local": "Comoros",
         "symbol": "Fr",
         "name": "Comorian franc",
+        "decimals": 0
+    },
+    {
+        "code": "XAF",
+        "local": "Congo",
+        "symbol": "Fr",
+        "name": "Central African CFA franc",
         "decimals": 0
     },
     {
@@ -456,7 +470,7 @@
     },
     {
         "code": "CDF",
-        "local": "DR Congo",
+        "local": "DRC",
         "symbol": "FC",
         "name": "Congolese franc",
         "decimals": 2
@@ -1218,6 +1232,13 @@
         "decimals": 2
     },
     {
+        "code": "TRY",
+        "local": "Northern Cyprus",
+        "symbol": "₺",
+        "name": "Turkish lira",
+        "decimals": 2
+    },
+    {
         "code": "USD",
         "local": "Northern Mariana Islands",
         "symbol": "$",
@@ -1349,13 +1370,6 @@
         "symbol": "ر.ق",
         "name": "Qatari riyal",
         "decimals": 2
-    },
-    {
-        "code": "XAF",
-        "local": "Republic of the Congo",
-        "symbol": "Fr",
-        "name": "Central African CFA franc",
-        "decimals": 0
     },
     {
         "code": "RON",
@@ -1533,6 +1547,13 @@
         "decimals": 2
     },
     {
+        "code": "SLSH",
+        "local": "Somaliland",
+        "symbol": "Sl.Sh",
+        "name": "Somaliland shilling",
+        "decimals": 2
+    },
+    {
         "code": "ZAR",
         "local": "South Africa",
         "symbol": "R",
@@ -1552,6 +1573,13 @@
         "symbol": "₩",
         "name": "South Korean won",
         "decimals": 0
+    },
+    {
+        "code": "RUB",
+        "local": "South Ossetia",
+        "symbol": "₽",
+        "name": "Russian ruble",
+        "decimals": 2
     },
     {
         "code": "SSP",
