@@ -654,7 +654,7 @@
         "code": "DKK",
         "local": "Greenland",
         "symbol": "kr.",
-        "name": "Krone",
+        "name": "Danish krone",
         "decimals": 2
     },
     {
@@ -1620,7 +1620,7 @@
         "code": "NOK",
         "local": "Svalbard and Jan Mayen",
         "symbol": "kr",
-        "name": "Krone",
+        "name": "Norwegian krone",
         "decimals": 2
     },
     {
