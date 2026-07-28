@@ -306,6 +306,7 @@ func (ctrl *V1Controller) HandleEntityUpdate() errchain.HandlerFunc {
 			attribute.String("entity.id", ID.String()),
 			attribute.String("entity.name", body.Name),
 			attribute.Float64("entity.quantity", body.Quantity),
+			attribute.String("entity.external_id", body.ExternalID),
 			attribute.Bool("entity.archived", body.Archived),
 			attribute.Bool("entity.parent_id.set", body.ParentID != uuid.Nil),
 			attribute.Int("entity.tags.count", len(body.TagIDs)),

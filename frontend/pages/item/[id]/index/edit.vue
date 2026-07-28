@@ -42,6 +42,7 @@
     middleware: ["auth"],
   });
 
+  const { selectedCollection } = useCollections();
   const route = useRoute();
   const api = useUserApi();
   const preferences = useViewPreferences();
@@ -132,6 +133,7 @@
       assetId: item.value.assetId,
       purchasePrice,
       soldPrice,
+      external_id: item.value.external_id,
       // Date-only fields stay as YYYY-MM-DD strings — see types.Date on the
       // backend. The form/picker hold strings; sending the spread above is
       // sufficient.
@@ -190,66 +192,83 @@
 
   type FormField = TextFormField | BoolFormField | DateFormField | NumberFormField;
 
-  const mainFields: FormField[] = [
-    {
-      type: "text",
-      label: "items.name",
-      ref: "name",
-      maxLength: 255,
-      minLength: 1,
-    },
-    {
-      type: "number",
-      label: "items.quantity",
-      ref: "quantity",
-      min: 0,
-    },
-    {
-      type: "markdown",
-      label: "items.description",
-      ref: "description",
-      maxLength: 1000,
-    },
-    {
-      type: "text",
-      label: "items.serial_number",
-      ref: "serialNumber",
-      maxLength: 255,
-    },
-    {
-      type: "text",
-      label: "items.model_number",
-      ref: "modelNumber",
-      maxLength: 255,
-    },
-    {
-      type: "text",
-      label: "items.manufacturer",
-      ref: "manufacturer",
-      maxLength: 255,
-    },
-    {
-      type: "markdown",
-      label: "items.notes",
-      ref: "notes",
-      maxLength: 1000,
-    },
-    {
-      type: "checkbox",
-      label: "items.insured",
-      ref: "insured",
-    },
-    {
-      type: "checkbox",
-      label: "items.archived",
-      ref: "archived",
-    },
-    {
-      type: "text",
-      label: "items.asset_id",
-      ref: "assetId",
-    },
-  ];
+  const mainFields = computed<FormField[]>(() => {
+    const fields: FormField[] = [
+      {
+        type: "text",
+        label: "items.name",
+        ref: "name",
+        maxLength: 255,
+        minLength: 1,
+      },
+      {
+        type: "number",
+        label: "items.quantity",
+        ref: "quantity",
+        min: 0,
+      },
+      {
+        type: "markdown",
+        label: "items.description",
+        ref: "description",
+        maxLength: 1000,
+      },
+      {
+        type: "text",
+        label: "items.serial_number",
+        ref: "serialNumber",
+        maxLength: 255,
+      },
+    ];
+
+    // Conditionally inject External ID field based on collection settings
+    if (selectedCollection.value?.external_ids_enabled) {
+      fields.push({
+        type: "text",
+        label: "items.external_id", // Make sure this key exists in your i18n JSON
+        ref: "externalId",
+        maxLength: 255,
+      });
+    }
+
+    fields.push(
+      {
+        type: "text",
+        label: "items.model_number",
+        ref: "modelNumber",
+        maxLength: 255,
+      },
+      {
+        type: "text",
+        label: "items.manufacturer",
+        ref: "manufacturer",
+        maxLength: 255,
+      },
+      {
+        type: "markdown",
+        label: "items.notes",
+        ref: "notes",
+        maxLength: 1000,
+      },
+      {
+        type: "checkbox",
+        label: "items.insured",
+        ref: "insured",
+      },
+      {
+        type: "checkbox",
+        label: "items.archived",
+        ref: "archived",
+      },
+      {
+        type: "text",
+        label: "items.asset_id",
+        ref: "assetId",
+      }
+    );
+
+    return fields;
+  });
 
   const purchaseFields: FormField[] = [
     {
