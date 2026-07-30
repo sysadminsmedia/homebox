@@ -750,7 +750,7 @@ export interface EntityCreate {
   description: string;
   entityTypeId: string;
   /** @maxLength 255 */
-  externalId?: string | null;
+  externalID?: string | null;
   /** @maxLength 255 */
   manufacturer?: string | null;
   /**
@@ -797,7 +797,7 @@ export interface EntityOut {
   createdAt: Date | string;
   description: string;
   entityType?: EntityTypeSummary | null;
-  externalId: string;
+  externalID: string;
   fields: EntityFieldData[];
   id: string;
   imageId?: string | null;
@@ -842,6 +842,7 @@ export interface EntityOut {
 
 export interface EntityPatch {
   entityTypeId?: string | null;
+  externalID: string;
   id: string;
   parentId?: string | null;
   quantity?: number | null;
@@ -861,6 +862,7 @@ export interface EntitySummary {
   createdAt: Date | string;
   description: string;
   entityType?: EntityTypeSummary | null;
+  externalID: string;
   id: string;
   imageId?: string | null;
   insured: boolean;
@@ -1017,6 +1019,7 @@ export interface EntityUpdate {
   /** @maxLength 1000 */
   description: string;
   entityTypeId: string;
+  externalID: string;
   fields: EntityFieldData[];
   id: string;
   insured: boolean;
@@ -1373,6 +1376,7 @@ export interface EntityTemplateCreateItemRequest {
    * precedence; when empty the repository falls back to the group's default.
    */
   entityTypeId: string;
+  externalID: string;
   /**
    * @minLength 1
    * @maxLength 255

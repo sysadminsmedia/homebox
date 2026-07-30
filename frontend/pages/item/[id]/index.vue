@@ -1,9 +1,10 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
+  import type { ShallowRef } from "vue";
   import { toast } from "@/components/ui/sonner";
   import type { AnyDetail, Detail, Details } from "~~/components/global/DetailsSection/types";
   import { filterZeroValues } from "~~/components/global/DetailsSection/types";
-  import type { ItemAttachment } from "~~/lib/api/types/data-contracts";
+  import type { ItemAttachment, EntityOut, EntitySummary, TemplateField } from "~~/lib/api/types/data-contracts";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPlus from "~icons/mdi/plus";
   import MdiMinus from "~icons/mdi/minus";
@@ -72,15 +73,24 @@
     return route.fullPath.split("/").at(-1) !== itemId.value;
   });
 
-  const { data: item, refresh } = useAsyncData(itemId.value, async () => {
-    const { data, error } = await api.items.get(itemId.value);
-    if (error) {
-      toast.error(t("items.toast.failed_load_item"));
-      navigateTo("/home");
-      return;
+  const { data: rawItem, refresh } = useAsyncData(
+    itemId.value,
+    async () => {
+      const { data, error } = await api.items.get(itemId.value);
+
+      if (error || !data) {
+        toast.error(t("items.toast.failed_load_item"));
+        navigateTo("/home");
+        return null;
+      }
+
+      return data as EntityOut;
+    },
+    {
+      default: () => null,
     }
-    return data;
-  });
+  );
+  const item = rawItem as unknown as ShallowRef<EntityOut | null>;
   onMounted(() => {
     refresh();
   });
@@ -108,6 +118,7 @@
     const resp = await api.items.patch(item.value.id, {
       id: item.value.id,
       quantity: newQuantity,
+      externalID: item.value.externalID,
     });
 
     if (resp.error) {
@@ -234,7 +245,7 @@
         ? [
             {
               name: "items.external_id",
-              text: item.value?.externalId,
+              text: item.value?.externalID || "",
               copyable: true,
             },
           ]
@@ -502,7 +513,7 @@
     return resp.data;
   });
 
-  const { data: items, refresh: refreshItemList } = useAsyncData(
+  const { data: rawItems, refresh: refreshItemList } = useAsyncData(
     () => itemId.value + "_item_list",
     async () => {
       if (!itemId.value) {
@@ -522,8 +533,11 @@
     },
     {
       watch: [itemId],
+      default: () => [],
     }
   );
+
+  const items = rawItems as unknown as ShallowRef<EntitySummary[]>;
 
   async function duplicateItem(settings?: DuplicateSettings) {
     if (!item.value) {
@@ -609,12 +623,17 @@
       ),
       includePurchaseFields: !!(item.value.purchaseFrom || item.value.purchasePrice || item.value.purchaseDate),
       includeSoldFields: !!(item.value.soldTo || item.value.soldPrice || item.value.soldDate),
-      fields: item.value.fields.map(field => ({
-        id: NIL_UUID,
-        name: field.name,
-        type: "text",
-        textValue: field.textValue || "",
-      })),
+      fields: item.value.fields.map(
+        field =>
+          ({
+            id: NIL_UUID,
+            name: field.name,
+            type: "text",
+            textValue: field.textValue || "",
+            numberValue: field.numberValue || 0,
+            booleanValue: field.booleanValue || false,
+          }) as TemplateField
+      ),
     };
 
     const { data, error } = await api.templates.create(templateData);

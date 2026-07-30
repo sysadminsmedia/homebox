@@ -261,6 +261,7 @@
     EntityTemplateSummary,
     EntityOut,
     EntityTypeSummary,
+    EntityTemplateCreateItemRequest,
   } from "~~/lib/api/types/data-contracts";
   import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
@@ -665,13 +666,15 @@
       error = result.error;
       data = result.data;
     } else if (templateData.value) {
+      console.log("crea " + form.externalId);
       // If a template is selected, use the template creation endpoint
-      const templateRequest = {
+      const templateRequest: EntityTemplateCreateItemRequest = {
         name: form.name,
         description: form.description,
-        parentId: form.location.id as string,
+        parentId: form.location?.id as string,
         tagIds: form.tags,
         quantity: form.quantity,
+        externalID: form.externalId,
         entityTypeId: selectedEntityType.value?.id || "",
       };
 
@@ -681,10 +684,10 @@
     } else {
       // Normal item creation without template
       const out: EntityCreate = {
-        parentId: form.parentId || (form.location.id as string),
+        parentId: form.parentId || (form.location?.id as string),
         name: form.name,
         quantity: form.quantity,
-        externalId: form.externalId,
+        externalID: form.externalId,
         description: form.description,
         manufacturer: form.manufacturer,
         modelNumber: form.modelNumber,

@@ -133,7 +133,7 @@
       assetId: item.value.assetId,
       purchasePrice,
       soldPrice,
-      external_id: item.value.external_id,
+      externalID: item.value.externalID,
       // Date-only fields stay as YYYY-MM-DD strings — see types.Date on the
       // backend. The form/picker hold strings; sending the spread above is
       // sufficient.
@@ -226,7 +226,7 @@
       fields.push({
         type: "text",
         label: "items.external_id", // Make sure this key exists in your i18n JSON
-        ref: "externalId",
+        ref: "externalID",
         maxLength: 255,
       });
     }
@@ -595,6 +595,7 @@
       tagIds: item.value.tagIds,
       assetId: item.value.assetId,
       syncChildEntityLocations: item.value.syncChildEntityLocations,
+      entityTypeId: item.value.entityType!.id,
     };
 
     const { error } = await api.items.update(itemId.value, payload);
