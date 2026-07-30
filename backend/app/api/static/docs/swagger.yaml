@@ -1107,7 +1107,7 @@ definitions:
         type: string
       entityTypeId:
         type: string
-      externalId:
+      externalID:
         maxLength: 255
         type: string
         x-nullable: true
@@ -1198,7 +1198,7 @@ definitions:
         - $ref: '#/definitions/repo.EntityTypeSummary'
         x-nullable: true
         x-omitempty: true
-      externalId:
+      externalID:
         type: string
       fields:
         items:
@@ -1288,6 +1288,8 @@ definitions:
         type: string
         x-nullable: true
         x-omitempty: true
+      externalID:
+        type: string
       id:
         type: string
       parentId:
@@ -1338,6 +1340,8 @@ definitions:
         - $ref: '#/definitions/repo.EntityTypeSummary'
         x-nullable: true
         x-omitempty: true
+      externalID:
+        type: string
       id:
         type: string
       imageId:
@@ -1625,6 +1629,8 @@ definitions:
         maxLength: 1000
         type: string
       entityTypeId:
+        type: string
+      externalID:
         type: string
       fields:
         items:
@@ -2244,6 +2250,8 @@ definitions:
         description: |-
           EntityTypeID is the entity type selected by the user. When set it takes
           precedence; when empty the repository falls back to the group's default.
+        type: string
+      externalID:
         type: string
       name:
         maxLength: 255

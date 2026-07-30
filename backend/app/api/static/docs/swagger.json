@@ -4832,7 +4832,7 @@
                 "entityTypeId": {
                     "type": "string"
                 },
-                "externalId": {
+                "externalID": {
                     "type": "string",
                     "maxLength": 255,
                     "x-nullable": true,
@@ -4956,7 +4956,7 @@
                     "x-nullable": true,
                     "x-omitempty": true
                 },
-                "externalId": {
+                "externalID": {
                     "type": "string"
                 },
                 "fields": {
@@ -5082,6 +5082,9 @@
                     "x-nullable": true,
                     "x-omitempty": true
                 },
+                "externalID": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -5154,6 +5157,9 @@
                     ],
                     "x-nullable": true,
                     "x-omitempty": true
+                },
+                "externalID": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "string"
@@ -5569,6 +5575,9 @@
                     "maxLength": 1000
                 },
                 "entityTypeId": {
+                    "type": "string"
+                },
+                "externalID": {
                     "type": "string"
                 },
                 "fields": {
@@ -6484,6 +6493,9 @@
                 },
                 "entityTypeId": {
                     "description": "EntityTypeID is the entity type selected by the user. When set it takes\nprecedence; when empty the repository falls back to the group's default.",
+                    "type": "string"
+                },
+                "externalID": {
                     "type": "string"
                 },
                 "name": {
