@@ -93,6 +93,10 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Post("/users/forgot-password", chain.ToHandlerFunc(v1Ctrl.HandleForgotPassword(), a.mwAuthRateLimit))
 		r.Post("/users/reset-password", chain.ToHandlerFunc(v1Ctrl.HandleResetPassword(), a.mwAuthRateLimit))
 
+		// Public found-item contact page (unauthenticated, rate limited)
+		r.Get("/found/{kind}/{id}", chain.ToHandlerFunc(v1Ctrl.HandleFoundGet(), a.mwAuthRateLimit))
+		r.Post("/found/{kind}/{id}/contact", chain.ToHandlerFunc(v1Ctrl.HandleFoundContact(), a.mwAuthRateLimit))
+
 		if a.conf.OIDC.Enabled {
 			r.Get("/users/login/oidc", chain.ToHandlerFunc(v1Ctrl.HandleOIDCLogin(), a.mwAuthRateLimit))
 			r.Get("/users/login/oidc/callback", chain.ToHandlerFunc(v1Ctrl.HandleOIDCCallback(), a.mwAuthRateLimit))
