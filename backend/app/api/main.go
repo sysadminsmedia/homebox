@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"runtime"
 	"strings"
@@ -267,27 +269,18 @@ func run(cfg *config.Config) error {
 			_ = httpserver.Shutdown(context.Background())
 		}()
 
-		listener, addrType, addrCfg, err := anyhttp.GetListener(cfg.Web.Host)
-		if err == nil {
+		listener, err := activationListener(cfg.Web.Host)
+		if err != nil {
+			return err
+		}
+		if listener != nil {
 			defer func() {
 				if err := listener.Close(); err != nil {
 					log.Error().Err(err).Msg("failed to close listener")
 				}
 			}()
-			switch addrType {
-			case anyhttp.SystemdFD:
-				sysdCfg := addrCfg.(*anyhttp.SysdConfig)
-				if sysdCfg.IdleTimeout != nil {
-					log.Error().Msg("idle timeout not yet supported. Please remove and try again")
-					return errors.New("idle timeout not yet supported. Please remove and try again")
-				}
-				fallthrough
-			case anyhttp.UnixSocket:
-				log.Info().Msgf("Server is running on %s", cfg.Web.Host)
-				return httpserver.Serve(listener)
-			}
-		} else {
-			log.Debug().Msgf("anyhttp error: %v", err)
+			log.Info().Msgf("Server is running on %s", cfg.Web.Host)
+			return httpserver.Serve(listener)
 		}
 		log.Info().Msgf("Server is running on %s:%s", cfg.Web.Host, cfg.Web.Port)
 		return httpserver.ListenAndServe()
@@ -320,6 +313,72 @@ func run(cfg *config.Config) error {
 	}
 
 	return runner.Start(context.Background())
+}
+
+// isActivationAddress reports whether host selects one of anyhttp's socket
+// activation modes. It mirrors anyhttp's own parsing — an address whose URL
+// path is "unix" or "sysd" — so the gate can never disagree with what
+// GetListener would have decided. Everything else, including the empty
+// default, is a plain TCP address we bind ourselves.
+func isActivationAddress(host string) bool {
+	u, err := url.Parse(host)
+	if err != nil {
+		// anyhttp treats an unparseable address as TCP; so do we.
+		return false
+	}
+	return u.Path == "unix" || u.Path == "sysd"
+}
+
+// activationListener returns a listener to Serve when Web.Host selects systemd
+// socket activation or a unix socket, and nil when the caller should bind
+// Web.Host:Web.Port itself.
+//
+// The gate runs *before* anyhttp is called, and that ordering is the whole
+// point. anyhttp.GetListener binds a TCP socket for any non-activation address
+// before it returns, and when Web.Host is empty (the default) that socket is
+// port 80, because anyhttp maps "" to ":http". Homebox never serves it, so the
+// process would sit on :80 for its entire lifetime without accepting anything:
+// under host networking that denies :80 to every other service, and clients
+// that do connect reach a socket nobody answers, so they hang rather than being
+// refused. Opening it and closing it again would still lose a startup race
+// against another service, so the only safe thing is never to ask for it.
+// See issue #1656.
+func activationListener(host string) (net.Listener, error) {
+	if !isActivationAddress(host) {
+		return nil, nil
+	}
+
+	listener, addrType, addrCfg, err := anyhttp.GetListener(host)
+	if err != nil {
+		// A malformed unix/sysd address falls back to binding Web.Host:Web.Port,
+		// matching how this behaved before.
+		log.Debug().Msgf("anyhttp error: %v", err)
+		return nil, nil
+	}
+
+	switch addrType {
+	case anyhttp.SystemdFD:
+		sysdCfg := addrCfg.(*anyhttp.SysdConfig)
+		if sysdCfg.IdleTimeout != nil {
+			closeUnusedListener(listener)
+			log.Error().Msg("idle timeout not yet supported. Please remove and try again")
+			return nil, errors.New("idle timeout not yet supported. Please remove and try again")
+		}
+		return listener, nil
+	case anyhttp.UnixSocket:
+		return listener, nil
+	default:
+		// Unreachable given the gate above, but if anyhttp ever hands back a
+		// TCP listener for a unix/sysd address, don't hold the socket.
+		closeUnusedListener(listener)
+		return nil, nil
+	}
+}
+
+func closeUnusedListener(listener net.Listener) {
+	if err := listener.Close(); err != nil {
+		log.Error().Err(err).Msg("failed to close unused listener")
+	}
 }
 
 // ensureAssetIDs assigns asset IDs to any entities that don't have one,
