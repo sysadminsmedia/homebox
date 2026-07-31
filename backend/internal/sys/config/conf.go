@@ -119,6 +119,8 @@ type LabelMakerConf struct {
 	LabelServiceTimeout   *time.Duration `yaml:"label_service_timeout"`
 	RegularFontPath       *string        `yaml:"regular_font_path"`
 	BoldFontPath          *string        `yaml:"bold_font_path"`
+	HideLocation          bool           `yaml:"hide_location"         conf:"default:false"`
+	HideAssetID           bool           `yaml:"hide_asset_id"         conf:"default:false"`
 }
 
 type OIDCConf struct {

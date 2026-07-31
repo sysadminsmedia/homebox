@@ -101,6 +101,21 @@ func wrapText(text string, face font.Face, maxWidth int, maxHeight int, lineHeig
 	currentHeight := 0
 	processedChars := 0
 
+	// remainder returns the unwrapped tail of text starting at byte offset i,
+	// clamped to text's bounds. The processedChars bookkeeping below can walk
+	// past len(text) when an overflow is detected while processing the
+	// string's final (possibly empty) line, so an unclamped text[i:] can
+	// panic with a slice-bounds-out-of-range error (observed for text == "").
+	remainder := func(i int) string {
+		if i < 0 {
+			i = 0
+		}
+		if i > len(text) {
+			i = len(text)
+		}
+		return text[i:]
+	}
+
 	for _, line := range lines {
 		words := strings.Fields(line)
 		if len(words) == 0 {
@@ -109,7 +124,7 @@ func wrapText(text string, face font.Face, maxWidth int, maxHeight int, lineHeig
 			if !unlimitedHeight {
 				currentHeight += lineHeight
 				if currentHeight > maxHeight {
-					return wrappedLines[:len(wrappedLines)-1], text[processedChars:]
+					return wrappedLines[:len(wrappedLines)-1], remainder(processedChars)
 				}
 			}
 			continue
@@ -128,7 +143,7 @@ func wrapText(text string, face font.Face, maxWidth int, maxHeight int, lineHeig
 				if !unlimitedHeight {
 					currentHeight += lineHeight
 					if currentHeight > maxHeight {
-						return wrappedLines[:len(wrappedLines)-1], text[processedChars-len(currentLine)-1:]
+						return wrappedLines[:len(wrappedLines)-1], remainder(processedChars - len(currentLine) - 1)
 					}
 				}
 				currentLine = word
@@ -140,7 +155,7 @@ func wrapText(text string, face font.Face, maxWidth int, maxHeight int, lineHeig
 		if !unlimitedHeight {
 			currentHeight += lineHeight
 			if currentHeight > maxHeight {
-				return wrappedLines[:len(wrappedLines)-1], text[processedChars-len(currentLine)-1:]
+				return wrappedLines[:len(wrappedLines)-1], remainder(processedChars - len(currentLine) - 1)
 			}
 		}
 	}

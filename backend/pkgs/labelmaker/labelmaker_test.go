@@ -1,12 +1,15 @@
 package labelmaker
 
 import (
+	"bytes"
+	"image"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"testing"
 
+	"github.com/golang/freetype/truetype"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
@@ -217,6 +220,44 @@ func TestSplitCommandTemplate(t *testing.T) {
 			assert.Equal(t, tt.want, splitCommandTemplate(tt.in))
 		})
 	}
+}
+
+// TestWrapText_EmptyTextWithNoHeightBudget is the regression test for a panic
+// ("slice bounds out of range [1:0]") that fired when wrapText was given an
+// empty string and a maxHeight too small to fit even one line. This happens
+// in practice when HBOX_LABEL_MAKER_HIDE_ASSET_ID leaves the description
+// empty (no location) and the promoted item-name title wraps to enough lines
+// to exceed the QR code's height, leaving zero (or negative) budget for the
+// description text beside it.
+func TestWrapText_EmptyTextWithNoHeightBudget(t *testing.T) {
+	fnt, err := loadFont(nil, FontTypeRegular)
+	require.NoError(t, err)
+
+	face := truetype.NewFace(fnt, &truetype.Options{Size: 24, DPI: 72})
+	img := image.NewRGBA(image.Rect(0, 0, 1, 1))
+	ctx := createContext(fnt, 24, img, 72)
+
+	require.NotPanics(t, func() {
+		lines, remaining := wrapText("", face, 200, -100, 24, ctx)
+		assert.Empty(t, lines)
+		assert.Empty(t, remaining)
+	})
+}
+
+// TestGenerateLabel_EmptyDescriptionWithTallTitle reproduces the real crash
+// end to end: an asset label with HideAssetID promotes a long item name to
+// the bold title slot with an empty description, which used to panic inside
+// GenerateLabel -> wrapText.
+func TestGenerateLabel_EmptyDescriptionWithTallTitle(t *testing.T) {
+	params := NewGenerateParams(300, 80, 10, 10, 32,
+		"A Really Rather Long Item Name That Wraps Several Times",
+		"", "http://localhost/item/1", true, nil)
+
+	var buf bytes.Buffer
+	require.NotPanics(t, func() {
+		require.NoError(t, GenerateLabel(&buf, &params, nil))
+	})
+	assert.NotZero(t, buf.Len())
 }
 
 // TestPrintLabel_ArgumentInjection is the regression test for the argument
