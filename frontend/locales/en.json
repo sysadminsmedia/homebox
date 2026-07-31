@@ -451,6 +451,15 @@
         "mailto": "Email the owner",
         "not_available": "This item is not available, or its owner has not enabled public contact.",
         "owner_message": "Message from the owner",
+        "settings": {
+            "description": "When enabled, anyone who scans an item label without being signed in sees a public contact page for this collection instead of the login screen.",
+            "enable": "Enable found item contact page",
+            "message_label": "Message shown to finders (optional)",
+            "message_placeholder": "Thanks for finding my stuff! Please get in touch.",
+            "no_smtp_warning": "While enabled, finders contact you through a form and your email address stays hidden, as long as the server has an email server configured. If it does not, the collection owner's email address is shown publicly instead. Nothing is shown while this setting is off.",
+            "saved": "Found item settings saved.",
+            "title": "Found Item Contact Page"
+        },
         "sign_in": "Is this your item? Sign in",
         "title": "Did you find this item?"
     },
