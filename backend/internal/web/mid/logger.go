@@ -20,6 +20,14 @@ func (s *spy) WriteHeader(status int) {
 	s.ResponseWriter.WriteHeader(status)
 }
 
+// Unwrap exposes the wrapped writer to http.ResponseController, which walks
+// the Unwrap chain to reach the underlying connection. Without it a handler
+// cannot clear the server's write deadline, and long streaming downloads get
+// truncated mid-body by Web.WriteTimeout.
+func (s *spy) Unwrap() http.ResponseWriter {
+	return s.ResponseWriter
+}
+
 func (s *spy) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	hj, ok := s.ResponseWriter.(http.Hijacker)
 	if !ok {

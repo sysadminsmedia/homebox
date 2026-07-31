@@ -10,6 +10,7 @@ import (
 	"io"
 	"os"
 	"path"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -1036,6 +1037,96 @@ type sqlExecer interface {
 	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
 }
 
+// sqlQuerier is the read-side counterpart of sqlExecer, used to introspect the
+// destination schema before replaying rows into it.
+type sqlQuerier interface {
+	QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error)
+}
+
+// boolColumns returns the columns of table that the destination database
+// stores as booleans.
+//
+// Exports are portable across engines and sqlite has no native boolean type:
+// it returns int64 0/1 for a BOOLEAN column, which marshals to JSON as 0/1 and
+// unmarshals back into a float64. Handing that number to a postgres bool
+// column fails outright ("unable to encode 0 into binary format for bool
+// (OID 16)"), so a sqlite-sourced backup could never be restored into
+// postgres. Normalizing on the import side rather than in the dump means the
+// export zips users already hold are repaired too.
+func boolColumns(ctx context.Context, db sqlQuerier, dialect, table string) (map[string]struct{}, error) {
+	if !isValidSQLIdent(table) {
+		return nil, fmt.Errorf("invalid table identifier %q", table)
+	}
+
+	query := `SELECT name FROM pragma_table_info(?) WHERE lower(type) IN ('bool', 'boolean')`
+	if dialect == "postgres" {
+		query = `SELECT column_name FROM information_schema.columns
+			WHERE table_schema = current_schema() AND table_name = $1 AND data_type = 'boolean'`
+	}
+
+	rows, err := db.QueryContext(ctx, query, table)
+	if err != nil {
+		return nil, fmt.Errorf("introspect bool columns on %q: %w", table, err)
+	}
+	defer func() { _ = rows.Close() }()
+
+	cols := make(map[string]struct{})
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			return nil, fmt.Errorf("introspect bool columns on %q: %w", table, err)
+		}
+		cols[name] = struct{}{}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("introspect bool columns on %q: %w", table, err)
+	}
+	return cols, nil
+}
+
+// coerceBoolColumns rewrites the boolean-typed entries of row in place so the
+// driver is handed a real bool regardless of how the source engine encoded it.
+func coerceBoolColumns(row map[string]any, boolCols map[string]struct{}) error {
+	for col := range boolCols {
+		v, ok := row[col]
+		if !ok || v == nil {
+			continue
+		}
+		b, err := valueToBool(v)
+		if err != nil {
+			return fmt.Errorf("column %q: %w", col, err)
+		}
+		row[col] = b
+	}
+	return nil
+}
+
+// valueToBool converts a JSON-decoded export value into a bool. Numbers follow
+// the sqlite convention (0 false, anything else true); strings cover engines
+// and hand-edited exports that render booleans as "true"/"f"/"1".
+func valueToBool(v any) (bool, error) {
+	switch x := v.(type) {
+	case bool:
+		return x, nil
+	case float64:
+		return x != 0, nil
+	case json.Number:
+		f, err := x.Float64()
+		if err != nil {
+			return false, fmt.Errorf("cannot interpret %q as a boolean", x.String())
+		}
+		return f != 0, nil
+	case string:
+		b, err := strconv.ParseBool(strings.TrimSpace(x))
+		if err != nil {
+			return false, fmt.Errorf("cannot interpret %q as a boolean", x)
+		}
+		return b, nil
+	default:
+		return false, fmt.Errorf("cannot interpret %T as a boolean", v)
+	}
+}
+
 // insertRow builds and runs an INSERT for one row's worth of column-value
 // pairs. Self-maintaining: every JSON key becomes a column.
 func insertRow(ctx context.Context, db sqlExecer, dialect, table string, row map[string]any) error {
@@ -1210,7 +1301,19 @@ func (s *ExportService) replayImportRows(ctx context.Context, tx *sql.Tx, zr *zi
 		if err != nil {
 			return nil, fmt.Errorf("read %s.json: %w", spec.name, err)
 		}
+		if len(rows) == 0 {
+			continue
+		}
+		// Introspected once per table, not per row: the shape is fixed for the
+		// whole file and an inventory can carry tens of thousands of entities.
+		boolCols, err := boolColumns(ctx, tx, s.dialect, spec.name)
+		if err != nil {
+			return nil, err
+		}
 		for _, row := range rows {
+			if err := coerceBoolColumns(row, boolCols); err != nil {
+				return nil, fmt.Errorf("insert %s: %w", spec.name, err)
+			}
 			newID, err := remapImportRow(row, spec, gid, userID, srcGroupID, remapFK, rememberID)
 			if err != nil {
 				return nil, err
