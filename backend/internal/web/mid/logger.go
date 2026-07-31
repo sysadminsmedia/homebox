@@ -20,6 +20,17 @@ func (s *spy) WriteHeader(status int) {
 	s.ResponseWriter.WriteHeader(status)
 }
 
+// Write implicitly sends a 200 status if the handler hasn't called
+// WriteHeader yet, matching how http.ResponseWriter behaves. Without this
+// override, a handler that writes a body without an explicit WriteHeader
+// call leaves s.status at its zero value.
+func (s *spy) Write(b []byte) (int, error) {
+	if s.status == 0 {
+		s.status = http.StatusOK
+	}
+
+	return s.ResponseWriter.Write(b)
+}
 // Unwrap exposes the wrapped writer to http.ResponseController, which walks
 // the Unwrap chain to reach the underlying connection. Without it a handler
 // cannot clear the server's write deadline, and long streaming downloads get
@@ -39,7 +50,7 @@ func (s *spy) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 func Logger(l zerolog.Logger) func(http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			reqID := r.Context().Value(middleware.RequestIDKey).(string)
+			reqID, _ := r.Context().Value(middleware.RequestIDKey).(string)
 
 			l.Info().Ctx(r.Context()).Str("method", r.Method).Str("path", r.URL.Path).Str("rid", reqID).Msg("request received")
 
