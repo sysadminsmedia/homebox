@@ -4,10 +4,34 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 )
+
+// allowSlowResponse clears the server's write deadline for the current
+// response.
+//
+// http.Server.WriteTimeout is an absolute deadline armed when the request is
+// read, not an idle timeout — it does not extend as bytes are written. Any
+// response that takes longer than Web.WriteTimeout (10s by default) is
+// therefore severed mid-body, at whatever offset throughput happened to reach.
+// For a streamed backup or attachment that means a silently truncated file
+// rather than an error the user can act on.
+//
+// Handlers that stream a blob of user-controlled size must call this before
+// writing the body. Failure is non-fatal and only logged: if some middleware in
+// the chain wraps the ResponseWriter without an Unwrap method, the deadline
+// stays in place and large downloads keep failing, so the log line is the
+// breadcrumb back to this comment.
+func allowSlowResponse(w http.ResponseWriter, r *http.Request) {
+	if err := http.NewResponseController(w).SetWriteDeadline(time.Time{}); err != nil {
+		log.Warn().Err(err).
+			Str("path", r.URL.Path).
+			Msg("could not clear write deadline; large downloads may be truncated by web.write_timeout")
+	}
+}
 
 // GetHBURL determines the base URL of the Homebox instance using the following priority:
 // 1. Configured hostname from Options.Hostname

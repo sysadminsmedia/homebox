@@ -280,6 +280,11 @@ func (ctrl *V1Controller) handleEntityAttachmentsHandler(w http.ResponseWriter, 
 			}
 		}(bucket)
 
+		// Attachments are user-supplied and can be arbitrarily large (videos,
+		// scanned manuals). Without this the default 10s write timeout truncates
+		// them mid-transfer on slow links.
+		allowSlowResponse(w, r)
+
 		disposition := "attachment"
 		if isSafeInlineType(doc.MimeType) {
 			disposition = "inline"

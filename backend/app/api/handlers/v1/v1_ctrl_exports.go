@@ -130,6 +130,12 @@ func (ctrl *V1Controller) HandleExportDownload() errchain.HandlerFunc {
 		}
 		defer func() { _ = reader.Close() }()
 
+		// Backups routinely run to hundreds of megabytes and take far longer than
+		// the default 10s write timeout to stream. Content-Length is set from the
+		// recorded artifact size, so a deadline cut mid-copy leaves the browser
+		// with a short read it reports as a failed download.
+		allowSlowResponse(w, r)
+
 		w.Header().Set("Content-Type", "application/zip")
 		w.Header().Set("Content-Disposition",
 			fmt.Sprintf(`attachment; filename="homebox-export-%s.zip"`, out.ID.String()))
