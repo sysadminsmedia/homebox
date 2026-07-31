@@ -91,6 +91,20 @@ func (ctrl *V1Controller) HandleGroupUpdate() errchain.HandlerFunc {
 			)
 		}
 
+		// Changing the found-contact settings can publish the group owner's
+		// email (mailto mode), so only the owner may touch them. Enforced only
+		// when a found-contact field is actually being set so members can still
+		// update name/currency.
+		if body.FoundContactEnabled != nil || body.FoundContactMessage != nil {
+			isOwner, err := ctrl.repo.Groups.IsOwnerOf(auth, auth.UID, auth.GID)
+			if err != nil {
+				return repo.Group{}, err
+			}
+			if !isOwner {
+				return repo.Group{}, validate.NewRequestError(errors.New("only the group owner can change found-contact settings"), http.StatusForbidden)
+			}
+		}
+
 		return ctrl.svc.Group.UpdateGroup(auth, body)
 	}
 
