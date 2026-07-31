@@ -448,6 +448,20 @@
         "decimals": 2
     },
     {
+        "code": "DKK",
+        "local": "Denmark",
+        "symbol": "kr",
+        "name": "Danish krone",
+        "decimals": 2
+    },
+    {
+        "code": "DKK",
+        "local": "Denmark",
+        "symbol": "kr",
+        "name": "Danish krone",
+        "decimals": 2
+    },
+    {
         "code": "DJF",
         "local": "Djibouti",
         "symbol": "Fr",
@@ -546,13 +560,6 @@
         "decimals": 2
     },
     {
-        "code": "DKK",
-        "local": "Faroe Islands",
-        "symbol": "kr",
-        "name": "Danish krone",
-        "decimals": 2
-    },
-    {
         "code": "FOK",
         "local": "Faroe Islands",
         "symbol": "kr",
@@ -648,13 +655,6 @@
         "local": "Greece",
         "symbol": "€",
         "name": "Euro",
-        "decimals": 2
-    },
-    {
-        "code": "DKK",
-        "local": "Greenland",
-        "symbol": "kr.",
-        "name": "Krone",
         "decimals": 2
     },
     {
@@ -1253,6 +1253,13 @@
         "decimals": 2
     },
     {
+        "code": "NOK",
+        "local": "Norway",
+        "symbol": "kr",
+        "name": "Norwegian krone",
+        "decimals": 2
+    },
+    {
         "code": "OMR",
         "local": "Oman",
         "symbol": "ر.ع.",
@@ -1614,13 +1621,6 @@
         "local": "Suriname",
         "symbol": "$",
         "name": "Surinamese dollar",
-        "decimals": 2
-    },
-    {
-        "code": "NOK",
-        "local": "Svalbard and Jan Mayen",
-        "symbol": "kr",
-        "name": "Krone",
         "decimals": 2
     },
     {
