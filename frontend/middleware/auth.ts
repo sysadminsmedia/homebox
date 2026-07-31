@@ -1,10 +1,10 @@
-export default defineNuxtRouteMiddleware(async () => {
+export default defineNuxtRouteMiddleware(async to => {
   const ctx = useAuthContext();
   const api = useUserApi();
   const redirectTo = useState("authRedirect");
 
   if (!ctx.isAuthorized()) {
-    const path = window.location.pathname;
+    const path = to.path;
 
     const asset = path.match(/^\/(?:a|assets)\/([^/]+)\/?$/);
     const item = path.match(/^\/item\/([^/]+)\/?$/);
