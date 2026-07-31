@@ -15,6 +15,18 @@ export type StatusResult = {
   message: string;
 };
 
+export type FoundItemKind = "item" | "asset";
+
+// The generator marks `message` and `email` as required on FoundItemResponse,
+// but the backend omits them when unset (message is optional, email is only
+// present in "mailto" mode). Redeclared here as optional to match reality.
+export type FoundItemResult = {
+  itemId: string;
+  message?: string;
+  mode: "form" | "mailto";
+  email?: string;
+};
+
 export class PublicApi extends BaseAPI {
   public status() {
     return this.http.get<APISummary>({ url: route("/status") });
@@ -46,6 +58,17 @@ export class PublicApi extends BaseAPI {
     return this.http.post<ResetPasswordRequest, void>({
       url: route("/users/reset-password"),
       body: { token, password },
+    });
+  }
+
+  public foundItem(kind: FoundItemKind, id: string) {
+    return this.http.get<FoundItemResult>({ url: route(`/found/${kind}/${id}`) });
+  }
+
+  public foundContact(kind: FoundItemKind, id: string, message: string, replyTo?: string) {
+    return this.http.post<{ message: string; replyTo?: string }, void>({
+      url: route(`/found/${kind}/${id}/contact`),
+      body: { message, replyTo: replyTo || undefined },
     });
   }
 }
