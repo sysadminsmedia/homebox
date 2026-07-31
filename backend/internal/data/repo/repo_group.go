@@ -31,11 +31,13 @@ type GroupRepository struct {
 func NewGroupRepository(db *ent.Client) *GroupRepository {
 	gmap := func(g *ent.Group) Group {
 		return Group{
-			ID:        g.ID,
-			Name:      g.Name,
-			CreatedAt: g.CreatedAt,
-			UpdatedAt: g.UpdatedAt,
-			Currency:  strings.ToUpper(g.Currency),
+			ID:                  g.ID,
+			Name:                g.Name,
+			CreatedAt:           g.CreatedAt,
+			UpdatedAt:           g.UpdatedAt,
+			Currency:            strings.ToUpper(g.Currency),
+			FoundContactEnabled: g.FoundContactEnabled,
+			FoundContactMessage: g.FoundContactMessage,
 		}
 	}
 
@@ -57,16 +59,20 @@ func NewGroupRepository(db *ent.Client) *GroupRepository {
 
 type (
 	Group struct {
-		ID        uuid.UUID `json:"id,omitempty"`
-		Name      string    `json:"name,omitempty"`
-		CreatedAt time.Time `json:"createdAt,omitempty"`
-		UpdatedAt time.Time `json:"updatedAt,omitempty"`
-		Currency  string    `json:"currency,omitempty"`
+		ID                  uuid.UUID `json:"id,omitempty"`
+		Name                string    `json:"name,omitempty"`
+		CreatedAt           time.Time `json:"createdAt,omitempty"`
+		UpdatedAt           time.Time `json:"updatedAt,omitempty"`
+		Currency            string    `json:"currency,omitempty"`
+		FoundContactEnabled bool      `json:"foundContactEnabled"`
+		FoundContactMessage string    `json:"foundContactMessage"`
 	}
 
 	GroupUpdate struct {
-		Name     string `json:"name"`
-		Currency string `json:"currency"`
+		Name                string  `json:"name"`
+		Currency            string  `json:"currency"`
+		FoundContactEnabled *bool   `json:"foundContactEnabled,omitempty"`
+		FoundContactMessage *string `json:"foundContactMessage,omitempty"`
 	}
 
 	GroupInvitationCreate struct {
@@ -312,11 +318,18 @@ func (r *GroupRepository) GroupCreate(ctx context.Context, name string, userID u
 }
 
 func (r *GroupRepository) GroupUpdate(ctx context.Context, id uuid.UUID, data GroupUpdate) (Group, error) {
-	entity, err := r.db.Group.UpdateOneID(id).
+	q := r.db.Group.UpdateOneID(id).
 		SetName(data.Name).
-		SetCurrency(strings.ToLower(data.Currency)).
-		Save(ctx)
+		SetCurrency(strings.ToLower(data.Currency))
 
+	if data.FoundContactEnabled != nil {
+		q = q.SetFoundContactEnabled(*data.FoundContactEnabled)
+	}
+	if data.FoundContactMessage != nil {
+		q = q.SetFoundContactMessage(*data.FoundContactMessage)
+	}
+
+	entity, err := q.Save(ctx)
 	return r.groupMapper.MapErr(entity, err)
 }
 
