@@ -73,6 +73,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		v1.WithRegistration(a.conf.Options.AllowRegistration),
 		v1.WithDemoStatus(a.conf.Demo), // Disable Password Change in Demo Mode
 		v1.WithURL(fmt.Sprintf("%s:%s", a.conf.Web.Host, a.conf.Web.Port)),
+		v1.WithFoundSendLimiter(a.foundSendLimiter),
 	)
 
 	r.Route(prefix+"/v1", func(r chi.Router) {
@@ -94,8 +95,8 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Post("/users/reset-password", chain.ToHandlerFunc(v1Ctrl.HandleResetPassword(), a.mwAuthRateLimit))
 
 		// Public found-item contact page (unauthenticated, rate limited)
-		r.Get("/found/{kind}/{id}", chain.ToHandlerFunc(v1Ctrl.HandleFoundGet(), a.mwAuthRateLimit))
-		r.Post("/found/{kind}/{id}/contact", chain.ToHandlerFunc(v1Ctrl.HandleFoundContact(), a.mwAuthRateLimit))
+		r.Get("/found/{kind}/{id}", chain.ToHandlerFunc(v1Ctrl.HandleFoundGet(), a.foundLimiter.middleware))
+		r.Post("/found/{kind}/{id}/contact", chain.ToHandlerFunc(v1Ctrl.HandleFoundContact(), a.foundLimiter.middleware))
 
 		if a.conf.OIDC.Enabled {
 			r.Get("/users/login/oidc", chain.ToHandlerFunc(v1Ctrl.HandleOIDCLogin(), a.mwAuthRateLimit))

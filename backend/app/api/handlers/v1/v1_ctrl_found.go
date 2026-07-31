@@ -241,6 +241,18 @@ func (ctrl *V1Controller) HandleFoundContact() errchain.HandlerFunc {
 			return server.JSON(w, http.StatusNoContent, nil)
 		}
 
+		// Per-item send cap, keyed on the resolved item ID so the bound holds
+		// regardless of source IP (the per-IP foundLimiter middleware cannot
+		// stop distributed mailbombing of one owner). Gated only after a
+		// successful lookup to preserve the uniform 204/404 behavior, and the
+		// response stays 204 when denied so the cap is never observable to the
+		// caller (anti-probing).
+		if ctrl.foundSendLimiter != nil && !ctrl.foundSendLimiter.Allow(contact.ItemID.String()) {
+			span.SetAttributes(attribute.String("found.outcome", "send_rate_limited"))
+			log.Warn().Str("item.id", contact.ItemID.String()).Msg("found-item contact send rate limit exceeded; dropping message")
+			return server.JSON(w, http.StatusNoContent, nil)
+		}
+
 		// Detached from the request context so a client disconnect doesn't
 		// abort the send; SendContact takes no context, and the goroutine
 		// starts its own root span. Errors are logged, never propagated —
