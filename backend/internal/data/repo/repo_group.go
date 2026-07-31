@@ -116,6 +116,14 @@ type (
 		Name  string    `json:"name"`
 		Total float64   `json:"total"`
 	}
+
+	FoundContact struct {
+		ItemID     uuid.UUID
+		ItemName   string
+		Message    string
+		OwnerName  string
+		OwnerEmail string
+	}
 )
 
 func (r *GroupRepository) GetAllGroups(ctx context.Context, userID uuid.UUID) ([]Group, error) {
@@ -476,6 +484,67 @@ func (r *GroupRepository) IsOwnerOf(ctx context.Context, userID, groupID uuid.UU
 			usergroup.RoleEQ(usergroup.RoleOwner),
 		).
 		Exist(ctx)
+}
+
+// FoundContactByItemID returns the public found-item contact details for an
+// item, but only when the owning group has opted in. Missing items, archived
+// items (sold/disposed), and disabled groups all return ent not-found errors
+// so callers cannot tell them apart.
+func (r *GroupRepository) FoundContactByItemID(ctx context.Context, itemID uuid.UUID) (FoundContact, error) {
+	e, err := r.db.Entity.Query().
+		Where(
+			entity.ID(itemID),
+			entity.Archived(false),
+			entity.HasGroupWith(group.FoundContactEnabled(true)),
+		).
+		WithGroup().
+		Only(ctx)
+	if err != nil {
+		return FoundContact{}, err
+	}
+	return r.foundContactFromEntity(ctx, e)
+}
+
+// FoundContactByAssetID resolves an asset ID across all opted-in groups.
+// Asset IDs are only unique within a group, so anything other than exactly
+// one match is treated as not found.
+func (r *GroupRepository) FoundContactByAssetID(ctx context.Context, assetID AssetID) (FoundContact, error) {
+	matches, err := r.db.Entity.Query().
+		Where(
+			entity.AssetID(int64(assetID)),
+			entity.Archived(false),
+			entity.HasGroupWith(group.FoundContactEnabled(true)),
+		).
+		WithGroup().
+		Limit(2).
+		All(ctx)
+	if err != nil {
+		return FoundContact{}, err
+	}
+	if len(matches) != 1 {
+		return FoundContact{}, &ent.NotFoundError{}
+	}
+	return r.foundContactFromEntity(ctx, matches[0])
+}
+
+func (r *GroupRepository) foundContactFromEntity(ctx context.Context, e *ent.Entity) (FoundContact, error) {
+	owner, err := r.db.User.Query().
+		Where(user.HasUserGroupsWith(
+			usergroup.GroupID(e.Edges.Group.ID),
+			usergroup.RoleEQ(usergroup.RoleOwner),
+		)).
+		Order(ent.Asc(user.FieldCreatedAt)).
+		First(ctx)
+	if err != nil {
+		return FoundContact{}, err
+	}
+	return FoundContact{
+		ItemID:     e.ID,
+		ItemName:   e.Name,
+		Message:    e.Edges.Group.FoundContactMessage,
+		OwnerName:  owner.Name,
+		OwnerEmail: owner.Email,
+	}, nil
 }
 
 func (r *GroupRepository) RemoveMember(ctx context.Context, groupID, userID uuid.UUID) error {
