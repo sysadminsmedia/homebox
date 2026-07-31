@@ -218,9 +218,16 @@ func TestGroupRepository_FoundContact_ExcludesArchivedItems(t *testing.T) {
 	assetID := nextAssetID()
 	require.NoError(t, tClient.Entity.UpdateOneID(item.ID).SetAssetID(int64(assetID)).Exec(ctx))
 
+	// Confirm both lookups succeed before archiving, so the test is
+	// self-contained and doesn't rely on other tests to prove the happy path.
+	_, err := tRepos.Groups.FoundContactByItemID(ctx, item.ID)
+	require.NoError(t, err)
+	_, err = tRepos.Groups.FoundContactByAssetID(ctx, assetID)
+	require.NoError(t, err)
+
 	require.NoError(t, tClient.Entity.UpdateOneID(item.ID).SetArchived(true).Exec(ctx))
 
-	_, err := tRepos.Groups.FoundContactByItemID(ctx, item.ID)
+	_, err = tRepos.Groups.FoundContactByItemID(ctx, item.ID)
 	require.Error(t, err)
 	assert.True(t, ent.IsNotFound(err))
 
