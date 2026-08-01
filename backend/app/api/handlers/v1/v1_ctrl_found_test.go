@@ -45,14 +45,14 @@ func TestFoundLookupRejectsBadRefsBeforeQuery(t *testing.T) {
 	}{
 		{name: "unknown kind", kind: "barcode", id: "000-001"},
 		{name: "empty kind", kind: "", id: "000-001"},
-		{name: "malformed item uuid", kind: "item", id: "not-a-uuid"},
-		{name: "empty item id", kind: "item", id: ""},
-		{name: "asset id zero", kind: "asset", id: "000-000"},
-		{name: "asset id bare zero", kind: "asset", id: "0"},
+		{name: "malformed item uuid", kind: foundKindItem, id: "not-a-uuid"},
+		{name: "empty item id", kind: foundKindItem, id: ""},
+		{name: "asset id zero", kind: foundKindAsset, id: "000-000"},
+		{name: "asset id bare zero", kind: foundKindAsset, id: "0"},
 		// Note: ParseAssetID strips dashes, so "-5" parses as asset 5 and
 		// is a legitimate (queryable) reference; negatives cannot occur.
-		{name: "asset id non-numeric", kind: "asset", id: "abc"},
-		{name: "empty asset id", kind: "asset", id: ""},
+		{name: "asset id non-numeric", kind: foundKindAsset, id: "abc"},
+		{name: "empty asset id", kind: foundKindAsset, id: ""},
 	}
 
 	for _, tc := range cases {
@@ -69,7 +69,7 @@ func TestHandleFoundGetNotFoundIsOpaque(t *testing.T) {
 	handler := ctrl.HandleFoundGet()
 
 	w := httptest.NewRecorder()
-	err := handler(w, foundTestRequest(http.MethodGet, "item", "not-a-uuid", ""))
+	err := handler(w, foundTestRequest(http.MethodGet, foundKindItem, "not-a-uuid", ""))
 
 	var reqErr *validate.RequestError
 	require.ErrorAs(t, err, &reqErr)
@@ -96,7 +96,7 @@ func TestHandleFoundContactValidation(t *testing.T) {
 	for _, tc := range badBodies {
 		t.Run(tc.name, func(t *testing.T) {
 			w := httptest.NewRecorder()
-			err := handler(w, foundTestRequest(http.MethodPost, "item", "not-a-uuid", tc.body))
+			err := handler(w, foundTestRequest(http.MethodPost, foundKindItem, "not-a-uuid", tc.body))
 
 			var reqErr *validate.RequestError
 			require.ErrorAs(t, err, &reqErr)
@@ -128,7 +128,7 @@ func TestHandleFoundContactBoundaryAndAlways204(t *testing.T) {
 	for _, tc := range okBodies {
 		t.Run(tc.name, func(t *testing.T) {
 			w := httptest.NewRecorder()
-			err := handler(w, foundTestRequest(http.MethodPost, "item", "not-a-uuid", tc.body))
+			err := handler(w, foundTestRequest(http.MethodPost, foundKindItem, "not-a-uuid", tc.body))
 
 			require.NoError(t, err)
 			assert.Equal(t, http.StatusNoContent, w.Code)

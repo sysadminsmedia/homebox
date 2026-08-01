@@ -22,7 +22,7 @@ type (
 	FoundItemResponse struct {
 		ItemID  string `json:"itemId"`
 		Message string `json:"message,omitempty"`
-		Mode    string `json:"mode"  enums:"form,mailto"`
+		Mode    string `json:"mode"              enums:"form,mailto"`
 		Email   string `json:"email,omitempty"`
 	}
 
@@ -48,6 +48,13 @@ const (
 	foundModeMailto = "mailto"
 )
 
+// foundKindItem and foundKindAsset are the two accepted values of the {kind}
+// route segment.
+const (
+	foundKindItem  = "item"
+	foundKindAsset = "asset"
+)
+
 // errFoundNotFound is the single error produced for every failed resolution:
 // unknown kind, malformed ID, missing item, archived item, opted-out group,
 // or ambiguous asset ID. Keeping them indistinguishable prevents an
@@ -58,7 +65,7 @@ var errFoundNotFound = errors.New("found item not found")
 // arbitrary client input never becomes an attribute value.
 func foundKindAttr(kind string) string {
 	switch kind {
-	case "item", "asset":
+	case foundKindItem, foundKindAsset:
 		return kind
 	default:
 		return "other"
@@ -73,13 +80,13 @@ func (ctrl *V1Controller) foundLookup(r *http.Request) (repo.FoundContact, error
 	id := chi.URLParam(r, "id")
 
 	switch kind {
-	case "item":
+	case foundKindItem:
 		itemID, err := uuid.Parse(id)
 		if err != nil {
 			return repo.FoundContact{}, errFoundNotFound
 		}
 		return ctrl.repo.Groups.FoundContactByItemID(r.Context(), itemID)
-	case "asset":
+	case foundKindAsset:
 		assetID, ok := repo.ParseAssetID(id)
 		// Every entity defaults to asset_id 0, so "000-000" (and anything
 		// non-positive) must never resolve; reject before touching the DB.
