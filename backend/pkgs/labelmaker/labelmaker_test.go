@@ -1,12 +1,14 @@
 package labelmaker
 
 import (
+	"image"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"testing"
 
+	"github.com/golang/freetype/truetype"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
@@ -255,4 +257,24 @@ func TestPrintLabel_ArgumentInjection(t *testing.T) {
 	require.Len(t, got, 2, "argv must not be split on whitespace inside the title")
 	assert.Equal(t, maliciousTitle, got[0])
 	assert.True(t, strings.HasSuffix(got[1], ".png"), "second arg should be the generated label file, got %q", got[1])
+}
+
+func TestWrapText_TrailingEmptyLineAtHeightLimit(t *testing.T) {
+	regularFont, err := loadFont(nil, FontTypeRegular)
+	require.NoError(t, err)
+
+	face := truetype.NewFace(regularFont, &truetype.Options{
+		Size: 12,
+		DPI:  72,
+	})
+	tmpImg := image.NewRGBA(image.Rect(0, 0, 1, 1))
+	ctx := createContext(regularFont, 12, tmpImg, 72)
+
+	// The height limit is crossed on the trailing empty line, where
+	// processedChars has already advanced past len(text).
+	text := "Widget A\n"
+	lines, remaining := wrapText(text, face, 200, 12, 12, ctx)
+
+	assert.Equal(t, []string{"Widget A"}, lines)
+	assert.Empty(t, remaining)
 }
