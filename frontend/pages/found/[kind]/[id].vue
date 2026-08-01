@@ -28,12 +28,18 @@
   const kind = computed<FoundItemKind>(() => (route.params.kind === "item" ? "item" : "asset"));
   const id = computed(() => String(route.params.id));
 
-  const { data: item, pending } = useAsyncData<FoundItemResult | null>(`found-${kind.value}-${id.value}`, async () => {
-    const { data, error } = await api.foundItem(kind.value, id.value);
-    if (error) {
-      return null;
+  const item = ref<FoundItemResult | null>(null);
+  const pending = ref(true);
+
+  onMounted(async () => {
+    try {
+      const { data, error } = await api.foundItem(kind.value, id.value);
+      item.value = error ? null : (data ?? null);
+    } catch {
+      item.value = null;
+    } finally {
+      pending.value = false;
     }
-    return data;
   });
 
   const message = ref("");
