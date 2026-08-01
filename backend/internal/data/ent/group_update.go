@@ -71,6 +71,20 @@ func (_u *GroupUpdate) SetNillableCurrency(v *string) *GroupUpdate {
 	return _u
 }
 
+// SetExternalIdsEnabled sets the "external_ids_enabled" field.
+func (_u *GroupUpdate) SetExternalIdsEnabled(v bool) *GroupUpdate {
+	_u.mutation.SetExternalIdsEnabled(v)
+	return _u
+}
+
+// SetNillableExternalIdsEnabled sets the "external_ids_enabled" field if the given value is not nil.
+func (_u *GroupUpdate) SetNillableExternalIdsEnabled(v *bool) *GroupUpdate {
+	if v != nil {
+		_u.SetExternalIdsEnabled(*v)
+	}
+	return _u
+}
+
 // AddUserIDs adds the "users" edge to the User entity by IDs.
 func (_u *GroupUpdate) AddUserIDs(ids ...uuid.UUID) *GroupUpdate {
 	_u.mutation.AddUserIDs(ids...)
@@ -430,6 +444,9 @@ func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Currency(); ok {
 		_spec.SetField(group.FieldCurrency, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.ExternalIdsEnabled(); ok {
+		_spec.SetField(group.FieldExternalIdsEnabled, field.TypeBool, value)
 	}
 	if _u.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -857,6 +874,20 @@ func (_u *GroupUpdateOne) SetNillableCurrency(v *string) *GroupUpdateOne {
 	return _u
 }
 
+// SetExternalIdsEnabled sets the "external_ids_enabled" field.
+func (_u *GroupUpdateOne) SetExternalIdsEnabled(v bool) *GroupUpdateOne {
+	_u.mutation.SetExternalIdsEnabled(v)
+	return _u
+}
+
+// SetNillableExternalIdsEnabled sets the "external_ids_enabled" field if the given value is not nil.
+func (_u *GroupUpdateOne) SetNillableExternalIdsEnabled(v *bool) *GroupUpdateOne {
+	if v != nil {
+		_u.SetExternalIdsEnabled(*v)
+	}
+	return _u
+}
+
 // AddUserIDs adds the "users" edge to the User entity by IDs.
 func (_u *GroupUpdateOne) AddUserIDs(ids ...uuid.UUID) *GroupUpdateOne {
 	_u.mutation.AddUserIDs(ids...)
@@ -1246,6 +1277,9 @@ func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error)
 	}
 	if value, ok := _u.mutation.Currency(); ok {
 		_spec.SetField(group.FieldCurrency, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.ExternalIdsEnabled(); ok {
+		_spec.SetField(group.FieldExternalIdsEnabled, field.TypeBool, value)
 	}
 	if _u.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{

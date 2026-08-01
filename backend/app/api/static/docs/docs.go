@@ -348,6 +348,39 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/entities/external/{external_id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "Get Entity by External ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "External ID",
+                        "name": "external_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityOut"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/entities/fields": {
             "get": {
                 "security": [
@@ -3499,6 +3532,10 @@ const docTemplate = `{
                         }
                     ]
                 },
+                "external_id": {
+                    "description": "ExternalID holds the value of the \"external_id\" field.",
+                    "type": "string"
+                },
                 "id": {
                     "description": "ID of the ent.",
                     "type": "string"
@@ -3996,6 +4033,10 @@ const docTemplate = `{
                             "$ref": "#/definitions/ent.GroupEdges"
                         }
                     ]
+                },
+                "external_ids_enabled": {
+                    "description": "ExternalIdsEnabled holds the value of the \"external_ids_enabled\" field.",
+                    "type": "boolean"
                 },
                 "id": {
                     "description": "ID of the ent.",
@@ -4794,6 +4835,12 @@ const docTemplate = `{
                 "entityTypeId": {
                     "type": "string"
                 },
+                "externalID": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
                 "manufacturer": {
                     "type": "string",
                     "maxLength": 255,
@@ -4911,6 +4958,9 @@ const docTemplate = `{
                     ],
                     "x-nullable": true,
                     "x-omitempty": true
+                },
+                "externalID": {
+                    "type": "string"
                 },
                 "fields": {
                     "type": "array",
@@ -5035,6 +5085,9 @@ const docTemplate = `{
                     "x-nullable": true,
                     "x-omitempty": true
                 },
+                "externalID": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -5107,6 +5160,9 @@ const docTemplate = `{
                     ],
                     "x-nullable": true,
                     "x-omitempty": true
+                },
+                "externalID": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "string"
@@ -5524,6 +5580,9 @@ const docTemplate = `{
                 "entityTypeId": {
                     "type": "string"
                 },
+                "externalID": {
+                    "type": "string"
+                },
                 "fields": {
                     "type": "array",
                     "items": {
@@ -5659,6 +5718,9 @@ const docTemplate = `{
                 "currency": {
                     "type": "string"
                 },
+                "external_ids_enabled": {
+                    "type": "boolean"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -5715,6 +5777,9 @@ const docTemplate = `{
             "properties": {
                 "currency": {
                     "type": "string"
+                },
+                "external_ids_enabled": {
+                    "type": "boolean"
                 },
                 "name": {
                     "type": "string"
@@ -6431,6 +6496,9 @@ const docTemplate = `{
                 },
                 "entityTypeId": {
                     "description": "EntityTypeID is the entity type selected by the user. When set it takes\nprecedence; when empty the repository falls back to the group's default.",
+                    "type": "string"
+                },
+                "externalID": {
                     "type": "string"
                 },
                 "name": {

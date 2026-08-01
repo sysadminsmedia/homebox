@@ -100,6 +100,7 @@ type (
 		// barcode product-search import flow (#1578).
 		ModelNumber  string `json:"modelNumber"  validate:"max=255" extensions:"x-nullable,x-omitempty"`
 		Manufacturer string `json:"manufacturer" validate:"max=255" extensions:"x-nullable,x-omitempty"`
+		ExternalID   string `json:"externalID" validate:"max=255" extensions:"x-nullable,x-omitempty"`
 
 		// Edges
 		TagIDs []uuid.UUID `json:"tagIds"`
@@ -121,6 +122,7 @@ type (
 		PurchaseFrom    string `json:"purchaseFrom"    validate:"max=255"`
 		SoldTo          string `json:"soldTo"          validate:"max=255"`
 		SoldNotes       string `json:"soldNotes"`
+		ExternalID      string `json:"externalID"`
 		// Extras
 		Notes string `json:"notes"`
 		// Edges
@@ -147,6 +149,7 @@ type (
 		ParentID     uuid.UUID   `json:"parentId"           extensions:"x-nullable,x-omitempty"`
 		EntityTypeID uuid.UUID   `json:"entityTypeId"       extensions:"x-nullable,x-omitempty"`
 		TagIDs       []uuid.UUID `json:"tagIds"             extensions:"x-nullable,x-omitempty"`
+		ExternalID   string      `json:"externalID"`
 	}
 
 	EntitySummary struct {
@@ -160,6 +163,7 @@ type (
 		Archived    bool      `json:"archived"`
 		CreatedAt   time.Time `json:"createdAt"`
 		UpdatedAt   time.Time `json:"updatedAt"`
+		ExternalID  string    `json:"externalID"`
 
 		PurchasePrice float64 `json:"purchasePrice"`
 
@@ -193,6 +197,7 @@ type (
 		SerialNumber string `json:"serialNumber"`
 		ModelNumber  string `json:"modelNumber"`
 		Manufacturer string `json:"manufacturer"`
+		ExternalID   string `json:"externalID"`
 
 		// Warranty
 		LifetimeWarranty bool       `json:"lifetimeWarranty"`
@@ -343,6 +348,7 @@ func mapEntityOut(e *ent.Entity) EntityOut {
 		SerialNumber: e.SerialNumber,
 		ModelNumber:  e.ModelNumber,
 		Manufacturer: e.Manufacturer,
+		ExternalID:   e.ExternalID,
 
 		// Purchase
 		PurchaseDate: types.DateFromTime(e.PurchaseDate),
@@ -548,6 +554,20 @@ func (r *EntityRepository) GetByRef(ctx context.Context, gid uuid.UUID, ref stri
 	defer span.End()
 
 	out, err := r.getOne(ctx, entity.ImportRef(ref), entity.HasGroupWith(group.ID(gid)))
+	recordSpanError(span, err)
+	return out, err
+}
+
+// GetOneByExternalID returns a single entity by External ID, verified to belong to a specific group.
+func (r *EntityRepository) GetOneByExternalID(ctx context.Context, gid uuid.UUID, externalID string) (EntityOut, error) {
+	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.GetOneByExternalID",
+		trace.WithAttributes(
+			attribute.String("group.id", gid.String()),
+			attribute.String("entity.external_id", externalID),
+		))
+	defer span.End()
+
+	out, err := r.getOne(ctx, entity.ExternalID(externalID), entity.HasGroupWith(group.ID(gid)))
 	recordSpanError(span, err)
 	return out, err
 }
@@ -1071,6 +1091,7 @@ func (r *EntityRepository) Create(ctx context.Context, gid uuid.UUID, data Entit
 		SetDescription(data.Description).
 		SetModelNumber(data.ModelNumber).
 		SetManufacturer(data.Manufacturer).
+		SetExternalID(data.ExternalID).
 		SetGroupID(gid).
 		SetAssetID(int64(data.AssetID))
 
@@ -1113,6 +1134,7 @@ type EntityCreateFromTemplate struct {
 	Description      string
 	Manufacturer     string
 	ModelNumber      string
+	ExternalID       string
 	WarrantyDetails  string
 	TagIDs           []uuid.UUID
 	Fields           []EntityFieldData
@@ -1130,6 +1152,7 @@ func (r *EntityRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID
 			attribute.String("group.id", gid.String()),
 			attribute.String("entity.name", data.Name),
 			attribute.Float64("entity.quantity", data.Quantity),
+			attribute.String("entity.external_id", data.ExternalID),
 			attribute.Bool("entity.parent_id.set", data.ParentID != uuid.Nil),
 			attribute.Bool("entity.entity_type_id.set", data.EntityTypeID != uuid.Nil),
 			attribute.Int("entity.tags.count", len(data.TagIDs)),
@@ -1206,6 +1229,7 @@ func (r *EntityRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID
 		SetAssetID(int64(nextAssetID)).
 		SetInsured(data.Insured).
 		SetManufacturer(data.Manufacturer).
+		SetExternalID(data.ExternalID).
 		SetModelNumber(data.ModelNumber).
 		SetLifetimeWarranty(data.LifetimeWarranty).
 		SetWarrantyDetails(data.WarrantyDetails)
@@ -1553,6 +1577,7 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		SetInsured(data.Insured).
 		SetWarrantyDetails(data.WarrantyDetails).
 		SetQuantity(data.Quantity).
+		SetExternalID(data.ExternalID).
 		SetAssetID(int64(data.AssetID)).
 		SetSyncChildEntityLocations(data.SyncChildEntityLocations)
 
@@ -2193,11 +2218,13 @@ func (r *EntityRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opt
 		SetName(options.CopyPrefix + originalEntity.Name).
 		SetDescription(originalEntity.Description).
 		SetQuantity(originalEntity.Quantity).
+		SetExternalID(originalEntity.ExternalID).
 		SetGroupID(gid).
 		SetAssetID(int64(nextAssetID)).
 		SetSerialNumber(originalEntity.SerialNumber).
 		SetModelNumber(originalEntity.ModelNumber).
 		SetManufacturer(originalEntity.Manufacturer).
+		SetExternalID(originalEntity.ExternalID).
 		SetLifetimeWarranty(originalEntity.LifetimeWarranty).
 		SetWarrantyDetails(originalEntity.WarrantyDetails).
 		SetPurchaseFrom(originalEntity.PurchaseFrom).

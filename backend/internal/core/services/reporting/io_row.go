@@ -27,6 +27,7 @@ type ExportCSVRow struct {
 	Manufacturer     string             `csv:"HB.manufacturer"`
 	ModelNumber      string             `csv:"HB.model_number"`
 	SerialNumber     string             `csv:"HB.serial_number"`
+	ExternalID       string             `csv:"HB.external_id"`
 	WarrantyDetails  string             `csv:"HB.warranty_details"`
 	SoldTo           string             `csv:"HB.sold_to"`
 	SoldNotes        string             `csv:"HB.sold_notes"`

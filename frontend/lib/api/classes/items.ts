@@ -134,6 +134,10 @@ export class ItemsApi extends BaseAPI {
     return this.http.get<EntityOut>({ url: route(`/entities/${id}`) });
   }
 
+  async getByExternalId(externalId: string) {
+    return this.http.get<EntityOut>({ url: route(`/entities/external/${externalId}`) });
+  }
+
   delete(id: string) {
     return this.http.delete<void>({ url: route(`/entities/${id}`) });
   }
