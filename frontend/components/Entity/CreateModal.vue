@@ -514,6 +514,8 @@
 
   onMounted(() => {
     const cleanup = registerOpenDialogCallback(DialogID.CreateEntity, async params => {
+      await entityTypeStore.ensureFetched();
+
       subItemCreate.value = false;
       let parentItemLocationId = null;
       parent.value = {};
