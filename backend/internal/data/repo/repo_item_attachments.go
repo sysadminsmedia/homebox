@@ -732,7 +732,9 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	if contentType != "image/avif" && contentType != "image/jxl" {
 		imageMeta, err := imagemeta.Decode(bytes.NewReader(contentBytes))
 		if err == nil {
-			orientation = uint16(imageMeta.Orientation)
+			// imagemeta v1 groups the primary image tags under IFD0 rather than
+			// exposing Orientation directly on Exif.
+			orientation = uint16(imageMeta.IFD0.Orientation)
 		}
 		// If error, just use default orientation (1)
 	}
