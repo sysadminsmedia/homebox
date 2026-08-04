@@ -34,6 +34,8 @@ export type LocationViewPreferences = {
   };
 };
 export type PreferenceSyncConfig = Partial<Record<keyof LocationViewPreferences, boolean>>;
+type PreferenceChange = true | Record<string, PreferenceChange>;
+type PreferenceChanges = Partial<Record<keyof LocationViewPreferences, PreferenceChange>>;
 
 const DEFAULT_PREFERENCES: LocationViewPreferences = {
   showDetails: true,
@@ -41,7 +43,7 @@ const DEFAULT_PREFERENCES: LocationViewPreferences = {
   editorAdvancedView: false,
   itemDisplayView: "card",
   theme: "homebox",
-  itemsPerTablePage: 10,
+  itemsPerTablePage: 12,
   displayLegacyHeader: false,
   legacyImageFit: false,
   language: null,
@@ -84,19 +86,109 @@ function buildSyncedSettings(preferences: LocationViewPreferences): Record<strin
   return payload;
 }
 
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isPrototypeKey(key: string): boolean {
+  return key === "__proto__" || key === "constructor" || key === "prototype";
+}
+
+function mergeSyncedValue(serverValue: unknown, localValue: unknown, localChange?: PreferenceChange): unknown {
+  if (localChange === undefined) {
+    return serverValue;
+  }
+
+  if (localChange === true || !isPlainObject(serverValue) || !isPlainObject(localValue)) {
+    return localValue;
+  }
+
+  const mergedValue: Record<string, unknown> = {};
+  const keys = new Set([...Object.keys(serverValue), ...Object.keys(localValue)]);
+
+  for (const key of keys) {
+    if (isPrototypeKey(key)) {
+      continue;
+    }
+
+    const nestedChange = localChange[key];
+    if (nestedChange !== undefined) {
+      mergedValue[key] = mergeSyncedValue(serverValue[key], localValue[key], nestedChange);
+      continue;
+    }
+
+    if (Object.hasOwn(serverValue, key)) {
+      mergedValue[key] = serverValue[key];
+    } else {
+      mergedValue[key] = localValue[key];
+    }
+  }
+
+  return mergedValue;
+}
+
 function mergeSyncedSettings(
   settings: Record<string, unknown>,
-  preferences: LocationViewPreferences
+  preferences: LocationViewPreferences,
+  localChanges: PreferenceChanges = {}
 ): LocationViewPreferences {
   const nextPreferences = { ...preferences };
 
   forEachSyncedPreference(key => {
     if (key in settings) {
-      nextPreferences[key] = settings[key] as never;
+      nextPreferences[key] = mergeSyncedValue(settings[key], preferences[key], localChanges[key]) as never;
     }
   });
 
   return nextPreferences;
+}
+
+function cloneSyncedSettings(settings: Record<string, unknown>): Record<string, unknown> {
+  return JSON.parse(JSON.stringify(settings)) as Record<string, unknown>;
+}
+
+function getPreferenceChange(previousValue: unknown, nextValue: unknown): PreferenceChange | null {
+  if (JSON.stringify(previousValue) === JSON.stringify(nextValue)) {
+    return null;
+  }
+
+  if (isPlainObject(previousValue) && isPlainObject(nextValue)) {
+    const changedFields: Record<string, PreferenceChange> = {};
+    const keys = new Set([...Object.keys(previousValue), ...Object.keys(nextValue)]);
+
+    for (const key of keys) {
+      if (isPrototypeKey(key)) {
+        continue;
+      }
+
+      const nestedChange = getPreferenceChange(previousValue[key], nextValue[key]);
+      if (nestedChange !== null) {
+        changedFields[key] = nestedChange;
+      }
+    }
+
+    if (Object.keys(changedFields).length > 0) {
+      return changedFields;
+    }
+  }
+
+  return true;
+}
+
+function getChangedPreferences(
+  previousSettings: Record<string, unknown>,
+  preferences: LocationViewPreferences
+): PreferenceChanges {
+  const changedPreferences: PreferenceChanges = {};
+
+  forEachSyncedPreference(key => {
+    const change = getPreferenceChange(previousSettings[key], preferences[key]);
+    if (change !== null) {
+      changedPreferences[key] = change;
+    }
+  });
+
+  return changedPreferences;
 }
 
 export function configureViewPreferenceSync(config: PreferenceSyncConfig) {
@@ -106,19 +198,19 @@ export function configureViewPreferenceSync(config: PreferenceSyncConfig) {
   };
 }
 
-async function refreshViewPreferencesFromServer(preferences: Ref<LocationViewPreferences>) {
+async function fetchViewPreferencesFromServer(): Promise<Record<string, unknown> | null> {
   const auth = useAuthContext();
   if (!auth.isAuthorized()) {
-    return;
+    return null;
   }
 
   const api = useUserApi();
   const { data, error } = await api.user.getSettings();
   if (error || !data?.item) {
-    return;
+    return null;
   }
 
-  preferences.value = mergeSyncedSettings(data.item, preferences.value);
+  return data.item;
 }
 export function useViewPreferencesSync() {
   if (syncInitialized || !import.meta.client) {
@@ -155,7 +247,7 @@ export function useViewPreferencesSync() {
   };
 
   const saveToServer = async () => {
-    if (saveInFlight || pauseServerSaves || !auth.isAuthorized()) {
+    if (saveInFlight || retryTimer !== null || pauseServerSaves || !auth.isAuthorized()) {
       return;
     }
 
@@ -165,7 +257,14 @@ export function useViewPreferencesSync() {
     try {
       while (syncedRevision < localRevision && !pauseServerSaves && auth.isAuthorized()) {
         const targetRevision = localRevision;
-        const { error } = await api.user.setSettings(buildSyncedSettings(preferences.value));
+        let error = false;
+        try {
+          ({ error } = await api.user.setSettings(buildSyncedSettings(preferences.value)));
+        } catch {
+          scheduleRetry();
+          return;
+        }
+
         if (error) {
           scheduleRetry();
           return;
@@ -176,7 +275,7 @@ export function useViewPreferencesSync() {
     } finally {
       saveInFlight = false;
 
-      if (syncedRevision < localRevision && !pauseServerSaves) {
+      if (syncedRevision < localRevision && retryTimer === null && !pauseServerSaves) {
         void saveToServer();
       }
     }
@@ -196,15 +295,22 @@ export function useViewPreferencesSync() {
     try {
       while (refreshRequested) {
         refreshRequested = false;
+        const refreshRevision = localRevision;
+        const refreshSettings = cloneSyncedSettings(buildSyncedSettings(preferences.value));
 
         pauseServerSaves = true;
-        applyingServerSnapshot = true;
         try {
-          await refreshViewPreferencesFromServer(preferences);
+          const settings = await fetchViewPreferencesFromServer();
+          if (settings) {
+            const localChanges =
+              localRevision === refreshRevision ? {} : getChangedPreferences(refreshSettings, preferences.value);
+            applyingServerSnapshot = true;
+            preferences.value = mergeSyncedSettings(settings, preferences.value, localChanges);
+          }
         } finally {
           applyingServerSnapshot = false;
+          pauseServerSaves = false;
         }
-        pauseServerSaves = false;
 
         if (syncedRevision < localRevision) {
           await saveToServer();
@@ -224,7 +330,7 @@ export function useViewPreferencesSync() {
 
       markDirty();
     },
-    { deep: true }
+    { deep: true, flush: "sync" }
   );
 
   watch(
