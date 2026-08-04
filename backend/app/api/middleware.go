@@ -361,6 +361,50 @@ func (a *app) mwTenant(next errchain.Handler) errchain.Handler {
 	})
 }
 
+// mwGroupOwner rejects requests from users who are not the owner of the tenant
+// group they are acting on. Membership in a group is enough to read and mutate
+// its inventory, but collection administration — renaming it, minting or
+// revoking invitations, removing members, deleting the whole collection — is
+// reserved for the owner. Without this, any invited member could take over or
+// destroy a shared collection.
+//
+// WARNING: This middleware _MUST_ be called after mwAuthToken and mwTenant.
+func (a *app) mwGroupOwner(next errchain.Handler) errchain.Handler {
+	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+		spanCtx, span := mwTracer().Start(r.Context(), "middleware.mwGroupOwner")
+		defer span.End()
+
+		auth := services.NewContext(spanCtx)
+		if auth.User == nil {
+			err := errors.New("user context not found")
+			recordMwSpanError(span, err)
+			span.SetAttributes(attribute.String("owner.outcome", "no_user_ctx"))
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+
+		isOwner, err := a.repos.Groups.IsOwnerOf(spanCtx, auth.UID, auth.GID)
+		if err != nil {
+			recordMwSpanError(span, err)
+			span.SetAttributes(attribute.String("owner.outcome", "lookup_error"))
+			return err
+		}
+
+		span.SetAttributes(
+			attribute.String("user.id", auth.UID.String()),
+			attribute.String("tenant.id", auth.GID.String()),
+			attribute.Bool("group.is_owner", isOwner),
+		)
+
+		if !isOwner {
+			span.SetAttributes(attribute.String("owner.outcome", "forbidden"))
+			return validate.NewRequestError(services.ErrNotGroupOwner, http.StatusForbidden)
+		}
+
+		span.SetAttributes(attribute.String("owner.outcome", "ok"))
+		return next.ServeHTTP(w, r.WithContext(spanCtx))
+	})
+}
+
 // authRateLimiter tracks authentication attempts per client and applies a backoff when limits are exceeded.
 type authRateLimiter struct {
 	cfg         config.AuthRateLimit

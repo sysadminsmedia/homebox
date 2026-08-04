@@ -31,6 +31,7 @@ func (s *spy) Write(b []byte) (int, error) {
 
 	return s.ResponseWriter.Write(b)
 }
+
 // Unwrap exposes the wrapped writer to http.ResponseController, which walks
 // the Unwrap chain to reach the underlying connection. Without it a handler
 // cannot clear the server's write deadline, and long streaming downloads get
