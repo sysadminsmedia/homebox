@@ -31,6 +31,7 @@
   import BaseCard from "@/components/Base/Card.vue";
   import { Card } from "~/components/ui/card";
   import DropZone from "~/components/global/DropZone.vue";
+  import PasteImageButton from "~/components/Form/PasteImageButton.vue";
   import EntitySelector from "~/components/Entity/Selector.vue";
   import { useEntityTypeStore } from "~/stores/entityTypes";
 
@@ -338,6 +339,15 @@
   const dropPhoto = (files: File[] | null) => uploadAttachment(files, AttachmentTypes.Photo);
   const dropAttachment = (files: File[] | null) => uploadAttachment(files, AttachmentTypes.Attachment);
   const dropWarranty = (files: File[] | null) => uploadAttachment(files, AttachmentTypes.Warranty);
+
+  async function pastePhotos(files: File[]) {
+    for (const file of files) {
+      await uploadAttachment([file], AttachmentTypes.Photo);
+    }
+  }
+
+  usePasteImage(pastePhotos);
+
   const dropManual = (files: File[] | null) => uploadAttachment(files, AttachmentTypes.Manual);
   const dropReceipt = (files: File[] | null) => uploadAttachment(files, AttachmentTypes.Receipt);
 
@@ -802,15 +812,17 @@
               <DropZone data-link-type="attachment" @drop="dropAttachment"> {{ $t("items.attachments") }} </DropZone>
               <DropZone data-link-type="receipt" @drop="dropReceipt"> {{ $t("items.receipts") }} </DropZone>
             </div>
-            <button
-              v-else
-              data-link-type="attachment"
-              class="grid h-24 w-full place-content-center border-2 border-dashed border-primary"
-              @click="clickUpload"
-            >
-              <input ref="refAttachmentInput" hidden type="file" @change="uploadImage" />
-              <p>{{ $t("items.drag_and_drop") }}</p>
-            </button>
+            <div v-else class="flex flex-col items-center gap-2">
+              <button
+                data-link-type="attachment"
+                class="grid h-24 w-full place-content-center border-2 border-dashed border-primary"
+                @click="clickUpload"
+              >
+                <input ref="refAttachmentInput" hidden type="file" @change="uploadImage" />
+                <p>{{ $t("items.drag_and_drop_or_paste") }}</p>
+              </button>
+              <PasteImageButton @paste="pastePhotos" />
+            </div>
           </div>
 
           <div class="border-t p-4">

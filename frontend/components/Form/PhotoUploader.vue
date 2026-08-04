@@ -5,19 +5,30 @@
         {{ label }}
       </Label>
 
-      <div class="relative inline-block">
-        <Button type="button" variant="outline" class="w-full" aria-hidden="true" @click.prevent="openFilePicker">
-          {{ buttonLabel }}
-        </Button>
-        <Input
-          id="photo-uploader"
-          ref="fileInput"
-          class="absolute left-0 top-0 size-full cursor-pointer opacity-0"
-          type="file"
-          accept="image/png,image/jpeg,image/gif,image/avif,image/webp,android/force-camera-workaround"
-          multiple
-          @change="onFilesSelected"
-        />
+      <div class="flex gap-2">
+        <!-- The file input is stacked on top of the button and is the real click target -->
+        <div class="relative inline-block grow">
+          <Button
+            type="button"
+            variant="outline"
+            class="w-full"
+            aria-hidden="true"
+            tabindex="-1"
+            @click.prevent="openFilePicker"
+          >
+            {{ buttonLabel }}
+          </Button>
+          <Input
+            id="photo-uploader"
+            ref="fileInput"
+            class="absolute left-0 top-0 size-full cursor-pointer opacity-0"
+            type="file"
+            accept="image/png,image/jpeg,image/gif,image/avif,image/webp,android/force-camera-workaround"
+            multiple
+            @change="onFilesSelected"
+          />
+        </div>
+        <PasteImageButton @paste="emitPhotos" />
       </div>
     </div>
   </div>
@@ -29,6 +40,7 @@
   import { Label } from "~/components/ui/label";
   import { Input } from "~/components/ui/input";
   import { Button } from "~/components/ui/button";
+  import PasteImageButton from "~/components/Form/PasteImageButton.vue";
   import { filesToPhotoPreviews, type PhotoPreview } from "./photo-uploader";
 
   const props = withDefaults(
@@ -54,17 +66,21 @@
   const label = computed(() => props.label || t("components.entity.create_modal.item_photo"));
   const buttonLabel = computed(() => props.buttonLabel || t("components.entity.create_modal.upload_photos"));
 
+  usePasteImage(emitPhotos);
+
   function openFilePicker() {
     fileInput.value?.click();
+  }
+
+  async function emitPhotos(files: FileList | File[]) {
+    emit("selected", await filesToPhotoPreviews(files, props.existingCount));
   }
 
   async function onFilesSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) return;
 
-    const photos = await filesToPhotoPreviews(input.files, props.existingCount);
-
-    emit("selected", photos);
+    await emitPhotos(input.files);
     input.value = "";
   }
 </script>

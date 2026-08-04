@@ -471,6 +471,7 @@
         "navigate": "Navigate",
         "no": "No",
         "password": "Password",
+        "paste_image": "Paste Image",
         "preview": "Preview",
         "quantity": "Quantity",
         "read_docs": "Read the Docs",
@@ -563,6 +564,7 @@
         "description": "Description",
         "details": "Details",
         "drag_and_drop": "Drag and drop files here or click to select files",
+        "drag_and_drop_or_paste": "Drag and drop files here, click to select files, or paste an image",
         "duplicate": {
             "copy_attachments": "Copy Attachments",
             "copy_custom_fields": "Copy Custom Fields",
@@ -651,6 +653,7 @@
             "child_items_location_no_longer_synced": "Child items' locations will no longer be synced with this item.",
             "child_items_location_synced": "Child items' locations have been synced with this item",
             "child_location_desync": "Parent item cleared — the item now lives directly in the selected location",
+            "clipboard_read_failed": "Couldn't read the clipboard — check your browser's clipboard permissions",
             "error_loading_parent_data": "Something went wrong trying to load parent data",
             "failed_adjust_quantity": "Failed to adjust quantity",
             "failed_delete_attachment": "Failed to delete attachment",
@@ -666,6 +669,7 @@
             "failed_upload_attachment": "Failed to upload attachment",
             "item_deleted": "Item deleted",
             "item_saved": "Item saved",
+            "no_image_in_clipboard": "No image found in the clipboard",
             "quantity_cannot_negative": "Quantity cannot be negative",
             "sync_child_location": "Selected parent syncs its children's locations to its own. The location has been updated."
         },
