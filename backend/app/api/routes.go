@@ -187,6 +187,10 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Post("/entities", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesCreate(), userMW...))
 		r.Post("/entities/import", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesImport(), userMW...))
 		r.Get("/entities/export", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesExport(), userMW...))
+		// PDF export endpoints — single entity, bulk selection, full inventory, and theme listing
+		r.Get("/entities/export/pdf", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesExportAllPDF(), userMW...))
+		r.Post("/entities/export/pdf", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesExportPDF(), userMW...))
+		r.Get("/entities/export/pdf/themes", chain.ToHandlerFunc(v1Ctrl.HandlePDFThemes(), userMW...))
 		r.Get("/entities/fields", chain.ToHandlerFunc(v1Ctrl.HandleGetAllCustomFieldNames(), userMW...))
 		r.Get("/entities/fields/values", chain.ToHandlerFunc(v1Ctrl.HandleGetAllCustomFieldValues(), userMW...))
 		r.Get("/entities/tree", chain.ToHandlerFunc(v1Ctrl.HandleLocationTreeQuery(), userMW...))
@@ -197,6 +201,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Patch("/entities/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityPatch(), userMW...))
 		r.Delete("/entities/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityDelete(), userMW...))
 		r.Post("/entities/{id}/duplicate", chain.ToHandlerFunc(v1Ctrl.HandleEntityDuplicate(), userMW...))
+		r.Get("/entities/{id}/export/pdf", chain.ToHandlerFunc(v1Ctrl.HandleEntityExportPDF(), userMW...))
 
 		// Entity attachment endpoints
 		r.Post("/entities/{id}/attachments", chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentCreate(), userMW...))
