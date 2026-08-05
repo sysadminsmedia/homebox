@@ -77,6 +77,34 @@ func (_c *GroupCreate) SetNillableCurrency(v *string) *GroupCreate {
 	return _c
 }
 
+// SetFoundContactEnabled sets the "found_contact_enabled" field.
+func (_c *GroupCreate) SetFoundContactEnabled(v bool) *GroupCreate {
+	_c.mutation.SetFoundContactEnabled(v)
+	return _c
+}
+
+// SetNillableFoundContactEnabled sets the "found_contact_enabled" field if the given value is not nil.
+func (_c *GroupCreate) SetNillableFoundContactEnabled(v *bool) *GroupCreate {
+	if v != nil {
+		_c.SetFoundContactEnabled(*v)
+	}
+	return _c
+}
+
+// SetFoundContactMessage sets the "found_contact_message" field.
+func (_c *GroupCreate) SetFoundContactMessage(v string) *GroupCreate {
+	_c.mutation.SetFoundContactMessage(v)
+	return _c
+}
+
+// SetNillableFoundContactMessage sets the "found_contact_message" field if the given value is not nil.
+func (_c *GroupCreate) SetNillableFoundContactMessage(v *string) *GroupCreate {
+	if v != nil {
+		_c.SetFoundContactMessage(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *GroupCreate) SetID(v uuid.UUID) *GroupCreate {
 	_c.mutation.SetID(v)
@@ -258,6 +286,14 @@ func (_c *GroupCreate) defaults() {
 		v := group.DefaultCurrency
 		_c.mutation.SetCurrency(v)
 	}
+	if _, ok := _c.mutation.FoundContactEnabled(); !ok {
+		v := group.DefaultFoundContactEnabled
+		_c.mutation.SetFoundContactEnabled(v)
+	}
+	if _, ok := _c.mutation.FoundContactMessage(); !ok {
+		v := group.DefaultFoundContactMessage
+		_c.mutation.SetFoundContactMessage(v)
+	}
 	if _, ok := _c.mutation.ID(); !ok {
 		v := group.DefaultID()
 		_c.mutation.SetID(v)
@@ -282,6 +318,17 @@ func (_c *GroupCreate) check() error {
 	}
 	if _, ok := _c.mutation.Currency(); !ok {
 		return &ValidationError{Name: "currency", err: errors.New(`ent: missing required field "Group.currency"`)}
+	}
+	if _, ok := _c.mutation.FoundContactEnabled(); !ok {
+		return &ValidationError{Name: "found_contact_enabled", err: errors.New(`ent: missing required field "Group.found_contact_enabled"`)}
+	}
+	if _, ok := _c.mutation.FoundContactMessage(); !ok {
+		return &ValidationError{Name: "found_contact_message", err: errors.New(`ent: missing required field "Group.found_contact_message"`)}
+	}
+	if v, ok := _c.mutation.FoundContactMessage(); ok {
+		if err := group.FoundContactMessageValidator(v); err != nil {
+			return &ValidationError{Name: "found_contact_message", err: fmt.Errorf(`ent: validator failed for field "Group.found_contact_message": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -333,6 +380,14 @@ func (_c *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Currency(); ok {
 		_spec.SetField(group.FieldCurrency, field.TypeString, value)
 		_node.Currency = value
+	}
+	if value, ok := _c.mutation.FoundContactEnabled(); ok {
+		_spec.SetField(group.FieldFoundContactEnabled, field.TypeBool, value)
+		_node.FoundContactEnabled = value
+	}
+	if value, ok := _c.mutation.FoundContactMessage(); ok {
+		_spec.SetField(group.FieldFoundContactMessage, field.TypeString, value)
+		_node.FoundContactMessage = value
 	}
 	if nodes := _c.mutation.UsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

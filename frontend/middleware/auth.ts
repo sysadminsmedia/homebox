@@ -1,12 +1,25 @@
-export default defineNuxtRouteMiddleware(async () => {
+export default defineNuxtRouteMiddleware(async to => {
   const ctx = useAuthContext();
   const api = useUserApi();
   const redirectTo = useState("authRedirect");
 
   if (!ctx.isAuthorized()) {
-    if (window.location.pathname !== "/") {
+    const path = to.path;
+
+    const asset = path.match(/^\/(?:a|assets)\/([^/]+)\/?$/);
+    const item = path.match(/^\/item\/([^/]+)\/?$/);
+    if (asset || item) {
+      console.debug("[middleware/auth] unauthenticated label scan, redirecting to found page");
+      redirectTo.value = path;
+      const kind = item ? "item" : "asset";
+      const match = item ?? asset;
+      const id = match?.[1];
+      return navigateTo(`/found/${kind}/${id}`);
+    }
+
+    if (path !== "/") {
       console.debug("[middleware/auth] isAuthorized returned false, redirecting to /");
-      redirectTo.value = window.location.pathname;
+      redirectTo.value = path;
       return navigateTo("/");
     }
   }
