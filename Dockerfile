@@ -90,8 +90,10 @@ EXPOSE 7745
 WORKDIR /app
 
 # Healthcheck configuration
+# Shell logic normalizes HBOX_WEB_APP_BASE to always have leading+trailing
+# slash (e.g. "homebox" -> "/homebox/") to match Go's normalizePath().
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-    CMD [ "wget", "--no-verbose", "--tries=1", "-O", "-", "http://localhost:7745/api/v1/status" ]
+    CMD sh -c 'B="${HBOX_WEB_APP_BASE:-/}"; B="/${B#/}"; B="${B%/}/"; wget --no-verbose --tries=1 -O - "http://localhost:7745${B}api/v1/status"'
 
 # Persist volume
 VOLUME [ "/data" ]
