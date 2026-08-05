@@ -1,0 +1,20 @@
+LOAD DATABASE
+     FROM {{SQLITE_URI}}
+     INTO {{POSTGRES_URI}}
+
+ EXCLUDING TABLE NAMES LIKE 'goose_db_version'
+
+ WITH data only,
+      truncate,
+      disable triggers,
+      include no drop,
+      create no tables,
+      create no indexes,
+      preserve index names
+
+  SET PostgreSQL PARAMETERS
+      maintenance_work_mem to '128MB',
+      work_mem to '12MB'
+
+  CAST type datetime to timestamptz drop default using zero-dates-to-null,
+       type date to timestamptz drop default using zero-dates-to-null;
