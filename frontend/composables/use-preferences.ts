@@ -1,8 +1,13 @@
 import type { Ref } from "vue";
 import type { EntitySummary } from "~/lib/api/types/data-contracts";
 import type { DaisyTheme } from "~~/lib/data/themes";
+import { resolveWeekStart, type WeekStart } from "~~/lib/datelib/weekStart";
 
 export type ViewType = "table" | "card";
+
+// Re-exported so existing importers of the preference helpers keep a single
+// entrypoint; the implementation lives in a side-effect-free module for testing.
+export { resolveWeekStart, type WeekStart };
 
 export type DuplicateSettings = {
   copyMaintenance: boolean;
@@ -26,6 +31,7 @@ export type LocationViewPreferences = {
   legacyImageFit: boolean;
   language?: string | null;
   overrideFormatLocale?: string | null;
+  firstDayOfWeek: WeekStart;
   collectionId?: string | null;
   duplicateSettings: DuplicateSettings;
   shownMultiTabWarning: boolean;
@@ -46,6 +52,7 @@ const DEFAULT_PREFERENCES: LocationViewPreferences = {
   legacyImageFit: false,
   language: null,
   overrideFormatLocale: null,
+  firstDayOfWeek: "auto",
   duplicateSettings: {
     copyMaintenance: false,
     copyAttachments: true,
@@ -57,6 +64,7 @@ const DEFAULT_PREFERENCES: LocationViewPreferences = {
     enabled: true,
   },
 };
+
 let syncConfig: PreferenceSyncConfig = {
   itemDisplayView: false,
   shownMultiTabWarning: false,
