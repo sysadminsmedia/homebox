@@ -33,7 +33,7 @@
     "h3": "^1.15.6",
     "intl-messageformat": "^10.7.18",
     "isomorphic-fetch": "^3.0.0",
-    "nuxt": "4.4.7",
+    "nuxt": "4.5.1",
     "prettier": "^3.9.6",
     "shadcn-nuxt": "2.2.0",
     "typescript": "5.9.2",
