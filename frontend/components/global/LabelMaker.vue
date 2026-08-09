@@ -85,11 +85,16 @@
       params.tenant = selectedId.value;
     }
 
+    // The backend has no translations of its own, so the text it prints on the
+    // label is passed along in the user's current language.
     if (props.type === "item" || props.type === "entity") {
+      params.locationLabel = t("items.location");
       return route(`/labelmaker/entity/${props.id}`, params);
     } else if (props.type === "location") {
+      params.locationDescription = t("components.global.label_maker.location_description");
       return route(`/labelmaker/location/${props.id}`, params);
     } else if (props.type === "asset") {
+      params.locationLabel = t("items.location");
       return route(`/labelmaker/asset/${props.id}`, params);
     } else {
       throw new Error(`Unexpected labelmaker type ${props.type}`);
