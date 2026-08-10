@@ -254,6 +254,32 @@
       },
       ...assetID.value,
       ...item.value.fields.map(field => {
+        // Typed custom fields render according to their backend enum type
+        // (text | number | boolean | time). "time" is a date-only value.
+        if (field.type === "number") {
+          return {
+            name: field.name,
+            text: field.numberValue,
+          } as AnyDetail;
+        }
+
+        if (field.type === "boolean") {
+          return {
+            name: field.name,
+            text: field.booleanValue ? "Yes" : "No",
+          } as AnyDetail;
+        }
+
+        if (field.type === "time") {
+          // timeValue is a YYYY-MM-DD string ("" when unset)
+          return {
+            name: field.name,
+            text: field.timeValue || "",
+            type: "date",
+            date: true,
+          } as AnyDetail;
+        }
+
         /**
          * Support Special URL Syntax
          */

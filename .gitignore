@@ -70,3 +70,6 @@ frontend/test-results/
 frontend/playwright-report/
 frontend/blob-report/
 frontend/playwright/.cache/
+
+# Local test scratch (DB export, logs, secrets) — not for commit
+_import/

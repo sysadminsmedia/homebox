@@ -462,6 +462,43 @@ func (ctrl *V1Controller) HandleGetAllCustomFieldValues() errchain.HandlerFunc {
 	return adapters.Query(fn, http.StatusOK)
 }
 
+// HandleEntitiesExpiring godoc
+//
+//	@Summary	Get entities with date fields coming due
+//	@Tags		Entities
+//	@Produce	json
+//	@Param		withinDays	query	int	false	"Days ahead to look (default 30)"
+//	@Success	200			{array}	repo.EntityExpiringField
+//	@Router		/v1/entities/expiring [GET]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleEntitiesExpiring() errchain.HandlerFunc {
+	type query struct {
+		WithinDays int `schema:"withinDays"`
+	}
+
+	fn := func(r *http.Request, q query) ([]repo.EntityExpiringField, error) {
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntitiesExpiring")
+		defer span.End()
+
+		within := q.WithinDays
+		if within <= 0 {
+			within = 30
+		}
+
+		auth := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("group.id", auth.GID.String()), attribute.Int("within.days", within))
+		out, err := ctrl.repo.Entities.QueryExpiringFields(auth, auth.GID, within)
+		if err != nil {
+			recordCtrlSpanError(span, err)
+			return out, err
+		}
+		span.SetAttributes(attribute.Int("results.count", len(out)))
+		return out, nil
+	}
+
+	return adapters.Query(fn, http.StatusOK)
+}
+
 // HandleEntitiesImport godoc
 //
 //	@Summary	Import Entities
