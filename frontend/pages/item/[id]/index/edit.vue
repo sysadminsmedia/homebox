@@ -514,6 +514,15 @@
     } as unknown as EntityFieldData);
   }
 
+  // Custom field types map to the backend EntityField enum
+  // (text | number | boolean | time). "time" is surfaced as "Date".
+  const fieldTypeOptions = [
+    { value: "text", text: "Text" },
+    { value: "number", text: "Number" },
+    { value: "time", text: "Date" },
+    { value: "boolean", text: "Yes / No" },
+  ];
+
   const { query, results, isLoading, triggerSearch } = useItemSearch(api, { immediate: false });
   const parent = ref();
   // Derived location shown in the "Location" selector. Kept separate from
@@ -762,12 +771,48 @@
             <div
               v-for="(field, idx) in item.fields"
               :key="`field-${idx}`"
-              class="grid grid-cols-2 gap-2 pt-4 md:grid-cols-4"
+              class="grid grid-cols-1 gap-2 pt-4 md:grid-cols-4 md:items-end"
             >
-              <!-- <FormSelect v-model:value="field.type" label="Field Type" :items="fieldTypes" value-key="value" /> -->
               <FormTextField v-model="field.name" :label="$t('global.name')" />
-              <div class="col-span-3 flex items-end">
-                <FormTextField v-model="field.textValue" :label="$t('global.value')" :max-length="500" />
+              <div>
+                <Label :for="`field-type-${idx}`" class="text-sm">{{ $t("global.type") }}</Label>
+                <Select :id="`field-type-${idx}`" v-model:model-value="field.type">
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem v-for="opt in fieldTypeOptions" :key="opt.value" :value="opt.value">
+                      {{ opt.text }}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div class="flex items-end md:col-span-2">
+                <FormTextField
+                  v-if="field.type === 'number'"
+                  v-model.number="field.numberValue"
+                  type="number"
+                  step="any"
+                  :label="$t('global.value')"
+                  class="grow"
+                />
+                <FormDatePicker
+                  v-else-if="field.type === 'time'"
+                  v-model="field.timeValue"
+                  date-only
+                  :label="$t('global.value')"
+                  class="grow"
+                />
+                <div v-else-if="field.type === 'boolean'" class="grow">
+                  <FormCheckbox v-model="field.booleanValue" :label="$t('global.value')" />
+                </div>
+                <FormTextField
+                  v-else
+                  v-model="field.textValue"
+                  :label="$t('global.value')"
+                  :max-length="500"
+                  class="grow"
+                />
                 <Tooltip>
                   <TooltipTrigger as-child>
                     <Button size="icon" variant="destructive" class="ml-2" @click="item.fields.splice(idx, 1)">

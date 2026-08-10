@@ -1,6 +1,7 @@
 import { BaseAPI, route } from "../base";
 import type {
   EntityCreate,
+  EntityExpiringField,
   EntityListResult,
   EntityOut,
   EntityPatch,
@@ -86,6 +87,10 @@ export class FieldsAPI extends BaseAPI {
 
   getAllValues(field: string) {
     return this.http.get<string[]>({ url: route(`/entities/fields/values`, { field }) });
+  }
+
+  expiring(withinDays?: number) {
+    return this.http.get<EntityExpiringField[]>({ url: route(`/entities/expiring`, { withinDays }) });
   }
 }
 

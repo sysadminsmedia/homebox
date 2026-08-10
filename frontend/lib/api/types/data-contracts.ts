@@ -770,7 +770,16 @@ export interface EntityFieldData {
   name: string;
   numberValue: number;
   textValue: string;
+  timeValue: string;
   type: string;
+}
+
+export interface EntityExpiringField {
+  /** date-only string, YYYY-MM-DD */
+  date: string;
+  fieldName: string;
+  id: string;
+  name: string;
 }
 
 export interface EntityListResult {

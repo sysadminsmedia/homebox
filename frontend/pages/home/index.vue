@@ -12,6 +12,7 @@
   import LocationCard from "~/components/Location/Card.vue";
   import TagChip from "~/components/Tag/Chip.vue";
   import Table from "~/components/Item/View/Table.vue";
+  import HomeExpiringSoon from "~/components/Home/ExpiringSoon.vue";
 
   const { t } = useI18n();
 
@@ -44,6 +45,8 @@
           <StatCard v-for="(stat, i) in stats" :key="i" :title="stat.label" :value="stat.value" :type="stat.type" />
         </div>
       </section>
+
+      <HomeExpiringSoon />
 
       <section>
         <Subtitle> {{ $t("home.recently_added") }} </Subtitle>

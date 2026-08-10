@@ -79,12 +79,23 @@ type (
 	}
 
 	EntityFieldData struct {
-		ID           uuid.UUID `json:"id,omitempty"`
-		Type         string    `json:"type"`
-		Name         string    `json:"name"`
-		TextValue    string    `json:"textValue"`
-		NumberValue  int       `json:"numberValue"`
-		BooleanValue bool      `json:"booleanValue"`
+		ID           uuid.UUID  `json:"id,omitempty"`
+		Type         string     `json:"type"`
+		Name         string     `json:"name"`
+		TextValue    string     `json:"textValue"`
+		NumberValue  int        `json:"numberValue"`
+		BooleanValue bool       `json:"booleanValue"`
+		TimeValue    types.Date `json:"timeValue"`
+	}
+
+	// EntityExpiringField is a single date-typed custom field that is coming
+	// due (or overdue), paired with the entity it belongs to. Powers the
+	// "coming due" dashboard view.
+	EntityExpiringField struct {
+		ID        uuid.UUID  `json:"id"`
+		Name      string     `json:"name"`
+		FieldName string     `json:"fieldName"`
+		Date      types.Date `json:"date"`
 	}
 
 	EntityCreate struct {
@@ -298,6 +309,7 @@ func mapEntityFields(fields []*ent.EntityField) []EntityFieldData {
 			TextValue:    f.TextValue,
 			NumberValue:  f.NumberValue,
 			BooleanValue: f.BooleanValue,
+			TimeValue:    types.DateFromTime(f.TimeValue),
 		}
 	})
 }
@@ -1657,6 +1669,7 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 				SetTextValue(f.TextValue).
 				SetNumberValue(f.NumberValue).
 				SetBooleanValue(f.BooleanValue).
+				SetTimeValue(f.TimeValue.Time()).
 				Save(fieldsCtx)
 			if err != nil {
 				recordSpanError(fieldsSpan, err)
@@ -1676,7 +1689,8 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 			SetName(f.Name).
 			SetTextValue(f.TextValue).
 			SetNumberValue(f.NumberValue).
-			SetBooleanValue(f.BooleanValue)
+			SetBooleanValue(f.BooleanValue).
+			SetTimeValue(f.TimeValue.Time())
 
 		_, err = opt.Save(fieldsCtx)
 		if err != nil {
@@ -1977,6 +1991,82 @@ func (r *EntityRepository) GetAllCustomFieldNames(ctx context.Context, gid uuid.
 	return fieldNames, nil
 }
 
+// deadlineKeywords are lowercased substrings that mark a date field as an
+// actionable deadline rather than a record of a past event. Past-dated fields
+// only surface in the expiring view when their name matches one of these, so
+// record dates like "Date filled" / "Date treated" stay out while
+// "Refill date" / "Expiration" still show up as overdue.
+var deadlineKeywords = []string{
+	"expir", "use by", "best by", "refill", "replace", "rotate", "renew",
+	"due", "check", "review", "inspect", "service", "warranty", "test",
+}
+
+func fieldNameIsDeadline(name string) bool {
+	l := strings.ToLower(name)
+	for _, k := range deadlineKeywords {
+		if strings.Contains(l, k) {
+			return true
+		}
+	}
+	return false
+}
+
+// QueryExpiringFields returns date-typed custom fields that come due within
+// withinDays, plus any already-overdue deadline fields. Past dates are kept
+// only when the field name reads as a deadline (see fieldNameIsDeadline) so
+// record dates don't create noise. Results are sorted by date ascending
+// (most-overdue / soonest first).
+func (r *EntityRepository) QueryExpiringFields(ctx context.Context, gid uuid.UUID, withinDays int) ([]EntityExpiringField, error) {
+	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.QueryExpiringFields",
+		trace.WithAttributes(
+			attribute.String("group.id", gid.String()),
+			attribute.Int("within.days", withinDays),
+		))
+	defer span.End()
+
+	cutoff := time.Now().AddDate(0, 0, withinDays)
+	today := types.DateFromTime(time.Now()).Time()
+
+	rows, err := r.db.EntityField.Query().
+		Where(
+			entityfield.TypeEQ(entityfield.TypeTime),
+			entityfield.TimeValueLTE(cutoff),
+			entityfield.HasEntityWith(
+				entity.HasGroupWith(group.ID(gid)),
+				entity.Archived(false),
+				entity.HasEntityTypeWith(entitytype.IsLocation(false)),
+			),
+		).
+		WithEntity().
+		Order(ent.Asc(entityfield.FieldTimeValue)).
+		All(ctx)
+	if err != nil {
+		wrapped := fmt.Errorf("failed to query expiring fields: %w", err)
+		recordSpanError(span, wrapped)
+		return nil, wrapped
+	}
+
+	out := make([]EntityExpiringField, 0, len(rows))
+	for _, f := range rows {
+		if f.Edges.Entity == nil {
+			continue
+		}
+		// Past dates only count when the field name reads as a deadline.
+		if f.TimeValue.Before(today) && !fieldNameIsDeadline(f.Name) {
+			continue
+		}
+		out = append(out, EntityExpiringField{
+			ID:        f.Edges.Entity.ID,
+			Name:      f.Edges.Entity.Name,
+			FieldName: f.Name,
+			Date:      types.DateFromTime(f.TimeValue),
+		})
+	}
+
+	span.SetAttributes(attribute.Int("results.count", len(out)))
+	return out, nil
+}
+
 // ZeroOutTimeFields sets all date fields to the beginning of the day.
 func (r *EntityRepository) ZeroOutTimeFields(ctx context.Context, gid uuid.UUID) (int, error) {
 	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.ZeroOutTimeFields",
@@ -2260,6 +2350,7 @@ func (r *EntityRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opt
 				SetTextValue(field.TextValue).
 				SetNumberValue(field.NumberValue).
 				SetBooleanValue(field.BooleanValue).
+				SetTimeValue(field.TimeValue.Time()).
 				Save(fieldsCtx)
 			if err != nil {
 				recordSpanError(fieldsSpan, err)
