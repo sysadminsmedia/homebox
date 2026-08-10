@@ -253,51 +253,6 @@
         text: item.value?.notes,
       },
       ...assetID.value,
-      ...item.value.fields.map(field => {
-        // Typed custom fields render according to their backend enum type
-        // (text | number | boolean | time). "time" is a date-only value.
-        if (field.type === "number") {
-          return {
-            name: field.name,
-            text: field.numberValue,
-          } as AnyDetail;
-        }
-
-        if (field.type === "boolean") {
-          return {
-            name: field.name,
-            text: field.booleanValue ? "Yes" : "No",
-          } as AnyDetail;
-        }
-
-        if (field.type === "time") {
-          // timeValue is a YYYY-MM-DD string ("" when unset)
-          return {
-            name: field.name,
-            text: field.timeValue || "",
-            type: "date",
-            date: true,
-          } as AnyDetail;
-        }
-
-        /**
-         * Support Special URL Syntax
-         */
-        const url = maybeUrl(field.textValue);
-        if (url.isUrl) {
-          return {
-            type: "link",
-            name: field.name,
-            text: url.text,
-            href: url.url,
-          } as AnyDetail;
-        }
-
-        return {
-          name: field.name,
-          text: field.textValue,
-        };
-      }),
     ];
 
     if (!preferences.value.showEmpty) {
@@ -305,6 +260,64 @@
     }
 
     return ret;
+  });
+
+  // Custom fields render in their own section (see below) so user-defined data
+  // is visually distinct from the built-in item details.
+  const customFieldDetails = computed<Details>(() => {
+    if (!item.value) {
+      return [];
+    }
+
+    return item.value.fields.map(field => {
+      // Typed custom fields render according to their backend enum type
+      // (text | number | boolean | time). "time" is a date-only value.
+      if (field.type === "number") {
+        return {
+          name: field.name,
+          text: field.numberValue,
+        } as AnyDetail;
+      }
+
+      if (field.type === "boolean") {
+        return {
+          name: field.name,
+          text: field.booleanValue ? "Yes" : "No",
+        } as AnyDetail;
+      }
+
+      if (field.type === "time") {
+        // timeValue is a YYYY-MM-DD string ("" when unset)
+        return {
+          name: field.name,
+          text: field.timeValue || "",
+          type: "date",
+          date: true,
+        } as AnyDetail;
+      }
+
+      /**
+       * Support Special URL Syntax
+       */
+      const url = maybeUrl(field.textValue);
+      if (url.isUrl) {
+        return {
+          type: "link",
+          name: field.name,
+          text: url.text,
+          href: url.url,
+        } as AnyDetail;
+      }
+
+      return {
+        name: field.name,
+        text: field.textValue,
+      };
+    });
+  });
+
+  const showCustomFields = computed(() => {
+    return (item.value?.fields.length ?? 0) > 0;
   });
 
   const showAttachments = computed(() => {
@@ -822,6 +835,11 @@
               </div>
             </template>
           </DetailsSection>
+        </BaseCard>
+
+        <BaseCard v-if="showCustomFields" collapsable>
+          <template #title> {{ $t("items.custom_fields") }} </template>
+          <DetailsSection :details="customFieldDetails" />
         </BaseCard>
 
         <!-- anything in this is not rendered if on another page -->
