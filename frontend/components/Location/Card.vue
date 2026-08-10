@@ -1,6 +1,20 @@
 <template>
-  <Card>
+  <Card class="relative overflow-hidden">
     <NuxtLink :to="`/location/${location.id}`" class="group/location-card transition duration-300">
+      <div v-if="imageUrl" class="relative h-[140px]">
+        <img
+          class="absolute h-[140px] w-full object-cover blur-md"
+          loading="lazy"
+          :src="imageUrl"
+          alt=""
+        />
+        <img
+          class="absolute h-[140px] w-full object-cover shadow-md"
+          loading="lazy"
+          :src="imageUrl"
+          :alt="location.name"
+        />
+      </div>
       <div
         :class="{
           'p-4': !dense,
@@ -16,7 +30,7 @@
               <MdiArrowUp class="hidden size-6 group-hover/location-card:block" />
             </div>
           </div>
-          <span class="mx-auto">
+          <span class="mx-auto font-semibold">
             {{ location.name }}
           </span>
           <Badge :class="{ 'opacity-0': !hasCount }">
@@ -35,6 +49,8 @@
   import { Card } from "@/components/ui/card";
   import { Badge } from "@/components/ui/badge";
 
+  const api = useUserApi();
+
   const props = defineProps({
     location: {
       type: Object as () => EntitySummary | EntityOut,
@@ -46,6 +62,18 @@
     },
   });
 
+  const imageUrl = computed(() => {
+    const loc = props.location as (EntitySummary | EntityOut) & { imageId?: string; thumbnailId?: string };
+    if (!loc.imageId && !loc.thumbnailId) {
+      return null;
+    }
+    if (loc.thumbnailId) {
+      return api.authURL(`/entities/${loc.id}/attachments/${loc.thumbnailId}`);
+    } else {
+      return api.authURL(`/entities/${loc.id}/attachments/${loc.imageId}`);
+    }
+  });
+
   const hasCount = computed(() => {
     return !!(props.location as EntitySummary).itemCount;
   });
@@ -54,3 +82,4 @@
     return hasCount.value ? (props.location as EntitySummary).itemCount : undefined;
   });
 </script>
+
