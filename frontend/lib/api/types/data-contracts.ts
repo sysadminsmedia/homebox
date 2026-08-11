@@ -782,6 +782,14 @@ export interface EntityExpiringField {
   name: string;
 }
 
+export interface BatteryReadinessRow {
+  deviceCount: number;
+  hasMinStock: boolean;
+  minStock: number;
+  stock: number;
+  type: string;
+}
+
 export interface EntityListResult {
   items: EntitySummary[];
   page: number;

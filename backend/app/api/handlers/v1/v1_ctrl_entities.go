@@ -499,6 +499,33 @@ func (ctrl *V1Controller) HandleEntitiesExpiring() errchain.HandlerFunc {
 	return adapters.Query(fn, http.StatusOK)
 }
 
+// HandleBatteryReadiness godoc
+//
+//	@Summary	Battery supply vs. demand per battery type
+//	@Tags		Entities
+//	@Produce	json
+//	@Success	200	{array}	repo.BatteryReadinessRow
+//	@Router		/v1/entities/battery-readiness [GET]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleBatteryReadiness() errchain.HandlerFunc {
+	fn := func(r *http.Request) ([]repo.BatteryReadinessRow, error) {
+		spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleBatteryReadiness")
+		defer span.End()
+
+		auth := services.NewContext(spanCtx)
+		span.SetAttributes(attribute.String("group.id", auth.GID.String()))
+		out, err := ctrl.repo.Entities.BatteryReadiness(auth, auth.GID)
+		if err != nil {
+			recordCtrlSpanError(span, err)
+			return out, err
+		}
+		span.SetAttributes(attribute.Int("results.count", len(out)))
+		return out, nil
+	}
+
+	return adapters.Command(fn, http.StatusOK)
+}
+
 // HandleEntitiesImport godoc
 //
 //	@Summary	Import Entities

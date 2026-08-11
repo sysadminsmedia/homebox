@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math"
+	"sort"
 	"strings"
 	"time"
 
@@ -96,6 +97,18 @@ type (
 		Name      string     `json:"name"`
 		FieldName string     `json:"fieldName"`
 		Date      types.Date `json:"date"`
+	}
+
+	// BatteryReadinessRow aggregates battery supply vs. demand for one battery
+	// type. Powers the "Battery Readiness" dashboard view. Supply comes from
+	// stock items (those carrying a "Min Stock" field); demand is the count of
+	// devices (items carrying only a "Battery Type" field).
+	BatteryReadinessRow struct {
+		Type        string  `json:"type"`
+		Stock       float64 `json:"stock"`
+		MinStock    int     `json:"minStock"`
+		HasMinStock bool    `json:"hasMinStock"`
+		DeviceCount int     `json:"deviceCount"`
 	}
 
 	EntityCreate struct {
@@ -2062,6 +2075,105 @@ func (r *EntityRepository) QueryExpiringFields(ctx context.Context, gid uuid.UUI
 			Date:      types.DateFromTime(f.TimeValue),
 		})
 	}
+
+	span.SetAttributes(attribute.Int("results.count", len(out)))
+	return out, nil
+}
+
+// Recognized custom-field names for the battery-readiness view. An item is
+// treated as battery *stock* when it carries both fields; a *device* when it
+// carries only BatteryTypeFieldName.
+const (
+	batteryTypeFieldName     = "Battery Type"
+	batteryMinStockFieldName = "Min Stock"
+)
+
+// BatteryReadiness aggregates battery supply vs. demand per battery type for
+// the group. Stock items (carrying a "Min Stock" field) contribute supply and
+// the reorder threshold; devices (carrying only "Battery Type") contribute to
+// the dependent-device count. Types that have devices but no stock item still
+// appear (stock 0), which is exactly the "you have gear but no batteries" case
+// worth surfacing. Rows are sorted by battery type.
+func (r *EntityRepository) BatteryReadiness(ctx context.Context, gid uuid.UUID) ([]BatteryReadinessRow, error) {
+	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.BatteryReadiness",
+		trace.WithAttributes(attribute.String("group.id", gid.String())))
+	defer span.End()
+
+	rows, err := r.db.EntityField.Query().
+		Where(
+			entityfield.NameIn(batteryTypeFieldName, batteryMinStockFieldName),
+			entityfield.HasEntityWith(
+				entity.HasGroupWith(group.ID(gid)),
+				entity.Archived(false),
+				entity.HasEntityTypeWith(entitytype.IsLocation(false)),
+			),
+		).
+		WithEntity().
+		All(ctx)
+	if err != nil {
+		wrapped := fmt.Errorf("failed to query battery fields: %w", err)
+		recordSpanError(span, wrapped)
+		return nil, wrapped
+	}
+
+	// Collapse the field rows back onto their owning entity.
+	type entityAgg struct {
+		typeVal string
+		hasType bool
+		minVal  int
+		hasMin  bool
+		qty     float64
+	}
+	perEntity := map[uuid.UUID]*entityAgg{}
+	for _, f := range rows {
+		e := f.Edges.Entity
+		if e == nil {
+			continue
+		}
+		agg, ok := perEntity[e.ID]
+		if !ok {
+			agg = &entityAgg{qty: e.Quantity}
+			perEntity[e.ID] = agg
+		}
+		switch f.Name {
+		case batteryTypeFieldName:
+			agg.typeVal = f.TextValue
+			agg.hasType = true
+		case batteryMinStockFieldName:
+			agg.minVal = f.NumberValue
+			agg.hasMin = true
+		}
+	}
+
+	// Group entities by battery type into supply/demand rows.
+	byType := map[string]*BatteryReadinessRow{}
+	for _, agg := range perEntity {
+		if !agg.hasType || agg.typeVal == "" {
+			continue
+		}
+		row, ok := byType[agg.typeVal]
+		if !ok {
+			row = &BatteryReadinessRow{Type: agg.typeVal}
+			byType[agg.typeVal] = row
+		}
+		if agg.hasMin {
+			// Stock item: contributes cells on hand and the reorder threshold.
+			row.Stock += agg.qty
+			row.MinStock = agg.minVal
+			row.HasMinStock = true
+		} else {
+			// Device: contributes to demand.
+			row.DeviceCount++
+		}
+	}
+
+	out := make([]BatteryReadinessRow, 0, len(byType))
+	for _, row := range byType {
+		out = append(out, *row)
+	}
+	sort.Slice(out, func(i, j int) bool {
+		return out[i].Type < out[j].Type
+	})
 
 	span.SetAttributes(attribute.Int("results.count", len(out)))
 	return out, nil

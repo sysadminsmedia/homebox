@@ -523,6 +523,33 @@
     { value: "boolean", text: "Yes / No" },
   ];
 
+  // Autocomplete for text custom-field values: suggest previously-used values
+  // for a field of the same name (e.g. "Battery Type" -> AA, AAA, CR2032).
+  // Cached per field name so we fetch each name at most once.
+  const fieldValueSuggestions = reactive<Record<string, string[]>>({});
+
+  async function loadFieldValueSuggestions(name: string) {
+    const key = name.trim();
+    if (!key || key in fieldValueSuggestions) {
+      return;
+    }
+    fieldValueSuggestions[key] = []; // reserve the key so we don't refetch
+    const { data } = await api.items.fields.getAllValues(key);
+    fieldValueSuggestions[key] = (data ?? []).filter(Boolean);
+  }
+
+  watch(
+    () => item.value?.fields?.map(f => `${f.type}:${f.name}`).join("|"),
+    () => {
+      item.value?.fields?.forEach(f => {
+        if (f.type === "text" && f.name) {
+          loadFieldValueSuggestions(f.name);
+        }
+      });
+    },
+    { immediate: true }
+  );
+
   const { query, results, isLoading, triggerSearch } = useItemSearch(api, { immediate: false });
   const parent = ref();
   // Derived location shown in the "Location" selector. Kept separate from
@@ -812,7 +839,11 @@
                   :label="$t('global.value')"
                   :max-length="500"
                   class="grow"
+                  :list="`field-values-${idx}`"
                 />
+                <datalist v-if="field.type !== 'number' && field.type !== 'time' && field.type !== 'boolean'" :id="`field-values-${idx}`">
+                  <option v-for="v in fieldValueSuggestions[field.name?.trim()] || []" :key="v" :value="v" />
+                </datalist>
                 <Tooltip>
                   <TooltipTrigger as-child>
                     <Button size="icon" variant="destructive" class="ml-2" @click="item.fields.splice(idx, 1)">

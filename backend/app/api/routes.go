@@ -190,6 +190,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Get("/entities/fields", chain.ToHandlerFunc(v1Ctrl.HandleGetAllCustomFieldNames(), userMW...))
 		r.Get("/entities/fields/values", chain.ToHandlerFunc(v1Ctrl.HandleGetAllCustomFieldValues(), userMW...))
 		r.Get("/entities/expiring", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesExpiring(), userMW...))
+		r.Get("/entities/battery-readiness", chain.ToHandlerFunc(v1Ctrl.HandleBatteryReadiness(), userMW...))
 		r.Get("/entities/tree", chain.ToHandlerFunc(v1Ctrl.HandleLocationTreeQuery(), userMW...))
 
 		r.Get("/entities/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityGet(), userMW...))

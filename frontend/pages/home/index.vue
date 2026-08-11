@@ -13,6 +13,7 @@
   import TagChip from "~/components/Tag/Chip.vue";
   import Table from "~/components/Item/View/Table.vue";
   import HomeExpiringSoon from "~/components/Home/ExpiringSoon.vue";
+  import HomeBatteryReadiness from "~/components/Home/BatteryReadiness.vue";
 
   const { t } = useI18n();
 
@@ -47,6 +48,8 @@
       </section>
 
       <HomeExpiringSoon />
+
+      <HomeBatteryReadiness />
 
       <section>
         <Subtitle> {{ $t("home.recently_added") }} </Subtitle>
