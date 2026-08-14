@@ -751,6 +751,8 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 		qb = qb.Order(ent.Desc(entity.FieldUpdatedAt))
 	case "assetId":
 		qb = qb.Order(ent.Asc(entity.FieldAssetID))
+	case "quantity":
+		qb = qb.Order(ent.Asc(entity.FieldQuantity))
 	default: // "name"
 		qb = qb.Order(ent.Asc(entity.FieldName))
 	}

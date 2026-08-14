@@ -9,6 +9,7 @@ import type { EntitySummary } from "~/lib/api/types/data-contracts";
 import Currency from "~/components/global/Currency.vue";
 import DateTime from "~/components/global/DateTime.vue";
 import { cn } from "~/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 /**
  * Create columns with i18n support.
@@ -103,7 +104,20 @@ export function makeColumns({
           },
           () => sortable(column, "items.quantity")
         ),
-      cell: ({ row }) => h("div", { class: "text-center" }, String(row.getValue("quantity") ?? "")),
+      cell: ({ row }) => 
+        h(
+          "div",
+          { class: "flex flex-col items-center gap-1 text-center w-24 mx-auto" },
+          [
+            h("span",
+              { class: "w-full text-center" },
+              String(row.getValue("quantity") ?? "")
+            ),
+            Number(row.getValue("quantity") ?? 0) === 0
+              ? h(Badge, { variant: "destructive" }, () => "Out of Stock")
+              : null,
+          ]
+        ),
     },
     {
       id: "insured",

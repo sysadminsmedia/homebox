@@ -449,6 +449,7 @@
                   <SelectItem value="name"> {{ $t("items.name") }} </SelectItem>
                   <SelectItem value="createdAt"> {{ $t("items.created_at") }} </SelectItem>
                   <SelectItem value="updatedAt"> {{ $t("items.updated_at") }} </SelectItem>
+                  <SelectItem value="quantity"> {{ $t("items.quantity") }} </SelectItem>
                 </SelectContent>
               </Select>
             </Label>

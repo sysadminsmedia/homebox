@@ -10,21 +10,27 @@
     </div>
     <NuxtLink :to="`/item/${item.id}`">
       <div class="relative h-[200px]">
-        <img
-          v-if="imageUrl && objectContain"
-          class="absolute h-[200px] w-full object-cover blur-md"
-          loading="lazy"
-          :src="imageUrl"
-          alt=""
-        />
-        <img
-          v-if="imageUrl"
-          class="absolute h-[200px] w-full shadow-md"
-          :class="objectContain ? 'object-contain' : 'object-cover'"
-          loading="lazy"
-          :src="imageUrl"
-          :alt="item.name"
-        />
+        <div :class="isOutOfStock ? 'opacity-40' : ''">
+          <img
+            v-if="imageUrl && objectContain"
+            class="absolute h-[200px] w-full object-cover blur-md"
+            loading="lazy"
+            :src="imageUrl"
+            alt=""
+          />
+          <img
+            v-if="imageUrl"
+            class="absolute h-[200px] w-full shadow-md"
+            :class="objectContain ? 'object-contain' : 'object-cover'"
+            loading="lazy"
+            :src="imageUrl"
+            :alt="item.name"
+          />
+        </div>
+        <!-- Out of Stock Overlay -->
+        <div v-if="isOutOfStock" class="absolute inset-0 flex items-center justify-center">
+          <span class="rounded-md bg-black/70 px-3 py-1 text-sm font-semibold text-white">Out of Stock</span>
+        </div>
         <div class="absolute inset-x-1 bottom-1">
           <Badge class="text-wrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline">
             <NuxtLink v-if="item.parent" :to="`/location/${item.parent.id}`">
@@ -69,6 +75,7 @@
         </TooltipProvider>
         <Markdown class="mb-2 line-clamp-3 text-ellipsis" :source="item.description" />
         <div class="-mr-1 mt-auto flex flex-wrap justify-end gap-2">
+          <Badge v-if="isOutOfStock" variant="destructive">Out of Stock</Badge>
           <TagChip v-for="tag in itemTags" :key="tag.id" :tag="tag" size="sm" :ancestors="tag.ancestors" />
         </div>
       </div>
@@ -123,6 +130,8 @@
       default: () => null,
     },
   });
+
+  const isOutOfStock = computed(() => props.item.quantity === 0);
 
   const objectContain = computed(() => imageUrl.value !== "/no-image.jpg" && !preferences.value.legacyImageFit);
 
