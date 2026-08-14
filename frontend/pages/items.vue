@@ -227,9 +227,16 @@
   });
 
   watch(onlyInStock, (newV, oldV) => {
-    if (newV !== oldV) {
-      search();
+    if (newV === oldV) {
+      return;
     }
+
+    if (page.value !== 1) {
+      page.value = 1;
+      return;
+    }
+
+    search();
   });
 
   watch(orderBy, (newV, oldV) => {
