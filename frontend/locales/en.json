@@ -611,6 +611,7 @@
         "only_with_photo": "Only items with photo",
         "only_without_photo": "Only items without photo",
         "only_in_stock": "Only items in stock",
+        "out_of_stock": "Out of Stock",
         "options": "Options",
         "order_by": "Order By",
         "pages": "Page { page } of { totalPages }",

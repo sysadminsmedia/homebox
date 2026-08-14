@@ -104,20 +104,20 @@ export function makeColumns({
           },
           () => sortable(column, "items.quantity")
         ),
-      cell: ({ row }) => 
-        h(
+      cell: ({ row }) => {
+        const quantity = Number(row.getValue("quantity") ?? 0);
+
+        return h(
           "div",
           { class: "flex flex-col items-center gap-1 text-center w-24 mx-auto" },
           [
-            h("span",
-              { class: "w-full text-center" },
-              String(row.getValue("quantity") ?? "")
-            ),
-            Number(row.getValue("quantity") ?? 0) === 0
-              ? h(Badge, { variant: "destructive" }, () => "Out of Stock")
+            h("span", String(quantity)),
+            quantity === 0
+              ? h(Badge, { variant: "destructive" }, () => t("items.out_of_stock"))
               : null,
           ]
-        ),
+        );
+      },
     },
     {
       id: "insured",

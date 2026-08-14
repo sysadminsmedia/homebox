@@ -27,9 +27,8 @@
             :alt="item.name"
           />
         </div>
-        <!-- Out of Stock Overlay -->
         <div v-if="isOutOfStock" class="absolute inset-0 flex items-center justify-center">
-          <span class="rounded-md bg-black/70 px-3 py-1 text-sm font-semibold text-white">Out of Stock</span>
+          <span class="rounded-md bg-black/70 px-3 py-1 text-sm font-semibold text-white"> {{ $t("items.out_of_stock") }} </span>
         </div>
         <div class="absolute inset-x-1 bottom-1">
           <Badge class="text-wrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline">
@@ -75,7 +74,7 @@
         </TooltipProvider>
         <Markdown class="mb-2 line-clamp-3 text-ellipsis" :source="item.description" />
         <div class="-mr-1 mt-auto flex flex-wrap justify-end gap-2">
-          <Badge v-if="isOutOfStock" variant="destructive">Out of Stock</Badge>
+          <Badge v-if="isOutOfStock" variant="destructive"> {{ $t("items.out_of_stock") }} </Badge>
           <TagChip v-for="tag in itemTags" :key="tag.id" :tag="tag" size="sm" :ancestors="tag.ancestors" />
         </div>
       </div>
