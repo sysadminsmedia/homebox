@@ -610,6 +610,7 @@
         "notes": "Notes",
         "only_with_photo": "Only items with photo",
         "only_without_photo": "Only items without photo",
+        "only_in_stock": "Only items in stock",
         "options": "Options",
         "order_by": "Order By",
         "pages": "Page { page } of { totalPages }",

@@ -67,6 +67,7 @@ type (
 		NegateTags       bool    `json:"negateTags"`
 		OnlyWithoutPhoto bool    `json:"onlyWithoutPhoto"`
 		OnlyWithPhoto    bool    `json:"onlyWithPhoto"`
+		OnlyInStock	  	 bool    `json:"onlyInStock"`
 		IncludeArchived  bool    `json:"includeArchived"`
 		FilterChildren   bool    `json:"filterChildren"` // when true, only return root entities (no parent)
 	}
@@ -584,6 +585,7 @@ func entityQuerySpanAttrs(gid uuid.UUID, q EntityQuery) []attribute.KeyValue {
 		attribute.Int("query.fields.count", len(q.Fields)),
 		attribute.Bool("query.only_with_photo", q.OnlyWithPhoto),
 		attribute.Bool("query.only_without_photo", q.OnlyWithoutPhoto),
+		attribute.Bool("query.only_in_stock", q.OnlyInStock),
 		attribute.Bool("query.include_archived", q.IncludeArchived),
 		attribute.Bool("query.filter_children", q.FilterChildren),
 		attribute.String("query.order_by", q.OrderBy),
@@ -699,6 +701,12 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 					attachment.TypeEQ(attachment.TypePhoto),
 				),
 			),
+			)
+		}
+
+		if q.OnlyInStock {
+			andPredicates = append(andPredicates, 
+				entity.QuantityGT(0),
 			)
 		}
 

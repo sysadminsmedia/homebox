@@ -87,6 +87,7 @@
   const negateTags = useOptionalRouteQuery("negateTags", false);
   const onlyWithoutPhoto = useOptionalRouteQuery("onlyWithoutPhoto", false);
   const onlyWithPhoto = useOptionalRouteQuery("onlyWithPhoto", false);
+  const onlyInStock = useOptionalRouteQuery("onlyInStock", false);
   const orderBy = useOptionalRouteQuery("orderBy", "name");
   const qLoc = useOptionalRouteQuery("loc", []);
   const qTag = useOptionalRouteQuery("tag", []);
@@ -225,6 +226,12 @@
     }
   });
 
+  watch(onlyInStock, (newV, oldV) => {
+    if (newV !== oldV) {
+      search();
+    }
+  });
+
   watch(orderBy, (newV, oldV) => {
     if (newV !== oldV) {
       search();
@@ -277,6 +284,7 @@
       negateTags: negateTags.value,
       onlyWithoutPhoto: onlyWithoutPhoto.value,
       onlyWithPhoto: onlyWithPhoto.value,
+      onlyInStock: onlyInStock.value,
       orderBy: orderBy.value,
       page: page.value,
       q: query.value,
@@ -313,6 +321,7 @@
       tags: tagIDs.value,
       negateTags: negateTags.value,
       onlyWithoutPhoto: onlyWithoutPhoto.value,
+      onlyInStock: onlyInStock.value,
       onlyWithPhoto: onlyWithPhoto.value,
       includeArchived: includeArchived.value,
       page: page.value,
@@ -435,6 +444,11 @@
               <Switch v-model="onlyWithPhoto" class="ml-auto" />
               <div class="grow" />
               <span class="text-right"> {{ $t("items.only_with_photo") }} </span>
+            </Label>
+            <Label class="flex cursor-pointer items-center">
+              <Switch v-model="onlyInStock" class="ml-auto" />
+              <div class="grow" />
+              <span class="text-right"> {{ $t("items.only_in_stock") }} </span>
             </Label>
             <Label class="flex cursor-pointer flex-col gap-2">
               <span class="text-right">
