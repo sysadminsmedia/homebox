@@ -66,6 +66,7 @@ docker run -d \
   --restart unless-stopped \
   --publish 3100:7745 \
   --env TZ=Europe/Bucharest \
+  --env HBOX_AUTH_API_KEY_PEPPER=$(openssl rand -base64 48) \
   --volume /path/to/data/folder/:/data \
   ghcr.io/sysadminsmedia/homebox:latest
 # ghcr.io/sysadminsmedia/homebox:latest-rootless
