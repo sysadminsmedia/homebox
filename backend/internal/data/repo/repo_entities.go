@@ -61,10 +61,7 @@ type (
 		OrderBy          string       `json:"orderBy"`
 		ParentIDs        []uuid.UUID  `json:"parentIds"`
 		TagIDs           []uuid.UUID  `json:"tagIds"`
-		NegateTags       bool         `json:"negateTags"`
 		MatchAllTags     bool         `json:"matchAllTags"` // require every selected tag (AND) instead of any (OR); ignored when NegateTags is set
-		OnlyWithoutPhoto bool         `json:"onlyWithoutPhoto"`
-		OnlyWithPhoto    bool         `json:"onlyWithPhoto"`
 		ParentItemIDs    []uuid.UUID  `json:"parentItemIds"`
 		Fields           []FieldQuery `json:"fields"`
 		Page             int
