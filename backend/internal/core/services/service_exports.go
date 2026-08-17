@@ -10,7 +10,9 @@ import (
 	"io"
 	"os"
 	"path"
+	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -203,6 +205,14 @@ type ExportService struct {
 	storage    config.Storage
 	pubSubConn string
 	dialect    string // "sqlite3" or "postgres"
+
+	// topics caches the publisher topic per topic name so it is opened once
+	// and reused for the lifetime of the process. Publishers must never call
+	// Shutdown on these: the default mem:// driver returns a shared singleton
+	// per URL, so shutting it down after one send permanently breaks every
+	// later publish until restart (#1592).
+	topicsMu sync.Mutex
+	topics   map[string]*pubsub.Topic
 }
 
 // Enqueue creates a pending Export row for gid and publishes a job to the
@@ -538,17 +548,53 @@ func (s *ExportService) copyAttachmentBlobs(ctx context.Context, zw *zip.Writer,
 	return nil
 }
 
-// publishExportJob sends a message on the export topic.
-func (s *ExportService) publishExportJob(ctx context.Context, gid, exportID uuid.UUID) error {
-	conn, err := utils.GenerateSubPubConn(s.pubSubConn, TopicCollectionExport)
+// openTopic returns the long-lived publisher topic for name, opening and
+// caching it on first use. The topic is reused across publishes and stays
+// open for the process lifetime — see the topics field doc for why a
+// per-publish Shutdown must not be reintroduced here.
+func (s *ExportService) openTopic(ctx context.Context, name string) (*pubsub.Topic, error) {
+	s.topicsMu.Lock()
+	defer s.topicsMu.Unlock()
+	if topic, ok := s.topics[name]; ok {
+		return topic, nil
+	}
+	conn, err := utils.GenerateSubPubConn(s.pubSubConn, name)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	topic, err := pubsub.OpenTopic(ctx, conn)
 	if err != nil {
+		return nil, err
+	}
+	if s.topics == nil {
+		s.topics = make(map[string]*pubsub.Topic)
+	}
+	s.topics[name] = topic
+	return topic, nil
+}
+
+// Shutdown flushes and closes every cached publisher topic. It is called
+// once from the app's graceful-shutdown path; publishes after Shutdown
+// would reopen topics, so it must only run at service teardown.
+func (s *ExportService) Shutdown(ctx context.Context) error {
+	s.topicsMu.Lock()
+	defer s.topicsMu.Unlock()
+	var errs []error
+	for name, topic := range s.topics {
+		if err := topic.Shutdown(ctx); err != nil {
+			errs = append(errs, fmt.Errorf("shutdown topic %q: %w", name, err))
+		}
+	}
+	s.topics = nil
+	return errors.Join(errs...)
+}
+
+// publishExportJob sends a message on the export topic.
+func (s *ExportService) publishExportJob(ctx context.Context, gid, exportID uuid.UUID) error {
+	topic, err := s.openTopic(ctx, TopicCollectionExport)
+	if err != nil {
 		return err
 	}
-	defer func() { _ = topic.Shutdown(ctx) }()
 	return topic.Send(ctx, &pubsub.Message{
 		Body: []byte("collection_export:" + exportID.String()),
 		Metadata: map[string]string{
@@ -563,15 +609,10 @@ func (s *ExportService) publishExportJob(ctx context.Context, gid, exportID uuid
 // storage at the row's artifact_path, unzips, restores into the group
 // identified by gid, then deletes the staged upload.
 func (s *ExportService) publishImportJob(ctx context.Context, gid, userID, importID uuid.UUID) error {
-	conn, err := utils.GenerateSubPubConn(s.pubSubConn, TopicCollectionImport)
+	topic, err := s.openTopic(ctx, TopicCollectionImport)
 	if err != nil {
 		return err
 	}
-	topic, err := pubsub.OpenTopic(ctx, conn)
-	if err != nil {
-		return err
-	}
-	defer func() { _ = topic.Shutdown(ctx) }()
 	return topic.Send(ctx, &pubsub.Message{
 		Body: []byte("collection_import:" + gid.String()),
 		Metadata: map[string]string{
@@ -996,6 +1037,96 @@ type sqlExecer interface {
 	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
 }
 
+// sqlQuerier is the read-side counterpart of sqlExecer, used to introspect the
+// destination schema before replaying rows into it.
+type sqlQuerier interface {
+	QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error)
+}
+
+// boolColumns returns the columns of table that the destination database
+// stores as booleans.
+//
+// Exports are portable across engines and sqlite has no native boolean type:
+// it returns int64 0/1 for a BOOLEAN column, which marshals to JSON as 0/1 and
+// unmarshals back into a float64. Handing that number to a postgres bool
+// column fails outright ("unable to encode 0 into binary format for bool
+// (OID 16)"), so a sqlite-sourced backup could never be restored into
+// postgres. Normalizing on the import side rather than in the dump means the
+// export zips users already hold are repaired too.
+func boolColumns(ctx context.Context, db sqlQuerier, dialect, table string) (map[string]struct{}, error) {
+	if !isValidSQLIdent(table) {
+		return nil, fmt.Errorf("invalid table identifier %q", table)
+	}
+
+	query := `SELECT name FROM pragma_table_info(?) WHERE lower(type) IN ('bool', 'boolean')`
+	if dialect == "postgres" {
+		query = `SELECT column_name FROM information_schema.columns
+			WHERE table_schema = current_schema() AND table_name = $1 AND data_type = 'boolean'`
+	}
+
+	rows, err := db.QueryContext(ctx, query, table)
+	if err != nil {
+		return nil, fmt.Errorf("introspect bool columns on %q: %w", table, err)
+	}
+	defer func() { _ = rows.Close() }()
+
+	cols := make(map[string]struct{})
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			return nil, fmt.Errorf("introspect bool columns on %q: %w", table, err)
+		}
+		cols[name] = struct{}{}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("introspect bool columns on %q: %w", table, err)
+	}
+	return cols, nil
+}
+
+// coerceBoolColumns rewrites the boolean-typed entries of row in place so the
+// driver is handed a real bool regardless of how the source engine encoded it.
+func coerceBoolColumns(row map[string]any, boolCols map[string]struct{}) error {
+	for col := range boolCols {
+		v, ok := row[col]
+		if !ok || v == nil {
+			continue
+		}
+		b, err := valueToBool(v)
+		if err != nil {
+			return fmt.Errorf("column %q: %w", col, err)
+		}
+		row[col] = b
+	}
+	return nil
+}
+
+// valueToBool converts a JSON-decoded export value into a bool. Numbers follow
+// the sqlite convention (0 false, anything else true); strings cover engines
+// and hand-edited exports that render booleans as "true"/"f"/"1".
+func valueToBool(v any) (bool, error) {
+	switch x := v.(type) {
+	case bool:
+		return x, nil
+	case float64:
+		return x != 0, nil
+	case json.Number:
+		f, err := x.Float64()
+		if err != nil {
+			return false, fmt.Errorf("cannot interpret %q as a boolean", x.String())
+		}
+		return f != 0, nil
+	case string:
+		b, err := strconv.ParseBool(strings.TrimSpace(x))
+		if err != nil {
+			return false, fmt.Errorf("cannot interpret %q as a boolean", x)
+		}
+		return b, nil
+	default:
+		return false, fmt.Errorf("cannot interpret %T as a boolean", v)
+	}
+}
+
 // insertRow builds and runs an INSERT for one row's worth of column-value
 // pairs. Self-maintaining: every JSON key becomes a column.
 func insertRow(ctx context.Context, db sqlExecer, dialect, table string, row map[string]any) error {
@@ -1170,7 +1301,19 @@ func (s *ExportService) replayImportRows(ctx context.Context, tx *sql.Tx, zr *zi
 		if err != nil {
 			return nil, fmt.Errorf("read %s.json: %w", spec.name, err)
 		}
+		if len(rows) == 0 {
+			continue
+		}
+		// Introspected once per table, not per row: the shape is fixed for the
+		// whole file and an inventory can carry tens of thousands of entities.
+		boolCols, err := boolColumns(ctx, tx, s.dialect, spec.name)
+		if err != nil {
+			return nil, err
+		}
 		for _, row := range rows {
+			if err := coerceBoolColumns(row, boolCols); err != nil {
+				return nil, fmt.Errorf("insert %s: %w", spec.name, err)
+			}
 			newID, err := remapImportRow(row, spec, gid, userID, srcGroupID, remapFK, rememberID)
 			if err != nil {
 				return nil, err

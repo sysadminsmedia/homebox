@@ -2,18 +2,45 @@ package services
 
 import (
 	"errors"
+	"net/http"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
 )
+
+// ErrNotGroupOwner is returned when a member of a collection attempts an action
+// reserved for the collection's owner.
+var ErrNotGroupOwner = errors.New("only the owner of this collection can perform this action")
 
 type GroupService struct {
 	repos *repo.AllRepos
 }
 
+// requireOwner asserts the acting user owns the collection identified by
+// ctx.GID. The mwGroupOwner route middleware is the first line of defense; this
+// is the backstop, so an admin action wired onto ordinary member middleware
+// can't silently reintroduce the bypass.
+func (svc *GroupService) requireOwner(ctx Context) error {
+	isOwner, err := svc.repos.Groups.IsOwnerOf(ctx.Context, ctx.UID, ctx.GID)
+	if err != nil {
+		return err
+	}
+
+	if !isOwner {
+		return validate.NewRequestError(ErrNotGroupOwner, http.StatusForbidden)
+	}
+
+	return nil
+}
+
 func (svc *GroupService) UpdateGroup(ctx Context, data repo.GroupUpdate) (repo.Group, error) {
+	if err := svc.requireOwner(ctx); err != nil {
+		return repo.Group{}, err
+	}
+
 	if data.Name == "" {
 		return repo.Group{}, errors.New("group name cannot be empty")
 	}
@@ -50,10 +77,18 @@ func (svc *GroupService) CreateGroup(ctx Context, name string) (repo.Group, erro
 }
 
 func (svc *GroupService) DeleteGroup(ctx Context) error {
+	if err := svc.requireOwner(ctx); err != nil {
+		return err
+	}
+
 	return svc.repos.Groups.GroupDelete(ctx.Context, ctx.GID)
 }
 
 func (svc *GroupService) NewInvitation(ctx Context, uses int, expiresAt time.Time) (repo.GroupInvitation, string, error) {
+	if err := svc.requireOwner(ctx); err != nil {
+		return repo.GroupInvitation{}, "", err
+	}
+
 	token := hasher.GenerateToken()
 
 	invitation, err := svc.repos.Groups.InvitationCreate(ctx, ctx.GID, repo.GroupInvitationCreate{
@@ -69,6 +104,10 @@ func (svc *GroupService) NewInvitation(ctx Context, uses int, expiresAt time.Tim
 }
 
 func (svc *GroupService) RemoveMember(ctx Context, userID uuid.UUID) error {
+	if err := svc.requireOwner(ctx); err != nil {
+		return err
+	}
+
 	if userID == uuid.Nil {
 		return errors.New("user ID cannot be empty")
 	}
@@ -103,6 +142,10 @@ func (svc *GroupService) RemoveMember(ctx Context, userID uuid.UUID) error {
 }
 
 func (svc *GroupService) DeleteInvitation(ctx Context, id uuid.UUID) error {
+	if err := svc.requireOwner(ctx); err != nil {
+		return err
+	}
+
 	return svc.repos.Groups.InvitationDelete(ctx.Context, ctx.GID, id)
 }
 

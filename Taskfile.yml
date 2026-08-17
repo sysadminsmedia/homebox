@@ -1,11 +1,16 @@
 version: "3"
 
+# NOTE: UNSAFE_DISABLE_PASSWORD_PROJECTION is deliberately NOT set here. It
+# turns password hashing into a plaintext no-op, which is a local dev-server
+# convenience only. As a global it also applied to `go:test`/`go:coverage`,
+# so the Go suite exercised the plaintext branch instead of argon2id — and
+# TestTimingEqualizationHashIsValidArgon2 failed in CI as a result. Set it
+# per-task on the tasks that actually run a dev server.
 env:
   HBOX_LOG_LEVEL: debug
   HBOX_DATABASE_DRIVER: sqlite3
   HBOX_DATABASE_SQLITE_PATH: .data/homebox.db?_pragma=busy_timeout=1000&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite
   HBOX_OPTIONS_ALLOW_REGISTRATION: true
-  UNSAFE_DISABLE_PASSWORD_PROJECTION: "yes_i_am_sure"
   HBOX_AUTH_API_KEY_PEPPER: "dev-only-pepper-not-for-production-use-32b+"
 tasks:
   setup:
@@ -60,6 +65,7 @@ tasks:
   go:run:
     env:
       HBOX_DEMO: true
+      UNSAFE_DISABLE_PASSWORD_PROJECTION: "yes_i_am_sure"
     desc: Starts the backend api server (depends on generate task)
     dir: backend
     deps:
@@ -71,6 +77,7 @@ tasks:
   go:run:postgresql:
     env:
       HBOX_DEMO: true
+      UNSAFE_DISABLE_PASSWORD_PROJECTION: "yes_i_am_sure"
       HBOX_DATABASE_DRIVER: postgres
       HBOX_DATABASE_USERNAME: homebox
       HBOX_DATABASE_PASSWORD: homebox
@@ -89,6 +96,7 @@ tasks:
   go:ci:
     env:
       HBOX_DEMO: true
+      UNSAFE_DISABLE_PASSWORD_PROJECTION: "yes_i_am_sure"
     desc: Runs all go test and lint related tasks
     dir: backend
     cmds:
@@ -200,6 +208,8 @@ tasks:
       - pnpm run typecheck
 
   test:ci:
+    env:
+      UNSAFE_DISABLE_PASSWORD_PROJECTION: "yes_i_am_sure"
     desc: Runs end-to-end test on a live server (only for use in CI)
     cmds:
       - cd backend && go build ./app/api
@@ -210,6 +220,7 @@ tasks:
 
   test:ci:postgresql:
     env:
+      UNSAFE_DISABLE_PASSWORD_PROJECTION: "yes_i_am_sure"
       HBOX_DATABASE_DRIVER: postgres
       HBOX_DATABASE_USERNAME: homebox
       HBOX_DATABASE_PASSWORD: homebox

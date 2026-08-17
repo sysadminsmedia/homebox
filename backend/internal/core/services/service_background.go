@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/containrrr/shoutrrr"
 	"github.com/google/uuid"
+	"github.com/nicholas-fedor/shoutrrr"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"

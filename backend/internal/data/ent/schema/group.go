@@ -60,9 +60,9 @@ func (Group) Edges() []ent.Edge {
 // GroupMixin when embedded in an ent.Schema, adds a reference to
 // the Group entity.
 type GroupMixin struct {
+	mixin.Schema
 	ref   string
 	field string
-	mixin.Schema
 }
 
 func (g GroupMixin) Fields() []ent.Field {

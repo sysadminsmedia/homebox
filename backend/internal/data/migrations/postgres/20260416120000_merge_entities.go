@@ -68,7 +68,32 @@ func Up20260402120000(ctx context.Context, tx *sql.Tx) error {
 		return fmt.Errorf("step 4b: rename item_children: %w", err)
 	}
 
-	_, err = tx.ExecContext(ctx, `ALTER TABLE "entities" RENAME COLUMN "sync_child_items_locations" TO "sync_child_entity_locations";`)
+	// A plain rename here is not safe: databases migrated before the
+	// 20250112202302 guard was schema-qualified can arrive with that migration
+	// marked applied but the legacy column never actually added. Goose will not
+	// re-run an applied migration, so those databases would fail this rename on
+	// every start forever. Create the column outright in that case, and treat an
+	// already-renamed column as done.
+	_, err = tx.ExecContext(ctx, `
+		DO $$
+		BEGIN
+			IF EXISTS (
+				SELECT 1 FROM information_schema.columns
+				WHERE table_schema = current_schema()
+				  AND table_name = 'entities'
+				  AND column_name = 'sync_child_items_locations'
+			) THEN
+				ALTER TABLE "entities" RENAME COLUMN "sync_child_items_locations" TO "sync_child_entity_locations";
+			ELSIF NOT EXISTS (
+				SELECT 1 FROM information_schema.columns
+				WHERE table_schema = current_schema()
+				  AND table_name = 'entities'
+				  AND column_name = 'sync_child_entity_locations'
+			) THEN
+				ALTER TABLE "entities" ADD COLUMN "sync_child_entity_locations" boolean NOT NULL DEFAULT false;
+			END IF;
+		END $$;
+	`)
 	if err != nil {
 		return fmt.Errorf("step 4c: rename sync_child_items_locations: %w", err)
 	}

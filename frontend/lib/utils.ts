@@ -90,3 +90,14 @@ export function formatValueAsCsvField(value: unknown): string {
   // Wrap in double quotes
   return `"${str}"`;
 }
+
+const utf8Encoder = new TextEncoder();
+
+/**
+ * Byte length of a string when UTF-8 encoded. The backend validates string
+ * fields by byte length (ent MaxLen), so character counters must use this
+ * rather than String.length to match what the server will accept.
+ */
+export function utf8Length(str: string): number {
+  return utf8Encoder.encode(str).length;
+}

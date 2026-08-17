@@ -35,7 +35,19 @@ func ValidateNotifierURL(notifierURL string, cfg *config.NotifierConf) error {
 		return fmt.Errorf("invalid URL in generic notifier: %w", err)
 	}
 
-	host := parsedURL.Hostname()
+	return validateHostAgainstPolicy(parsedURL.Hostname(), cfg)
+}
+
+// validateHostAgainstPolicy resolves host and checks every resolved IP (plus any
+// DNS64-embedded IPv4) against the configured allow/block policy. It is shared by
+// ValidateNotifierURL (the initial notifier URL) and NotifierRedirectGuard (each
+// redirect hop at delivery time) so both enforce identical rules — the redirect
+// path previously escaped these checks entirely, which was the SSRF bypass.
+func validateHostAgainstPolicy(host string, cfg *config.NotifierConf) error {
+	if cfg == nil {
+		return fmt.Errorf("notifier configuration is nil, cannot validate URL")
+	}
+
 	if host == "" {
 		return fmt.Errorf("no hostname found in URL")
 	}

@@ -322,7 +322,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 
 	if typ == attachment.TypePhoto && primary {
 		bldr = bldr.SetPrimary(true)
-		err := r.db.Attachment.Update().
+		err := tx.Attachment.Update().
 			Where(
 				attachment.HasEntityWith(entity.ID(itemID)),
 				attachment.IDNEQ(bldrId),
@@ -732,7 +732,9 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	if contentType != "image/avif" && contentType != "image/jxl" {
 		imageMeta, err := imagemeta.Decode(bytes.NewReader(contentBytes))
 		if err == nil {
-			orientation = uint16(imageMeta.Orientation)
+			// imagemeta v1 groups the primary image tags under IFD0 rather than
+			// exposing Orientation directly on Exif.
+			orientation = uint16(imageMeta.IFD0.Orientation)
 		}
 		// If error, just use default orientation (1)
 	}

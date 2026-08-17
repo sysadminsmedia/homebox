@@ -373,10 +373,12 @@ func (svc *UserService) Login(ctx context.Context, username, password string, ex
 			attribute.Bool("user.found", false),
 			attribute.String("login.outcome", "user_not_found"),
 		)
-		// SECURITY: Perform hash to ensure response times are the same
+		// Run a real argon2id comparison against a valid dummy hash so response
+		// timing matches the "user found" path. Without this the absence of hashing
+		// work would reveal that the account does not exist.
 		_, dummySpan := entityServiceTracer().Start(ctx, "service.UserService.Login.timingDummy",
 			trace.WithAttributes(attribute.String("reason", "user_not_found")))
-		hasher.CheckPasswordHashCtx(ctx, "not-a-real-password", "not-a-real-password")
+		hasher.CheckDummyPasswordHashCtx(ctx)
 		dummySpan.End()
 		return UserAuthTokenDetail{}, ErrorInvalidLogin
 	}
@@ -393,7 +395,7 @@ func (svc *UserService) Login(ctx context.Context, username, password string, ex
 		span.SetAttributes(attribute.String("login.outcome", "blocked_no_password_hash"))
 		_, dummySpan := entityServiceTracer().Start(ctx, "service.UserService.Login.timingDummy",
 			trace.WithAttributes(attribute.String("reason", "no_password_hash")))
-		hasher.CheckPasswordHashCtx(ctx, "not-a-real-password", "not-a-real-password")
+		hasher.CheckDummyPasswordHashCtx(ctx)
 		dummySpan.End()
 		return UserAuthTokenDetail{}, ErrorInvalidLogin
 	}
@@ -614,6 +616,28 @@ func (svc *UserService) Logout(ctx context.Context, token string) error {
 	err := svc.repos.AuthTokens.DeleteToken(ctx, hash)
 	recordServiceSpanError(span, err)
 	return err
+}
+
+// LogoutAll revokes every session token for the user, signing them out on all
+// devices including the one making the request. It gives a user a way to
+// unilaterally invalidate sessions they no longer trust — e.g. after a token is
+// leaked or a device is lost — without waiting for the token TTL to elapse.
+//
+// API keys are deliberate long-lived credentials stored in a separate table and
+// are intentionally left untouched; they are managed from the API keys page.
+// Returns the number of session tokens revoked.
+func (svc *UserService) LogoutAll(ctx context.Context, userID uuid.UUID) (int, error) {
+	ctx, span := entityServiceTracer().Start(ctx, "service.UserService.LogoutAll",
+		trace.WithAttributes(attribute.String("user.id", userID.String())))
+	defer span.End()
+
+	revoked, err := svc.repos.AuthTokens.DeleteAllByUser(ctx, userID)
+	if err != nil {
+		recordServiceSpanError(span, err)
+		return 0, err
+	}
+	span.SetAttributes(attribute.Int("logout_all.sessions_revoked", revoked))
+	return revoked, nil
 }
 
 func (svc *UserService) RenewToken(ctx context.Context, token string) (UserAuthTokenDetail, error) {

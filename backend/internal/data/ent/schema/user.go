@@ -92,9 +92,9 @@ func (User) Edges() []ent.Edge {
 // UserMixin when embedded in an ent.Schema, adds a reference to
 // the Group entity.
 type UserMixin struct {
+	mixin.Schema
 	ref   string
 	field string
-	mixin.Schema
 }
 
 func (g UserMixin) Fields() []ent.Field {

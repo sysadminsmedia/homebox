@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { ref, watch } from "vue";
+  import { utf8Length } from "@/lib/utils";
   import Markdown from "@/components/global/Markdown.vue";
   import { Checkbox } from "@/components/ui/checkbox";
   import { Textarea } from "@/components/ui/textarea";
@@ -39,7 +40,7 @@
 
   const isLengthInvalid = computed(() => {
     if (typeof local.value !== "string") return false;
-    const len = local.value.length;
+    const len = utf8Length(local.value);
     const max = props.maxLength ?? -1;
     const min = props.minLength ?? -1;
     return (max !== -1 && len > max) || (min !== -1 && len < min);
@@ -49,7 +50,7 @@
     if (typeof local.value !== "string") return "";
     const max = props.maxLength ?? -1;
     if (max !== -1) {
-      return `${local.value.length}/${max}`;
+      return `${utf8Length(local.value)}/${max}`;
     }
     return "";
   });

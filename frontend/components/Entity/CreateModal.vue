@@ -172,6 +172,7 @@
         "
         type="number"
         step="any"
+        :min="0"
       />
       <FormTextArea
         v-model="form.description"
@@ -373,6 +374,9 @@
     quantity: 1,
     description: "",
     color: "",
+    // Populated by the barcode product-import flow; passed through on create (#1578).
+    manufacturer: "",
+    modelNumber: "",
     tags: [] as string[],
     photos: [] as PhotoPreview[],
   });
@@ -541,6 +545,10 @@
         if (params.product) {
           form.name = params.product.item.name;
           form.description = params.product.item.description;
+          // Carry the looked-up identifications into the create payload so the
+          // created item isn't missing manufacturer/model (#1578).
+          form.manufacturer = params.product.manufacturer ?? "";
+          form.modelNumber = params.product.modelNumber ?? "";
 
           if (params.product.imageURL) {
             appendPhotos([
@@ -552,10 +560,13 @@
               },
             ]);
           }
+        } else {
+          // Restore last used template if available. Skipped for barcode
+          // product imports: a template's defaults (name, quantity, …) would
+          // clobber the just-looked-up product data, and the template create
+          // endpoint has no way to carry manufacturer/model (#1578).
+          await restoreLastTemplate();
         }
-
-        // Restore last used template if available
-        await restoreLastTemplate();
       } else {
         selectedEntityType.value = entityTypes.value.find(t => t.isLocation) || null;
       }
@@ -640,6 +651,8 @@
         name: form.name,
         quantity: form.quantity,
         description: form.description,
+        manufacturer: form.manufacturer,
+        modelNumber: form.modelNumber,
         tagIds: form.tags,
         entityTypeId: selectedEntityType.value?.id || "",
       };
@@ -694,6 +707,8 @@
     form.quantity = 1;
     form.description = "";
     form.color = "";
+    form.manufacturer = "";
+    form.modelNumber = "";
     form.photos = [];
     form.tags = [];
     selectedTemplate.value = null;
@@ -710,6 +725,11 @@
       } else {
         navigateTo(`/item/${data.id}`);
       }
+    } else if (!selectedEntityType.value?.isLocation) {
+      // "Create and Add Another" keeps the dialog open, so the open-dialog
+      // callback (which normally restores the persisted template) never
+      // fires — re-apply it here so the selection isn't cleared (#1489).
+      await restoreLastTemplate();
     }
   }
 

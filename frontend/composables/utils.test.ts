@@ -29,4 +29,18 @@ describe("maybeURL works as expected", () => {
     expect(result.url).toBe("");
     expect(result.text).toBe("");
   });
+
+  test("javascript scheme in special syntax is rejected", () => {
+    const result = maybeUrl("[Click Me](javascript:alert(1))");
+    expect(result.isUrl).toBe(false);
+    expect(result.url).toBe("");
+    expect(result.text).toBe("");
+  });
+
+  test("data scheme in special syntax is rejected", () => {
+    const result = maybeUrl("[Click Me](data:text/html,<script>alert(1)</script>)");
+    expect(result.isUrl).toBe(false);
+    expect(result.url).toBe("");
+    expect(result.text).toBe("");
+  });
 });

@@ -211,7 +211,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/currency": {
+        "/v1/currencies": {
             "get": {
                 "produces": [
                     "application/json"
@@ -2810,6 +2810,25 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/users/logout/all": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Revokes every session token for the authenticated user across all\ndevices, including the current one. Use this to invalidate a session\ntoken that may have been leaked or stolen. API keys are stored\nseparately and are not affected; revoke them from the API keys page.",
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Log Out Of All Sessions",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
         "/v1/users/refresh": {
             "get": {
                 "security": [
@@ -4280,6 +4299,10 @@ const docTemplate = `{
                 "used_at": {
                     "description": "UsedAt holds the value of the \"used_at\" field.",
                     "type": "string"
+                },
+                "user_id": {
+                    "description": "UserID holds the value of the \"user_id\" field.",
+                    "type": "string"
                 }
             }
         },
@@ -4777,6 +4800,19 @@ const docTemplate = `{
                 "entityTypeId": {
                     "type": "string"
                 },
+                "manufacturer": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "modelNumber": {
+                    "description": "Identifications — optional at create time; populated e.g. by the\nbarcode product-search import flow (#1578).",
+                    "type": "string",
+                    "maxLength": 255,
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
                 "name": {
                     "type": "string",
                     "maxLength": 255,
@@ -4906,6 +4942,16 @@ const docTemplate = `{
                 "lifetimeWarranty": {
                     "description": "Warranty",
                     "type": "boolean"
+                },
+                "location": {
+                    "description": "Location is the nearest ancestor whose entity type is a location.\nWhen the direct parent is already a location it equals Parent; when\nthe entity is nested inside other items it is the location those\nitems ultimately live in. Nil for top-level entities.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/repo.EntitySummary"
+                        }
+                    ],
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "manufacturer": {
                     "type": "string"

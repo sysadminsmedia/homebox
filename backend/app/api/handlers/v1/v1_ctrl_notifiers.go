@@ -3,9 +3,9 @@ package v1
 import (
 	"net/http"
 
-	"github.com/containrrr/shoutrrr"
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
+	"github.com/nicholas-fedor/shoutrrr"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"

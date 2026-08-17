@@ -124,7 +124,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/repo.PaginationResult-repo_EntitySummary"
-  /v1/currency:
+  /v1/currencies:
     get:
       tags:
         - Base
@@ -1805,6 +1805,21 @@ paths:
       responses:
         "204":
           description: No Content
+  /v1/users/logout/all:
+    post:
+      security:
+        - Bearer: []
+      description: |-
+        Revokes every session token for the authenticated user across all
+        devices, including the current one. Use this to invalidate a session
+        token that may have been leaked or stolen. API keys are stored
+        separately and are not affected; revoke them from the API keys page.
+      tags:
+        - Authentication
+      summary: Log Out Of All Sessions
+      responses:
+        "204":
+          description: No Content
   /v1/users/refresh:
     get:
       security:
@@ -2813,6 +2828,9 @@ components:
         used_at:
           description: UsedAt holds the value of the "used_at" field.
           type: string
+        user_id:
+          description: UserID holds the value of the "user_id" field.
+          type: string
     ent.PasswordResetTokensEdges:
       type: object
       properties:
@@ -3158,6 +3176,19 @@ components:
           maxLength: 1000
         entityTypeId:
           type: string
+        manufacturer:
+          type: string
+          maxLength: 255
+          x-omitempty: true
+          nullable: true
+        modelNumber:
+          description: |-
+            Identifications — optional at create time; populated e.g. by the
+            barcode product-search import flow (#1578).
+          type: string
+          maxLength: 255
+          x-omitempty: true
+          nullable: true
         name:
           type: string
           maxLength: 255
@@ -3247,6 +3278,16 @@ components:
         lifetimeWarranty:
           description: Warranty
           type: boolean
+        location:
+          description: |-
+            Location is the nearest ancestor whose entity type is a location.
+            When the direct parent is already a location it equals Parent; when
+            the entity is nested inside other items it is the location those
+            items ultimately live in. Nil for top-level entities.
+          allOf:
+            - $ref: "#/components/schemas/repo.EntitySummary"
+          x-omitempty: true
+          nullable: true
         manufacturer:
           type: string
         modelNumber:

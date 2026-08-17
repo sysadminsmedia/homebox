@@ -130,6 +130,12 @@ func (ctrl *V1Controller) HandleExportDownload() errchain.HandlerFunc {
 		}
 		defer func() { _ = reader.Close() }()
 
+		// Backups routinely run to hundreds of megabytes and take far longer than
+		// the default 10s write timeout to stream. Content-Length is set from the
+		// recorded artifact size, so a deadline cut mid-copy leaves the browser
+		// with a short read it reports as a failed download.
+		allowSlowResponse(w, r)
+
 		w.Header().Set("Content-Type", "application/zip")
 		w.Header().Set("Content-Disposition",
 			fmt.Sprintf(`attachment; filename="homebox-export-%s.zip"`, out.ID.String()))
@@ -228,11 +234,11 @@ func (ctrl *V1Controller) HandleCollectionImport() errchain.HandlerFunc {
 		}
 
 		// maxImportSize is in MB and applies to the whole request body via the
-		// path-aware middleware; here we pass it to ParseMultipartForm as the
-		// memory-vs-disk threshold so larger archives spool gracefully.
-		if err := r.ParseMultipartForm(ctrl.maxImportSize << 20); err != nil {
+		// path-aware middleware; here we pass `maxParseMemory` to ParseMultipartForm
+		// as the memory-vs-disk threshold so larger archives spool gracefully.
+		if err := r.ParseMultipartForm(ctrl.maxParseMemory << 20); err != nil {
 			log.Err(err).Msg("import: parse multipart")
-			return validate.NewRequestError(err, http.StatusBadRequest)
+			return multipartFormError(err)
 		}
 		// Remove any spooled temp files the multipart parser may have created.
 		// Registered before file.Close so the close (LIFO) runs first — on
