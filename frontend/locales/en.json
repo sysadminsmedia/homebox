@@ -676,7 +676,9 @@
         "updated_at": "Updated At",
         "warranty": "Warranty",
         "warranty_details": "Warranty Details",
-        "warranty_expires": "Warranty Expires"
+        "warranty_expires": "Warranty Expires",
+        "asc": "Ascending",
+        "desc": "Descending"
     },
     "languages": {
         "bs-BA": "Bosnian (Bosnia and Herzegovina)",

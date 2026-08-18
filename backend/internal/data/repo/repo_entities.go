@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/samber/lo"
@@ -60,6 +61,7 @@ type (
 		Search           string       `json:"search"`
 		SortBy           string       `json:"sortBy"`
 		OrderBy          string       `json:"orderBy"`
+		OrderDirection   string       `json:"orderDirection"`
 		ParentIDs        []uuid.UUID  `json:"parentIds"`
 		TagIDs           []uuid.UUID  `json:"tagIds"`
 		MatchAllTags     bool         `json:"matchAllTags"` // require every selected tag (AND) instead of any (OR); ignored when NegateTags is set
@@ -593,6 +595,7 @@ func entityQuerySpanAttrs(gid uuid.UUID, q EntityQuery) []attribute.KeyValue {
 		attribute.Bool("query.include_archived", q.IncludeArchived),
 		attribute.Bool("query.filter_children", q.FilterChildren),
 		attribute.String("query.order_by", q.OrderBy),
+		attribute.String("query.order_direction", q.OrderDirection),
 		attribute.Bool("query.is_location.set", isLocSet),
 		attribute.Bool("query.is_location.value", isLocValue),
 		attribute.Bool("query.asset_id.set", !q.AssetID.Nil()),
@@ -778,17 +781,54 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 	countSpan.SetAttributes(attribute.Int("query.total.count", count))
 	countSpan.End()
 
+	var orderBy string
+	locationSort := false
+
 	// Order
 	switch q.OrderBy {
 	case "createdAt":
-		qb = qb.Order(ent.Desc(entity.FieldCreatedAt))
+		orderBy = entity.FieldCreatedAt
 	case "updatedAt":
-		qb = qb.Order(ent.Desc(entity.FieldUpdatedAt))
+		orderBy = entity.FieldUpdatedAt
 	case "assetId":
-		qb = qb.Order(ent.Asc(entity.FieldAssetID))
+		orderBy = entity.FieldAssetID
+	case "quantity":
+		orderBy = entity.FieldQuantity
+	case "insured":
+		orderBy = entity.FieldInsured
+	case "archived":
+		orderBy = entity.FieldArchived
+	case "purchasePrice":
+		orderBy = entity.FieldPurchasePrice
+	case "location":
+		// Sort by immediate parent entity name.
+		locationSort = true
 	default: // "name"
-		qb = qb.Order(ent.Asc(entity.FieldName))
+		orderBy = entity.FieldName
 	}
+
+	if locationSort {
+		// FIXME: this sorts by parent not location
+		switch q.OrderDirection {
+		case "desc":
+			qb = qb.Order(entity.ByParentField(entity.FieldName, sql.OrderDesc()))
+		default: // "asc"
+			qb = qb.Order(entity.ByParentField(entity.FieldName))
+		}
+	} else {
+		switch q.OrderDirection {
+		case "desc":
+			qb = qb.Order(ent.Desc(orderBy))
+		default: // "asc"
+			qb = qb.Order(ent.Asc(orderBy))
+		}
+	}
+
+	// log order direction
+	log.Debug().
+		Str("orderBy", orderBy).
+		Str("orderDirection", q.OrderDirection).
+		Msg("QueryByGroup order")
 
 	qb = qb.
 		WithTag().

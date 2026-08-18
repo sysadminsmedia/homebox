@@ -89,6 +89,7 @@
   const onlyWithoutPhoto = useOptionalRouteQuery("onlyWithoutPhoto", false);
   const onlyWithPhoto = useOptionalRouteQuery("onlyWithPhoto", false);
   const orderBy = useOptionalRouteQuery("orderBy", "name");
+  const orderDirection = useOptionalRouteQuery("orderDirection", "asc");
   const qLoc = useOptionalRouteQuery("loc", []);
   const qTag = useOptionalRouteQuery("tag", []);
   const qEntityType = useOptionalRouteQuery("entityTypeIds", []);
@@ -259,6 +260,12 @@
     }
   });
 
+  watch(orderDirection, (newV, oldV) => {
+    if (newV !== oldV) {
+      search();
+    }
+  });
+
   watch(
     () => useRoute().query.q,
     (newV, oldV) => {
@@ -307,6 +314,7 @@
       onlyWithoutPhoto: onlyWithoutPhoto.value,
       onlyWithPhoto: onlyWithPhoto.value,
       orderBy: orderBy.value,
+      orderDirection: orderDirection.value,
       page: page.value,
       q: query.value,
       loc: locIDs.value,
@@ -350,6 +358,7 @@
       page: page.value,
       pageSize: pageSize.value,
       orderBy: orderBy.value,
+      orderDirection: orderDirection.value,
       fields,
     });
 
@@ -490,9 +499,25 @@
                   <SelectItem value="name"> {{ $t("items.name") }} </SelectItem>
                   <SelectItem value="createdAt"> {{ $t("items.created_at") }} </SelectItem>
                   <SelectItem value="updatedAt"> {{ $t("items.updated_at") }} </SelectItem>
+                  <SelectItem value="assetId"> {{ $t("items.asset_id") }} </SelectItem>
+                  <SelectItem value="purchasePrice"> {{ $t("items.purchase_price") }} </SelectItem>
+                  <SelectItem value="location"> {{ $t("items.location") }} </SelectItem>
+                  <SelectItem value="quantity"> {{ $t("items.quantity") }} </SelectItem>
+                  <SelectItem value="insured"> {{ $t("items.insured") }} </SelectItem>
+                  <SelectItem value="archived"> {{ $t("items.archived") }} </SelectItem>
                 </SelectContent>
               </Select>
             </Label>
+            <Select v-model="orderDirection">
+              <SelectTrigger>
+                <SelectValue :placeholder="$t('items.order_direction')" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="asc"> {{ $t("items.asc") }} </SelectItem>
+                <SelectItem value="desc"> {{ $t("items.desc") }} </SelectItem>
+              </SelectContent>
+            </Select>
+
             <Separator />
             <Button @click="reset"> {{ $t("items.reset_search") }} </Button>
           </PopoverContent>

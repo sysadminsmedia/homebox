@@ -55,6 +55,8 @@ func startEntityCtrlSpan(ctx context.Context, name string, attrs ...attribute.Ke
 //	@Param		matchAllTags	query		bool		false	"require all selected tags to match (AND) instead of any (OR)"
 //	@Param		parentIds		query		[]string	false	"parent Ids"	collectionFormat(multi)
 //	@Param		entityTypeIds	query		[]string	false	"entity type IDs; when provided this filter takes precedence over isLocation"	collectionFormat(multi)
+//  @Param		orderBy			query		string		false	"field to order by; valid values: name, createdAt, updatedAt, assetId"
+//  @Param		orderDirection	query		string		false	"order direction; valid values: asc, desc"
 //	@Success	200				{object}	repo.EntityListResult
 //	@Router		/v1/entities [GET]
 //	@Security	Bearer
@@ -89,6 +91,7 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 			IncludeArchived:  queryBool(params.Get("includeArchived")),
 			Fields:           filterFieldItems(params["fields"]),
 			OrderBy:          params.Get("orderBy"),
+			OrderDirection:   params.Get("orderDirection"),
 		}
 
 		// Parse isLocation filter: "true" = locations only, "false" = items only, absent = default (items only)
@@ -127,6 +130,7 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 			attribute.Bool("query.only_with_photo", query.OnlyWithPhoto),
 			attribute.Bool("query.only_without_photo", query.OnlyWithoutPhoto),
 			attribute.String("query.order_by", query.OrderBy),
+			attribute.String("query.order_direction", query.OrderDirection),
 			attribute.Bool("query.is_location.set", query.IsLocation != nil),
 			attribute.Bool("query.is_location.value", query.IsLocation != nil && *query.IsLocation),
 			attribute.Bool("query.asset_id.set", !query.AssetID.Nil()),
