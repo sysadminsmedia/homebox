@@ -8,7 +8,7 @@
         @update:model-value="tableRow.toggleSelected()"
       />
     </div>
-    <NuxtLink :to="`/item/${item.id}`">
+    <NuxtLink :to="`/${item.entityType?.isLocation ? 'location' : 'item'}/${item.id}`">
       <div class="relative h-[200px]">
         <img
           v-if="imageUrl && objectContain"

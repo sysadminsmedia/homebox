@@ -44,7 +44,7 @@
     emit("refresh");
   };
 
-  const openMultiTab = async (items: string[]) => {
+  const openMultiTab = async (items: EntitySummary[]) => {
     if (!preferences.value.shownMultiTabWarning) {
       // TODO: add warning with link to docs and just improve this
       const { isCanceled } = await confirm.open({
@@ -57,10 +57,10 @@
       preferences.value.shownMultiTabWarning = true;
     }
 
-    items.forEach(item => window.open(`/item/${item}`, "_blank"));
+    items.forEach(item => window.open(`/${item.entityType?.isLocation ? "location" : "item"}/${item.id}`, "_blank"));
   };
 
-  const downloadCsv = (items: Row<ItemSummary>[], columns: Column<ItemSummary>[]) => {
+  const downloadCsv = (items: Row<EntitySummary>[], columns: Column<EntitySummary>[]) => {
     // get enabled columns
     const enabledColumns = columns.filter(c => c.id !== undefined && c.getIsVisible() && c.getCanHide()).map(c => c.id);
 
@@ -69,7 +69,7 @@
 
     // map each item to a row matching enabled columns order, escaping each field
     const rows = items.map(item =>
-      enabledColumns.map(col => formatValueAsCsvField(item.original[col as keyof ItemSummary])).join(",")
+      enabledColumns.map(col => formatValueAsCsvField(item.original[col as keyof EntitySummary])).join(",")
     );
 
     const csv = [header, ...rows].join("\n");
@@ -169,11 +169,11 @@
       <DropdownMenuLabel>{{ t("components.item.view.table.dropdown.actions") }}</DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuItem v-if="item" as-child>
-        <NuxtLink :to="`/item/${item.id}`" class="hover:underline">
+        <NuxtLink :to="`/${item.entityType?.isLocation ? 'location' : 'item'}/${item.id}`" class="hover:underline">
           {{ t("components.item.view.table.dropdown.view_item") }}
         </NuxtLink>
       </DropdownMenuItem>
-      <DropdownMenuItem v-if="multi" @click="openMultiTab(multi.items.map(row => row.original.id))">
+      <DropdownMenuItem v-if="multi" @click="openMultiTab(multi.items.map(row => row.original))">
         {{ t("components.item.view.table.dropdown.view_items") }}
       </DropdownMenuItem>
       <DropdownMenuItem v-if="view === 'table'" @click="$emit('expand')">

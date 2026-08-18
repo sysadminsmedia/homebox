@@ -494,7 +494,9 @@
         "item": "Item",
         "location": "Location",
         "entity": "Entity",
-        "entity_type": "Entity Type"
+        "entity_type": "Entity Type",
+        "entity_types": "Entity Types",
+        "results": "Results"
     },
     "home": {
         "quick_statistics": "Quick Statistics",

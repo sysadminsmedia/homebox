@@ -23,6 +23,7 @@ export type ItemsQuery = {
   page?: number;
   pageSize?: number;
   parentIds?: string[];
+  entityTypeIds?: string[];
   tags?: string[];
   negateTags?: boolean;
   matchAllTags?: boolean;

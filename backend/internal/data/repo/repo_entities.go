@@ -56,6 +56,7 @@ type (
 
 	EntityQuery struct {
 		IsLocation       *bool        `json:"isLocation"` // nil=all, true=locations only, false=items only
+		EntityTypeIDs    []uuid.UUID  `json:"entityTypeIds"`
 		Search           string       `json:"search"`
 		SortBy           string       `json:"sortBy"`
 		OrderBy          string       `json:"orderBy"`
@@ -584,6 +585,7 @@ func entityQuerySpanAttrs(gid uuid.UUID, q EntityQuery) []attribute.KeyValue {
 		attribute.Bool("query.negate_tags", q.NegateTags),
 		attribute.Bool("query.match_all_tags", q.MatchAllTags),
 		attribute.Int("query.parent_ids.count", len(q.ParentIDs)),
+		attribute.Int("query.entity_type_ids.count", len(q.EntityTypeIDs)),
 		attribute.Int("query.parent_item_ids.count", len(q.ParentItemIDs)),
 		attribute.Int("query.fields.count", len(q.Fields)),
 		attribute.Bool("query.only_with_photo", q.OnlyWithPhoto),
@@ -659,19 +661,23 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 		entity.HasGroupWith(group.ID(gid)),
 	)
 
-	// Filter by entity type (location vs item) when specified.
-	// Default (nil) = items only (excludes locations for backward compat)
-	switch {
-	case q.IsLocation != nil && *q.IsLocation:
-		qb = qb.Where(entity.HasEntityTypeWith(entitytype.IsLocation(true)))
-	default:
-		// nil or false: exclude locations
-		qb = qb.Where(
-			entity.Or(
-				entity.Not(entity.HasEntityType()),
-				entity.HasEntityTypeWith(entitytype.IsLocation(false)),
-			),
-		)
+	// Filter by exact entity types when provided; otherwise use legacy
+	// location-vs-item behavior for backward compatibility.
+	if len(q.EntityTypeIDs) > 0 {
+		qb = qb.Where(entity.HasEntityTypeWith(entitytype.IDIn(q.EntityTypeIDs...)))
+	} else {
+		switch {
+		case q.IsLocation != nil && *q.IsLocation:
+			qb = qb.Where(entity.HasEntityTypeWith(entitytype.IsLocation(true)))
+		default:
+			// nil or false: exclude locations
+			qb = qb.Where(
+				entity.Or(
+					entity.Not(entity.HasEntityType()),
+					entity.HasEntityTypeWith(entitytype.IsLocation(false)),
+				),
+			)
+		}
 	}
 
 	if q.FilterChildren {

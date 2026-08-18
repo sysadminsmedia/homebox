@@ -54,6 +54,7 @@ func startEntityCtrlSpan(ctx context.Context, name string, attrs ...attribute.Ke
 //	@Param		tags			query		[]string	false	"tags Ids"		collectionFormat(multi)
 //	@Param		matchAllTags	query		bool		false	"require all selected tags to match (AND) instead of any (OR)"
 //	@Param		parentIds		query		[]string	false	"parent Ids"	collectionFormat(multi)
+//	@Param		entityTypeIds	query		[]string	false	"entity type IDs; when provided this filter takes precedence over isLocation"	collectionFormat(multi)
 //	@Success	200				{object}	repo.EntityListResult
 //	@Router		/v1/entities [GET]
 //	@Security	Bearer
@@ -79,6 +80,7 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 			PageSize:         queryIntOrNegativeOne(params.Get("pageSize")),
 			Search:           params.Get("q"),
 			ParentIDs:        queryUUIDList(params, "parentIds"),
+			EntityTypeIDs:    queryUUIDList(params, "entityTypeIds"),
 			TagIDs:           queryUUIDList(params, "tags"),
 			NegateTags:       queryBool(params.Get("negateTags")),
 			MatchAllTags:     queryBool(params.Get("matchAllTags")),
@@ -118,6 +120,7 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 			attribute.Int("query.page_size", query.PageSize),
 			attribute.Int("query.tag_ids.count", len(query.TagIDs)),
 			attribute.Int("query.parent_ids.count", len(query.ParentIDs)),
+			attribute.Int("query.entity_type_ids.count", len(query.EntityTypeIDs)),
 			attribute.Int("query.fields.count", len(query.Fields)),
 			attribute.Bool("query.include_archived", query.IncludeArchived),
 			attribute.Bool("query.filter_children", query.FilterChildren),
