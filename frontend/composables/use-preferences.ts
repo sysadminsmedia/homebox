@@ -32,6 +32,11 @@ export type LocationViewPreferences = {
   quickActions: {
     enabled: boolean;
   };
+  savedSearches: {
+    name: string;
+    query: string;
+    id: string;
+  }[];
 };
 export type PreferenceSyncConfig = Partial<Record<keyof LocationViewPreferences, boolean>>;
 
@@ -56,6 +61,7 @@ const DEFAULT_PREFERENCES: LocationViewPreferences = {
   quickActions: {
     enabled: true,
   },
+  savedSearches: [],
 };
 let syncConfig: PreferenceSyncConfig = {
   itemDisplayView: false,

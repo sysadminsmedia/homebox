@@ -671,14 +671,20 @@
             "item_deleted": "Item deleted",
             "item_saved": "Item saved",
             "quantity_cannot_negative": "Quantity cannot be negative",
-            "sync_child_location": "Selected parent syncs its children's locations to its own. The location has been updated."
+            "sync_child_location": "Selected parent syncs its children's locations to its own. The location has been updated.",
+            "saved_search_name_required": "Saved search name is required",
+            "saved_search_saved": "Search saved",
+            "saved_search_deleted": "Saved search deleted"
         },
         "updated_at": "Updated At",
         "warranty": "Warranty",
         "warranty_details": "Warranty Details",
         "warranty_expires": "Warranty Expires",
         "asc": "Ascending",
-        "desc": "Descending"
+        "desc": "Descending",
+        "saved_searches": "Saved Searches",
+        "no_saved_searches": "No saved searches",
+        "saved_search_name": "Save search as..."
     },
     "languages": {
         "bs-BA": "Bosnian (Bosnia and Herzegovina)",

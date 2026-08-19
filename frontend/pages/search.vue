@@ -428,6 +428,44 @@
       page.value = newPage;
     },
   });
+
+  // saved search
+
+  const savedSearchName = ref("");
+
+  function saveCurrentSearch() {
+    const name = savedSearchName.value.trim();
+    if (!name) {
+      toast.error(t("items.toast.saved_search_name_required")); // TODO: add this translation
+      return;
+    }
+
+    preferences.value.savedSearches.push({
+      name,
+      query: JSON.stringify(route.query),
+      id: crypto.randomUUID(),
+    });
+
+    savedSearchName.value = "";
+    toast.success(t("items.toast.saved_search_saved")); // TODO: add this translation
+  }
+
+  function deleteSavedSearch(id: string) {
+    const index = preferences.value.savedSearches.findIndex(s => s.id === id);
+    if (index !== -1) {
+      preferences.value.savedSearches.splice(index, 1);
+      toast.success(t("items.toast.saved_search_deleted")); // TODO: add this translation
+    }
+  }
+
+  async function applySavedSearch(id: string) {
+    const savedSearch = preferences.value.savedSearches.find(s => s.id === id);
+
+    const queryObj = JSON.parse(savedSearch!.query);
+
+    await router.push({ query: queryObj });
+    window.location.reload();
+  }
 </script>
 
 <template>
@@ -523,6 +561,41 @@
           </PopoverContent>
         </Popover>
         <div class="grow" />
+        <Popover>
+          <PopoverTrigger as-child>
+            <Button size="sm" variant="outline"> {{ $t("items.saved_searches") }}</Button>
+          </PopoverTrigger>
+          <PopoverContent class="z-40 w-[325px]" align="end">
+            <p class="text-base">{{ $t("items.saved_searches") }}</p>
+            <div class="mt-2 flex flex-col gap-1">
+              <div v-for="saved in preferences.savedSearches" :key="saved.id" class="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  class="h-9 grow justify-start truncate"
+                  @click="applySavedSearch(saved.id)"
+                >
+                  {{ saved.name }}
+                </Button>
+                <Button variant="destructive" size="icon" @click="deleteSavedSearch(saved.id)">
+                  <MdiDelete />
+                </Button>
+              </div>
+              <p v-if="preferences.savedSearches.length === 0" class="text-sm text-muted-foreground">
+                {{ $t("items.no_saved_searches") }}
+              </p>
+            </div>
+            <Separator class="my-2" />
+            <div class="flex items-center gap-2">
+              <Input
+                v-model="savedSearchName"
+                :placeholder="$t('items.saved_search_name')"
+                @keydown.enter="saveCurrentSearch"
+              />
+              <Button class="h-10" @click="saveCurrentSearch"> {{ $t("global.save") }} </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
         <Popover>
           <PopoverTrigger as-child>
             <Button size="sm" variant="outline"> {{ $t("items.tips") }}</Button>
