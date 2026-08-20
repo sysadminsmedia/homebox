@@ -36,3 +36,11 @@ func parseInt(s string) int {
 	i, _ := strconv.Atoi(s)
 	return i
 }
+
+func parseNillableFloat(s string) *float64 {
+	if s == "" {
+		return nil
+	}
+	f, _ := strconv.ParseFloat(s, 64)
+	return &f
+}

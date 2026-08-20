@@ -35,6 +35,7 @@ type ExportCSVRow struct {
 	Fields           []ExportItemFields `csv:"-"`
 	AssetID          repo.AssetID       `csv:"HB.asset_id"`
 	Quantity         float64            `csv:"HB.quantity"`
+	LowStockThreshold *float64           `csv:"HB.low_stock_threshold"`
 	PurchasePrice    float64            `csv:"HB.purchase_price"`
 	SoldPrice        float64            `csv:"HB.sold_price"`
 	Archived         bool               `csv:"HB.archived"`

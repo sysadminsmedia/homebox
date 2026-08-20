@@ -154,6 +154,8 @@ func (s *IOSheet) Read(data io.Reader) error {
 				v = parseBool(val)
 			case reflect.TypeOf(float64(0)):
 				v = parseFloat(val)
+			case reflect.TypeOf((*float64)(nil)):
+				v = parseNillableFloat(val)
 
 			// Custom Types
 			case reflect.TypeOf(types.Date{}):
@@ -173,7 +175,7 @@ func (s *IOSheet) Read(data io.Reader) error {
 				Msg("parsed value")
 
 			// Nil values are not allowed at the moment. This may change.
-			if v == nil {
+			if v == nil && field.Type != reflect.TypeOf((*float64)(nil)) {
 				return fmt.Errorf("could not convert %q to %s", val, field.Type)
 			}
 
@@ -260,6 +262,7 @@ func (s *IOSheet) ReadItems(ctx context.Context, entities []repo.EntityOut, gid 
 			AssetID:         item.AssetID,
 			Name:            item.Name,
 			Quantity:        item.Quantity,
+			LowStockThreshold: item.LowStockThreshold,
 			Description:     item.Description,
 			Insured:         item.Insured,
 			Archived:        item.Archived,
@@ -362,6 +365,12 @@ func (s *IOSheet) CSV() ([][]string, error) {
 				v = strconv.FormatBool(val.Bool())
 			case reflect.TypeOf(float64(0)):
 				v = strconv.FormatFloat(val.Float(), 'f', -1, 64)
+			case reflect.TypeOf((*float64)(nil)):
+				if val.IsNil() {
+					v = ""
+				} else {
+					v = strconv.FormatFloat(val.Elem().Float(), 'f', -1, 64)
+				}
 
 			// Custom Types
 			case reflect.TypeOf(types.Date{}):

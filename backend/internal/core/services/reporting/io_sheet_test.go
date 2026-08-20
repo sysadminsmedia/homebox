@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"reflect"
 	"testing"
+	"strings"
 
 	_ "embed"
 
@@ -117,6 +118,29 @@ func TestSheet_Read(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestSheet_ReadLowStockThreshold(t *testing.T) {
+	csv := strings.Join([]string{
+		"HB.name,HB.low_stock_threshold",
+		"Threshold 5,5",
+		"Threshold 0,0",
+		"Threshold nil,",
+	}, "\n")
+
+	sheet := &IOSheet{}
+	require.NoError(t, sheet.Read(strings.NewReader(csv)))
+
+	require.Len(t, sheet.Rows, 3)
+
+	require.NotNil(t, sheet.Rows[0].LowStockThreshold)
+	assert.Equal(t, 5.0, *sheet.Rows[0].LowStockThreshold)
+
+	require.NotNil(t, sheet.Rows[1].LowStockThreshold)
+	assert.Equal(t, 0.0, *sheet.Rows[1].LowStockThreshold)
+
+	assert.Nil(t, sheet.Rows[2].LowStockThreshold)
+
 }
 
 func Test_parseHeaders(t *testing.T) {

@@ -10,7 +10,7 @@
     </div>
     <NuxtLink :to="`/item/${item.id}`">
       <div class="relative h-[200px]">
-        <div :class="isOutOfStock ? 'opacity-40' : ''">
+        <div :class="isOutOfStock || isLowStock ? 'opacity-40' : ''">
           <img
             v-if="imageUrl && objectContain"
             class="absolute h-[200px] w-full object-cover blur-md"
@@ -27,8 +27,13 @@
             :alt="item.name"
           />
         </div>
-        <div v-if="isOutOfStock" class="absolute inset-0 flex items-center justify-center">
-          <span class="rounded-md bg-black/70 px-3 py-1 text-sm font-semibold text-white"> {{ $t("items.out_of_stock") }} </span>
+        <div v-if="isOutOfStock || isLowStock" class="absolute inset-0 flex items-center justify-center">
+          <span
+            class="rounded-md px-3 py-1 text-sm font-semibold text-white"
+            :class="isOutOfStock ? 'bg-red-600/90' : 'bg-yellow-500/90'"
+          >
+            {{ $t(isOutOfStock ? "items.out_of_stock" : "items.low_stock") }}
+          </span>
         </div>
         <div class="absolute inset-x-1 bottom-1">
           <Badge class="text-wrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline">
@@ -75,6 +80,9 @@
         <Markdown class="mb-2 line-clamp-3 text-ellipsis" :source="item.description" />
         <div class="-mr-1 mt-auto flex flex-wrap justify-end gap-2">
           <Badge v-if="isOutOfStock" variant="destructive"> {{ $t("items.out_of_stock") }} </Badge>
+          <Badge v-else-if="isLowStock" class="bg-yellow-500 text-black hover:bg-yellow-500/90">
+            {{ $t("items.low_stock") }}
+          </Badge>
           <TagChip v-for="tag in itemTags" :key="tag.id" :tag="tag" size="sm" :ancestors="tag.ancestors" />
         </div>
       </div>
@@ -131,6 +139,12 @@
   });
 
   const isOutOfStock = computed(() => props.item.quantity === 0);
+  const isLowStock = computed(
+    () =>
+      props.item.quantity > 0 &&
+      props.item.lowStockThreshold != null &&
+      props.item.quantity < props.item.lowStockThreshold
+  );
 
   const objectContain = computed(() => imageUrl.value !== "/no-image.jpg" && !preferences.value.legacyImageFit);
 

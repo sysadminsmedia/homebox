@@ -463,3 +463,97 @@ func copyBlobUnderTest(ctx context.Context, svc *ExportService, srcKey, dstKey s
 	}
 	return w.Close()
 }
+
+func TestCSVImportExport_LowStockThreshold(t *testing.T) {
+	ctx := context.Background()
+
+	// Create source group.
+	src, err := tRepos.Groups.GroupCreate(ctx, "csv-low-stock-src-"+fk.Str(4), uuid.Nil)
+	require.NoError(t, err)
+
+	// Create a location for the item.
+	location, err := tRepos.Entities.CreateContainer(ctx, src.ID, repo.EntityCreate{
+		Name: "Test Location",
+	})
+	require.NoError(t, err)
+
+	// Create item with a low-stock threshold.
+	threshold := 5.0
+
+	itemType, err := tRepos.EntityTypes.GetDefault(ctx, src.ID, false)
+	require.NoError(t, err)
+
+	_, err = tRepos.Entities.Create(ctx, src.ID, repo.EntityCreate{
+		ImportRef:         "low-stock-test",
+		Name:              "Widget",
+		Quantity:          10,
+		LowStockThreshold: &threshold,
+		EntityTypeID:      itemType.ID,
+		ParentID:          location.ID,
+	})
+	require.NoError(t, err)
+
+	// Export the source group.
+	rows, err := tSvc.Entities.ExportCSV(ctx, src.ID, "https://homebox.example")
+	require.NoError(t, err)
+
+	// Find CSV columns.
+	header := rows[0]
+	col := func(name string) int {
+		t.Helper()
+
+		for i, h := range header {
+			if h == name {
+				return i
+			}
+		}
+
+		require.FailNowf(t, "missing CSV column", "column %q not found in %v", name, header)
+		return -1
+	}
+
+	nameCol := col("HB.name")
+	thresholdCol := col("HB.low_stock_threshold")
+
+	// Find our exported item.
+	var itemRow []string
+	for _, row := range rows[1:] {
+		if row[nameCol] == "Widget" {
+			itemRow = row
+			break
+		}
+	}
+
+	require.NotNil(t, itemRow)
+
+	// Verify the threshold was exported correctly.
+	assert.Equal(t, "5", itemRow[thresholdCol])
+
+	// Re-create the CSV from the exported rows, excluding location entities.
+	importRows := [][]string{header}
+	for _, row := range rows[1:] {
+		if row[nameCol] != "Test Location" {
+			importRows = append(importRows, row)
+		}
+	}
+
+	var csvBuf bytes.Buffer
+	writer := csv.NewWriter(&csvBuf)
+	require.NoError(t, writer.WriteAll(importRows))
+	require.NoError(t, writer.Error())
+
+	// Import into a different group.
+	dst, err := tRepos.Groups.GroupCreate(ctx, "csv-low-stock-dst-"+fk.Str(4), uuid.Nil)
+	require.NoError(t, err)
+
+	imported, err := tSvc.Entities.CsvImport(ctx, dst.ID, bytes.NewReader(csvBuf.Bytes()))
+	require.NoError(t, err)
+	require.Equal(t, 1, imported)
+
+	// Verify the threshold survived the round trip.
+	importedItem, err := tRepos.Entities.GetByRef(ctx, dst.ID, "low-stock-test")
+	require.NoError(t, err)
+
+	require.NotNil(t, importedItem.LowStockThreshold)
+	assert.Equal(t, 5.0, *importedItem.LowStockThreshold)
+}

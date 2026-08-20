@@ -174,6 +174,14 @@
         step="any"
         :min="0"
       />
+      <FormTextField
+        v-if="!selectedEntityType?.isLocation"
+        v-model.number="form.lowStockThreshold"
+        :label="$t('global.low_stock_threshold')"
+        type="number"
+        step="any"
+        :min="0"
+      />
       <FormTextArea
         v-model="form.description"
         :label="
@@ -372,6 +380,7 @@
     parentId: null,
     name: "",
     quantity: 1,
+    lowStockThreshold: undefined,
     description: "",
     color: "",
     // Populated by the barcode product-import flow; passed through on create (#1578).
@@ -635,9 +644,12 @@
       const templateRequest = {
         name: form.name,
         description: form.description,
-        parentId: form.location.id as string,
+        parentId: form.location!.id,
         tagIds: form.tags,
         quantity: form.quantity,
+        ...(form.lowStockThreshold !== undefined
+          ? { lowStockThreshold: form.lowStockThreshold }
+          : {}),
         entityTypeId: selectedEntityType.value?.id || "",
       };
 
@@ -647,9 +659,10 @@
     } else {
       // Normal item creation without template
       const out: EntityCreate = {
-        parentId: form.parentId || (form.location.id as string),
+        parentId: form.parentId || form.location?.id || null,
         name: form.name,
         quantity: form.quantity,
+        lowStockThreshold: form.lowStockThreshold ?? null,
         description: form.description,
         manufacturer: form.manufacturer,
         modelNumber: form.modelNumber,

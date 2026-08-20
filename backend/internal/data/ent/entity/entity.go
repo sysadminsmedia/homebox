@@ -29,6 +29,8 @@ const (
 	FieldNotes = "notes"
 	// FieldQuantity holds the string denoting the quantity field in the database.
 	FieldQuantity = "quantity"
+	// FieldLowStockThreshold holds the string denoting the low_stock_threshold field in the database.
+	FieldLowStockThreshold = "low_stock_threshold"
 	// FieldInsured holds the string denoting the insured field in the database.
 	FieldInsured = "insured"
 	// FieldArchived holds the string denoting the archived field in the database.
@@ -141,6 +143,7 @@ var Columns = []string{
 	FieldImportRef,
 	FieldNotes,
 	FieldQuantity,
+	FieldLowStockThreshold,
 	FieldInsured,
 	FieldArchived,
 	FieldAssetID,
@@ -275,6 +278,11 @@ func ByNotes(opts ...sql.OrderTermOption) OrderOption {
 // ByQuantity orders the results by the quantity field.
 func ByQuantity(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldQuantity, opts...).ToFunc()
+}
+
+// ByLowStockThreshold orders the results by the low_stock_threshold field.
+func ByLowStockThreshold(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLowStockThreshold, opts...).ToFunc()
 }
 
 // ByInsured orders the results by the insured field.
