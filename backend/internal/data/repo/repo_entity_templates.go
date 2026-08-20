@@ -115,10 +115,11 @@ type (
 		// Custom fields
 		Fields []TemplateField `json:"fields"`
 		// Default values for entities
-		DefaultQuantity         float64   `json:"defaultQuantity"`
-		ID                      uuid.UUID `json:"id"`
-		DefaultInsured          bool      `json:"defaultInsured"`
-		DefaultLifetimeWarranty bool      `json:"defaultLifetimeWarranty"`
+		DefaultQuantity          float64   `json:"defaultQuantity"`
+		DefaultLowStockThreshold *float64  `json:"defaultLowStockThreshold,omitempty"`
+		ID                       uuid.UUID `json:"id"`
+		DefaultInsured           bool      `json:"defaultInsured"`
+		DefaultLifetimeWarranty  bool      `json:"defaultLifetimeWarranty"`
 		// Metadata flags
 		IncludeWarrantyFields bool `json:"includeWarrantyFields"`
 		IncludePurchaseFields bool `json:"includePurchaseFields"`
@@ -186,26 +187,27 @@ func (r *EntityTemplatesRepository) mapTemplateOut(ctx context.Context, template
 	}
 
 	return EntityTemplateOut{
-		ID:                      template.ID,
-		Name:                    template.Name,
-		Description:             template.Description,
-		Notes:                   template.Notes,
-		CreatedAt:               template.CreatedAt,
-		UpdatedAt:               template.UpdatedAt,
-		DefaultQuantity:         template.DefaultQuantity,
-		DefaultInsured:          template.DefaultInsured,
-		DefaultName:             template.DefaultName,
-		DefaultDescription:      template.DefaultDescription,
-		DefaultManufacturer:     template.DefaultManufacturer,
-		DefaultModelNumber:      template.DefaultModelNumber,
-		DefaultLifetimeWarranty: template.DefaultLifetimeWarranty,
-		DefaultWarrantyDetails:  template.DefaultWarrantyDetails,
-		DefaultLocation:         location,
-		DefaultTags:             tags,
-		IncludeWarrantyFields:   template.IncludeWarrantyFields,
-		IncludePurchaseFields:   template.IncludePurchaseFields,
-		IncludeSoldFields:       template.IncludeSoldFields,
-		Fields:                  fields,
+		ID:                       template.ID,
+		Name:                     template.Name,
+		Description:              template.Description,
+		Notes:                    template.Notes,
+		CreatedAt:                template.CreatedAt,
+		UpdatedAt:                template.UpdatedAt,
+		DefaultQuantity:          template.DefaultQuantity,
+		DefaultLowStockThreshold: template.DefaultLowStockThreshold,
+		DefaultInsured:           template.DefaultInsured,
+		DefaultName:              template.DefaultName,
+		DefaultDescription:       template.DefaultDescription,
+		DefaultManufacturer:      template.DefaultManufacturer,
+		DefaultModelNumber:       template.DefaultModelNumber,
+		DefaultLifetimeWarranty:  template.DefaultLifetimeWarranty,
+		DefaultWarrantyDetails:   template.DefaultWarrantyDetails,
+		DefaultLocation:          location,
+		DefaultTags:              tags,
+		IncludeWarrantyFields:    template.IncludeWarrantyFields,
+		IncludePurchaseFields:    template.IncludePurchaseFields,
+		IncludeSoldFields:        template.IncludeSoldFields,
+		Fields:                   fields,
 	}
 }
 

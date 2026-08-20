@@ -44,6 +44,9 @@ func (Entity) Fields() []ent.Field {
 			Optional(),
 		field.Float("quantity").
 			Default(1),
+		field.Float("low_stock_threshold").
+			Optional().
+			Nillable(),
 		field.Bool("insured").
 			Default(false),
 		field.Bool("archived").

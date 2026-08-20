@@ -3515,6 +3515,10 @@ const docTemplate = `{
                     "description": "LifetimeWarranty holds the value of the \"lifetime_warranty\" field.",
                     "type": "boolean"
                 },
+                "low_stock_threshold": {
+                    "description": "LowStockThreshold holds the value of the \"low_stock_threshold\" field.",
+                    "type": "number"
+                },
                 "manufacturer": {
                     "description": "Manufacturer holds the value of the \"manufacturer\" field.",
                     "type": "string"
@@ -3737,6 +3741,10 @@ const docTemplate = `{
                 "default_lifetime_warranty": {
                     "description": "DefaultLifetimeWarranty holds the value of the \"default_lifetime_warranty\" field.",
                     "type": "boolean"
+                },
+                "default_low_stock_threshold": {
+                    "description": "DefaultLowStockThreshold holds the value of the \"default_low_stock_threshold\" field.",
+                    "type": "number"
                 },
                 "default_manufacturer": {
                     "description": "DefaultManufacturer holds the value of the \"default_manufacturer\" field.",
@@ -4794,6 +4802,11 @@ const docTemplate = `{
                 "entityTypeId": {
                     "type": "string"
                 },
+                "lowStockThreshold": {
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
                 "manufacturer": {
                     "type": "string",
                     "maxLength": 255,
@@ -4947,6 +4960,11 @@ const docTemplate = `{
                     "x-nullable": true,
                     "x-omitempty": true
                 },
+                "lowStockThreshold": {
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
                 "manufacturer": {
                     "type": "string"
                 },
@@ -5038,6 +5056,11 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "lowStockThreshold": {
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
                 "parentId": {
                     "type": "string",
                     "x-nullable": true,
@@ -5122,6 +5145,11 @@ const docTemplate = `{
                 "itemCount": {
                     "description": "Container-specific (populated when querying locations)",
                     "type": "number"
+                },
+                "lowStockThreshold": {
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "name": {
                     "type": "string"
@@ -5270,6 +5298,9 @@ const docTemplate = `{
                             "$ref": "#/definitions/repo.TemplateLocationSummary"
                         }
                     ]
+                },
+                "defaultLowStockThreshold": {
+                    "type": "number"
                 },
                 "defaultManufacturer": {
                     "type": "string"
@@ -5539,6 +5570,11 @@ const docTemplate = `{
                 "lifetimeWarranty": {
                     "description": "Warranty",
                     "type": "boolean"
+                },
+                "lowStockThreshold": {
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "manufacturer": {
                     "type": "string"
@@ -6432,6 +6468,11 @@ const docTemplate = `{
                 "entityTypeId": {
                     "description": "EntityTypeID is the entity type selected by the user. When set it takes\nprecedence; when empty the repository falls back to the group's default.",
                     "type": "string"
+                },
+                "lowStockThreshold": {
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "name": {
                     "type": "string",
