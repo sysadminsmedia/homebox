@@ -73,6 +73,10 @@ type Options struct {
 	AllowAnalytics       bool   `yaml:"allow_analytics"         conf:"default:false"`
 	AllowLocalLogin      bool   `yaml:"allow_local_login"       conf:"default:true"`
 	TrustProxy           bool   `yaml:"trust_proxy"             conf:"default:false"`
+	// PDFExportMaxItems caps the number of items in a single PDF export to
+	// prevent excessive memory usage and request timeouts. Raise on powerful
+	// systems or lower on constrained ones.
+	PDFExportMaxItems int `yaml:"pdf_export_max_items" conf:"default:500"`
 }
 
 type Thumbnail struct {
