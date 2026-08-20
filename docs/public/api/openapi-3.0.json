@@ -1258,6 +1258,120 @@
                 }
             }
         },
+        "/v1/found/{kind}/{id}": {
+            "get": {
+                "description": "Public, unauthenticated lookup for the found-item contact page. Resolves an\nitem by UUID (kind \"item\") or by asset ID (kind \"asset\") when the owning\ngroup has opted in. Returns 404 for anything that does not resolve, with no\ndistinction between missing, archived, opted-out, or ambiguous.",
+                "tags": [
+                    "Found"
+                ],
+                "summary": "Get Found Item Contact Page",
+                "parameters": [
+                    {
+                        "description": "ID kind",
+                        "name": "kind",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "item",
+                                "asset"
+                            ]
+                        }
+                    },
+                    {
+                        "description": "Item UUID or asset ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.FoundItemResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "item not found or found-item contact not enabled",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/found/{kind}/{id}/contact": {
+            "post": {
+                "description": "Relays a finder's message to the item owner by email. After basic input\nvalidation this always returns 204, whether or not the item resolved or\nthe email was sent, so the endpoint cannot be used to probe for items.",
+                "tags": [
+                    "Found"
+                ],
+                "summary": "Send Found Item Contact Message",
+                "parameters": [
+                    {
+                        "description": "ID kind",
+                        "name": "kind",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "item",
+                                "asset"
+                            ]
+                        }
+                    },
+                    {
+                        "description": "Item UUID or asset ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/v1.FoundContactRequest"
+                            }
+                        }
+                    },
+                    "description": "Message",
+                    "required": true
+                },
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "invalid request body, empty or oversized message, or invalid reply-to address",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/group/exports": {
             "get": {
                 "security": [
@@ -4236,6 +4350,14 @@
                             }
                         ]
                     },
+                    "found_contact_enabled": {
+                        "description": "FoundContactEnabled holds the value of the \"found_contact_enabled\" field.",
+                        "type": "boolean"
+                    },
+                    "found_contact_message": {
+                        "description": "FoundContactMessage holds the value of the \"found_contact_message\" field.",
+                        "type": "string"
+                    },
                     "id": {
                         "description": "ID of the ent.",
                         "type": "string"
@@ -5898,6 +6020,12 @@
                     "currency": {
                         "type": "string"
                     },
+                    "foundContactEnabled": {
+                        "type": "boolean"
+                    },
+                    "foundContactMessage": {
+                        "type": "string"
+                    },
                     "id": {
                         "type": "string"
                     },
@@ -5953,6 +6081,12 @@
                 "type": "object",
                 "properties": {
                     "currency": {
+                        "type": "string"
+                    },
+                    "foundContactEnabled": {
+                        "type": "boolean"
+                    },
+                    "foundContactMessage": {
                         "type": "string"
                     },
                     "name": {
@@ -6700,6 +6834,42 @@
                     "email": {
                         "type": "string",
                         "example": "user@example.com"
+                    }
+                }
+            },
+            "v1.FoundContactRequest": {
+                "type": "object",
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "maxLength": 2000
+                    },
+                    "replyTo": {
+                        "type": "string"
+                    }
+                }
+            },
+            "v1.FoundItemResponse": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "itemId": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "mode": {
+                        "type": "string",
+                        "enum": [
+                            "form",
+                            "mailto"
+                        ]
                     }
                 }
             },

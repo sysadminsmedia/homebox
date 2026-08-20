@@ -552,6 +552,14 @@ definitions:
         description: |-
           Edges holds the relations/edges for other nodes in the graph.
           The values are being populated by the GroupQuery when eager-loading is set.
+      found_contact_enabled:
+        description: FoundContactEnabled holds the value of the "found_contact_enabled"
+          field.
+        type: boolean
+      found_contact_message:
+        description: FoundContactMessage holds the value of the "found_contact_message"
+          field.
+        type: string
       id:
         description: ID of the ent.
         type: string
@@ -1712,6 +1720,10 @@ definitions:
         type: string
       currency:
         type: string
+      foundContactEnabled:
+        type: boolean
+      foundContactMessage:
+        type: string
       id:
         type: string
       name:
@@ -1748,6 +1760,10 @@ definitions:
   repo.GroupUpdate:
     properties:
       currency:
+        type: string
+      foundContactEnabled:
+        type: boolean
+      foundContactMessage:
         type: string
       name:
         type: string
@@ -2250,6 +2266,30 @@ definitions:
         type: string
     required:
     - email
+    type: object
+  v1.FoundContactRequest:
+    properties:
+      message:
+        maxLength: 2000
+        type: string
+      replyTo:
+        type: string
+    required:
+    - message
+    type: object
+  v1.FoundItemResponse:
+    properties:
+      email:
+        type: string
+      itemId:
+        type: string
+      message:
+        type: string
+      mode:
+        enum:
+        - form
+        - mailto
+        type: string
     type: object
   v1.GroupAcceptInvitationResponse:
     properties:
@@ -3077,6 +3117,82 @@ paths:
       summary: Update Entity Type
       tags:
       - Entity Types
+  /v1/found/{kind}/{id}:
+    get:
+      description: |-
+        Public, unauthenticated lookup for the found-item contact page. Resolves an
+        item by UUID (kind "item") or by asset ID (kind "asset") when the owning
+        group has opted in. Returns 404 for anything that does not resolve, with no
+        distinction between missing, archived, opted-out, or ambiguous.
+      parameters:
+      - description: ID kind
+        enum:
+        - item
+        - asset
+        in: path
+        name: kind
+        required: true
+        type: string
+      - description: Item UUID or asset ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.FoundItemResponse'
+        "404":
+          description: item not found or found-item contact not enabled
+          schema:
+            type: string
+      summary: Get Found Item Contact Page
+      tags:
+      - Found
+  /v1/found/{kind}/{id}/contact:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Relays a finder's message to the item owner by email. After basic input
+        validation this always returns 204, whether or not the item resolved or
+        the email was sent, so the endpoint cannot be used to probe for items.
+      parameters:
+      - description: ID kind
+        enum:
+        - item
+        - asset
+        in: path
+        name: kind
+        required: true
+        type: string
+      - description: Item UUID or asset ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Message
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/v1.FoundContactRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: invalid request body, empty or oversized message, or invalid
+            reply-to address
+          schema:
+            type: string
+      summary: Send Found Item Contact Message
+      tags:
+      - Found
   /v1/group/exports:
     get:
       description: Returns export job rows for the caller's group, newest first.

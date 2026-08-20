@@ -2,6 +2,7 @@ package v1
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -38,6 +39,10 @@ type (
 	}
 )
 
+// groupFoundContactMessageMaxLen mirrors the ent schema's MaxLen(500) on
+// Group.found_contact_message.
+const groupFoundContactMessageMaxLen = 500
+
 // HandleGroupGet godoc
 //
 //	@Summary	Get Group
@@ -73,6 +78,31 @@ func (ctrl *V1Controller) HandleGroupUpdate() errchain.HandlerFunc {
 			return repo.Group{}, validate.NewFieldErrors(
 				validate.NewFieldError("currency", "currency '"+body.Currency+"' is not supported"),
 			)
+		}
+
+		// Enforce the ent schema's MaxLen(500) here so an oversized message
+		// surfaces as a 422 field error (mid.Errors maps FieldErrors to
+		// unprocessable entity, matching the currency check above) instead
+		// of a 500 from the ent validator. ent's MaxLen counts bytes
+		// (len(v)), so this check does too.
+		if body.FoundContactMessage != nil && len(*body.FoundContactMessage) > groupFoundContactMessageMaxLen {
+			return repo.Group{}, validate.NewFieldErrors(
+				validate.NewFieldError("foundContactMessage", fmt.Sprintf("message is too long (max %d)", groupFoundContactMessageMaxLen)),
+			)
+		}
+
+		// Changing the found-contact settings can publish the group owner's
+		// email (mailto mode), so only the owner may touch them. Enforced only
+		// when a found-contact field is actually being set so members can still
+		// update name/currency.
+		if body.FoundContactEnabled != nil || body.FoundContactMessage != nil {
+			isOwner, err := ctrl.repo.Groups.IsOwnerOf(auth, auth.UID, auth.GID)
+			if err != nil {
+				return repo.Group{}, err
+			}
+			if !isOwner {
+				return repo.Group{}, validate.NewRequestError(errors.New("only the group owner can change found-contact settings"), http.StatusForbidden)
+			}
 		}
 
 		return ctrl.svc.Group.UpdateGroup(auth, body)

@@ -23,6 +23,10 @@ const (
 	FieldName = "name"
 	// FieldCurrency holds the string denoting the currency field in the database.
 	FieldCurrency = "currency"
+	// FieldFoundContactEnabled holds the string denoting the found_contact_enabled field in the database.
+	FieldFoundContactEnabled = "found_contact_enabled"
+	// FieldFoundContactMessage holds the string denoting the found_contact_message field in the database.
+	FieldFoundContactMessage = "found_contact_message"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
 	EdgeUsers = "users"
 	// EdgeEntityTypes holds the string denoting the entity_types edge name in mutations.
@@ -113,6 +117,8 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldName,
 	FieldCurrency,
+	FieldFoundContactEnabled,
+	FieldFoundContactMessage,
 }
 
 var (
@@ -142,6 +148,12 @@ var (
 	NameValidator func(string) error
 	// DefaultCurrency holds the default value on creation for the "currency" field.
 	DefaultCurrency string
+	// DefaultFoundContactEnabled holds the default value on creation for the "found_contact_enabled" field.
+	DefaultFoundContactEnabled bool
+	// DefaultFoundContactMessage holds the default value on creation for the "found_contact_message" field.
+	DefaultFoundContactMessage string
+	// FoundContactMessageValidator is a validator for the "found_contact_message" field. It is called by the builders before save.
+	FoundContactMessageValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
@@ -172,6 +184,16 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // ByCurrency orders the results by the currency field.
 func ByCurrency(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCurrency, opts...).ToFunc()
+}
+
+// ByFoundContactEnabled orders the results by the found_contact_enabled field.
+func ByFoundContactEnabled(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFoundContactEnabled, opts...).ToFunc()
+}
+
+// ByFoundContactMessage orders the results by the found_contact_message field.
+func ByFoundContactMessage(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFoundContactMessage, opts...).ToFunc()
 }
 
 // ByUsersCount orders the results by users count.
