@@ -40,6 +40,8 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    // Dev proxy always runs at root — subpath is only relevant in production
+    // where the Go backend handles it.
     devProxy: {
       "/api": {
         target: "http://localhost:7745/api",
@@ -50,8 +52,11 @@ export default defineNuxtConfig({
   },
 
   app: {
+    // cdnURL "./" produces relative asset paths in the built HTML (e.g. ./_nuxt/app.js).
+    // These are resolved by the <base href> tag that the Go backend injects at runtime.
+    cdnURL: "./",
     head: {
-      script: [{ src: "/set-theme.js" }],
+      script: [{ src: "./set-theme.js" }],
     },
   },
 
@@ -59,11 +64,11 @@ export default defineNuxtConfig({
 
   pwa: {
     workbox: {
-      navigateFallbackDenylist: [/^\/api/],
+      navigateFallbackDenylist: [/\/api\/v\d+/],
       cleanupOutdatedCaches: true,
       runtimeCaching: [
         {
-          urlPattern: /^\/api/,
+          urlPattern: /\/api\/v\d+/,
           handler: "NetworkFirst",
           method: "GET",
           options: {
@@ -88,7 +93,7 @@ export default defineNuxtConfig({
       short_name: "Homebox",
       description: "Home Inventory App",
       theme_color: "#5b7f67",
-      start_url: "/home",
+      start_url: "./home",
       icons: [
         {
           src: "pwa-192x192.png",

@@ -27,7 +27,7 @@
   const { openDialog } = useDialog();
   const confirm = useConfirm();
   const localInvites = ref<Invitation[]>([]);
-  const baseUrl = `${window.location.protocol}//${window.location.host}`;
+  const baseUrl = new URL(useAppBase(), `${window.location.protocol}//${window.location.host}`).toString();
   const loading = ref(true);
   const invites = ref<Invitation[]>([]);
   const error = ref<string | null>(null);
