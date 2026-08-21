@@ -557,3 +557,112 @@ func TestCSVImportExport_LowStockThreshold(t *testing.T) {
 	require.NotNil(t, importedItem.LowStockThreshold)
 	assert.InDelta(t, 5.0, *importedItem.LowStockThreshold, 0)
 }
+
+func TestCSVImportExport_LowStockThresholdRoundTrip(t *testing.T) {
+	ctx := context.Background()
+
+	src, err := tRepos.Groups.GroupCreate(ctx, "csv-low-stock-src-"+fk.Str(4), uuid.Nil)
+	require.NoError(t, err)
+
+	location, err := tRepos.Entities.CreateContainer(ctx, src.ID, repo.EntityCreate{
+		Name: "Test Location",
+	})
+	require.NoError(t, err)
+
+	itemType, err := tRepos.EntityTypes.GetDefault(ctx, src.ID, false)
+	require.NoError(t, err)
+
+	threshold := 5.0
+
+	testItems := []struct {
+		importRef string
+		name      string
+		threshold *float64
+	}{
+		{
+			importRef: "low-stock-nil-test",
+			name:      "Widget Nil",
+			threshold: nil,
+		},
+		{
+			importRef: "low-stock-value-test",
+			name:      "Widget Value",
+			threshold: &threshold,
+		},
+	}
+
+	for _, tc := range testItems {
+		_, err := tRepos.Entities.Create(ctx, src.ID, repo.EntityCreate{
+			ImportRef:         tc.importRef,
+			Name:              tc.name,
+			Quantity:          10,
+			EntityTypeID:      itemType.ID,
+			ParentID:          location.ID,
+			LowStockThreshold: tc.threshold,
+		})
+		require.NoError(t, err)
+	}
+
+	rows, err := tSvc.Entities.ExportCSV(ctx, src.ID, "https://homebox.example")
+	require.NoError(t, err)
+
+	header := rows[0]
+
+	col := func(name string) int {
+		t.Helper()
+
+		for i, h := range header {
+			if h == name {
+				return i
+			}
+		}
+
+		require.FailNowf(t, "missing CSV column", "column %q not found", name)
+		return -1
+	}
+
+	nameCol := col("HB.name")
+	thresholdCol := col("HB.low_stock_threshold")
+
+	// Verify the exported CSV representation.
+	expectedCSVValues := map[string]string{
+		"Widget Nil":   "",
+		"Widget Value": "5",
+	}
+
+	for _, row := range rows[1:] {
+		if expected, ok := expectedCSVValues[row[nameCol]]; ok {
+			assert.Equal(t, expected, row[thresholdCol])
+		}
+	}
+
+	// Exclude the location because it is not being recreated in the destination group.
+	importRows := [][]string{header}
+	for _, row := range rows[1:] {
+		if row[nameCol] != "Test Location" {
+			importRows = append(importRows, row)
+		}
+	}
+
+	var csvBuf bytes.Buffer
+	writer := csv.NewWriter(&csvBuf)
+	require.NoError(t, writer.WriteAll(importRows))
+	require.NoError(t, writer.Error())
+
+	dst, err := tRepos.Groups.GroupCreate(ctx, "csv-low-stock-dst-"+fk.Str(4), uuid.Nil)
+	require.NoError(t, err)
+
+	imported, err := tSvc.Entities.CsvImport(ctx, dst.ID, bytes.NewReader(csvBuf.Bytes()))
+	require.NoError(t, err)
+	require.Equal(t, 2, imported)
+
+	// Verify both nullable states survived the round trip.
+	importedNil, err := tRepos.Entities.GetByRef(ctx, dst.ID, "low-stock-nil-test")
+	require.NoError(t, err)
+	assert.Nil(t, importedNil.LowStockThreshold)
+
+	importedValue, err := tRepos.Entities.GetByRef(ctx, dst.ID, "low-stock-value-test")
+	require.NoError(t, err)
+	require.NotNil(t, importedValue.LowStockThreshold)
+	assert.InDelta(t, 5.0, *importedValue.LowStockThreshold, 0)
+}

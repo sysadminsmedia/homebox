@@ -5212,6 +5212,10 @@ const docTemplate = `{
                     "type": "string",
                     "x-nullable": true
                 },
+                "defaultLowStockThreshold": {
+                    "type": "number",
+                    "x-nullable": true
+                },
                 "defaultManufacturer": {
                     "type": "string",
                     "maxLength": 255,
@@ -5398,6 +5402,10 @@ const docTemplate = `{
                 "defaultLocationId": {
                     "description": "Default location and tags",
                     "type": "string",
+                    "x-nullable": true
+                },
+                "defaultLowStockThreshold": {
+                    "type": "number",
                     "x-nullable": true
                 },
                 "defaultManufacturer": {

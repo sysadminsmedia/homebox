@@ -43,16 +43,17 @@ type (
 
 	EntityTemplateCreate struct {
 		// Default values for entities
-		DefaultQuantity        *float64     `json:"defaultQuantity,omitempty"        extensions:"x-nullable"`
-		DefaultName            *string      `json:"defaultName,omitempty"            validate:"omitempty,max=255"      extensions:"x-nullable"`
-		DefaultDescription     *string      `json:"defaultDescription,omitempty"     validate:"omitempty,max=1000"     extensions:"x-nullable"`
-		DefaultManufacturer    *string      `json:"defaultManufacturer,omitempty"    validate:"omitempty,max=255"      extensions:"x-nullable"`
-		DefaultModelNumber     *string      `json:"defaultModelNumber,omitempty"     validate:"omitempty,max=255"      extensions:"x-nullable"`
-		DefaultWarrantyDetails *string      `json:"defaultWarrantyDetails,omitempty" validate:"omitempty,max=1000"     extensions:"x-nullable"`
-		DefaultTagIDs          *[]uuid.UUID `json:"defaultTagIds,omitempty"          extensions:"x-nullable"`
-		Name                   string       `json:"name"                             validate:"required,min=1,max=255"`
-		Description            string       `json:"description"                      validate:"max=1000"`
-		Notes                  string       `json:"notes"                            validate:"max=1000"`
+		DefaultQuantity          *float64     `json:"defaultQuantity,omitempty"          extensions:"x-nullable"`
+		DefaultLowStockThreshold *float64     `json:"defaultLowStockThreshold,omitempty" extensions:"x-nullable"`
+		DefaultName              *string      `json:"defaultName,omitempty"              validate:"omitempty,max=255"      extensions:"x-nullable"`
+		DefaultDescription       *string      `json:"defaultDescription,omitempty"       validate:"omitempty,max=1000"     extensions:"x-nullable"`
+		DefaultManufacturer      *string      `json:"defaultManufacturer,omitempty"      validate:"omitempty,max=255"      extensions:"x-nullable"`
+		DefaultModelNumber       *string      `json:"defaultModelNumber,omitempty"       validate:"omitempty,max=255"      extensions:"x-nullable"`
+		DefaultWarrantyDetails   *string      `json:"defaultWarrantyDetails,omitempty"   validate:"omitempty,max=1000"     extensions:"x-nullable"`
+		DefaultTagIDs            *[]uuid.UUID `json:"defaultTagIds,omitempty"            extensions:"x-nullable"`
+		Name                     string       `json:"name"                               validate:"required,min=1,max=255"`
+		Description              string       `json:"description"                        validate:"max=1000"`
+		Notes                    string       `json:"notes"                              validate:"max=1000"`
 		// Custom fields
 		Fields []TemplateField `json:"fields"`
 		// Default location and tags
@@ -67,16 +68,17 @@ type (
 
 	EntityTemplateUpdate struct {
 		// Default values for entities
-		DefaultQuantity        *float64     `json:"defaultQuantity,omitempty"        extensions:"x-nullable"`
-		DefaultName            *string      `json:"defaultName,omitempty"            validate:"omitempty,max=255"      extensions:"x-nullable"`
-		DefaultDescription     *string      `json:"defaultDescription,omitempty"     validate:"omitempty,max=1000"     extensions:"x-nullable"`
-		DefaultManufacturer    *string      `json:"defaultManufacturer,omitempty"    validate:"omitempty,max=255"      extensions:"x-nullable"`
-		DefaultModelNumber     *string      `json:"defaultModelNumber,omitempty"     validate:"omitempty,max=255"      extensions:"x-nullable"`
-		DefaultWarrantyDetails *string      `json:"defaultWarrantyDetails,omitempty" validate:"omitempty,max=1000"     extensions:"x-nullable"`
-		DefaultTagIDs          *[]uuid.UUID `json:"defaultTagIds,omitempty"          extensions:"x-nullable"`
-		Name                   string       `json:"name"                             validate:"required,min=1,max=255"`
-		Description            string       `json:"description"                      validate:"max=1000"`
-		Notes                  string       `json:"notes"                            validate:"max=1000"`
+		DefaultQuantity          *float64     `json:"defaultQuantity,omitempty"          extensions:"x-nullable"`
+		DefaultLowStockThreshold *float64     `json:"defaultLowStockThreshold,omitempty" extensions:"x-nullable"`
+		DefaultName              *string      `json:"defaultName,omitempty"              validate:"omitempty,max=255"      extensions:"x-nullable"`
+		DefaultDescription       *string      `json:"defaultDescription,omitempty"       validate:"omitempty,max=1000"     extensions:"x-nullable"`
+		DefaultManufacturer      *string      `json:"defaultManufacturer,omitempty"      validate:"omitempty,max=255"      extensions:"x-nullable"`
+		DefaultModelNumber       *string      `json:"defaultModelNumber,omitempty"       validate:"omitempty,max=255"      extensions:"x-nullable"`
+		DefaultWarrantyDetails   *string      `json:"defaultWarrantyDetails,omitempty"   validate:"omitempty,max=1000"     extensions:"x-nullable"`
+		DefaultTagIDs            *[]uuid.UUID `json:"defaultTagIds,omitempty"            extensions:"x-nullable"`
+		Name                     string       `json:"name"                               validate:"required,min=1,max=255"`
+		Description              string       `json:"description"                        validate:"max=1000"`
+		Notes                    string       `json:"notes"                              validate:"max=1000"`
 		// Custom fields
 		Fields []TemplateField `json:"fields"`
 		ID     uuid.UUID       `json:"id"`
@@ -264,6 +266,7 @@ func (r *EntityTemplatesRepository) Create(ctx context.Context, gid uuid.UUID, d
 		SetDescription(data.Description).
 		SetNotes(data.Notes).
 		SetNillableDefaultQuantity(data.DefaultQuantity).
+		SetNillableDefaultLowStockThreshold(data.DefaultLowStockThreshold).
 		SetDefaultInsured(data.DefaultInsured).
 		SetNillableDefaultName(data.DefaultName).
 		SetNillableDefaultDescription(data.DefaultDescription).
@@ -347,6 +350,13 @@ func (r *EntityTemplatesRepository) Update(ctx context.Context, gid uuid.UUID, d
 		updateQ.SetLocationID(data.DefaultLocationID)
 	} else {
 		updateQ.ClearLocation()
+	}
+
+	// Update low stock threshold: set when provided (not nil), otherwise clear
+	if data.DefaultLowStockThreshold != nil {
+		updateQ.SetDefaultLowStockThreshold(*data.DefaultLowStockThreshold)
+	} else {
+		updateQ.ClearDefaultLowStockThreshold()
 	}
 
 	// Update default tag IDs (stored as JSON)

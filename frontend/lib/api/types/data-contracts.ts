@@ -886,6 +886,7 @@ export interface EntityTemplateCreate {
   defaultLifetimeWarranty: boolean;
   /** Default location and tags */
   defaultLocationId?: string | null;
+  defaultLowStockThreshold?: number | null;
   /** @maxLength 255 */
   defaultManufacturer?: string | null;
   /** @maxLength 255 */
@@ -957,6 +958,7 @@ export interface EntityTemplateUpdate {
   defaultLifetimeWarranty: boolean;
   /** Default location and tags */
   defaultLocationId?: string | null;
+  defaultLowStockThreshold?: number | null;
   /** @maxLength 255 */
   defaultManufacturer?: string | null;
   /** @maxLength 255 */

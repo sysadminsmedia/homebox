@@ -5451,6 +5451,10 @@
                         "type": "string",
                         "nullable": true
                     },
+                    "defaultLowStockThreshold": {
+                        "type": "number",
+                        "nullable": true
+                    },
                     "defaultManufacturer": {
                         "type": "string",
                         "maxLength": 255,
@@ -5637,6 +5641,10 @@
                     "defaultLocationId": {
                         "description": "Default location and tags",
                         "type": "string",
+                        "nullable": true
+                    },
+                    "defaultLowStockThreshold": {
+                        "type": "number",
                         "nullable": true
                     },
                     "defaultManufacturer": {

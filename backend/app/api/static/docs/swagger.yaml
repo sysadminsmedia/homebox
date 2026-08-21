@@ -1399,6 +1399,9 @@ definitions:
         description: Default location and tags
         type: string
         x-nullable: true
+      defaultLowStockThreshold:
+        type: number
+        x-nullable: true
       defaultManufacturer:
         maxLength: 255
         type: string
@@ -1529,6 +1532,9 @@ definitions:
       defaultLocationId:
         description: Default location and tags
         type: string
+        x-nullable: true
+      defaultLowStockThreshold:
+        type: number
         x-nullable: true
       defaultManufacturer:
         maxLength: 255

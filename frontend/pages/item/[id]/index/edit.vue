@@ -78,12 +78,18 @@
     return data;
   });
 
-  const item = ref<EntityOut & { tagIds: string[] }>(null as never);
+  type EditableItem = Omit<EntityOut, "lowStockThreshold"> & {
+    lowStockThreshold?: number;
+    tagIds: string[];
+  };
+
+  const item = ref<EditableItem>(null as never);
 
   watchEffect(() => {
     if (nullableItem.value) {
       item.value = {
         ...nullableItem.value,
+        lowStockThreshold: nullableItem.value.lowStockThreshold ?? undefined,
         tagIds: nullableItem.value.tags.map(l => l.id) ?? [],
       };
     }
@@ -592,6 +598,7 @@
       parentId: parent.value?.id || location.value?.id || null,
       tagIds: item.value.tagIds,
       assetId: item.value.assetId,
+      entityTypeId: item.value.entityType!.id,
       lowStockThreshold: normalizedLowStockThreshold(),
       syncChildEntityLocations: item.value.syncChildEntityLocations,
     };
