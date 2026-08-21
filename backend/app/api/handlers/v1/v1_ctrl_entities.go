@@ -82,7 +82,7 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 			NegateTags:       queryBool(params.Get("negateTags")),
 			OnlyWithoutPhoto: queryBool(params.Get("onlyWithoutPhoto")),
 			OnlyWithPhoto:    queryBool(params.Get("onlyWithPhoto")),
-			OnlyInStock: 	  queryBool(params.Get("onlyInStock")),
+			OnlyInStock:      queryBool(params.Get("onlyInStock")),
 			IncludeArchived:  queryBool(params.Get("includeArchived")),
 			Fields:           filterFieldItems(params["fields"]),
 			OrderBy:          params.Get("orderBy"),

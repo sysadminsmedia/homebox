@@ -14,33 +14,33 @@ type ExportItemFields struct {
 }
 
 type ExportCSVRow struct {
-	PurchaseDate     types.Date         `csv:"HB.purchase_date|HB.purchase_time"`
-	WarrantyExpires  types.Date         `csv:"HB.warranty_expires"`
-	SoldDate         types.Date         `csv:"HB.sold_date|HB.sold_time"`
-	ImportRef        string             `csv:"HB.import_ref"`
-	ParentImportRef  string             `csv:"HB.parent_import_ref"`
-	URL              string             `csv:"HB.url"`
-	Name             string             `csv:"HB.name"`
-	Description      string             `csv:"HB.description"`
-	Notes            string             `csv:"HB.notes"`
-	PurchaseFrom     string             `csv:"HB.purchase_from"`
-	Manufacturer     string             `csv:"HB.manufacturer"`
-	ModelNumber      string             `csv:"HB.model_number"`
-	SerialNumber     string             `csv:"HB.serial_number"`
-	WarrantyDetails  string             `csv:"HB.warranty_details"`
-	SoldTo           string             `csv:"HB.sold_to"`
-	SoldNotes        string             `csv:"HB.sold_notes"`
-	Location         LocationString     `csv:"HB.location"`
-	TagStr           TagString          `csv:"HB.tags|HB.labels"`
-	Fields           []ExportItemFields `csv:"-"`
-	AssetID          repo.AssetID       `csv:"HB.asset_id"`
-	Quantity         float64            `csv:"HB.quantity"`
+	PurchaseDate      types.Date         `csv:"HB.purchase_date|HB.purchase_time"`
+	WarrantyExpires   types.Date         `csv:"HB.warranty_expires"`
+	SoldDate          types.Date         `csv:"HB.sold_date|HB.sold_time"`
+	ImportRef         string             `csv:"HB.import_ref"`
+	ParentImportRef   string             `csv:"HB.parent_import_ref"`
+	URL               string             `csv:"HB.url"`
+	Name              string             `csv:"HB.name"`
+	Description       string             `csv:"HB.description"`
+	Notes             string             `csv:"HB.notes"`
+	PurchaseFrom      string             `csv:"HB.purchase_from"`
+	Manufacturer      string             `csv:"HB.manufacturer"`
+	ModelNumber       string             `csv:"HB.model_number"`
+	SerialNumber      string             `csv:"HB.serial_number"`
+	WarrantyDetails   string             `csv:"HB.warranty_details"`
+	SoldTo            string             `csv:"HB.sold_to"`
+	SoldNotes         string             `csv:"HB.sold_notes"`
+	Location          LocationString     `csv:"HB.location"`
+	TagStr            TagString          `csv:"HB.tags|HB.labels"`
+	Fields            []ExportItemFields `csv:"-"`
+	AssetID           repo.AssetID       `csv:"HB.asset_id"`
+	Quantity          float64            `csv:"HB.quantity"`
 	LowStockThreshold *float64           `csv:"HB.low_stock_threshold"`
-	PurchasePrice    float64            `csv:"HB.purchase_price"`
-	SoldPrice        float64            `csv:"HB.sold_price"`
-	Archived         bool               `csv:"HB.archived"`
-	Insured          bool               `csv:"HB.insured"`
-	LifetimeWarranty bool               `csv:"HB.lifetime_warranty"`
+	PurchasePrice     float64            `csv:"HB.purchase_price"`
+	SoldPrice         float64            `csv:"HB.sold_price"`
+	Archived          bool               `csv:"HB.archived"`
+	Insured           bool               `csv:"HB.insured"`
+	LifetimeWarranty  bool               `csv:"HB.lifetime_warranty"`
 }
 
 // ============================================================================

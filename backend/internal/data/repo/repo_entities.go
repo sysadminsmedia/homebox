@@ -90,11 +90,11 @@ type (
 
 	EntityCreate struct {
 		ImportRef         string    `json:"-"`
-		ParentID          uuid.UUID `json:"parentId"     extensions:"x-nullable"`
-		Name              string    `json:"name"         validate:"required,min=1,max=255"`
+		ParentID          uuid.UUID `json:"parentId"                    extensions:"x-nullable"`
+		Name              string    `json:"name"                        validate:"required,min=1,max=255"`
 		Quantity          float64   `json:"quantity"`
 		LowStockThreshold *float64  `json:"lowStockThreshold,omitempty" extensions:"x-nullable,x-omitempty"`
-		Description       string    `json:"description"  validate:"max=1000"`
+		Description       string    `json:"description"                 validate:"max=1000"`
 		AssetID           AssetID   `json:"-"`
 		EntityTypeID      uuid.UUID `json:"entityTypeId"`
 
@@ -128,12 +128,12 @@ type (
 		// Edges
 		TagIDs                   []uuid.UUID       `json:"tagIds"`
 		Fields                   []EntityFieldData `json:"fields"`
-		AssetID                  AssetID           `json:"assetId"                  swaggertype:"string"`
+		AssetID                  AssetID           `json:"assetId"                     swaggertype:"string"`
 		Quantity                 float64           `json:"quantity"`
 		LowStockThreshold        *float64          `json:"lowStockThreshold,omitempty" extensions:"x-nullable,x-omitempty"`
-		PurchasePrice            float64           `json:"purchasePrice"            extensions:"x-nullable,x-omitempty"`
-		SoldPrice                float64           `json:"soldPrice"                extensions:"x-nullable,x-omitempty"`
-		ParentID                 uuid.UUID         `json:"parentId"                 extensions:"x-nullable,x-omitempty"`
+		PurchasePrice            float64           `json:"purchasePrice"               extensions:"x-nullable,x-omitempty"`
+		SoldPrice                float64           `json:"soldPrice"                   extensions:"x-nullable,x-omitempty"`
+		ParentID                 uuid.UUID         `json:"parentId"                    extensions:"x-nullable,x-omitempty"`
 		ID                       uuid.UUID         `json:"id"`
 		EntityTypeID             uuid.UUID         `json:"entityTypeId"`
 		Insured                  bool              `json:"insured"`
@@ -145,12 +145,12 @@ type (
 
 	EntityPatch struct {
 		ID                uuid.UUID   `json:"id"`
-		Quantity          *float64    `json:"quantity,omitempty" extensions:"x-nullable,x-omitempty"`
+		Quantity          *float64    `json:"quantity,omitempty"          extensions:"x-nullable,x-omitempty"`
 		LowStockThreshold *float64    `json:"lowStockThreshold,omitempty" extensions:"x-nullable,x-omitempty"`
-		ImportRef         *string     `json:"-"                  extensions:"x-nullable,x-omitempty"`
-		ParentID          uuid.UUID   `json:"parentId"           extensions:"x-nullable,x-omitempty"`
-		EntityTypeID      uuid.UUID   `json:"entityTypeId"       extensions:"x-nullable,x-omitempty"`
-		TagIDs            []uuid.UUID `json:"tagIds"             extensions:"x-nullable,x-omitempty"`
+		ImportRef         *string     `json:"-"                           extensions:"x-nullable,x-omitempty"`
+		ParentID          uuid.UUID   `json:"parentId"                    extensions:"x-nullable,x-omitempty"`
+		EntityTypeID      uuid.UUID   `json:"entityTypeId"                extensions:"x-nullable,x-omitempty"`
+		TagIDs            []uuid.UUID `json:"tagIds"                      extensions:"x-nullable,x-omitempty"`
 	}
 
 	EntitySummary struct {
@@ -601,6 +601,89 @@ func entityQuerySpanAttrs(gid uuid.UUID, q EntityQuery) []attribute.KeyValue {
 	}
 }
 
+func (r *EntityRepository) queryByGroupPredicates(ctx context.Context, q EntityQuery) []predicate.Entity {
+	var andPredicates []predicate.Entity
+
+	if len(q.TagIDs) > 0 {
+		tagRepo := &TagRepository{r.db, r.bus}
+		ctxDescendants, descSpan := entityTracer().Start(ctx, "repo.EntityRepository.QueryByGroup.tagDescendants",
+			trace.WithAttributes(attribute.Int("query.tag_ids.count", len(q.TagIDs))))
+		descendants, err := tagRepo.GetDescendantTagIDs(ctxDescendants, q.TagIDs)
+		if err != nil {
+			recordSpanError(descSpan, err)
+			log.Warn().Err(err).Msg("failed to get descendant tags, using only direct tags")
+			descendants = q.TagIDs
+		} else if len(descendants) == 0 {
+			descendants = q.TagIDs
+		}
+		descSpan.SetAttributes(attribute.Int("query.tag_descendants.count", len(descendants)))
+		descSpan.End()
+
+		var tagPredicates []predicate.Entity
+		if !q.NegateTags {
+			tagPredicates = lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
+				return entity.HasTagWith(tag.ID(l))
+			})
+			andPredicates = append(andPredicates, entity.Or(tagPredicates...))
+		} else {
+			tagPredicates = lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
+				return entity.Not(entity.HasTagWith(tag.ID(l)))
+			})
+			andPredicates = append(andPredicates, entity.And(tagPredicates...))
+		}
+	}
+
+	if q.OnlyWithoutPhoto {
+		andPredicates = append(andPredicates, entity.Not(
+			entity.HasAttachmentsWith(
+				attachment.And(
+					attachment.Primary(true),
+					attachment.TypeEQ(attachment.TypePhoto),
+				),
+			)),
+		)
+	}
+
+	if q.OnlyWithPhoto {
+		andPredicates = append(andPredicates, entity.HasAttachmentsWith(
+			attachment.And(
+				attachment.Primary(true),
+				attachment.TypeEQ(attachment.TypePhoto),
+			),
+		),
+		)
+	}
+
+	if q.OnlyInStock {
+		andPredicates = append(andPredicates, entity.QuantityGT(0))
+	}
+
+	if len(q.ParentIDs) > 0 {
+		parentPredicates := lo.Map(q.ParentIDs, func(l uuid.UUID, _ int) predicate.Entity {
+			return entity.HasParentWith(entity.ID(l))
+		})
+		andPredicates = append(andPredicates, entity.Or(parentPredicates...))
+	}
+
+	if len(q.Fields) > 0 {
+		fieldPredicates := lo.Map(q.Fields, func(f FieldQuery, _ int) predicate.Entity {
+			return entity.HasFieldsWith(
+				entityfield.And(
+					entityfield.Name(f.Name),
+					entityfield.TextValue(f.Value),
+				),
+			)
+		})
+		andPredicates = append(andPredicates, entity.Or(fieldPredicates...))
+	}
+
+	if len(q.ParentItemIDs) > 0 {
+		andPredicates = append(andPredicates, entity.HasParentWith(entity.IDIn(q.ParentItemIDs...)))
+	}
+
+	return andPredicates
+}
+
 // QueryByGroup returns a list of entities that belong to a specific group based on the provided query.
 func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q EntityQuery) (PaginationResult[EntitySummary], error) {
 	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.QueryByGroup",
@@ -658,87 +741,7 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 		qb = qb.Where(entity.AssetID(int64(q.AssetID)))
 	}
 
-	var andPredicates []predicate.Entity
-	{
-		if len(q.TagIDs) > 0 {
-			tagRepo := &TagRepository{r.db, r.bus}
-			ctxDescendants, descSpan := entityTracer().Start(ctx, "repo.EntityRepository.QueryByGroup.tagDescendants",
-				trace.WithAttributes(attribute.Int("query.tag_ids.count", len(q.TagIDs))))
-			descendants, err := tagRepo.GetDescendantTagIDs(ctxDescendants, q.TagIDs)
-			if err != nil {
-				recordSpanError(descSpan, err)
-				log.Warn().Err(err).Msg("failed to get descendant tags, using only direct tags")
-				descendants = q.TagIDs
-			} else if len(descendants) == 0 {
-				descendants = q.TagIDs
-			}
-			descSpan.SetAttributes(attribute.Int("query.tag_descendants.count", len(descendants)))
-			descSpan.End()
-
-			var tagPredicates []predicate.Entity
-			if !q.NegateTags {
-				tagPredicates = lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
-					return entity.HasTagWith(tag.ID(l))
-				})
-				andPredicates = append(andPredicates, entity.Or(tagPredicates...))
-			} else {
-				tagPredicates = lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
-					return entity.Not(entity.HasTagWith(tag.ID(l)))
-				})
-				andPredicates = append(andPredicates, entity.And(tagPredicates...))
-			}
-		}
-
-		if q.OnlyWithoutPhoto {
-			andPredicates = append(andPredicates, entity.Not(
-				entity.HasAttachmentsWith(
-					attachment.And(
-						attachment.Primary(true),
-						attachment.TypeEQ(attachment.TypePhoto),
-					),
-				)),
-			)
-		}
-
-		if q.OnlyWithPhoto {
-			andPredicates = append(andPredicates, entity.HasAttachmentsWith(
-				attachment.And(
-					attachment.Primary(true),
-					attachment.TypeEQ(attachment.TypePhoto),
-				),
-			),
-			)
-		}
-
-		if q.OnlyInStock {
-			andPredicates = append(andPredicates,
-				entity.QuantityGT(0),
-			)
-		}
-
-		if len(q.ParentIDs) > 0 {
-			parentPredicates := lo.Map(q.ParentIDs, func(l uuid.UUID, _ int) predicate.Entity {
-				return entity.HasParentWith(entity.ID(l))
-			})
-			andPredicates = append(andPredicates, entity.Or(parentPredicates...))
-		}
-
-		if len(q.Fields) > 0 {
-			fieldPredicates := lo.Map(q.Fields, func(f FieldQuery, _ int) predicate.Entity {
-				return entity.HasFieldsWith(
-					entityfield.And(
-						entityfield.Name(f.Name),
-						entityfield.TextValue(f.Value),
-					),
-				)
-			})
-			andPredicates = append(andPredicates, entity.Or(fieldPredicates...))
-		}
-
-		if len(q.ParentItemIDs) > 0 {
-			andPredicates = append(andPredicates, entity.HasParentWith(entity.IDIn(q.ParentItemIDs...)))
-		}
-	}
+	andPredicates := r.queryByGroupPredicates(ctx, q)
 
 	if len(andPredicates) > 0 {
 		qb = qb.Where(entity.And(andPredicates...))

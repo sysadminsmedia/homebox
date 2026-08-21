@@ -555,5 +555,5 @@ func TestCSVImportExport_LowStockThreshold(t *testing.T) {
 	require.NoError(t, err)
 
 	require.NotNil(t, importedItem.LowStockThreshold)
-	assert.Equal(t, 5.0, *importedItem.LowStockThreshold)
+	assert.InDelta(t, 5.0, *importedItem.LowStockThreshold, 0)
 }
