@@ -475,6 +475,9 @@
     localStorage.removeItem(LAST_TEMPLATE_KEY);
   }
 
+  // Used at submit to tell "left at the default" from "stored elsewhere".
+  const inheritedLocationId = ref<string | null>(null);
+
   watch(
     parent,
     newParent => {
@@ -483,6 +486,8 @@
       } else {
         form.parentId = null;
       }
+      inheritedLocationId.value =
+        newParent?.location?.id ?? (newParent?.parent?.entityType?.isLocation ? newParent.parent.id : null);
     },
     { immediate: true }
   );
@@ -536,10 +541,9 @@
             parent.value = data;
           }
 
-          if (data.parent) {
-            const loc = data.parent;
-            parentItemLocationId = loc.id;
-          }
+          // What the sub-item inherits if left alone. Resolved location, not the
+          // direct parent — those only match when the parent sits in one.
+          parentItemLocationId = data.location?.id ?? (data.parent?.entityType?.isLocation ? data.parent.id : null);
         }
 
         if (params.product) {
@@ -646,8 +650,13 @@
       data = result.data;
     } else {
       // Normal item creation without template
+      // Only pin a location when it differs from what the item would inherit,
+      // so it otherwise still follows the parent (#1688).
+      const chosenLocationId = (form.location?.id as string) || null;
       const out: EntityCreate = {
         parentId: form.parentId || (form.location.id as string),
+        locationId:
+          form.parentId && chosenLocationId && chosenLocationId !== inheritedLocationId.value ? chosenLocationId : null,
         name: form.name,
         quantity: form.quantity,
         description: form.description,

@@ -1132,6 +1132,38 @@ func (c *EntityClient) QueryChildren(_m *Entity) *EntityQuery {
 	return query
 }
 
+// QueryLocation queries the location edge of a Entity.
+func (c *EntityClient) QueryLocation(_m *Entity) *EntityQuery {
+	query := (&EntityClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entity.Table, entity.FieldID, id),
+			sqlgraph.To(entity.Table, entity.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, entity.LocationTable, entity.LocationColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryLocationEntities queries the location_entities edge of a Entity.
+func (c *EntityClient) QueryLocationEntities(_m *Entity) *EntityQuery {
+	query := (&EntityClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entity.Table, entity.FieldID, id),
+			sqlgraph.To(entity.Table, entity.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, entity.LocationEntitiesTable, entity.LocationEntitiesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryTag queries the tag edge of a Entity.
 func (c *EntityClient) QueryTag(_m *Entity) *TagQuery {
 	query := (&TagClient{config: c.config}).Query()

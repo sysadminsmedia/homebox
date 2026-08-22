@@ -250,6 +250,10 @@ export interface EntEntityEdges {
   fields: EntEntityField[];
   /** Group holds the value of the group edge. */
   group: EntGroup;
+  /** Location holds the value of the location edge. */
+  location: EntEntity;
+  /** LocationEntities holds the value of the location_entities edge. */
+  location_entities: EntEntity[];
   /** MaintenanceEntries holds the value of the maintenance_entries edge. */
   maintenance_entries: EntMaintenanceEntry[];
   /** Parent holds the value of the parent edge. */
@@ -745,6 +749,11 @@ export interface EntityCreate {
   /** @maxLength 1000 */
   description: string;
   entityTypeId: string;
+  /**
+   * LocationID is only needed when ParentID refers to another item and
+   * the new entity is stored somewhere other than that item's location.
+   */
+  locationId?: string | null;
   /** @maxLength 255 */
   manufacturer?: string | null;
   /**
@@ -800,12 +809,20 @@ export interface EntityOut {
   /** Warranty */
   lifetimeWarranty: boolean;
   /**
-   * Location is the nearest ancestor whose entity type is a location.
-   * When the direct parent is already a location it equals Parent; when
-   * the entity is nested inside other items it is the location those
-   * items ultimately live in. Nil for top-level entities.
+   * Location is where this entity resolves to: its own location when one
+   * is set, otherwise the nearest ancestor whose entity type is a
+   * location. Nil for top-level entities. This is a *resolved* value —
+   * write it back through LocationID, not through this field.
    */
   location?: EntitySummary | null;
+  /**
+   * LocationID is this entity's own location, and is nil when Location was
+   * inherited from an ancestor. It is named to match the locationId field
+   * on EntityUpdate on purpose: a GET body PUT back verbatim keeps the
+   * entity exactly where it was, rather than silently pinning an
+   * inherited location or dropping an explicit one.
+   */
+  locationId?: string | null;
   manufacturer: string;
   modelNumber: string;
   name: string;
@@ -836,6 +853,7 @@ export interface EntityOut {
 export interface EntityPatch {
   entityTypeId?: string | null;
   id: string;
+  locationId?: string | null;
   parentId?: string | null;
   quantity?: number | null;
   tagIds?: string[] | null;
@@ -1015,6 +1033,13 @@ export interface EntityUpdate {
   insured: boolean;
   /** Warranty */
   lifetimeWarranty: boolean;
+  /**
+   * LocationID names the location this entity is stored in. It only
+   * needs to be sent when ParentID refers to another item and the entity
+   * lives somewhere other than that item's location (#1688); otherwise
+   * ParentID alone carries the location. See resolveLocationOverride.
+   */
+  locationId?: string | null;
   manufacturer: string;
   modelNumber: string;
   /**
@@ -1364,6 +1389,7 @@ export interface EntityTemplateCreateItemRequest {
    * precedence; when empty the repository falls back to the group's default.
    */
   entityTypeId: string;
+  locationId?: string | null;
   /**
    * @minLength 1
    * @maxLength 255
