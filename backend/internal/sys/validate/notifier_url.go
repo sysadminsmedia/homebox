@@ -63,6 +63,17 @@ func validateHostAgainstPolicy(host string, cfg *config.NotifierConf) error {
 		return fmt.Errorf("hostname did not resolve to any IP addresses")
 	}
 
+	return ValidateResolvedIPs(ips, cfg)
+}
+
+// ValidateResolvedIPs applies the allow/block policy to already-resolved
+// addresses. Shared by hostname validation and the dial-time check, which sees
+// the address it's about to connect to rather than a name.
+func ValidateResolvedIPs(ips []net.IP, cfg *config.NotifierConf) error {
+	if cfg == nil {
+		return fmt.Errorf("notifier configuration is nil, cannot validate address")
+	}
+
 	// Expand DNS64-synthesized IPv6 addresses (RFC 6052) into their embedded
 	// IPv4 addresses so the allow/block rules below are applied to the IPv4
 	// destination the NAT64 gateway will actually reach. The original IPv6
@@ -172,6 +183,14 @@ func checkBlockedCategories(ips []net.IP, cfg *config.NotifierConf) error {
 
 // isGenericNotifier checks if the URL is a generic notifier that needs validation
 func isGenericNotifier(notifierURL string) bool {
+	return IsGenericNotifier(notifierURL)
+}
+
+// IsGenericNotifier reports whether a notifier URL is a generic webhook, i.e.
+// one that can point at an arbitrary endpoint. The SSRF policy is scoped to
+// these; other services have fixed or operator-chosen endpoints, and applying
+// the network rules to them would break a LAN Gotify for no gain.
+func IsGenericNotifier(notifierURL string) bool {
 	return strings.HasPrefix(notifierURL, "generic://") ||
 		strings.HasPrefix(notifierURL, "generic+https://") ||
 		strings.HasPrefix(notifierURL, "generic+http://")
