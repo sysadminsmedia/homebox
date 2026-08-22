@@ -235,18 +235,18 @@ func (ctrl *V1Controller) HandleCacheWS() errchain.HandlerFunc {
 	})
 
 	factory := func(e string) func(data any) {
+		// The payload depends only on the event name, so marshal it once at
+		// subscription time instead of on every dispatch.
+		jsonBytes, err := json.Marshal(&eventMsg{Event: e})
+		if err != nil {
+			log.Log().Msgf("error marshaling event %q: %v", e, err)
+			return func(any) {}
+		}
+
 		return func(data any) {
 			eventData, ok := data.(eventbus.GroupMutationEvent)
 			if !ok {
 				log.Log().Msgf("invalid event data: %v", data)
-				return
-			}
-
-			msg := &eventMsg{Event: e}
-
-			jsonBytes, err := json.Marshal(msg)
-			if err != nil {
-				log.Log().Msgf("error marshling event data %v: %v", data, err)
 				return
 			}
 
@@ -272,18 +272,18 @@ func (ctrl *V1Controller) HandleCacheWS() errchain.HandlerFunc {
 	go func() {
 		const interval = 10 * time.Second
 
+		// The ping frame never changes, so build it once rather than on every tick.
+		pingBytes, err := json.Marshal(&eventMsg{Event: "ping"})
+		if err != nil {
+			log.Log().Msgf("error marshaling ping: %v", err)
+			return
+		}
+
 		ping := time.NewTicker(interval)
 		defer ping.Stop()
 
 		for range ping.C {
-			msg := &eventMsg{Event: "ping"}
-
-			pingBytes, err := json.Marshal(msg)
-			if err != nil {
-				log.Log().Msgf("error marshaling ping: %v", err)
-			} else {
-				_ = m.Broadcast(pingBytes)
-			}
+			_ = m.Broadcast(pingBytes)
 		}
 	}()
 
