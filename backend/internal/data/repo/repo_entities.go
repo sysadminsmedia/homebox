@@ -1687,6 +1687,23 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		return EntityOut{}, err
 	}
 
+	// The entity being updated must itself live in the caller's group. The
+	// group predicate on the update below makes a cross-tenant ID a silent
+	// no-op rather than an error, so without this guard execution falls
+	// through to the field sync — which can only scope by entity ID — and
+	// mutates a foreign group's fields before the scoped read at the end
+	// turns the request into a 404. Fail closed up front instead, so any
+	// edge added to this function later inherits the check.
+	if data.ID == uuid.Nil {
+		err := &ent.NotFoundError{}
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+	if err := assertEntityInGroup(ctx, r.db.Entity, gid, data.ID); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+
 	// See EntityRepository.Create for the rationale on these cross-group
 	// reference checks. Applied before the update so a rejected request never
 	// mutates the row.
@@ -1747,7 +1764,9 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 	}
 
 	tagsCtx, tagsSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.tags")
-	currentTags, err := r.db.Entity.Query().Where(entity.ID(data.ID)).QueryTag().All(tagsCtx)
+	currentTags, err := r.db.Entity.Query().
+		Where(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))).
+		QueryTag().All(tagsCtx)
 	if err != nil {
 		recordSpanError(tagsSpan, err)
 		tagsSpan.End()
@@ -1801,7 +1820,9 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 
 	fieldsCtx, fieldsSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.fields",
 		trace.WithAttributes(attribute.Int("fields.input.count", len(data.Fields))))
-	fields, err := r.db.EntityField.Query().Where(entityfield.HasEntityWith(entity.ID(data.ID))).All(fieldsCtx)
+	fields, err := r.db.EntityField.Query().
+		Where(entityfield.HasEntityWith(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid)))).
+		All(fieldsCtx)
 	if err != nil {
 		recordSpanError(fieldsSpan, err)
 		fieldsSpan.End()
@@ -1837,7 +1858,7 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		opt := r.db.EntityField.Update().
 			Where(
 				entityfield.ID(f.ID),
-				entityfield.HasEntityWith(entity.ID(data.ID)),
+				entityfield.HasEntityWith(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))),
 			).
 			SetType(entityfield.Type(f.Type)).
 			SetName(f.Name).
@@ -1863,7 +1884,7 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		deletedFields, err = r.db.EntityField.Delete().
 			Where(
 				entityfield.IDIn(fieldIds.Slice()...),
-				entityfield.HasEntityWith(entity.ID(data.ID)),
+				entityfield.HasEntityWith(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))),
 			).Exec(fieldsCtx)
 		if err != nil {
 			recordSpanError(fieldsSpan, err)
