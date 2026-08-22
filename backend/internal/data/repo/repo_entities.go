@@ -654,6 +654,103 @@ func (r *EntityRepository) tagPredicates(ctx context.Context, q EntityQuery) []p
 	}
 }
 
+// orderByLocation orders the entities of a group by their location, matching
+// the Location field computed by nearestLocationAncestor: when the direct
+// parent is a location it is used as-is, otherwise the parent chain is climbed
+// until a location is found. Ent has no support for recursive CTEs, so the
+// chain is walked with the dialect-aware sql builder, which keeps every value
+// bound as a query argument and every identifier quoted for the dialect in
+// use.
+//
+// Locations are compared by name. Entities without a location sort last in
+// both directions, and entities sharing a location fall back to their own name
+// so pages stay stable.
+func orderByLocation(gid uuid.UUID, desc bool) entity.OrderOption {
+	return func(s *sql.Selector) {
+		// Names of the CTEs and of the columns they add.
+		const (
+			ancestorsCTE       = "entity_ancestors"
+			nearestLocationCTE = "entity_nearest_location"
+
+			colAncestorID   = "ancestor_id"
+			colDepth        = "depth"
+			colLocationName = "location_name"
+		)
+
+		d := sql.Dialect(s.Dialect())
+
+		// Seed the walk with every entity in the group that has a parent,
+		// paired with that parent and a depth of zero.
+		child := d.Table(entity.Table)
+		seed := d.Select(child.C(entity.FieldID), child.C(entity.ParentColumn)).
+			AppendSelectExpr(sql.Expr("0")). // literal, so Postgres can type the depth column
+			From(child).
+			Where(sql.And(
+				sql.EQ(child.C(entity.GroupColumn), gid),
+				sql.NotNull(child.C(entity.ParentColumn)),
+			))
+
+		// Climb one level for as long as the ancestor reached so far is not a
+		// location, bounded by maxAncestorDepth so a cyclic tree terminates.
+		walked := d.Table(ancestorsCTE)
+		parent := d.Table(entity.Table).As("parent")
+		parentType := d.Table(entitytype.Table).As("parent_type")
+		climb := d.Select(walked.C(entity.FieldID), parent.C(entity.ParentColumn)).
+			AppendSelectExpr(sql.ExprFunc(func(b *sql.Builder) {
+				b.Ident(walked.C(colDepth)).WriteOp(sql.OpAdd).WriteString("1")
+			})).
+			From(walked).
+			Join(parent).On(parent.C(entity.FieldID), walked.C(colAncestorID)).
+			Join(parentType).On(parentType.C(entitytype.FieldID), parent.C(entity.EntityTypeColumn)).
+			Where(sql.And(
+				sql.EQ(parentType.C(entitytype.FieldIsLocation), false),
+				sql.NotNull(parent.C(entity.ParentColumn)),
+				sql.LT(walked.C(colDepth), maxAncestorDepth),
+			))
+
+		// Every chain stops at the first location it reaches, so at most one
+		// row per entity survives this filter.
+		ancestors := d.Table(ancestorsCTE)
+		location := d.Table(entity.Table).As("location")
+		locationType := d.Table(entitytype.Table).As("location_type")
+		nearest := d.Select(
+			ancestors.C(entity.FieldID),
+			sql.Min(sql.Lower(location.C(entity.FieldName))),
+		).
+			From(ancestors).
+			Join(location).On(location.C(entity.FieldID), ancestors.C(colAncestorID)).
+			Join(locationType).On(locationType.C(entitytype.FieldID), location.C(entity.EntityTypeColumn)).
+			Where(sql.EQ(locationType.C(entitytype.FieldIsLocation), true)).
+			GroupBy(ancestors.C(entity.FieldID))
+
+		ctes := sql.WithRecursive(ancestorsCTE, entity.FieldID, colAncestorID, colDepth).
+			As(seed.UnionAll(climb)).
+			With(nearestLocationCTE, entity.FieldID, colLocationName).
+			As(nearest)
+		ctes.SetDialect(s.Dialect())
+		s.Prefix(ctes)
+
+		nearestTable := d.Table(nearestLocationCTE)
+		s.LeftJoin(nearestTable).On(nearestTable.C(entity.FieldID), s.C(entity.FieldID))
+
+		// Ordering is written the same way ent writes its own order terms, see
+		// (*sql.OrderFieldTerm).ToFunc.
+		s.OrderExprFunc(func(b *sql.Builder) {
+			b.Ident(nearestTable.C(colLocationName))
+			if desc {
+				b.WriteString(" DESC")
+			}
+			// SQLite and Postgres disagree on where NULLs land by default, so
+			// the entities without a location are placed explicitly.
+			b.WriteString(" NULLS LAST")
+		})
+		// Tie-break so entities sharing a location paginate consistently.
+		s.OrderExprFunc(func(b *sql.Builder) {
+			b.Ident(sql.Lower(s.C(entity.FieldName)))
+		})
+	}
+}
+
 // QueryByGroup returns a list of entities that belong to a specific group based on the provided query.
 func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q EntityQuery) (PaginationResult[EntitySummary], error) {
 	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.QueryByGroup",
@@ -801,20 +898,15 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 	case "purchasePrice":
 		orderBy = entity.FieldPurchasePrice
 	case "location":
-		// Sort by immediate parent entity name.
+		// Sort by the name of the nearest location ancestor.
+		orderBy = "location"
 		locationSort = true
 	default: // "name"
 		orderBy = entity.FieldName
 	}
 
 	if locationSort {
-		// FIXME: this sorts by parent not location
-		switch q.OrderDirection {
-		case "desc":
-			qb = qb.Order(entity.ByParentField(entity.FieldName, sql.OrderDesc()))
-		default: // "asc"
-			qb = qb.Order(entity.ByParentField(entity.FieldName))
-		}
+		qb = qb.Order(orderByLocation(gid, q.OrderDirection == "desc"))
 	} else {
 		switch q.OrderDirection {
 		case "desc":
