@@ -259,6 +259,9 @@
           <div class="mb-2 max-w-[260px]">
             <FormCheckbox v-model="apiKeyForm.setExpiration" :label="$t('profile.api_key_set_expiration')" />
           </div>
+          <p v-if="!apiKeyForm.setExpiration" class="mb-2 text-sm text-muted-foreground">
+            {{ $t("profile.api_key_default_expiration") }}
+          </p>
           <div v-if="apiKeyForm.setExpiration" class="mb-2">
             <label class="mb-1 block text-sm font-medium">{{ $t("profile.api_key_expires_at") }}</label>
             <input

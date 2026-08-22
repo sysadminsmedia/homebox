@@ -19,7 +19,13 @@ import (
 )
 
 var (
-	oneWeek                   = time.Hour * 24 * 7
+	oneWeek = time.Hour * 24 * 7
+	// defaultAPIKeyTTL bounds the lifetime of an API key created without an
+	// explicit expiry. A password change revokes sessions but deliberately
+	// leaves API keys alone (matching how API credentials behave elsewhere),
+	// so without a default TTL a leaked key would stay valid for the life of
+	// the account. Callers that need a longer-lived key pass ExpiresAt.
+	defaultAPIKeyTTL          = time.Hour * 24 * 30
 	passwordResetTokenTTL     = time.Hour
 	ErrorInvalidLogin         = errors.New("invalid username or password")
 	ErrorInvalidToken         = errors.New("invalid token")
@@ -849,8 +855,18 @@ func (svc *UserService) CreateAPIKey(ctx context.Context, userID uuid.UUID, in r
 		))
 	defer span.End()
 
+	expiresAt := in.ExpiresAt
+	if expiresAt == nil {
+		defaulted := time.Now().Add(defaultAPIKeyTTL)
+		expiresAt = &defaulted
+	}
+	span.SetAttributes(
+		attribute.Bool("api_key.expiration.defaulted", in.ExpiresAt == nil),
+		attribute.String("api_key.expires_at", expiresAt.Format(time.RFC3339)),
+	)
+
 	token := hasher.GenerateAPIKeyCtx(ctx)
-	out, err := svc.repos.APIKeys.Create(ctx, userID, in.Name, token.Hash, in.ExpiresAt)
+	out, err := svc.repos.APIKeys.Create(ctx, userID, in.Name, token.Hash, expiresAt)
 	if err != nil {
 		recordServiceSpanError(span, err)
 		return repo.APIKeyCreatedOut{}, err
