@@ -19,12 +19,15 @@ import type { Requests } from "~~/lib/requests";
 
 export type ItemsQuery = {
   orderBy?: string;
+  orderDirection?: string;
   includeArchived?: boolean;
   page?: number;
   pageSize?: number;
   parentIds?: string[];
+  entityTypeIds?: string[];
   tags?: string[];
   negateTags?: boolean;
+  matchAllTags?: boolean;
   onlyWithoutPhoto?: boolean;
   onlyWithPhoto?: boolean;
   q?: string;

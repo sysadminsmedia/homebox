@@ -325,7 +325,10 @@
 
   const triggerSearch = () => {
     if (search.value) {
-      navigateTo(`/items?q=${encodeURIComponent(search.value)}`);
+      navigateTo({
+        path: "/search",
+        query: { q: search.value },
+      });
       search.value = "";
       // remove focus from input
       if (document.activeElement && "blur" in document.activeElement) {
@@ -422,9 +425,9 @@
     {
       icon: MdiMagnify,
       id: 3,
-      active: computed(() => route.path === "/items"),
+      active: computed(() => route.path === "/search"),
       name: computed(() => t("menu.search")),
-      to: "/items",
+      to: "/search",
     },
     {
       icon: MdiFileDocumentMultiple,

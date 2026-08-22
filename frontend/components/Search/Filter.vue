@@ -17,7 +17,7 @@
           class="flex cursor-pointer justify-between px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
         >
           <div>
-            <span>{{ v.name }}</span>
+            <span>{{ $t(v.name) }}</span>
             <span v-if="v.treeString && v.treeString !== v.name" class="ml-auto text-xs">{{ v.treeString }}</span>
           </div>
           <Checkbox :model-value="true" @update:model-value="_ => (selected = selected.filter(s => s.id !== v.id))" />
@@ -29,7 +29,7 @@
           class="flex cursor-pointer justify-between px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
         >
           <div>
-            <div>{{ v.name }}</div>
+            <div>{{ $t(v.name) }}</div>
             <div v-if="v.treeString && v.treeString !== v.name" class="ml-auto text-xs">
               {{ v.treeString }}
             </div>
