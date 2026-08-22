@@ -70,6 +70,7 @@
     defaultName: "",
     defaultDescription: "",
     defaultQuantity: 1,
+    defaultLowStockThreshold: undefined as number | undefined,
     defaultInsured: false,
     defaultManufacturer: "",
     defaultModelNumber: "",
@@ -93,6 +94,7 @@
       defaultName: template.value.defaultName ?? "",
       defaultDescription: template.value.defaultDescription ?? "",
       defaultQuantity: template.value.defaultQuantity,
+      defaultLowStockThreshold: template.value.defaultLowStockThreshold ?? undefined,
       defaultInsured: template.value.defaultInsured,
       defaultManufacturer: template.value.defaultManufacturer,
       defaultModelNumber: template.value.defaultModelNumber ?? "",
@@ -119,6 +121,9 @@
     // Prepare the data with proper format for API
     const payload = {
       ...updateData,
+      defaultLowStockThreshold: updateData.defaultLowStockThreshold === "" || updateData.defaultLowStockThreshold === undefined
+          ? null
+          : updateData.defaultLowStockThreshold,
       defaultLocationId: updateData.defaultLocation?.id ?? null,
     };
 
@@ -171,7 +176,7 @@
             :label="$t('components.template.form.item_description')"
             :max-length="1000"
           />
-          <div class="grid grid-cols-2 gap-2">
+          <div class="flex flex-col gap-2">
             <FormTextField
               v-model.number="updateData.defaultQuantity"
               :label="$t('global.quantity')"
@@ -180,11 +185,18 @@
               step="any"
             />
             <FormTextField
-              v-model="updateData.defaultModelNumber"
-              :label="$t('components.template.form.model_number')"
-              :max-length="255"
+              v-model.number="updateData.defaultLowStockThreshold"
+              :label="$t('global.low_stock_threshold')"
+              type="number"
+              :min="0"
+              step="any"
             />
           </div>
+          <FormTextField
+            v-model="updateData.defaultModelNumber"
+            :label="$t('components.template.form.model_number')"
+            :max-length="255"
+          />
           <FormTextField
             v-model="updateData.defaultManufacturer"
             :label="$t('components.template.form.manufacturer')"
@@ -292,6 +304,10 @@
             <div class="flex justify-between">
               <dt class="text-muted-foreground">{{ $t("global.quantity") }}</dt>
               <dd>{{ template.defaultQuantity }}</dd>
+            </div>
+            <div v-if="template.defaultLowStockThreshold != null" class="flex justify-between">
+              <dt class="text-muted-foreground">{{ $t("global.low_stock_threshold") }}</dt>
+              <dd>{{ template.defaultLowStockThreshold }}</dd>
             </div>
             <div v-if="template.defaultModelNumber" class="flex justify-between">
               <dt class="text-muted-foreground">{{ $t("components.template.form.model_number") }}</dt>

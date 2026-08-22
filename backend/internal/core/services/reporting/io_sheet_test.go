@@ -3,6 +3,7 @@ package reporting
 import (
 	"bytes"
 	"reflect"
+	"strings"
 	"testing"
 
 	_ "embed"
@@ -117,6 +118,32 @@ func TestSheet_Read(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestSheet_ReadLowStockThreshold(t *testing.T) {
+	csv := strings.Join([]string{
+		"HB.name,HB.low_stock_threshold",
+		"Threshold 5,5",
+		"Threshold 2.5,2.5",
+		"Threshold 0,0",
+		"Threshold nil,",
+	}, "\n")
+
+	sheet := &IOSheet{}
+	require.NoError(t, sheet.Read(strings.NewReader(csv)))
+
+	require.Len(t, sheet.Rows, 4)
+
+	require.NotNil(t, sheet.Rows[0].LowStockThreshold)
+	assert.InDelta(t, 5.0, *sheet.Rows[0].LowStockThreshold, 0)
+
+	require.NotNil(t, sheet.Rows[1].LowStockThreshold)
+	assert.InDelta(t, 2.5, *sheet.Rows[1].LowStockThreshold, 0)
+
+	require.NotNil(t, sheet.Rows[2].LowStockThreshold)
+	assert.InDelta(t, 0.0, *sheet.Rows[2].LowStockThreshold, 0)
+
+	assert.Nil(t, sheet.Rows[3].LowStockThreshold)
 }
 
 func Test_parseHeaders(t *testing.T) {

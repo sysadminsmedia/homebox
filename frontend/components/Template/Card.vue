@@ -53,6 +53,7 @@
       defaultName: fullTemplate.defaultName,
       defaultDescription: fullTemplate.defaultDescription,
       defaultQuantity: fullTemplate.defaultQuantity,
+      defaultLowStockThreshold: fullTemplate.defaultLowStockThreshold ?? null,
       defaultInsured: fullTemplate.defaultInsured,
       defaultManufacturer: fullTemplate.defaultManufacturer,
       defaultModelNumber: fullTemplate.defaultModelNumber,

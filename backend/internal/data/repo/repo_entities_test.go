@@ -405,6 +405,100 @@ func TestEntityRepository_Update_WithFractionalQuantity(t *testing.T) {
 	assert.InDelta(t, 2.75, got.Quantity, 0.000001)
 }
 
+func TestEntityRepository_Patch_LowStockThreshold(t *testing.T) {
+	ctx := context.Background()
+	itemET := useItemEntityType(t)
+
+	threshold := 5.0
+
+	created, err := tRepos.Entities.Create(ctx, tGroup.ID, EntityCreate{
+		Name:              "PatchLowStockThreshold",
+		EntityTypeID:      itemET.ID,
+		Quantity:          10,
+		LowStockThreshold: &threshold,
+	})
+	require.NoError(t, err)
+
+	// Nil PATCH should leave the existing value unchanged.
+	err = tRepos.Entities.Patch(ctx, tGroup.ID, created.ID, EntityPatch{})
+	require.NoError(t, err)
+
+	reloaded, err := tRepos.Entities.GetOne(ctx, created.ID)
+	require.NoError(t, err)
+	require.NotNil(t, reloaded.LowStockThreshold)
+	assert.InDelta(t, 5.0, *reloaded.LowStockThreshold, 0)
+
+	// Non-nil PATCH should update the value.
+	updatedThreshold := 2.0
+
+	err = tRepos.Entities.Patch(ctx, tGroup.ID, created.ID, EntityPatch{
+		LowStockThreshold: &updatedThreshold,
+	})
+	require.NoError(t, err)
+
+	reloaded, err = tRepos.Entities.GetOne(ctx, created.ID)
+	require.NoError(t, err)
+	require.NotNil(t, reloaded.LowStockThreshold)
+	assert.InDelta(t, 2.0, *reloaded.LowStockThreshold, 0)
+}
+
+func TestEntityRepository_Update_LowStockThresholdTransitions(t *testing.T) {
+	ctx := context.Background()
+	itemET := useItemEntityType(t)
+
+	zero := 0.0
+	nonZero := 3.0
+
+	created, err := tRepos.Entities.Create(ctx, tGroup.ID, EntityCreate{
+		Name:              "LowStockTransition",
+		EntityTypeID:      itemET.ID,
+		Quantity:          10,
+		LowStockThreshold: &zero,
+	})
+	require.NoError(t, err)
+
+	require.NotNil(t, created.LowStockThreshold)
+	assert.InDelta(t, 0.0, *created.LowStockThreshold, 0)
+
+	updated, err := tRepos.Entities.UpdateByGroup(ctx, tGroup.ID, EntityUpdate{
+		ID:                created.ID,
+		Name:              created.Name,
+		EntityTypeID:      itemET.ID,
+		Quantity:          created.Quantity,
+		LowStockThreshold: &nonZero,
+	})
+	require.NoError(t, err)
+	require.NotNil(t, updated.LowStockThreshold)
+	assert.InDelta(t, 3.0, *updated.LowStockThreshold, 0)
+
+	updated, err = tRepos.Entities.UpdateByGroup(ctx, tGroup.ID, EntityUpdate{
+		ID:           created.ID,
+		Name:         created.Name,
+		EntityTypeID: itemET.ID,
+		Quantity:     created.Quantity,
+		// Nil on update clears persisted threshold.
+		LowStockThreshold: nil,
+	})
+	require.NoError(t, err)
+	assert.Nil(t, updated.LowStockThreshold)
+
+	reloaded, err := tRepos.Entities.GetOne(ctx, created.ID)
+	require.NoError(t, err)
+	assert.Nil(t, reloaded.LowStockThreshold)
+
+	value := 7.0
+	updated, err = tRepos.Entities.UpdateByGroup(ctx, tGroup.ID, EntityUpdate{
+		ID:                created.ID,
+		Name:              created.Name,
+		EntityTypeID:      itemET.ID,
+		Quantity:          created.Quantity,
+		LowStockThreshold: &value,
+	})
+	require.NoError(t, err)
+	require.NotNil(t, updated.LowStockThreshold)
+	assert.InDelta(t, 7.0, *updated.LowStockThreshold, 0)
+}
+
 func TestEntityRepository_Update_RejectsNonFiniteQuantity(t *testing.T) {
 	e := useEntities(t, 1)[0]
 

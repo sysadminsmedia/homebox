@@ -23,7 +23,7 @@
           :label="$t('components.template.form.item_description')"
           :max-length="1000"
         />
-        <div class="grid grid-cols-2 gap-2">
+        <div class="flex min-w-0 flex-col gap-2">
           <FormTextField
             v-model.number="form.defaultQuantity"
             :label="$t('global.quantity')"
@@ -32,11 +32,18 @@
             step="any"
           />
           <FormTextField
-            v-model="form.defaultModelNumber"
-            :label="$t('components.template.form.model_number')"
-            :max-length="255"
+            v-model.number="form.defaultLowStockThreshold"
+            :label="$t('global.low_stock_threshold')"
+            type="number"
+            :min="0"
+            step="any"
           />
         </div>
+        <FormTextField
+          v-model="form.defaultModelNumber"
+          :label="$t('components.template.form.model_number')"
+          :max-length="255"
+        />
         <FormTextField
           v-model="form.defaultManufacturer"
           :label="$t('components.template.form.manufacturer')"
@@ -129,6 +136,7 @@
     defaultName: "",
     defaultDescription: "",
     defaultQuantity: 1,
+    defaultLowStockThreshold: undefined as number | undefined,
     defaultInsured: false,
     defaultManufacturer: "",
     defaultModelNumber: "",
@@ -157,6 +165,7 @@
       defaultName: "",
       defaultDescription: "",
       defaultQuantity: 1,
+      defaultLowStockThreshold: null,
       defaultInsured: false,
       defaultManufacturer: "",
       defaultModelNumber: "",
@@ -189,6 +198,7 @@
       defaultName: form.defaultName || null,
       defaultDescription: form.defaultDescription || null,
       defaultQuantity: form.defaultQuantity,
+      defaultLowStockThreshold: form.defaultLowStockThreshold ?? null,
       defaultInsured: form.defaultInsured,
       defaultManufacturer: form.defaultManufacturer || null,
       defaultModelNumber: form.defaultModelNumber || null,

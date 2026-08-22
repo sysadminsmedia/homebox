@@ -2271,6 +2271,9 @@ components:
         lifetime_warranty:
           description: LifetimeWarranty holds the value of the "lifetime_warranty" field.
           type: boolean
+        low_stock_threshold:
+          description: LowStockThreshold holds the value of the "low_stock_threshold" field.
+          type: number
         manufacturer:
           description: Manufacturer holds the value of the "manufacturer" field.
           type: string
@@ -2427,6 +2430,10 @@ components:
           description: DefaultLifetimeWarranty holds the value of the
             "default_lifetime_warranty" field.
           type: boolean
+        default_low_stock_threshold:
+          description: DefaultLowStockThreshold holds the value of the
+            "default_low_stock_threshold" field.
+          type: number
         default_manufacturer:
           description: DefaultManufacturer holds the value of the "default_manufacturer"
             field.
@@ -3168,6 +3175,10 @@ components:
           maxLength: 1000
         entityTypeId:
           type: string
+        lowStockThreshold:
+          type: number
+          x-omitempty: true
+          nullable: true
         manufacturer:
           type: string
           maxLength: 255
@@ -3280,6 +3291,10 @@ components:
             - $ref: "#/components/schemas/repo.EntitySummary"
           x-omitempty: true
           nullable: true
+        lowStockThreshold:
+          type: number
+          x-omitempty: true
+          nullable: true
         manufacturer:
           type: string
         modelNumber:
@@ -3342,6 +3357,10 @@ components:
           nullable: true
         id:
           type: string
+        lowStockThreshold:
+          type: number
+          x-omitempty: true
+          nullable: true
         parentId:
           type: string
           x-omitempty: true
@@ -3401,6 +3420,10 @@ components:
         itemCount:
           description: Container-specific (populated when querying locations)
           type: number
+        lowStockThreshold:
+          type: number
+          x-omitempty: true
+          nullable: true
         name:
           type: string
         parent:
@@ -3442,6 +3465,9 @@ components:
         defaultLocationId:
           description: Default location and tags
           type: string
+          nullable: true
+        defaultLowStockThreshold:
+          type: number
           nullable: true
         defaultManufacturer:
           type: string
@@ -3505,6 +3531,8 @@ components:
           description: Default location and tags
           allOf:
             - $ref: "#/components/schemas/repo.TemplateLocationSummary"
+        defaultLowStockThreshold:
+          type: number
         defaultManufacturer:
           type: string
         defaultModelNumber:
@@ -3571,6 +3599,9 @@ components:
         defaultLocationId:
           description: Default location and tags
           type: string
+          nullable: true
+        defaultLowStockThreshold:
+          type: number
           nullable: true
         defaultManufacturer:
           type: string
@@ -3691,6 +3722,10 @@ components:
         lifetimeWarranty:
           description: Warranty
           type: boolean
+        lowStockThreshold:
+          type: number
+          x-omitempty: true
+          nullable: true
         manufacturer:
           type: string
         modelNumber:
@@ -4298,6 +4333,10 @@ components:
 
             precedence; when empty the repository falls back to the group's default.
           type: string
+        lowStockThreshold:
+          type: number
+          x-omitempty: true
+          nullable: true
         name:
           type: string
           maxLength: 255

@@ -87,6 +87,7 @@
   const negateTags = useOptionalRouteQuery("negateTags", false);
   const onlyWithoutPhoto = useOptionalRouteQuery("onlyWithoutPhoto", false);
   const onlyWithPhoto = useOptionalRouteQuery("onlyWithPhoto", false);
+  const onlyInStock = useOptionalRouteQuery("onlyInStock", false);
   const orderBy = useOptionalRouteQuery("orderBy", "name");
   const qLoc = useOptionalRouteQuery("loc", []);
   const qTag = useOptionalRouteQuery("tag", []);
@@ -225,6 +226,19 @@
     }
   });
 
+  watch(onlyInStock, (newV, oldV) => {
+    if (newV === oldV) {
+      return;
+    }
+
+    if (page.value !== 1) {
+      page.value = 1;
+      return;
+    }
+
+    search();
+  });
+
   watch(orderBy, (newV, oldV) => {
     if (newV !== oldV) {
       search();
@@ -277,6 +291,7 @@
       negateTags: negateTags.value,
       onlyWithoutPhoto: onlyWithoutPhoto.value,
       onlyWithPhoto: onlyWithPhoto.value,
+      onlyInStock: onlyInStock.value,
       orderBy: orderBy.value,
       page: page.value,
       q: query.value,
@@ -313,6 +328,7 @@
       tags: tagIDs.value,
       negateTags: negateTags.value,
       onlyWithoutPhoto: onlyWithoutPhoto.value,
+      onlyInStock: onlyInStock.value,
       onlyWithPhoto: onlyWithPhoto.value,
       includeArchived: includeArchived.value,
       page: page.value,
@@ -436,6 +452,11 @@
               <div class="grow" />
               <span class="text-right"> {{ $t("items.only_with_photo") }} </span>
             </Label>
+            <Label class="flex cursor-pointer items-center">
+              <Switch v-model="onlyInStock" class="ml-auto" />
+              <div class="grow" />
+              <span class="text-right"> {{ $t("items.only_in_stock") }} </span>
+            </Label>
             <Label class="flex cursor-pointer flex-col gap-2">
               <span class="text-right">
                 <span class="text-right"> {{ $t("items.order_by") }} </span>
@@ -449,6 +470,7 @@
                   <SelectItem value="name"> {{ $t("items.name") }} </SelectItem>
                   <SelectItem value="createdAt"> {{ $t("items.created_at") }} </SelectItem>
                   <SelectItem value="updatedAt"> {{ $t("items.updated_at") }} </SelectItem>
+                  <SelectItem value="quantity"> {{ $t("items.quantity") }} </SelectItem>
                 </SelectContent>
               </Select>
             </Label>
