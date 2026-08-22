@@ -11,12 +11,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
 )
 
-// API key hashing is peppered and panics if the pepper was never configured
-// (see hasher.HashAPIKey); the app sets it at startup, so tests must too.
-func init() {
-	hasher.SetAPIKeyPepper([]byte("test-api-key-pepper"))
-}
-
 // TestCreateAPIKey_DefaultsToBoundedLifetime pins the default API key TTL. A
 // password change revokes sessions but intentionally leaves API keys alone, so
 // a key created without an explicit expiry must not live forever — otherwise a
