@@ -37,10 +37,14 @@ func parseInt(s string) int {
 	return i
 }
 
-func parseNillableFloat(s string) *float64 {
+func parseNillableFloat(s string) (*float64, error) {
 	if s == "" {
-		return nil
+		return nil, nil
 	}
-	f, _ := strconv.ParseFloat(s, 64)
-	return &f
+	f, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	return &f, nil
 }

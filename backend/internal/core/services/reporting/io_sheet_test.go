@@ -146,6 +146,21 @@ func TestSheet_ReadLowStockThreshold(t *testing.T) {
 	assert.Nil(t, sheet.Rows[3].LowStockThreshold)
 }
 
+func TestSheet_ReadLowStockThreshold_InvalidValue(t *testing.T) {
+	csv := strings.Join([]string{
+		"HB.name,HB.low_stock_threshold",
+		"Invalid Threshold,invalid",
+	}, "\n")
+
+	sheet := &IOSheet{}
+	err := sheet.Read(strings.NewReader(csv))
+
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "row 2")
+	assert.Contains(t, err.Error(), "HB.low_stock_threshold")
+	assert.Contains(t, err.Error(), "invalid")
+}
+
 func Test_parseHeaders(t *testing.T) {
 	tests := []struct {
 		name             string

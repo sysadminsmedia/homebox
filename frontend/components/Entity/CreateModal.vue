@@ -718,6 +718,7 @@
 
     form.name = "";
     form.quantity = 1;
+    form.lowStockThreshold = undefined;
     form.description = "";
     form.color = "";
     form.manufacturer = "";
