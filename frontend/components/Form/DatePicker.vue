@@ -1,11 +1,11 @@
 <template>
   <div v-if="!inline" class="flex w-full flex-col">
     <Label class="cursor-pointer"> {{ label }} </Label>
-    <VueDatePicker v-model="selected" :enable-time-picker="false" clearable :dark="isDark" :format="formatDate" />
+    <VueDatePicker v-model="selected" :week-start="weekStart" :enable-time-picker="false" clearable :dark="isDark" :format="formatDate" />
   </div>
   <div v-else class="sm:flex sm:items-start sm:gap-4">
     <Label class="flex w-full cursor-pointer px-1 py-2"> {{ label }} </Label>
-    <VueDatePicker v-model="selected" :enable-time-picker="false" clearable :dark="isDark" :format="formatDate" />
+    <VueDatePicker v-model="selected" :week-start="weekStart" :enable-time-picker="false" clearable :dark="isDark" :format="formatDate" />
   </div>
 </template>
 
@@ -13,6 +13,7 @@
   import VueDatePicker from "@vuepic/vue-datepicker";
   import "@vuepic/vue-datepicker/dist/main.css";
   import * as datelib from "~/lib/datelib/datelib";
+  import { useViewPreferences, resolveWeekStart } from "~~/composables/use-preferences";
   import { toDateOnlyString } from "~/lib/datelib/dateOnly";
   import { Label } from "@/components/ui/label";
   import { darkThemes } from "~/lib/data/themes";
@@ -49,6 +50,11 @@
   });
 
   const isDark = useIsThemeInList(darkThemes);
+
+  const preferences = useViewPreferences();
+  const weekStart = computed(() =>
+    resolveWeekStart(preferences.value.firstDayOfWeek, preferences.value.overrideFormatLocale ?? preferences.value.language)
+  );
 
   const formatDate = (date: Date | string | number) => fmtDate(date, "human", "date");
 
