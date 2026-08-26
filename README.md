@@ -23,6 +23,7 @@
 </p>
 <p align="center" style="width: 100%;">
   <a href="https://www.pikapods.com/pods?run=homebox"><img src="https://www.pikapods.com/static/run-button.svg"/></a>
+  <a href="https://repocloud.io/details/Homebox/"><img src="https://d16t0pc4846x52.cloudfront.net/deploylobe.svg" alt="Deploy on RepoCloud" height="32"/></a>
 </p>
 
 ## What is HomeBox
