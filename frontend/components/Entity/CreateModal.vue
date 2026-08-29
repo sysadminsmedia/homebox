@@ -234,6 +234,7 @@
     EntityTemplateOut,
     EntityTemplateSummary,
     EntityOut,
+    EntitySummary,
     EntityTypeSummary,
   } from "~~/lib/api/types/data-contracts";
   import { useTagStore } from "~/stores/tags";
@@ -478,16 +479,48 @@
   // Used at submit to tell "left at the default" from "stored elsewhere".
   const inheritedLocationId = ref<string | null>(null);
 
+  function resolveInheritedLocation(entity: EntityOut | EntitySummary | null | undefined): string | null {
+    if (!entity) return null;
+    const resolved = (entity as EntityOut).location?.id;
+    if (resolved) return resolved;
+    return entity.parent?.entityType?.isLocation ? entity.parent.id : null;
+  }
+
+  const resolvedParent = ref<EntityOut | null>(null);
+  let parentLookup = 0;
+
   watch(
     parent,
-    newParent => {
+    async newParent => {
       if (newParent && newParent.id && subItemCreate.value) {
         form.parentId = newParent.id;
       } else {
         form.parentId = null;
       }
-      inheritedLocationId.value =
-        newParent?.location?.id ?? (newParent?.parent?.entityType?.isLocation ? newParent.parent.id : null);
+
+      const lookup = ++parentLookup;
+
+      if (!newParent?.id) {
+        inheritedLocationId.value = null;
+        return;
+      }
+
+      if (resolvedParent.value?.id === newParent.id) {
+        inheritedLocationId.value = resolveInheritedLocation(resolvedParent.value);
+        return;
+      }
+
+      const { data, error } = await api.items.get(newParent.id);
+      if (lookup !== parentLookup) return;
+
+      if (error || !data) {
+        console.error("Parent item fetch error:", error);
+        inheritedLocationId.value = resolveInheritedLocation(newParent);
+        return;
+      }
+
+      resolvedParent.value = data;
+      inheritedLocationId.value = resolveInheritedLocation(data);
     },
     { immediate: true }
   );
@@ -522,6 +555,7 @@
       subItemCreate.value = false;
       let parentItemLocationId = null;
       parent.value = {};
+      resolvedParent.value = null;
       form.parentId = null;
 
       if (params.baseType === "item") {
@@ -535,15 +569,15 @@
           if (error || !data) {
             toast.error(t("components.entity.create_modal.toast.failed_load_parent"));
             console.error("Parent item fetch error:", error);
+            return;
           }
 
-          if (data) {
-            parent.value = data;
-          }
+          resolvedParent.value = data;
+          parent.value = data;
 
           // What the sub-item inherits if left alone. Resolved location, not the
           // direct parent — those only match when the parent sits in one.
-          parentItemLocationId = data.location?.id ?? (data.parent?.entityType?.isLocation ? data.parent.id : null);
+          parentItemLocationId = resolveInheritedLocation(data);
         }
 
         if (params.product) {

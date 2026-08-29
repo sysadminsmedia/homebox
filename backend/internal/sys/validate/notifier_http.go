@@ -40,6 +40,7 @@ func NotifierHTTPClient(cfg *config.NotifierConf) *http.Client {
 		transport = &http.Transport{}
 	}
 	transport.DialContext = dialer.DialContext
+	transport.Proxy = nil
 
 	return &http.Client{
 		Transport:     transport,

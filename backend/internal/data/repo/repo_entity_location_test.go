@@ -225,6 +225,8 @@ func TestEntityLocation_RejectsCrossGroupLocation(t *testing.T) {
 		LocationID: b.basement.ID,
 	})
 	require.Error(t, err, "must not accept another group's location")
+	assert.True(t, validate.IsFieldError(err))
+	assert.Contains(t, err.Error(), "must reference an existing location in this group")
 }
 
 // The "Sync child items' locations" toggle had nothing to act on between 0.26
