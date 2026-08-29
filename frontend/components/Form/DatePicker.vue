@@ -12,8 +12,7 @@
 <script setup lang="ts">
   import VueDatePicker from "@vuepic/vue-datepicker";
   import "@vuepic/vue-datepicker/dist/main.css";
-  import * as datelib from "~/lib/datelib/datelib";
-  import { toDateOnlyString } from "~/lib/datelib/dateOnly";
+  import { isDateOnlyString, parseDateOnly, toDateOnlyString } from "~/lib/datelib/dateOnly";
   import { Label } from "@/components/ui/label";
   import { darkThemes } from "~/lib/data/themes";
 
@@ -32,19 +31,6 @@
     label: {
       type: String,
       default: "Date",
-    },
-    // When true, this field represents a date-only value (no time-of-day or
-    // timezone semantics). modelValue is bound as a YYYY-MM-DD string and the
-    // component emits a YYYY-MM-DD string. Use this for any field stored as
-    // types.Date on the backend (purchaseDate, scheduledDate, etc.) — it
-    // prevents the timezone day-shift bug that occurs when JSON.stringify
-    // converts a Date object to a UTC ISO string.
-    //
-    // Leave false (the default) for true timestamp fields like invite expiry,
-    // which need full Date-object precision.
-    dateOnly: {
-      type: Boolean,
-      default: false,
     },
   });
 
@@ -66,7 +52,21 @@
           return null;
         }
 
-        return datelib.parse(props.modelValue);
+        // YYYY-MM-DD is read through local components. `new Date("2026-04-18")`
+        // would be UTC midnight, which the calendar then highlights as the
+        // 17th for anyone west of Greenwich.
+        if (isDateOnlyString(props.modelValue)) {
+          // parseDateOnly also rejects impossible days. Those must not reach
+          // the constructor below: `new Date("2026-02-30")` rolls over to
+          // March 2 rather than failing, and the picker would then re-emit
+          // that invented date on the next save.
+          return parseDateOnly(props.modelValue);
+        }
+
+        // Timestamps from older records still fall back to the plain
+        // constructor.
+        const parsed = new Date(props.modelValue);
+        return isNaN(parsed.getTime()) ? null : parsed;
       }
 
       // Date
@@ -86,20 +86,14 @@
       return null;
     },
     set(value: Date | null) {
-      if (props.dateOnly) {
-        // Always emit YYYY-MM-DD strings, derived from local components, so
-        // the user's calendar day is preserved across the API round-trip.
-        emit("update:modelValue", value ? toDateOnlyString(value) : "");
-        return;
-      }
-
-      if (value instanceof Date) {
-        value = datelib.zeroTime(value);
-        emit("update:modelValue", value);
-      } else {
-        value = value ? datelib.zeroTime(new Date(value)) : null;
-        emit("update:modelValue", value);
-      }
+      // Always a YYYY-MM-DD string built from local components. Emitting a
+      // Date instead would let JSON.stringify serialize it as a UTC instant,
+      // which lands on the previous day for every user west of Greenwich and
+      // shifts again on each subsequent save. Every field this picker drives
+      // is a calendar date (types.Date on the backend), so there is no case
+      // where a Date object is the right thing to emit — a timestamp field
+      // should use VueDatePicker directly.
+      emit("update:modelValue", value ? toDateOnlyString(value) : "");
     },
   });
 </script>
