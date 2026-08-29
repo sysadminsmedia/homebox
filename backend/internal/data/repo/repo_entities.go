@@ -280,7 +280,7 @@ func mapEntitySummary(e *ent.Entity) EntitySummary {
 		ThumbnailId: thumbnailID,
 
 		// Sale
-		SoldDate: types.DateFromTime(e.SoldDate),
+		SoldDate: types.DateFromDBTime(e.SoldDate),
 	}
 }
 
@@ -335,7 +335,7 @@ func mapEntityOut(e *ent.Entity) EntityOut {
 		AssetID:                  AssetID(e.AssetID),
 		EntitySummary:            mapEntitySummary(e),
 		LifetimeWarranty:         e.LifetimeWarranty,
-		WarrantyExpires:          types.DateFromTime(e.WarrantyExpires),
+		WarrantyExpires:          types.DateFromDBTime(e.WarrantyExpires),
 		WarrantyDetails:          e.WarrantyDetails,
 		SyncChildEntityLocations: e.SyncChildEntityLocations,
 
@@ -345,11 +345,11 @@ func mapEntityOut(e *ent.Entity) EntityOut {
 		Manufacturer: e.Manufacturer,
 
 		// Purchase
-		PurchaseDate: types.DateFromTime(e.PurchaseDate),
+		PurchaseDate: types.DateFromDBTime(e.PurchaseDate),
 		PurchaseFrom: e.PurchaseFrom,
 
 		// Sold
-		SoldDate:  types.DateFromTime(e.SoldDate),
+		SoldDate:  types.DateFromDBTime(e.SoldDate),
 		SoldTo:    e.SoldTo,
 		SoldPrice: e.SoldPrice,
 		SoldNotes: e.SoldNotes,
@@ -2028,8 +2028,12 @@ func (r *EntityRepository) ZeroOutTimeFields(ctx context.Context, gid uuid.UUID)
 	loadSpan.SetAttributes(attribute.Int("entities.count", len(entities)))
 	loadSpan.End()
 
+	// Normalize in UTC, not in t's own zone. Drivers may return a date-only
+	// column in the server's local zone (pgx does), and re-zeroing that value
+	// in place would write back the previous calendar day — turning a
+	// cosmetic read shift into permanent data loss.
 	toDateOnly := func(t time.Time) time.Time {
-		return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
+		return types.DateFromDBTime(t).Time()
 	}
 
 	_, updateSpan := entityTracer().Start(ctx, "repo.EntityRepository.ZeroOutTimeFields.update",
