@@ -69,11 +69,14 @@
       parent.value = data.parent;
     }
 
-    // The "Location" selector shows the derived location (nearest ancestor
+    // The "Location" selector shows the resolved location (nearest ancestor
     // that is a location-type entity), not the direct parent — when the item
     // sits inside another item, the parent is shown in "Parent Item" and the
     // location stays e.g. "Attic" (#1589).
     location.value = data.location ?? (data.parent?.entityType?.isLocation ? data.parent : null);
+    // locationId is only set when the item has its own location, so it tells us
+    // whether to keep sending it back or let the item follow its parent (#1688).
+    locationExplicit.value = !!data.locationId;
 
     return data;
   });
@@ -128,6 +131,9 @@
       // A selected parent item is the entity's real parent; otherwise the
       // item hangs directly off the chosen location.
       parentId: parent.value?.id || location.value?.id || null,
+      // Only when it's inside another item and the user picked a location —
+      // echoing back an inherited one would pin it (#1688).
+      locationId: parent.value?.id && locationExplicit.value ? location.value?.id || null : null,
       tagIds: item.value.tagIds,
       assetId: item.value.assetId,
       purchasePrice,
@@ -516,11 +522,14 @@
 
   const { query, results, isLoading, triggerSearch } = useItemSearch(api, { immediate: false });
   const parent = ref();
-  // Derived location shown in the "Location" selector. Kept separate from
+  // Resolved location shown in the "Location" selector. Kept separate from
   // `parent` (the "Parent Item" selector): when a parent item is chosen it
   // becomes the entity's real parent, while this stays the location the item
   // ultimately lives in (#1589).
   const location = ref();
+  // True when `location` is the user's own choice, not inherited. Only explicit
+  // choices are written back, so nested items follow their parent by default.
+  const locationExplicit = ref(false);
 
   async function keyboardSave(e: KeyboardEvent) {
     // Cmd + S
@@ -545,10 +554,12 @@
         return;
       }
 
-      // The item now lives inside the parent item, so its location follows
-      // the parent's derived location — reflect that in the selector instead
-      // of showing the parent item itself as the "location" (#1589).
-      location.value = data.location ?? (data.parent?.entityType?.isLocation ? data.parent : null);
+      // Show where it lands by default, i.e. the parent's location (#1589).
+      // Leave a location the user picked alone — overwriting it here is what
+      // made "child of X, stored in Y" impossible (#1688).
+      if (!locationExplicit.value) {
+        location.value = data.location ?? (data.parent?.entityType?.isLocation ? data.parent : null);
+      }
       if (data.syncChildEntityLocations) {
         toast.info(t("items.toast.sync_child_location"));
       }
@@ -556,12 +567,9 @@
   }
 
   function onLocationChanged() {
-    // Picking a location explicitly moves the item there: clear any selected
-    // parent item so the chosen location actually takes effect on save.
-    if (parent.value && parent.value.id) {
-      parent.value = null;
-      toast.info(t("items.toast.child_location_desync"));
-    }
+    // Location says where the item is stored, not what it belongs to, so the
+    // parent stays selected (#1688).
+    locationExplicit.value = !!location.value?.id;
   }
 
   async function syncChildEntityLocations() {
@@ -573,6 +581,7 @@
     const payload: EntityUpdate = {
       ...item.value,
       parentId: parent.value?.id || location.value?.id || null,
+      locationId: parent.value?.id && locationExplicit.value ? location.value?.id || null : null,
       tagIds: item.value.tagIds,
       assetId: item.value.assetId,
       syncChildEntityLocations: item.value.syncChildEntityLocations,

@@ -3625,6 +3625,21 @@ const docTemplate = `{
                         }
                     ]
                 },
+                "location": {
+                    "description": "Location holds the value of the location edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Entity"
+                        }
+                    ]
+                },
+                "location_entities": {
+                    "description": "LocationEntities holds the value of the location_entities edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Entity"
+                    }
+                },
                 "maintenance_entries": {
                     "description": "MaintenanceEntries holds the value of the maintenance_entries edge.",
                     "type": "array",
@@ -4794,6 +4809,12 @@ const docTemplate = `{
                 "entityTypeId": {
                     "type": "string"
                 },
+                "locationId": {
+                    "description": "LocationID is only needed when ParentID refers to another item and\nthe new entity is stored somewhere other than that item's location.",
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
                 "manufacturer": {
                     "type": "string",
                     "maxLength": 255,
@@ -4938,12 +4959,18 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "location": {
-                    "description": "Location is the nearest ancestor whose entity type is a location.\nWhen the direct parent is already a location it equals Parent; when\nthe entity is nested inside other items it is the location those\nitems ultimately live in. Nil for top-level entities.",
+                    "description": "Location is where this entity resolves to: its own location when one\nis set, otherwise the nearest ancestor whose entity type is a\nlocation. Nil for top-level entities. This is a *resolved* value —\nwrite it back through LocationID, not through this field.",
                     "allOf": [
                         {
                             "$ref": "#/definitions/repo.EntitySummary"
                         }
                     ],
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "locationId": {
+                    "description": "LocationID is this entity's own location, and is nil when Location was\ninherited from an ancestor. It is named to match the locationId field\non EntityUpdate on purpose: a GET body PUT back verbatim keeps the\nentity exactly where it was, rather than silently pinning an\ninherited location or dropping an explicit one.",
+                    "type": "string",
                     "x-nullable": true,
                     "x-omitempty": true
                 },
@@ -5037,6 +5064,11 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "locationId": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "parentId": {
                     "type": "string",
@@ -5539,6 +5571,12 @@ const docTemplate = `{
                 "lifetimeWarranty": {
                     "description": "Warranty",
                     "type": "boolean"
+                },
+                "locationId": {
+                    "description": "LocationID names the location this entity is stored in. It only\nneeds to be sent when ParentID refers to another item and the entity\nlives somewhere other than that item's location (#1688); otherwise\nParentID alone carries the location. See resolveLocationOverride.",
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "manufacturer": {
                     "type": "string"
@@ -6432,6 +6470,11 @@ const docTemplate = `{
                 "entityTypeId": {
                     "description": "EntityTypeID is the entity type selected by the user. When set it takes\nprecedence; when empty the repository falls back to the group's default.",
                     "type": "string"
+                },
+                "locationId": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "name": {
                     "type": "string",
