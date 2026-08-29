@@ -12,7 +12,7 @@
 <script setup lang="ts">
   import VueDatePicker from "@vuepic/vue-datepicker";
   import "@vuepic/vue-datepicker/dist/main.css";
-  import { parseDateOnly, toDateOnlyString } from "~/lib/datelib/dateOnly";
+  import { isDateOnlyString, parseDateOnly, toDateOnlyString } from "~/lib/datelib/dateOnly";
   import { Label } from "@/components/ui/label";
   import { darkThemes } from "~/lib/data/themes";
 
@@ -54,13 +54,17 @@
 
         // YYYY-MM-DD is read through local components. `new Date("2026-04-18")`
         // would be UTC midnight, which the calendar then highlights as the
-        // 17th for anyone west of Greenwich. Timestamps from older records
-        // still fall back to the plain constructor.
-        const dateOnly = parseDateOnly(props.modelValue);
-        if (dateOnly) {
-          return dateOnly;
+        // 17th for anyone west of Greenwich.
+        if (isDateOnlyString(props.modelValue)) {
+          // parseDateOnly also rejects impossible days. Those must not reach
+          // the constructor below: `new Date("2026-02-30")` rolls over to
+          // March 2 rather than failing, and the picker would then re-emit
+          // that invented date on the next save.
+          return parseDateOnly(props.modelValue);
         }
 
+        // Timestamps from older records still fall back to the plain
+        // constructor.
         const parsed = new Date(props.modelValue);
         return isNaN(parsed.getTime()) ? null : parsed;
       }
