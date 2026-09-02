@@ -33,6 +33,8 @@ type EntityTemplate struct {
 	Notes string `json:"notes,omitempty"`
 	// DefaultQuantity holds the value of the "default_quantity" field.
 	DefaultQuantity float64 `json:"default_quantity,omitempty"`
+	// DefaultLowStockThreshold holds the value of the "default_low_stock_threshold" field.
+	DefaultLowStockThreshold *float64 `json:"default_low_stock_threshold,omitempty"`
 	// DefaultInsured holds the value of the "default_insured" field.
 	DefaultInsured bool `json:"default_insured,omitempty"`
 	// Default name template for items (can use placeholders)
@@ -116,7 +118,7 @@ func (*EntityTemplate) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case entitytemplate.FieldDefaultInsured, entitytemplate.FieldDefaultLifetimeWarranty, entitytemplate.FieldIncludeWarrantyFields, entitytemplate.FieldIncludePurchaseFields, entitytemplate.FieldIncludeSoldFields:
 			values[i] = new(sql.NullBool)
-		case entitytemplate.FieldDefaultQuantity:
+		case entitytemplate.FieldDefaultQuantity, entitytemplate.FieldDefaultLowStockThreshold:
 			values[i] = new(sql.NullFloat64)
 		case entitytemplate.FieldName, entitytemplate.FieldDescription, entitytemplate.FieldNotes, entitytemplate.FieldDefaultName, entitytemplate.FieldDefaultDescription, entitytemplate.FieldDefaultManufacturer, entitytemplate.FieldDefaultModelNumber, entitytemplate.FieldDefaultWarrantyDetails:
 			values[i] = new(sql.NullString)
@@ -184,6 +186,13 @@ func (_m *EntityTemplate) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field default_quantity", values[i])
 			} else if value.Valid {
 				_m.DefaultQuantity = value.Float64
+			}
+		case entitytemplate.FieldDefaultLowStockThreshold:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field default_low_stock_threshold", values[i])
+			} else if value.Valid {
+				_m.DefaultLowStockThreshold = new(float64)
+				*_m.DefaultLowStockThreshold = value.Float64
 			}
 		case entitytemplate.FieldDefaultInsured:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -335,6 +344,11 @@ func (_m *EntityTemplate) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("default_quantity=")
 	builder.WriteString(fmt.Sprintf("%v", _m.DefaultQuantity))
+	builder.WriteString(", ")
+	if v := _m.DefaultLowStockThreshold; v != nil {
+		builder.WriteString("default_low_stock_threshold=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteString(", ")
 	builder.WriteString("default_insured=")
 	builder.WriteString(fmt.Sprintf("%v", _m.DefaultInsured))

@@ -34,6 +34,8 @@ type Entity struct {
 	Notes string `json:"notes,omitempty"`
 	// Quantity holds the value of the "quantity" field.
 	Quantity float64 `json:"quantity,omitempty"`
+	// LowStockThreshold holds the value of the "low_stock_threshold" field.
+	LowStockThreshold *float64 `json:"low_stock_threshold,omitempty"`
 	// Insured holds the value of the "insured" field.
 	Insured bool `json:"insured,omitempty"`
 	// Archived holds the value of the "archived" field.
@@ -185,7 +187,7 @@ func (*Entity) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case entity.FieldInsured, entity.FieldArchived, entity.FieldSyncChildEntityLocations, entity.FieldLifetimeWarranty:
 			values[i] = new(sql.NullBool)
-		case entity.FieldQuantity, entity.FieldPurchasePrice, entity.FieldSoldPrice:
+		case entity.FieldQuantity, entity.FieldLowStockThreshold, entity.FieldPurchasePrice, entity.FieldSoldPrice:
 			values[i] = new(sql.NullFloat64)
 		case entity.FieldAssetID:
 			values[i] = new(sql.NullInt64)
@@ -263,6 +265,13 @@ func (_m *Entity) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field quantity", values[i])
 			} else if value.Valid {
 				_m.Quantity = value.Float64
+			}
+		case entity.FieldLowStockThreshold:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field low_stock_threshold", values[i])
+			} else if value.Valid {
+				_m.LowStockThreshold = new(float64)
+				*_m.LowStockThreshold = value.Float64
 			}
 		case entity.FieldInsured:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -483,6 +492,11 @@ func (_m *Entity) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("quantity=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Quantity))
+	builder.WriteString(", ")
+	if v := _m.LowStockThreshold; v != nil {
+		builder.WriteString("low_stock_threshold=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteString(", ")
 	builder.WriteString("insured=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Insured))
