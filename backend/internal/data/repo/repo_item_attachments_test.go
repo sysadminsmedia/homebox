@@ -1,7 +1,9 @@
 package repo
 
 import (
+	"bytes"
 	"context"
+	"encoding/base64"
 	"os"
 	"path/filepath"
 	"strings"
@@ -530,4 +532,71 @@ func TestAttachmentRepo_DeleteSharedPathKeepsFileAndDropsThumbnail(t *testing.T)
 	sharedFile := filepath.Join(os.TempDir(), tRepos.Attachments.GetFullPath(second.Path))
 	_, err = os.Stat(sharedFile)
 	require.NoError(t, err, "shared file was deleted while another attachment references it")
+}
+
+// tinyPNG is a 1x1 image, decodable so thumbnail creation reaches the edge
+// write rather than bailing out at the decode step.
+const tinyPNG = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+
+// thumbnailRepo returns an attachment repository with thumbnail generation
+// switched on. The shared test harness disables it, which makes CreateThumbnail
+// exit before it does any real work.
+func thumbnailRepo() *AttachmentRepo {
+	return &AttachmentRepo{
+		db:         tClient,
+		storage:    config.Storage{PrefixPath: "/", ConnString: "file://" + os.TempDir()},
+		pubSubConn: "mem://{{ .Topic }}",
+		thumbnail:  config.Thumbnail{Enabled: true, Width: 50, Height: 50},
+	}
+}
+
+func TestAttachmentRepo_CreateThumbnailForDeletedAttachment(t *testing.T) {
+	ctx := context.Background()
+	e := useEntities(t, 1)[0]
+	repo := thumbnailRepo()
+
+	png, err := base64.StdEncoding.DecodeString(tinyPNG)
+	require.NoError(t, err)
+
+	// Two attachments with the same bytes share one stored path, so deleting
+	// the first leaves the file in place for the thumbnail worker to read.
+	deleted, err := repo.Create(ctx, e.ID, ItemCreateAttachment{
+		Title:   "gone.png",
+		Content: bytes.NewReader(png),
+	}, attachment.TypePhoto, false)
+	require.NoError(t, err)
+
+	kept, err := repo.Create(ctx, e.ID, ItemCreateAttachment{
+		Title:   "kept.png",
+		Content: bytes.NewReader(png),
+	}, attachment.TypePhoto, false)
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = repo.Delete(context.Background(), tGroup.ID, kept.ID)
+	})
+	require.Equal(t, deleted.Path, kept.Path)
+
+	require.NoError(t, repo.Delete(ctx, tGroup.ID, deleted.ID))
+
+	// The worker can pick the request up after the attachment is deleted, which
+	// must be a no-op rather than a foreign key failure. This pins that
+	// behaviour down; it does not reproduce the failure that motivated the
+	// guard, which needs the concurrency of a running server (the edge write
+	// failing and leaving the transaction open, which on SQLite holds the write
+	// lock so every later write fails with SQLITE_BUSY).
+	err = repo.CreateThumbnail(ctx, tGroup.ID, deleted.ID, "gone.png", deleted.Path)
+	require.NoError(t, err)
+
+	// No thumbnail row should have been left behind for the deleted attachment.
+	orphans, err := tClient.Attachment.Query().
+		Where(attachment.TypeEQ(attachment.TypeThumbnail), attachment.Title("gone.png-thumb")).
+		Count(ctx)
+	require.NoError(t, err)
+	require.Zero(t, orphans, "a thumbnail row was created for a deleted attachment")
+
+	// Proves the write lock was released. Updates a row rather than creating
+	// one so the check leaves no rows behind for other tests to count.
+	require.NoError(t,
+		tClient.Attachment.UpdateOneID(kept.ID).SetTitle("kept-after-thumbnail.png").Exec(ctx),
+		"database still locked after a thumbnail request for a deleted attachment")
 }

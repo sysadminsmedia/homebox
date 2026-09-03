@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"crypto/md5"
+	"database/sql"
+	"errors"
 	"fmt"
 	"image"
 	"io"
@@ -785,6 +787,15 @@ func (r *AttachmentRepo) Rename(ctx context.Context, gid uuid.UUID, id uuid.UUID
 	return r.db.Attachment.UpdateOneID(id).SetTitle(title).Save(ctx)
 }
 
+// rollbackThumbnailTx discards an in-flight thumbnail transaction. Leaving one
+// open holds the SQLite write lock for the life of the process, which turns a
+// single failed thumbnail into SQLITE_BUSY on every later write.
+func rollbackThumbnailTx(tx *ent.Tx) {
+	if err := tx.Rollback(); err != nil && !errors.Is(err, sql.ErrTxDone) {
+		log.Err(err).Msg("failed to roll back thumbnail transaction")
+	}
+}
+
 //nolint:gocyclo
 func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmentId uuid.UUID, title string, path string) error {
 	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.CreateThumbnail")
@@ -804,6 +815,21 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 		}
 	}()
+
+	// The attachment can be deleted between the request being published and the
+	// worker picking it up. Bail out before decoding anything: the edge write at
+	// the end would fail the foreign key check anyway.
+	exists, err := tx.Attachment.Query().Where(attachment.ID(attachmentId)).Exist(ctx)
+	if err != nil {
+		rollbackThumbnailTx(tx)
+		return err
+	}
+	if !exists {
+		log.Debug().Str("attachment_id", attachmentId.String()).
+			Msg("attachment deleted before its thumbnail could be created")
+		rollbackThumbnailTx(tx)
+		return nil
+	}
 
 	log.Debug().Msg("set initial database transaction")
 	att := tx.Attachment.Create().
@@ -863,6 +889,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	}
 
 	if stats.Size() > 100*1024*1024 {
+		rollbackThumbnailTx(tx)
 		return fmt.Errorf("original file %s is too large to create a thumbnail", title)
 	}
 
@@ -1010,6 +1037,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		}
 		att.SetPath(uploadResult.Path)
 	default:
+		rollbackThumbnailTx(tx)
 		return fmt.Errorf("file type %s is not supported for thumbnail creation or document thumnails disabled", title)
 	}
 
@@ -1018,11 +1046,13 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	log.Debug().Msg("saving thumbnail attachment to database")
 	thumbnail, err := att.Save(ctx)
 	if err != nil {
+		rollbackThumbnailTx(tx)
 		return err
 	}
 
 	_, err = tx.Attachment.UpdateOneID(attachmentId).SetThumbnail(thumbnail).Save(ctx)
 	if err != nil {
+		rollbackThumbnailTx(tx)
 		return err
 	}
 
