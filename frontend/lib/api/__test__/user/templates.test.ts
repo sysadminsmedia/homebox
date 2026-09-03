@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import type { EntityTemplateOut } from "../../types/data-contracts";
+import type { EntityOut, EntityTemplateCreateItemRequest, EntityTemplateOut } from "../../types/data-contracts";
 import type { UserClient } from "../../user";
 import { factories } from "../factories";
 import { sharedUserClient } from "../test-utils";
@@ -310,6 +310,35 @@ describe("template default image", () => {
     return new Blob([bytes], { type: "image/png" });
   }
 
+  /**
+   * useImageLocation creates a location to hold items created from a template,
+   * and returns it alongside the group's item entity type. Locations must carry
+   * the location entity type; without it the backend defaults new entities to
+   * the item type.
+   */
+  async function useImageLocation(api: UserClient): Promise<[EntityOut, string]> {
+    const { data: entityTypes } = await api.entityTypes.getAll();
+    const locationType = entityTypes.find(t => t.isLocation);
+    const itemType = entityTypes.find(t => !t.isLocation);
+    expect(locationType).toBeTruthy();
+    expect(itemType).toBeTruthy();
+
+    const { response, data } = await api.items.createLocation({
+      parentId: null,
+      name: "__test__.template_image.location",
+      description: "",
+      entityTypeId: locationType!.id,
+      quantity: 1,
+      tagIds: [],
+    });
+    expect(response.status).toBe(201);
+    return [data, itemType!.id];
+  }
+
+  function createItemRequest(parentId: string, entityTypeId: string, name: string): EntityTemplateCreateItemRequest {
+    return { name, description: "", parentId, entityTypeId, tagIds: [], quantity: 1 };
+  }
+
   test("user should be able to set and remove a template default image", async () => {
     const api = await sharedUserClient();
 
@@ -336,8 +365,7 @@ describe("template default image", () => {
   test("template default image is applied to items created from the template", async () => {
     const api = await sharedUserClient();
 
-    const { response: locResponse, data: location } = await api.items.createLocation(factories.location());
-    expect(locResponse.status).toBe(201);
+    const [location, itemTypeId] = await useImageLocation(api);
 
     const { response: createResponse, data: template } = await api.templates.create(factories.template());
     expect(createResponse.status).toBe(201);
@@ -345,12 +373,10 @@ describe("template default image", () => {
     const { response: imageResponse } = await api.templates.setImage(template.id, pngBlob(), "default.png");
     expect(imageResponse.status).toBe(200);
 
-    const { response, data: item } = await api.templates.createItem(template.id, {
-      name: "item-from-template",
-      description: "",
-      parentId: location.id,
-      tagIds: [],
-    });
+    const { response, data: item } = await api.templates.createItem(
+      template.id,
+      createItemRequest(location.id, itemTypeId, "item-from-template")
+    );
     expect(response.status).toBe(201);
     expect(item.attachments).toHaveLength(1);
     expect(item.attachments[0]?.type).toBe("photo");
@@ -373,17 +399,14 @@ describe("template default image", () => {
   test("items created before an image is set are left alone", async () => {
     const api = await sharedUserClient();
 
-    const { response: locResponse, data: location } = await api.items.createLocation(factories.location());
-    expect(locResponse.status).toBe(201);
+    const [location, itemTypeId] = await useImageLocation(api);
 
     const { data: template } = await api.templates.create(factories.template());
 
-    const { response, data: item } = await api.templates.createItem(template.id, {
-      name: "item-before-image",
-      description: "",
-      parentId: location.id,
-      tagIds: [],
-    });
+    const { response, data: item } = await api.templates.createItem(
+      template.id,
+      createItemRequest(location.id, itemTypeId, "item-before-image")
+    );
     expect(response.status).toBe(201);
     expect(item.attachments).toHaveLength(0);
 

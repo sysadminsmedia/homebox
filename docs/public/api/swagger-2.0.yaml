@@ -1443,6 +1443,7 @@ definitions:
         allOf:
         - $ref: '#/definitions/repo.TemplateImageSummary'
         description: Default image applied to entities created from this template
+        x-nullable: true
       defaultInsured:
         type: boolean
       defaultLifetimeWarranty:

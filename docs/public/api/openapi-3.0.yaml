@@ -3596,6 +3596,7 @@ components:
           description: Default image applied to entities created from this template
           allOf:
             - $ref: "#/components/schemas/repo.TemplateImageSummary"
+          nullable: true
         defaultInsured:
           type: boolean
         defaultLifetimeWarranty:

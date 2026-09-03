@@ -5399,7 +5399,8 @@ const docTemplate = `{
                         {
                             "$ref": "#/definitions/repo.TemplateImageSummary"
                         }
-                    ]
+                    ],
+                    "x-nullable": true
                 },
                 "defaultInsured": {
                     "type": "boolean"

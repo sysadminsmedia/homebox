@@ -111,7 +111,7 @@ type (
 		CreatedAt time.Time `json:"createdAt"`
 		UpdatedAt time.Time `json:"updatedAt"`
 		// Default image applied to entities created from this template
-		DefaultImage *TemplateImageSummary `json:"defaultImage"`
+		DefaultImage *TemplateImageSummary `json:"defaultImage" extensions:"x-nullable"`
 		// Default location and tags
 		DefaultLocation        *TemplateLocationSummary `json:"defaultLocation"`
 		Name                   string                   `json:"name"`
@@ -460,7 +460,7 @@ func (r *EntityTemplatesRepository) GetDefaultImage(ctx context.Context, gid uui
 }
 
 // SetDefaultImage stores an image on the template and applies it to entities
-// created from it afterwards. Any image the template already had is removed
+// created from it afterward. Any image the template already had is removed
 // first so a template never accumulates orphaned attachments.
 func (r *EntityTemplatesRepository) SetDefaultImage(ctx context.Context, gid uuid.UUID, id uuid.UUID, doc ItemCreateAttachment) (EntityTemplateOut, error) {
 	template, err := r.db.EntityTemplate.Query().
@@ -485,18 +485,42 @@ func (r *EntityTemplatesRepository) SetDefaultImage(ctx context.Context, gid uui
 	}
 
 	// The edge is one-to-one, so the previous image has to let go of it before
-	// the new one can take it.
+	// the new one can take it. Both writes go in one transaction: a partial
+	// swap would leave the template with no image while reporting failure, and
+	// strand the previous attachment where no group-scoped query can reach it.
 	prev := template.Edges.DefaultImage
-	if prev != nil {
-		if _, err := template.Update().ClearDefaultImage().Save(ctx); err != nil {
-			if delErr := r.attachments.delete(ctx, att); delErr != nil {
-				log.Err(delErr).Msg("failed to clean up template image after update failure")
-			}
-			return EntityTemplateOut{}, err
+
+	swap := func() error {
+		tx, err := r.db.Tx(ctx)
+		if err != nil {
+			return err
 		}
+		committed := false
+		defer func() {
+			if !committed {
+				if err := tx.Rollback(); err != nil {
+					log.Warn().Err(err).Msg("failed to roll back template image swap")
+				}
+			}
+		}()
+
+		if prev != nil {
+			if err := tx.EntityTemplate.UpdateOneID(id).ClearDefaultImage().Exec(ctx); err != nil {
+				return err
+			}
+		}
+		if err := tx.EntityTemplate.UpdateOneID(id).SetDefaultImageID(att.ID).Exec(ctx); err != nil {
+			return err
+		}
+
+		if err := tx.Commit(); err != nil {
+			return err
+		}
+		committed = true
+		return nil
 	}
 
-	if _, err = template.Update().SetDefaultImageID(att.ID).Save(ctx); err != nil {
+	if err := swap(); err != nil {
 		// Roll the file back so a failed swap doesn't leave a stored blob that
 		// nothing references.
 		if delErr := r.attachments.delete(ctx, att); delErr != nil {

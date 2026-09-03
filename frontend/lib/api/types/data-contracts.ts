@@ -914,7 +914,7 @@ export interface EntityTemplateOut {
   createdAt: Date | string;
   defaultDescription: string;
   /** Default image applied to entities created from this template */
-  defaultImage: TemplateImageSummary;
+  defaultImage?: TemplateImageSummary | null;
   defaultInsured: boolean;
   defaultLifetimeWarranty: boolean;
   /** Default location and tags */

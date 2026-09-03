@@ -646,8 +646,11 @@ func (r *AttachmentRepo) DeleteTemplateImage(ctx context.Context, gid uuid.UUID,
 // responsible for validating group ownership before calling.
 //
 // Paths are shared rather than copied when the same bytes are stored twice
-// (entity template default images, duplicated entities), so every file removal
-// is guarded by a reference count over the path.
+// (entity template default images, duplicated entities), so a file is only
+// removed once no row still references its path. The rows are deleted and the
+// references counted in one transaction, before any file is touched, so the
+// count is taken against committed state rather than a snapshot that a
+// concurrent writer can invalidate.
 func (r *AttachmentRepo) delete(ctx context.Context, doc *ent.Attachment) error {
 	id := doc.ID
 
@@ -663,39 +666,70 @@ func (r *AttachmentRepo) delete(ctx context.Context, doc *ent.Attachment) error 
 		log.Err(err).Msg("failed to query thumbnail for attachment")
 		return err
 	}
-	if thumb != nil {
-		if err := r.deleteFileIfUnreferenced(ctx, thumb.Path, thumb.ID); err != nil {
-			return err
-		}
-		if err := doc.Update().ClearThumbnail().Exec(ctx); err != nil {
-			log.Err(err).Msg("failed to clear thumbnail edge")
-			return err
-		}
-		if err := r.db.Attachment.DeleteOneID(thumb.ID).Exec(ctx); err != nil {
-			return err
-		}
-	}
 
-	if err := r.deleteFileIfUnreferenced(ctx, doc.Path, doc.ID); err != nil {
-		return err
-	}
-
-	return r.db.Attachment.DeleteOneID(id).Exec(ctx)
-}
-
-// deleteFileIfUnreferenced removes the stored file at path when the attachment
-// about to be deleted is the last one pointing at it.
-func (r *AttachmentRepo) deleteFileIfUnreferenced(ctx context.Context, path string, excludeID uuid.UUID) error {
-	others, err := r.db.Attachment.Query().
-		Where(
-			attachment.Path(path),
-			attachment.IDNEQ(excludeID),
-		).
-		Count(ctx)
+	tx, err := r.db.Tx(ctx)
 	if err != nil {
 		return err
 	}
-	if others > 0 {
+	committed := false
+	defer func() {
+		if !committed {
+			if err := tx.Rollback(); err != nil {
+				log.Warn().Err(err).Msg("failed to roll back attachment deletion")
+			}
+		}
+	}()
+
+	if thumb != nil {
+		if err := tx.Attachment.UpdateOneID(id).ClearThumbnail().Exec(ctx); err != nil {
+			log.Err(err).Msg("failed to clear thumbnail edge")
+			return err
+		}
+		if err := tx.Attachment.DeleteOneID(thumb.ID).Exec(ctx); err != nil {
+			return err
+		}
+	}
+
+	if err := tx.Attachment.DeleteOneID(id).Exec(ctx); err != nil {
+		return err
+	}
+
+	// Counted after the rows are gone, so a path with no remaining rows is
+	// genuinely unreferenced rather than merely unreferenced by this caller.
+	orphaned := make([]string, 0, 2)
+	for _, path := range dedupePaths(doc, thumb) {
+		remaining, err := tx.Attachment.Query().Where(attachment.Path(path)).Count(ctx)
+		if err != nil {
+			return err
+		}
+		if remaining == 0 {
+			orphaned = append(orphaned, path)
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	committed = true
+
+	return r.deleteFiles(ctx, orphaned)
+}
+
+// dedupePaths returns the distinct stored paths of an attachment and its
+// thumbnail. Identical content dedupes onto one path, so the two can coincide.
+func dedupePaths(doc *ent.Attachment, thumb *ent.Attachment) []string {
+	paths := []string{doc.Path}
+	if thumb != nil && thumb.Path != doc.Path {
+		paths = append(paths, thumb.Path)
+	}
+	return paths
+}
+
+// deleteFiles removes stored files that no attachment row references any more.
+// A failure here leaves an unreferenced file behind rather than failing the
+// deletion the caller already committed.
+func (r *AttachmentRepo) deleteFiles(ctx context.Context, paths []string) error {
+	if len(paths) == 0 {
 		return nil
 	}
 
@@ -710,7 +744,14 @@ func (r *AttachmentRepo) deleteFileIfUnreferenced(ctx context.Context, path stri
 		}
 	}(bucket)
 
-	return bucket.Delete(ctx, r.fullPath(path))
+	for _, path := range paths {
+		if err := bucket.Delete(ctx, r.fullPath(path)); err != nil {
+			log.Err(err).Str("path", path).Msg("failed to delete unreferenced file")
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (r *AttachmentRepo) Rename(ctx context.Context, gid uuid.UUID, id uuid.UUID, title string) (*ent.Attachment, error) {
