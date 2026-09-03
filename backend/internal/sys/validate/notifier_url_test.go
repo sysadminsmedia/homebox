@@ -10,6 +10,7 @@ import (
 // Repeated fixture values used across many test cases.
 const (
 	cidrPrivate24       = "192.168.1.0/24"
+	urlDiscord          = "discord://token@id"
 	urlGenericIPv6Local = "generic://http://[fd00::1]/webhook"
 	urlGenericIPv4Local = "generic://http://192.168.1.100/webhook"
 )
@@ -26,7 +27,7 @@ func TestValidateNotifierURL(t *testing.T) {
 	}{
 		{
 			name: "non-generic notifier passes validation",
-			url:  "discord://token@id",
+			url:  urlDiscord,
 			config: config.NotifierConf{
 				BlockLocalhost: true,
 			},
@@ -177,7 +178,7 @@ func TestValidateNotifierURL(t *testing.T) {
 		},
 		{
 			name: "block_nets does not affect non-generic notifiers",
-			url:  "discord://token@id",
+			url:  urlDiscord,
 			config: config.NotifierConf{
 				BlockNets: []string{"0.0.0.0/0"},
 			},
@@ -439,7 +440,7 @@ func TestIsGenericNotifier(t *testing.T) {
 		{"generic://", "generic://http://example.com", true},
 		{"generic+https://", "generic+https://example.com", true},
 		{"generic+http://", "generic+http://example.com", true},
-		{"discord://", "discord://token@id", false},
+		{"discord://", urlDiscord, false},
 		{"slack://", "slack://token@channel", false},
 		{"smtp://", "smtp://user:pass@host:587", false},
 	}
@@ -487,7 +488,7 @@ func TestExtractGenericURL(t *testing.T) {
 		},
 		{
 			name:        "not generic",
-			url:         "discord://token@id",
+			url:         urlDiscord,
 			expected:    "",
 			expectError: true,
 		},
@@ -743,7 +744,7 @@ func TestValidateNotifierURL_IdentifierHostsAllowed(t *testing.T) {
 	}
 
 	allowed := []string{
-		"discord://token@id",
+		urlDiscord,
 		"slack://token:token@channel",
 		"telegram://token@telegram?chats=1",
 		"pushover://shoutrrr:apiToken@userKey/",
