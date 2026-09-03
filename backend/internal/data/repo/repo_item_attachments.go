@@ -476,6 +476,11 @@ func (r *AttachmentRepo) requestThumbnail(ctx context.Context, groupID uuid.UUID
 		log.Err(err).Msg("failed to generate pubsub connection string")
 		return
 	}
+	// Not shut down after sending: the pubsub URL openers cache topics by name
+	// (mempubsub, the default, returns the same *pubsub.Topic for every
+	// OpenTopic on a given name), so shutting it down here would poison the
+	// topic process-wide and every later publisher would fail with
+	// FailedPrecondition. This matches how the other publishers here treat it.
 	topic, err := pubsub.OpenTopic(ctx, pubsubString)
 	if err != nil {
 		log.Err(err).Msg("failed to open pubsub topic")
@@ -712,7 +717,15 @@ func (r *AttachmentRepo) delete(ctx context.Context, doc *ent.Attachment) error 
 	}
 	committed = true
 
-	return r.deleteFiles(ctx, orphaned)
+	// The rows are gone. Reclaiming the files is best effort from here: a
+	// failure leaves an unreferenced file for create-missing-thumbnails or an
+	// operator to clean up, and must not report the committed deletion as
+	// failed, which would show the client an error and then NotFound on retry.
+	if err := r.deleteFiles(ctx, orphaned); err != nil {
+		log.Err(err).Msg("attachment deleted, but its unreferenced files could not be removed")
+	}
+
+	return nil
 }
 
 // dedupePaths returns the distinct stored paths of an attachment and its
@@ -726,8 +739,8 @@ func dedupePaths(doc *ent.Attachment, thumb *ent.Attachment) []string {
 }
 
 // deleteFiles removes stored files that no attachment row references any more.
-// A failure here leaves an unreferenced file behind rather than failing the
-// deletion the caller already committed.
+// Every path is attempted; the first failure is returned so the caller can log
+// it, having already committed the row deletion those files belonged to.
 func (r *AttachmentRepo) deleteFiles(ctx context.Context, paths []string) error {
 	if len(paths) == 0 {
 		return nil
@@ -744,14 +757,17 @@ func (r *AttachmentRepo) deleteFiles(ctx context.Context, paths []string) error 
 		}
 	}(bucket)
 
+	var firstErr error
 	for _, path := range paths {
 		if err := bucket.Delete(ctx, r.fullPath(path)); err != nil {
 			log.Err(err).Str("path", path).Msg("failed to delete unreferenced file")
-			return err
+			if firstErr == nil {
+				firstErr = err
+			}
 		}
 	}
 
-	return nil
+	return firstErr
 }
 
 func (r *AttachmentRepo) Rename(ctx context.Context, gid uuid.UUID, id uuid.UUID, title string) (*ent.Attachment, error) {
