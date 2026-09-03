@@ -135,6 +135,8 @@ export interface EntAttachment {
 export interface EntAttachmentEdges {
   /** Entity holds the value of the entity edge. */
   entity: EntEntity;
+  /** EntityTemplate holds the value of the entity_template edge. */
+  entity_template: EntEntityTemplate;
   /** Thumbnail holds the value of the thumbnail edge. */
   thumbnail: EntAttachment;
 }
@@ -336,6 +338,8 @@ export interface EntEntityTemplate {
 }
 
 export interface EntEntityTemplateEdges {
+  /** DefaultImage holds the value of the default_image edge. */
+  default_image: EntAttachment;
   /** Fields holds the value of the fields edge. */
   fields: EntTemplateField[];
   /** Group holds the value of the group edge. */
@@ -909,6 +913,8 @@ export interface EntityTemplateCreate {
 export interface EntityTemplateOut {
   createdAt: Date | string;
   defaultDescription: string;
+  /** Default image applied to entities created from this template */
+  defaultImage?: TemplateImageSummary | null;
   defaultInsured: boolean;
   defaultLifetimeWarranty: boolean;
   /** Default location and tags */
@@ -1250,6 +1256,13 @@ export interface TemplateField {
   textValue: string;
   timeValue: string;
   type: string;
+}
+
+export interface TemplateImageSummary {
+  id: string;
+  mimeType: string;
+  thumbnailId?: string | null;
+  title: string;
 }
 
 export interface TemplateLocationSummary {

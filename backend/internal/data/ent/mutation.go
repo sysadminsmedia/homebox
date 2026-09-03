@@ -816,24 +816,26 @@ func (m *APIKeyMutation) ResetEdge(name string) error {
 // AttachmentMutation represents an operation that mutates the Attachment nodes in the graph.
 type AttachmentMutation struct {
 	config
-	op               Op
-	typ              string
-	id               *uuid.UUID
-	created_at       *time.Time
-	updated_at       *time.Time
-	_type            *attachment.Type
-	primary          *bool
-	title            *string
-	_path            *string
-	mime_type        *string
-	clearedFields    map[string]struct{}
-	entity           *uuid.UUID
-	clearedentity    bool
-	thumbnail        *uuid.UUID
-	clearedthumbnail bool
-	done             bool
-	oldValue         func(context.Context) (*Attachment, error)
-	predicates       []predicate.Attachment
+	op                     Op
+	typ                    string
+	id                     *uuid.UUID
+	created_at             *time.Time
+	updated_at             *time.Time
+	_type                  *attachment.Type
+	primary                *bool
+	title                  *string
+	_path                  *string
+	mime_type              *string
+	clearedFields          map[string]struct{}
+	entity                 *uuid.UUID
+	clearedentity          bool
+	thumbnail              *uuid.UUID
+	clearedthumbnail       bool
+	entity_template        *uuid.UUID
+	clearedentity_template bool
+	done                   bool
+	oldValue               func(context.Context) (*Attachment, error)
+	predicates             []predicate.Attachment
 }
 
 var _ ent.Mutation = (*AttachmentMutation)(nil)
@@ -1270,6 +1272,45 @@ func (m *AttachmentMutation) ResetThumbnail() {
 	m.clearedthumbnail = false
 }
 
+// SetEntityTemplateID sets the "entity_template" edge to the EntityTemplate entity by id.
+func (m *AttachmentMutation) SetEntityTemplateID(id uuid.UUID) {
+	m.entity_template = &id
+}
+
+// ClearEntityTemplate clears the "entity_template" edge to the EntityTemplate entity.
+func (m *AttachmentMutation) ClearEntityTemplate() {
+	m.clearedentity_template = true
+}
+
+// EntityTemplateCleared reports if the "entity_template" edge to the EntityTemplate entity was cleared.
+func (m *AttachmentMutation) EntityTemplateCleared() bool {
+	return m.clearedentity_template
+}
+
+// EntityTemplateID returns the "entity_template" edge ID in the mutation.
+func (m *AttachmentMutation) EntityTemplateID() (id uuid.UUID, exists bool) {
+	if m.entity_template != nil {
+		return *m.entity_template, true
+	}
+	return
+}
+
+// EntityTemplateIDs returns the "entity_template" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// EntityTemplateID instead. It exists only for internal usage by the builders.
+func (m *AttachmentMutation) EntityTemplateIDs() (ids []uuid.UUID) {
+	if id := m.entity_template; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetEntityTemplate resets all changes to the "entity_template" edge.
+func (m *AttachmentMutation) ResetEntityTemplate() {
+	m.entity_template = nil
+	m.clearedentity_template = false
+}
+
 // Where appends a list predicates to the AttachmentMutation builder.
 func (m *AttachmentMutation) Where(ps ...predicate.Attachment) {
 	m.predicates = append(m.predicates, ps...)
@@ -1505,12 +1546,15 @@ func (m *AttachmentMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *AttachmentMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.entity != nil {
 		edges = append(edges, attachment.EdgeEntity)
 	}
 	if m.thumbnail != nil {
 		edges = append(edges, attachment.EdgeThumbnail)
+	}
+	if m.entity_template != nil {
+		edges = append(edges, attachment.EdgeEntityTemplate)
 	}
 	return edges
 }
@@ -1527,13 +1571,17 @@ func (m *AttachmentMutation) AddedIDs(name string) []ent.Value {
 		if id := m.thumbnail; id != nil {
 			return []ent.Value{*id}
 		}
+	case attachment.EdgeEntityTemplate:
+		if id := m.entity_template; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *AttachmentMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	return edges
 }
 
@@ -1545,12 +1593,15 @@ func (m *AttachmentMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *AttachmentMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedentity {
 		edges = append(edges, attachment.EdgeEntity)
 	}
 	if m.clearedthumbnail {
 		edges = append(edges, attachment.EdgeThumbnail)
+	}
+	if m.clearedentity_template {
+		edges = append(edges, attachment.EdgeEntityTemplate)
 	}
 	return edges
 }
@@ -1563,6 +1614,8 @@ func (m *AttachmentMutation) EdgeCleared(name string) bool {
 		return m.clearedentity
 	case attachment.EdgeThumbnail:
 		return m.clearedthumbnail
+	case attachment.EdgeEntityTemplate:
+		return m.clearedentity_template
 	}
 	return false
 }
@@ -1577,6 +1630,9 @@ func (m *AttachmentMutation) ClearEdge(name string) error {
 	case attachment.EdgeThumbnail:
 		m.ClearThumbnail()
 		return nil
+	case attachment.EdgeEntityTemplate:
+		m.ClearEntityTemplate()
+		return nil
 	}
 	return fmt.Errorf("unknown Attachment unique edge %s", name)
 }
@@ -1590,6 +1646,9 @@ func (m *AttachmentMutation) ResetEdge(name string) error {
 		return nil
 	case attachment.EdgeThumbnail:
 		m.ResetThumbnail()
+		return nil
+	case attachment.EdgeEntityTemplate:
+		m.ResetEntityTemplate()
 		return nil
 	}
 	return fmt.Errorf("unknown Attachment edge %s", name)
@@ -6130,6 +6189,8 @@ type EntityTemplateMutation struct {
 	clearedfields             bool
 	location                  *uuid.UUID
 	clearedlocation           bool
+	default_image             *uuid.UUID
+	cleareddefault_image      bool
 	done                      bool
 	oldValue                  func(context.Context) (*EntityTemplate, error)
 	predicates                []predicate.EntityTemplate
@@ -7123,6 +7184,45 @@ func (m *EntityTemplateMutation) ResetLocation() {
 	m.clearedlocation = false
 }
 
+// SetDefaultImageID sets the "default_image" edge to the Attachment entity by id.
+func (m *EntityTemplateMutation) SetDefaultImageID(id uuid.UUID) {
+	m.default_image = &id
+}
+
+// ClearDefaultImage clears the "default_image" edge to the Attachment entity.
+func (m *EntityTemplateMutation) ClearDefaultImage() {
+	m.cleareddefault_image = true
+}
+
+// DefaultImageCleared reports if the "default_image" edge to the Attachment entity was cleared.
+func (m *EntityTemplateMutation) DefaultImageCleared() bool {
+	return m.cleareddefault_image
+}
+
+// DefaultImageID returns the "default_image" edge ID in the mutation.
+func (m *EntityTemplateMutation) DefaultImageID() (id uuid.UUID, exists bool) {
+	if m.default_image != nil {
+		return *m.default_image, true
+	}
+	return
+}
+
+// DefaultImageIDs returns the "default_image" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// DefaultImageID instead. It exists only for internal usage by the builders.
+func (m *EntityTemplateMutation) DefaultImageIDs() (ids []uuid.UUID) {
+	if id := m.default_image; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDefaultImage resets all changes to the "default_image" edge.
+func (m *EntityTemplateMutation) ResetDefaultImage() {
+	m.default_image = nil
+	m.cleareddefault_image = false
+}
+
 // Where appends a list predicates to the EntityTemplateMutation builder.
 func (m *EntityTemplateMutation) Where(ps ...predicate.EntityTemplate) {
 	m.predicates = append(m.predicates, ps...)
@@ -7594,7 +7694,7 @@ func (m *EntityTemplateMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *EntityTemplateMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.group != nil {
 		edges = append(edges, entitytemplate.EdgeGroup)
 	}
@@ -7603,6 +7703,9 @@ func (m *EntityTemplateMutation) AddedEdges() []string {
 	}
 	if m.location != nil {
 		edges = append(edges, entitytemplate.EdgeLocation)
+	}
+	if m.default_image != nil {
+		edges = append(edges, entitytemplate.EdgeDefaultImage)
 	}
 	return edges
 }
@@ -7625,13 +7728,17 @@ func (m *EntityTemplateMutation) AddedIDs(name string) []ent.Value {
 		if id := m.location; id != nil {
 			return []ent.Value{*id}
 		}
+	case entitytemplate.EdgeDefaultImage:
+		if id := m.default_image; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *EntityTemplateMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.removedfields != nil {
 		edges = append(edges, entitytemplate.EdgeFields)
 	}
@@ -7654,7 +7761,7 @@ func (m *EntityTemplateMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *EntityTemplateMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedgroup {
 		edges = append(edges, entitytemplate.EdgeGroup)
 	}
@@ -7663,6 +7770,9 @@ func (m *EntityTemplateMutation) ClearedEdges() []string {
 	}
 	if m.clearedlocation {
 		edges = append(edges, entitytemplate.EdgeLocation)
+	}
+	if m.cleareddefault_image {
+		edges = append(edges, entitytemplate.EdgeDefaultImage)
 	}
 	return edges
 }
@@ -7677,6 +7787,8 @@ func (m *EntityTemplateMutation) EdgeCleared(name string) bool {
 		return m.clearedfields
 	case entitytemplate.EdgeLocation:
 		return m.clearedlocation
+	case entitytemplate.EdgeDefaultImage:
+		return m.cleareddefault_image
 	}
 	return false
 }
@@ -7690,6 +7802,9 @@ func (m *EntityTemplateMutation) ClearEdge(name string) error {
 		return nil
 	case entitytemplate.EdgeLocation:
 		m.ClearLocation()
+		return nil
+	case entitytemplate.EdgeDefaultImage:
+		m.ClearDefaultImage()
 		return nil
 	}
 	return fmt.Errorf("unknown EntityTemplate unique edge %s", name)
@@ -7707,6 +7822,9 @@ func (m *EntityTemplateMutation) ResetEdge(name string) error {
 		return nil
 	case entitytemplate.EdgeLocation:
 		m.ResetLocation()
+		return nil
+	case entitytemplate.EdgeDefaultImage:
+		m.ResetDefaultImage()
 		return nil
 	}
 	return fmt.Errorf("unknown EntityTemplate edge %s", name)

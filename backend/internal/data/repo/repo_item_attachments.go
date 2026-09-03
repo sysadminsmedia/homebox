@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"crypto/md5"
+	"database/sql"
+	"errors"
 	"fmt"
 	"image"
 	"io"
@@ -25,6 +27,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
@@ -428,6 +431,78 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	return attachmentDb, nil
 }
 
+// CreateUnlinked stores a file and creates an attachment row that is not linked
+// to an entity. It backs entity template default images, which are owned by a
+// template rather than an entity; entities created from that template get their
+// own attachment rows pointing at the same stored path, so the file is stored
+// once and the path refcount in delete keeps it alive while anything uses it.
+func (r *AttachmentRepo) CreateUnlinked(ctx context.Context, grp *ent.Group, doc ItemCreateAttachment, typ attachment.Type) (*ent.Attachment, error) {
+	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.CreateUnlinked")
+	defer span.End()
+
+	uploadResult, err := r.UploadFile(ctx, grp, doc)
+	if err != nil {
+		return nil, err
+	}
+
+	att, err := r.db.Attachment.Create().
+		SetID(uuid.New()).
+		SetCreatedAt(time.Now()).
+		SetUpdatedAt(time.Now()).
+		SetType(typ).
+		SetTitle(doc.Title).
+		SetPath(uploadResult.Path).
+		SetMimeType(uploadResult.ContentType).
+		Save(ctx)
+	if err != nil {
+		log.Err(err).Msg("failed to save unlinked attachment to database")
+		return nil, err
+	}
+
+	r.requestThumbnail(ctx, grp.ID, att, doc.Title)
+
+	return att, nil
+}
+
+// requestThumbnail asks the background worker to generate a thumbnail for an
+// attachment. Failures are logged rather than returned: a missing thumbnail
+// degrades display but must not fail the write that produced the attachment,
+// and the create-missing-thumbnails action can backfill it later.
+func (r *AttachmentRepo) requestThumbnail(ctx context.Context, groupID uuid.UUID, att *ent.Attachment, title string) {
+	if !r.thumbnail.Enabled {
+		return
+	}
+
+	pubsubString, err := utils.GenerateSubPubConn(r.pubSubConn, "thumbnails")
+	if err != nil {
+		log.Err(err).Msg("failed to generate pubsub connection string")
+		return
+	}
+	// Not shut down after sending: the pubsub URL openers cache topics by name
+	// (mempubsub, the default, returns the same *pubsub.Topic for every
+	// OpenTopic on a given name), so shutting it down here would poison the
+	// topic process-wide and every later publisher would fail with
+	// FailedPrecondition. This matches how the other publishers here treat it.
+	topic, err := pubsub.OpenTopic(ctx, pubsubString)
+	if err != nil {
+		log.Err(err).Msg("failed to open pubsub topic")
+		return
+	}
+
+	err = topic.Send(ctx, &pubsub.Message{
+		Body: []byte(fmt.Sprintf("attachment_created:%s", att.ID.String())),
+		Metadata: map[string]string{
+			"group_id":      groupID.String(),
+			"attachment_id": att.ID.String(),
+			"title":         title,
+			"path":          att.Path,
+		},
+	})
+	if err != nil {
+		log.Err(err).Msg("failed to send message to topic")
+	}
+}
+
 func (r *AttachmentRepo) CreateExternalLink(ctx context.Context, entityID uuid.UUID, externalID string, title string, mimeType string, attType attachment.Type) (*ent.Attachment, error) {
 	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.CreateExternalLink")
 	defer span.End()
@@ -550,56 +625,151 @@ func (r *AttachmentRepo) Delete(ctx context.Context, gid uuid.UUID, id uuid.UUID
 		return err
 	}
 
+	return r.delete(ctx, doc)
+}
+
+// DeleteTemplateImage deletes an attachment owned by an entity template rather
+// than an entity. Group ownership is validated through the template edge, since
+// template images intentionally have no entity edge.
+func (r *AttachmentRepo) DeleteTemplateImage(ctx context.Context, gid uuid.UUID, id uuid.UUID) error {
+	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.DeleteTemplateImage")
+	defer span.End()
+
+	doc, err := r.db.Attachment.Query().
+		Where(
+			attachment.ID(id),
+			attachment.HasEntityTemplateWith(entitytemplate.HasGroupWith(group.ID(gid))),
+		).
+		Only(ctx)
+	if err != nil {
+		return err
+	}
+
+	return r.delete(ctx, doc)
+}
+
+// delete removes an attachment row, along with its thumbnail, and the files
+// backing them once no other attachment references the same path. Callers are
+// responsible for validating group ownership before calling.
+//
+// Paths are shared rather than copied when the same bytes are stored twice
+// (entity template default images, duplicated entities), so a file is only
+// removed once no row still references its path. The rows are deleted and the
+// references counted in one transaction, before any file is touched, so the
+// count is taken against committed state rather than a snapshot that a
+// concurrent writer can invalidate.
+func (r *AttachmentRepo) delete(ctx context.Context, doc *ent.Attachment) error {
+	id := doc.ID
+
 	if isExternalLink(doc.MimeType) {
 		return r.db.Attachment.DeleteOneID(id).Exec(ctx)
 	}
 
-	all, err := r.db.Attachment.Query().Where(attachment.Path(doc.Path)).All(ctx)
+	// The thumbnail edge is one-to-one, so the thumbnail row always goes with
+	// the attachment being deleted, even when the source file lives on for
+	// other attachments.
+	thumb, err := doc.QueryThumbnail().First(ctx)
+	if err != nil && !ent.IsNotFound(err) {
+		log.Err(err).Msg("failed to query thumbnail for attachment")
+		return err
+	}
+
+	tx, err := r.db.Tx(ctx)
 	if err != nil {
 		return err
 	}
-	// If this is the last attachment for this path, delete the file
-	if len(all) == 1 {
-		thumb, err := doc.QueryThumbnail().First(ctx)
-		if err != nil && !ent.IsNotFound(err) {
-			log.Err(err).Msg("failed to query thumbnail for attachment")
+	committed := false
+	defer func() {
+		if !committed {
+			if err := tx.Rollback(); err != nil {
+				log.Warn().Err(err).Msg("failed to roll back attachment deletion")
+			}
+		}
+	}()
+
+	if thumb != nil {
+		if err := tx.Attachment.UpdateOneID(id).ClearThumbnail().Exec(ctx); err != nil {
+			log.Err(err).Msg("failed to clear thumbnail edge")
 			return err
 		}
-		if thumb != nil {
-			thumbBucket, err := blob.OpenBucket(ctx, r.GetConnString())
-			if err != nil {
-				log.Err(err).Msg("failed to open bucket for thumbnail deletion")
-				return err
-			}
-			err = thumbBucket.Delete(ctx, r.fullPath(thumb.Path))
-			if err != nil {
-				return err
-			}
-			_ = doc.Update().SetNillableThumbnailID(nil).SaveX(ctx)
-			_ = thumb.Update().SetNillableThumbnailID(nil).SaveX(ctx)
-			err = r.db.Attachment.DeleteOneID(thumb.ID).Exec(ctx)
-			if err != nil {
-				return err
-			}
-		}
-		bucket, err := blob.OpenBucket(ctx, r.GetConnString())
-		if err != nil {
-			log.Err(err).Msg("failed to open bucket")
-			return err
-		}
-		defer func(bucket *blob.Bucket) {
-			err := bucket.Close()
-			if err != nil {
-				log.Err(err).Msg("failed to close bucket")
-			}
-		}(bucket)
-		err = bucket.Delete(ctx, r.fullPath(doc.Path))
-		if err != nil {
+		if err := tx.Attachment.DeleteOneID(thumb.ID).Exec(ctx); err != nil {
 			return err
 		}
 	}
 
-	return r.db.Attachment.DeleteOneID(id).Exec(ctx)
+	if err := tx.Attachment.DeleteOneID(id).Exec(ctx); err != nil {
+		return err
+	}
+
+	// Counted after the rows are gone, so a path with no remaining rows is
+	// genuinely unreferenced rather than merely unreferenced by this caller.
+	orphaned := make([]string, 0, 2)
+	for _, path := range dedupePaths(doc, thumb) {
+		remaining, err := tx.Attachment.Query().Where(attachment.Path(path)).Count(ctx)
+		if err != nil {
+			return err
+		}
+		if remaining == 0 {
+			orphaned = append(orphaned, path)
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	committed = true
+
+	// The rows are gone. Reclaiming the files is best effort from here: a
+	// failure leaves an unreferenced file for create-missing-thumbnails or an
+	// operator to clean up, and must not report the committed deletion as
+	// failed, which would show the client an error and then NotFound on retry.
+	if err := r.deleteFiles(ctx, orphaned); err != nil {
+		log.Err(err).Msg("attachment deleted, but its unreferenced files could not be removed")
+	}
+
+	return nil
+}
+
+// dedupePaths returns the distinct stored paths of an attachment and its
+// thumbnail. Identical content dedupes onto one path, so the two can coincide.
+func dedupePaths(doc *ent.Attachment, thumb *ent.Attachment) []string {
+	paths := []string{doc.Path}
+	if thumb != nil && thumb.Path != doc.Path {
+		paths = append(paths, thumb.Path)
+	}
+	return paths
+}
+
+// deleteFiles removes stored files that no attachment row references any more.
+// Every path is attempted; the first failure is returned so the caller can log
+// it, having already committed the row deletion those files belonged to.
+func (r *AttachmentRepo) deleteFiles(ctx context.Context, paths []string) error {
+	if len(paths) == 0 {
+		return nil
+	}
+
+	bucket, err := blob.OpenBucket(ctx, r.GetConnString())
+	if err != nil {
+		log.Err(err).Msg("failed to open bucket")
+		return err
+	}
+	defer func(bucket *blob.Bucket) {
+		if err := bucket.Close(); err != nil {
+			log.Err(err).Msg("failed to close bucket")
+		}
+	}(bucket)
+
+	var firstErr error
+	for _, path := range paths {
+		if err := bucket.Delete(ctx, r.fullPath(path)); err != nil {
+			log.Err(err).Str("path", path).Msg("failed to delete unreferenced file")
+			if firstErr == nil {
+				firstErr = err
+			}
+		}
+	}
+
+	return firstErr
 }
 
 func (r *AttachmentRepo) Rename(ctx context.Context, gid uuid.UUID, id uuid.UUID, title string) (*ent.Attachment, error) {
@@ -615,6 +785,15 @@ func (r *AttachmentRepo) Rename(ctx context.Context, gid uuid.UUID, id uuid.UUID
 	}
 
 	return r.db.Attachment.UpdateOneID(id).SetTitle(title).Save(ctx)
+}
+
+// rollbackThumbnailTx discards an in-flight thumbnail transaction. Leaving one
+// open holds the SQLite write lock for the life of the process, which turns a
+// single failed thumbnail into SQLITE_BUSY on every later write.
+func rollbackThumbnailTx(tx *ent.Tx) {
+	if err := tx.Rollback(); err != nil && !errors.Is(err, sql.ErrTxDone) {
+		log.Err(err).Msg("failed to roll back thumbnail transaction")
+	}
 }
 
 //nolint:gocyclo
@@ -636,6 +815,21 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 		}
 	}()
+
+	// The attachment can be deleted between the request being published and the
+	// worker picking it up. Bail out before decoding anything: the edge write at
+	// the end would fail the foreign key check anyway.
+	exists, err := tx.Attachment.Query().Where(attachment.ID(attachmentId)).Exist(ctx)
+	if err != nil {
+		rollbackThumbnailTx(tx)
+		return err
+	}
+	if !exists {
+		log.Debug().Str("attachment_id", attachmentId.String()).
+			Msg("attachment deleted before its thumbnail could be created")
+		rollbackThumbnailTx(tx)
+		return nil
+	}
 
 	log.Debug().Msg("set initial database transaction")
 	att := tx.Attachment.Create().
@@ -695,6 +889,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	}
 
 	if stats.Size() > 100*1024*1024 {
+		rollbackThumbnailTx(tx)
 		return fmt.Errorf("original file %s is too large to create a thumbnail", title)
 	}
 
@@ -842,6 +1037,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		}
 		att.SetPath(uploadResult.Path)
 	default:
+		rollbackThumbnailTx(tx)
 		return fmt.Errorf("file type %s is not supported for thumbnail creation or document thumnails disabled", title)
 	}
 
@@ -850,11 +1046,13 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	log.Debug().Msg("saving thumbnail attachment to database")
 	thumbnail, err := att.Save(ctx)
 	if err != nil {
+		rollbackThumbnailTx(tx)
 		return err
 	}
 
 	_, err = tx.Attachment.UpdateOneID(attachmentId).SetThumbnail(thumbnail).Save(ctx)
 	if err != nil {
+		rollbackThumbnailTx(tx)
 		return err
 	}
 

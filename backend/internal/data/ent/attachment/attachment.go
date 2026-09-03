@@ -34,6 +34,8 @@ const (
 	EdgeEntity = "entity"
 	// EdgeThumbnail holds the string denoting the thumbnail edge name in mutations.
 	EdgeThumbnail = "thumbnail"
+	// EdgeEntityTemplate holds the string denoting the entity_template edge name in mutations.
+	EdgeEntityTemplate = "entity_template"
 	// Table holds the table name of the attachment in the database.
 	Table = "attachments"
 	// EntityTable is the table that holds the entity relation/edge.
@@ -47,6 +49,13 @@ const (
 	ThumbnailTable = "attachments"
 	// ThumbnailColumn is the table column denoting the thumbnail relation/edge.
 	ThumbnailColumn = "attachment_thumbnail"
+	// EntityTemplateTable is the table that holds the entity_template relation/edge.
+	EntityTemplateTable = "attachments"
+	// EntityTemplateInverseTable is the table name for the EntityTemplate entity.
+	// It exists in this package in order to avoid circular dependency with the "entitytemplate" package.
+	EntityTemplateInverseTable = "entity_templates"
+	// EntityTemplateColumn is the table column denoting the entity_template relation/edge.
+	EntityTemplateColumn = "entity_template_default_image"
 )
 
 // Columns holds all SQL columns for attachment fields.
@@ -66,6 +75,7 @@ var Columns = []string{
 var ForeignKeys = []string{
 	"attachment_thumbnail",
 	"entity_attachments",
+	"entity_template_default_image",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -188,6 +198,13 @@ func ByThumbnailField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newThumbnailStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByEntityTemplateField orders the results by entity_template field.
+func ByEntityTemplateField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEntityTemplateStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newEntityStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -200,5 +217,12 @@ func newThumbnailStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
 		sqlgraph.Edge(sqlgraph.O2O, false, ThumbnailTable, ThumbnailColumn),
+	)
+}
+func newEntityTemplateStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EntityTemplateInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, true, EntityTemplateTable, EntityTemplateColumn),
 	)
 }

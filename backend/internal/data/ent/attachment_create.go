@@ -13,6 +13,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 )
 
 // AttachmentCreate is the builder for creating a Attachment entity.
@@ -170,6 +171,25 @@ func (_c *AttachmentCreate) SetNillableThumbnailID(id *uuid.UUID) *AttachmentCre
 // SetThumbnail sets the "thumbnail" edge to the Attachment entity.
 func (_c *AttachmentCreate) SetThumbnail(v *Attachment) *AttachmentCreate {
 	return _c.SetThumbnailID(v.ID)
+}
+
+// SetEntityTemplateID sets the "entity_template" edge to the EntityTemplate entity by ID.
+func (_c *AttachmentCreate) SetEntityTemplateID(id uuid.UUID) *AttachmentCreate {
+	_c.mutation.SetEntityTemplateID(id)
+	return _c
+}
+
+// SetNillableEntityTemplateID sets the "entity_template" edge to the EntityTemplate entity by ID if the given value is not nil.
+func (_c *AttachmentCreate) SetNillableEntityTemplateID(id *uuid.UUID) *AttachmentCreate {
+	if id != nil {
+		_c = _c.SetEntityTemplateID(*id)
+	}
+	return _c
+}
+
+// SetEntityTemplate sets the "entity_template" edge to the EntityTemplate entity.
+func (_c *AttachmentCreate) SetEntityTemplate(v *EntityTemplate) *AttachmentCreate {
+	return _c.SetEntityTemplateID(v.ID)
 }
 
 // Mutation returns the AttachmentMutation object of the builder.
@@ -364,6 +384,23 @@ func (_c *AttachmentCreate) createSpec() (*Attachment, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.attachment_thumbnail = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.EntityTemplateIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   attachment.EntityTemplateTable,
+			Columns: []string{attachment.EntityTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytemplate.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.entity_template_default_image = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

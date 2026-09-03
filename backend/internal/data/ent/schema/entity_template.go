@@ -107,5 +107,11 @@ func (EntityTemplate) Edges() []ent.Edge {
 		// Default location for items created from this template
 		edge.To("location", Entity.Type).
 			Unique(),
+		// Default image applied to items created from this template. The
+		// attachment is owned by the template and has no entity edge; items
+		// created from the template get their own attachment row pointing at
+		// the same stored path.
+		edge.To("default_image", Attachment.Type).
+			Unique(),
 	}
 }

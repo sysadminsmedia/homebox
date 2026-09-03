@@ -34,7 +34,7 @@ func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubC
 		Groups:              NewGroupRepository(db, attachments),
 		Entities:            &EntityRepository{db, bus, attachments},
 		EntityTypes:         &EntityTypeRepository{db, bus},
-		EntityTemplates:     &EntityTemplatesRepository{db, bus},
+		EntityTemplates:     &EntityTemplatesRepository{db, bus, attachments},
 		Tags:                &TagRepository{db, bus},
 		Attachments:         attachments,
 		MaintEntry:          &MaintenanceEntryRepository{db},
