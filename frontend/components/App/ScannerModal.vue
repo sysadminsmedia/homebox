@@ -176,8 +176,8 @@
         if (result && !loading.value) {
           loading.value = true;
           try {
-            const url = new URL(result.getText());
-            if (!url.pathname.startsWith("/")) {
+            const url = parseScanResult(result.getText());
+            if (!url || !url.pathname.startsWith("/")) {
               throw new Error(t("scanner.invalid_url"));
             }
             const sanitizedPath = url.pathname.replace(/[^a-zA-Z0-9-_/]/g, "");
