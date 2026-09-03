@@ -120,6 +120,10 @@ definitions:
         allOf:
         - $ref: '#/definitions/ent.Entity'
         description: Entity holds the value of the entity edge.
+      entity_template:
+        allOf:
+        - $ref: '#/definitions/ent.EntityTemplate'
+        description: EntityTemplate holds the value of the entity_template edge.
       thumbnail:
         allOf:
         - $ref: '#/definitions/ent.Attachment'
@@ -430,6 +434,10 @@ definitions:
     type: object
   ent.EntityTemplateEdges:
     properties:
+      default_image:
+        allOf:
+        - $ref: '#/definitions/ent.Attachment'
+        description: DefaultImage holds the value of the default_image edge.
       fields:
         description: Fields holds the value of the fields edge.
         items:
@@ -1431,6 +1439,10 @@ definitions:
         type: string
       defaultDescription:
         type: string
+      defaultImage:
+        allOf:
+        - $ref: '#/definitions/repo.TemplateImageSummary'
+        description: Default image applied to entities created from this template
       defaultInsured:
         type: boolean
       defaultLifetimeWarranty:
@@ -2023,6 +2035,18 @@ definitions:
       timeValue:
         type: string
       type:
+        type: string
+    type: object
+  repo.TemplateImageSummary:
+    properties:
+      id:
+        type: string
+      mimeType:
+        type: string
+      thumbnailId:
+        type: string
+        x-nullable: true
+      title:
         type: string
     type: object
   repo.TemplateLocationSummary:
@@ -3969,6 +3993,83 @@ paths:
       security:
       - Bearer: []
       summary: Create Entity from Template
+      tags:
+      - Entity Templates
+  /v1/templates/{id}/image:
+    delete:
+      description: Removes the template's default image. Entities already created
+        from
+      parameters:
+      - description: Template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.EntityTemplateOut'
+      security:
+      - Bearer: []
+      summary: Delete Entity Template Default Image
+      tags:
+      - Entity Templates
+    get:
+      parameters:
+      - description: Template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      security:
+      - Bearer: []
+      summary: Get Entity Template Default Image
+      tags:
+      - Entity Templates
+    post:
+      consumes:
+      - multipart/form-data
+      description: Stores an image on the template. Entities created from the template
+      parameters:
+      - description: Template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Image file
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: name of the file including extension
+        in: formData
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.EntityTemplateOut'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/validate.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Set Entity Template Default Image
       tags:
       - Entity Templates
   /v1/users/change-password:

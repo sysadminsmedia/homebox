@@ -16,6 +16,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
@@ -1109,6 +1110,10 @@ func (r *EntityRepository) Create(ctx context.Context, gid uuid.UUID, data Entit
 
 // EntityCreateFromTemplate contains all data needed to create an entity from a template.
 type EntityCreateFromTemplate struct {
+	// TemplateID is the template the entity is created from. It is resolved
+	// inside the transaction to pick up the template's default image, so the
+	// stored path never has to travel out through the API layer.
+	TemplateID       uuid.UUID
 	Name             string
 	Description      string
 	Manufacturer     string
@@ -1250,6 +1255,45 @@ func (r *EntityRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID
 		fieldsSpan.End()
 	}
 
+	// Apply the template's default image, if it has one. The new attachment
+	// points at the path the template's own attachment already uses: the file
+	// is stored once, and the path refcount in AttachmentRepo.delete keeps it
+	// alive until the template and every entity created from it let go of it.
+	var newImage *ent.Attachment
+	if data.TemplateID != uuid.Nil {
+		imgCtx, imgSpan := entityTracer().Start(ctx, "repo.EntityRepository.CreateFromTemplate.image")
+		templateImage, err := tx.EntityTemplate.Query().
+			Where(entitytemplate.ID(data.TemplateID)).
+			QueryDefaultImage().
+			Only(imgCtx)
+		switch {
+		case ent.IsNotFound(err):
+			// Template has no default image; nothing to apply.
+		case err != nil:
+			recordSpanError(imgSpan, err)
+			imgSpan.End()
+			recordSpanError(span, err)
+			return EntityOut{}, err
+		default:
+			newImage, err = tx.Attachment.Create().
+				SetEntityID(newEntityID).
+				SetType(attachment.TypePhoto).
+				SetTitle(templateImage.Title).
+				SetPath(templateImage.Path).
+				SetMimeType(templateImage.MimeType).
+				SetPrimary(true).
+				Save(imgCtx)
+			if err != nil {
+				recordSpanError(imgSpan, err)
+				imgSpan.End()
+				recordSpanError(span, err)
+				return EntityOut{}, err
+			}
+			imgSpan.SetAttributes(attribute.String("attachment.id", newImage.ID.String()))
+		}
+		imgSpan.End()
+	}
+
 	_, commitSpan := entityTracer().Start(ctx, "repo.EntityRepository.CreateFromTemplate.commit")
 	if err = tx.Commit(); err != nil {
 		recordSpanError(commitSpan, err)
@@ -1259,6 +1303,11 @@ func (r *EntityRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID
 	}
 	commitSpan.End()
 	committed = true
+
+	// Queued after commit so the worker cannot race the transaction.
+	if newImage != nil {
+		r.attachments.requestThumbnail(ctx, gid, newImage, newImage.Title)
+	}
 
 	r.publishMutationEvent(gid)
 	out, err := r.GetOne(ctx, newEntityID)

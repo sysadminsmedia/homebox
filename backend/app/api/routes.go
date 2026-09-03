@@ -233,6 +233,8 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Put("/templates/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTemplatesUpdate(), userMW...))
 		r.Delete("/templates/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTemplatesDelete(), userMW...))
 		r.Post("/templates/{id}/create-item", chain.ToHandlerFunc(v1Ctrl.HandleEntityTemplatesCreateItem(), userMW...))
+		r.Post("/templates/{id}/image", chain.ToHandlerFunc(v1Ctrl.HandleEntityTemplateImageUpload(), userMW...))
+		r.Delete("/templates/{id}/image", chain.ToHandlerFunc(v1Ctrl.HandleEntityTemplateImageDelete(), userMW...))
 
 		// Maintenance
 		r.Get("/maintenance", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceGetAll(), userMW...))
@@ -260,6 +262,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 			"/entities/{id}/attachments/{attachment_id}",
 			chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentGet(), assetMW...),
 		)
+		r.Get("/templates/{id}/image", chain.ToHandlerFunc(v1Ctrl.HandleEntityTemplateImageGet(), assetMW...))
 
 		// Labelmaker
 		r.Get("/labelmaker/entity/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGetItemLabel(), userMW...))

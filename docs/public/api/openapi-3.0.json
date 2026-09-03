@@ -2823,6 +2823,148 @@
                 }
             }
         },
+        "/v1/templates/{id}/image": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Entity Templates"
+                ],
+                "summary": "Get Entity Template Default Image",
+                "parameters": [
+                    {
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/octet-stream": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Stores an image on the template. Entities created from the template",
+                "tags": [
+                    "Entity Templates"
+                ],
+                "summary": "Set Entity Template Default Image",
+                "parameters": [
+                    {
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "file": {
+                                        "description": "Image file",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "name": {
+                                        "description": "name of the file including extension",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "file",
+                                    "name"
+                                ]
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.EntityTemplateOut"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/validate.ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Removes the template's default image. Entities already created from",
+                "tags": [
+                    "Entity Templates"
+                ],
+                "summary": "Delete Entity Template Default Image",
+                "parameters": [
+                    {
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.EntityTemplateOut"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/users/change-password": {
             "put": {
                 "security": [
@@ -3606,6 +3748,14 @@
                             }
                         ]
                     },
+                    "entity_template": {
+                        "description": "EntityTemplate holds the value of the entity_template edge.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.EntityTemplate"
+                            }
+                        ]
+                    },
                     "thumbnail": {
                         "description": "Thumbnail holds the value of the thumbnail edge.",
                         "allOf": [
@@ -4049,6 +4199,14 @@
             "ent.EntityTemplateEdges": {
                 "type": "object",
                 "properties": {
+                    "default_image": {
+                        "description": "DefaultImage holds the value of the default_image edge.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.Attachment"
+                            }
+                        ]
+                    },
                     "fields": {
                         "description": "Fields holds the value of the fields edge.",
                         "type": "array",
@@ -5496,6 +5654,14 @@
                     "defaultDescription": {
                         "type": "string"
                     },
+                    "defaultImage": {
+                        "description": "Default image applied to entities created from this template",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/repo.TemplateImageSummary"
+                            }
+                        ]
+                    },
                     "defaultInsured": {
                         "type": "boolean"
                     },
@@ -6362,6 +6528,24 @@
                         "type": "string"
                     },
                     "type": {
+                        "type": "string"
+                    }
+                }
+            },
+            "repo.TemplateImageSummary": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "mimeType": {
+                        "type": "string"
+                    },
+                    "thumbnailId": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "title": {
                         "type": "string"
                     }
                 }

@@ -637,6 +637,22 @@ func (c *AttachmentClient) QueryThumbnail(_m *Attachment) *AttachmentQuery {
 	return query
 }
 
+// QueryEntityTemplate queries the entity_template edge of a Attachment.
+func (c *AttachmentClient) QueryEntityTemplate(_m *Attachment) *EntityTemplateQuery {
+	query := (&EntityTemplateClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(attachment.Table, attachment.FieldID, id),
+			sqlgraph.To(entitytemplate.Table, entitytemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, attachment.EntityTemplateTable, attachment.EntityTemplateColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *AttachmentClient) Hooks() []Hook {
 	return c.hooks.Attachment
@@ -1535,6 +1551,22 @@ func (c *EntityTemplateClient) QueryLocation(_m *EntityTemplate) *EntityQuery {
 			sqlgraph.From(entitytemplate.Table, entitytemplate.FieldID, id),
 			sqlgraph.To(entity.Table, entity.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, entitytemplate.LocationTable, entitytemplate.LocationColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryDefaultImage queries the default_image edge of a EntityTemplate.
+func (c *EntityTemplateClient) QueryDefaultImage(_m *EntityTemplate) *AttachmentQuery {
+	query := (&AttachmentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entitytemplate.Table, entitytemplate.FieldID, id),
+			sqlgraph.To(attachment.Table, attachment.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, entitytemplate.DefaultImageTable, entitytemplate.DefaultImageColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil

@@ -295,3 +295,105 @@ describe("templates with location and tags", () => {
     await api.items.deleteLocation(location.id);
   });
 });
+
+describe("template default image", () => {
+  // A 1x1 PNG, small enough to inline and a real image so the upload passes
+  // the image-type check.
+  const PNG_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+
+  function pngBlob(): Blob {
+    const binary = atob(PNG_BASE64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    return new Blob([bytes], { type: "image/png" });
+  }
+
+  test("user should be able to set and remove a template default image", async () => {
+    const api = await sharedUserClient();
+
+    const { response: createResponse, data: template } = await api.templates.create(factories.template());
+    expect(createResponse.status).toBe(201);
+
+    const { response, data } = await api.templates.setImage(template.id, pngBlob(), "default.png");
+    expect(response.status).toBe(200);
+    expect(data.defaultImage).toBeTruthy();
+    expect(data.defaultImage?.title).toBe("default.png");
+    expect(data.defaultImage?.mimeType).toBe("image/png");
+
+    // The image survives a round trip
+    const { data: fetched } = await api.templates.get(template.id);
+    expect(fetched.defaultImage?.id).toBe(data.defaultImage?.id);
+
+    const { response: removeResponse, data: removed } = await api.templates.deleteImage(template.id);
+    expect(removeResponse.status).toBe(200);
+    expect(removed.defaultImage).toBeNull();
+
+    await api.templates.delete(template.id);
+  });
+
+  test("template default image is applied to items created from the template", async () => {
+    const api = await sharedUserClient();
+
+    const { response: locResponse, data: location } = await api.items.createLocation(factories.location());
+    expect(locResponse.status).toBe(201);
+
+    const { response: createResponse, data: template } = await api.templates.create(factories.template());
+    expect(createResponse.status).toBe(201);
+
+    const { response: imageResponse } = await api.templates.setImage(template.id, pngBlob(), "default.png");
+    expect(imageResponse.status).toBe(200);
+
+    const { response, data: item } = await api.templates.createItem(template.id, {
+      name: "item-from-template",
+      description: "",
+      parentId: location.id,
+      tagIds: [],
+    });
+    expect(response.status).toBe(201);
+    expect(item.attachments).toHaveLength(1);
+    expect(item.attachments[0]?.type).toBe("photo");
+    expect(item.attachments[0]?.primary).toBe(true);
+    expect(item.imageId).toBe(item.attachments[0]?.id);
+
+    // Removing the item's copy must not take the template's image with it,
+    // since both point at the same stored file.
+    const { response: deleteAttachment } = await api.items.attachments.delete(item.id, item.attachments[0]!.id);
+    expect(deleteAttachment.status).toBe(204);
+
+    const { data: templateAfter } = await api.templates.get(template.id);
+    expect(templateAfter.defaultImage).toBeTruthy();
+
+    await api.items.delete(item.id);
+    await api.templates.delete(template.id);
+    await api.items.deleteLocation(location.id);
+  });
+
+  test("items created before an image is set are left alone", async () => {
+    const api = await sharedUserClient();
+
+    const { response: locResponse, data: location } = await api.items.createLocation(factories.location());
+    expect(locResponse.status).toBe(201);
+
+    const { data: template } = await api.templates.create(factories.template());
+
+    const { response, data: item } = await api.templates.createItem(template.id, {
+      name: "item-before-image",
+      description: "",
+      parentId: location.id,
+      tagIds: [],
+    });
+    expect(response.status).toBe(201);
+    expect(item.attachments).toHaveLength(0);
+
+    await api.templates.setImage(template.id, pngBlob(), "default.png");
+
+    const { data: itemAfter } = await api.items.get(item.id);
+    expect(itemAfter.attachments).toHaveLength(0);
+
+    await api.items.delete(item.id);
+    await api.templates.delete(template.id);
+    await api.items.deleteLocation(location.id);
+  });
+});

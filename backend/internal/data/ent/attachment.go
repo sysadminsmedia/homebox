@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 )
 
 // Attachment is the model entity for the Attachment schema.
@@ -35,10 +36,11 @@ type Attachment struct {
 	MimeType string `json:"mime_type,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AttachmentQuery when eager-loading is set.
-	Edges                AttachmentEdges `json:"edges"`
-	attachment_thumbnail *uuid.UUID
-	entity_attachments   *uuid.UUID
-	selectValues         sql.SelectValues
+	Edges                         AttachmentEdges `json:"edges"`
+	attachment_thumbnail          *uuid.UUID
+	entity_attachments            *uuid.UUID
+	entity_template_default_image *uuid.UUID
+	selectValues                  sql.SelectValues
 }
 
 // AttachmentEdges holds the relations/edges for other nodes in the graph.
@@ -47,9 +49,11 @@ type AttachmentEdges struct {
 	Entity *Entity `json:"entity,omitempty"`
 	// Thumbnail holds the value of the thumbnail edge.
 	Thumbnail *Attachment `json:"thumbnail,omitempty"`
+	// EntityTemplate holds the value of the entity_template edge.
+	EntityTemplate *EntityTemplate `json:"entity_template,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // EntityOrErr returns the Entity value or an error if the edge
@@ -74,6 +78,17 @@ func (e AttachmentEdges) ThumbnailOrErr() (*Attachment, error) {
 	return nil, &NotLoadedError{edge: "thumbnail"}
 }
 
+// EntityTemplateOrErr returns the EntityTemplate value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e AttachmentEdges) EntityTemplateOrErr() (*EntityTemplate, error) {
+	if e.EntityTemplate != nil {
+		return e.EntityTemplate, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: entitytemplate.Label}
+	}
+	return nil, &NotLoadedError{edge: "entity_template"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Attachment) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -90,6 +105,8 @@ func (*Attachment) scanValues(columns []string) ([]any, error) {
 		case attachment.ForeignKeys[0]: // attachment_thumbnail
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		case attachment.ForeignKeys[1]: // entity_attachments
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
+		case attachment.ForeignKeys[2]: // entity_template_default_image
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -168,6 +185,13 @@ func (_m *Attachment) assignValues(columns []string, values []any) error {
 				_m.entity_attachments = new(uuid.UUID)
 				*_m.entity_attachments = *value.S.(*uuid.UUID)
 			}
+		case attachment.ForeignKeys[2]:
+			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field entity_template_default_image", values[i])
+			} else if value.Valid {
+				_m.entity_template_default_image = new(uuid.UUID)
+				*_m.entity_template_default_image = *value.S.(*uuid.UUID)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -189,6 +213,11 @@ func (_m *Attachment) QueryEntity() *EntityQuery {
 // QueryThumbnail queries the "thumbnail" edge of the Attachment entity.
 func (_m *Attachment) QueryThumbnail() *AttachmentQuery {
 	return NewAttachmentClient(_m.config).QueryThumbnail(_m)
+}
+
+// QueryEntityTemplate queries the "entity_template" edge of the Attachment entity.
+func (_m *Attachment) QueryEntityTemplate() *EntityTemplateQuery {
+	return NewAttachmentClient(_m.config).QueryEntityTemplate(_m)
 }
 
 // Update returns a builder for updating this Attachment.

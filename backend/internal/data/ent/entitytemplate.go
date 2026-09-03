@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
@@ -71,9 +72,11 @@ type EntityTemplateEdges struct {
 	Fields []*TemplateField `json:"fields,omitempty"`
 	// Location holds the value of the location edge.
 	Location *Entity `json:"location,omitempty"`
+	// DefaultImage holds the value of the default_image edge.
+	DefaultImage *Attachment `json:"default_image,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // GroupOrErr returns the Group value or an error if the edge
@@ -105,6 +108,17 @@ func (e EntityTemplateEdges) LocationOrErr() (*Entity, error) {
 		return nil, &NotFoundError{label: entity.Label}
 	}
 	return nil, &NotLoadedError{edge: "location"}
+}
+
+// DefaultImageOrErr returns the DefaultImage value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EntityTemplateEdges) DefaultImageOrErr() (*Attachment, error) {
+	if e.DefaultImage != nil {
+		return e.DefaultImage, nil
+	} else if e.loadedTypes[3] {
+		return nil, &NotFoundError{label: attachment.Label}
+	}
+	return nil, &NotLoadedError{edge: "default_image"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -293,6 +307,11 @@ func (_m *EntityTemplate) QueryFields() *TemplateFieldQuery {
 // QueryLocation queries the "location" edge of the EntityTemplate entity.
 func (_m *EntityTemplate) QueryLocation() *EntityQuery {
 	return NewEntityTemplateClient(_m.config).QueryLocation(_m)
+}
+
+// QueryDefaultImage queries the "default_image" edge of the EntityTemplate entity.
+func (_m *EntityTemplate) QueryDefaultImage() *AttachmentQuery {
+	return NewEntityTemplateClient(_m.config).QueryDefaultImage(_m)
 }
 
 // Update returns a builder for updating this EntityTemplate.

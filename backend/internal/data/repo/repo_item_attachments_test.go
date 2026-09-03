@@ -472,3 +472,62 @@ func TestAttachmentRepo_MigrateLegacyFlatPaths_TargetExistsKeepsSource(t *testin
 	require.NoError(t, err)
 	assert.Equal(t, "new", string(dst), "target file should not be overwritten")
 }
+
+func TestAttachmentRepo_DeleteSharedPathKeepsFileAndDropsThumbnail(t *testing.T) {
+	ctx := context.Background()
+	e := useEntities(t, 1)[0]
+
+	// Two attachments with identical content dedupe onto one stored path, which
+	// is also what entity template default images produce.
+	first, err := tRepos.Attachments.Create(ctx, e.ID, ItemCreateAttachment{
+		Title:   "shared.png",
+		Content: strings.NewReader("shared bytes"),
+	}, attachment.TypePhoto, false)
+	require.NoError(t, err)
+
+	second, err := tRepos.Attachments.Create(ctx, e.ID, ItemCreateAttachment{
+		Title:   "shared.png",
+		Content: strings.NewReader("shared bytes"),
+	}, attachment.TypePhoto, false)
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, second.ID)
+	})
+	require.Equal(t, first.Path, second.Path)
+
+	// Give the first attachment a thumbnail. The harness runs with thumbnail
+	// generation disabled, so build the row the generator would have written.
+	grp, err := tClient.Group.Get(ctx, tGroup.ID)
+	require.NoError(t, err)
+	thumbUpload, err := tRepos.Attachments.UploadFile(ctx, grp, ItemCreateAttachment{
+		Title:   "shared-thumb.png",
+		Content: strings.NewReader("thumb bytes"),
+	})
+	require.NoError(t, err)
+
+	thumb, err := tClient.Attachment.Create().
+		SetID(uuid.New()).
+		SetType(attachment.TypeThumbnail).
+		SetTitle("shared.png-thumb").
+		SetPath(thumbUpload.Path).
+		SetMimeType(thumbUpload.ContentType).
+		Save(ctx)
+	require.NoError(t, err)
+	require.NoError(t, tClient.Attachment.UpdateOneID(first.ID).SetThumbnail(thumb).Exec(ctx))
+
+	require.NoError(t, tRepos.Attachments.Delete(ctx, tGroup.ID, first.ID))
+
+	// The thumbnail row belongs to the deleted attachment alone and must go
+	// with it, even though the source path is still in use.
+	_, err = tClient.Attachment.Get(ctx, thumb.ID)
+	require.Error(t, err, "thumbnail row was orphaned")
+
+	thumbFile := filepath.Join(os.TempDir(), tRepos.Attachments.GetFullPath(thumbUpload.Path))
+	_, err = os.Stat(thumbFile)
+	require.Error(t, err, "thumbnail file was orphaned")
+
+	// The shared source file must survive for the remaining attachment.
+	sharedFile := filepath.Join(os.TempDir(), tRepos.Attachments.GetFullPath(second.Path))
+	_, err = os.Stat(sharedFile)
+	require.NoError(t, err, "shared file was deleted while another attachment references it")
+}

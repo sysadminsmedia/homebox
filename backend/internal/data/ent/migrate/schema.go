@@ -58,6 +58,7 @@ var (
 		{Name: "mime_type", Type: field.TypeString, Default: "application/octet-stream"},
 		{Name: "attachment_thumbnail", Type: field.TypeUUID, Unique: true, Nullable: true},
 		{Name: "entity_attachments", Type: field.TypeUUID, Nullable: true},
+		{Name: "entity_template_default_image", Type: field.TypeUUID, Unique: true, Nullable: true},
 	}
 	// AttachmentsTable holds the schema information for the "attachments" table.
 	AttachmentsTable = &schema.Table{
@@ -76,6 +77,12 @@ var (
 				Columns:    []*schema.Column{AttachmentsColumns[9]},
 				RefColumns: []*schema.Column{EntitiesColumns[0]},
 				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "attachments_entity_templates_default_image",
+				Columns:    []*schema.Column{AttachmentsColumns[10]},
+				RefColumns: []*schema.Column{EntityTemplatesColumns[0]},
+				OnDelete:   schema.SetNull,
 			},
 		},
 	}
@@ -683,6 +690,7 @@ func init() {
 	APIKeysTable.ForeignKeys[0].RefTable = UsersTable
 	AttachmentsTable.ForeignKeys[0].RefTable = AttachmentsTable
 	AttachmentsTable.ForeignKeys[1].RefTable = EntitiesTable
+	AttachmentsTable.ForeignKeys[2].RefTable = EntityTemplatesTable
 	AuthRolesTable.ForeignKeys[0].RefTable = AuthTokensTable
 	AuthTokensTable.ForeignKeys[0].RefTable = UsersTable
 	EntitiesTable.ForeignKeys[0].RefTable = EntitiesTable

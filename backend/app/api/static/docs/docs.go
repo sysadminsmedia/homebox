@@ -2623,6 +2623,126 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/templates/{id}/image": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "tags": [
+                    "Entity Templates"
+                ],
+                "summary": "Get Entity Template Default Image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Stores an image on the template. Entities created from the template",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entity Templates"
+                ],
+                "summary": "Set Entity Template Default Image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Image file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "name of the file including extension",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityTemplateOut"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/validate.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Removes the template's default image. Entities already created from",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entity Templates"
+                ],
+                "summary": "Delete Entity Template Default Image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityTemplateOut"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/users/change-password": {
             "put": {
                 "security": [
@@ -3367,6 +3487,14 @@ const docTemplate = `{
                         }
                     ]
                 },
+                "entity_template": {
+                    "description": "EntityTemplate holds the value of the entity_template edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.EntityTemplate"
+                        }
+                    ]
+                },
                 "thumbnail": {
                     "description": "Thumbnail holds the value of the thumbnail edge.",
                     "allOf": [
@@ -3810,6 +3938,14 @@ const docTemplate = `{
         "ent.EntityTemplateEdges": {
             "type": "object",
             "properties": {
+                "default_image": {
+                    "description": "DefaultImage holds the value of the default_image edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Attachment"
+                        }
+                    ]
+                },
                 "fields": {
                     "description": "Fields holds the value of the fields edge.",
                     "type": "array",
@@ -5257,6 +5393,14 @@ const docTemplate = `{
                 "defaultDescription": {
                     "type": "string"
                 },
+                "defaultImage": {
+                    "description": "Default image applied to entities created from this template",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/repo.TemplateImageSummary"
+                        }
+                    ]
+                },
                 "defaultInsured": {
                     "type": "boolean"
                 },
@@ -6123,6 +6267,24 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.TemplateImageSummary": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "mimeType": {
+                    "type": "string"
+                },
+                "thumbnailId": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "title": {
                     "type": "string"
                 }
             }

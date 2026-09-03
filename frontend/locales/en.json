@@ -337,10 +337,12 @@
                 "edit": "Edit template"
             },
             "confirm_delete": "Delete this template?",
+            "confirm_remove_image": "Remove this template's default image? Items already created from it keep their photo.",
             "create_modal": {
                 "title": "Create Template"
             },
             "detail": {
+                "default_image": "Default Image",
                 "default_values": "Default Values",
                 "updated": "Updated"
             },
@@ -350,6 +352,8 @@
             "empty_value": "(empty)",
             "form": {
                 "custom_fields": "Custom Fields",
+                "default_image": "Default Image",
+                "default_image_hint": "Applied as the primary photo of items created from this template.",
                 "default_item_values": "Default Item Values",
                 "default_location": "Default Location",
                 "default_value": "Default Value",
@@ -361,8 +365,12 @@
                 "manufacturer": "Manufacturer",
                 "model_number": "Model Number",
                 "no_custom_fields": "No custom fields.",
+                "no_default_image": "No default image.",
+                "remove_image": "Remove image",
+                "replace_image": "Replace image",
                 "template_description": "Template Description",
-                "template_name": "Template Name"
+                "template_name": "Template Name",
+                "upload_image": "Upload image"
             },
             "hide_defaults": "Hide defaults",
             "save_as_template": "Save as Template",
@@ -382,6 +390,10 @@
                 "deleted": "Template deleted",
                 "duplicate_failed": "Failed to duplicate template",
                 "duplicated": "Template duplicated as \"{name}\"",
+                "image_remove_failed": "Failed to remove template image",
+                "image_removed": "Template image removed",
+                "image_update_failed": "Failed to update template image",
+                "image_updated": "Template image updated",
                 "load_failed": "Failed to load template details",
                 "saved_as_template": "Item saved as template \"{name}\"",
                 "update_failed": "Failed to update template",
