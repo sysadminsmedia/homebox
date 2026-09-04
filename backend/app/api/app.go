@@ -21,6 +21,8 @@ type app struct {
 	bus                 *eventbus.EventBus
 	authLimiter         *authRateLimiter
 	notifierTestLimiter *simpleRateLimiter
+	foundLimiter        *simpleRateLimiter
+	foundSendLimiter    *simpleRateLimiter
 	otel                *otel.Provider
 }
 
@@ -39,6 +41,14 @@ func new(conf *config.Config) *app {
 
 	s.authLimiter = newAuthRateLimiter(s.conf.Auth.RateLimit)
 	s.notifierTestLimiter = newSimpleRateLimiter(10, time.Minute, s.conf.Options.TrustProxy) // 10 requests per minute
+	// Public found-item endpoints. foundLimiter is a per-IP request cap on
+	// both routes (30/min/IP) that throttles asset-ID enumeration; unlike
+	// mwAuthRateLimit it is not a failed-auth backoff and does not reset on a
+	// successful response. foundSendLimiter is a per-item email cap
+	// (3 per 10 min) that bounds owner-directed mailbombing even from
+	// distributed source IPs.
+	s.foundLimiter = newSimpleRateLimiter(30, time.Minute, s.conf.Options.TrustProxy)
+	s.foundSendLimiter = newSimpleRateLimiter(3, 10*time.Minute, s.conf.Options.TrustProxy)
 
 	return s
 }

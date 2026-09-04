@@ -92,6 +92,32 @@ func TestSimpleRateLimiter(t *testing.T) {
 	}
 }
 
+// TestSimpleRateLimiterAllowPerKey exercises the exported Allow wrapper the
+// found-contact handler relies on for its per-item send cap: the cap is
+// enforced per key, and exhausting one key's bucket does not affect another's.
+func TestSimpleRateLimiterAllowPerKey(t *testing.T) {
+	// 3 sends per window, matching the found send-limiter's cap. trustProxy is
+	// irrelevant here: Allow takes an arbitrary key (the item ID), not an IP.
+	limiter := newSimpleRateLimiter(3, 10*time.Second, false)
+	t.Cleanup(func() { limiter.Stop() })
+
+	// Cap enforced per key: first 3 allowed, 4th denied.
+	for i := 0; i < 3; i++ {
+		if !limiter.Allow("item-A") {
+			t.Errorf("send %d for item-A should have been allowed", i+1)
+		}
+	}
+	if limiter.Allow("item-A") {
+		t.Error("4th send for item-A should have been blocked")
+	}
+
+	// Per-key isolation: item-A exhausting its bucket must not affect item-B.
+	// This is the property that makes the per-item mailbomb bound correct.
+	if !limiter.Allow("item-B") {
+		t.Error("item-B should be allowed even after item-A is exhausted")
+	}
+}
+
 func TestSimpleRateLimiterRefill(t *testing.T) {
 	type testCase struct {
 		name       string

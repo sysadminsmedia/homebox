@@ -734,6 +734,13 @@ func (rl *simpleRateLimiter) allow(clientIP string) bool {
 	return false
 }
 
+// Allow is an exported wrapper around allow so callers outside this package
+// (e.g. the v1 controller's per-item found-contact send cap) can gate on an
+// arbitrary key without reaching into the unexported method.
+func (rl *simpleRateLimiter) Allow(key string) bool {
+	return rl.allow(key)
+}
+
 // getClientIP extracts the client IP from the request.
 // It only uses proxy headers (X-Real-IP, X-Forwarded-For) if trustProxy is enabled.
 func (rl *simpleRateLimiter) getClientIP(r *http.Request, trustProxy bool) string {

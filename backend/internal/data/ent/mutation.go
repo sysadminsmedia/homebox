@@ -9504,6 +9504,8 @@ type GroupMutation struct {
 	updated_at               *time.Time
 	name                     *string
 	currency                 *string
+	found_contact_enabled    *bool
+	found_contact_message    *string
 	clearedFields            map[string]struct{}
 	users                    map[uuid.UUID]struct{}
 	removedusers             map[uuid.UUID]struct{}
@@ -9780,6 +9782,78 @@ func (m *GroupMutation) OldCurrency(ctx context.Context) (v string, err error) {
 // ResetCurrency resets all changes to the "currency" field.
 func (m *GroupMutation) ResetCurrency() {
 	m.currency = nil
+}
+
+// SetFoundContactEnabled sets the "found_contact_enabled" field.
+func (m *GroupMutation) SetFoundContactEnabled(b bool) {
+	m.found_contact_enabled = &b
+}
+
+// FoundContactEnabled returns the value of the "found_contact_enabled" field in the mutation.
+func (m *GroupMutation) FoundContactEnabled() (r bool, exists bool) {
+	v := m.found_contact_enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFoundContactEnabled returns the old "found_contact_enabled" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldFoundContactEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFoundContactEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFoundContactEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFoundContactEnabled: %w", err)
+	}
+	return oldValue.FoundContactEnabled, nil
+}
+
+// ResetFoundContactEnabled resets all changes to the "found_contact_enabled" field.
+func (m *GroupMutation) ResetFoundContactEnabled() {
+	m.found_contact_enabled = nil
+}
+
+// SetFoundContactMessage sets the "found_contact_message" field.
+func (m *GroupMutation) SetFoundContactMessage(s string) {
+	m.found_contact_message = &s
+}
+
+// FoundContactMessage returns the value of the "found_contact_message" field in the mutation.
+func (m *GroupMutation) FoundContactMessage() (r string, exists bool) {
+	v := m.found_contact_message
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFoundContactMessage returns the old "found_contact_message" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldFoundContactMessage(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFoundContactMessage is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFoundContactMessage requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFoundContactMessage: %w", err)
+	}
+	return oldValue.FoundContactMessage, nil
+}
+
+// ResetFoundContactMessage resets all changes to the "found_contact_message" field.
+func (m *GroupMutation) ResetFoundContactMessage() {
+	m.found_contact_message = nil
 }
 
 // AddUserIDs adds the "users" edge to the User entity by ids.
@@ -10248,7 +10322,7 @@ func (m *GroupMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 6)
 	if m.created_at != nil {
 		fields = append(fields, group.FieldCreatedAt)
 	}
@@ -10260,6 +10334,12 @@ func (m *GroupMutation) Fields() []string {
 	}
 	if m.currency != nil {
 		fields = append(fields, group.FieldCurrency)
+	}
+	if m.found_contact_enabled != nil {
+		fields = append(fields, group.FieldFoundContactEnabled)
+	}
+	if m.found_contact_message != nil {
+		fields = append(fields, group.FieldFoundContactMessage)
 	}
 	return fields
 }
@@ -10277,6 +10357,10 @@ func (m *GroupMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case group.FieldCurrency:
 		return m.Currency()
+	case group.FieldFoundContactEnabled:
+		return m.FoundContactEnabled()
+	case group.FieldFoundContactMessage:
+		return m.FoundContactMessage()
 	}
 	return nil, false
 }
@@ -10294,6 +10378,10 @@ func (m *GroupMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldName(ctx)
 	case group.FieldCurrency:
 		return m.OldCurrency(ctx)
+	case group.FieldFoundContactEnabled:
+		return m.OldFoundContactEnabled(ctx)
+	case group.FieldFoundContactMessage:
+		return m.OldFoundContactMessage(ctx)
 	}
 	return nil, fmt.Errorf("unknown Group field %s", name)
 }
@@ -10330,6 +10418,20 @@ func (m *GroupMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCurrency(v)
+		return nil
+	case group.FieldFoundContactEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFoundContactEnabled(v)
+		return nil
+	case group.FieldFoundContactMessage:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFoundContactMessage(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Group field %s", name)
@@ -10391,6 +10493,12 @@ func (m *GroupMutation) ResetField(name string) error {
 		return nil
 	case group.FieldCurrency:
 		m.ResetCurrency()
+		return nil
+	case group.FieldFoundContactEnabled:
+		m.ResetFoundContactEnabled()
+		return nil
+	case group.FieldFoundContactMessage:
+		m.ResetFoundContactMessage()
 		return nil
 	}
 	return fmt.Errorf("unknown Group field %s", name)
