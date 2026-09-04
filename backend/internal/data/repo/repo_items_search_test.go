@@ -1,216 +1,213 @@
 package repo
 
 import (
+	"context"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"github.com/sysadminsmedia/homebox/backend/pkgs/textutils"
+	"github.com/stretchr/testify/require"
 )
 
-// Repeated test fixture; constant satisfies goconst across the test cases below.
-const fixtureElectronicaAccented = "electrónica"
+// useSearchableItem creates an item with the given name and applies an
+// optional full update so tests can populate any searchable field.
+func useSearchableItem(t *testing.T, name string, mutate func(u *EntityUpdate)) EntityOut {
+	t.Helper()
+	ctx := context.Background()
+	itemET := useItemEntityType(t)
 
-func TestEntityRepository_AccentInsensitiveSearch(t *testing.T) {
-	// Test cases for accent-insensitive search
-	testCases := []struct {
-		name        string
-		itemName    string
-		searchQuery string
-		shouldMatch bool
-		description string
-	}{
-		{
-			name:        "Spanish accented item, search without accents",
-			itemName:    fixtureElectronicaAccented,
-			searchQuery: "electronica",
-			shouldMatch: true,
-			description: "Should find 'electrónica' when searching for 'electronica'",
-		},
-		{
-			name:        "Spanish accented item, search with accents",
-			itemName:    fixtureElectronicaAccented,
-			searchQuery: fixtureElectronicaAccented,
-			shouldMatch: true,
-			description: "Should find 'electrónica' when searching for 'electrónica'",
-		},
-		{
-			name:        "Non-accented item, search with accents",
-			itemName:    "electronica",
-			searchQuery: fixtureElectronicaAccented,
-			shouldMatch: true,
-			description: "Should find 'electronica' when searching for 'electrónica' (bidirectional search)",
-		},
-		{
-			name:        "Spanish item with tilde, search without accents",
-			itemName:    "café",
-			searchQuery: "cafe",
-			shouldMatch: true,
-			description: "Should find 'café' when searching for 'cafe'",
-		},
-		{
-			name:        "Spanish item without tilde, search with accents",
-			itemName:    "cafe",
-			searchQuery: "café",
-			shouldMatch: true,
-			description: "Should find 'cafe' when searching for 'café' (bidirectional)",
-		},
-		{
-			name:        "French accented item, search without accents",
-			itemName:    "pére",
-			searchQuery: "pere",
-			shouldMatch: true,
-			description: "Should find 'pére' when searching for 'pere'",
-		},
-		{
-			name:        "French: père without accent, search with accents",
-			itemName:    "pere",
-			searchQuery: "père",
-			shouldMatch: true,
-			description: "Should find 'pere' when searching for 'père' (bidirectional)",
-		},
-		{
-			name:        "Mixed case with accents",
-			itemName:    "Electrónica",
-			searchQuery: "ELECTRONICA",
-			shouldMatch: true,
-			description: "Should find 'Electrónica' when searching for 'ELECTRONICA' (case insensitive)",
-		},
-		{
-			name:        "Bidirectional: Non-accented item, search with different accents",
-			itemName:    "cafe",
-			searchQuery: "café",
-			shouldMatch: true,
-			description: "Should find 'cafe' when searching for 'café' (bidirectional)",
-		},
-		{
-			name:        "Bidirectional: Item with accent, search with different accent",
-			itemName:    "résumé",
-			searchQuery: "resume",
-			shouldMatch: true,
-			description: "Should find 'résumé' when searching for 'resume' (bidirectional)",
-		},
-		{
-			name:        "Bidirectional: Spanish ñ to n",
-			itemName:    "espanol",
-			searchQuery: "español",
-			shouldMatch: true,
-			description: "Should find 'espanol' when searching for 'español' (bidirectional ñ)",
-		},
-		{
-			name:        "French: français with accent, search without",
-			itemName:    "français",
-			searchQuery: "francais",
-			shouldMatch: true,
-			description: "Should find 'français' when searching for 'francais'",
-		},
-		{
-			name:        "French: français without accent, search with",
-			itemName:    "francais",
-			searchQuery: "français",
-			shouldMatch: true,
-			description: "Should find 'francais' when searching for 'français' (bidirectional)",
-		},
-		{
-			name:        "French: été with accent, search without",
-			itemName:    "été",
-			searchQuery: "ete",
-			shouldMatch: true,
-			description: "Should find 'été' when searching for 'ete'",
-		},
-		{
-			name:        "French: été without accent, search with",
-			itemName:    "ete",
-			searchQuery: "été",
-			shouldMatch: true,
-			description: "Should find 'ete' when searching for 'été' (bidirectional)",
-		},
-		{
-			name:        "French: hôtel with accent, search without",
-			itemName:    "hôtel",
-			searchQuery: "hotel",
-			shouldMatch: true,
-			description: "Should find 'hôtel' when searching for 'hotel'",
-		},
-		{
-			name:        "French: hôtel without accent, search with",
-			itemName:    "hotel",
-			searchQuery: "hôtel",
-			shouldMatch: true,
-			description: "Should find 'hotel' when searching for 'hôtel' (bidirectional)",
-		},
-		{
-			name:        "French: naïve with accent, search without",
-			itemName:    "naïve",
-			searchQuery: "naive",
-			shouldMatch: true,
-			description: "Should find 'naïve' when searching for 'naive'",
-		},
-		{
-			name:        "French: naïve without accent, search with",
-			itemName:    "naive",
-			searchQuery: "naïve",
-			shouldMatch: true,
-			description: "Should find 'naive' when searching for 'naïve' (bidirectional)",
-		},
+	e, err := tRepos.Entities.Create(ctx, tGroup.ID, EntityCreate{
+		Name:         name,
+		EntityTypeID: itemET.ID,
+	})
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = tRepos.Entities.Delete(context.Background(), e.ID) })
+
+	if mutate != nil {
+		u := EntityUpdate{
+			ID:           e.ID,
+			Name:         name,
+			Quantity:     1,
+			EntityTypeID: itemET.ID,
+		}
+		mutate(&u)
+		_, err = tRepos.Entities.UpdateByGroup(ctx, tGroup.ID, u)
+		require.NoError(t, err)
 	}
+	return e
+}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			// Test the normalization logic used in the repository
-			normalizedSearch := textutils.NormalizeSearchQuery(tc.searchQuery)
+// searchIDs runs a search query and returns the set of matched entity IDs.
+// The test group is shared across the package, so assertions check membership
+// instead of exact result counts.
+func searchIDs(t *testing.T, q EntityQuery) map[uuid.UUID]bool {
+	t.Helper()
+	q.Page, q.PageSize = -1, -1
+	res, err := tRepos.Entities.QueryByGroup(context.Background(), tGroup.ID, q)
+	require.NoError(t, err)
 
-			// This simulates what happens in the repository
-			// The original search would find exact matches (case-insensitive)
-			// The normalized search would find accent-insensitive matches
+	ids := make(map[uuid.UUID]bool, len(res.Items))
+	for _, item := range res.Items {
+		ids[item.ID] = true
+	}
+	return ids
+}
 
-			// Test that our normalization works as expected
-			if tc.shouldMatch {
-				// If it should match, then either the original query should match
-				// or the normalized query should match when applied to the stored data
-				assert.NotEmpty(t, normalizedSearch, "Normalized search should not be empty")
-
-				// The key insight is that we're searching with both the original and normalized queries
-				// So "electrónica" will be found when searching for "electronica" because:
-				// 1. Original search: "electronica" doesn't match "electrónica"
-				// 2. Normalized search: "electronica" matches the normalized version
-				t.Logf("✓ %s: Item '%s' should be found with search '%s' (normalized: '%s')",
-					tc.description, tc.itemName, tc.searchQuery, normalizedSearch)
-			} else {
-				t.Logf("✗ %s: Item '%s' should NOT be found with search '%s' (normalized: '%s')",
-					tc.description, tc.itemName, tc.searchQuery, normalizedSearch)
-			}
-		})
+func assertSearchFinds(t *testing.T, query string, item EntityOut, want bool) {
+	t.Helper()
+	found := searchIDs(t, EntityQuery{Search: query})[item.ID]
+	if want {
+		assert.True(t, found, "search %q should find item %q", query, item.Name)
+	} else {
+		assert.False(t, found, "search %q should NOT find item %q", query, item.Name)
 	}
 }
 
-func TestNormalizeSearchQueryIntegration(t *testing.T) {
-	// Test that the normalization function works correctly
-	testCases := []struct {
-		input    string
-		expected string
-	}{
-		{fixtureElectronicaAccented, "electronica"},
-		{"café", "cafe"},
-		{"ELECTRÓNICA", "electronica"},
-		{"Café París", "cafe paris"},
-		{"hello world", "hello world"},
-		// French accented words
-		{"père", "pere"},
-		{"français", "francais"},
-		{"été", "ete"},
-		{"hôtel", "hotel"},
-		{"naïve", "naive"},
-		{"PÈRE", "pere"},
-		{"FRANÇAIS", "francais"},
-		{"ÉTÉ", "ete"},
-		{"HÔTEL", "hotel"},
-		{"NAÏVE", "naive"},
-	}
+func TestEntitySearch_UnicodeCaseInsensitive(t *testing.T) {
+	ukrainian := useSearchableItem(t, "Тестовий Запис", nil)
+	greek := useSearchableItem(t, "Υπολογιστής", nil)
 
-	for _, tc := range testCases {
-		t.Run(tc.input, func(t *testing.T) {
-			result := textutils.NormalizeSearchQuery(tc.input)
-			assert.Equal(t, tc.expected, result, "Normalization should work correctly")
-		})
-	}
+	// Cyrillic: lowercase, uppercase, and partial queries must match
+	// uppercase stored text (issue #1021).
+	assertSearchFinds(t, "тест", ukrainian, true)
+	assertSearchFinds(t, "ТЕСТ", ukrainian, true)
+	assertSearchFinds(t, "тестовий запис", ukrainian, true)
+	assertSearchFinds(t, "запис", ukrainian, true)
+
+	// Greek, including the final-sigma form difference (issue #1367).
+	assertSearchFinds(t, "Υπολογιστής", greek, true)
+	assertSearchFinds(t, "υπολογιστής", greek, true)
+	assertSearchFinds(t, "ΥΠΟΛΟΓΙΣΤΗΣ", greek, true)
+	assertSearchFinds(t, "υπολογιστης", greek, true)
+
+	assertSearchFinds(t, "холодильник", ukrainian, false)
+}
+
+func TestEntitySearch_AccentInsensitive(t *testing.T) {
+	accented := useSearchableItem(t, "Electrónica de café", nil)
+	plain := useSearchableItem(t, "electronica cafe pere", nil)
+
+	assertSearchFinds(t, "electronica", accented, true)
+	assertSearchFinds(t, "café", accented, true)
+	assertSearchFinds(t, "CAFE", accented, true)
+	assertSearchFinds(t, "electrónica", plain, true)
+	assertSearchFinds(t, "père", plain, true)
+}
+
+func TestEntitySearch_MultiTokenAnd(t *testing.T) {
+	item := useSearchableItem(t, "Red Tool Box", nil)
+
+	// every token must match, in any order
+	assertSearchFinds(t, "box red", item, true)
+	assertSearchFinds(t, "red tool", item, true)
+	assertSearchFinds(t, "red hammer", item, false)
+
+	// quoted phrases match as a unit
+	assertSearchFinds(t, `"tool box"`, item, true)
+	assertSearchFinds(t, `"box tool"`, item, false)
+}
+
+func TestEntitySearch_MatchesAcrossFields(t *testing.T) {
+	item := useSearchableItem(t, "Multifield", func(u *EntityUpdate) {
+		u.SerialNumber = "SN-998877"
+		u.ModelNumber = "MX-1000"
+		u.Manufacturer = "Acme Corp"
+		u.Notes = "stored in the attic"
+		u.PurchaseFrom = "Conrad Electronic"
+	})
+
+	assertSearchFinds(t, "998877", item, true)
+	assertSearchFinds(t, "mx-1000", item, true)
+	assertSearchFinds(t, "acme", item, true)
+	assertSearchFinds(t, "attic", item, true)
+	assertSearchFinds(t, "conrad", item, true)
+
+	// tokens may match across different fields of the same item
+	assertSearchFinds(t, "acme attic", item, true)
+}
+
+func TestEntitySearch_MatchesTagNames(t *testing.T) {
+	ctx := context.Background()
+
+	tagOut, err := tRepos.Tags.Create(ctx, tGroup.ID, TagCreate{Name: "Электроника-поиск"})
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = tRepos.Tags.delete(context.Background(), tagOut.ID) })
+
+	itemET := useItemEntityType(t)
+	tagged, err := tRepos.Entities.Create(ctx, tGroup.ID, EntityCreate{
+		Name:         "Tagged thing",
+		EntityTypeID: itemET.ID,
+		TagIDs:       []uuid.UUID{tagOut.ID},
+	})
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = tRepos.Entities.Delete(context.Background(), tagged.ID) })
+
+	untagged := useSearchableItem(t, "Untagged thing", nil)
+
+	// tag names are searchable from the search bar (#1509), with the same
+	// UTF-8 case folding as other fields
+	assertSearchFinds(t, "электроника-поиск", tagged, true)
+	assertSearchFinds(t, "электроника-поиск", untagged, false)
+}
+
+func TestEntitySearch_MatchesCustomFieldValues(t *testing.T) {
+	item := useSearchableItem(t, "Phone", func(u *EntityUpdate) {
+		u.Fields = []EntityFieldData{
+			{Type: "text", Name: "IMEI", TextValue: "351234567891011"},
+		}
+	})
+	other := useSearchableItem(t, "Other phone", nil)
+
+	// custom field values are searchable from the search bar (#1380)
+	assertSearchFinds(t, "351234567891011", item, true)
+	assertSearchFinds(t, "3512345", item, true)
+	assertSearchFinds(t, "351234567891011", other, false)
+}
+
+func TestEntitySearch_LikeWildcardsAreLiteral(t *testing.T) {
+	percent := useSearchableItem(t, "100% cotton", nil)
+	plain := useSearchableItem(t, "100x cotton", nil)
+
+	assertSearchFinds(t, "100%", percent, true)
+	assertSearchFinds(t, "100%", plain, false)
+
+	underscore := useSearchableItem(t, "a_b pattern", nil)
+	noUnderscore := useSearchableItem(t, "axb pattern", nil)
+
+	assertSearchFinds(t, "a_b", underscore, true)
+	assertSearchFinds(t, "a_b", noUnderscore, false)
+}
+
+func TestQueryByGroup_MatchAllTags(t *testing.T) {
+	ctx := context.Background()
+	tags := useTags(t, 2)
+
+	itemET := useItemEntityType(t)
+	both, err := tRepos.Entities.Create(ctx, tGroup.ID, EntityCreate{
+		Name:         "Has both tags",
+		EntityTypeID: itemET.ID,
+		TagIDs:       []uuid.UUID{tags[0].ID, tags[1].ID},
+	})
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = tRepos.Entities.Delete(context.Background(), both.ID) })
+
+	one, err := tRepos.Entities.Create(ctx, tGroup.ID, EntityCreate{
+		Name:         "Has one tag",
+		EntityTypeID: itemET.ID,
+		TagIDs:       []uuid.UUID{tags[0].ID},
+	})
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = tRepos.Entities.Delete(context.Background(), one.ID) })
+
+	tagIDs := []uuid.UUID{tags[0].ID, tags[1].ID}
+
+	// default OR behavior: any selected tag matches
+	anyMatch := searchIDs(t, EntityQuery{TagIDs: tagIDs})
+	assert.True(t, anyMatch[both.ID], "OR mode should match item with both tags")
+	assert.True(t, anyMatch[one.ID], "OR mode should match item with one tag")
+
+	// matchAllTags: every selected tag must be present (#1454)
+	allMatch := searchIDs(t, EntityQuery{TagIDs: tagIDs, MatchAllTags: true})
+	assert.True(t, allMatch[both.ID], "AND mode should match item with both tags")
+	assert.False(t, allMatch[one.ID], "AND mode should NOT match item with only one tag")
 }

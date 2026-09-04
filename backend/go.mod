@@ -20,6 +20,7 @@ require (
 	github.com/gorilla/schema v1.4.1
 	github.com/hay-kot/httpkit v0.0.11
 	github.com/jackc/pgx/v5 v5.10.0
+	github.com/meilisearch/meilisearch-go v0.36.3
 	github.com/nicholas-fedor/shoutrrr v0.17.1
 	github.com/olahol/melody v1.4.0
 	github.com/pkg/errors v0.9.1
