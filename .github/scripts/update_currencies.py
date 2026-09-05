@@ -26,6 +26,15 @@ CURRENCY_DECIMAL_OVERRIDES = {
     "JPY": 0,  # Japanese Yen has no decimal places
     "BHD": 3,  # Bahraini Dinar uses 3 decimal places
 }
+
+# Some currency codes are shared by a country and one or more territories.
+# Prefer the canonical country entry so the app does not expose generic names
+# such as "Krone" for DKK/NOK after runtime deduplication by code.
+CANONICAL_CURRENCY_LOCALS = {
+    "DKK": "Denmark",
+    "NOK": "Norway",
+}
+
 DEFAULT_DECIMALS = 2
 MIN_DECIMALS = 0
 MAX_DECIMALS = 6
@@ -156,6 +165,29 @@ def parse_country_page(payload):
     return countries, meta
 
 
+def canonicalize_currency_rows(results):
+    canonical_by_code = {
+        row['code']: row
+        for row in results
+        if CANONICAL_CURRENCY_LOCALS.get(row['code']) == row['local']
+    }
+
+    canonicalized = []
+    for row in results:
+        canonical = canonical_by_code.get(row['code'])
+        if canonical is None:
+            canonicalized.append(row)
+            continue
+
+        updated = row.copy()
+        updated['local'] = canonical['local']
+        updated['name'] = canonical['name']
+        updated['symbol'] = canonical['symbol']
+        canonicalized.append(updated)
+
+    return canonicalized
+
+
 def countries_to_currencies(countries, iso_data):
     results = []
     for country in countries:
@@ -205,7 +237,7 @@ def countries_to_currencies(countries, iso_data):
             })
 
     # sort by country name for consistency
-    return sorted(results, key=lambda x: x['local'].lower())
+    return sorted(canonicalize_currency_rows(results), key=lambda x: x['local'].lower())
 
 
 def fetch_currencies():

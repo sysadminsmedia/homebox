@@ -112,15 +112,15 @@ type (
 		PurchaseDate types.Date `json:"purchaseDate"`
 		// Sold
 		SoldDate    types.Date `json:"soldDate"`
-		Name        string     `json:"name"                     validate:"required,min=1,max=255"`
-		Description string     `json:"description"              validate:"max=1000"`
+		Name        string     `json:"name"        validate:"required,min=1,max=255"`
+		Description string     `json:"description" validate:"max=1000"`
 		// Identifications
 		SerialNumber    string `json:"serialNumber"`
 		ModelNumber     string `json:"modelNumber"`
 		Manufacturer    string `json:"manufacturer"`
 		WarrantyDetails string `json:"warrantyDetails"`
-		PurchaseFrom    string `json:"purchaseFrom"  validate:"max=255"`
-		SoldTo          string `json:"soldTo"    validate:"max=255"`
+		PurchaseFrom    string `json:"purchaseFrom"    validate:"max=255"`
+		SoldTo          string `json:"soldTo"          validate:"max=255"`
 		SoldNotes       string `json:"soldNotes"`
 		ExternalID      string `json:"externalID"`
 		// Extras
@@ -130,8 +130,8 @@ type (
 		Fields                   []EntityFieldData `json:"fields"`
 		AssetID                  AssetID           `json:"assetId"                  swaggertype:"string"`
 		Quantity                 float64           `json:"quantity"`
-		PurchasePrice            float64           `json:"purchasePrice" extensions:"x-nullable,x-omitempty"`
-		SoldPrice                float64           `json:"soldPrice" extensions:"x-nullable,x-omitempty"`
+		PurchasePrice            float64           `json:"purchasePrice"            extensions:"x-nullable,x-omitempty"`
+		SoldPrice                float64           `json:"soldPrice"                extensions:"x-nullable,x-omitempty"`
 		ParentID                 uuid.UUID         `json:"parentId"                 extensions:"x-nullable,x-omitempty"`
 		ID                       uuid.UUID         `json:"id"`
 		EntityTypeID             uuid.UUID         `json:"entityTypeId"`
@@ -285,7 +285,7 @@ func mapEntitySummary(e *ent.Entity) EntitySummary {
 		ThumbnailId: thumbnailID,
 
 		// Sale
-		SoldDate: types.DateFromTime(e.SoldDate),
+		SoldDate: types.DateFromDBTime(e.SoldDate),
 	}
 }
 
@@ -340,7 +340,7 @@ func mapEntityOut(e *ent.Entity) EntityOut {
 		AssetID:                  AssetID(e.AssetID),
 		EntitySummary:            mapEntitySummary(e),
 		LifetimeWarranty:         e.LifetimeWarranty,
-		WarrantyExpires:          types.DateFromTime(e.WarrantyExpires),
+		WarrantyExpires:          types.DateFromDBTime(e.WarrantyExpires),
 		WarrantyDetails:          e.WarrantyDetails,
 		SyncChildEntityLocations: e.SyncChildEntityLocations,
 
@@ -351,11 +351,11 @@ func mapEntityOut(e *ent.Entity) EntityOut {
 		ExternalID:   e.ExternalID,
 
 		// Purchase
-		PurchaseDate: types.DateFromTime(e.PurchaseDate),
+		PurchaseDate: types.DateFromDBTime(e.PurchaseDate),
 		PurchaseFrom: e.PurchaseFrom,
 
 		// Sold
-		SoldDate:  types.DateFromTime(e.SoldDate),
+		SoldDate:  types.DateFromDBTime(e.SoldDate),
 		SoldTo:    e.SoldTo,
 		SoldPrice: e.SoldPrice,
 		SoldNotes: e.SoldNotes,
@@ -1544,6 +1544,23 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		return EntityOut{}, err
 	}
 
+	// The entity being updated must itself live in the caller's group. The
+	// group predicate on the update below makes a cross-tenant ID a silent
+	// no-op rather than an error, so without this guard execution falls
+	// through to the field sync — which can only scope by entity ID — and
+	// mutates a foreign group's fields before the scoped read at the end
+	// turns the request into a 404. Fail closed up front instead, so any
+	// edge added to this function later inherits the check.
+	if data.ID == uuid.Nil {
+		err := &ent.NotFoundError{}
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+	if err := assertEntityInGroup(ctx, r.db.Entity, gid, data.ID); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+
 	// See EntityRepository.Create for the rationale on these cross-group
 	// reference checks. Applied before the update so a rejected request never
 	// mutates the row.
@@ -1605,7 +1622,9 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 	}
 
 	tagsCtx, tagsSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.tags")
-	currentTags, err := r.db.Entity.Query().Where(entity.ID(data.ID)).QueryTag().All(tagsCtx)
+	currentTags, err := r.db.Entity.Query().
+		Where(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))).
+		QueryTag().All(tagsCtx)
 	if err != nil {
 		recordSpanError(tagsSpan, err)
 		tagsSpan.End()
@@ -1659,7 +1678,9 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 
 	fieldsCtx, fieldsSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.fields",
 		trace.WithAttributes(attribute.Int("fields.input.count", len(data.Fields))))
-	fields, err := r.db.EntityField.Query().Where(entityfield.HasEntityWith(entity.ID(data.ID))).All(fieldsCtx)
+	fields, err := r.db.EntityField.Query().
+		Where(entityfield.HasEntityWith(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid)))).
+		All(fieldsCtx)
 	if err != nil {
 		recordSpanError(fieldsSpan, err)
 		fieldsSpan.End()
@@ -1695,7 +1716,7 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		opt := r.db.EntityField.Update().
 			Where(
 				entityfield.ID(f.ID),
-				entityfield.HasEntityWith(entity.ID(data.ID)),
+				entityfield.HasEntityWith(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))),
 			).
 			SetType(entityfield.Type(f.Type)).
 			SetName(f.Name).
@@ -1721,7 +1742,7 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		deletedFields, err = r.db.EntityField.Delete().
 			Where(
 				entityfield.IDIn(fieldIds.Slice()...),
-				entityfield.HasEntityWith(entity.ID(data.ID)),
+				entityfield.HasEntityWith(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))),
 			).Exec(fieldsCtx)
 		if err != nil {
 			recordSpanError(fieldsSpan, err)
@@ -2032,8 +2053,12 @@ func (r *EntityRepository) ZeroOutTimeFields(ctx context.Context, gid uuid.UUID)
 	loadSpan.SetAttributes(attribute.Int("entities.count", len(entities)))
 	loadSpan.End()
 
+	// Normalize in UTC, not in t's own zone. Drivers may return a date-only
+	// column in the server's local zone (pgx does), and re-zeroing that value
+	// in place would write back the previous calendar day — turning a
+	// cosmetic read shift into permanent data loss.
 	toDateOnly := func(t time.Time) time.Time {
-		return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
+		return types.DateFromDBTime(t).Time()
 	}
 
 	_, updateSpan := entityTracer().Start(ctx, "repo.EntityRepository.ZeroOutTimeFields.update",

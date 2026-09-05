@@ -125,6 +125,10 @@ export default defineConfig({
                                             slug: 'contribute/code-of-conduct',
                                         },
                                         {
+                                            label: 'Security Policy',
+                                            slug: 'contribute/security',
+                                        },
+                                        {
                                             label: 'Development',
                                             items: [{ autogenerate: { directory: 'contribute/development', collapsed: true } }],
                                         },

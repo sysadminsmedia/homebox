@@ -61,6 +61,48 @@ class CountriesToCurrenciesTests(unittest.TestCase):
             'decimals': 2,
         }], result)
 
+    def test_prefers_canonical_currency_entries_for_duplicate_codes(self):
+        result = update_currencies.countries_to_currencies([
+            {
+                'names': {'common': 'Denmark'},
+                'currencies': [{
+                    'code': 'DKK',
+                    'name': 'Danish krone',
+                    'symbol': 'kr.',
+                }],
+            },
+            {
+                'names': {'common': 'Greenland'},
+                'currencies': [{
+                    'code': 'DKK',
+                    'name': 'krone',
+                    'symbol': 'kr',
+                }],
+            },
+            {
+                'names': {'common': 'Norway'},
+                'currencies': [{
+                    'code': 'NOK',
+                    'name': 'Norwegian krone',
+                    'symbol': 'kr',
+                }],
+            },
+            {
+                'names': {'common': 'Svalbard and Jan Mayen'},
+                'currencies': [{
+                    'code': 'NOK',
+                    'name': 'krone',
+                    'symbol': 'kr',
+                }],
+            },
+        ], {'DKK': 2, 'NOK': 2})
+
+        deduped = {currency['code']: currency for currency in result}
+        self.assertEqual('Danish krone', deduped['DKK']['name'])
+        self.assertEqual('Denmark', deduped['DKK']['local'])
+        self.assertEqual('Norwegian krone', deduped['NOK']['name'])
+        self.assertEqual('Norway', deduped['NOK']['local'])
+
     def test_rejects_old_currency_object_shape(self):
         with self.assertRaisesRegex(ValueError, 'currencies must be a JSON list'):
             update_currencies.countries_to_currencies([

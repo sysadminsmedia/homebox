@@ -13,6 +13,7 @@ services:
             - linux/arm64
             - linux/arm
     environment:
-      - HBOX_LOGGER_LEVEL=-1
+      - HBOX_LOG_LEVEL=-1
+      - HBOX_AUTH_API_KEY_PEPPER=dev-only-pepper-not-for-production-use-32b+
     ports:
       - 3100:7745

@@ -406,13 +406,6 @@
         "decimals": 2
     },
     {
-        "code": "CUC",
-        "local": "Cuba",
-        "symbol": "$",
-        "name": "Cuban convertible peso",
-        "decimals": 2
-    },
-    {
         "code": "CUP",
         "local": "Cuba",
         "symbol": "$",
@@ -420,10 +413,10 @@
         "decimals": 2
     },
     {
-        "code": "ANG",
+        "code": "XCG",
         "local": "Curaçao",
-        "symbol": "ƒ",
-        "name": "Netherlands Antillean guilder",
+        "symbol": "Cg",
+        "name": "Caribbean guilder",
         "decimals": 2
     },
     {
@@ -438,6 +431,20 @@
         "local": "Czechia",
         "symbol": "Kč",
         "name": "Czech koruna",
+        "decimals": 2
+    },
+    {
+        "code": "DKK",
+        "local": "Denmark",
+        "symbol": "kr",
+        "name": "Danish krone",
+        "decimals": 2
+    },
+    {
+        "code": "DKK",
+        "local": "Denmark",
+        "symbol": "kr",
+        "name": "Danish krone",
         "decimals": 2
     },
     {
@@ -485,7 +492,7 @@
     {
         "code": "EGP",
         "local": "Egypt",
-        "symbol": "£",
+        "symbol": "ج.م",
         "name": "Egyptian pound",
         "decimals": 2
     },
@@ -543,13 +550,6 @@
         "local": "Falkland Islands",
         "symbol": "£",
         "name": "Falkland Islands pound",
-        "decimals": 2
-    },
-    {
-        "code": "DKK",
-        "local": "Faroe Islands",
-        "symbol": "kr",
-        "name": "Danish krone",
         "decimals": 2
     },
     {
@@ -612,14 +612,14 @@
         "code": "GMD",
         "local": "Gambia",
         "symbol": "D",
-        "name": "Dalasi",
+        "name": "Gambian dalasi",
         "decimals": 2
     },
     {
         "code": "GEL",
         "local": "Georgia",
         "symbol": "₾",
-        "name": "Lari",
+        "name": "Georgian lari",
         "decimals": 2
     },
     {
@@ -648,13 +648,6 @@
         "local": "Greece",
         "symbol": "€",
         "name": "Euro",
-        "decimals": 2
-    },
-    {
-        "code": "DKK",
-        "local": "Greenland",
-        "symbol": "kr.",
-        "name": "Krone",
         "decimals": 2
     },
     {
@@ -1228,7 +1221,7 @@
         "code": "MKD",
         "local": "North Macedonia",
         "symbol": "den",
-        "name": "Denar",
+        "name": "Macedonian denar",
         "decimals": 2
     },
     {
@@ -1243,6 +1236,13 @@
         "local": "Northern Mariana Islands",
         "symbol": "$",
         "name": "United States dollar",
+        "decimals": 2
+    },
+    {
+        "code": "NOK",
+        "local": "Norway",
+        "symbol": "kr",
+        "name": "Norwegian krone",
         "decimals": 2
     },
     {
@@ -1276,7 +1276,7 @@
     {
         "code": "EGP",
         "local": "Palestine",
-        "symbol": "E£",
+        "symbol": "ج.م",
         "name": "Egyptian pound",
         "decimals": 2
     },
@@ -1290,7 +1290,7 @@
     {
         "code": "JOD",
         "local": "Palestine",
-        "symbol": "JD",
+        "symbol": "د.ا",
         "name": "Jordanian dinar",
         "decimals": 3
     },
@@ -1325,7 +1325,7 @@
     {
         "code": "PEN",
         "local": "Peru",
-        "symbol": "S/ ",
+        "symbol": "S/",
         "name": "Peruvian sol",
         "decimals": 2
     },
@@ -1410,7 +1410,7 @@
         "code": "GBP",
         "local": "Saint Helena, Ascension and Tristan da Cunha",
         "symbol": "£",
-        "name": "Pound sterling",
+        "name": "British pound",
         "decimals": 2
     },
     {
@@ -1501,7 +1501,7 @@
         "code": "SLE",
         "local": "Sierra Leone",
         "symbol": "Le",
-        "name": "Leone",
+        "name": "Sierra Leonean leone",
         "decimals": 2
     },
     {
@@ -1512,10 +1512,10 @@
         "decimals": 2
     },
     {
-        "code": "ANG",
+        "code": "XCG",
         "local": "Sint Maarten",
-        "symbol": "ƒ",
-        "name": "Netherlands Antillean guilder",
+        "symbol": "Cg",
+        "name": "Caribbean guilder",
         "decimals": 2
     },
     {
@@ -1598,7 +1598,7 @@
     {
         "code": "LKR",
         "local": "Sri Lanka",
-        "symbol": "Rs  රු",
+        "symbol": "Rs",
         "name": "Sri Lankan rupee",
         "decimals": 2
     },
@@ -1617,13 +1617,6 @@
         "decimals": 2
     },
     {
-        "code": "NOK",
-        "local": "Svalbard and Jan Mayen",
-        "symbol": "kr",
-        "name": "Krone",
-        "decimals": 2
-    },
-    {
         "code": "SEK",
         "local": "Sweden",
         "symbol": "kr",
@@ -1633,7 +1626,7 @@
     {
         "code": "CHF",
         "local": "Switzerland",
-        "symbol": "Fr.",
+        "symbol": "Fr",
         "name": "Swiss franc",
         "decimals": 2
     },
@@ -1857,14 +1850,14 @@
     {
         "code": "DZD",
         "local": "Western Sahara",
-        "symbol": "دج",
+        "symbol": "د.ج",
         "name": "Algerian dinar",
         "decimals": 2
     },
     {
         "code": "MAD",
         "local": "Western Sahara",
-        "symbol": "DH",
+        "symbol": "د.م.",
         "name": "Moroccan dirham",
         "decimals": 2
     },
@@ -1890,10 +1883,17 @@
         "decimals": 2
     },
     {
-        "code": "ZWL",
+        "code": "USD",
         "local": "Zimbabwe",
         "symbol": "$",
-        "name": "Zimbabwean dollar",
+        "name": "United States dollar",
+        "decimals": 2
+    },
+    {
+        "code": "ZWG",
+        "local": "Zimbabwe",
+        "symbol": "ZiG",
+        "name": "Zimbabwe Gold",
         "decimals": 2
     },
     {

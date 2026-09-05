@@ -50,3 +50,79 @@ func TestEntityRepository_UpdateByGroup_CrossTenantLeak(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, secretName, stillThere.Name, "victim entity must be unmodified")
 }
+
+// TestEntityRepository_UpdateByGroup_CrossTenantFieldWrite guards the nested
+// custom-field sync inside UpdateByGroup. The top-level record update is
+// group-scoped and silently affects zero rows for a foreign entity ID, so
+// execution used to fall through to the field block, which scoped its
+// create/update/delete only by entity ID. An attacker could therefore wipe or
+// inject fields on another tenant's entity — blindly, since the response is a
+// 404 from the group-scoped read at the end.
+func TestEntityRepository_UpdateByGroup_CrossTenantFieldWrite(t *testing.T) {
+	ctx := context.Background()
+
+	victimGroup, err := tRepos.Groups.GroupCreate(ctx, "victim-group-fields", uuid.Nil)
+	require.NoError(t, err)
+
+	victimET, err := tRepos.EntityTypes.GetDefault(ctx, victimGroup.ID, false)
+	require.NoError(t, err)
+
+	victim, err := tRepos.Entities.Create(ctx, victimGroup.ID, EntityCreate{
+		Name:         "victim-entity-with-fields",
+		EntityTypeID: victimET.ID,
+	})
+	require.NoError(t, err)
+
+	// Seed the victim entity with a custom field, as its own tenant would.
+	const (
+		fieldName  = "license-key"
+		fieldValue = "victim-secret-value"
+	)
+	seeded, err := tRepos.Entities.UpdateByGroup(ctx, victimGroup.ID, EntityUpdate{
+		ID:           victim.ID,
+		Name:         victim.Name,
+		EntityTypeID: victimET.ID,
+		Fields: []EntityFieldData{
+			{Name: fieldName, Type: "text", TextValue: fieldValue},
+		},
+	})
+	require.NoError(t, err)
+	require.Len(t, seeded.Fields, 1)
+
+	// Attacker (tGroup) submits an empty fields array against the victim's
+	// entity UUID: the delete branch would remove every existing field.
+	_, err = tRepos.Entities.UpdateByGroup(ctx, tGroup.ID, EntityUpdate{
+		ID:     victim.ID,
+		Name:   "poc-test",
+		Fields: []EntityFieldData{},
+	})
+	require.Error(t, err, "cross-tenant update must be rejected")
+
+	// Attacker attempts to inject a new field onto the victim's entity.
+	_, err = tRepos.Entities.UpdateByGroup(ctx, tGroup.ID, EntityUpdate{
+		ID:   victim.ID,
+		Name: "poc-test",
+		Fields: []EntityFieldData{
+			{Name: "attacker-injected", Type: "text", TextValue: "pwned"},
+		},
+	})
+	require.Error(t, err, "cross-tenant update must be rejected")
+
+	// Attacker attempts to overwrite the known field by ID.
+	_, err = tRepos.Entities.UpdateByGroup(ctx, tGroup.ID, EntityUpdate{
+		ID:   victim.ID,
+		Name: "poc-test",
+		Fields: []EntityFieldData{
+			{ID: seeded.Fields[0].ID, Name: fieldName, Type: "text", TextValue: "tampered"},
+		},
+	})
+	require.Error(t, err, "cross-tenant update must be rejected")
+
+	// The victim's fields must be exactly as seeded: not deleted, not added
+	// to, and not modified.
+	after, err := tRepos.Entities.GetOneByGroup(ctx, victimGroup.ID, victim.ID)
+	require.NoError(t, err)
+	require.Len(t, after.Fields, 1, "victim's custom fields must not be deleted or added to")
+	assert.Equal(t, fieldName, after.Fields[0].Name)
+	assert.Equal(t, fieldValue, after.Fields[0].TextValue, "victim's field value must not be tampered with")
+}

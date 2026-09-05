@@ -109,7 +109,7 @@ func wrapText(text string, face font.Face, maxWidth int, maxHeight int, lineHeig
 			if !unlimitedHeight {
 				currentHeight += lineHeight
 				if currentHeight > maxHeight {
-					return wrappedLines[:len(wrappedLines)-1], text[processedChars:]
+					return wrappedLines[:len(wrappedLines)-1], text[min(processedChars, len(text)):]
 				}
 			}
 			continue

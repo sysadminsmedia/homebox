@@ -152,6 +152,15 @@ var (
 // same argon2id work a real login performs.
 func timingEqualizationHash() string {
 	dummyHashOnce.Do(func() {
+		// With password protection disabled HashPassword is a no-op that returns
+		// the plaintext unchanged, which is not a decodable argon2id hash. Use the
+		// compiled-in constant instead so this function's contract — always a
+		// valid argon2id hash — holds in every mode, not just the default one.
+		if !enabled {
+			dummyHash = staticDummyHash
+			return
+		}
+
 		h, err := HashPassword("homebox-timing-equalization-placeholder")
 		if err != nil {
 			dummyHash = staticDummyHash

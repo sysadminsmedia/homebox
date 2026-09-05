@@ -669,3 +669,115 @@ func TestValidateNotifierURL_InvalidCIDR_BlockNets(t *testing.T) {
 		})
 	}
 }
+
+// TestValidateNotifierURL_SchemeCaseBypass covers the bypass where the SSRF policy
+// matched the raw URL string case-sensitively while shoutrrr lower-cases the scheme
+// before routing, so an upper-cased scheme reached the generic webhook service with
+// no validation at all.
+func TestValidateNotifierURL_SchemeCaseBypass(t *testing.T) {
+	cfg := config.NotifierConf{
+		BlockLocalhost:     true,
+		BlockLocalNets:     true,
+		BlockBogonNets:     true,
+		BlockCloudMetadata: true,
+	}
+
+	blocked := []string{
+		"generic+HTTP://169.254.169.254/latest/meta-data",
+		"generic+HTTPS://127.0.0.1/webhook",
+		"GENERIC+HTTP://169.254.169.254/latest/meta-data",
+		"GENERIC://http://127.0.0.1:8080/webhook",
+		"Generic+Http://192.168.1.1/webhook",
+	}
+
+	for _, url := range blocked {
+		t.Run(url, func(t *testing.T) {
+			if err := ValidateNotifierURL(url, &cfg); err == nil {
+				t.Errorf("expected %q to be blocked, but validation passed", url)
+			}
+		})
+	}
+}
+
+// TestValidateNotifierURL_NonGenericSchemes covers the bypass where the policy was
+// applied only to generic:// URLs, while schemes such as gotify and ntfy take a
+// fully user-supplied host (and a disabletls/scheme parameter that downgrades the
+// connection to plaintext HTTP against it).
+func TestValidateNotifierURL_NonGenericSchemes(t *testing.T) {
+	cfg := config.NotifierConf{
+		BlockLocalhost:     true,
+		BlockLocalNets:     true,
+		BlockBogonNets:     true,
+		BlockCloudMetadata: true,
+	}
+
+	blocked := []string{
+		"gotify://127.0.0.1:9000/AAAAAAAAAAAAAAA?disabletls=yes",
+		"ntfy://169.254.169.254/latest/meta-data?scheme=http",
+		"NTFY://169.254.169.254/topic",
+		"mattermost://192.168.1.1/token?disabletls=yes",
+		"matrix://user:pass@10.0.0.1/",
+		"smtp://user:pass@127.0.0.1:587/",
+		"zulip://bot:key@192.168.1.1/",
+		"rocketchat://10.0.0.1/token",
+	}
+
+	for _, url := range blocked {
+		t.Run(url, func(t *testing.T) {
+			if err := ValidateNotifierURL(url, &cfg); err == nil {
+				t.Errorf("expected %q to be blocked, but validation passed", url)
+			}
+		})
+	}
+}
+
+// TestValidateNotifierURL_IdentifierHostsAllowed ensures schemes whose URL "host" is
+// an account/token/channel identifier rather than a hostname are not rejected by the
+// host policy — they always talk to a fixed vendor endpoint.
+func TestValidateNotifierURL_IdentifierHostsAllowed(t *testing.T) {
+	cfg := config.NotifierConf{
+		BlockLocalhost:     true,
+		BlockLocalNets:     true,
+		BlockBogonNets:     true,
+		BlockCloudMetadata: true,
+	}
+
+	allowed := []string{
+		"discord://token@id",
+		"slack://token:token@channel",
+		"telegram://token@telegram?chats=1",
+		"pushover://shoutrrr:apiToken@userKey/",
+		"pushbullet://tokentokentoken",
+		"DISCORD://token@id",
+	}
+
+	for _, url := range allowed {
+		t.Run(url, func(t *testing.T) {
+			if err := ValidateNotifierURL(url, &cfg); err != nil {
+				t.Errorf("expected %q to pass, got: %v", url, err)
+			}
+		})
+	}
+}
+
+// TestValidateNotifierURL_UnknownSchemeRejected ensures the policy fails closed for
+// schemes it does not know how to classify, rather than letting them through.
+func TestValidateNotifierURL_UnknownSchemeRejected(t *testing.T) {
+	cfg := config.NotifierConf{BlockLocalhost: true}
+
+	rejected := []string{
+		"file:///etc/passwd",
+		"gopher://127.0.0.1:11211/_stats",
+		"somethingnew://127.0.0.1/x",
+		"generic+ftp://127.0.0.1/x",
+		"not-a-url",
+	}
+
+	for _, url := range rejected {
+		t.Run(url, func(t *testing.T) {
+			if err := ValidateNotifierURL(url, &cfg); err == nil {
+				t.Errorf("expected %q to be rejected, but validation passed", url)
+			}
+		})
+	}
+}
