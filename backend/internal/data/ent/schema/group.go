@@ -29,6 +29,8 @@ func (Group) Fields() []ent.Field {
 			NotEmpty(),
 		field.String("currency").
 			Default("usd"),
+		field.Bool("external_ids_enabled").
+			Default(false),
 	}
 }
 
