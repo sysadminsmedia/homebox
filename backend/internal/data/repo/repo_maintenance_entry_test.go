@@ -98,8 +98,11 @@ func TestMaintenanceEntryRepository_GetAllMaintenance_FutureCompletedDate(t *tes
 	}
 
 	for _, entry := range []MaintenanceEntryCreate{past, future} {
-		_, err := tRepos.MaintEntry.Create(context.Background(), tGroup.ID, item.ID, entry)
+		created, err := tRepos.MaintEntry.Create(context.Background(), tGroup.ID, item.ID, entry)
 		require.NoError(t, err)
+		t.Cleanup(func() {
+			require.NoError(t, tRepos.MaintEntry.Delete(context.Background(), tGroup.ID, created.ID))
+		})
 	}
 
 	completed, err := tRepos.MaintEntry.GetAllMaintenance(context.Background(), tGroup.ID, MaintenanceFilters{Status: MaintenanceFilterStatusCompleted})
@@ -115,8 +118,4 @@ func TestMaintenanceEntryRepository_GetAllMaintenance_FutureCompletedDate(t *tes
 	all, err := tRepos.MaintEntry.GetAllMaintenance(context.Background(), tGroup.ID, MaintenanceFilters{})
 	require.NoError(t, err)
 	assert.Len(t, all, 2)
-
-	for _, entry := range append(completed, scheduled...) {
-		require.NoError(t, tRepos.MaintEntry.Delete(context.Background(), tGroup.ID, entry.ID))
-	}
 }
