@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/hay-kot/httpkit/errchain"
@@ -477,35 +478,56 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 		}
 
 		log.Info().Msg("Processing barcode lookup request on: " + q.EAN)
-
-		// Sized for one hit from each configured upstream: upcitemdb, barcodespider,
-		// and the three Open*Facts sources.
-		products := make([]repo.BarcodeProduct, 0, 2+len(openFactsSources))
+		// A provider timeout must not consume the server's write deadline and
+		// prevent already available results from reaching the client.
+		allowSlowResponse(w, r)
 
 		// www.ean-search.org/: not free
 
 		// Example code: dewalt 5035048748428
-
-		ps, err := lookupUPCItemDB(q.EAN)
-		if err != nil {
-			log.Error().Msg("Can not retrieve product from upcitemdb.com: " + err.Error())
+		type lookup struct {
+			name string
+			run  func() ([]repo.BarcodeProduct, error)
 		}
-		products = append(products, ps...)
+		lookups := []lookup{{
+			name: "upcitemdb.com",
+			run:  func() ([]repo.BarcodeProduct, error) { return lookupUPCItemDB(q.EAN) },
+		}}
 
 		if conf.TokenBarcodespider != "" {
-			ps2, err := lookupBarcodespider(conf.TokenBarcodespider, q.EAN)
-			if err != nil {
-				log.Error().Msg("Can not retrieve product from barcodespider.com: " + err.Error())
-			}
-			products = append(products, ps2...)
+			lookups = append(lookups, lookup{
+				name: "barcodespider.com",
+				run: func() ([]repo.BarcodeProduct, error) {
+					return lookupBarcodespider(conf.TokenBarcodespider, q.EAN)
+				},
+			})
 		}
 
 		for _, source := range openFactsSources {
-			ps3, err := lookupOpenFacts(conf.OpenFoodFactsContact, source, q.EAN)
-			if err != nil {
-				log.Error().Msg("Can not retrieve product from " + source.Name + ": " + err.Error())
-			}
-			products = append(products, ps3...)
+			lookups = append(lookups, lookup{
+				name: source.Name,
+				run: func() ([]repo.BarcodeProduct, error) {
+					return lookupOpenFacts(conf.OpenFoodFactsContact, source, q.EAN)
+				},
+			})
+		}
+
+		results := make([][]repo.BarcodeProduct, len(lookups))
+		var wg sync.WaitGroup
+		for i, lookup := range lookups {
+			wg.Go(func() {
+				ps, err := lookup.run()
+				if err != nil {
+					log.Error().Msg("Can not retrieve product from " + lookup.name + ": " + err.Error())
+				}
+				results[i] = ps
+			})
+		}
+		wg.Wait()
+
+		products := make([]repo.BarcodeProduct, 0, len(results))
+		for _, result := range results {
+			products = append(products, result...)
 		}
 
 		// Retrieve images if possible

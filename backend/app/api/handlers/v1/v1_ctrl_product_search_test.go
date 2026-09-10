@@ -2,8 +2,103 @@ package v1
 
 import (
 	"encoding/json"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
+	"time"
+
+	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 )
+
+type roundTripFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) {
+	return f(r)
+}
+
+func TestBarcodeSearchReturnsAvailableProviderResults(t *testing.T) {
+	originalClient := barcodeHTTPClient
+	started := make(chan string, 1+len(openFactsSources))
+	release := make(chan struct{})
+	barcodeHTTPClient = &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		started <- r.URL.Host
+		<-release
+
+		status := http.StatusNotFound
+		body := ""
+		if r.URL.Host == "api.upcitemdb.com" {
+			status = http.StatusOK
+			body = `{"code":"OK","items":[{"ean":"1234567890123","title":"Available product"}]}`
+		}
+		return &http.Response{
+			StatusCode: status,
+			Header:     make(http.Header),
+			Body:       io.NopCloser(strings.NewReader(body)),
+			Request:    r,
+		}, nil
+	})}
+	t.Cleanup(func() { barcodeHTTPClient = originalClient })
+
+	handler := (&V1Controller{}).HandleProductSearchFromBarcode(config.BarcodeAPIConf{})
+	server := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if err := handler(w, r); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	}))
+	server.Config.WriteTimeout = 50 * time.Millisecond
+	server.Start()
+	t.Cleanup(server.Close)
+
+	type response struct {
+		status int
+		body   []byte
+		err    error
+	}
+	responseCh := make(chan response, 1)
+	go func() {
+		resp, err := server.Client().Get(server.URL + "/?productEAN=1234567890123")
+		if err != nil {
+			responseCh <- response{err: err}
+			return
+		}
+		defer func() { _ = resp.Body.Close() }()
+		body, err := io.ReadAll(resp.Body)
+		responseCh <- response{status: resp.StatusCode, body: body, err: err}
+	}()
+
+	timer := time.NewTimer(time.Second)
+	defer timer.Stop()
+	for count := 0; count < cap(started); count++ {
+		select {
+		case <-started:
+		case <-timer.C:
+			close(release)
+			<-responseCh
+			t.Fatalf("only %d of %d barcode providers started before the first response", count, cap(started))
+		}
+	}
+
+	time.Sleep(75 * time.Millisecond)
+	close(release)
+	result := <-responseCh
+	if result.err != nil {
+		t.Fatalf("barcode search failed after a provider delay: %v", result.err)
+	}
+	if result.status != http.StatusOK {
+		t.Fatalf("expected status 200, got %d", result.status)
+	}
+
+	var products []repo.BarcodeProduct
+	if err := json.Unmarshal(result.body, &products); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if len(products) != 1 || products[0].Item.Name != "Available product" {
+		t.Fatalf("unexpected products: %+v", products)
+	}
+}
 
 func TestUPCITEMDBResponseUnmarshalNumericListPrice(t *testing.T) {
 	body := []byte(`{
