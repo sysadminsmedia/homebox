@@ -22,4 +22,8 @@ describe("filterLocations", () => {
   it("keeps name and path search when the query has no hash", () => {
     expect(filterLocations("summer", locations).map(location => location.id)).toEqual(["summer"]);
   });
+
+  it("keeps tree path search when the query has no hash", () => {
+    expect(filterLocations("Garage", locations).map(location => location.id)).toEqual(["sid-in-name"]);
+  });
 });
