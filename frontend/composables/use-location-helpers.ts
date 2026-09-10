@@ -1,7 +1,9 @@
+import fuzzysort from "fuzzysort";
 import type { Ref } from "vue";
 import type { EntitySummary, TreeItem } from "~~/lib/api/types/data-contracts";
 
 export interface FlatTreeItem {
+  assetId: string;
   id: string;
   name: string;
   treeString: string;
@@ -20,6 +22,7 @@ function flatTree(tree: TreeItem[]): FlatTreeItem[] {
 
     for (const item of items) {
       v.push({
+        assetId: "",
         id: item.id,
         name: item.name,
         treeString: display + item.name,
@@ -33,6 +36,26 @@ function flatTree(tree: TreeItem[]): FlatTreeItem[] {
   flatten(tree, "");
 
   return v;
+}
+
+export function withAssetIds(
+  locations: Omit<FlatTreeItem, "assetId">[],
+  summaries: Pick<EntitySummary, "assetId" | "id">[]
+): FlatTreeItem[] {
+  const assetIdsByLocationId = new Map(summaries.map(summary => [summary.id, summary.assetId]));
+
+  return locations.map(location => ({
+    ...location,
+    assetId: assetIdsByLocationId.get(location.id) ?? "",
+  }));
+}
+
+export function filterLocations(search: string, locations: FlatTreeItem[]): FlatTreeItem[] {
+  const isAssetIdSearch = search.startsWith("#");
+  const query = isAssetIdSearch ? search.slice(1) : search;
+  const keys = isAssetIdSearch ? ["assetId"] : ["name", "treeString"];
+
+  return fuzzysort.go(query, locations, { keys, all: true }).map(result => result.obj);
 }
 
 function filterOutSubtree(tree: TreeItem[], excludeId: string): TreeItem[] {
@@ -61,6 +84,7 @@ export function useFlatLocations(excludeSubtreeForLocation?: EntitySummary): Ref
   if (locations.tree === null) {
     locations.refreshTree();
   }
+  void locations.ensureLocationsFetched();
 
   return computed(() => {
     if (locations.tree === null) {
@@ -71,6 +95,6 @@ export function useFlatLocations(excludeSubtreeForLocation?: EntitySummary): Ref
       ? filterOutSubtree(locations.tree, excludeSubtreeForLocation.id)
       : locations.tree;
 
-    return flatTree(filteredTree);
+    return withAssetIds(flatTree(filteredTree), locations.allLocations);
   });
 }
