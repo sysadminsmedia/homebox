@@ -10,6 +10,8 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
 
+const maintenanceDescription = "Maintenance description"
+
 // get the previous month from the current month, accounts for errors when run
 // near the beginning or end of the month/year
 func getPrevMonth(now time.Time) time.Time {
@@ -47,7 +49,7 @@ func TestMaintenanceEntryRepository_GetLog(t *testing.T) {
 		created[i] = MaintenanceEntryCreate{
 			CompletedDate: types.DateFromTime(dt),
 			Name:          "Maintenance",
-			Description:   "Maintenance description",
+			Description:   maintenanceDescription,
 			Cost:          10,
 		}
 	}
@@ -56,7 +58,7 @@ func TestMaintenanceEntryRepository_GetLog(t *testing.T) {
 	created[10] = MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now().AddDate(0, 0, 1)),
 		Name:          "Maintenance",
-		Description:   "Maintenance description",
+		Description:   maintenanceDescription,
 		Cost:          10,
 	}
 
@@ -87,13 +89,13 @@ func TestMaintenanceEntryRepository_GetAllMaintenance_FutureCompletedDate(t *tes
 	past := MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(getPrevMonth(time.Now())),
 		Name:          "Past maintenance",
-		Description:   "Maintenance description",
+		Description:   maintenanceDescription,
 		Cost:          10,
 	}
 	future := MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now().AddDate(0, 0, 1)),
 		Name:          "Future maintenance",
-		Description:   "Maintenance description",
+		Description:   maintenanceDescription,
 		Cost:          10,
 	}
 
