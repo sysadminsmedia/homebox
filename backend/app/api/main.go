@@ -125,11 +125,11 @@ func run(cfg *config.Config) error {
 	}
 	hasher.SetAPIKeyPepper([]byte(cfg.Auth.APIKeyPepper))
 
-	// Harden http.DefaultClient so notifier redirects are re-validated against the
-	// SSRF policy on every hop. shoutrrr's generic service delivers via
-	// http.DefaultClient with no CheckRedirect, so without this a notifier that
-	// passes the initial URL gate could be 30x-redirected to localhost / cloud
-	// metadata / other blocked destinations. Installed before any notifier can fire.
+	// Backstop only: harden http.DefaultClient so any redirect made through it is
+	// re-validated against the notifier SSRF policy. Notifier delivery itself goes
+	// through validate.SendNotifierMessage, which supplies its own guarded client —
+	// shoutrrr builds its own clients and never touches http.DefaultClient, so a
+	// guard installed here alone never ran on the delivery path.
 	validate.InstallNotifierRedirectGuard(&cfg.Notifier)
 
 	// =========================================================================
