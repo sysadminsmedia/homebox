@@ -515,13 +515,15 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 		results := make([][]repo.BarcodeProduct, len(lookups))
 		var wg sync.WaitGroup
 		for i, lookup := range lookups {
-			wg.Go(func() {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
 				ps, err := lookup.run()
 				if err != nil {
 					log.Error().Msg("Can not retrieve product from " + lookup.name + ": " + err.Error())
 				}
 				results[i] = ps
-			})
+			}()
 		}
 		wg.Wait()
 
