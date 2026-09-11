@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/ardanlabs/conf/v3"
@@ -62,6 +63,65 @@ type Config struct {
 	Otel       OTelConfig     `yaml:"otel"`
 	Auth       AuthConfig     `yaml:"auth"`
 	Notifier   NotifierConf   `yaml:"notifier"`
+	Search     SearchConf     `yaml:"search"`
+}
+
+// SearchConf selects and configures the free-text search engine. The default
+// "database" driver searches directly in SQLite/PostgreSQL and needs no extra
+// services. The "meilisearch" driver delegates matching to an external
+// Meilisearch instance for typo-tolerant, relevance-ranked search.
+type SearchConf struct {
+	Driver      string          `yaml:"driver"      conf:"default:database"`
+	Meilisearch MeilisearchConf `yaml:"meilisearch"`
+}
+
+// MeilisearchConf configures the connection to a Meilisearch instance when
+// SearchConf.Driver is "meilisearch".
+type MeilisearchConf struct {
+	Host   string `yaml:"host"    conf:"default:http://localhost:7700"`
+	APIKey string `yaml:"api_key"`
+	// Index is the Meilisearch index uid entities are stored in.
+	Index string `yaml:"index" conf:"default:homebox_entities"`
+	// MaxHits caps how many matching entity IDs a single search retrieves
+	// from Meilisearch before the database applies its own filters and
+	// pagination.
+	MaxHits int64 `yaml:"max_hits" conf:"default:1000"`
+}
+
+func (c MeilisearchConf) MarshalJSON() ([]byte, error) {
+	type alias MeilisearchConf
+	a := alias(c)
+	if a.APIKey != "" {
+		a.APIKey = redactedValue
+	}
+	return json.Marshal(a)
+}
+
+// Validate enforces secure transport for the Meilisearch connection. The API
+// key is sent on every request, so a non-local endpoint reached over plaintext
+// http would leak it on the wire. https is always allowed; http is permitted
+// only for loopback hosts.
+func (c MeilisearchConf) Validate() error {
+	if c.Host == "" {
+		return errors.New("search.meilisearch.host must not be empty")
+	}
+	u, err := url.Parse(c.Host)
+	if err != nil {
+		return fmt.Errorf("search.meilisearch.host is not a valid URL: %w", err)
+	}
+	switch u.Scheme {
+	case "https":
+		return nil
+	case "http":
+		switch strings.ToLower(u.Hostname()) {
+		case "localhost", "127.0.0.1", "::1":
+			return nil
+		default:
+			return fmt.Errorf("search.meilisearch.host uses insecure http for non-local host %q: use https", u.Host)
+		}
+	default:
+		return fmt.Errorf("search.meilisearch.host has unsupported scheme %q: must be http or https", u.Scheme)
+	}
 }
 
 type Options struct {
@@ -206,6 +266,14 @@ func New(buildstr string, description string) (*Config, error) {
 			os.Exit(0)
 		}
 		return &cfg, fmt.Errorf("parsing config: %w", err)
+	}
+
+	// Only enforce Meilisearch transport rules when that driver is selected;
+	// the unused default host is otherwise irrelevant.
+	if cfg.Search.Driver == "meilisearch" {
+		if err := cfg.Search.Meilisearch.Validate(); err != nil {
+			return &cfg, fmt.Errorf("invalid meilisearch config: %w", err)
+		}
 	}
 
 	return &cfg, nil

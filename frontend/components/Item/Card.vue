@@ -8,7 +8,7 @@
         @update:model-value="tableRow.toggleSelected()"
       />
     </div>
-    <NuxtLink :to="`/item/${item.id}`">
+    <NuxtLink :to="`/${item.entityType?.isLocation ? 'location' : 'item'}/${item.id}`">
       <div class="relative h-[200px]">
         <img
           v-if="imageUrl && objectContain"
@@ -25,7 +25,7 @@
           :src="imageUrl"
           :alt="item.name"
         />
-        <div class="absolute inset-x-1 bottom-1">
+        <div v-if="item.parent" class="absolute inset-x-1 bottom-1">
           <Badge class="text-wrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline">
             <NuxtLink v-if="item.parent" :to="`/location/${item.parent.id}`">
               {{ locationString }}

@@ -48,12 +48,16 @@ func startEntityCtrlSpan(ctx context.Context, name string, attrs ...attribute.Ke
 //	@Summary	Query All Entities
 //	@Tags		Entities
 //	@Produce	json
-//	@Param		q			query		string		false	"search string"
-//	@Param		page		query		int			false	"page number"
-//	@Param		pageSize	query		int			false	"items per page"
-//	@Param		tags		query		[]string	false	"tags Ids"		collectionFormat(multi)
-//	@Param		parentIds	query		[]string	false	"parent Ids"	collectionFormat(multi)
-//	@Success	200			{object}	repo.EntityListResult
+//	@Param		q				query		string		false	"search string; matches names, descriptions, serial/model numbers, manufacturers, notes, purchase sources, tag names, and custom field values. Use #<assetId> to look up by asset ID and double quotes for exact phrases"
+//	@Param		page			query		int			false	"page number"
+//	@Param		pageSize		query		int			false	"items per page"
+//	@Param		tags			query		[]string	false	"tags Ids"		collectionFormat(multi)
+//	@Param		matchAllTags	query		bool		false	"require all selected tags to match (AND) instead of any (OR)"
+//	@Param		parentIds		query		[]string	false	"parent Ids"	collectionFormat(multi)
+//	@Param		entityTypeIds	query		[]string	false	"entity type IDs; when provided this filter takes precedence over isLocation"	collectionFormat(multi)
+//  @Param		orderBy			query		string		false	"field to order by; valid values: name, createdAt, updatedAt, assetId"
+//  @Param		orderDirection	query		string		false	"order direction; valid values: asc, desc"
+//	@Success	200				{object}	repo.EntityListResult
 //	@Router		/v1/entities [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
@@ -78,13 +82,16 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 			PageSize:         queryIntOrNegativeOne(params.Get("pageSize")),
 			Search:           params.Get("q"),
 			ParentIDs:        queryUUIDList(params, "parentIds"),
+			EntityTypeIDs:    queryUUIDList(params, "entityTypeIds"),
 			TagIDs:           queryUUIDList(params, "tags"),
 			NegateTags:       queryBool(params.Get("negateTags")),
+			MatchAllTags:     queryBool(params.Get("matchAllTags")),
 			OnlyWithoutPhoto: queryBool(params.Get("onlyWithoutPhoto")),
 			OnlyWithPhoto:    queryBool(params.Get("onlyWithPhoto")),
 			IncludeArchived:  queryBool(params.Get("includeArchived")),
 			Fields:           filterFieldItems(params["fields"]),
 			OrderBy:          params.Get("orderBy"),
+			OrderDirection:   params.Get("orderDirection"),
 		}
 
 		// Parse isLocation filter: "true" = locations only, "false" = items only, absent = default (items only)
@@ -116,12 +123,14 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 			attribute.Int("query.page_size", query.PageSize),
 			attribute.Int("query.tag_ids.count", len(query.TagIDs)),
 			attribute.Int("query.parent_ids.count", len(query.ParentIDs)),
+			attribute.Int("query.entity_type_ids.count", len(query.EntityTypeIDs)),
 			attribute.Int("query.fields.count", len(query.Fields)),
 			attribute.Bool("query.include_archived", query.IncludeArchived),
 			attribute.Bool("query.filter_children", query.FilterChildren),
 			attribute.Bool("query.only_with_photo", query.OnlyWithPhoto),
 			attribute.Bool("query.only_without_photo", query.OnlyWithoutPhoto),
 			attribute.String("query.order_by", query.OrderBy),
+			attribute.String("query.order_direction", query.OrderDirection),
 			attribute.Bool("query.is_location.set", query.IsLocation != nil),
 			attribute.Bool("query.is_location.value", query.IsLocation != nil && *query.IsLocation),
 			attribute.Bool("query.asset_id.set", !query.AssetID.Nil()),

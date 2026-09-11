@@ -494,7 +494,9 @@
         "item": "Item",
         "location": "Location",
         "entity": "Entity",
-        "entity_type": "Entity Type"
+        "entity_type": "Entity Type",
+        "entity_types": "Entity Types",
+        "results": "Results"
     },
     "home": {
         "quick_statistics": "Quick Statistics",
@@ -601,6 +603,7 @@
         "manual": "Manual",
         "manuals": "Manuals",
         "manufacturer": "Manufacturer",
+        "match_all_tags": "Require All Selected Tags",
         "model_number": "Model Number",
         "name": "Name",
         "negate_tags": "Negate Selected Tags",
@@ -639,6 +642,7 @@
         "sync_child_locations": "Sync child items' locations",
         "tip_1": "Location and tag filters use the 'OR' operation. If more than one is selected only one will be\n required for a match.",
         "tip_2": "Searches prefixed with '#'' will query for a asset ID (example '#000-001')",
+        "tip_4": "Search matches names, descriptions, serial and model numbers, manufacturers, notes, purchase sources, tag names, and custom field values. Every word must match somewhere; wrap words in double quotes to match an exact phrase.",
         "tip_3": "Field filters use the 'OR' operation. If more than one is selected only one will be required for a\n match.",
         "tips": "Tips",
         "tips_sub": "Search Tips",
@@ -667,12 +671,20 @@
             "item_deleted": "Item deleted",
             "item_saved": "Item saved",
             "quantity_cannot_negative": "Quantity cannot be negative",
-            "sync_child_location": "Selected parent syncs its children's locations to its own. The location has been updated."
+            "sync_child_location": "Selected parent syncs its children's locations to its own. The location has been updated.",
+            "saved_search_name_required": "Saved search name is required",
+            "saved_search_saved": "Search saved",
+            "saved_search_deleted": "Saved search deleted"
         },
         "updated_at": "Updated At",
         "warranty": "Warranty",
         "warranty_details": "Warranty Details",
-        "warranty_expires": "Warranty Expires"
+        "warranty_expires": "Warranty Expires",
+        "asc": "Ascending",
+        "desc": "Descending",
+        "saved_searches": "Saved Searches",
+        "no_saved_searches": "No saved searches",
+        "saved_search_name": "Save search as..."
     },
     "languages": {
         "bs-BA": "Bosnian (Bosnia and Herzegovina)",

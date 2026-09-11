@@ -1,9 +1,11 @@
+// Package textutils provides text normalization helpers used by the search
+// system to implement case- and accent-insensitive matching across scripts.
 package textutils
 
 import (
-	"strings"
 	"unicode"
 
+	"golang.org/x/text/cases"
 	"golang.org/x/text/runes"
 	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
@@ -32,9 +34,15 @@ func RemoveAccents(text string) string {
 	return result
 }
 
-// NormalizeSearchQuery normalizes a search query for accent-insensitive matching.
-// This function removes accents and converts to lowercase for consistent search behavior.
-func NormalizeSearchQuery(query string) string {
-	normalized := RemoveAccents(query)
-	return strings.ToLower(normalized)
+// Fold returns a canonical caseless, accent-less representation of text for
+// search comparison. Two strings match case- and accent-insensitively iff
+// their folded forms are equal (or one contains the other).
+//
+// Unicode case folding is used instead of lowercasing so that scripts with
+// non-trivial case rules compare correctly (e.g. Greek final sigma "ς" and
+// "σ" both fold to "σ", "Σ" included; Cyrillic "Тест" folds to "тест").
+// Folding can introduce new combining marks (e.g. "İ" folds to "i" + U+0307),
+// so accents are stripped after folding as well as before.
+func Fold(text string) string {
+	return RemoveAccents(cases.Fold().String(RemoveAccents(text)))
 }

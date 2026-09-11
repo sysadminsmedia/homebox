@@ -113,7 +113,7 @@ func TestRemoveAccents(t *testing.T) {
 	}
 }
 
-func TestNormalizeSearchQuery(t *testing.T) {
+func TestFold(t *testing.T) {
 	testCases := []struct {
 		name     string
 		input    string
@@ -139,13 +139,40 @@ func TestNormalizeSearchQuery(t *testing.T) {
 			input:    "Hello World",
 			expected: "hello world",
 		},
+		{
+			// й decomposes to и + combining breve, which accent stripping
+			// removes — like ñ→n, both sides of a match fold the same way.
+			name:     "Ukrainian Cyrillic uppercase",
+			input:    "Тестовий Запис",
+			expected: "тестовии запис",
+		},
+		{
+			name:     "Greek uppercase with final sigma",
+			input:    "Υπολογιστής",
+			expected: "υπολογιστησ",
+		},
+		{
+			name:     "Greek lowercase final and medial sigma fold identically",
+			input:    "υπολογιστης σ ς",
+			expected: "υπολογιστησ σ σ",
+		},
+		{
+			name:     "German sharp s folds to ss",
+			input:    "Straße",
+			expected: "strasse",
+		},
+		{
+			name:     "Turkish dotted capital I",
+			input:    "İstanbul",
+			expected: "istanbul",
+		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			result := NormalizeSearchQuery(tc.input)
+			result := Fold(tc.input)
 			if result != tc.expected {
-				t.Errorf("NormalizeSearchQuery(%q) = %q, expected %q", tc.input, result, tc.expected)
+				t.Errorf("Fold(%q) = %q, expected %q", tc.input, result, tc.expected)
 			}
 		})
 	}

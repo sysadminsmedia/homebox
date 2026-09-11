@@ -944,3 +944,50 @@ func TestEntityRepository_RejectsNegativeQuantity(t *testing.T) {
 	err = tRepos.Entities.Patch(ctx, tGroup.ID, e.ID, EntityPatch{ID: e.ID, Quantity: &negative})
 	require.ErrorContains(t, err, "must not be negative")
 }
+
+// TestEntityRepository_QueryByGroup_OrderByLocation verifies that ordering by
+// "location" uses the nearest location ancestor rather than the direct parent:
+// an item nested inside another item must sort under the location that item
+// ultimately lives in, and items without any location ancestor sort last in
+// both directions.
+func TestEntityRepository_QueryByGroup_OrderByLocation(t *testing.T) {
+	ctx := context.Background()
+	containerET := useContainerEntityType(t)
+	itemET := useItemEntityType(t)
+
+	// Alpha Room > direct-item
+	// Zulu Room  > nested-box > nested-item
+	// (no parent) > orphan-item
+	alpha := mustCreateEntity(t, "Alpha Room", containerET.ID, uuid.Nil)
+	zulu := mustCreateEntity(t, "Zulu Room", containerET.ID, uuid.Nil)
+	box := mustCreateEntity(t, "nested-box", itemET.ID, zulu.ID)
+	nested := mustCreateEntity(t, "nested-item", itemET.ID, box.ID)
+	direct := mustCreateEntity(t, "direct-item", itemET.ID, alpha.ID)
+	orphan := mustCreateEntity(t, "orphan-item", itemET.ID, uuid.Nil)
+
+	// The test group is shared, so only the entities created here are ordered.
+	mine := map[uuid.UUID]bool{box.ID: true, nested.ID: true, direct.ID: true, orphan.ID: true}
+	order := func(direction string) []uuid.UUID {
+		t.Helper()
+		res, err := tRepos.Entities.QueryByGroup(ctx, tGroup.ID, EntityQuery{
+			Page:           -1,
+			PageSize:       -1,
+			OrderBy:        "location",
+			OrderDirection: direction,
+		})
+		require.NoError(t, err)
+
+		ids := make([]uuid.UUID, 0, len(mine))
+		for _, e := range res.Items {
+			if mine[e.ID] {
+				ids = append(ids, e.ID)
+			}
+		}
+		return ids
+	}
+
+	// Alpha Room, then Zulu Room (nested-box and nested-item tie on location
+	// and fall back to their own name), then the location-less item.
+	assert.Equal(t, []uuid.UUID{direct.ID, box.ID, nested.ID, orphan.ID}, order("asc"))
+	assert.Equal(t, []uuid.UUID{box.ID, nested.ID, direct.ID, orphan.ID}, order("desc"))
+}

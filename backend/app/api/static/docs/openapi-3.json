@@ -245,7 +245,7 @@
                 "summary": "Query All Entities",
                 "parameters": [
                     {
-                        "description": "search string",
+                        "description": "search string; matches names, descriptions, serial/model numbers, manufacturers, notes, purchase sources, tag names, and custom field values. Use #<assetId> to look up by asset ID and double quotes for exact phrases",
                         "name": "q",
                         "in": "query",
                         "schema": {
@@ -278,6 +278,14 @@
                             "items": {
                                 "type": "string"
                             }
+                        }
+                    },
+                    {
+                        "description": "require all selected tags to match (AND) instead of any (OR)",
+                        "name": "matchAllTags",
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean"
                         }
                     },
                     {

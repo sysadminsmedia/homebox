@@ -10,7 +10,9 @@ package cgofreesqlite
 import (
 	"database/sql"
 	"database/sql/driver"
+	"fmt"
 
+	"github.com/sysadminsmedia/homebox/backend/pkgs/textutils"
 	"modernc.org/sqlite"
 )
 
@@ -35,6 +37,37 @@ func (d CGOFreeSqliteDriver) Open(name string) (conn driver.Conn, err error) {
 	return conn, err
 }
 
+// modernDriver returns modernc's package-level driver singleton (the instance
+// it registers as "sqlite"). Functions registered through the sqlite package
+// (like hb_fold below) are stored on that singleton only, so wrapping a fresh
+// &sqlite.Driver{} would silently lose them.
+func modernDriver() *sqlite.Driver {
+	db, err := sql.Open("sqlite", "")
+	if err != nil {
+		panic(err)
+	}
+	defer func() { _ = db.Close() }()
+	return db.Driver().(*sqlite.Driver)
+}
+
 func init() { //nolint:gochecknoinits
-	sql.Register("sqlite3", CGOFreeSqliteDriver{Driver: &sqlite.Driver{}})
+	sql.Register("sqlite3", CGOFreeSqliteDriver{Driver: modernDriver()})
+
+	// hb_fold(text) folds its argument for case- and accent-insensitive
+	// comparison (full Unicode case folding + diacritic removal). SQLite's
+	// built-in lower()/LIKE only handle ASCII, which breaks search for
+	// Cyrillic, Greek, and other non-ASCII scripts. The search engine compares
+	// hb_fold(column) against patterns folded the same way in Go.
+	sqlite.MustRegisterDeterministicScalarFunction("hb_fold", 1, func(_ *sqlite.FunctionContext, args []driver.Value) (driver.Value, error) {
+		switch v := args[0].(type) {
+		case nil:
+			return nil, nil
+		case string:
+			return textutils.Fold(v), nil
+		case []byte:
+			return textutils.Fold(string(v)), nil
+		default:
+			return nil, fmt.Errorf("hb_fold: unsupported argument type %T", v)
+		}
+	})
 }

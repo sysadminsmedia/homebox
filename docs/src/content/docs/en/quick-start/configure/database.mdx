@@ -6,9 +6,11 @@ By default, Homebox will use an SQLite database. This allows for quick setup and
 However, you can configure Homebox to use a PostgreSQL database instead. We highly recommend this for larger installations,
 as it will allow you to scale Homebox horizontally.
 
-> [!WARNING]
-> PostgreSQL is **HIGHLY** recommended if you're using a complex character set language such as Russian, Chinese, etc.
-> (basically any language that requires non-ASCII characters) as SQLite has very poor search support for these languages.
+> [!NOTE]
+> Search is fully Unicode-aware on both databases: Homebox implements its own
+> case- and accent-insensitive matching on SQLite, so non-ASCII languages
+> (Cyrillic, Greek, etc.) work out of the box. See the [Search](./search) page
+> for details and optional external search engines.
 
 ## SQLite
 This is the default; generally speaking, there is no need to change anything here. We've already configured it with our
@@ -53,3 +55,18 @@ Optionally, you can also add the following environment variable to the Homebox s
 - `HBOX_DATABASE_SSL_ROOT_CERT=path/to/root.crt` (path to the root certificate file)
 - `HBOX_DATABASE_SSL_CERT=path/to/server.crt` (path to the server certificate file)
 - `HBOX_DATABASE_SSL_KEY=path/to/server.key` (path to the server key file)
+
+## Accent-insensitive search on PostgreSQL
+
+Search is case-insensitive on both databases. To make it accent-insensitive on
+PostgreSQL as well (e.g. so `cafe` matches `café`), Homebox uses the standard
+[`unaccent`](https://www.postgresql.org/docs/current/unaccent.html) extension.
+Homebox tries to enable it automatically on startup; if the database user
+lacks the privilege to create extensions, enable it once as a superuser:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS unaccent;
+```
+
+Without the extension, search still works but treats accented characters as
+distinct. SQLite needs no setup — accent-insensitive search is built in.
