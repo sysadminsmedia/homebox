@@ -37,10 +37,15 @@ tasks:
       - cp -r ./docs/openapi-3.json ../../../../docs/public/api/openapi-3.0.json
       - cp -r ./docs/openapi-3.yaml ../../../../docs/public/api/openapi-3.0.yaml
     sources:
-      - "./backend/app/api/**/*"
-      - "./backend/internal/data/**"
-      - "./backend/internal/core/services/**/*"
-      - "./backend/app/tools/typegen/main.go"
+      # Relative to `dir:` above, not the repo root. Deliberately excludes
+      # static/, where swag writes its own output - covering it would make this
+      # task perpetually out-of-date instead of perpetually up-to-date.
+      - "../*.go"
+      - "../handlers/**/*.go"
+      - "../providers/**/*.go"
+      - "../../../internal/data/**/*.go"
+      - "../../../internal/core/services/**/*.go"
+      - "../../tools/typegen/main.go"
   typescript-types:
     desc: Generates typescript types from swagger definition
     cmds:
@@ -157,7 +162,8 @@ tasks:
     cmds:
       - CGO_ENABLED=0 go generate ./...
     sources:
-      - "./backend/internal/data/ent/schema/**/*"
+      # Relative to `dir:` above, not the repo root.
+      - "./data/ent/schema/**/*"
 
   ui:watch:
     desc: Starts the vitest test runner in watch mode
