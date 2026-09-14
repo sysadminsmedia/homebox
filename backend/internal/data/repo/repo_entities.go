@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/samber/lo"
@@ -441,6 +442,10 @@ func (r *EntityRepository) getOneTx(ctx context.Context, tx *ent.Tx, where ...pr
 		WithGroup().
 		WithChildren(func(eq *ent.EntityQuery) {
 			eq.WithEntityType()
+			// Match the case-insensitive name order of the locations tree.
+			eq.Order(func(s *sql.Selector) {
+				s.OrderBy(sql.Lower(s.C(entity.FieldName)))
+			})
 		}).
 		WithAttachments().
 		Only(ctx)

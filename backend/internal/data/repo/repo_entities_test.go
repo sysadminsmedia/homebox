@@ -898,6 +898,27 @@ func TestEntityRepository_GetOne_DerivedLocation(t *testing.T) {
 	assert.Nil(t, out.Location, "top-level location has no derived location")
 }
 
+// TestEntityRepository_GetOne_ChildrenSortedByName guards #1644: the location
+// page must list child locations in the same order as the locations tree,
+// which sorts by name case-insensitively, not in insertion order.
+func TestEntityRepository_GetOne_ChildrenSortedByName(t *testing.T) {
+	containerET := useContainerEntityType(t)
+
+	parent := mustCreateEntity(t, "Garage", containerET.ID, uuid.Nil)
+	for _, name := range []string{"Shelf C", "shelf a", "Shelf B"} {
+		mustCreateEntity(t, name, containerET.ID, parent.ID)
+	}
+
+	out, err := tRepos.Entities.GetOneByGroup(context.Background(), tGroup.ID, parent.ID)
+	require.NoError(t, err)
+
+	names := make([]string, len(out.Children))
+	for i, c := range out.Children {
+		names[i] = c.Name
+	}
+	assert.Equal(t, []string{"shelf a", "Shelf B", "Shelf C"}, names)
+}
+
 // TestEntityRepository_Create_WithManufacturerModel guards #1578: the barcode
 // import flow creates items with manufacturer/model in the create payload.
 func TestEntityRepository_Create_WithManufacturerModel(t *testing.T) {
