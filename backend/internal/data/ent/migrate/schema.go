@@ -157,6 +157,7 @@ var (
 		{Name: "sold_price", Type: field.TypeFloat64, Default: 0},
 		{Name: "sold_notes", Type: field.TypeString, Nullable: true, Size: 1000},
 		{Name: "entity_children", Type: field.TypeUUID, Nullable: true},
+		{Name: "entity_location_entities", Type: field.TypeUUID, Nullable: true},
 		{Name: "entity_type_entities", Type: field.TypeUUID},
 		{Name: "group_entities", Type: field.TypeUUID},
 	}
@@ -173,14 +174,20 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:     "entities_entity_types_entities",
+				Symbol:     "entities_entities_location_entities",
 				Columns:    []*schema.Column{EntitiesColumns[26]},
+				RefColumns: []*schema.Column{EntitiesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "entities_entity_types_entities",
+				Columns:    []*schema.Column{EntitiesColumns[27]},
 				RefColumns: []*schema.Column{EntityTypesColumns[0]},
 				OnDelete:   schema.Restrict,
 			},
 			{
 				Symbol:     "entities_groups_entities",
-				Columns:    []*schema.Column{EntitiesColumns[27]},
+				Columns:    []*schema.Column{EntitiesColumns[28]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -686,8 +693,9 @@ func init() {
 	AuthRolesTable.ForeignKeys[0].RefTable = AuthTokensTable
 	AuthTokensTable.ForeignKeys[0].RefTable = UsersTable
 	EntitiesTable.ForeignKeys[0].RefTable = EntitiesTable
-	EntitiesTable.ForeignKeys[1].RefTable = EntityTypesTable
-	EntitiesTable.ForeignKeys[2].RefTable = GroupsTable
+	EntitiesTable.ForeignKeys[1].RefTable = EntitiesTable
+	EntitiesTable.ForeignKeys[2].RefTable = EntityTypesTable
+	EntitiesTable.ForeignKeys[3].RefTable = GroupsTable
 	EntityFieldsTable.ForeignKeys[0].RefTable = EntitiesTable
 	EntityTemplatesTable.ForeignKeys[0].RefTable = EntitiesTable
 	EntityTemplatesTable.ForeignKeys[1].RefTable = GroupsTable

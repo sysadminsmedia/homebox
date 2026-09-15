@@ -111,6 +111,12 @@ func (Entity) Edges() []ent.Edge {
 		edge.To("children", Entity.Type).
 			From("parent").
 			Unique(),
+		// Location override, only set when "parent" is a non-location entity.
+		// Otherwise NULL and the location comes from walking the parent chain.
+		// See repo.resolveLocationOverride (#1688).
+		edge.To("location_entities", Entity.Type).
+			From("location").
+			Unique(),
 		edge.From("tag", Tag.Type).
 			Ref("entities"),
 		edge.From("entity_type", EntityType.Type).

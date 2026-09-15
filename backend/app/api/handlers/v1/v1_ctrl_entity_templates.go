@@ -107,6 +107,7 @@ type EntityTemplateCreateItemRequest struct {
 	Name        string    `json:"name"        validate:"required,min=1,max=255"`
 	Description string    `json:"description" validate:"max=1000"`
 	ParentID    uuid.UUID `json:"parentId"    validate:"required"`
+	LocationID  uuid.UUID `json:"locationId"  extensions:"x-nullable,x-omitempty"`
 	// EntityTypeID is the entity type selected by the user. When set it takes
 	// precedence; when empty the repository falls back to the group's default.
 	EntityTypeID uuid.UUID   `json:"entityTypeId"`
@@ -155,6 +156,7 @@ func (ctrl *V1Controller) HandleEntityTemplatesCreateItem() errchain.HandlerFunc
 			Description:      body.Description,
 			Quantity:         quantity,
 			ParentID:         body.ParentID,
+			LocationID:       body.LocationID,
 			EntityTypeID:     body.EntityTypeID,
 			TagIDs:           body.TagIDs,
 			Insured:          template.DefaultInsured,

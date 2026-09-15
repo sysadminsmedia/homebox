@@ -70,11 +70,12 @@ type Entity struct {
 	SoldNotes string `json:"sold_notes,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the EntityQuery when eager-loading is set.
-	Edges                EntityEdges `json:"edges"`
-	entity_children      *uuid.UUID
-	entity_type_entities *uuid.UUID
-	group_entities       *uuid.UUID
-	selectValues         sql.SelectValues
+	Edges                    EntityEdges `json:"edges"`
+	entity_children          *uuid.UUID
+	entity_location_entities *uuid.UUID
+	entity_type_entities     *uuid.UUID
+	group_entities           *uuid.UUID
+	selectValues             sql.SelectValues
 }
 
 // EntityEdges holds the relations/edges for other nodes in the graph.
@@ -85,6 +86,10 @@ type EntityEdges struct {
 	Parent *Entity `json:"parent,omitempty"`
 	// Children holds the value of the children edge.
 	Children []*Entity `json:"children,omitempty"`
+	// Location holds the value of the location edge.
+	Location *Entity `json:"location,omitempty"`
+	// LocationEntities holds the value of the location_entities edge.
+	LocationEntities []*Entity `json:"location_entities,omitempty"`
 	// Tag holds the value of the tag edge.
 	Tag []*Tag `json:"tag,omitempty"`
 	// EntityType holds the value of the entity_type edge.
@@ -97,7 +102,7 @@ type EntityEdges struct {
 	Attachments []*Attachment `json:"attachments,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [8]bool
+	loadedTypes [10]bool
 }
 
 // GroupOrErr returns the Group value or an error if the edge
@@ -131,10 +136,30 @@ func (e EntityEdges) ChildrenOrErr() ([]*Entity, error) {
 	return nil, &NotLoadedError{edge: "children"}
 }
 
+// LocationOrErr returns the Location value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EntityEdges) LocationOrErr() (*Entity, error) {
+	if e.Location != nil {
+		return e.Location, nil
+	} else if e.loadedTypes[3] {
+		return nil, &NotFoundError{label: entity.Label}
+	}
+	return nil, &NotLoadedError{edge: "location"}
+}
+
+// LocationEntitiesOrErr returns the LocationEntities value or an error if the edge
+// was not loaded in eager-loading.
+func (e EntityEdges) LocationEntitiesOrErr() ([]*Entity, error) {
+	if e.loadedTypes[4] {
+		return e.LocationEntities, nil
+	}
+	return nil, &NotLoadedError{edge: "location_entities"}
+}
+
 // TagOrErr returns the Tag value or an error if the edge
 // was not loaded in eager-loading.
 func (e EntityEdges) TagOrErr() ([]*Tag, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[5] {
 		return e.Tag, nil
 	}
 	return nil, &NotLoadedError{edge: "tag"}
@@ -145,7 +170,7 @@ func (e EntityEdges) TagOrErr() ([]*Tag, error) {
 func (e EntityEdges) EntityTypeOrErr() (*EntityType, error) {
 	if e.EntityType != nil {
 		return e.EntityType, nil
-	} else if e.loadedTypes[4] {
+	} else if e.loadedTypes[6] {
 		return nil, &NotFoundError{label: entitytype.Label}
 	}
 	return nil, &NotLoadedError{edge: "entity_type"}
@@ -154,7 +179,7 @@ func (e EntityEdges) EntityTypeOrErr() (*EntityType, error) {
 // FieldsOrErr returns the Fields value or an error if the edge
 // was not loaded in eager-loading.
 func (e EntityEdges) FieldsOrErr() ([]*EntityField, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[7] {
 		return e.Fields, nil
 	}
 	return nil, &NotLoadedError{edge: "fields"}
@@ -163,7 +188,7 @@ func (e EntityEdges) FieldsOrErr() ([]*EntityField, error) {
 // MaintenanceEntriesOrErr returns the MaintenanceEntries value or an error if the edge
 // was not loaded in eager-loading.
 func (e EntityEdges) MaintenanceEntriesOrErr() ([]*MaintenanceEntry, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[8] {
 		return e.MaintenanceEntries, nil
 	}
 	return nil, &NotLoadedError{edge: "maintenance_entries"}
@@ -172,7 +197,7 @@ func (e EntityEdges) MaintenanceEntriesOrErr() ([]*MaintenanceEntry, error) {
 // AttachmentsOrErr returns the Attachments value or an error if the edge
 // was not loaded in eager-loading.
 func (e EntityEdges) AttachmentsOrErr() ([]*Attachment, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[9] {
 		return e.Attachments, nil
 	}
 	return nil, &NotLoadedError{edge: "attachments"}
@@ -197,9 +222,11 @@ func (*Entity) scanValues(columns []string) ([]any, error) {
 			values[i] = new(uuid.UUID)
 		case entity.ForeignKeys[0]: // entity_children
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
-		case entity.ForeignKeys[1]: // entity_type_entities
+		case entity.ForeignKeys[1]: // entity_location_entities
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
-		case entity.ForeignKeys[2]: // group_entities
+		case entity.ForeignKeys[2]: // entity_type_entities
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
+		case entity.ForeignKeys[3]: // group_entities
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -375,12 +402,19 @@ func (_m *Entity) assignValues(columns []string, values []any) error {
 			}
 		case entity.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field entity_location_entities", values[i])
+			} else if value.Valid {
+				_m.entity_location_entities = new(uuid.UUID)
+				*_m.entity_location_entities = *value.S.(*uuid.UUID)
+			}
+		case entity.ForeignKeys[2]:
+			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field entity_type_entities", values[i])
 			} else if value.Valid {
 				_m.entity_type_entities = new(uuid.UUID)
 				*_m.entity_type_entities = *value.S.(*uuid.UUID)
 			}
-		case entity.ForeignKeys[2]:
+		case entity.ForeignKeys[3]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field group_entities", values[i])
 			} else if value.Valid {
@@ -413,6 +447,16 @@ func (_m *Entity) QueryParent() *EntityQuery {
 // QueryChildren queries the "children" edge of the Entity entity.
 func (_m *Entity) QueryChildren() *EntityQuery {
 	return NewEntityClient(_m.config).QueryChildren(_m)
+}
+
+// QueryLocation queries the "location" edge of the Entity entity.
+func (_m *Entity) QueryLocation() *EntityQuery {
+	return NewEntityClient(_m.config).QueryLocation(_m)
+}
+
+// QueryLocationEntities queries the "location_entities" edge of the Entity entity.
+func (_m *Entity) QueryLocationEntities() *EntityQuery {
+	return NewEntityClient(_m.config).QueryLocationEntities(_m)
 }
 
 // QueryTag queries the "tag" edge of the Entity entity.

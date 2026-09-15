@@ -2349,6 +2349,15 @@ components:
           description: Group holds the value of the group edge.
           allOf:
             - $ref: "#/components/schemas/ent.Group"
+        location:
+          description: Location holds the value of the location edge.
+          allOf:
+            - $ref: "#/components/schemas/ent.Entity"
+        location_entities:
+          description: LocationEntities holds the value of the location_entities edge.
+          type: array
+          items:
+            $ref: "#/components/schemas/ent.Entity"
         maintenance_entries:
           description: MaintenanceEntries holds the value of the maintenance_entries edge.
           type: array
@@ -3168,6 +3177,13 @@ components:
           maxLength: 1000
         entityTypeId:
           type: string
+        locationId:
+          description: |-
+            LocationID is only needed when ParentID refers to another item and
+            the new entity is stored somewhere other than that item's location.
+          type: string
+          x-omitempty: true
+          nullable: true
         manufacturer:
           type: string
           maxLength: 255
@@ -3272,12 +3288,27 @@ components:
           type: boolean
         location:
           description: |-
-            Location is the nearest ancestor whose entity type is a location.
-            When the direct parent is already a location it equals Parent; when
-            the entity is nested inside other items it is the location those
-            items ultimately live in. Nil for top-level entities.
+            Location is where this entity resolves to: its own location when one
+            is set, otherwise the nearest ancestor whose entity type is a
+            location. Nil for top-level entities. This is a *resolved* value —
+            write it back through LocationID, not through this field.
           allOf:
             - $ref: "#/components/schemas/repo.EntitySummary"
+          x-omitempty: true
+          nullable: true
+        locationId:
+          description: >-
+            LocationID is this entity's own location, and is nil when Location
+            was
+
+            inherited from an ancestor. It is named to match the locationId field
+
+            on EntityUpdate on purpose: a GET body PUT back verbatim keeps the
+
+            entity exactly where it was, rather than silently pinning an
+
+            inherited location or dropping an explicit one.
+          type: string
           x-omitempty: true
           nullable: true
         manufacturer:
@@ -3342,6 +3373,10 @@ components:
           nullable: true
         id:
           type: string
+        locationId:
+          type: string
+          x-omitempty: true
+          nullable: true
         parentId:
           type: string
           x-omitempty: true
@@ -3691,6 +3726,15 @@ components:
         lifetimeWarranty:
           description: Warranty
           type: boolean
+        locationId:
+          description: |-
+            LocationID names the location this entity is stored in. It only
+            needs to be sent when ParentID refers to another item and the entity
+            lives somewhere other than that item's location (#1688); otherwise
+            ParentID alone carries the location. See resolveLocationOverride.
+          type: string
+          x-omitempty: true
+          nullable: true
         manufacturer:
           type: string
         modelNumber:
@@ -4298,6 +4342,10 @@ components:
 
             precedence; when empty the repository falls back to the group's default.
           type: string
+        locationId:
+          type: string
+          x-omitempty: true
+          nullable: true
         name:
           type: string
           maxLength: 255
