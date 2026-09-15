@@ -89,7 +89,7 @@ Great for testing the application, but not recommended for production deployment
 <DockerComposeDesigner />
 
 > [!NOTE]
-> The generated file defaults to PostgreSQL. If you disable PostgreSQL in the designer, Homebox will use SQLite.
+> The generated file defaults to PostgreSQL. If you choose SQLite instead, the data will be stored in a WAL enabled SQLite database. Please note that SQLite is not recommended for large instances, or instances that use non-english characters, as it may cause issues with search.
 >
 > For full database configuration details (including SSL options), see [database configuration](/en/quick-start/configure/database/).
 
