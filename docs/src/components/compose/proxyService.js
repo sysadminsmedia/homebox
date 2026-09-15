@@ -1,3 +1,13 @@
+import { CONTAINER_PORT } from './utils.js';
+
+// Every Homebox image declares a HEALTHCHECK, so sidecars can wait for the app
+// to actually answer requests rather than merely for its container to start.
+const dependsOnHomebox = [
+    '    depends_on:',
+    '      homebox:',
+    '        condition: service_healthy',
+];
+
 /**
  * Returns a YAML service block string for the selected proxy type, or an
  * empty string when no proxy is configured.
@@ -11,11 +21,11 @@ export function proxyServiceBlock(state) {
             '  caddy:',
             '    image: caddy:2-alpine',
             '    restart: unless-stopped',
-            '    depends_on:',
-            '      - homebox',
+            ...dependsOnHomebox,
             '    ports:',
-            '      - 80:80',
-            '      - 443:443',
+            '      - "80:80"',
+            '      - "443:443"',
+            '      - "443:443/udp"',
             '    volumes:',
             '      - ./Caddyfile:/etc/caddy/Caddyfile:ro',
             '      - caddy-data:/data',
@@ -28,11 +38,10 @@ export function proxyServiceBlock(state) {
             '  nginx:',
             '    image: nginx:alpine',
             '    restart: unless-stopped',
-            '    depends_on:',
-            '      - homebox',
+            ...dependsOnHomebox,
             '    ports:',
-            '      - 80:80',
-            '      - 443:443',
+            '      - "80:80"',
+            '      - "443:443"',
             '    volumes:',
             '      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro',
         ].join('\n');
@@ -43,9 +52,12 @@ export function proxyServiceBlock(state) {
             '  cloudflared:',
             '    image: cloudflare/cloudflared:latest',
             '    restart: unless-stopped',
-            '    depends_on:',
-            '      - homebox',
-            '    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}',
+            ...dependsOnHomebox,
+            '    command: tunnel --no-autoupdate run',
+            '    environment:',
+            // Read from the .env file / shell rather than baked into the compose
+            // file, so the tunnel credential never lands in version control.
+            '      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN:?set CLOUDFLARE_TUNNEL_TOKEN in a .env file}',
         ].join('\n');
     }
 
@@ -60,18 +72,27 @@ export function proxyServiceBlock(state) {
  * @returns {string}
  */
 export function getLabels(state) {
-    if (state.proxyType === 'traefik') {
-        return [
-            '    labels:',
-            '      traefik.enable: true',
-            '      traefik.http.routers.homebox-http.rule: Host(`' + state.hostname + '`)',
-            '      traefik.http.routers.homebox-http.entrypoints: web',
-            '      traefik.http.routers.homebox.rule: Host(`' + state.hostname + '`)',
-            '      traefik.http.routers.homebox.entrypoints: websecure',
-            '      traefik.http.routers.homebox.tls: true',
-            '      traefik.http.services.homebox.loadbalancer.passhostheader: true',
-            '      traefik.http.middlewares.treaefik-https-redirect.redirectscheme.scheme: https',
-            '      traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto: https',
-        ].join('\n');
+    if (state.proxyType !== 'traefik') {
+        return '';
     }
+
+    const host = state.hostname || 'homebox.example.com';
+
+    return [
+        '    labels:',
+        '      - "traefik.enable=true"',
+        // Without an explicit port Traefik has to guess which exposed port to
+        // route to, which breaks as soon as the container exposes more than one.
+        `      - "traefik.http.services.homebox.loadbalancer.server.port=${CONTAINER_PORT}"`,
+        '      - "traefik.http.services.homebox.loadbalancer.passhostheader=true"',
+        `      - "traefik.http.routers.homebox-http.rule=Host(\`${host}\`)"`,
+        '      - "traefik.http.routers.homebox-http.entrypoints=web"',
+        '      - "traefik.http.routers.homebox-http.middlewares=homebox-https-redirect"',
+        `      - "traefik.http.routers.homebox.rule=Host(\`${host}\`)"`,
+        '      - "traefik.http.routers.homebox.entrypoints=websecure"',
+        '      - "traefik.http.routers.homebox.tls=true"',
+        '      - "traefik.http.routers.homebox.middlewares=homebox-sslheader"',
+        '      - "traefik.http.middlewares.homebox-https-redirect.redirectscheme.scheme=https"',
+        '      - "traefik.http.middlewares.homebox-sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"',
+    ].join('\n');
 }

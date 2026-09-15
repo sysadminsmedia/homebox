@@ -6,11 +6,24 @@ import { buildComposeYaml } from './buildYaml.js';
  *
  * @param {HTMLElement} root
  */
+/**
+ * Returns a base64 pepper with the same entropy as `openssl rand -base64 48`.
+ * Homebox rejects anything under 32 bytes at startup.
+ *
+ * @returns {string}
+ */
+function generatePepper() {
+    const bytes = new Uint8Array(48);
+    crypto.getRandomValues(bytes);
+    return btoa(String.fromCharCode(...bytes));
+}
+
 function initComposeDesigner(root) {
     const fields = {
         imageVariant: root.querySelector('[data-field="imageVariant"]'),
         storageType: root.querySelector('[data-field="storageType"]'),
         databaseType: root.querySelector('[data-field="databaseType"]'),
+        databaseSslMode: root.querySelector('[data-field="databaseSslMode"]'),
         postgresUser: root.querySelector('[data-field="postgresUser"]'),
         postgresDatabase: root.querySelector('[data-field="postgresDatabase"]'),
         postgresStorageType: root.querySelector('[data-field="postgresStorageType"]'),
@@ -42,6 +55,13 @@ function initComposeDesigner(root) {
         logLevel: root.querySelector('[data-field="logLevel"]'),
         logFormat: root.querySelector('[data-field="logFormat"]'),
         maxUploadSize: root.querySelector('[data-field="maxUploadSize"]'),
+        maxImportSize: root.querySelector('[data-field="maxImportSize"]'),
+        apiKeyPepper: root.querySelector('[data-field="apiKeyPepper"]'),
+        autoIncrementAssetId: root.querySelector('[data-field="autoIncrementAssetId"]'),
+        currencyConfig: root.querySelector('[data-field="currencyConfig"]'),
+        thumbnailEnabled: root.querySelector('[data-field="thumbnailEnabled"]'),
+        thumbnailWidth: root.querySelector('[data-field="thumbnailWidth"]'),
+        thumbnailHeight: root.querySelector('[data-field="thumbnailHeight"]'),
         bindPath: root.querySelector('[data-field="bindPath"]'),
         postgresPassword: root.querySelector('[data-field="postgresPassword"]'),
     };
@@ -57,6 +77,8 @@ function initComposeDesigner(root) {
     const oidcRows = root.querySelectorAll('[data-oidc-row]');
     const output = root.querySelector('[data-output-wrapper] code');
     const copyButton = root.querySelector('[data-copy]');
+    const generatePepperButton = root.querySelector('[data-generate-pepper]');
+    const thumbnailRows = root.querySelectorAll('[data-thumbnail-row]');
     const rootlessWarning = root.querySelector('[data-warning-rootless]');
     const hardenedWarning = root.querySelector('[data-warning-hardened]');
 
@@ -65,6 +87,7 @@ function initComposeDesigner(root) {
             imageVariant: fields.imageVariant.value,
             storageType: fields.storageType.value,
             databaseType: fields.databaseType.value,
+            databaseSslMode: fields.databaseSslMode.value || 'disable',
             postgresUser: fields.postgresUser.value || 'homebox',
             postgresDatabase: fields.postgresDatabase.value || 'homebox',
             postgresStorageType: fields.postgresStorageType.value || 'volume',
@@ -97,6 +120,13 @@ function initComposeDesigner(root) {
             logLevel: fields.logLevel.value || 'info',
             logFormat: fields.logFormat.value || 'text',
             maxUploadSize: fields.maxUploadSize.value || '10',
+            maxImportSize: fields.maxImportSize.value || '1024',
+            apiKeyPepper: fields.apiKeyPepper.value || generatePepper(),
+            autoIncrementAssetId: fields.autoIncrementAssetId.checked,
+            currencyConfig: fields.currencyConfig.value.trim(),
+            thumbnailEnabled: fields.thumbnailEnabled.checked,
+            thumbnailWidth: fields.thumbnailWidth.value || '500',
+            thumbnailHeight: fields.thumbnailHeight.value || '500',
             bindPath: fields.bindPath.value || '/path/to/data/folder',
             postgresPassword: fields.postgresPassword.value || 'your_secure_password',
         };
@@ -118,6 +148,10 @@ function initComposeDesigner(root) {
             row.style.display = state.databaseType === 'sqlite' ? '' : 'none';
         });
 
+        thumbnailRows.forEach((row) => {
+            row.style.display = state.thumbnailEnabled ? '' : 'none';
+        });
+
         storageS3Section.style.display = state.storageBackend === 's3' ? '' : 'none';
         storageGcpSection.style.display = state.storageBackend === 'gcp' ? '' : 'none';
         storageAzureSection.style.display = state.storageBackend === 'azure' ? '' : 'none';
@@ -133,6 +167,17 @@ function initComposeDesigner(root) {
 
         output.textContent = buildComposeYaml(state);
     };
+
+    // Seed a usable secret so the generated file starts out valid rather than
+    // carrying a placeholder that fails the 32-byte startup check.
+    if (!fields.apiKeyPepper.value) {
+        fields.apiKeyPepper.value = generatePepper();
+    }
+
+    generatePepperButton.addEventListener('click', () => {
+        fields.apiKeyPepper.value = generatePepper();
+        render();
+    });
 
     Object.values(fields).forEach((field) => {
         field.addEventListener('input', render);

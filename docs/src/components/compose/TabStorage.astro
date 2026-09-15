@@ -10,7 +10,7 @@ import {
 
 <div class={sectionGridClass}>
     <label class={fieldClass}>
-        Storage backend
+        <span class={fieldLabelClass}>Storage backend</span>
         <select data-field="storageBackend" class={controlClass}>
             <option value="local" selected>Local</option>
             <option value="s3">S3</option>
@@ -21,7 +21,7 @@ import {
 
     <div data-storage-local-section class={`${sectionGridClass} md:col-span-2`}>
         <label class={fieldClass}>
-            Local data storage
+            <span class={fieldLabelClass}>Local data storage</span>
             <select data-field="storageType" class={controlClass}>
                 <option value="volume" selected>Named volume</option>
                 <option value="bind">Bind mount</option>
@@ -42,19 +42,19 @@ import {
 
     <div data-storage-s3-section class={`${sectionGridClass} md:col-span-2`} style="display: none;">
         <label class={fieldWideClass}>
-            S3 connection string (`HBOX_STORAGE_CONN_STRING`)
+            <span class={fieldLabelClass}>S3 connection string (<code>HBOX_STORAGE_CONN_STRING</code>)</span>
             <input type="text" data-field="s3ConnString" value="s3://my-bucket?region=us-east-1"
                    class={controlClass}/>
         </label>
 
         <label class={fieldClass}>
-            AWS access key (`AWS_ACCESS_KEY_ID`)
+            <span class={fieldLabelClass}>AWS access key (<code>AWS_ACCESS_KEY_ID</code>)</span>
             <input type="text" data-field="awsAccessKeyId" value="your_access_key"
                    class={controlClass}/>
         </label>
 
         <label class={fieldClass}>
-            AWS secret key (`AWS_SECRET_ACCESS_KEY`)
+            <span class={fieldLabelClass}>AWS secret key (<code>AWS_SECRET_ACCESS_KEY</code>)</span>
             <input type="text" data-field="awsSecretAccessKey" value="your_secret_key"
                    class={controlClass}/>
         </label>
@@ -62,12 +62,12 @@ import {
 
     <div data-storage-gcp-section class={`${sectionGridClass} md:col-span-2`} style="display: none;">
         <label class={fieldWideClass}>
-            GCP connection string (`HBOX_STORAGE_CONN_STRING`)
+            <span class={fieldLabelClass}>GCP connection string (<code>HBOX_STORAGE_CONN_STRING</code>)</span>
             <input type="text" data-field="gcpConnString" value="gcs://my-bucket" class={controlClass}/>
         </label>
 
         <label class={fieldWideClass}>
-            Credentials file (`GOOGLE_APPLICATION_CREDENTIALS`)
+            <span class={fieldLabelClass}>Credentials file (<code>GOOGLE_APPLICATION_CREDENTIALS</code>)</span>
             <input type="text" data-field="gcpCredentialsPath"
                    value="/run/secrets/gcp-service-account.json" class={controlClass}/>
         </label>
@@ -75,19 +75,19 @@ import {
 
     <div data-storage-azure-section class={`${sectionGridClass} md:col-span-2`} style="display: none;">
         <label class={fieldWideClass}>
-            Azure connection string (`HBOX_STORAGE_CONN_STRING`)
+            <span class={fieldLabelClass}>Azure connection string (<code>HBOX_STORAGE_CONN_STRING</code>)</span>
             <input type="text" data-field="azureConnString" value="azblob://my-container"
                    class={controlClass}/>
         </label>
 
         <label class={fieldClass}>
-            Account (`AZURE_STORAGE_ACCOUNT`)
+            <span class={fieldLabelClass}>Account (<code>AZURE_STORAGE_ACCOUNT</code>)</span>
             <input type="text" data-field="azureStorageAccount" value="your_account"
                    class={controlClass}/>
         </label>
 
         <label class={fieldClass}>
-            Key (`AZURE_STORAGE_KEY`)
+            <span class={fieldLabelClass}>Key (<code>AZURE_STORAGE_KEY</code>)</span>
             <input type="text" data-field="azureStorageKey" value="your_storage_key"
                    class={controlClass}/>
         </label>

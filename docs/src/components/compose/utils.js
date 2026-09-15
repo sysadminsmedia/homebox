@@ -20,3 +20,6 @@ export function pushEnv(lines, key, value) {
     lines.push(`      - ${key}=${value}`);
 }
 
+
+/** Port the Homebox container listens on (EXPOSE in every image variant). */
+export const CONTAINER_PORT = '7745';

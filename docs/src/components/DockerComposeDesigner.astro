@@ -10,7 +10,7 @@ import TabMisc from './compose/TabMisc.astro';
 
 <div data-compose-designer class="compose-designer rounded-lg border border-(--sl-color-hairline-light) p-4">
     <p class="text-sm mb-4">
-        Build a `compose.yml` for Homebox. The default configuration uses PostgreSQL.
+        Build a <code>compose.yml</code> for Homebox. The default configuration uses PostgreSQL.
     </p>
 
     <div class={sectionGridClass}>
@@ -51,7 +51,7 @@ import TabMisc from './compose/TabMisc.astro';
     </div>
 
     <div class="mt-4 flex items-center justify-between gap-3">
-        <strong class="text-sm">Generated `compose.yml`</strong>
+        <strong class="text-sm">Generated <code>compose.yml</code></strong>
         <button
                 type="button"
                 data-copy
@@ -66,12 +66,24 @@ import TabMisc from './compose/TabMisc.astro';
     </div>
 
     <p data-warning-rootless class="hidden mt-3 text-sm">
-        Rootless and hardened images require the data directory to be owned by UID/GID `65532` when using a bind mount.
+        Rootless and hardened images require the data directory to be owned by UID/GID <code>65532</code> when using a bind mount.
     </p>
     <p data-warning-hardened class="hidden mt-2 text-sm">
         The hardened image does not include the MQTT client.
     </p>
 </div>
+
+<style>
+    /* Starlight renders <code> as a bordered chip, which is far too loud for the
+       env-var hint sitting in every field label. Keep the monospace, drop the box. */
+    .compose-designer :global(code) {
+        background: none;
+        border: none;
+        padding: 0;
+        font-size: 0.95em;
+        opacity: 0.75;
+    }
+</style>
 
 <script>
     import './compose/initDesigner.js';

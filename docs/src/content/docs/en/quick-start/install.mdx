@@ -34,13 +34,21 @@ The hardened tag is a distroless image and contains no shells or utilities.
 ### Docker Run
 Great for testing the application, but not recommended for production deployments. Check out the docker compose example below for a production deployment.
 
+> [!IMPORTANT]
+> `HBOX_AUTH_API_KEY_PEPPER` is required and must be at least 32 bytes &mdash; Homebox refuses to start otherwise.
+> Generate one before running the commands below, and keep it stable across restarts (rotating it invalidates every issued API key):
+>
+> ```bash
+> openssl rand -base64 48 > hbox.pepper
+> ```
+
 <Tabs>
     <TabItem label="Regular">
         ```bash
         # Run the container
         docker run -d --name homebox --restart unless-stopped \
         --publish 3100:7745 --env HBOX_OPTIONS_ALLOW_ANALYTICS=false \
-        --env HBOX_AUTH_API_KEY_PEPPER=some_random_string \
+        --env HBOX_AUTH_API_KEY_PEPPER="$(cat hbox.pepper)" \
         --volume /path/to/data/folder:/data \
         ghcr.io/sysadminsmedia/homebox:latest
         ```
@@ -54,7 +62,7 @@ Great for testing the application, but not recommended for production deployment
         # Run the container
         docker run -d --name homebox --restart unless-stopped \
         --publish 3100:7745 --env HBOX_OPTIONS_ALLOW_ANALYTICS=false \
-        --env HBOX_AUTH_API_KEY_PEPPER=some_random_string \
+        --env HBOX_AUTH_API_KEY_PEPPER="$(cat hbox.pepper)" \
         --volume /path/to/data/folder:/data \
         ghcr.io/sysadminsmedia/homebox:latest-rootless
         ```
@@ -68,7 +76,7 @@ Great for testing the application, but not recommended for production deployment
         # Run the container
         docker run -d --name homebox --restart unless-stopped \
         --publish 3100:7745 --env HBOX_OPTIONS_ALLOW_ANALYTICS=false \
-        --env HBOX_AUTH_API_KEY_PEPPER=some_random_string \
+        --env HBOX_AUTH_API_KEY_PEPPER="$(cat hbox.pepper)" \
         --volume /path/to/data/folder:/data \
         ghcr.io/sysadminsmedia/homebox:latest-hardened
         ```

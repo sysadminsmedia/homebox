@@ -48,6 +48,17 @@ import {
         </select>
     </div>
 
+    <div data-db-postgres-row class={fieldClass} style="display: none;">
+        <label for="compose-database-ssl-mode" class={fieldLabelClass}>SSL mode
+            (<code>HBOX_DATABASE_SSL_MODE</code>)</label>
+        <select id="compose-database-ssl-mode" data-field="databaseSslMode" class={controlClass}>
+            <option value="disable" selected>disable (bundled postgres)</option>
+            <option value="require">require</option>
+            <option value="verify-ca">verify-ca</option>
+            <option value="verify-full">verify-full</option>
+        </select>
+    </div>
+
     <div data-db-postgres-bind-row class={fieldClass} style="display: none;">
         <label for="compose-postgres-bind-path" class={fieldLabelClass}>PostgreSQL bind mount path</label>
         <input
@@ -61,7 +72,7 @@ import {
 
     <div data-db-sqlite-row class={fieldWideClass} style="display: none;">
         <label for="compose-sqlite-path" class={fieldLabelClass}>SQLite path
-            (`HBOX_DATABASE_SQLITE_PATH`)</label>
+            (<code>HBOX_DATABASE_SQLITE_PATH</code>)</label>
         <input
                 id="compose-sqlite-path"
                 type="text"

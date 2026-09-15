@@ -1,4 +1,4 @@
-import { toBool, pushEnv } from './utils.js';
+import { toBool, pushEnv, CONTAINER_PORT } from './utils.js';
 import { getLabels, proxyServiceBlock } from './proxyService.js';
 
 /**
@@ -11,10 +11,19 @@ export function buildComposeYaml(state) {
     const imageTag =
         state.imageVariant === 'regular' ? 'latest' : `latest-${state.imageVariant}`;
 
-    const homeboxVolumes =
+    const homeboxVolumes = [
         state.storageType === 'bind'
             ? `      - ${state.bindPath}:/data/`
-            : '      - homebox-data:/data/';
+            : '      - homebox-data:/data/',
+    ];
+
+    // The credentials file has to exist inside the container for
+    // GOOGLE_APPLICATION_CREDENTIALS to resolve, so mount it alongside the data.
+    if (state.storageBackend === 'gcp') {
+        homeboxVolumes.push(
+            `      - ./gcp-service-account.json:${state.gcpCredentialsPath}:ro`
+        );
+    }
 
     const postgresVolume =
         state.postgresStorageType === 'bind'
@@ -33,7 +42,14 @@ export function buildComposeYaml(state) {
                   `      POSTGRES_PASSWORD: ${state.postgresPassword}`,
                   `      POSTGRES_USER: ${state.postgresUser}`,
                   `      POSTGRES_DB: ${state.postgresDatabase}`,
-                  '',
+                  // Without this, depends_on only waits for the container to start,
+                  // not for the database to accept connections.
+                  '    healthcheck:',
+                  `      test: ["CMD-SHELL", "pg_isready -U ${state.postgresUser} -d ${state.postgresDatabase}"]`,
+                  '      interval: 10s',
+                  '      timeout: 5s',
+                  '      retries: 5',
+                  '      start_period: 30s',
               ].join('\n')
             : '';
 
@@ -41,12 +57,24 @@ export function buildComposeYaml(state) {
         '      - HBOX_LOG_LEVEL=' + state.logLevel,
         '      - HBOX_LOG_FORMAT=' + state.logFormat,
         '      - HBOX_WEB_MAX_UPLOAD_SIZE=' + state.maxUploadSize,
+        '      - HBOX_WEB_MAX_IMPORT_SIZE=' + state.maxImportSize,
         '      - HBOX_OPTIONS_ALLOW_ANALYTICS=' + toBool(state.allowAnalytics),
-        '      # Use a strong random string for the pepper in production, it will be used to hash API keys and make them more secure',
-        '      - HBOX_AUTH_API_KEY_PEPPER=some_random_string',
         '      - HBOX_OPTIONS_ALLOW_REGISTRATION=' + toBool(state.allowRegistration),
+        '      - HBOX_OPTIONS_AUTO_INCREMENT_ASSET_ID=' + toBool(state.autoIncrementAssetId),
         '      - HBOX_OPTIONS_GITHUB_RELEASE_CHECK=' + toBool(state.githubReleaseCheck),
+        // Required: Homebox refuses to start when this is under 32 bytes.
+        '      # Required, min 32 bytes. Keep it stable: changing it invalidates all API keys',
+        '      - HBOX_AUTH_API_KEY_PEPPER=' + state.apiKeyPepper,
     ];
+
+    pushEnv(envLines, 'HBOX_OPTIONS_CURRENCY_CONFIG', state.currencyConfig);
+
+    if (!state.thumbnailEnabled) {
+        envLines.push('      - HBOX_THUMBNAIL_ENABLED=false');
+    } else {
+        envLines.push(`      - HBOX_THUMBNAIL_WIDTH=${state.thumbnailWidth}`);
+        envLines.push(`      - HBOX_THUMBNAIL_HEIGHT=${state.thumbnailHeight}`);
+    }
 
     if (state.databaseType === 'postgres') {
         envLines.push('      - HBOX_DATABASE_DRIVER=postgres');
@@ -55,6 +83,9 @@ export function buildComposeYaml(state) {
         envLines.push(`      - HBOX_DATABASE_USERNAME=${state.postgresUser}`);
         envLines.push(`      - HBOX_DATABASE_PASSWORD=${state.postgresPassword}`);
         envLines.push(`      - HBOX_DATABASE_DATABASE=${state.postgresDatabase}`);
+        // Defaults to "require", which the postgres:17-alpine image above cannot
+        // satisfy - it ships with ssl off - so the mode has to be explicit.
+        envLines.push(`      - HBOX_DATABASE_SSL_MODE=${state.databaseSslMode}`);
     } else if (state.sqlitePath) {
         envLines.push(`      - HBOX_DATABASE_SQLITE_PATH=${state.sqlitePath}`);
     }
@@ -95,9 +126,25 @@ export function buildComposeYaml(state) {
 
     const labels = getLabels(state);
 
+    // Waiting on service_healthy avoids the start-up crash loop that a plain
+    // list-form depends_on leaves in place while postgres is still initialising.
     const dependsOn =
-        state.databaseType === 'postgres' ? '    depends_on:\n      - postgres\n' : '';
+        state.databaseType === 'postgres'
+            ? '    depends_on:\n      postgres:\n        condition: service_healthy\n'
+            : '';
     const sidecarService = proxyServiceBlock(state);
+
+    // Behind a reverse proxy the app must not also be reachable on the host port,
+    // or requests can bypass whatever TLS and auth the proxy terminates.
+    const portsSection =
+        state.proxyType === 'none'
+            ? ['    ports:', `      - "3100:${CONTAINER_PORT}"`]
+            : [
+                  '    expose:',
+                  `      - "${CONTAINER_PORT}"`,
+                  '    # Add a ports: mapping here only if you also need to reach Homebox',
+                  '    # directly, bypassing the proxy.',
+              ];
 
     const volumeLines = [];
     if (state.storageType === 'volume') {
@@ -115,26 +162,24 @@ export function buildComposeYaml(state) {
         ? `\nvolumes:\n${volumeLines.join('\n')}`
         : '';
 
-    return [
-        'services:',
+    const homeboxService = [
         '  homebox:',
         `    image: ghcr.io/sysadminsmedia/homebox:${imageTag}`,
-        '    restart: always',
+        '    restart: unless-stopped',
         dependsOn.trimEnd(),
         '    environment:',
         envLines.join('\n'),
         '    volumes:',
-        homeboxVolumes,
-        '    ports:',
-        '      - 3100:7745',
+        homeboxVolumes.join('\n'),
+        portsSection.join('\n'),
         labels,
-        '',
-        postgresService.trimEnd(),
-        sidecarService.trimEnd(),
-        volumesSection.trimEnd(),
-        '',
     ]
         .filter((line) => line !== '')
         .join('\n');
-}
 
+    const services = [homeboxService, postgresService.trimEnd(), sidecarService.trimEnd()]
+        .filter((block) => block !== '')
+        .join('\n\n');
+
+    return `services:\n${services}\n${volumesSection.trimEnd()}\n`;
+}
