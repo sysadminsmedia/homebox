@@ -7,8 +7,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 )
 
@@ -27,8 +27,8 @@ var (
 func mapMaintenanceEntryWithDetails(entry *ent.MaintenanceEntry) MaintenanceEntryWithDetails {
 	return MaintenanceEntryWithDetails{
 		MaintenanceEntry: mapMaintenanceEntry(entry),
-		ItemName:         entry.Edges.Item.Name,
-		ItemID:           entry.ItemID,
+		ItemName:         entry.Edges.Entity.Name,
+		ItemID:           entry.EntityID,
 	}
 }
 
@@ -46,8 +46,8 @@ type MaintenanceFilters struct {
 
 func (r *MaintenanceEntryRepository) GetAllMaintenance(ctx context.Context, groupID uuid.UUID, filters MaintenanceFilters) ([]MaintenanceEntryWithDetails, error) {
 	query := r.db.MaintenanceEntry.Query().Where(
-		maintenanceentry.HasItemWith(
-			item.HasGroupWith(group.IDEQ(groupID)),
+		maintenanceentry.HasEntityWith(
+			entity.HasGroupWith(group.IDEQ(groupID)),
 		),
 	)
 
@@ -68,7 +68,7 @@ func (r *MaintenanceEntryRepository) GetAllMaintenance(ctx context.Context, grou
 	default:
 		return nil, fmt.Errorf("unknown status %s", filters.Status)
 	}
-	entries, err := query.WithItem().Order(maintenanceentry.ByScheduledDate()).All(ctx)
+	entries, err := query.WithEntity().Order(maintenanceentry.ByScheduledDate()).All(ctx)
 
 	if err != nil {
 		return nil, err

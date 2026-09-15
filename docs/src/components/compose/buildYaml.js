@@ -42,6 +42,8 @@ export function buildComposeYaml(state) {
         '      - HBOX_LOG_FORMAT=' + state.logFormat,
         '      - HBOX_WEB_MAX_UPLOAD_SIZE=' + state.maxUploadSize,
         '      - HBOX_OPTIONS_ALLOW_ANALYTICS=' + toBool(state.allowAnalytics),
+        '      # Use a strong random string for the pepper in production, it will be used to hash API keys and make them more secure',
+        '      - HBOX_AUTH_API_KEY_PEPPER=some_random_string',
         '      - HBOX_OPTIONS_ALLOW_REGISTRATION=' + toBool(state.allowRegistration),
         '      - HBOX_OPTIONS_GITHUB_RELEASE_CHECK=' + toBool(state.githubReleaseCheck),
     ];

@@ -1,5 +1,8 @@
 const flaggedWords = ["password", "homebox", "admin", "qwerty", "login"];
 
+export const PASSWORD_MIN_LENGTH = 6;
+export const PASSWORD_RULES = `minlength: ${PASSWORD_MIN_LENGTH};`;
+
 /**
  * scorePassword returns a score for a given password between 0 and 100.
  * if a password contains a flagged word, it returns 0.
@@ -10,7 +13,7 @@ export function scorePassword(pass: string): number {
   let score = 0;
   if (!pass) return score;
 
-  if (pass.length < 6) return score;
+  if (pass.length < PASSWORD_MIN_LENGTH) return score;
 
   // Check for flagged words
   for (const word of flaggedWords) {

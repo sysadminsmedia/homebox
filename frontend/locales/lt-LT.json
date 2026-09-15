@@ -1,10 +1,40 @@
 {
+    "collection": {
+        "copy_invite": "Kopijuoti pakvietimo nuorodą",
+        "create_invite": "Sukurti kvietimą",
+        "expires_at": "Nustoja galioti",
+        "invite_token_hidden": "Nebėra matoma",
+        "invites": "Pakvietimai",
+        "invites_delete_confirm": "Ar tikrai norite ištrinti šį pakvietimą?",
+        "members": {
+            "cannot_remove_last": "Negalite panaikinti paskutinio nario.",
+            "email": "El. paštas",
+            "member": "Narys",
+            "name": "Vardas",
+            "owner": "Savininkas",
+            "remove_confirm": "Ar tikrai norite pašalinti šį narį?",
+            "removed": "Narys pašalintas",
+            "role": "Prieiga"
+        },
+        "no_invites": "Nėra pakvietimų",
+        "remaining_uses": "Likę panaudojimai",
+        "tabs": {
+            "invites": "Pakvietimai",
+            "members": "Nariai",
+            "settings": "Nustatymai",
+            "tools": "Įrankiai"
+        },
+        "uses": "Panaudojimai"
+    },
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "Naudok {shiftKey} + {enterKey}, kad pridėtumei kitą"
+            },
             "import_dialog": {
                 "change_warning": "Pasikeitė importo su esamais import_refs elgesys. Jei CSV faile yra import_ref, \nelementas bus atnaujintas su CSV failo reikšmėmis.",
-                "description": "Importuokite CSV failą, kuriame yra jūsų elementai, etiketės ir vietos. Daugiau informacijos apie \nreikalingas formatas.",
-                "title": "Importuoti CSV failą"
+                "description": "Importuokite CSV dokumentą, kuriame yra jūsų elementai, etiketės ir vietos. Peržiūrėkite dokumentaciją dėl platesnės informacijos.",
+                "title": "Importuoti CSV dokumentą"
             },
             "outdated": {
                 "current_version": "Dabartinė Versija",

@@ -57,10 +57,13 @@
   const domain = window.location.protocol + "//" + window.location.host;
 
   const redirectTo = ref("");
+  // Holds invite code from dialog params until the watcher applies it on open
+  const pendingInviteCode = ref("");
 
   onMounted(() => {
     const cleanup = registerOpenDialogCallback(DialogID.JoinCollection, params => {
       redirectTo.value = params?.redirectTo || "";
+      pendingInviteCode.value = params?.inviteCode || "";
     });
 
     onUnmounted(cleanup);
@@ -70,8 +73,8 @@
     () => activeDialog.value,
     active => {
       if (active && active === DialogID.JoinCollection) {
-        // reset and focus on open
-        form.inviteCode = "";
+        form.inviteCode = pendingInviteCode.value;
+        pendingInviteCode.value = "";
         focused.value = true;
       }
     }

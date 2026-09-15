@@ -1,0 +1,38 @@
+{
+    "collection": {
+        "copy_invite": "Kopieer uitnodigingskakel",
+        "create_invite": "Skep uitnodiging",
+        "delete_collection": "Verwyder versameling",
+        "delete_confirm": "Is jy seker jy wil hierdie versameling verwyder? Hierdie aksie kan nie ongedaan gemaak word nie.",
+        "deleted_collection": "Versameling verwyder.",
+        "expires_at": "verval",
+        "invite_token": "teken",
+        "invite_token_hidden": "Nie meer sigbaar nie",
+        "invite_token_warning": "Uitnodigingstokens word slegs een keer gewys. Kopieer die skakel nou; jy sal nie hierdie token weer kan sien nadat jy hierdie bladsy verlaat of verfris het nie.",
+        "invites": "nooi",
+        "invites_delete_confirm": "Is jy seker jy will die uitnodiging verwyder?",
+        "leave_collection": "verlaat versameling",
+        "leave_confirm": "Is jy seker jy wil die versameling verlaat?",
+        "left_collection": "Jy het die versameling verlaat.",
+        "manage_collection": "bestuur versameling",
+        "members": {
+            "cannot_remove_last": "Jy kan nie die laaste lid verwyder nie.",
+            "email": "Epos",
+            "empty": "Nog nie lede in die versameling nie.",
+            "member": "Lid",
+            "name": "Naam",
+            "owner": "Eienaar",
+            "remove_confirm": "Is jy seker jy will nie lid verwyder?",
+            "removed": "Lid verwyder",
+            "role": "Posisie"
+        },
+        "no_collections": {
+            "create": "Begin n nuwe versameling",
+            "join": "Sluit aan by a bestaande versameling",
+            "message": "Dit lyk asof jy nie deel is van 'n versameling nie. Skep 'n nuwe versameling vir jou goed, of sluit aan by een waarna jy genooi is.",
+            "title": "Geen versameling gevind nie"
+        },
+        "no_invites": "Geen uitnodigings nie",
+        "remaining_uses": "Oorblywende gebruike"
+    }
+}

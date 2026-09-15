@@ -6,37 +6,38 @@ export interface UseTheme {
   setTheme: (theme: DaisyTheme) => void;
 }
 
-const themeRef = ref<DaisyTheme>("garden");
-
 export function useTheme(): UseTheme {
   const preferences = useViewPreferences();
-  themeRef.value = preferences.value.theme;
+  const theme = computed(() => preferences.value.theme);
+  const htmlEl = ref<HTMLElement | null>(null);
 
-  const setTheme = (newTheme: DaisyTheme) => {
-    preferences.value.theme = newTheme;
-
-    if (htmlEl) {
-      htmlEl.value?.setAttribute("data-theme", newTheme);
-      // FIXME: this is a hack to remove the theme class from the html element
-      htmlEl.value?.classList.remove(...themes);
-      htmlEl.value?.classList.add("theme-" + newTheme);
-    }
-
-    themeRef.value = newTheme;
-  };
-
-  const htmlEl = ref<HTMLElement | null>();
-
-  onMounted(() => {
-    if (htmlEl.value) {
+  const applyThemeToDom = (newTheme: DaisyTheme) => {
+    if (!htmlEl.value) {
       return;
     }
 
+    htmlEl.value.setAttribute("data-theme", newTheme);
+
+    const prefixedThemeClasses = Array.from(htmlEl.value.classList).filter(className => className.startsWith("theme-"));
+    if (prefixedThemeClasses.length > 0) {
+      htmlEl.value.classList.remove(...prefixedThemeClasses);
+    }
+
+    htmlEl.value.classList.remove(...themes);
+    htmlEl.value.classList.add("theme-" + newTheme);
+  };
+
+  const setTheme = (newTheme: DaisyTheme) => {
+    preferences.value.theme = newTheme;
+  };
+
+  onMounted(() => {
     htmlEl.value = document.querySelector("html");
+    applyThemeToDom(theme.value);
   });
 
-  const theme = computed(() => {
-    return themeRef.value;
+  watch(theme, newTheme => {
+    applyThemeToDom(newTheme);
   });
 
   return { theme, setTheme };

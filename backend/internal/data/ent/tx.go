@@ -12,34 +12,42 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// APIKey is the client for interacting with the APIKey builders.
+	APIKey *APIKeyClient
 	// Attachment is the client for interacting with the Attachment builders.
 	Attachment *AttachmentClient
 	// AuthRoles is the client for interacting with the AuthRoles builders.
 	AuthRoles *AuthRolesClient
 	// AuthTokens is the client for interacting with the AuthTokens builders.
 	AuthTokens *AuthTokensClient
+	// Entity is the client for interacting with the Entity builders.
+	Entity *EntityClient
+	// EntityField is the client for interacting with the EntityField builders.
+	EntityField *EntityFieldClient
+	// EntityTemplate is the client for interacting with the EntityTemplate builders.
+	EntityTemplate *EntityTemplateClient
+	// EntityType is the client for interacting with the EntityType builders.
+	EntityType *EntityTypeClient
+	// Export is the client for interacting with the Export builders.
+	Export *ExportClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// GroupInvitationToken is the client for interacting with the GroupInvitationToken builders.
 	GroupInvitationToken *GroupInvitationTokenClient
-	// Item is the client for interacting with the Item builders.
-	Item *ItemClient
-	// ItemField is the client for interacting with the ItemField builders.
-	ItemField *ItemFieldClient
-	// ItemTemplate is the client for interacting with the ItemTemplate builders.
-	ItemTemplate *ItemTemplateClient
-	// Location is the client for interacting with the Location builders.
-	Location *LocationClient
 	// MaintenanceEntry is the client for interacting with the MaintenanceEntry builders.
 	MaintenanceEntry *MaintenanceEntryClient
 	// Notifier is the client for interacting with the Notifier builders.
 	Notifier *NotifierClient
+	// PasswordResetTokens is the client for interacting with the PasswordResetTokens builders.
+	PasswordResetTokens *PasswordResetTokensClient
 	// Tag is the client for interacting with the Tag builders.
 	Tag *TagClient
 	// TemplateField is the client for interacting with the TemplateField builders.
 	TemplateField *TemplateFieldClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserGroup is the client for interacting with the UserGroup builders.
+	UserGroup *UserGroupClient
 
 	// lazily loaded.
 	client     *Client
@@ -171,20 +179,24 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.APIKey = NewAPIKeyClient(tx.config)
 	tx.Attachment = NewAttachmentClient(tx.config)
 	tx.AuthRoles = NewAuthRolesClient(tx.config)
 	tx.AuthTokens = NewAuthTokensClient(tx.config)
+	tx.Entity = NewEntityClient(tx.config)
+	tx.EntityField = NewEntityFieldClient(tx.config)
+	tx.EntityTemplate = NewEntityTemplateClient(tx.config)
+	tx.EntityType = NewEntityTypeClient(tx.config)
+	tx.Export = NewExportClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
 	tx.GroupInvitationToken = NewGroupInvitationTokenClient(tx.config)
-	tx.Item = NewItemClient(tx.config)
-	tx.ItemField = NewItemFieldClient(tx.config)
-	tx.ItemTemplate = NewItemTemplateClient(tx.config)
-	tx.Location = NewLocationClient(tx.config)
 	tx.MaintenanceEntry = NewMaintenanceEntryClient(tx.config)
 	tx.Notifier = NewNotifierClient(tx.config)
+	tx.PasswordResetTokens = NewPasswordResetTokensClient(tx.config)
 	tx.Tag = NewTagClient(tx.config)
 	tx.TemplateField = NewTemplateFieldClient(tx.config)
 	tx.User = NewUserClient(tx.config)
+	tx.UserGroup = NewUserGroupClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.
@@ -194,7 +206,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Attachment.QueryXXX(), the query will be executed
+// applies a query, for example: APIKey.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

@@ -391,21 +391,21 @@ func MimeTypeContainsFold(v string) predicate.Attachment {
 	return predicate.Attachment(sql.FieldContainsFold(FieldMimeType, v))
 }
 
-// HasItem applies the HasEdge predicate on the "item" edge.
-func HasItem() predicate.Attachment {
+// HasEntity applies the HasEdge predicate on the "entity" edge.
+func HasEntity() predicate.Attachment {
 	return predicate.Attachment(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ItemTable, ItemColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, EntityTable, EntityColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasItemWith applies the HasEdge predicate on the "item" edge with a given conditions (other predicates).
-func HasItemWith(preds ...predicate.Item) predicate.Attachment {
+// HasEntityWith applies the HasEdge predicate on the "entity" edge with a given conditions (other predicates).
+func HasEntityWith(preds ...predicate.Entity) predicate.Attachment {
 	return predicate.Attachment(func(s *sql.Selector) {
-		step := newItemStep()
+		step := newEntityStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

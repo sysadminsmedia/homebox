@@ -1,36 +1,36 @@
 import { BaseAPI, route } from "../base";
 import type {
-  ItemTemplateCreate,
-  ItemTemplateOut,
-  ItemTemplateSummary,
-  ItemTemplateUpdate,
-  ItemTemplateCreateItemRequest,
-  ItemOut,
+  EntityTemplateCreate,
+  EntityTemplateOut,
+  EntityTemplateSummary,
+  EntityTemplateUpdate,
+  EntityTemplateCreateItemRequest,
+  EntityOut,
 } from "../types/data-contracts";
 
 export class TemplatesApi extends BaseAPI {
   getAll() {
-    return this.http.get<ItemTemplateSummary[]>({ url: route("/templates") });
+    return this.http.get<EntityTemplateSummary[]>({ url: route("/templates") });
   }
 
-  create(body: ItemTemplateCreate) {
-    return this.http.post<ItemTemplateCreate, ItemTemplateOut>({ url: route("/templates"), body });
+  create(body: EntityTemplateCreate) {
+    return this.http.post<EntityTemplateCreate, EntityTemplateOut>({ url: route("/templates"), body });
   }
 
   get(id: string) {
-    return this.http.get<ItemTemplateOut>({ url: route(`/templates/${id}`) });
+    return this.http.get<EntityTemplateOut>({ url: route(`/templates/${id}`) });
   }
 
   delete(id: string) {
     return this.http.delete<void>({ url: route(`/templates/${id}`) });
   }
 
-  update(id: string, body: ItemTemplateUpdate) {
-    return this.http.put<ItemTemplateUpdate, ItemTemplateOut>({ url: route(`/templates/${id}`), body });
+  update(id: string, body: EntityTemplateUpdate) {
+    return this.http.put<EntityTemplateUpdate, EntityTemplateOut>({ url: route(`/templates/${id}`), body });
   }
 
-  createItem(templateId: string, body: ItemTemplateCreateItemRequest) {
-    return this.http.post<ItemTemplateCreateItemRequest, ItemOut>({
+  createItem(templateId: string, body: EntityTemplateCreateItemRequest) {
+    return this.http.post<EntityTemplateCreateItemRequest, EntityOut>({
       url: route(`/templates/${templateId}/create-item`),
       body,
     });

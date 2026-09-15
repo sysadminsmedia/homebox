@@ -66,9 +66,9 @@ func UpdatedAt(v time.Time) predicate.MaintenanceEntry {
 	return predicate.MaintenanceEntry(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
-// ItemID applies equality check predicate on the "item_id" field. It's identical to ItemIDEQ.
-func ItemID(v uuid.UUID) predicate.MaintenanceEntry {
-	return predicate.MaintenanceEntry(sql.FieldEQ(FieldItemID, v))
+// EntityID applies equality check predicate on the "entity_id" field. It's identical to EntityIDEQ.
+func EntityID(v uuid.UUID) predicate.MaintenanceEntry {
+	return predicate.MaintenanceEntry(sql.FieldEQ(FieldEntityID, v))
 }
 
 // Date applies equality check predicate on the "date" field. It's identical to DateEQ.
@@ -176,24 +176,24 @@ func UpdatedAtLTE(v time.Time) predicate.MaintenanceEntry {
 	return predicate.MaintenanceEntry(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
-// ItemIDEQ applies the EQ predicate on the "item_id" field.
-func ItemIDEQ(v uuid.UUID) predicate.MaintenanceEntry {
-	return predicate.MaintenanceEntry(sql.FieldEQ(FieldItemID, v))
+// EntityIDEQ applies the EQ predicate on the "entity_id" field.
+func EntityIDEQ(v uuid.UUID) predicate.MaintenanceEntry {
+	return predicate.MaintenanceEntry(sql.FieldEQ(FieldEntityID, v))
 }
 
-// ItemIDNEQ applies the NEQ predicate on the "item_id" field.
-func ItemIDNEQ(v uuid.UUID) predicate.MaintenanceEntry {
-	return predicate.MaintenanceEntry(sql.FieldNEQ(FieldItemID, v))
+// EntityIDNEQ applies the NEQ predicate on the "entity_id" field.
+func EntityIDNEQ(v uuid.UUID) predicate.MaintenanceEntry {
+	return predicate.MaintenanceEntry(sql.FieldNEQ(FieldEntityID, v))
 }
 
-// ItemIDIn applies the In predicate on the "item_id" field.
-func ItemIDIn(vs ...uuid.UUID) predicate.MaintenanceEntry {
-	return predicate.MaintenanceEntry(sql.FieldIn(FieldItemID, vs...))
+// EntityIDIn applies the In predicate on the "entity_id" field.
+func EntityIDIn(vs ...uuid.UUID) predicate.MaintenanceEntry {
+	return predicate.MaintenanceEntry(sql.FieldIn(FieldEntityID, vs...))
 }
 
-// ItemIDNotIn applies the NotIn predicate on the "item_id" field.
-func ItemIDNotIn(vs ...uuid.UUID) predicate.MaintenanceEntry {
-	return predicate.MaintenanceEntry(sql.FieldNotIn(FieldItemID, vs...))
+// EntityIDNotIn applies the NotIn predicate on the "entity_id" field.
+func EntityIDNotIn(vs ...uuid.UUID) predicate.MaintenanceEntry {
+	return predicate.MaintenanceEntry(sql.FieldNotIn(FieldEntityID, vs...))
 }
 
 // DateEQ applies the EQ predicate on the "date" field.
@@ -476,21 +476,21 @@ func CostLTE(v float64) predicate.MaintenanceEntry {
 	return predicate.MaintenanceEntry(sql.FieldLTE(FieldCost, v))
 }
 
-// HasItem applies the HasEdge predicate on the "item" edge.
-func HasItem() predicate.MaintenanceEntry {
+// HasEntity applies the HasEdge predicate on the "entity" edge.
+func HasEntity() predicate.MaintenanceEntry {
 	return predicate.MaintenanceEntry(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ItemTable, ItemColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, EntityTable, EntityColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasItemWith applies the HasEdge predicate on the "item" edge with a given conditions (other predicates).
-func HasItemWith(preds ...predicate.Item) predicate.MaintenanceEntry {
+// HasEntityWith applies the HasEdge predicate on the "entity" edge with a given conditions (other predicates).
+func HasEntityWith(preds ...predicate.Entity) predicate.MaintenanceEntry {
 	return predicate.MaintenanceEntry(func(s *sql.Selector) {
-		step := newItemStep()
+		step := newEntityStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

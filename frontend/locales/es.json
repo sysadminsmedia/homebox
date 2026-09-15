@@ -35,6 +35,7 @@
         "no_invites": "Sin invitaciones",
         "remaining_uses": "Usos restantes",
         "tabs": {
+            "entity_types": "Tipos de Entidad",
             "invites": "Invitaciones",
             "members": "Miembros",
             "notifiers": "Notificadores",
@@ -117,12 +118,14 @@
             "randomize": "Aleatorizar color"
         },
         "form": {
+            "min_length": "min {min}",
             "password": {
                 "toggle_show": "Alternar Visibilidad de la Contraseña"
             }
         },
         "global": {
             "copy_text": {
+                "continue": "Continuar",
                 "documentation": "documentación",
                 "failed_to_copy": "No se ha podido copiar el texto al portapapeles",
                 "https_required": "porque se requiere HTTPS",
@@ -214,6 +217,7 @@
                 "error_exception": "Se ha producido una excepción al recuperar el código de barras del artículo: ",
                 "error_invalid_barcode": "Código de barras proporcionado no válido",
                 "error_not_found": "No se ha encontrado ningún producto con el código de barras proporcionado.",
+                "import_selected": "Importar seleccionado",
                 "search_item": "Buscar producto",
                 "title": "Importar producto"
             },
@@ -279,6 +283,7 @@
             "create_modal": {
                 "location_description": "Descripción de la Ubicación",
                 "location_name": "Nombre de la Ubicación",
+                "location_photo": "Foto de Ubicación 📷",
                 "title": "Crear Ubicación",
                 "toast": {
                     "already_creating": "Ya se está creando una ubicación",
@@ -301,11 +306,18 @@
             "no_results": "Sin resultados.",
             "shortcut_hint": "Usa las teclas numéricas para seleccionar rápidamente una acción."
         },
+        "search": {
+            "filter": {
+                "search_placeholder": "Buscar…"
+            }
+        },
         "tag": {
             "create_modal": {
                 "tag_color": "Color de la Etiqueta",
                 "tag_description": "Descripción de la Etiqueta",
+                "tag_icon": "Icono de la etiqueta",
                 "tag_name": "Nombre de la Etiqueta",
+                "tag_parent": "Etiqueta padre",
                 "title": "Crear Etiqueta",
                 "toast": {
                     "already_creating": "Ya se está creando una etiqueta",
@@ -315,6 +327,8 @@
                 }
             },
             "selector": {
+                "clear": "Limpiar",
+                "no_tags_found": "No se han encontrado etiquetas",
                 "select_tags": "Seleccionar Etiquetas"
             }
         },
@@ -387,6 +401,7 @@
         "archived": "Archivado",
         "build": "Compilación: { build }",
         "cancel": "Cancelar",
+        "close": "Cerrar",
         "confirm": "Confirmar",
         "create": "Crear",
         "create_and_add": "Crear y Añadir Otro",
@@ -421,9 +436,13 @@
         "return_home": "Regresar a Inicio",
         "save": "Guardar",
         "search": "Buscar",
+        "select": "Seleccionar...",
+        "show_less": "Mostrar menos",
+        "show_more": "Mostrar más",
         "sign_out": "Cerrar Sesión",
         "submit": "Enviar",
         "tags": "Etiquetas",
+        "type": "Tipo",
         "unknown": "Desconocido",
         "update": "Actualizar",
         "updating": "Actualizando",
@@ -443,13 +462,25 @@
         "total_value": "Valor Total"
     },
     "index": {
+        "back_to_login": "Volver al inicio de sesión",
         "disabled_registration": "Registro Desactivado",
         "dont_join_group": "¿No quieres unirte a un grupo?",
+        "forgot_password": "¿Has olvidado tu contraseña?",
+        "forgot_password_check_email": "Si ese correo electrónico está asociado a una cuenta, un enlace para restablecerla está en camino. El enlace caducará en una hora.",
+        "forgot_password_send": "Enviar enlace de restablecimiento",
+        "forgot_password_subtitle": "Introduce la dirección de correo electrónico de tu cuenta y te enviaremos un enlace para restablecer tu contraseña.",
+        "forgot_password_title": "Restablecer contraseña",
         "joining_group": "¡Te estás uniendo a un grupo existente!",
         "login": "Iniciar sesión",
         "or": "o",
         "register": "Registrarse",
         "remember_me": "Recuérdame",
+        "reset_password_invalid": "Este enlace de restablecimiento no es válido o ha caducado. Solicita uno nuevo.",
+        "reset_password_missing_token": "Falta el token de restablecimiento. Vuelve a abrir el enlace del correo electrónico o solicita uno nuevo.",
+        "reset_password_set": "Establecer nueva contraseña",
+        "reset_password_subtitle": "Elige una nueva contraseña para tu cuenta.",
+        "reset_password_success": "Se ha restablecido tu contraseña. Inicia sesión con la nueva contraseña.",
+        "reset_password_title": "Restablece tu contraseña",
         "set_email": "¿Cuál es tu email?",
         "set_name": "¿Cómo te llamas?",
         "set_password": "Establece tu contraseña",
@@ -511,6 +542,7 @@
             "view_image": "Ver imagen"
         },
         "edit_details": "Editar detalles",
+        "field": "Campo",
         "field_selector": "Selector de Campo",
         "field_value": "Valor del Campo",
         "first": "Primer",
@@ -550,8 +582,10 @@
         "reset_search": "Restablecer Búsqueda",
         "results": "{ total } Resultados",
         "select_field": "Seleccionar un campo",
+        "select_value": "Selecciona un valor",
         "serial_number": "Número de serie",
         "show_advanced_view_options": "Mostrar Opciones Avanzadas de Vista",
+        "show_empty": "Mostrar vacío",
         "sold_at": "Vendido el",
         "sold_details": "Detalles de Venta",
         "sold_price": "Precio de venta",
@@ -631,12 +665,15 @@
     "languages.ro-RO": "Rumano",
     "languages.sk-SK": "Eslovaco",
     "languages.sq-AL": "Albano",
+    "languages.sr-RS": "Serbio (Serbia)",
     "locations": {
         "child_locations": "Ubicaciones Hijas",
         "collapse_tree": "Colapsar Árbol",
         "expand_tree": "Expandir Árbol",
+        "hide_items": "Elementos ocultos",
         "location_items_delete_confirm": "¿Estás seguro de que deseas eliminar esta ubicación y todos sus elementos? Esta acción no se puede deshacer.",
         "no_results": "Ubicaciones No Encontradas",
+        "show_items": "Mostrar elementos",
         "toast": {
             "failed_delete_location": "Error al eliminar la ubicación",
             "failed_load_location": "Error al cargar la ubicación",
@@ -702,6 +739,22 @@
     },
     "profile": {
         "active": "Activo",
+        "api_key_copied": "Copiado al portapapeles",
+        "api_key_copy": "Copiar",
+        "api_key_create": "Crear claves API",
+        "api_key_created": "Creado",
+        "api_key_delete_confirm": "¿Estás seguro de que quieres revocar esta clave API? Los clientes que la estén utilizando perderán el acceso de inmediato.",
+        "api_key_expires_at": "Expira",
+        "api_key_last_used": "Último uso",
+        "api_key_name": "Nombre",
+        "api_key_name_placeholder": "e.g. Home Assistant",
+        "api_key_never_used": "Nunca",
+        "api_key_no_expiration": "No expira",
+        "api_key_set_expiration": "Establecer fecha de expiración",
+        "api_key_token_label": "Tu nueva clave API",
+        "api_key_token_warning": "Copia este token ahora. Por motivos de seguridad, no volverá a aparecer.",
+        "api_keys": "Claves API",
+        "api_keys_sub": "Tokens estáticos para acceso programático. Cada token tiene los mismos permisos que tu cuenta.",
         "change_password": "Cambiar Contraseña",
         "currency_format": "Formato Divisa",
         "current_password": "Contraseña Actual",
@@ -724,6 +777,7 @@
         "moved_notice_link_settings": "Configuración de la divisa de la colección",
         "moved_notice_title": "¿Buscas notificaciones, invitaciones o ajustes de divisa?",
         "new_password": "Nueva Contraseña",
+        "no_api_keys": "Aún no hay claves API",
         "no_notifiers": "No hay notificadores configurados",
         "no_override": "No reemplazar",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notificación",
@@ -735,6 +789,10 @@
         "theme_settings_sub": "La configuración del tema se guarda en el almacenamiento local de tu navegador. Puedes cambiar el tema en cualquier momento. Si tienes\n problemas para configurar el tema, prueba a actualizar el navegador.",
         "toast": {
             "account_deleted": "Tu cuenta ha sido eliminada.",
+            "api_key_created": "Clave API creada.",
+            "api_key_deleted": "Clave API revocada.",
+            "failed_api_key_create": "No se ha podido crear la clave API.",
+            "failed_api_key_delete": "No se ha podido revocar la clave API.",
             "failed_change_password": "Error al cambiar la contraseña.",
             "failed_create_notifier": "Error al crear el notificador.",
             "failed_delete_account": "Error al eliminar tu cuenta.",
@@ -773,6 +831,7 @@
             "page_right_padding": "Margen Derecho de Página",
             "page_top_padding": "Margen Superior de Página",
             "page_width": "Ancho de Página",
+            "print_location_row": "Imprimir Fila de Ubicación",
             "qr_code_example": "Ejemplo de Código QR",
             "replace_homebox_behavior": "Reemplazar el comportamiento del texto «HomeBox»",
             "replace_homebox_behavior_always_replace": "Reemplazar Siempre \"HomeBox\"",
@@ -781,6 +840,7 @@
             "replace_homebox_behavior_item_no_name_no_location": "Reemplazar «HomeBox» cuando el elemento no tiene nombre ni ubicación",
             "replace_homebox_behavior_show_homebox": "Mostrar \"HomeBox\"",
             "replace_homebox_text": "Texto de reemplazado",
+            "skip_first_labels": "Saltar Primeras Etiquetas",
             "tip_1": "Los valores predeterminados están configurados para\n '<a href=\"https://www.avery.com/templates/5260\">'hojas de etiquetas Avery 5260'</a>'. Si utilizas un tipo de hoja diferente,\n tendrás que ajustar la configuración para que coincida con tu hoja.",
             "tip_2": "Si estás personalizando tu hoja las dimensiones están en pulgadas. Cuando estaba creando la hoja de etiquetas 5260, descubrí que\n las dimensiones usadas en su plantilla no coincidían con las necesarias para imprimir dentro de las casillas.\n '<b>'Prepárate para algo de prueba y error.'</b>'",
             "tip_3": "Al imprimir, asegúrate de:\n '<ol><li>'Establecer los márgenes en 0 o Ninguno'</li><li>'Establecer la escala al 100%'</li><li>'Desactivar impresión a doble cara'</li><li>'Imprimir una página de prueba antes de imprimir varias páginas'</li></ol>'",
@@ -801,6 +861,22 @@
         "select_video_source": "Elige una fuente de vídeo",
         "title": "Escaner",
         "unsupported": "La API Media Stream no se puede utilizar sin HTTPS"
+    },
+    "scanner_ar": {
+        "ar_mode": "Modo RA",
+        "back": "Atrás",
+        "child_items": "{count, plural, one {elemento hijo} other {elementos hijos}}",
+        "children": "{count, plural, one {sub-ubicación} other {sub-ubicaciones}}",
+        "items": "{count, plural, one {elemento} other {elementos}}",
+        "items_in_location": "{count, plural, one {elemento} other {elementos}}",
+        "more": "más",
+        "not_found": "Elemento no encontrado",
+        "qty": "Ctd",
+        "retry": "Reintentar",
+        "scanning": "Escaneando",
+        "switch_camera": "Cambiar Cámara",
+        "title": "Escáner RA",
+        "unsupported": "Este navegador no es compatible con el escaneo RA"
     },
     "tags": {
         "no_results": "No se han encontrado etiquetas",
@@ -846,6 +922,26 @@
             "zero_datetimes_sub": "Restablece el valor de la hora para todos los campos de fecha/hora en tu inventario al principio de esa fecha. Esto se hace para corregir un error que se introdujo al principio del desarrollo de la aplicación, que causó que el valor de la hora se almacenase con la fecha, lo cual produjo problemas al mostrar valores precisos del campo. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Ver el issue #236 de GitHub para más detalles.'</a>'"
         },
         "actions_sub": "Aplica Acciones a tu inventario de forma masiva. Estas acciones son irreversibles. '<b>'Ten Cuidado.'</b>'",
+        "backups": "Copia de Seguridad & Restaurar",
+        "backups_set": {
+            "create": "Crear Copia de Seguridad",
+            "create_button": "Iniciar Copia de Seguridad",
+            "create_sub": "Crea un archivo zip con todas las entidades, etiquetas, campos personalizados, archivos adjuntos y registros de mantenimiento de esta colección. La tarea se ejecuta en segundo plano; el archivo aparecerá en la tabla de abajo cuando esté listo.",
+            "delete_confirm": "¿Eliminar este elemento de copia de seguridad? Esta acción no se puede deshacer.",
+            "download": "Descargar",
+            "failed": "La copia de seguridad ha fallado. Consulta los registros del servidor para obtener más detalles.",
+            "list_empty": "Aún no hay copias de seguridad.",
+            "restore": "Restaurar desde una Copia de Seguridad",
+            "restore_button": "Cargar & Restaurar",
+            "restore_sub": "Sube un archivo zip de copia de seguridad para rellenar esta colección. La colección no debe contener aún ningún elemento — las ubicaciones y etiquetas predeterminadas se borrarán automáticamente como parte de la restauración.",
+            "table": {
+                "actions": "Acciones",
+                "created": "Creado",
+                "size": "Tamaño",
+                "status": "Estado"
+            }
+        },
+        "backups_sub": "Exporta toda tu colección — entidades, etiquetas, archivos adjuntos y metadatos — a un archivo zip portátil. Restaura un archivo en una colección vacía recién registrada, ya sea en este servidor o en otro.",
         "demo_mode_error": {
             "wipe_inventory": "El inventario, las etiquetas, las ubicaciones y los registros de mantenimiento no se pueden borrar mientras Homebox esté en modo demostración. Asegúrate de que no se encuentra en modo demostración y vuelve a intentarlo."
         },
@@ -862,7 +958,7 @@
         "import_export_sub": "Importa y exporta tu inventario a y desde un archivo CSV. Esto es útil para migrar tu inventario a una nueva instancia de Homebox.",
         "reports": "Informes",
         "reports_set": {
-            "asset_labels": "Etiquetas de ID de Activo",
+            "asset_labels": "Etiquetas de identificación de artículos",
             "asset_labels_button": "Generador de Etiquetas",
             "asset_labels_sub": "Genera un PDF para impresión de etiquetas para un rango de IDs de Activos. Estas etiquetas no son específicas para tu inventario, por lo que puedes imprimirlas con antelación y aplicarlas a tu inventario cuando las recibas.",
             "bill_of_materials": "Lista de Materiales",
@@ -872,12 +968,18 @@
         "reports_sub": "Genera diferentes informes para tu inventario.",
         "toast": {
             "asset_success": "Se han actualizado { results } activos.",
+            "backup_delete_failed": "No se ha podido eliminar la copia de seguridad.",
+            "backup_start_failed": "No se ha podido iniciar la copia de seguridad.",
+            "backup_started": "Se ha iniciado la copia de seguridad — aparecerá en la tabla cuando esté lista.",
             "failed_create_missing_thumbnails": "No se han podido crear las miniaturas que faltaban.",
             "failed_ensure_ids": "Error al asegurar los ID de los activos.",
             "failed_ensure_import_refs": "Error al asegurar las ref. de importación.",
             "failed_set_primary_photos": "No se han podido establecer las fotos principales.",
             "failed_wipe_inventory": "No se pudo vaciar el inventario.",
             "failed_zero_datetimes": "Error al restablecer los valores de fecha y hora.",
+            "restore_failed": "La restauración ha fallado.",
+            "restore_requires_empty": "Restaurar requiere una colección que no contenga elementos. Cambia a una colección recién creada (puedes dejar las ubicaciones y etiquetas predeterminadas) e inténtalo de nuevo.",
+            "restore_started": "Se ha iniciado la restauración — actualiza la página en unos instantes para ver los elementos importados.",
             "wipe_inventory_success": "Inventario borrado correctamente. { results } elementos eliminados."
         }
     }

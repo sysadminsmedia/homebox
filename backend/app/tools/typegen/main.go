@@ -57,8 +57,8 @@ func main() {
 		NewReReplace(`(\w+):\s(.*null.*)`, "$1?: $2"), // make null union types optional
 		NewReDate("createdAt"),
 		NewReDate("updatedAt"),
-		NewReDate("soldTime"),
-		NewReDate("purchaseTime"),
+		NewReDate("soldDate"),
+		NewReDate("purchaseDate"),
 		NewReDate("warrantyExpires"),
 		NewReDate("expiresAt"),
 		NewReDate("date"),

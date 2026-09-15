@@ -85,8 +85,8 @@
       params.tenant = selectedId.value;
     }
 
-    if (props.type === "item") {
-      return route(`/labelmaker/item/${props.id}`, params);
+    if (props.type === "item" || props.type === "entity") {
+      return route(`/labelmaker/entity/${props.id}`, params);
     } else if (props.type === "location") {
       return route(`/labelmaker/location/${props.id}`, params);
     } else if (props.type === "asset") {

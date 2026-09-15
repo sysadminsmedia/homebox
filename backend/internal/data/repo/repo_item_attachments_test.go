@@ -2,6 +2,8 @@ package repo
 
 import (
 	"context"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -13,8 +15,18 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 )
 
+func TestMimeTypeForSourceType(t *testing.T) {
+	mime, ok := MimeTypeForSourceType("link")
+	assert.True(t, ok)
+	assert.Equal(t, MimeTypeLinkURL, mime)
+
+	mime, ok = MimeTypeForSourceType("unknown")
+	assert.False(t, ok)
+	assert.Empty(t, mime)
+}
+
 func TestAttachmentRepo_Create(t *testing.T) {
-	item := useItems(t, 1)[0]
+	entity := useEntities(t, 1)[0]
 
 	var ids []uuid.UUID
 	t.Cleanup(func() {
@@ -24,9 +36,9 @@ func TestAttachmentRepo_Create(t *testing.T) {
 	})
 
 	type args struct {
-		ctx    context.Context
-		itemID uuid.UUID
-		typ    attachment.Type
+		ctx      context.Context
+		entityID uuid.UUID
+		typ      attachment.Type
 	}
 	tests := []struct {
 		name    string
@@ -37,32 +49,27 @@ func TestAttachmentRepo_Create(t *testing.T) {
 		{
 			name: "create attachment",
 			args: args{
-				ctx:    context.Background(),
-				itemID: item.ID,
-				typ:    attachment.TypePhoto,
+				ctx:      context.Background(),
+				entityID: entity.ID,
+				typ:      attachment.TypePhoto,
 			},
 			want: &ent.Attachment{
 				Type: attachment.TypePhoto,
 			},
 		},
 		{
-			name: "create attachment with invalid item id",
+			name: "create attachment with invalid entity id",
 			args: args{
-				ctx:    context.Background(),
-				itemID: uuid.New(),
-				typ:    "blarg",
+				ctx:      context.Background(),
+				entityID: uuid.New(),
+				typ:      "blarg",
 			},
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, _ := tRepos.Attachments.Create(tt.args.ctx, tt.args.itemID, ItemCreateAttachment{Title: "Test", Content: strings.NewReader("This is a test")}, tt.args.typ, false)
-			// TODO: Figure out how this works and fix the test later
-			// if (err != nil) != tt.wantErr {
-			//	t.Errorf("AttachmentRepo.Create() error = %v, wantErr %v", err, tt.wantErr)
-			//	return
-			//}
+			got, _ := tRepos.Attachments.Create(tt.args.ctx, tt.args.entityID, ItemCreateAttachment{Title: "Test", Content: strings.NewReader("This is a test")}, tt.args.typ, false)
 
 			if tt.wantErr {
 				return
@@ -70,9 +77,9 @@ func TestAttachmentRepo_Create(t *testing.T) {
 
 			assert.Equal(t, tt.want.Type, got.Type)
 
-			withItems, err := tRepos.Attachments.Get(tt.args.ctx, tGroup.ID, got.ID)
+			withEntity, err := tRepos.Attachments.Get(tt.args.ctx, tGroup.ID, got.ID)
 			require.NoError(t, err)
-			assert.Equal(t, tt.args.itemID, withItems.Edges.Item.ID)
+			assert.Equal(t, tt.args.entityID, withEntity.Edges.Entity.ID)
 
 			ids = append(ids, got.ID)
 		})
@@ -82,7 +89,7 @@ func TestAttachmentRepo_Create(t *testing.T) {
 func useAttachments(t *testing.T, n int) []*ent.Attachment {
 	t.Helper()
 
-	item := useItems(t, 1)[0]
+	entity := useEntities(t, 1)[0]
 
 	ids := make([]uuid.UUID, 0, n)
 	t.Cleanup(func() {
@@ -93,7 +100,7 @@ func useAttachments(t *testing.T, n int) []*ent.Attachment {
 
 	attachments := make([]*ent.Attachment, n)
 	for i := 0; i < n; i++ {
-		attach, err := tRepos.Attachments.Create(context.Background(), item.ID, ItemCreateAttachment{Title: "Test", Content: strings.NewReader("Test String")}, attachment.TypePhoto, true)
+		attach, err := tRepos.Attachments.Create(context.Background(), entity.ID, ItemCreateAttachment{Title: "Test", Content: strings.NewReader("Test String")}, attachment.TypePhoto, true)
 		require.NoError(t, err)
 		attachments[i] = attach
 
@@ -131,6 +138,73 @@ func TestAttachmentRepo_Delete(t *testing.T) {
 	require.Error(t, err)
 }
 
+func TestAttachmentRepo_CreateExternalLink(t *testing.T) {
+	ctx := context.Background()
+	entity := useEntities(t, 1)[0]
+
+	att, err := tRepos.Attachments.CreateExternalLink(
+		ctx,
+		entity.ID,
+		"https://example.com/manual",
+		"Example Manual",
+		MimeTypeLinkURL,
+		attachment.TypeManual,
+	)
+	require.NoError(t, err)
+	require.NotNil(t, att)
+
+	t.Cleanup(func() {
+		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, att.ID)
+	})
+
+	assert.Equal(t, "https://example.com/manual", att.Path)
+	assert.Equal(t, "Example Manual", att.Title)
+	assert.Equal(t, MimeTypeLinkURL, att.MimeType)
+	assert.Equal(t, attachment.TypeManual, att.Type)
+	assert.False(t, att.Primary)
+}
+
+func TestAttachmentRepo_DeleteExternalLink(t *testing.T) {
+	ctx := context.Background()
+	entity := useEntities(t, 1)[0]
+
+	att, err := tRepos.Attachments.CreateExternalLink(
+		ctx,
+		entity.ID,
+		"https://example.com/receipt",
+		"Example Receipt",
+		MimeTypeLinkURL,
+		attachment.TypeReceipt,
+	)
+	require.NoError(t, err)
+
+	err = tRepos.Attachments.Delete(ctx, tGroup.ID, att.ID)
+	require.NoError(t, err)
+
+	_, err = tRepos.Attachments.Get(ctx, tGroup.ID, att.ID)
+	require.Error(t, err)
+}
+
+func TestAttachmentRepo_DeleteExternalLink_DoesNotRequireBlobStorage(t *testing.T) {
+	ctx := context.Background()
+
+	repos := New(tClient, tbus, config.Storage{PrefixPath: "/", ConnString: "mem://"}, "mem://{{ .Topic }}", config.Thumbnail{Enabled: false})
+	entity := useEntities(t, 1)[0]
+
+	att, err := repos.Attachments.CreateExternalLink(
+		ctx,
+		entity.ID,
+		"https://example.com/no-blob",
+		"No Blob",
+		MimeTypeLinkURL,
+		attachment.TypeAttachment,
+	)
+	require.NoError(t, err)
+
+	err = repos.Attachments.Delete(ctx, tGroup.ID, att.ID)
+	require.NoError(t, err)
+}
+
 func TestAttachmentRepo_EnsureSinglePrimaryAttachment(t *testing.T) {
 	ctx := context.Background()
 	attachments := useAttachments(t, 2)
@@ -155,14 +229,14 @@ func TestAttachmentRepo_EnsureSinglePrimaryAttachment(t *testing.T) {
 
 func TestAttachmentRepo_UpdateNonPhotoDoesNotAffectPrimaryPhoto(t *testing.T) {
 	ctx := context.Background()
-	item := useItems(t, 1)[0]
+	entity := useEntities(t, 1)[0]
 
 	// Create a photo attachment that will be primary
-	photoAttachment, err := tRepos.Attachments.Create(ctx, item.ID, ItemCreateAttachment{Title: "Test Photo", Content: strings.NewReader("Photo content")}, attachment.TypePhoto, true)
+	photoAttachment, err := tRepos.Attachments.Create(ctx, entity.ID, ItemCreateAttachment{Title: "Test Photo", Content: strings.NewReader("Photo content")}, attachment.TypePhoto, true)
 	require.NoError(t, err)
 
 	// Create a manual attachment (non-photo)
-	manualAttachment, err := tRepos.Attachments.Create(ctx, item.ID, ItemCreateAttachment{Title: "Test Manual", Content: strings.NewReader("Manual content")}, attachment.TypeManual, false)
+	manualAttachment, err := tRepos.Attachments.Create(ctx, entity.ID, ItemCreateAttachment{Title: "Test Manual", Content: strings.NewReader("Manual content")}, attachment.TypeManual, false)
 	require.NoError(t, err)
 
 	// Cleanup
@@ -180,7 +254,7 @@ func TestAttachmentRepo_UpdateNonPhotoDoesNotAffectPrimaryPhoto(t *testing.T) {
 	_, err = tRepos.Attachments.Update(ctx, tGroup.ID, manualAttachment.ID, &ItemAttachmentUpdate{
 		Type:    attachment.TypeManual.String(),
 		Title:   "Updated Manual",
-		Primary: false, // This should have no effect since it's not a photo
+		Primary: false,
 	})
 	require.NoError(t, err)
 
@@ -197,10 +271,10 @@ func TestAttachmentRepo_UpdateNonPhotoDoesNotAffectPrimaryPhoto(t *testing.T) {
 
 func TestAttachmentRepo_AddingPDFAfterPhotoKeepsPhotoAsPrimary(t *testing.T) {
 	ctx := context.Background()
-	item := useItems(t, 1)[0]
+	entity := useEntities(t, 1)[0]
 
 	// Step 1: Upload a photo first (this should become primary since it's the first photo)
-	photoAttachment, err := tRepos.Attachments.Create(ctx, item.ID, ItemCreateAttachment{Title: "Item Photo", Content: strings.NewReader("Photo content")}, attachment.TypePhoto, false)
+	photoAttachment, err := tRepos.Attachments.Create(ctx, entity.ID, ItemCreateAttachment{Title: "Item Photo", Content: strings.NewReader("Photo content")}, attachment.TypePhoto, false)
 	require.NoError(t, err)
 
 	// Cleanup
@@ -214,7 +288,7 @@ func TestAttachmentRepo_AddingPDFAfterPhotoKeepsPhotoAsPrimary(t *testing.T) {
 	assert.True(t, photoAttachment.Primary, "First photo should automatically become primary")
 
 	// Step 2: Add a PDF receipt (this should NOT affect the photo's primary status)
-	pdfAttachment, err := tRepos.Attachments.Create(ctx, item.ID, ItemCreateAttachment{Title: "Receipt PDF", Content: strings.NewReader("PDF content")}, attachment.TypeReceipt, false)
+	pdfAttachment, err := tRepos.Attachments.Create(ctx, entity.ID, ItemCreateAttachment{Title: "Receipt PDF", Content: strings.NewReader("PDF content")}, attachment.TypeReceipt, false)
 	require.NoError(t, err)
 
 	// Add to cleanup
@@ -232,24 +306,24 @@ func TestAttachmentRepo_AddingPDFAfterPhotoKeepsPhotoAsPrimary(t *testing.T) {
 	require.NoError(t, err)
 	assert.False(t, pdfAttachment.Primary)
 
-	// Step 4: Test the actual item summary mapping (this is what determines the card display)
-	updatedItem, err := tRepos.Items.GetOne(ctx, item.ID)
+	// Step 4: Test the actual entity summary mapping (this is what determines the card display)
+	updatedEntity, err := tRepos.Entities.GetOne(ctx, entity.ID)
 	require.NoError(t, err)
 
-	// The item should have the photo's ID as the imageId
-	assert.NotNil(t, updatedItem.ImageID, "Item should have an imageId")
-	assert.Equal(t, photoAttachment.ID, *updatedItem.ImageID, "Item's imageId should match the photo attachment ID")
+	// The entity should have the photo's ID as the imageId
+	assert.NotNil(t, updatedEntity.ImageID, "Entity should have an imageId")
+	assert.Equal(t, photoAttachment.ID, *updatedEntity.ImageID, "Entity's imageId should match the photo attachment ID")
 }
 
 func TestAttachmentRepo_SettingPhotoPrimaryStillWorks(t *testing.T) {
 	ctx := context.Background()
-	item := useItems(t, 1)[0]
+	entity := useEntities(t, 1)[0]
 
 	// Create two photo attachments
-	photo1, err := tRepos.Attachments.Create(ctx, item.ID, ItemCreateAttachment{Title: "Photo 1", Content: strings.NewReader("Photo 1 content")}, attachment.TypePhoto, false)
+	photo1, err := tRepos.Attachments.Create(ctx, entity.ID, ItemCreateAttachment{Title: "Photo 1", Content: strings.NewReader("Photo 1 content")}, attachment.TypePhoto, false)
 	require.NoError(t, err)
 
-	photo2, err := tRepos.Attachments.Create(ctx, item.ID, ItemCreateAttachment{Title: "Photo 2", Content: strings.NewReader("Photo 2 content")}, attachment.TypePhoto, false)
+	photo2, err := tRepos.Attachments.Create(ctx, entity.ID, ItemCreateAttachment{Title: "Photo 2", Content: strings.NewReader("Photo 2 content")}, attachment.TypePhoto, false)
 	require.NoError(t, err)
 
 	// Cleanup
@@ -335,4 +409,66 @@ func TestAttachmentRepo_PathNormalization(t *testing.T) {
 	fullPathSlashPrefix := repoSlashPrefix.fullPath("eb6bf410-a1a8-478d-a803-ca3948368a0c/documents/f295eb01-18a9-4631-a797-70bd9623edd4.png")
 	assert.Equal(t, "eb6bf410-a1a8-478d-a803-ca3948368a0c/documents/f295eb01-18a9-4631-a797-70bd9623edd4.png", fullPathSlashPrefix)
 	assert.NotContains(t, fullPathSlashPrefix, "//", "fullPath() should not have double slashes")
+}
+
+func TestAttachmentRepo_MigrateLegacyFlatPaths(t *testing.T) {
+	root := t.TempDir()
+
+	// Legacy flat-encoded files written by pre-v0.22.1 homebox on Windows.
+	legacy1 := ".data__0x5c__eb6bf410-a1a8-478d-a803-ca3948368a0c__0x5c__documents__0x5c__hash1.png"
+	legacy2 := ".data__0x5c__eb6bf410-a1a8-478d-a803-ca3948368a0c__0x5c__documents__0x5c__hash2.png"
+	require.NoError(t, os.WriteFile(filepath.Join(root, legacy1), []byte("one"), 0o644))
+	require.NoError(t, os.WriteFile(filepath.Join(root, legacy2), []byte("two"), 0o644))
+
+	// Unrelated file at the bucket root must be left alone.
+	other := filepath.Join(root, "homebox.db")
+	require.NoError(t, os.WriteFile(other, []byte("db"), 0o644))
+
+	r := &AttachmentRepo{storage: config.Storage{ConnString: "file://" + root, PrefixPath: ".data"}}
+
+	require.NoError(t, r.MigrateLegacyFlatPaths())
+
+	for _, name := range []string{legacy1, legacy2} {
+		_, err := os.Stat(filepath.Join(root, name))
+		assert.True(t, os.IsNotExist(err), "legacy file %s should have been moved", name)
+	}
+	for _, hash := range []string{"hash1.png", "hash2.png"} {
+		want := filepath.Join(root, ".data", "eb6bf410-a1a8-478d-a803-ca3948368a0c", "documents", hash)
+		_, err := os.Stat(want)
+		require.NoError(t, err, "expected migrated file at %s", want)
+	}
+	_, err := os.Stat(other)
+	require.NoError(t, err, "unrelated files at the bucket root should be left in place")
+
+	// Idempotent: running again should be a no-op and not error.
+	require.NoError(t, r.MigrateLegacyFlatPaths())
+}
+
+func TestAttachmentRepo_MigrateLegacyFlatPaths_NoOpForCloudBackend(t *testing.T) {
+	r := &AttachmentRepo{storage: config.Storage{ConnString: "s3://my-bucket"}}
+	require.NoError(t, r.MigrateLegacyFlatPaths())
+}
+
+func TestAttachmentRepo_MigrateLegacyFlatPaths_TargetExistsKeepsSource(t *testing.T) {
+	root := t.TempDir()
+
+	legacy := "uuid__0x5c__documents__0x5c__hash.png"
+	require.NoError(t, os.WriteFile(filepath.Join(root, legacy), []byte("legacy"), 0o644))
+
+	// Pre-existing target — migration should leave the source in place rather
+	// than overwrite the (presumably-correct) target.
+	target := filepath.Join(root, "uuid", "documents", "hash.png")
+	require.NoError(t, os.MkdirAll(filepath.Dir(target), 0o755))
+	require.NoError(t, os.WriteFile(target, []byte("new"), 0o644))
+
+	r := &AttachmentRepo{storage: config.Storage{ConnString: "file://" + root}}
+	require.NoError(t, r.MigrateLegacyFlatPaths())
+
+	src, err := os.ReadFile(filepath.Join(root, legacy))
+	require.NoError(t, err)
+	assert.Equal(t, "legacy", string(src), "source file should remain untouched when target exists")
+
+	dst, err := os.ReadFile(target)
+	require.NoError(t, err)
+	assert.Equal(t, "new", string(dst), "target file should not be overwritten")
 }

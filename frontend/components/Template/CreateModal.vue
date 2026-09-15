@@ -24,7 +24,13 @@
           :max-length="1000"
         />
         <div class="grid grid-cols-2 gap-2">
-          <FormTextField v-model.number="form.defaultQuantity" :label="$t('global.quantity')" type="number" :min="1" />
+          <FormTextField
+            v-model.number="form.defaultQuantity"
+            :label="$t('global.quantity')"
+            type="number"
+            :min="1"
+            step="any"
+          />
           <FormTextField
             v-model="form.defaultModelNumber"
             :label="$t('components.template.form.model_number')"
@@ -107,7 +113,7 @@
   import LocationSelector from "~/components/Location/Selector.vue";
   import TagSelector from "~/components/Tag/Selector.vue";
   import { useTagStore } from "~/stores/tags";
-  import type { LocationSummary } from "~~/lib/api/types/data-contracts";
+  import type { EntitySummary } from "~~/lib/api/types/data-contracts";
 
   const emit = defineEmits<{ created: [] }>();
   const { closeDialog } = useDialog();
@@ -129,7 +135,7 @@
     defaultLifetimeWarranty: false,
     defaultWarrantyDetails: "",
     defaultLocationId: null as string | null,
-    defaultLocationObject: null as LocationSummary | null,
+    defaultLocationObject: null as EntitySummary | null,
     defaultTagIds: [] as string[],
     includeWarrantyFields: false,
     includePurchaseFields: false,

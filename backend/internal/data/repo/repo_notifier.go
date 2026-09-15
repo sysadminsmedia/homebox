@@ -101,6 +101,14 @@ func (r *NotifierRepository) Create(ctx context.Context, groupID, userID uuid.UU
 }
 
 func (r *NotifierRepository) Update(ctx context.Context, userID uuid.UUID, id uuid.UUID, input NotifierUpdate) (NotifierOut, error) {
+	owned, err := r.db.Notifier.Query().Where(notifier.ID(id), notifier.UserID(userID)).Exist(ctx)
+	if err != nil {
+		return NotifierOut{}, err
+	}
+	if !owned {
+		return NotifierOut{}, &ent.NotFoundError{}
+	}
+
 	q := r.db.Notifier.
 		UpdateOneID(id).
 		SetName(input.Name).
@@ -110,9 +118,9 @@ func (r *NotifierRepository) Update(ctx context.Context, userID uuid.UUID, id uu
 		q.SetURL(*input.URL)
 	}
 
-	notifier, err := q.Save(ctx)
+	updated, err := q.Save(ctx)
 
-	return r.mapper.MapErr(notifier, err)
+	return r.mapper.MapErr(updated, err)
 }
 
 func (r *NotifierRepository) Delete(ctx context.Context, userID uuid.UUID, id uuid.UUID) error {

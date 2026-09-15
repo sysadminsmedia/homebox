@@ -72,7 +72,7 @@ Traefik handles WebSocket connections automatically. Here's a configuration usin
 ```yaml
 services:
   homebox:
-    image: ghcr.io/hay-kot/homebox:latest
+    image: ghcr.io/sysadminsmedia/homebox:latest
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.homebox.rule=Host(`your-domain.com`)"

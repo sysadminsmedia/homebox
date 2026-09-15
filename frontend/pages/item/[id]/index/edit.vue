@@ -2,15 +2,15 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
-  import type { ItemAttachment, ItemField, ItemOut, ItemUpdate } from "~~/lib/api/types/data-contracts";
+  import type { ItemAttachment, EntityFieldData, EntityOut, EntityUpdate } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useTagStore } from "~/stores/tags";
-  import { useLocationStore } from "~~/stores/locations";
   import MdiLoading from "~icons/mdi/loading";
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiContentSaveOutline from "~icons/mdi/content-save-outline";
   import MdiImageOutline from "~icons/mdi/image-outline";
+  import MdiOpenInNew from "~icons/mdi/open-in-new";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { Button } from "@/components/ui/button";
   import { useDialog } from "@/components/ui/dialog-provider";
@@ -31,6 +31,8 @@
   import BaseCard from "@/components/Base/Card.vue";
   import { Card } from "~/components/ui/card";
   import DropZone from "~/components/global/DropZone.vue";
+  import EntitySelector from "~/components/Entity/Selector.vue";
+  import { useEntityTypeStore } from "~/stores/entityTypes";
 
   const { t } = useI18n();
 
@@ -44,10 +46,9 @@
   const api = useUserApi();
   const preferences = useViewPreferences();
 
-  const itemId = computed<string>(() => route.params.id as string);
+  const entityTypeStore = useEntityTypeStore();
 
-  const locationStore = useLocationStore();
-  const locations = computed(() => locationStore.allLocations);
+  const itemId = computed<string>(() => route.params.id as string);
 
   const tagStore = useTagStore();
   const tags = computed(() => tagStore.tags);
@@ -64,22 +65,20 @@
       return;
     }
 
-    if (locations.value && data.location?.id) {
-      // @ts-expect-error - we know the locations is valid
-      const location = locations.value.find(l => l.id === data.location.id);
-      if (location) {
-        data.location = location;
-      }
-    }
-
-    if (data.parent) {
+    if (data.parent && data.parent.entityType && !data.parent.entityType.isLocation) {
       parent.value = data.parent;
     }
+
+    // The "Location" selector shows the derived location (nearest ancestor
+    // that is a location-type entity), not the direct parent — when the item
+    // sits inside another item, the parent is shown in "Parent Item" and the
+    // location stays e.g. "Attic" (#1589).
+    location.value = data.location ?? (data.parent?.entityType?.isLocation ? data.parent : null);
 
     return data;
   });
 
-  const item = ref<ItemOut & { tagIds: string[] }>(null as never);
+  const item = ref<EntityOut & { tagIds: string[] }>(null as never);
 
   watchEffect(() => {
     if (nullableItem.value) {
@@ -90,8 +89,6 @@
     }
   });
 
-  // const item = computed(() => nullableItem.value as ItemOut);
-
   onMounted(() => {
     refresh();
   });
@@ -99,12 +96,20 @@
   const saving = ref(false);
 
   async function saveItem(redirect: boolean) {
-    if (!item.value.location?.id) {
+    if (!location.value?.id && !parent.value?.id) {
       toast.error(t("items.toast.failed_save_no_location"));
       return;
     }
 
     saving.value = true;
+    const isConvertingToLocation = item.value.entityType?.isLocation;
+    if (isConvertingToLocation) {
+      const { isCanceled } = await confirm.open(t("items.edit.change_entity_type_confirm"));
+      if (isCanceled) {
+        saving.value = false;
+        return;
+      }
+    }
 
     let purchasePrice = 0;
     let soldPrice = 0;
@@ -118,15 +123,20 @@
     console.log((item.value.purchasePrice ??= 0));
     console.log((item.value.soldPrice ??= 0));
 
-    const payload: ItemUpdate = {
+    const payload: EntityUpdate = {
       ...item.value,
-      locationId: item.value.location?.id,
+      // A selected parent item is the entity's real parent; otherwise the
+      // item hangs directly off the chosen location.
+      parentId: parent.value?.id || location.value?.id || null,
       tagIds: item.value.tagIds,
-      parentId: parent.value ? parent.value.id : null,
       assetId: item.value.assetId,
       purchasePrice,
       soldPrice,
-      purchaseTime: item.value.purchaseTime as Date,
+      // Date-only fields stay as YYYY-MM-DD strings — see types.Date on the
+      // backend. The form/picker hold strings; sending the spread above is
+      // sufficient.
+      syncChildEntityLocations: item.value.syncChildEntityLocations,
+      entityTypeId: item.value.entityType!.id,
     };
 
     const { error } = await api.items.update(itemId.value, payload);
@@ -139,7 +149,9 @@
     }
 
     toast.success(t("items.toast.item_saved"));
-    if (redirect) {
+    if (isConvertingToLocation) {
+      navigateTo("/location/" + itemId.value);
+    } else if (redirect) {
       navigateTo("/item/" + itemId.value);
     }
   }
@@ -152,7 +164,7 @@
   type TextFormField = {
     type: "text" | "textarea" | "markdown";
     label: string;
-    ref: NonNullableStringKeys<ItemOut>;
+    ref: NonNullableStringKeys<EntityOut>;
     maxLength?: number;
     minLength?: number;
   };
@@ -160,19 +172,20 @@
   type NumberFormField = {
     type: "number";
     label: string;
-    ref: NonNullableNumberKeys<ItemOut> | NonNullableStringKeys<ItemOut>;
+    ref: NonNullableNumberKeys<EntityOut> | NonNullableStringKeys<EntityOut>;
+    min?: number;
   };
 
   interface BoolFormField {
     type: "checkbox";
     label: string;
-    ref: BooleanKeys<ItemOut>;
+    ref: BooleanKeys<EntityOut>;
   }
 
   type DateFormField = {
     type: "date";
     label: string;
-    ref: DateKeys<ItemOut>;
+    ref: DateKeys<EntityOut>;
   };
 
   type FormField = TextFormField | BoolFormField | DateFormField | NumberFormField;
@@ -189,6 +202,7 @@
       type: "number",
       label: "items.quantity",
       ref: "quantity",
+      min: 0,
     },
     {
       type: "markdown",
@@ -252,7 +266,7 @@
     {
       type: "date",
       label: "items.purchase_date",
-      ref: "purchaseTime",
+      ref: "purchaseDate",
     },
   ];
 
@@ -290,7 +304,7 @@
     {
       type: "date",
       label: "items.sold_at",
-      ref: "soldTime",
+      ref: "soldDate",
     },
   ];
 
@@ -327,15 +341,86 @@
   const dropManual = (files: File[] | null) => uploadAttachment(files, AttachmentTypes.Manual);
   const dropReceipt = (files: File[] | null) => uploadAttachment(files, AttachmentTypes.Receipt);
 
+  function getDroppedURL(event: DragEvent): string {
+    const dt = event.dataTransfer;
+    if (!dt) return "";
+
+    const mozUrl = dt.getData("text/x-moz-url").split("\n")[0]?.trim() || "";
+    const uriList = dt
+      .getData("text/uri-list")
+      .split("\n")
+      .find(u => u.trim() && !u.startsWith("#"))
+      ?.trim();
+
+    return (mozUrl || uriList || dt.getData("text/plain").trim()).trim();
+  }
+
+  function isValidHttpURL(value: string): boolean {
+    try {
+      const parsed = new URL(value);
+      return parsed.protocol === "http:" || parsed.protocol === "https:";
+    } catch {
+      return false;
+    }
+  }
+
+  function fallbackLinkTitle(value: string): string {
+    try {
+      const parsed = new URL(value);
+      return parsed.hostname + parsed.pathname;
+    } catch {
+      return value;
+    }
+  }
+
+  async function handleAttachmentCardDrop(event: DragEvent) {
+    event.preventDefault();
+    const dt = event.dataTransfer;
+    if (!dt) return;
+
+    if (dt.files && dt.files.length > 0) {
+      return;
+    }
+
+    const droppedURL = getDroppedURL(event);
+    if (!droppedURL) return;
+
+    if (!isValidHttpURL(droppedURL)) {
+      toast.error(t("items.toast.failed_upload_attachment"));
+      return;
+    }
+
+    const targetEl = event.target as Element | null;
+    const zoneEl = targetEl?.closest("[data-link-type]");
+    const attachmentType = zoneEl?.getAttribute("data-link-type") || "attachment";
+
+    const title = fallbackLinkTitle(droppedURL);
+    const { data, error } = await api.items.attachments.addExternalLink(
+      itemId.value,
+      "link",
+      droppedURL,
+      title,
+      attachmentType
+    );
+
+    if (error) {
+      toast.error(t("items.toast.failed_upload_attachment"));
+      return;
+    }
+
+    toast.success(t("items.toast.attachment_uploaded"));
+    item.value.attachments = data.attachments;
+  }
+
   async function uploadAttachment(files: File[] | null, type: AttachmentTypes | null) {
     if (!files || files.length === 0 || !files[0]) {
       return;
     }
 
-    const { data, error } = await api.items.attachments.add(itemId.value, files[0], files[0].name, type);
+    const { data, error, status } = await api.items.attachments.add(itemId.value, files[0], files[0].name, type);
 
     if (error) {
-      toast.error(t("items.toast.failed_upload_attachment"));
+      toast.error(status === 413 ? t("items.toast.attachment_too_large") : t("items.toast.failed_upload_attachment"));
       return;
     }
 
@@ -426,11 +511,16 @@
       numberValue: 0,
       booleanValue: false,
       timeValue: null,
-    } as unknown as ItemField);
+    } as unknown as EntityFieldData);
   }
 
   const { query, results, isLoading, triggerSearch } = useItemSearch(api, { immediate: false });
   const parent = ref();
+  // Derived location shown in the "Location" selector. Kept separate from
+  // `parent` (the "Parent Item" selector): when a parent item is chosen it
+  // becomes the entity's real parent, while this stays the location the item
+  // ultimately lives in (#1589).
+  const location = ref();
 
   async function keyboardSave(e: KeyboardEvent) {
     // Cmd + S
@@ -455,40 +545,37 @@
         return;
       }
 
-      if (data.syncChildItemsLocations) {
+      // The item now lives inside the parent item, so its location follows
+      // the parent's derived location — reflect that in the selector instead
+      // of showing the parent item itself as the "location" (#1589).
+      location.value = data.location ?? (data.parent?.entityType?.isLocation ? data.parent : null);
+      if (data.syncChildEntityLocations) {
         toast.info(t("items.toast.sync_child_location"));
-        item.value.location = data.location;
       }
     }
   }
 
-  async function informAboutDesyncingLocationFromParent() {
+  function onLocationChanged() {
+    // Picking a location explicitly moves the item there: clear any selected
+    // parent item so the chosen location actually takes effect on save.
     if (parent.value && parent.value.id) {
-      const { data, error } = await api.items.get(parent.value.id);
-
-      if (error) {
-        toast.error(t("items.toast.error_loading_parent_data"));
-        return;
-      }
-
-      if (data.syncChildItemsLocations) {
-        toast.info(t("items.toast.child_location_desync"));
-      }
+      parent.value = null;
+      toast.info(t("items.toast.child_location_desync"));
     }
   }
 
-  async function syncChildItemsLocations() {
-    if (!item.value.location?.id) {
+  async function syncChildEntityLocations() {
+    if (!location.value?.id && !parent.value?.id) {
       toast.error(t("items.toast.failed_save_no_location"));
       return;
     }
 
-    const payload: ItemUpdate = {
+    const payload: EntityUpdate = {
       ...item.value,
-      locationId: item.value.location?.id,
+      parentId: parent.value?.id || location.value?.id || null,
       tagIds: item.value.tagIds,
-      parentId: parent.value ? parent.value.id : null,
       assetId: item.value.assetId,
+      syncChildEntityLocations: item.value.syncChildEntityLocations,
     };
 
     const { error } = await api.items.update(itemId.value, payload);
@@ -498,7 +585,7 @@
       return;
     }
 
-    if (!item.value.syncChildItemsLocations) {
+    if (!item.value.syncChildEntityLocations) {
       toast.success(t("items.toast.child_items_location_no_longer_synced"));
     } else {
       toast.success(t("items.toast.child_items_location_synced"));
@@ -587,7 +674,7 @@
         <BaseCard class="overflow-visible">
           <template #title> {{ $t("items.edit_details") }} </template>
           <div class="mb-6 grid gap-4 border-t px-5 pt-2 md:grid-cols-2">
-            <LocationSelector v-model="item.location" @update:model-value="informAboutDesyncingLocationFromParent()" />
+            <LocationSelector v-model="location" @update:model-value="onLocationChanged()" />
             <ItemSelector
               v-model="parent"
               v-model:search="query"
@@ -602,9 +689,17 @@
             />
             <div class="flex flex-col gap-2">
               <Label class="px-1">{{ $t("items.sync_child_locations") }}</Label>
-              <Switch v-model="item.syncChildItemsLocations" @update:model-value="syncChildItemsLocations()" />
+              <Switch v-model="item.syncChildEntityLocations" @update:model-value="syncChildEntityLocations()" />
             </div>
             <TagSelector v-model="item.tagIds" :tags="tags" />
+            <div class="flex flex-col gap-1">
+              <Label class="px-1">{{ $t("global.entity_type") }}</Label>
+              <EntitySelector
+                :entity-types="entityTypeStore.allTypes"
+                :selected-entity-type="item.entityType?.id"
+                @entity-type-changed="id => (item.entityType = entityTypeStore.findById(id))"
+              />
+            </div>
           </div>
 
           <div class="border-t sm:p-0">
@@ -638,6 +733,8 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
+                  step="any"
+                  :min="field.min"
                   :label="$t(field.label)"
                   inline
                 />
@@ -686,21 +783,27 @@
           </div>
         </BaseCard>
 
-        <Card ref="attDropZone" class="overflow-visible shadow-xl">
+        <Card
+          ref="attDropZone"
+          class="overflow-visible shadow-xl"
+          @dragover.prevent
+          @drop.prevent="handleAttachmentCardDrop"
+        >
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">{{ $t("items.attachments") }}</h3>
             <p class="text-xs">{{ $t("items.changes_persisted_immediately") }}</p>
           </div>
           <div class="border-t p-4">
             <div v-if="attDropZoneActive" class="grid grid-cols-4 gap-4">
-              <DropZone @drop="dropPhoto"> {{ $t("items.photos") }} </DropZone>
-              <DropZone @drop="dropWarranty"> {{ $t("items.warranty") }} </DropZone>
-              <DropZone @drop="dropManual"> {{ $t("items.manuals") }} </DropZone>
-              <DropZone @drop="dropAttachment"> {{ $t("items.attachments") }} </DropZone>
-              <DropZone @drop="dropReceipt"> {{ $t("items.receipts") }} </DropZone>
+              <DropZone data-link-type="photo" @drop="dropPhoto"> {{ $t("items.photos") }} </DropZone>
+              <DropZone data-link-type="warranty" @drop="dropWarranty"> {{ $t("items.warranty") }} </DropZone>
+              <DropZone data-link-type="manual" @drop="dropManual"> {{ $t("items.manuals") }} </DropZone>
+              <DropZone data-link-type="attachment" @drop="dropAttachment"> {{ $t("items.attachments") }} </DropZone>
+              <DropZone data-link-type="receipt" @drop="dropReceipt"> {{ $t("items.receipts") }} </DropZone>
             </div>
             <button
               v-else
+              data-link-type="attachment"
               class="grid h-24 w-full place-content-center border-2 border-dashed border-primary"
               @click="clickUpload"
             >
@@ -749,6 +852,24 @@
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>{{ $t("items.edit.view_image") }}</TooltipContent>
+                  </Tooltip>
+                  <Tooltip
+                    v-if="
+                      attachment.mimeType === 'link/url' ||
+                      (attachment.path ?? '').startsWith('http://') ||
+                      (attachment.path ?? '').startsWith('https://')
+                    "
+                  >
+                    <TooltipTrigger as-child>
+                      <a :href="attachment.path" target="_blank" rel="noopener noreferrer">
+                        <Button variant="outline" size="icon">
+                          <MdiOpenInNew />
+                        </Button>
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {{ $t("components.item.attachments_list.open_new_tab") }}
+                    </TooltipContent>
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger as-child>
@@ -799,6 +920,8 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
+                  step="any"
+                  :min="field.min"
                   :label="$t(field.label)"
                   inline
                 />
@@ -846,6 +969,8 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
+                  step="any"
+                  :min="field.min"
                   :label="$t(field.label)"
                   inline
                 />
@@ -893,6 +1018,8 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
+                  step="any"
+                  :min="field.min"
                   :label="$t(field.label)"
                   inline
                 />

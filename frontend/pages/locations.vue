@@ -28,7 +28,7 @@
   const api = useUserApi();
 
   const { data: tree } = useAsyncData(async () => {
-    const { data, error } = await api.locations.getTree({
+    const { data, error } = await api.items.getTree({
       withItems: true,
     });
 

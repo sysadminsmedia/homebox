@@ -41,7 +41,7 @@ func (ctrl *V1Controller) HandleMaintenanceGetAll() errchain.HandlerFunc {
 func (ctrl *V1Controller) HandleMaintenanceEntryUpdate() errchain.HandlerFunc {
 	fn := func(r *http.Request, entryID uuid.UUID, body repo.MaintenanceEntryUpdate) (repo.MaintenanceEntry, error) {
 		auth := services.NewContext(r.Context())
-		return ctrl.repo.MaintEntry.Update(auth, entryID, body)
+		return ctrl.repo.MaintEntry.Update(auth, auth.GID, entryID, body)
 	}
 
 	return adapters.ActionID("id", fn, http.StatusOK)
@@ -59,7 +59,7 @@ func (ctrl *V1Controller) HandleMaintenanceEntryUpdate() errchain.HandlerFunc {
 func (ctrl *V1Controller) HandleMaintenanceEntryDelete() errchain.HandlerFunc {
 	fn := func(r *http.Request, entryID uuid.UUID) (any, error) {
 		auth := services.NewContext(r.Context())
-		err := ctrl.repo.MaintEntry.Delete(auth, entryID)
+		err := ctrl.repo.MaintEntry.Delete(auth, auth.GID, entryID)
 		return nil, err
 	}
 

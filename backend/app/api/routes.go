@@ -7,6 +7,7 @@ import (
 	"io"
 	"mime"
 	"net/http"
+	"net/url"
 	"path"
 	"path/filepath"
 
@@ -16,7 +17,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/app/api/handlers/debughandlers"
 	v1 "github.com/sysadminsmedia/homebox/backend/app/api/handlers/v1"
 	"github.com/sysadminsmedia/homebox/backend/app/api/providers"
-	_ "github.com/sysadminsmedia/homebox/backend/app/api/static/docs"
+	docs "github.com/sysadminsmedia/homebox/backend/app/api/static/docs"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 )
@@ -37,9 +38,38 @@ func (a *app) debugRouter() *http.ServeMux {
 	return dbg
 }
 
+// swaggerDocHandler serves the OpenAPI document, rewriting its `host` so the
+// Swagger UI's "Base URL" reflects the instance actually being used rather than
+// a value baked in at build time.
+//
+// That host is the target of every "Try it out" request the Swagger UI issues,
+// Authorization header included, and this route is unauthenticated. Honoring a
+// raw X-Forwarded-Host therefore let any unauthenticated client mint a spec
+// pointing wherever they liked; behind a cache that does not key on that header,
+// the poisoned document would then be served to operators. Defer to
+// SecureBaseURL, which prefers the operator's configured hostname and accepts
+// X-Forwarded-Host only under TrustProxy, and only after validation. The
+// fallback is r.Host, which caches already key on.
+func (a *app) swaggerDocHandler(w http.ResponseWriter, r *http.Request) {
+	host := r.Host
+	if trusted := v1.SecureBaseURL(r, &a.conf.Options); trusted != "" {
+		if u, err := url.Parse(trusted); err == nil && u.Host != "" {
+			host = u.Host
+		}
+	}
+
+	spec := *docs.SwaggerInfo
+	spec.Host = host
+	doc := spec.ReadDoc()
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	_, _ = w.Write([]byte(doc))
+}
+
 // registerRoutes registers all the routes for the API
 func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllRepos) {
 	registerMimes()
+
+	r.Get("/swagger/doc.json", a.swaggerDocHandler)
 
 	r.Get("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("/swagger/doc.json"),
@@ -54,6 +84,8 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		a.bus,
 		a.conf,
 		v1.WithMaxUploadSize(a.conf.Web.MaxUploadSize),
+		v1.WithMaxImportSize(a.conf.Web.MaxImportSize),
+		v1.WithMaxParseMemory(a.conf.Web.MaxParseMemory),
 		v1.WithRegistration(a.conf.Options.AllowRegistration),
 		v1.WithDemoStatus(a.conf.Demo), // Disable Password Change in Demo Mode
 		v1.WithURL(fmt.Sprintf("%s:%s", a.conf.Web.Host, a.conf.Web.Port)),
@@ -74,6 +106,8 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 
 		r.Post("/users/register", chain.ToHandlerFunc(v1Ctrl.HandleUserRegistration()))
 		r.Post("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(providers...), a.mwAuthRateLimit))
+		r.Post("/users/forgot-password", chain.ToHandlerFunc(v1Ctrl.HandleForgotPassword(), a.mwAuthRateLimit))
+		r.Post("/users/reset-password", chain.ToHandlerFunc(v1Ctrl.HandleResetPassword(), a.mwAuthRateLimit))
 
 		if a.conf.OIDC.Enabled {
 			r.Get("/users/login/oidc", chain.ToHandlerFunc(v1Ctrl.HandleOIDCLogin(), a.mwAuthRateLimit))
@@ -86,31 +120,57 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 			a.mwRoles(RoleModeOr, authroles.RoleUser.String()),
 		}
 
+		// ownerMW additionally requires role=owner on the tenant collection.
+		// Use it for anything that administers the collection itself rather
+		// than its contents — an invited member must not be able to rename,
+		// re-share, or delete a collection they were merely given access to.
+		ownerMW := []errchain.Middleware{
+			a.mwAuthToken,
+			a.mwTenant,
+			a.mwRoles(RoleModeOr, authroles.RoleUser.String()),
+			a.mwGroupOwner,
+		}
+
 		r.Get("/ws/events", chain.ToHandlerFunc(v1Ctrl.HandleCacheWS(), userMW...))
 
 		// User management endpoints
 		r.Get("/users/self", chain.ToHandlerFunc(v1Ctrl.HandleUserSelf(), userMW...))
 		r.Put("/users/self", chain.ToHandlerFunc(v1Ctrl.HandleUserSelfUpdate(), userMW...))
 		r.Delete("/users/self", chain.ToHandlerFunc(v1Ctrl.HandleUserSelfDelete(), userMW...))
+		r.Get("/users/self/settings", chain.ToHandlerFunc(v1Ctrl.HandleUserSelfSettingsGet(), userMW...))
+		r.Put("/users/self/settings", chain.ToHandlerFunc(v1Ctrl.HandleUserSelfSettingsUpdate(), userMW...))
 		r.Post("/users/logout", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogout(), userMW...))
+		r.Post("/users/logout/all", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogoutAll(), userMW...))
 		r.Get("/users/refresh", chain.ToHandlerFunc(v1Ctrl.HandleAuthRefresh(), userMW...))
 		r.Put("/users/self/change-password", chain.ToHandlerFunc(v1Ctrl.HandleUserSelfChangePassword(), userMW...))
+
+		// User API keys (static tokens that authenticate as the owning user)
+		r.Get("/users/self/api-keys", chain.ToHandlerFunc(v1Ctrl.HandleUserAPIKeysList(), userMW...))
+		r.Post("/users/self/api-keys", chain.ToHandlerFunc(v1Ctrl.HandleUserAPIKeyCreate(), userMW...))
+		r.Delete("/users/self/api-keys/{id}", chain.ToHandlerFunc(v1Ctrl.HandleUserAPIKeyDelete(), userMW...))
 
 		// Group management endpoints
 		r.Get("/groups/all", chain.ToHandlerFunc(v1Ctrl.HandleGroupsGetAll(), userMW...))
 		r.Post("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupCreate(), userMW...))
 		r.Get("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupGet(), userMW...))
-		r.Put("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupUpdate(), userMW...))
-		r.Delete("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupDelete(), userMW...))
+		r.Put("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupUpdate(), ownerMW...))
+		r.Delete("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupDelete(), ownerMW...))
 
 		r.Get("/groups/members", chain.ToHandlerFunc(v1Ctrl.HandleGroupMembersGetAll(), userMW...))
-		r.Post("/groups/members", chain.ToHandlerFunc(v1Ctrl.HandleGroupMemberAdd(), userMW...))
-		r.Delete("/groups/members/{user_id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupMemberRemove(), userMW...))
+		r.Delete("/groups/members/{user_id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupMemberRemove(), ownerMW...))
 
 		r.Get("/groups/invitations", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsGetAll(), userMW...))
-		r.Post("/groups/invitations", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsCreate(), userMW...))
-		r.Delete("/groups/invitations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsDelete(), userMW...))
+		r.Post("/groups/invitations", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsCreate(), ownerMW...))
+		r.Delete("/groups/invitations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsDelete(), ownerMW...))
 		r.Post("/groups/invitations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsAccept(), userMW...))
+
+		// Collection export/import (group-scoped)
+		r.Post("/group/exports", chain.ToHandlerFunc(v1Ctrl.HandleExportsCreate(), userMW...))
+		r.Get("/group/exports", chain.ToHandlerFunc(v1Ctrl.HandleExportsList(), userMW...))
+		r.Get("/group/exports/{id}", chain.ToHandlerFunc(v1Ctrl.HandleExportGet(), userMW...))
+		r.Get("/group/exports/{id}/download", chain.ToHandlerFunc(v1Ctrl.HandleExportDownload(), userMW...))
+		r.Delete("/group/exports/{id}", chain.ToHandlerFunc(v1Ctrl.HandleExportDelete(), userMW...))
+		r.Post("/group/import", chain.ToHandlerFunc(v1Ctrl.HandleCollectionImport(), userMW...))
 
 		r.Get("/groups/statistics", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatistics(), userMW...))
 		r.Get("/groups/statistics/purchase-price", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatisticsPriceOverTime(), userMW...))
@@ -125,14 +185,6 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Post("/actions/create-missing-thumbnails", chain.ToHandlerFunc(v1Ctrl.HandleCreateMissingThumbnails(), userMW...))
 		r.Post("/actions/wipe-inventory", chain.ToHandlerFunc(v1Ctrl.HandleWipeInventory(), userMW...))
 
-		// Location endpoints
-		r.Get("/locations", chain.ToHandlerFunc(v1Ctrl.HandleLocationGetAll(), userMW...))
-		r.Post("/locations", chain.ToHandlerFunc(v1Ctrl.HandleLocationCreate(), userMW...))
-		r.Get("/locations/tree", chain.ToHandlerFunc(v1Ctrl.HandleLocationTreeQuery(), userMW...))
-		r.Get("/locations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleLocationGet(), userMW...))
-		r.Put("/locations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleLocationUpdate(), userMW...))
-		r.Delete("/locations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleLocationDelete(), userMW...))
-
 		// Tags endpoints
 		r.Get("/tags", chain.ToHandlerFunc(v1Ctrl.HandleTagsGetAll(), userMW...))
 		r.Post("/tags", chain.ToHandlerFunc(v1Ctrl.HandleTagsCreate(), userMW...))
@@ -140,39 +192,47 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Put("/tags/{id}", chain.ToHandlerFunc(v1Ctrl.HandleTagUpdate(), userMW...))
 		r.Delete("/tags/{id}", chain.ToHandlerFunc(v1Ctrl.HandleTagDelete(), userMW...))
 
-		// Item endpoints
-		r.Get("/items", chain.ToHandlerFunc(v1Ctrl.HandleItemsGetAll(), userMW...))
-		r.Post("/items", chain.ToHandlerFunc(v1Ctrl.HandleItemsCreate(), userMW...))
-		r.Post("/items/import", chain.ToHandlerFunc(v1Ctrl.HandleItemsImport(), userMW...))
-		r.Get("/items/export", chain.ToHandlerFunc(v1Ctrl.HandleItemsExport(), userMW...))
-		r.Get("/items/fields", chain.ToHandlerFunc(v1Ctrl.HandleGetAllCustomFieldNames(), userMW...))
-		r.Get("/items/fields/values", chain.ToHandlerFunc(v1Ctrl.HandleGetAllCustomFieldValues(), userMW...))
+		// Entity Type endpoints
+		r.Get("/entity-types", chain.ToHandlerFunc(v1Ctrl.HandleEntityTypeGetAll(), userMW...))
+		r.Post("/entity-types", chain.ToHandlerFunc(v1Ctrl.HandleEntityTypeCreate(), userMW...))
+		r.Put("/entity-types/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTypeUpdate(), userMW...))
+		r.Delete("/entity-types/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTypeDelete(), userMW...))
 
-		r.Get("/items/{id}", chain.ToHandlerFunc(v1Ctrl.HandleItemGet(), userMW...))
-		r.Get("/items/{id}/path", chain.ToHandlerFunc(v1Ctrl.HandleItemFullPath(), userMW...))
-		r.Put("/items/{id}", chain.ToHandlerFunc(v1Ctrl.HandleItemUpdate(), userMW...))
-		r.Patch("/items/{id}", chain.ToHandlerFunc(v1Ctrl.HandleItemPatch(), userMW...))
-		r.Delete("/items/{id}", chain.ToHandlerFunc(v1Ctrl.HandleItemDelete(), userMW...))
-		r.Post("/items/{id}/duplicate", chain.ToHandlerFunc(v1Ctrl.HandleItemDuplicate(), userMW...))
+		// Entity endpoints (primary)
+		r.Get("/entities", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesGetAll(), userMW...))
+		r.Post("/entities", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesCreate(), userMW...))
+		r.Post("/entities/import", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesImport(), userMW...))
+		r.Get("/entities/export", chain.ToHandlerFunc(v1Ctrl.HandleEntitiesExport(), userMW...))
+		r.Get("/entities/fields", chain.ToHandlerFunc(v1Ctrl.HandleGetAllCustomFieldNames(), userMW...))
+		r.Get("/entities/fields/values", chain.ToHandlerFunc(v1Ctrl.HandleGetAllCustomFieldValues(), userMW...))
+		r.Get("/entities/tree", chain.ToHandlerFunc(v1Ctrl.HandleLocationTreeQuery(), userMW...))
 
-		// Item attachment endpoints
-		r.Post("/items/{id}/attachments", chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentCreate(), userMW...))
-		r.Put("/items/{id}/attachments/{attachment_id}", chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentUpdate(), userMW...))
-		r.Delete("/items/{id}/attachments/{attachment_id}", chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentDelete(), userMW...))
+		r.Get("/entities/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityGet(), userMW...))
+		r.Get("/entities/{id}/path", chain.ToHandlerFunc(v1Ctrl.HandleEntityFullPath(), userMW...))
+		r.Put("/entities/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityUpdate(), userMW...))
+		r.Patch("/entities/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityPatch(), userMW...))
+		r.Delete("/entities/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityDelete(), userMW...))
+		r.Post("/entities/{id}/duplicate", chain.ToHandlerFunc(v1Ctrl.HandleEntityDuplicate(), userMW...))
 
-		// Item maintenance endpoints
-		r.Get("/items/{id}/maintenance", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceLogGet(), userMW...))
-		r.Post("/items/{id}/maintenance", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceEntryCreate(), userMW...))
+		// Entity attachment endpoints
+		r.Post("/entities/{id}/attachments", chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentCreate(), userMW...))
+		r.Post("/entities/{id}/attachments/external", chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentExternalCreate(), userMW...))
+		r.Put("/entities/{id}/attachments/{attachment_id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentUpdate(), userMW...))
+		r.Delete("/entities/{id}/attachments/{attachment_id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentDelete(), userMW...))
+
+		// Entity maintenance endpoints
+		r.Get("/entities/{id}/maintenance", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceLogGet(), userMW...))
+		r.Post("/entities/{id}/maintenance", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceEntryCreate(), userMW...))
 
 		r.Get("/assets/{id}", chain.ToHandlerFunc(v1Ctrl.HandleAssetGet(), userMW...))
 
-		// Item Templates
-		r.Get("/templates", chain.ToHandlerFunc(v1Ctrl.HandleItemTemplatesGetAll(), userMW...))
-		r.Post("/templates", chain.ToHandlerFunc(v1Ctrl.HandleItemTemplatesCreate(), userMW...))
-		r.Get("/templates/{id}", chain.ToHandlerFunc(v1Ctrl.HandleItemTemplatesGet(), userMW...))
-		r.Put("/templates/{id}", chain.ToHandlerFunc(v1Ctrl.HandleItemTemplatesUpdate(), userMW...))
-		r.Delete("/templates/{id}", chain.ToHandlerFunc(v1Ctrl.HandleItemTemplatesDelete(), userMW...))
-		r.Post("/templates/{id}/create-item", chain.ToHandlerFunc(v1Ctrl.HandleItemTemplatesCreateItem(), userMW...))
+		// Entity Templates
+		r.Get("/templates", chain.ToHandlerFunc(v1Ctrl.HandleEntityTemplatesGetAll(), userMW...))
+		r.Post("/templates", chain.ToHandlerFunc(v1Ctrl.HandleEntityTemplatesCreate(), userMW...))
+		r.Get("/templates/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTemplatesGet(), userMW...))
+		r.Put("/templates/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTemplatesUpdate(), userMW...))
+		r.Delete("/templates/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTemplatesDelete(), userMW...))
+		r.Post("/templates/{id}/create-item", chain.ToHandlerFunc(v1Ctrl.HandleEntityTemplatesCreateItem(), userMW...))
 
 		// Maintenance
 		r.Get("/maintenance", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceGetAll(), userMW...))
@@ -197,17 +257,26 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 
 		r.Get("/qrcode", chain.ToHandlerFunc(v1Ctrl.HandleGenerateQRCode(), assetMW...))
 		r.Get(
-			"/items/{id}/attachments/{attachment_id}",
-			chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentGet(), assetMW...),
+			"/entities/{id}/attachments/{attachment_id}",
+			chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentGet(), assetMW...),
 		)
 
 		// Labelmaker
+		r.Get("/labelmaker/entity/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGetItemLabel(), userMW...))
 		r.Get("/labelmaker/location/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGetLocationLabel(), userMW...))
 		r.Get("/labelmaker/item/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGetItemLabel(), userMW...))
 		r.Get("/labelmaker/asset/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGetAssetLabel(), userMW...))
 
 		// Reporting Services
 		r.Get("/reporting/bill-of-materials", chain.ToHandlerFunc(v1Ctrl.HandleBillOfMaterialsExport(), userMW...))
+
+		// OpenTelemetry proxy endpoint for frontend telemetry (requires auth)
+		if a.otel != nil && a.otel.IsEnabled() && a.conf.Otel.ProxyEnabled {
+			r.Post("/telemetry", chain.ToHandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+				a.otel.ProxyHandler().ServeHTTP(w, r)
+				return nil
+			}, userMW...))
+		}
 
 		r.NotFound(http.NotFound)
 	})

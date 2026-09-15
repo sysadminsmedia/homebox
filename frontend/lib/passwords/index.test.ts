@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { scorePassword } from ".";
+import { PASSWORD_MIN_LENGTH, scorePassword } from ".";
 
 describe("scorePassword tests", () => {
   test("flagged words should return negative number", () => {
@@ -15,7 +15,7 @@ describe("scorePassword tests", () => {
   });
 
   test("should return 0 for strings less than 6", () => {
-    expect(scorePassword("12345")).toBe(0);
+    expect(scorePassword("1".repeat(PASSWORD_MIN_LENGTH - 1))).toBe(0);
   });
 
   test("should return positive number for long string", () => {

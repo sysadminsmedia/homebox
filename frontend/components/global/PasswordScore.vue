@@ -2,6 +2,9 @@
   <div class="py-4">
     <p class="text-sm">{{ $t("components.global.password_score.password_strength") }}: {{ message }}</p>
     <Progress class="w-full" :model-value="score" />
+    <p v-if="password && !isValid" class="mt-1 text-sm text-destructive">
+      {{ $t("components.global.password_score.does_not_meet_requirement") }}
+    </p>
   </div>
 </template>
 

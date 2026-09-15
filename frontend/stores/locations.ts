@@ -1,11 +1,11 @@
 import { defineStore } from "pinia";
-import type { LocationsApi } from "~~/lib/api/classes/locations";
-import type { LocationOutCount, TreeItem } from "~~/lib/api/types/data-contracts";
+import type { ItemsApi } from "~~/lib/api/classes/items";
+import type { EntitySummary, TreeItem } from "~~/lib/api/types/data-contracts";
 
 export const useLocationStore = defineStore("locations", {
   state: () => ({
-    parents: null as LocationOutCount[] | null,
-    Locations: null as LocationOutCount[] | null,
+    parents: null as EntitySummary[] | null,
+    Locations: null as EntitySummary[] | null,
     client: useUserApi(),
     tree: null as TreeItem[] | null,
     refreshLocationsPromise: null as Promise<void> | null,
@@ -16,9 +16,9 @@ export const useLocationStore = defineStore("locations", {
      * synched with the server by intercepting the API calls and updating on the
      * response
      */
-    parentLocations(state): LocationOutCount[] {
+    parentLocations(state): EntitySummary[] {
       if (state.parents === null) {
-        this.client.locations.getAll({ filterChildren: true }).then(result => {
+        this.client.items.getLocations({ filterChildren: true }).then(result => {
           if (result.error) {
             console.error(result.error);
             return;
@@ -29,7 +29,7 @@ export const useLocationStore = defineStore("locations", {
       }
       return state.parents ?? [];
     },
-    allLocations(state): LocationOutCount[] {
+    allLocations(state): EntitySummary[] {
       return state.Locations ?? [];
     },
   },
@@ -44,8 +44,8 @@ export const useLocationStore = defineStore("locations", {
       }
       await this.refreshLocationsPromise;
     },
-    async refreshParents(): ReturnType<LocationsApi["getAll"]> {
-      const result = await this.client.locations.getAll({ filterChildren: true });
+    async refreshParents(): ReturnType<ItemsApi["getLocations"]> {
+      const result = await this.client.items.getLocations({ filterChildren: true });
       if (result.error) {
         return result;
       }
@@ -53,8 +53,8 @@ export const useLocationStore = defineStore("locations", {
       this.parents = result.data;
       return result;
     },
-    async refreshChildren(): ReturnType<LocationsApi["getAll"]> {
-      const result = await this.client.locations.getAll({ filterChildren: false });
+    async refreshChildren(): ReturnType<ItemsApi["getLocations"]> {
+      const result = await this.client.items.getLocations({ filterChildren: false });
       if (result.error) {
         return result;
       }
@@ -62,8 +62,8 @@ export const useLocationStore = defineStore("locations", {
       this.Locations = result.data;
       return result;
     },
-    async refreshTree(): ReturnType<LocationsApi["getTree"]> {
-      const result = await this.client.locations.getTree();
+    async refreshTree(): ReturnType<ItemsApi["getTree"]> {
+      const result = await this.client.items.getTree();
       if (result.error) {
         return result;
       }

@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 )
 
 // Attachment is the model entity for the Attachment schema.
@@ -37,14 +37,14 @@ type Attachment struct {
 	// The values are being populated by the AttachmentQuery when eager-loading is set.
 	Edges                AttachmentEdges `json:"edges"`
 	attachment_thumbnail *uuid.UUID
-	item_attachments     *uuid.UUID
+	entity_attachments   *uuid.UUID
 	selectValues         sql.SelectValues
 }
 
 // AttachmentEdges holds the relations/edges for other nodes in the graph.
 type AttachmentEdges struct {
-	// Item holds the value of the item edge.
-	Item *Item `json:"item,omitempty"`
+	// Entity holds the value of the entity edge.
+	Entity *Entity `json:"entity,omitempty"`
 	// Thumbnail holds the value of the thumbnail edge.
 	Thumbnail *Attachment `json:"thumbnail,omitempty"`
 	// loadedTypes holds the information for reporting if a
@@ -52,15 +52,15 @@ type AttachmentEdges struct {
 	loadedTypes [2]bool
 }
 
-// ItemOrErr returns the Item value or an error if the edge
+// EntityOrErr returns the Entity value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e AttachmentEdges) ItemOrErr() (*Item, error) {
-	if e.Item != nil {
-		return e.Item, nil
+func (e AttachmentEdges) EntityOrErr() (*Entity, error) {
+	if e.Entity != nil {
+		return e.Entity, nil
 	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: item.Label}
+		return nil, &NotFoundError{label: entity.Label}
 	}
-	return nil, &NotLoadedError{edge: "item"}
+	return nil, &NotLoadedError{edge: "entity"}
 }
 
 // ThumbnailOrErr returns the Thumbnail value or an error if the edge
@@ -89,7 +89,7 @@ func (*Attachment) scanValues(columns []string) ([]any, error) {
 			values[i] = new(uuid.UUID)
 		case attachment.ForeignKeys[0]: // attachment_thumbnail
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
-		case attachment.ForeignKeys[1]: // item_attachments
+		case attachment.ForeignKeys[1]: // entity_attachments
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -163,10 +163,10 @@ func (_m *Attachment) assignValues(columns []string, values []any) error {
 			}
 		case attachment.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
-				return fmt.Errorf("unexpected type %T for field item_attachments", values[i])
+				return fmt.Errorf("unexpected type %T for field entity_attachments", values[i])
 			} else if value.Valid {
-				_m.item_attachments = new(uuid.UUID)
-				*_m.item_attachments = *value.S.(*uuid.UUID)
+				_m.entity_attachments = new(uuid.UUID)
+				*_m.entity_attachments = *value.S.(*uuid.UUID)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -181,9 +181,9 @@ func (_m *Attachment) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// QueryItem queries the "item" edge of the Attachment entity.
-func (_m *Attachment) QueryItem() *ItemQuery {
-	return NewAttachmentClient(_m.config).QueryItem(_m)
+// QueryEntity queries the "entity" edge of the Attachment entity.
+func (_m *Attachment) QueryEntity() *EntityQuery {
+	return NewAttachmentClient(_m.config).QueryEntity(_m)
 }
 
 // QueryThumbnail queries the "thumbnail" edge of the Attachment entity.

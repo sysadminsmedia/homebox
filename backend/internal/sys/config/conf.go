@@ -5,11 +5,39 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
 	"time"
 
 	"github.com/ardanlabs/conf/v3"
 )
+
+// redactedValue is the sentinel substituted for any sensitive field when the
+// configuration is serialized (e.g. via Print). It must not match any plausible
+// real value.
+const redactedValue = "[REDACTED]"
+
+// redactURLUserinfo returns raw with any password component of an embedded
+// userinfo section replaced by the redaction sentinel. The username is left
+// visible so operators can still recognize which account is configured. Inputs
+// that are not parseable URLs, or that contain no password, are returned
+// unchanged.
+func redactURLUserinfo(raw string) string {
+	if raw == "" {
+		return raw
+	}
+	u, err := url.Parse(raw)
+	if err != nil || u.User == nil {
+		return raw
+	}
+	if _, hasPassword := u.User.Password(); !hasPassword {
+		return raw
+	}
+	// Plain "REDACTED" is used here (rather than redactedValue) so it survives
+	// URL percent-encoding without becoming "%5BREDACTED%5D".
+	u.User = url.UserPassword(u.User.Username(), "REDACTED")
+	return u.String()
+}
 
 const (
 	ModeDevelopment = "development"
@@ -31,19 +59,20 @@ type Config struct {
 	LabelMaker LabelMakerConf `yaml:"labelmaker"`
 	Thumbnail  Thumbnail      `yaml:"thumbnail"`
 	Barcode    BarcodeAPIConf `yaml:"barcode"`
+	Otel       OTelConfig     `yaml:"otel"`
 	Auth       AuthConfig     `yaml:"auth"`
 	Notifier   NotifierConf   `yaml:"notifier"`
 }
 
 type Options struct {
+	CurrencyConfig       string `yaml:"currencies"`
+	Hostname             string `yaml:"hostname"`
 	AllowRegistration    bool   `yaml:"disable_registration"    conf:"default:true"`
 	AutoIncrementAssetID bool   `yaml:"auto_increment_asset_id" conf:"default:true"`
-	CurrencyConfig       string `yaml:"currencies"`
 	GithubReleaseCheck   bool   `yaml:"check_github_release"    conf:"default:true"`
 	AllowAnalytics       bool   `yaml:"allow_analytics"         conf:"default:false"`
 	AllowLocalLogin      bool   `yaml:"allow_local_login"       conf:"default:true"`
 	TrustProxy           bool   `yaml:"trust_proxy"             conf:"default:false"`
-	Hostname             string `yaml:"hostname"`
 }
 
 type Thumbnail struct {
@@ -58,12 +87,23 @@ type DebugConf struct {
 }
 
 type WebConfig struct {
-	Port          string        `yaml:"port"            conf:"default:7745"`
-	Host          string        `yaml:"host"`
-	MaxUploadSize int64         `yaml:"max_file_upload" conf:"default:10"`
-	ReadTimeout   time.Duration `yaml:"read_timeout"    conf:"default:10s"`
-	WriteTimeout  time.Duration `yaml:"write_timeout"   conf:"default:10s"`
-	IdleTimeout   time.Duration `yaml:"idle_timeout"    conf:"default:30s"`
+	Port string `yaml:"port" conf:"default:7745"`
+	Host string `yaml:"host"`
+	// MaxUploadSize is the body cap (in MB) applied to ordinary upload
+	// endpoints (attachments, item imports, etc.). Defaults to 10 MB.
+	MaxUploadSize int64 `yaml:"max_file_upload" conf:"default:10"`
+	// MaxImportSize is the body cap (in MB) for collection-restore uploads
+	// (POST /v1/group/import). Set independently because a full collection
+	// backup including attachments can be much larger than a single asset
+	// upload. Defaults to 1 GB.
+	MaxImportSize int64 `yaml:"max_import_size" conf:"default:1024"`
+	// MaxParseMemory is the amount of memory used when parsing multipart form
+	// the data that does not fit into this memory will spil to temp files.
+	// Defaults to 64 MB.
+	MaxParseMemory int64         `yaml:"max_parse_memory" conf:"default:64"`
+	ReadTimeout    time.Duration `yaml:"read_timeout"     conf:"default:10s"`
+	WriteTimeout   time.Duration `yaml:"write_timeout"    conf:"default:10s"`
+	IdleTimeout    time.Duration `yaml:"idle_timeout"     conf:"default:30s"`
 }
 
 type LabelMakerConf struct {
@@ -82,14 +122,11 @@ type LabelMakerConf struct {
 }
 
 type OIDCConf struct {
-	Enabled            bool          `yaml:"enabled"              conf:"default:false"`
 	IssuerURL          string        `yaml:"issuer_url"`
 	ClientID           string        `yaml:"client_id"`
 	ClientSecret       string        `yaml:"client_secret"`
 	Scope              string        `yaml:"scope"                conf:"default:openid profile email"`
 	AllowedGroups      string        `yaml:"allowed_groups"`
-	AutoRedirect       bool          `yaml:"auto_redirect"        conf:"default:false"`
-	VerifyEmail        bool          `yaml:"verify_email"         conf:"default:false"`
 	GroupClaim         string        `yaml:"group_claim"          conf:"default:groups"`
 	EmailClaim         string        `yaml:"email_claim"          conf:"default:email"`
 	NameClaim          string        `yaml:"name_claim"           conf:"default:name"`
@@ -97,14 +134,50 @@ type OIDCConf struct {
 	ButtonText         string        `yaml:"button_text"          conf:"default:Sign in with OIDC"`
 	StateExpiry        time.Duration `yaml:"state_expiry"         conf:"default:10m"`
 	RequestTimeout     time.Duration `yaml:"request_timeout"      conf:"default:30s"`
+	Enabled            bool          `yaml:"enabled"              conf:"default:false"`
+	AutoRedirect       bool          `yaml:"auto_redirect"        conf:"default:false"`
+	VerifyEmail        bool          `yaml:"verify_email"         conf:"default:false"`
+}
+
+func (c OIDCConf) MarshalJSON() ([]byte, error) {
+	type alias OIDCConf
+	a := alias(c)
+	if a.ClientSecret != "" {
+		a.ClientSecret = redactedValue
+	}
+	return json.Marshal(a)
 }
 
 type BarcodeAPIConf struct {
-	TokenBarcodespider string `yaml:"token_barcodespider"`
+	TokenBarcodespider   string `yaml:"token_barcodespider"`
+	OpenFoodFactsContact string `yaml:"openfoodfacts_contact"`
+}
+
+func (c BarcodeAPIConf) MarshalJSON() ([]byte, error) {
+	type alias BarcodeAPIConf
+	a := alias(c)
+	if a.TokenBarcodespider != "" {
+		a.TokenBarcodespider = redactedValue
+	}
+	return json.Marshal(a)
 }
 
 type AuthConfig struct {
 	RateLimit AuthRateLimit `yaml:"rate_limit"`
+	// APIKeyPepper is a server-side secret HMAC-keyed into stored API key hashes.
+	// Holding it outside the database means a DB-only leak yields no usable hashes.
+	// Must stay stable across restarts — rotating it invalidates every issued key.
+	// Generate with `openssl rand -base64 48`.
+	APIKeyPepper string `yaml:"api_key_pepper" conf:"mask"`
+}
+
+func (c AuthConfig) MarshalJSON() ([]byte, error) {
+	type alias AuthConfig
+	a := alias(c)
+	if a.APIKeyPepper != "" {
+		a.APIKeyPepper = redactedValue
+	}
+	return json.Marshal(a)
 }
 
 type AuthRateLimit struct {
@@ -138,8 +211,10 @@ func New(buildstr string, description string) (*Config, error) {
 	return &cfg, nil
 }
 
-// Print prints the configuration to stdout as a json indented string
-// This is useful for debugging. If the marshaller errors out, it will panic.
+// Print prints the configuration to stdout as an indented JSON document.
+// Sensitive fields (secrets, tokens, passwords, embedded URL credentials) are
+// redacted via each sub-struct's MarshalJSON. Useful for debugging operator
+// configuration without leaking credentials to logs.
 func (c *Config) Print() {
 	res, err := json.MarshalIndent(c, "", "  ")
 	if err != nil {

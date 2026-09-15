@@ -2,7 +2,7 @@
   import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import { Input } from "~/components/ui/input";
-  import type { ItemSummary, TagSummary, LocationOutCount } from "~~/lib/api/types/data-contracts";
+  import type { EntitySummary, TagSummary } from "~~/lib/api/types/data-contracts";
   import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
   import MdiLoading from "~icons/mdi/loading";
@@ -35,7 +35,7 @@
 
   const api = useUserApi();
   const loading = useMinLoader(500);
-  const items = ref<ItemSummary[]>([]);
+  const items = ref<EntitySummary[]>([]);
   const total = ref(0);
 
   // Using useRouteQuery directly has two downsides
@@ -145,7 +145,7 @@
   const tagStore = useTagStore();
   const tags = computed(() => tagStore.tags);
 
-  const selectedLocations = ref<LocationOutCount[]>([]);
+  const selectedLocations = ref<EntitySummary[]>([]);
   const selectedTags = ref<TagSummary[]>([]);
 
   const locIDs = computed(() => selectedLocations.value.map(l => l.id));
@@ -309,7 +309,7 @@
 
     const { data, error } = await api.items.getAll({
       q: query.value || "",
-      locations: locIDs.value,
+      parentIds: locIDs.value,
       tags: tagIDs.value,
       negateTags: negateTags.value,
       onlyWithoutPhoto: onlyWithoutPhoto.value,

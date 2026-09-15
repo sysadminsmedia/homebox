@@ -35,6 +35,7 @@
         "no_invites": "Žiadne pozvánky",
         "remaining_uses": "Zostávajúce použitia",
         "tabs": {
+            "entity_types": "Typy entít",
             "invites": "Pozvánky",
             "members": "Členovia",
             "notifiers": "Oznamovače",
@@ -117,12 +118,14 @@
             "randomize": "Náhodná farba"
         },
         "form": {
+            "min_length": "min {min}",
             "password": {
                 "toggle_show": "Prepnúť zobrazenie hesla"
             }
         },
         "global": {
             "copy_text": {
+                "continue": "Pokračovať",
                 "documentation": "Dokumentácia",
                 "failed_to_copy": "Nepodarilo sa skopírovať text do schránky",
                 "https_required": "Pretože sa vyžaduje protokol HTTPS",
@@ -214,6 +217,7 @@
                 "error_exception": "Pri načítaní čiarového kódu došlo k chybe: ",
                 "error_invalid_barcode": "Zadali ste neplatný čiarový kód",
                 "error_not_found": "Nenašiel sa žiaden produkt s uvedeným čiarovým kódom.",
+                "import_selected": "Importovať vybrané",
                 "search_item": "Vyhľadať produkt",
                 "title": "Importovať produkt"
             },
@@ -279,6 +283,7 @@
             "create_modal": {
                 "location_description": "Popis miesta",
                 "location_name": "Názov miesta",
+                "location_photo": "Fotografia miesta 📷",
                 "title": "Vytvoriť miesto",
                 "toast": {
                     "already_creating": "Miesto sa už vytvára",
@@ -301,11 +306,18 @@
             "no_results": "Nenašli sa žiadne výsledky.",
             "shortcut_hint": "Pomocou klávesov s číslami rýchlo vyberte akciu."
         },
+        "search": {
+            "filter": {
+                "search_placeholder": "Hľadať…"
+            }
+        },
         "tag": {
             "create_modal": {
                 "tag_color": "Farba štítku",
                 "tag_description": "Popis štítku",
+                "tag_icon": "Ikona štítku",
                 "tag_name": "Názov štítku",
+                "tag_parent": "Nadradený štítok",
                 "title": "Vytvoriť štítok",
                 "toast": {
                     "already_creating": "Už vytvárate štítok",
@@ -315,6 +327,8 @@
                 }
             },
             "selector": {
+                "clear": "Vymazať",
+                "no_tags_found": "Nenašli sa žiadne štítky",
                 "select_tags": "Vybrať štítky"
             }
         },
@@ -387,6 +401,7 @@
         "archived": "Archivované",
         "build": "Zostava: { build }",
         "cancel": "Zrušiť",
+        "close": "Zavrieť",
         "confirm": "Potvrďte",
         "create": "Vytvoriť",
         "create_and_add": "Vytvoriť a pridať ďalšie",
@@ -421,9 +436,13 @@
         "return_home": "Vrátiť sa na začiatok",
         "save": "Uložiť",
         "search": "Hľadať",
+        "select": "Vybrať…",
+        "show_less": "Zobraziť menej",
+        "show_more": "Zobraziť viac",
         "sign_out": "Odhlásiť sa",
         "submit": "Odoslať",
         "tags": "Štítky",
+        "type": "Typ",
         "unknown": "Neznáme",
         "update": "Aktualizovať",
         "updating": "Aktualizujem",
@@ -443,13 +462,25 @@
         "total_value": "Celková hodnota"
     },
     "index": {
+        "back_to_login": "Späť na prihlásenie",
         "disabled_registration": "Registrácia zakázaná",
         "dont_join_group": "Nechcete sa pridať do skupiny?",
+        "forgot_password": "Zabudli ste heslo?",
+        "forgot_password_check_email": "Ak je tento e-mail prepojený s účtom, odoslali sme vám odkaz na obnovenie hesla. Odkaz vyprší za jednu hodinu.",
+        "forgot_password_send": "Poslať odkaz na obnovenie hesla",
+        "forgot_password_subtitle": "Vyberte e-mail pre váš účet a my vám pošleme odkaz na obnovenie hesla.",
+        "forgot_password_title": "Obnoviť heslo",
         "joining_group": "Pripájate sa k existujúcej skupine!",
         "login": "Prihláste sa",
         "or": "alebo",
         "register": "Zaregistrujte sa",
         "remember_me": "Pamätaj si ma",
+        "reset_password_invalid": "Tento odkaz na obnovenie hesla je neplatný alebo jeho platnosť vypršala. Požiadajte o nový.",
+        "reset_password_missing_token": "Chýba token na obnovenie. Znova otvorte odkaz z e-mailu alebo si vyžiadajte nový.",
+        "reset_password_set": "Nastaviť nové heslo",
+        "reset_password_subtitle": "Vyberte nové heslo pre váš účet.",
+        "reset_password_success": "Vaše heslo bolo obnovené. Prihláste sa s použitím nového hesla.",
+        "reset_password_title": "Obnovte si heslo",
         "set_email": "Aký je váš e-mail?",
         "set_name": "Ako sa voláte?",
         "set_password": "Nastavte si heslo",
@@ -511,6 +542,7 @@
             "view_image": "Zobraziť obrázok"
         },
         "edit_details": "Upraviť podrobnosti",
+        "field": "Pole",
         "field_selector": "Výber poľa",
         "field_value": "Hodnota poľa",
         "first": "Prvý",
@@ -550,8 +582,10 @@
         "reset_search": "Obnoviť vyhľadávanie",
         "results": "{ total } Výsledky",
         "select_field": "Vyberte pole",
+        "select_value": "Vyberte hodnotu",
         "serial_number": "Sériové číslo",
         "show_advanced_view_options": "Zobraziť rozšírené možnosti zobrazenia",
+        "show_empty": "Zobraziť prázdne",
         "sold_at": "Predané dňa",
         "sold_details": "Podrobnosti o predaji",
         "sold_price": "Predajná cena",
@@ -631,12 +665,15 @@
     "languages.da-DK": "Dánsko",
     "languages.ro-RO": "Rumunsko",
     "languages.sk-SK": "Slovenčina",
+    "languages.sr-RS": "Srbčina (Srbsko)",
     "locations": {
         "child_locations": "Miesta podriadených",
         "collapse_tree": "Zbaliť strom",
         "expand_tree": "Rozbaliť strom",
+        "hide_items": "Skryť položky",
         "location_items_delete_confirm": "Naozaj chcete odstrániť toto miesto a všetky jeho položky? Túto akciu nie je možné odvolať.",
         "no_results": "Žiadne lokality neboli nájdené",
+        "show_items": "Zobraziť položky",
         "toast": {
             "failed_delete_location": "Miesto sa nepodarilo odstrániť",
             "failed_load_location": "Miesto sa nepodarilo načítať",
@@ -702,6 +739,22 @@
     },
     "profile": {
         "active": "Aktívne",
+        "api_key_copied": "Skopírované do schránky",
+        "api_key_copy": "Kopírovať",
+        "api_key_create": "Vytvoriť API kľúč",
+        "api_key_created": "Vytvorený",
+        "api_key_delete_confirm": "Naozaj chcete odvolať tento API kľúč? Všetci klienti, ktorý ho používajú okamžite prídu o prístup.",
+        "api_key_expires_at": "Expiruje",
+        "api_key_last_used": "Naposledy použité",
+        "api_key_name": "Názov",
+        "api_key_name_placeholder": "napr. Home Assistant",
+        "api_key_never_used": "Nikdy",
+        "api_key_no_expiration": "Bez expirácie",
+        "api_key_set_expiration": "Nastaviť dátum expirácie",
+        "api_key_token_label": "Váš nový API kľúč",
+        "api_key_token_warning": "Teraz skopírujte tento token. Z dôvodu bezpečnosti ho už neskôr nebudete vedieť zobraziť.",
+        "api_keys": "API kľúče",
+        "api_keys_sub": "Statické tokeny pre prístup pre programy. Každý kľúč má rovnaké oprávnenia ako váš účet.",
         "change_password": "Zmeniť heslo",
         "currency_format": "Formát meny",
         "current_password": "Aktuálne heslo",
@@ -724,6 +777,7 @@
         "moved_notice_link_settings": "Nastavenia meny zbierky",
         "moved_notice_title": "Hľadáte oznamovače, pozvánky alebo nastavenie meny?",
         "new_password": "Nové heslo",
+        "no_api_keys": "Žiadne API kľúče",
         "no_notifiers": "Nie sú nastavené žiadne oznamovače",
         "no_override": "Bez prepísania",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Oznamovač",
@@ -735,6 +789,10 @@
         "theme_settings_sub": "Nastavenia motívu sú uložené v lokálnom úložisku vášho prehliadača. Tému môžete kedykoľvek zmeniť. Ak mate\n problémy s nastavením motívu, skúste obnoviť prehliadač.",
         "toast": {
             "account_deleted": "Váš účet bol odstránený.",
+            "api_key_created": "API kľúč bol vytvorený.",
+            "api_key_deleted": "API kľúč bol odvolaný.",
+            "failed_api_key_create": "API kľúč sa nepodarilo vytvoriť.",
+            "failed_api_key_delete": "API kľúč sa nepodarilo odvolať.",
             "failed_change_password": "Heslo sa nepodarilo zmeniť.",
             "failed_create_notifier": "Oznamovač sa nepodarilo vytvoriť.",
             "failed_delete_account": "Nepodarilo sa odstrániť váš účet.",
@@ -773,6 +831,7 @@
             "page_right_padding": "Odsadenie strany vpravo",
             "page_top_padding": "Odsadenie strany zvrchu",
             "page_width": "Šírka strany",
+            "print_location_row": "Vytlačiť riadok s umiestnením",
             "qr_code_example": "Príklad QR kódu",
             "replace_homebox_behavior": "Nahradiť správanie textu \"HomeBox\"",
             "replace_homebox_behavior_always_replace": "Vždy nahradiť „HomeBox“",
@@ -781,6 +840,7 @@
             "replace_homebox_behavior_item_no_name_no_location": "Nahradiť „HomeBox“, ak položka nemá názov a umiestnenie",
             "replace_homebox_behavior_show_homebox": "Zobraziť „HomeBox“",
             "replace_homebox_text": "Text nahradenia",
+            "skip_first_labels": "Preskočiť prvé etikety",
             "tip_1": "Predvolené nastavenia sú nastavené pre\n'<a href=\"https://www.avery.com/templates/5260\">'hárky štítkov Avery 5260'</a>'. Ak používate iný hárok,\nbudete musieť upraviť nastavenia tak, aby zodpovedali vášmu hárku.",
             "tip_2": "Ak si upravujete hárok, rozmery sú v palcoch. Pri vytváraní hárku 5260 som zistil, že rozmery použité v jeho šablóne nezodpovedali tomu, čo bolo potrebné na tlač v rámci políčok.\n\n„<b>„Buďte pripravení na pokusy a omyly.“</b>“",
             "tip_3": "Pri tlači nezabudnite:\n'<ol><li>'Nastaviť okraje na 0 alebo Žiadne'</li><li>'Nastaviť mierku na 100 %'</li><li>'Zakázať obojstrannú tlač'</li><li>'Pred tlačou viacerých strán vytlačiť testovaciu stranu'</li></ol>'",
@@ -801,6 +861,21 @@
         "select_video_source": "Vyberte zdroj videa",
         "title": "Skener",
         "unsupported": "Media Stream API nie je podporované bez protokolu HTTPS"
+    },
+    "scanner_ar": {
+        "ar_mode": "Režim AR",
+        "back": "Späť",
+        "child_items": "{count, plural, one {podpoložka} other {podpoložky}}",
+        "items": "{count, plural, one {položka} other {položky}}",
+        "items_in_location": "{count, plural, one {položka} other {položky}}",
+        "more": "viac",
+        "not_found": "Položka nebola nájdená",
+        "qty": "Mno",
+        "retry": "Opakovať",
+        "scanning": "Skenujem",
+        "switch_camera": "Prepnúť kameru",
+        "title": "AR skener",
+        "unsupported": "Skenovanie AR nie je podporované týmto prehliadačom"
     },
     "tags": {
         "no_results": "Nenašli sa žiadne štítky",
@@ -846,6 +921,22 @@
             "zero_datetimes_sub": "Obnoví hodnotu času pre všetky polia dátumu a času vo vašom inventári na začiatok dátumu. Ide o opravu chyby, ktorá bola zavedená na začiatku vývoja stránky a ktorá spôsobila, že sa hodnota času uložila s časom, čo spôsobilo problémy s poliami dátumu zobrazujúcimi presné hodnoty. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
         },
         "actions_sub": "Hromadne použite akcie na svoj inventár. Tieto akcie nie je možné odvolať. '<b>'Buďte opatrní.'</b>'",
+        "backups": "Záloha a obnova",
+        "backups_set": {
+            "create": "Vytvoriť zálohu",
+            "create_button": "Spustiť zálohu",
+            "download": "Stiahnuť",
+            "failed": "Záloha skončila s chybou. Podrobnosti nájdete v záznamoch serveru.",
+            "list_empty": "Zatiaľ neboli vytvorené žiadne zálohy.",
+            "restore": "Obnoviť zo zálohy",
+            "restore_button": "Nahrať a obnoviť",
+            "table": {
+                "actions": "Akcie",
+                "created": "Vytvorené",
+                "size": "Veľkosť",
+                "status": "Stav"
+            }
+        },
         "demo_mode_error": {
             "wipe_inventory": "Inventár, štítky, miesta a záznamy o údržbe nie je možné vymazať, keď je HomeBox v režime dema. Uistite sa, že nie ste v režime dema a skúste to znova."
         },
@@ -872,12 +963,17 @@
         "reports_sub": "Generujte rôzne prehľady pre svoj inventár.",
         "toast": {
             "asset_success": "{ results } aktiv bolo aktualizovaných.",
+            "backup_delete_failed": "Zálohu sa nepodarilo odstrániť.",
+            "backup_start_failed": "Zálohu sa nepodarilo vytvoriť.",
+            "backup_started": "Záloha bola spustená - po dokončení sa zobrazí v tabuľke.",
             "failed_create_missing_thumbnails": "Nepodarilo sa vytvoriť chýbajúce náhľady.",
             "failed_ensure_ids": "Nepodarilo sa zaistiť ID aktív.",
             "failed_ensure_import_refs": "Nepodarilo sa zaistiť import referencií.",
             "failed_set_primary_photos": "Nepodarilo sa nastaviť primárne fotografie.",
             "failed_wipe_inventory": "Inventár sa nepodarilo odstrániť.",
             "failed_zero_datetimes": "Nepodarilo sa obnoviť hodnoty dátumu a času.",
+            "restore_failed": "Obnova skončila chybou.",
+            "restore_started": "Obnova bola spustená - po krátkej chvíli aktualizujte zobrazenie, aby ste zobrazili importované položky.",
             "wipe_inventory_success": "Inventár bol úspešne odstráneny. Bolo zmazaných { results } položiek."
         }
     }

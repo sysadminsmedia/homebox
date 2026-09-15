@@ -38,10 +38,10 @@
         image.originalType = params.originalType;
         image.thumbnailSrc = params.thumbnailSrc;
       } else if (params.type === "attachment") {
-        image.originalSrc = api.authURL(`/items/${params.itemId}/attachments/${params.attachmentId}`);
+        image.originalSrc = api.authURL(`/entities/${params.itemId}/attachments/${params.attachmentId}`);
         image.originalType = params.mimeType;
         image.thumbnailSrc = params.thumbnailId
-          ? api.authURL(`/items/${params.itemId}/attachments/${params.thumbnailId}`)
+          ? api.authURL(`/entities/${params.itemId}/attachments/${params.thumbnailId}`)
           : image.originalSrc;
       }
     });

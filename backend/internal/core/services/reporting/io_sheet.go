@@ -201,32 +201,48 @@ func (s *IOSheet) Read(data io.Reader) error {
 }
 
 // ReadItems writes the sheet to a writer.
-func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, gid uuid.UUID, repos *repo.AllRepos, hbURL string) error {
-	s.Rows = make([]ExportCSVRow, len(items))
+func (s *IOSheet) ReadItems(ctx context.Context, entities []repo.EntityOut, gid uuid.UUID, repos *repo.AllRepos, hbURL string) error {
+	s.Rows = make([]ExportCSVRow, len(entities))
 
 	extraHeaders := map[string]struct{}{}
+	entitiesByID := lo.SliceToMap(entities, func(item repo.EntityOut) (uuid.UUID, repo.EntityOut) {
+		return item.ID, item
+	})
 
-	for i := range items {
-		item := items[i]
+	for i := range entities {
+		item := entities[i]
 
-		// TODO: Support fetching nested locations
-		locID := item.Location.ID
+		var locString LocationString
+		var parentImportRef string
+		if item.Parent != nil {
+			locationParentID := item.Parent.ID
 
-		locPaths, err := repos.Locations.PathForLoc(context.Background(), gid, locID)
-		if err != nil {
-			log.Error().Err(err).Msg("could not get location path")
-			return err
+			if parent, ok := entitiesByID[item.Parent.ID]; ok && parent.EntityType != nil && !parent.EntityType.IsLocation {
+				parentImportRef = parent.ImportRef
+				locationParentID = uuid.Nil
+				if parent.Parent != nil {
+					locationParentID = parent.Parent.ID
+				}
+			}
+
+			if locationParentID != uuid.Nil {
+				locPaths, err := repos.Entities.PathForEntity(ctx, gid, locationParentID)
+				if err != nil {
+					log.Error().Err(err).Msg("could not get entity path")
+					return err
+				}
+
+				locString = fromPathSlice(locPaths)
+			}
 		}
-
-		locString := fromPathSlice(locPaths)
 
 		tagString := lo.Map(item.Tags, func(l repo.TagSummary, _ int) string {
 			return l.Name
 		})
 
-		url := generateItemURL(item, hbURL)
+		url := generateEntityURL(item, hbURL)
 
-		customFields := lo.Map(item.Fields, func(f repo.ItemField, _ int) ExportItemFields {
+		customFields := lo.Map(item.Fields, func(f repo.EntityFieldData, _ int) ExportItemFields {
 			extraHeaders[f.Name] = struct{}{}
 			return ExportItemFields{
 				Name:  f.Name,
@@ -239,18 +255,19 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, gid uuid.
 			Location: locString,
 			TagStr:   tagString,
 
-			ImportRef:   item.ImportRef,
-			AssetID:     item.AssetID,
-			Name:        item.Name,
-			Quantity:    item.Quantity,
-			Description: item.Description,
-			Insured:     item.Insured,
-			Archived:    item.Archived,
-			URL:         url,
+			ImportRef:       item.ImportRef,
+			ParentImportRef: parentImportRef,
+			AssetID:         item.AssetID,
+			Name:            item.Name,
+			Quantity:        item.Quantity,
+			Description:     item.Description,
+			Insured:         item.Insured,
+			Archived:        item.Archived,
+			URL:             url,
 
 			PurchasePrice: item.PurchasePrice,
 			PurchaseFrom:  item.PurchaseFrom,
-			PurchaseTime:  item.PurchaseTime,
+			PurchaseDate:  item.PurchaseDate,
 
 			Manufacturer: item.Manufacturer,
 			ModelNumber:  item.ModelNumber,
@@ -261,7 +278,7 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, gid uuid.
 			WarrantyDetails:  item.WarrantyDetails,
 
 			SoldTo:    item.SoldTo,
-			SoldTime:  item.SoldTime,
+			SoldDate:  item.SoldDate,
 			SoldPrice: item.SoldPrice,
 			SoldNotes: item.SoldNotes,
 
@@ -295,12 +312,15 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, gid uuid.
 	return nil
 }
 
-func generateItemURL(item repo.ItemOut, d string) string {
-	url := ""
-	if item.ID != uuid.Nil {
-		url = fmt.Sprintf("%s/item/%s", d, item.ID.String())
+func generateEntityURL(entity repo.EntityOut, d string) string {
+	if entity.ID == uuid.Nil {
+		return ""
 	}
-	return url
+	prefix := "item"
+	if entity.EntityType != nil && entity.EntityType.IsLocation {
+		prefix = "location"
+	}
+	return fmt.Sprintf("%s/%s/%s", d, prefix, entity.ID.String())
 }
 
 // CSV writes the current sheet to a 2d array, for compatibility with TSV/CSV files.

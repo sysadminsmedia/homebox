@@ -34,17 +34,17 @@ const (
 	FieldBooleanValue = "boolean_value"
 	// FieldTimeValue holds the string denoting the time_value field in the database.
 	FieldTimeValue = "time_value"
-	// EdgeItemTemplate holds the string denoting the item_template edge name in mutations.
-	EdgeItemTemplate = "item_template"
+	// EdgeEntityTemplate holds the string denoting the entity_template edge name in mutations.
+	EdgeEntityTemplate = "entity_template"
 	// Table holds the table name of the templatefield in the database.
 	Table = "template_fields"
-	// ItemTemplateTable is the table that holds the item_template relation/edge.
-	ItemTemplateTable = "template_fields"
-	// ItemTemplateInverseTable is the table name for the ItemTemplate entity.
-	// It exists in this package in order to avoid circular dependency with the "itemtemplate" package.
-	ItemTemplateInverseTable = "item_templates"
-	// ItemTemplateColumn is the table column denoting the item_template relation/edge.
-	ItemTemplateColumn = "item_template_fields"
+	// EntityTemplateTable is the table that holds the entity_template relation/edge.
+	EntityTemplateTable = "template_fields"
+	// EntityTemplateInverseTable is the table name for the EntityTemplate entity.
+	// It exists in this package in order to avoid circular dependency with the "entitytemplate" package.
+	EntityTemplateInverseTable = "entity_templates"
+	// EntityTemplateColumn is the table column denoting the entity_template relation/edge.
+	EntityTemplateColumn = "entity_template_fields"
 )
 
 // Columns holds all SQL columns for templatefield fields.
@@ -64,7 +64,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "template_fields"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"item_template_fields",
+	"entity_template_fields",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -181,16 +181,16 @@ func ByTimeValue(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTimeValue, opts...).ToFunc()
 }
 
-// ByItemTemplateField orders the results by item_template field.
-func ByItemTemplateField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByEntityTemplateField orders the results by entity_template field.
+func ByEntityTemplateField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newItemTemplateStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newEntityTemplateStep(), sql.OrderByField(field, opts...))
 	}
 }
-func newItemTemplateStep() *sqlgraph.Step {
+func newEntityTemplateStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(ItemTemplateInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, ItemTemplateTable, ItemTemplateColumn),
+		sqlgraph.To(EntityTemplateInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, EntityTemplateTable, EntityTemplateColumn),
 	)
 }

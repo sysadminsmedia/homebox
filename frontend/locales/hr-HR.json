@@ -1,0 +1,28 @@
+{
+    "collection": {
+        "delete_collection": "Obriši zbirku",
+        "deleted_collection": "Zbirka obrisana.",
+        "manage_collection": "Upravljaj Zbirkom",
+        "members": {
+            "email": "Email",
+            "name": "Ime",
+            "owner": "Vlasnik"
+        },
+        "no_collections": {
+            "create": "Napravi novu zbirku",
+            "title": "Zbirka nije pronađena"
+        },
+        "tabs": {
+            "settings": "Postavke",
+            "tools": "Alati"
+        },
+        "uses": "Korisnici"
+    },
+    "components": {
+        "app": {
+            "import_dialog": {
+                "title": "Uvezi CSV Datoteku"
+            }
+        }
+    }
+}

@@ -36,6 +36,7 @@
         "tabs": {
             "invites": "Meghívások",
             "members": "Tagok",
+            "notifiers": "Értesítők",
             "settings": "Beállítások",
             "tools": "Eszközök"
         }
@@ -77,7 +78,18 @@
             },
             "invite_create_modal": {
                 "toast": {
-                    "invalid_expiry_missing": "Kérem válassza ki a lejárat dátumát és időpontját."
+                    "invalid_expiry_missing": "Kérem válassza ki a lejárat dátumát és időpontját.",
+                    "invalid_expiry_past": "A lejárat dátumának a jövőben kell lennie."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Gyűjtemény meghívókód",
+                "invites_should_look_like": "A meghívókódnak így kell kinéznie:",
+                "join": "Csatlakozás gyűjteményhez",
+                "no_invite_code_create_one": "Nincs meghívókódod? Készíts inkább egy új gyűjteményt",
+                "toast": {
+                    "join_failed": "Nem sikerült csatlakozni a gyűjteményhez",
+                    "join_success": "Csatlakozva a gyűjteményhez"
                 }
             }
         },
@@ -203,12 +215,16 @@
                     "card": "Kártya",
                     "items": "Tételek",
                     "no_items": "Nincs megjeleníthető elem",
+                    "select_all": "Mind kiválasztása",
                     "table": "Táblázat"
                 },
                 "table": {
                     "dropdown": {
+                        "actions": "Műveletek",
                         "delete_item": "Tétel törlése",
                         "delete_selected": "Kiválasztott tételek törlése",
+                        "download_csv": "Táblázat letöltése CSV-ként",
+                        "download_json": "Táblázat letöltése JSON-ként",
                         "error_deleting": "Hiba a tétel törlésekor",
                         "toggle_expand": "Kibontás",
                         "view_item": "Tétel megtekintése",
@@ -254,6 +270,7 @@
                 "delete": "Sablon törlése",
                 "edit": "Sablon szerkesztése"
             },
+            "confirm_delete": "Biztosan törlöd ezt a sablont?",
             "create_modal": {
                 "title": "Sablon létrehozása"
             },
@@ -264,6 +281,7 @@
                 "title": "Sablon szerkesztése"
             },
             "form": {
+                "custom_fields": "Egyedi mezők",
                 "item_description": "Tétel leírása",
                 "item_name": "Tétel neve",
                 "manufacturer": "Gyártó",
@@ -271,8 +289,12 @@
             },
             "save_as_template": "Mentés mint sablon",
             "toast": {
+                "applied": "\"{name}\" sablon alkalmazva",
+                "create_failed": "A sablon létrehozása nem sikerült",
                 "created": "Sablon létrehozva",
+                "delete_failed": "A sablon törlése nem sikerült",
                 "deleted": "Sablon törölve",
+                "load_failed": "Nem sikerült betölteni a sablon részleteit",
                 "updated": "Sablon frissítve"
             }
         }
@@ -313,6 +335,7 @@
         "navigate": "Navigáció",
         "no": "Nem",
         "password": "Jelszó",
+        "preview": "Előnézet",
         "quantity": "Mennyiség",
         "read_docs": "Olvasd el a dokumentációt",
         "return_home": "Vissza a kezdőlapra",
@@ -374,7 +397,11 @@
         "details": "Részletek",
         "drag_and_drop": "Húzd ide a fájlokat, vagy kattints a fájlok kiválasztásához",
         "duplicate": {
-            "copy_attachments": "Mellékletek másolása"
+            "copy_attachments": "Mellékletek másolása",
+            "copy_custom_fields": "Egyedi mezők másolása",
+            "copy_maintenance": "Karbantartások másolása",
+            "custom_prefix": "Előtag másolása",
+            "enable_custom_prefix": "Egyedi előtag használata"
         },
         "edit": {
             "edit_attachment_dialog": {
@@ -505,6 +532,7 @@
     "languages.ro-RO": "Román",
     "languages.sk-SK": "Szlovák",
     "languages.sq-AL": "Albán",
+    "languages.sr-RS": "Szerb",
     "locations": {
         "child_locations": "Tartalmazott helyek",
         "collapse_tree": "Fanézet becsukása",
@@ -565,6 +593,12 @@
         "scanner": "Szkenner",
         "search": "Keresés"
     },
+    "pages": {
+        "templates": {
+            "no_templates": "Nincsenek még sablonok.",
+            "title": "Sablonok"
+        }
+    },
     "profile": {
         "active": "Aktív",
         "change_password": "Jelszó módosítása",
@@ -581,6 +615,10 @@
         "group_settings_sub": "Ezek a csoport közös beállításai. Lehet hogy frissítened kell az oldalt a böngésződben a beállítások megváltoztatása után.",
         "inactive": "Inaktív",
         "language": "Nyelv",
+        "moved_notice_description": "Ezeket a beállításokat már a gyűjteményekben kezeljük.",
+        "moved_notice_link_invites": "Gyűjtemény meghívók",
+        "moved_notice_link_notifiers": "Gyűjtemény értesítői",
+        "moved_notice_title": "Az értesítőket, meghívókat, vagy a pénznem beállításokat keresed?",
         "new_password": "Új jelszó",
         "no_notifiers": "Nincs értesítő beállítva",
         "no_override": "Nincs felülírás",

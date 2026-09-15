@@ -1,6 +1,12 @@
 <template>
-  <div class="relative">
-    <FormTextField v-model="value" :placeholder="localizedPlaceholder" :label="localizedLabel" :type="inputType" />
+  <div class="relative" :class="wrapperClass()">
+    <FormTextField
+      v-bind="fieldAttrs()"
+      v-model="value"
+      :placeholder="localizedPlaceholder"
+      :label="localizedLabel"
+      :type="inputType"
+    />
     <TooltipProvider :delay-duration="0">
       <Tooltip>
         <TooltipTrigger as-child>
@@ -24,6 +30,12 @@
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
   import FormTextField from "@/components/Form/TextField.vue";
 
+  defineOptions({
+    inheritAttrs: false,
+  });
+
+  const attrs = useAttrs();
+
   const { t } = useI18n();
   type Props = {
     modelValue: string;
@@ -41,6 +53,15 @@
   const inputType = computed(() => {
     return hide.value ? "password" : "text";
   });
+
+  function wrapperClass() {
+    return attrs.class;
+  }
+
+  function fieldAttrs() {
+    const { class: _class, ...rest } = attrs;
+    return rest;
+  }
 
   const value = useVModel(props, "modelValue");
 </script>

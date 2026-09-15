@@ -21,7 +21,7 @@
 
   const { t } = useI18n();
 
-    useHead({ title: `HomeBox | ${t("collection.tabs.notifiers")}` });
+  useHead({ title: `HomeBox | ${t("collection.tabs.notifiers")}` });
 
   const api = useUserApi();
   const confirm = useConfirm();

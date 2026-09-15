@@ -3,7 +3,6 @@ package v1
 import (
 	"net/http"
 
-	"github.com/containrrr/shoutrrr"
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
@@ -117,7 +116,9 @@ func (ctrl *V1Controller) HandlerNotifierTest() errchain.HandlerFunc {
 			return nil, validate.NewRequestError(err, http.StatusBadRequest)
 		}
 
-		err := shoutrrr.Send(q.URL, "Test message from Homebox")
+		// Deliver through the guarded client so redirect hops and the resolved
+		// address are re-checked against the same policy.
+		err := validate.SendNotifierMessage(q.URL, "Test message from Homebox", &ctrl.config.Notifier)
 		return nil, err
 	}
 

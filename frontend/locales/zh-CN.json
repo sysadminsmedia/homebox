@@ -35,6 +35,7 @@
         "no_invites": "没有邀请",
         "remaining_uses": "剩余可用次数",
         "tabs": {
+            "entity_types": "实体类型",
             "invites": "邀请",
             "members": "成员",
             "notifiers": "通知器",
@@ -117,6 +118,7 @@
             "randomize": "随机颜色"
         },
         "form": {
+            "min_length": "最少 {min}",
             "password": {
                 "toggle_show": "切换密码显示"
             }
@@ -281,6 +283,7 @@
             "create_modal": {
                 "location_description": "位置描述",
                 "location_name": "位置名称",
+                "location_photo": "位置照片📷",
                 "title": "创建位置",
                 "toast": {
                     "already_creating": "已在创建位置",
@@ -312,7 +315,9 @@
             "create_modal": {
                 "tag_color": "标签颜色",
                 "tag_description": "标签描述",
+                "tag_icon": "标签图标",
                 "tag_name": "标签名",
+                "tag_parent": "父标签",
                 "title": "创建标签",
                 "toast": {
                     "already_creating": "已在创建标签",
@@ -322,6 +327,8 @@
                 }
             },
             "selector": {
+                "clear": "清除",
+                "no_tags_found": "未找到标签",
                 "select_tags": "选择标签"
             }
         },
@@ -394,12 +401,13 @@
         "archived": "归档",
         "build": "编译：{build}",
         "cancel": "取消",
+        "close": "关闭",
         "confirm": "确认",
         "create": "创建",
         "create_and_add": "保存并继续创建",
         "create_subitem": "创建子物品",
         "created": "创建于",
-        "delete": "刪除",
+        "delete": "删除",
         "delete_confirm": "确定要删除此物品吗？ ",
         "demo_instance": "这是一个演示实例",
         "details": "详情",
@@ -428,9 +436,13 @@
         "return_home": "回到主页",
         "save": "保存",
         "search": "搜索",
+        "select": "选择…",
+        "show_less": "收起",
+        "show_more": "展开",
         "sign_out": "登出",
         "submit": "提交",
         "tags": "标签",
+        "type": "类型",
         "unknown": "未知",
         "update": "更新",
         "updating": "更新中",
@@ -450,13 +462,25 @@
         "total_value": "价值总和"
     },
     "index": {
+        "back_to_login": "返回登录",
         "disabled_registration": "已禁用注册",
         "dont_join_group": "不想加入群组？",
+        "forgot_password": "忘记密码？",
+        "forgot_password_check_email": "如果如果该邮箱已关联账户，重置链接将发送至该邮箱。链接将在 1 小时后失效。",
+        "forgot_password_send": "发送重置密码链接",
+        "forgot_password_subtitle": "输入您的账户邮箱，我们将向您发送重置密码的链接。",
+        "forgot_password_title": "重置密码",
         "joining_group": "您正在加入现有群组！",
         "login": "登录",
         "or": "或",
         "register": "注册",
         "remember_me": "记住我",
+        "reset_password_invalid": "此重置链接无效或已过期，请重新获取。",
+        "reset_password_missing_token": "缺少重置令牌。请重新打开您电子邮件中的链接，或重新获取链接。",
+        "reset_password_set": "设置新密码",
+        "reset_password_subtitle": "为您的账户设置新密码。",
+        "reset_password_success": "您的密码已经重置，现在您可以使用新密码登录。",
+        "reset_password_title": "重置密码",
         "set_email": "您的电子邮箱是什么？",
         "set_name": "你的名称叫什么？",
         "set_password": "设置密码",
@@ -668,7 +692,7 @@
         "list": {
             "complete": "标记已完成",
             "create_first": "创建您的第一个项目",
-            "delete": "刪除",
+            "delete": "删除",
             "duplicate": "复制",
             "edit": "修改",
             "new": "创建"
@@ -715,6 +739,22 @@
     },
     "profile": {
         "active": "启用",
+        "api_key_copied": "已复制到剪贴板",
+        "api_key_copy": "复制",
+        "api_key_create": "创建 API 密钥",
+        "api_key_created": "创建时间",
+        "api_key_delete_confirm": "确定要撤销此 API 密钥吗？所有使用该密钥的客户端都将立即失去访问权限。",
+        "api_key_expires_at": "失效时间",
+        "api_key_last_used": "上次使用",
+        "api_key_name": "名称",
+        "api_key_name_placeholder": "如：Home Assistant",
+        "api_key_never_used": "从未使用",
+        "api_key_no_expiration": "永不失效",
+        "api_key_set_expiration": "设置失效时间",
+        "api_key_token_label": "你的新 API 密钥",
+        "api_key_token_warning": "请立刻复制此令牌。为保障安全，此令牌不会再次显示。",
+        "api_keys": "API 密钥",
+        "api_keys_sub": "用于程序化访问的静态令牌，每个密钥都具有与您的帐户相同的权限。",
         "change_password": "更改密码",
         "currency_format": "货币格式",
         "current_password": "原密码",
@@ -737,6 +777,7 @@
         "moved_notice_link_settings": "集合币种设置",
         "moved_notice_title": "正在寻找通知器、邀请或货币设置？",
         "new_password": "新密码",
+        "no_api_keys": "尚无 API 密钥",
         "no_notifiers": "尚未配置通知器",
         "no_override": "不覆盖",
         "notifier_modal": "{ type, select, true {编辑} false {创建} other {Other}} 通知器",
@@ -748,6 +789,10 @@
         "theme_settings_sub": "主题设置存储在浏览器的本地存储中。您可以随时更改主题。\n如果您在设置主题时遇到问题，请尝试刷新浏览器。",
         "toast": {
             "account_deleted": "您的账户已删除。",
+            "api_key_created": "API 密钥已创建。",
+            "api_key_deleted": "API 密钥已撤销。",
+            "failed_api_key_create": "创建 API 密钥失败。",
+            "failed_api_key_delete": "撤销 API 密钥失败。",
             "failed_change_password": "无法更改密码。",
             "failed_create_notifier": "创建通知器失败。",
             "failed_delete_account": "无法删除您的账号。",
@@ -817,6 +862,22 @@
         "title": "扫描器",
         "unsupported": "媒体流API只在HTTPS环境下支持"
     },
+    "scanner_ar": {
+        "ar_mode": "AR模式",
+        "back": "返回",
+        "child_items": "{count, plural, other {个子物品}}",
+        "children": "{count, plural, other {个子位置}}",
+        "items": "{count, plural, other {件物品}}",
+        "items_in_location": "{count, plural, other {件物品}}",
+        "more": "件",
+        "not_found": "未找到目标",
+        "qty": "数量",
+        "retry": "重试",
+        "scanning": "扫描中",
+        "switch_camera": "切换摄像头",
+        "title": "AR扫描器",
+        "unsupported": "当前浏览器不支持AR扫描"
+    },
     "tags": {
         "no_results": "未找到标签",
         "tag_delete_confirm": "确定要删除此标签吗？此操作无法撤销。",
@@ -861,6 +922,26 @@
             "zero_datetimes_sub": "将库存中所有日期时间字段的值重置为开始日期。这是为了修复在网站开发早期出现的一个错误，该错误导致自定义时间值保存时，日期会出现偏移的问题。 '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'详细问题请参考 Github Issue #236 '</a>'"
         },
         "actions_sub": "将操作批量应用于您的库存。这些操作都是不可逆转的，'<b> '三思而后行！'</b>'",
+        "backups": "备份与恢复",
+        "backups_set": {
+            "create": "创建备份",
+            "create_button": "开始备份",
+            "create_sub": "构建一个包含此集合中全部实体、标签、自定义字段、附件和维护记录的 zip 文件。该任务在后台运行；完成后，备份将出现在下方表格中。",
+            "delete_confirm": "确定要删除此备份吗？此操作无法撤销。",
+            "download": "下载",
+            "failed": "备份失败，详情请查看服务器日志。",
+            "list_empty": "尚无备份。",
+            "restore": "从备份恢复",
+            "restore_button": "上传并恢复",
+            "restore_sub": "上传备份 zip 文件以填充此集合。此集合必须尚未包含任何物品——默认位置和标签会在恢复过程中自动清空。",
+            "table": {
+                "actions": "操作",
+                "created": "创建时间",
+                "size": "大小",
+                "status": "状态"
+            }
+        },
+        "backups_sub": "将您的整个集合（包含实体，标签，附件和元数据）导出为便携的 zip 归档文件。您可以将归档文件还原到当前或其他服务器上新注册的空集合中。",
         "demo_mode_error": {
             "wipe_inventory": "Homebox 处于演示模式时，无法清空库存、标签、位置和维护记录。请确认你不处于演示模式，然后再次尝试。"
         },
@@ -887,12 +968,18 @@
         "reports_sub": "为您的库存生成各种报告。",
         "toast": {
             "asset_success": "{results}资产已更新。",
+            "backup_delete_failed": "删除备份失败。",
+            "backup_start_failed": "无法开始备份。",
+            "backup_started": "备份已开始，完成后会展示在表格中。",
             "failed_create_missing_thumbnails": "无法创建缺失的缩略图。",
             "failed_ensure_ids": "无法确认资产ID。",
             "failed_ensure_import_refs": "无法确认导入参考。",
             "failed_set_primary_photos": "无法设置封面。",
             "failed_wipe_inventory": "清空库存失败。",
             "failed_zero_datetimes": "无法重置日期和时间值。",
+            "restore_failed": "恢复失败。",
+            "restore_requires_empty": "恢复需要在没有物品的集合中进行。请切换到新注册的集合并重试（默认的位置和标签不影响恢复）。",
+            "restore_started": "恢复开始，请稍后刷新以查看导入的项目。",
             "wipe_inventory_success": "已成功清空库存。{ results }个物品已被删除。"
         }
     }

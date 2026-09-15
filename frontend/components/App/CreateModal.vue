@@ -3,7 +3,11 @@
     <DialogScrollContent>
       <DialogHeader>
         <div class="mr-4 flex place-items-center justify-between">
-          <DialogTitle>{{ title }}</DialogTitle>
+          <DialogTitle>
+            <slot name="title">
+              {{ title }}
+            </slot>
+          </DialogTitle>
           <slot name="header-actions" />
         </div>
       </DialogHeader>
@@ -30,7 +34,11 @@
   <Drawer v-else :dialog-id="dialogId">
     <DrawerContent class="max-h-[90%]">
       <DrawerHeader>
-        <DrawerTitle>{{ title }}</DrawerTitle>
+        <DrawerTitle>
+          <slot name="title">
+            {{ title }}
+          </slot>
+        </DrawerTitle>
       </DrawerHeader>
       <div class="flex justify-center">
         <slot name="header-actions" />
@@ -54,7 +62,7 @@
 
   defineProps<{
     dialogId: DialogID;
-    title: string;
+    title?: string;
     hideFooter?: boolean;
   }>();
 </script>

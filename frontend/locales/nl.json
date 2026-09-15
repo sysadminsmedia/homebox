@@ -35,6 +35,7 @@
         "no_invites": "Geen uitnodigingen",
         "remaining_uses": "Resterende toepassingen",
         "tabs": {
+            "entity_types": "Entiteitstypen",
             "invites": "Uitnodigingen",
             "members": "Leden",
             "notifiers": "Notificaties",
@@ -117,6 +118,7 @@
             "randomize": "Kleur willekeurig maken"
         },
         "form": {
+            "min_length": "min {min}",
             "password": {
                 "toggle_show": "Wachtwoord zichtbaar maken aan/uitzetten"
             }
@@ -281,6 +283,7 @@
             "create_modal": {
                 "location_description": "Locatie omschrijving",
                 "location_name": "Locatie Naam",
+                "location_photo": "Foto locatie 📷",
                 "title": "Maak locatie",
                 "toast": {
                     "already_creating": "Een locatie wordt al aangemaakt",
@@ -312,7 +315,9 @@
             "create_modal": {
                 "tag_color": "Tag kleur",
                 "tag_description": "Tagbeschrijving",
+                "tag_icon": "Tag icoon",
                 "tag_name": "Tag naam",
+                "tag_parent": "Bovenliggende tag",
                 "title": "Tag aanmaken",
                 "toast": {
                     "already_creating": "Een tag wordt al aangemaakt",
@@ -322,6 +327,8 @@
                 }
             },
             "selector": {
+                "clear": "Leegmaken",
+                "no_tags_found": "Geen tags gevonden",
                 "select_tags": "Tag selecteren"
             }
         },
@@ -394,6 +401,7 @@
         "archived": "Gearchiveerd",
         "build": "Build: { build }",
         "cancel": "Annuleren",
+        "close": "Sluit",
         "confirm": "Bevestigen",
         "create": "Maken",
         "create_and_add": "Maak en voeg nog een toe",
@@ -428,9 +436,13 @@
         "return_home": "Terug naar startpagina",
         "save": "Opslaan",
         "search": "Zoeken",
+        "select": "Selecteer...",
+        "show_less": "Toon minder",
+        "show_more": "Toon meer",
         "sign_out": "Log uit",
         "submit": "Indienen",
         "tags": "Tags",
+        "type": "Type",
         "unknown": "Onbekend",
         "update": "Bijwerken",
         "updating": "Aan het updaten",
@@ -450,13 +462,25 @@
         "total_value": "Totale Waarde"
     },
     "index": {
+        "back_to_login": "Terug naar login",
         "disabled_registration": "Registratie uitgeschakeld",
         "dont_join_group": "Wil je je niet bij een groep aansluiten?",
+        "forgot_password": "Paswoord vergeten?",
+        "forgot_password_check_email": "Als dit e-mailadres aan een account is gekoppeld, ontvang je een link om het e-mailadres te resetten. Deze link is een uur geldig.",
+        "forgot_password_send": "Stuur reset link",
+        "forgot_password_subtitle": "Voer het e-mailadres van je account in en wij sturen je een link om je wachtwoord opnieuw in te stellen.",
+        "forgot_password_title": "Reset je wachtwoord",
         "joining_group": "Je sluit je aan bij een bestaande groep!",
         "login": "Log in",
         "or": "of",
         "register": "Registreer",
         "remember_me": "Onthoud mij",
+        "reset_password_invalid": "Deze resetlink is ongeldig of is verlopen. Vraag een nieuwe aan.",
+        "reset_password_missing_token": "De reset token ontbreekt. Open de link in je e-mail opnieuw of vraag een nieuwe token aan.",
+        "reset_password_set": "Nieuw wachtwoord instellen",
+        "reset_password_subtitle": "Kies een nieuw wachtwoord voor je account.",
+        "reset_password_success": "Je wachtwoord is opnieuw ingesteld. Log in met het nieuwe wachtwoord.",
+        "reset_password_title": "Reset je wachtwoord",
         "set_email": "Wat is je mailadres?",
         "set_name": "Wat is je naam?",
         "set_password": "Stel je wachtwoord in",
@@ -715,6 +739,22 @@
     },
     "profile": {
         "active": "Actief",
+        "api_key_copied": "Gekopieerd naar het klembord",
+        "api_key_copy": "Kopieer",
+        "api_key_create": "API key aanmaken",
+        "api_key_created": "Aangemaakt",
+        "api_key_delete_confirm": "Weet je zeker dat je deze API key wilt intrekken? Alle clients die deze key gebruiken, verliezen onmiddellijk hun toegang.",
+        "api_key_expires_at": "Verloopt",
+        "api_key_last_used": "Laatst gebruikt",
+        "api_key_name": "Naam",
+        "api_key_name_placeholder": "bvb. Home Assistant",
+        "api_key_never_used": "Nooit",
+        "api_key_no_expiration": "Geen vervaldatum",
+        "api_key_set_expiration": "Stel een vervaldatum in",
+        "api_key_token_label": "Je nieuwe API key",
+        "api_key_token_warning": "Kopieer deze token nu. Om veiligheidsredenen wordt deze niet opnieuw weergegeven.",
+        "api_keys": "API Keys",
+        "api_keys_sub": "Static tokens voor programmatic access. Elke key heeft dezelfde rechten als je account.",
         "change_password": "Verander Wachtwoord",
         "currency_format": "Valutanotatie",
         "current_password": "Huidig Wachtwoord",
@@ -737,6 +777,7 @@
         "moved_notice_link_settings": "Valuta-instellingen collectie",
         "moved_notice_title": "Op zoek naar notificaties, uitnodigingen of valuta-instellingen?",
         "new_password": "Nieuw Wachtwoord",
+        "no_api_keys": "Nog geen API keys",
         "no_notifiers": "Geen melders geconfigureerd",
         "no_override": "Niet overschrijven",
         "notifier_modal": "{ type, select, true {Bewerk} false {Creëer} other {Overig}} Notifier",
@@ -748,6 +789,10 @@
         "theme_settings_sub": "Thema-instellingen worden opgeslagen in de lokale opslag van uw browser. Je kan deze wijzigen op elk moment. \nAls je problemen hebt met de instellingen kun je de browser verversen.",
         "toast": {
             "account_deleted": "Uw account is verwijderd.",
+            "api_key_created": "API key aangemaakt.",
+            "api_key_deleted": "API key ingetrokken.",
+            "failed_api_key_create": "API key aanmaken mislukt.",
+            "failed_api_key_delete": "Intrekken API-key mislukt.",
             "failed_change_password": "Wijzigen wachtwoord mislukt.",
             "failed_create_notifier": "Aanmaken notificatie mislukt.",
             "failed_delete_account": "Verwijderen van uw account mislukt.",
@@ -817,6 +862,22 @@
         "title": "Scanner",
         "unsupported": "Mediastream-API wordt niet ondersteund zonder HTTPS"
     },
+    "scanner_ar": {
+        "ar_mode": "AR Mode",
+        "back": "Terug",
+        "child_items": "{count, plural, one {onderliggend item} other {onderliggende items}}",
+        "children": "{count, plural, one {sublocatie} other {sublocaties}}",
+        "items": "{count, plural, one {item} other {items}}",
+        "items_in_location": "{count, plural, one {item} other {items}}",
+        "more": "meer",
+        "not_found": "Item niet gevonden",
+        "qty": "Hoeveelheid",
+        "retry": "Probeer opnieuw",
+        "scanning": "Scannen",
+        "switch_camera": "Wissel camera",
+        "title": "Ar Scanner",
+        "unsupported": "AR scannen wordt niet ondersteund in deze browser"
+    },
     "tags": {
         "no_results": "Geen tags gevonden",
         "tag_delete_confirm": "Bent u zeker dat u deze tag wil verwijderen? Deze actie kan niet ongedaan gemaakt worden.",
@@ -861,6 +922,26 @@
             "zero_datetimes_sub": "Hiermee stelt u de tijdwaarde voor alle datum-/tijdvelden in uw voorraad in op het begin van de datum. Dit is een oplossing voor een fout in de applicatie geïntroduceerd in het begin van de ontwikkeling waarbij de tijd waarde verkeerd werd opgeslagen. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Zie Github Issue #236 voor alle details.'</a>'"
         },
         "actions_sub": "Acties in bulk toepassen op je inventaris. Deze zijn onomkeerbaar '<b>'Wees voorzichtig.'</b>'",
+        "backups": "Back-up & herstel",
+        "backups_set": {
+            "create": "Back-up maken",
+            "create_button": "Start back-up",
+            "create_sub": "Maakt een zip-bestand aan met alle entiteiten, tags, aangepaste velden, bijlagen en onderhoudsrecords in deze collectie. De taak wordt op de achtergrond uitgevoerd, het bestand verschijnt in de onderstaande tabel zodra het klaar is.",
+            "delete_confirm": "Dit back-upbestand verwijderen? Dit kan niet ongedaan gemaakt worden.",
+            "download": "Download",
+            "failed": "Back-up mislukt. Check server logs voor details.",
+            "list_empty": "Nog geen back-ups.",
+            "restore": "Herstel van back-up",
+            "restore_button": "Uploaden en herstellen",
+            "restore_sub": "Upload een back-up-zipbestand om deze collectie te vullen. De collectie mag nog geen items bevatten, standaardlocaties en -tags worden automatisch verwijderd tijdens het herstelproces.",
+            "table": {
+                "actions": "Acties",
+                "created": "Aangemaakt",
+                "size": "Grootte",
+                "status": "Status"
+            }
+        },
+        "backups_sub": "Exporteer uw volledige collectie — entiteiten, tags, bijlagen en metagegevens — naar een verplaatsbaar zip-archief. Herstel een archief in een pas aangemaakte, lege collectie op deze of een andere server.",
         "demo_mode_error": {
             "wipe_inventory": "Inventaris, tags, locaties en onderhoudsrecords kunnen niet worden gewist terwijl Homebox zich in de demomodus bevindt. Zorg ervoor dat u niet in de demomodus bent en probeer het opnieuw."
         },
@@ -887,12 +968,18 @@
         "reports_sub": "Genereer verschillende rapporten van je voorraad.",
         "toast": {
             "asset_success": "{ results } items zijn bijgewerkt.",
+            "backup_delete_failed": "Back-up verwijderen mislukt.",
+            "backup_start_failed": "Back-up starten mislukt.",
+            "backup_started": "De back-up is gestart — deze verschijnt in de tabel zodra hij klaar is.",
             "failed_create_missing_thumbnails": "Ontbrekende miniaturen aanmaken mislukt.",
             "failed_ensure_ids": "Item-ID's aanmaken mislukt.",
             "failed_ensure_import_refs": "Import refs aanmaken mislukt.",
             "failed_set_primary_photos": "Primaire foto's instellen mislukt.",
             "failed_wipe_inventory": "Inventaris wissen mislukt.",
             "failed_zero_datetimes": "Datum- en tijdwaarden resetten mislukt.",
+            "restore_failed": "Herstel mislukt.",
+            "restore_requires_empty": "Voor het herstellen is een collectie zonder items vereist. Schakel over naar een nieuw geregistreerde collectie (standaardlocaties en -tags zijn prima) en probeer het opnieuw.",
+            "restore_started": "Herstel gestart — vernieuw de pagina binnenkort om de geïmporteerde items te bekijken.",
             "wipe_inventory_success": "Inventaris succesvol gewist. { results } items verwijderd."
         }
     }

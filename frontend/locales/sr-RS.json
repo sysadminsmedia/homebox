@@ -1,16 +1,58 @@
 {
     "collection": {
-        "copy_invite": "kopiraj link poziva",
+        "copy_invite": "Kopiraj link poziva",
         "create_invite": "napravi poziv",
         "delete_collection": "izbrisi kolekciju",
-        "delete_confirm": "dali ste sigurni da zelite da izbrisete kolekciju? ovaj akcija ne moza da se ponistiti",
+        "delete_confirm": "Da li ste sigurni da želite da izbrišete kolekciju? Ova akcija ne može da se poništi.",
         "deleted_collection": "kolekcija ponistena",
         "expires_at": "istice",
         "invite_token": "token",
         "invite_token_hidden": "vise nije vidljivo",
-        "invite_token_warning": "poziv tokeni samo se pokazu jedanput. zacuvaj link sad; kasnije nije mocuge da se pojavi open kad izadjes iz stranice ili ako obnovis stranicu",
+        "invite_token_warning": "Pozivni tokeni se samo pokazu jedanput. Kopiraj vezu sada; Kasnije nije moguće da se prikaže opet kada izađete iz stranice ili ako osvežite stranicu.",
         "invites": "poziva",
         "invites_delete_confirm": "dali ste sigurni da zelite da izbrisete ovaj poziv?",
-        "leave_collection": "ostavi kolekciju"
+        "leave_collection": "ostavi kolekciju",
+        "leave_confirm": "Da li ste sigurni da želite da napustite ovu kolekciju?",
+        "left_collection": "Napustili ste kolekciju.",
+        "manage_collection": "Upravljanje kolekcijom",
+        "members": {
+            "cannot_remove_last": "Ne možete izbrisati poslednji član.",
+            "empty": "Još uvek nema članova u ovoj kolekciji.",
+            "member": "Član",
+            "name": "Ime",
+            "owner": "Vlasnik",
+            "remove_confirm": "Da li ste sigurni da želite da izbrišete ovog člana?"
+        },
+        "tabs": {
+            "settings": "Podešavanja",
+            "tools": "Alati"
+        }
+    },
+    "components": {
+        "app": {
+            "create_modal": {
+                "createAndAddAnother": "Pritisnite {shiftKey} + {enterKey} da dodaje još jedan."
+            },
+            "outdated": {
+                "new_version_available": "Nova verzija je dostupna",
+                "new_version_available_link": "Kliknite ovde da vidite beleške o novoj verziji"
+            }
+        },
+        "collection": {
+            "create_modal": {
+                "name_label": "Ime kolekcije",
+                "title": "Napravi kolekciju",
+                "toast": {
+                    "create_success": "Kolekcija napravljena",
+                    "please_enter_name": "Unesite ime kolekcije"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Unesite datum i vreme isteka.",
+                    "invalid_expiry_past": "Datum isteka mora biti u budućnosti."
+                }
+            }
+        }
     }
 }

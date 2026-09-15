@@ -10,9 +10,16 @@ import (
 	"github.com/samber/lo"
 )
 
+// Required column headers in CSV/TSV imports. Exported so tests and other
+// packages share the same canonical strings.
+const (
+	HeaderHBLocation = "HB.location"
+	HeaderHBName     = "HB.name"
+)
+
 var (
 	ErrNoHomeboxHeaders       = errors.New("no headers found")
-	ErrMissingRequiredHeaders = errors.New("missing required headers `HB.location` or `HB.name`")
+	ErrMissingRequiredHeaders = errors.New("missing required headers `" + HeaderHBLocation + "` or `" + HeaderHBName + "`")
 )
 
 // determineSeparator determines the separator used in the CSV file
@@ -89,7 +96,7 @@ func parseHeaders(headers []string) (hbHeaders map[string]int, fieldHeaders []st
 		}
 	}
 
-	required := []string{"HB.location", "HB.name"}
+	required := []string{HeaderHBLocation, HeaderHBName}
 	if !lo.EveryBy(required, func(h string) bool {
 		return lo.HasKey(hbHeaders, h)
 	}) {

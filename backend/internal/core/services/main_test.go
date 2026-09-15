@@ -15,6 +15,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/faker"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
 )
 
 var (
@@ -53,10 +54,18 @@ func bootstrap() {
 }
 
 func MainNoExit(m *testing.M) int {
+	// API key hashing is peppered and panics if the pepper was never configured
+	// (see hasher.HashAPIKey); the app sets it at startup, so tests must too.
+	hasher.SetAPIKeyPepper([]byte("test-api-key-pepper"))
+
 	client, err := ent.Open("sqlite3", "file:ent?mode=memory&cache=shared&_fk=1&_time_format=sqlite")
 	if err != nil {
 		log.Fatalf("failed opening connection to sqlite: %v", err)
 	}
+
+	go func() {
+		_ = tbus.Run(context.Background())
+	}()
 
 	err = client.Schema.Create(context.Background())
 	if err != nil {
@@ -82,7 +91,13 @@ func MainNoExit(m *testing.M) int {
 		currencies.CollectDefaults(),
 	)
 
-	tSvc = New(tRepos, WithCurrencies(defaults))
+	tSvc = New(tRepos,
+		WithCurrencies(defaults),
+		WithExportPlumbing(tbus, tClient, config.Storage{
+			PrefixPath: "/",
+			ConnString: "file://" + os.TempDir(),
+		}, "mem://{{ .Topic }}", "sqlite3"),
+	)
 	defer func() { _ = client.Close() }()
 
 	bootstrap()

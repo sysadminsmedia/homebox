@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts" setup>
-  import type { LocationOut, LocationOutCount, LocationSummary } from "~~/lib/api/types/data-contracts";
+  import type { EntityOut, EntitySummary } from "~~/lib/api/types/data-contracts";
   import MdiArrowUp from "~icons/mdi/arrow-down";
   import MdiMapMarkerOutline from "~icons/mdi/map-marker-outline";
   import { Card } from "@/components/ui/card";
@@ -37,7 +37,7 @@
 
   const props = defineProps({
     location: {
-      type: Object as () => LocationOutCount | LocationOut | LocationSummary,
+      type: Object as () => EntitySummary | EntityOut,
       required: true,
     },
     dense: {
@@ -47,10 +47,10 @@
   });
 
   const hasCount = computed(() => {
-    return !!(props.location as LocationOutCount).itemCount;
+    return !!(props.location as EntitySummary).itemCount;
   });
 
   const count = computed(() => {
-    return hasCount.value ? (props.location as LocationOutCount).itemCount : undefined;
+    return hasCount.value ? (props.location as EntitySummary).itemCount : undefined;
   });
 </script>

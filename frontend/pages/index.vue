@@ -19,6 +19,7 @@
   import FormPassword from "~/components/Form/Password.vue";
   import FormCheckbox from "~/components/Form/Checkbox.vue";
   import PasswordScore from "~/components/global/PasswordScore.vue";
+  import { PASSWORD_MIN_LENGTH, PASSWORD_RULES } from "~/lib/passwords";
 
   const { t } = useI18n();
 
@@ -31,7 +32,12 @@
     middleware: [
       () => {
         const ctx = useAuthContext();
+        const route = useRoute();
         if (ctx.isAuthorized()) {
+          // Preserve invitation token when redirecting authenticated users
+          if (route.query.token) {
+            return `/home?token=${encodeURIComponent(route.query.token as string)}`;
+          }
           return "/home";
         } else {
           console.log("Logged out, clearing collectionId preference");
@@ -56,7 +62,7 @@
 
     if (data.demo) {
       username.value = "demo@example.com";
-      password.value = "demo";
+      password.value = "demodemo";
     }
     return data;
   });
@@ -64,7 +70,7 @@
   whenever(status, status => {
     if (status?.demo) {
       email.value = "demo@example.com";
-      loginPassword.value = "demo";
+      loginPassword.value = "demodemo";
     }
 
     // Auto-redirect to OIDC if autoRedirect is enabled, but not if there's an OIDC initialization error
@@ -299,7 +305,7 @@
       <div class="grid min-h-[50vh] p-6 sm:place-items-center">
         <div>
           <Transition name="slide-fade">
-            <form v-if="registerForm" @submit.prevent="registerUser">
+            <form v-if="registerForm" id="register-form" name="register" method="post" @submit.prevent="registerUser">
               <Card class="md:w-[500px]">
                 <CardHeader>
                   <CardTitle class="flex items-center gap-2">
@@ -308,15 +314,42 @@
                   </CardTitle>
                 </CardHeader>
                 <CardContent class="flex flex-col gap-2">
-                  <FormTextField v-model="email" :label="$t('index.set_email')" data-testid="email-input" />
-                  <FormTextField v-model="username" :label="$t('index.set_name')" data-testid="name-input" />
+                  <FormTextField
+                    id="register-email"
+                    v-model="email"
+                    :label="$t('index.set_email')"
+                    type="email"
+                    name="email"
+                    autocomplete="username"
+                    :required="true"
+                    data-testid="email-input"
+                  />
+                  <FormTextField
+                    id="register-name"
+                    v-model="username"
+                    :label="$t('index.set_name')"
+                    name="name"
+                    autocomplete="name"
+                    :required="true"
+                    data-testid="name-input"
+                  />
                   <div v-if="!(groupToken == '')" class="pb-1 pt-4 text-center">
                     <p>{{ $t("index.joining_group") }}</p>
                     <button type="button" class="text-xs underline" @click="groupToken = ''">
                       {{ $t("index.dont_join_group") }}
                     </button>
                   </div>
-                  <FormPassword v-model="password" :label="$t('index.set_password')" data-testid="password-input" />
+                  <FormPassword
+                    id="register-password"
+                    v-model="password"
+                    :label="$t('index.set_password')"
+                    name="new-password"
+                    autocomplete="new-password"
+                    :min-length="PASSWORD_MIN_LENGTH"
+                    :passwordrules="PASSWORD_RULES"
+                    :required="true"
+                    data-testid="password-input"
+                  />
                   <PasswordScore v-model:valid="canRegister" :password="password" />
                 </CardContent>
                 <CardFooter>
@@ -332,7 +365,7 @@
                 </CardFooter>
               </Card>
             </form>
-            <form v-else @submit.prevent="login">
+            <form v-else id="login-form" name="login" method="post" @submit.prevent="login">
               <Card class="md:w-[500px]">
                 <CardHeader>
                   <CardTitle class="flex items-center gap-2">
@@ -349,13 +382,32 @@
                       <b>{{ $t("global.email") }}</b> demo@example.com
                     </p>
                     <p class="text-center text-xs">
-                      <b>{{ $t("global.password") }}</b> demo
+                      <b>{{ $t("global.password") }}</b> demodemo
                     </p>
                   </template>
-                  <FormTextField v-model="email" :label="$t('global.email')" />
-                  <FormPassword v-model="loginPassword" :label="$t('global.password')" />
-                  <div class="max-w-[140px]">
-                    <FormCheckbox v-model="remember" :label="$t('index.remember_me')" />
+                  <FormTextField
+                    id="login-username"
+                    v-model="email"
+                    :label="$t('global.email')"
+                    name="username"
+                    autocomplete="username"
+                    :required="true"
+                  />
+                  <FormPassword
+                    id="login-password"
+                    v-model="loginPassword"
+                    :label="$t('global.password')"
+                    name="password"
+                    autocomplete="current-password"
+                    :required="true"
+                  />
+                  <div class="flex items-center justify-between">
+                    <div class="max-w-[140px]">
+                      <FormCheckbox v-model="remember" :label="$t('index.remember_me')" />
+                    </div>
+                    <NuxtLink to="/forgot-password" class="text-sm hover:underline">
+                      {{ $t("index.forgot_password") }}
+                    </NuxtLink>
                   </div>
                 </CardContent>
                 <CardFooter class="flex flex-col gap-2">

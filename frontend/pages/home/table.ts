@@ -16,8 +16,8 @@ export function itemsTable(api: UserClient) {
     }
   );
 
-  onServerEvent(ServerEvent.ItemMutation, () => {
-    console.log("item mutation");
+  onServerEvent(ServerEvent.EntityMutation, () => {
+    console.log("entity mutation");
     refresh();
   });
 

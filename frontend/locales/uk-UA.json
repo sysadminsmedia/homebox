@@ -1,4 +1,49 @@
 {
+    "collection": {
+        "copy_invite": "Скопіювати посилання на запрошення",
+        "create_invite": "Створити запрошення",
+        "delete_collection": "Видалити колекцію",
+        "delete_confirm": "Ви певні щодо видалення колекції? Її буде неможливо відновити.",
+        "deleted_collection": "Колекцію видалено.",
+        "expires_at": "Спливає",
+        "invite_token": "Токен",
+        "invite_token_hidden": "Більше не видимі",
+        "invite_token_warning": "Токени запрошення показуються тільки раз. Скопіюйте посилання зараз; Ви не зможете побачити це посилання знову, коли покинете або оновите цю сторінку.",
+        "invites": "Запрошення",
+        "invites_delete_confirm": "Ви певні щодо видалення цього запрошення?",
+        "leave_collection": "Покинути Колекцію",
+        "leave_confirm": "Ви певні що хочете покинути цю колекцію?",
+        "left_collection": "Ви покинули колекцію.",
+        "manage_collection": "Керувати Колекціями",
+        "members": {
+            "cannot_remove_last": "Ви не можете видалити останній елемент.",
+            "email": "Електронна пошта",
+            "empty": "В цій колекції поки нема елементів.",
+            "member": "Елемент",
+            "name": "Ім'я",
+            "owner": "Власник",
+            "remove_confirm": "Ви певні щодо видалення цього елемента?",
+            "removed": "Елемент видалено",
+            "role": "Роль"
+        },
+        "no_collections": {
+            "create": "Створити нову колекцію",
+            "join": "Доєднатись до існуючої колекції",
+            "message": "Виглядає що Ви не є частиною колекції. Створити нову колекцію для ваших речей, або поєднайтесь до колекції куди Вас запрошено.",
+            "title": "Колекції не знайдено"
+        },
+        "no_invites": "Нема запрошень",
+        "remaining_uses": "Користувачі що залишаються",
+        "tabs": {
+            "entity_types": "Типи об’єктів",
+            "invites": "Запрошення",
+            "members": "Учасники",
+            "notifiers": "Сповіщувачі",
+            "settings": "Налаштування",
+            "tools": "Інструменти"
+        },
+        "uses": "Використання"
+    },
     "components": {
         "app": {
             "create_modal": {
@@ -18,10 +63,51 @@
             },
             "outdated": {
                 "current_version": "Поточна версія",
-                "dismiss": "Закрити",
+                "dismiss": "Відхилити",
                 "latest_version": "Остання версія",
                 "new_version_available": "Доступна нова версія",
                 "new_version_available_link": "Натисніть тут, щоб переглянути примітки до випуску"
+            }
+        },
+        "collection": {
+            "create_modal": {
+                "name_label": "Ім'я Колекції",
+                "title": "Створити Колекцію",
+                "toast": {
+                    "already_creating": "Колекція вже створюється",
+                    "create_failed": "Не вдалося створити колекцію",
+                    "create_success": "Колекцію створено",
+                    "please_enter_name": "Будь ласка введіть ім'я колекції"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Будь ласка введіть термін придатності колекції.",
+                    "invalid_expiry_past": "Терміни придатності мусить бути в майбутньому.",
+                    "invalid_uses": "Кількість використань має бути числом від 1 до 100."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Код запрошення Колекції",
+                "invites_should_look_like": "Запрошення мусить виглядати так:",
+                "join": "Доєднатись до Колекції",
+                "no_invite_code_create_one": "Нема коду запрошення? Натомість, створіть нову колекцію",
+                "title": "Доєднатись до Колекції",
+                "toast": {
+                    "already_joining": "Вже додається до колекції",
+                    "join_failed": "Не вдалось доєднатись до колекції",
+                    "join_success": "Приєднано до колекції",
+                    "please_enter_valid_join_code": "Будь ласка введіть коректний код запрошення"
+                }
+            },
+            "selector": {
+                "collection_options": "Опції Колекції",
+                "create_collection": "Створити нову Колекцію",
+                "join_collection": "Доєднатись до існуючої Колекції",
+                "no_collection_found": "Жодної колекції не знайдено",
+                "search_collections": "Пошук Колекції…",
+                "select_collection": "Вибір Колекції",
+                "your_collections": "Ваші колекції"
             }
         },
         "color_selector": {
@@ -32,12 +118,14 @@
             "randomize": "Випадковий колір"
         },
         "form": {
+            "min_length": "Щонайменше {min}",
             "password": {
                 "toggle_show": "Показати/приховати пароль"
             }
         },
         "global": {
             "copy_text": {
+                "continue": "Продовжити",
                 "documentation": "документація",
                 "failed_to_copy": "Не вдалось скопіювати текст в буфер обміну",
                 "https_required": "тому що HTTPS обов 'язковий",
@@ -94,6 +182,7 @@
                 "open_new_tab": "Відкрити у новій вкладці"
             },
             "create_modal": {
+                "clear_template": "Очистити шаблон",
                 "delete_photo": "Видалити фото",
                 "item_description": "Опис елемента",
                 "item_name": "Назва елемента",
@@ -114,7 +203,9 @@
                     "please_select_location": "Виберіть місцезнаходження.",
                     "rotate_failed": "Не вдалося повернути зображення: { error }",
                     "rotate_process_failed": "Не вдалося обробити повернуте зображення",
+                    "some_photos_failed": "{count, plural, =0 {Фотографій для завантаження немає.} =1 {Не вдалося завантажити 1 фотографію.} other {Деякі фотографії не вдалося завантажити.}}",
                     "upload_failed": "Не вдалося завантажити фото: { photoName }",
+                    "upload_success": "{count, plural, =0 {Фотографії не завантажено.} =1 {Фотографія завантажено успішно.} other {Усі фотографії завантажено успішно.}}",
                     "uploading_photos": "{count, plural, =0 {Фото не завантажене} =1 {Завантажене 1 фото…} other {Завантажено {count} фото…}}"
                 },
                 "upload_photos": "Завантажувати фотографії",
@@ -126,21 +217,65 @@
                 "error_exception": "Виникла помилка під час отримання штрихкоду товару: ",
                 "error_invalid_barcode": "Надано недійсний штрихкод",
                 "error_not_found": "Не знайдено продукту з наданим штрихкодом.",
+                "import_selected": "Імпортувати вибране",
                 "search_item": "Пошук продукту",
                 "title": "Імпорт продукту"
             },
+            "selector": {
+                "clear": "Скинути вибір елементу",
+                "no_results": "Результатів Не Знайдено",
+                "placeholder": "Вибрати…",
+                "search_placeholder": "Введіть текст для пошуку…",
+                "searching": "Пошук…"
+            },
             "view": {
+                "change_details": {
+                    "add_tags": "Додати Теги",
+                    "failed_to_update_item": "Не вдалося оновити елемент",
+                    "remove_tags": "Видалити Теги",
+                    "title": "Змінити деталі предмета"
+                },
                 "selectable": {
                     "card": "Картка",
                     "items": "Предмети",
                     "no_items": "Предмети відсутні",
+                    "select_all": "Вибрати Все",
+                    "select_card": "Вибрати Картку",
+                    "select_row": "Вибрати Рядок",
                     "table": "Таблиця"
                 },
                 "table": {
+                    "dropdown": {
+                        "actions": "Дії",
+                        "change_location": "Змінити місцезнаходження",
+                        "change_location_success": "Місцезнаходження Змінено",
+                        "change_tags": "Змінити Теги",
+                        "change_tags_success": "Теги Змінено",
+                        "create_maintenance_item": "Створити Запис про Обслуговування для Товару",
+                        "create_maintenance_selected": "Створити Запис про Обслуговування для Вибраних Позицій",
+                        "create_maintenance_success": "Створено записи про обслуговування",
+                        "delete_confirmation": "Ви справді бажаєте видалити вибрані елементи? Скасовувати цю дію НЕМОЖЛИВО.",
+                        "delete_item": "Видалити Елемент",
+                        "delete_selected": "Видалити Вибрані Елементи",
+                        "download_csv": "Звантажити Таблицю в Форматі CSV",
+                        "download_json": "Звантажити Таблицю в Форматі JSON",
+                        "duplicate_item": "Здублювати Eлемент",
+                        "duplicate_selected": "Дублювати Вибрані Елементи",
+                        "error_deleting": "Помилка під час Видалення Елемента",
+                        "error_duplicating": "Помилка під час Дублювання Елемента",
+                        "open_menu": "Відкрити меню",
+                        "open_multi_tab_warning": "З міркувань безпеки браузери за замовчуванням не дозволяють відкривати кілька вкладок одночасно. Щоб змінити це, дотримуйтесь інструкцій, наведених у документації:",
+                        "toggle_expand": "Розгорнути/Згорнути",
+                        "view_item": "Переглянути елемент",
+                        "view_items": "Переглянути елементи"
+                    },
                     "headers": "Заголовок",
                     "page": "Сторінка",
+                    "quick_actions": "Активувати Швидкі Дії та Виділення",
                     "rows_per_page": "Рядків на сторінці",
-                    "table_settings": "Налаштування таблиці"
+                    "selected_rows": "Виділено {selected} з {total} рядків.",
+                    "table_settings": "Налаштування таблиці",
+                    "view_item": "Переглянути Елемент"
                 }
             }
         },
@@ -148,33 +283,133 @@
             "create_modal": {
                 "location_description": "Опис місця",
                 "location_name": "Назва місця",
-                "title": "Створити локацію"
+                "location_photo": "Фото локації 📷",
+                "title": "Створити локацію",
+                "toast": {
+                    "already_creating": "Локація вже створюється",
+                    "create_failed": "Не вдалося створити локацію",
+                    "create_success": "Локація створена"
+                }
             },
             "selector": {
+                "clear": "Очистити Вибрану Локацію",
                 "no_location_found": "Місцезнаходження не знайдено",
                 "parent_location": "Батьківське місце",
                 "search_location": "Пошук місцеположень",
                 "select_location": "Виберіть місце розташування"
             },
             "tree": {
-                "no_locations": "Локації відсутні. Додайте нову за допомогою \n'<span class=\"link-primary\">'Створити'</span>' клавіші ліворуч."
+                "no_locations": "Локації відсутні. Додайте нову за допомогою кнопки Створити."
             }
         },
         "quick_menu": {
             "no_results": "Результатів не знайдено.",
             "shortcut_hint": "Використовуйте цифрові клавіші для швидкого вибору дії."
+        },
+        "search": {
+            "filter": {
+                "search_placeholder": "Шукати…"
+            }
+        },
+        "tag": {
+            "create_modal": {
+                "tag_color": "Колір Тегу",
+                "tag_description": "Опис Тегу",
+                "tag_icon": "Значок Тегу",
+                "tag_name": "Назва Тегу",
+                "tag_parent": "Батьківський тег",
+                "title": "Створити тег",
+                "toast": {
+                    "already_creating": "Вже створюється тег",
+                    "create_failed": "Не вдалося створити тег",
+                    "create_success": "Тег створено",
+                    "tag_name_too_long": "Назва тегу має бути менш ніж 50 символів"
+                }
+            },
+            "selector": {
+                "clear": "Очистити",
+                "no_tags_found": "Не знайдено тегів",
+                "select_tags": "Обрати теги"
+            }
+        },
+        "template": {
+            "apply_template": "Застосувати шаблон",
+            "card": {
+                "delete": "Видалити шаблон",
+                "duplicate": "Дублювати шаблон",
+                "edit": "Редагувати шаблон"
+            },
+            "confirm_delete": "Видалити шаблон?",
+            "create_modal": {
+                "title": "Створити шаблон"
+            },
+            "detail": {
+                "default_values": "Типові значення",
+                "updated": "Оновлено"
+            },
+            "edit_modal": {
+                "title": "Редагувати Шаблон"
+            },
+            "empty_value": "(порожньо)",
+            "form": {
+                "custom_fields": "Власні поля",
+                "default_item_values": "Типові значення об'єктів",
+                "default_location": "Локація за замовчуванням",
+                "default_value": "Типове значення",
+                "field_name": "Назва поля",
+                "item_description": "Опис об'єкта",
+                "item_name": "Назва об'єкта",
+                "lifetime_warranty": "Довічна гарантія",
+                "location": "Місце",
+                "manufacturer": "Виробник",
+                "model_number": "Номер моделі",
+                "no_custom_fields": "Немає спеціальних полів.",
+                "template_description": "Опис Шаблону",
+                "template_name": "Назва Шаблону"
+            },
+            "hide_defaults": "Сховати типові",
+            "save_as_template": "Зберегти як Шаблон",
+            "selector": {
+                "clear": "Скинути вибір шаблону",
+                "label": "Шаблон (Опціонально)",
+                "not_found": "Не знайдено шаблонів",
+                "search": "Пошук шаблонів…",
+                "select": "Обирання шаблону…"
+            },
+            "show_defaults": "Показати типові",
+            "toast": {
+                "applied": "Шаблон \"{name}\" застосовано",
+                "create_failed": "Не вдалось створити шаблон",
+                "created": "Створено шаблон",
+                "delete_failed": "Не вдалось видалити шаблон",
+                "deleted": "Шаблон видалено",
+                "duplicate_failed": "Не вдалось дублювати шаблон",
+                "duplicated": "Шаблон дубльовано як \"{name}\"",
+                "load_failed": "Не вдалося завантажити деталі шаблону",
+                "saved_as_template": "Об'єкт збережений як шаблон \"{name}\"",
+                "update_failed": "Не вдалось оновити шаблон",
+                "updated": "Шаблон оновлено"
+            },
+            "using_template": "Використання шаблону: {name}"
         }
+    },
+    "errors": {
+        "api_failure": "Помилка виклику API бекенду: "
     },
     "global": {
         "add": "Додати",
         "archived": "Заархівований",
         "build": "Зібрати: { build }",
         "cancel": "Відмінивши",
+        "close": "Закрити",
         "confirm": "Зберегти",
         "create": "Створити",
         "create_and_add": "Створити і додати ще один",
+        "create_subitem": "Створити дочірній об'єкт",
         "created": "Створено",
         "delete": "Видалити",
+        "delete_confirm": "Ви впевнені, що хочете видалити цей об'єкт? ",
+        "demo_instance": "Це демонстраційне середовище",
         "details": "Подробиці",
         "duplicate": "Дублювати",
         "edit": "Редагувати",
@@ -182,67 +417,138 @@
         "follow_dev": "Підписатись на розробника",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Версія: { version } Build: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' Версія: { version } Збірка: { build } '</a>'"
         },
         "github": "GitHub проекту",
         "insured": "Застрахований",
         "items": "Предмети",
         "join_discord": "Доєднатися до Discord",
+        "loading": "Завантаження…",
         "locations": "Локації",
         "maintenance": "Технічне обслуговування",
         "name": "Ім'я",
         "navigate": "Направляти",
+        "no": "Ні",
         "password": "Пароль",
+        "preview": "Попередній перегляд",
         "quantity": "Кількість",
         "read_docs": "Переглянути документацію",
+        "return_home": "Повернутись на головну",
         "save": "Зберегти",
         "search": "Пошук",
+        "select": "Обрати...",
+        "show_less": "Показати менше",
+        "show_more": "Показати більше",
         "sign_out": "Вийти",
         "submit": "Підтвердити",
+        "tags": "Тег",
+        "type": "Тип",
+        "unknown": "Невідомо",
         "update": "Оновити",
+        "updating": "Оновлюється",
         "value": "Значення",
         "version": "Версія: { version }",
-        "welcome": "Вітаю, { username }"
+        "welcome": "Вітаю, { username }",
+        "yes": "Так"
     },
     "home": {
         "quick_statistics": "Швидка статистика",
         "recently_added": "Нещодавно додано",
         "storage_locations": "Місця зберігання",
+        "tags": "Тегі",
         "total_items": "Всього елементів",
         "total_locations": "Загальна кількість місць",
+        "total_tags": "Загально тегів",
         "total_value": "Загальна вартість"
     },
     "index": {
+        "back_to_login": "Повернутись до входу",
         "disabled_registration": "Реєстрація недоступна",
         "dont_join_group": "Не хочете доєднуватись до групи?",
+        "forgot_password": "Забули свій пароль?",
+        "forgot_password_check_email": "Якщо цю електронну адресу пов’язано з обліковим записом, посилання для скидання вже готове. Термін дії посилання закінчується через годину.",
+        "forgot_password_send": "Надіслати посилання для скидання паролю",
+        "forgot_password_subtitle": "Введіть електронну адресу і ми надішлемо вам посилання для зміни пароля.",
+        "forgot_password_title": "Скинути пароль",
         "joining_group": "Ви доєднуєтесь до існуючої групи!",
         "login": "Логін",
+        "or": "або",
         "register": "Реєстрація",
         "remember_me": "Запам'ятати мене",
+        "reset_password_invalid": "Цє посилання для скидання недійсне або його термін дії закінчився. Запитайте нове.",
+        "reset_password_missing_token": "Відсутній токен скидання. Відкрийте посилання з електронного листа знову або запитайте нове.",
+        "reset_password_set": "Встановити новий пароль",
+        "reset_password_subtitle": "Обрати новий пароль для вашого акаунту.",
+        "reset_password_success": "Ваш пароль було скинуто. Увійдіть з новим паролем.",
+        "reset_password_title": "Скинути пароль",
         "set_email": "Який ваш e-mail?",
         "set_name": "Як вас звуть?",
         "set_password": "Оберіть пароль",
-        "tagline": "Слідкуйте, організуйте і керуйте своїми предметами."
+        "tagline": "Слідкуйте, організуйте і керуйте своїми предметами.",
+        "title": "Упорядковуйте та позначайте тегами свої речі",
+        "toast": {
+            "invalid_email": "Неправильна електрона адреса",
+            "invalid_email_password": "Неправильна електронна пошта або пароль",
+            "login_success": "Успішно ввійшли",
+            "oidc_access_denied": "Доступ заборонено: ваш обліковий запис не має необхідної ролі або членства в групі",
+            "oidc_auth_failed": "Помилка автентифікації OIDC",
+            "oidc_invalid_response": "Отримано недійсну відповідь OIDC",
+            "oidc_provider_error": "Провайдер OIDC повернув помилку",
+            "oidc_security_error": "Помилка безпеки OIDC - можлива атака CSRF",
+            "oidc_session_expired": "Сесія OIDC закінчилась",
+            "oidc_token_expired": "Термін дії токена OIDC закінчився",
+            "oidc_token_invalid": "Підпис токена OIDC недійсний",
+            "problem_registering": "Проблема з реєстрацією користувача",
+            "user_registered": "Користувач зареєстрований"
+        }
     },
     "items": {
         "add": "Додати",
         "advanced": "Розширено",
         "archived": "Архівовано",
         "asset_id": "ID активу",
+        "associated_with_multiple": "Цей ID активу пов'язаний із кількома об'єктами",
         "attachment": "Вкладення",
         "attachments": "Вкладення",
         "changes_persisted_immediately": "Зміни до вкладень будуть збережені одразу",
         "created_at": "Створено о",
         "custom_fields": "Власні поля",
+        "delete_attachment_confirm": "Ви впевнені, що хочете видалити це вкладення?",
+        "delete_item_confirm": "Ви впевнені, що хочете видалити цей об'єкт?",
         "description": "Опис",
         "details": "Подробиці",
         "drag_and_drop": "Перетягніть файли сюди або клацніть, щоб вибрати файли",
+        "duplicate": {
+            "copy_attachments": "Копіювати вкладення",
+            "copy_custom_fields": "Копіювати власні поля",
+            "copy_maintenance": "Копіювати обслуговування",
+            "custom_prefix": "Копіювати префікс",
+            "enable_custom_prefix": "Увімкнути власний префікс",
+            "override_instructions": "Утримуйте Shift під час натискання кнопки дублювання, щоб ігнорувати ці налаштування.",
+            "prefix": "Копія ",
+            "prefix_instructions": "Цей префікс буде додано на початок назви дубльованого об'єкта. Додайте пробіл наприкінці префікса, щоб відокремити його від назви об'єкта.",
+            "temporary_title": "Тимчасові налаштування",
+            "title": "Налаштування дублювання"
+        },
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "Назва вкладення",
+                "attachment_type": "Тип вкладення",
+                "primary_photo": "Основне фото",
+                "primary_photo_sub": "Ця опція доступна лише для фотографій. Тільки одна фотографія може бути основною. Якщо ви виберете цей варіант, поточне основне фото (якщо воно є) перестане бути таким.",
+                "select_type": "Обрати тип",
+                "title": "Редагувати вкладення"
+            },
+            "view_image": "Перегляд зображення"
+        },
         "edit_details": "Редагувати деталі",
-        "field_selector": "Обрати поле",
+        "field": "Поле",
+        "field_selector": "Вибір полів",
         "field_value": "Значення поля",
         "first": "Перший",
         "include_archive": "Включити заархівовані предмети",
         "insured": "Застраховано",
+        "invalid_asset_id": "Неправильний ID актива",
         "last": "Останній",
         "lifetime_warranty": "Довічна гарантія",
         "location": "Місце",
@@ -251,7 +557,9 @@
         "manufacturer": "Виробник",
         "model_number": "Номер моделі",
         "name": "Назва",
+        "negate_tags": "Скасувати вибрані теги",
         "next_page": "Наступна сторінка",
+        "no_attachments": "Не знайдено вкладення",
         "no_results": "Предметів нема",
         "notes": "Примітки",
         "only_with_photo": "Тільки товари з фотографією",
@@ -273,23 +581,54 @@
         "receipts": "Чеки",
         "reset_search": "Скинути пошук",
         "results": "{ total } Результатів",
+        "select_field": "Обрати поле",
+        "select_value": "Обрати значення",
         "serial_number": "Серійний номер",
         "show_advanced_view_options": "Показати розширені параметри",
+        "show_empty": "Показати порожні",
         "sold_at": "Продано за",
         "sold_details": "Деталі продажу",
         "sold_price": "Ціна продажу",
         "sold_to": "Покупець",
-        "tip_1": "Фільтри по локації і міткам використовують операцію \"АБО\". Якщо більше одного обрано, тільки один\nз них має співпасти для виводу результату.",
+        "sync_child_locations": "Синхронізувати розташування дочірніх об'єктів",
+        "tip_1": "Фільтри за локаціями та тегами використовують операцію «АБО». Якщо вибрано декілька фільтрів, \nдля збігу достатньо відповідності хоча б одному з них.",
         "tip_2": "Пошуки, що починаються з \"#\" будуть шукати за ID предмета (наприклад, \"#000-001\")",
         "tip_3": "Пошук в полях використовує операцію \"АБО\". Якщо більше одного задіяно, достатньо буде \nспівпасти лише одному для виводу результату.",
         "tips": "Підказки",
         "tips_sub": "Підказки щодо пошуку",
+        "toast": {
+            "asset_not_found": "Актив не знайдено",
+            "attachment_deleted": "Вкладення видалено",
+            "attachment_updated": "Вкладення оновлено",
+            "attachment_uploaded": "Вкладення завантажено",
+            "child_items_location_no_longer_synced": "Розташування дочірніх об'єктів більше не синхронізуватиметься з цим об'єктом.",
+            "child_items_location_synced": "Розташування дочірніх об'єктів синхронізовано з цим об'єктом",
+            "child_location_desync": "Зміна розташування призведе до скасування синхронізації з розташуванням батьківського об'єкта",
+            "error_loading_parent_data": "Під час спроби завантажити дані батьківського об'єкта сталася помилка",
+            "failed_adjust_quantity": "Не вдалося налаштувати кількість",
+            "failed_delete_attachment": "Не вдалося видалити вкладення",
+            "failed_delete_item": "Не вдалося видалити об'єкт",
+            "failed_duplicate_item": "Не вдалося дублювати об'єкт",
+            "failed_load_asset": "Не вдалося завантажити актив",
+            "failed_load_item": "Не вдалося завантажити об'єкт",
+            "failed_load_items": "Не вдалося завантажити об'єкти",
+            "failed_save": "Не вдалося зберегти об'єкт",
+            "failed_save_no_location": "Не вдалось зберегти об'єкт: не обране розташування",
+            "failed_search_items": "Не вдалося виконати пошук об'єктів",
+            "failed_update_attachment": "Не вдалося оновити вкладення",
+            "failed_upload_attachment": "Не вдалося завантажити вкладення",
+            "item_deleted": "Об'єкт видалено",
+            "item_saved": "Об'єкт збережено",
+            "quantity_cannot_negative": "Кількість не може бути від’ємною",
+            "sync_child_location": "Вибраний батьківський об'єкт синхронізує розташування дочірніх об'єктів із власним. Розташування оновлено."
+        },
         "updated_at": "Оновлено",
         "warranty": "Гарантія",
         "warranty_details": "Деталі гарантії",
         "warranty_expires": "Гарантія закінчується"
     },
     "languages": {
+        "bs-BA": "Боснійська (Боснія і Герцеговина)",
         "ca": "Каталонська",
         "cs-CZ": "Чеський",
         "de": "Німецька",
@@ -302,6 +641,8 @@
         "it": "Італійська",
         "ja-JP": "Японська",
         "ko-KR": "Корейський",
+        "lb-LU": "Люксембурзька (Люксембург)",
+        "lt-LT": "Литовська (Литва)",
         "nb-NO": "Норвезький Бокмол",
         "nl": "Голландський",
         "pl": "Польська мова",
@@ -314,6 +655,7 @@
         "th-TH": "Тайський",
         "tr": "турецька",
         "uk-UA": "Українська",
+        "vi-VN": "В'єтнамська",
         "zh-CN": "Китайська (спрощена)",
         "zh-HK": "Китайська (Гонконг)",
         "zh-MO": "Китайська (Макао)",
@@ -323,11 +665,22 @@
     "languages.ro-RO": "Румунська",
     "languages.sk-SK": "Словацька",
     "languages.sq-AL": "Албанський",
+    "languages.sr-RS": "Сербська (Сербія)",
     "locations": {
         "child_locations": "Вкладені місця",
         "collapse_tree": "Згорнути дерево",
         "expand_tree": "Розгорнути дерево",
+        "hide_items": "Сховати об'єкти",
+        "location_items_delete_confirm": "Ви впевнені, що бажаєте видалити це розташування та всі його об'єкти? Цю дію не можна скасувати.",
         "no_results": "Локації відсутні",
+        "show_items": "Показати об'єкти",
+        "toast": {
+            "failed_delete_location": "Не вдалося видалити локацію",
+            "failed_load_location": "Не вдалося завантажити локацію",
+            "failed_update_location": "Не вдалося оновити локацію",
+            "location_deleted": "Розташування видалено",
+            "location_updated": "Розташування оновлено"
+        },
         "update_location": "Оновити місце"
     },
     "maintenance": {
@@ -366,67 +719,232 @@
         "total_entries": "Всього записів"
     },
     "menu": {
+        "collection": "Колекція",
         "create_item": "Елемент / Актив",
         "create_location": "Місце",
+        "create_tag": "Тег",
         "home": "Головна",
         "locations": "Локації",
         "maintenance": "Обслуговування",
         "profile": "Профіль",
         "scanner": "Сканер",
-        "search": "Пошук"
+        "search": "Пошук",
+        "templates": "Шаблони"
+    },
+    "pages": {
+        "templates": {
+            "no_templates": "Поки що немає шаблонів.",
+            "title": "Шаблони"
+        }
     },
     "profile": {
         "active": "Активний",
+        "api_key_copied": "Скопійовано в буфер обміну",
+        "api_key_copy": "Копіювати",
+        "api_key_create": "Створити API ключ",
+        "api_key_created": "Створено",
+        "api_key_delete_confirm": "Ви впевнені, що бажаєте відкликати цей ключ API? Усі клієнти, які його використовують, негайно втратять доступ.",
+        "api_key_expires_at": "Термін дії",
+        "api_key_last_used": "Останнє використання",
+        "api_key_name": "Назва",
+        "api_key_name_placeholder": "напр., Home Assistant",
+        "api_key_never_used": "Ніколи",
+        "api_key_no_expiration": "Без терміну дії",
+        "api_key_set_expiration": "Встановіть термін дії",
+        "api_key_token_label": "Ваш новий ключ API",
+        "api_key_token_warning": "Скопіюйте цей токен зараз. З міркувань безпеки його більше не буде показано.",
+        "api_keys": "API ключи",
+        "api_keys_sub": "Статичні токени для програмного доступу. Кожен ключ має ті ж права доступу, що й ваш обліковий запис.",
         "change_password": "Змінити пароль",
         "currency_format": "Формат валюти",
         "current_password": "Поточний пароль",
         "delete_account": "Видалити обліковий запис",
+        "delete_account_confirm": "Ви впевнені, що хочете видалити свій обліковий запис? Якщо ви останній учасник групи, усі ваші дані буде видалено. Цю дію не можна скасувати.",
         "delete_account_sub": "Видалити акаунт і всі пов'язані дані. Це невідворотна дія.",
+        "delete_notifier_confirm": "Ви впевнені, що хочете видалити цей сповіщувач?",
+        "display_legacy_header": "{ currentValue, select, true {Вимкнути застарілий заголовок} false {Увімкнути застарілий заголовок} other {Не знайдено}}",
         "enabled": "Включено",
         "example": "Приклад",
         "group_settings": "Налаштування групи",
         "group_settings_sub": "Налаштування спільної групи. Можливо, вам доведеться оновити сторінку для збереження параметрів.",
         "inactive": "Неактивний",
         "language": "Мова",
+        "legacy_image_fit": "{ currentValue, select, true {Вимкнути Legacy Fit: Вписати зображення з полями} false {Увімкнути Legacy Fit: Заповнити зображення з обрізкою} other {Не знайдено}}",
+        "moved_notice_body": "Сповіщувачі, запрошення та налаштування валюти перенесено на сторінки колекцій.",
+        "moved_notice_description": "Тепер ці параметри керуються для кожної колекції.",
+        "moved_notice_link_invites": "Запрошення до колекцій",
+        "moved_notice_link_notifiers": "Сповіщувачі колекцій",
+        "moved_notice_link_settings": "Налаштування валюти колекції",
+        "moved_notice_title": "Шукаєте сповіщувачі, запрошення або налаштування валюти?",
         "new_password": "Новий пароль",
+        "no_api_keys": "Ключів API ще немає",
         "no_notifiers": "Немає налаштованих сповіщувачів",
+        "no_override": "Без заміни",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Сповіщувач",
         "notifiers": "Сповіщувачі",
         "notifiers_sub": "Отримувати сповіщення про майбутнє технічне обслуговування",
+        "override_locale": "Заміна мови дати та валюти",
         "test": "Тест",
         "theme_settings": "Налаштування Теми",
         "theme_settings_sub": "Налаштування теми зберігаються в локальному сховищі вашого браузера. Ви можете змінити тему в будь-який момент. Якщо\nзберегти не вдається, спробуйте оновити сторінку (Ctrl+F5).",
+        "toast": {
+            "account_deleted": "Ваш обліковий запис видалено.",
+            "api_key_created": "Ключ API створено.",
+            "api_key_deleted": "Ключ API відкликано.",
+            "failed_api_key_create": "Не вдалося створити ключ API.",
+            "failed_api_key_delete": "Не вдалося відкликати ключ API.",
+            "failed_change_password": "Не вдалося змінити пароль.",
+            "failed_create_notifier": "Не вдалося створити сповіщувач.",
+            "failed_delete_account": "Не вдалося видалити ваш обліковий запис.",
+            "failed_delete_notifier": "Не вдалося видалити сповіщувач.",
+            "failed_get_currencies": "Не вдалося отримати валюти",
+            "failed_test_notifier": "Не вдалось протестувати сповіщувач.",
+            "failed_update_group": "Не вдалось оновити групу",
+            "failed_update_notifier": "Не вдалось оновити сповіщувач.",
+            "group_updated": "Групу оновлено",
+            "notifier_test_success": "Перевірка сповіщувача успішна.",
+            "password_changed": "Пароль успішно змінено."
+        },
         "update_group": "Оновити групу",
         "update_language": "Оновлення мови",
         "url": "URL-адреса",
         "user_profile": "Профіль користувача",
         "user_profile_sub": "Запросіть користувачів і керуйте своїм обліковим записом."
     },
+    "reports": {
+        "label_generator": {
+            "asset_end": "Кінець активу",
+            "asset_start": "Початок активу",
+            "base_url": "Базова URL-адреса",
+            "bordered_labels": "Мітки в рамках",
+            "generate_page": "Створити сторінку",
+            "input_placeholder": "Введіть тут",
+            "instruction_1": "Генератор міток HomeBox — це інструмент, який допоможе вам друкувати мітки для вашого інвентарю HomeBox. Вони\n призначені для попереднього друку, щоб ви могли роздрукувати багато міток і тримати їх готовими до наклеювання",
+            "instruction_2": "Таким чином, ці етикетки працюють шляхом друку QR-коду з URL-адресою та інформації про AssetID. Якщо ви вимкнули \n AssetID у налаштуваннях HomeBox, ви все одно можете використовувати цей інструмент, але AssetID не матимуть посилань на жоден об'єкт",
+            "instruction_3": "Ця функція перебуває на ранній стадії розробки та може змінитися в майбутніх версіях. Якщо у вас є відгуки, \nбудь ласка, залиште їх у <a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">«обговоренні на GitHub».</a>",
+            "label_height": "Висота мітки",
+            "label_width": "Ширина мітки",
+            "measure_type": "Одиниці вимірювання",
+            "page_bottom_padding": "Нижній відступ сторінки",
+            "page_height": "Висота сторінки",
+            "page_left_padding": "Лівий відступ сторінки",
+            "page_right_padding": "Правий відступ сторінки",
+            "page_top_padding": "Верхній відступ сторінки",
+            "page_width": "Ширина сторінки",
+            "print_location_row": "Рядок розташування для друку",
+            "qr_code_example": "Приклад QR коду",
+            "replace_homebox_behavior": "Замінити поведінку тексту \"HomeBox\"",
+            "replace_homebox_behavior_always_replace": "Завжди замінювати \"HomeBox\"",
+            "replace_homebox_behavior_item_no_location": "Замінювати «Homebox», якщо в об'єкта немає розташування",
+            "replace_homebox_behavior_item_no_name": "Замінювати «Homebox», якщо в об'єкта немає назви",
+            "replace_homebox_behavior_item_no_name_no_location": "Замінювати «Homebox», якщо в об'єкта немає назви та розташування",
+            "replace_homebox_behavior_show_homebox": "Показати \"HomeBox\"",
+            "replace_homebox_text": "Текст для заміни",
+            "skip_first_labels": "Пропустити перші мітки",
+            "tip_1": "Налаштування за замовчуванням тут встановлені для \n'<a href=\"https://www.avery.com/templates/5260\">'аркушів етикеток «Avery 5260»</a>. Якщо ви використовуєте інші аркуші, \nвам потрібно буде змінити налаштування відповідно до параметрів вашого аркуша.",
+            "tip_2": "Якщо ви налаштовуєте свій аркуш, розміри вказані в дюймах. Під час створення аркуша 5260 я виявив, \n що розміри в їхньому шаблоні не відповідають тим, що потрібні для точного друку в межах полів. \n <b>Будьте готові до того, що знадобиться кілька спроб.</b>",
+            "tip_3": "Під час друку обов’язково:\n '<ol><li>Встановіть поля на 0 або «Відсутні»</li><li> Встановіть масштаб на 100%</li><li>Вимкніть двосторонній друк</li><li>Надрукуйте тестову сторінку перед друком великої кількості сторінок</li></ol>'",
+            "tips": "Поради",
+            "title": "Генератор міток",
+            "toast": {
+                "page_too_small_card": "Розмір сторінки занадто малий для розміру картки"
+            }
+        }
+    },
     "scanner": {
+        "barcode_detected_message": "розпізнано штрих-код товару",
+        "barcode_fetch_data": "Отримати дані про товар",
         "error": "Під час сканування сталася помилка",
         "invalid_url": "Неправильна URL-адреса штрих-коду",
         "no_sources": "Немає доступних джерел відео",
+        "permission_denied": "Доступ до камери заборонено. Будь ласка, дозвольте доступ до камери в налаштуваннях вашого браузера",
         "select_video_source": "Виберіть джерело відео",
         "title": "Сканер",
         "unsupported": "API медіапотоку не підтримується без HTTPS"
     },
+    "scanner_ar": {
+        "ar_mode": "AR Режим",
+        "back": "Назад",
+        "child_items": "{count, plural, one {дочірній предмет} other {дочірні предмети}}",
+        "children": "{count, plural, one {підлокація} other {підлокації}}",
+        "items": "{count, plural, one {предмет} other {предмети}}",
+        "items_in_location": "{count, plural, one {предмет} other {предмети}}",
+        "more": "більше",
+        "not_found": "Позиція не знайдена",
+        "qty": "Кількість",
+        "retry": "Спробувати ще раз",
+        "scanning": "Сканування",
+        "switch_camera": "Переключити камеру",
+        "title": "AR-сканер",
+        "unsupported": "У цьому браузері не підтримується сканування за допомогою AR"
+    },
+    "tags": {
+        "no_results": "Теги не знайдено",
+        "tag_delete_confirm": "Ви впевнені, що хочете видалити цей тег? Цю дію неможливо скасувати.",
+        "toast": {
+            "failed_delete_tag": "Не вдалося видалити тег",
+            "failed_load_tag": "Не вдалося завантажити тег",
+            "failed_update_tag": "Не вдалося оновити тег",
+            "tag_deleted": "Тег видалено",
+            "tag_updated": "Тег оновлено"
+        },
+        "update_tag": "Оновлення тегу"
+    },
     "tools": {
         "actions": "Дії з інвентарем",
         "actions_set": {
+            "create_missing_thumbnails": "Створити відсутні мініатюри",
+            "create_missing_thumbnails_button": "Створити мініатюри",
+            "create_missing_thumbnails_confirm": "Ви впевнені, що хочете створити відсутні мініатюри? Це може тривати певний час, а дію неможливо буде скасувати.",
+            "create_missing_thumbnails_sub": "Створює ескізи (мініатюри) для всіх вкладень, що підтримуються поточною конфігурацією. Це корисно для файлів, які були завантажені до виходу версії Homebox v0.20.0. Ця дія не перезаписує існуючі ескізи, а лише створює нові для тих вкладень, які їх не мають. Будь ласка, зверніть увагу, що ескізи створюються у фоновому режимі, тому процес може тривати певний час.",
             "ensure_ids": "Перевірити наявність ID",
             "ensure_ids_button": "Перевірити наявність ID",
+            "ensure_ids_confirm": "Ви впевнені, що хочете присвоїти ідентифікатор усім об’єктам? Цей процес може тривати деякий час, і його НЕМОЖЛИВО скасувати.",
             "ensure_ids_sub": "Перевіряє усі ваші предмети на наявність вірного asset_id поля. Цей процес полягає в пошуці найбільшого значення asset_id у базі даних, і присвоєння настпупного за ним значення кожному предмету без asset_id. Процес йде по порядку поля created_at.",
             "ensure_import_refs": "Присвоїти дані іморту",
             "ensure_import_refs_button": "Присвоїти дані імпорту",
             "ensure_import_refs_sub": "Запевнитись, що всі предмети у вашій базі мають коректне поле import_ref. Для цього кожен предмет без встановленого import_ref отримає в це поле строку з восьми випадкових літер.",
             "set_primary_photo": "Встановити основну фотографію",
             "set_primary_photo_button": "Встановити основну фотографію",
+            "set_primary_photo_confirm": "Ви впевнені, що хочете встановити основні фотографії? Цей процес може зайняти деякий час, і його НЕМОЖЛИВО скасувати.",
             "set_primary_photo_sub": "У версії v0.10.0 Homebox до вкладень типу photo було додано поле зображення. Ця дія встановить основною фотографією першу картинку, що ви додали до предметів, якщо вона ще не встановлена. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Див. GitHub PR #576'</a>'",
+            "wipe_inventory": "Очистити інвентар",
+            "wipe_inventory_button": "Очистити інвентар",
+            "wipe_inventory_confirm": "Ви впевнені, що хочете повністю очистити свій інвентар? Це призведе до видалення всіх предметів, і цю дію НЕМОЖЛИВО скасувати.",
+            "wipe_inventory_locations": "Також очистіть всі локації",
+            "wipe_inventory_maintenance": "Також видалити всі записи про обслуговування",
+            "wipe_inventory_note": "Примітка: Цю дію можуть виконувати лише власники групи.",
+            "wipe_inventory_sub": "Остаточно видалить усі предмети з вашого інвентарю. Ця дія є НЕЗВОРОТНОЮ і призведе до видалення всіх даних про предмети, включаючи вкладення та фотографії.",
+            "wipe_inventory_tags": "Також видаліть усі теги",
             "zero_datetimes": "Обнулити дати предметів",
             "zero_datetimes_button": "Обнулити дати предметів",
+            "zero_datetimes_confirm": "Ви впевнені, що хочете скинути всі значення дати та часу? Цей процес може тривати деякий час, і його НЕМОЖЛИВО скасувати.",
             "zero_datetimes_sub": "Ця клавіша скидає значення \"час\" для усіх полів типу \"дата\" у списку ваших предметів. Користуйтеся для виправлення багу, що був доданий на початку розробки, і який псував збереження часу, що призводило до некоректного відображення.'<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Більше даних на GitHub, #236 проблема.'</a>'"
         },
         "actions_sub": "Дії для роботи з усіма предметами одразу. Процес незворотній.'<b>'Будьте обережні.'</b>'",
+        "backups": "Створення резервних копій і відновлення даних",
+        "backups_set": {
+            "create": "Створити резервну копію",
+            "create_button": "Почати резервне копіювання",
+            "create_sub": "Створює архів ZIP, що містить усі об’єкти, теги, користувацькі поля, вкладення та записи про обслуговування з цієї колекції. Завдання виконується у фоновому режимі; архів з’явиться у таблиці нижче, коли буде готовий.",
+            "delete_confirm": "Видалити цей артефакт резервної копії? Цю дію НЕМОЖЛИВО скасувати.",
+            "download": "Скачати",
+            "failed": "Створення резервної копії не вдалося. Детальнішу інформацію дивіться в журналах сервера.",
+            "list_empty": "Резервних копій поки що немає.",
+            "restore": "Відновити з резервної копії",
+            "restore_button": "Завантажити & Відновити",
+            "restore_sub": "Завантажте архів із резервною копією, щоб заповнити цю колекцію. У колекції поки що не повинно бути жодних елементів — стандартні розташування та теги автоматично видаляються під час відновлення.",
+            "table": {
+                "actions": "Дії",
+                "created": "Створено",
+                "size": "Розмір",
+                "status": "Статус"
+            }
+        },
+        "backups_sub": "Експортуйте всю свою колекцію — об’єкти, теги, вкладення та метадані — у портативний архів у форматі ZIP. Відновіть архів у щойно зареєстрованій порожній колекції на цьому або іншому сервері.",
+        "demo_mode_error": {
+            "wipe_inventory": "Інвентар, теги, локації та записи про обслуговування неможливо видалити, поки Homebox перебуває в деморежимі. Будь ласка, переконайтеся, що деморежим вимкнено, і спробуйте ще раз."
+        },
         "import_export": "Імопрт/Експорт",
         "import_export_set": {
             "export": "Експортувати інвентар",
@@ -434,6 +952,7 @@
             "export_sub": "Експортувати у стандартному для HomeBox форматі. Це виведе у файл усі предмети з інвентара.",
             "import": "Імпортувати інвентар",
             "import_button": "Імпортувати інвентар",
+            "import_ref_confirm": "Ви впевнені, що хочете, щоб усі об’єкти мали атрибут import_ref? Цей процес може тривати деякий час, і його НЕМОЖЛИВО скасувати.",
             "import_sub": "Імпортувати у стандартному форматі для HomeBox .CSV-файл.Без '<code>'HB.import_ref'</code>' колонки, це '<b>не'</b>' перезапише ніякі предмети в інвентарі, лише додасть нові. Рядки з параметром '<code>'HB.import_ref'</code>' будуть злиті з існуючими предметами, якщо такі наявні і import_ref поле співпадає."
         },
         "import_export_sub": "Імпортувати і експортувати ваш інвентар у форматі .CSV. Це корисно для переносу інвентара на нову інсталяцію HomeBox.",
@@ -446,6 +965,22 @@
             "bill_of_materials_button": "Згенерувати звіт",
             "bill_of_materials_sub": "Створити .CSV файл, який можна імпортувати у відповідну програму (Excel, Spreadsheets, т.д.). Це буде повний звіт з описом усіх доданих предметів."
         },
-        "reports_sub": "Створити різноманітні звіти по вашим предметам."
+        "reports_sub": "Створити різноманітні звіти по вашим предметам.",
+        "toast": {
+            "asset_success": "{ results } дані були оновлені.",
+            "backup_delete_failed": "Не вдалося видалити резервну копію.",
+            "backup_start_failed": "Не вдалося розпочати резервне копіювання.",
+            "backup_started": "Створення резервної копії розпочато — вона з’явиться в таблиці, коли буде готова.",
+            "failed_create_missing_thumbnails": "Не вдалося створити відсутні мініатюри.",
+            "failed_ensure_ids": "Не вдалося перевірити ID активів.",
+            "failed_ensure_import_refs": "Не вдалося перевірити референси імпорту.",
+            "failed_set_primary_photos": "Не вдалося встановити основні фотографії.",
+            "failed_wipe_inventory": "Не вдалося очистити інвентар.",
+            "failed_zero_datetimes": "Не вдалося скинути значення дати та часу.",
+            "restore_failed": "Відновлення не вдалося.",
+            "restore_requires_empty": "Для відновлення потрібна колекція, яка не містить предметів. Перейдіть до щойно створеної колекції (можна залишити стандартні налаштування розташування та тегів) і спробуйте ще раз.",
+            "restore_started": "Відновлення розпочато — оновіть сторінку, щоб побачити імпортовані елементи.",
+            "wipe_inventory_success": "Операція з очищенням списку виконано. { results } предметів видалено."
+        }
     }
 }

@@ -42,7 +42,7 @@ func (TemplateField) Fields() []ent.Field {
 // Edges of the TemplateField.
 func (TemplateField) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("item_template", ItemTemplate.Type).
+		edge.From("entity_template", EntityTemplate.Type).
 			Ref("fields").
 			Unique(),
 	}

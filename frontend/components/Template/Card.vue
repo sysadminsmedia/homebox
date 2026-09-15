@@ -6,10 +6,10 @@
   import MdiContentCopy from "~icons/mdi/content-copy";
   import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
   import { Button } from "@/components/ui/button";
-  import type { ItemTemplateSummary, ItemTemplateCreate } from "~/lib/api/types/data-contracts";
+  import type { EntityTemplateSummary, EntityTemplateCreate } from "~/lib/api/types/data-contracts";
 
   const props = defineProps<{
-    template: ItemTemplateSummary;
+    template: EntityTemplateSummary;
   }>();
 
   const emit = defineEmits<{
@@ -46,7 +46,7 @@
     const NIL_UUID = "00000000-0000-0000-0000-000000000000";
 
     // Create a duplicate with "(Copy)" suffix
-    const duplicateData: ItemTemplateCreate = {
+    const duplicateData: EntityTemplateCreate = {
       name: `${fullTemplate.name} (Copy)`,
       description: fullTemplate.description,
       notes: fullTemplate.notes,

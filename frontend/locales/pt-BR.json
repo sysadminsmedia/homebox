@@ -35,6 +35,7 @@
         "no_invites": "Sem convites",
         "remaining_uses": "Usos restantes",
         "tabs": {
+            "entity_types": "Tipos de entidades",
             "invites": "Convites",
             "members": "Ingressar em uma coleção existente",
             "notifiers": "Notificadores",
@@ -312,7 +313,9 @@
             "create_modal": {
                 "tag_color": "Cor da Tag",
                 "tag_description": "Descrição da Tag",
+                "tag_icon": "Ícone da tag",
                 "tag_name": "Nome da Tag",
+                "tag_parent": "Tag Pai",
                 "title": "Criar Tag",
                 "toast": {
                     "already_creating": "Tag já está sendo criada",
@@ -322,6 +325,8 @@
                 }
             },
             "selector": {
+                "clear": "Limpar",
+                "no_tags_found": "Nenhuma Tag Encontrada",
                 "select_tags": "Selecionar Tags"
             }
         },
@@ -428,9 +433,13 @@
         "return_home": "Retornar para Home",
         "save": "Salvar",
         "search": "Buscar",
+        "select": "Selecionar...",
+        "show_less": "Mostrar Menos",
+        "show_more": "Mostrar mais",
         "sign_out": "Encerrar sessão",
         "submit": "Enviar",
         "tags": "Tags",
+        "type": "Tipo",
         "unknown": "Desconhecido",
         "update": "Atualizar",
         "updating": "Atualizando",
@@ -641,6 +650,7 @@
     "languages.da-DK": "Dinamarquês",
     "languages.ro-RO": "Romeno",
     "languages.sk-SK": "Eslovaco",
+    "languages.sr-RS": "Sérvia",
     "locations": {
         "child_locations": "Locais Filhos",
         "collapse_tree": "Ocultar Árvore",
@@ -815,6 +825,22 @@
         "select_video_source": "Escolha uma fonte de vídeo",
         "title": "Escâner",
         "unsupported": "A API do Fluxo de Mídia não é suportada sem o protocolo HTTPS"
+    },
+    "scanner_ar": {
+        "ar_mode": "Modo RA",
+        "back": "Voltar",
+        "child_items": "{contagem, plural, este {item filho} outros {itens filhos}}",
+        "children": "{contagem, plural, este {sub-local} outros {sub-locais}}",
+        "items": "{contagem, plural, este {item} outros {itens}}",
+        "items_in_location": "{contagem, plural, este {item} outros {itens}}",
+        "more": "mais",
+        "not_found": "Item não encontrado",
+        "qty": "Qtdd",
+        "retry": "Tentar novamente",
+        "scanning": "Escaneando",
+        "switch_camera": "Trocar câmera",
+        "title": "Escâner RA",
+        "unsupported": "Escaneamento de Realidade Aumentada não é compatível com este navegador"
     },
     "tags": {
         "no_results": "Nenhuma Tag Encontrada",

@@ -1,4 +1,13 @@
 {
+    "collection": {
+        "copy_invite": "复制邀请链接",
+        "create_invite": "新建邀请",
+        "delete_collection": "删除合集",
+        "delete_confirm": "你确定要删除该合集吗？这个行为无法被撤回。",
+        "deleted_collection": "合集已被删除。",
+        "expires_at": "到期",
+        "invite_token": "邀请码"
+    },
     "components": {
         "app": {
             "import_dialog": {
