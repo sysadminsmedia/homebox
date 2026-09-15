@@ -1791,6 +1791,12 @@ const docTemplate = `{
                         "description": "Print this label, defaults to false",
                         "name": "print",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Translated word for 'Location', used as the location line prefix",
+                        "name": "locationLabel",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1830,6 +1836,12 @@ const docTemplate = `{
                         "description": "Print this label, defaults to false",
                         "name": "print",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Translated word for 'Location', used as the location line prefix",
+                        "name": "locationLabel",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1868,6 +1880,12 @@ const docTemplate = `{
                         "type": "boolean",
                         "description": "Print this label, defaults to false",
                         "name": "print",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Translated description text, defaults to 'Homebox Location'",
+                        "name": "locationDescription",
                         "in": "query"
                     }
                 ],
