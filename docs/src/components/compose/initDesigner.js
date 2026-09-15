@@ -82,6 +82,11 @@ function initComposeDesigner(root) {
     const rootlessWarning = root.querySelector('[data-warning-rootless]');
     const hardenedWarning = root.querySelector('[data-warning-hardened]');
 
+    // Generated once per designer session so that clearing the field falls back to
+    // the same secret rather than minting a new one on every re-render.
+    let sessionPepper = fields.apiKeyPepper.value || generatePepper();
+    fields.apiKeyPepper.value = sessionPepper;
+
     const render = () => {
         const state = {
             imageVariant: fields.imageVariant.value,
@@ -121,7 +126,7 @@ function initComposeDesigner(root) {
             logFormat: fields.logFormat.value || 'text',
             maxUploadSize: fields.maxUploadSize.value || '10',
             maxImportSize: fields.maxImportSize.value || '1024',
-            apiKeyPepper: fields.apiKeyPepper.value || generatePepper(),
+            apiKeyPepper: fields.apiKeyPepper.value || sessionPepper,
             autoIncrementAssetId: fields.autoIncrementAssetId.checked,
             currencyConfig: fields.currencyConfig.value.trim(),
             thumbnailEnabled: fields.thumbnailEnabled.checked,
@@ -168,14 +173,9 @@ function initComposeDesigner(root) {
         output.textContent = buildComposeYaml(state);
     };
 
-    // Seed a usable secret so the generated file starts out valid rather than
-    // carrying a placeholder that fails the 32-byte startup check.
-    if (!fields.apiKeyPepper.value) {
-        fields.apiKeyPepper.value = generatePepper();
-    }
-
     generatePepperButton.addEventListener('click', () => {
-        fields.apiKeyPepper.value = generatePepper();
+        sessionPepper = generatePepper();
+        fields.apiKeyPepper.value = sessionPepper;
         render();
     });
 

@@ -1,4 +1,4 @@
-import { CONTAINER_PORT } from './utils.js';
+import { CONTAINER_PORT, yamlScalar } from './utils.js';
 
 // Every Homebox image declares a HEALTHCHECK, so sidecars can wait for the app
 // to actually answer requests rather than merely for its container to start.
@@ -78,21 +78,28 @@ export function getLabels(state) {
 
     const host = state.hostname || 'homebox.example.com';
 
+    // The hostname is free text, so each label is encoded as a YAML scalar rather
+    // than wrapped in hand-written double quotes.
+    const label = (value) => `      - ${yamlScalar(value)}`;
+
     return [
         '    labels:',
-        '      - "traefik.enable=true"',
+        label('traefik.enable=true'),
         // Without an explicit port Traefik has to guess which exposed port to
         // route to, which breaks as soon as the container exposes more than one.
-        `      - "traefik.http.services.homebox.loadbalancer.server.port=${CONTAINER_PORT}"`,
-        '      - "traefik.http.services.homebox.loadbalancer.passhostheader=true"',
-        `      - "traefik.http.routers.homebox-http.rule=Host(\`${host}\`)"`,
-        '      - "traefik.http.routers.homebox-http.entrypoints=web"',
-        '      - "traefik.http.routers.homebox-http.middlewares=homebox-https-redirect"',
-        `      - "traefik.http.routers.homebox.rule=Host(\`${host}\`)"`,
-        '      - "traefik.http.routers.homebox.entrypoints=websecure"',
-        '      - "traefik.http.routers.homebox.tls=true"',
-        '      - "traefik.http.routers.homebox.middlewares=homebox-sslheader"',
-        '      - "traefik.http.middlewares.homebox-https-redirect.redirectscheme.scheme=https"',
-        '      - "traefik.http.middlewares.homebox-sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"',
+        label(`traefik.http.services.homebox.loadbalancer.server.port=${CONTAINER_PORT}`),
+        label('traefik.http.services.homebox.loadbalancer.passhostheader=true'),
+        label(`traefik.http.routers.homebox-http.rule=Host(\`${host}\`)`),
+        label('traefik.http.routers.homebox-http.entrypoints=web'),
+        label('traefik.http.routers.homebox-http.middlewares=homebox-https-redirect'),
+        label(`traefik.http.routers.homebox.rule=Host(\`${host}\`)`),
+        label('traefik.http.routers.homebox.entrypoints=websecure'),
+        label('traefik.http.routers.homebox.tls=true'),
+        label('traefik.http.routers.homebox.middlewares=homebox-sslheader'),
+        label('traefik.http.middlewares.homebox-https-redirect.redirectscheme.scheme=https'),
+        label(
+            'traefik.http.middlewares.homebox-sslheader.headers.customrequestheaders' +
+                '.X-Forwarded-Proto=https'
+        ),
     ].join('\n');
 }
