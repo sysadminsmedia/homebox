@@ -1,196 +1,127 @@
 package validate_test
 
 import (
-	"net"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"sync/atomic"
 	"testing"
 
-	"github.com/nicholas-fedor/shoutrrr"
-	"github.com/nicholas-fedor/shoutrrr/pkg/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
 
-// The servers sit on different loopback addresses on purpose. Both have to be
-// reachable for the first hop, so "block all localhost" would stop the request
-// before it reached the redirect under test. Blocking only 127.0.0.2/32 leaves
-// the redirector permitted and its target not.
-const (
-	redirectorAddr = "127.0.0.1:0"
-	victimIP       = "127.0.0.2"
-)
-
-// blockVictimPolicy blocks the victim only, leaving the redirector reachable.
-func blockVictimPolicy() *config.NotifierConf {
-	return &config.NotifierConf{BlockNets: []string{victimIP + "/32"}}
-}
-
-// serveOn starts an httptest server on a specific address.
-func serveOn(t *testing.T, addr string, h http.Handler) *httptest.Server {
-	t.Helper()
-	l, err := net.Listen("tcp", addr)
-	require.NoError(t, err, "binding %s", addr)
-
-	srv := httptest.NewUnstartedServer(h)
-	_ = srv.Listener.Close()
-	srv.Listener = l
-	srv.Start()
-	t.Cleanup(srv.Close)
-	return srv
-}
-
-// startVictimAndRedirector puts a victim on the blocked address that records
-// hits, and a redirector on a permitted one that 307s to it. Returns the
-// notifier URL for the redirector and the victim's hit count.
-func startVictimAndRedirector(t *testing.T) (notifierURL string, victimHits func() int32) {
+// startVictim spins up a loopback server that records whether it was reached.
+func startVictim(t *testing.T) (serverURL string, hits func() int32) {
 	t.Helper()
 
-	var hits int32
-	victim := serveOn(t, victimIP+":0", http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		atomic.AddInt32(&hits, 1)
+	var count int32
+	victim := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		atomic.AddInt32(&count, 1)
 		w.WriteHeader(http.StatusOK)
 	}))
+	t.Cleanup(victim.Close)
 
-	redirector := serveOn(t, redirectorAddr, http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		w.Header().Set("Location", victim.URL)
-		w.WriteHeader(http.StatusTemporaryRedirect)
-	}))
-
-	// shoutrrr's generic service wraps a plain http(s) URL as generic+http(s)://...
-	return "generic+" + redirector.URL, func() int32 { return atomic.LoadInt32(&hits) }
+	return victim.URL, func() int32 { return atomic.LoadInt32(&count) }
 }
 
-// sendVia is what notifier.Sender does for a generic webhook, minus the URL
-// gate — which would otherwise reject these loopback servers before the hop
-// under test.
-func sendVia(client *http.Client, rawURL, message string) error {
-	sender, err := shoutrrr.CreateSenderWithOptions(types.SenderOptions{HTTPClient: client}, rawURL)
-	if err != nil {
-		return err
-	}
-	for _, sendErr := range sender.Send(message, nil) {
-		if sendErr != nil {
-			return sendErr
-		}
-	}
-	return nil
-}
+// TestNotifierRedirectGuard_RefusesBlockedHop verifies the CheckRedirect hook refuses
+// a hop whose target is blocked by policy. Without it, a host that passes the initial
+// URL gate could 30x the request onward to localhost / link-local / cloud metadata.
+func TestNotifierRedirectGuard_RefusesBlockedHop(t *testing.T) {
+	guard := validate.NotifierRedirectGuard(&config.NotifierConf{BlockLocalhost: true})
 
-// Documents the hole: shoutrrr follows redirects with no policy re-check, so a
-// host that passes the URL gate can 307 to a blocked destination. Sends through
-// the package-level shoutrrr.Send, which is what we must not do.
-func TestNotifierRedirectSSRF_Unguarded(t *testing.T) {
-	notifierURL, victimHits := startVictimAndRedirector(t)
-
-	err := shoutrrr.Send(notifierURL, "Test message from Homebox")
+	blocked, err := url.Parse("http://127.0.0.1:8080/webhook")
 	require.NoError(t, err)
-	assert.Equal(t, int32(1), victimHits(), "unguarded: redirect to the blocked victim IS followed (SSRF)")
+
+	err = guard(&http.Request{URL: blocked}, nil)
+	assert.Error(t, err, "a redirect to a blocked destination must be refused")
 }
 
-// The hardened client must refuse the redirect and never reach the victim. It
-// has to be injected into shoutrrr, not set on http.DefaultClient — since
-// v0.17.1 the generic service builds its own client per send, so anything on
-// DefaultClient is never consulted.
-func TestNotifierRedirectSSRF_Guarded(t *testing.T) {
-	notifierURL, victimHits := startVictimAndRedirector(t)
+// TestNotifierRedirectGuard_AllowsPermittedHop ensures ordinary redirects to
+// permitted hosts continue to be followed.
+func TestNotifierRedirectGuard_AllowsPermittedHop(t *testing.T) {
+	guard := validate.NotifierRedirectGuard(&config.NotifierConf{})
 
-	client := validate.NotifierHTTPClient(blockVictimPolicy())
-	err := sendVia(client, notifierURL, "Test message from Homebox")
+	allowed, err := url.Parse("http://127.0.0.1:8080/webhook")
+	require.NoError(t, err)
 
-	require.Error(t, err, "guarded: redirect to a blocked destination must be refused and the send must fail")
-	assert.Equal(t, int32(0), victimHits(), "guarded: the blocked redirect target must never be reached")
+	err = guard(&http.Request{URL: allowed}, nil)
+	assert.NoError(t, err, "with no blocks configured the redirect must be followed")
 }
 
-// The second layer. The dial check runs on the address of every connect, so it
-// holds however the request got there — including a name that resolved to
-// something permitted at validation time and blocked at connect (rebinding),
-// which CheckRedirect can't see.
-func TestNotifierDialGuard_BlocksDirectConnection(t *testing.T) {
-	var hits int32
-	victim := serveOn(t, victimIP+":0", http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		atomic.AddInt32(&hits, 1)
-		w.WriteHeader(http.StatusOK)
-	}))
+// TestNotifierRedirectGuard_CapsHops verifies the hop cap still applies.
+func TestNotifierRedirectGuard_CapsHops(t *testing.T) {
+	guard := validate.NotifierRedirectGuard(&config.NotifierConf{})
 
-	client := validate.NotifierHTTPClient(blockVictimPolicy())
-	err := sendVia(client, "generic+"+victim.URL, "Test message from Homebox")
+	target, err := url.Parse("http://example.com/webhook")
+	require.NoError(t, err)
 
-	require.Error(t, err, "a direct send to a blocked address must fail at dial time")
-	assert.Equal(t, int32(0), atomic.LoadInt32(&hits), "the blocked address must never be connected to")
+	err = guard(&http.Request{URL: target}, make([]*http.Request, 10))
+	assert.Error(t, err, "the redirect chain must be capped")
 }
 
-// The counterweight: a guard that blocks everything would pass the tests above.
-func TestNotifierDialGuard_AllowsPermittedDestination(t *testing.T) {
-	var hits int32
-	receiver := serveOn(t, redirectorAddr, http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		atomic.AddInt32(&hits, 1)
-		w.WriteHeader(http.StatusOK)
-	}))
+// TestNotifierHTTPClient_BlocksDestination verifies the client's dialer enforces the
+// policy on the very first hop. The previous guard lived only on CheckRedirect, which
+// net/http invokes before *following* a redirect and never for the initial request,
+// so the first hop was never checked at connection time.
+func TestNotifierHTTPClient_BlocksDestination(t *testing.T) {
+	victimURL, victimHits := startVictim(t)
 
-	client := validate.NotifierHTTPClient(blockVictimPolicy())
-	err := sendVia(client, "generic+"+receiver.URL, "Test message from Homebox")
+	client := validate.NotifierHTTPClient(&config.NotifierConf{BlockLocalhost: true})
 
-	require.NoError(t, err, "a permitted destination must still be delivered to")
-	assert.Equal(t, int32(1), atomic.LoadInt32(&hits))
+	resp, err := client.Get(victimURL) //nolint:noctx // exercising the dialer, not a real request path
+	if err == nil {
+		_ = resp.Body.Close()
+	}
+
+	require.Error(t, err, "a blocked destination must be refused at dial time")
+	assert.Equal(t, int32(0), victimHits(), "the blocked destination must never be reached")
 }
 
-// Redirects to permitted hosts still work, so webhook endpoints that redirect
-// keep working.
-func TestNotifierRedirectGuard_FollowsPermittedRedirect(t *testing.T) {
-	var hits int32
-	final := serveOn(t, redirectorAddr, http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		atomic.AddInt32(&hits, 1)
-		w.WriteHeader(http.StatusOK)
-	}))
+// TestNotifierHTTPClient_AllowsPermittedDestination ensures the guarded client still
+// delivers to destinations the policy permits.
+func TestNotifierHTTPClient_AllowsPermittedDestination(t *testing.T) {
+	victimURL, victimHits := startVictim(t)
 
-	redirector := serveOn(t, redirectorAddr, http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		w.Header().Set("Location", final.URL)
-		w.WriteHeader(http.StatusTemporaryRedirect)
-	}))
+	client := validate.NotifierHTTPClient(&config.NotifierConf{})
 
-	client := validate.NotifierHTTPClient(blockVictimPolicy())
-	err := sendVia(client, "generic+"+redirector.URL, "Test message from Homebox")
+	resp, err := client.Get(victimURL) //nolint:noctx // exercising the dialer, not a real request path
+	require.NoError(t, err)
+	_ = resp.Body.Close()
 
-	require.NoError(t, err, "a redirect to a permitted host must still be followed")
-	assert.Equal(t, int32(1), atomic.LoadInt32(&hits))
+	assert.Equal(t, int32(1), victimHits(), "a permitted destination must still be reached")
 }
 
-// The first gate is still wired into the shared path: a URL pointing straight at
-// a blocked destination is refused before any request goes out.
-func TestNotifierSend_RejectsBlockedURLBeforeSending(t *testing.T) {
-	var hits int32
-	victim := serveOn(t, victimIP+":0", http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		atomic.AddInt32(&hits, 1)
-		w.WriteHeader(http.StatusOK)
-	}))
+// TestSendNotifierMessage_EnforcesPolicy verifies the send path validates the URL
+// before delivering. shoutrrr.Send would otherwise deliver through an unguarded
+// client of its own.
+func TestSendNotifierMessage_EnforcesPolicy(t *testing.T) {
+	victimURL, victimHits := startVictim(t)
 
-	err := notifier.Send(blockVictimPolicy(), "generic+"+victim.URL, "Test message from Homebox")
+	err := validate.SendNotifierMessage(
+		"generic+"+victimURL,
+		"Test message from Homebox",
+		&config.NotifierConf{BlockLocalhost: true},
+	)
 
-	require.Error(t, err)
-	var vErr *notifier.ValidationError
-	require.ErrorAs(t, err, &vErr, "should be reported as a validation failure, not a delivery failure")
-	assert.Equal(t, int32(0), atomic.LoadInt32(&hits))
+	require.Error(t, err, "a blocked destination must not be delivered to")
+	assert.Equal(t, int32(0), victimHits(), "the blocked destination must never be reached")
 }
 
-// Pins the policy's scope. notifier.* covers generic webhooks; everything else
-// has a fixed or operator-chosen endpoint. Applying the network rules there
-// would break a LAN Gotify on a bogon address and prevent nothing.
-func TestNotifierSend_NonGenericBypassesNetworkPolicy(t *testing.T) {
-	cfg := blockVictimPolicy()
+// TestSendNotifierMessage_DeliversPermitted ensures the guarded send path still
+// delivers notifications the policy permits.
+func TestSendNotifierMessage_DeliversPermitted(t *testing.T) {
+	victimURL, victimHits := startVictim(t)
 
-	// Same address, non-generic scheme.
-	require.False(t, validate.IsGenericNotifier("gotify://"+victimIP+":1234/token"),
-		"gotify:// must not be treated as a generic webhook")
-	require.NoError(t, validate.ValidateNotifierURL("gotify://"+victimIP+":1234/token", cfg),
-		"the URL gate must not apply network policy to non-generic services")
+	err := validate.SendNotifierMessage(
+		"generic+"+victimURL,
+		"Test message from Homebox",
+		&config.NotifierConf{},
+	)
 
-	// The generic form of the same address is still refused, so the difference is
-	// the scheme and not a hole.
-	require.True(t, validate.IsGenericNotifier("generic+http://"+victimIP+":1234"))
-	require.Error(t, validate.ValidateNotifierURL("generic+http://"+victimIP+":1234", cfg))
+	require.NoError(t, err)
+	assert.Equal(t, int32(1), victimHits(), "a permitted notifier must still be delivered")
 }

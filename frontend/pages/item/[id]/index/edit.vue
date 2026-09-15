@@ -751,7 +751,6 @@
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
                   :label="$t(field.label)"
-                  date-only
                   inline
                 />
                 <FormCheckbox
@@ -939,7 +938,6 @@
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
                   :label="$t(field.label)"
-                  date-only
                   inline
                 />
                 <FormCheckbox
@@ -989,7 +987,6 @@
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
                   :label="$t(field.label)"
-                  date-only
                   inline
                 />
                 <FormCheckbox
@@ -1039,7 +1036,6 @@
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
                   :label="$t(field.label)"
-                  date-only
                   inline
                 />
                 <FormCheckbox

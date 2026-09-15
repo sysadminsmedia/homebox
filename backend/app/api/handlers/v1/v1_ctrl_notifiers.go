@@ -10,7 +10,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
 )
@@ -120,8 +119,11 @@ func (ctrl *V1Controller) HandlerNotifierTest() errchain.HandlerFunc {
 			return nil, validate.NewRequestError(err, http.StatusBadRequest)
 		}
 
-		// Same path a real notification takes, so Test exercises the guards too.
-		if err := notifier.Send(&ctrl.config.Notifier, q.URL, "Test message from Homebox"); err != nil {
+		// Deliver through the guarded client so redirect hops and the resolved
+		// address are re-checked against the same policy.
+		if err := validate.SendNotifierMessage(q.URL, "Test message from Homebox", &ctrl.config.Notifier); err != nil {
+			// The delivery error can quote the URL, which carries the notifier's
+			// credentials; keep it to the log and hand the caller a bare failure.
 			log.Err(err).Str("notifier_url", redactNotifierURL(q.URL)).Msg("notifier test failed")
 			return nil, validate.NewRequestError(errTestNotifierFailed, http.StatusBadRequest)
 		}

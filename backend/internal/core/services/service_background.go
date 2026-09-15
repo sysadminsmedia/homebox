@@ -3,7 +3,6 @@ package services
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -14,7 +13,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
 
 type Latest struct {
@@ -79,27 +78,23 @@ func (svc *BackgroundService) SendNotifiersToday(ctx context.Context) error {
 		}
 
 		var sendErrs []error
-		// One sender for the batch so connections are pooled.
-		sender := notifier.NewSender(svc.notifierConfig)
 		for i := range notifiers {
-			err := sender.Send(notifiers[i].URL, bldr.String())
-			if err == nil {
-				continue
-			}
-
-			// A refused URL is a config problem, not a failed delivery.
-			var vErr *notifier.ValidationError
-			if errors.As(err, &vErr) {
+			// Validate notifier URL before sending
+			if err := validate.ValidateNotifierURL(notifiers[i].URL, svc.notifierConfig); err != nil {
 				log.Error().
-					Err(vErr.Err).
+					Err(err).
 					Str("notifier_id", notifiers[i].ID.String()).
 					Str("notifier_name", notifiers[i].Name).
 					Msg("notifier URL failed validation, skipping")
-				sendErrs = append(sendErrs, fmt.Errorf("notifier %s failed validation: %w", notifiers[i].Name, vErr.Err))
+				sendErrs = append(sendErrs, fmt.Errorf("notifier %s failed validation: %w", notifiers[i].Name, err))
 				continue
 			}
 
-			sendErrs = append(sendErrs, err)
+			err := validate.SendNotifierMessage(notifiers[i].URL, bldr.String(), svc.notifierConfig)
+
+			if err != nil {
+				sendErrs = append(sendErrs, err)
+			}
 		}
 
 		if len(sendErrs) > 0 {
