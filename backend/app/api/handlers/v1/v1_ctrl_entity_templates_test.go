@@ -7,10 +7,10 @@ import (
 
 func TestEntityTemplateCreateItemRequestLowStockThresholdPresence(t *testing.T) {
 	tests := []struct {
-		name        string
-		payload     string
-		present     bool
-		threshold   *float64
+		name      string
+		payload   string
+		present   bool
+		threshold *float64
 	}{
 		{
 			name:    "omitted",
