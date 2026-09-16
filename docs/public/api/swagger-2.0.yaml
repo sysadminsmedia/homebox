@@ -217,6 +217,10 @@ definitions:
       lifetime_warranty:
         description: LifetimeWarranty holds the value of the "lifetime_warranty" field.
         type: boolean
+      low_stock_threshold:
+        description: LowStockThreshold holds the value of the "low_stock_threshold"
+          field.
+        type: number
       manufacturer:
         description: Manufacturer holds the value of the "manufacturer" field.
         type: string
@@ -373,6 +377,10 @@ definitions:
         description: DefaultLifetimeWarranty holds the value of the "default_lifetime_warranty"
           field.
         type: boolean
+      default_low_stock_threshold:
+        description: DefaultLowStockThreshold holds the value of the "default_low_stock_threshold"
+          field.
+        type: number
       default_manufacturer:
         description: DefaultManufacturer holds the value of the "default_manufacturer"
           field.
@@ -1100,6 +1108,10 @@ definitions:
         type: string
       entityTypeId:
         type: string
+      lowStockThreshold:
+        type: number
+        x-nullable: true
+        x-omitempty: true
       manufacturer:
         maxLength: 255
         type: string
@@ -1214,6 +1226,10 @@ definitions:
           items ultimately live in. Nil for top-level entities.
         x-nullable: true
         x-omitempty: true
+      lowStockThreshold:
+        type: number
+        x-nullable: true
+        x-omitempty: true
       manufacturer:
         type: string
       modelNumber:
@@ -1276,6 +1292,10 @@ definitions:
         x-omitempty: true
       id:
         type: string
+      lowStockThreshold:
+        type: number
+        x-nullable: true
+        x-omitempty: true
       parentId:
         type: string
         x-nullable: true
@@ -1335,6 +1355,10 @@ definitions:
       itemCount:
         description: Container-specific (populated when querying locations)
         type: number
+      lowStockThreshold:
+        type: number
+        x-nullable: true
+        x-omitempty: true
       name:
         type: string
       parent:
@@ -1374,6 +1398,9 @@ definitions:
       defaultLocationId:
         description: Default location and tags
         type: string
+        x-nullable: true
+      defaultLowStockThreshold:
+        type: number
         x-nullable: true
       defaultManufacturer:
         maxLength: 255
@@ -1439,6 +1466,8 @@ definitions:
         allOf:
         - $ref: '#/definitions/repo.TemplateLocationSummary'
         description: Default location and tags
+      defaultLowStockThreshold:
+        type: number
       defaultManufacturer:
         type: string
       defaultModelNumber:
@@ -1503,6 +1532,9 @@ definitions:
       defaultLocationId:
         description: Default location and tags
         type: string
+        x-nullable: true
+      defaultLowStockThreshold:
+        type: number
         x-nullable: true
       defaultManufacturer:
         maxLength: 255
@@ -1623,6 +1655,10 @@ definitions:
       lifetimeWarranty:
         description: Warranty
         type: boolean
+      lowStockThreshold:
+        type: number
+        x-nullable: true
+        x-omitempty: true
       manufacturer:
         type: string
       modelNumber:
@@ -2227,6 +2263,10 @@ definitions:
           EntityTypeID is the entity type selected by the user. When set it takes
           precedence; when empty the repository falls back to the group's default.
         type: string
+      lowStockThreshold:
+        type: number
+        x-nullable: true
+        x-omitempty: true
       name:
         maxLength: 255
         minLength: 1

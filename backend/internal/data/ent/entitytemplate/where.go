@@ -86,6 +86,11 @@ func DefaultQuantity(v float64) predicate.EntityTemplate {
 	return predicate.EntityTemplate(sql.FieldEQ(FieldDefaultQuantity, v))
 }
 
+// DefaultLowStockThreshold applies equality check predicate on the "default_low_stock_threshold" field. It's identical to DefaultLowStockThresholdEQ.
+func DefaultLowStockThreshold(v float64) predicate.EntityTemplate {
+	return predicate.EntityTemplate(sql.FieldEQ(FieldDefaultLowStockThreshold, v))
+}
+
 // DefaultInsured applies equality check predicate on the "default_insured" field. It's identical to DefaultInsuredEQ.
 func DefaultInsured(v bool) predicate.EntityTemplate {
 	return predicate.EntityTemplate(sql.FieldEQ(FieldDefaultInsured, v))
@@ -469,6 +474,56 @@ func DefaultQuantityLT(v float64) predicate.EntityTemplate {
 // DefaultQuantityLTE applies the LTE predicate on the "default_quantity" field.
 func DefaultQuantityLTE(v float64) predicate.EntityTemplate {
 	return predicate.EntityTemplate(sql.FieldLTE(FieldDefaultQuantity, v))
+}
+
+// DefaultLowStockThresholdEQ applies the EQ predicate on the "default_low_stock_threshold" field.
+func DefaultLowStockThresholdEQ(v float64) predicate.EntityTemplate {
+	return predicate.EntityTemplate(sql.FieldEQ(FieldDefaultLowStockThreshold, v))
+}
+
+// DefaultLowStockThresholdNEQ applies the NEQ predicate on the "default_low_stock_threshold" field.
+func DefaultLowStockThresholdNEQ(v float64) predicate.EntityTemplate {
+	return predicate.EntityTemplate(sql.FieldNEQ(FieldDefaultLowStockThreshold, v))
+}
+
+// DefaultLowStockThresholdIn applies the In predicate on the "default_low_stock_threshold" field.
+func DefaultLowStockThresholdIn(vs ...float64) predicate.EntityTemplate {
+	return predicate.EntityTemplate(sql.FieldIn(FieldDefaultLowStockThreshold, vs...))
+}
+
+// DefaultLowStockThresholdNotIn applies the NotIn predicate on the "default_low_stock_threshold" field.
+func DefaultLowStockThresholdNotIn(vs ...float64) predicate.EntityTemplate {
+	return predicate.EntityTemplate(sql.FieldNotIn(FieldDefaultLowStockThreshold, vs...))
+}
+
+// DefaultLowStockThresholdGT applies the GT predicate on the "default_low_stock_threshold" field.
+func DefaultLowStockThresholdGT(v float64) predicate.EntityTemplate {
+	return predicate.EntityTemplate(sql.FieldGT(FieldDefaultLowStockThreshold, v))
+}
+
+// DefaultLowStockThresholdGTE applies the GTE predicate on the "default_low_stock_threshold" field.
+func DefaultLowStockThresholdGTE(v float64) predicate.EntityTemplate {
+	return predicate.EntityTemplate(sql.FieldGTE(FieldDefaultLowStockThreshold, v))
+}
+
+// DefaultLowStockThresholdLT applies the LT predicate on the "default_low_stock_threshold" field.
+func DefaultLowStockThresholdLT(v float64) predicate.EntityTemplate {
+	return predicate.EntityTemplate(sql.FieldLT(FieldDefaultLowStockThreshold, v))
+}
+
+// DefaultLowStockThresholdLTE applies the LTE predicate on the "default_low_stock_threshold" field.
+func DefaultLowStockThresholdLTE(v float64) predicate.EntityTemplate {
+	return predicate.EntityTemplate(sql.FieldLTE(FieldDefaultLowStockThreshold, v))
+}
+
+// DefaultLowStockThresholdIsNil applies the IsNil predicate on the "default_low_stock_threshold" field.
+func DefaultLowStockThresholdIsNil() predicate.EntityTemplate {
+	return predicate.EntityTemplate(sql.FieldIsNull(FieldDefaultLowStockThreshold))
+}
+
+// DefaultLowStockThresholdNotNil applies the NotNil predicate on the "default_low_stock_threshold" field.
+func DefaultLowStockThresholdNotNil() predicate.EntityTemplate {
+	return predicate.EntityTemplate(sql.FieldNotNull(FieldDefaultLowStockThreshold))
 }
 
 // DefaultInsuredEQ applies the EQ predicate on the "default_insured" field.

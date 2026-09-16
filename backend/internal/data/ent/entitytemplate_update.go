@@ -114,6 +114,33 @@ func (_u *EntityTemplateUpdate) AddDefaultQuantity(v float64) *EntityTemplateUpd
 	return _u
 }
 
+// SetDefaultLowStockThreshold sets the "default_low_stock_threshold" field.
+func (_u *EntityTemplateUpdate) SetDefaultLowStockThreshold(v float64) *EntityTemplateUpdate {
+	_u.mutation.ResetDefaultLowStockThreshold()
+	_u.mutation.SetDefaultLowStockThreshold(v)
+	return _u
+}
+
+// SetNillableDefaultLowStockThreshold sets the "default_low_stock_threshold" field if the given value is not nil.
+func (_u *EntityTemplateUpdate) SetNillableDefaultLowStockThreshold(v *float64) *EntityTemplateUpdate {
+	if v != nil {
+		_u.SetDefaultLowStockThreshold(*v)
+	}
+	return _u
+}
+
+// AddDefaultLowStockThreshold adds value to the "default_low_stock_threshold" field.
+func (_u *EntityTemplateUpdate) AddDefaultLowStockThreshold(v float64) *EntityTemplateUpdate {
+	_u.mutation.AddDefaultLowStockThreshold(v)
+	return _u
+}
+
+// ClearDefaultLowStockThreshold clears the value of the "default_low_stock_threshold" field.
+func (_u *EntityTemplateUpdate) ClearDefaultLowStockThreshold() *EntityTemplateUpdate {
+	_u.mutation.ClearDefaultLowStockThreshold()
+	return _u
+}
+
 // SetDefaultInsured sets the "default_insured" field.
 func (_u *EntityTemplateUpdate) SetDefaultInsured(v bool) *EntityTemplateUpdate {
 	_u.mutation.SetDefaultInsured(v)
@@ -505,6 +532,15 @@ func (_u *EntityTemplateUpdate) sqlSave(ctx context.Context) (_node int, err err
 	if value, ok := _u.mutation.AddedDefaultQuantity(); ok {
 		_spec.AddField(entitytemplate.FieldDefaultQuantity, field.TypeFloat64, value)
 	}
+	if value, ok := _u.mutation.DefaultLowStockThreshold(); ok {
+		_spec.SetField(entitytemplate.FieldDefaultLowStockThreshold, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedDefaultLowStockThreshold(); ok {
+		_spec.AddField(entitytemplate.FieldDefaultLowStockThreshold, field.TypeFloat64, value)
+	}
+	if _u.mutation.DefaultLowStockThresholdCleared() {
+		_spec.ClearField(entitytemplate.FieldDefaultLowStockThreshold, field.TypeFloat64)
+	}
 	if value, ok := _u.mutation.DefaultInsured(); ok {
 		_spec.SetField(entitytemplate.FieldDefaultInsured, field.TypeBool, value)
 	}
@@ -762,6 +798,33 @@ func (_u *EntityTemplateUpdateOne) SetNillableDefaultQuantity(v *float64) *Entit
 // AddDefaultQuantity adds value to the "default_quantity" field.
 func (_u *EntityTemplateUpdateOne) AddDefaultQuantity(v float64) *EntityTemplateUpdateOne {
 	_u.mutation.AddDefaultQuantity(v)
+	return _u
+}
+
+// SetDefaultLowStockThreshold sets the "default_low_stock_threshold" field.
+func (_u *EntityTemplateUpdateOne) SetDefaultLowStockThreshold(v float64) *EntityTemplateUpdateOne {
+	_u.mutation.ResetDefaultLowStockThreshold()
+	_u.mutation.SetDefaultLowStockThreshold(v)
+	return _u
+}
+
+// SetNillableDefaultLowStockThreshold sets the "default_low_stock_threshold" field if the given value is not nil.
+func (_u *EntityTemplateUpdateOne) SetNillableDefaultLowStockThreshold(v *float64) *EntityTemplateUpdateOne {
+	if v != nil {
+		_u.SetDefaultLowStockThreshold(*v)
+	}
+	return _u
+}
+
+// AddDefaultLowStockThreshold adds value to the "default_low_stock_threshold" field.
+func (_u *EntityTemplateUpdateOne) AddDefaultLowStockThreshold(v float64) *EntityTemplateUpdateOne {
+	_u.mutation.AddDefaultLowStockThreshold(v)
+	return _u
+}
+
+// ClearDefaultLowStockThreshold clears the value of the "default_low_stock_threshold" field.
+func (_u *EntityTemplateUpdateOne) ClearDefaultLowStockThreshold() *EntityTemplateUpdateOne {
+	_u.mutation.ClearDefaultLowStockThreshold()
 	return _u
 }
 
@@ -1185,6 +1248,15 @@ func (_u *EntityTemplateUpdateOne) sqlSave(ctx context.Context) (_node *EntityTe
 	}
 	if value, ok := _u.mutation.AddedDefaultQuantity(); ok {
 		_spec.AddField(entitytemplate.FieldDefaultQuantity, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.DefaultLowStockThreshold(); ok {
+		_spec.SetField(entitytemplate.FieldDefaultLowStockThreshold, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedDefaultLowStockThreshold(); ok {
+		_spec.AddField(entitytemplate.FieldDefaultLowStockThreshold, field.TypeFloat64, value)
+	}
+	if _u.mutation.DefaultLowStockThresholdCleared() {
+		_spec.ClearField(entitytemplate.FieldDefaultLowStockThreshold, field.TypeFloat64)
 	}
 	if value, ok := _u.mutation.DefaultInsured(); ok {
 		_spec.SetField(entitytemplate.FieldDefaultInsured, field.TypeBool, value)

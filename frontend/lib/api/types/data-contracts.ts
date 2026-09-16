@@ -203,6 +203,8 @@ export interface EntEntity {
   insured: boolean;
   /** LifetimeWarranty holds the value of the "lifetime_warranty" field. */
   lifetime_warranty: boolean;
+  /** LowStockThreshold holds the value of the "low_stock_threshold" field. */
+  low_stock_threshold: number;
   /** Manufacturer holds the value of the "manufacturer" field. */
   manufacturer: string;
   /** ModelNumber holds the value of the "model_number" field. */
@@ -300,6 +302,8 @@ export interface EntEntityTemplate {
   default_insured: boolean;
   /** DefaultLifetimeWarranty holds the value of the "default_lifetime_warranty" field. */
   default_lifetime_warranty: boolean;
+  /** DefaultLowStockThreshold holds the value of the "default_low_stock_threshold" field. */
+  default_low_stock_threshold: number;
   /** DefaultManufacturer holds the value of the "default_manufacturer" field. */
   default_manufacturer: string;
   /** Default model number for items created from this template */
@@ -745,6 +749,7 @@ export interface EntityCreate {
   /** @maxLength 1000 */
   description: string;
   entityTypeId: string;
+  lowStockThreshold?: number | null;
   /** @maxLength 255 */
   manufacturer?: string | null;
   /**
@@ -806,6 +811,7 @@ export interface EntityOut {
    * items ultimately live in. Nil for top-level entities.
    */
   location?: EntitySummary | null;
+  lowStockThreshold?: number | null;
   manufacturer: string;
   modelNumber: string;
   name: string;
@@ -836,6 +842,7 @@ export interface EntityOut {
 export interface EntityPatch {
   entityTypeId?: string | null;
   id: string;
+  lowStockThreshold?: number | null;
   parentId?: string | null;
   quantity?: number | null;
   tagIds?: string[] | null;
@@ -859,6 +866,7 @@ export interface EntitySummary {
   insured: boolean;
   /** Container-specific (populated when querying locations) */
   itemCount: number;
+  lowStockThreshold?: number | null;
   name: string;
   /** Edges */
   parent?: EntitySummary | null;
@@ -878,6 +886,7 @@ export interface EntityTemplateCreate {
   defaultLifetimeWarranty: boolean;
   /** Default location and tags */
   defaultLocationId?: string | null;
+  defaultLowStockThreshold?: number | null;
   /** @maxLength 255 */
   defaultManufacturer?: string | null;
   /** @maxLength 255 */
@@ -913,6 +922,7 @@ export interface EntityTemplateOut {
   defaultLifetimeWarranty: boolean;
   /** Default location and tags */
   defaultLocation: TemplateLocationSummary;
+  defaultLowStockThreshold: number;
   defaultManufacturer: string;
   defaultModelNumber: string;
   defaultName: string;
@@ -948,6 +958,7 @@ export interface EntityTemplateUpdate {
   defaultLifetimeWarranty: boolean;
   /** Default location and tags */
   defaultLocationId?: string | null;
+  defaultLowStockThreshold?: number | null;
   /** @maxLength 255 */
   defaultManufacturer?: string | null;
   /** @maxLength 255 */
@@ -1015,6 +1026,7 @@ export interface EntityUpdate {
   insured: boolean;
   /** Warranty */
   lifetimeWarranty: boolean;
+  lowStockThreshold?: number | null;
   manufacturer: string;
   modelNumber: string;
   /**
@@ -1364,6 +1376,7 @@ export interface EntityTemplateCreateItemRequest {
    * precedence; when empty the repository falls back to the group's default.
    */
   entityTypeId: string;
+  lowStockThreshold?: number | null;
   /**
    * @minLength 1
    * @maxLength 255

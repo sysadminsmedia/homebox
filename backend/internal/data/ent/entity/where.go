@@ -91,6 +91,11 @@ func Quantity(v float64) predicate.Entity {
 	return predicate.Entity(sql.FieldEQ(FieldQuantity, v))
 }
 
+// LowStockThreshold applies equality check predicate on the "low_stock_threshold" field. It's identical to LowStockThresholdEQ.
+func LowStockThreshold(v float64) predicate.Entity {
+	return predicate.Entity(sql.FieldEQ(FieldLowStockThreshold, v))
+}
+
 // Insured applies equality check predicate on the "insured" field. It's identical to InsuredEQ.
 func Insured(v bool) predicate.Entity {
 	return predicate.Entity(sql.FieldEQ(FieldInsured, v))
@@ -584,6 +589,56 @@ func QuantityLT(v float64) predicate.Entity {
 // QuantityLTE applies the LTE predicate on the "quantity" field.
 func QuantityLTE(v float64) predicate.Entity {
 	return predicate.Entity(sql.FieldLTE(FieldQuantity, v))
+}
+
+// LowStockThresholdEQ applies the EQ predicate on the "low_stock_threshold" field.
+func LowStockThresholdEQ(v float64) predicate.Entity {
+	return predicate.Entity(sql.FieldEQ(FieldLowStockThreshold, v))
+}
+
+// LowStockThresholdNEQ applies the NEQ predicate on the "low_stock_threshold" field.
+func LowStockThresholdNEQ(v float64) predicate.Entity {
+	return predicate.Entity(sql.FieldNEQ(FieldLowStockThreshold, v))
+}
+
+// LowStockThresholdIn applies the In predicate on the "low_stock_threshold" field.
+func LowStockThresholdIn(vs ...float64) predicate.Entity {
+	return predicate.Entity(sql.FieldIn(FieldLowStockThreshold, vs...))
+}
+
+// LowStockThresholdNotIn applies the NotIn predicate on the "low_stock_threshold" field.
+func LowStockThresholdNotIn(vs ...float64) predicate.Entity {
+	return predicate.Entity(sql.FieldNotIn(FieldLowStockThreshold, vs...))
+}
+
+// LowStockThresholdGT applies the GT predicate on the "low_stock_threshold" field.
+func LowStockThresholdGT(v float64) predicate.Entity {
+	return predicate.Entity(sql.FieldGT(FieldLowStockThreshold, v))
+}
+
+// LowStockThresholdGTE applies the GTE predicate on the "low_stock_threshold" field.
+func LowStockThresholdGTE(v float64) predicate.Entity {
+	return predicate.Entity(sql.FieldGTE(FieldLowStockThreshold, v))
+}
+
+// LowStockThresholdLT applies the LT predicate on the "low_stock_threshold" field.
+func LowStockThresholdLT(v float64) predicate.Entity {
+	return predicate.Entity(sql.FieldLT(FieldLowStockThreshold, v))
+}
+
+// LowStockThresholdLTE applies the LTE predicate on the "low_stock_threshold" field.
+func LowStockThresholdLTE(v float64) predicate.Entity {
+	return predicate.Entity(sql.FieldLTE(FieldLowStockThreshold, v))
+}
+
+// LowStockThresholdIsNil applies the IsNil predicate on the "low_stock_threshold" field.
+func LowStockThresholdIsNil() predicate.Entity {
+	return predicate.Entity(sql.FieldIsNull(FieldLowStockThreshold))
+}
+
+// LowStockThresholdNotNil applies the NotNil predicate on the "low_stock_threshold" field.
+func LowStockThresholdNotNil() predicate.Entity {
+	return predicate.Entity(sql.FieldNotNull(FieldLowStockThreshold))
 }
 
 // InsuredEQ applies the EQ predicate on the "insured" field.

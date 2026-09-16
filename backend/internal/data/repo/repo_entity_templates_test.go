@@ -85,6 +85,35 @@ func TestEntityTemplatesRepository_GetOne(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestEntityTemplatesRepository_LowStockThreshold(t *testing.T) {
+	threshold := 5.5
+	data := templateFactory()
+	data.DefaultLowStockThreshold = &threshold
+
+	created, err := tRepos.EntityTemplates.Create(context.Background(), tGroup.ID, data)
+	require.NoError(t, err)
+	require.NotNil(t, created.DefaultLowStockThreshold)
+	assert.InDelta(t, threshold, *created.DefaultLowStockThreshold, 0)
+
+	updatedThreshold := 8.25
+	updated, err := tRepos.EntityTemplates.Update(context.Background(), tGroup.ID, EntityTemplateUpdate{
+		ID:                       created.ID,
+		Name:                     created.Name,
+		Description:              created.Description,
+		Notes:                    created.Notes,
+		DefaultQuantity:          lo.ToPtr(created.DefaultQuantity),
+		DefaultLowStockThreshold: &updatedThreshold,
+		DefaultInsured:           created.DefaultInsured,
+		Fields:                   created.Fields,
+	})
+	require.NoError(t, err)
+	require.NotNil(t, updated.DefaultLowStockThreshold)
+	assert.InDelta(t, updatedThreshold, *updated.DefaultLowStockThreshold, 0)
+
+	err = tRepos.EntityTemplates.Delete(context.Background(), tGroup.ID, created.ID)
+	require.NoError(t, err)
+}
+
 func TestEntityTemplatesRepository_Update(t *testing.T) {
 	data := templateFactory()
 

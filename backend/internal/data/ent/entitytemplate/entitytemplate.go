@@ -27,6 +27,8 @@ const (
 	FieldNotes = "notes"
 	// FieldDefaultQuantity holds the string denoting the default_quantity field in the database.
 	FieldDefaultQuantity = "default_quantity"
+	// FieldDefaultLowStockThreshold holds the string denoting the default_low_stock_threshold field in the database.
+	FieldDefaultLowStockThreshold = "default_low_stock_threshold"
 	// FieldDefaultInsured holds the string denoting the default_insured field in the database.
 	FieldDefaultInsured = "default_insured"
 	// FieldDefaultName holds the string denoting the default_name field in the database.
@@ -89,6 +91,7 @@ var Columns = []string{
 	FieldDescription,
 	FieldNotes,
 	FieldDefaultQuantity,
+	FieldDefaultLowStockThreshold,
 	FieldDefaultInsured,
 	FieldDefaultName,
 	FieldDefaultDescription,
@@ -199,6 +202,11 @@ func ByNotes(opts ...sql.OrderTermOption) OrderOption {
 // ByDefaultQuantity orders the results by the default_quantity field.
 func ByDefaultQuantity(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDefaultQuantity, opts...).ToFunc()
+}
+
+// ByDefaultLowStockThreshold orders the results by the default_low_stock_threshold field.
+func ByDefaultLowStockThreshold(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDefaultLowStockThreshold, opts...).ToFunc()
 }
 
 // ByDefaultInsured orders the results by the default_insured field.

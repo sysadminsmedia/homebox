@@ -109,9 +109,10 @@ type EntityTemplateCreateItemRequest struct {
 	ParentID    uuid.UUID `json:"parentId"    validate:"required"`
 	// EntityTypeID is the entity type selected by the user. When set it takes
 	// precedence; when empty the repository falls back to the group's default.
-	EntityTypeID uuid.UUID   `json:"entityTypeId"`
-	TagIDs       []uuid.UUID `json:"tagIds"`
-	Quantity     *float64    `json:"quantity"`
+	EntityTypeID      uuid.UUID   `json:"entityTypeId"`
+	TagIDs            []uuid.UUID `json:"tagIds"`
+	Quantity          *float64    `json:"quantity"`
+	LowStockThreshold *float64    `json:"lowStockThreshold,omitempty" extensions:"x-nullable,x-omitempty"`
 }
 
 // HandleEntityTemplatesCreateItem godoc
@@ -138,6 +139,11 @@ func (ctrl *V1Controller) HandleEntityTemplatesCreateItem() errchain.HandlerFunc
 			quantity = *body.Quantity
 		}
 
+		lowStockThreshold := template.DefaultLowStockThreshold
+		if body.LowStockThreshold != nil {
+			lowStockThreshold = body.LowStockThreshold
+		}
+
 		// Build custom fields from template
 		fields := lo.Map(template.Fields, func(f repo.TemplateField, _ int) repo.EntityFieldData {
 			return repo.EntityFieldData{
@@ -151,18 +157,19 @@ func (ctrl *V1Controller) HandleEntityTemplatesCreateItem() errchain.HandlerFunc
 
 		// Create entity with all template data in a single transaction
 		return ctrl.repo.Entities.CreateFromTemplate(r.Context(), auth.GID, repo.EntityCreateFromTemplate{
-			Name:             body.Name,
-			Description:      body.Description,
-			Quantity:         quantity,
-			ParentID:         body.ParentID,
-			EntityTypeID:     body.EntityTypeID,
-			TagIDs:           body.TagIDs,
-			Insured:          template.DefaultInsured,
-			Manufacturer:     template.DefaultManufacturer,
-			ModelNumber:      template.DefaultModelNumber,
-			LifetimeWarranty: template.DefaultLifetimeWarranty,
-			WarrantyDetails:  template.DefaultWarrantyDetails,
-			Fields:           fields,
+			Name:              body.Name,
+			Description:       body.Description,
+			Quantity:          quantity,
+			LowStockThreshold: lowStockThreshold,
+			ParentID:          body.ParentID,
+			EntityTypeID:      body.EntityTypeID,
+			TagIDs:            body.TagIDs,
+			Insured:           template.DefaultInsured,
+			Manufacturer:      template.DefaultManufacturer,
+			ModelNumber:       template.DefaultModelNumber,
+			LifetimeWarranty:  template.DefaultLifetimeWarranty,
+			WarrantyDetails:   template.DefaultWarrantyDetails,
+			Fields:            fields,
 		})
 	}
 

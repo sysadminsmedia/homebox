@@ -100,6 +100,20 @@ func (_c *EntityTemplateCreate) SetNillableDefaultQuantity(v *float64) *EntityTe
 	return _c
 }
 
+// SetDefaultLowStockThreshold sets the "default_low_stock_threshold" field.
+func (_c *EntityTemplateCreate) SetDefaultLowStockThreshold(v float64) *EntityTemplateCreate {
+	_c.mutation.SetDefaultLowStockThreshold(v)
+	return _c
+}
+
+// SetNillableDefaultLowStockThreshold sets the "default_low_stock_threshold" field if the given value is not nil.
+func (_c *EntityTemplateCreate) SetNillableDefaultLowStockThreshold(v *float64) *EntityTemplateCreate {
+	if v != nil {
+		_c.SetDefaultLowStockThreshold(*v)
+	}
+	return _c
+}
+
 // SetDefaultInsured sets the "default_insured" field.
 func (_c *EntityTemplateCreate) SetDefaultInsured(v bool) *EntityTemplateCreate {
 	_c.mutation.SetDefaultInsured(v)
@@ -508,6 +522,10 @@ func (_c *EntityTemplateCreate) createSpec() (*EntityTemplate, *sqlgraph.CreateS
 	if value, ok := _c.mutation.DefaultQuantity(); ok {
 		_spec.SetField(entitytemplate.FieldDefaultQuantity, field.TypeFloat64, value)
 		_node.DefaultQuantity = value
+	}
+	if value, ok := _c.mutation.DefaultLowStockThreshold(); ok {
+		_spec.SetField(entitytemplate.FieldDefaultLowStockThreshold, field.TypeFloat64, value)
+		_node.DefaultLowStockThreshold = &value
 	}
 	if value, ok := _c.mutation.DefaultInsured(); ok {
 		_spec.SetField(entitytemplate.FieldDefaultInsured, field.TypeBool, value)
