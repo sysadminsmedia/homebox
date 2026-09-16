@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -109,10 +110,28 @@ type EntityTemplateCreateItemRequest struct {
 	ParentID    uuid.UUID `json:"parentId"    validate:"required"`
 	// EntityTypeID is the entity type selected by the user. When set it takes
 	// precedence; when empty the repository falls back to the group's default.
-	EntityTypeID      uuid.UUID   `json:"entityTypeId"`
-	TagIDs            []uuid.UUID `json:"tagIds"`
-	Quantity          *float64    `json:"quantity"`
-	LowStockThreshold *float64    `json:"lowStockThreshold,omitempty" extensions:"x-nullable,x-omitempty"`
+	EntityTypeID         uuid.UUID   `json:"entityTypeId"`
+	TagIDs               []uuid.UUID `json:"tagIds"`
+	Quantity             *float64    `json:"quantity"`
+	LowStockThreshold    *float64    `json:"lowStockThreshold,omitempty" extensions:"x-nullable,x-omitempty"`
+	lowStockThresholdSet bool
+}
+
+func (r *EntityTemplateCreateItemRequest) UnmarshalJSON(data []byte) error {
+	type request EntityTemplateCreateItemRequest
+	var decoded request
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+
+	var fields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &fields); err != nil {
+		return err
+	}
+
+	*r = EntityTemplateCreateItemRequest(decoded)
+	_, r.lowStockThresholdSet = fields["lowStockThreshold"]
+	return nil
 }
 
 // HandleEntityTemplatesCreateItem godoc
@@ -140,7 +159,7 @@ func (ctrl *V1Controller) HandleEntityTemplatesCreateItem() errchain.HandlerFunc
 		}
 
 		lowStockThreshold := template.DefaultLowStockThreshold
-		if body.LowStockThreshold != nil {
+		if body.lowStockThresholdSet {
 			lowStockThreshold = body.LowStockThreshold
 		}
 

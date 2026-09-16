@@ -351,6 +351,7 @@
         } as EntityTemplateSummary;
         templateData.value = data;
         form.quantity = data.defaultQuantity;
+        form.lowStockThreshold = data.defaultLowStockThreshold ?? undefined;
         if (data.defaultName) form.name = data.defaultName;
         if (data.defaultDescription) form.description = data.defaultDescription;
         if (data.defaultLocation) {
@@ -660,7 +661,7 @@
         parentId: form.location!.id,
         tagIds: form.tags,
         quantity: form.quantity,
-        ...(normalizedLowStockThreshold !== null ? { lowStockThreshold: normalizedLowStockThreshold } : {}),
+        lowStockThreshold: normalizedLowStockThreshold,
         entityTypeId: selectedEntityType.value?.id || "",
       };
 
