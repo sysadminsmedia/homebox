@@ -157,7 +157,7 @@ func (s *IOSheet) Read(data io.Reader) error {
 			case reflect.TypeOf((*float64)(nil)):
 				parsed, err := parseNillableFloat(val)
 				if err != nil {
-					return fmt.Errorf("Could not parse row %d, column %q value %q as %s: %w", i+2, tag, val, field.Type, err)
+					return fmt.Errorf("could not parse row %d, column %q value %q as %s: %w", i+2, tag, val, field.Type, err)
 				}
 				v = parsed
 
