@@ -418,6 +418,10 @@ export interface EntGroup {
    * The values are being populated by the GroupQuery when eager-loading is set.
    */
   edges: EntGroupEdges;
+  /** FoundContactEnabled holds the value of the "found_contact_enabled" field. */
+  found_contact_enabled: boolean;
+  /** FoundContactMessage holds the value of the "found_contact_message" field. */
+  found_contact_message: string;
   /** ID of the ent. */
   id: string;
   /** Name holds the value of the "name" field. */
@@ -1067,6 +1071,8 @@ export interface ExportOut {
 export interface Group {
   createdAt: Date | string;
   currency: string;
+  foundContactEnabled: boolean;
+  foundContactMessage: string;
   id: string;
   name: string;
   updatedAt: Date | string;
@@ -1090,6 +1096,8 @@ export interface GroupStatistics {
 
 export interface GroupUpdate {
   currency: string;
+  foundContactEnabled: boolean;
+  foundContactMessage: string;
   name: string;
 }
 
@@ -1377,6 +1385,19 @@ export interface EntityTemplateCreateItemRequest {
 export interface ForgotPasswordRequest {
   /** @example "user@example.com" */
   email: string;
+}
+
+export interface FoundContactRequest {
+  /** @maxLength 2000 */
+  message: string;
+  replyTo: string;
+}
+
+export interface FoundItemResponse {
+  email: string;
+  itemId: string;
+  message: string;
+  mode: "form" | "mailto";
 }
 
 export interface GroupAcceptInvitationResponse {

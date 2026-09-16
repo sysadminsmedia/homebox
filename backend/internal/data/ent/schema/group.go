@@ -29,6 +29,11 @@ func (Group) Fields() []ent.Field {
 			NotEmpty(),
 		field.String("currency").
 			Default("usd"),
+		field.Bool("found_contact_enabled").
+			Default(false),
+		field.String("found_contact_message").
+			MaxLen(500).
+			Default(""),
 	}
 }
 

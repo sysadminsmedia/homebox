@@ -31,11 +31,13 @@ type GroupRepository struct {
 func NewGroupRepository(db *ent.Client, attachments *AttachmentRepo) *GroupRepository {
 	gmap := func(g *ent.Group) Group {
 		return Group{
-			ID:        g.ID,
-			Name:      g.Name,
-			CreatedAt: g.CreatedAt,
-			UpdatedAt: g.UpdatedAt,
-			Currency:  strings.ToUpper(g.Currency),
+			ID:                  g.ID,
+			Name:                g.Name,
+			CreatedAt:           g.CreatedAt,
+			UpdatedAt:           g.UpdatedAt,
+			Currency:            strings.ToUpper(g.Currency),
+			FoundContactEnabled: g.FoundContactEnabled,
+			FoundContactMessage: g.FoundContactMessage,
 		}
 	}
 
@@ -58,16 +60,20 @@ func NewGroupRepository(db *ent.Client, attachments *AttachmentRepo) *GroupRepos
 
 type (
 	Group struct {
-		ID        uuid.UUID `json:"id,omitempty"`
-		Name      string    `json:"name,omitempty"`
-		CreatedAt time.Time `json:"createdAt,omitempty"`
-		UpdatedAt time.Time `json:"updatedAt,omitempty"`
-		Currency  string    `json:"currency,omitempty"`
+		ID                  uuid.UUID `json:"id,omitempty"`
+		Name                string    `json:"name,omitempty"`
+		CreatedAt           time.Time `json:"createdAt,omitempty"`
+		UpdatedAt           time.Time `json:"updatedAt,omitempty"`
+		Currency            string    `json:"currency,omitempty"`
+		FoundContactEnabled bool      `json:"foundContactEnabled"`
+		FoundContactMessage string    `json:"foundContactMessage"`
 	}
 
 	GroupUpdate struct {
-		Name     string `json:"name"`
-		Currency string `json:"currency"`
+		Name                string  `json:"name"`
+		Currency            string  `json:"currency"`
+		FoundContactEnabled *bool   `json:"foundContactEnabled,omitempty"`
+		FoundContactMessage *string `json:"foundContactMessage,omitempty"`
 	}
 
 	GroupInvitationCreate struct {
@@ -110,6 +116,14 @@ type (
 		ID    uuid.UUID `json:"id"`
 		Name  string    `json:"name"`
 		Total float64   `json:"total"`
+	}
+
+	FoundContact struct {
+		ItemID     uuid.UUID
+		ItemName   string
+		Message    string
+		OwnerName  string
+		OwnerEmail string
 	}
 )
 
@@ -313,11 +327,18 @@ func (r *GroupRepository) GroupCreate(ctx context.Context, name string, userID u
 }
 
 func (r *GroupRepository) GroupUpdate(ctx context.Context, id uuid.UUID, data GroupUpdate) (Group, error) {
-	entity, err := r.db.Group.UpdateOneID(id).
+	q := r.db.Group.UpdateOneID(id).
 		SetName(data.Name).
-		SetCurrency(strings.ToLower(data.Currency)).
-		Save(ctx)
+		SetCurrency(strings.ToLower(data.Currency))
 
+	if data.FoundContactEnabled != nil {
+		q = q.SetFoundContactEnabled(*data.FoundContactEnabled)
+	}
+	if data.FoundContactMessage != nil {
+		q = q.SetFoundContactMessage(*data.FoundContactMessage)
+	}
+
+	entity, err := q.Save(ctx)
 	return r.groupMapper.MapErr(entity, err)
 }
 
@@ -470,6 +491,67 @@ func (r *GroupRepository) IsOwnerOf(ctx context.Context, userID, groupID uuid.UU
 			usergroup.RoleEQ(usergroup.RoleOwner),
 		).
 		Exist(ctx)
+}
+
+// FoundContactByItemID returns the public found-item contact details for an
+// item, but only when the owning group has opted in. Missing items, archived
+// items (sold/disposed), and disabled groups all return ent not-found errors
+// so callers cannot tell them apart.
+func (r *GroupRepository) FoundContactByItemID(ctx context.Context, itemID uuid.UUID) (FoundContact, error) {
+	e, err := r.db.Entity.Query().
+		Where(
+			entity.ID(itemID),
+			entity.Archived(false),
+			entity.HasGroupWith(group.FoundContactEnabled(true)),
+		).
+		WithGroup().
+		Only(ctx)
+	if err != nil {
+		return FoundContact{}, err
+	}
+	return r.foundContactFromEntity(ctx, e)
+}
+
+// FoundContactByAssetID resolves an asset ID across all opted-in groups.
+// Asset IDs are only unique within a group, so anything other than exactly
+// one match is treated as not found.
+func (r *GroupRepository) FoundContactByAssetID(ctx context.Context, assetID AssetID) (FoundContact, error) {
+	matches, err := r.db.Entity.Query().
+		Where(
+			entity.AssetID(int64(assetID)),
+			entity.Archived(false),
+			entity.HasGroupWith(group.FoundContactEnabled(true)),
+		).
+		WithGroup().
+		Limit(2).
+		All(ctx)
+	if err != nil {
+		return FoundContact{}, err
+	}
+	if len(matches) != 1 {
+		return FoundContact{}, &ent.NotFoundError{}
+	}
+	return r.foundContactFromEntity(ctx, matches[0])
+}
+
+func (r *GroupRepository) foundContactFromEntity(ctx context.Context, e *ent.Entity) (FoundContact, error) {
+	owner, err := r.db.User.Query().
+		Where(user.HasUserGroupsWith(
+			usergroup.GroupID(e.Edges.Group.ID),
+			usergroup.RoleEQ(usergroup.RoleOwner),
+		)).
+		Order(ent.Asc(user.FieldCreatedAt)).
+		First(ctx)
+	if err != nil {
+		return FoundContact{}, err
+	}
+	return FoundContact{
+		ItemID:     e.ID,
+		ItemName:   e.Name,
+		Message:    e.Edges.Group.FoundContactMessage,
+		OwnerName:  owner.Name,
+		OwnerEmail: owner.Email,
+	}, nil
 }
 
 func (r *GroupRepository) RemoveMember(ctx context.Context, groupID, userID uuid.UUID) error {

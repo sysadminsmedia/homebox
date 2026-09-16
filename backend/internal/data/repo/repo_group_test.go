@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -54,6 +55,28 @@ func Test_Group_Update(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "test2", g.Name)
 	assert.Equal(t, "EUR", g.Currency)
+
+	// Setting found-contact fields via non-nil pointers persists them.
+	g, err = tRepos.Groups.GroupUpdate(context.Background(), g.ID, GroupUpdate{
+		Name:                "test2",
+		Currency:            "eur",
+		FoundContactEnabled: lo.ToPtr(true),
+		FoundContactMessage: lo.ToPtr("email me at test@example.com"),
+	})
+	require.NoError(t, err)
+	assert.True(t, g.FoundContactEnabled)
+	assert.Equal(t, "email me at test@example.com", g.FoundContactMessage)
+
+	// Updating again with nil pointers (only name/currency) must not reset
+	// the found-contact fields.
+	g, err = tRepos.Groups.GroupUpdate(context.Background(), g.ID, GroupUpdate{
+		Name:     "test3",
+		Currency: "usd",
+	})
+	require.NoError(t, err)
+	assert.Equal(t, "test3", g.Name)
+	assert.True(t, g.FoundContactEnabled)
+	assert.Equal(t, "email me at test@example.com", g.FoundContactMessage)
 }
 
 // TODO: Fix this test at some point, the data itself in production/development is working fine, it only fails on the test

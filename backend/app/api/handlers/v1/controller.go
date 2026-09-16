@@ -94,6 +94,22 @@ func WithURL(url string) func(*V1Controller) {
 	}
 }
 
+// sendLimiter is the minimal contract the found-contact handler needs from the
+// per-item send cap. The concrete limiter lives in package main, which this
+// package cannot import, so it is injected behind this interface.
+type sendLimiter interface {
+	Allow(key string) bool
+}
+
+// WithFoundSendLimiter injects the per-item found-contact email cap. The
+// handler gates on it before dispatching the SMTP send so a single item cannot
+// be mailbombed even from distributed source IPs.
+func WithFoundSendLimiter(limiter sendLimiter) func(*V1Controller) {
+	return func(ctrl *V1Controller) {
+		ctrl.foundSendLimiter = limiter
+	}
+}
+
 type V1Controller struct {
 	repo              *repo.AllRepos
 	svc               *services.AllServices
@@ -107,6 +123,7 @@ type V1Controller struct {
 	cookieSecure      bool
 	isDemo            bool
 	allowRegistration bool
+	foundSendLimiter  sendLimiter
 }
 
 type (

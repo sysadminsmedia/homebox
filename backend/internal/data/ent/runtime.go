@@ -494,6 +494,16 @@ func init() {
 	groupDescCurrency := groupFields[1].Descriptor()
 	// group.DefaultCurrency holds the default value on creation for the currency field.
 	group.DefaultCurrency = groupDescCurrency.Default.(string)
+	// groupDescFoundContactEnabled is the schema descriptor for found_contact_enabled field.
+	groupDescFoundContactEnabled := groupFields[2].Descriptor()
+	// group.DefaultFoundContactEnabled holds the default value on creation for the found_contact_enabled field.
+	group.DefaultFoundContactEnabled = groupDescFoundContactEnabled.Default.(bool)
+	// groupDescFoundContactMessage is the schema descriptor for found_contact_message field.
+	groupDescFoundContactMessage := groupFields[3].Descriptor()
+	// group.DefaultFoundContactMessage holds the default value on creation for the found_contact_message field.
+	group.DefaultFoundContactMessage = groupDescFoundContactMessage.Default.(string)
+	// group.FoundContactMessageValidator is a validator for the "found_contact_message" field. It is called by the builders before save.
+	group.FoundContactMessageValidator = groupDescFoundContactMessage.Validators[0].(func(string) error)
 	// groupDescID is the schema descriptor for id field.
 	groupDescID := groupMixinFields0[0].Descriptor()
 	// group.DefaultID holds the default value on creation for the id field.

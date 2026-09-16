@@ -71,6 +71,34 @@ func (_u *GroupUpdate) SetNillableCurrency(v *string) *GroupUpdate {
 	return _u
 }
 
+// SetFoundContactEnabled sets the "found_contact_enabled" field.
+func (_u *GroupUpdate) SetFoundContactEnabled(v bool) *GroupUpdate {
+	_u.mutation.SetFoundContactEnabled(v)
+	return _u
+}
+
+// SetNillableFoundContactEnabled sets the "found_contact_enabled" field if the given value is not nil.
+func (_u *GroupUpdate) SetNillableFoundContactEnabled(v *bool) *GroupUpdate {
+	if v != nil {
+		_u.SetFoundContactEnabled(*v)
+	}
+	return _u
+}
+
+// SetFoundContactMessage sets the "found_contact_message" field.
+func (_u *GroupUpdate) SetFoundContactMessage(v string) *GroupUpdate {
+	_u.mutation.SetFoundContactMessage(v)
+	return _u
+}
+
+// SetNillableFoundContactMessage sets the "found_contact_message" field if the given value is not nil.
+func (_u *GroupUpdate) SetNillableFoundContactMessage(v *string) *GroupUpdate {
+	if v != nil {
+		_u.SetFoundContactMessage(*v)
+	}
+	return _u
+}
+
 // AddUserIDs adds the "users" edge to the User entity by IDs.
 func (_u *GroupUpdate) AddUserIDs(ids ...uuid.UUID) *GroupUpdate {
 	_u.mutation.AddUserIDs(ids...)
@@ -407,6 +435,11 @@ func (_u *GroupUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Group.name": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.FoundContactMessage(); ok {
+		if err := group.FoundContactMessageValidator(v); err != nil {
+			return &ValidationError{Name: "found_contact_message", err: fmt.Errorf(`ent: validator failed for field "Group.found_contact_message": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -430,6 +463,12 @@ func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Currency(); ok {
 		_spec.SetField(group.FieldCurrency, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.FoundContactEnabled(); ok {
+		_spec.SetField(group.FieldFoundContactEnabled, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.FoundContactMessage(); ok {
+		_spec.SetField(group.FieldFoundContactMessage, field.TypeString, value)
 	}
 	if _u.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -857,6 +896,34 @@ func (_u *GroupUpdateOne) SetNillableCurrency(v *string) *GroupUpdateOne {
 	return _u
 }
 
+// SetFoundContactEnabled sets the "found_contact_enabled" field.
+func (_u *GroupUpdateOne) SetFoundContactEnabled(v bool) *GroupUpdateOne {
+	_u.mutation.SetFoundContactEnabled(v)
+	return _u
+}
+
+// SetNillableFoundContactEnabled sets the "found_contact_enabled" field if the given value is not nil.
+func (_u *GroupUpdateOne) SetNillableFoundContactEnabled(v *bool) *GroupUpdateOne {
+	if v != nil {
+		_u.SetFoundContactEnabled(*v)
+	}
+	return _u
+}
+
+// SetFoundContactMessage sets the "found_contact_message" field.
+func (_u *GroupUpdateOne) SetFoundContactMessage(v string) *GroupUpdateOne {
+	_u.mutation.SetFoundContactMessage(v)
+	return _u
+}
+
+// SetNillableFoundContactMessage sets the "found_contact_message" field if the given value is not nil.
+func (_u *GroupUpdateOne) SetNillableFoundContactMessage(v *string) *GroupUpdateOne {
+	if v != nil {
+		_u.SetFoundContactMessage(*v)
+	}
+	return _u
+}
+
 // AddUserIDs adds the "users" edge to the User entity by IDs.
 func (_u *GroupUpdateOne) AddUserIDs(ids ...uuid.UUID) *GroupUpdateOne {
 	_u.mutation.AddUserIDs(ids...)
@@ -1206,6 +1273,11 @@ func (_u *GroupUpdateOne) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Group.name": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.FoundContactMessage(); ok {
+		if err := group.FoundContactMessageValidator(v); err != nil {
+			return &ValidationError{Name: "found_contact_message", err: fmt.Errorf(`ent: validator failed for field "Group.found_contact_message": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -1246,6 +1318,12 @@ func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error)
 	}
 	if value, ok := _u.mutation.Currency(); ok {
 		_spec.SetField(group.FieldCurrency, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.FoundContactEnabled(); ok {
+		_spec.SetField(group.FieldFoundContactEnabled, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.FoundContactMessage(); ok {
+		_spec.SetField(group.FieldFoundContactMessage, field.TypeString, value)
 	}
 	if _u.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
