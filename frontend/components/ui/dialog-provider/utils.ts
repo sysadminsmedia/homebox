@@ -63,7 +63,9 @@ export type DialogParamsMap = {
     itemId: string;
     attachmentId: string;
   };
-  [DialogID.CreateEntity]: { baseType: "item"; product?: BarcodeProduct; subItem?: true } | { baseType: "location" };
+  [DialogID.CreateEntity]:
+    | { baseType: "item"; externalId?: string; product?: BarcodeProduct; subItem?: true }
+    | { baseType: "location" };
   [DialogID.ProductImport]?: { barcode?: string };
   [DialogID.EditMaintenance]:
     | { type: "create"; itemId: string | string[] }
@@ -77,6 +79,7 @@ export type DialogParamsMap = {
   };
   [DialogID.CreateCollection]?: { redirectTo?: string };
   [DialogID.JoinCollection]?: { redirectTo?: string; inviteCode?: string };
+  [DialogID.Scanner]?: { mode?: string };
 };
 
 /**

@@ -112,6 +112,7 @@ type EntityTemplateCreateItemRequest struct {
 	EntityTypeID uuid.UUID   `json:"entityTypeId"`
 	TagIDs       []uuid.UUID `json:"tagIds"`
 	Quantity     *float64    `json:"quantity"`
+	ExternalID   string      `json:"externalID"`
 }
 
 // HandleEntityTemplatesCreateItem godoc
@@ -159,6 +160,7 @@ func (ctrl *V1Controller) HandleEntityTemplatesCreateItem() errchain.HandlerFunc
 			TagIDs:           body.TagIDs,
 			Insured:          template.DefaultInsured,
 			Manufacturer:     template.DefaultManufacturer,
+			ExternalID:       body.ExternalID,
 			ModelNumber:      template.DefaultModelNumber,
 			LifetimeWarranty: template.DefaultLifetimeWarranty,
 			WarrantyDetails:  template.DefaultWarrantyDetails,

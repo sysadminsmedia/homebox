@@ -43,6 +43,8 @@ const (
 	FieldModelNumber = "model_number"
 	// FieldManufacturer holds the string denoting the manufacturer field in the database.
 	FieldManufacturer = "manufacturer"
+	// FieldExternalID holds the string denoting the external_id field in the database.
+	FieldExternalID = "external_id"
 	// FieldLifetimeWarranty holds the string denoting the lifetime_warranty field in the database.
 	FieldLifetimeWarranty = "lifetime_warranty"
 	// FieldWarrantyExpires holds the string denoting the warranty_expires field in the database.
@@ -148,6 +150,7 @@ var Columns = []string{
 	FieldSerialNumber,
 	FieldModelNumber,
 	FieldManufacturer,
+	FieldExternalID,
 	FieldLifetimeWarranty,
 	FieldWarrantyExpires,
 	FieldWarrantyDetails,
@@ -220,6 +223,8 @@ var (
 	ModelNumberValidator func(string) error
 	// ManufacturerValidator is a validator for the "manufacturer" field. It is called by the builders before save.
 	ManufacturerValidator func(string) error
+	// ExternalIDValidator is a validator for the "external_id" field. It is called by the builders before save.
+	ExternalIDValidator func(string) error
 	// DefaultLifetimeWarranty holds the default value on creation for the "lifetime_warranty" field.
 	DefaultLifetimeWarranty bool
 	// WarrantyDetailsValidator is a validator for the "warranty_details" field. It is called by the builders before save.
@@ -310,6 +315,11 @@ func ByModelNumber(opts ...sql.OrderTermOption) OrderOption {
 // ByManufacturer orders the results by the manufacturer field.
 func ByManufacturer(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldManufacturer, opts...).ToFunc()
+}
+
+// ByExternalID orders the results by the external_id field.
+func ByExternalID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExternalID, opts...).ToFunc()
 }
 
 // ByLifetimeWarranty orders the results by the lifetime_warranty field.

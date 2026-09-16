@@ -76,6 +76,11 @@ func Currency(v string) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldCurrency, v))
 }
 
+// ExternalIdsEnabled applies equality check predicate on the "external_ids_enabled" field. It's identical to ExternalIdsEnabledEQ.
+func ExternalIdsEnabled(v bool) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldExternalIdsEnabled, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldCreatedAt, v))
@@ -284,6 +289,16 @@ func CurrencyEqualFold(v string) predicate.Group {
 // CurrencyContainsFold applies the ContainsFold predicate on the "currency" field.
 func CurrencyContainsFold(v string) predicate.Group {
 	return predicate.Group(sql.FieldContainsFold(FieldCurrency, v))
+}
+
+// ExternalIdsEnabledEQ applies the EQ predicate on the "external_ids_enabled" field.
+func ExternalIdsEnabledEQ(v bool) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldExternalIdsEnabled, v))
+}
+
+// ExternalIdsEnabledNEQ applies the NEQ predicate on the "external_ids_enabled" field.
+func ExternalIdsEnabledNEQ(v bool) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldExternalIdsEnabled, v))
 }
 
 // HasUsers applies the HasEdge predicate on the "users" edge.

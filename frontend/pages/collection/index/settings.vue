@@ -2,6 +2,7 @@
   import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import { Button } from "@/components/ui/button";
+  import { Checkbox } from "@/components/ui/checkbox";
   import { Label } from "@/components/ui/label";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import MdiLoading from "~icons/mdi/loading";
@@ -28,6 +29,7 @@
   const currencies = ref<CurrenciesCurrency[]>([]);
   const name = ref("");
   const currencyCode = ref("USD");
+  const externalIdsEnabled = ref(false);
   const currencyExample = ref("$1,000.00");
 
   const loadSettings = async () => {
@@ -60,6 +62,7 @@
       group.value = res.data;
       name.value = res.data.name;
       currencyCode.value = res.data.currency;
+      externalIdsEnabled.value = res.data.external_ids_enabled;
     } catch (e) {
       const msg = (e as Error).message ?? String(e);
       error.value = msg;
@@ -101,6 +104,7 @@
         {
           name: name.value,
           currency: currencyCode.value,
+          external_ids_enabled: externalIdsEnabled.value,
         },
         selectedCollection.value.id
       );
@@ -158,6 +162,11 @@
             </SelectContent>
           </Select>
           <p class="m-2 text-sm">{{ $t("profile.example") }}: {{ currencyExample }}</p>
+        </div>
+
+        <div class="mt-4 flex items-center space-x-2">
+          <Checkbox id="external-ids" v-model="externalIdsEnabled" :disabled="saving"> </Checkbox>
+          <Label for="external-ids">{{ $t("profile.enable_external_ids") }}</Label>
         </div>
 
         <div class="mt-4">
