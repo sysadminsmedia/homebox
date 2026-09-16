@@ -204,7 +204,7 @@ export interface EntEntity {
   /** LifetimeWarranty holds the value of the "lifetime_warranty" field. */
   lifetime_warranty: boolean;
   /** LowStockThreshold holds the value of the "low_stock_threshold" field. */
-  low_stock_threshold: number;
+  low_stock_threshold?: number | null;
   /** Manufacturer holds the value of the "manufacturer" field. */
   manufacturer: string;
   /** ModelNumber holds the value of the "model_number" field. */
@@ -303,7 +303,7 @@ export interface EntEntityTemplate {
   /** DefaultLifetimeWarranty holds the value of the "default_lifetime_warranty" field. */
   default_lifetime_warranty: boolean;
   /** DefaultLowStockThreshold holds the value of the "default_low_stock_threshold" field. */
-  default_low_stock_threshold: number;
+  default_low_stock_threshold?: number | null;
   /** DefaultManufacturer holds the value of the "default_manufacturer" field. */
   default_manufacturer: string;
   /** Default model number for items created from this template */

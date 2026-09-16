@@ -17,7 +17,7 @@ import (
 
 // Entity is the model entity for the Entity schema.
 type Entity struct {
-	config `json:"-"`
+	config `extensions:"-" json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -35,7 +35,7 @@ type Entity struct {
 	// Quantity holds the value of the "quantity" field.
 	Quantity float64 `json:"quantity,omitempty"`
 	// LowStockThreshold holds the value of the "low_stock_threshold" field.
-	LowStockThreshold *float64 `json:"low_stock_threshold,omitempty"`
+	LowStockThreshold *float64 `json:"low_stock_threshold,omitempty" extensions:"x-nullable"`
 	// Insured holds the value of the "insured" field.
 	Insured bool `json:"insured,omitempty"`
 	// Archived holds the value of the "archived" field.

@@ -18,7 +18,7 @@ import (
 
 // EntityTemplate is the model entity for the EntityTemplate schema.
 type EntityTemplate struct {
-	config `json:"-"`
+	config `extensions:"-" json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -34,7 +34,7 @@ type EntityTemplate struct {
 	// DefaultQuantity holds the value of the "default_quantity" field.
 	DefaultQuantity float64 `json:"default_quantity,omitempty"`
 	// DefaultLowStockThreshold holds the value of the "default_low_stock_threshold" field.
-	DefaultLowStockThreshold *float64 `json:"default_low_stock_threshold,omitempty"`
+	DefaultLowStockThreshold *float64 `json:"default_low_stock_threshold,omitempty" extensions:"x-nullable"`
 	// DefaultInsured holds the value of the "default_insured" field.
 	DefaultInsured bool `json:"default_insured,omitempty"`
 	// Default name template for items (can use placeholders)

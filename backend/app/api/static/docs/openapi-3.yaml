@@ -2274,6 +2274,7 @@ components:
         low_stock_threshold:
           description: LowStockThreshold holds the value of the "low_stock_threshold" field.
           type: number
+          nullable: true
         manufacturer:
           description: Manufacturer holds the value of the "manufacturer" field.
           type: string
@@ -2434,6 +2435,7 @@ components:
           description: DefaultLowStockThreshold holds the value of the
             "default_low_stock_threshold" field.
           type: number
+          nullable: true
         default_manufacturer:
           description: DefaultManufacturer holds the value of the "default_manufacturer"
             field.

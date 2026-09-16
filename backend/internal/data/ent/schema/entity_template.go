@@ -43,7 +43,8 @@ func (EntityTemplate) Fields() []ent.Field {
 			Default(1),
 		field.Float("default_low_stock_threshold").
 			Optional().
-			Nillable(),
+			Nillable().
+			StructTag(`json:"default_low_stock_threshold,omitempty" extensions:"x-nullable"`),
 		field.Bool("default_insured").
 			Default(false),
 

@@ -3517,7 +3517,8 @@ const docTemplate = `{
                 },
                 "low_stock_threshold": {
                     "description": "LowStockThreshold holds the value of the \"low_stock_threshold\" field.",
-                    "type": "number"
+                    "type": "number",
+                    "x-nullable": true
                 },
                 "manufacturer": {
                     "description": "Manufacturer holds the value of the \"manufacturer\" field.",
@@ -3744,7 +3745,8 @@ const docTemplate = `{
                 },
                 "default_low_stock_threshold": {
                     "description": "DefaultLowStockThreshold holds the value of the \"default_low_stock_threshold\" field.",
-                    "type": "number"
+                    "type": "number",
+                    "x-nullable": true
                 },
                 "default_manufacturer": {
                     "description": "DefaultManufacturer holds the value of the \"default_manufacturer\" field.",
