@@ -54,6 +54,8 @@ type Entity struct {
 	WarrantyExpires time.Time `json:"warranty_expires,omitempty"`
 	// WarrantyDetails holds the value of the "warranty_details" field.
 	WarrantyDetails string `json:"warranty_details,omitempty"`
+	// NotifyWarrantyExpiration holds the value of the "notify_warranty_expiration" field.
+	NotifyWarrantyExpiration bool `json:"notify_warranty_expiration,omitempty"`
 	// PurchaseDate holds the value of the "purchase_date" field.
 	PurchaseDate time.Time `json:"purchase_date,omitempty"`
 	// PurchaseFrom holds the value of the "purchase_from" field.
@@ -183,7 +185,7 @@ func (*Entity) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case entity.FieldInsured, entity.FieldArchived, entity.FieldSyncChildEntityLocations, entity.FieldLifetimeWarranty:
+		case entity.FieldInsured, entity.FieldArchived, entity.FieldSyncChildEntityLocations, entity.FieldLifetimeWarranty, entity.FieldNotifyWarrantyExpiration:
 			values[i] = new(sql.NullBool)
 		case entity.FieldQuantity, entity.FieldPurchasePrice, entity.FieldSoldPrice:
 			values[i] = new(sql.NullFloat64)
@@ -323,6 +325,12 @@ func (_m *Entity) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field warranty_details", values[i])
 			} else if value.Valid {
 				_m.WarrantyDetails = value.String
+			}
+		case entity.FieldNotifyWarrantyExpiration:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field notify_warranty_expiration", values[i])
+			} else if value.Valid {
+				_m.NotifyWarrantyExpiration = value.Bool
 			}
 		case entity.FieldPurchaseDate:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -513,6 +521,9 @@ func (_m *Entity) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("warranty_details=")
 	builder.WriteString(_m.WarrantyDetails)
+	builder.WriteString(", ")
+	builder.WriteString("notify_warranty_expiration=")
+	builder.WriteString(fmt.Sprintf("%v", _m.NotifyWarrantyExpiration))
 	builder.WriteString(", ")
 	builder.WriteString("purchase_date=")
 	builder.WriteString(_m.PurchaseDate.Format(time.ANSIC))

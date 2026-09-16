@@ -49,6 +49,8 @@ const (
 	FieldWarrantyExpires = "warranty_expires"
 	// FieldWarrantyDetails holds the string denoting the warranty_details field in the database.
 	FieldWarrantyDetails = "warranty_details"
+	// FieldNotifyWarrantyExpiration holds the string denoting the notify_warranty_expiration field in the database.
+	FieldNotifyWarrantyExpiration = "notify_warranty_expiration"
 	// FieldPurchaseDate holds the string denoting the purchase_date field in the database.
 	FieldPurchaseDate = "purchase_date"
 	// FieldPurchaseFrom holds the string denoting the purchase_from field in the database.
@@ -151,6 +153,7 @@ var Columns = []string{
 	FieldLifetimeWarranty,
 	FieldWarrantyExpires,
 	FieldWarrantyDetails,
+	FieldNotifyWarrantyExpiration,
 	FieldPurchaseDate,
 	FieldPurchaseFrom,
 	FieldPurchasePrice,
@@ -224,6 +227,8 @@ var (
 	DefaultLifetimeWarranty bool
 	// WarrantyDetailsValidator is a validator for the "warranty_details" field. It is called by the builders before save.
 	WarrantyDetailsValidator func(string) error
+	// DefaultNotifyWarrantyExpiration holds the default value on creation for the "notify_warranty_expiration" field.
+	DefaultNotifyWarrantyExpiration bool
 	// DefaultPurchasePrice holds the default value on creation for the "purchase_price" field.
 	DefaultPurchasePrice float64
 	// DefaultSoldPrice holds the default value on creation for the "sold_price" field.
@@ -325,6 +330,11 @@ func ByWarrantyExpires(opts ...sql.OrderTermOption) OrderOption {
 // ByWarrantyDetails orders the results by the warranty_details field.
 func ByWarrantyDetails(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldWarrantyDetails, opts...).ToFunc()
+}
+
+// ByNotifyWarrantyExpiration orders the results by the notify_warranty_expiration field.
+func ByNotifyWarrantyExpiration(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNotifyWarrantyExpiration, opts...).ToFunc()
 }
 
 // ByPurchaseDate orders the results by the purchase_date field.
