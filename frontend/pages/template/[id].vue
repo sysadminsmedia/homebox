@@ -62,6 +62,16 @@
   }
 
   const updating = ref(false);
+
+  function normalizeNullableNumber(value: number | string | null | undefined): number | null {
+    if (value === null || value === undefined || value === "") {
+      return null;
+    }
+
+    const num = typeof value === "number" ? value : Number(value);
+    return Number.isFinite(num) ? num : null;
+  }
+
   const updateData = reactive({
     id: "",
     name: "",
@@ -121,9 +131,7 @@
     // Prepare the data with proper format for API
     const payload = {
       ...updateData,
-      defaultLowStockThreshold: updateData.defaultLowStockThreshold === "" || updateData.defaultLowStockThreshold === undefined
-          ? null
-          : updateData.defaultLowStockThreshold,
+      defaultLowStockThreshold: normalizeNullableNumber(updateData.defaultLowStockThreshold),
       defaultLocationId: updateData.defaultLocation?.id ?? null,
     };
 

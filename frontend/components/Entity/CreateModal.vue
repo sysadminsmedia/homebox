@@ -367,6 +367,15 @@
 
   const LAST_TEMPLATE_KEY = "homebox:lastUsedTemplate";
 
+  function normalizeNullableNumber(value: number | string | null | undefined): number | null {
+    if (value === null || value === undefined || value === "") {
+      return null;
+    }
+
+    const num = typeof value === "number" ? value : Number(value);
+    return Number.isFinite(num) ? num : null;
+  }
+
   const loading = ref(false);
   const focused = ref(false);
   const selectedTemplate = ref<EntityTemplateSummary | null>(null);
@@ -414,6 +423,7 @@
 
     // Pre-fill form with template defaults
     form.quantity = data.defaultQuantity;
+    form.lowStockThreshold = data.defaultLowStockThreshold ?? undefined;
     if (data.defaultName) {
       form.name = data.defaultName;
     }
@@ -456,6 +466,7 @@
     templateData.value = data;
     templateUserSelected.value = true;
     form.quantity = data.defaultQuantity;
+    form.lowStockThreshold = data.defaultLowStockThreshold ?? undefined;
     if (data.defaultName) {
       form.name = data.defaultName;
     }
@@ -481,6 +492,7 @@
     templateUserSelected.value = false;
     showTemplateDetails.value = false;
     form.quantity = 1;
+    form.lowStockThreshold = undefined;
     localStorage.removeItem(LAST_TEMPLATE_KEY);
   }
 
@@ -641,15 +653,14 @@
       data = result.data;
     } else if (templateData.value) {
       // If a template is selected, use the template creation endpoint
+      const normalizedLowStockThreshold = normalizeNullableNumber(form.lowStockThreshold);
       const templateRequest = {
         name: form.name,
         description: form.description,
         parentId: form.location!.id,
         tagIds: form.tags,
         quantity: form.quantity,
-        ...(form.lowStockThreshold !== undefined
-          ? { lowStockThreshold: form.lowStockThreshold }
-          : {}),
+        ...(normalizedLowStockThreshold !== null ? { lowStockThreshold: normalizedLowStockThreshold } : {}),
         entityTypeId: selectedEntityType.value?.id || "",
       };
 
@@ -662,7 +673,7 @@
         parentId: form.parentId || form.location?.id || null,
         name: form.name,
         quantity: form.quantity,
-        lowStockThreshold: form.lowStockThreshold ?? null,
+        lowStockThreshold: normalizeNullableNumber(form.lowStockThreshold),
         description: form.description,
         manufacturer: form.manufacturer,
         modelNumber: form.modelNumber,

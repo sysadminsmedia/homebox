@@ -129,6 +129,16 @@
   const tags = computed(() => tagStore.tags);
 
   const loading = ref(false);
+
+  function normalizeNullableNumber(value: number | string | null | undefined): number | null {
+    if (value === null || value === undefined || value === "") {
+      return null;
+    }
+
+    const num = typeof value === "number" ? value : Number(value);
+    return Number.isFinite(num) ? num : null;
+  }
+
   const form = reactive({
     name: "",
     description: "",
@@ -198,7 +208,7 @@
       defaultName: form.defaultName || null,
       defaultDescription: form.defaultDescription || null,
       defaultQuantity: form.defaultQuantity,
-      defaultLowStockThreshold: form.defaultLowStockThreshold ?? null,
+      defaultLowStockThreshold: normalizeNullableNumber(form.defaultLowStockThreshold),
       defaultInsured: form.defaultInsured,
       defaultManufacturer: form.defaultManufacturer || null,
       defaultModelNumber: form.defaultModelNumber || null,
