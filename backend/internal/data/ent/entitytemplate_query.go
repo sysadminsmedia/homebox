@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
@@ -23,14 +24,15 @@ import (
 // EntityTemplateQuery is the builder for querying EntityTemplate entities.
 type EntityTemplateQuery struct {
 	config
-	ctx          *QueryContext
-	order        []entitytemplate.OrderOption
-	inters       []Interceptor
-	predicates   []predicate.EntityTemplate
-	withGroup    *GroupQuery
-	withFields   *TemplateFieldQuery
-	withLocation *EntityQuery
-	withFKs      bool
+	ctx              *QueryContext
+	order            []entitytemplate.OrderOption
+	inters           []Interceptor
+	predicates       []predicate.EntityTemplate
+	withGroup        *GroupQuery
+	withFields       *TemplateFieldQuery
+	withLocation     *EntityQuery
+	withDefaultImage *AttachmentQuery
+	withFKs          bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -126,6 +128,28 @@ func (_q *EntityTemplateQuery) QueryLocation() *EntityQuery {
 			sqlgraph.From(entitytemplate.Table, entitytemplate.FieldID, selector),
 			sqlgraph.To(entity.Table, entity.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, entitytemplate.LocationTable, entitytemplate.LocationColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryDefaultImage chains the current query on the "default_image" edge.
+func (_q *EntityTemplateQuery) QueryDefaultImage() *AttachmentQuery {
+	query := (&AttachmentClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entitytemplate.Table, entitytemplate.FieldID, selector),
+			sqlgraph.To(attachment.Table, attachment.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, entitytemplate.DefaultImageTable, entitytemplate.DefaultImageColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -320,14 +344,15 @@ func (_q *EntityTemplateQuery) Clone() *EntityTemplateQuery {
 		return nil
 	}
 	return &EntityTemplateQuery{
-		config:       _q.config,
-		ctx:          _q.ctx.Clone(),
-		order:        append([]entitytemplate.OrderOption{}, _q.order...),
-		inters:       append([]Interceptor{}, _q.inters...),
-		predicates:   append([]predicate.EntityTemplate{}, _q.predicates...),
-		withGroup:    _q.withGroup.Clone(),
-		withFields:   _q.withFields.Clone(),
-		withLocation: _q.withLocation.Clone(),
+		config:           _q.config,
+		ctx:              _q.ctx.Clone(),
+		order:            append([]entitytemplate.OrderOption{}, _q.order...),
+		inters:           append([]Interceptor{}, _q.inters...),
+		predicates:       append([]predicate.EntityTemplate{}, _q.predicates...),
+		withGroup:        _q.withGroup.Clone(),
+		withFields:       _q.withFields.Clone(),
+		withLocation:     _q.withLocation.Clone(),
+		withDefaultImage: _q.withDefaultImage.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -364,6 +389,17 @@ func (_q *EntityTemplateQuery) WithLocation(opts ...func(*EntityQuery)) *EntityT
 		opt(query)
 	}
 	_q.withLocation = query
+	return _q
+}
+
+// WithDefaultImage tells the query-builder to eager-load the nodes that are connected to
+// the "default_image" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *EntityTemplateQuery) WithDefaultImage(opts ...func(*AttachmentQuery)) *EntityTemplateQuery {
+	query := (&AttachmentClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withDefaultImage = query
 	return _q
 }
 
@@ -446,10 +482,11 @@ func (_q *EntityTemplateQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 		nodes       = []*EntityTemplate{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			_q.withGroup != nil,
 			_q.withFields != nil,
 			_q.withLocation != nil,
+			_q.withDefaultImage != nil,
 		}
 	)
 	if _q.withGroup != nil || _q.withLocation != nil {
@@ -492,6 +529,12 @@ func (_q *EntityTemplateQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 	if query := _q.withLocation; query != nil {
 		if err := _q.loadLocation(ctx, query, nodes, nil,
 			func(n *EntityTemplate, e *Entity) { n.Edges.Location = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withDefaultImage; query != nil {
+		if err := _q.loadDefaultImage(ctx, query, nodes, nil,
+			func(n *EntityTemplate, e *Attachment) { n.Edges.DefaultImage = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -590,6 +633,34 @@ func (_q *EntityTemplateQuery) loadLocation(ctx context.Context, query *EntityQu
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
+	}
+	return nil
+}
+func (_q *EntityTemplateQuery) loadDefaultImage(ctx context.Context, query *AttachmentQuery, nodes []*EntityTemplate, init func(*EntityTemplate), assign func(*EntityTemplate, *Attachment)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*EntityTemplate)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+	}
+	query.withFKs = true
+	query.Where(predicate.Attachment(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(entitytemplate.DefaultImageColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.entity_template_default_image
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "entity_template_default_image" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "entity_template_default_image" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }

@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
@@ -347,6 +348,25 @@ func (_u *EntityTemplateUpdate) SetLocation(v *Entity) *EntityTemplateUpdate {
 	return _u.SetLocationID(v.ID)
 }
 
+// SetDefaultImageID sets the "default_image" edge to the Attachment entity by ID.
+func (_u *EntityTemplateUpdate) SetDefaultImageID(id uuid.UUID) *EntityTemplateUpdate {
+	_u.mutation.SetDefaultImageID(id)
+	return _u
+}
+
+// SetNillableDefaultImageID sets the "default_image" edge to the Attachment entity by ID if the given value is not nil.
+func (_u *EntityTemplateUpdate) SetNillableDefaultImageID(id *uuid.UUID) *EntityTemplateUpdate {
+	if id != nil {
+		_u = _u.SetDefaultImageID(*id)
+	}
+	return _u
+}
+
+// SetDefaultImage sets the "default_image" edge to the Attachment entity.
+func (_u *EntityTemplateUpdate) SetDefaultImage(v *Attachment) *EntityTemplateUpdate {
+	return _u.SetDefaultImageID(v.ID)
+}
+
 // Mutation returns the EntityTemplateMutation object of the builder.
 func (_u *EntityTemplateUpdate) Mutation() *EntityTemplateMutation {
 	return _u.mutation
@@ -382,6 +402,12 @@ func (_u *EntityTemplateUpdate) RemoveFields(v ...*TemplateField) *EntityTemplat
 // ClearLocation clears the "location" edge to the Entity entity.
 func (_u *EntityTemplateUpdate) ClearLocation() *EntityTemplateUpdate {
 	_u.mutation.ClearLocation()
+	return _u
+}
+
+// ClearDefaultImage clears the "default_image" edge to the Attachment entity.
+func (_u *EntityTemplateUpdate) ClearDefaultImage() *EntityTemplateUpdate {
+	_u.mutation.ClearDefaultImage()
 	return _u
 }
 
@@ -657,6 +683,35 @@ func (_u *EntityTemplateUpdate) sqlSave(ctx context.Context) (_node int, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.DefaultImageCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   entitytemplate.DefaultImageTable,
+			Columns: []string{entitytemplate.DefaultImageColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.DefaultImageIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   entitytemplate.DefaultImageTable,
+			Columns: []string{entitytemplate.DefaultImageColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -998,6 +1053,25 @@ func (_u *EntityTemplateUpdateOne) SetLocation(v *Entity) *EntityTemplateUpdateO
 	return _u.SetLocationID(v.ID)
 }
 
+// SetDefaultImageID sets the "default_image" edge to the Attachment entity by ID.
+func (_u *EntityTemplateUpdateOne) SetDefaultImageID(id uuid.UUID) *EntityTemplateUpdateOne {
+	_u.mutation.SetDefaultImageID(id)
+	return _u
+}
+
+// SetNillableDefaultImageID sets the "default_image" edge to the Attachment entity by ID if the given value is not nil.
+func (_u *EntityTemplateUpdateOne) SetNillableDefaultImageID(id *uuid.UUID) *EntityTemplateUpdateOne {
+	if id != nil {
+		_u = _u.SetDefaultImageID(*id)
+	}
+	return _u
+}
+
+// SetDefaultImage sets the "default_image" edge to the Attachment entity.
+func (_u *EntityTemplateUpdateOne) SetDefaultImage(v *Attachment) *EntityTemplateUpdateOne {
+	return _u.SetDefaultImageID(v.ID)
+}
+
 // Mutation returns the EntityTemplateMutation object of the builder.
 func (_u *EntityTemplateUpdateOne) Mutation() *EntityTemplateMutation {
 	return _u.mutation
@@ -1033,6 +1107,12 @@ func (_u *EntityTemplateUpdateOne) RemoveFields(v ...*TemplateField) *EntityTemp
 // ClearLocation clears the "location" edge to the Entity entity.
 func (_u *EntityTemplateUpdateOne) ClearLocation() *EntityTemplateUpdateOne {
 	_u.mutation.ClearLocation()
+	return _u
+}
+
+// ClearDefaultImage clears the "default_image" edge to the Attachment entity.
+func (_u *EntityTemplateUpdateOne) ClearDefaultImage() *EntityTemplateUpdateOne {
+	_u.mutation.ClearDefaultImage()
 	return _u
 }
 
@@ -1338,6 +1418,35 @@ func (_u *EntityTemplateUpdateOne) sqlSave(ctx context.Context) (_node *EntityTe
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.DefaultImageCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   entitytemplate.DefaultImageTable,
+			Columns: []string{entitytemplate.DefaultImageColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.DefaultImageIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   entitytemplate.DefaultImageTable,
+			Columns: []string{entitytemplate.DefaultImageColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
@@ -303,6 +304,25 @@ func (_c *EntityTemplateCreate) SetNillableLocationID(id *uuid.UUID) *EntityTemp
 // SetLocation sets the "location" edge to the Entity entity.
 func (_c *EntityTemplateCreate) SetLocation(v *Entity) *EntityTemplateCreate {
 	return _c.SetLocationID(v.ID)
+}
+
+// SetDefaultImageID sets the "default_image" edge to the Attachment entity by ID.
+func (_c *EntityTemplateCreate) SetDefaultImageID(id uuid.UUID) *EntityTemplateCreate {
+	_c.mutation.SetDefaultImageID(id)
+	return _c
+}
+
+// SetNillableDefaultImageID sets the "default_image" edge to the Attachment entity by ID if the given value is not nil.
+func (_c *EntityTemplateCreate) SetNillableDefaultImageID(id *uuid.UUID) *EntityTemplateCreate {
+	if id != nil {
+		_c = _c.SetDefaultImageID(*id)
+	}
+	return _c
+}
+
+// SetDefaultImage sets the "default_image" edge to the Attachment entity.
+func (_c *EntityTemplateCreate) SetDefaultImage(v *Attachment) *EntityTemplateCreate {
+	return _c.SetDefaultImageID(v.ID)
 }
 
 // Mutation returns the EntityTemplateMutation object of the builder.
@@ -601,6 +621,22 @@ func (_c *EntityTemplateCreate) createSpec() (*EntityTemplate, *sqlgraph.CreateS
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.entity_template_location = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.DefaultImageIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   entitytemplate.DefaultImageTable,
+			Columns: []string{entitytemplate.DefaultImageColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

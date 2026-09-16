@@ -62,6 +62,33 @@
       </div>
 
       <Separator class="my-2" />
+      <div class="flex flex-col gap-2">
+        <h3 class="text-sm font-medium">{{ $t("components.template.form.default_image") }}</h3>
+        <p class="text-xs text-muted-foreground">{{ $t("components.template.form.default_image_hint") }}</p>
+        <div class="flex items-center gap-3">
+          <img
+            v-if="imagePreview"
+            :src="imagePreview"
+            :alt="$t('components.template.form.default_image')"
+            class="size-16 rounded border object-cover"
+          />
+          <Button type="button" size="sm" variant="outline" @click="imageInput?.click()">
+            {{ image ? $t("components.template.form.replace_image") : $t("components.template.form.upload_image") }}
+          </Button>
+          <Button v-if="image" type="button" size="sm" variant="ghost" @click="clearImage">
+            {{ $t("components.template.form.remove_image") }}
+          </Button>
+          <input
+            ref="imageInput"
+            type="file"
+            class="hidden"
+            accept="image/png,image/jpeg,image/gif,image/avif,image/webp"
+            @change="onImageSelected"
+          />
+        </div>
+      </div>
+
+      <Separator class="my-2" />
       <div class="flex items-center justify-between">
         <h3 class="text-sm font-medium">{{ $t("components.template.form.custom_fields") }}</h3>
         <Button type="button" size="sm" variant="outline" @click="addField">
@@ -145,6 +172,31 @@
 
   const NIL_UUID = "00000000-0000-0000-0000-000000000000";
 
+  const image = ref<File | null>(null);
+  const imagePreview = ref<string | null>(null);
+  const imageInput = ref<HTMLInputElement | null>(null);
+
+  function onImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = "";
+    if (!file) return;
+
+    clearImage();
+    image.value = file;
+    imagePreview.value = URL.createObjectURL(file);
+  }
+
+  function clearImage() {
+    if (imagePreview.value) {
+      URL.revokeObjectURL(imagePreview.value);
+    }
+    image.value = null;
+    imagePreview.value = null;
+  }
+
+  onBeforeUnmount(clearImage);
+
   function addField() {
     form.fields.push({ id: NIL_UUID, name: "", type: "text", textValue: "" });
   }
@@ -170,6 +222,7 @@
       includeSoldFields: false,
       fields: [],
     });
+    clearImage();
     loading.value = false;
   }
 
@@ -202,11 +255,20 @@
       fields: form.fields,
     };
 
-    const { error } = await api.templates.create(createData);
+    const { error, data } = await api.templates.create(createData);
     if (error) {
       toast.error(t("components.template.toast.create_failed"));
       loading.value = false;
       return;
+    }
+
+    // The image needs a template to belong to, so it follows the create call.
+    // A failure here leaves a usable template, so it warns rather than aborts.
+    if (image.value && data) {
+      const { error: imageError } = await api.templates.setImage(data.id, image.value, image.value.name);
+      if (imageError) {
+        toast.error(t("components.template.toast.image_update_failed"));
+      }
     }
 
     toast.success(t("components.template.toast.created"));

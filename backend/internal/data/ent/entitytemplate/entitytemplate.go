@@ -55,6 +55,8 @@ const (
 	EdgeFields = "fields"
 	// EdgeLocation holds the string denoting the location edge name in mutations.
 	EdgeLocation = "location"
+	// EdgeDefaultImage holds the string denoting the default_image edge name in mutations.
+	EdgeDefaultImage = "default_image"
 	// Table holds the table name of the entitytemplate in the database.
 	Table = "entity_templates"
 	// GroupTable is the table that holds the group relation/edge.
@@ -78,6 +80,13 @@ const (
 	LocationInverseTable = "entities"
 	// LocationColumn is the table column denoting the location relation/edge.
 	LocationColumn = "entity_template_location"
+	// DefaultImageTable is the table that holds the default_image relation/edge.
+	DefaultImageTable = "attachments"
+	// DefaultImageInverseTable is the table name for the Attachment entity.
+	// It exists in this package in order to avoid circular dependency with the "attachment" package.
+	DefaultImageInverseTable = "attachments"
+	// DefaultImageColumn is the table column denoting the default_image relation/edge.
+	DefaultImageColumn = "entity_template_default_image"
 )
 
 // Columns holds all SQL columns for entitytemplate fields.
@@ -278,6 +287,13 @@ func ByLocationField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newLocationStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByDefaultImageField orders the results by default_image field.
+func ByDefaultImageField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newDefaultImageStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newGroupStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -297,5 +313,12 @@ func newLocationStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(LocationInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, false, LocationTable, LocationColumn),
+	)
+}
+func newDefaultImageStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DefaultImageInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, DefaultImageTable, DefaultImageColumn),
 	)
 }

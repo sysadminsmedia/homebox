@@ -29,6 +29,21 @@ export class TemplatesApi extends BaseAPI {
     return this.http.put<EntityTemplateUpdate, EntityTemplateOut>({ url: route(`/templates/${id}`), body });
   }
 
+  setImage(id: string, file: File | Blob, filename: string) {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("name", filename);
+
+    return this.http.post<FormData, EntityTemplateOut>({
+      url: route(`/templates/${id}/image`),
+      data: formData,
+    });
+  }
+
+  deleteImage(id: string) {
+    return this.http.delete<EntityTemplateOut>({ url: route(`/templates/${id}/image`) });
+  }
+
   createItem(templateId: string, body: EntityTemplateCreateItemRequest) {
     return this.http.post<EntityTemplateCreateItemRequest, EntityOut>({
       url: route(`/templates/${templateId}/create-item`),

@@ -975,6 +975,29 @@ func HasLocationWith(preds ...predicate.Entity) predicate.EntityTemplate {
 	})
 }
 
+// HasDefaultImage applies the HasEdge predicate on the "default_image" edge.
+func HasDefaultImage() predicate.EntityTemplate {
+	return predicate.EntityTemplate(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, DefaultImageTable, DefaultImageColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasDefaultImageWith applies the HasEdge predicate on the "default_image" edge with a given conditions (other predicates).
+func HasDefaultImageWith(preds ...predicate.Attachment) predicate.EntityTemplate {
+	return predicate.EntityTemplate(func(s *sql.Selector) {
+		step := newDefaultImageStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.EntityTemplate) predicate.EntityTemplate {
 	return predicate.EntityTemplate(sql.AndPredicates(predicates...))

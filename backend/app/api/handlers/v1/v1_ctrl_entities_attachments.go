@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"context"
 	"errors"
 	"net/http"
 	"net/url"
@@ -12,6 +13,7 @@ import (
 	"github.com/hay-kot/httpkit/server"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
@@ -31,6 +33,17 @@ func sanitizeAttachmentName(name string) string {
 	name = strings.ReplaceAll(name, "/", "")
 	name = strings.ReplaceAll(name, "\\", "")
 	return name
+}
+
+// isImageExtension reports whether a file name looks like an image Homebox can
+// display and thumbnail.
+func isImageExtension(name string) bool {
+	switch strings.ToLower(filepath.Ext(name)) {
+	case ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".tiff", ".avif", ".ico", ".heic", ".jxl":
+		return true
+	default:
+		return false
+	}
 }
 
 // HandleEntityAttachmentCreate godoc
@@ -96,12 +109,9 @@ func (ctrl *V1Controller) HandleEntityAttachmentCreate() errchain.HandlerFunc {
 
 		attachmentType := r.FormValue("type")
 		if attachmentType == "" {
-			ext := filepath.Ext(attachmentName)
-
-			switch strings.ToLower(ext) {
-			case ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".tiff", ".avif", ".ico", ".heic", ".jxl":
+			if isImageExtension(attachmentName) {
 				attachmentType = attachment.TypePhoto.String()
-			default:
+			} else {
 				attachmentType = attachment.TypeAttachment.String()
 			}
 		}
@@ -187,6 +197,83 @@ func (ctrl *V1Controller) HandleEntityAttachmentUpdate() errchain.HandlerFunc {
 	return ctrl.handleEntityAttachmentsHandler
 }
 
+// serveAttachmentContent streams a stored attachment to the client. Entity
+// attachments and entity template images resolve the attachment row
+// differently but are served identically once it is in hand.
+func (ctrl *V1Controller) serveAttachmentContent(ctx context.Context, w http.ResponseWriter, r *http.Request, doc *ent.Attachment) error {
+	ctx, span := startEntityCtrlSpan(ctx, "controller.V1.serveAttachmentContent")
+	defer span.End()
+
+	if doc.MimeType == repo.MimeTypeLinkURL {
+		parsed, ok := parseExternalHTTPURL(doc.Path)
+		if !ok {
+			err := errors.New("invalid external URL attachment")
+			recordCtrlSpanError(span, err)
+			return validate.NewRequestError(err, http.StatusUnprocessableEntity)
+		}
+
+		http.Redirect(w, r, parsed.String(), http.StatusFound)
+		return nil
+	}
+
+	bucketCtx, bucketSpan := startEntityCtrlSpan(ctx, "controller.V1.serveAttachmentContent.openBucket")
+	bucket, err := blob.OpenBucket(bucketCtx, ctrl.repo.Attachments.GetConnString())
+	if err != nil {
+		recordCtrlSpanError(bucketSpan, err)
+		bucketSpan.End()
+		recordCtrlSpanError(span, err)
+		log.Err(err).Msg("failed to open bucket")
+		return validate.NewRequestError(err, http.StatusInternalServerError)
+	}
+	bucketSpan.End()
+
+	readerCtx, readerSpan := startEntityCtrlSpan(ctx, "controller.V1.serveAttachmentContent.openReader")
+	file, err := bucket.NewReader(readerCtx, ctrl.repo.Attachments.GetFullPath(doc.Path), nil)
+	if err != nil {
+		recordCtrlSpanError(readerSpan, err)
+		readerSpan.End()
+		recordCtrlSpanError(span, err)
+		log.Err(err).Msg("failed to open file")
+		return validate.NewRequestError(err, http.StatusInternalServerError)
+	}
+	readerSpan.End()
+
+	defer func(file *blob.Reader) {
+		err := file.Close()
+		if err != nil {
+			log.Err(err).Msg("failed to close file")
+		}
+	}(file)
+	defer func(bucket *blob.Bucket) {
+		err := bucket.Close()
+		if err != nil {
+			log.Err(err).Msg("failed to close bucket")
+		}
+	}(bucket)
+
+	// Attachments are user-supplied and can be arbitrarily large (videos,
+	// scanned manuals). Without this the default 10s write timeout truncates
+	// them mid-transfer on slow links.
+	allowSlowResponse(w, r)
+
+	disposition := "attachment"
+	if isSafeInlineType(doc.MimeType) {
+		disposition = "inline"
+	}
+	disposition += "; filename*=UTF-8''" + url.QueryEscape(doc.Title)
+	w.Header().Set("Content-Disposition", disposition)
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.Header().Set("X-Frame-Options", "DENY")
+	w.Header().Set("X-Download-Options", "noopen")
+	w.Header().Set("Content-Security-Policy", "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; sandbox;")
+
+	_, serveSpan := startEntityCtrlSpan(ctx, "controller.V1.serveAttachmentContent.serveContent",
+		attribute.String("attachment.disposition", disposition))
+	http.ServeContent(w, r, doc.Title, doc.CreatedAt, file)
+	serveSpan.End()
+	return nil
+}
+
 func (ctrl *V1Controller) handleEntityAttachmentsHandler(w http.ResponseWriter, r *http.Request) error {
 	spanCtx, span := startEntityCtrlSpan(r.Context(), "controller.V1.handleEntityAttachmentsHandler",
 		attribute.String("http.method", r.Method))
@@ -230,77 +317,7 @@ func (ctrl *V1Controller) handleEntityAttachmentsHandler(w http.ResponseWriter, 
 			attribute.String("attachment.title", doc.Title),
 		)
 
-		if doc.MimeType == repo.MimeTypeLinkURL {
-			parsed, ok := parseExternalHTTPURL(doc.Path)
-			if !ok {
-				err = errors.New("invalid external URL attachment")
-				recordCtrlSpanError(getSpan, err)
-				recordCtrlSpanError(span, err)
-				return validate.NewRequestError(err, http.StatusUnprocessableEntity)
-			}
-
-			http.Redirect(w, r, parsed.String(), http.StatusFound)
-			return nil
-		}
-
-		bucketCtx, bucketSpan := startEntityCtrlSpan(getCtx, "controller.V1.handleEntityAttachmentsHandler.openBucket")
-		bucket, err := blob.OpenBucket(bucketCtx, ctrl.repo.Attachments.GetConnString())
-		if err != nil {
-			recordCtrlSpanError(bucketSpan, err)
-			bucketSpan.End()
-			recordCtrlSpanError(getSpan, err)
-			recordCtrlSpanError(span, err)
-			log.Err(err).Msg("failed to open bucket")
-			return validate.NewRequestError(err, http.StatusInternalServerError)
-		}
-		bucketSpan.End()
-
-		readerCtx, readerSpan := startEntityCtrlSpan(getCtx, "controller.V1.handleEntityAttachmentsHandler.openReader")
-		file, err := bucket.NewReader(readerCtx, ctrl.repo.Attachments.GetFullPath(doc.Path), nil)
-		if err != nil {
-			recordCtrlSpanError(readerSpan, err)
-			readerSpan.End()
-			recordCtrlSpanError(getSpan, err)
-			recordCtrlSpanError(span, err)
-			log.Err(err).Msg("failed to open file")
-			return validate.NewRequestError(err, http.StatusInternalServerError)
-		}
-		readerSpan.End()
-
-		defer func(file *blob.Reader) {
-			err := file.Close()
-			if err != nil {
-				log.Err(err).Msg("failed to close file")
-			}
-		}(file)
-		defer func(bucket *blob.Bucket) {
-			err := bucket.Close()
-			if err != nil {
-				log.Err(err).Msg("failed to close bucket")
-			}
-		}(bucket)
-
-		// Attachments are user-supplied and can be arbitrarily large (videos,
-		// scanned manuals). Without this the default 10s write timeout truncates
-		// them mid-transfer on slow links.
-		allowSlowResponse(w, r)
-
-		disposition := "attachment"
-		if isSafeInlineType(doc.MimeType) {
-			disposition = "inline"
-		}
-		disposition += "; filename*=UTF-8''" + url.QueryEscape(doc.Title)
-		w.Header().Set("Content-Disposition", disposition)
-		w.Header().Set("X-Content-Type-Options", "nosniff")
-		w.Header().Set("X-Frame-Options", "DENY")
-		w.Header().Set("X-Download-Options", "noopen")
-		w.Header().Set("Content-Security-Policy", "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; sandbox;")
-
-		_, serveSpan := startEntityCtrlSpan(getCtx, "controller.V1.handleEntityAttachmentsHandler.serveContent",
-			attribute.String("attachment.disposition", disposition))
-		http.ServeContent(w, r, doc.Title, doc.CreatedAt, file)
-		serveSpan.End()
-		return nil
+		return ctrl.serveAttachmentContent(getCtx, w, r, doc)
 
 	case http.MethodDelete:
 		err = ctrl.svc.Entities.AttachmentDelete(spanCtx, ctx.GID, attachmentID)
