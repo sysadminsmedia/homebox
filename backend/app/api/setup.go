@@ -1,6 +1,10 @@
 package main
 
 import (
+	"context"
+	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
+
 	"bytes"
 	"fmt"
 	"os"
@@ -65,6 +69,12 @@ func setupDatabase(cfg *config.Config, otelProvider *otel.Provider) (*ent.Client
 		_ = c.Close()
 		return nil, "", err
 	}
+
+	if err := seedTemplates(c); err != nil {
+        // Registramos el error pero no detenemos el arranque
+        log.Error().Err(err).Msg("failed to seed custom templates")
+    }
+
 	return c, dialectName, nil
 }
 
@@ -187,4 +197,93 @@ func loadCurrencies(cfg *config.Config) ([]currencies.CollectorFunc, error) {
 		collectFuncs = append(collectFuncs, currencies.CollectJSON(bytes.NewReader(content)))
 	}
 	return collectFuncs, nil
+}
+
+func seedTemplates(c *ent.Client) error {
+	ctx := context.Background()
+
+	// 1. Obtenemos el primer grupo de la base de datos.
+	defaultGroup, err := c.Group.Query().First(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			// Si es una instalación 100% limpia y el usuario aún no se ha registrado en la web,
+			// no existirá ningún grupo. Saltamos la inyección por ahora sin romper el arranque.
+			log.Warn().Msg("No groups found yet. Skipping custom templates seeding.")
+			return nil
+		}
+		return err
+	}
+
+	type seedField struct {
+		Name string
+		Type string
+	}
+
+	type seedTemplate struct {
+		ID          string
+		Name        string
+		Description string
+		Fields      []seedField
+	}
+
+	myTemplates := []seedTemplate{
+		{
+			ID:          "c3c2c279-11b0-4b3b-8359-0d98a1c3d710",
+			Name:        "FAC-IMP-DET Libro",
+			Description: "",
+			Fields: []seedField{
+				{Name: "Autor", Type: "text"},
+				{Name: "Editorial ", Type: "text"},
+				{Name: "ISBN ", Type: "text"},
+				{Name: "Nombre: Año de Publicación ", Type: "text"},
+				{Name: "Idioma ", Type: "text"},
+				{Name: "IDFactura", Type: "text"},
+			},
+		},
+	}
+
+	for _, tpl := range myTemplates {
+		id, err := uuid.Parse(tpl.ID)
+		if err != nil {
+			log.Error().Err(err).Str("id", tpl.ID).Msg("Invalid UUID for template")
+			continue
+		}
+
+		_, err = c.EntityTemplate.Get(ctx, id)
+
+		if err != nil && ent.IsNotFound(err) {
+			
+			// 2. Creamos la plantilla vinculándola al grupo que encontramos
+			createdTemplate, err := c.EntityTemplate.Create().
+				SetID(id).
+				SetName(tpl.Name).
+				SetDescription(tpl.Description).
+				SetGroup(defaultGroup). // <- AÑADIMOS ESTA LÍNEA (El "Edge" requerido)
+				Save(ctx)
+
+			if err != nil {
+				log.Error().Err(err).Str("template", tpl.Name).Msg("Failed to insert custom template")
+				continue 
+			}
+
+			for _, field := range tpl.Fields {
+				_, err = c.TemplateField.Create().
+					SetName(field.Name).
+					SetType(templatefield.Type(field.Type)).
+					SetEntityTemplate(createdTemplate).
+					Save(ctx)
+				
+				if err != nil {
+					log.Error().Err(err).Str("field", field.Name).Msg("Failed to insert template field")
+				}
+			}
+
+			log.Info().Str("template", tpl.Name).Msg("Custom template seeded successfully")
+
+		} else if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
