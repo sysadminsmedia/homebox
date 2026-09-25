@@ -720,6 +720,7 @@
     },
     "menu": {
         "collection": "Colección",
+        "create_invoice": "Factura",
         "create_item": "Artículo / Activo",
         "create_location": "Ubicación",
         "create_tag": "Etiqueta",

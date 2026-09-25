@@ -365,6 +365,12 @@
 
   const dropdown: DropdownItem[] = [
     {
+      id: 4,
+      name: computed(() => t("menu.create_invoice")),
+      shortcut: "Shift+4",
+      dialogId: DialogID.CreateEntity,
+    },
+    {
       id: 0,
       name: computed(() => t("menu.create_item")),
       shortcut: "Shift+1",
