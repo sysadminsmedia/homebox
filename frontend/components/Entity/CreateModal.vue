@@ -174,6 +174,14 @@
         step="any"
         :min="0"
       />
+      <FormTextField
+        v-if="!selectedEntityType?.isLocation"
+        v-model.number="form.lowStockThreshold"
+        :label="$t('global.low_stock_threshold')"
+        type="number"
+        step="any"
+        :min="0"
+      />
       <FormTextArea
         v-model="form.description"
         :label="
@@ -343,6 +351,7 @@
         } as EntityTemplateSummary;
         templateData.value = data;
         form.quantity = data.defaultQuantity;
+        form.lowStockThreshold = data.defaultLowStockThreshold ?? undefined;
         if (data.defaultName) form.name = data.defaultName;
         if (data.defaultDescription) form.description = data.defaultDescription;
         if (data.defaultLocation) {
@@ -359,6 +368,15 @@
 
   const LAST_TEMPLATE_KEY = "homebox:lastUsedTemplate";
 
+  function normalizeNullableNumber(value: number | string | null | undefined): number | null {
+    if (value === null || value === undefined || value === "") {
+      return null;
+    }
+
+    const num = typeof value === "number" ? value : Number(value);
+    return Number.isFinite(num) ? num : null;
+  }
+
   const loading = ref(false);
   const focused = ref(false);
   const selectedTemplate = ref<EntityTemplateSummary | null>(null);
@@ -372,6 +390,7 @@
     parentId: null,
     name: "",
     quantity: 1,
+    lowStockThreshold: undefined,
     description: "",
     color: "",
     // Populated by the barcode product-import flow; passed through on create (#1578).
@@ -405,6 +424,7 @@
 
     // Pre-fill form with template defaults
     form.quantity = data.defaultQuantity;
+    form.lowStockThreshold = data.defaultLowStockThreshold ?? undefined;
     if (data.defaultName) {
       form.name = data.defaultName;
     }
@@ -447,6 +467,7 @@
     templateData.value = data;
     templateUserSelected.value = true;
     form.quantity = data.defaultQuantity;
+    form.lowStockThreshold = data.defaultLowStockThreshold ?? undefined;
     if (data.defaultName) {
       form.name = data.defaultName;
     }
@@ -472,6 +493,7 @@
     templateUserSelected.value = false;
     showTemplateDetails.value = false;
     form.quantity = 1;
+    form.lowStockThreshold = undefined;
     localStorage.removeItem(LAST_TEMPLATE_KEY);
   }
 
@@ -632,12 +654,14 @@
       data = result.data;
     } else if (templateData.value) {
       // If a template is selected, use the template creation endpoint
+      const normalizedLowStockThreshold = normalizeNullableNumber(form.lowStockThreshold);
       const templateRequest = {
         name: form.name,
         description: form.description,
-        parentId: form.location.id as string,
+        parentId: form.location!.id,
         tagIds: form.tags,
         quantity: form.quantity,
+        lowStockThreshold: normalizedLowStockThreshold,
         entityTypeId: selectedEntityType.value?.id || "",
       };
 
@@ -647,9 +671,10 @@
     } else {
       // Normal item creation without template
       const out: EntityCreate = {
-        parentId: form.parentId || (form.location.id as string),
+        parentId: form.parentId || form.location?.id || null,
         name: form.name,
         quantity: form.quantity,
+        lowStockThreshold: normalizeNullableNumber(form.lowStockThreshold),
         description: form.description,
         manufacturer: form.manufacturer,
         modelNumber: form.modelNumber,
@@ -705,6 +730,7 @@
 
     form.name = "";
     form.quantity = 1;
+    form.lowStockThreshold = undefined;
     form.description = "";
     form.color = "";
     form.manufacturer = "";

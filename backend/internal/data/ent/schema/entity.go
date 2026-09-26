@@ -44,6 +44,10 @@ func (Entity) Fields() []ent.Field {
 			Optional(),
 		field.Float("quantity").
 			Default(1),
+		field.Float("low_stock_threshold").
+			Optional().
+			Nillable().
+			StructTag(`json:"low_stock_threshold,omitempty" extensions:"x-nullable"`),
 		field.Bool("insured").
 			Default(false),
 		field.Bool("archived").

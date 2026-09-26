@@ -78,12 +78,18 @@
     return data;
   });
 
-  const item = ref<EntityOut & { tagIds: string[] }>(null as never);
+  type EditableItem = Omit<EntityOut, "lowStockThreshold"> & {
+    lowStockThreshold?: number;
+    tagIds: string[];
+  };
+
+  const item = ref<EditableItem>(null as never);
 
   watchEffect(() => {
     if (nullableItem.value) {
       item.value = {
         ...nullableItem.value,
+        lowStockThreshold: nullableItem.value.lowStockThreshold ?? undefined,
         tagIds: nullableItem.value.tags.map(l => l.id) ?? [],
       };
     }
@@ -94,6 +100,11 @@
   });
 
   const saving = ref(false);
+
+  function normalizedLowStockThreshold(): number | null {
+    const threshold = item.value.lowStockThreshold;
+    return typeof threshold === "number" && Number.isFinite(threshold) ? threshold : null;
+  }
 
   async function saveItem(redirect: boolean) {
     if (!location.value?.id && !parent.value?.id) {
@@ -130,6 +141,7 @@
       parentId: parent.value?.id || location.value?.id || null,
       tagIds: item.value.tagIds,
       assetId: item.value.assetId,
+      lowStockThreshold: normalizedLowStockThreshold(),
       purchasePrice,
       soldPrice,
       // Date-only fields stay as YYYY-MM-DD strings — see types.Date on the
@@ -157,7 +169,12 @@
   }
 
   type NonNullableStringKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends string ? K : never]: any }>;
-  type NonNullableNumberKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends number ? K : never]: any }>;
+  type NonNullableNumberKeys<T> = Extract<
+    keyof T,
+    keyof {
+      [K in keyof T as NonNullable<T[K]> extends number ? K : never]: any;
+    }
+  >;
   type BooleanKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends boolean ? K : never]: any }>;
   type DateKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends Date | string ? K : never]: any }>;
 
@@ -202,6 +219,12 @@
       type: "number",
       label: "items.quantity",
       ref: "quantity",
+      min: 0,
+    },
+    {
+      type: "number",
+      label: "items.low_stock_threshold",
+      ref: "lowStockThreshold",
       min: 0,
     },
     {
@@ -575,6 +598,8 @@
       parentId: parent.value?.id || location.value?.id || null,
       tagIds: item.value.tagIds,
       assetId: item.value.assetId,
+      entityTypeId: item.value.entityType!.id,
+      lowStockThreshold: normalizedLowStockThreshold(),
       syncChildEntityLocations: item.value.syncChildEntityLocations,
     };
 

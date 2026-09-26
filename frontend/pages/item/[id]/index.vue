@@ -225,6 +225,10 @@
         slot: "quantity",
       },
       {
+        name: "items.low_stock_threshold",
+        text: item.value?.lowStockThreshold ?? "",
+      },
+      {
         name: "items.serial_number",
         text: item.value?.serialNumber,
         copyable: true,

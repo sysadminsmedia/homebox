@@ -139,6 +139,7 @@ var (
 		{Name: "import_ref", Type: field.TypeString, Nullable: true, Size: 100},
 		{Name: "notes", Type: field.TypeString, Nullable: true, Size: 1000},
 		{Name: "quantity", Type: field.TypeFloat64, Default: 1},
+		{Name: "low_stock_threshold", Type: field.TypeFloat64, Nullable: true},
 		{Name: "insured", Type: field.TypeBool, Default: false},
 		{Name: "archived", Type: field.TypeBool, Default: false},
 		{Name: "asset_id", Type: field.TypeInt64, Default: 0},
@@ -168,19 +169,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "entities_entities_children",
-				Columns:    []*schema.Column{EntitiesColumns[25]},
+				Columns:    []*schema.Column{EntitiesColumns[26]},
 				RefColumns: []*schema.Column{EntitiesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "entities_entity_types_entities",
-				Columns:    []*schema.Column{EntitiesColumns[26]},
+				Columns:    []*schema.Column{EntitiesColumns[27]},
 				RefColumns: []*schema.Column{EntityTypesColumns[0]},
 				OnDelete:   schema.Restrict,
 			},
 			{
 				Symbol:     "entities_groups_entities",
-				Columns:    []*schema.Column{EntitiesColumns[27]},
+				Columns:    []*schema.Column{EntitiesColumns[28]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -194,27 +195,27 @@ var (
 			{
 				Name:    "entity_manufacturer",
 				Unique:  false,
-				Columns: []*schema.Column{EntitiesColumns[14]},
+				Columns: []*schema.Column{EntitiesColumns[15]},
 			},
 			{
 				Name:    "entity_model_number",
 				Unique:  false,
-				Columns: []*schema.Column{EntitiesColumns[13]},
+				Columns: []*schema.Column{EntitiesColumns[14]},
 			},
 			{
 				Name:    "entity_serial_number",
 				Unique:  false,
-				Columns: []*schema.Column{EntitiesColumns[12]},
+				Columns: []*schema.Column{EntitiesColumns[13]},
 			},
 			{
 				Name:    "entity_archived",
 				Unique:  false,
-				Columns: []*schema.Column{EntitiesColumns[9]},
+				Columns: []*schema.Column{EntitiesColumns[10]},
 			},
 			{
 				Name:    "entity_asset_id",
 				Unique:  false,
-				Columns: []*schema.Column{EntitiesColumns[10]},
+				Columns: []*schema.Column{EntitiesColumns[11]},
 			},
 		},
 	}
@@ -255,6 +256,7 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
 		{Name: "notes", Type: field.TypeString, Nullable: true, Size: 1000},
 		{Name: "default_quantity", Type: field.TypeFloat64, Default: 1},
+		{Name: "default_low_stock_threshold", Type: field.TypeFloat64, Nullable: true},
 		{Name: "default_insured", Type: field.TypeBool, Default: false},
 		{Name: "default_name", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "default_description", Type: field.TypeString, Nullable: true, Size: 1000},
@@ -277,13 +279,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "entity_templates_entities_location",
-				Columns:    []*schema.Column{EntityTemplatesColumns[18]},
+				Columns:    []*schema.Column{EntityTemplatesColumns[19]},
 				RefColumns: []*schema.Column{EntitiesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "entity_templates_groups_entity_templates",
-				Columns:    []*schema.Column{EntityTemplatesColumns[19]},
+				Columns:    []*schema.Column{EntityTemplatesColumns[20]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},

@@ -2622,6 +2622,8 @@ type EntityMutation struct {
 	notes                       *string
 	quantity                    *float64
 	addquantity                 *float64
+	low_stock_threshold         *float64
+	addlow_stock_threshold      *float64
 	insured                     *bool
 	archived                    *bool
 	asset_id                    *int64
@@ -3082,6 +3084,76 @@ func (m *EntityMutation) AddedQuantity() (r float64, exists bool) {
 func (m *EntityMutation) ResetQuantity() {
 	m.quantity = nil
 	m.addquantity = nil
+}
+
+// SetLowStockThreshold sets the "low_stock_threshold" field.
+func (m *EntityMutation) SetLowStockThreshold(f float64) {
+	m.low_stock_threshold = &f
+	m.addlow_stock_threshold = nil
+}
+
+// LowStockThreshold returns the value of the "low_stock_threshold" field in the mutation.
+func (m *EntityMutation) LowStockThreshold() (r float64, exists bool) {
+	v := m.low_stock_threshold
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLowStockThreshold returns the old "low_stock_threshold" field's value of the Entity entity.
+// If the Entity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntityMutation) OldLowStockThreshold(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLowStockThreshold is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLowStockThreshold requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLowStockThreshold: %w", err)
+	}
+	return oldValue.LowStockThreshold, nil
+}
+
+// AddLowStockThreshold adds f to the "low_stock_threshold" field.
+func (m *EntityMutation) AddLowStockThreshold(f float64) {
+	if m.addlow_stock_threshold != nil {
+		*m.addlow_stock_threshold += f
+	} else {
+		m.addlow_stock_threshold = &f
+	}
+}
+
+// AddedLowStockThreshold returns the value that was added to the "low_stock_threshold" field in this mutation.
+func (m *EntityMutation) AddedLowStockThreshold() (r float64, exists bool) {
+	v := m.addlow_stock_threshold
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearLowStockThreshold clears the value of the "low_stock_threshold" field.
+func (m *EntityMutation) ClearLowStockThreshold() {
+	m.low_stock_threshold = nil
+	m.addlow_stock_threshold = nil
+	m.clearedFields[entity.FieldLowStockThreshold] = struct{}{}
+}
+
+// LowStockThresholdCleared returns if the "low_stock_threshold" field was cleared in this mutation.
+func (m *EntityMutation) LowStockThresholdCleared() bool {
+	_, ok := m.clearedFields[entity.FieldLowStockThreshold]
+	return ok
+}
+
+// ResetLowStockThreshold resets all changes to the "low_stock_threshold" field.
+func (m *EntityMutation) ResetLowStockThreshold() {
+	m.low_stock_threshold = nil
+	m.addlow_stock_threshold = nil
+	delete(m.clearedFields, entity.FieldLowStockThreshold)
 }
 
 // SetInsured sets the "insured" field.
@@ -4307,7 +4379,7 @@ func (m *EntityMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EntityMutation) Fields() []string {
-	fields := make([]string, 0, 24)
+	fields := make([]string, 0, 25)
 	if m.created_at != nil {
 		fields = append(fields, entity.FieldCreatedAt)
 	}
@@ -4328,6 +4400,9 @@ func (m *EntityMutation) Fields() []string {
 	}
 	if m.quantity != nil {
 		fields = append(fields, entity.FieldQuantity)
+	}
+	if m.low_stock_threshold != nil {
+		fields = append(fields, entity.FieldLowStockThreshold)
 	}
 	if m.insured != nil {
 		fields = append(fields, entity.FieldInsured)
@@ -4402,6 +4477,8 @@ func (m *EntityMutation) Field(name string) (ent.Value, bool) {
 		return m.Notes()
 	case entity.FieldQuantity:
 		return m.Quantity()
+	case entity.FieldLowStockThreshold:
+		return m.LowStockThreshold()
 	case entity.FieldInsured:
 		return m.Insured()
 	case entity.FieldArchived:
@@ -4459,6 +4536,8 @@ func (m *EntityMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldNotes(ctx)
 	case entity.FieldQuantity:
 		return m.OldQuantity(ctx)
+	case entity.FieldLowStockThreshold:
+		return m.OldLowStockThreshold(ctx)
 	case entity.FieldInsured:
 		return m.OldInsured(ctx)
 	case entity.FieldArchived:
@@ -4550,6 +4629,13 @@ func (m *EntityMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetQuantity(v)
+		return nil
+	case entity.FieldLowStockThreshold:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLowStockThreshold(v)
 		return nil
 	case entity.FieldInsured:
 		v, ok := value.(bool)
@@ -4681,6 +4767,9 @@ func (m *EntityMutation) AddedFields() []string {
 	if m.addquantity != nil {
 		fields = append(fields, entity.FieldQuantity)
 	}
+	if m.addlow_stock_threshold != nil {
+		fields = append(fields, entity.FieldLowStockThreshold)
+	}
 	if m.addasset_id != nil {
 		fields = append(fields, entity.FieldAssetID)
 	}
@@ -4700,6 +4789,8 @@ func (m *EntityMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case entity.FieldQuantity:
 		return m.AddedQuantity()
+	case entity.FieldLowStockThreshold:
+		return m.AddedLowStockThreshold()
 	case entity.FieldAssetID:
 		return m.AddedAssetID()
 	case entity.FieldPurchasePrice:
@@ -4721,6 +4812,13 @@ func (m *EntityMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddQuantity(v)
+		return nil
+	case entity.FieldLowStockThreshold:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLowStockThreshold(v)
 		return nil
 	case entity.FieldAssetID:
 		v, ok := value.(int64)
@@ -4759,6 +4857,9 @@ func (m *EntityMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(entity.FieldNotes) {
 		fields = append(fields, entity.FieldNotes)
+	}
+	if m.FieldCleared(entity.FieldLowStockThreshold) {
+		fields = append(fields, entity.FieldLowStockThreshold)
 	}
 	if m.FieldCleared(entity.FieldSerialNumber) {
 		fields = append(fields, entity.FieldSerialNumber)
@@ -4812,6 +4913,9 @@ func (m *EntityMutation) ClearField(name string) error {
 		return nil
 	case entity.FieldNotes:
 		m.ClearNotes()
+		return nil
+	case entity.FieldLowStockThreshold:
+		m.ClearLowStockThreshold()
 		return nil
 	case entity.FieldSerialNumber:
 		m.ClearSerialNumber()
@@ -4871,6 +4975,9 @@ func (m *EntityMutation) ResetField(name string) error {
 		return nil
 	case entity.FieldQuantity:
 		m.ResetQuantity()
+		return nil
+	case entity.FieldLowStockThreshold:
+		m.ResetLowStockThreshold()
 		return nil
 	case entity.FieldInsured:
 		m.ResetInsured()
@@ -6100,39 +6207,41 @@ func (m *EntityFieldMutation) ResetEdge(name string) error {
 // EntityTemplateMutation represents an operation that mutates the EntityTemplate nodes in the graph.
 type EntityTemplateMutation struct {
 	config
-	op                        Op
-	typ                       string
-	id                        *uuid.UUID
-	created_at                *time.Time
-	updated_at                *time.Time
-	name                      *string
-	description               *string
-	notes                     *string
-	default_quantity          *float64
-	adddefault_quantity       *float64
-	default_insured           *bool
-	default_name              *string
-	default_description       *string
-	default_manufacturer      *string
-	default_model_number      *string
-	default_lifetime_warranty *bool
-	default_warranty_details  *string
-	include_warranty_fields   *bool
-	include_purchase_fields   *bool
-	include_sold_fields       *bool
-	default_tag_ids           *[]uuid.UUID
-	appenddefault_tag_ids     []uuid.UUID
-	clearedFields             map[string]struct{}
-	group                     *uuid.UUID
-	clearedgroup              bool
-	fields                    map[uuid.UUID]struct{}
-	removedfields             map[uuid.UUID]struct{}
-	clearedfields             bool
-	location                  *uuid.UUID
-	clearedlocation           bool
-	done                      bool
-	oldValue                  func(context.Context) (*EntityTemplate, error)
-	predicates                []predicate.EntityTemplate
+	op                             Op
+	typ                            string
+	id                             *uuid.UUID
+	created_at                     *time.Time
+	updated_at                     *time.Time
+	name                           *string
+	description                    *string
+	notes                          *string
+	default_quantity               *float64
+	adddefault_quantity            *float64
+	default_low_stock_threshold    *float64
+	adddefault_low_stock_threshold *float64
+	default_insured                *bool
+	default_name                   *string
+	default_description            *string
+	default_manufacturer           *string
+	default_model_number           *string
+	default_lifetime_warranty      *bool
+	default_warranty_details       *string
+	include_warranty_fields        *bool
+	include_purchase_fields        *bool
+	include_sold_fields            *bool
+	default_tag_ids                *[]uuid.UUID
+	appenddefault_tag_ids          []uuid.UUID
+	clearedFields                  map[string]struct{}
+	group                          *uuid.UUID
+	clearedgroup                   bool
+	fields                         map[uuid.UUID]struct{}
+	removedfields                  map[uuid.UUID]struct{}
+	clearedfields                  bool
+	location                       *uuid.UUID
+	clearedlocation                bool
+	done                           bool
+	oldValue                       func(context.Context) (*EntityTemplate, error)
+	predicates                     []predicate.EntityTemplate
 }
 
 var _ ent.Mutation = (*EntityTemplateMutation)(nil)
@@ -6499,6 +6608,76 @@ func (m *EntityTemplateMutation) AddedDefaultQuantity() (r float64, exists bool)
 func (m *EntityTemplateMutation) ResetDefaultQuantity() {
 	m.default_quantity = nil
 	m.adddefault_quantity = nil
+}
+
+// SetDefaultLowStockThreshold sets the "default_low_stock_threshold" field.
+func (m *EntityTemplateMutation) SetDefaultLowStockThreshold(f float64) {
+	m.default_low_stock_threshold = &f
+	m.adddefault_low_stock_threshold = nil
+}
+
+// DefaultLowStockThreshold returns the value of the "default_low_stock_threshold" field in the mutation.
+func (m *EntityTemplateMutation) DefaultLowStockThreshold() (r float64, exists bool) {
+	v := m.default_low_stock_threshold
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDefaultLowStockThreshold returns the old "default_low_stock_threshold" field's value of the EntityTemplate entity.
+// If the EntityTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntityTemplateMutation) OldDefaultLowStockThreshold(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDefaultLowStockThreshold is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDefaultLowStockThreshold requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDefaultLowStockThreshold: %w", err)
+	}
+	return oldValue.DefaultLowStockThreshold, nil
+}
+
+// AddDefaultLowStockThreshold adds f to the "default_low_stock_threshold" field.
+func (m *EntityTemplateMutation) AddDefaultLowStockThreshold(f float64) {
+	if m.adddefault_low_stock_threshold != nil {
+		*m.adddefault_low_stock_threshold += f
+	} else {
+		m.adddefault_low_stock_threshold = &f
+	}
+}
+
+// AddedDefaultLowStockThreshold returns the value that was added to the "default_low_stock_threshold" field in this mutation.
+func (m *EntityTemplateMutation) AddedDefaultLowStockThreshold() (r float64, exists bool) {
+	v := m.adddefault_low_stock_threshold
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDefaultLowStockThreshold clears the value of the "default_low_stock_threshold" field.
+func (m *EntityTemplateMutation) ClearDefaultLowStockThreshold() {
+	m.default_low_stock_threshold = nil
+	m.adddefault_low_stock_threshold = nil
+	m.clearedFields[entitytemplate.FieldDefaultLowStockThreshold] = struct{}{}
+}
+
+// DefaultLowStockThresholdCleared returns if the "default_low_stock_threshold" field was cleared in this mutation.
+func (m *EntityTemplateMutation) DefaultLowStockThresholdCleared() bool {
+	_, ok := m.clearedFields[entitytemplate.FieldDefaultLowStockThreshold]
+	return ok
+}
+
+// ResetDefaultLowStockThreshold resets all changes to the "default_low_stock_threshold" field.
+func (m *EntityTemplateMutation) ResetDefaultLowStockThreshold() {
+	m.default_low_stock_threshold = nil
+	m.adddefault_low_stock_threshold = nil
+	delete(m.clearedFields, entitytemplate.FieldDefaultLowStockThreshold)
 }
 
 // SetDefaultInsured sets the "default_insured" field.
@@ -7157,7 +7336,7 @@ func (m *EntityTemplateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EntityTemplateMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, entitytemplate.FieldCreatedAt)
 	}
@@ -7175,6 +7354,9 @@ func (m *EntityTemplateMutation) Fields() []string {
 	}
 	if m.default_quantity != nil {
 		fields = append(fields, entitytemplate.FieldDefaultQuantity)
+	}
+	if m.default_low_stock_threshold != nil {
+		fields = append(fields, entitytemplate.FieldDefaultLowStockThreshold)
 	}
 	if m.default_insured != nil {
 		fields = append(fields, entitytemplate.FieldDefaultInsured)
@@ -7229,6 +7411,8 @@ func (m *EntityTemplateMutation) Field(name string) (ent.Value, bool) {
 		return m.Notes()
 	case entitytemplate.FieldDefaultQuantity:
 		return m.DefaultQuantity()
+	case entitytemplate.FieldDefaultLowStockThreshold:
+		return m.DefaultLowStockThreshold()
 	case entitytemplate.FieldDefaultInsured:
 		return m.DefaultInsured()
 	case entitytemplate.FieldDefaultName:
@@ -7272,6 +7456,8 @@ func (m *EntityTemplateMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldNotes(ctx)
 	case entitytemplate.FieldDefaultQuantity:
 		return m.OldDefaultQuantity(ctx)
+	case entitytemplate.FieldDefaultLowStockThreshold:
+		return m.OldDefaultLowStockThreshold(ctx)
 	case entitytemplate.FieldDefaultInsured:
 		return m.OldDefaultInsured(ctx)
 	case entitytemplate.FieldDefaultName:
@@ -7344,6 +7530,13 @@ func (m *EntityTemplateMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDefaultQuantity(v)
+		return nil
+	case entitytemplate.FieldDefaultLowStockThreshold:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDefaultLowStockThreshold(v)
 		return nil
 	case entitytemplate.FieldDefaultInsured:
 		v, ok := value.(bool)
@@ -7433,6 +7626,9 @@ func (m *EntityTemplateMutation) AddedFields() []string {
 	if m.adddefault_quantity != nil {
 		fields = append(fields, entitytemplate.FieldDefaultQuantity)
 	}
+	if m.adddefault_low_stock_threshold != nil {
+		fields = append(fields, entitytemplate.FieldDefaultLowStockThreshold)
+	}
 	return fields
 }
 
@@ -7443,6 +7639,8 @@ func (m *EntityTemplateMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case entitytemplate.FieldDefaultQuantity:
 		return m.AddedDefaultQuantity()
+	case entitytemplate.FieldDefaultLowStockThreshold:
+		return m.AddedDefaultLowStockThreshold()
 	}
 	return nil, false
 }
@@ -7459,6 +7657,13 @@ func (m *EntityTemplateMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddDefaultQuantity(v)
 		return nil
+	case entitytemplate.FieldDefaultLowStockThreshold:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDefaultLowStockThreshold(v)
+		return nil
 	}
 	return fmt.Errorf("unknown EntityTemplate numeric field %s", name)
 }
@@ -7472,6 +7677,9 @@ func (m *EntityTemplateMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(entitytemplate.FieldNotes) {
 		fields = append(fields, entitytemplate.FieldNotes)
+	}
+	if m.FieldCleared(entitytemplate.FieldDefaultLowStockThreshold) {
+		fields = append(fields, entitytemplate.FieldDefaultLowStockThreshold)
 	}
 	if m.FieldCleared(entitytemplate.FieldDefaultName) {
 		fields = append(fields, entitytemplate.FieldDefaultName)
@@ -7510,6 +7718,9 @@ func (m *EntityTemplateMutation) ClearField(name string) error {
 		return nil
 	case entitytemplate.FieldNotes:
 		m.ClearNotes()
+		return nil
+	case entitytemplate.FieldDefaultLowStockThreshold:
+		m.ClearDefaultLowStockThreshold()
 		return nil
 	case entitytemplate.FieldDefaultName:
 		m.ClearDefaultName()
@@ -7554,6 +7765,9 @@ func (m *EntityTemplateMutation) ResetField(name string) error {
 		return nil
 	case entitytemplate.FieldDefaultQuantity:
 		m.ResetDefaultQuantity()
+		return nil
+	case entitytemplate.FieldDefaultLowStockThreshold:
+		m.ResetDefaultLowStockThreshold()
 		return nil
 	case entitytemplate.FieldDefaultInsured:
 		m.ResetDefaultInsured()

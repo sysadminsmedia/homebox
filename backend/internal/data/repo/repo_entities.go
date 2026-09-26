@@ -67,6 +67,7 @@ type (
 		NegateTags       bool    `json:"negateTags"`
 		OnlyWithoutPhoto bool    `json:"onlyWithoutPhoto"`
 		OnlyWithPhoto    bool    `json:"onlyWithPhoto"`
+		OnlyInStock      bool    `json:"onlyInStock"`
 		IncludeArchived  bool    `json:"includeArchived"`
 		FilterChildren   bool    `json:"filterChildren"` // when true, only return root entities (no parent)
 	}
@@ -88,13 +89,14 @@ type (
 	}
 
 	EntityCreate struct {
-		ImportRef    string    `json:"-"`
-		ParentID     uuid.UUID `json:"parentId"     extensions:"x-nullable"`
-		Name         string    `json:"name"         validate:"required,min=1,max=255"`
-		Quantity     float64   `json:"quantity"`
-		Description  string    `json:"description"  validate:"max=1000"`
-		AssetID      AssetID   `json:"-"`
-		EntityTypeID uuid.UUID `json:"entityTypeId"`
+		ImportRef         string    `json:"-"`
+		ParentID          uuid.UUID `json:"parentId"                    extensions:"x-nullable"`
+		Name              string    `json:"name"                        validate:"required,min=1,max=255"`
+		Quantity          float64   `json:"quantity"`
+		LowStockThreshold *float64  `json:"lowStockThreshold,omitempty" extensions:"x-nullable,x-omitempty"`
+		Description       string    `json:"description"                 validate:"max=1000"`
+		AssetID           AssetID   `json:"-"`
+		EntityTypeID      uuid.UUID `json:"entityTypeId"`
 
 		// Identifications — optional at create time; populated e.g. by the
 		// barcode product-search import flow (#1578).
@@ -126,11 +128,12 @@ type (
 		// Edges
 		TagIDs                   []uuid.UUID       `json:"tagIds"`
 		Fields                   []EntityFieldData `json:"fields"`
-		AssetID                  AssetID           `json:"assetId"                  swaggertype:"string"`
+		AssetID                  AssetID           `json:"assetId"                     swaggertype:"string"`
 		Quantity                 float64           `json:"quantity"`
-		PurchasePrice            float64           `json:"purchasePrice"            extensions:"x-nullable,x-omitempty"`
-		SoldPrice                float64           `json:"soldPrice"                extensions:"x-nullable,x-omitempty"`
-		ParentID                 uuid.UUID         `json:"parentId"                 extensions:"x-nullable,x-omitempty"`
+		LowStockThreshold        *float64          `json:"lowStockThreshold,omitempty" extensions:"x-nullable,x-omitempty"`
+		PurchasePrice            float64           `json:"purchasePrice"               extensions:"x-nullable,x-omitempty"`
+		SoldPrice                float64           `json:"soldPrice"                   extensions:"x-nullable,x-omitempty"`
+		ParentID                 uuid.UUID         `json:"parentId"                    extensions:"x-nullable,x-omitempty"`
 		ID                       uuid.UUID         `json:"id"`
 		EntityTypeID             uuid.UUID         `json:"entityTypeId"`
 		Insured                  bool              `json:"insured"`
@@ -141,12 +144,13 @@ type (
 	}
 
 	EntityPatch struct {
-		ID           uuid.UUID   `json:"id"`
-		Quantity     *float64    `json:"quantity,omitempty" extensions:"x-nullable,x-omitempty"`
-		ImportRef    *string     `json:"-"                  extensions:"x-nullable,x-omitempty"`
-		ParentID     uuid.UUID   `json:"parentId"           extensions:"x-nullable,x-omitempty"`
-		EntityTypeID uuid.UUID   `json:"entityTypeId"       extensions:"x-nullable,x-omitempty"`
-		TagIDs       []uuid.UUID `json:"tagIds"             extensions:"x-nullable,x-omitempty"`
+		ID                uuid.UUID   `json:"id"`
+		Quantity          *float64    `json:"quantity,omitempty"          extensions:"x-nullable,x-omitempty"`
+		LowStockThreshold *float64    `json:"lowStockThreshold,omitempty" extensions:"x-nullable,x-omitempty"`
+		ImportRef         *string     `json:"-"                           extensions:"x-nullable,x-omitempty"`
+		ParentID          uuid.UUID   `json:"parentId"                    extensions:"x-nullable,x-omitempty"`
+		EntityTypeID      uuid.UUID   `json:"entityTypeId"                extensions:"x-nullable,x-omitempty"`
+		TagIDs            []uuid.UUID `json:"tagIds"                      extensions:"x-nullable,x-omitempty"`
 	}
 
 	EntitySummary struct {
@@ -160,6 +164,8 @@ type (
 		Archived    bool      `json:"archived"`
 		CreatedAt   time.Time `json:"createdAt"`
 		UpdatedAt   time.Time `json:"updatedAt"`
+
+		LowStockThreshold *float64 `json:"lowStockThreshold,omitempty" extensions:"x-nullable,x-omitempty"`
 
 		PurchasePrice float64 `json:"purchasePrice"`
 
@@ -258,16 +264,17 @@ func mapEntitySummary(e *ent.Entity) EntitySummary {
 	}
 
 	return EntitySummary{
-		ID:            e.ID,
-		AssetID:       AssetID(e.AssetID),
-		Name:          e.Name,
-		Description:   e.Description,
-		ImportRef:     e.ImportRef,
-		Quantity:      e.Quantity,
-		CreatedAt:     e.CreatedAt,
-		UpdatedAt:     e.UpdatedAt,
-		Archived:      e.Archived,
-		PurchasePrice: e.PurchasePrice,
+		ID:                e.ID,
+		AssetID:           AssetID(e.AssetID),
+		Name:              e.Name,
+		Description:       e.Description,
+		ImportRef:         e.ImportRef,
+		Quantity:          e.Quantity,
+		LowStockThreshold: e.LowStockThreshold,
+		CreatedAt:         e.CreatedAt,
+		UpdatedAt:         e.UpdatedAt,
+		Archived:          e.Archived,
+		PurchasePrice:     e.PurchasePrice,
 
 		// Edges
 		Parent:     parent,
@@ -584,6 +591,7 @@ func entityQuerySpanAttrs(gid uuid.UUID, q EntityQuery) []attribute.KeyValue {
 		attribute.Int("query.fields.count", len(q.Fields)),
 		attribute.Bool("query.only_with_photo", q.OnlyWithPhoto),
 		attribute.Bool("query.only_without_photo", q.OnlyWithoutPhoto),
+		attribute.Bool("query.only_in_stock", q.OnlyInStock),
 		attribute.Bool("query.include_archived", q.IncludeArchived),
 		attribute.Bool("query.filter_children", q.FilterChildren),
 		attribute.String("query.order_by", q.OrderBy),
@@ -591,6 +599,89 @@ func entityQuerySpanAttrs(gid uuid.UUID, q EntityQuery) []attribute.KeyValue {
 		attribute.Bool("query.is_location.value", isLocValue),
 		attribute.Bool("query.asset_id.set", !q.AssetID.Nil()),
 	}
+}
+
+func (r *EntityRepository) queryByGroupPredicates(ctx context.Context, q EntityQuery) []predicate.Entity {
+	var andPredicates []predicate.Entity
+
+	if len(q.TagIDs) > 0 {
+		tagRepo := &TagRepository{r.db, r.bus}
+		ctxDescendants, descSpan := entityTracer().Start(ctx, "repo.EntityRepository.QueryByGroup.tagDescendants",
+			trace.WithAttributes(attribute.Int("query.tag_ids.count", len(q.TagIDs))))
+		descendants, err := tagRepo.GetDescendantTagIDs(ctxDescendants, q.TagIDs)
+		if err != nil {
+			recordSpanError(descSpan, err)
+			log.Warn().Err(err).Msg("failed to get descendant tags, using only direct tags")
+			descendants = q.TagIDs
+		} else if len(descendants) == 0 {
+			descendants = q.TagIDs
+		}
+		descSpan.SetAttributes(attribute.Int("query.tag_descendants.count", len(descendants)))
+		descSpan.End()
+
+		var tagPredicates []predicate.Entity
+		if !q.NegateTags {
+			tagPredicates = lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
+				return entity.HasTagWith(tag.ID(l))
+			})
+			andPredicates = append(andPredicates, entity.Or(tagPredicates...))
+		} else {
+			tagPredicates = lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
+				return entity.Not(entity.HasTagWith(tag.ID(l)))
+			})
+			andPredicates = append(andPredicates, entity.And(tagPredicates...))
+		}
+	}
+
+	if q.OnlyWithoutPhoto {
+		andPredicates = append(andPredicates, entity.Not(
+			entity.HasAttachmentsWith(
+				attachment.And(
+					attachment.Primary(true),
+					attachment.TypeEQ(attachment.TypePhoto),
+				),
+			)),
+		)
+	}
+
+	if q.OnlyWithPhoto {
+		andPredicates = append(andPredicates, entity.HasAttachmentsWith(
+			attachment.And(
+				attachment.Primary(true),
+				attachment.TypeEQ(attachment.TypePhoto),
+			),
+		),
+		)
+	}
+
+	if q.OnlyInStock {
+		andPredicates = append(andPredicates, entity.QuantityGT(0))
+	}
+
+	if len(q.ParentIDs) > 0 {
+		parentPredicates := lo.Map(q.ParentIDs, func(l uuid.UUID, _ int) predicate.Entity {
+			return entity.HasParentWith(entity.ID(l))
+		})
+		andPredicates = append(andPredicates, entity.Or(parentPredicates...))
+	}
+
+	if len(q.Fields) > 0 {
+		fieldPredicates := lo.Map(q.Fields, func(f FieldQuery, _ int) predicate.Entity {
+			return entity.HasFieldsWith(
+				entityfield.And(
+					entityfield.Name(f.Name),
+					entityfield.TextValue(f.Value),
+				),
+			)
+		})
+		andPredicates = append(andPredicates, entity.Or(fieldPredicates...))
+	}
+
+	if len(q.ParentItemIDs) > 0 {
+		andPredicates = append(andPredicates, entity.HasParentWith(entity.IDIn(q.ParentItemIDs...)))
+	}
+
+	return andPredicates
 }
 
 // QueryByGroup returns a list of entities that belong to a specific group based on the provided query.
@@ -650,81 +741,7 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 		qb = qb.Where(entity.AssetID(int64(q.AssetID)))
 	}
 
-	var andPredicates []predicate.Entity
-	{
-		if len(q.TagIDs) > 0 {
-			tagRepo := &TagRepository{r.db, r.bus}
-			ctxDescendants, descSpan := entityTracer().Start(ctx, "repo.EntityRepository.QueryByGroup.tagDescendants",
-				trace.WithAttributes(attribute.Int("query.tag_ids.count", len(q.TagIDs))))
-			descendants, err := tagRepo.GetDescendantTagIDs(ctxDescendants, q.TagIDs)
-			if err != nil {
-				recordSpanError(descSpan, err)
-				log.Warn().Err(err).Msg("failed to get descendant tags, using only direct tags")
-				descendants = q.TagIDs
-			} else if len(descendants) == 0 {
-				descendants = q.TagIDs
-			}
-			descSpan.SetAttributes(attribute.Int("query.tag_descendants.count", len(descendants)))
-			descSpan.End()
-
-			var tagPredicates []predicate.Entity
-			if !q.NegateTags {
-				tagPredicates = lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
-					return entity.HasTagWith(tag.ID(l))
-				})
-				andPredicates = append(andPredicates, entity.Or(tagPredicates...))
-			} else {
-				tagPredicates = lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
-					return entity.Not(entity.HasTagWith(tag.ID(l)))
-				})
-				andPredicates = append(andPredicates, entity.And(tagPredicates...))
-			}
-		}
-
-		if q.OnlyWithoutPhoto {
-			andPredicates = append(andPredicates, entity.Not(
-				entity.HasAttachmentsWith(
-					attachment.And(
-						attachment.Primary(true),
-						attachment.TypeEQ(attachment.TypePhoto),
-					),
-				)),
-			)
-		}
-
-		if q.OnlyWithPhoto {
-			andPredicates = append(andPredicates, entity.HasAttachmentsWith(
-				attachment.And(
-					attachment.Primary(true),
-					attachment.TypeEQ(attachment.TypePhoto),
-				),
-			),
-			)
-		}
-
-		if len(q.ParentIDs) > 0 {
-			parentPredicates := lo.Map(q.ParentIDs, func(l uuid.UUID, _ int) predicate.Entity {
-				return entity.HasParentWith(entity.ID(l))
-			})
-			andPredicates = append(andPredicates, entity.Or(parentPredicates...))
-		}
-
-		if len(q.Fields) > 0 {
-			fieldPredicates := lo.Map(q.Fields, func(f FieldQuery, _ int) predicate.Entity {
-				return entity.HasFieldsWith(
-					entityfield.And(
-						entityfield.Name(f.Name),
-						entityfield.TextValue(f.Value),
-					),
-				)
-			})
-			andPredicates = append(andPredicates, entity.Or(fieldPredicates...))
-		}
-
-		if len(q.ParentItemIDs) > 0 {
-			andPredicates = append(andPredicates, entity.HasParentWith(entity.IDIn(q.ParentItemIDs...)))
-		}
-	}
+	andPredicates := r.queryByGroupPredicates(ctx, q)
 
 	if len(andPredicates) > 0 {
 		qb = qb.Where(entity.And(andPredicates...))
@@ -751,6 +768,8 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 		qb = qb.Order(ent.Desc(entity.FieldUpdatedAt))
 	case "assetId":
 		qb = qb.Order(ent.Asc(entity.FieldAssetID))
+	case "quantity":
+		qb = qb.Order(ent.Asc(entity.FieldQuantity))
 	default: // "name"
 		qb = qb.Order(ent.Asc(entity.FieldName))
 	}
@@ -1068,11 +1087,16 @@ func (r *EntityRepository) Create(ctx context.Context, gid uuid.UUID, data Entit
 		SetImportRef(data.ImportRef).
 		SetName(data.Name).
 		SetQuantity(data.Quantity).
+		SetNillableLowStockThreshold(data.LowStockThreshold).
 		SetDescription(data.Description).
 		SetModelNumber(data.ModelNumber).
 		SetManufacturer(data.Manufacturer).
 		SetGroupID(gid).
 		SetAssetID(int64(data.AssetID))
+
+	if data.LowStockThreshold != nil {
+		q.SetLowStockThreshold(*data.LowStockThreshold)
+	}
 
 	if data.ParentID != uuid.Nil {
 		q.SetParentID(data.ParentID)
@@ -1109,18 +1133,19 @@ func (r *EntityRepository) Create(ctx context.Context, gid uuid.UUID, data Entit
 
 // EntityCreateFromTemplate contains all data needed to create an entity from a template.
 type EntityCreateFromTemplate struct {
-	Name             string
-	Description      string
-	Manufacturer     string
-	ModelNumber      string
-	WarrantyDetails  string
-	TagIDs           []uuid.UUID
-	Fields           []EntityFieldData
-	Quantity         float64
-	ParentID         uuid.UUID
-	EntityTypeID     uuid.UUID
-	Insured          bool
-	LifetimeWarranty bool
+	Name              string
+	Description       string
+	Manufacturer      string
+	ModelNumber       string
+	WarrantyDetails   string
+	TagIDs            []uuid.UUID
+	Fields            []EntityFieldData
+	Quantity          float64
+	LowStockThreshold *float64
+	ParentID          uuid.UUID
+	EntityTypeID      uuid.UUID
+	Insured           bool
+	LifetimeWarranty  bool
 }
 
 // CreateFromTemplate creates an entity with all template data in a single transaction.
@@ -1202,6 +1227,7 @@ func (r *EntityRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID
 		SetName(data.Name).
 		SetDescription(data.Description).
 		SetQuantity(data.Quantity).
+		SetNillableLowStockThreshold(data.LowStockThreshold).
 		SetGroupID(gid).
 		SetAssetID(int64(nextAssetID)).
 		SetInsured(data.Insured).
@@ -1591,7 +1617,11 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 	} else {
 		q.SetWarrantyExpires(t)
 	}
-
+	if data.LowStockThreshold != nil {
+		q.SetLowStockThreshold(*data.LowStockThreshold)
+	} else {
+		q.ClearLowStockThreshold()
+	}
 	if data.EntityTypeID != uuid.Nil {
 		q.SetEntityTypeID(data.EntityTypeID)
 	}
@@ -1882,6 +1912,10 @@ func (r *EntityRepository) Patch(ctx context.Context, gid, id uuid.UUID, data En
 		}
 
 		q.SetQuantity(*data.Quantity)
+	}
+
+	if data.LowStockThreshold != nil {
+		q.SetLowStockThreshold(*data.LowStockThreshold)
 	}
 
 	if data.ParentID != uuid.Nil {

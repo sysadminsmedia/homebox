@@ -136,6 +136,33 @@ func (_u *EntityUpdate) AddQuantity(v float64) *EntityUpdate {
 	return _u
 }
 
+// SetLowStockThreshold sets the "low_stock_threshold" field.
+func (_u *EntityUpdate) SetLowStockThreshold(v float64) *EntityUpdate {
+	_u.mutation.ResetLowStockThreshold()
+	_u.mutation.SetLowStockThreshold(v)
+	return _u
+}
+
+// SetNillableLowStockThreshold sets the "low_stock_threshold" field if the given value is not nil.
+func (_u *EntityUpdate) SetNillableLowStockThreshold(v *float64) *EntityUpdate {
+	if v != nil {
+		_u.SetLowStockThreshold(*v)
+	}
+	return _u
+}
+
+// AddLowStockThreshold adds value to the "low_stock_threshold" field.
+func (_u *EntityUpdate) AddLowStockThreshold(v float64) *EntityUpdate {
+	_u.mutation.AddLowStockThreshold(v)
+	return _u
+}
+
+// ClearLowStockThreshold clears the value of the "low_stock_threshold" field.
+func (_u *EntityUpdate) ClearLowStockThreshold() *EntityUpdate {
+	_u.mutation.ClearLowStockThreshold()
+	return _u
+}
+
 // SetInsured sets the "insured" field.
 func (_u *EntityUpdate) SetInsured(v bool) *EntityUpdate {
 	_u.mutation.SetInsured(v)
@@ -833,6 +860,15 @@ func (_u *EntityUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedQuantity(); ok {
 		_spec.AddField(entity.FieldQuantity, field.TypeFloat64, value)
 	}
+	if value, ok := _u.mutation.LowStockThreshold(); ok {
+		_spec.SetField(entity.FieldLowStockThreshold, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedLowStockThreshold(); ok {
+		_spec.AddField(entity.FieldLowStockThreshold, field.TypeFloat64, value)
+	}
+	if _u.mutation.LowStockThresholdCleared() {
+		_spec.ClearField(entity.FieldLowStockThreshold, field.TypeFloat64)
+	}
 	if value, ok := _u.mutation.Insured(); ok {
 		_spec.SetField(entity.FieldInsured, field.TypeBool, value)
 	}
@@ -1353,6 +1389,33 @@ func (_u *EntityUpdateOne) SetNillableQuantity(v *float64) *EntityUpdateOne {
 // AddQuantity adds value to the "quantity" field.
 func (_u *EntityUpdateOne) AddQuantity(v float64) *EntityUpdateOne {
 	_u.mutation.AddQuantity(v)
+	return _u
+}
+
+// SetLowStockThreshold sets the "low_stock_threshold" field.
+func (_u *EntityUpdateOne) SetLowStockThreshold(v float64) *EntityUpdateOne {
+	_u.mutation.ResetLowStockThreshold()
+	_u.mutation.SetLowStockThreshold(v)
+	return _u
+}
+
+// SetNillableLowStockThreshold sets the "low_stock_threshold" field if the given value is not nil.
+func (_u *EntityUpdateOne) SetNillableLowStockThreshold(v *float64) *EntityUpdateOne {
+	if v != nil {
+		_u.SetLowStockThreshold(*v)
+	}
+	return _u
+}
+
+// AddLowStockThreshold adds value to the "low_stock_threshold" field.
+func (_u *EntityUpdateOne) AddLowStockThreshold(v float64) *EntityUpdateOne {
+	_u.mutation.AddLowStockThreshold(v)
+	return _u
+}
+
+// ClearLowStockThreshold clears the value of the "low_stock_threshold" field.
+func (_u *EntityUpdateOne) ClearLowStockThreshold() *EntityUpdateOne {
+	_u.mutation.ClearLowStockThreshold()
 	return _u
 }
 
@@ -2082,6 +2145,15 @@ func (_u *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err erro
 	}
 	if value, ok := _u.mutation.AddedQuantity(); ok {
 		_spec.AddField(entity.FieldQuantity, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.LowStockThreshold(); ok {
+		_spec.SetField(entity.FieldLowStockThreshold, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedLowStockThreshold(); ok {
+		_spec.AddField(entity.FieldLowStockThreshold, field.TypeFloat64, value)
+	}
+	if _u.mutation.LowStockThresholdCleared() {
+		_spec.ClearField(entity.FieldLowStockThreshold, field.TypeFloat64)
 	}
 	if value, ok := _u.mutation.Insured(); ok {
 		_spec.SetField(entity.FieldInsured, field.TypeBool, value)
