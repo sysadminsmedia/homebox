@@ -26,6 +26,7 @@ func (Entity) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("name"),
 		index.Fields("manufacturer"),
+		index.Fields("external_id"),
 		index.Fields("model_number"),
 		index.Fields("serial_number"),
 		index.Fields("archived"),
@@ -62,6 +63,9 @@ func (Entity) Fields() []ent.Field {
 			MaxLen(255).
 			Optional(),
 		field.String("manufacturer").
+			MaxLen(255).
+			Optional(),
+		field.String("external_id").
 			MaxLen(255).
 			Optional(),
 

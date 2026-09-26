@@ -195,6 +195,8 @@ export interface EntEntity {
    * The values are being populated by the EntityQuery when eager-loading is set.
    */
   edges: EntEntityEdges;
+  /** ExternalID holds the value of the "external_id" field. */
+  external_id: string;
   /** ID of the ent. */
   id: string;
   /** ImportRef holds the value of the "import_ref" field. */
@@ -418,6 +420,8 @@ export interface EntGroup {
    * The values are being populated by the GroupQuery when eager-loading is set.
    */
   edges: EntGroupEdges;
+  /** ExternalIdsEnabled holds the value of the "external_ids_enabled" field. */
+  external_ids_enabled: boolean;
   /** ID of the ent. */
   id: string;
   /** Name holds the value of the "name" field. */
@@ -746,6 +750,8 @@ export interface EntityCreate {
   description: string;
   entityTypeId: string;
   /** @maxLength 255 */
+  externalID?: string | null;
+  /** @maxLength 255 */
   manufacturer?: string | null;
   /**
    * Identifications — optional at create time; populated e.g. by the
@@ -791,6 +797,7 @@ export interface EntityOut {
   createdAt: Date | string;
   description: string;
   entityType?: EntityTypeSummary | null;
+  externalID: string;
   fields: EntityFieldData[];
   id: string;
   imageId?: string | null;
@@ -835,6 +842,7 @@ export interface EntityOut {
 
 export interface EntityPatch {
   entityTypeId?: string | null;
+  externalID: string;
   id: string;
   parentId?: string | null;
   quantity?: number | null;
@@ -854,6 +862,7 @@ export interface EntitySummary {
   createdAt: Date | string;
   description: string;
   entityType?: EntityTypeSummary | null;
+  externalID: string;
   id: string;
   imageId?: string | null;
   insured: boolean;
@@ -1010,6 +1019,7 @@ export interface EntityUpdate {
   /** @maxLength 1000 */
   description: string;
   entityTypeId: string;
+  externalID: string;
   fields: EntityFieldData[];
   id: string;
   insured: boolean;
@@ -1067,6 +1077,7 @@ export interface ExportOut {
 export interface Group {
   createdAt: Date | string;
   currency: string;
+  external_ids_enabled: boolean;
   id: string;
   name: string;
   updatedAt: Date | string;
@@ -1090,6 +1101,7 @@ export interface GroupStatistics {
 
 export interface GroupUpdate {
   currency: string;
+  external_ids_enabled: boolean;
   name: string;
 }
 
@@ -1364,6 +1376,7 @@ export interface EntityTemplateCreateItemRequest {
    * precedence; when empty the repository falls back to the group's default.
    */
   entityTypeId: string;
+  externalID: string;
   /**
    * @minLength 1
    * @maxLength 255

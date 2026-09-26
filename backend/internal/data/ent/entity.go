@@ -48,6 +48,8 @@ type Entity struct {
 	ModelNumber string `json:"model_number,omitempty"`
 	// Manufacturer holds the value of the "manufacturer" field.
 	Manufacturer string `json:"manufacturer,omitempty"`
+	// ExternalID holds the value of the "external_id" field.
+	ExternalID string `json:"external_id,omitempty"`
 	// LifetimeWarranty holds the value of the "lifetime_warranty" field.
 	LifetimeWarranty bool `json:"lifetime_warranty,omitempty"`
 	// WarrantyExpires holds the value of the "warranty_expires" field.
@@ -189,7 +191,7 @@ func (*Entity) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case entity.FieldAssetID:
 			values[i] = new(sql.NullInt64)
-		case entity.FieldName, entity.FieldDescription, entity.FieldImportRef, entity.FieldNotes, entity.FieldSerialNumber, entity.FieldModelNumber, entity.FieldManufacturer, entity.FieldWarrantyDetails, entity.FieldPurchaseFrom, entity.FieldSoldTo, entity.FieldSoldNotes:
+		case entity.FieldName, entity.FieldDescription, entity.FieldImportRef, entity.FieldNotes, entity.FieldSerialNumber, entity.FieldModelNumber, entity.FieldManufacturer, entity.FieldExternalID, entity.FieldWarrantyDetails, entity.FieldPurchaseFrom, entity.FieldSoldTo, entity.FieldSoldNotes:
 			values[i] = new(sql.NullString)
 		case entity.FieldCreatedAt, entity.FieldUpdatedAt, entity.FieldWarrantyExpires, entity.FieldPurchaseDate, entity.FieldSoldDate:
 			values[i] = new(sql.NullTime)
@@ -305,6 +307,12 @@ func (_m *Entity) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field manufacturer", values[i])
 			} else if value.Valid {
 				_m.Manufacturer = value.String
+			}
+		case entity.FieldExternalID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field external_id", values[i])
+			} else if value.Valid {
+				_m.ExternalID = value.String
 			}
 		case entity.FieldLifetimeWarranty:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -504,6 +512,9 @@ func (_m *Entity) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("manufacturer=")
 	builder.WriteString(_m.Manufacturer)
+	builder.WriteString(", ")
+	builder.WriteString("external_id=")
+	builder.WriteString(_m.ExternalID)
 	builder.WriteString(", ")
 	builder.WriteString("lifetime_warranty=")
 	builder.WriteString(fmt.Sprintf("%v", _m.LifetimeWarranty))

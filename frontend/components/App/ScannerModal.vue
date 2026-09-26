@@ -68,9 +68,11 @@
   import MdiCameraOutline from "~icons/mdi/camera-outline";
   import { useDialog } from "@/components/ui/dialog-provider";
 
+  const api = useUserApi();
   const { t } = useI18n();
-  const { activeDialog, openDialog, closeDialog } = useDialog();
+  const { activeDialog, openDialog, closeDialog, registerOpenDialogCallback } = useDialog();
   const open = computed(() => activeDialog && activeDialog.value === DialogID.Scanner);
+  const { selectedCollection } = useCollections();
 
   const sources = ref<MediaDeviceInfo[]>([]);
   const selectedSource = ref<string | null>(null);
@@ -80,8 +82,20 @@
   const errorMessage = ref<string | null>(null);
   const detectedBarcode = ref<string>("");
   const detectedBarcodeType = ref<string>("");
+  const scanMode = ref<string | null>(null);
 
   const LAST_USED_DEVICE_ID_KEY = "homebox:lastUsedDeviceId";
+
+  onMounted(() => {
+    const cleanup = registerOpenDialogCallback(DialogID.Scanner, (params: { mode?: string } | undefined) => {
+      scanMode.value = params?.mode || null;
+    });
+
+    onUnmounted(() => {
+      cleanup();
+      stopScanner();
+    });
+  });
 
   const handleError = (error: unknown) => {
     console.error("Scanner error:", error);
@@ -172,9 +186,55 @@
     }
 
     try {
-      await codeReader.decodeFromVideoDevice(newSource, video.value!, (result, err) => {
+      await codeReader.decodeFromVideoDevice(newSource, video.value!, async (result, err) => {
         if (result && !loading.value) {
           loading.value = true;
+          const text = result.getText();
+
+          // Trying to add new entity with external_id provided
+          if (scanMode.value === "external_id") {
+            try {
+              const { data, error } = await api.items.getByExternalId(text);
+
+              closeDialog(DialogID.Scanner);
+
+              if (data && !error && data.id) {
+                // Entity exists
+                navigateTo(`/item/${data.id}`);
+              } else if (data && error && data.error === "Not Found") {
+                // Entity does not exists
+                openDialog(DialogID.CreateEntity, {
+                  params: {
+                    baseType: "item",
+                    externalId: text,
+                  },
+                });
+              } else {
+                // Other error
+                throw new Error(t("scanner.error") + " : " + data?.error);
+              }
+            } catch (e) {
+              handleError(e);
+              loading.value = false;
+            }
+            return;
+          }
+
+          // Trying to find entity with external_id if enabled in settings
+          if (selectedCollection.value?.external_ids_enabled) {
+            try {
+              const { data, error } = await api.items.getByExternalId(text);
+
+              if (data && !error && data.id) {
+                closeDialog(DialogID.Scanner);
+                navigateTo(`/item/${data.id}`);
+                return;
+              }
+            } catch (e) {
+              // Let the search continue
+            }
+          }
+
           try {
             const url = new URL(result.getText());
             if (!url.pathname.startsWith("/")) {
@@ -204,6 +264,7 @@
             loading.value = false;
           }
         }
+
         if (err && !(err instanceof NotFoundException)) {
           console.error(err);
           handleError(err);
@@ -212,9 +273,5 @@
     } catch (err) {
       handleError(err);
     }
-  });
-
-  onUnmounted(() => {
-    stopScanner();
   });
 </script>
