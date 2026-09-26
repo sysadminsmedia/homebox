@@ -92,12 +92,7 @@
       </CardContent>
 
       <CardFooter class="flex flex-col gap-2">
-        <Button
-          form="reset-password-form"
-          type="submit"
-          class="w-full"
-          :disabled="loading || !passwordValid || !token"
-        >
+        <Button form="reset-password-form" type="submit" class="w-full" :disabled="loading || !passwordValid || !token">
           {{ $t("index.reset_password_set") }}
         </Button>
         <NuxtLink to="/" class="text-sm text-muted-foreground hover:underline">

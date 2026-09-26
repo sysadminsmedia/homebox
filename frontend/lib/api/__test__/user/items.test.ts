@@ -13,10 +13,18 @@ describe("user should be able to create an item and add an attachment", () => {
    * that can be used to delete the location from the backend server.
    */
   async function useLocation(api: UserClient): Promise<[EntityOut, () => Promise<void>]> {
+    // Locations must carry the group's location entity type; without an
+    // entityTypeId the backend defaults new entities to the item type.
+    const { response: typesResponse, data: entityTypes } = await api.entityTypes.getAll();
+    expect(typesResponse.status).toBe(200);
+    const locationType = entityTypes.find(t => t.isLocation);
+    expect(locationType).toBeTruthy();
+
     const { response, data } = await api.items.createLocation({
       parentId: null,
       name: `__test__.location.name_${increment}`,
       description: `__test__.location.description_${increment}`,
+      entityTypeId: locationType!.id,
     });
     expect(response.status).toBe(201);
     increment++;
@@ -251,13 +259,17 @@ describe("user should be able to create an item and add an attachment", () => {
     const { response: updateResponse } = await api.items.update(parent.id, itemUpdate);
     expect(updateResponse.status).toBe(200);
 
+    // Children stay attached to the parent item (#1591) and derive their
+    // location from the ancestor chain, so it follows the parent's location.
     const { response: child1FinalResponse, data: child1FinalData } = await api.items.get(child1Item.id);
     expect(child1FinalResponse.status).toBe(200);
-    expect(child1FinalData.parent?.id).toBe(parentLocation.id);
+    expect(child1FinalData.parent?.id).toBe(parent.id);
+    expect(child1FinalData.location?.id).toBe(parentLocation.id);
 
     const { response: child2FinalResponse, data: child2FinalData } = await api.items.get(child2Item.id);
     expect(child2FinalResponse.status).toBe(200);
-    expect(child2FinalData.parent?.id).toBe(parentLocation.id);
+    expect(child2FinalData.parent?.id).toBe(parent.id);
+    expect(child2FinalData.location?.id).toBe(parentLocation.id);
 
     parentCleanup();
     childsCleanup();

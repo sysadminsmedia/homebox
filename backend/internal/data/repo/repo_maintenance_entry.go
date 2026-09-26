@@ -78,8 +78,8 @@ func mapMaintenanceEntry(entry *ent.MaintenanceEntry) MaintenanceEntry {
 	}
 	return MaintenanceEntry{
 		ID:            entry.ID,
-		CompletedDate: types.Date(entry.Date),
-		ScheduledDate: types.Date(entry.ScheduledDate),
+		CompletedDate: types.DateFromDBTime(entry.Date),
+		ScheduledDate: types.DateFromDBTime(entry.ScheduledDate),
 		PlanID:        planID,
 		IsOverdue:     isEntryOverdue(entry.Date, entry.ScheduledDate),
 		Name:          entry.Name,

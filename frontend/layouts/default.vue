@@ -7,10 +7,9 @@
     -->
     <ModalConfirm />
     <OutdatedModal v-if="status" :status="status" />
-    <ItemCreateModal />
+    <EntityCreateModal />
     <WipeInventoryDialog />
     <TagCreateModal />
-    <LocationCreateModal />
     <ItemBarcodeModal />
     <AppQuickMenuModal :actions="quickMenuActions" />
     <AppScannerModal />
@@ -49,7 +48,20 @@
                 v-for="btn in dropdown"
                 :key="btn.id"
                 class="group cursor-pointer text-lg"
-                @click="openDialog(btn.dialogId as NoParamDialogIDs)"
+                @click="
+                  () => {
+                    if (btn.dialogId === DialogID.CreateEntity) {
+                      if (btn.id == 0)
+                        // create item
+                        openDialog(btn.dialogId, { params: { baseType: 'item' } });
+                      else if (btn.id == 1)
+                        // create location
+                        openDialog(btn.dialogId, { params: { baseType: 'location' } });
+                    } else {
+                      openDialog(btn.dialogId as NoParamDialogIDs);
+                    }
+                  }
+                "
               >
                 {{ btn.name.value }}
                 <Shortcut
@@ -227,6 +239,7 @@
   import DOMPurify from "dompurify";
   import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
+  import { useEntityTypeStore } from "~~/stores/entityTypes";
 
   import MdiHome from "~icons/mdi/home";
   import MdiFileTree from "~icons/mdi/file-tree";
@@ -271,14 +284,12 @@
   import { Input } from "~/components/ui/input";
   import { Button } from "~/components/ui/button";
   import { toast } from "@/components/ui/sonner";
-  import { DialogID, type NoParamDialogIDs, type OptionalDialogIDs } from "~/components/ui/dialog-provider/utils";
+  import { DialogID, type NoParamDialogIDs } from "~/components/ui/dialog-provider/utils";
   import ModalConfirm from "~/components/ModalConfirm.vue";
   import OutdatedModal from "~/components/App/OutdatedModal.vue";
-  import ItemCreateModal from "~/components/Item/CreateModal.vue";
+  import EntityCreateModal from "~/components/Entity/CreateModal.vue";
   import WipeInventoryDialog from "~/components/WipeInventoryDialog.vue";
-
   import TagCreateModal from "~/components/Tag/CreateModal.vue";
-  import LocationCreateModal from "~/components/Location/CreateModal.vue";
   import ItemBarcodeModal from "~/components/Item/BarcodeModal.vue";
   import AppQuickMenuModal from "~/components/App/QuickMenuModal.vue";
   import AppScannerModal from "~/components/App/ScannerModal.vue";
@@ -347,7 +358,7 @@
     id: number;
     name: ComputedRef<string>;
     shortcut: string;
-    dialogId: NoParamDialogIDs | OptionalDialogIDs;
+    dialogId: DialogID;
   };
 
   const dropdown: DropdownItem[] = [
@@ -355,18 +366,18 @@
       id: 0,
       name: computed(() => t("menu.create_item")),
       shortcut: "Shift+1",
-      dialogId: DialogID.CreateItem,
+      dialogId: DialogID.CreateEntity,
     },
     {
       id: 1,
       name: computed(() => t("menu.create_location")),
-      shortcut: "Shift+3",
-      dialogId: DialogID.CreateLocation,
+      shortcut: "Shift+2",
+      dialogId: DialogID.CreateEntity,
     },
     {
       id: 2,
       name: computed(() => t("menu.create_tag")),
-      shortcut: "Shift+2",
+      shortcut: "Shift+3",
       dialogId: DialogID.CreateTag,
     },
   ];
@@ -486,8 +497,9 @@
   const quickMenuActions = reactive([
     ...dropdown.map(v => ({
       text: computed(() => v.name.value),
-      dialogId: v.dialogId as NoParamDialogIDs,
+      dialogId: v.dialogId,
       shortcut: v.shortcut.split("+")[1] as string,
+      id: v.id,
       type: "create" as const,
     })),
     ...nav.map(v => ({
@@ -502,6 +514,9 @@
 
   const locationStore = useLocationStore();
   locationStore.ensureLocationsFetched();
+
+  const entityTypeStore = useEntityTypeStore();
+  entityTypeStore.ensureFetched();
 
   onMounted(() => {
     locationStore.refreshParents();

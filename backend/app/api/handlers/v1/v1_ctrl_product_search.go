@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/hay-kot/httpkit/errchain"
@@ -23,7 +24,21 @@ import (
 const (
 	barcodeHTTPTimeoutSec = 10
 	schemeHTTPS           = "https"
+
+	// barcodeMaxResponseBytes caps how much of an upstream response is decoded so a
+	// misbehaving third-party API cannot drive unbounded allocation.
+	barcodeMaxResponseBytes = 4 << 20 // 4 MiB
 )
+
+// barcodeHTTPClient is shared by every barcode lookup so outbound requests reuse a
+// single connection pool instead of allocating a client per call.
+var barcodeHTTPClient = &http.Client{Timeout: barcodeHTTPTimeoutSec * time.Second}
+
+// decodeBarcodeResponse streams the response body into v. Decoding directly off the
+// body avoids materializing the whole payload before parsing it.
+func decodeBarcodeResponse(body io.Reader, v any) error {
+	return json.NewDecoder(io.LimitReader(body, barcodeMaxResponseBytes)).Decode(v)
+}
 
 // flexibleString is a string that can be unmarshaled from either a JSON
 // string or a JSON number. upcitemdb.com sometimes returns price fields
@@ -172,32 +187,26 @@ type BARCODESPIDER_COMResponse struct {
 }
 
 func lookupUPCItemDB(iEan string) ([]repo.BarcodeProduct, error) {
-	client := &http.Client{Timeout: barcodeHTTPTimeoutSec * time.Second}
-	resp, err := client.Get("https://api.upcitemdb.com/prod/trial/lookup?upc=" + url.QueryEscape(iEan))
+	resp, err := barcodeHTTPClient.Get("https://api.upcitemdb.com/prod/trial/lookup?upc=" + url.QueryEscape(iEan))
 	if err != nil {
 		return nil, err
 	}
 
 	defer func() {
-		err = errors.Join(err, resp.Body.Close())
+		_ = resp.Body.Close()
 	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("API returned status code: %d", resp.StatusCode)
 	}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	var result UPCITEMDBResponse
-	if err := json.Unmarshal(body, &result); err != nil {
+	if err := decodeBarcodeResponse(resp.Body, &result); err != nil {
 		log.Error().Msg("Can not unmarshal JSON from upcitemdb.com")
 		return nil, err
 	}
 
-	var res []repo.BarcodeProduct
+	res := make([]repo.BarcodeProduct, 0, len(result.Items))
 
 	for _, it := range result.Items {
 		var p repo.BarcodeProduct
@@ -233,28 +242,21 @@ func lookupBarcodespider(tokenAPI string, iEan string) ([]repo.BarcodeProduct, e
 
 	req.Header.Add("token", tokenAPI)
 
-	client := &http.Client{Timeout: barcodeHTTPTimeoutSec * time.Second}
-
-	resp, err := client.Do(req)
+	resp, err := barcodeHTTPClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
 	defer func() {
-		err = errors.Join(err, resp.Body.Close())
+		_ = resp.Body.Close()
 	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("barcodespider API returned status code: %d", resp.StatusCode)
 	}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	var result BARCODESPIDER_COMResponse
-	if err := json.Unmarshal(body, &result); err != nil {
+	if err := decodeBarcodeResponse(resp.Body, &result); err != nil {
 		log.Error().Msg("Can not unmarshal JSON from barcodespider.com")
 		return nil, err
 	}
@@ -291,15 +293,16 @@ func firstNonEmpty(values ...string) string {
 	return ""
 }
 
+var openFactsAllowedImageDomains = []string{
+	"openfoodfacts.org",
+	"openbeautyfacts.org",
+	"openproductsfacts.org",
+}
+
 func isAllowedOpenFactsImageHost(host string) bool {
 	host = strings.ToLower(strings.TrimSuffix(strings.TrimSpace(host), "."))
-	allowedDomains := []string{
-		"openfoodfacts.org",
-		"openbeautyfacts.org",
-		"openproductsfacts.org",
-	}
 
-	for _, domain := range allowedDomains {
+	for _, domain := range openFactsAllowedImageDomains {
 		if host == domain || strings.HasSuffix(host, "."+domain) {
 			return true
 		}
@@ -346,8 +349,9 @@ func buildOpenFactsBarcodeProduct(sourceName string, iEan string, product openFa
 	p.Item.Name = name
 	p.Manufacturer = product.Brands
 
-	var descriptionParts []string
-	for _, value := range []string{product.GenericName, product.Categories, product.Quantity} {
+	descriptionSources := [...]string{product.GenericName, product.Categories, product.Quantity}
+	descriptionParts := make([]string, 0, len(descriptionSources))
+	for _, value := range descriptionSources {
 		value = strings.TrimSpace(value)
 		if value != "" && value != name {
 			descriptionParts = append(descriptionParts, value)
@@ -361,7 +365,6 @@ func buildOpenFactsBarcodeProduct(sourceName string, iEan string, product openFa
 }
 
 func lookupOpenFacts(contact string, source openFactsSource, iEan string) ([]repo.BarcodeProduct, error) {
-	client := &http.Client{Timeout: barcodeHTTPTimeoutSec * time.Second}
 	req, err := http.NewRequest(
 		"GET", strings.TrimRight(source.BaseURL, "/")+"/api/v2/product/"+url.PathEscape(iEan)+".json", nil)
 	if err != nil {
@@ -374,13 +377,13 @@ func lookupOpenFacts(contact string, source openFactsSource, iEan string) ([]rep
 	}
 	req.Header.Set("User-Agent", userAgent)
 
-	resp, err := client.Do(req)
+	resp, err := barcodeHTTPClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
 	defer func() {
-		err = errors.Join(err, resp.Body.Close())
+		_ = resp.Body.Close()
 	}()
 
 	if resp.StatusCode == http.StatusNotFound {
@@ -390,13 +393,8 @@ func lookupOpenFacts(contact string, source openFactsSource, iEan string) ([]rep
 		return nil, fmt.Errorf("%s API returned status code: %d", source.Name, resp.StatusCode)
 	}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	var result OpenFactsResponse
-	if err := json.Unmarshal(body, &result); err != nil {
+	if err := decodeBarcodeResponse(resp.Body, &result); err != nil {
 		log.Error().Msg("Can not unmarshal " + source.Name + " JSON")
 		return nil, err
 	}
@@ -415,8 +413,7 @@ func lookupOpenFacts(contact string, source openFactsSource, iEan string) ([]rep
 
 // fetchImageBase64 fetches an image from the given HTTPS URL and returns it as a base64-encoded data URI.
 func fetchImageBase64(imageURL string) (string, error) {
-	client := &http.Client{Timeout: barcodeHTTPTimeoutSec * time.Second}
-	res, err := client.Get(imageURL)
+	res, err := barcodeHTTPClient.Get(imageURL)
 	if err != nil {
 		return "", err
 	}
@@ -434,23 +431,29 @@ func fetchImageBase64(imageURL string) (string, error) {
 	}
 
 	limitedReader := io.LimitReader(res.Body, 8*1024*1024)
-	bytes, err := io.ReadAll(limitedReader)
+	raw, err := io.ReadAll(limitedReader)
 	if err != nil {
 		return "", err
 	}
 
-	mimeType := http.DetectContentType(bytes)
-	var base64Encoding string
+	mimeType := http.DetectContentType(raw)
+	var prefix string
 	switch mimeType {
 	case "image/jpeg":
-		base64Encoding = "data:image/jpeg;base64,"
+		prefix = "data:image/jpeg;base64,"
 	case "image/png":
-		base64Encoding = "data:image/png;base64,"
+		prefix = "data:image/png;base64,"
 	default:
 		return "", fmt.Errorf("unsupported image type: %s", mimeType)
 	}
 
-	return base64Encoding + base64.StdEncoding.EncodeToString(bytes), nil
+	// Encode straight into a single buffer sized for prefix+payload so the data URI
+	// is built without an intermediate base64 string and a second concat.
+	out := make([]byte, len(prefix)+base64.StdEncoding.EncodedLen(len(raw)))
+	copy(out, prefix)
+	base64.StdEncoding.Encode(out[len(prefix):], raw)
+
+	return string(out), nil
 }
 
 // HandleProductSearchFromBarcode godoc
@@ -475,33 +478,58 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 		}
 
 		log.Info().Msg("Processing barcode lookup request on: " + q.EAN)
-
-		var products []repo.BarcodeProduct
+		// A provider timeout must not consume the server's write deadline and
+		// prevent already available results from reaching the client.
+		allowSlowResponse(w, r)
 
 		// www.ean-search.org/: not free
 
 		// Example code: dewalt 5035048748428
-
-		ps, err := lookupUPCItemDB(q.EAN)
-		if err != nil {
-			log.Error().Msg("Can not retrieve product from upcitemdb.com: " + err.Error())
+		type lookup struct {
+			name string
+			run  func() ([]repo.BarcodeProduct, error)
 		}
-		products = append(products, ps...)
+		lookups := []lookup{{
+			name: "upcitemdb.com",
+			run:  func() ([]repo.BarcodeProduct, error) { return lookupUPCItemDB(q.EAN) },
+		}}
 
 		if conf.TokenBarcodespider != "" {
-			ps2, err := lookupBarcodespider(conf.TokenBarcodespider, q.EAN)
-			if err != nil {
-				log.Error().Msg("Can not retrieve product from barcodespider.com: " + err.Error())
-			}
-			products = append(products, ps2...)
+			lookups = append(lookups, lookup{
+				name: "barcodespider.com",
+				run: func() ([]repo.BarcodeProduct, error) {
+					return lookupBarcodespider(conf.TokenBarcodespider, q.EAN)
+				},
+			})
 		}
 
 		for _, source := range openFactsSources {
-			ps3, err := lookupOpenFacts(conf.OpenFoodFactsContact, source, q.EAN)
-			if err != nil {
-				log.Error().Msg("Can not retrieve product from " + source.Name + ": " + err.Error())
-			}
-			products = append(products, ps3...)
+			lookups = append(lookups, lookup{
+				name: source.Name,
+				run: func() ([]repo.BarcodeProduct, error) {
+					return lookupOpenFacts(conf.OpenFoodFactsContact, source, q.EAN)
+				},
+			})
+		}
+
+		results := make([][]repo.BarcodeProduct, len(lookups))
+		var wg sync.WaitGroup
+		for i, lookup := range lookups {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				ps, err := lookup.run()
+				if err != nil {
+					log.Error().Msg("Can not retrieve product from " + lookup.name + ": " + err.Error())
+				}
+				results[i] = ps
+			}()
+		}
+		wg.Wait()
+
+		products := make([]repo.BarcodeProduct, 0, len(results))
+		for _, result := range results {
+			products = append(products, result...)
 		}
 
 		// Retrieve images if possible

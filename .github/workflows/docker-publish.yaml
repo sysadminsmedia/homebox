@@ -216,14 +216,22 @@ jobs:
         run: |
           set -euo pipefail
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.GHCR_REPO }}@sha256:%s ' *) 2>&1 | tee /tmp/push-ghcr.out
-          digest=$(grep -oE 'sha256:[a-f0-9]{64}' /tmp/push-ghcr.out | head -n1 || true)
-          if [ -z "$digest" ]; then
-            echo "No digest found in imagetools output:"
-            cat /tmp/push-ghcr.out
+            $(printf '${{ env.GHCR_REPO }}@sha256:%s ' *)
+          tag=$(jq -r --arg repo "${{ env.GHCR_REPO }}" \
+            '[.tags[] | select(ascii_downcase | startswith(($repo | ascii_downcase) + ":"))][0] // ""' \
+            <<< "$DOCKER_METADATA_OUTPUT_JSON")
+          if [ -z "$tag" ]; then
+            echo "No ${{ env.GHCR_REPO }} tag found in DOCKER_METADATA_OUTPUT_JSON:"
+            echo "$DOCKER_METADATA_OUTPUT_JSON"
             exit 1
           fi
-          echo "digest=$digest" >> $GITHUB_OUTPUT
+          digest=$(docker buildx imagetools inspect "$tag" --format '{{.Manifest.Digest}}')
+          if [ -z "$digest" ]; then
+            echo "Could not resolve a manifest digest for $tag"
+            exit 1
+          fi
+          echo "Attesting $tag@$digest"
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
 
       - name: Attest GHCR images
         uses: actions/attest-build-provenance@00014ed6ed5efc5b1ab7f7f34a39eb55d41aa4f8
@@ -240,14 +248,22 @@ jobs:
         run: |
           set -euo pipefail
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.DOCKERHUB_REPO }}@sha256:%s ' *) 2>&1 | tee /tmp/push-dockerhub.out
-          digest=$(grep -oE 'sha256:[a-f0-9]{64}' /tmp/push-dockerhub.out | head -n1 || true)
-          if [ -z "$digest" ]; then
-            echo "No digest found in imagetools output:"
-            cat /tmp/push-dockerhub.out
+            $(printf '${{ env.DOCKERHUB_REPO }}@sha256:%s ' *)
+          tag=$(jq -r --arg repo "${{ env.DOCKERHUB_REPO }}" \
+            '[.tags[] | select(ascii_downcase | startswith(($repo | ascii_downcase) + ":"))][0] // ""' \
+            <<< "$DOCKER_METADATA_OUTPUT_JSON")
+          if [ -z "$tag" ]; then
+            echo "No ${{ env.DOCKERHUB_REPO }} tag found in DOCKER_METADATA_OUTPUT_JSON:"
+            echo "$DOCKER_METADATA_OUTPUT_JSON"
             exit 1
           fi
-          echo "digest=$digest" >> $GITHUB_OUTPUT
+          digest=$(docker buildx imagetools inspect "$tag" --format '{{.Manifest.Digest}}')
+          if [ -z "$digest" ]; then
+            echo "Could not resolve a manifest digest for $tag"
+            exit 1
+          fi
+          echo "Attesting $tag@$digest"
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
 
       - name: Attest Dockerhub images
         uses: actions/attest-build-provenance@00014ed6ed5efc5b1ab7f7f34a39eb55d41aa4f8

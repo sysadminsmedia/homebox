@@ -9,8 +9,8 @@
 
       <form class="flex flex-col gap-2" @submit.prevent="dispatchFormSubmit">
         <FormTextField v-model="entry.name" autofocus :label="$t('maintenance.modal.entry_name')" />
-        <DatePicker v-model="entry.completedDate" date-only :label="$t('maintenance.modal.completed_date')" />
-        <DatePicker v-model="entry.scheduledDate" date-only :label="$t('maintenance.modal.scheduled_date')" />
+        <DatePicker v-model="entry.completedDate" :label="$t('maintenance.modal.completed_date')" />
+        <DatePicker v-model="entry.scheduledDate" :label="$t('maintenance.modal.scheduled_date')" />
         <label class="flex items-center gap-2 text-sm">
           <input v-model="entry.isRecurring" type="checkbox" :true-value="true" :false-value="false" />
           {{ $t("maintenance.modal.recurring") }}

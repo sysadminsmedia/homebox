@@ -23,6 +23,8 @@ type PasswordResetTokens struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID uuid.UUID `json:"user_id,omitempty"`
 	// Token holds the value of the "token" field.
 	Token []byte `json:"token,omitempty"`
 	// ExpiresAt holds the value of the "expires_at" field.
@@ -31,9 +33,8 @@ type PasswordResetTokens struct {
 	UsedAt *time.Time `json:"used_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PasswordResetTokensQuery when eager-loading is set.
-	Edges                      PasswordResetTokensEdges `json:"edges"`
-	user_password_reset_tokens *uuid.UUID
-	selectValues               sql.SelectValues
+	Edges        PasswordResetTokensEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // PasswordResetTokensEdges holds the relations/edges for other nodes in the graph.
@@ -65,10 +66,8 @@ func (*PasswordResetTokens) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case passwordresettokens.FieldCreatedAt, passwordresettokens.FieldUpdatedAt, passwordresettokens.FieldExpiresAt, passwordresettokens.FieldUsedAt:
 			values[i] = new(sql.NullTime)
-		case passwordresettokens.FieldID:
+		case passwordresettokens.FieldID, passwordresettokens.FieldUserID:
 			values[i] = new(uuid.UUID)
-		case passwordresettokens.ForeignKeys[0]: // user_password_reset_tokens
-			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -102,6 +101,12 @@ func (_m *PasswordResetTokens) assignValues(columns []string, values []any) erro
 			} else if value.Valid {
 				_m.UpdatedAt = value.Time
 			}
+		case passwordresettokens.FieldUserID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value != nil {
+				_m.UserID = *value
+			}
 		case passwordresettokens.FieldToken:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field token", values[i])
@@ -120,13 +125,6 @@ func (_m *PasswordResetTokens) assignValues(columns []string, values []any) erro
 			} else if value.Valid {
 				_m.UsedAt = new(time.Time)
 				*_m.UsedAt = value.Time
-			}
-		case passwordresettokens.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullScanner); !ok {
-				return fmt.Errorf("unexpected type %T for field user_password_reset_tokens", values[i])
-			} else if value.Valid {
-				_m.user_password_reset_tokens = new(uuid.UUID)
-				*_m.user_password_reset_tokens = *value.S.(*uuid.UUID)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -174,6 +172,9 @@ func (_m *PasswordResetTokens) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("user_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
 	builder.WriteString(", ")
 	builder.WriteString("token=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Token))

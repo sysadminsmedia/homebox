@@ -19,7 +19,13 @@ import (
 )
 
 var (
-	oneWeek                   = time.Hour * 24 * 7
+	oneWeek = time.Hour * 24 * 7
+	// defaultAPIKeyTTL bounds the lifetime of an API key created without an
+	// explicit expiry. A password change revokes sessions but deliberately
+	// leaves API keys alone (matching how API credentials behave elsewhere),
+	// so without a default TTL a leaked key would stay valid for the life of
+	// the account. Callers that need a longer-lived key pass ExpiresAt.
+	defaultAPIKeyTTL          = time.Hour * 24 * 30
 	passwordResetTokenTTL     = time.Hour
 	ErrorInvalidLogin         = errors.New("invalid username or password")
 	ErrorInvalidToken         = errors.New("invalid token")
@@ -220,6 +226,17 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration,
 			}
 			locsCreated++
 		}
+
+		// Seeding locations lazily creates the "Location" entity type, but the
+		// "Item" type isn't created until the first item — leaving the new group
+		// unable to create items via the UI. Ensure both exist up front.
+		if err := ensureDefaultEntityTypes(bootstrapCtx, svc.repos, usr.DefaultGroupID); err != nil {
+			recordServiceSpanError(bootstrapSpan, err)
+			bootstrapSpan.End()
+			recordServiceSpanError(span, err)
+			return repo.UserOut{}, err
+		}
+
 		bootstrapSpan.SetAttributes(
 			attribute.Int("tags.created.count", tagsCreated),
 			attribute.Int("locations.created.count", locsCreated),
@@ -362,10 +379,12 @@ func (svc *UserService) Login(ctx context.Context, username, password string, ex
 			attribute.Bool("user.found", false),
 			attribute.String("login.outcome", "user_not_found"),
 		)
-		// SECURITY: Perform hash to ensure response times are the same
+		// Run a real argon2id comparison against a valid dummy hash so response
+		// timing matches the "user found" path. Without this the absence of hashing
+		// work would reveal that the account does not exist.
 		_, dummySpan := entityServiceTracer().Start(ctx, "service.UserService.Login.timingDummy",
 			trace.WithAttributes(attribute.String("reason", "user_not_found")))
-		hasher.CheckPasswordHashCtx(ctx, "not-a-real-password", "not-a-real-password")
+		hasher.CheckDummyPasswordHashCtx(ctx)
 		dummySpan.End()
 		return UserAuthTokenDetail{}, ErrorInvalidLogin
 	}
@@ -382,7 +401,7 @@ func (svc *UserService) Login(ctx context.Context, username, password string, ex
 		span.SetAttributes(attribute.String("login.outcome", "blocked_no_password_hash"))
 		_, dummySpan := entityServiceTracer().Start(ctx, "service.UserService.Login.timingDummy",
 			trace.WithAttributes(attribute.String("reason", "no_password_hash")))
-		hasher.CheckPasswordHashCtx(ctx, "not-a-real-password", "not-a-real-password")
+		hasher.CheckDummyPasswordHashCtx(ctx)
 		dummySpan.End()
 		return UserAuthTokenDetail{}, ErrorInvalidLogin
 	}
@@ -574,6 +593,17 @@ func (svc *UserService) registerOIDCUser(ctx context.Context, issuer, subject, e
 		}
 		locsCreated++
 	}
+
+	// Ensure both default entity types exist (see RegisterUser): seeding
+	// locations only creates the "Location" type, not "Item".
+	if err := ensureDefaultEntityTypes(bootstrapCtx, svc.repos, group.ID); err != nil {
+		recordServiceSpanError(bootstrapSpan, err)
+		bootstrapSpan.End()
+		recordServiceSpanError(span, err)
+		log.Err(err).Msg("Failed to ensure default entity types")
+		return repo.UserOut{}, err
+	}
+
 	bootstrapSpan.SetAttributes(
 		attribute.Int("tags.created.count", tagsCreated),
 		attribute.Int("locations.created.count", locsCreated),
@@ -592,6 +622,28 @@ func (svc *UserService) Logout(ctx context.Context, token string) error {
 	err := svc.repos.AuthTokens.DeleteToken(ctx, hash)
 	recordServiceSpanError(span, err)
 	return err
+}
+
+// LogoutAll revokes every session token for the user, signing them out on all
+// devices including the one making the request. It gives a user a way to
+// unilaterally invalidate sessions they no longer trust — e.g. after a token is
+// leaked or a device is lost — without waiting for the token TTL to elapse.
+//
+// API keys are deliberate long-lived credentials stored in a separate table and
+// are intentionally left untouched; they are managed from the API keys page.
+// Returns the number of session tokens revoked.
+func (svc *UserService) LogoutAll(ctx context.Context, userID uuid.UUID) (int, error) {
+	ctx, span := entityServiceTracer().Start(ctx, "service.UserService.LogoutAll",
+		trace.WithAttributes(attribute.String("user.id", userID.String())))
+	defer span.End()
+
+	revoked, err := svc.repos.AuthTokens.DeleteAllByUser(ctx, userID)
+	if err != nil {
+		recordServiceSpanError(span, err)
+		return 0, err
+	}
+	span.SetAttributes(attribute.Int("logout_all.sessions_revoked", revoked))
+	return revoked, nil
 }
 
 func (svc *UserService) RenewToken(ctx context.Context, token string) (UserAuthTokenDetail, error) {
@@ -803,8 +855,18 @@ func (svc *UserService) CreateAPIKey(ctx context.Context, userID uuid.UUID, in r
 		))
 	defer span.End()
 
+	expiresAt := in.ExpiresAt
+	if expiresAt == nil {
+		defaulted := time.Now().Add(defaultAPIKeyTTL)
+		expiresAt = &defaulted
+	}
+	span.SetAttributes(
+		attribute.Bool("api_key.expiration.defaulted", in.ExpiresAt == nil),
+		attribute.String("api_key.expires_at", expiresAt.Format(time.RFC3339)),
+	)
+
 	token := hasher.GenerateAPIKeyCtx(ctx)
-	out, err := svc.repos.APIKeys.Create(ctx, userID, in.Name, token.Hash, in.ExpiresAt)
+	out, err := svc.repos.APIKeys.Create(ctx, userID, in.Name, token.Hash, expiresAt)
 	if err != nil {
 		recordServiceSpanError(span, err)
 		return repo.APIKeyCreatedOut{}, err

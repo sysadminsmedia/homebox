@@ -69,10 +69,10 @@ func mergeCreateEntityTypes(ctx context.Context, db *sql.DB) error {
 	seedSQL := `INSERT INTO entity_types (id, created_at, updated_at, name, description, is_location, group_entity_types)
 		SELECT ` + uuidExpr + `, datetime('now'), datetime('now'), $1, '', $2, g.id FROM groups g;`
 
-	if _, err := db.ExecContext(ctx, seedSQL, "Location", true); err != nil {
+	if _, err := db.ExecContext(ctx, seedSQL, "global.location", true); err != nil {
 		return fmt.Errorf("seed Location type: %w", err)
 	}
-	if _, err := db.ExecContext(ctx, seedSQL, "Item", false); err != nil {
+	if _, err := db.ExecContext(ctx, seedSQL, "global.item", false); err != nil {
 		return fmt.Errorf("seed Item type: %w", err)
 	}
 
@@ -157,7 +157,7 @@ func mergeMigrateData(ctx context.Context, db *sql.DB) error {
 			i.sold_time, i.sold_to, i.sold_price, i.sold_notes,
 			i.group_items, et.id, i.item_children
 		FROM items i
-		JOIN entity_types et ON et.group_entity_types = i.group_items AND et.name = 'Item';
+		JOIN entity_types et ON et.group_entity_types = i.group_items AND et.name = 'global.item';
 	`); err != nil {
 		return fmt.Errorf("insert items as entities: %w", err)
 	}
@@ -175,7 +175,7 @@ func mergeMigrateData(ctx context.Context, db *sql.DB) error {
 			1, 0, 0, 0, 0, 0, 0, 0,
 			l.group_locations, et.id, l.location_children
 		FROM locations l
-		JOIN entity_types et ON et.group_entity_types = l.group_locations AND et.name = 'Location';
+		JOIN entity_types et ON et.group_entity_types = l.group_locations AND et.name = 'global.location';
 	`); err != nil {
 		return fmt.Errorf("insert locations as entities: %w", err)
 	}

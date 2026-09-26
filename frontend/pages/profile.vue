@@ -111,6 +111,25 @@
     passwordChange.loading = false;
   }
 
+  async function logoutAllDevices() {
+    const result = await confirm.open(t("profile.logout_all_confirm"));
+    if (result.isCanceled) {
+      return;
+    }
+
+    const { error } = await api.user.logoutAll();
+    if (error) {
+      toast.error(t("profile.toast.failed_logout_all"));
+      return;
+    }
+
+    // Every session token was revoked server-side, including this one, so clear
+    // the local session and send the user back to the login flow.
+    toast.success(t("profile.toast.logout_all_success"));
+    auth.invalidateSession();
+    navigateTo("/");
+  }
+
   // ---------------------------------------------------------------------------
   // API keys
 
@@ -240,6 +259,9 @@
           <div class="mb-2 max-w-[260px]">
             <FormCheckbox v-model="apiKeyForm.setExpiration" :label="$t('profile.api_key_set_expiration')" />
           </div>
+          <p v-if="!apiKeyForm.setExpiration" class="mb-2 text-sm text-muted-foreground">
+            {{ $t("profile.api_key_default_expiration") }}
+          </p>
           <div v-if="apiKeyForm.setExpiration" class="mb-2">
             <label class="mb-1 block text-sm font-medium">{{ $t("profile.api_key_expires_at") }}</label>
             <input
@@ -342,6 +364,9 @@
           <div class="flex gap-2">
             <Button variant="secondary" size="sm" @click="openDialog(DialogID.ChangePassword)">
               {{ $t("profile.change_password") }}
+            </Button>
+            <Button variant="secondary" size="sm" @click="logoutAllDevices">
+              {{ $t("profile.logout_all_devices") }}
             </Button>
             <Button variant="secondary" size="sm" @click="openDialog(DialogID.DuplicateSettings)">
               {{ $t("items.duplicate.title") }}

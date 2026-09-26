@@ -50,6 +50,12 @@ func (_c *PasswordResetTokensCreate) SetNillableUpdatedAt(v *time.Time) *Passwor
 	return _c
 }
 
+// SetUserID sets the "user_id" field.
+func (_c *PasswordResetTokensCreate) SetUserID(v uuid.UUID) *PasswordResetTokensCreate {
+	_c.mutation.SetUserID(v)
+	return _c
+}
+
 // SetToken sets the "token" field.
 func (_c *PasswordResetTokensCreate) SetToken(v []byte) *PasswordResetTokensCreate {
 	_c.mutation.SetToken(v)
@@ -95,12 +101,6 @@ func (_c *PasswordResetTokensCreate) SetNillableID(v *uuid.UUID) *PasswordResetT
 	if v != nil {
 		_c.SetID(*v)
 	}
-	return _c
-}
-
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_c *PasswordResetTokensCreate) SetUserID(id uuid.UUID) *PasswordResetTokensCreate {
-	_c.mutation.SetUserID(id)
 	return _c
 }
 
@@ -169,6 +169,9 @@ func (_c *PasswordResetTokensCreate) check() error {
 	}
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "PasswordResetTokens.updated_at"`)}
+	}
+	if _, ok := _c.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "PasswordResetTokens.user_id"`)}
 	}
 	if _, ok := _c.mutation.Token(); !ok {
 		return &ValidationError{Name: "token", err: errors.New(`ent: missing required field "PasswordResetTokens.token"`)}
@@ -248,7 +251,7 @@ func (_c *PasswordResetTokensCreate) createSpec() (*PasswordResetTokens, *sqlgra
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_password_reset_tokens = &nodes[0]
+		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

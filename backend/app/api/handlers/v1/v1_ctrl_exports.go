@@ -66,13 +66,13 @@ func (ctrl *V1Controller) HandleExportsCreate() errchain.HandlerFunc {
 
 // HandleExportGet godoc
 //
-//	@Summary		Get an Export
-//	@Tags			Group
-//	@Produce		json
-//	@Param			id	path	string	true	"Export ID"
-//	@Success		200	{object}	repo.ExportOut
-//	@Router			/v1/group/exports/{id} [GET]
-//	@Security		Bearer
+//	@Summary	Get an Export
+//	@Tags		Group
+//	@Produce	json
+//	@Param		id	path		string	true	"Export ID"
+//	@Success	200	{object}	repo.ExportOut
+//	@Router		/v1/group/exports/{id} [GET]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleExportGet() errchain.HandlerFunc {
 	fn := func(r *http.Request, id uuid.UUID) (repo.ExportOut, error) {
 		ctx := services.NewContext(r.Context())
@@ -84,13 +84,13 @@ func (ctrl *V1Controller) HandleExportGet() errchain.HandlerFunc {
 
 // HandleExportDownload godoc
 //
-//	@Summary		Download an Export Artifact
-//	@Tags			Group
-//	@Produce		application/zip
-//	@Param			id	path		string	true	"Export ID"
-//	@Success		200	{file}		file
-//	@Router			/v1/group/exports/{id}/download [GET]
-//	@Security		Bearer
+//	@Summary	Download an Export Artifact
+//	@Tags		Group
+//	@Produce	application/zip
+//	@Param		id	path	string	true	"Export ID"
+//	@Success	200	{file}	file
+//	@Router		/v1/group/exports/{id}/download [GET]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleExportDownload() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		ctx := services.NewContext(r.Context())
@@ -129,6 +129,12 @@ func (ctrl *V1Controller) HandleExportDownload() errchain.HandlerFunc {
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 		defer func() { _ = reader.Close() }()
+
+		// Backups routinely run to hundreds of megabytes and take far longer than
+		// the default 10s write timeout to stream. Content-Length is set from the
+		// recorded artifact size, so a deadline cut mid-copy leaves the browser
+		// with a short read it reports as a failed download.
+		allowSlowResponse(w, r)
 
 		w.Header().Set("Content-Type", "application/zip")
 		w.Header().Set("Content-Disposition",
@@ -195,7 +201,7 @@ func (ctrl *V1Controller) HandleExportDelete() errchain.HandlerFunc {
 //	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			file	formData	file	true	"Export zip"
-//	@Success		202	{object}	repo.ExportOut
+//	@Success		202		{object}	repo.ExportOut
 //	@Router			/v1/group/import [POST]
 //	@Security		Bearer
 func (ctrl *V1Controller) HandleCollectionImport() errchain.HandlerFunc {
@@ -228,11 +234,11 @@ func (ctrl *V1Controller) HandleCollectionImport() errchain.HandlerFunc {
 		}
 
 		// maxImportSize is in MB and applies to the whole request body via the
-		// path-aware middleware; here we pass it to ParseMultipartForm as the
-		// memory-vs-disk threshold so larger archives spool gracefully.
-		if err := r.ParseMultipartForm(ctrl.maxImportSize << 20); err != nil {
+		// path-aware middleware; here we pass `maxParseMemory` to ParseMultipartForm
+		// as the memory-vs-disk threshold so larger archives spool gracefully.
+		if err := r.ParseMultipartForm(ctrl.maxParseMemory << 20); err != nil {
 			log.Err(err).Msg("import: parse multipart")
-			return validate.NewRequestError(err, http.StatusBadRequest)
+			return multipartFormError(err)
 		}
 		// Remove any spooled temp files the multipart parser may have created.
 		// Registered before file.Close so the close (LIFO) runs first — on

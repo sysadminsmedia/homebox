@@ -7,6 +7,7 @@ import {Tabs, TabItem} from "@astrojs/starlight/components";
 
 <Tabs>
     <TabItem label="Environment Variables">
+
 | Variable                                | Default                                                                                        | Description                                                                                                                                                                               |
 |-----------------------------------------|------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | HBOX_MODE                               | `development`                                                                                  | application mode used for runtime behavior  can be one of: `development`, `production`                                                                                                    |
@@ -75,7 +76,7 @@ import {Tabs, TabItem} from "@astrojs/starlight/components";
 | HBOX_LABEL_MAKER_MARGIN                 | 32                                                                                             | margin around label                                                                                                                                                                       |
 | HBOX_LABEL_MAKER_PADDING                | 32                                                                                             | space between elements on label                                                                                                                                                           |
 | HBOX_LABEL_MAKER_FONT_SIZE              | 32.0                                                                                           | font size for label text                                                                                                                                                                  |
-| HBOX_LABEL_MAKER_PRINT_COMMAND          |                                                                                                | the command to use for printing labels. if empty, label printing is disabled. <span v-pre>`{{.FileName}}`</span> in the command will be replaced with the png filename of the label       |
+| HBOX_LABEL_MAKER_PRINT_COMMAND          |                                                                                                | the command to use for printing labels. if empty, label printing is disabled. `{{.FileName}}` in the command will be replaced with the png filename of the label       |
 | HBOX_LABEL_MAKER_DYNAMIC_LENGTH         | true                                                                                           | allow label generation with open length. `HBOX_LABEL_MAKER_HEIGHT` is still used for layout and minimal height. If not used, long text may be cut off, but all labels have the same size. |
 | HBOX_LABEL_MAKER_ADDITIONAL_INFORMATION |                                                                                                | Additional information added to the label like name or phone number                                                                                                                       |
 | HBOX_LABEL_MAKER_REGULAR_FONT_PATH      |                                                                                                | path to regular font file for label generation (e.g., `/fonts/NotoSansKR-Regular.ttf`). If not set, uses embedded font. Supports TTF format.                                              |
@@ -87,12 +88,13 @@ import {Tabs, TabItem} from "@astrojs/starlight/components";
 | HBOX_THUMBNAIL_HEIGHT                   | 500                                                                                            | height for generated thumbnails in pixels                                                                                                                                                 |
 | HBOX_BARCODE_TOKEN_BARCODESPIDER        |                                                                                                | API token for BarcodeSpider.com service used for barcode product lookups. If not set, BarcodeSpider lookups will not be performed.                                                        |
 | HBOX_BARCODE_OPEN_FOOD_FACTS_CONTACT    |                                                                                                | Optional contact value included in the User-Agent for Open Food Facts, Open Beauty Facts, and Open Products Facts barcode lookups. This is sent to third-party APIs, so avoid secrets or personal PII and prefer a role/contact alias. |
-| HBOX_NOTIFIER_ALLOW_NETS                |                                                                                                | comma-separated list of CIDR networks to allow for generic notifiers (e.g., `192.168.1.0/24,10.0.0.0/8`). If set, only these networks will be allowed and all block rules are bypassed.   |
-| HBOX_NOTIFIER_BLOCK_NETS                |                                                                                                | comma-separated list of CIDR networks to block for generic notifiers (e.g., `192.168.1.0/24,10.0.0.0/8`). Provides fine-grained blocking without enabling blanket rules.                  |
+| HBOX_NOTIFIER_ALLOW_NETS                |                                                                                                | semicolon-separated list of CIDR networks to allow for generic notifiers (e.g., `192.168.1.0/24;10.0.0.0/8`). If set, only these networks will be allowed and all block rules are bypassed. |
+| HBOX_NOTIFIER_BLOCK_NETS                |                                                                                                | semicolon-separated list of CIDR networks to block for generic notifiers (e.g., `192.168.1.0/24;10.0.0.0/8`). Provides fine-grained blocking without enabling blanket rules.                |
 | HBOX_NOTIFIER_BLOCK_LOCALHOST           | false                                                                                          | block generic notifiers from sending to localhost/loopback addresses (127.0.0.1, ::1)                                                                                                     |
 | HBOX_NOTIFIER_BLOCK_LOCAL_NETS          | false                                                                                          | block generic notifiers from sending to RFC1918 private networks (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16)                                                                             |
 | HBOX_NOTIFIER_BLOCK_BOGON_NETS          | true                                                                                           | block generic notifiers from sending to bogon/reserved networks (link-local, multicast, broadcast, etc.)                                                                                  |
 | HBOX_NOTIFIER_BLOCK_CLOUD_METADATA      | true                                                                                           | block generic notifiers from sending to cloud metadata endpoints (169.254.169.254, fd00:ec2::254)                                                                                         |
+| HBOX_NOTIFIER_DNS64_NETS                | 64:ff9b::/96;64:ff9b:1::/48                                                                    | semicolon-separated list of DNS64/NAT64 translation prefixes (RFC 6052). IPv6 addresses in these prefixes have their embedded IPv4 address extracted and checked against the allow/block rules, preventing DNS64-based SSRF bypasses. Override if your NAT64 deployment uses a custom prefix. |
 | HBOX_OTEL_ENABLED                       | false                                                                                          | enable OpenTelemetry tracing. Standard OTEL_* env vars are also honored by the SDK in addition to these `HBOX_OTEL_*` options.                                                            |
 | HBOX_OTEL_SERVICE_NAME                  | homebox                                                                                        | service name reported to the telemetry backend                                                                                                                                            |
 | HBOX_OTEL_SERVICE_VERSION               |                                                                                                | service version reported to the telemetry backend (defaults to the build version when unset)                                                                                              |
@@ -109,6 +111,7 @@ import {Tabs, TabItem} from "@astrojs/starlight/components";
 | HBOX_OTEL_ENABLE_DATABASE_TRACING       | true                                                                                           | emit spans for database operations                                                                                                                                                        |
 | HBOX_OTEL_ENABLE_HTTP_TRACING           | true                                                                                           | emit spans for HTTP requests                                                                                                                                                              |
 | HBOX_OTEL_PROXY_ENABLED                 | true                                                                                           | enable the in-process telemetry proxy endpoint that forwards frontend trace data to the configured exporter                                                                               |
+
     </TabItem>
     <TabItem label="CLI Options">
 
@@ -166,6 +169,7 @@ OPTIONS
       --notifier-block-cloud-metadata       <bool>      (default: true)
       --notifier-block-local-nets           <bool>      (default: false)
       --notifier-block-localhost            <bool>      (default: false)
+      --notifier-dns64-nets                 <string>    (default: 64:ff9b::/96;64:ff9b:1::/48)
       --oidc-allowed-groups                 <string>
       --oidc-auto-redirect                  <bool>      (default: false)
       --oidc-button-text                    <string>    (default: Sign in with OIDC)
@@ -223,6 +227,7 @@ OPTIONS
 </Tabs>
 
 ### HBOX_WEB_HOST examples
+
 | Value                       | Notes                                                      |
 |-----------------------------|------------------------------------------------------------|
 | 0.0.0.0                     | Visible all interfaces (default behaviour)                 |

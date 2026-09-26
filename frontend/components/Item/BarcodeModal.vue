@@ -188,8 +188,11 @@
       selectedRow.value < products.value.length
     ) {
       const p = products.value![selectedRow.value];
-      openDialog(DialogID.CreateItem, {
-        params: { product: p },
+      openDialog(DialogID.CreateEntity, {
+        params: {
+          baseType: "item",
+          product: p,
+        },
       });
     }
   }

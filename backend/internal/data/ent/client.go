@@ -290,8 +290,8 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.APIKey, c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity, c.EntityField,
 		c.EntityTemplate, c.EntityType, c.Export, c.Group, c.GroupInvitationToken,
-		c.MaintenanceEntry, c.MaintenancePlan, c.Notifier, c.PasswordResetTokens, c.Tag,
-		c.TemplateField, c.User, c.UserGroup,
+		c.MaintenanceEntry, c.MaintenancePlan, c.Notifier, c.PasswordResetTokens,
+		c.Tag, c.TemplateField, c.User, c.UserGroup,
 	} {
 		n.Use(hooks...)
 	}
@@ -303,8 +303,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.APIKey, c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity, c.EntityField,
 		c.EntityTemplate, c.EntityType, c.Export, c.Group, c.GroupInvitationToken,
-		c.MaintenanceEntry, c.MaintenancePlan, c.Notifier, c.PasswordResetTokens, c.Tag,
-		c.TemplateField, c.User, c.UserGroup,
+		c.MaintenanceEntry, c.MaintenancePlan, c.Notifier, c.PasswordResetTokens,
+		c.Tag, c.TemplateField, c.User, c.UserGroup,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -3686,12 +3686,14 @@ func (c *UserGroupClient) mutate(ctx context.Context, m *UserGroupMutation) (Val
 type (
 	hooks struct {
 		APIKey, Attachment, AuthRoles, AuthTokens, Entity, EntityField, EntityTemplate,
-		EntityType, Export, Group, GroupInvitationToken, MaintenanceEntry, MaintenancePlan,
-		Notifier, PasswordResetTokens, Tag, TemplateField, User, UserGroup []ent.Hook
+		EntityType, Export, Group, GroupInvitationToken, MaintenanceEntry,
+		MaintenancePlan, Notifier, PasswordResetTokens, Tag, TemplateField, User,
+		UserGroup []ent.Hook
 	}
 	inters struct {
 		APIKey, Attachment, AuthRoles, AuthTokens, Entity, EntityField, EntityTemplate,
-		EntityType, Export, Group, GroupInvitationToken, MaintenanceEntry, MaintenancePlan,
-		Notifier, PasswordResetTokens, Tag, TemplateField, User, UserGroup []ent.Interceptor
+		EntityType, Export, Group, GroupInvitationToken, MaintenanceEntry,
+		MaintenancePlan, Notifier, PasswordResetTokens, Tag, TemplateField, User,
+		UserGroup []ent.Interceptor
 	}
 )

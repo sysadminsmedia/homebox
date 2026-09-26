@@ -53,7 +53,7 @@
   const { closeDialog } = useDialog();
   const tagStore = useTagStore();
 
-  useDialogHotkey(DialogID.CreateTag, { code: "Digit2", shift: true });
+  useDialogHotkey(DialogID.CreateTag, { code: "Digit3", shift: true });
 
   const loading = ref(false);
   const focused = ref(false);

@@ -66,6 +66,11 @@ func UpdatedAt(v time.Time) predicate.PasswordResetTokens {
 	return predicate.PasswordResetTokens(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v uuid.UUID) predicate.PasswordResetTokens {
+	return predicate.PasswordResetTokens(sql.FieldEQ(FieldUserID, v))
+}
+
 // Token applies equality check predicate on the "token" field. It's identical to TokenEQ.
 func Token(v []byte) predicate.PasswordResetTokens {
 	return predicate.PasswordResetTokens(sql.FieldEQ(FieldToken, v))
@@ -159,6 +164,26 @@ func UpdatedAtLT(v time.Time) predicate.PasswordResetTokens {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.PasswordResetTokens {
 	return predicate.PasswordResetTokens(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v uuid.UUID) predicate.PasswordResetTokens {
+	return predicate.PasswordResetTokens(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v uuid.UUID) predicate.PasswordResetTokens {
+	return predicate.PasswordResetTokens(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...uuid.UUID) predicate.PasswordResetTokens {
+	return predicate.PasswordResetTokens(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...uuid.UUID) predicate.PasswordResetTokens {
+	return predicate.PasswordResetTokens(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // TokenEQ applies the EQ predicate on the "token" field.

@@ -225,7 +225,10 @@
     return route(`/qrcode`, { data: encodeURIComponent(data) });
   }
 
-  function getItem(n: number, item: { assetId: string; name: string; location: { name: string } } | null): LabelData {
+  function getItem(
+    n: number,
+    item: { assetId: string; name: string; parent?: { name: string } | null } | null
+  ): LabelData {
     // format n into - seperated string with leading zeros
     const assetID = fmtAssetID(item?.assetId ?? n + 1);
 
@@ -233,7 +236,10 @@
       url: getQRCodeUrl(assetID),
       assetID: item?.assetId ?? assetID,
       name: item?.name ?? labelBlankLine,
-      location: item?.location?.name ?? labelBlankLine,
+      // Since the entities refactor an item's whereabouts is its parent
+      // entity (a location or a container item) — the old `location` edge no
+      // longer exists (#1574).
+      location: item?.parent?.name ?? labelBlankLine,
     };
   }
 
@@ -263,11 +269,10 @@
     const items: LabelData[] = [];
     for (let i = displayProperties.assetRange - 1; i < displayProperties.assetRangeMax - 1; i++) {
       const item = allFields?.value?.items?.[i];
-      if (item?.location) {
-        items.push(getItem(i, item as { assetId: string; location: { name: string }; name: string }));
-      } else {
-        items.push(getItem(i, null));
-      }
+      // Real items render their own data; indices past the inventory render
+      // as blank pre-printable labels. The old guard required the removed
+      // `location` edge and thus blanked every label (#1574).
+      items.push(getItem(i, item ?? null));
     }
     return items;
   });

@@ -62,18 +62,18 @@ func sanitizeExternalURLTitle(raw string) string {
 
 // HandleEntityAttachmentExternalCreate godoc
 //
-//	@Summary	Create External Link Attachment
+//	@Summary		Create External Link Attachment
 //	@Description	Links an entity to a document or URL in an external system without copying
 //				the file into Homebox. The source is identified by source_type.
-//	@Tags		Entities Attachments
-//	@Accept		json
-//	@Produce	json
-//	@Param		id		path		string					true	"Entity ID"
-//	@Param		payload	body		externalAttachmentRequest	true	"External document reference"
-//	@Success	201		{object}	repo.EntityOut
-//	@Failure	400		{object}	validate.ErrorResponse
-//	@Router		/v1/entities/{id}/attachments/external [POST]
-//	@Security	Bearer
+//	@Tags			Entities Attachments
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		string						true	"Entity ID"
+//	@Param			payload	body		externalAttachmentRequest	true	"External document reference"
+//	@Success		201		{object}	repo.EntityOut
+//	@Failure		400		{object}	validate.ErrorResponse
+//	@Router			/v1/entities/{id}/attachments/external [POST]
+//	@Security		Bearer
 func (ctrl *V1Controller) HandleEntityAttachmentExternalCreate() errchain.HandlerFunc {
 	fn := func(r *http.Request, id uuid.UUID, body externalAttachmentRequest) (repo.EntityOut, error) {
 		_, span := startEntityCtrlSpan(r.Context(), "controller.V1.HandleEntityAttachmentExternalCreate")

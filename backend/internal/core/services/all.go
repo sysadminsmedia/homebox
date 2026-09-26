@@ -78,8 +78,9 @@ func WithMailer(m *mailer.Mailer) func(*options) {
 // This ensures SSRF protections are enabled when WithNotifierConfig is not provided.
 func defaultNotifierConf() *config.NotifierConf {
 	return &config.NotifierConf{
-		BlockBogonNets:     true, // default:true per conf tag
-		BlockCloudMetadata: true, // default:true per conf tag
+		BlockBogonNets:     true,                                       // default:true per conf tag
+		BlockCloudMetadata: true,                                       // default:true per conf tag
+		Dns64Nets:          []string{"64:ff9b::/96", "64:ff9b:1::/48"}, // default per conf tag
 	}
 }
 

@@ -57,6 +57,9 @@ You can also try the demo instances of Homebox:
 [Configuration & Docker Compose](https://homebox.software/en/quick-start/)
 
 ```bash
+# Save pepper to local file
+openssl rand -base64 48 > hbox.pepper
+chmod 400 hbox.pepper
 # If using the rootless or hardened image, ensure data 
 # folder has correct permissions
 mkdir -p /path/to/data/folder
@@ -66,6 +69,7 @@ docker run -d \
   --restart unless-stopped \
   --publish 3100:7745 \
   --env TZ=Europe/Bucharest \
+  --env HBOX_AUTH_API_KEY_PEPPER=$(cat hbox.pepper) \
   --volume /path/to/data/folder/:/data \
   ghcr.io/sysadminsmedia/homebox:latest
 # ghcr.io/sysadminsmedia/homebox:latest-rootless

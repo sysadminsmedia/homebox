@@ -60,7 +60,7 @@ func (ctrl *V1Controller) HandleEntityAttachmentCreate() errchain.HandlerFunc {
 			parseSpan.End()
 			recordCtrlSpanError(span, err)
 			log.Err(err).Msg("failed to parse multipart form")
-			return validate.NewRequestError(errors.New("failed to parse multipart form"), http.StatusBadRequest)
+			return multipartFormError(err)
 		}
 
 		errs := validate.NewFieldErrors()
@@ -151,9 +151,9 @@ func (ctrl *V1Controller) HandleEntityAttachmentCreate() errchain.HandlerFunc {
 //	@Summary	Get Entity Attachment
 //	@Tags		Entities Attachments
 //	@Produce	application/octet-stream
-//	@Param		id				path		string	true	"Entity ID"
-//	@Param		attachment_id	path		string	true	"Attachment ID"
-//	@Success	200				{file}		file
+//	@Param		id				path	string	true	"Entity ID"
+//	@Param		attachment_id	path	string	true	"Attachment ID"
+//	@Success	200				{file}	file
 //	@Router		/v1/entities/{id}/attachments/{attachment_id} [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleEntityAttachmentGet() errchain.HandlerFunc {
@@ -279,6 +279,11 @@ func (ctrl *V1Controller) handleEntityAttachmentsHandler(w http.ResponseWriter, 
 				log.Err(err).Msg("failed to close bucket")
 			}
 		}(bucket)
+
+		// Attachments are user-supplied and can be arbitrarily large (videos,
+		// scanned manuals). Without this the default 10s write timeout truncates
+		// them mid-transfer on slow links.
+		allowSlowResponse(w, r)
 
 		disposition := "attachment"
 		if isSafeInlineType(doc.MimeType) {

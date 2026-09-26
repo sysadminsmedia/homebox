@@ -36,6 +36,7 @@
 
 <script lang="ts" setup>
   import { computed } from "vue";
+  import { utf8Length } from "@/lib/utils";
   import { Label } from "~/components/ui/label";
   import { Textarea } from "~/components/ui/textarea";
 
@@ -73,7 +74,7 @@
 
   const isLengthInvalid = computed(() => {
     if (typeof value.value !== "string") return false;
-    const len = value.value.length;
+    const len = utf8Length(value.value);
     const max = props.maxLength;
     const min = props.minLength;
     // invalid if max length exists and is exceeded OR min length exists and is not met
@@ -84,7 +85,7 @@
     if (typeof value.value !== "string") return "";
     const max = props.maxLength;
     if (max !== -1) {
-      return `${value.value.length}/${max}`;
+      return `${utf8Length(value.value)}/${max}`;
     }
     return "";
   });

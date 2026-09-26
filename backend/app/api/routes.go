@@ -7,6 +7,7 @@ import (
 	"io"
 	"mime"
 	"net/http"
+	"net/url"
 	"path"
 	"path/filepath"
 
@@ -37,23 +38,38 @@ func (a *app) debugRouter() *http.ServeMux {
 	return dbg
 }
 
+// swaggerDocHandler serves the OpenAPI document, rewriting its `host` so the
+// Swagger UI's "Base URL" reflects the instance actually being used rather than
+// a value baked in at build time.
+//
+// That host is the target of every "Try it out" request the Swagger UI issues,
+// Authorization header included, and this route is unauthenticated. Honoring a
+// raw X-Forwarded-Host therefore let any unauthenticated client mint a spec
+// pointing wherever they liked; behind a cache that does not key on that header,
+// the poisoned document would then be served to operators. Defer to
+// SecureBaseURL, which prefers the operator's configured hostname and accepts
+// X-Forwarded-Host only under TrustProxy, and only after validation. The
+// fallback is r.Host, which caches already key on.
+func (a *app) swaggerDocHandler(w http.ResponseWriter, r *http.Request) {
+	host := r.Host
+	if trusted := v1.SecureBaseURL(r, &a.conf.Options); trusted != "" {
+		if u, err := url.Parse(trusted); err == nil && u.Host != "" {
+			host = u.Host
+		}
+	}
+
+	spec := *docs.SwaggerInfo
+	spec.Host = host
+	doc := spec.ReadDoc()
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	_, _ = w.Write([]byte(doc))
+}
+
 // registerRoutes registers all the routes for the API
 func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllRepos) {
 	registerMimes()
 
-	// Serve doc.json dynamically so the Swagger UI "Base URL" reflects the
-	// actual host of the user's instance rather than a hardcoded value.
-	r.Get("/swagger/doc.json", func(w http.ResponseWriter, r *http.Request) {
-		host := r.Host
-		if fwdHost := r.Header.Get("X-Forwarded-Host"); fwdHost != "" {
-			host = fwdHost
-		}
-		spec := *docs.SwaggerInfo
-		spec.Host = host
-		doc := spec.ReadDoc()
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		_, _ = w.Write([]byte(doc))
-	})
+	r.Get("/swagger/doc.json", a.swaggerDocHandler)
 
 	r.Get("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("/swagger/doc.json"),
@@ -69,6 +85,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		a.conf,
 		v1.WithMaxUploadSize(a.conf.Web.MaxUploadSize),
 		v1.WithMaxImportSize(a.conf.Web.MaxImportSize),
+		v1.WithMaxParseMemory(a.conf.Web.MaxParseMemory),
 		v1.WithRegistration(a.conf.Options.AllowRegistration),
 		v1.WithDemoStatus(a.conf.Demo), // Disable Password Change in Demo Mode
 		v1.WithURL(fmt.Sprintf("%s:%s", a.conf.Web.Host, a.conf.Web.Port)),
@@ -103,6 +120,17 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 			a.mwRoles(RoleModeOr, authroles.RoleUser.String()),
 		}
 
+		// ownerMW additionally requires role=owner on the tenant collection.
+		// Use it for anything that administers the collection itself rather
+		// than its contents — an invited member must not be able to rename,
+		// re-share, or delete a collection they were merely given access to.
+		ownerMW := []errchain.Middleware{
+			a.mwAuthToken,
+			a.mwTenant,
+			a.mwRoles(RoleModeOr, authroles.RoleUser.String()),
+			a.mwGroupOwner,
+		}
+
 		r.Get("/ws/events", chain.ToHandlerFunc(v1Ctrl.HandleCacheWS(), userMW...))
 
 		// User management endpoints
@@ -112,6 +140,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Get("/users/self/settings", chain.ToHandlerFunc(v1Ctrl.HandleUserSelfSettingsGet(), userMW...))
 		r.Put("/users/self/settings", chain.ToHandlerFunc(v1Ctrl.HandleUserSelfSettingsUpdate(), userMW...))
 		r.Post("/users/logout", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogout(), userMW...))
+		r.Post("/users/logout/all", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogoutAll(), userMW...))
 		r.Get("/users/refresh", chain.ToHandlerFunc(v1Ctrl.HandleAuthRefresh(), userMW...))
 		r.Put("/users/self/change-password", chain.ToHandlerFunc(v1Ctrl.HandleUserSelfChangePassword(), userMW...))
 
@@ -124,15 +153,15 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Get("/groups/all", chain.ToHandlerFunc(v1Ctrl.HandleGroupsGetAll(), userMW...))
 		r.Post("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupCreate(), userMW...))
 		r.Get("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupGet(), userMW...))
-		r.Put("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupUpdate(), userMW...))
-		r.Delete("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupDelete(), userMW...))
+		r.Put("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupUpdate(), ownerMW...))
+		r.Delete("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupDelete(), ownerMW...))
 
 		r.Get("/groups/members", chain.ToHandlerFunc(v1Ctrl.HandleGroupMembersGetAll(), userMW...))
-		r.Delete("/groups/members/{user_id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupMemberRemove(), userMW...))
+		r.Delete("/groups/members/{user_id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupMemberRemove(), ownerMW...))
 
 		r.Get("/groups/invitations", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsGetAll(), userMW...))
-		r.Post("/groups/invitations", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsCreate(), userMW...))
-		r.Delete("/groups/invitations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsDelete(), userMW...))
+		r.Post("/groups/invitations", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsCreate(), ownerMW...))
+		r.Delete("/groups/invitations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsDelete(), ownerMW...))
 		r.Post("/groups/invitations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsAccept(), userMW...))
 
 		// Collection export/import (group-scoped)

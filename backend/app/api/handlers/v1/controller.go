@@ -3,6 +3,8 @@ package v1
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -15,9 +17,24 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 
 	"github.com/olahol/melody"
 )
+
+// multipartFormError translates a ParseMultipartForm failure into a
+// RequestError. A body that tripped the MaxBytesReader cap installed by the
+// body-size middleware surfaces as 413 with an explicit message instead of a
+// misleading 400 "failed to parse multipart form" (#1538).
+func multipartFormError(err error) error {
+	var maxBytesErr *http.MaxBytesError
+	if errors.As(err, &maxBytesErr) {
+		return validate.NewRequestError(
+			fmt.Errorf("uploaded file exceeds the size limit of %d bytes", maxBytesErr.Limit),
+			http.StatusRequestEntityTooLarge)
+	}
+	return validate.NewRequestError(errors.New("failed to parse multipart form"), http.StatusBadRequest)
+}
 
 type Results[T any] struct {
 	Items []T `json:"items"`
@@ -47,6 +64,12 @@ func WithMaxImportSize(maxImportSize int64) func(*V1Controller) {
 	}
 }
 
+func WithMaxParseMemory(maxParseMemory int64) func(*V1Controller) {
+	return func(ctrl *V1Controller) {
+		ctrl.maxParseMemory = maxParseMemory
+	}
+}
+
 func WithDemoStatus(demoStatus bool) func(*V1Controller) {
 	return func(ctrl *V1Controller) {
 		ctrl.isDemo = demoStatus
@@ -72,17 +95,18 @@ func WithURL(url string) func(*V1Controller) {
 }
 
 type V1Controller struct {
-	cookieSecure      bool
 	repo              *repo.AllRepos
 	svc               *services.AllServices
-	maxUploadSize     int64
-	maxImportSize     int64
-	isDemo            bool
-	allowRegistration bool
 	bus               *eventbus.EventBus
-	url               string
 	config            *config.Config
 	oidcProvider      *providers.OIDCProvider
+	url               string
+	maxUploadSize     int64
+	maxImportSize     int64
+	maxParseMemory    int64
+	cookieSecure      bool
+	isDemo            bool
+	allowRegistration bool
 }
 
 type (
@@ -109,8 +133,8 @@ type (
 	}
 
 	OIDCStatus struct {
-		Enabled      bool   `json:"enabled"`
 		ButtonText   string `json:"buttonText,omitempty"`
+		Enabled      bool   `json:"enabled"`
 		AutoRedirect bool   `json:"autoRedirect,omitempty"`
 		AllowLocal   bool   `json:"allowLocal"`
 	}
@@ -187,7 +211,7 @@ func (ctrl *V1Controller) HandleBase(ready ReadyFunc, build Build) errchain.Hand
 //	@Tags		Base
 //	@Produce	json
 //	@Success	200	{object}	currencies.Currency
-//	@Router		/v1/currency [GET]
+//	@Router		/v1/currencies [GET]
 func (ctrl *V1Controller) HandleCurrency() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		// Set Cache for 10 Minutes
@@ -203,6 +227,7 @@ func (ctrl *V1Controller) HandleCacheWS() errchain.HandlerFunc {
 	}
 
 	m := melody.New()
+	m.Upgrader.Subprotocols = []string{"hb-auth"}
 
 	m.HandleConnect(func(s *melody.Session) {
 		auth := services.NewContext(s.Request.Context())
@@ -210,18 +235,18 @@ func (ctrl *V1Controller) HandleCacheWS() errchain.HandlerFunc {
 	})
 
 	factory := func(e string) func(data any) {
+		// The payload depends only on the event name, so marshal it once at
+		// subscription time instead of on every dispatch.
+		jsonBytes, err := json.Marshal(&eventMsg{Event: e})
+		if err != nil {
+			log.Log().Msgf("error marshaling event %q: %v", e, err)
+			return func(any) {}
+		}
+
 		return func(data any) {
 			eventData, ok := data.(eventbus.GroupMutationEvent)
 			if !ok {
 				log.Log().Msgf("invalid event data: %v", data)
-				return
-			}
-
-			msg := &eventMsg{Event: e}
-
-			jsonBytes, err := json.Marshal(msg)
-			if err != nil {
-				log.Log().Msgf("error marshling event data %v: %v", data, err)
 				return
 			}
 
@@ -247,18 +272,18 @@ func (ctrl *V1Controller) HandleCacheWS() errchain.HandlerFunc {
 	go func() {
 		const interval = 10 * time.Second
 
+		// The ping frame never changes, so build it once rather than on every tick.
+		pingBytes, err := json.Marshal(&eventMsg{Event: "ping"})
+		if err != nil {
+			log.Log().Msgf("error marshaling ping: %v", err)
+			return
+		}
+
 		ping := time.NewTicker(interval)
 		defer ping.Stop()
 
 		for range ping.C {
-			msg := &eventMsg{Event: "ping"}
-
-			pingBytes, err := json.Marshal(msg)
-			if err != nil {
-				log.Log().Msgf("error marshaling ping: %v", err)
-			} else {
-				_ = m.Broadcast(pingBytes)
-			}
+			_ = m.Broadcast(pingBytes)
 		}
 	}()
 

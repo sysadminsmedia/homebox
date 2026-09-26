@@ -92,7 +92,7 @@ export function fmtDate(
     return format(dt, "p", localeOptions);
   }
 
-  let formatStr = "";
+  let formatStr: string;
 
   switch (fmt) {
     case "human":

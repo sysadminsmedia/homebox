@@ -12,7 +12,7 @@
         </h3>
       </component>
       <div>
-        <p v-if="$slots.subtitle" class="mt-1 max-w-2xl text-sm text-gray-500">
+        <p v-if="$slots.subtitle" class="mt-1 max-w-2xl text-sm text-foreground/70">
           <slot name="subtitle" />
         </p>
         <template v-if="$slots['title-actions']">

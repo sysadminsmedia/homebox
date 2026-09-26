@@ -12,42 +12,47 @@ var validate *validator.Validate
 func init() { // nolint
 	validate = validator.New()
 
-	err := validate.RegisterValidation("shoutrrr", func(fl validator.FieldLevel) bool {
-		prefixes := [...]string{
-			"bark://",
-			"discord://",
-			"smtp://",
-			"gotify://",
-			"googlechat://",
-			"ifttt://",
-			"join://",
-			"mattermost://",
-			"matrix://",
-			"ntfy://",
-			"opsgenie://",
-			"pushbullet://",
-			"pushover://",
-			"rocketchat://",
-			"slack://",
-			"teams://",
-			"telegram://",
-			"zulip://",
-			"generic://",
-			"generic+",
-		}
+	// Notifier schemes users are allowed to configure. Matching is done on the
+	// normalized (lower-cased) scheme rather than a raw prefix: schemes are
+	// case-insensitive and shoutrrr lower-cases them before routing, so a raw
+	// prefix test disagrees with the service that actually handles the URL.
+	allowedNotifierSchemes := map[string]bool{
+		"bark":       true,
+		"discord":    true,
+		"smtp":       true,
+		"gotify":     true,
+		"googlechat": true,
+		"ifttt":      true,
+		"join":       true,
+		"mattermost": true,
+		"matrix":     true,
+		"ntfy":       true,
+		"opsgenie":   true,
+		"pushbullet": true,
+		"pushover":   true,
+		"rocketchat": true,
+		"slack":      true,
+		"teams":      true,
+		"telegram":   true,
+		"zulip":      true,
+		"generic":    true,
+	}
 
+	err := validate.RegisterValidation("shoutrrr", func(fl validator.FieldLevel) bool {
 		str := fl.Field().String()
 		if str == "" {
 			return false
 		}
 
-		for _, prefix := range prefixes {
-			if strings.HasPrefix(str, prefix) {
-				return true
-			}
+		scheme, _, ok := splitScheme(str)
+		if !ok {
+			return false
 		}
 
-		return false
+		// shoutrrr routes on the part before the "+" (generic+http -> generic).
+		service, _, _ := strings.Cut(scheme, "+")
+
+		return allowedNotifierSchemes[service]
 	})
 
 	if err != nil {

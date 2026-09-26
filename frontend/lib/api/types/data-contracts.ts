@@ -559,6 +559,8 @@ export interface EntPasswordResetTokens {
   updated_at: string;
   /** UsedAt holds the value of the "used_at" field. */
   used_at: string;
+  /** UserID holds the value of the "user_id" field. */
+  user_id: string;
 }
 
 export interface EntPasswordResetTokensEdges {
@@ -752,6 +754,14 @@ export interface EntityCreate {
   /** @maxLength 1000 */
   description: string;
   entityTypeId: string;
+  /** @maxLength 255 */
+  manufacturer?: string | null;
+  /**
+   * Identifications — optional at create time; populated e.g. by the
+   * barcode product-search import flow (#1578).
+   * @maxLength 255
+   */
+  modelNumber?: string | null;
   /**
    * @minLength 1
    * @maxLength 255
@@ -798,6 +808,13 @@ export interface EntityOut {
   itemCount: number;
   /** Warranty */
   lifetimeWarranty: boolean;
+  /**
+   * Location is the nearest ancestor whose entity type is a location.
+   * When the direct parent is already a location it equals Parent; when
+   * the entity is nested inside other items it is the location those
+   * items ultimately live in. Nil for top-level entities.
+   */
+  location?: EntitySummary | null;
   manufacturer: string;
   modelNumber: string;
   name: string;
@@ -1391,6 +1408,11 @@ export interface CreateRequest {
 export interface EntityTemplateCreateItemRequest {
   /** @maxLength 1000 */
   description: string;
+  /**
+   * EntityTypeID is the entity type selected by the user. When set it takes
+   * precedence; when empty the repository falls back to the group's default.
+   */
+  entityTypeId: string;
   /**
    * @minLength 1
    * @maxLength 255

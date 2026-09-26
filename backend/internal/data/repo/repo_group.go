@@ -28,7 +28,7 @@ type GroupRepository struct {
 	attachments      *AttachmentRepo
 }
 
-func NewGroupRepository(db *ent.Client) *GroupRepository {
+func NewGroupRepository(db *ent.Client, attachments *AttachmentRepo) *GroupRepository {
 	gmap := func(g *ent.Group) Group {
 		return Group{
 			ID:        g.ID,
@@ -52,6 +52,7 @@ func NewGroupRepository(db *ent.Client) *GroupRepository {
 		db:               db,
 		groupMapper:      gmap,
 		invitationMapper: imap,
+		attachments:      attachments,
 	}
 }
 
@@ -332,19 +333,25 @@ func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) error {
 
 	itm, err := tx.Entity.Query().
 		Where(entity.HasGroupWith(group.ID(id))).
-		WithGroup().
 		WithAttachments().
 		All(ctx)
 	if err != nil {
+		if rerr := tx.Rollback(); rerr != nil {
+			log.Error().Err(rerr).Msg("failed to rollback transaction")
+		}
 		return err
 	}
 
-	// Delete all attachments (and their files) before deleting the entities
+	// Keep attachment row operations on the same transaction.
+	attachments := *r.attachments
+	attachments.db = tx.Client()
+
+	// Delete all attachments (and their files) before deleting the entities.
 	for _, it := range itm {
 		for _, att := range it.Edges.Attachments {
-			if err := r.attachments.Delete(ctx, id, att.ID); err != nil {
-				log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during entity deletion")
-				// Continue with other attachments even if one fails
+			if err := attachments.Delete(ctx, id, att.ID); err != nil {
+				log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during group deletion")
+				// Continue with other attachments even if one fails.
 			}
 		}
 	}
