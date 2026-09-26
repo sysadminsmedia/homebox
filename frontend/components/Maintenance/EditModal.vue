@@ -234,15 +234,18 @@
 
     if (shouldCreateRecurringPlan && entry.itemIdForPlanLookup && entry.id) {
       const firstDueDate = entry.scheduledDate || entry.completedDate || toDateOnlyString(new Date());
-      const { data: createdPlan, error: createPlanError } = await api.items.maintenance.createPlan(entry.itemIdForPlanLookup, {
-        name: entry.name,
-        description: entry.description,
-        active: true,
-        intervalValue: Math.max(parseInt(entry.intervalValue, 10) || 1, 1),
-        intervalUnit: entry.intervalUnit,
-        startDate: firstDueDate,
-        linkExistingEntryID: entry.id,
-      });
+      const { data: createdPlan, error: createPlanError } = await api.items.maintenance.createPlan(
+        entry.itemIdForPlanLookup,
+        {
+          name: entry.name,
+          description: entry.description,
+          active: true,
+          intervalValue: Math.max(parseInt(entry.intervalValue, 10) || 1, 1),
+          intervalUnit: entry.intervalUnit,
+          startDate: firstDueDate,
+          linkExistingEntryID: entry.id,
+        }
+      );
 
       if (createPlanError || !createdPlan) {
         toast.error(t("maintenance.toast.failed_to_update"));
@@ -256,7 +259,7 @@
       name: entry.name,
       completedDate: entry.completedDate,
       scheduledDate: entry.scheduledDate,
-      planID: isRecurring ? entry.planID ?? undefined : undefined,
+      planID: isRecurring ? (entry.planID ?? undefined) : undefined,
       description: entry.description,
       cost: parseFloat(entry.cost) ? entry.cost : "0",
     });

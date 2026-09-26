@@ -116,6 +116,8 @@
   async function completeEntry(maintenanceEntry: MaintenanceEntry) {
     const { error } = await api.maintenance.update(maintenanceEntry.id, {
       name: maintenanceEntry.name,
+      // Local YYYY-MM-DD — using a Date object would JSON-stringify to UTC and
+      // shift the day for users east of UTC.
       completedDate: toDateOnlyString(new Date()),
       scheduledDate: (maintenanceEntry.scheduledDate as string) ?? "",
       planID: maintenanceEntry.planID,

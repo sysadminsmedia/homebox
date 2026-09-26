@@ -26,13 +26,13 @@ const (
 )
 
 type MaintenancePlanCreate struct {
-	Name                 string                      `json:"name" validate:"required"`
-	Description          string                      `json:"description"`
-	IntervalValue        int                         `json:"intervalValue" validate:"required,min=1"`
-	IntervalUnit         MaintenancePlanIntervalUnit `json:"intervalUnit" validate:"required"`
-	StartDate            types.Date                  `json:"startDate"`
-	Active               bool                        `json:"active"`
-	LinkExistingEntryID  *uuid.UUID                  `json:"linkExistingEntryID,omitempty"`
+	Name                string                      `json:"name"                          validate:"required"`
+	Description         string                      `json:"description"`
+	IntervalValue       int                         `json:"intervalValue"                 validate:"required,min=1"`
+	IntervalUnit        MaintenancePlanIntervalUnit `json:"intervalUnit"                  validate:"required"`
+	StartDate           types.Date                  `json:"startDate"`
+	Active              bool                        `json:"active"`
+	LinkExistingEntryID *uuid.UUID                  `json:"linkExistingEntryID,omitempty"`
 }
 
 type MaintenancePlanUpdate struct {
@@ -125,60 +125,113 @@ func (r *MaintenanceEntryRepository) ListPlansByItemID(ctx context.Context, grou
 	return mapEach(items, mapMaintenancePlan), nil
 }
 
-func (r *MaintenanceEntryRepository) CreatePlan(ctx context.Context, itemID uuid.UUID, input MaintenancePlanCreate) (MaintenancePlan, error) {
+// ownedEntity reports whether itemID belongs to the given group.
+func ownedEntity(ctx context.Context, db *ent.Client, gid, itemID uuid.UUID) (bool, error) {
+	return db.Entity.Query().
+		Where(entity.ID(itemID), entity.HasGroupWith(group.ID(gid))).
+		Exist(ctx)
+}
+
+// ownedPlan returns the plan only if it belongs to an entity in the given group.
+func ownedPlan(ctx context.Context, db *ent.Client, gid, planID uuid.UUID) (*ent.MaintenancePlan, error) {
+	return db.MaintenancePlan.Query().
+		Where(
+			maintenanceplan.ID(planID),
+			maintenanceplan.HasEntityWith(entity.HasGroupWith(group.ID(gid))),
+		).
+		Only(ctx)
+}
+
+// withTx runs fn inside a transaction, committing on success and rolling
+// back on error.
+func (r *MaintenanceEntryRepository) withTx(ctx context.Context, fn func(db *ent.Client) error) error {
+	tx, err := r.db.Tx(ctx)
+	if err != nil {
+		return err
+	}
+
+	if err := fn(tx.Client()); err != nil {
+		if rbErr := tx.Rollback(); rbErr != nil {
+			return fmt.Errorf("%w (rollback failed: %w)", err, rbErr)
+		}
+		return err
+	}
+
+	return tx.Commit()
+}
+
+func (r *MaintenanceEntryRepository) CreatePlan(ctx context.Context, gid, itemID uuid.UUID, input MaintenancePlanCreate) (MaintenancePlan, error) {
+	owned, err := ownedEntity(ctx, r.db, gid, itemID)
+	if err != nil {
+		return MaintenancePlan{}, err
+	}
+	if !owned {
+		return MaintenancePlan{}, &ent.NotFoundError{}
+	}
+
 	base := input.StartDate.Time()
 	if base.IsZero() {
 		base = time.Now().UTC()
 	}
-	firstDue := base.UTC()
-	item, err := r.db.MaintenancePlan.Create().
-		SetEntityID(itemID).
-		SetName(input.Name).
-		SetDescription(input.Description).
-		SetIntervalValue(input.IntervalValue).
-		SetIntervalUnit(maintenanceplan.IntervalUnit(input.IntervalUnit)).
-		SetActive(input.Active).
-		SetNextDueAt(firstDue).
-		Save(ctx)
+	firstDue := types.DateFromTime(base.UTC()).Time()
+
+	var plan *ent.MaintenancePlan
+	err = r.withTx(ctx, func(db *ent.Client) error {
+		var err error
+		plan, err = db.MaintenancePlan.Create().
+			SetEntityID(itemID).
+			SetName(input.Name).
+			SetDescription(input.Description).
+			SetIntervalValue(input.IntervalValue).
+			SetIntervalUnit(maintenanceplan.IntervalUnit(input.IntervalUnit)).
+			SetActive(input.Active).
+			SetNextDueAt(firstDue).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
+
+		if input.LinkExistingEntryID != nil && *input.LinkExistingEntryID != uuid.Nil {
+			// Only entries on the same entity can be linked; the entity is
+			// already known to belong to the caller's group.
+			existing, err := db.MaintenanceEntry.Query().
+				Where(
+					maintenanceentry.IDEQ(*input.LinkExistingEntryID),
+					maintenanceentry.EntityIDEQ(itemID),
+				).
+				Only(ctx)
+			if err != nil {
+				return fmt.Errorf("link existing maintenance entry: %w", err)
+			}
+			_, err = db.MaintenanceEntry.UpdateOneID(existing.ID).
+				SetPlanID(plan.ID).
+				SetScheduledDate(firstDue).
+				Save(ctx)
+			return err
+		}
+
+		_, err = db.MaintenanceEntry.Create().
+			SetEntityID(itemID).
+			SetPlanID(plan.ID).
+			SetName(plan.Name).
+			SetDescription(plan.Description).
+			SetScheduledDate(firstDue).
+			SetDate(time.Time{}).
+			Save(ctx)
+		return err
+	})
 	if err != nil {
 		return MaintenancePlan{}, err
 	}
 
-	if input.LinkExistingEntryID != nil && *input.LinkExistingEntryID != uuid.Nil {
-		exists, err := r.db.MaintenanceEntry.Query().
-			Where(
-				maintenanceentry.IDEQ(*input.LinkExistingEntryID),
-				maintenanceentry.EntityIDEQ(itemID),
-			).
-			Only(ctx)
-		if err != nil {
-			return MaintenancePlan{}, fmt.Errorf("link existing maintenance entry: %w", err)
-		}
-		_, err = r.db.MaintenanceEntry.UpdateOneID(exists.ID).
-			SetPlanID(item.ID).
-			SetScheduledDate(firstDue).
-			Save(ctx)
-		if err != nil {
-			return MaintenancePlan{}, err
-		}
-	} else {
-		_, err = r.db.MaintenanceEntry.Create().
-			SetEntityID(itemID).
-			SetPlanID(item.ID).
-			SetName(item.Name).
-			SetDescription(item.Description).
-			SetScheduledDate(firstDue).
-			SetDate(time.Time{}).
-			Save(ctx)
-		if err != nil {
-			return MaintenancePlan{}, err
-		}
-	}
-
-	return mapMaintenancePlan(item), nil
+	return mapMaintenancePlan(plan), nil
 }
 
-func (r *MaintenanceEntryRepository) UpdatePlan(ctx context.Context, planID uuid.UUID, input MaintenancePlanUpdate) (MaintenancePlan, error) {
+func (r *MaintenanceEntryRepository) UpdatePlan(ctx context.Context, gid, planID uuid.UUID, input MaintenancePlanUpdate) (MaintenancePlan, error) {
+	if _, err := ownedPlan(ctx, r.db, gid, planID); err != nil {
+		return MaintenancePlan{}, err
+	}
+
 	up := r.db.MaintenancePlan.UpdateOneID(planID).
 		SetName(input.Name).
 		SetDescription(input.Description).
@@ -194,34 +247,76 @@ func (r *MaintenanceEntryRepository) UpdatePlan(ctx context.Context, planID uuid
 		}
 	}
 
-	item, err := up.Save(ctx)
+	plan, err := up.Save(ctx)
 	if err != nil {
 		return MaintenancePlan{}, err
 	}
 
-	return mapMaintenancePlan(item), nil
+	return mapMaintenancePlan(plan), nil
 }
 
-func (r *MaintenanceEntryRepository) DeletePlan(ctx context.Context, id uuid.UUID) error {
-	return r.db.MaintenancePlan.DeleteOneID(id).Exec(ctx)
-}
-
-func (r *MaintenanceEntryRepository) rollPlanFromCompletion(ctx context.Context, planID uuid.UUID, completedAt time.Time, itemID uuid.UUID) (MaintenancePlan, error) {
-	plan, err := r.db.MaintenancePlan.Query().Where(maintenanceplan.IDEQ(planID)).Only(ctx)
+func (r *MaintenanceEntryRepository) DeletePlan(ctx context.Context, gid, planID uuid.UUID) error {
+	n, err := r.db.MaintenancePlan.Delete().
+		Where(
+			maintenanceplan.ID(planID),
+			maintenanceplan.HasEntityWith(entity.HasGroupWith(group.ID(gid))),
+		).
+		Exec(ctx)
 	if err != nil {
-		return MaintenancePlan{}, err
+		return err
+	}
+	if n == 0 {
+		return &ent.NotFoundError{}
+	}
+
+	return nil
+}
+
+// validatePlanForEntity ensures planID refers to a plan on the given entity.
+// Entries may only be attached to plans on their own entity; this also keeps
+// plans from other groups out of reach.
+func validatePlanForEntity(ctx context.Context, db *ent.Client, planID, entityID uuid.UUID) error {
+	exists, err := db.MaintenancePlan.Query().
+		Where(maintenanceplan.ID(planID), maintenanceplan.EntityIDEQ(entityID)).
+		Exist(ctx)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return &ent.NotFoundError{}
+	}
+
+	return nil
+}
+
+// rollPlanFromCompletion advances a plan after one of its entries is completed
+// and creates the next open entry. The caller must have verified that the plan
+// belongs to entityID.
+func rollPlanFromCompletion(ctx context.Context, db *ent.Client, planID uuid.UUID, completedAt time.Time, entityID uuid.UUID) error {
+	plan, err := db.MaintenancePlan.Query().
+		Where(maintenanceplan.ID(planID), maintenanceplan.EntityIDEQ(entityID)).
+		Only(ctx)
+	if err != nil {
+		return err
+	}
+
+	if !plan.Active {
+		// Paused plans record the completion but do not schedule a follow-up.
+		return db.MaintenancePlan.UpdateOneID(planID).
+			SetLastCompletedAt(completedAt).
+			Exec(ctx)
 	}
 
 	nextDue := computeNextDue(completedAt, plan.IntervalValue, MaintenancePlanIntervalUnit(plan.IntervalUnit))
-	updated, err := r.db.MaintenancePlan.UpdateOneID(planID).
+	updated, err := db.MaintenancePlan.UpdateOneID(planID).
 		SetLastCompletedAt(completedAt).
 		SetNextDueAt(nextDue).
 		Save(ctx)
 	if err != nil {
-		return MaintenancePlan{}, err
+		return err
 	}
 
-	openCount, err := r.db.MaintenanceEntry.Query().
+	openCount, err := db.MaintenanceEntry.Query().
 		Where(
 			maintenanceentry.PlanIDEQ(planID),
 			maintenanceentry.ScheduledDateEQ(nextDue),
@@ -232,23 +327,34 @@ func (r *MaintenanceEntryRepository) rollPlanFromCompletion(ctx context.Context,
 		).
 		Count(ctx)
 	if err != nil {
-		return MaintenancePlan{}, err
+		return err
 	}
 
-	if openCount == 0 {
-		if _, err := r.db.MaintenanceEntry.Create().
-			SetEntityID(itemID).
-			SetPlanID(planID).
-			SetName(updated.Name).
-			SetDescription(updated.Description).
-			SetScheduledDate(nextDue).
-			SetDate(time.Time{}).
-			Save(ctx); err != nil {
-			return MaintenancePlan{}, err
-		}
+	if openCount > 0 {
+		return nil
 	}
 
-	return mapMaintenancePlan(updated), nil
+	return db.MaintenanceEntry.Create().
+		SetEntityID(entityID).
+		SetPlanID(planID).
+		SetName(updated.Name).
+		SetDescription(updated.Description).
+		SetScheduledDate(nextDue).
+		SetDate(time.Time{}).
+		Exec(ctx)
+}
+
+// addMonthsClamped adds n months to t, clamping the day to the last day of the
+// target month so that e.g. Jan 31 + 1 month is Feb 28/29 rather than Mar 3.
+func addMonthsClamped(t time.Time, n int) time.Time {
+	y, m, d := t.Date()
+	firstOfTarget := time.Date(y, m+time.Month(n), 1, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
+	lastDay := firstOfTarget.AddDate(0, 1, -1).Day()
+	if d > lastDay {
+		d = lastDay
+	}
+
+	return time.Date(firstOfTarget.Year(), firstOfTarget.Month(), d, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
 }
 
 func computeNextDue(base time.Time, intervalValue int, intervalUnit MaintenancePlanIntervalUnit) time.Time {
@@ -260,9 +366,9 @@ func computeNextDue(base time.Time, intervalValue int, intervalUnit MaintenanceP
 	case MaintenancePlanIntervalUnitWeek:
 		return base.AddDate(0, 0, 7*intervalValue)
 	case MaintenancePlanIntervalUnitMonth:
-		return base.AddDate(0, intervalValue, 0)
+		return addMonthsClamped(base, intervalValue)
 	case MaintenancePlanIntervalUnitYear:
-		return base.AddDate(intervalValue, 0, 0)
+		return addMonthsClamped(base, 12*intervalValue)
 	default:
 		return base
 	}

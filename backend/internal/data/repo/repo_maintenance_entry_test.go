@@ -135,7 +135,7 @@ func TestMaintenanceEntryRepository_Update_RecurringCompletionCreatesNextEntry(t
 	item := useEntities(t, 1)[0]
 	startDate := time.Now().UTC().AddDate(0, 0, -1)
 
-	plan, err := tRepos.MaintEntry.CreatePlan(context.Background(), item.ID, MaintenancePlanCreate{
+	plan, err := tRepos.MaintEntry.CreatePlan(context.Background(), tGroup.ID, item.ID, MaintenancePlanCreate{
 		Name:          "Filter replacement",
 		Description:   "Recurring filter task",
 		IntervalValue: 1,
@@ -198,7 +198,7 @@ func TestMaintenanceEntryRepository_CreatePlan_UsesStartDateAsFirstDueDate(t *te
 	startDate := time.Date(2026, time.March, 10, 9, 30, 0, 0, time.UTC)
 	expectedFirstDue := types.DateFromTime(startDate).Time()
 
-	plan, err := tRepos.MaintEntry.CreatePlan(context.Background(), item.ID, MaintenancePlanCreate{
+	plan, err := tRepos.MaintEntry.CreatePlan(context.Background(), tGroup.ID, item.ID, MaintenancePlanCreate{
 		Name:          "Weekly maintenance",
 		Description:   "Recurring task with explicit scheduled date",
 		IntervalValue: 1,

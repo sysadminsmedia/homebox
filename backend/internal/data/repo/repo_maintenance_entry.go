@@ -11,6 +11,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceplan"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
 
@@ -109,6 +110,33 @@ func (r *MaintenanceEntryRepository) GetScheduled(ctx context.Context, gid uuid.
 	return mapEachMaintenanceEntry(entries), nil
 }
 
+// GetOverdueRecurring returns open entries of active maintenance plans whose
+// scheduled date is before dt. One-off entries are excluded so existing
+// notification behaviour for them is unchanged.
+func (r *MaintenanceEntryRepository) GetOverdueRecurring(ctx context.Context, gid uuid.UUID, dt types.Date) ([]MaintenanceEntry, error) {
+	entries, err := r.db.MaintenanceEntry.Query().
+		Where(
+			maintenanceentry.HasEntityWith(
+				entity.HasGroupWith(group.ID(gid)),
+			),
+			maintenanceentry.HasPlanWith(maintenanceplan.Active(true)),
+			maintenanceentry.ScheduledDateNotNil(),
+			maintenanceentry.ScheduledDateGT(time.Time{}),
+			maintenanceentry.ScheduledDateLT(dt.Time()),
+			maintenanceentry.Or(
+				maintenanceentry.DateIsNil(),
+				maintenanceentry.DateEQ(time.Time{}),
+			),
+		).
+		Order(ent.Asc(maintenanceentry.FieldScheduledDate)).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return mapEachMaintenanceEntry(entries), nil
+}
+
 func (r *MaintenanceEntryRepository) Create(ctx context.Context, gid, itemID uuid.UUID, input MaintenanceEntryCreate) (MaintenanceEntry, error) {
 	// Verify the target item belongs to the caller's group before creating an
 	// entry against it. Without this check, a caller in group A could POST a
@@ -124,24 +152,22 @@ func (r *MaintenanceEntryRepository) Create(ctx context.Context, gid, itemID uui
 		return MaintenanceEntry{}, &ent.NotFoundError{}
 	}
 
-	item, err := r.db.MaintenanceEntry.Create().
+	create := r.db.MaintenanceEntry.Create().
 		SetEntityID(itemID).
 		SetDate(input.CompletedDate.Time()).
 		SetScheduledDate(input.ScheduledDate.Time()).
 		SetName(input.Name).
 		SetDescription(input.Description).
-		SetCost(input.Cost).
-		Save(ctx)
-	if err != nil {
-		return mapMaintenanceEntryErr(item, err)
-	}
+		SetCost(input.Cost)
 
 	if input.PlanID != uuid.Nil {
-		item, err = r.db.MaintenanceEntry.UpdateOneID(item.ID).
-			SetPlanID(input.PlanID).
-			Save(ctx)
+		if err := validatePlanForEntity(ctx, r.db, input.PlanID, itemID); err != nil {
+			return MaintenanceEntry{}, err
+		}
+		create = create.SetPlanID(input.PlanID)
 	}
 
+	item, err := create.Save(ctx)
 	return mapMaintenanceEntryErr(item, err)
 }
 
@@ -179,31 +205,44 @@ func (r *MaintenanceEntryRepository) Update(ctx context.Context, gid uuid.UUID, 
 		cost = current.Cost
 	}
 
-	updater := r.db.MaintenanceEntry.UpdateOneID(id).
-		SetDate(completedDate).
-		SetScheduledDate(scheduledDate).
-		SetName(name).
-		SetDescription(description).
-		SetCost(cost)
-
 	if input.PlanID != uuid.Nil {
-		updater = updater.SetPlanID(input.PlanID)
-	} else {
-		updater = updater.ClearPlanID()
-	}
-
-	item, err := updater.Save(ctx)
-	if err != nil {
-		return mapMaintenanceEntryErr(item, err)
-	}
-
-	if current.Date.IsZero() && !completedDate.IsZero() && item.PlanID != nil && *item.PlanID != uuid.Nil {
-		if _, err = r.rollPlanFromCompletion(ctx, *item.PlanID, completedDate, item.EntityID); err != nil {
+		if err := validatePlanForEntity(ctx, r.db, input.PlanID, current.EntityID); err != nil {
 			return MaintenanceEntry{}, err
 		}
 	}
 
-	return mapMaintenanceEntryErr(item, err)
+	var item *ent.MaintenanceEntry
+	err = r.withTx(ctx, func(db *ent.Client) error {
+		updater := db.MaintenanceEntry.UpdateOneID(id).
+			SetDate(completedDate).
+			SetScheduledDate(scheduledDate).
+			SetName(name).
+			SetDescription(description).
+			SetCost(cost)
+
+		if input.PlanID != uuid.Nil {
+			updater = updater.SetPlanID(input.PlanID)
+		} else {
+			updater = updater.ClearPlanID()
+		}
+
+		var err error
+		item, err = updater.Save(ctx)
+		if err != nil {
+			return err
+		}
+
+		if current.Date.IsZero() && !completedDate.IsZero() && item.PlanID != nil && *item.PlanID != uuid.Nil {
+			return rollPlanFromCompletion(ctx, db, *item.PlanID, completedDate, item.EntityID)
+		}
+
+		return nil
+	})
+	if err != nil {
+		return MaintenanceEntry{}, err
+	}
+
+	return mapMaintenanceEntryErr(item, nil)
 }
 
 func (r *MaintenanceEntryRepository) GetMaintenanceByItemID(ctx context.Context, groupID, itemID uuid.UUID, filters MaintenanceFilters) ([]MaintenanceEntryWithDetails, error) {
