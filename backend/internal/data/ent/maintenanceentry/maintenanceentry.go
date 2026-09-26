@@ -21,6 +21,8 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// FieldEntityID holds the string denoting the entity_id field in the database.
 	FieldEntityID = "entity_id"
+	// FieldPlanID holds the string denoting the plan_id field in the database.
+	FieldPlanID = "plan_id"
 	// FieldDate holds the string denoting the date field in the database.
 	FieldDate = "date"
 	// FieldScheduledDate holds the string denoting the scheduled_date field in the database.
@@ -33,6 +35,8 @@ const (
 	FieldCost = "cost"
 	// EdgeEntity holds the string denoting the entity edge name in mutations.
 	EdgeEntity = "entity"
+	// EdgePlan holds the string denoting the plan edge name in mutations.
+	EdgePlan = "plan"
 	// Table holds the table name of the maintenanceentry in the database.
 	Table = "maintenance_entries"
 	// EntityTable is the table that holds the entity relation/edge.
@@ -42,6 +46,13 @@ const (
 	EntityInverseTable = "entities"
 	// EntityColumn is the table column denoting the entity relation/edge.
 	EntityColumn = "entity_id"
+	// PlanTable is the table that holds the plan relation/edge.
+	PlanTable = "maintenance_entries"
+	// PlanInverseTable is the table name for the MaintenancePlan entity.
+	// It exists in this package in order to avoid circular dependency with the "maintenanceplan" package.
+	PlanInverseTable = "maintenance_plans"
+	// PlanColumn is the table column denoting the plan relation/edge.
+	PlanColumn = "plan_id"
 )
 
 // Columns holds all SQL columns for maintenanceentry fields.
@@ -50,6 +61,7 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldEntityID,
+	FieldPlanID,
 	FieldDate,
 	FieldScheduledDate,
 	FieldName,
@@ -107,6 +119,11 @@ func ByEntityID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEntityID, opts...).ToFunc()
 }
 
+// ByPlanID orders the results by the plan_id field.
+func ByPlanID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPlanID, opts...).ToFunc()
+}
+
 // ByDate orders the results by the date field.
 func ByDate(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDate, opts...).ToFunc()
@@ -138,10 +155,24 @@ func ByEntityField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newEntityStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByPlanField orders the results by plan field.
+func ByPlanField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPlanStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newEntityStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EntityInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, EntityTable, EntityColumn),
+	)
+}
+func newPlanStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PlanInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, PlanTable, PlanColumn),
 	)
 }

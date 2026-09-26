@@ -36,6 +36,7 @@ type MaintenanceFilterStatus string
 
 const (
 	MaintenanceFilterStatusScheduled MaintenanceFilterStatus = "scheduled"
+	MaintenanceFilterStatusOverdue   MaintenanceFilterStatus = "overdue"
 	MaintenanceFilterStatusCompleted MaintenanceFilterStatus = "completed"
 	MaintenanceFilterStatusBoth      MaintenanceFilterStatus = "both"
 )
@@ -57,6 +58,14 @@ func (r *MaintenanceEntryRepository) GetAllMaintenance(ctx context.Context, grou
 			maintenanceentry.DateIsNil(),
 			maintenanceentry.DateEQ(time.Time{}),
 		))
+	case MaintenanceFilterStatusOverdue:
+		query = query.Where(
+			maintenanceentry.ScheduledDateLT(time.Now()),
+			maintenanceentry.Or(
+				maintenanceentry.DateIsNil(),
+				maintenanceentry.DateEQ(time.Time{}),
+			),
+		)
 	case MaintenanceFilterStatusCompleted:
 		query = query.Where(
 			maintenanceentry.Not(maintenanceentry.Or(

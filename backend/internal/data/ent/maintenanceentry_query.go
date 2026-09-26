@@ -14,6 +14,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceplan"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 )
 
@@ -25,6 +26,7 @@ type MaintenanceEntryQuery struct {
 	inters     []Interceptor
 	predicates []predicate.MaintenanceEntry
 	withEntity *EntityQuery
+	withPlan   *MaintenancePlanQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -76,6 +78,28 @@ func (_q *MaintenanceEntryQuery) QueryEntity() *EntityQuery {
 			sqlgraph.From(maintenanceentry.Table, maintenanceentry.FieldID, selector),
 			sqlgraph.To(entity.Table, entity.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, maintenanceentry.EntityTable, maintenanceentry.EntityColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPlan chains the current query on the "plan" edge.
+func (_q *MaintenanceEntryQuery) QueryPlan() *MaintenancePlanQuery {
+	query := (&MaintenancePlanClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(maintenanceentry.Table, maintenanceentry.FieldID, selector),
+			sqlgraph.To(maintenanceplan.Table, maintenanceplan.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, maintenanceentry.PlanTable, maintenanceentry.PlanColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -276,6 +300,7 @@ func (_q *MaintenanceEntryQuery) Clone() *MaintenanceEntryQuery {
 		inters:     append([]Interceptor{}, _q.inters...),
 		predicates: append([]predicate.MaintenanceEntry{}, _q.predicates...),
 		withEntity: _q.withEntity.Clone(),
+		withPlan:   _q.withPlan.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -290,6 +315,17 @@ func (_q *MaintenanceEntryQuery) WithEntity(opts ...func(*EntityQuery)) *Mainten
 		opt(query)
 	}
 	_q.withEntity = query
+	return _q
+}
+
+// WithPlan tells the query-builder to eager-load the nodes that are connected to
+// the "plan" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *MaintenanceEntryQuery) WithPlan(opts ...func(*MaintenancePlanQuery)) *MaintenanceEntryQuery {
+	query := (&MaintenancePlanClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withPlan = query
 	return _q
 }
 
@@ -371,8 +407,9 @@ func (_q *MaintenanceEntryQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 	var (
 		nodes       = []*MaintenanceEntry{}
 		_spec       = _q.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			_q.withEntity != nil,
+			_q.withPlan != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -396,6 +433,12 @@ func (_q *MaintenanceEntryQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 	if query := _q.withEntity; query != nil {
 		if err := _q.loadEntity(ctx, query, nodes, nil,
 			func(n *MaintenanceEntry, e *Entity) { n.Edges.Entity = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withPlan; query != nil {
+		if err := _q.loadPlan(ctx, query, nodes, nil,
+			func(n *MaintenanceEntry, e *MaintenancePlan) { n.Edges.Plan = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -431,6 +474,38 @@ func (_q *MaintenanceEntryQuery) loadEntity(ctx context.Context, query *EntityQu
 	}
 	return nil
 }
+func (_q *MaintenanceEntryQuery) loadPlan(ctx context.Context, query *MaintenancePlanQuery, nodes []*MaintenanceEntry, init func(*MaintenanceEntry), assign func(*MaintenanceEntry, *MaintenancePlan)) error {
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*MaintenanceEntry)
+	for i := range nodes {
+		if nodes[i].PlanID == nil {
+			continue
+		}
+		fk := *nodes[i].PlanID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(maintenanceplan.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "plan_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 
 func (_q *MaintenanceEntryQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
@@ -459,6 +534,9 @@ func (_q *MaintenanceEntryQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if _q.withEntity != nil {
 			_spec.Node.AddColumnOnce(maintenanceentry.FieldEntityID)
+		}
+		if _q.withPlan != nil {
+			_spec.Node.AddColumnOnce(maintenanceentry.FieldPlanID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

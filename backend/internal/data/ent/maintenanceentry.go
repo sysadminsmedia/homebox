@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceplan"
 )
 
 // MaintenanceEntry is the model entity for the MaintenanceEntry schema.
@@ -25,6 +26,8 @@ type MaintenanceEntry struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// EntityID holds the value of the "entity_id" field.
 	EntityID uuid.UUID `json:"entity_id,omitempty"`
+	// PlanID holds the value of the "plan_id" field.
+	PlanID *uuid.UUID `json:"plan_id,omitempty"`
 	// Date holds the value of the "date" field.
 	Date time.Time `json:"date,omitempty"`
 	// ScheduledDate holds the value of the "scheduled_date" field.
@@ -45,9 +48,11 @@ type MaintenanceEntry struct {
 type MaintenanceEntryEdges struct {
 	// Entity holds the value of the entity edge.
 	Entity *Entity `json:"entity,omitempty"`
+	// Plan holds the value of the plan edge.
+	Plan *MaintenancePlan `json:"plan,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // EntityOrErr returns the Entity value or an error if the edge
@@ -61,11 +66,24 @@ func (e MaintenanceEntryEdges) EntityOrErr() (*Entity, error) {
 	return nil, &NotLoadedError{edge: "entity"}
 }
 
+// PlanOrErr returns the Plan value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e MaintenanceEntryEdges) PlanOrErr() (*MaintenancePlan, error) {
+	if e.Plan != nil {
+		return e.Plan, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: maintenanceplan.Label}
+	}
+	return nil, &NotLoadedError{edge: "plan"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*MaintenanceEntry) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case maintenanceentry.FieldPlanID:
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		case maintenanceentry.FieldCost:
 			values[i] = new(sql.NullFloat64)
 		case maintenanceentry.FieldName, maintenanceentry.FieldDescription:
@@ -112,6 +130,13 @@ func (_m *MaintenanceEntry) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field entity_id", values[i])
 			} else if value != nil {
 				_m.EntityID = *value
+			}
+		case maintenanceentry.FieldPlanID:
+			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field plan_id", values[i])
+			} else if value.Valid {
+				_m.PlanID = new(uuid.UUID)
+				*_m.PlanID = *value.S.(*uuid.UUID)
 			}
 		case maintenanceentry.FieldDate:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -161,6 +186,11 @@ func (_m *MaintenanceEntry) QueryEntity() *EntityQuery {
 	return NewMaintenanceEntryClient(_m.config).QueryEntity(_m)
 }
 
+// QueryPlan queries the "plan" edge of the MaintenanceEntry entity.
+func (_m *MaintenanceEntry) QueryPlan() *MaintenancePlanQuery {
+	return NewMaintenanceEntryClient(_m.config).QueryPlan(_m)
+}
+
 // Update returns a builder for updating this MaintenanceEntry.
 // Note that you need to call MaintenanceEntry.Unwrap() before calling this method if this MaintenanceEntry
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -192,6 +222,11 @@ func (_m *MaintenanceEntry) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("entity_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.EntityID))
+	builder.WriteString(", ")
+	if v := _m.PlanID; v != nil {
+		builder.WriteString("plan_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteString(", ")
 	builder.WriteString("date=")
 	builder.WriteString(_m.Date.Format(time.ANSIC))

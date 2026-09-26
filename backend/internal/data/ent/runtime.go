@@ -17,6 +17,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceplan"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/passwordresettokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema"
@@ -541,7 +542,7 @@ func init() {
 	// maintenanceentry.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	maintenanceentry.UpdateDefaultUpdatedAt = maintenanceentryDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// maintenanceentryDescName is the schema descriptor for name field.
-	maintenanceentryDescName := maintenanceentryFields[3].Descriptor()
+	maintenanceentryDescName := maintenanceentryFields[4].Descriptor()
 	// maintenanceentry.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	maintenanceentry.NameValidator = func() func(string) error {
 		validators := maintenanceentryDescName.Validators
@@ -559,17 +560,66 @@ func init() {
 		}
 	}()
 	// maintenanceentryDescDescription is the schema descriptor for description field.
-	maintenanceentryDescDescription := maintenanceentryFields[4].Descriptor()
+	maintenanceentryDescDescription := maintenanceentryFields[5].Descriptor()
 	// maintenanceentry.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	maintenanceentry.DescriptionValidator = maintenanceentryDescDescription.Validators[0].(func(string) error)
 	// maintenanceentryDescCost is the schema descriptor for cost field.
-	maintenanceentryDescCost := maintenanceentryFields[5].Descriptor()
+	maintenanceentryDescCost := maintenanceentryFields[6].Descriptor()
 	// maintenanceentry.DefaultCost holds the default value on creation for the cost field.
 	maintenanceentry.DefaultCost = maintenanceentryDescCost.Default.(float64)
 	// maintenanceentryDescID is the schema descriptor for id field.
 	maintenanceentryDescID := maintenanceentryMixinFields0[0].Descriptor()
 	// maintenanceentry.DefaultID holds the default value on creation for the id field.
 	maintenanceentry.DefaultID = maintenanceentryDescID.Default.(func() uuid.UUID)
+	maintenanceplanMixin := schema.MaintenancePlan{}.Mixin()
+	maintenanceplanMixinFields0 := maintenanceplanMixin[0].Fields()
+	_ = maintenanceplanMixinFields0
+	maintenanceplanFields := schema.MaintenancePlan{}.Fields()
+	_ = maintenanceplanFields
+	// maintenanceplanDescCreatedAt is the schema descriptor for created_at field.
+	maintenanceplanDescCreatedAt := maintenanceplanMixinFields0[1].Descriptor()
+	// maintenanceplan.DefaultCreatedAt holds the default value on creation for the created_at field.
+	maintenanceplan.DefaultCreatedAt = maintenanceplanDescCreatedAt.Default.(func() time.Time)
+	// maintenanceplanDescUpdatedAt is the schema descriptor for updated_at field.
+	maintenanceplanDescUpdatedAt := maintenanceplanMixinFields0[2].Descriptor()
+	// maintenanceplan.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	maintenanceplan.DefaultUpdatedAt = maintenanceplanDescUpdatedAt.Default.(func() time.Time)
+	// maintenanceplan.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	maintenanceplan.UpdateDefaultUpdatedAt = maintenanceplanDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// maintenanceplanDescName is the schema descriptor for name field.
+	maintenanceplanDescName := maintenanceplanFields[1].Descriptor()
+	// maintenanceplan.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	maintenanceplan.NameValidator = func() func(string) error {
+		validators := maintenanceplanDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// maintenanceplanDescDescription is the schema descriptor for description field.
+	maintenanceplanDescDescription := maintenanceplanFields[2].Descriptor()
+	// maintenanceplan.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	maintenanceplan.DescriptionValidator = maintenanceplanDescDescription.Validators[0].(func(string) error)
+	// maintenanceplanDescIntervalValue is the schema descriptor for interval_value field.
+	maintenanceplanDescIntervalValue := maintenanceplanFields[3].Descriptor()
+	// maintenanceplan.IntervalValueValidator is a validator for the "interval_value" field. It is called by the builders before save.
+	maintenanceplan.IntervalValueValidator = maintenanceplanDescIntervalValue.Validators[0].(func(int) error)
+	// maintenanceplanDescActive is the schema descriptor for active field.
+	maintenanceplanDescActive := maintenanceplanFields[5].Descriptor()
+	// maintenanceplan.DefaultActive holds the default value on creation for the active field.
+	maintenanceplan.DefaultActive = maintenanceplanDescActive.Default.(bool)
+	// maintenanceplanDescID is the schema descriptor for id field.
+	maintenanceplanDescID := maintenanceplanMixinFields0[0].Descriptor()
+	// maintenanceplan.DefaultID holds the default value on creation for the id field.
+	maintenanceplan.DefaultID = maintenanceplanDescID.Default.(func() uuid.UUID)
 	notifierMixin := schema.Notifier{}.Mixin()
 	notifierMixinFields0 := notifierMixin[0].Fields()
 	_ = notifierMixinFields0

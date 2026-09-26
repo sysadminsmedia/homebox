@@ -43,7 +43,14 @@ func (svc *BackgroundService) SendNotifiersToday(ctx context.Context) error {
 			return err
 		}
 
-		if len(entries) == 0 {
+		// Recurring tasks keep reminding until completed; one-off entries only
+		// notify on their scheduled day.
+		overdue, err := svc.repos.MaintEntry.GetOverdueRecurring(ctx, group.ID, today)
+		if err != nil {
+			return err
+		}
+
+		if len(entries) == 0 && len(overdue) == 0 {
 			log.Debug().
 				Str("group_name", group.Name).
 				Str("group_id", group.ID.String()).
@@ -75,6 +82,15 @@ func (svc *BackgroundService) SendNotifiersToday(ctx context.Context) error {
 			bldr.WriteString(" - ")
 			bldr.WriteString(entry.Name)
 			bldr.WriteString("\n")
+		}
+
+		for i := range overdue {
+			entry := overdue[i]
+			bldr.WriteString(" - ")
+			bldr.WriteString(entry.Name)
+			bldr.WriteString(" (overdue since ")
+			bldr.WriteString(entry.ScheduledDate.String())
+			bldr.WriteString(")\n")
 		}
 
 		var sendErrs []error

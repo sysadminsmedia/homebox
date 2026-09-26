@@ -11,6 +11,8 @@ import type {
   MaintenanceEntry,
   MaintenanceEntryCreate,
   MaintenanceEntryWithDetails,
+  MaintenancePlan,
+  MaintenancePlanCreate,
   TreeItem,
 } from "../types/data-contracts";
 import type { AttachmentTypes } from "../types/non-generated";
@@ -99,6 +101,19 @@ export class ItemMaintenanceAPI extends BaseAPI {
   create(itemId: string, data: MaintenanceEntryCreate) {
     return this.http.post<MaintenanceEntryCreate, MaintenanceEntry>({
       url: route(`/entities/${itemId}/maintenance`),
+      body: data,
+    });
+  }
+
+  getPlans(itemId: string) {
+    return this.http.get<MaintenancePlan[]>({
+      url: route(`/entities/${itemId}/maintenance/plans`),
+    });
+  }
+
+  createPlan(itemId: string, data: MaintenancePlanCreate) {
+    return this.http.post<MaintenancePlanCreate, MaintenancePlan>({
+      url: route(`/entities/${itemId}/maintenance/plans`),
       body: data,
     });
   }

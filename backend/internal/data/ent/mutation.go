@@ -24,6 +24,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceplan"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/passwordresettokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
@@ -54,6 +55,7 @@ const (
 	TypeGroup                = "Group"
 	TypeGroupInvitationToken = "GroupInvitationToken"
 	TypeMaintenanceEntry     = "MaintenanceEntry"
+	TypeMaintenancePlan      = "MaintenancePlan"
 	TypeNotifier             = "Notifier"
 	TypePasswordResetTokens  = "PasswordResetTokens"
 	TypeTag                  = "Tag"
@@ -2661,6 +2663,9 @@ type EntityMutation struct {
 	maintenance_entries         map[uuid.UUID]struct{}
 	removedmaintenance_entries  map[uuid.UUID]struct{}
 	clearedmaintenance_entries  bool
+	maintenance_plans           map[uuid.UUID]struct{}
+	removedmaintenance_plans    map[uuid.UUID]struct{}
+	clearedmaintenance_plans    bool
 	attachments                 map[uuid.UUID]struct{}
 	removedattachments          map[uuid.UUID]struct{}
 	clearedattachments          bool
@@ -4219,6 +4224,60 @@ func (m *EntityMutation) ResetMaintenanceEntries() {
 	m.removedmaintenance_entries = nil
 }
 
+// AddMaintenancePlanIDs adds the "maintenance_plans" edge to the MaintenancePlan entity by ids.
+func (m *EntityMutation) AddMaintenancePlanIDs(ids ...uuid.UUID) {
+	if m.maintenance_plans == nil {
+		m.maintenance_plans = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		m.maintenance_plans[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMaintenancePlans clears the "maintenance_plans" edge to the MaintenancePlan entity.
+func (m *EntityMutation) ClearMaintenancePlans() {
+	m.clearedmaintenance_plans = true
+}
+
+// MaintenancePlansCleared reports if the "maintenance_plans" edge to the MaintenancePlan entity was cleared.
+func (m *EntityMutation) MaintenancePlansCleared() bool {
+	return m.clearedmaintenance_plans
+}
+
+// RemoveMaintenancePlanIDs removes the "maintenance_plans" edge to the MaintenancePlan entity by IDs.
+func (m *EntityMutation) RemoveMaintenancePlanIDs(ids ...uuid.UUID) {
+	if m.removedmaintenance_plans == nil {
+		m.removedmaintenance_plans = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		delete(m.maintenance_plans, ids[i])
+		m.removedmaintenance_plans[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMaintenancePlans returns the removed IDs of the "maintenance_plans" edge to the MaintenancePlan entity.
+func (m *EntityMutation) RemovedMaintenancePlansIDs() (ids []uuid.UUID) {
+	for id := range m.removedmaintenance_plans {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MaintenancePlansIDs returns the "maintenance_plans" edge IDs in the mutation.
+func (m *EntityMutation) MaintenancePlansIDs() (ids []uuid.UUID) {
+	for id := range m.maintenance_plans {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMaintenancePlans resets all changes to the "maintenance_plans" edge.
+func (m *EntityMutation) ResetMaintenancePlans() {
+	m.maintenance_plans = nil
+	m.clearedmaintenance_plans = false
+	m.removedmaintenance_plans = nil
+}
+
 // AddAttachmentIDs adds the "attachments" edge to the Attachment entity by ids.
 func (m *EntityMutation) AddAttachmentIDs(ids ...uuid.UUID) {
 	if m.attachments == nil {
@@ -4929,7 +4988,7 @@ func (m *EntityMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *EntityMutation) AddedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 9)
 	if m.group != nil {
 		edges = append(edges, entity.EdgeGroup)
 	}
@@ -4950,6 +5009,9 @@ func (m *EntityMutation) AddedEdges() []string {
 	}
 	if m.maintenance_entries != nil {
 		edges = append(edges, entity.EdgeMaintenanceEntries)
+	}
+	if m.maintenance_plans != nil {
+		edges = append(edges, entity.EdgeMaintenancePlans)
 	}
 	if m.attachments != nil {
 		edges = append(edges, entity.EdgeAttachments)
@@ -4997,6 +5059,12 @@ func (m *EntityMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case entity.EdgeMaintenancePlans:
+		ids := make([]ent.Value, 0, len(m.maintenance_plans))
+		for id := range m.maintenance_plans {
+			ids = append(ids, id)
+		}
+		return ids
 	case entity.EdgeAttachments:
 		ids := make([]ent.Value, 0, len(m.attachments))
 		for id := range m.attachments {
@@ -5009,7 +5077,7 @@ func (m *EntityMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *EntityMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 9)
 	if m.removedchildren != nil {
 		edges = append(edges, entity.EdgeChildren)
 	}
@@ -5021,6 +5089,9 @@ func (m *EntityMutation) RemovedEdges() []string {
 	}
 	if m.removedmaintenance_entries != nil {
 		edges = append(edges, entity.EdgeMaintenanceEntries)
+	}
+	if m.removedmaintenance_plans != nil {
+		edges = append(edges, entity.EdgeMaintenancePlans)
 	}
 	if m.removedattachments != nil {
 		edges = append(edges, entity.EdgeAttachments)
@@ -5056,6 +5127,12 @@ func (m *EntityMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case entity.EdgeMaintenancePlans:
+		ids := make([]ent.Value, 0, len(m.removedmaintenance_plans))
+		for id := range m.removedmaintenance_plans {
+			ids = append(ids, id)
+		}
+		return ids
 	case entity.EdgeAttachments:
 		ids := make([]ent.Value, 0, len(m.removedattachments))
 		for id := range m.removedattachments {
@@ -5068,7 +5145,7 @@ func (m *EntityMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *EntityMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 9)
 	if m.clearedgroup {
 		edges = append(edges, entity.EdgeGroup)
 	}
@@ -5089,6 +5166,9 @@ func (m *EntityMutation) ClearedEdges() []string {
 	}
 	if m.clearedmaintenance_entries {
 		edges = append(edges, entity.EdgeMaintenanceEntries)
+	}
+	if m.clearedmaintenance_plans {
+		edges = append(edges, entity.EdgeMaintenancePlans)
 	}
 	if m.clearedattachments {
 		edges = append(edges, entity.EdgeAttachments)
@@ -5114,6 +5194,8 @@ func (m *EntityMutation) EdgeCleared(name string) bool {
 		return m.clearedfields
 	case entity.EdgeMaintenanceEntries:
 		return m.clearedmaintenance_entries
+	case entity.EdgeMaintenancePlans:
+		return m.clearedmaintenance_plans
 	case entity.EdgeAttachments:
 		return m.clearedattachments
 	}
@@ -5161,6 +5243,9 @@ func (m *EntityMutation) ResetEdge(name string) error {
 		return nil
 	case entity.EdgeMaintenanceEntries:
 		m.ResetMaintenanceEntries()
+		return nil
+	case entity.EdgeMaintenancePlans:
+		m.ResetMaintenancePlans()
 		return nil
 	case entity.EdgeAttachments:
 		m.ResetAttachments()
@@ -11330,6 +11415,8 @@ type MaintenanceEntryMutation struct {
 	clearedFields  map[string]struct{}
 	entity         *uuid.UUID
 	clearedentity  bool
+	plan           *uuid.UUID
+	clearedplan    bool
 	done           bool
 	oldValue       func(context.Context) (*MaintenanceEntry, error)
 	predicates     []predicate.MaintenanceEntry
@@ -11545,6 +11632,55 @@ func (m *MaintenanceEntryMutation) OldEntityID(ctx context.Context) (v uuid.UUID
 // ResetEntityID resets all changes to the "entity_id" field.
 func (m *MaintenanceEntryMutation) ResetEntityID() {
 	m.entity = nil
+}
+
+// SetPlanID sets the "plan_id" field.
+func (m *MaintenanceEntryMutation) SetPlanID(u uuid.UUID) {
+	m.plan = &u
+}
+
+// PlanID returns the value of the "plan_id" field in the mutation.
+func (m *MaintenanceEntryMutation) PlanID() (r uuid.UUID, exists bool) {
+	v := m.plan
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPlanID returns the old "plan_id" field's value of the MaintenanceEntry entity.
+// If the MaintenanceEntry object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenanceEntryMutation) OldPlanID(ctx context.Context) (v *uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPlanID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPlanID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPlanID: %w", err)
+	}
+	return oldValue.PlanID, nil
+}
+
+// ClearPlanID clears the value of the "plan_id" field.
+func (m *MaintenanceEntryMutation) ClearPlanID() {
+	m.plan = nil
+	m.clearedFields[maintenanceentry.FieldPlanID] = struct{}{}
+}
+
+// PlanIDCleared returns if the "plan_id" field was cleared in this mutation.
+func (m *MaintenanceEntryMutation) PlanIDCleared() bool {
+	_, ok := m.clearedFields[maintenanceentry.FieldPlanID]
+	return ok
+}
+
+// ResetPlanID resets all changes to the "plan_id" field.
+func (m *MaintenanceEntryMutation) ResetPlanID() {
+	m.plan = nil
+	delete(m.clearedFields, maintenanceentry.FieldPlanID)
 }
 
 // SetDate sets the "date" field.
@@ -11813,6 +11949,33 @@ func (m *MaintenanceEntryMutation) ResetEntity() {
 	m.clearedentity = false
 }
 
+// ClearPlan clears the "plan" edge to the MaintenancePlan entity.
+func (m *MaintenanceEntryMutation) ClearPlan() {
+	m.clearedplan = true
+	m.clearedFields[maintenanceentry.FieldPlanID] = struct{}{}
+}
+
+// PlanCleared reports if the "plan" edge to the MaintenancePlan entity was cleared.
+func (m *MaintenanceEntryMutation) PlanCleared() bool {
+	return m.PlanIDCleared() || m.clearedplan
+}
+
+// PlanIDs returns the "plan" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// PlanID instead. It exists only for internal usage by the builders.
+func (m *MaintenanceEntryMutation) PlanIDs() (ids []uuid.UUID) {
+	if id := m.plan; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPlan resets all changes to the "plan" edge.
+func (m *MaintenanceEntryMutation) ResetPlan() {
+	m.plan = nil
+	m.clearedplan = false
+}
+
 // Where appends a list predicates to the MaintenanceEntryMutation builder.
 func (m *MaintenanceEntryMutation) Where(ps ...predicate.MaintenanceEntry) {
 	m.predicates = append(m.predicates, ps...)
@@ -11847,7 +12010,7 @@ func (m *MaintenanceEntryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MaintenanceEntryMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.created_at != nil {
 		fields = append(fields, maintenanceentry.FieldCreatedAt)
 	}
@@ -11856,6 +12019,9 @@ func (m *MaintenanceEntryMutation) Fields() []string {
 	}
 	if m.entity != nil {
 		fields = append(fields, maintenanceentry.FieldEntityID)
+	}
+	if m.plan != nil {
+		fields = append(fields, maintenanceentry.FieldPlanID)
 	}
 	if m.date != nil {
 		fields = append(fields, maintenanceentry.FieldDate)
@@ -11886,6 +12052,8 @@ func (m *MaintenanceEntryMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedAt()
 	case maintenanceentry.FieldEntityID:
 		return m.EntityID()
+	case maintenanceentry.FieldPlanID:
+		return m.PlanID()
 	case maintenanceentry.FieldDate:
 		return m.Date()
 	case maintenanceentry.FieldScheduledDate:
@@ -11911,6 +12079,8 @@ func (m *MaintenanceEntryMutation) OldField(ctx context.Context, name string) (e
 		return m.OldUpdatedAt(ctx)
 	case maintenanceentry.FieldEntityID:
 		return m.OldEntityID(ctx)
+	case maintenanceentry.FieldPlanID:
+		return m.OldPlanID(ctx)
 	case maintenanceentry.FieldDate:
 		return m.OldDate(ctx)
 	case maintenanceentry.FieldScheduledDate:
@@ -11950,6 +12120,13 @@ func (m *MaintenanceEntryMutation) SetField(name string, value ent.Value) error 
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEntityID(v)
+		return nil
+	case maintenanceentry.FieldPlanID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPlanID(v)
 		return nil
 	case maintenanceentry.FieldDate:
 		v, ok := value.(time.Time)
@@ -12031,6 +12208,9 @@ func (m *MaintenanceEntryMutation) AddField(name string, value ent.Value) error 
 // mutation.
 func (m *MaintenanceEntryMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(maintenanceentry.FieldPlanID) {
+		fields = append(fields, maintenanceentry.FieldPlanID)
+	}
 	if m.FieldCleared(maintenanceentry.FieldDate) {
 		fields = append(fields, maintenanceentry.FieldDate)
 	}
@@ -12054,6 +12234,9 @@ func (m *MaintenanceEntryMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *MaintenanceEntryMutation) ClearField(name string) error {
 	switch name {
+	case maintenanceentry.FieldPlanID:
+		m.ClearPlanID()
+		return nil
 	case maintenanceentry.FieldDate:
 		m.ClearDate()
 		return nil
@@ -12080,6 +12263,9 @@ func (m *MaintenanceEntryMutation) ResetField(name string) error {
 	case maintenanceentry.FieldEntityID:
 		m.ResetEntityID()
 		return nil
+	case maintenanceentry.FieldPlanID:
+		m.ResetPlanID()
+		return nil
 	case maintenanceentry.FieldDate:
 		m.ResetDate()
 		return nil
@@ -12101,9 +12287,12 @@ func (m *MaintenanceEntryMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MaintenanceEntryMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.entity != nil {
 		edges = append(edges, maintenanceentry.EdgeEntity)
+	}
+	if m.plan != nil {
+		edges = append(edges, maintenanceentry.EdgePlan)
 	}
 	return edges
 }
@@ -12116,13 +12305,17 @@ func (m *MaintenanceEntryMutation) AddedIDs(name string) []ent.Value {
 		if id := m.entity; id != nil {
 			return []ent.Value{*id}
 		}
+	case maintenanceentry.EdgePlan:
+		if id := m.plan; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MaintenanceEntryMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	return edges
 }
 
@@ -12134,9 +12327,12 @@ func (m *MaintenanceEntryMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MaintenanceEntryMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedentity {
 		edges = append(edges, maintenanceentry.EdgeEntity)
+	}
+	if m.clearedplan {
+		edges = append(edges, maintenanceentry.EdgePlan)
 	}
 	return edges
 }
@@ -12147,6 +12343,8 @@ func (m *MaintenanceEntryMutation) EdgeCleared(name string) bool {
 	switch name {
 	case maintenanceentry.EdgeEntity:
 		return m.clearedentity
+	case maintenanceentry.EdgePlan:
+		return m.clearedplan
 	}
 	return false
 }
@@ -12157,6 +12355,9 @@ func (m *MaintenanceEntryMutation) ClearEdge(name string) error {
 	switch name {
 	case maintenanceentry.EdgeEntity:
 		m.ClearEntity()
+		return nil
+	case maintenanceentry.EdgePlan:
+		m.ClearPlan()
 		return nil
 	}
 	return fmt.Errorf("unknown MaintenanceEntry unique edge %s", name)
@@ -12169,8 +12370,1064 @@ func (m *MaintenanceEntryMutation) ResetEdge(name string) error {
 	case maintenanceentry.EdgeEntity:
 		m.ResetEntity()
 		return nil
+	case maintenanceentry.EdgePlan:
+		m.ResetPlan()
+		return nil
 	}
 	return fmt.Errorf("unknown MaintenanceEntry edge %s", name)
+}
+
+// MaintenancePlanMutation represents an operation that mutates the MaintenancePlan nodes in the graph.
+type MaintenancePlanMutation struct {
+	config
+	op                         Op
+	typ                        string
+	id                         *uuid.UUID
+	created_at                 *time.Time
+	updated_at                 *time.Time
+	name                       *string
+	description                *string
+	interval_value             *int
+	addinterval_value          *int
+	interval_unit              *maintenanceplan.IntervalUnit
+	active                     *bool
+	last_completed_at          *time.Time
+	next_due_at                *time.Time
+	clearedFields              map[string]struct{}
+	entity                     *uuid.UUID
+	clearedentity              bool
+	maintenance_entries        map[uuid.UUID]struct{}
+	removedmaintenance_entries map[uuid.UUID]struct{}
+	clearedmaintenance_entries bool
+	done                       bool
+	oldValue                   func(context.Context) (*MaintenancePlan, error)
+	predicates                 []predicate.MaintenancePlan
+}
+
+var _ ent.Mutation = (*MaintenancePlanMutation)(nil)
+
+// maintenanceplanOption allows management of the mutation configuration using functional options.
+type maintenanceplanOption func(*MaintenancePlanMutation)
+
+// newMaintenancePlanMutation creates new mutation for the MaintenancePlan entity.
+func newMaintenancePlanMutation(c config, op Op, opts ...maintenanceplanOption) *MaintenancePlanMutation {
+	m := &MaintenancePlanMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeMaintenancePlan,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withMaintenancePlanID sets the ID field of the mutation.
+func withMaintenancePlanID(id uuid.UUID) maintenanceplanOption {
+	return func(m *MaintenancePlanMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *MaintenancePlan
+		)
+		m.oldValue = func(ctx context.Context) (*MaintenancePlan, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().MaintenancePlan.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withMaintenancePlan sets the old MaintenancePlan of the mutation.
+func withMaintenancePlan(node *MaintenancePlan) maintenanceplanOption {
+	return func(m *MaintenancePlanMutation) {
+		m.oldValue = func(context.Context) (*MaintenancePlan, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m MaintenancePlanMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m MaintenancePlanMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of MaintenancePlan entities.
+func (m *MaintenancePlanMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *MaintenancePlanMutation) ID() (id uuid.UUID, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *MaintenancePlanMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uuid.UUID{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().MaintenancePlan.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *MaintenancePlanMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *MaintenancePlanMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the MaintenancePlan entity.
+// If the MaintenancePlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenancePlanMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *MaintenancePlanMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *MaintenancePlanMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *MaintenancePlanMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the MaintenancePlan entity.
+// If the MaintenancePlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenancePlanMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *MaintenancePlanMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetEntityID sets the "entity_id" field.
+func (m *MaintenancePlanMutation) SetEntityID(u uuid.UUID) {
+	m.entity = &u
+}
+
+// EntityID returns the value of the "entity_id" field in the mutation.
+func (m *MaintenancePlanMutation) EntityID() (r uuid.UUID, exists bool) {
+	v := m.entity
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEntityID returns the old "entity_id" field's value of the MaintenancePlan entity.
+// If the MaintenancePlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenancePlanMutation) OldEntityID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEntityID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEntityID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEntityID: %w", err)
+	}
+	return oldValue.EntityID, nil
+}
+
+// ResetEntityID resets all changes to the "entity_id" field.
+func (m *MaintenancePlanMutation) ResetEntityID() {
+	m.entity = nil
+}
+
+// SetName sets the "name" field.
+func (m *MaintenancePlanMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *MaintenancePlanMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the MaintenancePlan entity.
+// If the MaintenancePlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenancePlanMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *MaintenancePlanMutation) ResetName() {
+	m.name = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *MaintenancePlanMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *MaintenancePlanMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the MaintenancePlan entity.
+// If the MaintenancePlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenancePlanMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *MaintenancePlanMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[maintenanceplan.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *MaintenancePlanMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[maintenanceplan.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *MaintenancePlanMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, maintenanceplan.FieldDescription)
+}
+
+// SetIntervalValue sets the "interval_value" field.
+func (m *MaintenancePlanMutation) SetIntervalValue(i int) {
+	m.interval_value = &i
+	m.addinterval_value = nil
+}
+
+// IntervalValue returns the value of the "interval_value" field in the mutation.
+func (m *MaintenancePlanMutation) IntervalValue() (r int, exists bool) {
+	v := m.interval_value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIntervalValue returns the old "interval_value" field's value of the MaintenancePlan entity.
+// If the MaintenancePlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenancePlanMutation) OldIntervalValue(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIntervalValue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIntervalValue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIntervalValue: %w", err)
+	}
+	return oldValue.IntervalValue, nil
+}
+
+// AddIntervalValue adds i to the "interval_value" field.
+func (m *MaintenancePlanMutation) AddIntervalValue(i int) {
+	if m.addinterval_value != nil {
+		*m.addinterval_value += i
+	} else {
+		m.addinterval_value = &i
+	}
+}
+
+// AddedIntervalValue returns the value that was added to the "interval_value" field in this mutation.
+func (m *MaintenancePlanMutation) AddedIntervalValue() (r int, exists bool) {
+	v := m.addinterval_value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetIntervalValue resets all changes to the "interval_value" field.
+func (m *MaintenancePlanMutation) ResetIntervalValue() {
+	m.interval_value = nil
+	m.addinterval_value = nil
+}
+
+// SetIntervalUnit sets the "interval_unit" field.
+func (m *MaintenancePlanMutation) SetIntervalUnit(mu maintenanceplan.IntervalUnit) {
+	m.interval_unit = &mu
+}
+
+// IntervalUnit returns the value of the "interval_unit" field in the mutation.
+func (m *MaintenancePlanMutation) IntervalUnit() (r maintenanceplan.IntervalUnit, exists bool) {
+	v := m.interval_unit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIntervalUnit returns the old "interval_unit" field's value of the MaintenancePlan entity.
+// If the MaintenancePlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenancePlanMutation) OldIntervalUnit(ctx context.Context) (v maintenanceplan.IntervalUnit, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIntervalUnit is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIntervalUnit requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIntervalUnit: %w", err)
+	}
+	return oldValue.IntervalUnit, nil
+}
+
+// ResetIntervalUnit resets all changes to the "interval_unit" field.
+func (m *MaintenancePlanMutation) ResetIntervalUnit() {
+	m.interval_unit = nil
+}
+
+// SetActive sets the "active" field.
+func (m *MaintenancePlanMutation) SetActive(b bool) {
+	m.active = &b
+}
+
+// Active returns the value of the "active" field in the mutation.
+func (m *MaintenancePlanMutation) Active() (r bool, exists bool) {
+	v := m.active
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldActive returns the old "active" field's value of the MaintenancePlan entity.
+// If the MaintenancePlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenancePlanMutation) OldActive(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldActive is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldActive requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldActive: %w", err)
+	}
+	return oldValue.Active, nil
+}
+
+// ResetActive resets all changes to the "active" field.
+func (m *MaintenancePlanMutation) ResetActive() {
+	m.active = nil
+}
+
+// SetLastCompletedAt sets the "last_completed_at" field.
+func (m *MaintenancePlanMutation) SetLastCompletedAt(t time.Time) {
+	m.last_completed_at = &t
+}
+
+// LastCompletedAt returns the value of the "last_completed_at" field in the mutation.
+func (m *MaintenancePlanMutation) LastCompletedAt() (r time.Time, exists bool) {
+	v := m.last_completed_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastCompletedAt returns the old "last_completed_at" field's value of the MaintenancePlan entity.
+// If the MaintenancePlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenancePlanMutation) OldLastCompletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastCompletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastCompletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastCompletedAt: %w", err)
+	}
+	return oldValue.LastCompletedAt, nil
+}
+
+// ClearLastCompletedAt clears the value of the "last_completed_at" field.
+func (m *MaintenancePlanMutation) ClearLastCompletedAt() {
+	m.last_completed_at = nil
+	m.clearedFields[maintenanceplan.FieldLastCompletedAt] = struct{}{}
+}
+
+// LastCompletedAtCleared returns if the "last_completed_at" field was cleared in this mutation.
+func (m *MaintenancePlanMutation) LastCompletedAtCleared() bool {
+	_, ok := m.clearedFields[maintenanceplan.FieldLastCompletedAt]
+	return ok
+}
+
+// ResetLastCompletedAt resets all changes to the "last_completed_at" field.
+func (m *MaintenancePlanMutation) ResetLastCompletedAt() {
+	m.last_completed_at = nil
+	delete(m.clearedFields, maintenanceplan.FieldLastCompletedAt)
+}
+
+// SetNextDueAt sets the "next_due_at" field.
+func (m *MaintenancePlanMutation) SetNextDueAt(t time.Time) {
+	m.next_due_at = &t
+}
+
+// NextDueAt returns the value of the "next_due_at" field in the mutation.
+func (m *MaintenancePlanMutation) NextDueAt() (r time.Time, exists bool) {
+	v := m.next_due_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNextDueAt returns the old "next_due_at" field's value of the MaintenancePlan entity.
+// If the MaintenancePlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MaintenancePlanMutation) OldNextDueAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNextDueAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNextDueAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNextDueAt: %w", err)
+	}
+	return oldValue.NextDueAt, nil
+}
+
+// ClearNextDueAt clears the value of the "next_due_at" field.
+func (m *MaintenancePlanMutation) ClearNextDueAt() {
+	m.next_due_at = nil
+	m.clearedFields[maintenanceplan.FieldNextDueAt] = struct{}{}
+}
+
+// NextDueAtCleared returns if the "next_due_at" field was cleared in this mutation.
+func (m *MaintenancePlanMutation) NextDueAtCleared() bool {
+	_, ok := m.clearedFields[maintenanceplan.FieldNextDueAt]
+	return ok
+}
+
+// ResetNextDueAt resets all changes to the "next_due_at" field.
+func (m *MaintenancePlanMutation) ResetNextDueAt() {
+	m.next_due_at = nil
+	delete(m.clearedFields, maintenanceplan.FieldNextDueAt)
+}
+
+// ClearEntity clears the "entity" edge to the Entity entity.
+func (m *MaintenancePlanMutation) ClearEntity() {
+	m.clearedentity = true
+	m.clearedFields[maintenanceplan.FieldEntityID] = struct{}{}
+}
+
+// EntityCleared reports if the "entity" edge to the Entity entity was cleared.
+func (m *MaintenancePlanMutation) EntityCleared() bool {
+	return m.clearedentity
+}
+
+// EntityIDs returns the "entity" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// EntityID instead. It exists only for internal usage by the builders.
+func (m *MaintenancePlanMutation) EntityIDs() (ids []uuid.UUID) {
+	if id := m.entity; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetEntity resets all changes to the "entity" edge.
+func (m *MaintenancePlanMutation) ResetEntity() {
+	m.entity = nil
+	m.clearedentity = false
+}
+
+// AddMaintenanceEntryIDs adds the "maintenance_entries" edge to the MaintenanceEntry entity by ids.
+func (m *MaintenancePlanMutation) AddMaintenanceEntryIDs(ids ...uuid.UUID) {
+	if m.maintenance_entries == nil {
+		m.maintenance_entries = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		m.maintenance_entries[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMaintenanceEntries clears the "maintenance_entries" edge to the MaintenanceEntry entity.
+func (m *MaintenancePlanMutation) ClearMaintenanceEntries() {
+	m.clearedmaintenance_entries = true
+}
+
+// MaintenanceEntriesCleared reports if the "maintenance_entries" edge to the MaintenanceEntry entity was cleared.
+func (m *MaintenancePlanMutation) MaintenanceEntriesCleared() bool {
+	return m.clearedmaintenance_entries
+}
+
+// RemoveMaintenanceEntryIDs removes the "maintenance_entries" edge to the MaintenanceEntry entity by IDs.
+func (m *MaintenancePlanMutation) RemoveMaintenanceEntryIDs(ids ...uuid.UUID) {
+	if m.removedmaintenance_entries == nil {
+		m.removedmaintenance_entries = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		delete(m.maintenance_entries, ids[i])
+		m.removedmaintenance_entries[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMaintenanceEntries returns the removed IDs of the "maintenance_entries" edge to the MaintenanceEntry entity.
+func (m *MaintenancePlanMutation) RemovedMaintenanceEntriesIDs() (ids []uuid.UUID) {
+	for id := range m.removedmaintenance_entries {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MaintenanceEntriesIDs returns the "maintenance_entries" edge IDs in the mutation.
+func (m *MaintenancePlanMutation) MaintenanceEntriesIDs() (ids []uuid.UUID) {
+	for id := range m.maintenance_entries {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMaintenanceEntries resets all changes to the "maintenance_entries" edge.
+func (m *MaintenancePlanMutation) ResetMaintenanceEntries() {
+	m.maintenance_entries = nil
+	m.clearedmaintenance_entries = false
+	m.removedmaintenance_entries = nil
+}
+
+// Where appends a list predicates to the MaintenancePlanMutation builder.
+func (m *MaintenancePlanMutation) Where(ps ...predicate.MaintenancePlan) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the MaintenancePlanMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *MaintenancePlanMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.MaintenancePlan, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *MaintenancePlanMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *MaintenancePlanMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (MaintenancePlan).
+func (m *MaintenancePlanMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *MaintenancePlanMutation) Fields() []string {
+	fields := make([]string, 0, 10)
+	if m.created_at != nil {
+		fields = append(fields, maintenanceplan.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, maintenanceplan.FieldUpdatedAt)
+	}
+	if m.entity != nil {
+		fields = append(fields, maintenanceplan.FieldEntityID)
+	}
+	if m.name != nil {
+		fields = append(fields, maintenanceplan.FieldName)
+	}
+	if m.description != nil {
+		fields = append(fields, maintenanceplan.FieldDescription)
+	}
+	if m.interval_value != nil {
+		fields = append(fields, maintenanceplan.FieldIntervalValue)
+	}
+	if m.interval_unit != nil {
+		fields = append(fields, maintenanceplan.FieldIntervalUnit)
+	}
+	if m.active != nil {
+		fields = append(fields, maintenanceplan.FieldActive)
+	}
+	if m.last_completed_at != nil {
+		fields = append(fields, maintenanceplan.FieldLastCompletedAt)
+	}
+	if m.next_due_at != nil {
+		fields = append(fields, maintenanceplan.FieldNextDueAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *MaintenancePlanMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case maintenanceplan.FieldCreatedAt:
+		return m.CreatedAt()
+	case maintenanceplan.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case maintenanceplan.FieldEntityID:
+		return m.EntityID()
+	case maintenanceplan.FieldName:
+		return m.Name()
+	case maintenanceplan.FieldDescription:
+		return m.Description()
+	case maintenanceplan.FieldIntervalValue:
+		return m.IntervalValue()
+	case maintenanceplan.FieldIntervalUnit:
+		return m.IntervalUnit()
+	case maintenanceplan.FieldActive:
+		return m.Active()
+	case maintenanceplan.FieldLastCompletedAt:
+		return m.LastCompletedAt()
+	case maintenanceplan.FieldNextDueAt:
+		return m.NextDueAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *MaintenancePlanMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case maintenanceplan.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case maintenanceplan.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case maintenanceplan.FieldEntityID:
+		return m.OldEntityID(ctx)
+	case maintenanceplan.FieldName:
+		return m.OldName(ctx)
+	case maintenanceplan.FieldDescription:
+		return m.OldDescription(ctx)
+	case maintenanceplan.FieldIntervalValue:
+		return m.OldIntervalValue(ctx)
+	case maintenanceplan.FieldIntervalUnit:
+		return m.OldIntervalUnit(ctx)
+	case maintenanceplan.FieldActive:
+		return m.OldActive(ctx)
+	case maintenanceplan.FieldLastCompletedAt:
+		return m.OldLastCompletedAt(ctx)
+	case maintenanceplan.FieldNextDueAt:
+		return m.OldNextDueAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown MaintenancePlan field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MaintenancePlanMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case maintenanceplan.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case maintenanceplan.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case maintenanceplan.FieldEntityID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEntityID(v)
+		return nil
+	case maintenanceplan.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case maintenanceplan.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case maintenanceplan.FieldIntervalValue:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIntervalValue(v)
+		return nil
+	case maintenanceplan.FieldIntervalUnit:
+		v, ok := value.(maintenanceplan.IntervalUnit)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIntervalUnit(v)
+		return nil
+	case maintenanceplan.FieldActive:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetActive(v)
+		return nil
+	case maintenanceplan.FieldLastCompletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastCompletedAt(v)
+		return nil
+	case maintenanceplan.FieldNextDueAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNextDueAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MaintenancePlan field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *MaintenancePlanMutation) AddedFields() []string {
+	var fields []string
+	if m.addinterval_value != nil {
+		fields = append(fields, maintenanceplan.FieldIntervalValue)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *MaintenancePlanMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case maintenanceplan.FieldIntervalValue:
+		return m.AddedIntervalValue()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MaintenancePlanMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case maintenanceplan.FieldIntervalValue:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddIntervalValue(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MaintenancePlan numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *MaintenancePlanMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(maintenanceplan.FieldDescription) {
+		fields = append(fields, maintenanceplan.FieldDescription)
+	}
+	if m.FieldCleared(maintenanceplan.FieldLastCompletedAt) {
+		fields = append(fields, maintenanceplan.FieldLastCompletedAt)
+	}
+	if m.FieldCleared(maintenanceplan.FieldNextDueAt) {
+		fields = append(fields, maintenanceplan.FieldNextDueAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *MaintenancePlanMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *MaintenancePlanMutation) ClearField(name string) error {
+	switch name {
+	case maintenanceplan.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case maintenanceplan.FieldLastCompletedAt:
+		m.ClearLastCompletedAt()
+		return nil
+	case maintenanceplan.FieldNextDueAt:
+		m.ClearNextDueAt()
+		return nil
+	}
+	return fmt.Errorf("unknown MaintenancePlan nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *MaintenancePlanMutation) ResetField(name string) error {
+	switch name {
+	case maintenanceplan.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case maintenanceplan.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case maintenanceplan.FieldEntityID:
+		m.ResetEntityID()
+		return nil
+	case maintenanceplan.FieldName:
+		m.ResetName()
+		return nil
+	case maintenanceplan.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case maintenanceplan.FieldIntervalValue:
+		m.ResetIntervalValue()
+		return nil
+	case maintenanceplan.FieldIntervalUnit:
+		m.ResetIntervalUnit()
+		return nil
+	case maintenanceplan.FieldActive:
+		m.ResetActive()
+		return nil
+	case maintenanceplan.FieldLastCompletedAt:
+		m.ResetLastCompletedAt()
+		return nil
+	case maintenanceplan.FieldNextDueAt:
+		m.ResetNextDueAt()
+		return nil
+	}
+	return fmt.Errorf("unknown MaintenancePlan field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *MaintenancePlanMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.entity != nil {
+		edges = append(edges, maintenanceplan.EdgeEntity)
+	}
+	if m.maintenance_entries != nil {
+		edges = append(edges, maintenanceplan.EdgeMaintenanceEntries)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *MaintenancePlanMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case maintenanceplan.EdgeEntity:
+		if id := m.entity; id != nil {
+			return []ent.Value{*id}
+		}
+	case maintenanceplan.EdgeMaintenanceEntries:
+		ids := make([]ent.Value, 0, len(m.maintenance_entries))
+		for id := range m.maintenance_entries {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *MaintenancePlanMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.removedmaintenance_entries != nil {
+		edges = append(edges, maintenanceplan.EdgeMaintenanceEntries)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *MaintenancePlanMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case maintenanceplan.EdgeMaintenanceEntries:
+		ids := make([]ent.Value, 0, len(m.removedmaintenance_entries))
+		for id := range m.removedmaintenance_entries {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *MaintenancePlanMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedentity {
+		edges = append(edges, maintenanceplan.EdgeEntity)
+	}
+	if m.clearedmaintenance_entries {
+		edges = append(edges, maintenanceplan.EdgeMaintenanceEntries)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *MaintenancePlanMutation) EdgeCleared(name string) bool {
+	switch name {
+	case maintenanceplan.EdgeEntity:
+		return m.clearedentity
+	case maintenanceplan.EdgeMaintenanceEntries:
+		return m.clearedmaintenance_entries
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *MaintenancePlanMutation) ClearEdge(name string) error {
+	switch name {
+	case maintenanceplan.EdgeEntity:
+		m.ClearEntity()
+		return nil
+	}
+	return fmt.Errorf("unknown MaintenancePlan unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *MaintenancePlanMutation) ResetEdge(name string) error {
+	switch name {
+	case maintenanceplan.EdgeEntity:
+		m.ResetEntity()
+		return nil
+	case maintenanceplan.EdgeMaintenanceEntries:
+		m.ResetMaintenanceEntries()
+		return nil
+	}
+	return fmt.Errorf("unknown MaintenancePlan edge %s", name)
 }
 
 // NotifierMutation represents an operation that mutates the Notifier nodes in the graph.

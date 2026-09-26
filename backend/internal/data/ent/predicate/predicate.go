@@ -42,6 +42,9 @@ type GroupInvitationToken func(*sql.Selector)
 // MaintenanceEntry is the predicate function for maintenanceentry builders.
 type MaintenanceEntry func(*sql.Selector)
 
+// MaintenancePlan is the predicate function for maintenanceplan builders.
+type MaintenancePlan func(*sql.Selector)
+
 // Notifier is the predicate function for notifier builders.
 type Notifier func(*sql.Selector)
 
