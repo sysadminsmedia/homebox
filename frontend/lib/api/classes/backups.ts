@@ -42,7 +42,10 @@ export class BackupsAPI extends BaseAPI {
   }
 
   /** Returns the URL to download the artifact directly. */
-  downloadURL(id: string) {
+  downloadURL(id: string, tenant?: string) {
+    if (tenant) {
+      return route(`/group/exports/${id}/download`, { tenant });
+    }
     return route(`/group/exports/${id}/download`);
   }
 
