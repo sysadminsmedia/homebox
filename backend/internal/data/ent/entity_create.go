@@ -257,6 +257,20 @@ func (_c *EntityCreate) SetNillableWarrantyDetails(v *string) *EntityCreate {
 	return _c
 }
 
+// SetNotifyWarrantyExpiration sets the "notify_warranty_expiration" field.
+func (_c *EntityCreate) SetNotifyWarrantyExpiration(v bool) *EntityCreate {
+	_c.mutation.SetNotifyWarrantyExpiration(v)
+	return _c
+}
+
+// SetNillableNotifyWarrantyExpiration sets the "notify_warranty_expiration" field if the given value is not nil.
+func (_c *EntityCreate) SetNillableNotifyWarrantyExpiration(v *bool) *EntityCreate {
+	if v != nil {
+		_c.SetNotifyWarrantyExpiration(*v)
+	}
+	return _c
+}
+
 // SetPurchaseDate sets the "purchase_date" field.
 func (_c *EntityCreate) SetPurchaseDate(v time.Time) *EntityCreate {
 	_c.mutation.SetPurchaseDate(v)
@@ -552,6 +566,10 @@ func (_c *EntityCreate) defaults() {
 		v := entity.DefaultLifetimeWarranty
 		_c.mutation.SetLifetimeWarranty(v)
 	}
+	if _, ok := _c.mutation.NotifyWarrantyExpiration(); !ok {
+		v := entity.DefaultNotifyWarrantyExpiration
+		_c.mutation.SetNotifyWarrantyExpiration(v)
+	}
 	if _, ok := _c.mutation.PurchasePrice(); !ok {
 		v := entity.DefaultPurchasePrice
 		_c.mutation.SetPurchasePrice(v)
@@ -634,6 +652,9 @@ func (_c *EntityCreate) check() error {
 		if err := entity.WarrantyDetailsValidator(v); err != nil {
 			return &ValidationError{Name: "warranty_details", err: fmt.Errorf(`ent: validator failed for field "Entity.warranty_details": %w`, err)}
 		}
+	}
+	if _, ok := _c.mutation.NotifyWarrantyExpiration(); !ok {
+		return &ValidationError{Name: "notify_warranty_expiration", err: errors.New(`ent: missing required field "Entity.notify_warranty_expiration"`)}
 	}
 	if _, ok := _c.mutation.PurchasePrice(); !ok {
 		return &ValidationError{Name: "purchase_price", err: errors.New(`ent: missing required field "Entity.purchase_price"`)}
@@ -754,6 +775,10 @@ func (_c *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.WarrantyDetails(); ok {
 		_spec.SetField(entity.FieldWarrantyDetails, field.TypeString, value)
 		_node.WarrantyDetails = value
+	}
+	if value, ok := _c.mutation.NotifyWarrantyExpiration(); ok {
+		_spec.SetField(entity.FieldNotifyWarrantyExpiration, field.TypeBool, value)
+		_node.NotifyWarrantyExpiration = value
 	}
 	if value, ok := _c.mutation.PurchaseDate(); ok {
 		_spec.SetField(entity.FieldPurchaseDate, field.TypeTime, value)
