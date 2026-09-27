@@ -46,6 +46,7 @@ export class BackupsAPI extends BaseAPI {
     if (tenant) {
       return route(`/group/exports/${id}/download`, { tenant });
     }
+
     return route(`/group/exports/${id}/download`);
   }
 
