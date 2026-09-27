@@ -54,7 +54,8 @@ type StubState = {
 
 function qrModules(text: string): number[][] {
   const hints = new Map<EncodeHintType, string | number>([
-    [EncodeHintType.ERROR_CORRECTION, "H"],
+    // ZXing 0.21 cannot read back its own level-H QR output, so the stub uses M.
+    [EncodeHintType.ERROR_CORRECTION, "M"],
     [EncodeHintType.MARGIN, 4],
   ]);
   const matrix = new QRCodeWriter().encode(text, BarcodeFormat.QR_CODE, 0, 0, hints);
