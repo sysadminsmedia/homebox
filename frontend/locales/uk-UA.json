@@ -117,6 +117,86 @@
             "no_color_selected": "Колір не вибрано",
             "randomize": "Випадковий колір"
         },
+        "entity": {
+            "create_modal": {
+                "clear_template": "Очистити шаблон",
+                "delete_photo": "Видалити фото",
+                "entity_description": "{type} Опис",
+                "entity_name": "{type} Назва",
+                "entity_photo": "{type} Фото📷",
+                "entity_quantity": "{type} Кількість",
+                "item_selector_no_results_text": "Введіть текст для пошуку…",
+                "parent_item": "Батьківський елемент",
+                "product_tooltip_input_barcode": "Автозаповнення штрих-кодом, наданим вручну",
+                "product_tooltip_scan_barcode": "Автозаповнення за штрих-кодом з 📷",
+                "rotate_photo": "Повернути фото",
+                "set_as_primary_photo": "Встановити { isPrimary, select, true {non-} false {} other {}}основним фотом",
+                "toast": {
+                    "already_creating": "Вже створюється {type}",
+                    "create_failed": "Не вдається створити {type}",
+                    "create_success": "{type} створено",
+                    "failed_load_parent": "Не вдалося завантажити батьківський елемент - будь ласка, виберіть вручну",
+                    "no_canvas_support": "Ваш браузер не підтримує операції з canvas",
+                    "please_select_entity_type": "Будь-ласка оберіть тип запису.",
+                    "please_select_location": "Оберіть місцезнаходження.",
+                    "rotate_failed": "Не вдалося повернути зображення: { error }",
+                    "rotate_process_failed": "Не вдалося обробити повернуте зображення",
+                    "some_photos_failed": "{count, plural, =0 {Немає фото для завантаження.} =1 {Не вдалося завантажити 1 фото.} other {Деякі фото не вдалося завантажити.}}",
+                    "upload_failed": "Не вдалося завантажити фото: { photoName }",
+                    "upload_success": "{count, plural, =0 {Фото не завантажено.} =1 {Фото завантажено успішно.} other {Усі фото завантажено успішно.}}",
+                    "uploading_photos": "{count, plural, =0 {Фото не завантажене} =1 {Завантажене 1 фото…} other {Завантажено {count} фото…}}"
+                },
+                "upload_photos": "Завантажити фото",
+                "uploaded": "Завантажені Фото"
+            },
+            "selector": {
+                "placeholder": "Обрати тип…"
+            }
+        },
+        "entityTypes": {
+            "card": {
+                "actions": {
+                    "delete": "Видалити"
+                },
+                "badge_container": "Контейнер",
+                "default_template": "Шаблон за умовчанням: {name}",
+                "tooltip": {
+                    "delete": "Видалити",
+                    "edit": "Редагувати"
+                }
+            },
+            "confirm": {
+                "convert_item_to_location": "Перетворення типу об'єкта на тип розташування призведе до втрати полів для записів, які використовують цей тип. Ви впевнені, що бажаєте продовжити?",
+                "delete_entity_type": "Ви певні що хочете видалити \"{name}\"?"
+            },
+            "create_dialog": {
+                "button": "Створити",
+                "is_container_location_type_label": "Чи це тип контейнера/розташування",
+                "name_label": "Назва",
+                "title": "Створити тип запису"
+            },
+            "page": {
+                "create": "Створити",
+                "empty_button": "Створити тип запису",
+                "empty_title": "Типи записів ще не визначено.",
+                "title": "Типи записів"
+            },
+            "toasts": {
+                "create_failed": "Не вдалося створити тип запис",
+                "create_success": "Тип запису створено",
+                "delete_confirm_failed": "Не вдалося видалити тип запису. Переконайтеся, що жодні записи не використовують його.",
+                "delete_success": "Тип запису видалено",
+                "name_required": "Назва обов'язкова",
+                "update_failed": "Не вдалося оновити тип запису",
+                "update_success": "Тип запису оновлено"
+            },
+            "update_dialog": {
+                "button": "Оновити",
+                "is_container_location_type_label": "Чи це тип контейнера/розташування",
+                "name_label": "Назва",
+                "title": "Оновити тип запису"
+            }
+        },
         "form": {
             "min_length": "Щонайменше {min}",
             "password": {
@@ -173,6 +253,7 @@
                 "qr_tooltip": "Показати QR-код"
             },
             "password_score": {
+                "does_not_meet_requirement": "Не відповідає вимогам щодо надійності пароля",
                 "password_strength": "Міцність паролю"
             }
         },
@@ -180,36 +261,6 @@
             "attachments_list": {
                 "download": "Завантажити",
                 "open_new_tab": "Відкрити у новій вкладці"
-            },
-            "create_modal": {
-                "clear_template": "Очистити шаблон",
-                "delete_photo": "Видалити фото",
-                "item_description": "Опис елемента",
-                "item_name": "Назва елемента",
-                "item_photo": "Фотографія товару 📷",
-                "item_quantity": "Кількість товару",
-                "parent_item": "Батьківський елемент",
-                "product_tooltip_input_barcode": "Автозаповнення за введеним штрих-кодом",
-                "product_tooltip_scan_barcode": "Автозаповнити за штрих-кодом з 📷",
-                "rotate_photo": "Повернути фото",
-                "set_as_primary_photo": "Встановити { isPrimary, select, true {non-} false {} other {}}основним фотом",
-                "title": "Додати предмет",
-                "toast": {
-                    "already_creating": "Елемент вже створюється",
-                    "create_failed": "Не вдалося створили елемент",
-                    "create_success": "Елемент створено",
-                    "failed_load_parent": "Не вдалося завантажити батьківський елемент - будь ласка, виберіть вручну",
-                    "no_canvas_support": "Ваш браузер не підтримує операції з canvas",
-                    "please_select_location": "Виберіть місцезнаходження.",
-                    "rotate_failed": "Не вдалося повернути зображення: { error }",
-                    "rotate_process_failed": "Не вдалося обробити повернуте зображення",
-                    "some_photos_failed": "{count, plural, =0 {Фотографій для завантаження немає.} =1 {Не вдалося завантажити 1 фотографію.} other {Деякі фотографії не вдалося завантажити.}}",
-                    "upload_failed": "Не вдалося завантажити фото: { photoName }",
-                    "upload_success": "{count, plural, =0 {Фотографії не завантажено.} =1 {Фотографія завантажено успішно.} other {Усі фотографії завантажено успішно.}}",
-                    "uploading_photos": "{count, plural, =0 {Фото не завантажене} =1 {Завантажене 1 фото…} other {Завантажено {count} фото…}}"
-                },
-                "upload_photos": "Завантажувати фотографії",
-                "uploaded": "Фотографію завантажено"
             },
             "product_import": {
                 "barcode": "Штрихкод продукту",
@@ -280,17 +331,7 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Опис місця",
-                "location_name": "Назва місця",
-                "location_photo": "Фото локації 📷",
-                "title": "Створити локацію",
-                "toast": {
-                    "already_creating": "Локація вже створюється",
-                    "create_failed": "Не вдалося створити локацію",
-                    "create_success": "Локація створена"
-                }
-            },
+            "create_item": "Створити об'єкт",
             "selector": {
                 "clear": "Очистити Вибрану Локацію",
                 "no_location_found": "Місцезнаходження не знайдено",
@@ -414,6 +455,8 @@
         "duplicate": "Дублювати",
         "edit": "Редагувати",
         "email": "Email",
+        "entity": "Запис",
+        "entity_type": "Тип запису",
         "follow_dev": "Підписатись на розробника",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
@@ -421,9 +464,11 @@
         },
         "github": "GitHub проекту",
         "insured": "Застрахований",
+        "item": "Предмети",
         "items": "Предмети",
         "join_discord": "Доєднатися до Discord",
         "loading": "Завантаження…",
+        "location": "Місце",
         "locations": "Локації",
         "maintenance": "Технічне обслуговування",
         "name": "Ім'я",
@@ -531,6 +576,7 @@
             "title": "Налаштування дублювання"
         },
         "edit": {
+            "change_entity_type_confirm": "Зміна типу запису може призвести до втрати даних у полях, які не є спільними для поточного та нового типів запису. Ви впевнені, що бажаєте змінити тип запису?",
             "edit_attachment_dialog": {
                 "attachment_title": "Назва вкладення",
                 "attachment_type": "Тип вкладення",
@@ -599,11 +645,12 @@
         "toast": {
             "asset_not_found": "Актив не знайдено",
             "attachment_deleted": "Вкладення видалено",
+            "attachment_too_large": "Вкладення занадто велике: воно перевищує ліміт розміру завантаження сервера",
             "attachment_updated": "Вкладення оновлено",
             "attachment_uploaded": "Вкладення завантажено",
             "child_items_location_no_longer_synced": "Розташування дочірніх об'єктів більше не синхронізуватиметься з цим об'єктом.",
             "child_items_location_synced": "Розташування дочірніх об'єктів синхронізовано з цим об'єктом",
-            "child_location_desync": "Зміна розташування призведе до скасування синхронізації з розташуванням батьківського об'єкта",
+            "child_location_desync": "Батьківський елемент очищено — елемент тепер знаходиться безпосередньо у вибраному місці",
             "error_loading_parent_data": "Під час спроби завантажити дані батьківського об'єкта сталася помилка",
             "failed_adjust_quantity": "Не вдалося налаштувати кількість",
             "failed_delete_attachment": "Не вдалося видалити вкладення",
@@ -662,6 +709,8 @@
         "zh-TW": "Китайська (традиційне письмо)"
     },
     "languages.da-DK": "Данська",
+    "languages.el-GR": "Грецька",
+    "languages.en@pirate": "Англійська (піратська)",
     "languages.ro-RO": "Румунська",
     "languages.sk-SK": "Словацька",
     "languages.sq-AL": "Албанський",
@@ -770,6 +819,8 @@
         "inactive": "Неактивний",
         "language": "Мова",
         "legacy_image_fit": "{ currentValue, select, true {Вимкнути Legacy Fit: Вписати зображення з полями} false {Увімкнути Legacy Fit: Заповнити зображення з обрізкою} other {Не знайдено}}",
+        "logout_all_confirm": "Це призведе до виходу з усіх пристроїв, зокрема й на цьому. Вам потрібно буде знову ввійти. Продовжити?",
+        "logout_all_devices": "Вийти з усіх пристроїв",
         "moved_notice_body": "Сповіщувачі, запрошення та налаштування валюти перенесено на сторінки колекцій.",
         "moved_notice_description": "Тепер ці параметри керуються для кожної колекції.",
         "moved_notice_link_invites": "Запрошення до колекцій",
@@ -798,10 +849,12 @@
             "failed_delete_account": "Не вдалося видалити ваш обліковий запис.",
             "failed_delete_notifier": "Не вдалося видалити сповіщувач.",
             "failed_get_currencies": "Не вдалося отримати валюти",
+            "failed_logout_all": "Не вдалося вийти з усіх пристроїв.",
             "failed_test_notifier": "Не вдалось протестувати сповіщувач.",
             "failed_update_group": "Не вдалось оновити групу",
             "failed_update_notifier": "Не вдалось оновити сповіщувач.",
             "group_updated": "Групу оновлено",
+            "logout_all_success": "Вийшли з усіх пристроїв.",
             "notifier_test_success": "Перевірка сповіщувача успішна.",
             "password_changed": "Пароль успішно змінено."
         },

@@ -117,6 +117,86 @@
             "no_color_selected": "No color selected",
             "randomize": "Randomize color"
         },
+        "entity": {
+            "create_modal": {
+                "clear_template": "Clear Template",
+                "delete_photo": "Delete photo",
+                "entity_description": "{type} Description",
+                "entity_name": "{type} Name",
+                "entity_photo": "{type} Photo 📷",
+                "entity_quantity": "{type} Quantity",
+                "item_selector_no_results_text": "Type to search…",
+                "parent_item": "Parent Item",
+                "product_tooltip_input_barcode": "Autofill with a manually provided barcode",
+                "product_tooltip_scan_barcode": "Autofill with a barcode from 📷",
+                "rotate_photo": "Rotate photo",
+                "set_as_primary_photo": "Set as { isPrimary, select, true {non-} false {} other {}}primary photo",
+                "toast": {
+                    "already_creating": "Already creating an {type}",
+                    "create_failed": "Couldn't create {type}",
+                    "create_success": "{type} created",
+                    "failed_load_parent": "Failed to load parent item - please select manually",
+                    "no_canvas_support": "Your browser doesn't support canvas operations",
+                    "please_select_entity_type": "Please select an entity type.",
+                    "please_select_location": "Please select a location.",
+                    "rotate_failed": "Failed to rotate image: { error }",
+                    "rotate_process_failed": "Failed to process rotated image",
+                    "some_photos_failed": "{count, plural, =0 {No photos to upload.} =1 {1 photo failed to upload.} other {Some photos failed to upload.}}",
+                    "upload_failed": "Failed to upload photo: { photoName }",
+                    "upload_success": "{count, plural, =0 {No photos uploaded.} =1 {Photo uploaded successfully.} other {All photos uploaded successfully.}}",
+                    "uploading_photos": "{count, plural, =0 {No photos to upload} =1 {Uploading 1 photo…} other {Uploading {count} photos…}}"
+                },
+                "upload_photos": "Upload Photos",
+                "uploaded": "Uploaded Photo"
+            },
+            "selector": {
+                "placeholder": "Select a type…"
+            }
+        },
+        "entityTypes": {
+            "card": {
+                "actions": {
+                    "delete": "Delete"
+                },
+                "badge_container": "Container",
+                "default_template": "Default template: {name}",
+                "tooltip": {
+                    "delete": "Delete",
+                    "edit": "Edit"
+                }
+            },
+            "confirm": {
+                "convert_item_to_location": "Converting an item type to a location type will result in a loss of fields for entities using this type. Are you sure you want to continue?",
+                "delete_entity_type": "Are you sure you want to delete \"{name}\"?"
+            },
+            "create_dialog": {
+                "button": "Create",
+                "is_container_location_type_label": "Is a container / location type",
+                "name_label": "Name",
+                "title": "Create Entity Type"
+            },
+            "page": {
+                "create": "Create",
+                "empty_button": "Create Entity Type",
+                "empty_title": "No entity types defined yet.",
+                "title": "Entity Types"
+            },
+            "toasts": {
+                "create_failed": "Failed to create entity type",
+                "create_success": "Entity type created",
+                "delete_confirm_failed": "Failed to delete entity type. Make sure no entities are using it.",
+                "delete_success": "Entity type deleted",
+                "name_required": "Name is required",
+                "update_failed": "Failed to update entity type",
+                "update_success": "Entity type updated"
+            },
+            "update_dialog": {
+                "button": "Update",
+                "is_container_location_type_label": "Is a container / location type",
+                "name_label": "Name",
+                "title": "Update Entity Type"
+            }
+        },
         "form": {
             "min_length": "min {min}",
             "password": {
@@ -173,44 +253,8 @@
                 "qr_tooltip": "Show QR Code"
             },
             "password_score": {
-                "password_strength": "Password Strength",
-                "does_not_meet_requirement": "Doesn't meet password strength requirement"
-            }
-        },
-        "entity": {
-            "selector": {
-                "placeholder": "Select a type…"
-            },
-            "create_modal": {
-                "entity_name": "{type} Name",
-                "entity_quantity": "{type} Quantity",
-                "entity_description": "{type} Description",
-                "entity_photo": "{type} Photo 📷",
-                "upload_photos": "Upload Photos",
-                "uploaded": "Uploaded Photo",
-                "toast": {
-                    "already_creating": "Already creating an {type}",
-                    "create_failed": "Couldn't create {type}",
-                    "create_success": "{type} created",
-                    "failed_load_parent": "Failed to load parent item - please select manually",
-                    "no_canvas_support": "Your browser doesn't support canvas operations",
-                    "please_select_entity_type": "Please select an entity type.",
-                    "please_select_location": "Please select a location.",
-                    "rotate_failed": "Failed to rotate image: { error }",
-                    "rotate_process_failed": "Failed to process rotated image",
-                    "some_photos_failed": "{count, plural, =0 {No photos to upload.} =1 {1 photo failed to upload.} other {Some photos failed to upload.}}",
-                    "upload_failed": "Failed to upload photo: { photoName }",
-                    "upload_success": "{count, plural, =0 {No photos uploaded.} =1 {Photo uploaded successfully.} other {All photos uploaded successfully.}}",
-                    "uploading_photos": "{count, plural, =0 {No photos to upload} =1 {Uploading 1 photo…} other {Uploading {count} photos…}}"
-                },
-                "clear_template": "Clear Template",
-                "delete_photo": "Delete photo",
-                "parent_item": "Parent Item",
-                "product_tooltip_input_barcode": "Autofill with a manually provided barcode",
-                "product_tooltip_scan_barcode": "Autofill with a barcode from 📷",
-                "rotate_photo": "Rotate photo",
-                "set_as_primary_photo": "Set as { isPrimary, select, true {non-} false {} other {}}primary photo",
-                "item_selector_no_results_text": "Type to search…"
+                "does_not_meet_requirement": "Doesn't meet password strength requirement",
+                "password_strength": "Password Strength"
             }
         },
         "item": {
@@ -287,6 +331,7 @@
             }
         },
         "location": {
+            "create_item": "Create Item",
             "selector": {
                 "clear": "Clear Location Selection",
                 "no_location_found": "No location found",
@@ -296,8 +341,7 @@
             },
             "tree": {
                 "no_locations": "No locations available. Use the Create button to add a new location."
-            },
-            "create_item": "Create Item"
+            }
         },
         "quick_menu": {
             "no_results": "No results found.",
@@ -388,50 +432,6 @@
                 "updated": "Template updated"
             },
             "using_template": "Using template: {name}"
-        },
-        "entityTypes": {
-            "create_dialog": {
-                "title": "Create Entity Type",
-                "name_label": "Name",
-                "is_container_location_type_label": "Is a container / location type",
-                "button": "Create"
-            },
-            "update_dialog": {
-                "title": "Update Entity Type",
-                "name_label": "Name",
-                "is_container_location_type_label": "Is a container / location type",
-                "button": "Update"
-            },
-            "page": {
-                "title": "Entity Types",
-                "create": "Create",
-                "empty_title": "No entity types defined yet.",
-                "empty_button": "Create Entity Type"
-            },
-            "card": {
-                "default_template": "Default template: {name}",
-                "badge_container": "Container",
-                "tooltip": {
-                "edit": "Edit",
-                "delete": "Delete"
-                },
-                "actions": {
-                "delete": "Delete"
-                }
-            },
-            "toasts": {
-                "name_required": "Name is required",
-                "create_failed": "Failed to create entity type",
-                "create_success": "Entity type created",
-                "update_failed": "Failed to update entity type",
-                "update_success": "Entity type updated",
-                "delete_confirm_failed": "Failed to delete entity type. Make sure no entities are using it.",
-                "delete_success": "Entity type deleted"
-            },
-            "confirm": {
-                "convert_item_to_location": "Converting an item type to a location type will result in a loss of fields for entities using this type. Are you sure you want to continue?",
-                "delete_entity_type": "Are you sure you want to delete \"{name}\"?"
-            }
         }
     },
     "errors": {
@@ -455,6 +455,8 @@
         "duplicate": "Duplicate",
         "edit": "Edit",
         "email": "Email",
+        "entity": "Entity",
+        "entity_type": "Entity Type",
         "follow_dev": "Follow the Developer",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
@@ -462,9 +464,11 @@
         },
         "github": "GitHub Project",
         "insured": "Insured",
+        "item": "Item",
         "items": "Items",
         "join_discord": "Join the Discord",
         "loading": "Loading…",
+        "location": "Location",
         "locations": "Locations",
         "maintenance": "Maintenance",
         "name": "Name",
@@ -490,11 +494,7 @@
         "value": "Value",
         "version": "Version: { version }",
         "welcome": "Welcome, { username }",
-        "yes": "Yes",
-        "item": "Item",
-        "location": "Location",
-        "entity": "Entity",
-        "entity_type": "Entity Type"
+        "yes": "Yes"
     },
     "home": {
         "quick_statistics": "Quick Statistics",
@@ -576,6 +576,7 @@
             "title": "Duplicate Settings"
         },
         "edit": {
+            "change_entity_type_confirm": "Changing the entity type may cause loss of data in fields that are not shared between the current and new entity types. Are you sure you want to change the entity type?",
             "edit_attachment_dialog": {
                 "attachment_title": "Attachment Title",
                 "attachment_type": "Attachment Type",
@@ -584,8 +585,7 @@
                 "select_type": "Select a type",
                 "title": "Attachment Edit"
             },
-            "view_image": "View Image",
-            "change_entity_type_confirm": "Changing the entity type may cause loss of data in fields that are not shared between the current and new entity types. Are you sure you want to change the entity type?"
+            "view_image": "View Image"
         },
         "edit_details": "Edit Details",
         "field": "Field",
@@ -645,8 +645,8 @@
         "toast": {
             "asset_not_found": "Asset not found",
             "attachment_deleted": "Attachment deleted",
-            "attachment_updated": "Attachment updated",
             "attachment_too_large": "Attachment is too large: it exceeds the server's upload size limit",
+            "attachment_updated": "Attachment updated",
             "attachment_uploaded": "Attachment uploaded",
             "child_items_location_no_longer_synced": "Child items' locations will no longer be synced with this item.",
             "child_items_location_synced": "Child items' locations have been synced with this item",
@@ -712,6 +712,7 @@
         "zh-MO": "Chinese (Macau)",
         "zh-TW": "Chinese (Traditional)"
     },
+    "languages.el-GR": "Greek",
     "languages.en@pirate": "English (Pirate)",
     "languages.sr-RS": "Serbian (Serbia)",
     "locations": {
@@ -849,10 +850,10 @@
             "failed_delete_account": "Failed to delete your account.",
             "failed_delete_notifier": "Failed to delete notifier.",
             "failed_get_currencies": "Failed to get currencies",
+            "failed_logout_all": "Failed to sign out of all devices.",
             "failed_test_notifier": "Failed to test notifier.",
             "failed_update_group": "Failed to update group",
             "failed_update_notifier": "Failed to update notifier.",
-            "failed_logout_all": "Failed to sign out of all devices.",
             "group_updated": "Group updated",
             "logout_all_success": "Signed out of all devices.",
             "notifier_test_success": "Notifier test successful.",

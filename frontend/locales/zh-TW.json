@@ -3,7 +3,7 @@
         "copy_invite": "複製邀請連結",
         "create_invite": "製作邀請函",
         "delete_collection": "刪除收藏",
-        "delete_confirm": "是否確定刪除此收藏？此作業將無法復原。",
+        "delete_confirm": "是否確認刪除此收藏集？此作業將無法復原。",
         "deleted_collection": "收藏已刪除。",
         "expires_at": "過期",
         "invite_token": "Token",
@@ -12,7 +12,7 @@
         "invites": "邀請",
         "invites_delete_confirm": "是否確認刪除此邀請？",
         "leave_collection": "離開收藏",
-        "leave_confirm": "是否確認離開收藏？",
+        "leave_confirm": "是否確認離開收藏集？",
         "left_collection": "你已離開該收藏。",
         "manage_collection": "管理收藏",
         "members": {
@@ -22,7 +22,7 @@
             "member": "成員",
             "name": "名稱",
             "owner": "擁有者",
-            "remove_confirm": "是否確認要移除此成員？",
+            "remove_confirm": "是否確認移除此成員？",
             "removed": "成員已移除",
             "role": "身分組"
         },
@@ -35,6 +35,7 @@
         "no_invites": "無邀請",
         "remaining_uses": "剩餘使用次數",
         "tabs": {
+            "entity_types": "實體類型",
             "invites": "邀請",
             "members": "成員",
             "notifiers": "通知",
@@ -116,6 +117,76 @@
             "no_color_selected": "色彩未選取",
             "randomize": "隨機色彩"
         },
+        "entity": {
+            "create_modal": {
+                "clear_template": "清除範本",
+                "delete_photo": "刪除圖片",
+                "entity_description": "{type}描述",
+                "entity_name": "{type}名稱",
+                "entity_photo": "{type}圖片📷",
+                "entity_quantity": "{type}數量",
+                "item_selector_no_results_text": "輸入以搜尋…",
+                "parent_item": "母物品",
+                "product_tooltip_input_barcode": "上傳條碼以自動輸入",
+                "product_tooltip_scan_barcode": "拍攝📷條碼以自動輸入",
+                "rotate_photo": "旋轉圖片",
+                "set_as_primary_photo": "{isPrimary, select, true {取消設定封面圖片} false {設定為封面圖片} other {設定為封面圖片}}",
+                "toast": {
+                    "already_creating": "建立{type}中",
+                    "create_failed": "無法建立{type}",
+                    "create_success": "已建立{type}",
+                    "failed_load_parent": "無法讀取母物品，請手動選取",
+                    "no_canvas_support": "您的瀏覽器不支援Canvas",
+                    "please_select_entity_type": "請選擇實體類型。",
+                    "please_select_location": "請選擇一個位置。",
+                    "rotate_failed": "旋轉圖片失敗：{ error }",
+                    "rotate_process_failed": "旋轉圖片失敗",
+                    "some_photos_failed": "{count, plural, =0 {已無需要上傳的圖片。} =1 {1 張圖片上傳失敗。} other {多張圖片上傳失敗。}}",
+                    "upload_failed": "上傳圖片失敗：{ photoName }",
+                    "upload_success": "{count, plural, =0 {未上傳照片。} =1 {照片上傳成功。} other {所有照片皆已上傳成功。}}",
+                    "uploading_photos": "{count, plural, =0 {0張圖片上傳中...} =1 {1張圖片上傳中...} other {{count}張圖片上傳中...}}"
+                },
+                "upload_photos": "上傳圖片",
+                "uploaded": "圖片已上傳"
+            },
+            "selector": {
+                "placeholder": "選擇一個類型…"
+            }
+        },
+        "entityTypes": {
+            "card": {
+                "actions": {
+                    "delete": "刪除"
+                },
+                "badge_container": "容器",
+                "default_template": "預設範本：{name}",
+                "tooltip": {
+                    "delete": "刪除",
+                    "edit": "編輯"
+                }
+            },
+            "confirm": {
+                "delete_entity_type": "是否確認刪除「{name}」？"
+            },
+            "create_dialog": {
+                "button": "新增",
+                "is_container_location_type_label": "位置或容器類型實體",
+                "name_label": "名稱",
+                "title": "新增實體類型"
+            },
+            "page": {
+                "create": "新增",
+                "empty_button": "新增實體類型",
+                "empty_title": "尚未建立任何實體類型。",
+                "title": "實體類型"
+            },
+            "toasts": {
+                "create_failed": "新增實體類型失敗",
+                "create_success": "已新增實體類型",
+                "delete_confirm_failed": "刪除實體類型失敗，請確認無物品使用此實體。",
+                "delete_success": "已刪除實體類型"
+            }
+        },
         "form": {
             "password": {
                 "toggle_show": "開啟/關閉密碼顯示"
@@ -179,36 +250,6 @@
                 "download": "下載",
                 "open_new_tab": "在新分頁開啟"
             },
-            "create_modal": {
-                "clear_template": "清除模板",
-                "delete_photo": "刪除圖片",
-                "item_description": "物品描述",
-                "item_name": "物品名稱",
-                "item_photo": "物品圖片📷",
-                "item_quantity": "物品數量",
-                "parent_item": "母物品",
-                "product_tooltip_input_barcode": "使用條碼自動輸入",
-                "product_tooltip_scan_barcode": "使用📷掃描條碼自動輸入",
-                "rotate_photo": "旋轉圖片",
-                "set_as_primary_photo": "設定為 { isPrimary, select, true {non-} false {} other {}}主圖片",
-                "title": "新增項目",
-                "toast": {
-                    "already_creating": "已正在建立物品",
-                    "create_failed": "無法建立物品",
-                    "create_success": "物品已建立",
-                    "failed_load_parent": "載入母物品失敗，請手動選擇母物品",
-                    "no_canvas_support": "你的瀏覽器不支援美化功能",
-                    "please_select_location": "請選擇一個位置。",
-                    "rotate_failed": "旋轉圖片失敗：{ error }",
-                    "rotate_process_failed": "圖片旋轉處理失敗",
-                    "some_photos_failed": "{count, plural, =0 {無圖片可供上傳。} =1 {1張圖片上傳失敗。} other {某些圖片上傳失敗。}}",
-                    "upload_failed": "圖片{ photoName }上傳失敗",
-                    "upload_success": "{count, plural, =0 {無圖片上傳。} =1 {圖片上傳成功。} other {所有圖片上傳成功。}}",
-                    "uploading_photos": "{count, plural, =0 {無圖片上傳} =1 {正在上傳1張圖片…} other {正在上傳 {count} 張圖片…}}"
-                },
-                "upload_photos": "上傳圖片",
-                "uploaded": "已上傳圖片"
-            },
             "product_import": {
                 "barcode": "商品條碼",
                 "db_source": "資料庫來源",
@@ -251,7 +292,7 @@
                         "change_tags_success": "標籤已修改",
                         "create_maintenance_item": "為物品新增維修紀錄",
                         "create_maintenance_selected": "為選擇的物品新增維修紀錄",
-                        "create_maintenance_success": "維修紀錄已新增",
+                        "create_maintenance_success": "已新增維修紀錄",
                         "delete_confirmation": "是否確認刪除已選擇的物品？此作業將無法復原。",
                         "delete_item": "刪除物品",
                         "delete_selected": "刪除選取物品",
@@ -278,16 +319,6 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "位置描述",
-                "location_name": "位置名稱",
-                "title": "新增地點",
-                "toast": {
-                    "already_creating": "已正在建立位置",
-                    "create_failed": "無法建立位置",
-                    "create_success": "位置已建立"
-                }
-            },
             "selector": {
                 "clear": "清除選取位置",
                 "no_location_found": "未找到位置",
@@ -317,9 +348,9 @@
                 "tag_parent": "母標籤",
                 "title": "建立標籤",
                 "toast": {
-                    "already_creating": "已正在建立標籤",
+                    "already_creating": "建立標籤中",
                     "create_failed": "無法建立標籤",
-                    "create_success": "標籤已建立",
+                    "create_success": "已建立標籤",
                     "tag_name_too_long": "標籤名稱不得超過50個字元"
                 }
             },
@@ -514,8 +545,8 @@
             "edit_attachment_dialog": {
                 "attachment_title": "附件標題",
                 "attachment_type": "附件類型",
-                "primary_photo": "主要圖片",
-                "primary_photo_sub": "此選項僅適用於圖片，僅可使用圖片作為主要圖片。若勾選此選項則此圖片將作為主要圖片使用，將取消其他主要圖片。",
+                "primary_photo": "封面圖片",
+                "primary_photo_sub": "此選項僅適用於圖片，僅可使用圖片作為封面。勾選此選項將使用此圖片作為唯一封面圖片使用。",
                 "select_type": "選擇類型",
                 "title": "編輯附件"
             },
@@ -583,7 +614,7 @@
             "attachment_uploaded": "已上傳附件",
             "child_items_location_no_longer_synced": "子物品位置將不會與此物品同步。",
             "child_items_location_synced": "子物件位置已和此物品同步",
-            "child_location_desync": "修改位置將取消和母物品同步",
+            "child_location_desync": "取消子母物件 — 物品將會直接儲存於已選擇位置",
             "error_loading_parent_data": "母物品讀取時發生錯誤",
             "failed_adjust_quantity": "數量修改失敗",
             "failed_delete_attachment": "附件刪除失敗",
@@ -739,7 +770,7 @@
         "moved_notice_link_invites": "收藏集邀請",
         "moved_notice_link_notifiers": "收藏集通知",
         "moved_notice_link_settings": "收藏集幣值設定",
-        "moved_notice_title": "正在尋找通知、邀請或幣值設定嗎？",
+        "moved_notice_title": "正在尋找通知、邀請或幣值設定？",
         "new_password": "新密碼",
         "no_notifiers": "無已設定通知",
         "no_override": "預設",
@@ -847,10 +878,10 @@
             "ensure_import_refs": "驗證匯入參照",
             "ensure_import_refs_button": "驗證",
             "ensure_import_refs_sub": "此功能用以確保每一件物品皆包含一個有效的import_ref（匯入參照）。若物品為包含一個有效的import_ref則系統將填入隨機生成的一個8個字元字串。",
-            "set_primary_photo": "自動設定主要圖片",
+            "set_primary_photo": "自動設定封面圖片",
             "set_primary_photo_button": "自動設定",
-            "set_primary_photo_confirm": "是否確認執行自動設定主要圖片？此作業將無法復原。",
-            "set_primary_photo_sub": "Homebox v0.10.0 (2023年10月10日發行)版本中加入主要圖片功能。此功能可用於v0.10.0之前建立且無縮圖的物品，系統將自動使用物品中最早上傳圖片作為物品縮圖。‘<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">’詳細請見GitHub PR #576'</a>'",
+            "set_primary_photo_confirm": "是否自動設定封面圖片？此作業將無法復原。",
+            "set_primary_photo_sub": "Homebox v0.10.0 (2023年10月10日發行)版本中加入主要封面功能。此功能可用於v0.10.0之前建立且無縮圖的物品，系統將自動使用物品中最早上傳圖片作為封面。‘<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">’詳細請見GitHub PR #576'</a>'",
             "wipe_inventory": "清除所有收藏",
             "wipe_inventory_button": "清除所有收藏",
             "wipe_inventory_confirm": "是否確認清除所有收藏？此作業將刪除所有物品且無法復原。",
@@ -894,7 +925,7 @@
             "failed_create_missing_thumbnails": "自動建立縮圖失敗。",
             "failed_ensure_ids": "Asset ID驗證失敗。",
             "failed_ensure_import_refs": "驗證import refs失敗。",
-            "failed_set_primary_photos": "設定主要圖片失敗。",
+            "failed_set_primary_photos": "設定封面圖片失敗。",
             "failed_wipe_inventory": "清除收藏集失敗。",
             "failed_zero_datetimes": "重設物品建立時間失敗。",
             "wipe_inventory_success": "已成功清除收藏集。已刪除{ results }個物品。"

@@ -1,0 +1,428 @@
+{
+    "collection": {
+        "copy_invite": "Copïo'r ddolen gwahoddiad",
+        "create_invite": "Creu Gwahoddiad",
+        "delete_collection": "Dileu Casgliad",
+        "delete_confirm": "Ydych chi'n siwr eich bod chi am ddileu y casgliad? Ni allwch ddad-wneud y weithred hon.",
+        "deleted_collection": "Casgliad wedi'w ddileu.",
+        "expires_at": "Yn dod i ben",
+        "invite_token": "Tocyn",
+        "invite_token_hidden": "Nid yn weladwy rhagor",
+        "invite_token_warning": "Dangosir tocynnau gwahoddiad unwaith yn unig. Copiwch y ddolen nawr; ni fyddwch yn gallu gweld y tocyn yma byth eto ar ol gadael neu ail-lwytho'r dudalen yma.",
+        "invites": "Gwahoddiadau",
+        "invites_delete_confirm": "Ydych chi'n siwr eich fod am ddileu'r gwahoddiad yma?",
+        "leave_collection": "Gadael y Casgliad",
+        "leave_confirm": "Ydych chi'n siwr eich fod am adael y casgliad yma?",
+        "left_collection": "Rydych wedi gadael y casgliad.",
+        "manage_collection": "Rheoli'r Casgliad",
+        "members": {
+            "cannot_remove_last": "Nid ydych yn gallu tynnu yr aelod olaf.",
+            "email": "Ebost",
+            "empty": "Dim aelodau yn y casgliad yma eto.",
+            "member": "Aelod",
+            "name": "Enw",
+            "owner": "Perchennog",
+            "remove_confirm": "Ydych chi'n siŵr eich bod chi am dynnu'r aelod yma?",
+            "removed": "Aelod wedi'w dynnu",
+            "role": "Rôl"
+        },
+        "no_collections": {
+            "create": "Creu casgliad newydd",
+            "join": "Ymuno a chasgliad sy'n bodoli eisoes",
+            "message": "Mae'n ymddangos nad ydych chi'n rhan o gasgliad. Crëwch gasgliad newydd ar gyfer eich pethau, neu ymunwch ag un rydych chi wedi cael gwahoddiad iddo.",
+            "title": "Heb ddarganfod unrhyw gasgliad"
+        },
+        "no_invites": "Dim gwahoddiadau",
+        "remaining_uses": "Defnyddiau sy'n weddill",
+        "tabs": {
+            "entity_types": "Mathau o Endidau",
+            "invites": "Gwahoddiadau",
+            "members": "Aelodau",
+            "notifiers": "Hysbyswyr",
+            "settings": "Gosodiadau",
+            "tools": "Offer"
+        },
+        "uses": "Defnydd"
+    },
+    "components": {
+        "app": {
+            "create_modal": {
+                "createAndAddAnother": "Defnyddiwch {shiftKey} + {enterKey} i greu ac ychwannegu un arall."
+            },
+            "import_dialog": {
+                "description": "Mewnforiwch ffeil CSV sy'n cynnwys eich eitemau, labeli a lleoliadau. \nGweler y dogfennau am fwy o wybodaeth am y fformat gofynnol.",
+                "title": "Mewnforio ffeil CSV",
+                "toast": {
+                    "import_failed": "Mewnforio wedi methu. Triwch eto wedyn os gwelwch yn dda.",
+                    "import_success": "Mewnforio llwyddianus!",
+                    "please_select_file": "Dewisiwch ffeil i fewnforfio os gwelwch yn dda."
+                }
+            },
+            "outdated": {
+                "current_version": "Fersiwn Cyfredol",
+                "dismiss": "Diddymu",
+                "latest_version": "Fersiwn Diweddaraf",
+                "new_version_available": "Fersiwn Newydd Ar Gael",
+                "new_version_available_link": "Cliciwch yma i weld y nodiadau rhyddhau"
+            }
+        },
+        "collection": {
+            "create_modal": {
+                "name_label": "Enw'r Casgliad",
+                "title": "Creu Casgliad",
+                "toast": {
+                    "already_creating": "Wrthi'n creu casgliad yn barod",
+                    "create_failed": "Methu creu casgliad",
+                    "create_success": "Casgliad wedi'i greu",
+                    "please_enter_name": "Rhowch enw i'r casgliad os gwelwch yn dda"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Dewisiwch Dyddiad ac Amser dod i ben.",
+                    "invalid_expiry_past": "Mae rhaid i ddydiad dod i ben fod yn y dyfodol.",
+                    "invalid_uses": "Rhaid i ddefnyddiau fod yn rhif rhwng 1 a 100."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Côd Gwahoddiad i Gasgliad",
+                "invites_should_look_like": "Dylsai gwaoddiadau edrych fel hyn:",
+                "join": "Ymuno a Chasgliad",
+                "no_invite_code_create_one": "Dim côd gwahoddiad? Crewch casgliad newydd yn lle",
+                "title": "Ymuno a Chasgliad",
+                "toast": {
+                    "already_joining": "Wrthi'n ymuno a chasgliad yn barod",
+                    "join_failed": "Methwyd a ymuno a chasgliad",
+                    "join_success": "Ymunwyd a chasgliad",
+                    "please_enter_valid_join_code": "Rhowch côd ymuno a chasgliad dilys"
+                }
+            },
+            "selector": {
+                "collection_options": "Dewisiadau Casgliad",
+                "create_collection": "Creu Casgliad Newydd",
+                "join_collection": "Ymuno a Chasgliad sy'n bodoli eisioes",
+                "no_collection_found": "Dim casgliad wedi'w ddarganfod",
+                "search_collections": "Chwilio Casgliadau…",
+                "select_collection": "Dewis Casgliadau",
+                "your_collections": "Eich Casgliadau"
+            }
+        },
+        "color_selector": {
+            "clear": "Clirio'r lliw",
+            "color": "Lliw",
+            "no_color": "Dim Lliw",
+            "no_color_selected": "Dim lliw wedi'u ddewis",
+            "randomize": "Dewis lliw ar hap"
+        },
+        "entity": {
+            "create_modal": {
+                "clear_template": "Clirio'r templed",
+                "delete_photo": "Dileu llun",
+                "entity_description": "{type} Disgrifiad",
+                "entity_name": "{type} Enw",
+                "entity_photo": "{type} Llun 📷",
+                "entity_quantity": "{type} Nifer",
+                "item_selector_no_results_text": "Teipiwch i chwilio…",
+                "parent_item": "Rhiant Eitem",
+                "product_tooltip_input_barcode": "Llenwi'n awtomatig gyda chod bar a ddarperir â llaw",
+                "product_tooltip_scan_barcode": "Llenwi'n awtomatig gyda chod bar o 📷",
+                "rotate_photo": "Troi'r Llun",
+                "set_as_primary_photo": "Dewis { isPrimary, select, true {non-} false {} other {}} fel prif lun",
+                "toast": {
+                    "already_creating": "Wrthi yn creu {type} yn barod",
+                    "create_failed": "Methwyd a chreu {type}",
+                    "create_success": "Crewyd {type}",
+                    "failed_load_parent": "Methwyd a llwytho rhiant eitem - dewisiwch eich hun",
+                    "no_canvas_support": "Dydy eich porwr ddim yn cefnogi gweithrediadau cynfas",
+                    "please_select_entity_type": "Dewiswch fath o endid.",
+                    "please_select_location": "Dewisiwch leoliad.",
+                    "rotate_failed": "Methwyd a troi'r llun: { error }",
+                    "rotate_process_failed": "Methwyd a phrosesu y llun oedd wedi'w throi",
+                    "some_photos_failed": "{count, plural, =0 {Dim lluniau i'w uwchlwytho.} =1 {Methwyd a uwchlwytho 1 llun.} other {Methwyd a uwchlwytho rhai lluniau.}}",
+                    "upload_failed": "Methwyd a uwchlwytho'r llun: { photoName }",
+                    "upload_success": "{count, plural, =0 {Dim lluniau i'w uwchlwytho.} =1 {Uwchlwythwyd y llun yn llwyddianus.} other {Uwchlwythwyd pob llun yn llwyddianus.}}",
+                    "uploading_photos": "{count, plural, =0 {Dim lluniau i'w uwchlwytho} =1 {Wrthi'n uwchlwytho 1 llun...} other {Wrthi'n uwchlwytho {count} o luniau…}}"
+                },
+                "upload_photos": "Uwchlwytho Lluniau",
+                "uploaded": "Llun a uwchlwythwyd"
+            },
+            "selector": {
+                "placeholder": "Dewisiwch math…"
+            }
+        },
+        "entityTypes": {
+            "card": {
+                "actions": {
+                    "delete": "Dileu"
+                },
+                "badge_container": "Cynhwysydd",
+                "default_template": "Templed diofyn: {name}",
+                "tooltip": {
+                    "delete": "Dileu",
+                    "edit": "Newid"
+                }
+            },
+            "confirm": {
+                "convert_item_to_location": "Bydd newid eitem i leoliad yn arwain at golli meysydd ar gyfer endidau sy'n defnyddio'r math hwn. Ydych chi'n siŵr eich bod chi eisiau parhau?",
+                "delete_entity_type": "Ydych chi'n siwr eich fod chi am ddileu \"{name}\"?"
+            },
+            "create_dialog": {
+                "button": "Creu",
+                "is_container_location_type_label": "Yn fath o gynhwysydd / lleoliad",
+                "name_label": "Enw",
+                "title": "Creu teip endid"
+            },
+            "page": {
+                "create": "Creu",
+                "empty_button": "Creu Math Endid",
+                "empty_title": "Dim mathau o endid wedi'w ddifinio eto.",
+                "title": "Mathau o Endid"
+            },
+            "toasts": {
+                "create_failed": "Methyd a chreu math edid",
+                "create_success": "Crewyd math edid",
+                "delete_confirm_failed": "Methwyd a dileu y math edid. Gwnewch yn siwr does ddim endid yn ei ddefnyddio.",
+                "delete_success": "Dilewyd math edid",
+                "name_required": "Mae Enw yn ofynnol",
+                "update_failed": "Methwyd a diweddaru y math endid",
+                "update_success": "Diweddarwyd y math endid"
+            },
+            "update_dialog": {
+                "button": "Diweddaru",
+                "is_container_location_type_label": "Yn fath o gynhwysydd / lleoliad",
+                "name_label": "Enw",
+                "title": "Diweddaru Math Endid"
+            }
+        },
+        "form": {
+            "min_length": "lleiafswm {min}",
+            "password": {
+                "toggle_show": "Togglo Dangos Cyfrinair"
+            }
+        },
+        "global": {
+            "copy_text": {
+                "continue": "Parhau",
+                "documentation": "dogfennau",
+                "failed_to_copy": "Methwyd a chopio'r testun i'r clipfwrdd",
+                "https_required": "oherwydd mae HTTPS yn ofynnol",
+                "learn_more": "Dysgwch mwy yn ein"
+            },
+            "date_time": {
+                "ago": "{0} yn ol",
+                "days": "diwrnodau",
+                "hour": "awr",
+                "hours": "oriau",
+                "in": "mewn {0}",
+                "just-now": "nawr",
+                "last-month": "mis diwethaf",
+                "last-week": "wythnos diwethaf",
+                "last-year": "blwyddyn diwethaf",
+                "minute": "munud",
+                "minutes": "munudau",
+                "months": "misoedd",
+                "next-month": "mis nesaf",
+                "next-week": "wythnos nesaf",
+                "next-year": "blwyddyn nesaf",
+                "second": "eiliad",
+                "seconds": "eiliadau",
+                "tomorrow": "yfory",
+                "week": "wythnos",
+                "weeks": "wythnosau",
+                "years": "blynyddoedd",
+                "yesterday": "ddoe"
+            },
+            "label_maker": {
+                "browser_print": "Argraffu o'r Porwr",
+                "confirm_description": "Ydych chi'n siwr eich fod chi am argraffu'r label hwn?",
+                "download": "Lawrlwytho'r Label",
+                "print": "Argraffu'r Label",
+                "server_print": "Argraffu ar Weinydd",
+                "titles": "Labeli",
+                "toast": {
+                    "load_status_failed": "Methwyd a llwytho'r statws",
+                    "print_failed": "Methwyd a argraffu'r label",
+                    "print_success": "Argraffwyd y label"
+                }
+            },
+            "page_qr_code": {
+                "page_url": "URL y Dudalen",
+                "qr_tooltip": "Dangos Côd QR"
+            },
+            "password_score": {
+                "password_strength": "Cryfder y Cyfrinair"
+            }
+        },
+        "item": {
+            "attachments_list": {
+                "download": "Lawrlwytho",
+                "open_new_tab": "Agor mewn tab newydd"
+            },
+            "product_import": {
+                "barcode": "Côd bar y cynnyrch",
+                "db_source": "ffynhonell y Bâs Data",
+                "error_exception": "Digwyddodd eithriad wrth adfer côd bar yr eitem: ",
+                "error_invalid_barcode": "Côd bar annilys wedi'i ddarparu",
+                "error_not_found": "Ni chanfuwyd unrhyw gynnyrch gyda'r côd bar yna.",
+                "import_selected": "Mewnforio'r rhai a ddewiswyd",
+                "search_item": "Chwilio cynnyrch",
+                "title": "Mewnforio'r cynnyrch"
+            },
+            "selector": {
+                "clear": "Clirio'r eitemau a ddewisiwyd",
+                "no_results": "Heb ganfod unrhyw ganlyniadau",
+                "placeholder": "Dewis…",
+                "search_placeholder": "Teipiwch i chwilio…",
+                "searching": "Wrthi'n chwilio…"
+            },
+            "view": {
+                "change_details": {
+                    "add_tags": "Ychwanegu Tagiau",
+                    "failed_to_update_item": "Methwyd a uwchraddio'r eitem",
+                    "remove_tags": "Tynnu Tagiau",
+                    "title": "Newid Manylion yr Eitem"
+                },
+                "selectable": {
+                    "card": "Cerdyn",
+                    "items": "Eitemau",
+                    "no_items": "Dim Eitemau i'w ddangos",
+                    "select_all": "Dewis y Cyfan",
+                    "select_card": "Dewis Cerdyn",
+                    "select_row": "Dewis Rhes",
+                    "table": "Tabl"
+                },
+                "table": {
+                    "dropdown": {
+                        "actions": "Gweithredoedd",
+                        "change_location": "Newid Lleoliad",
+                        "change_location_success": "Newidwyd Lleoliad",
+                        "change_tags": "Newid Tagiau",
+                        "change_tags_success": "Newidwyd y Tagiau",
+                        "create_maintenance_item": "Creu Cofnod Cynnal a Chadw ar gyfer yr Eitem",
+                        "create_maintenance_selected": "Creu Cofnod Cynnal a Chadw ar gyfer yr Eitemau a Ddewisiwyd",
+                        "create_maintenance_success": "Crewyd Cofnodion Cynnal a Chadw",
+                        "delete_confirmation": "Ydych chi'n siwr eich fod am dileu yr eitemau a ddewisiwyd? Nid ydych yn gallu dad-wneud y weithred hyn.",
+                        "delete_item": "Dileu Eitem",
+                        "delete_selected": "Dileu yr Eitemau a Ddewisiwyd",
+                        "download_csv": "Lawrlwytho Tabl ar ffurf CSV",
+                        "download_json": "Lawrlwytho Tabl ar ffurf JSON",
+                        "duplicate_item": "Dyblygu'r eitem",
+                        "duplicate_selected": "Dyblygu'r eitemau a ddewisiwyd",
+                        "error_deleting": "Gwall wrth Dileu Eitem",
+                        "error_duplicating": "Gwall wrth Ddyblygu Eitem",
+                        "open_menu": "Agor dewislen",
+                        "open_multi_tab_warning": "Am resymau diogelwch nid yw porwyr yn caniatáu agor sawl tab yr ru'n pryd, i newid hyn darllenwch y dogfennau:",
+                        "toggle_expand": "Togglo Ehangu",
+                        "view_item": "Gweld eitem",
+                        "view_items": "Gweld eitemau"
+                    },
+                    "page": "Tudalen",
+                    "quick_actions": "Galluogi Gweithredodd Cyflym a Dewisiadau",
+                    "rows_per_page": "Rhesi ar bob tudalen",
+                    "selected_rows": "{selected} allan o {total} rhes wedi'w ddewis.",
+                    "table_settings": "Gosodiadau'r Tabl",
+                    "view_item": "Gweld Eitem"
+                }
+            }
+        },
+        "location": {
+            "create_item": "Creu Eitem",
+            "selector": {
+                "clear": "Clirio'r Lleoliad a ddewisiwyd",
+                "no_location_found": "Dim lleoliad wedi'w ddarganfod",
+                "parent_location": "Lleoliad Rhiant",
+                "search_location": "Lleoliadau Chwilio",
+                "select_location": "Dewis Lleoliad"
+            },
+            "tree": {
+                "no_locations": "Dim Lleoliadau ar gael. Defnyddiwch y botwm Creu i ychwanegu lleoliad newydd."
+            }
+        },
+        "quick_menu": {
+            "no_results": "Dim canlyniadau.",
+            "shortcut_hint": "Defnyddiwch yr allewddi rhifau i ddewis gweithred yn gyflym."
+        },
+        "search": {
+            "filter": {
+                "search_placeholder": "Chwilio…"
+            }
+        },
+        "tag": {
+            "create_modal": {
+                "tag_color": "Lliw y Tag",
+                "tag_description": "Disgrifiad y Tag",
+                "tag_icon": "Eicon y Tag",
+                "tag_name": "Enw'r Tag",
+                "tag_parent": "Rhiant Tag",
+                "title": "Creu Tag",
+                "toast": {
+                    "already_creating": "Wrthi'n creu tag yn barod",
+                    "create_failed": "Methwyd creu tag",
+                    "create_success": "Tag wedi'w creu",
+                    "tag_name_too_long": "Dylsai enw tag ddim fod yn fwy na 50 cymeriad"
+                }
+            },
+            "selector": {
+                "clear": "Clirio",
+                "no_tags_found": "Dim taggiau wedi'i ddarganfod",
+                "select_tags": "Dewis Taggiau"
+            }
+        },
+        "template": {
+            "apply_template": "Gosod Templed",
+            "card": {
+                "delete": "Dileu Templed",
+                "duplicate": "Dyblygu'r templed",
+                "edit": "Newid y templed"
+            },
+            "confirm_delete": "Dileu'r templed hyn?",
+            "create_modal": {
+                "title": "Creu Templed"
+            },
+            "detail": {
+                "default_values": "Gwerthoedd Di-ofyn",
+                "updated": "Uwchraddiwyd"
+            },
+            "edit_modal": {
+                "title": "Golygu'r Templed"
+            },
+            "empty_value": "(gwag)",
+            "form": {
+                "default_item_values": "Gwerthoedd Eitemau Di-ofyn",
+                "default_location": "Lleoliad Di-ofyn",
+                "default_value": "Gwerth Di-ofyn",
+                "field_name": "Enw'r Maes",
+                "item_description": "Disgrifiad yr Eitem",
+                "item_name": "Enw'r Eitem",
+                "lifetime_warranty": "Gwarant oes",
+                "location": "Lleoliad",
+                "manufacturer": "Gwneuthredwr",
+                "model_number": "Rhif Model",
+                "no_custom_fields": "Dim meusydd personol.",
+                "template_description": "Disgrifiad y Templed",
+                "template_name": "Enw'r Templed"
+            },
+            "hide_defaults": "Cuddio'r di-ofyn",
+            "save_as_template": "Cadw fel Templed",
+            "selector": {
+                "clear": "Clirio'r Templed a Dewisiwyd",
+                "label": "Templed (Dewisiol)",
+                "not_found": "Dim templed wedi'w ddarganfod",
+                "search": "Chwilio templedau…",
+                "select": "Dewis templed…"
+            },
+            "show_defaults": "Dangod Di-ofyn",
+            "toast": {
+                "applied": "Templed \"{name}\"wedi'i gymhwyso",
+                "create_failed": "Methwyd a chreu templed",
+                "created": "Crewyd Templed",
+                "delete_failed": "Methwyd a dileu y templed",
+                "deleted": "Templed wedi'w ddileu",
+                "duplicate_failed": "Methwyd a dyblygu'r templed",
+                "duplicated": "Dyblygwyd y templed fel \"{name}\"",
+                "load_failed": "Methwyd a llwytho manylion y templed",
+                "saved_as_template": "Cadwyd yr eitem fel templed \"{name}\""
+            }
+        }
+    }
+}

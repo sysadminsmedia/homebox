@@ -61,11 +61,6 @@
             }
         },
         "item": {
-            "create_modal": {
-                "item_description": "Përshkrimi i Artikullit",
-                "item_name": "Emri i Artikullit",
-                "title": "Krijo artikullin"
-            },
             "view": {
                 "selectable": {
                     "card": "Kartë",
@@ -80,11 +75,6 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Përshkrimi i vendndodhjes",
-                "location_name": "Emri i vendndodhjes",
-                "title": "Krijoni një vendndodhje të re"
-            },
             "selector": {
                 "parent_location": "Vendndodhja e prindit"
             },
