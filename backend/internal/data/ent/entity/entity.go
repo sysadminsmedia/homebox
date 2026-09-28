@@ -69,6 +69,10 @@ const (
 	EdgeParent = "parent"
 	// EdgeChildren holds the string denoting the children edge name in mutations.
 	EdgeChildren = "children"
+	// EdgeLocation holds the string denoting the location edge name in mutations.
+	EdgeLocation = "location"
+	// EdgeLocationEntities holds the string denoting the location_entities edge name in mutations.
+	EdgeLocationEntities = "location_entities"
 	// EdgeTag holds the string denoting the tag edge name in mutations.
 	EdgeTag = "tag"
 	// EdgeEntityType holds the string denoting the entity_type edge name in mutations.
@@ -96,6 +100,14 @@ const (
 	ChildrenTable = "entities"
 	// ChildrenColumn is the table column denoting the children relation/edge.
 	ChildrenColumn = "entity_children"
+	// LocationTable is the table that holds the location relation/edge.
+	LocationTable = "entities"
+	// LocationColumn is the table column denoting the location relation/edge.
+	LocationColumn = "entity_location_entities"
+	// LocationEntitiesTable is the table that holds the location_entities relation/edge.
+	LocationEntitiesTable = "entities"
+	// LocationEntitiesColumn is the table column denoting the location_entities relation/edge.
+	LocationEntitiesColumn = "entity_location_entities"
 	// TagTable is the table that holds the tag relation/edge. The primary key declared below.
 	TagTable = "tag_entities"
 	// TagInverseTable is the table name for the Tag entity.
@@ -164,6 +176,7 @@ var Columns = []string{
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"entity_children",
+	"entity_location_entities",
 	"entity_type_entities",
 	"group_entities",
 }
@@ -390,6 +403,27 @@ func ByChildren(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByLocationField orders the results by location field.
+func ByLocationField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newLocationStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByLocationEntitiesCount orders the results by location_entities count.
+func ByLocationEntitiesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newLocationEntitiesStep(), opts...)
+	}
+}
+
+// ByLocationEntities orders the results by location_entities terms.
+func ByLocationEntities(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newLocationEntitiesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByTagCount orders the results by tag count.
 func ByTagCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -471,6 +505,20 @@ func newChildrenStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
+	)
+}
+func newLocationStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, LocationTable, LocationColumn),
+	)
+}
+func newLocationEntitiesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, LocationEntitiesTable, LocationEntitiesColumn),
 	)
 }
 func newTagStep() *sqlgraph.Step {
