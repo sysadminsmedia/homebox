@@ -500,6 +500,40 @@ func (_u *EntityUpdate) AddChildren(v ...*Entity) *EntityUpdate {
 	return _u.AddChildIDs(ids...)
 }
 
+// SetLocationID sets the "location" edge to the Entity entity by ID.
+func (_u *EntityUpdate) SetLocationID(id uuid.UUID) *EntityUpdate {
+	_u.mutation.SetLocationID(id)
+	return _u
+}
+
+// SetNillableLocationID sets the "location" edge to the Entity entity by ID if the given value is not nil.
+func (_u *EntityUpdate) SetNillableLocationID(id *uuid.UUID) *EntityUpdate {
+	if id != nil {
+		_u = _u.SetLocationID(*id)
+	}
+	return _u
+}
+
+// SetLocation sets the "location" edge to the Entity entity.
+func (_u *EntityUpdate) SetLocation(v *Entity) *EntityUpdate {
+	return _u.SetLocationID(v.ID)
+}
+
+// AddLocationEntityIDs adds the "location_entities" edge to the Entity entity by IDs.
+func (_u *EntityUpdate) AddLocationEntityIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.AddLocationEntityIDs(ids...)
+	return _u
+}
+
+// AddLocationEntities adds the "location_entities" edges to the Entity entity.
+func (_u *EntityUpdate) AddLocationEntities(v ...*Entity) *EntityUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddLocationEntityIDs(ids...)
+}
+
 // AddTagIDs adds the "tag" edge to the Tag entity by IDs.
 func (_u *EntityUpdate) AddTagIDs(ids ...uuid.UUID) *EntityUpdate {
 	_u.mutation.AddTagIDs(ids...)
@@ -607,6 +641,33 @@ func (_u *EntityUpdate) RemoveChildren(v ...*Entity) *EntityUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveChildIDs(ids...)
+}
+
+// ClearLocation clears the "location" edge to the Entity entity.
+func (_u *EntityUpdate) ClearLocation() *EntityUpdate {
+	_u.mutation.ClearLocation()
+	return _u
+}
+
+// ClearLocationEntities clears all "location_entities" edges to the Entity entity.
+func (_u *EntityUpdate) ClearLocationEntities() *EntityUpdate {
+	_u.mutation.ClearLocationEntities()
+	return _u
+}
+
+// RemoveLocationEntityIDs removes the "location_entities" edge to Entity entities by IDs.
+func (_u *EntityUpdate) RemoveLocationEntityIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.RemoveLocationEntityIDs(ids...)
+	return _u
+}
+
+// RemoveLocationEntities removes "location_entities" edges to Entity entities.
+func (_u *EntityUpdate) RemoveLocationEntities(v ...*Entity) *EntityUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveLocationEntityIDs(ids...)
 }
 
 // ClearTag clears all "tag" edges to the Tag entity.
@@ -1016,6 +1077,80 @@ func (_u *EntityUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Inverse: false,
 			Table:   entity.ChildrenTable,
 			Columns: []string{entity.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.LocationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   entity.LocationTable,
+			Columns: []string{entity.LocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.LocationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   entity.LocationTable,
+			Columns: []string{entity.LocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.LocationEntitiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.LocationEntitiesTable,
+			Columns: []string{entity.LocationEntitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedLocationEntitiesIDs(); len(nodes) > 0 && !_u.mutation.LocationEntitiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.LocationEntitiesTable,
+			Columns: []string{entity.LocationEntitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.LocationEntitiesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.LocationEntitiesTable,
+			Columns: []string{entity.LocationEntitiesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
@@ -1720,6 +1855,40 @@ func (_u *EntityUpdateOne) AddChildren(v ...*Entity) *EntityUpdateOne {
 	return _u.AddChildIDs(ids...)
 }
 
+// SetLocationID sets the "location" edge to the Entity entity by ID.
+func (_u *EntityUpdateOne) SetLocationID(id uuid.UUID) *EntityUpdateOne {
+	_u.mutation.SetLocationID(id)
+	return _u
+}
+
+// SetNillableLocationID sets the "location" edge to the Entity entity by ID if the given value is not nil.
+func (_u *EntityUpdateOne) SetNillableLocationID(id *uuid.UUID) *EntityUpdateOne {
+	if id != nil {
+		_u = _u.SetLocationID(*id)
+	}
+	return _u
+}
+
+// SetLocation sets the "location" edge to the Entity entity.
+func (_u *EntityUpdateOne) SetLocation(v *Entity) *EntityUpdateOne {
+	return _u.SetLocationID(v.ID)
+}
+
+// AddLocationEntityIDs adds the "location_entities" edge to the Entity entity by IDs.
+func (_u *EntityUpdateOne) AddLocationEntityIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.AddLocationEntityIDs(ids...)
+	return _u
+}
+
+// AddLocationEntities adds the "location_entities" edges to the Entity entity.
+func (_u *EntityUpdateOne) AddLocationEntities(v ...*Entity) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddLocationEntityIDs(ids...)
+}
+
 // AddTagIDs adds the "tag" edge to the Tag entity by IDs.
 func (_u *EntityUpdateOne) AddTagIDs(ids ...uuid.UUID) *EntityUpdateOne {
 	_u.mutation.AddTagIDs(ids...)
@@ -1827,6 +1996,33 @@ func (_u *EntityUpdateOne) RemoveChildren(v ...*Entity) *EntityUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveChildIDs(ids...)
+}
+
+// ClearLocation clears the "location" edge to the Entity entity.
+func (_u *EntityUpdateOne) ClearLocation() *EntityUpdateOne {
+	_u.mutation.ClearLocation()
+	return _u
+}
+
+// ClearLocationEntities clears all "location_entities" edges to the Entity entity.
+func (_u *EntityUpdateOne) ClearLocationEntities() *EntityUpdateOne {
+	_u.mutation.ClearLocationEntities()
+	return _u
+}
+
+// RemoveLocationEntityIDs removes the "location_entities" edge to Entity entities by IDs.
+func (_u *EntityUpdateOne) RemoveLocationEntityIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.RemoveLocationEntityIDs(ids...)
+	return _u
+}
+
+// RemoveLocationEntities removes "location_entities" edges to Entity entities.
+func (_u *EntityUpdateOne) RemoveLocationEntities(v ...*Entity) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveLocationEntityIDs(ids...)
 }
 
 // ClearTag clears all "tag" edges to the Tag entity.
@@ -2266,6 +2462,80 @@ func (_u *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err erro
 			Inverse: false,
 			Table:   entity.ChildrenTable,
 			Columns: []string{entity.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.LocationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   entity.LocationTable,
+			Columns: []string{entity.LocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.LocationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   entity.LocationTable,
+			Columns: []string{entity.LocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.LocationEntitiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.LocationEntitiesTable,
+			Columns: []string{entity.LocationEntitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedLocationEntitiesIDs(); len(nodes) > 0 && !_u.mutation.LocationEntitiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.LocationEntitiesTable,
+			Columns: []string{entity.LocationEntitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.LocationEntitiesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.LocationEntitiesTable,
+			Columns: []string{entity.LocationEntitiesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),

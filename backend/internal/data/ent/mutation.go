@@ -2650,6 +2650,11 @@ type EntityMutation struct {
 	children                    map[uuid.UUID]struct{}
 	removedchildren             map[uuid.UUID]struct{}
 	clearedchildren             bool
+	location                    *uuid.UUID
+	clearedlocation             bool
+	location_entities           map[uuid.UUID]struct{}
+	removedlocation_entities    map[uuid.UUID]struct{}
+	clearedlocation_entities    bool
 	tag                         map[uuid.UUID]struct{}
 	removedtag                  map[uuid.UUID]struct{}
 	clearedtag                  bool
@@ -4018,6 +4023,99 @@ func (m *EntityMutation) ResetChildren() {
 	m.removedchildren = nil
 }
 
+// SetLocationID sets the "location" edge to the Entity entity by id.
+func (m *EntityMutation) SetLocationID(id uuid.UUID) {
+	m.location = &id
+}
+
+// ClearLocation clears the "location" edge to the Entity entity.
+func (m *EntityMutation) ClearLocation() {
+	m.clearedlocation = true
+}
+
+// LocationCleared reports if the "location" edge to the Entity entity was cleared.
+func (m *EntityMutation) LocationCleared() bool {
+	return m.clearedlocation
+}
+
+// LocationID returns the "location" edge ID in the mutation.
+func (m *EntityMutation) LocationID() (id uuid.UUID, exists bool) {
+	if m.location != nil {
+		return *m.location, true
+	}
+	return
+}
+
+// LocationIDs returns the "location" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// LocationID instead. It exists only for internal usage by the builders.
+func (m *EntityMutation) LocationIDs() (ids []uuid.UUID) {
+	if id := m.location; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetLocation resets all changes to the "location" edge.
+func (m *EntityMutation) ResetLocation() {
+	m.location = nil
+	m.clearedlocation = false
+}
+
+// AddLocationEntityIDs adds the "location_entities" edge to the Entity entity by ids.
+func (m *EntityMutation) AddLocationEntityIDs(ids ...uuid.UUID) {
+	if m.location_entities == nil {
+		m.location_entities = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		m.location_entities[ids[i]] = struct{}{}
+	}
+}
+
+// ClearLocationEntities clears the "location_entities" edge to the Entity entity.
+func (m *EntityMutation) ClearLocationEntities() {
+	m.clearedlocation_entities = true
+}
+
+// LocationEntitiesCleared reports if the "location_entities" edge to the Entity entity was cleared.
+func (m *EntityMutation) LocationEntitiesCleared() bool {
+	return m.clearedlocation_entities
+}
+
+// RemoveLocationEntityIDs removes the "location_entities" edge to the Entity entity by IDs.
+func (m *EntityMutation) RemoveLocationEntityIDs(ids ...uuid.UUID) {
+	if m.removedlocation_entities == nil {
+		m.removedlocation_entities = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		delete(m.location_entities, ids[i])
+		m.removedlocation_entities[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedLocationEntities returns the removed IDs of the "location_entities" edge to the Entity entity.
+func (m *EntityMutation) RemovedLocationEntitiesIDs() (ids []uuid.UUID) {
+	for id := range m.removedlocation_entities {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// LocationEntitiesIDs returns the "location_entities" edge IDs in the mutation.
+func (m *EntityMutation) LocationEntitiesIDs() (ids []uuid.UUID) {
+	for id := range m.location_entities {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetLocationEntities resets all changes to the "location_entities" edge.
+func (m *EntityMutation) ResetLocationEntities() {
+	m.location_entities = nil
+	m.clearedlocation_entities = false
+	m.removedlocation_entities = nil
+}
+
 // AddTagIDs adds the "tag" edge to the Tag entity by ids.
 func (m *EntityMutation) AddTagIDs(ids ...uuid.UUID) {
 	if m.tag == nil {
@@ -4929,7 +5027,7 @@ func (m *EntityMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *EntityMutation) AddedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 10)
 	if m.group != nil {
 		edges = append(edges, entity.EdgeGroup)
 	}
@@ -4938,6 +5036,12 @@ func (m *EntityMutation) AddedEdges() []string {
 	}
 	if m.children != nil {
 		edges = append(edges, entity.EdgeChildren)
+	}
+	if m.location != nil {
+		edges = append(edges, entity.EdgeLocation)
+	}
+	if m.location_entities != nil {
+		edges = append(edges, entity.EdgeLocationEntities)
 	}
 	if m.tag != nil {
 		edges = append(edges, entity.EdgeTag)
@@ -4975,6 +5079,16 @@ func (m *EntityMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case entity.EdgeLocation:
+		if id := m.location; id != nil {
+			return []ent.Value{*id}
+		}
+	case entity.EdgeLocationEntities:
+		ids := make([]ent.Value, 0, len(m.location_entities))
+		for id := range m.location_entities {
+			ids = append(ids, id)
+		}
+		return ids
 	case entity.EdgeTag:
 		ids := make([]ent.Value, 0, len(m.tag))
 		for id := range m.tag {
@@ -5009,9 +5123,12 @@ func (m *EntityMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *EntityMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 10)
 	if m.removedchildren != nil {
 		edges = append(edges, entity.EdgeChildren)
+	}
+	if m.removedlocation_entities != nil {
+		edges = append(edges, entity.EdgeLocationEntities)
 	}
 	if m.removedtag != nil {
 		edges = append(edges, entity.EdgeTag)
@@ -5035,6 +5152,12 @@ func (m *EntityMutation) RemovedIDs(name string) []ent.Value {
 	case entity.EdgeChildren:
 		ids := make([]ent.Value, 0, len(m.removedchildren))
 		for id := range m.removedchildren {
+			ids = append(ids, id)
+		}
+		return ids
+	case entity.EdgeLocationEntities:
+		ids := make([]ent.Value, 0, len(m.removedlocation_entities))
+		for id := range m.removedlocation_entities {
 			ids = append(ids, id)
 		}
 		return ids
@@ -5068,7 +5191,7 @@ func (m *EntityMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *EntityMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 10)
 	if m.clearedgroup {
 		edges = append(edges, entity.EdgeGroup)
 	}
@@ -5077,6 +5200,12 @@ func (m *EntityMutation) ClearedEdges() []string {
 	}
 	if m.clearedchildren {
 		edges = append(edges, entity.EdgeChildren)
+	}
+	if m.clearedlocation {
+		edges = append(edges, entity.EdgeLocation)
+	}
+	if m.clearedlocation_entities {
+		edges = append(edges, entity.EdgeLocationEntities)
 	}
 	if m.clearedtag {
 		edges = append(edges, entity.EdgeTag)
@@ -5106,6 +5235,10 @@ func (m *EntityMutation) EdgeCleared(name string) bool {
 		return m.clearedparent
 	case entity.EdgeChildren:
 		return m.clearedchildren
+	case entity.EdgeLocation:
+		return m.clearedlocation
+	case entity.EdgeLocationEntities:
+		return m.clearedlocation_entities
 	case entity.EdgeTag:
 		return m.clearedtag
 	case entity.EdgeEntityType:
@@ -5130,6 +5263,9 @@ func (m *EntityMutation) ClearEdge(name string) error {
 	case entity.EdgeParent:
 		m.ClearParent()
 		return nil
+	case entity.EdgeLocation:
+		m.ClearLocation()
+		return nil
 	case entity.EdgeEntityType:
 		m.ClearEntityType()
 		return nil
@@ -5149,6 +5285,12 @@ func (m *EntityMutation) ResetEdge(name string) error {
 		return nil
 	case entity.EdgeChildren:
 		m.ResetChildren()
+		return nil
+	case entity.EdgeLocation:
+		m.ResetLocation()
+		return nil
+	case entity.EdgeLocationEntities:
+		m.ResetLocationEntities()
 		return nil
 	case entity.EdgeTag:
 		m.ResetTag()
