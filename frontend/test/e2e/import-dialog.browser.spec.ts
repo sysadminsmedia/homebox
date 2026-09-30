@@ -8,12 +8,12 @@ test("failed CSV import only shows the error toast", async ({ page }) => {
     route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ error: "import failed" }) })
   );
 
-  await page.goto("/home");
-  await expect(page).toHaveURL("/");
-  await page.fill("input[type='text']", "demo@example.com");
-  await page.fill("input[type='password']", "demodemo");
-  await page.click("button[type='submit']");
-  await expect(page).toHaveURL("/home");
+  // log in through the API: WebKit drops the auth cookies the server sets with Domain=localhost,
+  // the request context keeps them and shares them with the page
+  const login = await page.request.post("/api/v1/users/login", {
+    form: { username: "demo@example.com", password: "demodemo" },
+  });
+  expect(login.ok()).toBe(true);
 
   await page.goto("/collection/tools");
   await page.getByRole("button", { name: "Import Inventory" }).click();
