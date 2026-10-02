@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Scheduled &amp; remote backups (mockup)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--fg:#1c2230;--mut:#667085;--bd:#e4e7ec;--pri:#5b6ee1;--ok:#12805c;--okbg:#e3f6ee;--warn:#9a6700;--warnbg:#fff4d6;--err:#b42318;--errbg:#fde8e6}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,sans-serif;padding:24px}
+.wrap{max-width:1040px;margin:auto;display:grid;gap:16px}
+.mock{font-size:12px;color:var(--mut);text-align:center}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px}
+.hd{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.hd h2{margin:0;font-size:16px}.hd p{margin:2px 0 0;color:var(--mut);font-size:13px}
+.bd{padding:16px 20px}
+.banner{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;border-radius:8px;border:1px solid}
+.banner.err{background:var(--errbg);border-color:#f5b5ae;color:var(--err)}
+.banner.info{background:#eef1ff;border-color:#c9d1fb}
+.banner b{display:block}
+.btn{border:1px solid var(--bd);background:#fff;border-radius:6px;padding:5px 12px;font:inherit;cursor:pointer}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:800px){.grid{grid-template-columns:1fr 1fr}}
+label{display:block;font-size:12px;color:var(--mut);margin-bottom:4px}
+.fld{border:1px solid var(--bd);border-radius:6px;padding:7px 10px;background:#fff}
+.sw{display:inline-block;width:34px;height:20px;border-radius:10px;background:var(--pri);position:relative;vertical-align:middle}
+.sw:after{content:"";position:absolute;right:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#fff}
+.note{color:var(--mut);font-size:12px;margin-top:8px}
+table{width:100%;border-collapse:collapse}th{text-align:left;color:var(--mut);font-weight:500;font-size:12px;padding:6px 8px}
+td{padding:10px 8px;border-top:1px solid var(--bd);vertical-align:middle}
+.pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px}
+.ok{background:var(--okbg);color:var(--ok)}.warn{background:var(--warnbg);color:var(--warn)}.bad{background:var(--errbg);color:var(--err)}.off{background:#eee;color:var(--mut)}
+.ico{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:6px;background:#eef1ff;font-weight:600;font-size:11px;margin-right:8px;vertical-align:middle}
+.sub{color:var(--mut);font-size:12px}
+.tag{font-size:11px;background:#eef1ff;color:var(--pri);border-radius:4px;padding:1px 6px;margin-left:6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:800px){.two{grid-template-columns:1fr}}
+.dlg{box-shadow:0 8px 30px rgba(16,24,40,.12)}
+.row{display:flex;justify-content:space-between;gap:8px;padding:6px 0}
+.act{color:var(--pri);margin-left:10px;cursor:pointer}.act.d{color:var(--err)}
+</style></head><body><div class="wrap">
+<div class="mock">UI MOCKUP — Tools → Backups &amp; Restore (proposed). Not implemented.</div>
+
+<div class="banner err"><span>⚠</span><div><b>Remote backup destination “TrueNAS (SMB)” has been unreachable for 3 health checks</b>
+Last successful backup there: 2 days ago. Local backups are still running. <span class="act">View destination</span> <span class="act">Dismiss</span></div></div>
+
+<section class="card">
+  <div class="hd"><div><h2>Automatic backups</h2><p>Scheduled snapshots of this collection. Skipped when nothing has changed since the last backup.</p></div>
+  <button class="btn pri">Back up now</button></div>
+  <div class="bd">
+    <div class="row"><span><span class="sw"></span>&nbsp; <b>Enable scheduled backups</b></span><span class="sub">Next run: today 03:00 · Last run: yesterday 03:00 (completed, 84 MB)</span></div>
+    <div class="grid" style="margin-top:8px">
+      <div><label>Frequency</label><div class="fld">Daily ▾</div></div>
+      <div><label>Time</label><div class="fld">03:00</div></div>
+      <div><label>Keep (versioning)</label><div class="fld">7 daily · 4 weekly · 6 monthly</div></div>
+      <div><label>Only when data changed</label><div class="fld">✓ Skip if unchanged</div></div>
+    </div>
+    <div class="note">Frequency options: hourly, every N hours, daily, weekly, monthly, or custom cron. Each run creates a new versioned archive; older versions are pruned by the retention policy (replaces today’s fixed 7-day purge).</div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="hd"><div><h2>Backup destinations</h2><p>Each destination has its own schedule, retention and health check.</p></div><button class="btn">+ Add destination</button></div>
+  <div class="bd">
+    <div class="banner info" style="margin-bottom:12px"><span>☁</span><div><b>You signed in with Google (OIDC)</b>
+    Store backups in your Google Drive “Homebox Backups” folder using this login. Homebox will request the minimal <code>drive.file</code> scope.
+    <div style="margin-top:8px"><button class="btn pri">Use Google Drive</button> <button class="btn">Not now</button></div></div></div>
+    <table>
+      <thead><tr><th>Destination</th><th>Schedule</th><th>Retention</th><th>Health</th><th>Last backup</th><th></th></tr></thead>
+      <tbody>
+      <tr><td><span class="ico">LOC</span><b>Local storage</b><span class="tag">default</span><div class="sub" style="margin-left:36px">/data/backups</div></td><td>Daily 03:00</td><td>7d / 4w / 6m</td><td><span class="pill ok">● Healthy</span></td><td>Yesterday · 84 MB</td><td><span class="act">Edit</span></td></tr>
+      <tr><td><span class="ico">NAS</span><b>TrueNAS (SMB)</b><div class="sub" style="margin-left:36px">smb://truenas.lan/backups/homebox</div></td><td>Daily 03:30</td><td>14d / 8w</td><td><span class="pill bad">● Unreachable</span><div class="sub">checked 5 min ago</div></td><td>2 days ago · 84 MB</td><td><span class="act">Test</span><span class="act">Edit</span></td></tr>
+      <tr><td><span class="ico">GD</span><b>Google Drive</b><span class="tag">via OIDC</span><div class="sub" style="margin-left:36px">you@gmail.com · Homebox Backups/</div></td><td>Weekly Sun 04:00</td><td>8w / 12m</td><td><span class="pill ok">● Healthy</span><div class="sub">checked 12 min ago</div></td><td>3 days ago · 84 MB</td><td><span class="act">Test</span><span class="act">Edit</span></td></tr>
+      <tr><td><span class="ico">S3</span><b>Backblaze B2 (S3)</b><div class="sub" style="margin-left:36px">s3://homebox-backups</div></td><td>Hourly</td><td>24h / 7d</td><td><span class="pill off">Paused</span></td><td>—</td><td><span class="act">Edit</span></td></tr>
+      </tbody></table>
+    <div class="note">Supported targets (proposed): Local · SMB / NFS · SFTP · WebDAV (Nextcloud, Synology) · S3-compatible (MinIO, Backblaze) · Google Drive · OneDrive · Dropbox.</div>
+  </div>
+</section>
+
+<div class="two">
+<section class="card dlg">
+  <div class="hd"><div><h2>Add destination</h2><p>Test the connection before saving.</p></div></div>
+  <div class="bd" style="display:grid;gap:10px">
+    <div><label>Type</label><div class="fld">SMB / CIFS (TrueNAS, Unraid, Synology) ▾</div></div>
+    <div><label>Host / share path</label><div class="fld">truenas.lan / backups / homebox</div></div>
+    <div class="grid" style="grid-template-columns:1fr 1fr"><div><label>Username</label><div class="fld">homebox</div></div><div><label>Password</label><div class="fld">••••••••</div></div></div>
+    <div class="grid" style="grid-template-columns:1fr 1fr"><div><label>Schedule</label><div class="fld">Daily 03:30 ▾</div></div><div><label>Health check every</label><div class="fld">15 minutes ▾</div></div></div>
+    <div class="banner" style="background:var(--okbg);border-color:#a7e3cc;color:var(--ok)"><span>✓</span><div><b>Connection OK</b>Wrote and deleted a 1 KB test file in 142 ms. 1.8 TB free.</div></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn">Test connection</button><button class="btn">Cancel</button><button class="btn pri">Save</button></div>
+  </div>
+</section>
+
+<section class="card dlg">
+  <div class="hd"><div><h2>Alerts</h2><p>Notify when a backup fails or a destination goes down.</p></div></div>
+  <div class="bd">
+    <div class="row"><span>Backup failed</span><span class="pill ok">On</span></div>
+    <div class="row"><span>Destination unreachable (after <b>2</b> failed checks)</span><span class="pill ok">On</span></div>
+    <div class="row"><span>No successful backup in <b>48 h</b></span><span class="pill ok">On</span></div>
+    <div class="row"><span>Recovery notice when destination is back</span><span class="pill ok">On</span></div>
+    <div class="note" style="margin-bottom:10px">Delivered via: in-app banner · existing Notifiers (Shoutrrr)</div>
+    <label>Version history (TrueNAS)</label>
+    <table><tbody>
+      <tr><td>2026-10-02 03:30</td><td>84 MB</td><td><span class="pill ok">completed</span></td><td style="text-align:right"><span class="act">Download</span><span class="act">Restore</span></td></tr>
+      <tr><td>2026-10-01 03:30</td><td>—</td><td><span class="pill bad">failed: timeout</span></td><td style="text-align:right"><span class="act d">Retry</span></td></tr>
+      <tr><td>2026-09-30 03:30</td><td>83 MB</td><td><span class="pill ok">completed</span></td><td style="text-align:right"><span class="act">Download</span><span class="act">Restore</span></td></tr>
+    </tbody></table>
+  </div>
+</section>
+</div></div></body></html>
