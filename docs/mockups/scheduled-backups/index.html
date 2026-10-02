@@ -2,20 +2,20 @@
 <html lang="en"><head><meta charset="utf-8"><title>Scheduled &amp; remote backups (mockup)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-:root{--bg:#f6f7f9;--card:#fff;--fg:#1c2230;--mut:#667085;--bd:#e4e7ec;--pri:#5b6ee1;--ok:#12805c;--okbg:#e3f6ee;--warn:#9a6700;--warnbg:#fff4d6;--err:#b42318;--errbg:#fde8e6}
+:root{--bg:hsl(0 0% 96%);--card:hsl(0 0% 100%);--fg:hsl(0 0% 20%);--mut:hsl(0 0% 40%);--bd:hsl(0 0% 81%);--pri:hsl(139 16% 43%);--prifg:hsl(139 100% 89%);--acc:hsl(97 37% 93%);--accfg:hsl(97 31% 19%);--ok:hsl(139 50% 28%);--okbg:hsl(139 40% 90%);--warn:#8a5a00;--warnbg:#fff4d6;--err:hsl(0 70% 38%);--errbg:hsl(0 91% 93%);--errbd:hsl(0 91% 71%)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,sans-serif;padding:24px}
 .wrap{max-width:1040px;margin:auto;display:grid;gap:16px}
 .mock{font-size:12px;color:var(--mut);text-align:center}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:10px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:.5rem}
 .hd{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;gap:12px}
 .hd h2{margin:0;font-size:16px}.hd p{margin:2px 0 0;color:var(--mut);font-size:13px}
 .bd{padding:16px 20px}
 .banner{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;border-radius:8px;border:1px solid}
-.banner.err{background:var(--errbg);border-color:#f5b5ae;color:var(--err)}
-.banner.info{background:#eef1ff;border-color:#c9d1fb}
+.banner.err{background:var(--errbg);border-color:var(--errbd);color:var(--err)}
+.banner.info{background:var(--acc);border-color:var(--bd);color:var(--accfg)}
 .banner b{display:block}
-.btn{border:1px solid var(--bd);background:#fff;border-radius:6px;padding:5px 12px;font:inherit;cursor:pointer}
-.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.btn{border:1px solid var(--bd);background:#fff;border-radius:.5rem;padding:5px 12px;font:inherit;cursor:pointer}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:var(--prifg)}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 @media(max-width:800px){.grid{grid-template-columns:1fr 1fr}}
 label{display:block;font-size:12px;color:var(--mut);margin-bottom:4px}
@@ -27,20 +27,20 @@ table{width:100%;border-collapse:collapse}th{text-align:left;color:var(--mut);fo
 td{padding:10px 8px;border-top:1px solid var(--bd);vertical-align:middle}
 .pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px}
 .ok{background:var(--okbg);color:var(--ok)}.warn{background:var(--warnbg);color:var(--warn)}.bad{background:var(--errbg);color:var(--err)}.off{background:#eee;color:var(--mut)}
-.ico{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:6px;background:#eef1ff;font-weight:600;font-size:11px;margin-right:8px;vertical-align:middle}
+.ico{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:6px;background:var(--acc);color:var(--accfg);font-weight:600;font-size:11px;margin-right:8px;vertical-align:middle}
 .sub{color:var(--mut);font-size:12px}
-.tag{font-size:11px;background:#eef1ff;color:var(--pri);border-radius:4px;padding:1px 6px;margin-left:6px}
+.tag{font-size:11px;background:var(--acc);color:var(--accfg);border-radius:4px;padding:1px 6px;margin-left:6px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:800px){.two{grid-template-columns:1fr}}
 .dlg{box-shadow:0 8px 30px rgba(16,24,40,.12)}
 .row{display:flex;justify-content:space-between;gap:8px;padding:6px 0}
 .act{color:var(--pri);margin-left:10px;cursor:pointer}.act.d{color:var(--err)}
 </style></head><body><div class="wrap">
-<div class="mock">UI MOCKUP — Tools → Backups &amp; Restore (proposed). Not implemented.</div>
+<div class="mock" id="tag">PROPOSED UI MOCKUP — Tools → Backups &amp; Restore. Not implemented.</div>
 
-<div class="banner err"><span>⚠</span><div><b>Remote backup destination “TrueNAS (SMB)” has been unreachable for 3 health checks</b>
+<div class="v v1 banner err"><span>⚠</span><div><b>Remote backup destination “TrueNAS (SMB)” has been unreachable for 3 health checks</b>
 Last successful backup there: 2 days ago. Local backups are still running. <span class="act">View destination</span> <span class="act">Dismiss</span></div></div>
 
-<section class="card">
+<section class="v v1 card">
   <div class="hd"><div><h2>Automatic backups</h2><p>Scheduled snapshots of this collection. Skipped when nothing has changed since the last backup.</p></div>
   <button class="btn pri">Back up now</button></div>
   <div class="bd">
@@ -55,7 +55,7 @@ Last successful backup there: 2 days ago. Local backups are still running. <span
   </div>
 </section>
 
-<section class="card">
+<section class="v v2 card">
   <div class="hd"><div><h2>Backup destinations</h2><p>Each destination has its own schedule, retention and health check.</p></div><button class="btn">+ Add destination</button></div>
   <div class="bd">
     <div class="banner info" style="margin-bottom:12px"><span>☁</span><div><b>You signed in with Google (OIDC)</b>
@@ -73,7 +73,7 @@ Last successful backup there: 2 days ago. Local backups are still running. <span
   </div>
 </section>
 
-<div class="two">
+<div class="two v v3">
 <section class="card dlg">
   <div class="hd"><div><h2>Add destination</h2><p>Test the connection before saving.</p></div></div>
   <div class="bd" style="display:grid;gap:10px">
@@ -81,7 +81,7 @@ Last successful backup there: 2 days ago. Local backups are still running. <span
     <div><label>Host / share path</label><div class="fld">truenas.lan / backups / homebox</div></div>
     <div class="grid" style="grid-template-columns:1fr 1fr"><div><label>Username</label><div class="fld">homebox</div></div><div><label>Password</label><div class="fld">••••••••</div></div></div>
     <div class="grid" style="grid-template-columns:1fr 1fr"><div><label>Schedule</label><div class="fld">Daily 03:30 ▾</div></div><div><label>Health check every</label><div class="fld">15 minutes ▾</div></div></div>
-    <div class="banner" style="background:var(--okbg);border-color:#a7e3cc;color:var(--ok)"><span>✓</span><div><b>Connection OK</b>Wrote and deleted a 1 KB test file in 142 ms. 1.8 TB free.</div></div>
+    <div class="banner" style="background:var(--okbg);border-color:var(--pri);color:var(--ok)"><span>✓</span><div><b>Connection OK</b>Wrote and deleted a 1 KB test file in 142 ms. 1.8 TB free.</div></div>
     <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn">Test connection</button><button class="btn">Cancel</button><button class="btn pri">Save</button></div>
   </div>
 </section>
@@ -102,4 +102,8 @@ Last successful backup there: 2 days ago. Local backups are still running. <span
     </tbody></table>
   </div>
 </section>
-</div></div></body></html>
+</div></div><script>
+var v=new URLSearchParams(location.search).get("view");
+if(v){document.querySelectorAll(".v").forEach(function(e){e.style.display=e.classList.contains("v"+v)?"":"none"});
+ if(v!="0")document.getElementById("tag").style.display="none"}
+</script></body></html>
