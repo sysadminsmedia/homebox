@@ -159,6 +159,7 @@
                 "browser_print": "Print from Browser",
                 "confirm_description": "Are you sure you want to print this label?",
                 "download": "Download Label",
+                "location_description": "Homebox Location",
                 "print": "Print label",
                 "server_print": "Print on Server",
                 "titles": "Labels",
