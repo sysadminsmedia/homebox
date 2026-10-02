@@ -57,19 +57,19 @@ type (
 
 	EntityQuery struct {
 		IsLocation       *bool        `json:"isLocation"` // nil=all, true=locations only, false=items only
-		EntityTypeIDs    []uuid.UUID  `json:"entityTypeIds"`
 		Search           string       `json:"search"`
 		SortBy           string       `json:"sortBy"`
 		OrderBy          string       `json:"orderBy"`
 		OrderDirection   string       `json:"orderDirection"`
+		EntityTypeIDs    []uuid.UUID  `json:"entityTypeIds"`
 		ParentIDs        []uuid.UUID  `json:"parentIds"`
 		TagIDs           []uuid.UUID  `json:"tagIds"`
-		MatchAllTags     bool         `json:"matchAllTags"` // require every selected tag (AND) instead of any (OR); ignored when NegateTags is set
 		ParentItemIDs    []uuid.UUID  `json:"parentItemIds"`
 		Fields           []FieldQuery `json:"fields"`
 		Page             int
 		PageSize         int
 		AssetID          AssetID `json:"assetId"`
+		MatchAllTags     bool    `json:"matchAllTags"` // require every selected tag (AND) instead of any (OR); ignored when NegateTags is set
 		NegateTags       bool    `json:"negateTags"`
 		OnlyWithoutPhoto bool    `json:"onlyWithoutPhoto"`
 		OnlyWithPhoto    bool    `json:"onlyWithPhoto"`
