@@ -10,6 +10,8 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
 
+const maintenanceDescription = "Maintenance description"
+
 // get the previous month from the current month, accounts for errors when run
 // near the beginning or end of the month/year
 func getPrevMonth(now time.Time) time.Time {
@@ -47,7 +49,7 @@ func TestMaintenanceEntryRepository_GetLog(t *testing.T) {
 		created[i] = MaintenanceEntryCreate{
 			CompletedDate: types.DateFromTime(dt),
 			Name:          "Maintenance",
-			Description:   "Maintenance description",
+			Description:   maintenanceDescription,
 			Cost:          10,
 		}
 	}
@@ -56,7 +58,7 @@ func TestMaintenanceEntryRepository_GetLog(t *testing.T) {
 	created[10] = MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now().AddDate(0, 0, 1)),
 		Name:          "Maintenance",
-		Description:   "Maintenance description",
+		Description:   maintenanceDescription,
 		Cost:          10,
 	}
 
@@ -79,4 +81,43 @@ func TestMaintenanceEntryRepository_GetLog(t *testing.T) {
 		err := tRepos.MaintEntry.Delete(context.Background(), tGroup.ID, entry.ID)
 		require.NoError(t, err)
 	}
+}
+
+func TestMaintenanceEntryRepository_GetAllMaintenance_FutureCompletedDate(t *testing.T) {
+	item := useEntities(t, 1)[0]
+
+	past := MaintenanceEntryCreate{
+		CompletedDate: types.DateFromTime(getPrevMonth(time.Now())),
+		Name:          "Past maintenance",
+		Description:   maintenanceDescription,
+		Cost:          10,
+	}
+	future := MaintenanceEntryCreate{
+		CompletedDate: types.DateFromTime(time.Now().AddDate(0, 0, 1)),
+		Name:          "Future maintenance",
+		Description:   maintenanceDescription,
+		Cost:          10,
+	}
+
+	for _, entry := range []MaintenanceEntryCreate{past, future} {
+		created, err := tRepos.MaintEntry.Create(context.Background(), tGroup.ID, item.ID, entry)
+		require.NoError(t, err)
+		t.Cleanup(func() {
+			require.NoError(t, tRepos.MaintEntry.Delete(context.Background(), tGroup.ID, created.ID))
+		})
+	}
+
+	completed, err := tRepos.MaintEntry.GetAllMaintenance(context.Background(), tGroup.ID, MaintenanceFilters{Status: MaintenanceFilterStatusCompleted})
+	require.NoError(t, err)
+	require.Len(t, completed, 1)
+	assert.Equal(t, "Past maintenance", completed[0].Name)
+
+	scheduled, err := tRepos.MaintEntry.GetAllMaintenance(context.Background(), tGroup.ID, MaintenanceFilters{Status: MaintenanceFilterStatusScheduled})
+	require.NoError(t, err)
+	require.Len(t, scheduled, 1)
+	assert.Equal(t, "Future maintenance", scheduled[0].Name)
+
+	all, err := tRepos.MaintEntry.GetAllMaintenance(context.Background(), tGroup.ID, MaintenanceFilters{})
+	require.NoError(t, err)
+	assert.Len(t, all, 2)
 }
