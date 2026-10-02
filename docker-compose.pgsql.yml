@@ -1,0 +1,54 @@
+services:
+  homebox:
+    image: homebox
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - COMMIT=head
+        - BUILD_TIME=0001-01-01T00:00:00Z
+      x-bake:
+        platforms:
+            - linux/amd64
+            - linux/arm64
+            - linux/arm
+    environment:
+      - HBOX_DEBUG=true
+      - HBOX_LOGGER_LEVEL=-1
+      - HBOX_DATABASE_DRIVER=postgres
+      - HBOX_DATABASE_HOST=db
+      - HBOX_DATABASE_PORT=5432
+      - HBOX_DATABASE_USERNAME=homebox
+      - HBOX_DATABASE_PASSWORD=homebox
+      - HBOX_DATABASE_DATABASE=homebox
+      - HBOX_DATABASE_SSL_MODE=disable
+    ports:
+      - 3100:7745
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=homebox
+      - POSTGRES_PASSWORD=homebox
+      - POSTGRES_DB=homebox
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U homebox"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migration:
+    image: fridus/pgloader:latest
+    profiles: ["tools"]
+    volumes:
+      - ./data:/data
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
