@@ -458,6 +458,10 @@ func (r *EntityRepository) getOneTx(ctx context.Context, tx *ent.Tx, where ...pr
 		WithGroup().
 		WithChildren(func(eq *ent.EntityQuery) {
 			eq.WithEntityType()
+			// Match the case-insensitive name order of the locations tree.
+			eq.Order(func(s *sql.Selector) {
+				s.OrderBy(sql.Lower(s.C(entity.FieldName)), s.C(entity.FieldID))
+			})
 		}).
 		WithAttachments().
 		Only(ctx)
@@ -3096,7 +3100,8 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 				) tree
 		ORDER BY node_type DESC, -- sort locations before items
 				 level,
-				 lower(NAME)`
+				 lower(NAME),
+				 id`
 
 	if tq.WithItems {
 		// Items hang off their effective location. The same expression has to be
