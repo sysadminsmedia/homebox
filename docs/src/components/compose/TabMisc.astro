@@ -1,0 +1,119 @@
+---
+import {
+    sectionGridClass,
+    fieldClass,
+    fieldWideClass,
+    fieldLabelClass,
+    checkboxFieldClass,
+    controlClass,
+} from './constants';
+---
+
+<div class={sectionGridClass}>
+    <div class={fieldWideClass}>
+        <label for="compose-api-key-pepper" class={fieldLabelClass}>API key pepper
+            (<code>HBOX_AUTH_API_KEY_PEPPER</code>)</label>
+        <div class="flex gap-2">
+            <input
+                    id="compose-api-key-pepper"
+                    type="text"
+                    data-field="apiKeyPepper"
+                    value=""
+                    class={controlClass}
+            />
+            <button
+                    type="button"
+                    data-generate-pepper
+                    class="shrink-0 rounded border border-(--sl-color-hairline) px-3 text-xs hover:bg-(--sl-color-bg-nav)"
+            >
+                Regenerate
+            </button>
+        </div>
+        <span class="text-xs opacity-80">
+            Required. Homebox refuses to start if this is under 32 bytes. Keep it secret and
+            stable &mdash; changing it invalidates every issued API key.
+        </span>
+    </div>
+
+    <label class={checkboxFieldClass}>
+        <input type="checkbox" data-field="allowAnalytics"/>
+        Allow analytics
+    </label>
+
+    <label class={checkboxFieldClass}>
+        <input type="checkbox" data-field="allowRegistration" checked/>
+        Allow registration
+    </label>
+
+    <label class={checkboxFieldClass}>
+        <input type="checkbox" data-field="autoIncrementAssetId" checked/>
+        Auto-increment asset IDs
+    </label>
+
+    <label class={checkboxFieldClass}>
+        <input type="checkbox" data-field="githubReleaseCheck" checked/>
+        Check GitHub releases
+    </label>
+
+    <label class={checkboxFieldClass}>
+        <input type="checkbox" data-field="thumbnailEnabled" checked/>
+        Generate image thumbnails
+    </label>
+
+    <div data-thumbnail-row class={fieldClass}>
+        <label for="compose-thumbnail-width" class={fieldLabelClass}>Thumbnail width px
+            (<code>HBOX_THUMBNAIL_WIDTH</code>)</label>
+        <input id="compose-thumbnail-width" type="number" data-field="thumbnailWidth" value="500"
+               min="1" class={controlClass}/>
+    </div>
+
+    <div data-thumbnail-row class={fieldClass}>
+        <label for="compose-thumbnail-height" class={fieldLabelClass}>Thumbnail height px
+            (<code>HBOX_THUMBNAIL_HEIGHT</code>)</label>
+        <input id="compose-thumbnail-height" type="number" data-field="thumbnailHeight" value="500"
+               min="1" class={controlClass}/>
+    </div>
+
+    <div class={fieldClass}>
+        <label for="compose-log-level" class={fieldLabelClass}>Log level
+            (<code>HBOX_LOG_LEVEL</code>)</label>
+        <select id="compose-log-level" data-field="logLevel" class={controlClass}>
+            <option value="trace">trace</option>
+            <option value="debug">debug</option>
+            <option value="info" selected>info</option>
+            <option value="warn">warn</option>
+            <option value="error">error</option>
+        </select>
+    </div>
+
+    <div class={fieldClass}>
+        <label for="compose-log-format" class={fieldLabelClass}>Log format
+            (<code>HBOX_LOG_FORMAT</code>)</label>
+        <select id="compose-log-format" data-field="logFormat" class={controlClass}>
+            <option value="text" selected>text</option>
+            <option value="json">json</option>
+        </select>
+    </div>
+
+    <div class={fieldClass}>
+        <label for="compose-max-upload-size" class={fieldLabelClass}>Max upload size MB
+            (<code>HBOX_WEB_MAX_UPLOAD_SIZE</code>)</label>
+        <input id="compose-max-upload-size" type="number" data-field="maxUploadSize" value="10"
+               min="1" class={controlClass}/>
+    </div>
+
+    <div class={fieldClass}>
+        <label for="compose-max-import-size" class={fieldLabelClass}>Max import size MB
+            (<code>HBOX_WEB_MAX_IMPORT_SIZE</code>)</label>
+        <input id="compose-max-import-size" type="number" data-field="maxImportSize" value="1024"
+               min="1" class={controlClass}/>
+    </div>
+
+    <div class={fieldWideClass}>
+        <label for="compose-currency-config" class={fieldLabelClass}>Additional currencies file
+            (<code>HBOX_OPTIONS_CURRENCY_CONFIG</code>)</label>
+        <input id="compose-currency-config" type="text" data-field="currencyConfig" value=""
+               placeholder="Leave blank unless you ship a custom currency JSON file"
+               class={controlClass}/>
+    </div>
+</div>
