@@ -14,19 +14,21 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 )
 
 // AttachmentQuery is the builder for querying Attachment entities.
 type AttachmentQuery struct {
 	config
-	ctx           *QueryContext
-	order         []attachment.OrderOption
-	inters        []Interceptor
-	predicates    []predicate.Attachment
-	withEntity    *EntityQuery
-	withThumbnail *AttachmentQuery
-	withFKs       bool
+	ctx                *QueryContext
+	order              []attachment.OrderOption
+	inters             []Interceptor
+	predicates         []predicate.Attachment
+	withEntity         *EntityQuery
+	withThumbnail      *AttachmentQuery
+	withEntityTemplate *EntityTemplateQuery
+	withFKs            bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -100,6 +102,28 @@ func (_q *AttachmentQuery) QueryThumbnail() *AttachmentQuery {
 			sqlgraph.From(attachment.Table, attachment.FieldID, selector),
 			sqlgraph.To(attachment.Table, attachment.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, attachment.ThumbnailTable, attachment.ThumbnailColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEntityTemplate chains the current query on the "entity_template" edge.
+func (_q *AttachmentQuery) QueryEntityTemplate() *EntityTemplateQuery {
+	query := (&EntityTemplateClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(attachment.Table, attachment.FieldID, selector),
+			sqlgraph.To(entitytemplate.Table, entitytemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, attachment.EntityTemplateTable, attachment.EntityTemplateColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -294,13 +318,14 @@ func (_q *AttachmentQuery) Clone() *AttachmentQuery {
 		return nil
 	}
 	return &AttachmentQuery{
-		config:        _q.config,
-		ctx:           _q.ctx.Clone(),
-		order:         append([]attachment.OrderOption{}, _q.order...),
-		inters:        append([]Interceptor{}, _q.inters...),
-		predicates:    append([]predicate.Attachment{}, _q.predicates...),
-		withEntity:    _q.withEntity.Clone(),
-		withThumbnail: _q.withThumbnail.Clone(),
+		config:             _q.config,
+		ctx:                _q.ctx.Clone(),
+		order:              append([]attachment.OrderOption{}, _q.order...),
+		inters:             append([]Interceptor{}, _q.inters...),
+		predicates:         append([]predicate.Attachment{}, _q.predicates...),
+		withEntity:         _q.withEntity.Clone(),
+		withThumbnail:      _q.withThumbnail.Clone(),
+		withEntityTemplate: _q.withEntityTemplate.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -326,6 +351,17 @@ func (_q *AttachmentQuery) WithThumbnail(opts ...func(*AttachmentQuery)) *Attach
 		opt(query)
 	}
 	_q.withThumbnail = query
+	return _q
+}
+
+// WithEntityTemplate tells the query-builder to eager-load the nodes that are connected to
+// the "entity_template" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *AttachmentQuery) WithEntityTemplate(opts ...func(*EntityTemplateQuery)) *AttachmentQuery {
+	query := (&EntityTemplateClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withEntityTemplate = query
 	return _q
 }
 
@@ -408,12 +444,13 @@ func (_q *AttachmentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*A
 		nodes       = []*Attachment{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			_q.withEntity != nil,
 			_q.withThumbnail != nil,
+			_q.withEntityTemplate != nil,
 		}
 	)
-	if _q.withEntity != nil || _q.withThumbnail != nil {
+	if _q.withEntity != nil || _q.withThumbnail != nil || _q.withEntityTemplate != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -446,6 +483,12 @@ func (_q *AttachmentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*A
 	if query := _q.withThumbnail; query != nil {
 		if err := _q.loadThumbnail(ctx, query, nodes, nil,
 			func(n *Attachment, e *Attachment) { n.Edges.Thumbnail = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withEntityTemplate; query != nil {
+		if err := _q.loadEntityTemplate(ctx, query, nodes, nil,
+			func(n *Attachment, e *EntityTemplate) { n.Edges.EntityTemplate = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -509,6 +552,38 @@ func (_q *AttachmentQuery) loadThumbnail(ctx context.Context, query *AttachmentQ
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "attachment_thumbnail" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (_q *AttachmentQuery) loadEntityTemplate(ctx context.Context, query *EntityTemplateQuery, nodes []*Attachment, init func(*Attachment), assign func(*Attachment, *EntityTemplate)) error {
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*Attachment)
+	for i := range nodes {
+		if nodes[i].entity_template_default_image == nil {
+			continue
+		}
+		fk := *nodes[i].entity_template_default_image
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(entitytemplate.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "entity_template_default_image" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

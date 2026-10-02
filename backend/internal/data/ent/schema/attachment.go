@@ -37,5 +37,8 @@ func (Attachment) Edges() []ent.Edge {
 			Unique(),
 		edge.To("thumbnail", Attachment.Type).
 			Unique(),
+		edge.From("entity_template", EntityTemplate.Type).
+			Ref("default_image").
+			Unique(),
 	}
 }

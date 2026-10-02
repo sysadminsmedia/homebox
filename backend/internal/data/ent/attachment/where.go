@@ -437,6 +437,29 @@ func HasThumbnailWith(preds ...predicate.Attachment) predicate.Attachment {
 	})
 }
 
+// HasEntityTemplate applies the HasEdge predicate on the "entity_template" edge.
+func HasEntityTemplate() predicate.Attachment {
+	return predicate.Attachment(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, EntityTemplateTable, EntityTemplateColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasEntityTemplateWith applies the HasEdge predicate on the "entity_template" edge with a given conditions (other predicates).
+func HasEntityTemplateWith(preds ...predicate.EntityTemplate) predicate.Attachment {
+	return predicate.Attachment(func(s *sql.Selector) {
+		step := newEntityTemplateStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Attachment) predicate.Attachment {
 	return predicate.Attachment(sql.AndPredicates(predicates...))

@@ -4,6 +4,7 @@
   import MdiPencil from "~icons/mdi/pencil";
   import MdiDelete from "~icons/mdi/delete";
   import MdiPlus from "~icons/mdi/plus";
+  import MdiImagePlus from "~icons/mdi/image-plus";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { Card } from "@/components/ui/card";
@@ -136,6 +137,51 @@
   }
 
   const NIL_UUID = "00000000-0000-0000-0000-000000000000";
+
+  const imageUploading = ref(false);
+  const imageInput = ref<HTMLInputElement | null>(null);
+
+  const hasImage = computed(() => !!template.value?.defaultImage);
+
+  const imageUrl = computed(() => {
+    const image = template.value?.defaultImage;
+    if (!image) return null;
+    // Cache-bust on the attachment id so replacing the image repaints.
+    // authURL only adds a query string when an attachment token is in play.
+    const url = api.authURL(`/templates/${templateId.value}/image`);
+    return `${url}${url.includes("?") ? "&" : "?"}v=${image.id}`;
+  });
+
+  async function onImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = "";
+    if (!file) return;
+
+    imageUploading.value = true;
+    const { error, data } = await api.templates.setImage(templateId.value, file, file.name);
+    imageUploading.value = false;
+
+    if (error) {
+      toast.error(t("components.template.toast.image_update_failed"));
+      return;
+    }
+    toast.success(t("components.template.toast.image_updated"));
+    template.value = data;
+  }
+
+  async function removeImage() {
+    const { isCanceled } = await confirm.open(t("components.template.confirm_remove_image"));
+    if (isCanceled) return;
+
+    const { error, data } = await api.templates.deleteImage(templateId.value);
+    if (error) {
+      toast.error(t("components.template.toast.image_remove_failed"));
+      return;
+    }
+    toast.success(t("components.template.toast.image_removed"));
+    template.value = data;
+  }
 </script>
 
 <template>
@@ -275,6 +321,46 @@
 
       <Separator v-if="template.description" class="my-3" />
       <Markdown v-if="template.description" :source="template.description" />
+
+      <Separator class="my-3" />
+      <div class="flex flex-wrap items-start gap-4">
+        <div>
+          <h3 class="mb-2 text-sm font-medium">{{ $t("components.template.detail.default_image") }}</h3>
+          <img
+            v-if="imageUrl"
+            :src="imageUrl"
+            :alt="$t('components.template.detail.default_image')"
+            class="size-32 rounded border object-cover"
+          />
+          <p v-else class="text-sm text-muted-foreground">
+            {{ $t("components.template.form.no_default_image") }}
+          </p>
+        </div>
+        <div class="flex flex-col gap-2 pt-7">
+          <p class="max-w-xs text-xs text-muted-foreground">
+            {{ $t("components.template.form.default_image_hint") }}
+          </p>
+          <div class="flex gap-2">
+            <Button type="button" size="sm" variant="outline" :loading="imageUploading" @click="imageInput?.click()">
+              <MdiImagePlus class="mr-1 size-4" />
+              {{
+                hasImage ? $t("components.template.form.replace_image") : $t("components.template.form.upload_image")
+              }}
+            </Button>
+            <Button v-if="hasImage" type="button" size="sm" variant="ghost" @click="removeImage">
+              <MdiDelete class="mr-1 size-4" />
+              {{ $t("components.template.form.remove_image") }}
+            </Button>
+          </div>
+          <input
+            ref="imageInput"
+            type="file"
+            class="hidden"
+            accept="image/png,image/jpeg,image/gif,image/avif,image/webp"
+            @change="onImageSelected"
+          />
+        </div>
+      </div>
 
       <Separator class="my-3" />
       <div class="grid gap-4 text-sm md:grid-cols-2">

@@ -9,6 +9,7 @@ import (
 	"github.com/samber/lo"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
@@ -16,8 +17,9 @@ import (
 )
 
 type EntityTemplatesRepository struct {
-	db  *ent.Client
-	bus *eventbus.EventBus
+	db          *ent.Client
+	bus         *eventbus.EventBus
+	attachments *AttachmentRepo
 }
 
 type (
@@ -98,9 +100,18 @@ type (
 		UpdatedAt   time.Time `json:"updatedAt"`
 	}
 
+	TemplateImageSummary struct {
+		ID          uuid.UUID  `json:"id"`
+		Title       string     `json:"title"`
+		MimeType    string     `json:"mimeType"`
+		ThumbnailID *uuid.UUID `json:"thumbnailId" extensions:"x-nullable"`
+	}
+
 	EntityTemplateOut struct {
 		CreatedAt time.Time `json:"createdAt"`
 		UpdatedAt time.Time `json:"updatedAt"`
+		// Default image applied to entities created from this template
+		DefaultImage *TemplateImageSummary `json:"defaultImage" extensions:"x-nullable"`
 		// Default location and tags
 		DefaultLocation        *TemplateLocationSummary `json:"defaultLocation"`
 		Name                   string                   `json:"name"`
@@ -169,6 +180,20 @@ func (r *EntityTemplatesRepository) mapTemplateOut(ctx context.Context, template
 		}
 	}
 
+	// Map the default image if present
+	var image *TemplateImageSummary
+	if template.Edges.DefaultImage != nil {
+		att := template.Edges.DefaultImage
+		image = &TemplateImageSummary{
+			ID:       att.ID,
+			Title:    att.Title,
+			MimeType: att.MimeType,
+		}
+		if thumb, err := att.QueryThumbnail().Only(ctx); err == nil {
+			image.ThumbnailID = &thumb.ID
+		}
+	}
+
 	// Fetch tags from database using stored IDs
 	tags := make([]TemplateTagSummary, 0)
 	if len(template.DefaultTagIds) > 0 {
@@ -201,6 +226,7 @@ func (r *EntityTemplatesRepository) mapTemplateOut(ctx context.Context, template
 		DefaultLifetimeWarranty: template.DefaultLifetimeWarranty,
 		DefaultWarrantyDetails:  template.DefaultWarrantyDetails,
 		DefaultLocation:         location,
+		DefaultImage:            image,
 		DefaultTags:             tags,
 		IncludeWarrantyFields:   template.IncludeWarrantyFields,
 		IncludePurchaseFields:   template.IncludePurchaseFields,
@@ -242,6 +268,7 @@ func (r *EntityTemplatesRepository) GetOne(ctx context.Context, gid uuid.UUID, i
 		).
 		WithFields().
 		WithLocation().
+		WithDefaultImage().
 		Only(ctx)
 
 	if err != nil {
@@ -420,24 +447,156 @@ func (r *EntityTemplatesRepository) Update(ctx context.Context, gid uuid.UUID, d
 	return r.GetOne(ctx, gid, template.ID)
 }
 
-// Delete deletes a template
-func (r *EntityTemplatesRepository) Delete(ctx context.Context, gid uuid.UUID, id uuid.UUID) error {
-	// Verify template belongs to group
-	_, err := r.db.EntityTemplate.Query().
+// GetDefaultImage returns the attachment backing the template's default image,
+// verified to belong to the specified group.
+func (r *EntityTemplatesRepository) GetDefaultImage(ctx context.Context, gid uuid.UUID, id uuid.UUID) (*ent.Attachment, error) {
+	return r.db.EntityTemplate.Query().
 		Where(
 			entitytemplate.ID(id),
 			entitytemplate.HasGroupWith(group.ID(gid)),
 		).
+		QueryDefaultImage().
+		Only(ctx)
+}
+
+// SetDefaultImage stores an image on the template and applies it to entities
+// created from it afterward. Any image the template already had is removed
+// first so a template never accumulates orphaned attachments.
+func (r *EntityTemplatesRepository) SetDefaultImage(ctx context.Context, gid uuid.UUID, id uuid.UUID, doc ItemCreateAttachment) (EntityTemplateOut, error) {
+	template, err := r.db.EntityTemplate.Query().
+		Where(
+			entitytemplate.ID(id),
+			entitytemplate.HasGroupWith(group.ID(gid)),
+		).
+		WithDefaultImage().
+		Only(ctx)
+	if err != nil {
+		return EntityTemplateOut{}, err
+	}
+
+	grp, err := r.db.Group.Get(ctx, gid)
+	if err != nil {
+		return EntityTemplateOut{}, err
+	}
+
+	att, err := r.attachments.CreateUnlinked(ctx, grp, doc, attachment.TypePhoto)
+	if err != nil {
+		return EntityTemplateOut{}, err
+	}
+
+	// The edge is one-to-one, so the previous image has to let go of it before
+	// the new one can take it. Both writes go in one transaction: a partial
+	// swap would leave the template with no image while reporting failure, and
+	// strand the previous attachment where no group-scoped query can reach it.
+	prev := template.Edges.DefaultImage
+
+	swap := func() error {
+		tx, err := r.db.Tx(ctx)
+		if err != nil {
+			return err
+		}
+		committed := false
+		defer func() {
+			if !committed {
+				if err := tx.Rollback(); err != nil {
+					log.Warn().Err(err).Msg("failed to roll back template image swap")
+				}
+			}
+		}()
+
+		if prev != nil {
+			if err := tx.EntityTemplate.UpdateOneID(id).ClearDefaultImage().Exec(ctx); err != nil {
+				return err
+			}
+		}
+		if err := tx.EntityTemplate.UpdateOneID(id).SetDefaultImageID(att.ID).Exec(ctx); err != nil {
+			return err
+		}
+
+		if err := tx.Commit(); err != nil {
+			return err
+		}
+		committed = true
+		return nil
+	}
+
+	if err := swap(); err != nil {
+		// Roll the file back so a failed swap doesn't leave a stored blob that
+		// nothing references.
+		if delErr := r.attachments.delete(ctx, att); delErr != nil {
+			log.Err(delErr).Msg("failed to clean up template image after update failure")
+		}
+		return EntityTemplateOut{}, err
+	}
+
+	if prev != nil {
+		if err := r.attachments.delete(ctx, prev); err != nil {
+			log.Err(err).Msg("failed to delete replaced template image")
+		}
+	}
+
+	r.publishMutationEvent(gid)
+	return r.GetOne(ctx, gid, id)
+}
+
+// ClearDefaultImage removes the template's default image. Entities already
+// created from the template keep the copies they were given.
+func (r *EntityTemplatesRepository) ClearDefaultImage(ctx context.Context, gid uuid.UUID, id uuid.UUID) (EntityTemplateOut, error) {
+	template, err := r.db.EntityTemplate.Query().
+		Where(
+			entitytemplate.ID(id),
+			entitytemplate.HasGroupWith(group.ID(gid)),
+		).
+		WithDefaultImage().
+		Only(ctx)
+	if err != nil {
+		return EntityTemplateOut{}, err
+	}
+
+	if template.Edges.DefaultImage == nil {
+		return r.GetOne(ctx, gid, id)
+	}
+
+	if _, err := template.Update().ClearDefaultImage().Save(ctx); err != nil {
+		return EntityTemplateOut{}, err
+	}
+
+	if err := r.attachments.delete(ctx, template.Edges.DefaultImage); err != nil {
+		log.Err(err).Msg("failed to delete template image")
+	}
+
+	r.publishMutationEvent(gid)
+	return r.GetOne(ctx, gid, id)
+}
+
+// Delete deletes a template
+func (r *EntityTemplatesRepository) Delete(ctx context.Context, gid uuid.UUID, id uuid.UUID) error {
+	// Verify template belongs to group
+	template, err := r.db.EntityTemplate.Query().
+		Where(
+			entitytemplate.ID(id),
+			entitytemplate.HasGroupWith(group.ID(gid)),
+		).
+		WithDefaultImage().
 		Only(ctx)
 
 	if err != nil {
 		return err
 	}
+	image := template.Edges.DefaultImage
 
 	// Delete template (fields will be cascade deleted)
 	err = r.db.EntityTemplate.DeleteOneID(id).Exec(ctx)
 	if err != nil {
 		return err
+	}
+
+	// The image is owned by the template, so it goes with it. The file itself
+	// survives if entities created from this template still reference the path.
+	if image != nil {
+		if err := r.attachments.delete(ctx, image); err != nil {
+			log.Err(err).Msg("failed to delete template image")
+		}
 	}
 
 	r.publishMutationEvent(gid)

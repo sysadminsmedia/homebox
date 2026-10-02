@@ -14,6 +14,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 )
 
@@ -144,6 +145,25 @@ func (_u *AttachmentUpdate) SetThumbnail(v *Attachment) *AttachmentUpdate {
 	return _u.SetThumbnailID(v.ID)
 }
 
+// SetEntityTemplateID sets the "entity_template" edge to the EntityTemplate entity by ID.
+func (_u *AttachmentUpdate) SetEntityTemplateID(id uuid.UUID) *AttachmentUpdate {
+	_u.mutation.SetEntityTemplateID(id)
+	return _u
+}
+
+// SetNillableEntityTemplateID sets the "entity_template" edge to the EntityTemplate entity by ID if the given value is not nil.
+func (_u *AttachmentUpdate) SetNillableEntityTemplateID(id *uuid.UUID) *AttachmentUpdate {
+	if id != nil {
+		_u = _u.SetEntityTemplateID(*id)
+	}
+	return _u
+}
+
+// SetEntityTemplate sets the "entity_template" edge to the EntityTemplate entity.
+func (_u *AttachmentUpdate) SetEntityTemplate(v *EntityTemplate) *AttachmentUpdate {
+	return _u.SetEntityTemplateID(v.ID)
+}
+
 // Mutation returns the AttachmentMutation object of the builder.
 func (_u *AttachmentUpdate) Mutation() *AttachmentMutation {
 	return _u.mutation
@@ -158,6 +178,12 @@ func (_u *AttachmentUpdate) ClearEntity() *AttachmentUpdate {
 // ClearThumbnail clears the "thumbnail" edge to the Attachment entity.
 func (_u *AttachmentUpdate) ClearThumbnail() *AttachmentUpdate {
 	_u.mutation.ClearThumbnail()
+	return _u
+}
+
+// ClearEntityTemplate clears the "entity_template" edge to the EntityTemplate entity.
+func (_u *AttachmentUpdate) ClearEntityTemplate() *AttachmentUpdate {
+	_u.mutation.ClearEntityTemplate()
 	return _u
 }
 
@@ -288,6 +314,35 @@ func (_u *AttachmentUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 			Bidi:    true,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.EntityTemplateCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   attachment.EntityTemplateTable,
+			Columns: []string{attachment.EntityTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytemplate.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.EntityTemplateIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   attachment.EntityTemplateTable,
+			Columns: []string{attachment.EntityTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytemplate.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -429,6 +484,25 @@ func (_u *AttachmentUpdateOne) SetThumbnail(v *Attachment) *AttachmentUpdateOne 
 	return _u.SetThumbnailID(v.ID)
 }
 
+// SetEntityTemplateID sets the "entity_template" edge to the EntityTemplate entity by ID.
+func (_u *AttachmentUpdateOne) SetEntityTemplateID(id uuid.UUID) *AttachmentUpdateOne {
+	_u.mutation.SetEntityTemplateID(id)
+	return _u
+}
+
+// SetNillableEntityTemplateID sets the "entity_template" edge to the EntityTemplate entity by ID if the given value is not nil.
+func (_u *AttachmentUpdateOne) SetNillableEntityTemplateID(id *uuid.UUID) *AttachmentUpdateOne {
+	if id != nil {
+		_u = _u.SetEntityTemplateID(*id)
+	}
+	return _u
+}
+
+// SetEntityTemplate sets the "entity_template" edge to the EntityTemplate entity.
+func (_u *AttachmentUpdateOne) SetEntityTemplate(v *EntityTemplate) *AttachmentUpdateOne {
+	return _u.SetEntityTemplateID(v.ID)
+}
+
 // Mutation returns the AttachmentMutation object of the builder.
 func (_u *AttachmentUpdateOne) Mutation() *AttachmentMutation {
 	return _u.mutation
@@ -443,6 +517,12 @@ func (_u *AttachmentUpdateOne) ClearEntity() *AttachmentUpdateOne {
 // ClearThumbnail clears the "thumbnail" edge to the Attachment entity.
 func (_u *AttachmentUpdateOne) ClearThumbnail() *AttachmentUpdateOne {
 	_u.mutation.ClearThumbnail()
+	return _u
+}
+
+// ClearEntityTemplate clears the "entity_template" edge to the EntityTemplate entity.
+func (_u *AttachmentUpdateOne) ClearEntityTemplate() *AttachmentUpdateOne {
+	_u.mutation.ClearEntityTemplate()
 	return _u
 }
 
@@ -603,6 +683,35 @@ func (_u *AttachmentUpdateOne) sqlSave(ctx context.Context) (_node *Attachment, 
 			Bidi:    true,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.EntityTemplateCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   attachment.EntityTemplateTable,
+			Columns: []string{attachment.EntityTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytemplate.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.EntityTemplateIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   attachment.EntityTemplateTable,
+			Columns: []string{attachment.EntityTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytemplate.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
