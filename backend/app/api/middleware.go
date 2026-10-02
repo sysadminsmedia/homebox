@@ -15,6 +15,7 @@ import (
 	v1 "github.com/sysadminsmedia/homebox/backend/app/api/handlers/v1"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
@@ -45,6 +46,21 @@ type tokenHasKey struct {
 }
 
 var hashedToken = tokenHasKey{key: "hashedToken"}
+
+// allowQuerySessionToken marks routes that may receive a full session token via
+// the access_token query parameter. See mwAllowQuerySessionToken.
+var allowQuerySessionToken = tokenHasKey{key: "allowQuerySessionToken"}
+
+// mwAllowQuerySessionToken lets mwAuthToken accept a session token from the
+// access_token query parameter on this route. Use it only for WebSocket
+// upgrades: browsers cannot set an Authorization header on a WebSocket, and
+// non-cookie clients (and clients older than the Sec-WebSocket-Protocol auth)
+// rely on the query parameter. It must run before mwAuthToken.
+func (a *app) mwAllowQuerySessionToken(next errchain.Handler) errchain.Handler {
+	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+		return next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), allowQuerySessionToken, true)))
+	})
+}
 
 type RoleMode int
 
@@ -169,11 +185,14 @@ func getWebSocketProtocolToken(r *http.Request) (string, error) {
 
 // mwAuthToken is a middleware that will check the database for a stateful token
 // and attach it's user to the request context, or return an appropriate error.
-// Authorization support is by token via Headers or Query Parameter
+// Authorization support is by token via Headers or Query Parameter. The query
+// parameter only accepts attachment-scoped tokens; session tokens are rejected
+// unless the route opts in with mwAllowQuerySessionToken, and API keys are
+// never accepted that way.
 //
 // Example:
 //   - header = "Bearer 1234567890"
-//   - query = "?access_token=1234567890"
+//   - query = "?access_token=<attachment token>"
 func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 		spanCtx, span := mwTracer().Start(r.Context(), "middleware.mwAuthToken",
@@ -238,6 +257,24 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 			recordMwSpanError(span, err)
 			span.SetAttributes(attribute.String("auth.outcome", "lookup_error"))
 			return err
+		}
+
+		// Query-string tokens end up in browser history, proxy logs, and shared
+		// links, so they are only accepted for the attachment-scoped token the
+		// frontend embeds in <img>/download URLs. Full session tokens must be
+		// sent via cookie or the Authorization header, except on routes that
+		// opt in with mwAllowQuerySessionToken (WebSocket upgrades).
+		if err == nil && tokenSource == "query" && r.Context().Value(allowQuerySessionToken) == nil {
+			roles, rolesErr := a.repos.AuthTokens.GetRoles(r.Context(), requestToken)
+			if rolesErr != nil {
+				recordMwSpanError(span, rolesErr)
+				span.SetAttributes(attribute.String("auth.outcome", "lookup_error"))
+				return rolesErr
+			}
+			if roles.Contains(authroles.RoleUser.String()) {
+				span.SetAttributes(attribute.String("auth.outcome", "session_token_in_query"))
+				return validate.NewRequestError(errors.New("session tokens are not accepted in the query string"), http.StatusUnauthorized)
+			}
 		}
 
 		isAPIKey := false
@@ -532,6 +569,17 @@ func (a *app) mwAuthRateLimit(next errchain.Handler) errchain.Handler {
 		)
 		return err
 	})
+}
+
+// mwRegisterRateLimit caps registration attempts per client, successful or not.
+// Each registration runs a full Argon2id hash and creates a user and group, so
+// unlike login it must be throttled even when every request succeeds. It is
+// turned off together with the other auth limits via auth.rate_limit.enabled.
+func (a *app) mwRegisterRateLimit(next errchain.Handler) errchain.Handler {
+	if a.registerLimiter == nil || !a.conf.Auth.RateLimit.Enabled {
+		return next
+	}
+	return a.registerLimiter.middleware(next)
 }
 
 // shouldAllow checks if the client should be allowed to authenticate based on the configured rate limit.

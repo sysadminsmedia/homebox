@@ -104,7 +104,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 			providers.NewLocalProvider(a.services.User),
 		}
 
-		r.Post("/users/register", chain.ToHandlerFunc(v1Ctrl.HandleUserRegistration()))
+		r.Post("/users/register", chain.ToHandlerFunc(v1Ctrl.HandleUserRegistration(), a.mwRegisterRateLimit))
 		r.Post("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(providers...), a.mwAuthRateLimit))
 		r.Post("/users/forgot-password", chain.ToHandlerFunc(v1Ctrl.HandleForgotPassword(), a.mwAuthRateLimit))
 		r.Post("/users/reset-password", chain.ToHandlerFunc(v1Ctrl.HandleResetPassword(), a.mwAuthRateLimit))
@@ -131,7 +131,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 			a.mwGroupOwner,
 		}
 
-		r.Get("/ws/events", chain.ToHandlerFunc(v1Ctrl.HandleCacheWS(), userMW...))
+		r.Get("/ws/events", chain.ToHandlerFunc(v1Ctrl.HandleCacheWS(), append([]errchain.Middleware{a.mwAllowQuerySessionToken}, userMW...)...))
 
 		// User management endpoints
 		r.Get("/users/self", chain.ToHandlerFunc(v1Ctrl.HandleUserSelf(), userMW...))
