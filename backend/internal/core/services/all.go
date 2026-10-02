@@ -17,6 +17,7 @@ type AllServices struct {
 	BackgroundService *BackgroundService
 	Exports           *ExportService
 	Currencies        *currencies.CurrencyRegistry
+	Found             *FoundService
 }
 
 type OptionsFunc func(*options)
@@ -65,9 +66,9 @@ func WithExportPlumbing(bus *eventbus.EventBus, db *ent.Client, storage config.S
 	}
 }
 
-// WithMailer hands the SMTP mailer to services that send mail (currently only
-// password reset). A nil or unconfigured mailer disables those code paths
-// rather than panicking.
+// WithMailer hands the SMTP mailer to services that send mail (currently
+// password reset and the found-item contact relay). A nil or unconfigured
+// mailer disables those code paths rather than panicking.
 func WithMailer(m *mailer.Mailer) func(*options) {
 	return func(o *options) {
 		o.mailer = m
@@ -127,5 +128,6 @@ func New(repos *repo.AllRepos, opts ...OptionsFunc) *AllServices {
 			dialect:    options.dialect,
 		},
 		Currencies: currencies.NewCurrencyService(options.currencies),
+		Found:      &FoundService{mailer: options.mailer},
 	}
 }

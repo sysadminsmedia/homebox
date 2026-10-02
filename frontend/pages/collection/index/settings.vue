@@ -4,10 +4,18 @@
   import { Button } from "@/components/ui/button";
   import { Label } from "@/components/ui/label";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import { Switch } from "@/components/ui/switch";
   import MdiLoading from "~icons/mdi/loading";
   import FormTextField from "~/components/Form/TextField.vue";
-  import type { CurrenciesCurrency, Group } from "~~/lib/api/types/data-contracts";
+  import FormTextArea from "~/components/Form/TextArea.vue";
+  import type { CurrenciesCurrency, Group, GroupUpdate } from "~~/lib/api/types/data-contracts";
   import { fmtCurrencyAsync } from "~/composables/utils";
+  import { utf8Length } from "@/lib/utils";
+
+  // The generated GroupUpdate type marks every field (including
+  // foundContactEnabled/foundContactMessage) as required, but the backend applies pointer
+  // semantics: omitted fields are left unchanged. Redeclared here as partial to match reality.
+  type GroupUpdatePayload = Partial<GroupUpdate>;
 
   definePageMeta({
     middleware: ["auth"],
@@ -29,6 +37,10 @@
   const name = ref("");
   const currencyCode = ref("USD");
   const currencyExample = ref("$1,000.00");
+
+  const foundContactEnabled = ref(false);
+  const foundContactMessage = ref("");
+  const savingFoundContact = ref(false);
 
   const loadSettings = async () => {
     if (!selectedCollection.value) {
@@ -60,6 +72,8 @@
       group.value = res.data;
       name.value = res.data.name;
       currencyCode.value = res.data.currency;
+      foundContactEnabled.value = res.data.foundContactEnabled;
+      foundContactMessage.value = res.data.foundContactMessage ?? "";
     } catch (e) {
       const msg = (e as Error).message ?? String(e);
       error.value = msg;
@@ -97,13 +111,11 @@
     error.value = null;
 
     try {
-      const res = await api.group.update(
-        {
-          name: name.value,
-          currency: currencyCode.value,
-        },
-        selectedCollection.value.id
-      );
+      const payload: GroupUpdatePayload = {
+        name: name.value,
+        currency: currencyCode.value,
+      };
+      const res = await api.group.update(payload as GroupUpdate, selectedCollection.value.id);
 
       if (res.error || !res.data) {
         const msg = t("profile.toast.failed_update_group");
@@ -123,6 +135,41 @@
       toast.error(msg);
     } finally {
       saving.value = false;
+    }
+  };
+
+  const saveFoundContact = async () => {
+    if (!selectedCollection.value || !group.value) return;
+
+    savingFoundContact.value = true;
+    error.value = null;
+
+    try {
+      const payload: GroupUpdatePayload = {
+        name: group.value.name,
+        currency: group.value.currency,
+        foundContactEnabled: foundContactEnabled.value,
+        foundContactMessage: foundContactMessage.value,
+      };
+      const res = await api.group.update(payload as GroupUpdate, selectedCollection.value.id);
+
+      if (res.error || !res.data) {
+        const msg = t("profile.toast.failed_update_group");
+        error.value = msg;
+        toast.error(msg);
+        return;
+      }
+
+      group.value = res.data;
+      foundContactEnabled.value = res.data.foundContactEnabled;
+      foundContactMessage.value = res.data.foundContactMessage ?? "";
+      toast.success(t("found.settings.saved"));
+    } catch (e) {
+      const msg = (e as Error).message ?? String(e);
+      error.value = msg;
+      toast.error(msg);
+    } finally {
+      savingFoundContact.value = false;
     }
   };
 </script>
@@ -164,6 +211,41 @@
           <Button variant="secondary" size="sm" :disabled="saving" @click="save">
             <MdiLoading v-if="saving" class="mr-2 inline-block animate-spin" />
             <span>{{ $t("profile.update_group") }}</span>
+          </Button>
+        </div>
+      </div>
+
+      <div v-if="selectedCollection" class="mt-4 space-y-4 rounded-md border bg-card p-4">
+        <div>
+          <h2 class="text-lg font-medium">{{ $t("found.settings.title") }}</h2>
+          <p class="text-sm text-muted-foreground">{{ $t("found.settings.description") }}</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <Switch id="found-contact-enabled" v-model="foundContactEnabled" />
+          <Label for="found-contact-enabled">{{ $t("found.settings.enable") }}</Label>
+        </div>
+
+        <FormTextArea
+          v-model="foundContactMessage"
+          :label="$t('found.settings.message_label')"
+          :placeholder="$t('found.settings.message_placeholder')"
+          :max-length="500"
+        />
+
+        <div class="rounded-md border border-accent-foreground bg-accent p-4 text-accent-foreground">
+          <p class="text-sm">{{ $t("found.settings.no_smtp_warning") }}</p>
+        </div>
+
+        <div class="mt-4">
+          <Button
+            variant="secondary"
+            size="sm"
+            :disabled="savingFoundContact || utf8Length(foundContactMessage) > 500"
+            @click="saveFoundContact"
+          >
+            <MdiLoading v-if="savingFoundContact" class="mr-2 inline-block animate-spin" />
+            <span>{{ $t("global.save") }}</span>
           </Button>
         </div>
       </div>

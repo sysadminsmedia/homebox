@@ -76,6 +76,16 @@ func Currency(v string) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldCurrency, v))
 }
 
+// FoundContactEnabled applies equality check predicate on the "found_contact_enabled" field. It's identical to FoundContactEnabledEQ.
+func FoundContactEnabled(v bool) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldFoundContactEnabled, v))
+}
+
+// FoundContactMessage applies equality check predicate on the "found_contact_message" field. It's identical to FoundContactMessageEQ.
+func FoundContactMessage(v string) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldFoundContactMessage, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldCreatedAt, v))
@@ -284,6 +294,81 @@ func CurrencyEqualFold(v string) predicate.Group {
 // CurrencyContainsFold applies the ContainsFold predicate on the "currency" field.
 func CurrencyContainsFold(v string) predicate.Group {
 	return predicate.Group(sql.FieldContainsFold(FieldCurrency, v))
+}
+
+// FoundContactEnabledEQ applies the EQ predicate on the "found_contact_enabled" field.
+func FoundContactEnabledEQ(v bool) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldFoundContactEnabled, v))
+}
+
+// FoundContactEnabledNEQ applies the NEQ predicate on the "found_contact_enabled" field.
+func FoundContactEnabledNEQ(v bool) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldFoundContactEnabled, v))
+}
+
+// FoundContactMessageEQ applies the EQ predicate on the "found_contact_message" field.
+func FoundContactMessageEQ(v string) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldFoundContactMessage, v))
+}
+
+// FoundContactMessageNEQ applies the NEQ predicate on the "found_contact_message" field.
+func FoundContactMessageNEQ(v string) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldFoundContactMessage, v))
+}
+
+// FoundContactMessageIn applies the In predicate on the "found_contact_message" field.
+func FoundContactMessageIn(vs ...string) predicate.Group {
+	return predicate.Group(sql.FieldIn(FieldFoundContactMessage, vs...))
+}
+
+// FoundContactMessageNotIn applies the NotIn predicate on the "found_contact_message" field.
+func FoundContactMessageNotIn(vs ...string) predicate.Group {
+	return predicate.Group(sql.FieldNotIn(FieldFoundContactMessage, vs...))
+}
+
+// FoundContactMessageGT applies the GT predicate on the "found_contact_message" field.
+func FoundContactMessageGT(v string) predicate.Group {
+	return predicate.Group(sql.FieldGT(FieldFoundContactMessage, v))
+}
+
+// FoundContactMessageGTE applies the GTE predicate on the "found_contact_message" field.
+func FoundContactMessageGTE(v string) predicate.Group {
+	return predicate.Group(sql.FieldGTE(FieldFoundContactMessage, v))
+}
+
+// FoundContactMessageLT applies the LT predicate on the "found_contact_message" field.
+func FoundContactMessageLT(v string) predicate.Group {
+	return predicate.Group(sql.FieldLT(FieldFoundContactMessage, v))
+}
+
+// FoundContactMessageLTE applies the LTE predicate on the "found_contact_message" field.
+func FoundContactMessageLTE(v string) predicate.Group {
+	return predicate.Group(sql.FieldLTE(FieldFoundContactMessage, v))
+}
+
+// FoundContactMessageContains applies the Contains predicate on the "found_contact_message" field.
+func FoundContactMessageContains(v string) predicate.Group {
+	return predicate.Group(sql.FieldContains(FieldFoundContactMessage, v))
+}
+
+// FoundContactMessageHasPrefix applies the HasPrefix predicate on the "found_contact_message" field.
+func FoundContactMessageHasPrefix(v string) predicate.Group {
+	return predicate.Group(sql.FieldHasPrefix(FieldFoundContactMessage, v))
+}
+
+// FoundContactMessageHasSuffix applies the HasSuffix predicate on the "found_contact_message" field.
+func FoundContactMessageHasSuffix(v string) predicate.Group {
+	return predicate.Group(sql.FieldHasSuffix(FieldFoundContactMessage, v))
+}
+
+// FoundContactMessageEqualFold applies the EqualFold predicate on the "found_contact_message" field.
+func FoundContactMessageEqualFold(v string) predicate.Group {
+	return predicate.Group(sql.FieldEqualFold(FieldFoundContactMessage, v))
+}
+
+// FoundContactMessageContainsFold applies the ContainsFold predicate on the "found_contact_message" field.
+func FoundContactMessageContainsFold(v string) predicate.Group {
+	return predicate.Group(sql.FieldContainsFold(FieldFoundContactMessage, v))
 }
 
 // HasUsers applies the HasEdge predicate on the "users" edge.

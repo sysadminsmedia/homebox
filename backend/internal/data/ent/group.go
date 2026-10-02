@@ -26,6 +26,10 @@ type Group struct {
 	Name string `json:"name,omitempty"`
 	// Currency holds the value of the "currency" field.
 	Currency string `json:"currency,omitempty"`
+	// FoundContactEnabled holds the value of the "found_contact_enabled" field.
+	FoundContactEnabled bool `json:"found_contact_enabled,omitempty"`
+	// FoundContactMessage holds the value of the "found_contact_message" field.
+	FoundContactMessage string `json:"found_contact_message,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GroupQuery when eager-loading is set.
 	Edges        GroupEdges `json:"edges"`
@@ -143,7 +147,9 @@ func (*Group) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case group.FieldName, group.FieldCurrency:
+		case group.FieldFoundContactEnabled:
+			values[i] = new(sql.NullBool)
+		case group.FieldName, group.FieldCurrency, group.FieldFoundContactMessage:
 			values[i] = new(sql.NullString)
 		case group.FieldCreatedAt, group.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -193,6 +199,18 @@ func (_m *Group) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field currency", values[i])
 			} else if value.Valid {
 				_m.Currency = value.String
+			}
+		case group.FieldFoundContactEnabled:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field found_contact_enabled", values[i])
+			} else if value.Valid {
+				_m.FoundContactEnabled = value.Bool
+			}
+		case group.FieldFoundContactMessage:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field found_contact_message", values[i])
+			} else if value.Valid {
+				_m.FoundContactMessage = value.String
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -286,6 +304,12 @@ func (_m *Group) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("currency=")
 	builder.WriteString(_m.Currency)
+	builder.WriteString(", ")
+	builder.WriteString("found_contact_enabled=")
+	builder.WriteString(fmt.Sprintf("%v", _m.FoundContactEnabled))
+	builder.WriteString(", ")
+	builder.WriteString("found_contact_message=")
+	builder.WriteString(_m.FoundContactMessage)
 	builder.WriteByte(')')
 	return builder.String()
 }
