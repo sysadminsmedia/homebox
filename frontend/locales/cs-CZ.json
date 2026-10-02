@@ -117,6 +117,86 @@
             "no_color_selected": "Není vybrána žádná barva",
             "randomize": "Náhodně vybrat barvu"
         },
+        "entity": {
+            "create_modal": {
+                "clear_template": "Vymazat šablonu",
+                "delete_photo": "Smazat fotku",
+                "entity_description": "{type} Popis",
+                "entity_name": "{type} Název",
+                "entity_photo": "{type} Foto 📷",
+                "entity_quantity": "{type} Množství",
+                "item_selector_no_results_text": "Psaním začne hledání…",
+                "parent_item": "Nadřazená položka",
+                "product_tooltip_input_barcode": "Automatické vyplnění ručně zadaným čárovým kódem",
+                "product_tooltip_scan_barcode": "Automatické vyplnění čárovým kódem z 📷",
+                "rotate_photo": "Otočit fotku",
+                "set_as_primary_photo": "Nastavit jako { isPrimary, select, true {non-} false {} other {}}hlavní fotku",
+                "toast": {
+                    "already_creating": "Již se vytváří {type}",
+                    "create_failed": "Nelze vytvořit {type}",
+                    "create_success": "Vytvořeno {type}",
+                    "failed_load_parent": "Načtení nadřazené položky se nezdařilo – vyberte ji prosím ručně",
+                    "no_canvas_support": "Váš prohlížeč nepodporuje operace s obrazem",
+                    "please_select_entity_type": "Vyberte prosím typ subjektu.",
+                    "please_select_location": "Vyberte prosím umístění.",
+                    "rotate_failed": "Nepodařilo se otočit obrázek: { error }",
+                    "rotate_process_failed": "Nepodařilo se zpracovat otočený obrázek",
+                    "some_photos_failed": "{count, plural, =0 {Žádná fotka k nahrání.} =1 {Nepodařilo se nahrát 1 fotku.} other {Některé fotky se nepodařilo nahrát.}}",
+                    "upload_failed": "Nepodařilo se nahrát fotku: { photoName }",
+                    "upload_success": "{count, plural, =0 {Nebyly nahrány žádné fotky.} =1 {Fotka úspěšně nahrána.} other {Všechny fotky úspěšně nahrány.}}",
+                    "uploading_photos": "{count, plural, =0 {Žádné fotky k nahrání} =1 {Nahrává se 1 fotka…} other {Nahrává se {count} fotek…}}"
+                },
+                "upload_photos": "Nahrát fotky",
+                "uploaded": "Fotka byla nahrána"
+            },
+            "selector": {
+                "placeholder": "Vyberte typ…"
+            }
+        },
+        "entityTypes": {
+            "card": {
+                "actions": {
+                    "delete": "Smazat"
+                },
+                "badge_container": "Kontejner",
+                "default_template": "Výchozí šablona: {name}",
+                "tooltip": {
+                    "delete": "Smazat",
+                    "edit": "Upravit"
+                }
+            },
+            "confirm": {
+                "convert_item_to_location": "Převedením typu položky na typ umístění dojde ke ztrátě polí u entit, které tento typ používají. Opravdu chcete pokračovat?",
+                "delete_entity_type": "Opravdu chcete odstranit „{name}“?"
+            },
+            "create_dialog": {
+                "button": "Vytvořit",
+                "is_container_location_type_label": "Je typ kontejneru / umístění",
+                "name_label": "Název",
+                "title": "Vytvořit typ entity"
+            },
+            "page": {
+                "create": "Vytvořit",
+                "empty_button": "Vytvořit typ entity",
+                "empty_title": "Zatím nebyly definovány žádné typy entit.",
+                "title": "Typy entit"
+            },
+            "toasts": {
+                "create_failed": "Vytvoření typu entity se nezdařilo",
+                "create_success": "Typ entity byl vytvořen",
+                "delete_confirm_failed": "Odstranění typu entity se nezdařilo. Ujistěte se, že jej žádná entita nepoužívá.",
+                "delete_success": "Typ entity byl odstraněn",
+                "name_required": "Název je povinný",
+                "update_failed": "Aktualizace typu entity se nezdařila",
+                "update_success": "Typ entity byl aktualizován"
+            },
+            "update_dialog": {
+                "button": "Aktualizovat",
+                "is_container_location_type_label": "Jedná se o typ kontejneru / umístění",
+                "name_label": "Název",
+                "title": "Aktualizovat typ entity"
+            }
+        },
         "form": {
             "min_length": "min {min}",
             "password": {
@@ -173,6 +253,7 @@
                 "qr_tooltip": "Zobrazit QR kód"
             },
             "password_score": {
+                "does_not_meet_requirement": "Nesplňuje požadavky na sílu hesla",
                 "password_strength": "Síla hesla"
             }
         },
@@ -180,36 +261,6 @@
             "attachments_list": {
                 "download": "Stáhnout",
                 "open_new_tab": "Otevřít na nové kartě"
-            },
-            "create_modal": {
-                "clear_template": "Vymazat šablonu",
-                "delete_photo": "Odstranit fotku",
-                "item_description": "Popis položky",
-                "item_name": "Název položky",
-                "item_photo": "Fotka položky 📷",
-                "item_quantity": "Množství položek",
-                "parent_item": "Nadřazená položka",
-                "product_tooltip_input_barcode": "Automatické vyplnění ručně zadaným čárovým kódem",
-                "product_tooltip_scan_barcode": "Automatické vyplnění čárovým kódem z 📷",
-                "rotate_photo": "Otočit fotku",
-                "set_as_primary_photo": "Nastavit jako { isPrimary, select, true {ne} false {} other {}}primární fotku",
-                "title": "Vytvořit položku",
-                "toast": {
-                    "already_creating": "Již vytváříte položku",
-                    "create_failed": "Nepodařilo se vytvořit položku",
-                    "create_success": "Položka vytvořena",
-                    "failed_load_parent": "Nepodařilo se načíst nadřazenou položku - vyberte ji ručně",
-                    "no_canvas_support": "Váš prohlížeč nepodporuje operace s obrazem",
-                    "please_select_location": "Vyberte prosím umístění.",
-                    "rotate_failed": "Nepodařilo se otočit obrázek: { error }",
-                    "rotate_process_failed": "Nepodařilo se zpracovat otočený obrázek",
-                    "some_photos_failed": "{count, plural, =0 {Žádná fotka k nahrání.} =1 {Nepodařilo se nahrát 1 fotku.} other {Některé fotky se nepodařilo nahrát.}}",
-                    "upload_failed": "Nepodařilo se nahrát fotku: { photoName }",
-                    "upload_success": "{count, plural, =0 {Nejsou nahrané žádné fotky.} =1 {Fotka byla úspěšně nahrána.} other {Všechny fotky byly úspěšně nahrány.}}",
-                    "uploading_photos": "{count, plural, =0 {Žádné fotky k nahrání} =1 {Nahrávání 1 fotky…} other {Nahrávání {count} fotek…}}"
-                },
-                "upload_photos": "Nahrát fotky",
-                "uploaded": "Fotka byla nahrána"
             },
             "product_import": {
                 "barcode": "Čárový kód produktu",
@@ -280,17 +331,7 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Popis umístění",
-                "location_name": "Název umístění",
-                "location_photo": "Fotografie místa 📷",
-                "title": "Vytvořit umístění",
-                "toast": {
-                    "already_creating": "Již vytváříte umístění",
-                    "create_failed": "Nelze vytvořit umístění",
-                    "create_success": "Umístění bylo vytvořeno"
-                }
-            },
+            "create_item": "Vytvořit položku",
             "selector": {
                 "clear": "Vymazat výběr umístění",
                 "no_location_found": "Nebylo nalezeno žádné umístění",
@@ -414,6 +455,8 @@
         "duplicate": "Duplikovat",
         "edit": "Upravit",
         "email": "E-mail",
+        "entity": "Entita",
+        "entity_type": "Typ entity",
         "follow_dev": "Sledovat vývojáře",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
@@ -421,9 +464,11 @@
         },
         "github": "GitHub projekt",
         "insured": "Pojištěno",
+        "item": "Položka",
         "items": "Položky",
         "join_discord": "Připojte se na Discord",
         "loading": "Načítání…",
+        "location": "Umístění",
         "locations": "Umístění",
         "maintenance": "Údržba",
         "name": "Jméno",
@@ -531,6 +576,7 @@
             "title": "Nastavení duplikování"
         },
         "edit": {
+            "change_entity_type_confirm": "Změna typu entity může způsobit ztrátu dat v polích, která nejsou společná pro aktuální a nový typ entity. Opravdu chcete změnit typ entity?",
             "edit_attachment_dialog": {
                 "attachment_title": "Název přílohy",
                 "attachment_type": "Typ přílohy",
@@ -599,11 +645,12 @@
         "toast": {
             "asset_not_found": "Majetek nenalezen",
             "attachment_deleted": "Příloha odstraněna",
+            "attachment_too_large": "Příloha je příliš velká: překračuje limit velikosti pro nahrávání na server",
             "attachment_updated": "Příloha aktualizována",
             "attachment_uploaded": "Příloha nahrána",
             "child_items_location_no_longer_synced": "Umístění podřízených položek již nebude s touto položkou synchronizováno.",
             "child_items_location_synced": "Umístění podřízených položek bylo synchronizováno s touto položkou",
-            "child_location_desync": "Změna umístění zruší synchronizaci s umístěním nadřezené položky",
+            "child_location_desync": "Nadřazená položka byla odstraněna – položka se nyní nachází přímo ve vybraném umístění",
             "error_loading_parent_data": "Při pokusu o načtení dat nadřazené položky se něco pokazilo",
             "failed_adjust_quantity": "Nepodařilo se upravit množství",
             "failed_delete_attachment": "Nepodařilo se odstranit přílohu",
@@ -662,6 +709,8 @@
         "zh-TW": "Čínština (Tradiční)"
     },
     "languages.da-DK": "Dánština",
+    "languages.el-GR": "Řecký",
+    "languages.en@pirate": "angličtina (pirátská)",
     "languages.ro-RO": "Rumunština",
     "languages.sk-SK": "Slovenština",
     "languages.sq-AL": "Albánština",
@@ -720,7 +769,7 @@
     },
     "menu": {
         "collection": "Sbírka",
-        "create_item": "Položka",
+        "create_item": "Položka / Majetek",
         "create_location": "Umístění",
         "create_tag": "Štítek",
         "home": "Domů",
@@ -743,6 +792,7 @@
         "api_key_copy": "Kopírovat",
         "api_key_create": "Vytvořit klíč API",
         "api_key_created": "Vytvořeno",
+        "api_key_default_expiration": "Platnost klíčů vyprší po 30 dnech, pokud nestanovíte konkrétní datum.",
         "api_key_delete_confirm": "Opravdu chcete tento klíč API zrušit? Všichni klienti, kteří jej používají, o přístup okamžitě přijdou.",
         "api_key_expires_at": "Vyprší",
         "api_key_last_used": "Naposledy použito",
@@ -750,7 +800,7 @@
         "api_key_name_placeholder": "např. Home Assistant",
         "api_key_never_used": "Nikdy",
         "api_key_no_expiration": "Bez expirace",
-        "api_key_set_expiration": "Nastavit datum expirace",
+        "api_key_set_expiration": "Nastavit vlastní datum vypršení platnosti",
         "api_key_token_label": "Váš nový klíč API",
         "api_key_token_warning": "Zkopírujte si tento token hned teď. Z bezpečnostních důvodů se již znovu nezobrazí.",
         "api_keys": "Klíče API",
@@ -770,6 +820,8 @@
         "inactive": "Neaktivní",
         "language": "Jazyk",
         "legacy_image_fit": "{ currentValue, select, true {Zakázat starší přizpůsobení: přizpůsobit obrázek s pruhy} false {Povolit starší přizpůsobení: vyplnit obrázek oříznutím} other {Not Hit}}",
+        "logout_all_confirm": "Tímto se odhlásíte ze všech zařízení, včetně tohoto. Budete se muset znovu přihlásit. Chcete pokračovat?",
+        "logout_all_devices": "Odhlásit se ze všech zařízení",
         "moved_notice_body": "Oznamovače, pozvánky a nastavení měny byly přesunuty na stránky sbírek.",
         "moved_notice_description": "Tato nastavení jsou nyní spravována podle sbírky.",
         "moved_notice_link_invites": "Pozvánky do sbírky",
@@ -798,10 +850,12 @@
             "failed_delete_account": "Nepodařilo se odstranit vás účet.",
             "failed_delete_notifier": "Nepodařilo se odstranit oznamovač.",
             "failed_get_currencies": "Nepodařilo se získat měny",
+            "failed_logout_all": "Odhlášení ze všech zařízení se nezdařilo.",
             "failed_test_notifier": "Nepodařilo se otestovat oznamovač.",
             "failed_update_group": "Nepodařilo se aktualizovat skupinu",
             "failed_update_notifier": "Nepodařilo se aktualizovat oznamovač.",
             "group_updated": "Skupina aktualizována",
+            "logout_all_success": "Odhlášeno ze všech zařízení.",
             "notifier_test_success": "Oznamovač úspěšně otestován.",
             "password_changed": "Heslo bylo úspěšně změněno."
         },
@@ -843,7 +897,7 @@
             "skip_first_labels": "Přeskočit první etikety",
             "tip_1": "Výchozí nastavení jsou nastavení pro\n '<a href=\"https://www.avery.com/templates/5260\">'archy štítků Avery 5260'</a>'. Pokud používáte jiný arch, musíte\n nastavení upravit tak, aby odpovídalo vašemu archu.",
             "tip_2": "Pokud si arch přizpůsobujete, rozměry jsou uvedeny v palcích. Při sestavování archu 5260 jsem zjistil,\n že rozměry použité v jejich šabloně neodpovídají tomu, co bylo potřeba vytisknout v rámci políček.\n '<b>'Připravte se na to, že budete muset použít metodu pokusu a omylu.'</b>'",
-            "tip_3": "Při tisku nezapomeňte:\n'<ol><li>'Nastavit okraje na 0 nebo Žádné'</li><li>'Nastavit měřítko na 100%'</li><li>Zakázat oboustranný tisk'</li><li>'Před tiskem více stránek vytiskněte zkušební stránku'</li></ol>'",
+            "tip_3": "Při tisku nezapomeňte:\n ‚<ol><li>'Nastavit okraje na 0 nebo Žádné‘</li><li>‚Nastavit měřítko na 100 %‘</li><li>‚Zakázat oboustranný tisk‘</li><li>‚Před tiskem více stránek vytisknout zkušební stránku‘</li></ol>'",
             "tips": "Tipy",
             "title": "Generátor etiket",
             "toast": {
@@ -922,6 +976,26 @@
             "zero_datetimes_sub": "Obnoví hodnotu času pro všechna pole s datem a časem v inventáři na začátek data. Jedná se o opravu chyby, která byla zavedena na začátku vývoje webu a která způsobovala, že hodnota času byla uložena spolu s časem, což způsobovalo problémy se zobrazováním přesných hodnot v polích s datem. Další podrobnosti naleznete v '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Problém #236 na Githubu.'</a>'"
         },
         "actions_sub": "Hromadně aplikujte akce na majetek. Jedná se o nevratné akce. '<b>'Buďte opatrní.'</b>'",
+        "backups": "Zálohování a obnovení",
+        "backups_set": {
+            "create": "Vytvořit zálohu",
+            "create_button": "Spustit zálohování",
+            "create_sub": "Vytvoří soubor ZIP obsahující všechny entity, štítky, vlastní pole, přílohy a záznamy o údržbě v této sbírce. Úloha běží na pozadí; jakmile bude hotová, artefakt se zobrazí v tabulce níže.",
+            "delete_confirm": "Chcete tento záložní artefakt smazat? Tuto akci nelze vrátit zpět.",
+            "download": "Stáhnout",
+            "failed": "Zálohování se nezdařilo. Podrobnosti najdete v protokolech serveru.",
+            "list_empty": "Zatím žádné zálohy.",
+            "restore": "Obnovit ze zálohy",
+            "restore_button": "Nahrát a obnovit",
+            "restore_sub": "Nahrajte záložní soubor ZIP, aby se tato sbírka naplnila. Sbírka zatím nesmí obsahovat žádné položky – výchozí umístění a štítky se v rámci obnovy automaticky vymažou.",
+            "table": {
+                "actions": "Akce",
+                "created": "Vytvořeno",
+                "size": "Velikost",
+                "status": "Stav"
+            }
+        },
+        "backups_sub": "Exportujte celou svou sbírku – entity, štítky, přílohy a metadata – do přenositelného archivu ZIP. Obnovte archiv do nově zaregistrované, prázdné sbírky na tomto nebo jiném serveru.",
         "demo_mode_error": {
             "wipe_inventory": "Zásoby, štítky, umístění a záznamy o údržbě nelze vymazat, pokud je Homebox v demo režimu. Ujistěte se, že nejste v demo režimu, a zkuste to znovu."
         },
@@ -948,12 +1022,18 @@
         "reports_sub": "Generování různých přehledů o zásobách.",
         "toast": {
             "asset_success": "{ results } byly aktualizovány.",
+            "backup_delete_failed": "Odstranění zálohy se nezdařilo.",
+            "backup_start_failed": "Zahájení zálohování se nezdařilo.",
+            "backup_started": "Zálohování bylo zahájeno — jakmile bude hotové, objeví se v tabulce.",
             "failed_create_missing_thumbnails": "Nepodařilo se vytvořit chybějící náhledy.",
             "failed_ensure_ids": "Nepodařilo se zajistit ID majetku.",
             "failed_ensure_import_refs": "Nepodařilo se zajistit refernce importu.",
             "failed_set_primary_photos": "Nepodařilo se nastavit primární fotky.",
             "failed_wipe_inventory": "Nepodařilo se vymazat sklad.",
             "failed_zero_datetimes": "Nepodařilo se obnovit hodnoty data a času.",
+            "restore_failed": "Obnovení se nezdařilo.",
+            "restore_requires_empty": "Obnovení vyžaduje sbírku bez položek. Přepněte na nově zaregistrovanou sbírku (výchozí umístění a štítky jsou v pořádku) a zkuste to znovu.",
+            "restore_started": "Obnovení bylo zahájeno — za chvíli stránku aktualizujte, abyste viděli importované položky.",
             "wipe_inventory_success": "Sklad byl úspěšně vymazán. { results } položek bylo odstraněno."
         }
     }

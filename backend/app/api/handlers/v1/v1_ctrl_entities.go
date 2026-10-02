@@ -51,12 +51,12 @@ func startEntityCtrlSpan(ctx context.Context, name string, attrs ...attribute.Ke
 //	@Param		q				query		string		false	"search string; matches names, descriptions, serial/model numbers, manufacturers, notes, purchase sources, tag names, and custom field values. Use #<assetId> to look up by asset ID and double quotes for exact phrases"
 //	@Param		page			query		int			false	"page number"
 //	@Param		pageSize		query		int			false	"items per page"
-//	@Param		tags			query		[]string	false	"tags Ids"		collectionFormat(multi)
+//	@Param		tags			query		[]string	false	"tags Ids"	collectionFormat(multi)
 //	@Param		matchAllTags	query		bool		false	"require all selected tags to match (AND) instead of any (OR)"
-//	@Param		parentIds		query		[]string	false	"parent Ids"	collectionFormat(multi)
+//	@Param		parentIds		query		[]string	false	"parent Ids"																	collectionFormat(multi)
 //	@Param		entityTypeIds	query		[]string	false	"entity type IDs; when provided this filter takes precedence over isLocation"	collectionFormat(multi)
-//  @Param		orderBy			query		string		false	"field to order by; valid values: name, createdAt, updatedAt, assetId"
-//  @Param		orderDirection	query		string		false	"order direction; valid values: asc, desc"
+//	@Param		orderBy			query		string		false	"field to order by; valid values: name, createdAt, updatedAt, assetId"
+//	@Param		orderDirection	query		string		false	"order direction; valid values: asc, desc"
 //	@Success	200				{object}	repo.EntityListResult
 //	@Router		/v1/entities [GET]
 //	@Security	Bearer

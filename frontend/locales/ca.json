@@ -35,6 +35,7 @@
         "no_invites": "No hi ha invitacions",
         "remaining_uses": "Usos restants",
         "tabs": {
+            "entity_types": "Estils d'identitat",
             "invites": "Invitacions",
             "members": "Membres",
             "notifiers": "Notificadors",
@@ -116,7 +117,88 @@
             "no_color_selected": "No s'ha seleccionat cap color",
             "randomize": "Color aleatori"
         },
+        "entity": {
+            "create_modal": {
+                "clear_template": "Buidar Plantilla",
+                "delete_photo": "Eliminar foto",
+                "entity_description": "{type} Descripció",
+                "entity_name": "{type} Nom",
+                "entity_photo": "{type} Foto 📷",
+                "entity_quantity": "{type} Quantitat",
+                "item_selector_no_results_text": "Escriu per buscar…",
+                "parent_item": "Element Principal",
+                "product_tooltip_input_barcode": "Autocompletar utilizant un codi de barres introduït manualment",
+                "product_tooltip_scan_barcode": "Autocompletar amb un codi de barres de 📷",
+                "rotate_photo": "Girar la foto",
+                "set_as_primary_photo": "Establir com foto { isPrimary, select, true {no } false {} other {}}principal",
+                "toast": {
+                    "already_creating": "Ja s'està  creant un(a) {type}",
+                    "create_failed": "No s'ha pogut crear {type}",
+                    "create_success": "{type} creat",
+                    "failed_load_parent": "No s'ha pogut carregar l'element principal; per favor, selecciona'l manualment",
+                    "no_canvas_support": "El teu navegador no admet opcions de canvas",
+                    "please_select_entity_type": "Seleccions un tipus d'identitat",
+                    "please_select_location": "Per favor, selecciona una ubicació.",
+                    "rotate_failed": "No s'ha pogur girar la imatge: { error }",
+                    "rotate_process_failed": "Error al processar la imatge girada",
+                    "some_photos_failed": "{count, plural, =0 {No hi ha fotos per pujar.} =1 {1 foto no s'ha pogut pujar.} other {Algunes fotos no s'han pogut pujar.}}",
+                    "upload_failed": "No s'ha pogut pujar la foto: { photoName }",
+                    "upload_success": "{count, plural, =0 {No s'han pujat les fotos.} =1 {La foto s'ha pujat correctament.} other {Totes les fotos han pujat correctament.}}",
+                    "uploading_photos": "{count, plural, =0 {No hi ha fotos per pujar} =1 {Pujant 1 foto…} other {Pujant{count} fotos…}}"
+                },
+                "upload_photos": "Pujar Fotos",
+                "uploaded": "Foto Pujada"
+            },
+            "selector": {
+                "placeholder": "Selecciona un tipus…"
+            }
+        },
+        "entityTypes": {
+            "card": {
+                "actions": {
+                    "delete": "Eliminar"
+                },
+                "badge_container": "Contenidor",
+                "default_template": "Plantilla predeterminada: {name}",
+                "tooltip": {
+                    "delete": "Eliminar",
+                    "edit": "Editar"
+                }
+            },
+            "confirm": {
+                "convert_item_to_location": "Convertir un tipus d'element a un tipus d'ubicació comportarà la pèrdua de camps per a les entitats que utilitzen aquest tipus. Esteu segur que voleu continuar?",
+                "delete_entity_type": "Estas segur que el vols eliminar \"{name}\"?"
+            },
+            "create_dialog": {
+                "button": "Crear",
+                "is_container_location_type_label": "Es un tipus de contenidor /ubicació",
+                "name_label": "Nom",
+                "title": "Crear Tipus d'Entitat"
+            },
+            "page": {
+                "create": "Crear",
+                "empty_button": "Crear Tipus d'Identitat",
+                "empty_title": "Encara no s'han definit els tipus d'identitat.",
+                "title": "Tipus d'Identitat"
+            },
+            "toasts": {
+                "create_failed": "No s'ha pogut crear el tipus d'identitat",
+                "create_success": "S'ha creat el tipus d'identitat",
+                "delete_confirm_failed": "No s'ha pogut eliminar el tipud d'entitat. Assegura't de que cap entitat l'està utilitzant",
+                "delete_success": "Tipus d'entitat eliminat",
+                "name_required": "El nom es obligatori",
+                "update_failed": "No s'ha pogut actualitzar el tipus d'entitat",
+                "update_success": "S'ha actualitzat el tipus d'entitat"
+            },
+            "update_dialog": {
+                "button": "Actualitzar",
+                "is_container_location_type_label": "Es un tipus de contenidor / ubicació",
+                "name_label": "Nom",
+                "title": "Actualitzar el tipus d'entitat"
+            }
+        },
         "form": {
+            "min_length": "min {min}",
             "password": {
                 "toggle_show": "Alternar visibilitat de la contrasenya"
             }
@@ -171,6 +253,7 @@
                 "qr_tooltip": "Mostra el codi QR"
             },
             "password_score": {
+                "does_not_meet_requirement": "No compleix els requisits d'una contrasenya segura",
                 "password_strength": "Força de la contrasenya"
             }
         },
@@ -179,42 +262,13 @@
                 "download": "Descarregar",
                 "open_new_tab": "Obrir a una pestanya nova"
             },
-            "create_modal": {
-                "clear_template": "Buidar la plantilla",
-                "delete_photo": "Suprimir la foto",
-                "item_description": "Descripció de l'article",
-                "item_name": "Nom de l'article",
-                "item_photo": "Foto de l'article 📷",
-                "item_quantity": "Quantitat de l'article",
-                "parent_item": "Article pare",
-                "product_tooltip_input_barcode": "Omplir automàticament amb un codi de barres proporcionat manualment",
-                "product_tooltip_scan_barcode": "Auto-completar amb un codi de barres des de 📷",
-                "rotate_photo": "Girar la foto",
-                "set_as_primary_photo": "Establir com a { isPrimary, select, true {non-} false {} other {}} foto principal",
-                "title": "Crea un article",
-                "toast": {
-                    "already_creating": "Ja s'està creant un element",
-                    "create_failed": "No s'ha pogut crear l'element",
-                    "create_success": "Element creat",
-                    "failed_load_parent": "No s'ha pogut carregar l'element pare - selecciona-ho manualment",
-                    "no_canvas_support": "El teu navegador no té suport per operacions de canvas",
-                    "please_select_location": "Si us plau, selecciona una ubicació.",
-                    "rotate_failed": "No s'ha pogut girar la imatge: { error }",
-                    "rotate_process_failed": "No s'ha pogur processar la imatge girada",
-                    "some_photos_failed": "{count, plural, =0 {No hi ha fotos per carregar.} =1 {No s'ha pogut carregar 1 foto.} other {No s'han pogut carregar les fotos.}}",
-                    "upload_failed": "No s'ha pogut carregar la foto: { photoName }",
-                    "upload_success": "{count, plural, =0 {No s'han carregat fotos.} =1 {Fotografia carregada correctament.} other {Totes les fotos carregades correctament.}}",
-                    "uploading_photos": "{count, plural, =0 {No hi ha fotos per carregar} =1 {Carregat 1 foto…} other {Carregant {count} fotos…}}"
-                },
-                "upload_photos": "Carregar fotos",
-                "uploaded": "Foto carregada"
-            },
             "product_import": {
                 "barcode": "Codi de barres del producte",
                 "db_source": "Font de la BBDD",
                 "error_exception": "S'ha produït un error al recuperar el codi de barres de l'article: ",
                 "error_invalid_barcode": "El codi de barres proporcionat no és vàlid",
                 "error_not_found": "No s'ha trobat cap producte amb el codi de barres indicat.",
+                "import_selected": "Importar seleccionat",
                 "search_item": "Cerca un producte",
                 "title": "Importa un producte"
             },
@@ -251,68 +305,212 @@
                         "create_maintenance_item": "Crear entrada de manteniment per a l'article",
                         "create_maintenance_selected": "Crear entrada de manteniment per als elements seleccionats",
                         "create_maintenance_success": "Entrades de manteniment creades",
-                        "delete_confirmation": "N'estàs segur que vols suprimir els elements seleccionats? Aquesta acció no es pot desfer."
+                        "delete_confirmation": "N'estàs segur que vols suprimir els elements seleccionats? Aquesta acció no es pot desfer.",
+                        "delete_item": "Esborrar element",
+                        "delete_selected": "Esborrar els elements seleccionats",
+                        "download_csv": "Descarregar la Taula en format CSV",
+                        "download_json": "Descarregar la taula com a JSON",
+                        "duplicate_item": "Duplicar Element",
+                        "duplicate_selected": "Duplicar Elements Seleccionats",
+                        "error_deleting": "Error al esborrar l'element",
+                        "error_duplicating": "Error al duplicar l'element",
+                        "open_menu": "Obrir el menú",
+                        "open_multi_tab_warning": "Per raons de seguretat, els navegadors no permeten obrir diferents pestanyes a la vegada de forma predeterminada. Per cambiar-ho, segueix la documentació:",
+                        "toggle_expand": "Alternar Expandir",
+                        "view_item": "Veure element",
+                        "view_items": "Veure elements"
                     },
+                    "headers": "Capçaleres",
                     "page": "Pàgina",
-                    "rows_per_page": "Files per pàgina"
+                    "quick_actions": "Habilitar Accions Ràpides i Selecció",
+                    "rows_per_page": "Files per pàgina",
+                    "selected_rows": "{selected} de {total} files seleccionades.",
+                    "table_settings": "Configuració de la Taula",
+                    "view_item": "Veure Article"
                 }
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Descripció de la ubicació",
-                "location_name": "Nom de la ubicació",
-                "title": "Crea una ubicació"
-            },
+            "create_item": "Crear Element",
             "selector": {
-                "parent_location": "Ubicació pare"
+                "clear": "Desseleccionar Ubicacions",
+                "no_location_found": "Ubicació no trobada",
+                "parent_location": "Ubicació pare",
+                "search_location": "Buscar Ubicacions",
+                "select_location": "Escollir una Ubicació"
             },
             "tree": {
-                "no_locations": "No hi ha ubicacions disponibles. Afegiu ubicacions amb el botó\n '<span class=\"link-primary\">'Crea'</span>' a la barra de navegació."
+                "no_locations": "No hi ha ubicacions disponibles. Afegiu ubicacions amb el botó'<span class=\"link-primary\">'Crea'</span>' a la barra de navegació."
             }
+        },
+        "quick_menu": {
+            "no_results": "Sense resultats.",
+            "shortcut_hint": "Fes servir les tecles numèriques per seleccionar ràpidament una acció."
+        },
+        "search": {
+            "filter": {
+                "search_placeholder": "Cercar…"
+            }
+        },
+        "tag": {
+            "create_modal": {
+                "tag_color": "Color de l'Etiqueta",
+                "tag_description": "Descripció de l'Etiqueta",
+                "tag_icon": "Icona de l'Etiqueta",
+                "tag_name": "Nom de l'Etiqueta",
+                "tag_parent": "Etiqueta Principal",
+                "title": "Crear Etiqueta",
+                "toast": {
+                    "already_creating": "Ja s'està creant l'etiqueta",
+                    "create_failed": "No s'ha pogut crear l'etiqueta",
+                    "create_success": "Etiqueta creada",
+                    "tag_name_too_long": "El nom de l'etiqueta no pot tenir més de 50 caràcters"
+                }
+            },
+            "selector": {
+                "clear": "Netejar",
+                "no_tags_found": "No s'han trobar etiquetes",
+                "select_tags": "Seleccionar Etiquetes"
+            }
+        },
+        "template": {
+            "apply_template": "Aplicar una plantilla",
+            "card": {
+                "delete": "Eliminar plantilla",
+                "duplicate": "Duplicar plantilla",
+                "edit": "Editar plantilla"
+            },
+            "confirm_delete": "Eliminar plantilla?",
+            "create_modal": {
+                "title": "Crear Plantilla"
+            },
+            "detail": {
+                "default_values": "Valors Predeterminats",
+                "updated": "Actualitzat"
+            },
+            "edit_modal": {
+                "title": "Editar Plantilla"
+            },
+            "empty_value": "(buit)",
+            "form": {
+                "custom_fields": "Camps Personalitzats",
+                "default_item_values": "Valors Predeterminats dels Elements",
+                "default_location": "Ubicació Predeterminada",
+                "default_value": "Valor Predeterminat",
+                "field_name": "Nom del Camp",
+                "item_description": "Descripció del Element",
+                "item_name": "Nom de l'Element",
+                "lifetime_warranty": "Garantia per vida",
+                "location": "Ubicació",
+                "manufacturer": "Fabricant",
+                "model_number": "Numéro de Model",
+                "no_custom_fields": "Sense camps personalitzats.",
+                "template_description": "Descripció de la Plantilla",
+                "template_name": "Nom de la Plantilla"
+            },
+            "hide_defaults": "Amagar valors predeterminats",
+            "save_as_template": "Guardar com a Plantilla",
+            "selector": {
+                "clear": "Desseleccionar Plantilles",
+                "label": "Plantilla (Opcional)",
+                "not_found": "No s'ha trobat cap plantilla",
+                "search": "Buscar plantilles…",
+                "select": "Seleccionar plantilla…"
+            },
+            "show_defaults": "Mosta valors predeterminats",
+            "toast": {
+                "applied": "Plantilla \"{name}\" aplicada",
+                "create_failed": "No s'ha pogut creat la plantilla",
+                "created": "Plantilla creada",
+                "delete_failed": "No s'ha pogut eliminar la plantilla",
+                "deleted": "Plantilla eliminada",
+                "duplicate_failed": "No s'ha pogut duplicar la plantilla",
+                "duplicated": "Plantilla duplicada com \"{name}\"",
+                "load_failed": "No s'han pogut carregar els detalls de la plantilla",
+                "saved_as_template": "Element guardat com a plantilla \"{name}\"",
+                "update_failed": "No s'ha pogut actualitzar la plantilla",
+                "updated": "Plantilla actualitzada"
+            },
+            "using_template": "Fent servir la plantilla: {name}"
         }
+    },
+    "errors": {
+        "api_failure": "Error en la trucada a l'API del backend: "
     },
     "global": {
         "add": "Afegeix",
+        "archived": "Arxivat",
         "build": "Construcció: { build }",
+        "cancel": "Cancel·lar",
+        "close": "Tancar",
         "confirm": "Confirma",
         "create": "Crea",
         "create_and_add": "Crea i afegeix-ne un altre",
+        "create_subitem": "Crear sub element",
         "created": "Creat",
         "delete": "Esborra",
+        "delete_confirm": "Estàs segur que vols eliminar aquest element? ",
+        "demo_instance": "Això és una demostració",
         "details": "Detalls",
         "duplicate": "Duplica",
         "edit": "Edita",
         "email": "Correu electrònic",
+        "entity": "Entitat",
+        "entity_type": "Tipus d'Entitat",
         "follow_dev": "Segueix al desenvolupador",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' Versió: { version } Construcció: { build } '</a>'"
+        },
         "github": "Projecte de GitHub",
+        "insured": "Assegurat",
+        "item": "Element",
         "items": "Articles",
         "join_discord": "Uniu-vos a Discord",
+        "loading": "Carregant…",
+        "location": "Ubicació",
         "locations": "Ubicacions",
         "maintenance": "Manteniment",
         "name": "Nom",
+        "navigate": "Navegar",
+        "no": "No",
         "password": "Contrasenya",
+        "preview": "Vista prèvia",
+        "quantity": "Quantitat",
         "read_docs": "Llegiu la documentació",
+        "return_home": "Torna a Casa",
         "save": "Desa",
         "search": "Cerca",
+        "select": "Seleccionar...",
+        "show_less": "Mostra menys",
+        "show_more": "Mostra més",
         "sign_out": "Tanca la sessió",
         "submit": "Envia",
+        "tags": "Etiquetes",
+        "type": "Tipus",
+        "unknown": "Desconegut",
         "update": "Actualitza",
+        "updating": "Actualitzant",
         "value": "Valor",
         "version": "Versió {version}",
-        "welcome": "Us donem la benvinguda, { username }"
+        "welcome": "Us donem la benvinguda, { username }",
+        "yes": "Si"
     },
     "home": {
         "quick_statistics": "Estadístiques ràpides",
         "recently_added": "Afegit recentment",
         "storage_locations": "Ubicacions d'emmagatzematge",
+        "tags": "Etiquetes",
         "total_items": "Articles totals",
         "total_locations": "Ubicacions totals",
+        "total_tags": "Total Etiquetes",
         "total_value": "Valor total"
     },
     "index": {
+        "back_to_login": "Tornar a l'inici de sessió",
         "disabled_registration": "El registre és desactivat",
         "dont_join_group": "Voleu unir-vos al grup?",
+        "forgot_password": "Has oblidat el teu password?",
         "joining_group": "Us uniu a un grup existent!",
         "login": "Inici de sessió",
         "register": "Registra-m'hi",

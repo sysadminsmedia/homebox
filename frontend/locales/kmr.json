@@ -181,36 +181,6 @@
                 "download": "Daxîne",
                 "open_new_tab": "Di tabeke nû de veke"
             },
-            "create_modal": {
-                "clear_template": "Şablonê paqij bike",
-                "delete_photo": "Wêneyê jê bibe",
-                "item_description": "Danasîna tiştê",
-                "item_name": "Navê tiştê",
-                "item_photo": "Wêneyê tiştê 📷",
-                "item_quantity": "Hejmara tiştê",
-                "parent_item": "Tiştê dêûbav",
-                "product_tooltip_input_barcode": "Bi barkodeke bi destî hatiye dayîn bixwe dagire",
-                "product_tooltip_scan_barcode": "Bi barkodekê ji 📷 bixwe dagire",
-                "rotate_photo": "Wêneyê bizivirîne",
-                "set_as_primary_photo": "Weke wêneyê { isPrimary, select, true {ne-} false {} other {}}sereke saz bike",
-                "title": "Tişt çêbike",
-                "toast": {
-                    "already_creating": "Tişt jixwe tê çêkirin",
-                    "create_failed": "Tişt nehate çêkirin",
-                    "create_success": "Tişt hate çêkirin",
-                    "failed_load_parent": "Barkirina tiştê dêûbav bi ser neket - ji kerema xwe bi destî hilbijêre",
-                    "no_canvas_support": "Geroka te piştgirî nade operasyonên canvas",
-                    "please_select_location": "Ji kerema xwe cihê hilbijêre.",
-                    "rotate_failed": "Zivirandina wêneyê bi ser neket: { error }",
-                    "rotate_process_failed": "Pêvajoya wêneyê zivirandî bi ser neket",
-                    "some_photos_failed": "{count, plural, =0 {Wêne tune ne ku werin barkirin.} =1 {Barkirina 1 wêne bi ser neket.} other {Barkirina hin wêneyan bi ser neket.}}",
-                    "upload_failed": "Barkirina wêneyê bi ser neket: { photoName }",
-                    "upload_success": "{count, plural, =0 {Tu wêne nehat barkirin.} =1 {Wêne bi serkeftî hate barkirin.} other {Hemû wêne bi serkeftî hatin barkirin.}}",
-                    "uploading_photos": "{count, plural, =0 {Wêne tune ne ku werin barkirin} =1 {1 wêne tê barkirin…} other {{count} wêne tên barkirin…}}"
-                },
-                "upload_photos": "Wêneyan bar bike",
-                "uploaded": "Wêneyê barkirî"
-            },
             "product_import": {
                 "barcode": "Barkoda hilberê",
                 "db_source": "Çavkaniya DB",
@@ -280,17 +250,6 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Danasîna cihê",
-                "location_name": "Navê cihê",
-                "location_photo": "Wêneyê cihê 📷",
-                "title": "Cihê çêbike",
-                "toast": {
-                    "already_creating": "Cih jixwe tê çêkirin",
-                    "create_failed": "Cih nehate çêkirin",
-                    "create_success": "Cih hate çêkirin"
-                }
-            },
             "selector": {
                 "clear": "Hilbijartina cihê paqij bike",
                 "no_location_found": "Tu cih nehat dîtin",

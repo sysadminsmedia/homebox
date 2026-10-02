@@ -93,33 +93,6 @@
                 "download": "Last ned",
                 "open_new_tab": "Åpne i ny fane"
             },
-            "create_modal": {
-                "delete_photo": "Slett bilde",
-                "item_description": "Objektbeskrivelse",
-                "item_name": "Objektnavn",
-                "item_photo": "Objektfoto",
-                "item_quantity": "Objektantall",
-                "parent_item": "Overordnet enhet",
-                "rotate_photo": "Roter bilde",
-                "set_as_primary_photo": "Sett som { isPrimary, select, true {non-} false {} other {}}primary photo",
-                "title": "Opprett objekt",
-                "toast": {
-                    "already_creating": "Opprettelse pågår allerede",
-                    "create_failed": "Klarte ikke opprette enhet",
-                    "create_success": "Enhet opprettet",
-                    "failed_load_parent": "Klarte ikke å laster overordnet enhet, vennligst velg en manuelt",
-                    "no_canvas_support": "Nettleseren din støtter ikke canvas-operasjoner",
-                    "please_select_location": "Vennligst velg en lokasjon.",
-                    "rotate_failed": "Fikk ikke til å rotere bildet: { error }",
-                    "rotate_process_failed": "Fikk ikke prosessert rotert bilde",
-                    "some_photos_failed": "{count, plural, =0 {Ingen bilder å laste opp.} =1 {1 fikk ikke lastet opp bilde.} other {Noen bilder ble ikke lastet opp.}}",
-                    "upload_failed": "Fikk ikke lastet opp bildet: { photoName }",
-                    "upload_success": "{count, plural, =0 {Ingen bilder lastet opp.} =1 {Bilde lastet opp.} other {Alle bilder ble lastet opp.}}",
-                    "uploading_photos": "{count, plural, =0 {Ingen bilder å laste opp} =1 {Laster opp 1 bilde...} other {Laster opp{count} photos...}}"
-                },
-                "upload_photos": "Last opp bilder",
-                "uploaded": "Bilde lastet opp"
-            },
             "selector": {
                 "no_results": "Ingen resultat funnet",
                 "placeholder": "Velg…",
@@ -142,16 +115,6 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Lokasjonsbeskrivelse",
-                "location_name": "Lokasjonsnavn",
-                "title": "Opprett lokasjon",
-                "toast": {
-                    "already_creating": "Opprettelse av lokasjon pågår",
-                    "create_failed": "Fikk ikke opprettet lokasjon",
-                    "create_success": "Lokasjon opprettet"
-                }
-            },
             "selector": {
                 "no_location_found": "Lokasjon ikke funnet",
                 "parent_location": "Overordnet lokasjon",

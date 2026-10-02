@@ -181,36 +181,6 @@
                 "download": "تنزيل",
                 "open_new_tab": "فتح في علامة تبويب جديدة"
             },
-            "create_modal": {
-                "clear_template": "مسح القالب",
-                "delete_photo": "حذف الصورة",
-                "item_description": "وصف العنصر",
-                "item_name": "اسم العنصر",
-                "item_photo": "صورة العنصر 📷",
-                "item_quantity": "كمية العنصر",
-                "parent_item": "العنصر الأب",
-                "product_tooltip_input_barcode": "ملء تلقائي باستخدام باركود مُدخل يدويًا",
-                "product_tooltip_scan_barcode": "ملء تلقائي باستخدام باركود من 📷",
-                "rotate_photo": "تدوير الصورة",
-                "set_as_primary_photo": "تعيين كصورة { isPrimary, select, true {غير } false {} other {}}رئيسية",
-                "title": "إنشاء عنصر",
-                "toast": {
-                    "already_creating": "يتم إنشاء عنصر بالفعل",
-                    "create_failed": "تعذر إنشاء العنصر",
-                    "create_success": "تم إنشاء العنصر",
-                    "failed_load_parent": "فشل تحميل العنصر الأب - يُرجى الاختيار يدويًا",
-                    "no_canvas_support": "متصفحك لا يدعم عمليات canvas",
-                    "please_select_location": "يُرجى اختيار موقع.",
-                    "rotate_failed": "فشل تدوير الصورة: { error }",
-                    "rotate_process_failed": "فشلت معالجة الصورة المُدوّرة",
-                    "some_photos_failed": "{count, plural, =0 {لا توجد صور لرفعها.} =1 {فشل رفع صورة واحدة.} other {فشل رفع بعض الصور.}}",
-                    "upload_failed": "فشل رفع الصورة: { photoName }",
-                    "upload_success": "{count, plural, =0 {لم يتم رفع أي صور.} =1 {تم رفع الصورة بنجاح.} other {تم رفع جميع الصور بنجاح.}}",
-                    "uploading_photos": "{count, plural, =0 {لا توجد صور لرفعها} =1 {جارٍ رفع صورة واحدة…} other {جارٍ رفع {count} صورة…}}"
-                },
-                "upload_photos": "رفع الصور",
-                "uploaded": "الصورة المرفوعة"
-            },
             "product_import": {
                 "barcode": "باركود المنتج",
                 "db_source": "مصدر قاعدة البيانات",
@@ -280,17 +250,6 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "وصف الموقع",
-                "location_name": "اسم الموقع",
-                "location_photo": "صورة الموقع 📷",
-                "title": "إنشاء موقع",
-                "toast": {
-                    "already_creating": "يتم إنشاء موقع بالفعل",
-                    "create_failed": "تعذر إنشاء الموقع",
-                    "create_success": "تم إنشاء الموقع"
-                }
-            },
             "selector": {
                 "clear": "مسح اختيار الموقع",
                 "no_location_found": "لم يتم العثور على موقع",

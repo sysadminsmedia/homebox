@@ -1,19 +1,26 @@
 package config
 
 type NotifierConf struct {
-	// AllowNets will allow specific networks through for generic notifiers.
+	// The options below apply to every notifier whose URL carries a user-supplied
+	// destination host (generic://, gotify://, ntfy://, smtp://, ...), not just
+	// generic webhooks. See validate.ValidateNotifierURL.
+
+	// AllowNets will allow specific networks through for notifiers.
 	// If this is filled, only these networks will be allowed through.
 	AllowNets []string `yaml:"allow_nets"`
-	// BlockNets will block specific networks from generic notifiers.
-	// If this is filled, these networks will be blocked from generic notifiers.
+	// BlockNets will block specific networks from notifiers.
+	// If this is filled, these networks will be blocked from notifiers.
 	BlockNets []string `yaml:"block_nets"`
-	// BlockLocalhost will prevent generic notifiers from sending to localhost.
-	BlockLocalhost bool `yaml:"block_localhost" conf:"default:false"`
-	// BlockLocalNets will prevent generic notifiers from sending to local networks. (RFC1918)
+	// BlockLocalhost will prevent notifiers from sending to localhost. On by
+	// default: loopback is the Homebox host/container itself (IPv6 ::1 was
+	// already blocked via BlockBogonNets), so this is rarely a real notifier.
+	BlockLocalhost bool `yaml:"block_localhost" conf:"default:true"`
+	// BlockLocalNets will prevent notifiers from sending to local networks. (RFC1918)
+	// Off by default so self-hosted notifiers on the LAN (gotify, ntfy, ...) keep working.
 	BlockLocalNets bool `yaml:"block_local_nets" conf:"default:false"`
-	// BlockBogonNets will prevent generic notifiers from sending to bogon networks. (Reserved IPs)
+	// BlockBogonNets will prevent notifiers from sending to bogon networks. (Reserved IPs)
 	BlockBogonNets bool `yaml:"block_bogon_nets" conf:"default:true"`
-	// BlockCloudMetadata will prevent generic notifiers from sending to known cloud metadata IPs.
+	// BlockCloudMetadata will prevent notifiers from sending to known cloud metadata IPs.
 	BlockCloudMetadata bool `yaml:"block_cloud_metadata" conf:"default:true"`
 	// Dns64Nets lists the IPv6 prefixes used for DNS64/NAT64 translation (RFC 6052).
 	// IPv6 addresses inside these prefixes carry an embedded IPv4 address, which is

@@ -11,6 +11,12 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
 
+// Entity names shared across the location fixtures below.
+const (
+	testParentName = "Parent"
+	testChildName  = "Child"
+)
+
 // locationFixture gives each test its own group with two locations, so tests
 // don't see each other's tree.
 type locationFixture struct {
@@ -56,7 +62,7 @@ func TestEntityLocation_ChildKeepsOwnLocation(t *testing.T) {
 
 	// 1. Parent in the Attic.
 	parent, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
-		Name:         "Parent",
+		Name:         testParentName,
 		EntityTypeID: f.itemType,
 		ParentID:     f.attic.ID,
 	})
@@ -66,7 +72,7 @@ func TestEntityLocation_ChildKeepsOwnLocation(t *testing.T) {
 
 	// 2. Child in the Basement.
 	child, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
-		Name:         "Child",
+		Name:         testChildName,
 		EntityTypeID: f.itemType,
 		ParentID:     f.basement.ID,
 	})
@@ -75,7 +81,7 @@ func TestEntityLocation_ChildKeepsOwnLocation(t *testing.T) {
 	// 4. Make Parent the parent of Child, while keeping Child in the Basement.
 	updated, err := tRepos.Entities.UpdateByGroup(ctx, f.gid, EntityUpdate{
 		ID:         child.ID,
-		Name:       "Child",
+		Name:       testChildName,
 		Quantity:   1,
 		ParentID:   parent.ID,
 		LocationID: f.basement.ID,
@@ -108,12 +114,12 @@ func TestEntityLocation_InheritsWhenNoOverride(t *testing.T) {
 	f := newLocationFixture(t, "loc-inherit-default")
 
 	parent, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
-		Name: "Parent", EntityTypeID: f.itemType, ParentID: f.attic.ID,
+		Name: testParentName, EntityTypeID: f.itemType, ParentID: f.attic.ID,
 	})
 	require.NoError(t, err)
 
 	child, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
-		Name: "Child", EntityTypeID: f.itemType, ParentID: parent.ID,
+		Name: testChildName, EntityTypeID: f.itemType, ParentID: parent.ID,
 	})
 	require.NoError(t, err)
 
@@ -122,7 +128,7 @@ func TestEntityLocation_InheritsWhenNoOverride(t *testing.T) {
 
 	// Moving the parent moves the inheriting child with it.
 	_, err = tRepos.Entities.UpdateByGroup(ctx, f.gid, EntityUpdate{
-		ID: parent.ID, Name: "Parent", Quantity: 1, ParentID: f.basement.ID,
+		ID: parent.ID, Name: testParentName, Quantity: 1, ParentID: f.basement.ID,
 	})
 	require.NoError(t, err)
 
@@ -190,7 +196,7 @@ func TestEntityLocation_RejectsNonLocationTarget(t *testing.T) {
 	f := newLocationFixture(t, "loc-non-location-target")
 
 	parent, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
-		Name: "Parent", EntityTypeID: f.itemType, ParentID: f.attic.ID,
+		Name: testParentName, EntityTypeID: f.itemType, ParentID: f.attic.ID,
 	})
 	require.NoError(t, err)
 	other, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
@@ -199,7 +205,7 @@ func TestEntityLocation_RejectsNonLocationTarget(t *testing.T) {
 	require.NoError(t, err)
 
 	_, err = tRepos.Entities.Create(ctx, f.gid, EntityCreate{
-		Name: "Child", EntityTypeID: f.itemType,
+		Name: testChildName, EntityTypeID: f.itemType,
 		ParentID:   parent.ID,
 		LocationID: other.ID,
 	})
@@ -215,12 +221,12 @@ func TestEntityLocation_RejectsCrossGroupLocation(t *testing.T) {
 	b := newLocationFixture(t, "loc-tenant-b")
 
 	parent, err := tRepos.Entities.Create(ctx, a.gid, EntityCreate{
-		Name: "Parent", EntityTypeID: a.itemType, ParentID: a.attic.ID,
+		Name: testParentName, EntityTypeID: a.itemType, ParentID: a.attic.ID,
 	})
 	require.NoError(t, err)
 
 	_, err = tRepos.Entities.Create(ctx, a.gid, EntityCreate{
-		Name: "Child", EntityTypeID: a.itemType,
+		Name: testChildName, EntityTypeID: a.itemType,
 		ParentID:   parent.ID,
 		LocationID: b.basement.ID,
 	})
@@ -237,12 +243,12 @@ func TestEntityLocation_SyncChildLocationsClearsOverrides(t *testing.T) {
 	f := newLocationFixture(t, "loc-sync-toggle")
 
 	parent, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
-		Name: "Parent", EntityTypeID: f.itemType, ParentID: f.attic.ID,
+		Name: testParentName, EntityTypeID: f.itemType, ParentID: f.attic.ID,
 	})
 	require.NoError(t, err)
 
 	child, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
-		Name: "Child", EntityTypeID: f.itemType,
+		Name: testChildName, EntityTypeID: f.itemType,
 		ParentID:   parent.ID,
 		LocationID: f.basement.ID,
 	})
@@ -252,7 +258,7 @@ func TestEntityLocation_SyncChildLocationsClearsOverrides(t *testing.T) {
 
 	// Turn the toggle on for the parent.
 	_, err = tRepos.Entities.UpdateByGroup(ctx, f.gid, EntityUpdate{
-		ID: parent.ID, Name: "Parent", Quantity: 1, ParentID: f.attic.ID,
+		ID: parent.ID, Name: testParentName, Quantity: 1, ParentID: f.attic.ID,
 		SyncChildEntityLocations: true,
 	})
 	require.NoError(t, err)
@@ -272,7 +278,7 @@ func TestEntityLocation_QueryByLocationFindsOverriddenChild(t *testing.T) {
 	f := newLocationFixture(t, "loc-query-filter")
 
 	parent, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
-		Name: "Parent", EntityTypeID: f.itemType, ParentID: f.attic.ID,
+		Name: testParentName, EntityTypeID: f.itemType, ParentID: f.attic.ID,
 	})
 	require.NoError(t, err)
 
@@ -367,7 +373,7 @@ func TestEntityLocation_RoundTripPreservesPlacement(t *testing.T) {
 	f := newLocationFixture(t, "loc-roundtrip")
 
 	parent, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
-		Name: "Parent", EntityTypeID: f.itemType, ParentID: f.attic.ID,
+		Name: testParentName, EntityTypeID: f.itemType, ParentID: f.attic.ID,
 	})
 	require.NoError(t, err)
 
@@ -411,7 +417,7 @@ func TestEntityLocation_RoundTripPreservesPlacement(t *testing.T) {
 
 	// The inheriting one still tracks the parent after its round trip.
 	_, err = tRepos.Entities.UpdateByGroup(ctx, f.gid, EntityUpdate{
-		ID: parent.ID, Name: "Parent", Quantity: 1, ParentID: f.basement.ID,
+		ID: parent.ID, Name: testParentName, Quantity: 1, ParentID: f.basement.ID,
 	})
 	require.NoError(t, err)
 	reread, err := tRepos.Entities.GetOneByGroup(ctx, f.gid, inheriting.ID)
@@ -427,12 +433,12 @@ func TestEntityLocation_DeletingLocationFallsBackToInheritance(t *testing.T) {
 	f := newLocationFixture(t, "loc-delete-target")
 
 	parent, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
-		Name: "Parent", EntityTypeID: f.itemType, ParentID: f.attic.ID,
+		Name: testParentName, EntityTypeID: f.itemType, ParentID: f.attic.ID,
 	})
 	require.NoError(t, err)
 
 	child, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
-		Name: "Child", EntityTypeID: f.itemType,
+		Name: testChildName, EntityTypeID: f.itemType,
 		ParentID: parent.ID, LocationID: f.basement.ID,
 	})
 	require.NoError(t, err)
