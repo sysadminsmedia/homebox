@@ -493,6 +493,12 @@ func (r *GroupRepository) InvitationDecrement(ctx context.Context, id uuid.UUID)
 	return nil
 }
 
+// InvitationRefund returns a use claimed with InvitationDecrement, for when the
+// registration it was reserved for fails afterwards.
+func (r *GroupRepository) InvitationRefund(ctx context.Context, id uuid.UUID) error {
+	return r.db.GroupInvitationToken.UpdateOneID(id).AddUses(1).Exec(ctx)
+}
+
 func (r *GroupRepository) InvitationAccept(ctx context.Context, token []byte, userID uuid.UUID) (Group, error) {
 	tx, err := r.db.Tx(ctx)
 	if err != nil {
