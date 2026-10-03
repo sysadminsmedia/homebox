@@ -793,7 +793,14 @@ func applyEntityOrder(qb *ent.EntityQuery, gid uuid.UUID, q EntityQuery) (*ent.E
 		orderBy = entity.FieldName
 	}
 
-	switch q.OrderDirection {
+	dir := q.OrderDirection
+	if dir == "" && (orderBy == entity.FieldCreatedAt || orderBy == entity.FieldUpdatedAt) {
+		// Before orderDirection existed these were always newest first; keep
+		// that for clients that don't send a direction.
+		dir = "desc"
+	}
+
+	switch dir {
 	case "desc":
 		return qb.Order(ent.Desc(orderBy)), orderBy
 	default: // "asc"

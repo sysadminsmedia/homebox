@@ -991,3 +991,47 @@ func TestEntityRepository_QueryByGroup_OrderByLocation(t *testing.T) {
 	assert.Equal(t, []uuid.UUID{direct.ID, box.ID, nested.ID, orphan.ID}, order("asc"))
 	assert.Equal(t, []uuid.UUID{box.ID, nested.ID, direct.ID, orphan.ID}, order("desc"))
 }
+
+// TestEntityRepository_QueryByGroup_OrderByTimestampsDefaultDesc verifies that
+// createdAt and updatedAt sort newest first when no direction is given, as
+// they did before orderDirection was added, while an explicit "asc" is still
+// respected.
+func TestEntityRepository_QueryByGroup_OrderByTimestampsDefaultDesc(t *testing.T) {
+	ctx := context.Background()
+	itemET := useItemEntityType(t)
+
+	first := mustCreateEntity(t, "order-first", itemET.ID, uuid.Nil)
+	time.Sleep(10 * time.Millisecond)
+	second := mustCreateEntity(t, "order-second", itemET.ID, uuid.Nil)
+	time.Sleep(10 * time.Millisecond)
+	third := mustCreateEntity(t, "order-third", itemET.ID, uuid.Nil)
+
+	// The test group is shared, so only the entities created here are ordered.
+	mine := map[uuid.UUID]bool{first.ID: true, second.ID: true, third.ID: true}
+	order := func(orderBy, direction string) []uuid.UUID {
+		t.Helper()
+		res, err := tRepos.Entities.QueryByGroup(ctx, tGroup.ID, EntityQuery{
+			Page:           -1,
+			PageSize:       -1,
+			OrderBy:        orderBy,
+			OrderDirection: direction,
+		})
+		require.NoError(t, err)
+
+		ids := make([]uuid.UUID, 0, len(mine))
+		for _, e := range res.Items {
+			if mine[e.ID] {
+				ids = append(ids, e.ID)
+			}
+		}
+		return ids
+	}
+
+	newestFirst := []uuid.UUID{third.ID, second.ID, first.ID}
+	oldestFirst := []uuid.UUID{first.ID, second.ID, third.ID}
+	for _, orderBy := range []string{"createdAt", "updatedAt"} {
+		assert.Equal(t, newestFirst, order(orderBy, ""), orderBy)
+		assert.Equal(t, newestFirst, order(orderBy, "desc"), orderBy)
+		assert.Equal(t, oldestFirst, order(orderBy, "asc"), orderBy)
+	}
+}
