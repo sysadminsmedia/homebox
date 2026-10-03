@@ -21,7 +21,8 @@
             "env": {
                 "HBOX_DEMO": "true",
                 "HBOX_LOG_LEVEL": "debug",
-                "HBOX_DEBUG_ENABLED": "true"
+                "HBOX_DEBUG_ENABLED": "true",
+                "HBOX_AUTH_API_KEY_PEPPER": "dev-only-pepper-not-for-production-use-32b+"
             },
             "console": "integratedTerminal",
         },
@@ -36,7 +37,7 @@
             ],
             "cwd": "${workspaceFolder}/frontend",
             "serverReadyAction": {
-                "action": "debugWithChrome",
+                "action": "openExternally",
                 "pattern": "Local: +http://localhost:([0-9]+)",
                 "uriFormat": "http://localhost:%s",
                 "webRoot": "${workspaceFolder}/frontend"
