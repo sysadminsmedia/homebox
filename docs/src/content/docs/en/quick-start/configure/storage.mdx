@@ -3,6 +3,10 @@ title: Storage
 ---
 Homebox supports multiple storage backends for flexibility in deployment models.
 
+> [!NOTE]
+> Collection backups are written to this same storage by default. To schedule backups, keep versions, or send them to a
+> separate directory or bucket, see [Backups](/quick-start/configure/backups/).
+
 ## Local Storage
 
 By default, homebox uses local storage at the `.data` folder relative path to the binary, or `/data` in the docker

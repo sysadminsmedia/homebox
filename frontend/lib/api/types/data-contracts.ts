@@ -43,6 +43,12 @@ export enum ExportStatus {
   StatusFailed = "failed",
 }
 
+export enum ExportOrigin {
+  DefaultOrigin = "manual",
+  OriginManual = "manual",
+  OriginScheduled = "scheduled",
+}
+
 export enum ExportKind {
   DefaultKind = "export",
   KindExport = "export",
@@ -54,6 +60,37 @@ export enum EntityfieldType {
   TypeNumber = "number",
   TypeBoolean = "boolean",
   TypeTime = "time",
+}
+
+export enum BackupdestinationType {
+  DefaultType = "primary",
+  TypePrimary = "primary",
+  TypeLocal = "local",
+  TypeS3 = "s3",
+  TypeGcs = "gcs",
+  TypeAzblob = "azblob",
+  TypeSftp = "sftp",
+  TypeWebdav = "webdav",
+  TypeGdrive = "gdrive",
+  TypeOnedrive = "onedrive",
+  TypeDropbox = "dropbox",
+  TypeSmb = "smb",
+}
+
+export enum BackupdestinationHealthStatus {
+  DefaultHealthStatus = "unknown",
+  HealthStatusUnknown = "unknown",
+  HealthStatusHealthy = "healthy",
+  HealthStatusUnreachable = "unreachable",
+}
+
+export enum BackupdestinationFrequency {
+  DefaultFrequency = "daily",
+  FrequencyHourly = "hourly",
+  FrequencyDaily = "daily",
+  FrequencyWeekly = "weekly",
+  FrequencyMonthly = "monthly",
+  FrequencyCron = "cron",
 }
 
 export enum AuthrolesRole {
@@ -179,6 +216,101 @@ export interface EntAuthTokensEdges {
   roles: EntAuthRoles;
   /** User holds the value of the user edge. */
   user: EntUser;
+}
+
+export interface EntBackupDestination {
+  /** AlertFailureThreshold holds the value of the "alert_failure_threshold" field. */
+  alert_failure_threshold: number;
+  /** AlertStaleHours holds the value of the "alert_stale_hours" field. */
+  alert_stale_hours: number;
+  /** AlertedFailure holds the value of the "alerted_failure" field. */
+  alerted_failure: boolean;
+  /** AlertedStale holds the value of the "alerted_stale" field. */
+  alerted_stale: boolean;
+  /** AlertedUnreachable holds the value of the "alerted_unreachable" field. */
+  alerted_unreachable: boolean;
+  /** AlertsEnabled holds the value of the "alerts_enabled" field. */
+  alerts_enabled: boolean;
+  /** AtHour holds the value of the "at_hour" field. */
+  at_hour: number;
+  /** AtMinute holds the value of the "at_minute" field. */
+  at_minute: number;
+  /** ConnString holds the value of the "conn_string" field. */
+  conn_string: string;
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /** CronExpr holds the value of the "cron_expr" field. */
+  cron_expr: string;
+  /** DayOfMonth holds the value of the "day_of_month" field. */
+  day_of_month: number;
+  /** Description holds the value of the "description" field. */
+  description: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the BackupDestinationQuery when eager-loading is set.
+   */
+  edges: EntBackupDestinationEdges;
+  /** Enabled holds the value of the "enabled" field. */
+  enabled: boolean;
+  /** Frequency holds the value of the "frequency" field. */
+  frequency: BackupdestinationFrequency;
+  /** GroupID holds the value of the "group_id" field. */
+  group_id: string;
+  /** HealthCheckedAt holds the value of the "health_checked_at" field. */
+  health_checked_at: string;
+  /** HealthError holds the value of the "health_error" field. */
+  health_error: string;
+  /** HealthFailures holds the value of the "health_failures" field. */
+  health_failures: number;
+  /** HealthIntervalMinutes holds the value of the "health_interval_minutes" field. */
+  health_interval_minutes: number;
+  /** HealthStatus holds the value of the "health_status" field. */
+  health_status: BackupdestinationHealthStatus;
+  /** HostKey holds the value of the "host_key" field. */
+  host_key: string;
+  /** ID of the ent. */
+  id: string;
+  /** IntervalHours holds the value of the "interval_hours" field. */
+  interval_hours: number;
+  /** KeepDaily holds the value of the "keep_daily" field. */
+  keep_daily: number;
+  /** KeepMonthly holds the value of the "keep_monthly" field. */
+  keep_monthly: number;
+  /** KeepWeekly holds the value of the "keep_weekly" field. */
+  keep_weekly: number;
+  /** LastError holds the value of the "last_error" field. */
+  last_error: string;
+  /** LastFingerprint holds the value of the "last_fingerprint" field. */
+  last_fingerprint: string;
+  /** LastRunAt holds the value of the "last_run_at" field. */
+  last_run_at: string;
+  /** LastSkippedAt holds the value of the "last_skipped_at" field. */
+  last_skipped_at: string;
+  /** LastSuccessAt holds the value of the "last_success_at" field. */
+  last_success_at: string;
+  /** Name holds the value of the "name" field. */
+  name: string;
+  /** NextRunAt holds the value of the "next_run_at" field. */
+  next_run_at: string;
+  /** Prefix holds the value of the "prefix" field. */
+  prefix: string;
+  /** ScheduleEnabled holds the value of the "schedule_enabled" field. */
+  schedule_enabled: boolean;
+  /** SkipIfUnchanged holds the value of the "skip_if_unchanged" field. */
+  skip_if_unchanged: boolean;
+  /** Type holds the value of the "type" field. */
+  type: BackupdestinationType;
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+  /** Username holds the value of the "username" field. */
+  username: string;
+  /** Weekday holds the value of the "weekday" field. */
+  weekday: number;
+}
+
+export interface EntBackupDestinationEdges {
+  /** Group holds the value of the group edge. */
+  group: EntGroup;
 }
 
 export interface EntEntity {
@@ -384,6 +516,8 @@ export interface EntExport {
   artifact_path: string;
   /** CreatedAt holds the value of the "created_at" field. */
   created_at: string;
+  /** DestinationID holds the value of the "destination_id" field. */
+  destination_id: string;
   /**
    * Edges holds the relations/edges for other nodes in the graph.
    * The values are being populated by the ExportQuery when eager-loading is set.
@@ -397,6 +531,8 @@ export interface EntExport {
   id: string;
   /** Kind holds the value of the "kind" field. */
   kind: ExportKind;
+  /** Origin holds the value of the "origin" field. */
+  origin: ExportOrigin;
   /** Progress holds the value of the "progress" field. */
   progress: number;
   /** SizeBytes holds the value of the "size_bytes" field. */
@@ -431,6 +567,8 @@ export interface EntGroup {
 }
 
 export interface EntGroupEdges {
+  /** BackupDestinations holds the value of the backup_destinations edge. */
+  backup_destinations: EntBackupDestination[];
   /** Entities holds the value of the entities edge. */
   entities: EntEntity[];
   /** EntityTemplates holds the value of the entity_templates edge. */
@@ -723,6 +861,253 @@ export interface APIKeyOut {
   lastUsedAt?: string | null;
   name: string;
   userId: string;
+}
+
+export interface BackupDestinationOut {
+  /**
+   * @min 1
+   * @max 100
+   */
+  alertFailureThreshold: number;
+  /**
+   * AlertStaleHours alerts when no backup succeeded for this long. 0 disables.
+   * @min 0
+   * @max 8760
+   */
+  alertStaleHours: number;
+  alertsEnabled: boolean;
+  /**
+   * @min 0
+   * @max 23
+   */
+  atHour: number;
+  /**
+   * @min 0
+   * @max 59
+   */
+  atMinute: number;
+  /** @maxLength 2048 */
+  connString: string;
+  createdAt: Date | string;
+  /**
+   * CronExpr is a 5-field cron expression or descriptor, used when Frequency
+   * is "cron". It may start with CRON_TZ=Zone to schedule in another zone.
+   * @maxLength 255
+   */
+  cronExpr: string;
+  /**
+   * @min 1
+   * @max 28
+   */
+  dayOfMonth: number;
+  /** @maxLength 1000 */
+  description: string;
+  enabled: boolean;
+  /** Frequency is one of hourly, daily, weekly, monthly, cron. */
+  frequency: "hourly" | "daily" | "weekly" | "monthly" | "cron";
+  groupId: string;
+  /** HasSecret reports whether credentials are stored for the destination. */
+  hasSecret: boolean;
+  healthCheckedAt?: string | null;
+  healthError: string;
+  healthFailures: number;
+  /**
+   * @min 1
+   * @max 1440
+   */
+  healthIntervalMinutes: number;
+  healthStatus: string;
+  /** @maxLength 255 */
+  hostKey: string;
+  id: string;
+  /**
+   * @min 1
+   * @max 168
+   */
+  intervalHours: number;
+  /**
+   * @min 0
+   * @max 3650
+   */
+  keepDaily: number;
+  /**
+   * @min 0
+   * @max 120
+   */
+  keepMonthly: number;
+  /**
+   * @min 0
+   * @max 520
+   */
+  keepWeekly: number;
+  lastError: string;
+  lastRunAt?: string | null;
+  lastSkippedAt?: string | null;
+  lastSuccessAt?: string | null;
+  /**
+   * @minLength 1
+   * @maxLength 255
+   */
+  name: string;
+  nextRunAt?: string | null;
+  /** @maxLength 255 */
+  prefix: string;
+  scheduleEnabled: boolean;
+  skipIfUnchanged: boolean;
+  /**
+   * Type is one of primary, local, s3, gcs, azblob, sftp, webdav, gdrive,
+   * onedrive, dropbox, smb.
+   */
+  type:
+    | "primary"
+    | "local"
+    | "s3"
+    | "gcs"
+    | "azblob"
+    | "sftp"
+    | "webdav"
+    | "gdrive"
+    | "onedrive"
+    | "dropbox"
+    | "smb";
+  updatedAt: Date | string;
+  /**
+   * Username and HostKey serve the sftp and webdav types. HostKey is the
+   * SSH host key fingerprint (SHA256:...) an sftp server must present.
+   * @maxLength 255
+   */
+  username: string;
+  /**
+   * @min 0
+   * @max 6
+   */
+  weekday: number;
+}
+
+export interface BackupInput {
+  /**
+   * @min 1
+   * @max 100
+   */
+  alertFailureThreshold: number;
+  /**
+   * AlertStaleHours alerts when no backup succeeded for this long. 0 disables.
+   * @min 0
+   * @max 8760
+   */
+  alertStaleHours: number;
+  alertsEnabled: boolean;
+  /**
+   * @min 0
+   * @max 23
+   */
+  atHour: number;
+  /**
+   * @min 0
+   * @max 59
+   */
+  atMinute: number;
+  /** @maxLength 2048 */
+  connString: string;
+  /**
+   * CronExpr is a 5-field cron expression or descriptor, used when Frequency
+   * is "cron". It may start with CRON_TZ=Zone to schedule in another zone.
+   * @maxLength 255
+   */
+  cronExpr: string;
+  /**
+   * @min 1
+   * @max 28
+   */
+  dayOfMonth: number;
+  /** @maxLength 1000 */
+  description: string;
+  /**
+   * DestinationID is only used when testing unsaved settings: it lets the
+   * test reuse the stored credentials of that destination.
+   */
+  destinationId: string;
+  enabled: boolean;
+  /** Frequency is one of hourly, daily, weekly, monthly, cron. */
+  frequency: "hourly" | "daily" | "weekly" | "monthly" | "cron";
+  /**
+   * @min 1
+   * @max 1440
+   */
+  healthIntervalMinutes: number;
+  /** @maxLength 255 */
+  hostKey: string;
+  /**
+   * @min 1
+   * @max 168
+   */
+  intervalHours: number;
+  /**
+   * @min 0
+   * @max 3650
+   */
+  keepDaily: number;
+  /**
+   * @min 0
+   * @max 120
+   */
+  keepMonthly: number;
+  /**
+   * @min 0
+   * @max 520
+   */
+  keepWeekly: number;
+  /**
+   * @minLength 1
+   * @maxLength 255
+   */
+  name: string;
+  /**
+   * OAuthTicket is the one-time ticket returned by the OAuth callback for a
+   * cloud-drive destination. It carries the connected account, and is
+   * consumed when the destination is saved.
+   */
+  oauthTicket: string;
+  /** Passphrase unlocks a passphrase-protected PrivateKey. */
+  passphrase: string;
+  /**
+   * Password is the sftp or webdav password. Leave empty to keep the stored
+   * credentials of an existing destination.
+   */
+  password: string;
+  /** @maxLength 255 */
+  prefix: string;
+  /** PrivateKey is a PEM private key for sftp, optionally passphrase-protected. */
+  privateKey: string;
+  scheduleEnabled: boolean;
+  skipIfUnchanged: boolean;
+  /**
+   * Type is one of primary, local, s3, gcs, azblob, sftp, webdav, gdrive,
+   * onedrive, dropbox, smb.
+   */
+  type:
+    | "primary"
+    | "local"
+    | "s3"
+    | "gcs"
+    | "azblob"
+    | "sftp"
+    | "webdav"
+    | "gdrive"
+    | "onedrive"
+    | "dropbox"
+    | "smb";
+  /**
+   * Username and HostKey serve the sftp and webdav types. HostKey is the
+   * SSH host key fingerprint (SHA256:...) an sftp server must present.
+   * @maxLength 255
+   */
+  username: string;
+  /**
+   * @min 0
+   * @max 6
+   */
+  weekday: number;
 }
 
 export interface BarcodeProduct {
@@ -1065,6 +1450,11 @@ export interface EntityUpdate {
 export interface ExportOut {
   artifactPath: string;
   createdAt: Date | string;
+  /**
+   * DestinationID is the backup destination holding the artifact; absent
+   * for plain manual exports, which live in the primary storage.
+   */
+  destinationId?: string | null;
   error: string;
   groupId: string;
   id: string;
@@ -1074,6 +1464,11 @@ export interface ExportOut {
    * same for both.
    */
   kind: string;
+  /**
+   * Origin is "manual" for user-triggered exports and "scheduled" for
+   * backups started by the scheduler.
+   */
+  origin: string;
   progress: number;
   sizeBytes: number;
   status: string;
@@ -1332,6 +1727,23 @@ export interface Latest {
   version: string;
 }
 
+export interface OIDCSuggestion {
+  destType: string;
+  email: string;
+  provider: string;
+}
+
+export interface TestResult {
+  /**
+   * HostKey is the SSH host key fingerprint the server presented when it
+   * was missing or did not match, so the UI can offer to trust it.
+   */
+  hostKey: string;
+  latencyMs: number;
+  message: string;
+  ok: boolean;
+}
+
 export interface UserRegistration {
   email: string;
   name: string;
@@ -1355,6 +1767,34 @@ export interface APISummary {
 
 export interface ActionAmountResult {
   completed: number;
+}
+
+export interface BackupOAuthStartIn {
+  provider: "google" | "microsoft" | "dropbox";
+  /**
+   * UseLoginAccount asks the provider to preselect the account the user
+   * signed in to Homebox with. Honoured only when that login came from the
+   * same provider.
+   */
+  useLoginAccount: boolean;
+}
+
+export interface BackupOAuthStartOut {
+  authUrl: string;
+}
+
+export interface BackupOptions {
+  allowCustomEndpoints: boolean;
+  enabled: boolean;
+  localEnabled: boolean;
+  /** OAuthProviders lists the configured cloud drives: google, microsoft, dropbox. */
+  oauthProviders: string[];
+  /**
+   * OIDCSuggestion offers the cloud drive matching the identity provider the
+   * current user signed in with, when there is one.
+   */
+  oidcSuggestion?: OIDCSuggestion | null;
+  remoteEnabled: boolean;
 }
 
 export interface Build {
@@ -1437,6 +1877,10 @@ export interface ResetPasswordRequest {
   password: string;
   /** @minLength 20 */
   token: string;
+}
+
+export interface ResultsRepoBackupDestinationOut {
+  items: BackupDestinationOut[];
 }
 
 export interface ResultsRepoExportOut {

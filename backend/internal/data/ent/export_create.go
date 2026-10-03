@@ -140,6 +140,34 @@ func (_c *ExportCreate) SetNillableError(v *string) *ExportCreate {
 	return _c
 }
 
+// SetOrigin sets the "origin" field.
+func (_c *ExportCreate) SetOrigin(v export.Origin) *ExportCreate {
+	_c.mutation.SetOrigin(v)
+	return _c
+}
+
+// SetNillableOrigin sets the "origin" field if the given value is not nil.
+func (_c *ExportCreate) SetNillableOrigin(v *export.Origin) *ExportCreate {
+	if v != nil {
+		_c.SetOrigin(*v)
+	}
+	return _c
+}
+
+// SetDestinationID sets the "destination_id" field.
+func (_c *ExportCreate) SetDestinationID(v uuid.UUID) *ExportCreate {
+	_c.mutation.SetDestinationID(v)
+	return _c
+}
+
+// SetNillableDestinationID sets the "destination_id" field if the given value is not nil.
+func (_c *ExportCreate) SetNillableDestinationID(v *uuid.UUID) *ExportCreate {
+	if v != nil {
+		_c.SetDestinationID(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *ExportCreate) SetID(v uuid.UUID) *ExportCreate {
 	_c.mutation.SetID(v)
@@ -218,6 +246,10 @@ func (_c *ExportCreate) defaults() {
 		v := export.DefaultSizeBytes
 		_c.mutation.SetSizeBytes(v)
 	}
+	if _, ok := _c.mutation.Origin(); !ok {
+		v := export.DefaultOrigin
+		_c.mutation.SetOrigin(v)
+	}
 	if _, ok := _c.mutation.ID(); !ok {
 		v := export.DefaultID()
 		_c.mutation.SetID(v)
@@ -260,6 +292,14 @@ func (_c *ExportCreate) check() error {
 	if v, ok := _c.mutation.Error(); ok {
 		if err := export.ErrorValidator(v); err != nil {
 			return &ValidationError{Name: "error", err: fmt.Errorf(`ent: validator failed for field "Export.error": %w`, err)}
+		}
+	}
+	if _, ok := _c.mutation.Origin(); !ok {
+		return &ValidationError{Name: "origin", err: errors.New(`ent: missing required field "Export.origin"`)}
+	}
+	if v, ok := _c.mutation.Origin(); ok {
+		if err := export.OriginValidator(v); err != nil {
+			return &ValidationError{Name: "origin", err: fmt.Errorf(`ent: validator failed for field "Export.origin": %w`, err)}
 		}
 	}
 	if len(_c.mutation.GroupIDs()) == 0 {
@@ -331,6 +371,14 @@ func (_c *ExportCreate) createSpec() (*Export, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Error(); ok {
 		_spec.SetField(export.FieldError, field.TypeString, value)
 		_node.Error = value
+	}
+	if value, ok := _c.mutation.Origin(); ok {
+		_spec.SetField(export.FieldOrigin, field.TypeEnum, value)
+		_node.Origin = value
+	}
+	if value, ok := _c.mutation.DestinationID(); ok {
+		_spec.SetField(export.FieldDestinationID, field.TypeUUID, value)
+		_node.DestinationID = &value
 	}
 	if nodes := _c.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

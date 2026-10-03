@@ -91,6 +91,11 @@ func Error(v string) predicate.Export {
 	return predicate.Export(sql.FieldEQ(FieldError, v))
 }
 
+// DestinationID applies equality check predicate on the "destination_id" field. It's identical to DestinationIDEQ.
+func DestinationID(v uuid.UUID) predicate.Export {
+	return predicate.Export(sql.FieldEQ(FieldDestinationID, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Export {
 	return predicate.Export(sql.FieldEQ(FieldCreatedAt, v))
@@ -459,6 +464,76 @@ func ErrorEqualFold(v string) predicate.Export {
 // ErrorContainsFold applies the ContainsFold predicate on the "error" field.
 func ErrorContainsFold(v string) predicate.Export {
 	return predicate.Export(sql.FieldContainsFold(FieldError, v))
+}
+
+// OriginEQ applies the EQ predicate on the "origin" field.
+func OriginEQ(v Origin) predicate.Export {
+	return predicate.Export(sql.FieldEQ(FieldOrigin, v))
+}
+
+// OriginNEQ applies the NEQ predicate on the "origin" field.
+func OriginNEQ(v Origin) predicate.Export {
+	return predicate.Export(sql.FieldNEQ(FieldOrigin, v))
+}
+
+// OriginIn applies the In predicate on the "origin" field.
+func OriginIn(vs ...Origin) predicate.Export {
+	return predicate.Export(sql.FieldIn(FieldOrigin, vs...))
+}
+
+// OriginNotIn applies the NotIn predicate on the "origin" field.
+func OriginNotIn(vs ...Origin) predicate.Export {
+	return predicate.Export(sql.FieldNotIn(FieldOrigin, vs...))
+}
+
+// DestinationIDEQ applies the EQ predicate on the "destination_id" field.
+func DestinationIDEQ(v uuid.UUID) predicate.Export {
+	return predicate.Export(sql.FieldEQ(FieldDestinationID, v))
+}
+
+// DestinationIDNEQ applies the NEQ predicate on the "destination_id" field.
+func DestinationIDNEQ(v uuid.UUID) predicate.Export {
+	return predicate.Export(sql.FieldNEQ(FieldDestinationID, v))
+}
+
+// DestinationIDIn applies the In predicate on the "destination_id" field.
+func DestinationIDIn(vs ...uuid.UUID) predicate.Export {
+	return predicate.Export(sql.FieldIn(FieldDestinationID, vs...))
+}
+
+// DestinationIDNotIn applies the NotIn predicate on the "destination_id" field.
+func DestinationIDNotIn(vs ...uuid.UUID) predicate.Export {
+	return predicate.Export(sql.FieldNotIn(FieldDestinationID, vs...))
+}
+
+// DestinationIDGT applies the GT predicate on the "destination_id" field.
+func DestinationIDGT(v uuid.UUID) predicate.Export {
+	return predicate.Export(sql.FieldGT(FieldDestinationID, v))
+}
+
+// DestinationIDGTE applies the GTE predicate on the "destination_id" field.
+func DestinationIDGTE(v uuid.UUID) predicate.Export {
+	return predicate.Export(sql.FieldGTE(FieldDestinationID, v))
+}
+
+// DestinationIDLT applies the LT predicate on the "destination_id" field.
+func DestinationIDLT(v uuid.UUID) predicate.Export {
+	return predicate.Export(sql.FieldLT(FieldDestinationID, v))
+}
+
+// DestinationIDLTE applies the LTE predicate on the "destination_id" field.
+func DestinationIDLTE(v uuid.UUID) predicate.Export {
+	return predicate.Export(sql.FieldLTE(FieldDestinationID, v))
+}
+
+// DestinationIDIsNil applies the IsNil predicate on the "destination_id" field.
+func DestinationIDIsNil() predicate.Export {
+	return predicate.Export(sql.FieldIsNull(FieldDestinationID))
+}
+
+// DestinationIDNotNil applies the NotNil predicate on the "destination_id" field.
+func DestinationIDNotNil() predicate.Export {
+	return predicate.Export(sql.FieldNotNull(FieldDestinationID))
 }
 
 // HasGroup applies the HasEdge predicate on the "group" edge.

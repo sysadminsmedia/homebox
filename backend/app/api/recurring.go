@@ -56,6 +56,15 @@ func registerRecurringTasks(app *app, cfg *config.Config, runner *graceful.Runne
 		purgeStaleExports(ctx, app)
 	}))
 
+	if cfg.Backup.Enabled {
+		runner.AddPlugin(NewTask("backup-scheduler", time.Minute, func(ctx context.Context) {
+			app.services.Backups.SchedulerTick(ctx)
+		}))
+		runner.AddPlugin(NewTask("backup-health", time.Minute, func(ctx context.Context) {
+			app.services.Backups.HealthTick(ctx)
+		}))
+	}
+
 	runner.AddPlugin(NewTask("send-notifications", time.Hour, func(ctx context.Context) {
 		now := time.Now()
 		if now.Hour() == 8 {

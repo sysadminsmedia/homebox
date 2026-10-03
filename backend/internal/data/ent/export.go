@@ -37,6 +37,10 @@ type Export struct {
 	SizeBytes int64 `json:"size_bytes,omitempty"`
 	// Error holds the value of the "error" field.
 	Error string `json:"error,omitempty"`
+	// Origin holds the value of the "origin" field.
+	Origin export.Origin `json:"origin,omitempty"`
+	// DestinationID holds the value of the "destination_id" field.
+	DestinationID *uuid.UUID `json:"destination_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ExportQuery when eager-loading is set.
 	Edges        ExportEdges `json:"edges"`
@@ -68,9 +72,11 @@ func (*Export) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case export.FieldDestinationID:
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		case export.FieldProgress, export.FieldSizeBytes:
 			values[i] = new(sql.NullInt64)
-		case export.FieldKind, export.FieldStatus, export.FieldArtifactPath, export.FieldError:
+		case export.FieldKind, export.FieldStatus, export.FieldArtifactPath, export.FieldError, export.FieldOrigin:
 			values[i] = new(sql.NullString)
 		case export.FieldCreatedAt, export.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -151,6 +157,19 @@ func (_m *Export) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Error = value.String
 			}
+		case export.FieldOrigin:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field origin", values[i])
+			} else if value.Valid {
+				_m.Origin = export.Origin(value.String)
+			}
+		case export.FieldDestinationID:
+			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field destination_id", values[i])
+			} else if value.Valid {
+				_m.DestinationID = new(uuid.UUID)
+				*_m.DestinationID = *value.S.(*uuid.UUID)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -218,6 +237,14 @@ func (_m *Export) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("error=")
 	builder.WriteString(_m.Error)
+	builder.WriteString(", ")
+	builder.WriteString("origin=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Origin))
+	builder.WriteString(", ")
+	if v := _m.DestinationID; v != nil {
+		builder.WriteString("destination_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }
