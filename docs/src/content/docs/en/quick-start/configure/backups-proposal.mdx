@@ -4,13 +4,34 @@ description: Design proposal for scheduled, versioned backups with remote NAS an
 draft: true
 ---
 
-> [!CAUTION]
-> **This is a proposal, not a shipped feature.** Nothing on this page is available in HomeBox today. The screenshots are
-> static mockups and the diagrams show a suggested design. Discussion: [sysadminsmedia/homebox#1767](https://github.com/sysadminsmedia/homebox/discussions/1767).
+> [!NOTE]
+> **Phase 1 is implemented**: scheduled backups, skip-if-unchanged, versioning and retention, destinations on the primary
+> storage, a local directory and S3 / Google Cloud Storage / Azure Blob, test connection, health checks, and alerts
+> through the existing Notifiers. See [Backups](/quick-start/configure/backups/).
+>
+> **Everything else on this page is still a proposal**: SFTP, WebDAV, SMB/NFS, Google Drive / OneDrive / Dropbox, the
+> OIDC-assisted cloud offer, cron schedules and encrypted credential storage. The mockups and the demo show the target
+> design, so they include items that do not exist yet.
+> Discussion: [sysadminsmedia/homebox#1767](https://github.com/sysadminsmedia/homebox/discussions/1767).
 
-## Where we are today
+## Status
 
-| Capability                                   | Today                                                                                                           |
+| Capability                                          | Status      |
+|-----------------------------------------------------|-------------|
+| Scheduled backups (hourly, daily, weekly, monthly)  | Implemented |
+| Skip when nothing changed                           | Implemented |
+| Versioning and retention                            | Implemented |
+| Primary storage, local directory, S3, GCS, Azure    | Implemented |
+| Test connection, health checks, alerts, UI banner   | Implemented |
+| Custom cron expressions                             | Planned     |
+| SFTP, WebDAV, SMB/NFS                               | Planned     |
+| Google Drive, OneDrive, Dropbox                     | Planned     |
+| OIDC-assisted cloud destination                     | Planned     |
+| Encrypted credential storage                        | Planned     |
+
+## How it looked before Phase 1
+
+| Capability                                   | Before                                                                                                          |
 |----------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
 | Create a backup                              | Manual only (Tools → Backups & Restore). There is no scheduler.                                                  |
 | Where backups are written                    | The same blob storage as attachments, set by `HBOX_STORAGE_CONN_STRING` (see [Storage](/quick-start/configure/storage/)). |

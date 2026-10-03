@@ -172,6 +172,18 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Delete("/group/exports/{id}", chain.ToHandlerFunc(v1Ctrl.HandleExportDelete(), userMW...))
 		r.Post("/group/import", chain.ToHandlerFunc(v1Ctrl.HandleCollectionImport(), userMW...))
 
+		// Scheduled backups and their destinations (group owners only)
+		r.Get("/group/backup-options", chain.ToHandlerFunc(v1Ctrl.HandleBackupOptions(), ownerMW...))
+		r.Get("/group/backup-destinations", chain.ToHandlerFunc(v1Ctrl.HandleBackupDestinationsList(), ownerMW...))
+		r.Post("/group/backup-destinations", chain.ToHandlerFunc(v1Ctrl.HandleBackupDestinationCreate(), ownerMW...))
+		r.Post("/group/backup-destinations/test", chain.ToHandlerFunc(v1Ctrl.HandleBackupSettingsTest(), ownerMW...))
+		r.Get("/group/backup-destinations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleBackupDestinationGet(), ownerMW...))
+		r.Put("/group/backup-destinations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleBackupDestinationUpdate(), ownerMW...))
+		r.Delete("/group/backup-destinations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleBackupDestinationDelete(), ownerMW...))
+		r.Post("/group/backup-destinations/{id}/test", chain.ToHandlerFunc(v1Ctrl.HandleBackupDestinationTest(), ownerMW...))
+		r.Post("/group/backup-destinations/{id}/run", chain.ToHandlerFunc(v1Ctrl.HandleBackupDestinationRun(), ownerMW...))
+		r.Get("/group/backup-destinations/{id}/versions", chain.ToHandlerFunc(v1Ctrl.HandleBackupDestinationVersions(), ownerMW...))
+
 		r.Get("/groups/statistics", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatistics(), userMW...))
 		r.Get("/groups/statistics/purchase-price", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatisticsPriceOverTime(), userMW...))
 		r.Get("/groups/statistics/locations", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatisticsLocations(), userMW...))

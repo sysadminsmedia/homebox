@@ -43,6 +43,12 @@ export enum ExportStatus {
   StatusFailed = "failed",
 }
 
+export enum ExportOrigin {
+  DefaultOrigin = "manual",
+  OriginManual = "manual",
+  OriginScheduled = "scheduled",
+}
+
 export enum ExportKind {
   DefaultKind = "export",
   KindExport = "export",
@@ -54,6 +60,30 @@ export enum EntityfieldType {
   TypeNumber = "number",
   TypeBoolean = "boolean",
   TypeTime = "time",
+}
+
+export enum BackupdestinationType {
+  DefaultType = "primary",
+  TypePrimary = "primary",
+  TypeLocal = "local",
+  TypeS3 = "s3",
+  TypeGcs = "gcs",
+  TypeAzblob = "azblob",
+}
+
+export enum BackupdestinationHealthStatus {
+  DefaultHealthStatus = "unknown",
+  HealthStatusUnknown = "unknown",
+  HealthStatusHealthy = "healthy",
+  HealthStatusUnreachable = "unreachable",
+}
+
+export enum BackupdestinationFrequency {
+  DefaultFrequency = "daily",
+  FrequencyHourly = "hourly",
+  FrequencyDaily = "daily",
+  FrequencyWeekly = "weekly",
+  FrequencyMonthly = "monthly",
 }
 
 export enum AuthrolesRole {
@@ -179,6 +209,95 @@ export interface EntAuthTokensEdges {
   roles: EntAuthRoles;
   /** User holds the value of the user edge. */
   user: EntUser;
+}
+
+export interface EntBackupDestination {
+  /** AlertFailureThreshold holds the value of the "alert_failure_threshold" field. */
+  alert_failure_threshold: number;
+  /** AlertStaleHours holds the value of the "alert_stale_hours" field. */
+  alert_stale_hours: number;
+  /** AlertedFailure holds the value of the "alerted_failure" field. */
+  alerted_failure: boolean;
+  /** AlertedStale holds the value of the "alerted_stale" field. */
+  alerted_stale: boolean;
+  /** AlertedUnreachable holds the value of the "alerted_unreachable" field. */
+  alerted_unreachable: boolean;
+  /** AlertsEnabled holds the value of the "alerts_enabled" field. */
+  alerts_enabled: boolean;
+  /** AtHour holds the value of the "at_hour" field. */
+  at_hour: number;
+  /** AtMinute holds the value of the "at_minute" field. */
+  at_minute: number;
+  /** ConnString holds the value of the "conn_string" field. */
+  conn_string: string;
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /** DayOfMonth holds the value of the "day_of_month" field. */
+  day_of_month: number;
+  /** Description holds the value of the "description" field. */
+  description: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the BackupDestinationQuery when eager-loading is set.
+   */
+  edges: EntBackupDestinationEdges;
+  /** Enabled holds the value of the "enabled" field. */
+  enabled: boolean;
+  /** Frequency holds the value of the "frequency" field. */
+  frequency: BackupdestinationFrequency;
+  /** GroupID holds the value of the "group_id" field. */
+  group_id: string;
+  /** HealthCheckedAt holds the value of the "health_checked_at" field. */
+  health_checked_at: string;
+  /** HealthError holds the value of the "health_error" field. */
+  health_error: string;
+  /** HealthFailures holds the value of the "health_failures" field. */
+  health_failures: number;
+  /** HealthIntervalMinutes holds the value of the "health_interval_minutes" field. */
+  health_interval_minutes: number;
+  /** HealthStatus holds the value of the "health_status" field. */
+  health_status: BackupdestinationHealthStatus;
+  /** ID of the ent. */
+  id: string;
+  /** IntervalHours holds the value of the "interval_hours" field. */
+  interval_hours: number;
+  /** KeepDaily holds the value of the "keep_daily" field. */
+  keep_daily: number;
+  /** KeepMonthly holds the value of the "keep_monthly" field. */
+  keep_monthly: number;
+  /** KeepWeekly holds the value of the "keep_weekly" field. */
+  keep_weekly: number;
+  /** LastError holds the value of the "last_error" field. */
+  last_error: string;
+  /** LastFingerprint holds the value of the "last_fingerprint" field. */
+  last_fingerprint: string;
+  /** LastRunAt holds the value of the "last_run_at" field. */
+  last_run_at: string;
+  /** LastSkippedAt holds the value of the "last_skipped_at" field. */
+  last_skipped_at: string;
+  /** LastSuccessAt holds the value of the "last_success_at" field. */
+  last_success_at: string;
+  /** Name holds the value of the "name" field. */
+  name: string;
+  /** NextRunAt holds the value of the "next_run_at" field. */
+  next_run_at: string;
+  /** Prefix holds the value of the "prefix" field. */
+  prefix: string;
+  /** ScheduleEnabled holds the value of the "schedule_enabled" field. */
+  schedule_enabled: boolean;
+  /** SkipIfUnchanged holds the value of the "skip_if_unchanged" field. */
+  skip_if_unchanged: boolean;
+  /** Type holds the value of the "type" field. */
+  type: BackupdestinationType;
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+  /** Weekday holds the value of the "weekday" field. */
+  weekday: number;
+}
+
+export interface EntBackupDestinationEdges {
+  /** Group holds the value of the group edge. */
+  group: EntGroup;
 }
 
 export interface EntEntity {
@@ -384,6 +503,8 @@ export interface EntExport {
   artifact_path: string;
   /** CreatedAt holds the value of the "created_at" field. */
   created_at: string;
+  /** DestinationID holds the value of the "destination_id" field. */
+  destination_id: string;
   /**
    * Edges holds the relations/edges for other nodes in the graph.
    * The values are being populated by the ExportQuery when eager-loading is set.
@@ -397,6 +518,8 @@ export interface EntExport {
   id: string;
   /** Kind holds the value of the "kind" field. */
   kind: ExportKind;
+  /** Origin holds the value of the "origin" field. */
+  origin: ExportOrigin;
   /** Progress holds the value of the "progress" field. */
   progress: number;
   /** SizeBytes holds the value of the "size_bytes" field. */
@@ -431,6 +554,8 @@ export interface EntGroup {
 }
 
 export interface EntGroupEdges {
+  /** BackupDestinations holds the value of the backup_destinations edge. */
+  backup_destinations: EntBackupDestination[];
   /** Entities holds the value of the entities edge. */
   entities: EntEntity[];
   /** EntityTemplates holds the value of the entity_templates edge. */
@@ -725,6 +850,175 @@ export interface APIKeyOut {
   userId: string;
 }
 
+export interface BackupDestinationOut {
+  /**
+   * @min 1
+   * @max 100
+   */
+  alertFailureThreshold: number;
+  /**
+   * AlertStaleHours alerts when no backup succeeded for this long. 0 disables.
+   * @min 0
+   * @max 8760
+   */
+  alertStaleHours: number;
+  alertsEnabled: boolean;
+  /**
+   * @min 0
+   * @max 23
+   */
+  atHour: number;
+  /**
+   * @min 0
+   * @max 59
+   */
+  atMinute: number;
+  /** @maxLength 2048 */
+  connString: string;
+  createdAt: Date | string;
+  /**
+   * @min 1
+   * @max 28
+   */
+  dayOfMonth: number;
+  /** @maxLength 1000 */
+  description: string;
+  enabled: boolean;
+  /** Frequency is one of hourly, daily, weekly, monthly. */
+  frequency: "hourly" | "daily" | "weekly" | "monthly";
+  groupId: string;
+  healthCheckedAt?: string | null;
+  healthError: string;
+  healthFailures: number;
+  /**
+   * @min 1
+   * @max 1440
+   */
+  healthIntervalMinutes: number;
+  healthStatus: string;
+  id: string;
+  /**
+   * @min 1
+   * @max 168
+   */
+  intervalHours: number;
+  /**
+   * @min 0
+   * @max 3650
+   */
+  keepDaily: number;
+  /**
+   * @min 0
+   * @max 120
+   */
+  keepMonthly: number;
+  /**
+   * @min 0
+   * @max 520
+   */
+  keepWeekly: number;
+  lastError: string;
+  lastRunAt?: string | null;
+  lastSkippedAt?: string | null;
+  lastSuccessAt?: string | null;
+  /**
+   * @minLength 1
+   * @maxLength 255
+   */
+  name: string;
+  nextRunAt?: string | null;
+  /** @maxLength 255 */
+  prefix: string;
+  scheduleEnabled: boolean;
+  skipIfUnchanged: boolean;
+  /** Type is one of primary, local, s3, gcs, azblob. */
+  type: "primary" | "local" | "s3" | "gcs" | "azblob";
+  updatedAt: Date | string;
+  /**
+   * @min 0
+   * @max 6
+   */
+  weekday: number;
+}
+
+export interface BackupSettings {
+  /**
+   * @min 1
+   * @max 100
+   */
+  alertFailureThreshold: number;
+  /**
+   * AlertStaleHours alerts when no backup succeeded for this long. 0 disables.
+   * @min 0
+   * @max 8760
+   */
+  alertStaleHours: number;
+  alertsEnabled: boolean;
+  /**
+   * @min 0
+   * @max 23
+   */
+  atHour: number;
+  /**
+   * @min 0
+   * @max 59
+   */
+  atMinute: number;
+  /** @maxLength 2048 */
+  connString: string;
+  /**
+   * @min 1
+   * @max 28
+   */
+  dayOfMonth: number;
+  /** @maxLength 1000 */
+  description: string;
+  enabled: boolean;
+  /** Frequency is one of hourly, daily, weekly, monthly. */
+  frequency: "hourly" | "daily" | "weekly" | "monthly";
+  /**
+   * @min 1
+   * @max 1440
+   */
+  healthIntervalMinutes: number;
+  /**
+   * @min 1
+   * @max 168
+   */
+  intervalHours: number;
+  /**
+   * @min 0
+   * @max 3650
+   */
+  keepDaily: number;
+  /**
+   * @min 0
+   * @max 120
+   */
+  keepMonthly: number;
+  /**
+   * @min 0
+   * @max 520
+   */
+  keepWeekly: number;
+  /**
+   * @minLength 1
+   * @maxLength 255
+   */
+  name: string;
+  /** @maxLength 255 */
+  prefix: string;
+  scheduleEnabled: boolean;
+  skipIfUnchanged: boolean;
+  /** Type is one of primary, local, s3, gcs, azblob. */
+  type: "primary" | "local" | "s3" | "gcs" | "azblob";
+  /**
+   * @min 0
+   * @max 6
+   */
+  weekday: number;
+}
+
 export interface BarcodeProduct {
   barcode: string;
   imageBase64: string;
@@ -749,10 +1043,7 @@ export interface EntityCreate {
   /** @maxLength 1000 */
   description: string;
   entityTypeId: string;
-  /**
-   * LocationID is only needed when ParentID refers to another item and
-   * the new entity is stored somewhere other than that item's location.
-   */
+  /** Only needed when ParentID is another item and this lives elsewhere (#1688). */
   locationId?: string | null;
   /** @maxLength 255 */
   manufacturer?: string | null;
@@ -809,18 +1100,14 @@ export interface EntityOut {
   /** Warranty */
   lifetimeWarranty: boolean;
   /**
-   * Location is where this entity resolves to: its own location when one
-   * is set, otherwise the nearest ancestor whose entity type is a
-   * location. Nil for top-level entities. This is a *resolved* value —
-   * write it back through LocationID, not through this field.
+   * Location is resolved: this entity's own location, else the nearest
+   * location ancestor. Read-only — write via LocationID.
    */
   location?: EntitySummary | null;
   /**
-   * LocationID is this entity's own location, and is nil when Location was
-   * inherited from an ancestor. It is named to match the locationId field
-   * on EntityUpdate on purpose: a GET body PUT back verbatim keeps the
-   * entity exactly where it was, rather than silently pinning an
-   * inherited location or dropping an explicit one.
+   * LocationID is set only when this entity has its own location, nil when
+   * inherited. Same name as the EntityUpdate field so a GET/PUT round trip
+   * doesn't pin an inherited location or drop an explicit one.
    */
   locationId?: string | null;
   manufacturer: string;
@@ -1034,10 +1321,8 @@ export interface EntityUpdate {
   /** Warranty */
   lifetimeWarranty: boolean;
   /**
-   * LocationID names the location this entity is stored in. It only
-   * needs to be sent when ParentID refers to another item and the entity
-   * lives somewhere other than that item's location (#1688); otherwise
-   * ParentID alone carries the location. See resolveLocationOverride.
+   * Only needed when ParentID is another item and this lives elsewhere (#1688).
+   * Otherwise ParentID carries the location. See resolveLocationOverride.
    */
   locationId?: string | null;
   manufacturer: string;
@@ -1074,6 +1359,11 @@ export interface EntityUpdate {
 export interface ExportOut {
   artifactPath: string;
   createdAt: Date | string;
+  /**
+   * DestinationID is the backup destination holding the artifact; absent
+   * for plain manual exports, which live in the primary storage.
+   */
+  destinationId?: string | null;
   error: string;
   groupId: string;
   id: string;
@@ -1083,6 +1373,11 @@ export interface ExportOut {
    * same for both.
    */
   kind: string;
+  /**
+   * Origin is "manual" for user-triggered exports and "scheduled" for
+   * backups started by the scheduler.
+   */
+  origin: string;
   progress: number;
   sizeBytes: number;
   status: string;
@@ -1341,6 +1636,12 @@ export interface Latest {
   version: string;
 }
 
+export interface TestResult {
+  latencyMs: number;
+  message: string;
+  ok: boolean;
+}
+
 export interface UserRegistration {
   email: string;
   name: string;
@@ -1364,6 +1665,12 @@ export interface APISummary {
 
 export interface ActionAmountResult {
   completed: number;
+}
+
+export interface BackupOptions {
+  allowCustomEndpoints: boolean;
+  enabled: boolean;
+  localEnabled: boolean;
 }
 
 export interface Build {
@@ -1446,6 +1753,10 @@ export interface ResetPasswordRequest {
   password: string;
   /** @minLength 20 */
   token: string;
+}
+
+export interface ResultsRepoBackupDestinationOut {
+  items: BackupDestinationOut[];
 }
 
 export interface ResultsRepoExportOut {

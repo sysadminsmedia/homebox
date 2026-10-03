@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"path"
-	"strings"
 
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
@@ -108,22 +106,20 @@ func (ctrl *V1Controller) HandleExportDownload() errchain.HandlerFunc {
 		if out.Status != "completed" || out.ArtifactPath == "" {
 			return validate.NewRequestError(errors.New("export not ready"), http.StatusConflict)
 		}
-		// Defence in depth: refuse to stream anything that doesn't live under the
-		// caller's group prefix. The repo Get above already enforces ownership;
-		// this catches a stale row whose artifact_path was tampered with.
-		expectedPrefix := ctx.GID.String() + "/exports/"
-		if !strings.HasPrefix(out.ArtifactPath, expectedPrefix) {
-			return validate.NewRequestError(errors.New("artifact outside group prefix"), http.StatusForbidden)
-		}
-
-		bucket, err := blob.OpenBucket(r.Context(), ctrl.repo.Attachments.GetConnString())
+		// Defence in depth: the service refuses any artifact that lives outside
+		// the prefix its destination (or the primary storage) allows for this
+		// group, which catches a stale row whose artifact_path was tampered with.
+		bucket, key, err := ctrl.svc.Backups.ArtifactLocation(r.Context(), ctx.GID, out)
 		if err != nil {
-			log.Err(err).Msg("export download: open bucket")
-			return validate.NewRequestError(err, http.StatusInternalServerError)
+			log.Err(err).Msg("export download: locate artifact")
+			if ent.IsNotFound(err) {
+				return validate.NewRequestError(err, http.StatusNotFound)
+			}
+			return validate.NewRequestError(err, http.StatusForbidden)
 		}
 		defer func() { _ = bucket.Close() }()
 
-		reader, err := bucket.NewReader(r.Context(), ctrl.repo.Attachments.GetFullPath(out.ArtifactPath), nil)
+		reader, err := bucket.NewReader(r.Context(), key, nil)
 		if err != nil {
 			log.Err(err).Str("artifact_path", out.ArtifactPath).Msg("export download: open reader")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
@@ -169,19 +165,13 @@ func (ctrl *V1Controller) HandleExportDelete() errchain.HandlerFunc {
 			return nil, err
 		}
 		if out.ArtifactPath != "" {
-			// Defence in depth: only touch blobs that live under the caller's
-			// group prefix. The repo Get above already enforces ownership; this
-			// catches a stale row whose artifact_path was tampered with, and
-			// path.Clean collapses any traversal segments before the prefix
-			// check so "<gid>/exports/../../other" can't slip through.
-			cleanPath := path.Clean(out.ArtifactPath)
-			expectedPrefix := ctx.GID.String() + "/exports/"
-			if strings.HasPrefix(cleanPath, expectedPrefix) {
-				bucket, err := blob.OpenBucket(r.Context(), ctrl.repo.Attachments.GetConnString())
-				if err == nil {
-					_ = bucket.Delete(r.Context(), ctrl.repo.Attachments.GetFullPath(cleanPath))
-					_ = bucket.Close()
-				}
+			// Best effort, as before: a bucket that is unreachable or an artifact
+			// that is already gone must not block removing the history row.
+			// ArtifactLocation enforces the per-group prefix and collapses any
+			// traversal segments before resolving the key.
+			if bucket, key, err := ctrl.svc.Backups.ArtifactLocation(r.Context(), ctx.GID, out); err == nil {
+				_ = bucket.Delete(r.Context(), key)
+				_ = bucket.Close()
 			}
 		}
 		if _, err := ctrl.repo.Exports.Delete(ctx, ctx.GID, id); err != nil {

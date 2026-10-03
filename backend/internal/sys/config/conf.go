@@ -64,6 +64,22 @@ type Config struct {
 	Auth       AuthConfig     `yaml:"auth"`
 	Notifier   NotifierConf   `yaml:"notifier"`
 	Search     SearchConf     `yaml:"search"`
+	Backup     BackupConf     `yaml:"backup"`
+}
+
+// BackupConf controls scheduled backups and their destinations.
+type BackupConf struct {
+	// Enabled turns the scheduler, health checks and destination management
+	// on or off. Manual exports are unaffected.
+	Enabled bool `yaml:"enabled" conf:"default:true"`
+	// LocalRoot is the directory under which "local" destinations may create
+	// sub-directories. Empty disables local destinations; the primary
+	// storage and cloud destinations still work.
+	LocalRoot string `yaml:"local_root"`
+	// AllowCustomEndpoints permits cloud destination URLs that carry an
+	// endpoint (S3-compatible servers, NAS gateways, emulators). Turn off to
+	// restrict destinations to the providers' default endpoints.
+	AllowCustomEndpoints bool `yaml:"allow_custom_endpoints" conf:"default:true"`
 }
 
 // SearchConf selects and configures the free-text search engine. The default

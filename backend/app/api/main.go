@@ -197,6 +197,7 @@ func run(cfg *config.Config) error {
 		services.WithNotifierConfig(&cfg.Notifier),
 		services.WithExportPlumbing(app.bus, app.db, cfg.Storage, cfg.Database.PubSubConnString, sqlDialect),
 		services.WithMailer(&app.mailer),
+		services.WithBackupConfig(cfg.Backup),
 	)
 
 	ensureAssetIDs(app)

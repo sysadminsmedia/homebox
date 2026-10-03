@@ -97,6 +97,11 @@ func MainNoExit(m *testing.M) int {
 			PrefixPath: "/",
 			ConnString: "file://" + os.TempDir(),
 		}, "mem://{{ .Topic }}", "sqlite3"),
+		WithBackupConfig(config.BackupConf{
+			Enabled:              true,
+			LocalRoot:            os.TempDir() + "/homebox-backup-root",
+			AllowCustomEndpoints: true,
+		}),
 	)
 	defer func() { _ = client.Close() }()
 

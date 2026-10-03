@@ -160,6 +160,40 @@ func (_u *ExportUpdate) ClearError() *ExportUpdate {
 	return _u
 }
 
+// SetOrigin sets the "origin" field.
+func (_u *ExportUpdate) SetOrigin(v export.Origin) *ExportUpdate {
+	_u.mutation.SetOrigin(v)
+	return _u
+}
+
+// SetNillableOrigin sets the "origin" field if the given value is not nil.
+func (_u *ExportUpdate) SetNillableOrigin(v *export.Origin) *ExportUpdate {
+	if v != nil {
+		_u.SetOrigin(*v)
+	}
+	return _u
+}
+
+// SetDestinationID sets the "destination_id" field.
+func (_u *ExportUpdate) SetDestinationID(v uuid.UUID) *ExportUpdate {
+	_u.mutation.SetDestinationID(v)
+	return _u
+}
+
+// SetNillableDestinationID sets the "destination_id" field if the given value is not nil.
+func (_u *ExportUpdate) SetNillableDestinationID(v *uuid.UUID) *ExportUpdate {
+	if v != nil {
+		_u.SetDestinationID(*v)
+	}
+	return _u
+}
+
+// ClearDestinationID clears the value of the "destination_id" field.
+func (_u *ExportUpdate) ClearDestinationID() *ExportUpdate {
+	_u.mutation.ClearDestinationID()
+	return _u
+}
+
 // SetGroup sets the "group" edge to the Group entity.
 func (_u *ExportUpdate) SetGroup(v *Group) *ExportUpdate {
 	return _u.SetGroupID(v.ID)
@@ -229,6 +263,11 @@ func (_u *ExportUpdate) check() error {
 			return &ValidationError{Name: "error", err: fmt.Errorf(`ent: validator failed for field "Export.error": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.Origin(); ok {
+		if err := export.OriginValidator(v); err != nil {
+			return &ValidationError{Name: "origin", err: fmt.Errorf(`ent: validator failed for field "Export.origin": %w`, err)}
+		}
+	}
 	if _u.mutation.GroupCleared() && len(_u.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Export.group"`)
 	}
@@ -279,6 +318,15 @@ func (_u *ExportUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.ErrorCleared() {
 		_spec.ClearField(export.FieldError, field.TypeString)
+	}
+	if value, ok := _u.mutation.Origin(); ok {
+		_spec.SetField(export.FieldOrigin, field.TypeEnum, value)
+	}
+	if value, ok := _u.mutation.DestinationID(); ok {
+		_spec.SetField(export.FieldDestinationID, field.TypeUUID, value)
+	}
+	if _u.mutation.DestinationIDCleared() {
+		_spec.ClearField(export.FieldDestinationID, field.TypeUUID)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -459,6 +507,40 @@ func (_u *ExportUpdateOne) ClearError() *ExportUpdateOne {
 	return _u
 }
 
+// SetOrigin sets the "origin" field.
+func (_u *ExportUpdateOne) SetOrigin(v export.Origin) *ExportUpdateOne {
+	_u.mutation.SetOrigin(v)
+	return _u
+}
+
+// SetNillableOrigin sets the "origin" field if the given value is not nil.
+func (_u *ExportUpdateOne) SetNillableOrigin(v *export.Origin) *ExportUpdateOne {
+	if v != nil {
+		_u.SetOrigin(*v)
+	}
+	return _u
+}
+
+// SetDestinationID sets the "destination_id" field.
+func (_u *ExportUpdateOne) SetDestinationID(v uuid.UUID) *ExportUpdateOne {
+	_u.mutation.SetDestinationID(v)
+	return _u
+}
+
+// SetNillableDestinationID sets the "destination_id" field if the given value is not nil.
+func (_u *ExportUpdateOne) SetNillableDestinationID(v *uuid.UUID) *ExportUpdateOne {
+	if v != nil {
+		_u.SetDestinationID(*v)
+	}
+	return _u
+}
+
+// ClearDestinationID clears the value of the "destination_id" field.
+func (_u *ExportUpdateOne) ClearDestinationID() *ExportUpdateOne {
+	_u.mutation.ClearDestinationID()
+	return _u
+}
+
 // SetGroup sets the "group" edge to the Group entity.
 func (_u *ExportUpdateOne) SetGroup(v *Group) *ExportUpdateOne {
 	return _u.SetGroupID(v.ID)
@@ -541,6 +623,11 @@ func (_u *ExportUpdateOne) check() error {
 			return &ValidationError{Name: "error", err: fmt.Errorf(`ent: validator failed for field "Export.error": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.Origin(); ok {
+		if err := export.OriginValidator(v); err != nil {
+			return &ValidationError{Name: "origin", err: fmt.Errorf(`ent: validator failed for field "Export.origin": %w`, err)}
+		}
+	}
 	if _u.mutation.GroupCleared() && len(_u.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Export.group"`)
 	}
@@ -608,6 +695,15 @@ func (_u *ExportUpdateOne) sqlSave(ctx context.Context) (_node *Export, err erro
 	}
 	if _u.mutation.ErrorCleared() {
 		_spec.ClearField(export.FieldError, field.TypeString)
+	}
+	if value, ok := _u.mutation.Origin(); ok {
+		_spec.SetField(export.FieldOrigin, field.TypeEnum, value)
+	}
+	if value, ok := _u.mutation.DestinationID(); ok {
+		_spec.SetField(export.FieldDestinationID, field.TypeUUID, value)
+	}
+	if _u.mutation.DestinationIDCleared() {
+		_spec.ClearField(export.FieldDestinationID, field.TypeUUID)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{

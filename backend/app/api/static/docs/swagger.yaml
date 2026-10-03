@@ -30,6 +30,48 @@ definitions:
     - RoleAdmin
     - RoleUser
     - RoleAttachments
+  backupdestination.Frequency:
+    enum:
+    - daily
+    - hourly
+    - daily
+    - weekly
+    - monthly
+    type: string
+    x-enum-varnames:
+    - DefaultFrequency
+    - FrequencyHourly
+    - FrequencyDaily
+    - FrequencyWeekly
+    - FrequencyMonthly
+  backupdestination.HealthStatus:
+    enum:
+    - unknown
+    - unknown
+    - healthy
+    - unreachable
+    type: string
+    x-enum-varnames:
+    - DefaultHealthStatus
+    - HealthStatusUnknown
+    - HealthStatusHealthy
+    - HealthStatusUnreachable
+  backupdestination.Type:
+    enum:
+    - primary
+    - primary
+    - local
+    - s3
+    - gcs
+    - azblob
+    type: string
+    x-enum-varnames:
+    - DefaultType
+    - TypePrimary
+    - TypeLocal
+    - TypeS3
+    - TypeGcs
+    - TypeAzblob
   currencies.Currency:
     properties:
       code:
@@ -184,6 +226,142 @@ definitions:
         allOf:
         - $ref: '#/definitions/ent.User'
         description: User holds the value of the user edge.
+    type: object
+  ent.BackupDestination:
+    properties:
+      alert_failure_threshold:
+        description: AlertFailureThreshold holds the value of the "alert_failure_threshold"
+          field.
+        type: integer
+      alert_stale_hours:
+        description: AlertStaleHours holds the value of the "alert_stale_hours" field.
+        type: integer
+      alerted_failure:
+        description: AlertedFailure holds the value of the "alerted_failure" field.
+        type: boolean
+      alerted_stale:
+        description: AlertedStale holds the value of the "alerted_stale" field.
+        type: boolean
+      alerted_unreachable:
+        description: AlertedUnreachable holds the value of the "alerted_unreachable"
+          field.
+        type: boolean
+      alerts_enabled:
+        description: AlertsEnabled holds the value of the "alerts_enabled" field.
+        type: boolean
+      at_hour:
+        description: AtHour holds the value of the "at_hour" field.
+        type: integer
+      at_minute:
+        description: AtMinute holds the value of the "at_minute" field.
+        type: integer
+      conn_string:
+        description: ConnString holds the value of the "conn_string" field.
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      day_of_month:
+        description: DayOfMonth holds the value of the "day_of_month" field.
+        type: integer
+      description:
+        description: Description holds the value of the "description" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.BackupDestinationEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the BackupDestinationQuery when eager-loading is set.
+      enabled:
+        description: Enabled holds the value of the "enabled" field.
+        type: boolean
+      frequency:
+        allOf:
+        - $ref: '#/definitions/backupdestination.Frequency'
+        description: Frequency holds the value of the "frequency" field.
+      group_id:
+        description: GroupID holds the value of the "group_id" field.
+        type: string
+      health_checked_at:
+        description: HealthCheckedAt holds the value of the "health_checked_at" field.
+        type: string
+      health_error:
+        description: HealthError holds the value of the "health_error" field.
+        type: string
+      health_failures:
+        description: HealthFailures holds the value of the "health_failures" field.
+        type: integer
+      health_interval_minutes:
+        description: HealthIntervalMinutes holds the value of the "health_interval_minutes"
+          field.
+        type: integer
+      health_status:
+        allOf:
+        - $ref: '#/definitions/backupdestination.HealthStatus'
+        description: HealthStatus holds the value of the "health_status" field.
+      id:
+        description: ID of the ent.
+        type: string
+      interval_hours:
+        description: IntervalHours holds the value of the "interval_hours" field.
+        type: integer
+      keep_daily:
+        description: KeepDaily holds the value of the "keep_daily" field.
+        type: integer
+      keep_monthly:
+        description: KeepMonthly holds the value of the "keep_monthly" field.
+        type: integer
+      keep_weekly:
+        description: KeepWeekly holds the value of the "keep_weekly" field.
+        type: integer
+      last_error:
+        description: LastError holds the value of the "last_error" field.
+        type: string
+      last_fingerprint:
+        description: LastFingerprint holds the value of the "last_fingerprint" field.
+        type: string
+      last_run_at:
+        description: LastRunAt holds the value of the "last_run_at" field.
+        type: string
+      last_skipped_at:
+        description: LastSkippedAt holds the value of the "last_skipped_at" field.
+        type: string
+      last_success_at:
+        description: LastSuccessAt holds the value of the "last_success_at" field.
+        type: string
+      name:
+        description: Name holds the value of the "name" field.
+        type: string
+      next_run_at:
+        description: NextRunAt holds the value of the "next_run_at" field.
+        type: string
+      prefix:
+        description: Prefix holds the value of the "prefix" field.
+        type: string
+      schedule_enabled:
+        description: ScheduleEnabled holds the value of the "schedule_enabled" field.
+        type: boolean
+      skip_if_unchanged:
+        description: SkipIfUnchanged holds the value of the "skip_if_unchanged" field.
+        type: boolean
+      type:
+        allOf:
+        - $ref: '#/definitions/backupdestination.Type'
+        description: Type holds the value of the "type" field.
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      weekday:
+        description: Weekday holds the value of the "weekday" field.
+        type: integer
+    type: object
+  ent.BackupDestinationEdges:
+    properties:
+      group:
+        allOf:
+        - $ref: '#/definitions/ent.Group'
+        description: Group holds the value of the group edge.
     type: object
   ent.Entity:
     properties:
@@ -507,6 +685,9 @@ definitions:
       created_at:
         description: CreatedAt holds the value of the "created_at" field.
         type: string
+      destination_id:
+        description: DestinationID holds the value of the "destination_id" field.
+        type: string
       edges:
         allOf:
         - $ref: '#/definitions/ent.ExportEdges'
@@ -526,6 +707,10 @@ definitions:
         allOf:
         - $ref: '#/definitions/export.Kind'
         description: Kind holds the value of the "kind" field.
+      origin:
+        allOf:
+        - $ref: '#/definitions/export.Origin'
+        description: Origin holds the value of the "origin" field.
       progress:
         description: Progress holds the value of the "progress" field.
         type: integer
@@ -573,6 +758,12 @@ definitions:
     type: object
   ent.GroupEdges:
     properties:
+      backup_destinations:
+        description: BackupDestinations holds the value of the backup_destinations
+          edge.
+        items:
+          $ref: '#/definitions/ent.BackupDestination'
+        type: array
       entities:
         description: Entities holds the value of the entities edge.
         items:
@@ -1008,6 +1199,16 @@ definitions:
     - DefaultKind
     - KindExport
     - KindImport
+  export.Origin:
+    enum:
+    - manual
+    - manual
+    - scheduled
+    type: string
+    x-enum-varnames:
+    - DefaultOrigin
+    - OriginManual
+    - OriginScheduled
   export.Status:
     enum:
     - pending
@@ -1070,6 +1271,219 @@ definitions:
       userId:
         type: string
     type: object
+  repo.BackupDestinationOut:
+    properties:
+      alertFailureThreshold:
+        maximum: 100
+        minimum: 1
+        type: integer
+      alertStaleHours:
+        description: AlertStaleHours alerts when no backup succeeded for this long.
+          0 disables.
+        maximum: 8760
+        minimum: 0
+        type: integer
+      alertsEnabled:
+        type: boolean
+      atHour:
+        maximum: 23
+        minimum: 0
+        type: integer
+      atMinute:
+        maximum: 59
+        minimum: 0
+        type: integer
+      connString:
+        maxLength: 2048
+        type: string
+      createdAt:
+        type: string
+      dayOfMonth:
+        maximum: 28
+        minimum: 1
+        type: integer
+      description:
+        maxLength: 1000
+        type: string
+      enabled:
+        type: boolean
+      frequency:
+        description: Frequency is one of hourly, daily, weekly, monthly.
+        enum:
+        - hourly
+        - daily
+        - weekly
+        - monthly
+        type: string
+      groupId:
+        type: string
+      healthCheckedAt:
+        type: string
+        x-nullable: true
+      healthError:
+        type: string
+      healthFailures:
+        type: integer
+      healthIntervalMinutes:
+        maximum: 1440
+        minimum: 1
+        type: integer
+      healthStatus:
+        type: string
+      id:
+        type: string
+      intervalHours:
+        maximum: 168
+        minimum: 1
+        type: integer
+      keepDaily:
+        maximum: 3650
+        minimum: 0
+        type: integer
+      keepMonthly:
+        maximum: 120
+        minimum: 0
+        type: integer
+      keepWeekly:
+        maximum: 520
+        minimum: 0
+        type: integer
+      lastError:
+        type: string
+      lastRunAt:
+        type: string
+        x-nullable: true
+      lastSkippedAt:
+        type: string
+        x-nullable: true
+      lastSuccessAt:
+        type: string
+        x-nullable: true
+      name:
+        maxLength: 255
+        minLength: 1
+        type: string
+      nextRunAt:
+        type: string
+        x-nullable: true
+      prefix:
+        maxLength: 255
+        type: string
+      scheduleEnabled:
+        type: boolean
+      skipIfUnchanged:
+        type: boolean
+      type:
+        description: Type is one of primary, local, s3, gcs, azblob.
+        enum:
+        - primary
+        - local
+        - s3
+        - gcs
+        - azblob
+        type: string
+      updatedAt:
+        type: string
+      weekday:
+        maximum: 6
+        minimum: 0
+        type: integer
+    required:
+    - frequency
+    - name
+    - type
+    type: object
+  repo.BackupSettings:
+    properties:
+      alertFailureThreshold:
+        maximum: 100
+        minimum: 1
+        type: integer
+      alertStaleHours:
+        description: AlertStaleHours alerts when no backup succeeded for this long.
+          0 disables.
+        maximum: 8760
+        minimum: 0
+        type: integer
+      alertsEnabled:
+        type: boolean
+      atHour:
+        maximum: 23
+        minimum: 0
+        type: integer
+      atMinute:
+        maximum: 59
+        minimum: 0
+        type: integer
+      connString:
+        maxLength: 2048
+        type: string
+      dayOfMonth:
+        maximum: 28
+        minimum: 1
+        type: integer
+      description:
+        maxLength: 1000
+        type: string
+      enabled:
+        type: boolean
+      frequency:
+        description: Frequency is one of hourly, daily, weekly, monthly.
+        enum:
+        - hourly
+        - daily
+        - weekly
+        - monthly
+        type: string
+      healthIntervalMinutes:
+        maximum: 1440
+        minimum: 1
+        type: integer
+      intervalHours:
+        maximum: 168
+        minimum: 1
+        type: integer
+      keepDaily:
+        maximum: 3650
+        minimum: 0
+        type: integer
+      keepMonthly:
+        maximum: 120
+        minimum: 0
+        type: integer
+      keepWeekly:
+        maximum: 520
+        minimum: 0
+        type: integer
+      name:
+        maxLength: 255
+        minLength: 1
+        type: string
+      prefix:
+        maxLength: 255
+        type: string
+      scheduleEnabled:
+        type: boolean
+      skipIfUnchanged:
+        type: boolean
+      type:
+        description: Type is one of primary, local, s3, gcs, azblob.
+        enum:
+        - primary
+        - local
+        - s3
+        - gcs
+        - azblob
+        type: string
+      weekday:
+        maximum: 6
+        minimum: 0
+        type: integer
+    required:
+    - frequency
+    - name
+    - type
+    type: object
   repo.BarcodeProduct:
     properties:
       barcode:
@@ -1110,9 +1524,8 @@ definitions:
       entityTypeId:
         type: string
       locationId:
-        description: |-
-          LocationID is only needed when ParentID refers to another item and
-          the new entity is stored somewhere other than that item's location.
+        description: Only needed when ParentID is another item and this lives elsewhere
+          (#1688).
         type: string
         x-nullable: true
         x-omitempty: true
@@ -1224,19 +1637,15 @@ definitions:
         allOf:
         - $ref: '#/definitions/repo.EntitySummary'
         description: |-
-          Location is where this entity resolves to: its own location when one
-          is set, otherwise the nearest ancestor whose entity type is a
-          location. Nil for top-level entities. This is a *resolved* value —
-          write it back through LocationID, not through this field.
+          Location is resolved: this entity's own location, else the nearest
+          location ancestor. Read-only — write via LocationID.
         x-nullable: true
         x-omitempty: true
       locationId:
         description: |-
-          LocationID is this entity's own location, and is nil when Location was
-          inherited from an ancestor. It is named to match the locationId field
-          on EntityUpdate on purpose: a GET body PUT back verbatim keeps the
-          entity exactly where it was, rather than silently pinning an
-          inherited location or dropping an explicit one.
+          LocationID is set only when this entity has its own location, nil when
+          inherited. Same name as the EntityUpdate field so a GET/PUT round trip
+          doesn't pin an inherited location or drop an explicit one.
         type: string
         x-nullable: true
         x-omitempty: true
@@ -1655,10 +2064,8 @@ definitions:
         type: boolean
       locationId:
         description: |-
-          LocationID names the location this entity is stored in. It only
-          needs to be sent when ParentID refers to another item and the entity
-          lives somewhere other than that item's location (#1688); otherwise
-          ParentID alone carries the location. See resolveLocationOverride.
+          Only needed when ParentID is another item and this lives elsewhere (#1688).
+          Otherwise ParentID carries the location. See resolveLocationOverride.
         type: string
         x-nullable: true
         x-omitempty: true
@@ -1724,6 +2131,12 @@ definitions:
         type: string
       createdAt:
         type: string
+      destinationId:
+        description: |-
+          DestinationID is the backup destination holding the artifact; absent
+          for plain manual exports, which live in the primary storage.
+        type: string
+        x-nullable: true
       error:
         type: string
       groupId:
@@ -1735,6 +2148,11 @@ definitions:
           Kind is "export" for server-produced backup artifacts, "import" for
           user-uploaded restore zips. The lifecycle fields below behave the
           same for both.
+        type: string
+      origin:
+        description: |-
+          Origin is "manual" for user-triggered exports and "scheduled" for
+          backups started by the scheduler.
         type: string
       progress:
         type: integer
@@ -2168,6 +2586,15 @@ definitions:
       version:
         type: string
     type: object
+  services.TestResult:
+    properties:
+      latencyMs:
+        type: integer
+      message:
+        type: string
+      ok:
+        type: boolean
+    type: object
   services.UserRegistration:
     properties:
       email:
@@ -2232,6 +2659,15 @@ definitions:
     properties:
       completed:
         type: integer
+    type: object
+  v1.BackupOptions:
+    properties:
+      allowCustomEndpoints:
+        type: boolean
+      enabled:
+        type: boolean
+      localEnabled:
+        type: boolean
     type: object
   v1.Build:
     properties:
@@ -2356,6 +2792,13 @@ definitions:
     required:
     - password
     - token
+    type: object
+  v1.Results-repo_BackupDestinationOut:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/repo.BackupDestinationOut'
+        type: array
     type: object
   v1.Results-repo_ExportOut:
     properties:
@@ -2580,6 +3023,23 @@ paths:
           type: string
         name: parentIds
         type: array
+      - collectionFormat: multi
+        description: entity type IDs; when provided this filter takes precedence over
+          isLocation
+        in: query
+        items:
+          type: string
+        name: entityTypeIds
+        type: array
+      - description: 'field to order by; valid values: name, createdAt, updatedAt,
+          assetId'
+        in: query
+        name: orderBy
+        type: string
+      - description: 'order direction; valid values: asc, desc'
+        in: query
+        name: orderDirection
+        type: string
       produces:
       - application/json
       responses:
@@ -3126,6 +3586,211 @@ paths:
       summary: Update Entity Type
       tags:
       - Entity Types
+  /v1/group/backup-destinations:
+    get:
+      description: Returns the group's backup destinations with schedule, retention
+        and health status. Group owners only.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.Results-repo_BackupDestinationOut'
+      security:
+      - Bearer: []
+      summary: List Backup Destinations
+      tags:
+      - Backups
+    post:
+      consumes:
+      - application/json
+      description: 'Credentials are never stored: cloud destinations read them from
+        the server environment.'
+      parameters:
+      - description: Destination settings
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.BackupSettings'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.BackupDestinationOut'
+      security:
+      - Bearer: []
+      summary: Create a Backup Destination
+      tags:
+      - Backups
+  /v1/group/backup-destinations/{id}:
+    delete:
+      description: Removes the destination and its backup history. Files already written
+        to the destination are not deleted.
+      parameters:
+      - description: Destination ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete a Backup Destination
+      tags:
+      - Backups
+    get:
+      parameters:
+      - description: Destination ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.BackupDestinationOut'
+      security:
+      - Bearer: []
+      summary: Get a Backup Destination
+      tags:
+      - Backups
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Destination ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Destination settings
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.BackupSettings'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.BackupDestinationOut'
+      security:
+      - Bearer: []
+      summary: Update a Backup Destination
+      tags:
+      - Backups
+  /v1/group/backup-destinations/{id}/run:
+    post:
+      description: Starts an on-demand backup to this destination.
+      parameters:
+      - description: Destination ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/repo.ExportOut'
+      security:
+      - Bearer: []
+      summary: Back Up Now
+      tags:
+      - Backups
+  /v1/group/backup-destinations/{id}/test:
+    post:
+      description: Writes and deletes a small test object and records the result as
+        the destination's health.
+      parameters:
+      - description: Destination ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.TestResult'
+      security:
+      - Bearer: []
+      summary: Test a Saved Backup Destination
+      tags:
+      - Backups
+  /v1/group/backup-destinations/{id}/versions:
+    get:
+      description: Returns the backups written to a destination, newest first.
+      parameters:
+      - description: Destination ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.Results-repo_ExportOut'
+      security:
+      - Bearer: []
+      summary: List Backup Versions
+      tags:
+      - Backups
+  /v1/group/backup-destinations/test:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Destination settings
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.BackupSettings'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.TestResult'
+      security:
+      - Bearer: []
+      summary: Test Unsaved Backup Destination Settings
+      tags:
+      - Backups
+  /v1/group/backup-options:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.BackupOptions'
+      security:
+      - Bearer: []
+      summary: Get Backup Options
+      tags:
+      - Backups
   /v1/group/exports:
     get:
       description: Returns export job rows for the caller's group, newest first.

@@ -16,6 +16,7 @@ type AllServices struct {
 	Entities          *EntityService
 	BackgroundService *BackgroundService
 	Exports           *ExportService
+	Backups           *BackupService
 	Currencies        *currencies.CurrencyRegistry
 }
 
@@ -31,6 +32,7 @@ type options struct {
 	pubSubConn           string
 	dialect              string
 	mailer               *mailer.Mailer
+	backup               config.BackupConf
 }
 
 func WithAutoIncrementAssetID(v bool) func(*options) {
@@ -62,6 +64,14 @@ func WithExportPlumbing(bus *eventbus.EventBus, db *ent.Client, storage config.S
 		o.storage = storage
 		o.pubSubConn = pubSubConn
 		o.dialect = dialect
+	}
+}
+
+// WithBackupConfig supplies the scheduled-backup settings. Without it
+// scheduled backups are disabled.
+func WithBackupConfig(v config.BackupConf) func(*options) {
+	return func(o *options) {
+		o.backup = v
 	}
 }
 
@@ -106,6 +116,25 @@ func New(repos *repo.AllRepos, opts ...OptionsFunc) *AllServices {
 		opt(options)
 	}
 
+	exportSvc := &ExportService{
+		db:         options.db,
+		repos:      repos,
+		bus:        options.bus,
+		storage:    options.storage,
+		pubSubConn: options.pubSubConn,
+		dialect:    options.dialect,
+	}
+	backupSvc := &BackupService{
+		repos:          repos,
+		db:             options.db,
+		exports:        exportSvc,
+		cfg:            options.backup,
+		notifierConfig: options.notifierConfig,
+		dialect:        options.dialect,
+		bus:            options.bus,
+	}
+	exportSvc.backups = backupSvc
+
 	return &AllServices{
 		User:  &UserService{repos: repos, mailer: options.mailer},
 		Group: &GroupService{repos},
@@ -118,14 +147,8 @@ func New(repos *repo.AllRepos, opts ...OptionsFunc) *AllServices {
 			latest:         Latest{},
 			notifierConfig: options.notifierConfig,
 		},
-		Exports: &ExportService{
-			db:         options.db,
-			repos:      repos,
-			bus:        options.bus,
-			storage:    options.storage,
-			pubSubConn: options.pubSubConn,
-			dialect:    options.dialect,
-		},
+		Exports:    exportSvc,
+		Backups:    backupSvc,
 		Currencies: currencies.NewCurrencyService(options.currencies),
 	}
 }

@@ -205,6 +205,8 @@ type ExportService struct {
 	storage    config.Storage
 	pubSubConn string
 	dialect    string // "sqlite3" or "postgres"
+	// backups handles destination-bound runs (scheduled backups); set by New.
+	backups *BackupService
 
 	// topics caches the publisher topic per topic name so it is opened once
 	// and reused for the lifetime of the process. Publishers must never call
@@ -231,6 +233,24 @@ func (s *ExportService) Enqueue(ctx context.Context, gid uuid.UUID) (repo.Export
 		return out, err
 	}
 
+	s.publishMutation(gid)
+	return out, nil
+}
+
+// EnqueueForDestination creates a pending export row bound to a backup
+// destination and publishes the build job. origin is "manual" or "scheduled".
+func (s *ExportService) EnqueueForDestination(ctx context.Context, gid, destID uuid.UUID, origin string) (repo.ExportOut, error) {
+	ctx, span := otel.Tracer("services").Start(ctx, "ExportService.EnqueueForDestination")
+	defer span.End()
+
+	out, err := s.repos.Exports.CreateForDestination(ctx, gid, destID, origin)
+	if err != nil {
+		return out, err
+	}
+	if err := s.publishExportJob(ctx, gid, out.ID); err != nil {
+		_ = s.repos.Exports.SetFailed(ctx, gid, out.ID, "failed to enqueue: "+err.Error())
+		return out, err
+	}
 	s.publishMutation(gid)
 	return out, nil
 }
@@ -359,11 +379,27 @@ func (s *ExportService) RunExport(ctx context.Context, exportID, gid uuid.UUID) 
 	}
 	s.publishMutation(gid)
 
-	artifactPath, sizeBytes, err := s.buildArtifact(ctx, exportID, gid)
+	// Destination-bound runs capture the data fingerprint up front, so edits
+	// made while the zip is being built still trigger the next scheduled run.
+	var fingerprint string
+	if exp.DestinationID != nil && s.backups != nil {
+		fingerprint = s.backups.beforeRun(ctx, gid)
+	}
+
+	artifactPath, sizeBytes, err := s.buildArtifact(ctx, exp)
 	if err != nil {
 		log.Err(err).Stringer("export_id", exportID).Msg("export job: failed")
-		_ = s.repos.Exports.SetFailed(ctx, gid, exportID, err.Error())
+		failMsg := err.Error()
+		if exp.DestinationID != nil && s.backups != nil {
+			// Destination errors can name host paths; the row is visible to
+			// group owners, so scrub the local backup root first.
+			failMsg = s.backups.redact(failMsg)
+		}
+		_ = s.repos.Exports.SetFailed(ctx, gid, exportID, failMsg)
 		s.publishMutation(gid)
+		if s.backups != nil {
+			s.backups.afterRun(ctx, gid, exp, fingerprint, err)
+		}
 		return
 	}
 
@@ -371,12 +407,16 @@ func (s *ExportService) RunExport(ctx context.Context, exportID, gid uuid.UUID) 
 		log.Err(err).Msg("export job: failed to mark completed")
 	}
 	s.publishMutation(gid)
+	if s.backups != nil {
+		s.backups.afterRun(ctx, gid, exp, fingerprint, nil)
+	}
 }
 
 // buildArtifact does the actual zip generation: dump every group-scoped
 // table to JSON, copy attachment blobs, write manifest, upload to blob
 // storage. Returns the blob key and total size.
-func (s *ExportService) buildArtifact(ctx context.Context, exportID, gid uuid.UUID) (string, int64, error) {
+func (s *ExportService) buildArtifact(ctx context.Context, exp repo.ExportOut) (string, int64, error) {
+	exportID, gid := exp.ID, exp.GroupID
 	tmp, err := os.CreateTemp("", fmt.Sprintf("homebox-export-%s-*.zip", exportID))
 	if err != nil {
 		return "", 0, fmt.Errorf("create temp file: %w", err)
@@ -454,14 +494,13 @@ func (s *ExportService) buildArtifact(ctx context.Context, exportID, gid uuid.UU
 	}
 	size := stat.Size()
 
-	artifactPath := fmt.Sprintf("%s/exports/%s.zip", gid.String(), exportID.String())
-	bucket, err := blob.OpenBucket(ctx, s.repos.Attachments.GetConnString())
+	artifactPath, bucket, key, err := s.openArtifactTarget(ctx, exp)
 	if err != nil {
-		return "", 0, fmt.Errorf("open bucket: %w", err)
+		return "", 0, err
 	}
 	defer func() { _ = bucket.Close() }()
 
-	bw, err := bucket.NewWriter(ctx, s.repos.Attachments.GetFullPath(artifactPath), &blob.WriterOptions{
+	bw, err := bucket.NewWriter(ctx, key, &blob.WriterOptions{
 		ContentType: "application/zip",
 	})
 	if err != nil {
@@ -476,6 +515,31 @@ func (s *ExportService) buildArtifact(ctx context.Context, exportID, gid uuid.UU
 	}
 
 	return artifactPath, size, nil
+}
+
+// openArtifactTarget picks where a finished export is written: the primary
+// storage for plain exports, or the bound backup destination. It returns the
+// artifact path to record on the row plus the open bucket and full key.
+func (s *ExportService) openArtifactTarget(ctx context.Context, exp repo.ExportOut) (string, *blob.Bucket, string, error) {
+	if exp.DestinationID == nil || s.backups == nil {
+		artifactPath := fmt.Sprintf("%s/exports/%s.zip", exp.GroupID.String(), exp.ID.String())
+		bucket, err := blob.OpenBucket(ctx, s.repos.Attachments.GetConnString())
+		if err != nil {
+			return "", nil, "", fmt.Errorf("open bucket: %w", err)
+		}
+		return artifactPath, bucket, s.repos.Attachments.GetFullPath(artifactPath), nil
+	}
+
+	dest, err := s.repos.BackupDestinations.Get(ctx, exp.GroupID, *exp.DestinationID)
+	if err != nil {
+		return "", nil, "", fmt.Errorf("load backup destination: %w", err)
+	}
+	artifactPath := artifactPath(dest, exp.GroupID, exp.ID, time.Now())
+	bucket, key, err := s.backups.openBucket(ctx, dest)
+	if err != nil {
+		return "", nil, "", fmt.Errorf("open destination %q: %w", dest.Name, err)
+	}
+	return artifactPath, bucket, key(artifactPath), nil
 }
 
 // copyAttachmentBlobs streams every attachment blob in the group — including
