@@ -129,6 +129,72 @@ var (
 			},
 		},
 	}
+	// BackupDestinationsColumns holds the columns for the "backup_destinations" table.
+	BackupDestinationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 255},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"primary", "local", "s3", "gcs", "azblob", "sftp", "webdav", "gdrive", "onedrive", "dropbox", "smb"}, Default: "primary"},
+		{Name: "conn_string", Type: field.TypeString, Nullable: true, Size: 2048},
+		{Name: "username", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "secret", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "host_key", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "prefix", Type: field.TypeString, Size: 255, Default: "homebox-backups"},
+		{Name: "enabled", Type: field.TypeBool, Default: true},
+		{Name: "schedule_enabled", Type: field.TypeBool, Default: false},
+		{Name: "frequency", Type: field.TypeEnum, Enums: []string{"hourly", "daily", "weekly", "monthly", "cron"}, Default: "daily"},
+		{Name: "cron_expr", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "interval_hours", Type: field.TypeInt, Default: 1},
+		{Name: "at_hour", Type: field.TypeInt, Default: 3},
+		{Name: "at_minute", Type: field.TypeInt, Default: 0},
+		{Name: "weekday", Type: field.TypeInt, Default: 0},
+		{Name: "day_of_month", Type: field.TypeInt, Default: 1},
+		{Name: "skip_if_unchanged", Type: field.TypeBool, Default: true},
+		{Name: "keep_daily", Type: field.TypeInt, Default: 7},
+		{Name: "keep_weekly", Type: field.TypeInt, Default: 4},
+		{Name: "keep_monthly", Type: field.TypeInt, Default: 6},
+		{Name: "next_run_at", Type: field.TypeTime, Nullable: true},
+		{Name: "last_run_at", Type: field.TypeTime, Nullable: true},
+		{Name: "last_success_at", Type: field.TypeTime, Nullable: true},
+		{Name: "last_skipped_at", Type: field.TypeTime, Nullable: true},
+		{Name: "last_fingerprint", Type: field.TypeString, Nullable: true, Size: 128},
+		{Name: "last_error", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "health_status", Type: field.TypeEnum, Enums: []string{"unknown", "healthy", "unreachable"}, Default: "unknown"},
+		{Name: "health_checked_at", Type: field.TypeTime, Nullable: true},
+		{Name: "health_error", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "health_failures", Type: field.TypeInt, Default: 0},
+		{Name: "health_interval_minutes", Type: field.TypeInt, Default: 15},
+		{Name: "alerts_enabled", Type: field.TypeBool, Default: true},
+		{Name: "alert_failure_threshold", Type: field.TypeInt, Default: 2},
+		{Name: "alert_stale_hours", Type: field.TypeInt, Default: 48},
+		{Name: "alerted_unreachable", Type: field.TypeBool, Default: false},
+		{Name: "alerted_failure", Type: field.TypeBool, Default: false},
+		{Name: "alerted_stale", Type: field.TypeBool, Default: false},
+		{Name: "group_id", Type: field.TypeUUID},
+	}
+	// BackupDestinationsTable holds the schema information for the "backup_destinations" table.
+	BackupDestinationsTable = &schema.Table{
+		Name:       "backup_destinations",
+		Columns:    BackupDestinationsColumns,
+		PrimaryKey: []*schema.Column{BackupDestinationsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "backup_destinations_groups_backup_destinations",
+				Columns:    []*schema.Column{BackupDestinationsColumns[41]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "backupdestination_group_id",
+				Unique:  false,
+				Columns: []*schema.Column{BackupDestinationsColumns[41]},
+			},
+		},
+	}
 	// EntitiesColumns holds the columns for the "entities" table.
 	EntitiesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -346,6 +412,8 @@ var (
 		{Name: "artifact_path", Type: field.TypeString, Nullable: true},
 		{Name: "size_bytes", Type: field.TypeInt64, Default: 0},
 		{Name: "error", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "origin", Type: field.TypeEnum, Enums: []string{"manual", "scheduled"}, Default: "manual"},
+		{Name: "destination_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "group_id", Type: field.TypeUUID},
 	}
 	// ExportsTable holds the schema information for the "exports" table.
@@ -356,7 +424,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "exports_groups_exports",
-				Columns:    []*schema.Column{ExportsColumns[9]},
+				Columns:    []*schema.Column{ExportsColumns[11]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -365,12 +433,12 @@ var (
 			{
 				Name:    "export_group_id",
 				Unique:  false,
-				Columns: []*schema.Column{ExportsColumns[9]},
+				Columns: []*schema.Column{ExportsColumns[11]},
 			},
 			{
 				Name:    "export_group_id_status",
 				Unique:  false,
-				Columns: []*schema.Column{ExportsColumns[9], ExportsColumns[4]},
+				Columns: []*schema.Column{ExportsColumns[11], ExportsColumns[4]},
 			},
 		},
 	}
@@ -668,6 +736,7 @@ var (
 		AttachmentsTable,
 		AuthRolesTable,
 		AuthTokensTable,
+		BackupDestinationsTable,
 		EntitiesTable,
 		EntityFieldsTable,
 		EntityTemplatesTable,
@@ -692,6 +761,7 @@ func init() {
 	AttachmentsTable.ForeignKeys[1].RefTable = EntitiesTable
 	AuthRolesTable.ForeignKeys[0].RefTable = AuthTokensTable
 	AuthTokensTable.ForeignKeys[0].RefTable = UsersTable
+	BackupDestinationsTable.ForeignKeys[0].RefTable = GroupsTable
 	EntitiesTable.ForeignKeys[0].RefTable = EntitiesTable
 	EntitiesTable.ForeignKeys[1].RefTable = EntitiesTable
 	EntitiesTable.ForeignKeys[2].RefTable = EntityTypesTable

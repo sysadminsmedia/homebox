@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/backupdestination"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
@@ -209,6 +210,21 @@ func (_c *GroupCreate) AddExports(v ...*Export) *GroupCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddExportIDs(ids...)
+}
+
+// AddBackupDestinationIDs adds the "backup_destinations" edge to the BackupDestination entity by IDs.
+func (_c *GroupCreate) AddBackupDestinationIDs(ids ...uuid.UUID) *GroupCreate {
+	_c.mutation.AddBackupDestinationIDs(ids...)
+	return _c
+}
+
+// AddBackupDestinations adds the "backup_destinations" edges to the BackupDestination entity.
+func (_c *GroupCreate) AddBackupDestinations(v ...*BackupDestination) *GroupCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddBackupDestinationIDs(ids...)
 }
 
 // Mutation returns the GroupMutation object of the builder.
@@ -459,6 +475,22 @@ func (_c *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(export.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.BackupDestinationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.BackupDestinationsTable,
+			Columns: []string{group.BackupDestinationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(backupdestination.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

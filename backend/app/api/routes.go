@@ -104,6 +104,9 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 			providers.NewLocalProvider(a.services.User),
 		}
 
+		// Cloud-drive OAuth redirect target. Public by necessity (the provider
+		// redirects the browser here); the single-use state authorizes it.
+		r.Get("/group/backup-oauth/callback", chain.ToHandlerFunc(v1Ctrl.HandleBackupOAuthCallback()))
 		r.Post("/users/register", chain.ToHandlerFunc(v1Ctrl.HandleUserRegistration(), a.mwRegisterRateLimit))
 		r.Post("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(providers...), a.mwAuthRateLimit))
 		r.Post("/users/forgot-password", chain.ToHandlerFunc(v1Ctrl.HandleForgotPassword(), a.mwAuthRateLimit))
@@ -171,6 +174,19 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Get("/group/exports/{id}/download", chain.ToHandlerFunc(v1Ctrl.HandleExportDownload(), userMW...))
 		r.Delete("/group/exports/{id}", chain.ToHandlerFunc(v1Ctrl.HandleExportDelete(), userMW...))
 		r.Post("/group/import", chain.ToHandlerFunc(v1Ctrl.HandleCollectionImport(), userMW...))
+
+		// Scheduled backups and their destinations (group owners only)
+		r.Post("/group/backup-oauth/start", chain.ToHandlerFunc(v1Ctrl.HandleBackupOAuthStart(), ownerMW...))
+		r.Get("/group/backup-options", chain.ToHandlerFunc(v1Ctrl.HandleBackupOptions(), ownerMW...))
+		r.Get("/group/backup-destinations", chain.ToHandlerFunc(v1Ctrl.HandleBackupDestinationsList(), ownerMW...))
+		r.Post("/group/backup-destinations", chain.ToHandlerFunc(v1Ctrl.HandleBackupDestinationCreate(), ownerMW...))
+		r.Post("/group/backup-destinations/test", chain.ToHandlerFunc(v1Ctrl.HandleBackupSettingsTest(), ownerMW...))
+		r.Get("/group/backup-destinations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleBackupDestinationGet(), ownerMW...))
+		r.Put("/group/backup-destinations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleBackupDestinationUpdate(), ownerMW...))
+		r.Delete("/group/backup-destinations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleBackupDestinationDelete(), ownerMW...))
+		r.Post("/group/backup-destinations/{id}/test", chain.ToHandlerFunc(v1Ctrl.HandleBackupDestinationTest(), ownerMW...))
+		r.Post("/group/backup-destinations/{id}/run", chain.ToHandlerFunc(v1Ctrl.HandleBackupDestinationRun(), ownerMW...))
+		r.Get("/group/backup-destinations/{id}/versions", chain.ToHandlerFunc(v1Ctrl.HandleBackupDestinationVersions(), ownerMW...))
 
 		r.Get("/groups/statistics", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatistics(), userMW...))
 		r.Get("/groups/statistics/purchase-price", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatisticsPriceOverTime(), userMW...))

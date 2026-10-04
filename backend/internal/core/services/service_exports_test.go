@@ -104,7 +104,7 @@ func TestExportRoundTrip(t *testing.T) {
 	expRow, err := tRepos.Exports.Create(ctx, src.ID)
 	require.NoError(t, err)
 
-	artifactPath, sizeBytes, err := tSvc.Exports.buildArtifact(ctx, expRow.ID, src.ID)
+	artifactPath, sizeBytes, err := tSvc.Exports.buildArtifact(ctx, expRow)
 	require.NoError(t, err)
 	require.NotEmpty(t, artifactPath)
 	require.Positive(t, sizeBytes)

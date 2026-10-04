@@ -39,6 +39,8 @@ const (
 	EdgeEntityTemplates = "entity_templates"
 	// EdgeExports holds the string denoting the exports edge name in mutations.
 	EdgeExports = "exports"
+	// EdgeBackupDestinations holds the string denoting the backup_destinations edge name in mutations.
+	EdgeBackupDestinations = "backup_destinations"
 	// EdgeUserGroups holds the string denoting the user_groups edge name in mutations.
 	EdgeUserGroups = "user_groups"
 	// Table holds the table name of the group in the database.
@@ -97,6 +99,13 @@ const (
 	ExportsInverseTable = "exports"
 	// ExportsColumn is the table column denoting the exports relation/edge.
 	ExportsColumn = "group_id"
+	// BackupDestinationsTable is the table that holds the backup_destinations relation/edge.
+	BackupDestinationsTable = "backup_destinations"
+	// BackupDestinationsInverseTable is the table name for the BackupDestination entity.
+	// It exists in this package in order to avoid circular dependency with the "backupdestination" package.
+	BackupDestinationsInverseTable = "backup_destinations"
+	// BackupDestinationsColumn is the table column denoting the backup_destinations relation/edge.
+	BackupDestinationsColumn = "group_id"
 	// UserGroupsTable is the table that holds the user_groups relation/edge.
 	UserGroupsTable = "user_groups"
 	// UserGroupsInverseTable is the table name for the UserGroup entity.
@@ -286,6 +295,20 @@ func ByExports(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByBackupDestinationsCount orders the results by backup_destinations count.
+func ByBackupDestinationsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newBackupDestinationsStep(), opts...)
+	}
+}
+
+// ByBackupDestinations orders the results by backup_destinations terms.
+func ByBackupDestinations(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newBackupDestinationsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByUserGroupsCount orders the results by user_groups count.
 func ByUserGroupsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -353,6 +376,13 @@ func newExportsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ExportsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ExportsTable, ExportsColumn),
+	)
+}
+func newBackupDestinationsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(BackupDestinationsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, BackupDestinationsTable, BackupDestinationsColumn),
 	)
 }
 func newUserGroupsStep() *sqlgraph.Step {
