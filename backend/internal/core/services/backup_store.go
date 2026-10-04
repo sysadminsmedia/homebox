@@ -221,7 +221,9 @@ type stopOnClose struct {
 }
 
 func (r stopOnClose) Close() error {
-	r.stop()
+	// Disarm only after the close returns, so a server that stalls on the
+	// close request can still be cancelled.
+	defer r.stop()
 	return r.ReadCloser.Close()
 }
 
