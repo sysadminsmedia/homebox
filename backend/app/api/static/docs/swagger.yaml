@@ -3519,6 +3519,10 @@ paths:
         in: query
         name: print
         type: boolean
+      - description: Translated word for 'Location', used as the location line prefix
+        in: query
+        name: locationLabel
+        type: string
       produces:
       - application/json
       responses:
@@ -3543,6 +3547,10 @@ paths:
         in: query
         name: print
         type: boolean
+      - description: Translated word for 'Location', used as the location line prefix
+        in: query
+        name: locationLabel
+        type: string
       produces:
       - application/json
       responses:
@@ -3567,6 +3575,10 @@ paths:
         in: query
         name: print
         type: boolean
+      - description: Translated description text, defaults to 'Homebox Location'
+        in: query
+        name: locationDescription
+        type: string
       produces:
       - application/json
       responses:

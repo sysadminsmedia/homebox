@@ -1964,6 +1964,14 @@
                         "schema": {
                             "type": "boolean"
                         }
+                    },
+                    {
+                        "description": "Translated word for 'Location', used as the location line prefix",
+                        "name": "locationLabel",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -2008,6 +2016,14 @@
                         "schema": {
                             "type": "boolean"
                         }
+                    },
+                    {
+                        "description": "Translated word for 'Location', used as the location line prefix",
+                        "name": "locationLabel",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -2051,6 +2067,14 @@
                         "in": "query",
                         "schema": {
                             "type": "boolean"
+                        }
+                    },
+                    {
+                        "description": "Translated description text, defaults to 'Homebox Location'",
+                        "name": "locationDescription",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 ],
