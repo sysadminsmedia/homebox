@@ -69,7 +69,7 @@ async function mockBackups(page: Page, opts: MockOptions = {}) {
   const destinations = [...(opts.destinations ?? [])];
   const posted: Record<string, unknown>[] = [];
 
-  await page.route("**/api/v1/group/backup-options", route =>
+  await page.route(/\/api\/v1\/group\/backup-options(\?.*)?$/, route =>
     json(route, {
       enabled: opts.enabled ?? true,
       localEnabled: false,
@@ -79,7 +79,7 @@ async function mockBackups(page: Page, opts: MockOptions = {}) {
       ...(opts.oidcSuggestion ? { oidcSuggestion: opts.oidcSuggestion } : {}),
     })
   );
-  await page.route("**/api/v1/group/backup-destinations", async route => {
+  await page.route(/\/api\/v1\/group\/backup-destinations(\?.*)?$/, async route => {
     if (route.request().method() === "POST") {
       const body = route.request().postDataJSON() as Record<string, unknown>;
       posted.push(body);
@@ -89,7 +89,7 @@ async function mockBackups(page: Page, opts: MockOptions = {}) {
     }
     return json(route, { items: destinations });
   });
-  await page.route("**/api/v1/group/backup-destinations/test", route =>
+  await page.route(/\/api\/v1\/group\/backup-destinations\/test(\?.*)?$/, route =>
     json(route, opts.testResult ?? { ok: true, latencyMs: 12, message: "Wrote and deleted a 1 KB test file" })
   );
   return { posted };

@@ -206,11 +206,31 @@ func (s *sftpStore) full(key string) (string, error) {
 	return p, nil
 }
 
-func (s *sftpStore) Write(_ context.Context, key string, r io.Reader, _ int64, _ string) error {
+// closeOnDone closes the transport when ctx ends, which unblocks a stalled
+// read or write. Store.Close is no use here: it speaks the protocol before it
+// closes the transport. The returned func stops the watcher.
+func closeOnDone(ctx context.Context, closeTransport func() error) func() bool {
+	return context.AfterFunc(ctx, func() { _ = closeTransport() })
+}
+
+// stopOnClose runs stop when the reader is closed, so cancellation stays armed
+// for as long as the caller is still reading.
+type stopOnClose struct {
+	io.ReadCloser
+	stop func() bool
+}
+
+func (r stopOnClose) Close() error {
+	r.stop()
+	return r.ReadCloser.Close()
+}
+
+func (s *sftpStore) Write(ctx context.Context, key string, r io.Reader, _ int64, _ string) error {
 	p, err := s.full(key)
 	if err != nil {
 		return err
 	}
+	defer closeOnDone(ctx, s.ssh.Close)()
 	if err := s.client.MkdirAll(path.Dir(p)); err != nil {
 		return fmt.Errorf("create directory: %w", err)
 	}
@@ -239,19 +259,26 @@ func (s *sftpStore) Write(_ context.Context, key string, r io.Reader, _ int64, _
 	return nil
 }
 
-func (s *sftpStore) Open(_ context.Context, key string) (io.ReadCloser, error) {
+func (s *sftpStore) Open(ctx context.Context, key string) (io.ReadCloser, error) {
 	p, err := s.full(key)
 	if err != nil {
 		return nil, err
 	}
-	return s.client.Open(p)
+	stop := closeOnDone(ctx, s.ssh.Close)
+	f, err := s.client.Open(p)
+	if err != nil {
+		stop()
+		return nil, err
+	}
+	return stopOnClose{f, stop}, nil
 }
 
-func (s *sftpStore) Delete(_ context.Context, key string) error {
+func (s *sftpStore) Delete(ctx context.Context, key string) error {
 	p, err := s.full(key)
 	if err != nil {
 		return err
 	}
+	defer closeOnDone(ctx, s.ssh.Close)()
 	if err := s.client.Remove(p); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		return err
 	}
@@ -424,11 +451,12 @@ func (s *smbStore) full(key string) (string, error) {
 	return p, nil
 }
 
-func (s *smbStore) Write(_ context.Context, key string, r io.Reader, _ int64, _ string) error {
+func (s *smbStore) Write(ctx context.Context, key string, r io.Reader, _ int64, _ string) error {
 	p, err := s.full(key)
 	if err != nil {
 		return err
 	}
+	defer closeOnDone(ctx, s.conn.Close)()
 	if dir := path.Dir(p); dir != "." {
 		if err := s.share.MkdirAll(dir, 0o755); err != nil {
 			return fmt.Errorf("create folder: %w", err)
@@ -460,19 +488,26 @@ func (s *smbStore) Write(_ context.Context, key string, r io.Reader, _ int64, _ 
 	return nil
 }
 
-func (s *smbStore) Open(_ context.Context, key string) (io.ReadCloser, error) {
+func (s *smbStore) Open(ctx context.Context, key string) (io.ReadCloser, error) {
 	p, err := s.full(key)
 	if err != nil {
 		return nil, err
 	}
-	return s.share.Open(p)
+	stop := closeOnDone(ctx, s.conn.Close)
+	f, err := s.share.Open(p)
+	if err != nil {
+		stop()
+		return nil, err
+	}
+	return stopOnClose{f, stop}, nil
 }
 
-func (s *smbStore) Delete(_ context.Context, key string) error {
+func (s *smbStore) Delete(ctx context.Context, key string) error {
 	p, err := s.full(key)
 	if err != nil {
 		return err
 	}
+	defer closeOnDone(ctx, s.conn.Close)()
 	if err := s.share.Remove(p); err != nil && !os.IsNotExist(err) {
 		return err
 	}

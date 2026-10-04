@@ -161,7 +161,10 @@ type oauthFlow struct {
 	gid, uid uuid.UUID
 	provider string
 	verifier string
-	created  time.Time
+	// redirectURI is the one sent at start. The code exchange must present
+	// the same value, so it is never recomputed from the callback request.
+	redirectURI string
+	created     time.Time
 }
 
 type oauthResult struct {
@@ -273,7 +276,7 @@ func (s *BackupService) OAuthStart(gid, uid uuid.UUID, providerKey, redirectURI,
 	sum := sha256.Sum256([]byte(verifier))
 	challenge := base64.RawURLEncoding.EncodeToString(sum[:])
 	state := randomToken(32)
-	if err := s.oauth.putFlow(state, oauthFlow{gid: gid, uid: uid, provider: p.Key, verifier: verifier, created: time.Now()}); err != nil {
+	if err := s.oauth.putFlow(state, oauthFlow{gid: gid, uid: uid, provider: p.Key, verifier: verifier, redirectURI: redirectURI, created: time.Now()}); err != nil {
 		return "", invalid("%v", err)
 	}
 
@@ -306,7 +309,7 @@ type OAuthOutcome struct {
 // OAuthCallback finishes an authorization: it validates the single-use state,
 // exchanges the code, looks up the account and parks the refresh token under a
 // one-time ticket until the destination is saved.
-func (s *BackupService) OAuthCallback(ctx context.Context, redirectURI, state, code, providerError string) OAuthOutcome {
+func (s *BackupService) OAuthCallback(ctx context.Context, _, state, code, providerError string) OAuthOutcome {
 	flow, ok := s.oauth.takeFlow(state)
 	if !ok {
 		return OAuthOutcome{Error: "This authorization link is unknown or has expired. Close this window and try again."}
@@ -327,7 +330,7 @@ func (s *BackupService) OAuthCallback(ctx context.Context, redirectURI, state, c
 	tok, err := postToken(ctx, s.httpClient(), p, url.Values{
 		"grant_type":    {"authorization_code"},
 		"code":          {code},
-		"redirect_uri":  {redirectURI},
+		"redirect_uri":  {flow.redirectURI},
 		"code_verifier": {flow.verifier},
 	})
 	if err != nil {

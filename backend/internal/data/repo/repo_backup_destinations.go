@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"time"
+	"unicode/utf8"
 
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
@@ -340,9 +341,7 @@ func (r *BackupDestinationRepository) MarkRunSucceeded(ctx context.Context, id u
 
 // MarkRunFailed records a failed run and its (truncated) error.
 func (r *BackupDestinationRepository) MarkRunFailed(ctx context.Context, id uuid.UUID, at time.Time, msg string) error {
-	if len(msg) > 1000 {
-		msg = msg[:1000]
-	}
+	msg = truncateUTF8(msg, 1000)
 	return r.db.BackupDestination.UpdateOneID(id).
 		SetLastRunAt(at).
 		SetLastError(msg).
@@ -351,9 +350,7 @@ func (r *BackupDestinationRepository) MarkRunFailed(ctx context.Context, id uuid
 
 // SetHealth stores the result of a health probe.
 func (r *BackupDestinationRepository) SetHealth(ctx context.Context, id uuid.UUID, status string, checkedAt time.Time, errMsg string, failures int) error {
-	if len(errMsg) > 1000 {
-		errMsg = errMsg[:1000]
-	}
+	errMsg = truncateUTF8(errMsg, 1000)
 	return r.db.BackupDestination.UpdateOneID(id).
 		SetHealthStatus(backupdestination.HealthStatus(status)).
 		SetHealthCheckedAt(checkedAt).
@@ -383,4 +380,16 @@ func (r *BackupDestinationRepository) SetAlertedStale(ctx context.Context, id uu
 // rotates the OAuth refresh token.
 func (r *BackupDestinationRepository) SetSecret(ctx context.Context, id uuid.UUID, secret string) error {
 	return r.db.BackupDestination.UpdateOneID(id).SetSecret(secret).Exec(ctx)
+}
+
+// truncateUTF8 cuts s to at most n bytes without splitting a multi-byte rune,
+// which PostgreSQL would reject as invalid UTF-8.
+func truncateUTF8(s string, n int) string {
+	if len(s) <= n {
+		return s
+	}
+	for n > 0 && !utf8.RuneStart(s[n]) {
+		n--
+	}
+	return s[:n]
 }

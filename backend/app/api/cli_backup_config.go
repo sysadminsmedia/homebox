@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -327,11 +328,29 @@ func confirm(bio backupConfigIO, say func(string, ...any), q string) bool {
 	return false
 }
 
+// writeBackupCopy always creates a fresh owner-only file. A stale copy with
+// wider permissions, or a symlink planted at the path, is removed first, and
+// O_EXCL refuses to follow anything that appears in between.
+func writeBackupCopy(path string, data []byte) error {
+	if err := os.Remove(path); err != nil && !errors.Is(err, fs.ErrNotExist) {
+		return err
+	}
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600)
+	if err != nil {
+		return err
+	}
+	if _, err := f.Write(data); err != nil {
+		_ = f.Close()
+		return err
+	}
+	return f.Close()
+}
+
 // writeEnvFile replaces the file atomically with owner-only permissions, after
 // saving a copy of whatever was there.
 func writeEnvFile(path string, previous, content []byte) error {
 	if len(previous) > 0 {
-		if err := os.WriteFile(path+".bak", previous, 0o600); err != nil {
+		if err := writeBackupCopy(path+".bak", previous); err != nil {
 			return fmt.Errorf("could not save %s.bak: %w", path, err)
 		}
 	}

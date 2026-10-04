@@ -43,7 +43,7 @@ connect to whatever address a collection owner types in, wherever the server can
 
 > [!IMPORTANT]
 > The S3, Google Cloud Storage and Azure types never store credentials: they read them from the server's environment, and
-> a connection string that embeds a username or password is rejected. Only SFTP and WebDAV store a login, and they store
+> a connection string that embeds a username or password is rejected. Only SFTP, WebDAV and SMB store a login, and they store
 > it encrypted (see below).
 
 ### SFTP and WebDAV
@@ -66,6 +66,8 @@ can no longer be read and you will need to re-enter them.
 
 - **Address**: `sftp://host[:port]/path` for SFTP, `smb://host[:port]/share[/folder]` for SMB, or the full
   `https://host/path/` URL for WebDAV. Put the username in its own field, not in the URL.
+  WebDAV sends the password with every request, so use `https://`. Plain `http://` is accepted for servers on a trusted
+  LAN, but anyone on the network path can read the login.
 - **SFTP host key**: to make sure backups are only sent to your server, an SFTP destination is pinned to the server's SSH
   host key. Click **Test connection** once. Homebox shows the fingerprint the server presented. Compare it with your server
   (`ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub`), then click **Trust this host key**. If the key ever changes, the
@@ -283,8 +285,8 @@ shell history and process lists.
 |--------------------------------------|---------|----------------------------------------------------------------------------------------------|
 | `HBOX_BACKUP_ENABLED`                | `true`  | Turns destinations, the scheduler and health checks on or off. Manual exports are unaffected. |
 | `HBOX_BACKUP_LOCAL_ROOT`             |         | Directory local destinations live under. Empty disables local destinations.                  |
-| `HBOX_BACKUP_ALLOW_CUSTOM_ENDPOINTS` | `false` | Let collection owners use cloud URLs with a custom `endpoint`, and SFTP and WebDAV servers. Off by default: it makes the server connect to addresses owners enter. |
-| `HBOX_BACKUP_ENCRYPTION_KEY`         |         | Seals SFTP, WebDAV and cloud-drive logins at rest. Required for those types. Keep it stable. |
+| `HBOX_BACKUP_ALLOW_CUSTOM_ENDPOINTS` | `false` | Let collection owners use cloud URLs with a custom `endpoint`, and SFTP, WebDAV and SMB servers. Off by default: it makes the server connect to addresses owners enter. |
+| `HBOX_BACKUP_ENCRYPTION_KEY`         |         | Seals SFTP, WebDAV, SMB and cloud-drive logins at rest. Required for those types. Keep it stable. |
 | `HBOX_BACKUP_GOOGLE_CLIENT_ID` / `_SECRET` |   | OAuth app for Google Drive destinations.                                                     |
 | `HBOX_BACKUP_MICROSOFT_CLIENT_ID` / `_SECRET` / `_TENANT` | `common` for the tenant | OAuth app for OneDrive destinations.                              |
 | `HBOX_BACKUP_DROPBOX_CLIENT_ID` / `_SECRET` |  | OAuth app for Dropbox destinations.                                                          |

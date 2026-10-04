@@ -112,7 +112,7 @@
                 </Badge>
               </td>
               <td class="py-2">
-                <span>{{ v.status }}</span>
+                <span>{{ $t(`tools.backups_set.statuses.${v.status}`) }}</span>
                 <span v-if="v.status === 'running'"> ({{ v.progress }}%)</span>
                 <span v-if="v.status === 'failed' && v.error" class="block text-xs text-destructive" :title="v.error">
                   {{ v.error }}

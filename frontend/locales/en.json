@@ -1125,6 +1125,12 @@
             "restore": "Restore from Backup",
             "restore_button": "Upload & Restore",
             "restore_sub": "Upload a backup zip to populate this collection. The collection must contain no items yet — default locations and tags are wiped automatically as part of the restore.",
+            "statuses": {
+                "completed": "Completed",
+                "failed": "Failed",
+                "pending": "Pending",
+                "running": "Running"
+            },
             "table": {
                 "actions": "Actions",
                 "created": "Created",
