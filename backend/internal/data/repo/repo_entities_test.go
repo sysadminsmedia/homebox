@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"math"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -1000,14 +1001,28 @@ func TestEntityRepository_QueryByGroup_OrderByTimestampsDefaultDesc(t *testing.T
 	ctx := context.Background()
 	itemET := useItemEntityType(t)
 
-	first := mustCreateEntity(t, "order-first", itemET.ID, uuid.Nil)
-	time.Sleep(10 * time.Millisecond)
-	second := mustCreateEntity(t, "order-second", itemET.ID, uuid.Nil)
-	time.Sleep(10 * time.Millisecond)
-	third := mustCreateEntity(t, "order-third", itemET.ID, uuid.Nil)
+	base := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+	create := func(name string, createdHour, updatedHour int) uuid.UUID {
+		t.Helper()
+		e, err := tClient.Entity.Create().
+			SetName(name).
+			SetGroupID(tGroup.ID).
+			SetEntityTypeID(itemET.ID).
+			SetCreatedAt(base.Add(time.Duration(createdHour) * time.Hour)).
+			SetUpdatedAt(base.Add(time.Duration(updatedHour) * time.Hour)).
+			Save(ctx)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = tRepos.Entities.Delete(context.Background(), e.ID) })
+		return e.ID
+	}
+
+	// updatedAt runs in a different order than createdAt, so each field is checked on its own.
+	first := create("order-first", 1, 3)
+	second := create("order-second", 2, 1)
+	third := create("order-third", 3, 2)
 
 	// The test group is shared, so only the entities created here are ordered.
-	mine := map[uuid.UUID]bool{first.ID: true, second.ID: true, third.ID: true}
+	mine := map[uuid.UUID]bool{first: true, second: true, third: true}
 	order := func(orderBy, direction string) []uuid.UUID {
 		t.Helper()
 		res, err := tRepos.Entities.QueryByGroup(ctx, tGroup.ID, EntityQuery{
@@ -1027,11 +1042,18 @@ func TestEntityRepository_QueryByGroup_OrderByTimestampsDefaultDesc(t *testing.T
 		return ids
 	}
 
-	newestFirst := []uuid.UUID{third.ID, second.ID, first.ID}
-	oldestFirst := []uuid.UUID{first.ID, second.ID, third.ID}
-	for _, orderBy := range []string{"createdAt", "updatedAt"} {
-		assert.Equal(t, newestFirst, order(orderBy, ""), orderBy)
-		assert.Equal(t, newestFirst, order(orderBy, "desc"), orderBy)
-		assert.Equal(t, oldestFirst, order(orderBy, "asc"), orderBy)
+	tests := []struct {
+		orderBy     string
+		oldestFirst []uuid.UUID
+	}{
+		{"createdAt", []uuid.UUID{first, second, third}},
+		{"updatedAt", []uuid.UUID{second, third, first}},
+	}
+	for _, tc := range tests {
+		newestFirst := slices.Clone(tc.oldestFirst)
+		slices.Reverse(newestFirst)
+		assert.Equal(t, newestFirst, order(tc.orderBy, ""), tc.orderBy)
+		assert.Equal(t, newestFirst, order(tc.orderBy, "desc"), tc.orderBy)
+		assert.Equal(t, tc.oldestFirst, order(tc.orderBy, "asc"), tc.orderBy)
 	}
 }
