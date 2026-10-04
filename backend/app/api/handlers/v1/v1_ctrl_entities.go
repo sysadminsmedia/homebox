@@ -55,7 +55,7 @@ func startEntityCtrlSpan(ctx context.Context, name string, attrs ...attribute.Ke
 //	@Param		matchAllTags	query		bool		false	"require all selected tags to match (AND) instead of any (OR)"
 //	@Param		parentIds		query		[]string	false	"parent Ids"																	collectionFormat(multi)
 //	@Param		entityTypeIds	query		[]string	false	"entity type IDs; when provided this filter takes precedence over isLocation"	collectionFormat(multi)
-//	@Param		orderBy			query		string		false	"field to order by; valid values: name, createdAt, updatedAt, assetId"
+//	@Param		orderBy			query		string		false	"field to order by; valid values: name, createdAt, updatedAt, assetId, quantity, insured, archived, purchasePrice, location"
 //	@Param		orderDirection	query		string		false	"order direction; valid values: asc, desc; default: desc for createdAt and updatedAt, asc for all other fields"
 //	@Success	200				{object}	repo.EntityListResult
 //	@Router		/v1/entities [GET]
