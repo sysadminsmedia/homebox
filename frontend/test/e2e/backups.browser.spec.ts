@@ -1,4 +1,4 @@
-import type { Page, Response, Route } from "@playwright/test";
+import type { Locator, Page, Response, Route } from "@playwright/test";
 import { expect, test } from "@playwright/test";
 
 // The e2e server runs in demo mode, where backup destinations cannot be
@@ -136,6 +136,18 @@ async function openTools(page: Page) {
   await slow(page.getByText("Backup & Restore").first()).toBeVisible();
 }
 
+// Clicks Save and waits for the create request, so a click that never submits
+// or a rejected request fails here with its status instead of as a missing row.
+async function saveDestination(page: Page, dialog: Locator) {
+  const saved = page.waitForResponse(
+    r => r.request().method() === "POST" && new URL(r.url()).pathname.endsWith("/group/backup-destinations")
+  );
+  const save = dialog.getByRole("button", { name: "Save" });
+  await expect(save).toBeEnabled();
+  await save.click();
+  expect((await saved).status()).toBe(201);
+}
+
 async function pickType(page: Page, label: string | RegExp) {
   await page.locator('[role="dialog"] [role="combobox"]').first().click();
   await page.getByRole("option", { name: label }).click();
@@ -157,9 +169,11 @@ test("a primary-storage destination can be added and listed", async ({ page }) =
 
   await slow(page.getByText("No extra destinations yet")).toBeVisible();
   await page.getByRole("button", { name: "Add destination" }).click();
-  await page.getByLabel("Name", { exact: true }).fill("Nightly");
-  await page.getByRole("button", { name: "Save" }).click();
+  const dialog = page.getByRole("dialog", { name: "Add backup destination" });
+  await dialog.getByLabel("Name", { exact: true }).fill("Nightly");
+  await saveDestination(page, dialog);
 
+  await expect(dialog).toBeHidden();
   await slow(page.getByText("Nightly", { exact: true })).toBeVisible();
   await slow(page.getByText("Daily at 03:00")).toBeVisible();
   expect(posted).toHaveLength(1);
@@ -176,7 +190,7 @@ test("a custom cron schedule is sent and summarised", async ({ page }) => {
   await page.locator('[role="dialog"] [role="combobox"]').nth(1).click();
   await page.getByRole("option", { name: "Custom (cron)" }).click();
   await page.getByLabel("Cron expression").fill("0 3 * * 1-5");
-  await page.getByRole("button", { name: "Save" }).click();
+  await saveDestination(page, page.getByRole("dialog", { name: "Add backup destination" }));
 
   await slow(page.getByText("Cron 0 3 * * 1-5")).toBeVisible();
   expect(posted[0]).toMatchObject({ frequency: "cron", cronExpr: "0 3 * * 1-5" });
