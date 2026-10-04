@@ -140,7 +140,7 @@ certificatesResolvers:
 
 Caddy automatically handles WebSocket upgrades and HTTPS with Let's Encrypt certificates.
 
-```caddy
+```txt title="Caddyfile"
 your-domain.com {
     reverse_proxy localhost:7745 {
         header_uri X-Forwarded-Proto {scheme}
@@ -151,7 +151,7 @@ your-domain.com {
 ```
 
 ### Caddyfile with Custom Configuration
-```caddy
+```txt title="Caddyfile"
 your-domain.com {
     encode gzip
 
