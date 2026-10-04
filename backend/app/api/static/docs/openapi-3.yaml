@@ -183,6 +183,27 @@ paths:
             type: array
             items:
               type: string
+        - description: entity type IDs; when provided this filter takes precedence over
+            isLocation
+          name: entityTypeIds
+          in: query
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - description: "field to order by; valid values: name, createdAt, updatedAt,
+            assetId"
+          name: orderBy
+          in: query
+          schema:
+            type: string
+        - description: "order direction; valid values: asc, desc. Defaults to desc for
+            createdAt and updatedAt, asc otherwise"
+          name: orderDirection
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: OK
@@ -3186,9 +3207,8 @@ components:
         entityTypeId:
           type: string
         locationId:
-          description: |-
-            LocationID is only needed when ParentID refers to another item and
-            the new entity is stored somewhere other than that item's location.
+          description: Only needed when ParentID is another item and this lives elsewhere
+            (#1688).
           type: string
           x-omitempty: true
           nullable: true
@@ -3296,26 +3316,20 @@ components:
           type: boolean
         location:
           description: |-
-            Location is where this entity resolves to: its own location when one
-            is set, otherwise the nearest ancestor whose entity type is a
-            location. Nil for top-level entities. This is a *resolved* value —
-            write it back through LocationID, not through this field.
+            Location is resolved: this entity's own location, else the nearest
+            location ancestor. Read-only — write via LocationID.
           allOf:
             - $ref: "#/components/schemas/repo.EntitySummary"
           x-omitempty: true
           nullable: true
         locationId:
           description: >-
-            LocationID is this entity's own location, and is nil when Location
-            was
+            LocationID is set only when this entity has its own location, nil
+            when
 
-            inherited from an ancestor. It is named to match the locationId field
+            inherited. Same name as the EntityUpdate field so a GET/PUT round trip
 
-            on EntityUpdate on purpose: a GET body PUT back verbatim keeps the
-
-            entity exactly where it was, rather than silently pinning an
-
-            inherited location or dropping an explicit one.
+            doesn't pin an inherited location or drop an explicit one.
           type: string
           x-omitempty: true
           nullable: true
@@ -3735,11 +3749,11 @@ components:
           description: Warranty
           type: boolean
         locationId:
-          description: |-
-            LocationID names the location this entity is stored in. It only
-            needs to be sent when ParentID refers to another item and the entity
-            lives somewhere other than that item's location (#1688); otherwise
-            ParentID alone carries the location. See resolveLocationOverride.
+          description: >-
+            Only needed when ParentID is another item and this lives elsewhere
+            (#1688).
+
+            Otherwise ParentID carries the location. See resolveLocationOverride.
           type: string
           x-omitempty: true
           nullable: true

@@ -749,10 +749,7 @@ export interface EntityCreate {
   /** @maxLength 1000 */
   description: string;
   entityTypeId: string;
-  /**
-   * LocationID is only needed when ParentID refers to another item and
-   * the new entity is stored somewhere other than that item's location.
-   */
+  /** Only needed when ParentID is another item and this lives elsewhere (#1688). */
   locationId?: string | null;
   /** @maxLength 255 */
   manufacturer?: string | null;
@@ -809,18 +806,14 @@ export interface EntityOut {
   /** Warranty */
   lifetimeWarranty: boolean;
   /**
-   * Location is where this entity resolves to: its own location when one
-   * is set, otherwise the nearest ancestor whose entity type is a
-   * location. Nil for top-level entities. This is a *resolved* value —
-   * write it back through LocationID, not through this field.
+   * Location is resolved: this entity's own location, else the nearest
+   * location ancestor. Read-only — write via LocationID.
    */
   location?: EntitySummary | null;
   /**
-   * LocationID is this entity's own location, and is nil when Location was
-   * inherited from an ancestor. It is named to match the locationId field
-   * on EntityUpdate on purpose: a GET body PUT back verbatim keeps the
-   * entity exactly where it was, rather than silently pinning an
-   * inherited location or dropping an explicit one.
+   * LocationID is set only when this entity has its own location, nil when
+   * inherited. Same name as the EntityUpdate field so a GET/PUT round trip
+   * doesn't pin an inherited location or drop an explicit one.
    */
   locationId?: string | null;
   manufacturer: string;
@@ -1034,10 +1027,8 @@ export interface EntityUpdate {
   /** Warranty */
   lifetimeWarranty: boolean;
   /**
-   * LocationID names the location this entity is stored in. It only
-   * needs to be sent when ParentID refers to another item and the entity
-   * lives somewhere other than that item's location (#1688); otherwise
-   * ParentID alone carries the location. See resolveLocationOverride.
+   * Only needed when ParentID is another item and this lives elsewhere (#1688).
+   * Otherwise ParentID carries the location. See resolveLocationOverride.
    */
   locationId?: string | null;
   manufacturer: string;

@@ -288,6 +288,28 @@ const docTemplate = `{
                         "description": "parent Ids",
                         "name": "parentIds",
                         "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "description": "entity type IDs; when provided this filter takes precedence over isLocation",
+                        "name": "entityTypeIds",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "field to order by; valid values: name, createdAt, updatedAt, assetId",
+                        "name": "orderBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "order direction; valid values: asc, desc. Defaults to desc for createdAt and updatedAt, asc otherwise",
+                        "name": "orderDirection",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -4816,7 +4838,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "locationId": {
-                    "description": "LocationID is only needed when ParentID refers to another item and\nthe new entity is stored somewhere other than that item's location.",
+                    "description": "Only needed when ParentID is another item and this lives elsewhere (#1688).",
                     "type": "string",
                     "x-nullable": true,
                     "x-omitempty": true
@@ -4965,7 +4987,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "location": {
-                    "description": "Location is where this entity resolves to: its own location when one\nis set, otherwise the nearest ancestor whose entity type is a\nlocation. Nil for top-level entities. This is a *resolved* value —\nwrite it back through LocationID, not through this field.",
+                    "description": "Location is resolved: this entity's own location, else the nearest\nlocation ancestor. Read-only — write via LocationID.",
                     "allOf": [
                         {
                             "$ref": "#/definitions/repo.EntitySummary"
@@ -4975,7 +4997,7 @@ const docTemplate = `{
                     "x-omitempty": true
                 },
                 "locationId": {
-                    "description": "LocationID is this entity's own location, and is nil when Location was\ninherited from an ancestor. It is named to match the locationId field\non EntityUpdate on purpose: a GET body PUT back verbatim keeps the\nentity exactly where it was, rather than silently pinning an\ninherited location or dropping an explicit one.",
+                    "description": "LocationID is set only when this entity has its own location, nil when\ninherited. Same name as the EntityUpdate field so a GET/PUT round trip\ndoesn't pin an inherited location or drop an explicit one.",
                     "type": "string",
                     "x-nullable": true,
                     "x-omitempty": true
@@ -5579,7 +5601,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "locationId": {
-                    "description": "LocationID names the location this entity is stored in. It only\nneeds to be sent when ParentID refers to another item and the entity\nlives somewhere other than that item's location (#1688); otherwise\nParentID alone carries the location. See resolveLocationOverride.",
+                    "description": "Only needed when ParentID is another item and this lives elsewhere (#1688).\nOtherwise ParentID carries the location. See resolveLocationOverride.",
                     "type": "string",
                     "x-nullable": true,
                     "x-omitempty": true
