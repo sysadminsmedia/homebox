@@ -767,15 +767,19 @@ func orderByLocation(gid uuid.UUID, desc bool) entity.OrderOption {
 }
 
 // applyEntityOrder applies the ORDER BY for q.OrderBy / q.OrderDirection and
-// returns the resolved order field name for logging.
+// returns the resolved order field name for logging. When no direction is
+// given, timestamps sort newest first and every other field ascending.
 func applyEntityOrder(qb *ent.EntityQuery, gid uuid.UUID, q EntityQuery) (*ent.EntityQuery, string) {
 	var orderBy string
+	defaultDesc := false
 
 	switch q.OrderBy {
 	case "createdAt":
 		orderBy = entity.FieldCreatedAt
+		defaultDesc = true
 	case "updatedAt":
 		orderBy = entity.FieldUpdatedAt
+		defaultDesc = true
 	case "assetId":
 		orderBy = entity.FieldAssetID
 	case "quantity":
@@ -793,12 +797,11 @@ func applyEntityOrder(qb *ent.EntityQuery, gid uuid.UUID, q EntityQuery) (*ent.E
 		orderBy = entity.FieldName
 	}
 
-	switch q.OrderDirection {
-	case "desc":
+	desc := q.OrderDirection == "desc" || (q.OrderDirection == "" && defaultDesc)
+	if desc {
 		return qb.Order(ent.Desc(orderBy)), orderBy
-	default: // "asc"
-		return qb.Order(ent.Asc(orderBy)), orderBy
 	}
+	return qb.Order(ent.Asc(orderBy)), orderBy
 }
 
 // QueryByGroup returns a list of entities that belong to a specific group based on the provided query.
