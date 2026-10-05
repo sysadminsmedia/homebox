@@ -78,11 +78,11 @@
   }
 
   function getLabelUrl(print: boolean): string {
-    const { selectedId } = useCollections();
+    const prefs = useViewPreferences();
     const params: Record<string, QueryValue> = { print };
 
-    if (selectedId.value) {
-      params.tenant = selectedId.value;
+    if (prefs.value.collectionId) {
+      params.tenant = prefs.value.collectionId;
     }
 
     if (props.type === "item" || props.type === "entity") {
