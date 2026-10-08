@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
@@ -56,19 +57,26 @@ func (r *MaintenanceEntryRepository) GetAllMaintenance(ctx context.Context, grou
 		query = query.Where(maintenanceentry.Or(
 			maintenanceentry.DateIsNil(),
 			maintenanceentry.DateEQ(time.Time{}),
+			maintenanceentry.DateGT(time.Now()),
 		))
+		query = query.Order(maintenanceentry.ByScheduledDate(sql.OrderAsc()))
 	case MaintenanceFilterStatusCompleted:
 		query = query.Where(
 			maintenanceentry.Not(maintenanceentry.Or(
 				maintenanceentry.DateIsNil(),
-				maintenanceentry.DateEQ(time.Time{})),
+				maintenanceentry.DateEQ(time.Time{}),
+				maintenanceentry.DateGT(time.Now())),
 			))
-	case MaintenanceFilterStatusBoth:
-		// No additional filters needed
+		query = query.Order(maintenanceentry.ByDate(sql.OrderDesc()))
+	case MaintenanceFilterStatusBoth, "":
+		query = query.Order(
+			maintenanceentry.ByScheduledDate(sql.OrderDesc()),
+			maintenanceentry.ByDate(sql.OrderDesc()),
+		)
 	default:
 		return nil, fmt.Errorf("unknown status %s", filters.Status)
 	}
-	entries, err := query.WithEntity().Order(maintenanceentry.ByScheduledDate()).All(ctx)
+	entries, err := query.WithEntity().All(ctx)
 
 	if err != nil {
 		return nil, err

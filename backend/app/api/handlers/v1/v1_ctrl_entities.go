@@ -160,7 +160,7 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 			if !item.SoldDate.Time().IsZero() {
 				continue
 			}
-			totalPrice.Add(totalPrice, big.NewInt(int64(math.Round(item.PurchasePrice*100))))
+			totalPrice.Add(totalPrice, big.NewInt(int64(math.Round(item.PurchasePrice*item.Quantity*100))))
 		}
 
 		totalPriceFloat, _ := new(big.Float).Quo(new(big.Float).SetInt(totalPrice), big.NewFloat(100)).Float64()
