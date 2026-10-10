@@ -991,3 +991,47 @@ func TestEntityRepository_QueryByGroup_OrderByLocation(t *testing.T) {
 	assert.Equal(t, []uuid.UUID{direct.ID, box.ID, nested.ID, orphan.ID}, order("asc"))
 	assert.Equal(t, []uuid.UUID{box.ID, nested.ID, direct.ID, orphan.ID}, order("desc"))
 }
+
+// TestEntityRepository_QueryByGroup_TimestampOrderDefaultsDesc verifies that
+// ordering by createdAt/updatedAt without a direction returns the newest
+// entities first, while an explicit direction is still respected.
+func TestEntityRepository_QueryByGroup_TimestampOrderDefaultsDesc(t *testing.T) {
+	ctx := context.Background()
+	itemET := useItemEntityType(t)
+
+	first := mustCreateEntity(t, "ts-first", itemET.ID, uuid.Nil)
+	second := mustCreateEntity(t, "ts-second", itemET.ID, uuid.Nil)
+	third := mustCreateEntity(t, "ts-third", itemET.ID, uuid.Nil)
+
+	// Touch the first entity so it becomes the most recently updated.
+	_, err := tClient.Entity.UpdateOneID(first.ID).SetDescription("touched").Save(ctx)
+	require.NoError(t, err)
+
+	// The test group is shared, so only the entities created here are ordered.
+	mine := map[uuid.UUID]bool{first.ID: true, second.ID: true, third.ID: true}
+	order := func(orderBy, direction string) []uuid.UUID {
+		t.Helper()
+		res, err := tRepos.Entities.QueryByGroup(ctx, tGroup.ID, EntityQuery{
+			Page:           -1,
+			PageSize:       -1,
+			OrderBy:        orderBy,
+			OrderDirection: direction,
+		})
+		require.NoError(t, err)
+
+		ids := make([]uuid.UUID, 0, len(mine))
+		for _, e := range res.Items {
+			if mine[e.ID] {
+				ids = append(ids, e.ID)
+			}
+		}
+		return ids
+	}
+
+	assert.Equal(t, []uuid.UUID{third.ID, second.ID, first.ID}, order("createdAt", ""))
+	assert.Equal(t, []uuid.UUID{third.ID, second.ID, first.ID}, order("createdAt", "desc"))
+	assert.Equal(t, []uuid.UUID{first.ID, second.ID, third.ID}, order("createdAt", "asc"))
+
+	assert.Equal(t, []uuid.UUID{first.ID, third.ID, second.ID}, order("updatedAt", ""))
+	assert.Equal(t, []uuid.UUID{second.ID, third.ID, first.ID}, order("updatedAt", "asc"))
+}

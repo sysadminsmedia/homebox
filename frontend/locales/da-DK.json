@@ -53,7 +53,7 @@
             },
             "import_dialog": {
                 "change_warning": "Adfærd for imports med eksisterende import_refs har ændret sig. Hvis en import_ref er tilstede i CSV filen,\nvil genstanden blive opdateret med værdierne fra CSV filen.",
-                "description": "Importer en CSV fil som indeholder dine genstande, etiketter, og lokationer. Se dokumentation for mere information vedrørende\nden korrekte format.",
+                "description": "Importer en CSV fil som indeholder dine genstande, etiketter, og placeringer. Se dokumentation for mere information vedrørende\nden korrekte format.",
                 "title": "Importer CSV Fil",
                 "toast": {
                     "import_failed": "Importen mislykkedes. Prøv igen senere.",
@@ -117,9 +117,90 @@
             "no_color_selected": "Ingen farve valgt",
             "randomize": "Tilfældig farve"
         },
+        "entity": {
+            "create_modal": {
+                "clear_template": "Ryd skabelon",
+                "delete_photo": "Slet billede",
+                "entity_description": "Beskrivelse af {type}",
+                "entity_name": "{type}navn",
+                "entity_photo": "{type}billed 📷",
+                "entity_quantity": "{type} antal",
+                "item_selector_no_results_text": "Skriv for at søge…",
+                "parent_item": "Overordnet element",
+                "product_tooltip_input_barcode": "Autoudfyld med en manuelt angivet stregkode",
+                "product_tooltip_scan_barcode": "Fyld automatisk med stregkode fra 📷",
+                "rotate_photo": "Roter billede",
+                "set_as_primary_photo": "Sæt som { isPrimary, select, true {non-} false {} other {}}primært billede",
+                "toast": {
+                    "already_creating": "Opretter allerede en {type}",
+                    "create_failed": "Kunne ikke oprette {type}",
+                    "create_success": "{type} oprettet",
+                    "failed_load_parent": "Kunne ikke indlæse overordnet element - vælg venligst manuelt",
+                    "no_canvas_support": "Din browser understøtter ikke canvas-handlinger",
+                    "please_select_entity_type": "Vælg venligst en enhedstype.",
+                    "please_select_location": "Vælg venligst en placering.",
+                    "rotate_failed": "Kunne ikke rotere billedet: { error }",
+                    "rotate_process_failed": "Kunne ikke behandle roteret billede",
+                    "some_photos_failed": "{count, plural, =0 {Ingen billeder at uploade.} =1 {1 billede kunne ikke uploades.} other {Nogle billeder kunne ikke uploades.}}",
+                    "upload_failed": "Kunne ikke uploade billede: { photoName }",
+                    "upload_success": "{count, plural, =0 {Ingen billeder uploadet.} =1 {billede uploadet.} other {Alle billeder uploadet.}}",
+                    "uploading_photos": "{count, plural, =0 {Ingen billeder at uploade} =1 {Uploader 1 billede…} other {Uploader {count} billeder…}}"
+                },
+                "upload_photos": "Upload billeder",
+                "uploaded": "Uploadet billede"
+            },
+            "selector": {
+                "placeholder": "Vælg en type…"
+            }
+        },
+        "entityTypes": {
+            "card": {
+                "actions": {
+                    "delete": "Slet"
+                },
+                "badge_container": "Beholder",
+                "default_template": "Standardskabelon: {name}",
+                "tooltip": {
+                    "delete": "Slet",
+                    "edit": "Rediger"
+                }
+            },
+            "confirm": {
+                "convert_item_to_location": "Konvertering af en enhedstype til en placering vil resultere i mistede felter for enheder der benytter denne type. Er du sikker på at du vil fortsætte?",
+                "delete_entity_type": "Er du sikker på at du vil slette \"{name}\"?"
+            },
+            "create_dialog": {
+                "button": "Opret",
+                "is_container_location_type_label": "Er en beholder- / placeringstype",
+                "name_label": "Navn",
+                "title": "Opret enhedstype"
+            },
+            "page": {
+                "create": "Opret",
+                "empty_button": "Opret enhedstype",
+                "empty_title": "Ingen enhedstyper er defineret endnu.",
+                "title": "Enhedstyper"
+            },
+            "toasts": {
+                "create_failed": "Kunne ikke oprette enhedstype",
+                "create_success": "Enhedstype oprettet",
+                "delete_confirm_failed": "Kunne ikke slette enhedstype. Sørg for at der ikke er nogen enheder der benytter den.",
+                "delete_success": "Enhedstype slettet",
+                "name_required": "Navn er påkrævet",
+                "update_failed": "Kunne ikke opdatere enhedstypen",
+                "update_success": "Enhedstype opdateret"
+            },
+            "update_dialog": {
+                "button": "Opdater",
+                "is_container_location_type_label": "Er en beholder- / placeringstype",
+                "name_label": "Navn",
+                "title": "Opdater enhedstype"
+            }
+        },
         "form": {
+            "min_length": "min {min}",
             "password": {
-                "toggle_show": "Slå adgangskode til/fra Vis"
+                "toggle_show": "Slå adgangskodevisning til/fra"
             }
         },
         "global": {
@@ -172,6 +253,7 @@
                 "qr_tooltip": "Vis QR-kode"
             },
             "password_score": {
+                "does_not_meet_requirement": "Opfylder ikke adgangskoders styrkekrav",
                 "password_strength": "Adgangskodestyrke"
             }
         },
@@ -179,36 +261,6 @@
             "attachments_list": {
                 "download": "Download",
                 "open_new_tab": "Åbn i ny fane"
-            },
-            "create_modal": {
-                "clear_template": "Ryd skabelon",
-                "delete_photo": "Slet billede",
-                "item_description": "Genstandsbeskrivelse",
-                "item_name": "Genstandsnavn",
-                "item_photo": "Genstandsfoto 📷",
-                "item_quantity": "Genstandsantal",
-                "parent_item": "Overordnet element",
-                "product_tooltip_input_barcode": "Autoudfyld med en manuelt angivet stregkode",
-                "product_tooltip_scan_barcode": "Fyld automatisk med stregkode fra 📷",
-                "rotate_photo": "Roter foto",
-                "set_as_primary_photo": "Sæt som { isPrimary, select, true {non-} false {} other {}}primært foto",
-                "title": "Opret genstand",
-                "toast": {
-                    "already_creating": "Opretter allerede et element",
-                    "create_failed": "Kunne ikke oprette elementet",
-                    "create_success": "Element oprettet",
-                    "failed_load_parent": "Kunne ikke indlæse overordnet element - vælg venligst manuelt",
-                    "no_canvas_support": "Din browser understøtter ikke canvas-handlinger",
-                    "please_select_location": "Vælg venligst en placering.",
-                    "rotate_failed": "Kunne ikke rotere billedet: { error }",
-                    "rotate_process_failed": "Kunne ikke behandle roteret billede",
-                    "some_photos_failed": "{count, plural, =0 {Ingen billeder at uploade.} =1 {1 billede kunne ikke uploades.} other {Nogle billeder kunne ikke uploades.}}",
-                    "upload_failed": "Kunne ikke uploade billede: { photoName }",
-                    "upload_success": "{count, plural, =0 {Ingen billeder uploadet.} =1 {Foto uploadet.} other {Alle billeder uploadet.}}",
-                    "uploading_photos": "{count, plural, =0 {Ingen billeder at uploade} =1 {Uploader 1 billede…} other {Uploader {count} billeder…}}"
-                },
-                "upload_photos": "Upload Billeder",
-                "uploaded": "Uploadet billede"
             },
             "product_import": {
                 "barcode": "Produkts stregkode",
@@ -279,25 +331,16 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Lokationsbeskrivelse",
-                "location_name": "Lokationsnavn",
-                "title": "Opret lokation",
-                "toast": {
-                    "already_creating": "Allerede oprettet en lokation",
-                    "create_failed": "Kunne ikke oprette placering",
-                    "create_success": "Placering oprettet"
-                }
-            },
+            "create_item": "Opret genstand",
             "selector": {
-                "clear": "Ryd valgte lokationer",
+                "clear": "Ryd valgte placeringer",
                 "no_location_found": "Ingen placering fundet",
-                "parent_location": "Forældrelokation",
+                "parent_location": "Overordnet placering",
                 "search_location": "Søg efter placeringer",
                 "select_location": "Vælg en placering"
             },
             "tree": {
-                "no_locations": "Ingen tilgængelige lokationer. Brug Opret knappen for at tilføje en ny lokation."
+                "no_locations": "Ingen tilgængelige placeringer. Brug opret-knappen for at tilføje en ny placering."
             }
         },
         "quick_menu": {
@@ -358,7 +401,7 @@
                 "item_description": "Beskrivelse af genstand",
                 "item_name": "Navn på genstand",
                 "lifetime_warranty": "Livstidsgaranti",
-                "location": "Lokation",
+                "location": "Placering",
                 "manufacturer": "Producent",
                 "model_number": "Modelnummer",
                 "no_custom_fields": "Ingen brugerdefinerede felter.",
@@ -399,6 +442,7 @@
         "archived": "Arkiveret",
         "build": "Build: { build }",
         "cancel": "Ophæv",
+        "close": "Luk",
         "confirm": "Bekræft",
         "create": "Opret",
         "create_and_add": "Opret og tilføj ny",
@@ -411,6 +455,8 @@
         "duplicate": "Dupliker",
         "edit": "Rediger",
         "email": "Email",
+        "entity": "Enhed",
+        "entity_type": "Enhedstype",
         "follow_dev": "Følg udvikleren",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
@@ -418,10 +464,12 @@
         },
         "github": "GitHub projekt",
         "insured": "Forsikret",
+        "item": "Genstand",
         "items": "Genstande",
         "join_discord": "Deltag i vores Discord",
         "loading": "Indlæser…",
-        "locations": "Lokationer",
+        "location": "Placering",
+        "locations": "Placeringer",
         "maintenance": "Vedligeholdelse",
         "name": "Navn",
         "navigate": "Naviger",
@@ -451,21 +499,33 @@
     "home": {
         "quick_statistics": "Hurtigt overblik",
         "recently_added": "Tilføjet for nylig",
-        "storage_locations": "Opbevaringslokationer",
+        "storage_locations": "Opbevaringsplaceringer",
         "tags": "Tags",
         "total_items": "Antal genstande",
-        "total_locations": "Antal lokationer",
+        "total_locations": "Antal placeringer",
         "total_tags": "Antal tags",
         "total_value": "Samlet værdi"
     },
     "index": {
+        "back_to_login": "Tilbage til login",
         "disabled_registration": "Registrering slået fra",
         "dont_join_group": "Ikke lyst til at deltage i en gruppe?",
+        "forgot_password": "Glemt din adgangskode?",
+        "forgot_password_check_email": "Hvis den e-mailadresse er knyttet til en konto, er der et nulstillingslink på vej. Linket udløber om en time.",
+        "forgot_password_send": "Send nulstillingslink",
+        "forgot_password_subtitle": "Indtast e-mailadressen for din konto, så sender vi dig et link til at nulstille din adgangskode.",
+        "forgot_password_title": "Nulstil din adgangskode",
         "joining_group": "Du deltager i en eksisterende gruppe!",
         "login": "Log ind",
         "or": "eller",
         "register": "Registrer",
         "remember_me": "Husk mig",
+        "reset_password_invalid": "Dette nulstillingslink er ugyldigt eller udløbet. Anmod om et nyt.",
+        "reset_password_missing_token": "Manglende nulstillingstoken. Åbn linket fra din e-mail igen, eller anmod om et nyt.",
+        "reset_password_set": "Angiv ny adgangskode",
+        "reset_password_subtitle": "Vælg en ny adgangskode til din konto.",
+        "reset_password_success": "Din adgangskode er blevet nulstillet. Log ind med den nye adgangskode.",
+        "reset_password_title": "Nulstil din adgangskode",
         "set_email": "Hvad er din E-Mail?",
         "set_name": "Hvad hedder du?",
         "set_password": "Opret din adgangskode",
@@ -516,11 +576,12 @@
             "title": "Dupliker indstillinger"
         },
         "edit": {
+            "change_entity_type_confirm": "Ændring af enhedstypen kan forårsage tab af data i felter, der ikke deles mellem den nuværende og den nye enhedstype. Er du sikker på, at du vil ændre enhedstypen?",
             "edit_attachment_dialog": {
                 "attachment_title": "Titel på vedhæftet fil",
                 "attachment_type": "Vedhæftningstype",
-                "primary_photo": "Primært foto",
-                "primary_photo_sub": "Denne mulighed er kun tilgængelig for fotos. Kun ét foto kan være primært. Hvis du vælger denne mulighed, vil det aktuelle primære foto, hvis der er et, blive fravalgt.",
+                "primary_photo": "Primært billede",
+                "primary_photo_sub": "Denne mulighed er kun tilgængelig for billeder. Kun ét billede kan være primært. Hvis du vælger denne mulighed, vil det aktuelle primære billede, hvis der er et, blive fravalgt.",
                 "select_type": "Vælg en type",
                 "title": "Rediger vedhæftet fil"
             },
@@ -547,14 +608,14 @@
         "no_attachments": "Ingen vedhæftede filer fundet",
         "no_results": "Ingen elementer fundet",
         "notes": "Noter",
-        "only_with_photo": "Kun elementer med foto",
-        "only_without_photo": "Kun elementer uden foto",
+        "only_with_photo": "Kun elementer med billede",
+        "only_without_photo": "Kun elementer uden billede",
         "options": "Muligheder",
         "order_by": "Sorter efter",
         "pages": "Side { page } af { totalPages }",
         "parent_item": "Overordnet element",
-        "photo": "Foto",
-        "photos": "Fotos",
+        "photo": "Billede",
+        "photos": "Billeder",
         "prev_page": "Forrige side",
         "purchase_date": "Købsdato",
         "purchase_details": "Købsdetaljer",
@@ -576,7 +637,7 @@
         "sold_price": "Salgspris",
         "sold_to": "Solgt til",
         "sync_child_locations": "Synkroniser placeringer af underordnede elementer",
-        "tip_1": "Lokations- og tagfiltre bruger 'ELLER' operatoren. Hvis mere end én er valgt, kræves der kun én\n til et match.",
+        "tip_1": "Placerings- og tagfiltre bruger 'ELLER' operatoren. Hvis mere end én er valgt, kræves der kun én\n til et match.",
         "tip_2": "Søgninger med præfikset '#'' vil forespørge efter et aktiv-id (eksempel '#000-001')",
         "tip_3": "Feltfiltre bruger handlingen 'ELLER'. Hvis mere end én er valgt, kræves der kun én til en\n kamp.",
         "tips": "Tips",
@@ -584,11 +645,12 @@
         "toast": {
             "asset_not_found": "Aktivet blev ikke fundet",
             "attachment_deleted": "Vedhæftet fil slettet",
+            "attachment_too_large": "Vedhæftet fil er for stor: Den overskrider serverens uploadgrænse",
             "attachment_updated": "Vedhæftet fil opdateret",
             "attachment_uploaded": "Vedhæftet fil uploadet",
             "child_items_location_no_longer_synced": "Placeringen af underelementer vil ikke længere blive synkroniseret med dette element.",
             "child_items_location_synced": "Placeringerne af underordnede elementer er blevet synkroniseret med dette element",
-            "child_location_desync": "Ændring af placering vil afsynkronisere den fra forælderens placering",
+            "child_location_desync": "Overordnet placering fjernet — enheden bor nu direkte i den valgte placering",
             "error_loading_parent_data": "Noget gik galt under indlæsning af overordnede data",
             "failed_adjust_quantity": "Kunne ikke justere mængden",
             "failed_delete_attachment": "Kunne ikke slette vedhæftet fil",
@@ -648,6 +710,8 @@
         "zh-TW": "Kinesisk (Traditionel)"
     },
     "languages.da-DK": "Dansk",
+    "languages.el-GR": "Græsk",
+    "languages.en@pirate": "Engelsk (pirat)",
     "languages.ro-RO": "Rumænsk",
     "languages.sk-SK": "Slovakisk",
     "languages.sr-RS": "Serbisk (Serbien)",
@@ -709,7 +773,7 @@
         "create_location": "Lokalitet",
         "create_tag": "Tag",
         "home": "Hjem",
-        "locations": "Lokationer",
+        "locations": "Placeringer",
         "maintenance": "Vedligeholdelse",
         "profile": "Profil",
         "scanner": "Skanner",
@@ -724,6 +788,23 @@
     },
     "profile": {
         "active": "Aktiv",
+        "api_key_copied": "Kopieret til udklipsholderen",
+        "api_key_copy": "Kopier",
+        "api_key_create": "Opret en API-nøgle",
+        "api_key_created": "Oprettet",
+        "api_key_default_expiration": "Nøgler udløber efter 30 dage medmindre du angiver en dato.",
+        "api_key_delete_confirm": "Er du sikker på, at du vil tilbagekalde denne API-nøgle? Alle klienter, der bruger den, mister adgangen med det samme.",
+        "api_key_expires_at": "Udløber",
+        "api_key_last_used": "Sidst brugt",
+        "api_key_name": "Navn",
+        "api_key_name_placeholder": "f.eks. Home Assistant",
+        "api_key_never_used": "Aldrig",
+        "api_key_no_expiration": "Ingen udløbsdato",
+        "api_key_set_expiration": "Angiv en udløbsdato",
+        "api_key_token_label": "Din nye API-nøgle",
+        "api_key_token_warning": "Kopiér denne token nu. Af hensyn til din sikkerhed vil den ikke blive vist igen.",
+        "api_keys": "API-nøgler",
+        "api_keys_sub": "Statiske tokens til programmatisk adgang. Hver nøgle har de samme tilladelser som din konto.",
         "change_password": "Skift adgangskode",
         "currency_format": "Valuta format",
         "current_password": "Aktuel adgangskode",
@@ -739,12 +820,16 @@
         "inactive": "Inaktiv",
         "language": "Sprog",
         "legacy_image_fit": "{ currentValue, select, true {Deaktiver Legacy Fit: Tilpas billede med bjælker} false {Aktiver Legacy Fit: Fyld billede med beskæring} other {Ikke ramt}}",
+        "logout_all_confirm": "Dette logger dig ud på alle enheder, inklusive denne. Du skal logge ind igen. Vil du fortsætte?",
+        "logout_all_devices": "Log ud af alle enheder",
+        "moved_notice_body": "Meddelelser, invitationer og valutaindstillinger er blevet flyttet til samlingssiderne.",
         "moved_notice_description": "Disse indstillinger håndteres nu per samling.",
         "moved_notice_link_invites": "Samlingsinvitationer",
         "moved_notice_link_notifiers": "Samlingsnotifikationer",
         "moved_notice_link_settings": "Valutaindstillinger for samling",
         "moved_notice_title": "Leder du efter notifikations-, invitations- eller valutaindstillinger?",
         "new_password": "Ny Adgangskode",
+        "no_api_keys": "Ingen API-nøgler endnu",
         "no_notifiers": "Ingen notifikationer konfigureret",
         "no_override": "Ingen tilsidesættelse",
         "notifier_modal": "{ type, select, true {Rediger} false {Opret} other {Andet}} Meddeler",
@@ -756,15 +841,21 @@
         "theme_settings_sub": "Temaindstillinger gemmes i din browsers lokale lager. Du kan til enhver tid ændre temaet. Hvis du har\n problemer med at indstille dit tema, kan du prøve at opdatere din browser.",
         "toast": {
             "account_deleted": "Din konto er blevet slettet.",
+            "api_key_created": "API-nøgle oprettet.",
+            "api_key_deleted": "API-nøgle tilbagekaldt.",
+            "failed_api_key_create": "Kunne ikke oprette API-nøgle.",
+            "failed_api_key_delete": "Kunne ikke tilbagekalde API-nøgle.",
             "failed_change_password": "Kunne ikke ændre adgangskode.",
             "failed_create_notifier": "Kunne ikke oprette underretteren.",
             "failed_delete_account": "Kunne ikke slette din konto.",
             "failed_delete_notifier": "Kunne ikke slette underretteren.",
             "failed_get_currencies": "Kunne ikke hente valutaer",
+            "failed_logout_all": "Kunne ikke logge ud af alle enheder.",
             "failed_test_notifier": "Kunne ikke teste underretteren.",
             "failed_update_group": "Gruppen kunne ikke opdateres",
             "failed_update_notifier": "Kunne ikke opdatere underretteren.",
             "group_updated": "Gruppen er opdateret",
+            "logout_all_success": "Logget ud af alle enheder.",
             "notifier_test_success": "Underretter-testen er gennemført.",
             "password_changed": "Adgangskoden er ændret."
         },
@@ -794,13 +885,13 @@
             "page_right_padding": "Højre sidepolstring",
             "page_top_padding": "Sidetoppolstring",
             "page_width": "Sidebredde",
-            "print_location_row": "Tilføj lokation",
+            "print_location_row": "Print placeringsrække",
             "qr_code_example": "Eksempel på QR-kode",
             "replace_homebox_behavior": "Erstat \"HomeBox\" tekst",
             "replace_homebox_behavior_always_replace": "Udskift altid \"HomeBox\"",
-            "replace_homebox_behavior_item_no_location": "Udskift \"HomeBox\" når genstanden ikke har en lokation",
+            "replace_homebox_behavior_item_no_location": "Udskift \"HomeBox\" når genstanden ikke har en placering",
             "replace_homebox_behavior_item_no_name": "Udskift \"HomeBox\" når genstanden ikke har et navn",
-            "replace_homebox_behavior_item_no_name_no_location": "Udskift \"HomeBox\" når genstanden ikke har navn eller lokation",
+            "replace_homebox_behavior_item_no_name_no_location": "Udskift \"HomeBox\" når genstanden ikke har navn eller placering",
             "replace_homebox_behavior_show_homebox": "Vis \"HomeBox\"",
             "replace_homebox_text": "Erstatningstekst",
             "skip_first_labels": "Spring de første Labels over",
@@ -828,6 +919,10 @@
     "scanner_ar": {
         "ar_mode": "AR tilstand",
         "back": "Tilbage",
+        "child_items": "{count, plural, one {underelement} other {underelementer}}",
+        "children": "{count, plural, one {underplacering} other {underplaceringer}}",
+        "items": "{count, plural, one {enhed} other {enheder}}",
+        "items_in_location": "{count, plural, one {enhed} other {enheder}}",
         "more": "mere",
         "not_found": "Genstand ikke fundet",
         "qty": "Antal",
@@ -863,14 +958,14 @@
             "ensure_import_refs": "Sørg for importreferencer",
             "ensure_import_refs_button": "Sørg for importreferencer",
             "ensure_import_refs_sub": "Sikrer at alle genstande på lageret har et gyldigt import_ref felt. Dette gøres ved tilfældigt at generere en streng på 8 tegn for hvert element, der ikke har et indstillet import_ref felt.",
-            "set_primary_photo": "Indstil primært foto",
-            "set_primary_photo_button": "Indstil primært foto",
+            "set_primary_photo": "Indstil primært billede",
+            "set_primary_photo_button": "Indstil primært billede",
             "set_primary_photo_confirm": "Er du sikker på, at du vil indstille primære billeder? Dette kan tage et stykke tid og kan ikke fortrydes.",
-            "set_primary_photo_sub": "I version v0.10.0 af HomeBox blev det primære billedfelt tilføjet til vedhæftede filer af typen foto. Denne handling indstiller det primære billedfelt til det første billede i matrixen for vedhæftede filer i databasen, hvis det ikke allerede er angivet. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Se GitHub PR #576'</a>'",
+            "set_primary_photo_sub": "I version v0.10.0 af HomeBox blev det primære billedfelt tilføjet til vedhæftede filer af typen billede. Denne handling indstiller det primære billedfelt til det første billede i matrixen for vedhæftede filer i databasen, hvis det ikke allerede er angivet. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Se GitHub PR #576'</a>'",
             "wipe_inventory": "Ryd lagerbeholdning",
             "wipe_inventory_button": "Ryd lagerbeholdning",
             "wipe_inventory_confirm": "Er du sikker på at du vil rydde hele din lagerbeholdning? Dette vil slette alle genstande og kan ikke fortrydes.",
-            "wipe_inventory_locations": "Slet også alle lokationer",
+            "wipe_inventory_locations": "Slet også alle placeringer",
             "wipe_inventory_maintenance": "Slet også alle vedligeholdelsesposter",
             "wipe_inventory_note": "Note: Kun gruppeejere kan udføre denne handling.",
             "wipe_inventory_sub": "Slet alle genstande permanent fra dit lager. Denne handling er uigenkaldelig og vil slette alle genstande inkl. vedhæftede filer og billeder.",
@@ -881,8 +976,28 @@
             "zero_datetimes_sub": "Nulstiller klokkeslætsværdien for alle dato- og klokkeslætsfelter i lageret til begyndelsen af datoen. Dette er for at rette en fejl, der blev introduceret tidligt i udviklingen af webstedet, der forårsagede, at tidsværdien blev gemt med tiden, hvilket forårsagede problemer med datofelter, der viste nøjagtige værdier. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Se Github-udgave #236 for flere detaljer.'</a>'"
         },
         "actions_sub": "Anvend flere handlinger på din beholdning på én gang. Det er uigenkaldelige handlinger. '<b>'Vær forsigtig.'</b>'",
+        "backups": "Sikkerhedskopiering og gendannelse",
+        "backups_set": {
+            "create": "Opret sikkerhedskopi",
+            "create_button": "Start sikkerhedskopiering",
+            "create_sub": "Opretter en zip-fil med alle enheder, tags, brugerdefinerede felter, vedhæftede filer og vedligeholdelsesposter i denne samling. Jobbet kører i baggrunden; artefaktet vises i tabellen nedenfor, når den er klar.",
+            "delete_confirm": "Vil du slette dette backup-artefakt? Dette kan ikke fortrydes.",
+            "download": "Download",
+            "failed": "Sikkerhedskopiering mislykkedes. Tjek serverlogfilerne for detaljer.",
+            "list_empty": "Ingen sikkerhedskopier endnu.",
+            "restore": "Gendan fra sikkerhedskopi",
+            "restore_button": "Upload og gendan",
+            "restore_sub": "Upload en backup-zip-fil for at udfylde denne samling. Samlingen må ikke indeholde elementer endnu — standardplaceringer og tags slettes automatisk som en del af gendannelsen.",
+            "table": {
+                "actions": "Handlinger",
+                "created": "Oprettet",
+                "size": "Størrelse",
+                "status": "Status"
+            }
+        },
+        "backups_sub": "Eksporter hele din samling – enheder, tags, vedhæftede filer og metadata — til et bærbart zip-arkiv. Gendan et arkiv til en nyligt registreret, tom samling på denne eller en anden server.",
         "demo_mode_error": {
-            "wipe_inventory": "Lagerbeholdning, tags, lokationer og vedligeholdelse kan ikke slettes, når Homebox er i demo tilstand. Tjek at du ikke er i demo tilstand, og prøv igen."
+            "wipe_inventory": "Lagerbeholdning, tags, placeringer og vedligeholdelse kan ikke slettes, når Homebox er i demo tilstand. Tjek at du ikke er i demo tilstand, og prøv igen."
         },
         "import_export": "Importer/Eksporter",
         "import_export_set": {
@@ -892,7 +1007,7 @@
             "import": "Importeret beholdning",
             "import_button": "Importer beholdning",
             "import_ref_confirm": "Er du sikker på, at du vil sikre dig, at alle aktiver har en import_ref? Dette kan tage et stykke tid og kan ikke fortrydes.",
-            "import_sub": "Importerer standard CSV-formatet til HomeBox. Uden en '<code>'HB.import_ref'</code>'-kolonne vil dette '<b>'ikke'</b>' overskrive eksisterende genstande i dit lager, kun tilføje nye genstande. Rækker med kolonnen \"<code>HB.import_ref\"</code> flettes ind i eksisterende elementer med samme import_ref, hvis der findes en."
+            "import_sub": "Importerer standard CSV-formatet til HomeBox. Uden en '<code>'HB.import_ref'</code>'-kolonne vil dette '<b>'ikke'</b>' overskrive eksisterende genstande i dit lager, kun tilføje nye genstande. Rækker med kolonnen '<code>'HB.import_ref'</code>' flettes ind i eksisterende elementer med samme import_ref, hvis der findes en."
         },
         "import_export_sub": "Importér og eksporter din lagerbeholdning til og fra en CSV-fil. Dette er nyttigt til at migrere dit lager til en ny forekomst af HomeBox.",
         "reports": "Rapporter",
@@ -907,12 +1022,18 @@
         "reports_sub": "Generer forskellige rapporter for dit lager.",
         "toast": {
             "asset_success": "Aktiverne i { results } er blevet opdateret.",
+            "backup_delete_failed": "Kunne ikke slette sikkerhedskopien.",
+            "backup_start_failed": "Kunne ikke starte sikkerhedskopiering.",
+            "backup_started": "Sikkerhedskopiering startet — den vises i tabellen, når den er klar.",
             "failed_create_missing_thumbnails": "Kunne ikke oprette manglende miniaturebilleder.",
             "failed_ensure_ids": "Kunne ikke sikre aktiv-ID'er.",
             "failed_ensure_import_refs": "Kunne ikke sikre importreferencer.",
             "failed_set_primary_photos": "Kunne ikke indstille primære billeder.",
             "failed_wipe_inventory": "Kunne ikke rydde lageret.",
             "failed_zero_datetimes": "Dato- og klokkeslætsværdier kunne ikke nulstilles.",
+            "restore_failed": "Gendannelsen mislykkedes.",
+            "restore_requires_empty": "Gendannelse kræver en samling uden elementer. Skift til en nyligt registreret samling (standardplaceringer og tags er i orden), og prøv igen.",
+            "restore_started": "Gendannelse startet — opdater om lidt for at se importerede elementer.",
             "wipe_inventory_success": "Lageret er blevet ryddet. { results } genstande er blevet slettet."
         }
     }

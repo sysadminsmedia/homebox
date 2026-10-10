@@ -16,9 +16,6 @@
             }
         },
         "item": {
-            "create_modal": {
-                "title": "新增項目"
-            },
             "view": {
                 "selectable": {
                     "card": "卡牌風",
@@ -26,11 +23,6 @@
                     "no_items": "沒有可顯示的項目",
                     "table": "表格"
                 }
-            }
-        },
-        "location": {
-            "create_modal": {
-                "title": "新增地點"
             }
         }
     },

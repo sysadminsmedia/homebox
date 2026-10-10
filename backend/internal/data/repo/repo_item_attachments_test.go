@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+	"gocloud.dev/blob"
 )
 
 func TestMimeTypeForSourceType(t *testing.T) {
@@ -471,4 +473,40 @@ func TestAttachmentRepo_MigrateLegacyFlatPaths_TargetExistsKeepsSource(t *testin
 	dst, err := os.ReadFile(target)
 	require.NoError(t, err)
 	assert.Equal(t, "new", string(dst), "target file should not be overwritten")
+}
+
+// TestAttachmentRepo_FilesystemRootBucket covers the Docker image defaults,
+// where the bucket root is "/" (file:///) and the prefix selects the data
+// directory. Keys under a root bucket must be readable and writable.
+func TestAttachmentRepo_FilesystemRootBucket(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("filesystem root bucket layout only applies to unix-like systems")
+	}
+
+	ctx := context.Background()
+	dataDir := t.TempDir()
+
+	r := &AttachmentRepo{storage: config.Storage{
+		ConnString: "file:///?no_tmp_dir=true",
+		PrefixPath: strings.TrimPrefix(dataDir, "/"),
+	}}
+
+	gid := uuid.New()
+	key := r.fullPath(r.path(gid, "hash"))
+
+	bucket, err := blob.OpenBucket(ctx, r.GetConnString())
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = bucket.Close() })
+
+	require.NoError(t, bucket.WriteAll(ctx, key, []byte("hello"), nil))
+
+	got, err := bucket.ReadAll(ctx, key)
+	require.NoError(t, err)
+	assert.Equal(t, []byte("hello"), got)
+
+	onDisk, err := os.ReadFile(filepath.Join(dataDir, gid.String(), "documents", "hash"))
+	require.NoError(t, err)
+	assert.Equal(t, []byte("hello"), onDisk)
+
+	require.NoError(t, bucket.Delete(ctx, key))
 }

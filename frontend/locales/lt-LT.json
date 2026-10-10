@@ -2,13 +2,23 @@
     "collection": {
         "copy_invite": "Kopijuoti pakvietimo nuorodą",
         "create_invite": "Sukurti kvietimą",
+        "delete_collection": "Ištrinti rinkinį",
+        "delete_confirm": "Ar tikrai norite ištrinti šį rinkinį? Šio veiksmo atšaukti negalėsite.",
+        "deleted_collection": "Rinkinys ištrintas.",
         "expires_at": "Nustoja galioti",
+        "invite_token": "Žetonas",
         "invite_token_hidden": "Nebėra matoma",
+        "invite_token_warning": "Kvietimo žetonas rodomas tik vieną kartą. Nukopijuokite nuorodą dabar, nes palikę arba atnaujinę šį puslapį šio žetono daugiau nebematysite.",
         "invites": "Pakvietimai",
         "invites_delete_confirm": "Ar tikrai norite ištrinti šį pakvietimą?",
+        "leave_collection": "Palikti rinkinį",
+        "leave_confirm": "Ar tikrai norite palikti šį rinkinį?",
+        "left_collection": "Palikote rinkinį.",
+        "manage_collection": "Tvarkyti rinkinį",
         "members": {
             "cannot_remove_last": "Negalite panaikinti paskutinio nario.",
             "email": "El. paštas",
+            "empty": "Šiame rinkinyje narių dar nėra.",
             "member": "Narys",
             "name": "Vardas",
             "owner": "Savininkas",
@@ -16,11 +26,19 @@
             "removed": "Narys pašalintas",
             "role": "Prieiga"
         },
+        "no_collections": {
+            "create": "Sukurti naują rinkinį",
+            "join": "Prisijungti prie esamo rinkinio",
+            "message": "Panašu, jog nepriklausote jokiam rinkiniui. Sukurkite naują rinkinį savo daiktams arba prisijunkite prie to, į kurį buvote pakviesti.",
+            "title": "Rinkinių nerasta"
+        },
         "no_invites": "Nėra pakvietimų",
         "remaining_uses": "Likę panaudojimai",
         "tabs": {
+            "entity_types": "Objektų tipai",
             "invites": "Pakvietimai",
             "members": "Nariai",
+            "notifiers": "Pranešėjai",
             "settings": "Nustatymai",
             "tools": "Įrankiai"
         },
@@ -29,22 +47,165 @@
     "components": {
         "app": {
             "create_modal": {
-                "createAndAddAnother": "Naudok {shiftKey} + {enterKey}, kad pridėtumei kitą"
+                "createAndAddAnother": "Naudok {shiftKey} + {enterKey}, kad pridėtumei kitą.",
+                "enter": "Enter",
+                "shift": "Shift"
             },
             "import_dialog": {
                 "change_warning": "Pasikeitė importo su esamais import_refs elgesys. Jei CSV faile yra import_ref, \nelementas bus atnaujintas su CSV failo reikšmėmis.",
-                "description": "Importuokite CSV dokumentą, kuriame yra jūsų elementai, etiketės ir vietos. Peržiūrėkite dokumentaciją dėl platesnės informacijos.",
-                "title": "Importuoti CSV dokumentą"
+                "description": "Importuokite CSV failą, kuriame yra jūsų daiktai, etiketės ir vietos. Daugiau informacijos apie reikiamą formatą \nrasite dokumentacijoje.",
+                "title": "Importuoti CSV failą",
+                "toast": {
+                    "import_failed": "Nepavyko importuoti. Pabandykite dar kartą vėliau.",
+                    "import_success": "Importavimas sėkmingas!",
+                    "please_select_file": "Pasirinkite importuojamą failą."
+                }
             },
             "outdated": {
                 "current_version": "Dabartinė Versija",
                 "dismiss": "Atmesti",
-                "new_version_available": "Galima Nauja Versija",
-                "new_version_available_link": "Spauskite čia Norėdami peržiūrėti išleidimo pastabas"
+                "latest_version": "Naujausia Versija",
+                "new_version_available": "Yra Naujesnė Versija",
+                "new_version_available_link": "Spauskite čia norėdami peržiūrėti išleidimo pastabas"
+            }
+        },
+        "collection": {
+            "create_modal": {
+                "name_label": "Rinkinio pavadinimas",
+                "title": "Sukurti rinkinį",
+                "toast": {
+                    "already_creating": "Jau kuriate rinkinį",
+                    "create_failed": "Nepavyko sukurti rinkinio",
+                    "create_success": "Rinkinys sukurtas",
+                    "please_enter_name": "Įveskite rinkinio pavadinimą"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Prašome pasirinkti galiojimo pabaigos datą ir laiką.",
+                    "invalid_expiry_past": "Galiojimo pabaigos data turi būti ateityje.",
+                    "invalid_uses": "Panaudojimų skaičius turi būti skaičius nuo 1 iki 100."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Rinkinio pakvietimo kodas",
+                "invites_should_look_like": "Pakvietimai turėtų atrodyti taip:",
+                "join": "Prisijungti prie rinkinio",
+                "no_invite_code_create_one": "Neturite pakvietimo kodo? Vietoj to sukurkite naują rinkinį",
+                "title": "Prisijungti prie rinkinio",
+                "toast": {
+                    "already_joining": "Jau jungiamasi prie rinkinio",
+                    "join_failed": "Nepavyko prisijungti prie rinkinio",
+                    "join_success": "Prisijungta prie rinkinio",
+                    "please_enter_valid_join_code": "Prašome įvesti galiojantį rinkinio pakvietimo kodą"
+                }
+            },
+            "selector": {
+                "collection_options": "Rinkinio nustatymai",
+                "create_collection": "Sukurti rinkinį",
+                "join_collection": "Prisijungti prie rinkinio",
+                "no_collection_found": "Rinkinys nerastas",
+                "search_collections": "Ieškoti rinkinių…",
+                "select_collection": "Pasirinkti rinkinį",
+                "your_collections": "Jūsų rinkiniai"
+            }
+        },
+        "color_selector": {
+            "clear": "Panaikinti spalvą",
+            "color": "Spalva",
+            "no_color": "Nėra spalvos",
+            "no_color_selected": "Nepasirinkta spalva",
+            "randomize": "Atsitiktinė spalva"
+        },
+        "entity": {
+            "create_modal": {
+                "clear_template": "Išvalyti šabloną",
+                "delete_photo": "Ištrinti nuotrauką",
+                "entity_description": "{type} Aprašymas",
+                "entity_name": "{type} Pavadinimas",
+                "entity_photo": "{type} Nuotrauka 📷",
+                "entity_quantity": "{type} Kiekis",
+                "item_selector_no_results_text": "Įveskite tekstą paieškai…",
+                "parent_item": "Pirminis objektas",
+                "product_tooltip_input_barcode": "Užpildyti automatiškai naudojant įvestą brūkšninį kodą",
+                "product_tooltip_scan_barcode": "Užpildyti su brūkšniniu kodu iš 📷",
+                "rotate_photo": "Pasukti nuotrauką",
+                "set_as_primary_photo": "Nustatyti kaip { isPrimary, select, true {nepagrindinę} false {pagrindinę} other {pagrindinę}} nuotrauką",
+                "toast": {
+                    "already_creating": "Jau kuriamas {type}",
+                    "create_failed": "Kažkas nepavyko, {type} nesukurtas",
+                    "create_success": "{type} sukurtas",
+                    "failed_load_parent": "Nepavyko užkrauti pirminio elemento – prašome pasirinkti rankiniu būdu",
+                    "no_canvas_support": "Jūsų naršyklė nepalaiko „canvas“ operacijų",
+                    "please_select_entity_type": "Pasirinkite objekto tipą.",
+                    "please_select_location": "Prašome pasirinkti vietą.",
+                    "rotate_failed": "Nepavyko pasukti nuotraukos: { error }",
+                    "rotate_process_failed": "Nepavyko apdoroti pasuktos nuotraukos",
+                    "some_photos_failed": "{count, plural, =0 {Nėra įkeliamų nuotraukų.} =1 {Nepavyko įkelti 1 nuotraukos.} other {Nepavyko įkelti kai kurių nuotraukų.}}",
+                    "upload_failed": "Nepavyko įkelti nuotraukos: { photoName }",
+                    "upload_success": "{count, plural, =0 {Nuotraukų neįkelta.} =1 {Nuotrauka sėkmingai įkelta.} other {Visos nuotraukos sėkmingai įkeltos.}}",
+                    "uploading_photos": "{count, plural, =0 {Nėra įkeliamų nuotraukų} =1 {Įkeliama 1 nuotrauka…} other {Įkeliamos {count} nuotraukos…}}"
+                },
+                "upload_photos": "Įkeltos nuotraukos",
+                "uploaded": "Įkelta nuotrauka"
+            },
+            "selector": {
+                "placeholder": "Pasirinkite tipą…"
+            }
+        },
+        "entityTypes": {
+            "card": {
+                "actions": {
+                    "delete": "Trinti"
+                },
+                "badge_container": "Konteineris",
+                "default_template": "Numatytasis šablonas: {name}",
+                "tooltip": {
+                    "delete": "Trinti",
+                    "edit": "Redaguoti"
+                }
+            },
+            "confirm": {
+                "convert_item_to_location": "Pakeitus elemento tipą į vietos tipą, bus prarasti objekto laukai, naudojantys šį tipą. Ar tikrai norite tęsti?",
+                "delete_entity_type": "Ar tikrai norite ištrinti „{name}“?"
+            },
+            "create_dialog": {
+                "button": "Sukurti",
+                "is_container_location_type_label": "Yra konteinerio / vietos tipas",
+                "name_label": "Pavadinimas",
+                "title": "Sukurti objekto tipą"
+            },
+            "page": {
+                "create": "Sukurti",
+                "empty_button": "Sukurti objekto tipą",
+                "empty_title": "Dar nėra apibrėžtų objektų tipų.",
+                "title": "Objektų tipai"
+            },
+            "toasts": {
+                "create_failed": "Nepavyko sukurti objekto tipo",
+                "create_success": "Sukurtas objekto tipas",
+                "delete_confirm_failed": "Nepavyko ištrinti objekto tipo. Įsitikinkite, kad joks objektas jo nenaudoja.",
+                "delete_success": "Ištrintas objekto tipas",
+                "name_required": "Pavadinimas privalomas",
+                "update_failed": "Nepavyko atnaujinti objekto tipo",
+                "update_success": "Objekto tipas atnaujintas"
+            },
+            "update_dialog": {
+                "button": "Atnaujinti",
+                "is_container_location_type_label": "Yra konteinerio / vietos tipas",
+                "name_label": "Pavadinimas",
+                "title": "Atnaujinti objekto tipą"
+            }
+        },
+        "form": {
+            "min_length": "bent {min}",
+            "password": {
+                "toggle_show": "Rodyti / slėpti slaptažodį"
             }
         },
         "global": {
             "copy_text": {
+                "continue": "Tęsti",
                 "documentation": "dokumentas",
                 "failed_to_copy": "Nepavyko nukopijuoti teksto į mainų sritį",
                 "https_required": "kadangi reikalingas HTTPS",
@@ -69,6 +230,7 @@
                 "second": "antras",
                 "seconds": "sekundės",
                 "tomorrow": "rytoj",
+                "week": "savaitė",
                 "weeks": "savaičių",
                 "years": "metai",
                 "yesterday": "vakar"
@@ -79,36 +241,481 @@
                 "download": "Atsisiųsti Etiketę",
                 "print": "Spausdinti etiketę",
                 "server_print": "Spausdinti serveryje",
-                "titles": "Etiketė"
+                "titles": "Etiketė",
+                "toast": {
+                    "load_status_failed": "Nepavyko įkelti būsenos",
+                    "print_failed": "Nepavyko atspausdinti etiketės",
+                    "print_success": "Etiketė atspausdinta"
+                }
             },
             "page_qr_code": {
                 "page_url": "Puslapio URL",
                 "qr_tooltip": "Rodyti KR kodą"
             },
             "password_score": {
+                "does_not_meet_requirement": "Neatitinka slaptažodžio stiprumo reikalavimų",
                 "password_strength": "Slaptažodžio Stiprumas"
             }
         },
         "item": {
-            "create_modal": {
-                "item_description": "Prekės Aprašymas",
-                "item_name": "Prekės Pavadinimas",
-                "item_photo": "Prekės Nuotrauka 📷",
-                "item_quantity": "Prekės Kiekis",
-                "title": "Sukurti Elementą",
-                "upload_photos": "Įkelti Nuotraukas"
+            "attachments_list": {
+                "download": "Atsisiųsti",
+                "open_new_tab": "Atidaryti naujoje kortelėje"
+            },
+            "product_import": {
+                "barcode": "Produkto brūkšninis kodas",
+                "db_source": "DB šaltinis",
+                "error_exception": "Klaida gaunant elemento brūkšninį kodą: ",
+                "error_invalid_barcode": "Pateiktas neteisingas brūkšninis kodas",
+                "error_not_found": "Pagal pateiktą brūkšninį kodą produktas nerastas.",
+                "import_selected": "Importuoti pasirinktus",
+                "search_item": "Ieškoti produkto",
+                "title": "Importuoti produktą"
+            },
+            "selector": {
+                "clear": "Išvalyti pasirinktus elementus",
+                "no_results": "Rezultatų nerasta",
+                "placeholder": "Rinktis…",
+                "search_placeholder": "Įveskite tekstą paieškai…",
+                "searching": "Ieškoma…"
             },
             "view": {
+                "change_details": {
+                    "add_tags": "Pridėti žymes",
+                    "failed_to_update_item": "Nepavyko atnaujinti daikto",
+                    "remove_tags": "Pašalinti žymes",
+                    "title": "Pakeisti elemento duomenis"
+                },
                 "selectable": {
                     "card": "Kortelė",
                     "items": "Elementas",
                     "no_items": "Nėra rodomų elementų",
+                    "select_all": "Pasirinkti viską",
+                    "select_card": "Pasirinkti kortelę",
+                    "select_row": "Pasirinkti eilutę",
                     "table": "Lentelė"
                 },
                 "table": {
-                    "page": "Puslapis"
+                    "dropdown": {
+                        "actions": "Veiksmai",
+                        "change_location": "Pakeisti vietą",
+                        "change_location_success": "Vieta pakeista",
+                        "change_tags": "Pakeisti žymes",
+                        "change_tags_success": "Žymės pakeistos",
+                        "create_maintenance_item": "Sukurti elemento priežiūros įrašą",
+                        "create_maintenance_selected": "Sukurti pasirinktų elementų priežiūros įrašą",
+                        "create_maintenance_success": "Sukurti priežiūros įrašai",
+                        "delete_confirmation": "Ar tikrai norite ištrinti pasirinktus elementus? Šio veiksmo atšaukti negalima.",
+                        "delete_item": "Ištrinti daiktą",
+                        "delete_selected": "Ištrinti pasirinktus daiktus",
+                        "download_csv": "Atsisiųsti lentelę kaip CSV",
+                        "download_json": "Atsisiųsti lentelę kaip JSON",
+                        "duplicate_item": "Dubliuoti daiktą",
+                        "duplicate_selected": "Dubliuoti pasirinktus daiktus",
+                        "error_deleting": "Įvyko klaida trinant daiktą",
+                        "error_duplicating": "Įvyko klaida dubliuojant daiktą",
+                        "open_menu": "Atidaryti meniu",
+                        "open_multi_tab_warning": "Saugumo sumetimais naršyklės iš karto neleidžia vienu metu atidaryti kelių kortelių. Norėdami tai pakeisti, vadovaukitės dokumentacija:",
+                        "toggle_expand": "Perjungti išskleidimą",
+                        "view_item": "Peržiūrėti daiktą",
+                        "view_items": "Peržiūrėti daiktus"
+                    },
+                    "headers": "Antraštės",
+                    "page": "Puslapis",
+                    "quick_actions": "Įgalinti greituosius veiksmus ir žymėjimą",
+                    "rows_per_page": "Eilučių skaičius puslapyje",
+                    "selected_rows": "Pažymėta eilučių: {selected} iš {total}.",
+                    "table_settings": "Lentelės nustatymai",
+                    "view_item": "Žiūrėti daiktą"
                 }
             }
+        },
+        "location": {
+            "create_item": "Sukurti daiktą",
+            "selector": {
+                "clear": "Išvalyti vietos pasirinkimą",
+                "no_location_found": "Vietų nerasta",
+                "parent_location": "Pirminė vieta",
+                "search_location": "Ieškoti vietų",
+                "select_location": "Pasirinkti vietą"
+            },
+            "tree": {
+                "no_locations": "Nėra pasiekiamų vietų. Norėdami pridėti naują vietą, naudokite mygtuką „Sukurti“."
+            }
+        },
+        "quick_menu": {
+            "no_results": "Rezultatų nerasta.",
+            "shortcut_hint": "Naudokite skaičių klavišus, kad greitai pasirinktumėte veiksmą."
+        },
+        "search": {
+            "filter": {
+                "search_placeholder": "Ieškoti…"
+            }
+        },
+        "tag": {
+            "create_modal": {
+                "tag_color": "Žymos spalva",
+                "tag_description": "Žymos aprašymas",
+                "tag_icon": "Žymos ikona",
+                "tag_name": "Žymos pavadinimas",
+                "tag_parent": "Pirminė žyma",
+                "title": "Sukurti žymą",
+                "toast": {
+                    "already_creating": "Jau kuriama žyma",
+                    "create_failed": "Nepavyko sukurti žymos",
+                    "create_success": "Žyma sukurta",
+                    "tag_name_too_long": "Žymos pavadinimas negali viršyti 50 simbolių"
+                }
+            },
+            "selector": {
+                "clear": "Išvalyti",
+                "no_tags_found": "Žymų nerasta",
+                "select_tags": "Pasirinkti žymas"
+            }
+        },
+        "template": {
+            "apply_template": "Taikyti šabloną",
+            "card": {
+                "delete": "Ištrinti šabloną",
+                "duplicate": "Dubliuoti šabloną",
+                "edit": "Redaguoti šabloną"
+            },
+            "confirm_delete": "Ištrinti šį šabloną?",
+            "create_modal": {
+                "title": "Sukurti šabloną"
+            },
+            "detail": {
+                "default_values": "Numatytosios reikšmės",
+                "updated": "Atnaujinta"
+            },
+            "edit_modal": {
+                "title": "Redaguoti Šabloną"
+            },
+            "empty_value": "(tuščia)",
+            "form": {
+                "custom_fields": "Papildomi laukai",
+                "default_item_values": "Numatytosios daikto reikšmės",
+                "default_location": "Numatytoji vieta",
+                "default_value": "Numatyta reikšmė",
+                "field_name": "Lauko pavadinimas",
+                "item_description": "Daikto aprašymas",
+                "item_name": "Daikto pavadinimas",
+                "lifetime_warranty": "Garantija visam gyvenimui",
+                "location": "Vieta",
+                "manufacturer": "Gamintojas",
+                "model_number": "Modelio numeris",
+                "no_custom_fields": "Nėra papildomų laukų.",
+                "template_description": "Šablono aprašymas",
+                "template_name": "Šablono pavadinimas"
+            },
+            "hide_defaults": "Paslėpti numatytus",
+            "save_as_template": "Išsaugoti kaip šabloną",
+            "selector": {
+                "clear": "Išvalyti šablono pasirinkimą",
+                "label": "Šablonas (pasirenkama)",
+                "not_found": "Šablonų nerasta",
+                "search": "Ieškoti šablonų…",
+                "select": "Pasirinkti šabloną…"
+            },
+            "show_defaults": "Rodyti numatytus",
+            "toast": {
+                "applied": "Šablonas „{name}“ pritaikytas",
+                "create_failed": "Nepavyko sukurti šablono",
+                "created": "Šablonas sukurtas",
+                "delete_failed": "Nepavyko ištrinti šablono",
+                "deleted": "Šablonas ištrintas",
+                "duplicate_failed": "Nepavyko dubliuoti šablono",
+                "duplicated": "Šablonas dubliuotas kaip „{name}“",
+                "load_failed": "Nepavyko įkelti šablono duomenų",
+                "saved_as_template": "Daiktas išsaugotas kaip šablonas „{name}“",
+                "update_failed": "Nepavyko atnaujinti šablono",
+                "updated": "Šablonas atnaujintas"
+            },
+            "using_template": "Naudojamas šablonas: {name}"
         }
+    },
+    "errors": {
+        "api_failure": "Nepavyko atlikti galinės sistemos (API) užklausos: "
+    },
+    "global": {
+        "add": "Pridėti",
+        "archived": "Archyvuota",
+        "build": "Versija: { build }",
+        "cancel": "Atšaukti",
+        "close": "Užverti",
+        "confirm": "Patvirtinti",
+        "create": "Sukurti",
+        "create_and_add": "Sukurti ir pridėti kitą",
+        "create_subitem": "Sukurti sub-daiktą",
+        "created": "Sukurta",
+        "delete": "Ištrinti",
+        "delete_confirm": "Ar tikrai norite ištrinti šį daiktą? ",
+        "demo_instance": "Tai yra demonstracinė versija",
+        "details": "Išsamiau",
+        "duplicate": "Dubliuoti",
+        "edit": "Redaguoti",
+        "email": "Email",
+        "entity": "Objektas",
+        "entity_type": "Objekto tipas",
+        "follow_dev": "Sekti kūrėją",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' Versija: { version } Versijos numeris: { build } '</a>'"
+        },
+        "github": "GitHub projektas",
+        "insured": "Apdrausta",
+        "item": "Daiktas",
+        "items": "Daiktai",
+        "join_discord": "Prisijungti prie Discord",
+        "loading": "Įkeliama…",
+        "location": "Vieta",
+        "locations": "Vietos",
+        "maintenance": "Priežiūra",
+        "name": "Pavadinimas",
+        "navigate": "Naviguoti",
+        "no": "Ne",
+        "password": "Slaptažodis",
+        "preview": "Peržiūra",
+        "quantity": "Kiekis",
+        "read_docs": "Skaityti dokumentaciją",
+        "return_home": "Grįžti į pradžią",
+        "save": "Išsaugoti",
+        "search": "Ieškoti",
+        "select": "Pasirinkti…",
+        "show_less": "Rodyti mažiau",
+        "show_more": "Rodyti daugiau",
+        "sign_out": "Atsijungti",
+        "submit": "Pateikti",
+        "tags": "Žymos",
+        "type": "Tipas",
+        "unknown": "Nežinoma",
+        "update": "Atnaujinti",
+        "updating": "Atnaujinama",
+        "value": "Vertė",
+        "version": "Versija: { version }",
+        "welcome": "Sveiki, { username }",
+        "yes": "Taip"
+    },
+    "home": {
+        "quick_statistics": "Greita statistika",
+        "recently_added": "Neseniai pridėta",
+        "storage_locations": "Daiktų laikymo vietos",
+        "tags": "Žymos",
+        "total_items": "Iš viso daiktų",
+        "total_locations": "Iš viso vietų",
+        "total_tags": "Iš viso žymų",
+        "total_value": "Bendroji vertė"
+    },
+    "index": {
+        "back_to_login": "Grįžti į prisijungimo langą",
+        "disabled_registration": "Registracija išjungta",
+        "dont_join_group": "Nenorite prisijungti prie grupės?",
+        "forgot_password": "Pamiršote savo slaptažodį?",
+        "forgot_password_check_email": "Jei šis el. pašto adresas yra susietas su paskyra, slaptažodžio atkūrimo nuoroda jau pakeliui. Nuoroda galioja vieną valandą.",
+        "forgot_password_send": "Siųsti atkūrimo nuorodą",
+        "forgot_password_subtitle": "Įveskite savo paskyros el. pašto adresą ir mes išsiųsime slaptažodžio atkūrimo nuorodą.",
+        "forgot_password_title": "Atkurti slaptažodį",
+        "joining_group": "Jūs jungiatės prie esamos grupės!",
+        "login": "Prisijungti",
+        "or": "arba",
+        "register": "Registruotis",
+        "remember_me": "Prisiminti mane",
+        "reset_password_invalid": "Ši atkūrimo nuoroda negalioja arba jos galiojimo laikas pasibaigė. Paprašykite naujos.",
+        "reset_password_missing_token": "Trūksta atkūrimo rakto. Vėl atidarykite nuorodą iš savo el. pašto arba paprašykite naujos.",
+        "reset_password_set": "Nustatyti naują slaptažodį",
+        "reset_password_subtitle": "Įveskite naują savo paskyros slaptažodį.",
+        "reset_password_success": "Jūsų slaptažodis buvo sėkmingai pakeistas. Prisijunkite naudodami naują slaptažodį.",
+        "reset_password_title": "Keisti savo slaptažodį",
+        "set_email": "Koks jūsų el. pašto adresas?",
+        "set_name": "Koks jūsų vardas?",
+        "set_password": "Įveskite savo slaptažodį",
+        "tagline": "Sekite, organizuokite ir valdykite savo daiktus.",
+        "title": "Organizuokite ir žymėkite savo daiktus",
+        "toast": {
+            "invalid_email": "Neteisingas el. pašto adresas",
+            "invalid_email_password": "Neteisingas el. pašto adresas arba slaptažodis",
+            "login_success": "Sėkmingai prisijungėte",
+            "oidc_access_denied": "Prieiga atmesta: jūsų paskyra neturi reikiamų teisių arba nepriklauso atitinkamai grupei",
+            "oidc_auth_failed": "OIDC autentifikavimas nepavyko",
+            "oidc_invalid_response": "Gautas neteisingas OIDC atsakymas",
+            "oidc_provider_error": "OIDC teikėjas grąžino klaidą",
+            "oidc_security_error": "OIDC saugumo klaida - galimas CSRF išpuolis",
+            "oidc_session_expired": "OIDC sesija pasibaigė",
+            "oidc_token_expired": "OIDC žetonas pasibaigė",
+            "oidc_token_invalid": "OIDC žetono parašas negalioja",
+            "problem_registering": "Įvyko klaida registruojant vartotoją",
+            "user_registered": "Vartotojas sėkmingai užregistruotas"
+        }
+    },
+    "items": {
+        "add": "Pridėti",
+        "advanced": "Išplėstiniai nustatymai",
+        "archived": "Archyvuota",
+        "asset_id": "Objekto ID",
+        "associated_with_multiple": "Šis objekto Id yra susietas su keliais daiktais",
+        "attachment": "Priedas",
+        "attachments": "Prisegti failai",
+        "changes_persisted_immediately": "Pakeitimai prieduose bus išsaugoti iškart",
+        "created_at": "Sukurtas",
+        "custom_fields": "Papildomi laukai",
+        "delete_attachment_confirm": "Ar tikrai norite ištrinti šį priedą?",
+        "delete_item_confirm": "Ar tikrai norite ištrinti šį daiktą?",
+        "description": "Aprašymas",
+        "details": "Išsami informacija",
+        "drag_and_drop": "Spustelėkite arba nuvilkite failus čia, kad juos pridėtumėte",
+        "duplicate": {
+            "copy_attachments": "Kopijuoti priedus",
+            "copy_custom_fields": "Kopijuoti papildomus laukus",
+            "copy_maintenance": "Kopijuoti priežiūros įrašus",
+            "custom_prefix": "Kopijuoti priešdėlį",
+            "enable_custom_prefix": "Įgalinti pasirenkamus priešdėlius",
+            "override_instructions": "Laikykite Shift klavišą ir spauskite dubliavimo mygtuką kad pakeistumėte šiuos nustatymus.",
+            "prefix": "Kopija ",
+            "prefix_instructions": "Šis priešdėlis bus pridėtas dubliuojamo daikto pavadinimo pradžioje. Priešdėlio pabaigoje įveskite tarpą norėdami jį atskirti nuo daikto pavadinimo.",
+            "temporary_title": "Laikini nustatymai",
+            "title": "Dubliavimo nustatymai"
+        },
+        "edit": {
+            "change_entity_type_confirm": "Pakeitus objekto tipą gali būti prarasti duomenys laukuose, kurie nėra bendri tarp naujo objekto tipo. Ar tikrai norite pakeisti objekto tipą?",
+            "edit_attachment_dialog": {
+                "attachment_title": "Priedo pavadinimas",
+                "attachment_type": "Priedo tipas",
+                "primary_photo": "Pagrindinė nuotrauka",
+                "primary_photo_sub": "Ši parinktis galima tik nuotraukoms. Tik viena nuotrauka gali būti pagrindinė. Jei pasirinksite šią parinktį, dabartinė pagrindinė nuotrauka (jei tokia yra) nebebus pažymėta kaip pagrindinė.",
+                "select_type": "Pasirinkite tipą",
+                "title": "Priedų redagavimas"
+            },
+            "view_image": "Peržiūrėti nuotrauką"
+        },
+        "edit_details": "Redaguoti išsamią informaciją",
+        "field": "Laukas",
+        "field_selector": "Lauko pasirinkimas",
+        "field_value": "Lauko reikšmė",
+        "first": "Pirmas",
+        "include_archive": "Įtraukti archyvuotus daiktus",
+        "insured": "Apdraustas",
+        "invalid_asset_id": "Neteisingas objekto ID",
+        "last": "Paskutinis",
+        "lifetime_warranty": "Neribota garantija",
+        "location": "Vieta",
+        "manual": "Instrukcija",
+        "manuals": "Instrukcijos",
+        "manufacturer": "Gamintojas",
+        "model_number": "Modelio numeris",
+        "name": "Pavadinimas",
+        "negate_tags": "Nerodyti objektų su pasirinktomis žymomis",
+        "next_page": "Kitas puslapis",
+        "no_attachments": "Jokių priedų nerasta",
+        "no_results": "Jokių daiktų nerasta",
+        "notes": "Pastabos",
+        "only_with_photo": "Tik daiktai su nuotraukomis",
+        "only_without_photo": "Tik daiktai be nuotraukų",
+        "options": "Parinktys",
+        "order_by": "Rūšiuoti pagal",
+        "pages": "{ page } puslapis iš { totalPages }",
+        "parent_item": "Pirminis daiktas",
+        "photo": "Nuotrauka",
+        "photos": "Nuotraukos",
+        "prev_page": "Ankstesnis puslapis",
+        "purchase_date": "Pirkimo data",
+        "purchase_details": "Pirkimo informacija",
+        "purchase_price": "Pirkinio kaina",
+        "purchased_from": "Pirkta iš",
+        "quantity": "Kiekis",
+        "query_id": "Užklausiamo objekto ID numeris: { id }",
+        "receipt": "Kvitas",
+        "receipts": "Kvitai",
+        "reset_search": "Išvalyti paiešką",
+        "results": "Paieškos rezultatų: { total }",
+        "select_field": "Pasirinkite lauką",
+        "select_value": "Pasirinkite reikšmę",
+        "serial_number": "Serijos numeris",
+        "show_advanced_view_options": "Rodyti išplėstinės peržiūros parinktis",
+        "show_empty": "Rodyti tuščius laukus",
+        "sold_at": "Kur parduotas",
+        "sold_details": "Pardavimo informacija",
+        "sold_price": "Pardavimo kaina",
+        "sold_to": "Kam parduotas",
+        "sync_child_locations": "Sinchronizuoti antrinių objektų vietas",
+        "tip_1": "Vietos ir žymų filtrai naudoja „ARBA“ operaciją. Jei pasirinkti keli filtrai, atitikmeniui užtenka \nbent vieno iš jų.",
+        "tip_2": "Paieškos su priešdėliu „#“ atliks užklausą pagal objekto ID (pavyzdžiui „#000-001“)",
+        "tip_3": "Laukų filtrai naudoja „ARBA“ operaciją. Jei pasirinkti keli filtrai, atitikmeniui užtenka \nbent vieno iš jų.",
+        "tips": "Patarimai",
+        "tips_sub": "Paieškos patarimai",
+        "toast": {
+            "asset_not_found": "Objektas nerastas",
+            "attachment_deleted": "Priedas ištrintas",
+            "attachment_too_large": "Pridedamas per didelis failas: jis viršija serverio įkėlimo dydžio limitą",
+            "attachment_updated": "Priedas atnaujintas",
+            "attachment_uploaded": "Priedas įkeltas",
+            "child_items_location_no_longer_synced": "Antrinių daiktų vietos nebebus susietos su šiuo daiktu.",
+            "child_items_location_synced": "Antrinių daiktų vietos nuo šiol yra susietos su šiuo daiktu",
+            "child_location_desync": "Pirminis daiktas pašalintas — šis daiktas dabar yra pasirinktoje vietoje",
+            "error_loading_parent_data": "Nepavyko užkrauti pirminio daikto duomenų",
+            "failed_adjust_quantity": "Nepavyko pakeisti kiekio",
+            "failed_delete_attachment": "Nepavyko ištrinti priedo",
+            "failed_delete_item": "Nepavyko ištrinti daikto",
+            "failed_duplicate_item": "Nepavyko dubliuoti daikto",
+            "failed_load_asset": "Nepavyko užkrauti objekto",
+            "failed_load_item": "Nepavyko užkrauti daikto",
+            "failed_load_items": "Nepavyko užkrauti daiktų",
+            "failed_save": "Nepavyko išsaugoti daiktų",
+            "failed_save_no_location": "Nepavyko išsaugoti daikto: nepasirinkta vieta",
+            "failed_search_items": "Nepavyko ieškoti daiktų",
+            "failed_update_attachment": "Nepavyko atnaujinti priedo",
+            "failed_upload_attachment": "Nepavyko įkelti priedo",
+            "item_deleted": "Daiktas ištrintas",
+            "item_saved": "Daiktas išsaugotas",
+            "quantity_cannot_negative": "Kiekis negali būti neigiamas",
+            "sync_child_location": "Pasirinktas pirminis daiktas sinchronizuoja savo antrinių daiktų vietas su savąja. Vieta buvo atnaujinta."
+        },
+        "updated_at": "Atnaujintas",
+        "warranty": "Garantija",
+        "warranty_details": "Garantijos informacija",
+        "warranty_expires": "Garantija baigia galioti"
+    },
+    "languages": {
+        "bs-BA": "Bosnių (Bosnija ir Hercegovina)",
+        "ca": "Katalonų",
+        "cs-CZ": "Čekų",
+        "da-DK": "Danų",
+        "de": "Vokiečių",
+        "en": "Anglų",
+        "es": "Ispanų",
+        "fi-FI": "Suomių",
+        "fr": "Prancūzų",
+        "hu": "Vengrų",
+        "id-ID": "Indoneziečių",
+        "it": "Italų",
+        "ja-JP": "Japonų",
+        "ko-KR": "Korėjiečių",
+        "lb-LU": "Liuksemburgiečių (Liuksemburgas)",
+        "lt-LT": "Lietuvių (Lietuva)",
+        "nb-NO": "Norvegų bukmolas (Bokmål)",
+        "nl": "Olandų",
+        "pl": "Lenkų",
+        "pt-BR": "Portugalų (Brazilija)",
+        "pt-PT": "Portugalų (Portugalija)",
+        "ro-RO": "Rumunų",
+        "ru": "Rusų",
+        "sk-SK": "Slovakų",
+        "sl": "Slovėnų",
+        "sq-AL": "Albanų",
+        "sv": "Švedų",
+        "ta-IN": "Tamilų",
+        "th-TH": "Tajų",
+        "tr": "Turkų",
+        "uk-UA": "Ukrainiečių",
+        "vi-VN": "Vietnamiečių",
+        "zh-CN": "Kinų (Supaprastinta)",
+        "zh-HK": "Kinų (Hong Kong)",
+        "zh-MO": "Kinų (Macau)",
+        "zh-TW": "Kinų (tradicinė)"
+    },
+    "languages.el-GR": "Graikų",
+    "languages.en@pirate": "Anglų (piratų)",
+    "languages.sr-RS": "Serbų (Serbija)",
+    "locations": {
+        "child_locations": "Antrinės vietos"
     }
 }

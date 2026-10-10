@@ -57,19 +57,19 @@ type (
 
 	EntityQuery struct {
 		IsLocation       *bool        `json:"isLocation"` // nil=all, true=locations only, false=items only
-		EntityTypeIDs    []uuid.UUID  `json:"entityTypeIds"`
 		Search           string       `json:"search"`
 		SortBy           string       `json:"sortBy"`
 		OrderBy          string       `json:"orderBy"`
 		OrderDirection   string       `json:"orderDirection"`
+		EntityTypeIDs    []uuid.UUID  `json:"entityTypeIds"`
 		ParentIDs        []uuid.UUID  `json:"parentIds"`
 		TagIDs           []uuid.UUID  `json:"tagIds"`
-		MatchAllTags     bool         `json:"matchAllTags"` // require every selected tag (AND) instead of any (OR); ignored when NegateTags is set
 		ParentItemIDs    []uuid.UUID  `json:"parentItemIds"`
 		Fields           []FieldQuery `json:"fields"`
 		Page             int
 		PageSize         int
 		AssetID          AssetID `json:"assetId"`
+		MatchAllTags     bool    `json:"matchAllTags"` // require every selected tag (AND) instead of any (OR); ignored when NegateTags is set
 		NegateTags       bool    `json:"negateTags"`
 		OnlyWithoutPhoto bool    `json:"onlyWithoutPhoto"`
 		OnlyWithPhoto    bool    `json:"onlyWithPhoto"`
@@ -766,6 +766,44 @@ func orderByLocation(gid uuid.UUID, desc bool) entity.OrderOption {
 	}
 }
 
+// applyEntityOrder applies the ORDER BY for q.OrderBy / q.OrderDirection and
+// returns the resolved order field name for logging. When no direction is
+// given, timestamps sort newest first and every other field ascending.
+func applyEntityOrder(qb *ent.EntityQuery, gid uuid.UUID, q EntityQuery) (*ent.EntityQuery, string) {
+	var orderBy string
+	defaultDesc := false
+
+	switch q.OrderBy {
+	case "createdAt":
+		orderBy = entity.FieldCreatedAt
+		defaultDesc = true
+	case "updatedAt":
+		orderBy = entity.FieldUpdatedAt
+		defaultDesc = true
+	case "assetId":
+		orderBy = entity.FieldAssetID
+	case "quantity":
+		orderBy = entity.FieldQuantity
+	case "insured":
+		orderBy = entity.FieldInsured
+	case "archived":
+		orderBy = entity.FieldArchived
+	case "purchasePrice":
+		orderBy = entity.FieldPurchasePrice
+	case "location":
+		// Sort by the name of the nearest location ancestor.
+		return qb.Order(orderByLocation(gid, q.OrderDirection == "desc")), "location"
+	default: // "name"
+		orderBy = entity.FieldName
+	}
+
+	desc := q.OrderDirection == "desc" || (q.OrderDirection == "" && defaultDesc)
+	if desc {
+		return qb.Order(ent.Desc(orderBy)), orderBy
+	}
+	return qb.Order(ent.Asc(orderBy)), orderBy
+}
+
 // QueryByGroup returns a list of entities that belong to a specific group based on the provided query.
 func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q EntityQuery) (PaginationResult[EntitySummary], error) {
 	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.QueryByGroup",
@@ -894,42 +932,7 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 	countSpan.End()
 
 	var orderBy string
-	locationSort := false
-
-	// Order
-	switch q.OrderBy {
-	case "createdAt":
-		orderBy = entity.FieldCreatedAt
-	case "updatedAt":
-		orderBy = entity.FieldUpdatedAt
-	case "assetId":
-		orderBy = entity.FieldAssetID
-	case "quantity":
-		orderBy = entity.FieldQuantity
-	case "insured":
-		orderBy = entity.FieldInsured
-	case "archived":
-		orderBy = entity.FieldArchived
-	case "purchasePrice":
-		orderBy = entity.FieldPurchasePrice
-	case "location":
-		// Sort by the name of the nearest location ancestor.
-		orderBy = "location"
-		locationSort = true
-	default: // "name"
-		orderBy = entity.FieldName
-	}
-
-	if locationSort {
-		qb = qb.Order(orderByLocation(gid, q.OrderDirection == "desc"))
-	} else {
-		switch q.OrderDirection {
-		case "desc":
-			qb = qb.Order(ent.Desc(orderBy))
-		default: // "asc"
-			qb = qb.Order(ent.Asc(orderBy))
-		}
-	}
+	qb, orderBy = applyEntityOrder(qb, gid, q)
 
 	// log order direction
 	log.Debug().
