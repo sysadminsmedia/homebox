@@ -283,6 +283,17 @@ When you create maintenance entries with scheduled dates, Homebox will:
 3. Send a notification listing all maintenance items due today
 4. Only active notifiers will receive notifications
 
+### Warranty Expiration Reminders
+
+Individual items can opt in to a warranty-expiration reminder by enabling **Notify 30 days before expiration** in the item's warranty details. When enabled, Homebox will:
+
+1. Check daily for items whose warranty expires exactly 30 days from today
+2. For each group with such items, collect all active notifiers
+3. Send a notification listing the items whose warranty is about to expire
+4. Only active notifiers will receive notifications
+
+Like maintenance reminders, the notice fires once — on the day that is 30 days before the warranty expires. Items with a lifetime warranty or no expiry date are never included.
+
 ### Message Format
 
 Notifications are sent in the following format:
@@ -292,7 +303,13 @@ Homebox Maintenance for (YYYY-MM-DD):
  - Maintenance Item 1
  - Maintenance Item 2
  - Maintenance Item 3
+
+Homebox Warranties expiring on (YYYY-MM-DD):
+ - Item 1
+ - Item 2
 ```
+
+Each section only appears when there is something to report. A notification may contain just maintenance, just warranties, or both.
 
 ## Troubleshooting
 
