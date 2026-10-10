@@ -299,6 +299,15 @@ definitions:
         allOf:
         - $ref: '#/definitions/ent.Group'
         description: Group holds the value of the group edge.
+      location:
+        allOf:
+        - $ref: '#/definitions/ent.Entity'
+        description: Location holds the value of the location edge.
+      location_entities:
+        description: LocationEntities holds the value of the location_entities edge.
+        items:
+          $ref: '#/definitions/ent.Entity'
+        type: array
       maintenance_entries:
         description: MaintenanceEntries holds the value of the maintenance_entries
           edge.
@@ -1104,6 +1113,12 @@ definitions:
         type: string
       entityTypeId:
         type: string
+      locationId:
+        description: Only needed when ParentID is another item and this lives elsewhere
+          (#1688).
+        type: string
+        x-nullable: true
+        x-omitempty: true
       manufacturer:
         maxLength: 255
         type: string
@@ -1212,10 +1227,16 @@ definitions:
         allOf:
         - $ref: '#/definitions/repo.EntitySummary'
         description: |-
-          Location is the nearest ancestor whose entity type is a location.
-          When the direct parent is already a location it equals Parent; when
-          the entity is nested inside other items it is the location those
-          items ultimately live in. Nil for top-level entities.
+          Location is resolved: this entity's own location, else the nearest
+          location ancestor. Read-only — write via LocationID.
+        x-nullable: true
+        x-omitempty: true
+      locationId:
+        description: |-
+          LocationID is set only when this entity has its own location, nil when
+          inherited. Same name as the EntityUpdate field so a GET/PUT round trip
+          doesn't pin an inherited location or drop an explicit one.
+        type: string
         x-nullable: true
         x-omitempty: true
       manufacturer:
@@ -1282,6 +1303,10 @@ definitions:
         x-omitempty: true
       id:
         type: string
+      locationId:
+        type: string
+        x-nullable: true
+        x-omitempty: true
       parentId:
         type: string
         x-nullable: true
@@ -1629,6 +1654,13 @@ definitions:
       lifetimeWarranty:
         description: Warranty
         type: boolean
+      locationId:
+        description: |-
+          Only needed when ParentID is another item and this lives elsewhere (#1688).
+          Otherwise ParentID carries the location. See resolveLocationOverride.
+        type: string
+        x-nullable: true
+        x-omitempty: true
       manufacturer:
         type: string
       modelNumber:
@@ -2235,6 +2267,10 @@ definitions:
           EntityTypeID is the entity type selected by the user. When set it takes
           precedence; when empty the repository falls back to the group's default.
         type: string
+      locationId:
+        type: string
+        x-nullable: true
+        x-omitempty: true
       name:
         maxLength: 255
         minLength: 1
@@ -2513,7 +2549,9 @@ paths:
   /v1/entities:
     get:
       parameters:
-      - description: search string
+      - description: 'search string; matches names, descriptions, serial/model numbers,
+          manufacturers, notes, purchase sources, tag names, and custom field values.
+          Use #<assetId> to look up by asset ID and double quotes for exact phrases'
         in: query
         name: q
         type: string
@@ -2532,6 +2570,10 @@ paths:
           type: string
         name: tags
         type: array
+      - description: require all selected tags to match (AND) instead of any (OR)
+        in: query
+        name: matchAllTags
+        type: boolean
       - collectionFormat: multi
         description: parent Ids
         in: query
@@ -2539,6 +2581,24 @@ paths:
           type: string
         name: parentIds
         type: array
+      - collectionFormat: multi
+        description: entity type IDs; when provided this filter takes precedence over
+          isLocation
+        in: query
+        items:
+          type: string
+        name: entityTypeIds
+        type: array
+      - description: 'field to order by; valid values: name, createdAt, updatedAt,
+          assetId'
+        in: query
+        name: orderBy
+        type: string
+      - description: 'order direction; valid values: asc, desc. Defaults to desc for
+          createdAt and updatedAt, asc otherwise'
+        in: query
+        name: orderDirection
+        type: string
       produces:
       - application/json
       responses:

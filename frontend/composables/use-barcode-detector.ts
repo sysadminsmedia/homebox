@@ -416,7 +416,7 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
           return null;
         }
 
-        const [locRes, itemsRes] = await Promise.all([api.locations.get(id), api.items.getAll({ locations: [id] })]);
+        const [locRes, itemsRes] = await Promise.all([api.locations.get(id), api.items.getAll({ parentIds: [id] })]);
         if (locRes.data) {
           const result: EntityData = { location: locRes.data, childItems: itemsRes.data?.items ?? [] };
           entityCache.set(cacheKey, { data: result, fetchedAt: Date.now() });

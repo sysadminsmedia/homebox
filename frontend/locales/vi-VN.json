@@ -93,35 +93,6 @@
                 "download": "Tải về",
                 "open_new_tab": "Mở ra trong tab mới"
             },
-            "create_modal": {
-                "delete_photo": "Xóa Ảnh",
-                "item_description": "Mô tả về món đồ",
-                "item_name": "Tên món đồ",
-                "item_photo": "Hình ảnh món đồ",
-                "item_quantity": "Số lượng món đồ",
-                "parent_item": "Món đồ chủ",
-                "product_tooltip_input_barcode": "Điền tự động với barcode tạo thủ công",
-                "product_tooltip_scan_barcode": "Điền tự động với barcode từ hình chụp",
-                "rotate_photo": "Xoay bức hình",
-                "set_as_primary_photo": "Đặt với { isPrimary, select, true {non-} false {} other {}} hình chính",
-                "title": "Tạo món đồ",
-                "toast": {
-                    "already_creating": "Đã đang tạo vật phẩm",
-                    "create_failed": "Không thể tạo món đồ",
-                    "create_success": "Món đồ đã được tạo",
-                    "failed_load_parent": "Không nạp được giá trị vật phẩm nhóm - hãy chọn thủ công",
-                    "no_canvas_support": "Trình duyệt bạn không hỗ trợ thao tác với canvas",
-                    "please_select_location": "Xin chọn địa điểm.",
-                    "rotate_failed": "Thất bại khi xoay ảnh: { error }",
-                    "rotate_process_failed": "Thất bại khi xử lý ảnh đã được xoay",
-                    "some_photos_failed": "{count, plural, =0 {Không có ảnh để đăng.} =1 {1 ảnh đăng thất bại.} other {Một vài hình đăng thất bại}}",
-                    "upload_failed": "Thất bại khi tải lên ảnh: { photoName }",
-                    "upload_success": "{count, plural, =0 {Không có ảnh nào được đăng} =1 {Ảnh đăng thành công.} other {Tất cả ảnh được đăng thành công.}}",
-                    "uploading_photos": "{count, plural, =0 {Không có ảnh để đăng} =1 {Đang đăng 1 ảnh…} other {Đang đăng {count} ảnh…}}"
-                },
-                "upload_photos": "Tải lên nhiều ảnh",
-                "uploaded": "Ảnh đã được tải lên"
-            },
             "product_import": {
                 "barcode": "Barcode của sản phẩm",
                 "db_source": "Nguồn cơ sở dữ liệu",

@@ -52,7 +52,10 @@
     <div v-else-if="entity.location" class="flex flex-col gap-1">
       <span class="truncate text-sm font-semibold text-foreground">{{ entity.location.name }}</span>
       <div class="flex flex-wrap items-center gap-1.5">
-        <span v-if="entity.location.children.length > 0" class="text-xs text-muted-foreground">
+        <span
+          v-if="entity.location.children && entity.location.children.length > 0"
+          class="text-xs text-muted-foreground"
+        >
           {{ entity.location.children.length }}
           {{ t("scanner_ar.children", { count: entity.location.children.length }) }}
         </span>

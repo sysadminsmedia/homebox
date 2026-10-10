@@ -625,8 +625,11 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	log.Debug().Msg("starting thumbnail creation")
 	tx, err := r.db.Tx(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
+	// Always end the transaction, whatever the return path
+	// After a successful Commit this is a no-op (returns sql.ErrTxDone)
+	defer func() { _ = tx.Rollback() }()
 	// If there is an error during file creation rollback the database
 	defer func() {
 		if v := recover(); v != nil {
@@ -861,7 +864,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	log.Debug().Msg("finishing thumbnail creation transaction")
 	if err := tx.Commit(); err != nil {
 		log.Err(err).Msg("failed to commit transaction")
-		return nil
+		return err
 	}
 	return nil
 }

@@ -190,9 +190,32 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration,
 		IsOwner:        creatingGroup,
 	}
 
+	// Claim an invitation use before the user and membership are committed. The
+	// guarded decrement is atomic, so concurrent registrations racing on the same
+	// token can't all pass the Uses check above and oversubscribe it; losers fail
+	// here without creating anything. The use is handed back if creation fails.
+	if token.ID != uuid.Nil {
+		decCtx, decSpan := entityServiceTracer().Start(ctx, "service.UserService.RegisterUser.decrementInvitation")
+		log.Debug().Msg("decrementing invitation token")
+		err = svc.repos.Groups.InvitationDecrement(decCtx, token.ID)
+		if err != nil {
+			recordServiceSpanError(decSpan, err)
+			decSpan.End()
+			recordServiceSpanError(span, err)
+			log.Err(err).Msg("Failed to update invitation token")
+			return repo.UserOut{}, err
+		}
+		decSpan.End()
+	}
+
 	usr, err := svc.repos.Users.Create(ctx, usrCreate)
 	if err != nil {
 		recordServiceSpanError(span, err)
+		if token.ID != uuid.Nil {
+			if refundErr := svc.repos.Groups.InvitationRefund(context.WithoutCancel(ctx), token.ID); refundErr != nil {
+				log.Err(refundErr).Msg("Failed to refund invitation token use")
+			}
+		}
 		return repo.UserOut{}, err
 	}
 	span.SetAttributes(attribute.String("user.id", usr.ID.String()))
@@ -242,21 +265,6 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration,
 			attribute.Int("locations.created.count", locsCreated),
 		)
 		bootstrapSpan.End()
-	}
-
-	// Decrement the invitation token if it was used.
-	if token.ID != uuid.Nil {
-		decCtx, decSpan := entityServiceTracer().Start(ctx, "service.UserService.RegisterUser.decrementInvitation")
-		log.Debug().Msg("decrementing invitation token")
-		err = svc.repos.Groups.InvitationDecrement(decCtx, token.ID)
-		if err != nil {
-			recordServiceSpanError(decSpan, err)
-			decSpan.End()
-			recordServiceSpanError(span, err)
-			log.Err(err).Msg("Failed to update invitation token")
-			return repo.UserOut{}, err
-		}
-		decSpan.End()
 	}
 
 	return usr, nil

@@ -11,3 +11,9 @@ import (
 func (c *Client) Sql() *sql.DB {
 	return c.driver.(*entsql.Driver).DB()
 }
+
+// Dialect returns the dialect name of the underlying database driver
+// (dialect.SQLite or dialect.Postgres).
+func (c *Client) Dialect() string {
+	return c.driver.Dialect()
+}

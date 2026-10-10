@@ -43,13 +43,18 @@ that item receives the next available ID. This is recommended for most users.
 
 In some cases, you may want to skip some items such as consumables, or items that are loosely tracked. In this case,
 we recommend that you leave auto-incrementing IDs enabled _however_ when you create a new item that you want to skip,
-you can go to that item and reset the ID to 0. This will remove it from the auto-incrementing sequence,
-and the next item will receive the next available ID.
+you can go to that item, clear its Asset ID field and save. The item then has no ID, it is left out of the
+auto-incrementing sequence, and the next item will receive the next available ID.
+
+Setting the ID to `0` also leaves the item out of the sequence for now, but `0` means "not assigned yet": the
+__Ensure Asset IDs__ action described below gives every item with an ID of `0` the next available ID. Use `0` for
+items you may want to number later in one go, and an empty field for items that should never get an ID.
 
 > [!TIP]
-> If you're migrating from an older version, there is an action on the user's profile page to assign IDs to all items.
-> This will assign the next available ID to all items in order of their creation. You should __only do this once__ during
-> the migration process. You should be especially cautious with this if you're using the reset feature described in [option number 2](#2-auto-incrementing-ids-with-reset)
+> If you're migrating from an older version, there is an action on the Tools page (__Inventory Actions__ →
+> __Ensure Asset IDs__) that assigns the next available ID to every item whose ID is `0`, in order of their creation.
+> Items with an empty ID field are left alone. You should __only do this once__ during the migration process, and be
+> aware that it also numbers any item you set to `0` using [option number 2](#2-auto-incrementing-ids-with-reset).
 
 
 ## QR Codes

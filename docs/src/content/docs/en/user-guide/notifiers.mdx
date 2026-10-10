@@ -95,17 +95,17 @@ generic+https://your-webhook-endpoint.com/path
 generic+http://your-webhook-endpoint.com/path
 ```
 
-## Security Considerations for Generic Webhooks
+## Network Security for Notifiers
 
-Generic webhooks allow Homebox to make HTTP requests to arbitrary URLs. To prevent Server-Side Request Forgery (SSRF) attacks and protect your internal network, Homebox provides several configuration options to restrict where generic notifiers can send requests.
+Many notifier URLs let the user choose the server Homebox connects to: generic webhooks (`generic://`, `generic+https://`, `generic+http://`) and self-hosted services such as Gotify, ntfy, Matrix, Mattermost, MQTT and SMTP. Any user who can add a notifier can make Homebox send requests to that host. To prevent Server-Side Request Forgery (SSRF) attacks and protect your internal network, Homebox provides several configuration options to restrict where notifiers can send requests.
 
 :::caution[Security Notice]
-Generic webhooks (`generic://`, `generic+https://`, `generic+http://`) can be used to make requests to any accessible network endpoint. Configure the security settings below to protect your internal infrastructure.
+Notifiers can be used to make requests to any network endpoint Homebox can reach. Configure the security settings below to protect your internal infrastructure, especially if registration is open or the instance is exposed to the internet.
 :::
 
 ### Configuration Options
 
-All security options apply only to generic webhook notifiers. Other notification services (Discord, Slack, etc.) are not affected by these settings.
+These options apply to every notifier whose URL contains a destination host, including redirects and the address actually connected to. Services that always connect to a fixed vendor endpoint (Discord, Slack, Telegram, Pushover, etc.) are not affected. Notifier URLs using a scheme Homebox does not recognize are rejected.
 
 #### Allow List (Recommended)
 
@@ -119,19 +119,19 @@ HBOX_NOTIFIER_ALLOW_NETS="192.168.1.0/24;10.0.50.0/24"
 
 #### Block Localhost
 
-Prevents generic notifiers from making requests to localhost/loopback addresses (127.0.0.1, ::1).
+Prevents notifiers from making requests to localhost/loopback addresses (127.0.0.1, ::1).
 
 ```bash
 HBOX_NOTIFIER_BLOCK_LOCALHOST=true
 ```
 
-**Default:** `false`
+**Default:** `true` (enabled by default since v0.27.0)
 
-**Use Case:** Prevent access to services running on the same host as Homebox (e.g., admin panels, development servers).
+**Use Case:** Prevent access to services running on the same host as Homebox (e.g., admin panels, development servers). If you run a notification service such as ntfy or Gotify on the same machine as Homebox and connect to it via `localhost`, either set this to `false` or point the notifier at the machine's LAN address instead.
 
 #### Block Local Networks (RFC1918)
 
-Prevents generic notifiers from making requests to private network ranges:
+Prevents notifiers from making requests to private network ranges:
 - 10.0.0.0/8
 - 172.16.0.0/12
 - 192.168.0.0/16
@@ -140,13 +140,13 @@ Prevents generic notifiers from making requests to private network ranges:
 HBOX_NOTIFIER_BLOCK_LOCAL_NETS=true
 ```
 
-**Default:** `false`
+**Default:** `false` (so self-hosted notification services on your LAN keep working)
 
 **Use Case:** Block access to all internal network services to prevent SSRF attacks against internal infrastructure.
 
 #### Block Bogon Networks
 
-Prevents generic notifiers from making requests to reserved/special-use IP ranges including:
+Prevents notifiers from making requests to reserved/special-use IP ranges including:
 - Link-local addresses (169.254.0.0/16)
 - Multicast addresses
 - Broadcast addresses
@@ -163,7 +163,7 @@ HBOX_NOTIFIER_BLOCK_BOGON_NETS=true
 
 #### Block Cloud Metadata Endpoints
 
-Prevents generic notifiers from accessing cloud provider metadata endpoints:
+Prevents notifiers from accessing cloud provider metadata endpoints:
 - 169.254.169.254 (AWS, Azure, GCP, Oracle Cloud)
 - 169.254.169.253 (AWS IMDSv2)
 - fd00:ec2::254 (AWS IPv6)

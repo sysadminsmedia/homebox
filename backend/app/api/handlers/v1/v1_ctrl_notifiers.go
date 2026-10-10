@@ -1,10 +1,13 @@
 package v1
 
 import (
+	"errors"
 	"net/http"
+	"net/url"
 
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
+	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
@@ -118,11 +121,27 @@ func (ctrl *V1Controller) HandlerNotifierTest() errchain.HandlerFunc {
 
 		// Deliver through the guarded client so redirect hops and the resolved
 		// address are re-checked against the same policy.
-		err := validate.SendNotifierMessage(q.URL, "Test message from Homebox", &ctrl.config.Notifier)
-		return nil, err
+		if err := validate.SendNotifierMessage(q.URL, "Test message from Homebox", &ctrl.config.Notifier); err != nil {
+			// The delivery error can quote the URL, which carries the notifier's
+			// credentials; keep it to the log and hand the caller a bare failure.
+			log.Err(err).Str("notifier_url", redactNotifierURL(q.URL)).Msg("notifier test failed")
+			return nil, validate.NewRequestError(errTestNotifierFailed, http.StatusBadRequest)
+		}
+
+		return nil, nil
 	}
 
 	return adapters.Action(fn, http.StatusOK)
+}
+
+var errTestNotifierFailed = errors.New("failed to send test notification")
+
+func redactNotifierURL(raw string) string {
+	u, err := url.Parse(raw)
+	if err != nil {
+		return "<unparsable url>"
+	}
+	return u.Redacted()
 }
 
 // validateNotifierURL validates a notifier URL against the configured block/allow lists

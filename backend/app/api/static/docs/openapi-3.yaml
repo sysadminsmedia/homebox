@@ -144,7 +144,10 @@ paths:
         - Entities
       summary: Query All Entities
       parameters:
-        - description: search string
+        - description: "search string; matches names, descriptions, serial/model numbers,
+            manufacturers, notes, purchase sources, tag names, and custom field
+            values. Use #<assetId> to look up by asset ID and double quotes for
+            exact phrases"
           name: q
           in: query
           schema:
@@ -167,6 +170,11 @@ paths:
             type: array
             items:
               type: string
+        - description: require all selected tags to match (AND) instead of any (OR)
+          name: matchAllTags
+          in: query
+          schema:
+            type: boolean
         - description: parent Ids
           name: parentIds
           in: query
@@ -175,6 +183,27 @@ paths:
             type: array
             items:
               type: string
+        - description: entity type IDs; when provided this filter takes precedence over
+            isLocation
+          name: entityTypeIds
+          in: query
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - description: "field to order by; valid values: name, createdAt, updatedAt,
+            assetId"
+          name: orderBy
+          in: query
+          schema:
+            type: string
+        - description: "order direction; valid values: asc, desc. Defaults to desc for
+            createdAt and updatedAt, asc otherwise"
+          name: orderDirection
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: OK
@@ -2353,6 +2382,15 @@ components:
           description: Group holds the value of the group edge.
           allOf:
             - $ref: "#/components/schemas/ent.Group"
+        location:
+          description: Location holds the value of the location edge.
+          allOf:
+            - $ref: "#/components/schemas/ent.Entity"
+        location_entities:
+          description: LocationEntities holds the value of the location_entities edge.
+          type: array
+          items:
+            $ref: "#/components/schemas/ent.Entity"
         maintenance_entries:
           description: MaintenanceEntries holds the value of the maintenance_entries edge.
           type: array
@@ -3172,6 +3210,12 @@ components:
           maxLength: 1000
         entityTypeId:
           type: string
+        locationId:
+          description: Only needed when ParentID is another item and this lives elsewhere
+            (#1688).
+          type: string
+          x-omitempty: true
+          nullable: true
         manufacturer:
           type: string
           maxLength: 255
@@ -3276,12 +3320,21 @@ components:
           type: boolean
         location:
           description: |-
-            Location is the nearest ancestor whose entity type is a location.
-            When the direct parent is already a location it equals Parent; when
-            the entity is nested inside other items it is the location those
-            items ultimately live in. Nil for top-level entities.
+            Location is resolved: this entity's own location, else the nearest
+            location ancestor. Read-only — write via LocationID.
           allOf:
             - $ref: "#/components/schemas/repo.EntitySummary"
+          x-omitempty: true
+          nullable: true
+        locationId:
+          description: >-
+            LocationID is set only when this entity has its own location, nil
+            when
+
+            inherited. Same name as the EntityUpdate field so a GET/PUT round trip
+
+            doesn't pin an inherited location or drop an explicit one.
+          type: string
           x-omitempty: true
           nullable: true
         manufacturer:
@@ -3348,6 +3401,10 @@ components:
           nullable: true
         id:
           type: string
+        locationId:
+          type: string
+          x-omitempty: true
+          nullable: true
         parentId:
           type: string
           x-omitempty: true
@@ -3697,6 +3754,15 @@ components:
         lifetimeWarranty:
           description: Warranty
           type: boolean
+        locationId:
+          description: >-
+            Only needed when ParentID is another item and this lives elsewhere
+            (#1688).
+
+            Otherwise ParentID carries the location. See resolveLocationOverride.
+          type: string
+          x-omitempty: true
+          nullable: true
         manufacturer:
           type: string
         modelNumber:
@@ -4306,6 +4372,10 @@ components:
 
             precedence; when empty the repository falls back to the group's default.
           type: string
+        locationId:
+          type: string
+          x-omitempty: true
+          nullable: true
         name:
           type: string
           maxLength: 255

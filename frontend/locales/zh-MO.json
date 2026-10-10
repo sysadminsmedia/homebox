@@ -6,7 +6,13 @@
         "delete_confirm": "你确定要删除该合集吗？这个行为无法被撤回。",
         "deleted_collection": "合集已被删除。",
         "expires_at": "到期",
-        "invite_token": "邀请码"
+        "invite_token": "邀请码",
+        "invite_token_hidden": "不再可见",
+        "invites": "邀请",
+        "invites_delete_confirm": "确定删除这条邀请？",
+        "leave_collection": "离开此收藏",
+        "leave_confirm": "确定要离开该收藏么？",
+        "left_collection": "你已经离开收藏了。"
     },
     "components": {
         "app": {
@@ -70,11 +76,6 @@
             }
         },
         "item": {
-            "create_modal": {
-                "item_description": "项目说明",
-                "item_name": "项目名称",
-                "title": "新增項目"
-            },
             "view": {
                 "selectable": {
                     "card": "卡牌風",
@@ -89,11 +90,6 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "位置描述",
-                "location_name": "位置描述",
-                "title": "新增地點"
-            },
             "selector": {
                 "parent_location": "父页面"
             }
