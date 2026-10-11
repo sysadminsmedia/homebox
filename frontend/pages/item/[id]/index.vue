@@ -403,7 +403,9 @@
     if (preferences.value.showEmpty) {
       return true;
     }
-    return item.value?.soldTo || item.value?.soldPrice !== 0 || validDate(item.value?.soldDate);
+    return (
+      item.value?.soldTo || item.value?.soldPrice !== 0 || validDate(item.value?.soldDate) || item.value?.soldNotes
+    );
   });
 
   const soldDetails = computed<Details>(() => {
