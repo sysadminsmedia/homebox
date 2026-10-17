@@ -56,14 +56,16 @@ func (r *MaintenanceEntryRepository) GetAllMaintenance(ctx context.Context, grou
 		query = query.Where(maintenanceentry.Or(
 			maintenanceentry.DateIsNil(),
 			maintenanceentry.DateEQ(time.Time{}),
+			maintenanceentry.DateGT(time.Now()),
 		))
 	case MaintenanceFilterStatusCompleted:
 		query = query.Where(
 			maintenanceentry.Not(maintenanceentry.Or(
 				maintenanceentry.DateIsNil(),
-				maintenanceentry.DateEQ(time.Time{})),
+				maintenanceentry.DateEQ(time.Time{}),
+				maintenanceentry.DateGT(time.Now())),
 			))
-	case MaintenanceFilterStatusBoth:
+	case MaintenanceFilterStatusBoth, "":
 		// No additional filters needed
 	default:
 		return nil, fmt.Errorf("unknown status %s", filters.Status)
