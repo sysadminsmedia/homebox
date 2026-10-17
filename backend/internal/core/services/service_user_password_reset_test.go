@@ -1,7 +1,6 @@
 package services
 
 import (
-	"context"
 	"net/url"
 	"testing"
 	"time"
@@ -23,7 +22,7 @@ func newTestUserWithPassword(t *testing.T, password string) repo.UserOut {
 	t.Helper()
 	hash, err := hasher.HashPassword(password)
 	require.NoError(t, err)
-	usr, err := tRepos.Users.Create(context.Background(), repo.UserCreate{
+	usr, err := tRepos.Users.Create(testCtx(), repo.UserCreate{
 		Name:           fk.Str(10),
 		Email:          fk.Email(),
 		Password:       &hash,
@@ -44,34 +43,34 @@ func extractToken(t *testing.T, link string) string {
 
 func TestRequestPasswordReset_NoMailer_ReturnsError(t *testing.T) {
 	// tSvc.User.mailer is nil by default in tests; that's the path we want.
-	err := tSvc.User.RequestPasswordReset(context.Background(), "anyone@example.com", "https://example.com")
+	err := tSvc.User.RequestPasswordReset(testCtx(), "anyone@example.com", "https://example.com")
 	assert.ErrorIs(t, err, ErrorMailerNotConfigured)
 }
 
 func TestGenerateResetLink_HappyPath(t *testing.T) {
 	usr := newTestUserWithPassword(t, "original-password")
 
-	link, err := tSvc.User.GenerateResetLink(context.Background(), usr.Email, "https://example.com")
+	link, err := tSvc.User.GenerateResetLink(testCtx(), usr.Email, "https://example.com")
 	require.NoError(t, err)
 	assert.Contains(t, link, "https://example.com/reset-password?token=")
 
 	// The token should be persisted (hashed) and unused.
 	rawToken := extractToken(t, link)
 	hash := hasher.HashToken(rawToken)
-	got, err := tRepos.PasswordResetTokens.GetValidByHash(context.Background(), hash)
+	got, err := tRepos.PasswordResetTokens.GetValidByHash(testCtx(), hash)
 	require.NoError(t, err)
 	assert.Equal(t, usr.ID, got.UserID)
 }
 
 func TestGenerateResetLink_UnknownEmail_ReturnsNotFound(t *testing.T) {
-	_, err := tSvc.User.GenerateResetLink(context.Background(), "ghost-"+fk.Email(), "https://example.com")
+	_, err := tSvc.User.GenerateResetLink(testCtx(), "ghost-"+fk.Email(), "https://example.com")
 	require.Error(t, err)
 	assert.True(t, ent.IsNotFound(err), "expected NotFound, got %v", err)
 }
 
 func TestGenerateResetLink_OIDCUser_ReturnsSentinel(t *testing.T) {
 	// User with no local password (OIDC-only style).
-	usr, err := tRepos.Users.Create(context.Background(), repo.UserCreate{
+	usr, err := tRepos.Users.Create(testCtx(), repo.UserCreate{
 		Name:           fk.Str(10),
 		Email:          fk.Email(),
 		Password:       nil,
@@ -79,13 +78,13 @@ func TestGenerateResetLink_OIDCUser_ReturnsSentinel(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	_, err = tSvc.User.GenerateResetLink(context.Background(), usr.Email, "https://example.com")
+	_, err = tSvc.User.GenerateResetLink(testCtx(), usr.Email, "https://example.com")
 	require.Error(t, err)
 	assert.ErrorIs(t, err, errResetUserHasNoPassword)
 }
 
 func TestResetPassword_HappyPath_RevokesSessions(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	usr := newTestUserWithPassword(t, "old-password")
 
 	// Give the user two active sessions; both must be killed by the reset.
@@ -121,7 +120,7 @@ func TestResetPassword_HappyPath_RevokesSessions(t *testing.T) {
 }
 
 func TestResetPassword_TokenReplay_Rejected(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	usr := newTestUserWithPassword(t, "first-password")
 
 	link, err := tSvc.User.GenerateResetLink(ctx, usr.Email, "https://example.com")
@@ -142,7 +141,7 @@ func TestResetPassword_AtomicClaim_LosesRaceToConcurrentReset(t *testing.T) {
 	// token used between GetValidByHash and the second ResetPassword call —
 	// the second caller's MarkUsed should fail with the claim-race error,
 	// which ResetPassword translates to ErrorPasswordResetInvalid.
-	ctx := context.Background()
+	ctx := testCtx()
 	usr := newTestUserWithPassword(t, "starting-pw")
 
 	link, err := tSvc.User.GenerateResetLink(ctx, usr.Email, "https://example.com")
@@ -165,7 +164,7 @@ func TestResetPassword_AtomicClaim_LosesRaceToConcurrentReset(t *testing.T) {
 }
 
 func TestResetPassword_BogusToken_Rejected(t *testing.T) {
-	err := tSvc.User.ResetPassword(context.Background(), "this-is-not-a-real-token", "newpw")
+	err := tSvc.User.ResetPassword(testCtx(), "this-is-not-a-real-token", "newpw")
 	assert.ErrorIs(t, err, ErrorPasswordResetInvalid)
 }
 
@@ -177,7 +176,7 @@ func TestResetPassword_BogusToken_Rejected(t *testing.T) {
 // invalid-token path without the dummy hash returns in microseconds, so a
 // loose floor reliably distinguishes "dummy hash ran" from "didn't".
 func TestResetPassword_InvalidToken_RunsDummyHash(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	// Warm up: argon2id allocates ~64 MiB; the first call in a process can be
 	// markedly slower than steady-state. Run once so the measurement below
@@ -212,15 +211,15 @@ func TestResetPassword_InvalidToken_RunsDummyHash(t *testing.T) {
 }
 
 func TestResetPassword_EmptyInputs_Rejected(t *testing.T) {
-	err := tSvc.User.ResetPassword(context.Background(), "", "newpw")
+	err := tSvc.User.ResetPassword(testCtx(), "", "newpw")
 	require.ErrorIs(t, err, ErrorPasswordResetInvalid)
 
-	err = tSvc.User.ResetPassword(context.Background(), "sometoken", "")
+	err = tSvc.User.ResetPassword(testCtx(), "sometoken", "")
 	assert.ErrorIs(t, err, ErrorPasswordResetInvalid)
 }
 
 func TestResetPassword_ExpiredToken_Rejected(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	usr := newTestUserWithPassword(t, "starting-password")
 
 	// Mint a token directly in the repo with an expiration in the past, so we
@@ -234,7 +233,7 @@ func TestResetPassword_ExpiredToken_Rejected(t *testing.T) {
 }
 
 func TestPurgeExpired_RemovesExpiredAndUsedTokens(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	usr := newTestUserWithPassword(t, "irrelevant")
 
 	// Expired token.

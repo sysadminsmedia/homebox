@@ -16,6 +16,7 @@ import (
 	"github.com/meilisearch/meilisearch-go"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authz"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
@@ -393,8 +394,11 @@ func (e *MeilisearchEngine) ReindexGroup(ctx context.Context, gid uuid.UUID) err
 
 // reindex upserts documents for all entities (gid == nil) or one group's
 // entities, then deletes that scope's documents that no longer correspond to
-// a database row.
+// a database row. The index must hold every entity in scope regardless of who
+// triggered the rebuild (searches are re-filtered by the ORM per viewer), so
+// the reads bypass the privacy layer.
 func (e *MeilisearchEngine) reindex(ctx context.Context, gid *uuid.UUID) error {
+	ctx = authz.NewSystemContext(ctx)
 	idQuery := e.db.Entity.Query().Order(ent.Asc(entity.FieldID))
 	if gid != nil {
 		idQuery = idQuery.Where(entity.HasGroupWith(group.ID(*gid)))

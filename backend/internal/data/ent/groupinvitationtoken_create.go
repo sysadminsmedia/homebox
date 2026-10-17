@@ -84,6 +84,12 @@ func (_c *GroupInvitationTokenCreate) SetNillableUses(v *int) *GroupInvitationTo
 	return _c
 }
 
+// SetPermissions sets the "permissions" field.
+func (_c *GroupInvitationTokenCreate) SetPermissions(v []string) *GroupInvitationTokenCreate {
+	_c.mutation.SetPermissions(v)
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *GroupInvitationTokenCreate) SetID(v uuid.UUID) *GroupInvitationTokenCreate {
 	_c.mutation.SetID(v)
@@ -124,7 +130,9 @@ func (_c *GroupInvitationTokenCreate) Mutation() *GroupInvitationTokenMutation {
 
 // Save creates the GroupInvitationToken in the database.
 func (_c *GroupInvitationTokenCreate) Save(ctx context.Context) (*GroupInvitationToken, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -151,16 +159,25 @@ func (_c *GroupInvitationTokenCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *GroupInvitationTokenCreate) defaults() {
+func (_c *GroupInvitationTokenCreate) defaults() error {
 	if _, ok := _c.mutation.CreatedAt(); !ok {
+		if groupinvitationtoken.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized groupinvitationtoken.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := groupinvitationtoken.DefaultCreatedAt()
 		_c.mutation.SetCreatedAt(v)
 	}
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		if groupinvitationtoken.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized groupinvitationtoken.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := groupinvitationtoken.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := _c.mutation.ExpiresAt(); !ok {
+		if groupinvitationtoken.DefaultExpiresAt == nil {
+			return fmt.Errorf("ent: uninitialized groupinvitationtoken.DefaultExpiresAt (forgotten import ent/runtime?)")
+		}
 		v := groupinvitationtoken.DefaultExpiresAt()
 		_c.mutation.SetExpiresAt(v)
 	}
@@ -168,10 +185,18 @@ func (_c *GroupInvitationTokenCreate) defaults() {
 		v := groupinvitationtoken.DefaultUses
 		_c.mutation.SetUses(v)
 	}
+	if _, ok := _c.mutation.Permissions(); !ok {
+		v := groupinvitationtoken.DefaultPermissions
+		_c.mutation.SetPermissions(v)
+	}
 	if _, ok := _c.mutation.ID(); !ok {
+		if groupinvitationtoken.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized groupinvitationtoken.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := groupinvitationtoken.DefaultID()
 		_c.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -190,6 +215,9 @@ func (_c *GroupInvitationTokenCreate) check() error {
 	}
 	if _, ok := _c.mutation.Uses(); !ok {
 		return &ValidationError{Name: "uses", err: errors.New(`ent: missing required field "GroupInvitationToken.uses"`)}
+	}
+	if _, ok := _c.mutation.Permissions(); !ok {
+		return &ValidationError{Name: "permissions", err: errors.New(`ent: missing required field "GroupInvitationToken.permissions"`)}
 	}
 	return nil
 }
@@ -245,6 +273,10 @@ func (_c *GroupInvitationTokenCreate) createSpec() (*GroupInvitationToken, *sqlg
 	if value, ok := _c.mutation.Uses(); ok {
 		_spec.SetField(groupinvitationtoken.FieldUses, field.TypeInt, value)
 		_node.Uses = value
+	}
+	if value, ok := _c.mutation.Permissions(); ok {
+		_spec.SetField(groupinvitationtoken.FieldPermissions, field.TypeJSON, value)
+		_node.Permissions = value
 	}
 	if nodes := _c.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

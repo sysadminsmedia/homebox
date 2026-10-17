@@ -1,7 +1,6 @@
 package services
 
 import (
-	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,7 +11,7 @@ import (
 // legitimate login still works and every rejection path returns the same generic
 // error, regardless of whether the account exists.
 func TestLogin_EndToEnd(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	const password = "correct-horse-battery-staple"
 	reg := UserRegistration{

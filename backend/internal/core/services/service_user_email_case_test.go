@@ -1,7 +1,6 @@
 package services
 
 import (
-	"context"
 	"strings"
 	"testing"
 
@@ -13,7 +12,7 @@ import (
 // email in different cases is rejected as a duplicate, and that login still works
 // for the single account (the case-variant account-takeover/DoS fix).
 func TestRegister_EmailCaseInsensitiveUniqueness(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	base := strings.ToLower(fk.Str(10))
 	lower := base + "@example.com"

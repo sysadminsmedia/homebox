@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -29,6 +30,8 @@ type GroupInvitationToken struct {
 	ExpiresAt time.Time `json:"expires_at,omitempty"`
 	// Uses holds the value of the "uses" field.
 	Uses int `json:"uses,omitempty"`
+	// Permissions holds the value of the "permissions" field.
+	Permissions []string `json:"permissions,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GroupInvitationTokenQuery when eager-loading is set.
 	Edges                   GroupInvitationTokenEdges `json:"edges"`
@@ -61,7 +64,7 @@ func (*GroupInvitationToken) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case groupinvitationtoken.FieldToken:
+		case groupinvitationtoken.FieldToken, groupinvitationtoken.FieldPermissions:
 			values[i] = new([]byte)
 		case groupinvitationtoken.FieldUses:
 			values[i] = new(sql.NullInt64)
@@ -121,6 +124,14 @@ func (_m *GroupInvitationToken) assignValues(columns []string, values []any) err
 				return fmt.Errorf("unexpected type %T for field uses", values[i])
 			} else if value.Valid {
 				_m.Uses = int(value.Int64)
+			}
+		case groupinvitationtoken.FieldPermissions:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field permissions", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.Permissions); err != nil {
+					return fmt.Errorf("unmarshal field permissions: %w", err)
+				}
 			}
 		case groupinvitationtoken.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
@@ -184,6 +195,9 @@ func (_m *GroupInvitationToken) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("uses=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Uses))
+	builder.WriteString(", ")
+	builder.WriteString("permissions=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Permissions))
 	builder.WriteByte(')')
 	return builder.String()
 }

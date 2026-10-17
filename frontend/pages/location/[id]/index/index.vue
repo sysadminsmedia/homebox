@@ -44,6 +44,7 @@
 
   const route = useRoute();
   const api = useUserApi();
+  const { can } = usePermissions();
   const preferences = useViewPreferences();
 
   const locationId = computed<string>(() => route.params.id as string);
@@ -282,7 +283,7 @@
               </div>
             </div>
             <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-2">
-              <LabelMaker :id="location.id" type="location" />
+              <LabelMaker v-if="can('label:print')" :id="location.id" type="location" />
               <Button class="w-9 md:w-auto" @click="openCreateItem">
                 <MdiPlus name="mdi-plus" />
                 <span class="hidden md:inline">

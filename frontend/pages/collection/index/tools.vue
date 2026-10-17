@@ -2,7 +2,7 @@
   <div>
     <AppImportDialog />
     <BaseContainer class="m-0 flex flex-col gap-4 px-0">
-      <BaseCard>
+      <BaseCard v-if="canAny('label:print', 'report:generate')">
         <template #title>
           <BaseSectionHeader>
             <MdiFileChart class="mr-2" />
@@ -11,7 +11,7 @@
           </BaseSectionHeader>
         </template>
         <div class="divide-y border-t px-6 pb-3">
-          <DetailAction to="/reports/label-generator">
+          <DetailAction v-if="can('label:print')" to="/reports/label-generator">
             <template #title>{{ $t("tools.reports_set.asset_labels") }}</template>
             {{ $t("tools.reports_set.asset_labels_sub") }}
             <template #button>
@@ -19,14 +19,14 @@
               <MdiArrowRight class="ml-2" />
             </template>
           </DetailAction>
-          <DetailAction @action="getBillOfMaterials()">
+          <DetailAction v-if="can('report:generate')" @action="getBillOfMaterials()">
             <template #title>{{ $t("tools.reports_set.bill_of_materials") }}</template>
             {{ $t("tools.reports_set.bill_of_materials_sub") }}
             <template #button> {{ $t("tools.reports_set.bill_of_materials_button") }} </template>
           </DetailAction>
         </div>
       </BaseCard>
-      <BaseCard>
+      <BaseCard v-if="canAny('data:import', 'data:export')">
         <template #title>
           <BaseSectionHeader>
             <MdiDatabase class="mr-2" />
@@ -37,20 +37,20 @@
           </BaseSectionHeader>
         </template>
         <div class="divide-y border-t px-6 pb-3">
-          <DetailAction @action="openDialog(DialogID.Import)">
+          <DetailAction v-if="can('data:import')" @action="openDialog(DialogID.Import)">
             <template #title> {{ $t("tools.import_export_set.import") }} </template>
             <!-- eslint-disable-next-line vue/no-v-html -->
             <div v-html="DOMPurify.sanitize($t('tools.import_export_set.import_sub'))" />
             <template #button> {{ $t("tools.import_export_set.import_button") }} </template>
           </DetailAction>
-          <DetailAction @action="getExportCSV()">
+          <DetailAction v-if="can('data:export')" @action="getExportCSV()">
             <template #title>{{ $t("tools.import_export_set.export") }}</template>
             {{ $t("tools.import_export_set.export_sub") }}
             <template #button> {{ $t("tools.import_export_set.export_button") }} </template>
           </DetailAction>
         </div>
       </BaseCard>
-      <BaseCard>
+      <BaseCard v-if="canAny('data:import', 'data:export')">
         <template #title>
           <BaseSectionHeader>
             <MdiPackageVariant class="mr-2" />
@@ -59,7 +59,7 @@
           </BaseSectionHeader>
         </template>
         <div class="divide-y border-t px-6 pb-3">
-          <DetailAction @action="startBackup">
+          <DetailAction v-if="can('data:export')" @action="startBackup">
             <template #title>{{ $t("tools.backups_set.create") }}</template>
             {{ $t("tools.backups_set.create_sub") }}
             <template #button> {{ $t("tools.backups_set.create_button") }} </template>
@@ -109,7 +109,7 @@
               {{ $t("tools.backups_set.list_empty") }}
             </p>
           </div>
-          <DetailAction>
+          <DetailAction v-if="can('data:import')">
             <template #title>{{ $t("tools.backups_set.restore") }}</template>
             {{ $t("tools.backups_set.restore_sub") }}
             <template #button>
@@ -121,7 +121,7 @@
           </DetailAction>
         </div>
       </BaseCard>
-      <BaseCard>
+      <BaseCard v-if="canAny('tools:run', 'tools:wipe')">
         <template #title>
           <BaseSectionHeader>
             <MdiAlert class="mr-2" />
@@ -133,35 +133,35 @@
           </BaseSectionHeader>
         </template>
         <div class="divide-y border-t px-6 pb-3">
-          <DetailAction @action="ensureAssetIDs">
+          <DetailAction v-if="canRunTools" @action="ensureAssetIDs">
             <template #title>{{ $t("tools.actions_set.ensure_ids") }}</template>
             {{ $t("tools.actions_set.ensure_ids_sub") }}
             <template #button> {{ $t("tools.actions_set.ensure_ids_button") }} </template>
           </DetailAction>
-          <DetailAction @action="ensureImportRefs">
+          <DetailAction v-if="canRunTools" @action="ensureImportRefs">
             <template #title>{{ $t("tools.actions_set.ensure_import_refs") }}</template>
             {{ $t("tools.actions_set.ensure_import_refs_sub") }}
             <template #button> {{ $t("tools.actions_set.ensure_import_refs_button") }} </template>
           </DetailAction>
-          <DetailAction @action="resetItemDateTimes">
+          <DetailAction v-if="canRunTools" @action="resetItemDateTimes">
             <template #title> {{ $t("tools.actions_set.zero_datetimes") }} </template>
             <!-- eslint-disable-next-line vue/no-v-html -->
             <div v-html="DOMPurify.sanitize($t('tools.actions_set.zero_datetimes_sub'))" />
             <template #button> {{ $t("tools.actions_set.zero_datetimes_button") }} </template>
           </DetailAction>
-          <DetailAction @action="setPrimaryPhotos">
+          <DetailAction v-if="canRunTools" @action="setPrimaryPhotos">
             <template #title> {{ $t("tools.actions_set.set_primary_photo") }} </template>
             <!-- eslint-disable-next-line vue/no-v-html -->
             <div v-html="DOMPurify.sanitize($t('tools.actions_set.set_primary_photo_sub'))" />
             <template #button> {{ $t("tools.actions_set.set_primary_photo_button") }} </template>
           </DetailAction>
-          <DetailAction @action="createMissingThumbnails">
+          <DetailAction v-if="canRunTools" @action="createMissingThumbnails">
             <template #title> {{ $t("tools.actions_set.create_missing_thumbnails") }} </template>
             <!-- eslint-disable-next-line vue/no-v-html -->
             <div v-html="DOMPurify.sanitize($t('tools.actions_set.create_missing_thumbnails_sub'))" />
             <template #button> {{ $t("tools.actions_set.create_missing_thumbnails_button") }} </template>
           </DetailAction>
-          <DetailAction @action="wipeInventory">
+          <DetailAction v-if="can('tools:wipe')" @action="wipeInventory">
             <template #title> {{ $t("tools.actions_set.wipe_inventory") }} </template>
             <!-- eslint-disable-next-line vue/no-v-html -->
             <div v-html="DOMPurify.sanitize($t('tools.actions_set.wipe_inventory_sub'))" />
@@ -203,6 +203,10 @@
   });
 
   const { openDialog } = useDialog();
+
+  const { can, canAny } = usePermissions();
+  // The bulk actions edit every entity, so the backend also requires entity:update.
+  const canRunTools = computed(() => can("tools:run") && can("entity:update"));
 
   const api = useUserApi();
   const confirm = useConfirm();

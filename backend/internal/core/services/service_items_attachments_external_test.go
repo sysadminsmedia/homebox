@@ -1,7 +1,6 @@
 package services
 
 import (
-	"context"
 	"testing"
 
 	"github.com/google/uuid"
@@ -14,17 +13,17 @@ import (
 func newExternalLinkEntity(t *testing.T) repo.EntityOut {
 	t.Helper()
 
-	loc, err := tRepos.Entities.CreateContainer(context.Background(), tGroup.ID, repo.EntityCreate{Name: fk.Str(10)})
+	loc, err := tRepos.Entities.CreateContainer(testCtx(), tGroup.ID, repo.EntityCreate{Name: fk.Str(10)})
 	require.NoError(t, err)
 
-	entity, err := tRepos.Entities.Create(context.Background(), tGroup.ID, repo.EntityCreate{
+	entity, err := tRepos.Entities.Create(testCtx(), tGroup.ID, repo.EntityCreate{
 		Name:     fk.Str(10),
 		ParentID: loc.ID,
 	})
 	require.NoError(t, err)
 
 	t.Cleanup(func() {
-		_ = tRepos.Entities.Delete(context.Background(), entity.ID)
+		_ = tRepos.Entities.Delete(testCtx(), entity.ID)
 	})
 
 	return entity
@@ -136,6 +135,6 @@ func TestEntityService_AttachmentDelete_ExternalLink(t *testing.T) {
 	err = svc.AttachmentDelete(tCtx, tCtx.GID, createdID)
 	require.NoError(t, err)
 
-	_, err = tRepos.Attachments.Get(context.Background(), tCtx.GID, createdID)
+	_, err = tRepos.Attachments.Get(testCtx(), tCtx.GID, createdID)
 	assert.Error(t, err)
 }

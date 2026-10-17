@@ -9,6 +9,7 @@ import (
 	"github.com/hay-kot/httpkit/server"
 	"github.com/rs/zerolog"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/privacy"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
 
@@ -64,6 +65,12 @@ func Errors(log zerolog.Logger) errchain.ErrorHandler {
 					} else {
 						code = requestError.Status
 					}
+				case errors.Is(err, privacy.Deny):
+					// ent privacy layer denial: the caller can address the
+					// resource but lacks the permission to act on it.
+					// (Invisible rows surface as NotFoundError instead.)
+					resp.Error = "Forbidden"
+					code = http.StatusForbidden
 				case ent.IsNotFound(err):
 					resp.Error = "Not Found"
 					code = http.StatusNotFound

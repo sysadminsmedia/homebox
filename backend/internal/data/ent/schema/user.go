@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/index"
 	"entgo.io/ent/schema/mixin"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authzrules"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
@@ -86,6 +87,9 @@ func (User) Edges() []ent.Edge {
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,
 			}),
+		// M:M membership in tenant-scoped permission groups.
+		edge.From("permission_groups", PermissionGroup.Type).
+			Ref("users"),
 	}
 }
 
@@ -118,4 +122,15 @@ func (g UserMixin) Edges() []ent.Edge {
 	}
 
 	return []ent.Edge{e}
+}
+
+// Policy of the User: mutations require the matching permission and are
+// pinned to the viewer's tenant; reads are filtered by Interceptors.
+func (User) Policy() ent.Policy {
+	return authzrules.NewPolicy(authzrules.UserMutationRule())
+}
+
+// Interceptors of the User scope every read to the request viewer.
+func (User) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{authzrules.FilterUser()}
 }

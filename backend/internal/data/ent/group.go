@@ -50,11 +50,15 @@ type GroupEdges struct {
 	EntityTemplates []*EntityTemplate `json:"entity_templates,omitempty"`
 	// Exports holds the value of the exports edge.
 	Exports []*Export `json:"exports,omitempty"`
+	// PermissionGroups holds the value of the permission_groups edge.
+	PermissionGroups []*PermissionGroup `json:"permission_groups,omitempty"`
+	// AccessGrants holds the value of the access_grants edge.
+	AccessGrants []*AccessGrant `json:"access_grants,omitempty"`
 	// UserGroups holds the value of the user_groups edge.
 	UserGroups []*UserGroup `json:"user_groups,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [9]bool
+	loadedTypes [11]bool
 }
 
 // UsersOrErr returns the Users value or an error if the edge
@@ -129,10 +133,28 @@ func (e GroupEdges) ExportsOrErr() ([]*Export, error) {
 	return nil, &NotLoadedError{edge: "exports"}
 }
 
+// PermissionGroupsOrErr returns the PermissionGroups value or an error if the edge
+// was not loaded in eager-loading.
+func (e GroupEdges) PermissionGroupsOrErr() ([]*PermissionGroup, error) {
+	if e.loadedTypes[8] {
+		return e.PermissionGroups, nil
+	}
+	return nil, &NotLoadedError{edge: "permission_groups"}
+}
+
+// AccessGrantsOrErr returns the AccessGrants value or an error if the edge
+// was not loaded in eager-loading.
+func (e GroupEdges) AccessGrantsOrErr() ([]*AccessGrant, error) {
+	if e.loadedTypes[9] {
+		return e.AccessGrants, nil
+	}
+	return nil, &NotLoadedError{edge: "access_grants"}
+}
+
 // UserGroupsOrErr returns the UserGroups value or an error if the edge
 // was not loaded in eager-loading.
 func (e GroupEdges) UserGroupsOrErr() ([]*UserGroup, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[10] {
 		return e.UserGroups, nil
 	}
 	return nil, &NotLoadedError{edge: "user_groups"}
@@ -245,6 +267,16 @@ func (_m *Group) QueryEntityTemplates() *EntityTemplateQuery {
 // QueryExports queries the "exports" edge of the Group entity.
 func (_m *Group) QueryExports() *ExportQuery {
 	return NewGroupClient(_m.config).QueryExports(_m)
+}
+
+// QueryPermissionGroups queries the "permission_groups" edge of the Group entity.
+func (_m *Group) QueryPermissionGroups() *PermissionGroupQuery {
+	return NewGroupClient(_m.config).QueryPermissionGroups(_m)
+}
+
+// QueryAccessGrants queries the "access_grants" edge of the Group entity.
+func (_m *Group) QueryAccessGrants() *AccessGrantQuery {
+	return NewGroupClient(_m.config).QueryAccessGrants(_m)
 }
 
 // QueryUserGroups queries the "user_groups" edge of the Group entity.

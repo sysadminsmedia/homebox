@@ -23,11 +23,15 @@ type AllRepos struct {
 	MaintEntry          *MaintenanceEntryRepository
 	Notifiers           *NotifierRepository
 	Exports             *ExportRepository
+	Permissions         *PermissionsRepository
 }
 
 // New constructs the repository container. searchEngine selects the free-text
 // search implementation; nil falls back to the default database engine.
-func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubConn string, thumbnail config.Thumbnail, searchEngine search.Engine) *AllRepos {
+// dialect is the ent dialect name ("postgres" or "sqlite3"); it lets the
+// permission/membership repositories take a PostgreSQL row lock when enforcing
+// the last-admin invariant.
+func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubConn string, thumbnail config.Thumbnail, searchEngine search.Engine, dialect string) *AllRepos {
 	if searchEngine == nil {
 		searchEngine = search.NewDatabaseEngine(db)
 	}
@@ -37,7 +41,7 @@ func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubC
 		AuthTokens:          &TokenRepository{db},
 		PasswordResetTokens: &PasswordResetTokenRepository{db},
 		APIKeys:             NewAPIKeyRepository(db),
-		Groups:              NewGroupRepository(db, attachments),
+		Groups:              NewGroupRepository(db, attachments, dialect),
 		Entities:            &EntityRepository{db, bus, attachments, searchEngine},
 		EntityTypes:         &EntityTypeRepository{db, bus},
 		EntityTemplates:     &EntityTemplatesRepository{db, bus},
@@ -46,5 +50,6 @@ func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubC
 		MaintEntry:          &MaintenanceEntryRepository{db},
 		Notifiers:           NewNotifierRepository(db),
 		Exports:             &ExportRepository{db},
+		Permissions:         &PermissionsRepository{db: db, dialect: dialect},
 	}
 }

@@ -8,6 +8,10 @@ func (_m *APIKey) GetID() uuid.UUID {
 	return _m.ID
 }
 
+func (_m *AccessGrant) GetID() uuid.UUID {
+	return _m.ID
+}
+
 func (_m *Attachment) GetID() uuid.UUID {
 	return _m.ID
 }
@@ -57,6 +61,10 @@ func (_m *Notifier) GetID() uuid.UUID {
 }
 
 func (_m *PasswordResetTokens) GetID() uuid.UUID {
+	return _m.ID
+}
+
+func (_m *PermissionGroup) GetID() uuid.UUID {
 	return _m.ID
 }
 

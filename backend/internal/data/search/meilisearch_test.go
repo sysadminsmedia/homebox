@@ -44,14 +44,14 @@ func newTestEntClient(t *testing.T) *ent.Client {
 	client, err := ent.Open("sqlite3", "file:"+uuid.NewString()+"?mode=memory&cache=shared&_fk=1&_time_format=sqlite")
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = client.Close() })
-	require.NoError(t, client.Schema.Create(context.Background()))
+	require.NoError(t, client.Schema.Create(testCtx()))
 	return client
 }
 
 func TestMeilisearchEngine_Integration(t *testing.T) {
 	cfg := meiliTestConfig(t)
 	db := newTestEntClient(t)
-	ctx := context.Background()
+	ctx := testCtx()
 
 	g1 := db.Group.Create().SetName("group-one").SaveX(ctx)
 	g2 := db.Group.Create().SetName("group-two").SaveX(ctx)
@@ -227,7 +227,7 @@ func TestMeilisearchEngine_Integration(t *testing.T) {
 func TestMeilisearchEngine_EventDrivenReindex(t *testing.T) {
 	cfg := meiliTestConfig(t)
 	db := newTestEntClient(t)
-	ctx := context.Background()
+	ctx := testCtx()
 
 	oldDebounce := meiliReindexDebounce
 	meiliReindexDebounce = 100 * time.Millisecond

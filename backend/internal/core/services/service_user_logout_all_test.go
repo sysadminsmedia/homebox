@@ -1,7 +1,6 @@
 package services
 
 import (
-	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,7 +14,7 @@ import (
 // both re-login and logout. (Concurrent sessions are intentional; this asserts the
 // pre-existing behavior that motivates a revoke-all control.)
 func TestSessionPersistenceGap(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	usr := newTestUserWithPassword(t, "persist-pw-1")
 
 	tok1, err := tSvc.User.createSessionToken(ctx, usr.ID, false)
@@ -35,7 +34,7 @@ func TestSessionPersistenceGap(t *testing.T) {
 // token can be unilaterally revoked. API keys live in a separate table and are
 // intentionally unaffected.
 func TestLogoutAll_RevokesEverySession(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	usr := newTestUserWithPassword(t, "logout-all-pw")
 
 	tok1, err := tSvc.User.createSessionToken(ctx, usr.ID, false)

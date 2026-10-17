@@ -1,7 +1,6 @@
 package services
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -17,7 +16,7 @@ import (
 // leaked key stays valid for the life of the account with no lifecycle event
 // that would ever retire it.
 func TestCreateAPIKey_DefaultsToBoundedLifetime(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	usr := newTestUserWithPassword(t, "api-key-default-ttl")
 
 	before := time.Now()
@@ -36,7 +35,7 @@ func TestCreateAPIKey_DefaultsToBoundedLifetime(t *testing.T) {
 // TestCreateAPIKey_HonorsExplicitExpiry ensures the default does not override a
 // caller-supplied expiry in either direction.
 func TestCreateAPIKey_HonorsExplicitExpiry(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	usr := newTestUserWithPassword(t, "api-key-explicit-ttl")
 
 	t.Run("LongerThanDefault", func(t *testing.T) {
@@ -59,7 +58,7 @@ func TestCreateAPIKey_HonorsExplicitExpiry(t *testing.T) {
 // TestCreateAPIKey_ExpiredKeyRejected confirms the stored expiry is actually
 // enforced at authentication time, so the default TTL has teeth.
 func TestCreateAPIKey_ExpiredKeyRejected(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	usr := newTestUserWithPassword(t, "api-key-expired")
 
 	past := time.Now().Add(-time.Hour).UTC()

@@ -13,6 +13,12 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/currencies"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+
+	// Stitch schema policies, interceptors, and hooks into the ent client.
+	// Without this import the privacy layer is not registered and every
+	// query fails with "uninitialized interceptor".
+	_ "github.com/sysadminsmedia/homebox/backend/internal/data/ent/runtime"
+
 	"github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/otel"

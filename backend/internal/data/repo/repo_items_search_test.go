@@ -1,7 +1,6 @@
 package repo
 
 import (
-	"context"
 	"testing"
 
 	"github.com/google/uuid"
@@ -13,7 +12,7 @@ import (
 // optional full update so tests can populate any searchable field.
 func useSearchableItem(t *testing.T, name string, mutate func(u *EntityUpdate)) EntityOut {
 	t.Helper()
-	ctx := context.Background()
+	ctx := testCtx()
 	itemET := useItemEntityType(t)
 
 	e, err := tRepos.Entities.Create(ctx, tGroup.ID, EntityCreate{
@@ -21,7 +20,7 @@ func useSearchableItem(t *testing.T, name string, mutate func(u *EntityUpdate)) 
 		EntityTypeID: itemET.ID,
 	})
 	require.NoError(t, err)
-	t.Cleanup(func() { _ = tRepos.Entities.Delete(context.Background(), e.ID) })
+	t.Cleanup(func() { _ = tRepos.Entities.Delete(testCtx(), e.ID) })
 
 	if mutate != nil {
 		u := EntityUpdate{
@@ -43,7 +42,7 @@ func useSearchableItem(t *testing.T, name string, mutate func(u *EntityUpdate)) 
 func searchIDs(t *testing.T, q EntityQuery) map[uuid.UUID]bool {
 	t.Helper()
 	q.Page, q.PageSize = -1, -1
-	res, err := tRepos.Entities.QueryByGroup(context.Background(), tGroup.ID, q)
+	res, err := tRepos.Entities.QueryByGroup(testCtx(), tGroup.ID, q)
 	require.NoError(t, err)
 
 	ids := make(map[uuid.UUID]bool, len(res.Items))
@@ -127,11 +126,11 @@ func TestEntitySearch_MatchesAcrossFields(t *testing.T) {
 }
 
 func TestEntitySearch_MatchesTagNames(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	tagOut, err := tRepos.Tags.Create(ctx, tGroup.ID, TagCreate{Name: "Электроника-поиск"})
 	require.NoError(t, err)
-	t.Cleanup(func() { _ = tRepos.Tags.delete(context.Background(), tagOut.ID) })
+	t.Cleanup(func() { _ = tRepos.Tags.delete(testCtx(), tagOut.ID) })
 
 	itemET := useItemEntityType(t)
 	tagged, err := tRepos.Entities.Create(ctx, tGroup.ID, EntityCreate{
@@ -140,7 +139,7 @@ func TestEntitySearch_MatchesTagNames(t *testing.T) {
 		TagIDs:       []uuid.UUID{tagOut.ID},
 	})
 	require.NoError(t, err)
-	t.Cleanup(func() { _ = tRepos.Entities.Delete(context.Background(), tagged.ID) })
+	t.Cleanup(func() { _ = tRepos.Entities.Delete(testCtx(), tagged.ID) })
 
 	untagged := useSearchableItem(t, "Untagged thing", nil)
 
@@ -179,7 +178,7 @@ func TestEntitySearch_LikeWildcardsAreLiteral(t *testing.T) {
 }
 
 func TestQueryByGroup_MatchAllTags(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	tags := useTags(t, 2)
 
 	itemET := useItemEntityType(t)
@@ -189,7 +188,7 @@ func TestQueryByGroup_MatchAllTags(t *testing.T) {
 		TagIDs:       []uuid.UUID{tags[0].ID, tags[1].ID},
 	})
 	require.NoError(t, err)
-	t.Cleanup(func() { _ = tRepos.Entities.Delete(context.Background(), both.ID) })
+	t.Cleanup(func() { _ = tRepos.Entities.Delete(testCtx(), both.ID) })
 
 	one, err := tRepos.Entities.Create(ctx, tGroup.ID, EntityCreate{
 		Name:         "Has one tag",
@@ -197,7 +196,7 @@ func TestQueryByGroup_MatchAllTags(t *testing.T) {
 		TagIDs:       []uuid.UUID{tags[0].ID},
 	})
 	require.NoError(t, err)
-	t.Cleanup(func() { _ = tRepos.Entities.Delete(context.Background(), one.ID) })
+	t.Cleanup(func() { _ = tRepos.Entities.Delete(testCtx(), one.ID) })
 
 	tagIDs := []uuid.UUID{tags[0].ID, tags[1].ID}
 

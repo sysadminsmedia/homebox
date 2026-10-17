@@ -4,7 +4,11 @@
   import { Button } from "@/components/ui/button";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
   import MdiDelete from "~icons/mdi/delete";
+  import MdiShieldAccount from "~icons/mdi/shield-account";
   import { toast } from "@/components/ui/sonner";
+  import { useDialog } from "@/components/ui/dialog-provider";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
+  import CollectionMemberPermissionsDialog from "~/components/Collection/MemberPermissionsDialog.vue";
   import type { UserSummary } from "~~/lib/api/types/data-contracts";
 
   definePageMeta({
@@ -18,6 +22,8 @@
   const api = useUserApi();
   const auth = useAuthContext();
   const confirm = useConfirm();
+  const { can } = usePermissions();
+  const { openDialog } = useDialog();
 
   const loading = ref(true);
   const members = ref<UserSummary[]>([]);
@@ -84,6 +90,11 @@
     }
   };
 
+  const handlePermissions = (user: UserSummary) => {
+    if (!user?.id) return;
+    openDialog(DialogID.MemberPermissions, { params: { userId: user.id } });
+  };
+
   onMounted(() => {
     loadMembers();
   });
@@ -91,6 +102,8 @@
 
 <template>
   <div class="space-y-4">
+    <CollectionMemberPermissionsDialog />
+
     <div v-if="loading" class="rounded-md border bg-card p-4 text-sm text-muted-foreground">
       {{ $t("global.loading") }}
     </div>
@@ -114,9 +127,24 @@
               <TableCell>{{ user.name }}</TableCell>
               <TableCell>{{ user.email }}</TableCell>
               <TableCell>
-                <div class="ml-auto">
+                <div class="ml-auto flex justify-end gap-1">
                   <TooltipProvider :delay-duration="0">
-                    <Tooltip>
+                    <Tooltip v-if="can('permissions:manage')">
+                      <TooltipTrigger as-child>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          :aria-label="$t('collection.members.permissions')"
+                          @click="handlePermissions(user)"
+                        >
+                          <MdiShieldAccount class="size-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {{ $t("collection.members.permissions") }}
+                      </TooltipContent>
+                    </Tooltip>
+                    <Tooltip v-if="can('members:manage')">
                       <TooltipTrigger as-child>
                         <Button
                           variant="destructive"

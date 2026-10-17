@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -23,6 +24,8 @@ type UserGroup struct {
 	GroupID uuid.UUID `json:"group_id,omitempty"`
 	// Role holds the value of the "role" field.
 	Role usergroup.Role `json:"role,omitempty"`
+	// Permissions holds the value of the "permissions" field.
+	Permissions []string `json:"permissions,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserGroupQuery when eager-loading is set.
 	Edges        UserGroupEdges `json:"edges"`
@@ -67,6 +70,8 @@ func (*UserGroup) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case usergroup.FieldPermissions:
+			values[i] = new([]byte)
 		case usergroup.FieldRole:
 			values[i] = new(sql.NullString)
 		case usergroup.FieldUserID, usergroup.FieldGroupID:
@@ -103,6 +108,14 @@ func (_m *UserGroup) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field role", values[i])
 			} else if value.Valid {
 				_m.Role = usergroup.Role(value.String)
+			}
+		case usergroup.FieldPermissions:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field permissions", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.Permissions); err != nil {
+					return fmt.Errorf("unmarshal field permissions: %w", err)
+				}
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -157,6 +170,9 @@ func (_m *UserGroup) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("role=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Role))
+	builder.WriteString(", ")
+	builder.WriteString("permissions=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Permissions))
 	builder.WriteByte(')')
 	return builder.String()
 }

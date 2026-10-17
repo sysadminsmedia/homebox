@@ -1,7 +1,6 @@
 package services
 
 import (
-	"context"
 	"encoding/json"
 	"testing"
 
@@ -98,7 +97,7 @@ func TestCoerceBoolColumnsRejectsGarbage(t *testing.T) {
 // database so a driver change can't silently turn it into a no-op, which
 // would quietly restore the broken behaviour.
 func TestBoolColumnsSQLite(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	db := tClient.Sql()
 
 	cols, err := boolColumns(ctx, db, "sqlite3", "entities")
@@ -113,6 +112,6 @@ func TestBoolColumnsSQLite(t *testing.T) {
 func TestBoolColumnsRejectsBadIdentifier(t *testing.T) {
 	t.Parallel()
 
-	_, err := boolColumns(context.Background(), tClient.Sql(), "sqlite3", "entities; DROP TABLE entities")
+	_, err := boolColumns(testCtx(), tClient.Sql(), "sqlite3", "entities; DROP TABLE entities")
 	require.Error(t, err)
 }

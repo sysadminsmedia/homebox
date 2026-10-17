@@ -1,7 +1,6 @@
 package repo
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -17,7 +16,7 @@ import (
 // the gap between the lookup and the claim, the UPDATE must still refuse to
 // burn it.
 func TestPasswordResetTokens_AtomicClaim_RejectsExpired(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	// Create a token that's already expired by the time we try to claim it.
 	tok, err := tRepos.PasswordResetTokens.Create(ctx, tUser.ID, []byte("hash-1-claim-test"), time.Now().Add(-time.Minute))
@@ -37,7 +36,7 @@ func TestPasswordResetTokens_AtomicClaim_RejectsExpired(t *testing.T) {
 }
 
 func TestPasswordResetTokens_ConsumeAndChangePassword_RejectsExpired(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	tok, err := tRepos.PasswordResetTokens.Create(ctx, tUser.ID, []byte("hash-2-consume-test"), time.Now().Add(-time.Minute))
 	require.NoError(t, err)

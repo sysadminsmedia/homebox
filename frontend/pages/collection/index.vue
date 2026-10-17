@@ -10,6 +10,7 @@
   import MdiBell from "~icons/mdi/bell";
   import MdiCog from "~icons/mdi/cog";
   import MdiShape from "~icons/mdi/shape";
+  import MdiShieldAccount from "~icons/mdi/shield-account";
   import MdiWrench from "~icons/mdi/wrench";
   import MdiLogout from "~icons/mdi/logout";
   import MdiDelete from "~icons/mdi/delete";
@@ -30,44 +31,61 @@
 
   const currentPath = computed(() => route.path);
 
-  const tabs = computed(() => [
-    {
-      id: "members",
-      label: "collection.tabs.members",
-      to: "/collection/members",
-      icon: MdiAccountMultiple,
-    },
-    {
-      id: "invites",
-      label: "collection.tabs.invites",
-      to: "/collection/invites",
-      icon: MdiEmailPlus,
-    },
-    {
-      id: "notifiers",
-      label: "collection.tabs.notifiers",
-      to: "/collection/notifiers",
-      icon: MdiBell,
-    },
-    {
-      id: "settings",
-      label: "collection.tabs.settings",
-      to: "/collection/settings",
-      icon: MdiCog,
-    },
-    {
-      id: "entity-types",
-      label: "collection.tabs.entity_types",
-      to: "/collection/entity-types",
-      icon: MdiShape,
-    },
-    {
-      id: "tools",
-      label: "collection.tabs.tools",
-      to: "/collection/tools",
-      icon: MdiWrench,
-    },
-  ]);
+  const { can, canAny } = usePermissions();
+
+  const tabs = computed(() =>
+    [
+      {
+        id: "members",
+        label: "collection.tabs.members",
+        to: "/collection/members",
+        icon: MdiAccountMultiple,
+        visible: true,
+      },
+      {
+        id: "invites",
+        label: "collection.tabs.invites",
+        to: "/collection/invites",
+        icon: MdiEmailPlus,
+        visible: can("members:manage"),
+      },
+      {
+        id: "permission-groups",
+        label: "collection.tabs.permission_groups",
+        to: "/collection/permission-groups",
+        icon: MdiShieldAccount,
+        visible: can("permissions:manage"),
+      },
+      {
+        id: "notifiers",
+        label: "collection.tabs.notifiers",
+        to: "/collection/notifiers",
+        icon: MdiBell,
+        visible: can("notifier:manage"),
+      },
+      {
+        id: "settings",
+        label: "collection.tabs.settings",
+        to: "/collection/settings",
+        icon: MdiCog,
+        visible: can("settings:manage"),
+      },
+      {
+        id: "entity-types",
+        label: "collection.tabs.entity_types",
+        to: "/collection/entity-types",
+        icon: MdiShape,
+        visible: can("entitytype:manage"),
+      },
+      {
+        id: "tools",
+        label: "collection.tabs.tools",
+        to: "/collection/tools",
+        icon: MdiWrench,
+        visible: canAny("tools:run", "tools:wipe", "data:import", "data:export", "label:print", "report:generate"),
+      },
+    ].filter(tab => tab.visible)
+  );
 
   const { selectedCollection, load: reloadCollections } = useCollections();
 
@@ -239,6 +257,7 @@
 
         <div id="collection-header-actions" class="ml-auto flex items-center gap-1">
           <Button
+            v-if="!isOnlyMember || can('collection:delete')"
             variant="outline"
             size="icon"
             class="size-8"

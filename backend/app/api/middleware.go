@@ -14,6 +14,7 @@ import (
 	"github.com/rs/zerolog/log"
 	v1 "github.com/sysadminsmedia/homebox/backend/app/api/handlers/v1"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authz"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
@@ -252,6 +253,11 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 
 		r = r.WithContext(context.WithValue(spanCtx, hashedToken, requestToken))
 
+		// Credential lookups run before any viewer exists; the presented token
+		// is the authorization, so they bypass the privacy layer (as GetSelf
+		// does internally). This context is never attached to the request.
+		authCtx := authz.NewSystemContext(r.Context())
+
 		usr, err := a.services.User.GetSelf(r.Context(), requestToken)
 		if err != nil && !ent.IsNotFound(err) {
 			recordMwSpanError(span, err)
@@ -265,7 +271,7 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 		// sent via cookie or the Authorization header, except on routes that
 		// opt in with mwAllowQuerySessionToken (WebSocket upgrades).
 		if err == nil && tokenSource == "query" && r.Context().Value(allowQuerySessionToken) == nil {
-			roles, rolesErr := a.repos.AuthTokens.GetRoles(r.Context(), requestToken)
+			roles, rolesErr := a.repos.AuthTokens.GetRoles(authCtx, requestToken)
 			if rolesErr != nil {
 				recordMwSpanError(span, rolesErr)
 				span.SetAttributes(attribute.String("auth.outcome", "lookup_error"))
@@ -289,7 +295,7 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 			}
 
 			tokenHash := hasher.HashAPIKey(requestToken)
-			keyUsr, keyID, keyErr := a.repos.APIKeys.GetUserFromToken(r.Context(), tokenHash)
+			keyUsr, keyID, keyErr := a.repos.APIKeys.GetUserFromToken(authCtx, tokenHash)
 			if keyErr != nil {
 				if ent.IsNotFound(keyErr) {
 					span.SetAttributes(attribute.String("auth.outcome", "token_not_found"))
@@ -304,7 +310,7 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 
 			// Best-effort last_used_at update; failure must not break the
 			// request, but we want it surfaced in logs.
-			if touchErr := a.repos.APIKeys.TouchLastUsed(r.Context(), keyID, time.Now()); touchErr != nil {
+			if touchErr := a.repos.APIKeys.TouchLastUsed(authCtx, keyID, time.Now()); touchErr != nil {
 				log.Warn().Err(touchErr).Str("api_key.id", keyID.String()).Msg("failed to update api key last_used_at")
 			}
 		}
@@ -398,48 +404,74 @@ func (a *app) mwTenant(next errchain.Handler) errchain.Handler {
 	})
 }
 
-// mwGroupOwner rejects requests from users who are not the owner of the tenant
-// group they are acting on. Membership in a group is enough to read and mutate
-// its inventory, but collection administration — renaming it, minting or
-// revoking invitations, removing members, deleting the whole collection — is
-// reserved for the owner. Without this, any invited member could take over or
-// destroy a shared collection.
+// mwViewer resolves the caller's effective permission set for the active
+// tenant (direct membership permissions ∪ permission-group permissions) and
+// attaches it to the request context as an authz.Viewer. The ent privacy
+// layer reads the viewer from the context for every query and mutation.
 //
 // WARNING: This middleware _MUST_ be called after mwAuthToken and mwTenant.
-func (a *app) mwGroupOwner(next errchain.Handler) errchain.Handler {
+func (a *app) mwViewer(next errchain.Handler) errchain.Handler {
 	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
-		spanCtx, span := mwTracer().Start(r.Context(), "middleware.mwGroupOwner")
+		spanCtx, span := mwTracer().Start(r.Context(), "middleware.mwViewer")
 		defer span.End()
 
-		auth := services.NewContext(spanCtx)
-		if auth.User == nil {
+		user := services.UseUserCtx(spanCtx)
+		if user == nil {
 			err := errors.New("user context not found")
 			recordMwSpanError(span, err)
-			span.SetAttributes(attribute.String("owner.outcome", "no_user_ctx"))
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		tenantID := services.UseTenantCtx(spanCtx)
+		if tenantID == uuid.Nil {
+			err := errors.New("tenant context not found")
+			recordMwSpanError(span, err)
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
-		isOwner, err := a.repos.Groups.IsOwnerOf(spanCtx, auth.UID, auth.GID)
+		viewer, err := a.repos.Permissions.ResolveViewer(spanCtx, user.ID, tenantID, user.IsSuperuser)
 		if err != nil {
 			recordMwSpanError(span, err)
-			span.SetAttributes(attribute.String("owner.outcome", "lookup_error"))
-			return err
+			if ent.IsNotFound(err) {
+				// Membership disappeared between mwTenant and here.
+				return validate.NewRequestError(errors.New("user does not have access to the requested tenant"), http.StatusForbidden)
+			}
+			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
 		span.SetAttributes(
-			attribute.String("user.id", auth.UID.String()),
-			attribute.String("tenant.id", auth.GID.String()),
-			attribute.Bool("group.is_owner", isOwner),
+			attribute.String("user.id", user.ID.String()),
+			attribute.String("tenant.id", tenantID.String()),
+			attribute.Int("viewer.permissions.count", len(viewer.Perms)),
+			attribute.Int("viewer.permission_groups.count", len(viewer.PermGroupIDs)),
+			attribute.Bool("viewer.superuser", viewer.Superuser),
 		)
 
-		if !isOwner {
-			span.SetAttributes(attribute.String("owner.outcome", "forbidden"))
-			return validate.NewRequestError(services.ErrNotGroupOwner, http.StatusForbidden)
-		}
-
-		span.SetAttributes(attribute.String("owner.outcome", "ok"))
-		return next.ServeHTTP(w, r.WithContext(spanCtx))
+		r = r.WithContext(authz.NewContext(spanCtx, viewer))
+		return next.ServeHTTP(w, r)
 	})
+}
+
+// mwPermission fast-fails requests whose viewer lacks a tenant-wide
+// permission, returning a clean 403 before the handler runs. It is purely a
+// UX nicety on management routes: the ent privacy layer remains the source
+// of truth, and this middleware must never be the only protection. Do not
+// apply it to entity CRUD routes — row-level grants apply there and the
+// tenant-wide permission is not decisive.
+//
+// WARNING: This middleware _MUST_ be called after mwViewer.
+func (a *app) mwPermission(perm authz.Permission) errchain.Middleware {
+	return func(next errchain.Handler) errchain.Handler {
+		return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+			v := authz.FromContext(r.Context())
+			if v == nil {
+				return validate.NewRequestError(errors.New("viewer context not found"), http.StatusInternalServerError)
+			}
+			if !v.Has(perm) {
+				return validate.NewRequestError(errors.New("missing required permission: "+string(perm)), http.StatusForbidden)
+			}
+			return next.ServeHTTP(w, r)
+		})
+	}
 }
 
 // authRateLimiter tracks authentication attempts per client and applies a backoff when limits are exceeded.

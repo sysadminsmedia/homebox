@@ -470,6 +470,52 @@ func HasExportsWith(preds ...predicate.Export) predicate.Group {
 	})
 }
 
+// HasPermissionGroups applies the HasEdge predicate on the "permission_groups" edge.
+func HasPermissionGroups() predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PermissionGroupsTable, PermissionGroupsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPermissionGroupsWith applies the HasEdge predicate on the "permission_groups" edge with a given conditions (other predicates).
+func HasPermissionGroupsWith(preds ...predicate.PermissionGroup) predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := newPermissionGroupsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasAccessGrants applies the HasEdge predicate on the "access_grants" edge.
+func HasAccessGrants() predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, AccessGrantsTable, AccessGrantsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAccessGrantsWith applies the HasEdge predicate on the "access_grants" edge with a given conditions (other predicates).
+func HasAccessGrantsWith(preds ...predicate.AccessGrant) predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := newAccessGrantsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasUserGroups applies the HasEdge predicate on the "user_groups" edge.
 func HasUserGroups() predicate.Group {
 	return predicate.Group(func(s *sql.Selector) {

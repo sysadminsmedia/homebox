@@ -65,6 +65,12 @@
       return;
     }
 
+    if (!data.capabilities?.includes("update")) {
+      toast.error(t("items.toast.no_edit_permission"));
+      navigateTo(`/item/${itemId.value}`);
+      return;
+    }
+
     if (data.parent && data.parent.entityType && !data.parent.entityType.isLocation) {
       parent.value = data.parent;
     }

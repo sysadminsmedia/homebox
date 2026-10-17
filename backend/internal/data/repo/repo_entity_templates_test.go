@@ -1,7 +1,6 @@
 package repo
 
 import (
-	"context"
 	"testing"
 
 	"github.com/google/uuid"
@@ -33,24 +32,24 @@ func templateFactory() EntityTemplateCreate {
 func TestEntityTemplatesRepository_Create(t *testing.T) {
 	data := templateFactory()
 
-	result, err := tRepos.EntityTemplates.Create(context.Background(), tGroup.ID, data)
+	result, err := tRepos.EntityTemplates.Create(testCtx(), tGroup.ID, data)
 	require.NoError(t, err)
 	assert.NotEqual(t, uuid.Nil, result.ID)
 	assert.Equal(t, data.Name, result.Name)
 	assert.Equal(t, data.Description, result.Description)
 
 	// Cleanup
-	err = tRepos.EntityTemplates.Delete(context.Background(), tGroup.ID, result.ID)
+	err = tRepos.EntityTemplates.Delete(testCtx(), tGroup.ID, result.ID)
 	require.NoError(t, err)
 }
 
 func TestEntityTemplatesRepository_GetAll(t *testing.T) {
 	data := templateFactory()
 
-	created, err := tRepos.EntityTemplates.Create(context.Background(), tGroup.ID, data)
+	created, err := tRepos.EntityTemplates.Create(testCtx(), tGroup.ID, data)
 	require.NoError(t, err)
 
-	results, err := tRepos.EntityTemplates.GetAll(context.Background(), tGroup.ID)
+	results, err := tRepos.EntityTemplates.GetAll(testCtx(), tGroup.ID)
 	require.NoError(t, err)
 	assert.GreaterOrEqual(t, len(results), 1)
 
@@ -64,31 +63,31 @@ func TestEntityTemplatesRepository_GetAll(t *testing.T) {
 	assert.True(t, found)
 
 	// Cleanup
-	err = tRepos.EntityTemplates.Delete(context.Background(), tGroup.ID, created.ID)
+	err = tRepos.EntityTemplates.Delete(testCtx(), tGroup.ID, created.ID)
 	require.NoError(t, err)
 }
 
 func TestEntityTemplatesRepository_GetOne(t *testing.T) {
 	data := templateFactory()
 
-	created, err := tRepos.EntityTemplates.Create(context.Background(), tGroup.ID, data)
+	created, err := tRepos.EntityTemplates.Create(testCtx(), tGroup.ID, data)
 	require.NoError(t, err)
 
-	result, err := tRepos.EntityTemplates.GetOne(context.Background(), tGroup.ID, created.ID)
+	result, err := tRepos.EntityTemplates.GetOne(testCtx(), tGroup.ID, created.ID)
 	require.NoError(t, err)
 	assert.Equal(t, created.ID, result.ID)
 	assert.Equal(t, data.Name, result.Name)
 	assert.Equal(t, data.Description, result.Description)
 
 	// Cleanup
-	err = tRepos.EntityTemplates.Delete(context.Background(), tGroup.ID, created.ID)
+	err = tRepos.EntityTemplates.Delete(testCtx(), tGroup.ID, created.ID)
 	require.NoError(t, err)
 }
 
 func TestEntityTemplatesRepository_Update(t *testing.T) {
 	data := templateFactory()
 
-	created, err := tRepos.EntityTemplates.Create(context.Background(), tGroup.ID, data)
+	created, err := tRepos.EntityTemplates.Create(testCtx(), tGroup.ID, data)
 	require.NoError(t, err)
 
 	updateData := EntityTemplateUpdate{
@@ -98,26 +97,26 @@ func TestEntityTemplatesRepository_Update(t *testing.T) {
 		Notes:       fk.Str(50),
 	}
 
-	result, err := tRepos.EntityTemplates.Update(context.Background(), tGroup.ID, updateData)
+	result, err := tRepos.EntityTemplates.Update(testCtx(), tGroup.ID, updateData)
 	require.NoError(t, err)
 	assert.Equal(t, created.ID, result.ID)
 	assert.Equal(t, updateData.Name, result.Name)
 	assert.Equal(t, updateData.Description, result.Description)
 
 	// Cleanup
-	err = tRepos.EntityTemplates.Delete(context.Background(), tGroup.ID, created.ID)
+	err = tRepos.EntityTemplates.Delete(testCtx(), tGroup.ID, created.ID)
 	require.NoError(t, err)
 }
 
 func TestEntityTemplatesRepository_Delete(t *testing.T) {
 	data := templateFactory()
 
-	created, err := tRepos.EntityTemplates.Create(context.Background(), tGroup.ID, data)
+	created, err := tRepos.EntityTemplates.Create(testCtx(), tGroup.ID, data)
 	require.NoError(t, err)
 
-	err = tRepos.EntityTemplates.Delete(context.Background(), tGroup.ID, created.ID)
+	err = tRepos.EntityTemplates.Delete(testCtx(), tGroup.ID, created.ID)
 	require.NoError(t, err)
 
-	_, err = tRepos.EntityTemplates.GetOne(context.Background(), tGroup.ID, created.ID)
+	_, err = tRepos.EntityTemplates.GetOne(testCtx(), tGroup.ID, created.ID)
 	require.Error(t, err)
 }

@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authzrules"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
@@ -50,4 +51,15 @@ func (AuthTokens) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("token"),
 	}
+}
+
+// Policy of the AuthTokens: mutations require the matching permission and are
+// pinned to the viewer's tenant; reads are filtered by Interceptors.
+func (AuthTokens) Policy() ent.Policy {
+	return authzrules.NewPolicy(authzrules.AuthTokensMutationRule())
+}
+
+// Interceptors of the AuthTokens scope every read to the request viewer.
+func (AuthTokens) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{authzrules.FilterAuthTokens()}
 }
