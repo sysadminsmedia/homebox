@@ -4,6 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+	"github.com/google/uuid"
 
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
@@ -51,6 +52,17 @@ func (Export) Fields() []ent.Field {
 		field.String("error").
 			MaxLen(1000).
 			Optional(),
+		// origin separates on-demand exports (subject to the 7-day sweep)
+		// from scheduled backups (pruned by the destination's retention).
+		field.Enum("origin").
+			Values("manual", "scheduled").
+			Default("manual"),
+		// destination_id points at the backup destination holding the
+		// artifact; nil means the primary storage. A plain column rather than
+		// an edge so deleting a destination never cascades into history.
+		field.UUID("destination_id", uuid.UUID{}).
+			Optional().
+			Nillable(),
 	}
 }
 

@@ -41,3 +41,7 @@ HomeBox supports OpenID Connect (OIDC) authentication, allowing users to log in 
 
 > [!NOTE]
 > If you’re deploying without docker containers, you can use command line arguments to configure HomeBox. Run `homebox --help` for more information.
+
+## Backing up to your Google Drive or OneDrive
+If your users sign in with Google or Microsoft, Homebox can offer to store scheduled backups in that account's Drive or
+OneDrive. This needs a separate OAuth app for backups, not your login app. See [Backups](./backups#using-your-google-or-microsoft-login).

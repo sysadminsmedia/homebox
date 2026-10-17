@@ -34,6 +34,10 @@ const (
 	FieldSizeBytes = "size_bytes"
 	// FieldError holds the string denoting the error field in the database.
 	FieldError = "error"
+	// FieldOrigin holds the string denoting the origin field in the database.
+	FieldOrigin = "origin"
+	// FieldDestinationID holds the string denoting the destination_id field in the database.
+	FieldDestinationID = "destination_id"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
 	// Table holds the table name of the export in the database.
@@ -59,6 +63,8 @@ var Columns = []string{
 	FieldArtifactPath,
 	FieldSizeBytes,
 	FieldError,
+	FieldOrigin,
+	FieldDestinationID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -142,6 +148,32 @@ func StatusValidator(s Status) error {
 	}
 }
 
+// Origin defines the type for the "origin" enum field.
+type Origin string
+
+// OriginManual is the default value of the Origin enum.
+const DefaultOrigin = OriginManual
+
+// Origin values.
+const (
+	OriginManual    Origin = "manual"
+	OriginScheduled Origin = "scheduled"
+)
+
+func (o Origin) String() string {
+	return string(o)
+}
+
+// OriginValidator is a validator for the "origin" field enum values. It is called by the builders before save.
+func OriginValidator(o Origin) error {
+	switch o {
+	case OriginManual, OriginScheduled:
+		return nil
+	default:
+		return fmt.Errorf("export: invalid enum value for origin field: %q", o)
+	}
+}
+
 // OrderOption defines the ordering options for the Export queries.
 type OrderOption func(*sql.Selector)
 
@@ -193,6 +225,16 @@ func BySizeBytes(opts ...sql.OrderTermOption) OrderOption {
 // ByError orders the results by the error field.
 func ByError(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldError, opts...).ToFunc()
+}
+
+// ByOrigin orders the results by the origin field.
+func ByOrigin(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOrigin, opts...).ToFunc()
+}
+
+// ByDestinationID orders the results by the destination_id field.
+func ByDestinationID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDestinationID, opts...).ToFunc()
 }
 
 // ByGroupField orders the results by group field.

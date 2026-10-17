@@ -20,6 +20,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/backupdestination"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
@@ -49,6 +50,8 @@ type Client struct {
 	AuthRoles *AuthRolesClient
 	// AuthTokens is the client for interacting with the AuthTokens builders.
 	AuthTokens *AuthTokensClient
+	// BackupDestination is the client for interacting with the BackupDestination builders.
+	BackupDestination *BackupDestinationClient
 	// Entity is the client for interacting with the Entity builders.
 	Entity *EntityClient
 	// EntityField is the client for interacting with the EntityField builders.
@@ -92,6 +95,7 @@ func (c *Client) init() {
 	c.Attachment = NewAttachmentClient(c.config)
 	c.AuthRoles = NewAuthRolesClient(c.config)
 	c.AuthTokens = NewAuthTokensClient(c.config)
+	c.BackupDestination = NewBackupDestinationClient(c.config)
 	c.Entity = NewEntityClient(c.config)
 	c.EntityField = NewEntityFieldClient(c.config)
 	c.EntityTemplate = NewEntityTemplateClient(c.config)
@@ -202,6 +206,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Attachment:           NewAttachmentClient(cfg),
 		AuthRoles:            NewAuthRolesClient(cfg),
 		AuthTokens:           NewAuthTokensClient(cfg),
+		BackupDestination:    NewBackupDestinationClient(cfg),
 		Entity:               NewEntityClient(cfg),
 		EntityField:          NewEntityFieldClient(cfg),
 		EntityTemplate:       NewEntityTemplateClient(cfg),
@@ -239,6 +244,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Attachment:           NewAttachmentClient(cfg),
 		AuthRoles:            NewAuthRolesClient(cfg),
 		AuthTokens:           NewAuthTokensClient(cfg),
+		BackupDestination:    NewBackupDestinationClient(cfg),
 		Entity:               NewEntityClient(cfg),
 		EntityField:          NewEntityFieldClient(cfg),
 		EntityTemplate:       NewEntityTemplateClient(cfg),
@@ -282,10 +288,10 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.APIKey, c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity, c.EntityField,
-		c.EntityTemplate, c.EntityType, c.Export, c.Group, c.GroupInvitationToken,
-		c.MaintenanceEntry, c.Notifier, c.PasswordResetTokens, c.Tag, c.TemplateField,
-		c.User, c.UserGroup,
+		c.APIKey, c.Attachment, c.AuthRoles, c.AuthTokens, c.BackupDestination,
+		c.Entity, c.EntityField, c.EntityTemplate, c.EntityType, c.Export, c.Group,
+		c.GroupInvitationToken, c.MaintenanceEntry, c.Notifier, c.PasswordResetTokens,
+		c.Tag, c.TemplateField, c.User, c.UserGroup,
 	} {
 		n.Use(hooks...)
 	}
@@ -295,10 +301,10 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.APIKey, c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity, c.EntityField,
-		c.EntityTemplate, c.EntityType, c.Export, c.Group, c.GroupInvitationToken,
-		c.MaintenanceEntry, c.Notifier, c.PasswordResetTokens, c.Tag, c.TemplateField,
-		c.User, c.UserGroup,
+		c.APIKey, c.Attachment, c.AuthRoles, c.AuthTokens, c.BackupDestination,
+		c.Entity, c.EntityField, c.EntityTemplate, c.EntityType, c.Export, c.Group,
+		c.GroupInvitationToken, c.MaintenanceEntry, c.Notifier, c.PasswordResetTokens,
+		c.Tag, c.TemplateField, c.User, c.UserGroup,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -315,6 +321,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.AuthRoles.mutate(ctx, m)
 	case *AuthTokensMutation:
 		return c.AuthTokens.mutate(ctx, m)
+	case *BackupDestinationMutation:
+		return c.BackupDestination.mutate(ctx, m)
 	case *EntityMutation:
 		return c.Entity.mutate(ctx, m)
 	case *EntityFieldMutation:
@@ -973,6 +981,155 @@ func (c *AuthTokensClient) mutate(ctx context.Context, m *AuthTokensMutation) (V
 		return (&AuthTokensDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown AuthTokens mutation op: %q", m.Op())
+	}
+}
+
+// BackupDestinationClient is a client for the BackupDestination schema.
+type BackupDestinationClient struct {
+	config
+}
+
+// NewBackupDestinationClient returns a client for the BackupDestination from the given config.
+func NewBackupDestinationClient(c config) *BackupDestinationClient {
+	return &BackupDestinationClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `backupdestination.Hooks(f(g(h())))`.
+func (c *BackupDestinationClient) Use(hooks ...Hook) {
+	c.hooks.BackupDestination = append(c.hooks.BackupDestination, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `backupdestination.Intercept(f(g(h())))`.
+func (c *BackupDestinationClient) Intercept(interceptors ...Interceptor) {
+	c.inters.BackupDestination = append(c.inters.BackupDestination, interceptors...)
+}
+
+// Create returns a builder for creating a BackupDestination entity.
+func (c *BackupDestinationClient) Create() *BackupDestinationCreate {
+	mutation := newBackupDestinationMutation(c.config, OpCreate)
+	return &BackupDestinationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of BackupDestination entities.
+func (c *BackupDestinationClient) CreateBulk(builders ...*BackupDestinationCreate) *BackupDestinationCreateBulk {
+	return &BackupDestinationCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *BackupDestinationClient) MapCreateBulk(slice any, setFunc func(*BackupDestinationCreate, int)) *BackupDestinationCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &BackupDestinationCreateBulk{err: fmt.Errorf("calling to BackupDestinationClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*BackupDestinationCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &BackupDestinationCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for BackupDestination.
+func (c *BackupDestinationClient) Update() *BackupDestinationUpdate {
+	mutation := newBackupDestinationMutation(c.config, OpUpdate)
+	return &BackupDestinationUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *BackupDestinationClient) UpdateOne(_m *BackupDestination) *BackupDestinationUpdateOne {
+	mutation := newBackupDestinationMutation(c.config, OpUpdateOne, withBackupDestination(_m))
+	return &BackupDestinationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *BackupDestinationClient) UpdateOneID(id uuid.UUID) *BackupDestinationUpdateOne {
+	mutation := newBackupDestinationMutation(c.config, OpUpdateOne, withBackupDestinationID(id))
+	return &BackupDestinationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for BackupDestination.
+func (c *BackupDestinationClient) Delete() *BackupDestinationDelete {
+	mutation := newBackupDestinationMutation(c.config, OpDelete)
+	return &BackupDestinationDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *BackupDestinationClient) DeleteOne(_m *BackupDestination) *BackupDestinationDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *BackupDestinationClient) DeleteOneID(id uuid.UUID) *BackupDestinationDeleteOne {
+	builder := c.Delete().Where(backupdestination.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &BackupDestinationDeleteOne{builder}
+}
+
+// Query returns a query builder for BackupDestination.
+func (c *BackupDestinationClient) Query() *BackupDestinationQuery {
+	return &BackupDestinationQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeBackupDestination},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a BackupDestination entity by its id.
+func (c *BackupDestinationClient) Get(ctx context.Context, id uuid.UUID) (*BackupDestination, error) {
+	return c.Query().Where(backupdestination.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *BackupDestinationClient) GetX(ctx context.Context, id uuid.UUID) *BackupDestination {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryGroup queries the group edge of a BackupDestination.
+func (c *BackupDestinationClient) QueryGroup(_m *BackupDestination) *GroupQuery {
+	query := (&GroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(backupdestination.Table, backupdestination.FieldID, id),
+			sqlgraph.To(group.Table, group.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, backupdestination.GroupTable, backupdestination.GroupColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *BackupDestinationClient) Hooks() []Hook {
+	return c.hooks.BackupDestination
+}
+
+// Interceptors returns the client interceptors.
+func (c *BackupDestinationClient) Interceptors() []Interceptor {
+	return c.inters.BackupDestination
+}
+
+func (c *BackupDestinationClient) mutate(ctx context.Context, m *BackupDestinationMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&BackupDestinationCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&BackupDestinationUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&BackupDestinationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&BackupDestinationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown BackupDestination mutation op: %q", m.Op())
 	}
 }
 
@@ -2158,6 +2315,22 @@ func (c *GroupClient) QueryExports(_m *Group) *ExportQuery {
 			sqlgraph.From(group.Table, group.FieldID, id),
 			sqlgraph.To(export.Table, export.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, group.ExportsTable, group.ExportsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryBackupDestinations queries the backup_destinations edge of a Group.
+func (c *GroupClient) QueryBackupDestinations(_m *Group) *BackupDestinationQuery {
+	query := (&BackupDestinationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, id),
+			sqlgraph.To(backupdestination.Table, backupdestination.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.BackupDestinationsTable, group.BackupDestinationsColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -3512,13 +3685,15 @@ func (c *UserGroupClient) mutate(ctx context.Context, m *UserGroupMutation) (Val
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		APIKey, Attachment, AuthRoles, AuthTokens, Entity, EntityField, EntityTemplate,
-		EntityType, Export, Group, GroupInvitationToken, MaintenanceEntry, Notifier,
-		PasswordResetTokens, Tag, TemplateField, User, UserGroup []ent.Hook
+		APIKey, Attachment, AuthRoles, AuthTokens, BackupDestination, Entity,
+		EntityField, EntityTemplate, EntityType, Export, Group, GroupInvitationToken,
+		MaintenanceEntry, Notifier, PasswordResetTokens, Tag, TemplateField, User,
+		UserGroup []ent.Hook
 	}
 	inters struct {
-		APIKey, Attachment, AuthRoles, AuthTokens, Entity, EntityField, EntityTemplate,
-		EntityType, Export, Group, GroupInvitationToken, MaintenanceEntry, Notifier,
-		PasswordResetTokens, Tag, TemplateField, User, UserGroup []ent.Interceptor
+		APIKey, Attachment, AuthRoles, AuthTokens, BackupDestination, Entity,
+		EntityField, EntityTemplate, EntityType, Export, Group, GroupInvitationToken,
+		MaintenanceEntry, Notifier, PasswordResetTokens, Tag, TemplateField, User,
+		UserGroup []ent.Interceptor
 	}
 )

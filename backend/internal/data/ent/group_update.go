@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/backupdestination"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
@@ -191,6 +192,21 @@ func (_u *GroupUpdate) AddExports(v ...*Export) *GroupUpdate {
 	return _u.AddExportIDs(ids...)
 }
 
+// AddBackupDestinationIDs adds the "backup_destinations" edge to the BackupDestination entity by IDs.
+func (_u *GroupUpdate) AddBackupDestinationIDs(ids ...uuid.UUID) *GroupUpdate {
+	_u.mutation.AddBackupDestinationIDs(ids...)
+	return _u
+}
+
+// AddBackupDestinations adds the "backup_destinations" edges to the BackupDestination entity.
+func (_u *GroupUpdate) AddBackupDestinations(v ...*BackupDestination) *GroupUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddBackupDestinationIDs(ids...)
+}
+
 // Mutation returns the GroupMutation object of the builder.
 func (_u *GroupUpdate) Mutation() *GroupMutation {
 	return _u.mutation
@@ -362,6 +378,27 @@ func (_u *GroupUpdate) RemoveExports(v ...*Export) *GroupUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveExportIDs(ids...)
+}
+
+// ClearBackupDestinations clears all "backup_destinations" edges to the BackupDestination entity.
+func (_u *GroupUpdate) ClearBackupDestinations() *GroupUpdate {
+	_u.mutation.ClearBackupDestinations()
+	return _u
+}
+
+// RemoveBackupDestinationIDs removes the "backup_destinations" edge to BackupDestination entities by IDs.
+func (_u *GroupUpdate) RemoveBackupDestinationIDs(ids ...uuid.UUID) *GroupUpdate {
+	_u.mutation.RemoveBackupDestinationIDs(ids...)
+	return _u
+}
+
+// RemoveBackupDestinations removes "backup_destinations" edges to BackupDestination entities.
+func (_u *GroupUpdate) RemoveBackupDestinations(v ...*BackupDestination) *GroupUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveBackupDestinationIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -803,6 +840,51 @@ func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.BackupDestinationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.BackupDestinationsTable,
+			Columns: []string{group.BackupDestinationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(backupdestination.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedBackupDestinationsIDs(); len(nodes) > 0 && !_u.mutation.BackupDestinationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.BackupDestinationsTable,
+			Columns: []string{group.BackupDestinationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(backupdestination.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.BackupDestinationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.BackupDestinationsTable,
+			Columns: []string{group.BackupDestinationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(backupdestination.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{group.Label}
@@ -977,6 +1059,21 @@ func (_u *GroupUpdateOne) AddExports(v ...*Export) *GroupUpdateOne {
 	return _u.AddExportIDs(ids...)
 }
 
+// AddBackupDestinationIDs adds the "backup_destinations" edge to the BackupDestination entity by IDs.
+func (_u *GroupUpdateOne) AddBackupDestinationIDs(ids ...uuid.UUID) *GroupUpdateOne {
+	_u.mutation.AddBackupDestinationIDs(ids...)
+	return _u
+}
+
+// AddBackupDestinations adds the "backup_destinations" edges to the BackupDestination entity.
+func (_u *GroupUpdateOne) AddBackupDestinations(v ...*BackupDestination) *GroupUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddBackupDestinationIDs(ids...)
+}
+
 // Mutation returns the GroupMutation object of the builder.
 func (_u *GroupUpdateOne) Mutation() *GroupMutation {
 	return _u.mutation
@@ -1148,6 +1245,27 @@ func (_u *GroupUpdateOne) RemoveExports(v ...*Export) *GroupUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveExportIDs(ids...)
+}
+
+// ClearBackupDestinations clears all "backup_destinations" edges to the BackupDestination entity.
+func (_u *GroupUpdateOne) ClearBackupDestinations() *GroupUpdateOne {
+	_u.mutation.ClearBackupDestinations()
+	return _u
+}
+
+// RemoveBackupDestinationIDs removes the "backup_destinations" edge to BackupDestination entities by IDs.
+func (_u *GroupUpdateOne) RemoveBackupDestinationIDs(ids ...uuid.UUID) *GroupUpdateOne {
+	_u.mutation.RemoveBackupDestinationIDs(ids...)
+	return _u
+}
+
+// RemoveBackupDestinations removes "backup_destinations" edges to BackupDestination entities.
+func (_u *GroupUpdateOne) RemoveBackupDestinations(v ...*BackupDestination) *GroupUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveBackupDestinationIDs(ids...)
 }
 
 // Where appends a list predicates to the GroupUpdate builder.
@@ -1612,6 +1730,51 @@ func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error)
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(export.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.BackupDestinationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.BackupDestinationsTable,
+			Columns: []string{group.BackupDestinationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(backupdestination.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedBackupDestinationsIDs(); len(nodes) > 0 && !_u.mutation.BackupDestinationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.BackupDestinationsTable,
+			Columns: []string{group.BackupDestinationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(backupdestination.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.BackupDestinationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.BackupDestinationsTable,
+			Columns: []string{group.BackupDestinationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(backupdestination.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

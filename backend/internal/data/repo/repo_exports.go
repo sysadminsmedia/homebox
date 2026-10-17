@@ -31,20 +31,28 @@ type ExportOut struct {
 	ArtifactPath string    `json:"artifactPath,omitempty"`
 	SizeBytes    int64     `json:"sizeBytes"`
 	Error        string    `json:"error,omitempty"`
+	// Origin is "manual" for user-triggered exports and "scheduled" for
+	// backups started by the scheduler.
+	Origin string `json:"origin"`
+	// DestinationID is the backup destination holding the artifact; absent
+	// for plain manual exports, which live in the primary storage.
+	DestinationID *uuid.UUID `json:"destinationId,omitempty" extensions:"x-nullable"`
 }
 
 func mapExport(e *ent.Export) ExportOut {
 	return ExportOut{
-		ID:           e.ID,
-		GroupID:      e.GroupID,
-		Kind:         string(e.Kind),
-		CreatedAt:    e.CreatedAt,
-		UpdatedAt:    e.UpdatedAt,
-		Status:       string(e.Status),
-		Progress:     e.Progress,
-		ArtifactPath: e.ArtifactPath,
-		SizeBytes:    e.SizeBytes,
-		Error:        e.Error,
+		ID:            e.ID,
+		GroupID:       e.GroupID,
+		Kind:          string(e.Kind),
+		CreatedAt:     e.CreatedAt,
+		UpdatedAt:     e.UpdatedAt,
+		Status:        string(e.Status),
+		Progress:      e.Progress,
+		ArtifactPath:  e.ArtifactPath,
+		SizeBytes:     e.SizeBytes,
+		Error:         e.Error,
+		Origin:        string(e.Origin),
+		DestinationID: e.DestinationID,
 	}
 }
 
@@ -62,6 +70,87 @@ func (r *ExportRepository) Create(ctx context.Context, gid uuid.UUID) (ExportOut
 // worker will restore. The uploadKey points at the blob already written
 // to "{gid}/imports/{uuid}.zip", and sizeBytes is the streamed upload
 // size so the UI can show "X MB queued" before the worker even starts.
+// CreateForDestination stages a pending export row bound to a backup
+// destination. origin is "manual" for "Back up now" and "scheduled" for
+// scheduler-initiated runs.
+func (r *ExportRepository) CreateForDestination(ctx context.Context, gid, destID uuid.UUID, origin string) (ExportOut, error) {
+	e, err := r.db.Export.Create().
+		SetGroupID(gid).
+		SetOrigin(export.Origin(origin)).
+		SetDestinationID(destID).
+		Save(ctx)
+	if err != nil {
+		return ExportOut{}, err
+	}
+	return mapExport(e), nil
+}
+
+// DeleteByDestination removes every export row bound to destID.
+func (r *ExportRepository) DeleteByDestination(ctx context.Context, gid, destID uuid.UUID) (int, error) {
+	return r.db.Export.Delete().
+		Where(export.GroupID(gid), export.DestinationID(destID)).
+		Exec(ctx)
+}
+
+// ListByDestination returns every export bound to destID, newest first.
+func (r *ExportRepository) ListByDestination(ctx context.Context, gid, destID uuid.UUID) ([]ExportOut, error) {
+	rows, err := r.db.Export.Query().
+		Where(export.GroupID(gid), export.DestinationID(destID)).
+		Order(ent.Desc(export.FieldCreatedAt)).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	out := make([]ExportOut, len(rows))
+	for i, e := range rows {
+		out[i] = mapExport(e)
+	}
+	return out, nil
+}
+
+// CountArtifactsForDestination returns how many stored backup files the
+// destination's history points at. Each row records its artifact path relative
+// to the destination's location, so the location must not change while any exist.
+func (r *ExportRepository) CountArtifactsForDestination(ctx context.Context, gid, destID uuid.UUID) (int, error) {
+	return r.db.Export.Query().
+		Where(
+			export.GroupID(gid),
+			export.DestinationID(destID),
+			export.ArtifactPathNotNil(),
+			export.ArtifactPathNEQ(""),
+		).
+		Count(ctx)
+}
+
+// FailStaleActive marks pending or running exports for the destination that have
+// not changed since cutoff as failed, and returns how many. A run that was
+// interrupted (a crash or restart mid-backup) would otherwise stay "running"
+// forever and block every later scheduled and manual backup to the destination.
+func (r *ExportRepository) FailStaleActive(ctx context.Context, gid, destID uuid.UUID, cutoff time.Time) (int, error) {
+	return r.db.Export.Update().
+		Where(
+			export.GroupID(gid),
+			export.DestinationID(destID),
+			export.StatusIn(export.StatusPending, export.StatusRunning),
+			export.UpdatedAtLT(cutoff),
+		).
+		SetStatus(export.StatusFailed).
+		SetError("interrupted: the backup stopped before it finished (the server may have restarted)").
+		Save(ctx)
+}
+
+// HasActiveForDestination reports whether a pending or running export exists
+// for destID, so the scheduler never stacks runs.
+func (r *ExportRepository) HasActiveForDestination(ctx context.Context, gid, destID uuid.UUID) (bool, error) {
+	return r.db.Export.Query().
+		Where(
+			export.GroupID(gid),
+			export.DestinationID(destID),
+			export.StatusIn(export.StatusPending, export.StatusRunning),
+		).
+		Exist(ctx)
+}
+
 func (r *ExportRepository) CreateImport(ctx context.Context, gid uuid.UUID, uploadKey string, sizeBytes int64) (ExportOut, error) {
 	e, err := r.db.Export.Create().
 		SetGroupID(gid).
@@ -175,7 +264,7 @@ func (r *ExportRepository) Delete(ctx context.Context, gid uuid.UUID, id uuid.UU
 // group on purpose: this is the cleanup task that sweeps every tenant.
 func (r *ExportRepository) ListOlderThan(ctx context.Context, cutoff time.Time) ([]ExportOut, error) {
 	rows, err := r.db.Export.Query().
-		Where(export.CreatedAtLT(cutoff)).
+		Where(export.CreatedAtLT(cutoff), export.OriginEQ(export.OriginManual), export.DestinationIDIsNil()).
 		All(ctx)
 	if err != nil {
 		return nil, err

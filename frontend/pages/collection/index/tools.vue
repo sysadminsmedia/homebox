@@ -64,6 +64,7 @@
             {{ $t("tools.backups_set.create_sub") }}
             <template #button> {{ $t("tools.backups_set.create_button") }} </template>
           </DetailAction>
+          <BackupDestinations />
           <div class="py-3">
             <table v-if="backups.length > 0" class="w-full text-sm">
               <thead>
@@ -191,6 +192,7 @@
   import BaseCard from "@/components/Base/Card.vue";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import DetailAction from "@/components/DetailAction.vue";
+  import BackupDestinations from "@/components/Backup/Destinations.vue";
 
   const { t } = useI18n();
   const prefs = useViewPreferences();
@@ -319,7 +321,8 @@
     if (error || !data) {
       return;
     }
-    backups.value = data.items ?? [];
+    // Backups bound to a destination are listed under that destination's Versions.
+    backups.value = (data.items ?? []).filter(b => !b.destinationId);
   }
 
   // Initial fetch + live refresh on export/import lifecycle events.
@@ -343,7 +346,7 @@
     return `${v.toFixed(v >= 10 || i === 0 ? 0 : 1)} ${units[i]}`;
   }
 
-  function formatCreated(iso: string): string {
+  function formatCreated(iso: string | Date): string {
     return new Date(iso).toLocaleString();
   }
 

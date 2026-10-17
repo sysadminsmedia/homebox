@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/backupdestination"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
@@ -29,19 +30,20 @@ import (
 // GroupQuery is the builder for querying Group entities.
 type GroupQuery struct {
 	config
-	ctx                  *QueryContext
-	order                []group.OrderOption
-	inters               []Interceptor
-	predicates           []predicate.Group
-	withUsers            *UserQuery
-	withEntityTypes      *EntityTypeQuery
-	withEntities         *EntityQuery
-	withTags             *TagQuery
-	withInvitationTokens *GroupInvitationTokenQuery
-	withNotifiers        *NotifierQuery
-	withEntityTemplates  *EntityTemplateQuery
-	withExports          *ExportQuery
-	withUserGroups       *UserGroupQuery
+	ctx                    *QueryContext
+	order                  []group.OrderOption
+	inters                 []Interceptor
+	predicates             []predicate.Group
+	withUsers              *UserQuery
+	withEntityTypes        *EntityTypeQuery
+	withEntities           *EntityQuery
+	withTags               *TagQuery
+	withInvitationTokens   *GroupInvitationTokenQuery
+	withNotifiers          *NotifierQuery
+	withEntityTemplates    *EntityTemplateQuery
+	withExports            *ExportQuery
+	withBackupDestinations *BackupDestinationQuery
+	withUserGroups         *UserGroupQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -247,6 +249,28 @@ func (_q *GroupQuery) QueryExports() *ExportQuery {
 			sqlgraph.From(group.Table, group.FieldID, selector),
 			sqlgraph.To(export.Table, export.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, group.ExportsTable, group.ExportsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryBackupDestinations chains the current query on the "backup_destinations" edge.
+func (_q *GroupQuery) QueryBackupDestinations() *BackupDestinationQuery {
+	query := (&BackupDestinationClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(backupdestination.Table, backupdestination.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.BackupDestinationsTable, group.BackupDestinationsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -463,20 +487,21 @@ func (_q *GroupQuery) Clone() *GroupQuery {
 		return nil
 	}
 	return &GroupQuery{
-		config:               _q.config,
-		ctx:                  _q.ctx.Clone(),
-		order:                append([]group.OrderOption{}, _q.order...),
-		inters:               append([]Interceptor{}, _q.inters...),
-		predicates:           append([]predicate.Group{}, _q.predicates...),
-		withUsers:            _q.withUsers.Clone(),
-		withEntityTypes:      _q.withEntityTypes.Clone(),
-		withEntities:         _q.withEntities.Clone(),
-		withTags:             _q.withTags.Clone(),
-		withInvitationTokens: _q.withInvitationTokens.Clone(),
-		withNotifiers:        _q.withNotifiers.Clone(),
-		withEntityTemplates:  _q.withEntityTemplates.Clone(),
-		withExports:          _q.withExports.Clone(),
-		withUserGroups:       _q.withUserGroups.Clone(),
+		config:                 _q.config,
+		ctx:                    _q.ctx.Clone(),
+		order:                  append([]group.OrderOption{}, _q.order...),
+		inters:                 append([]Interceptor{}, _q.inters...),
+		predicates:             append([]predicate.Group{}, _q.predicates...),
+		withUsers:              _q.withUsers.Clone(),
+		withEntityTypes:        _q.withEntityTypes.Clone(),
+		withEntities:           _q.withEntities.Clone(),
+		withTags:               _q.withTags.Clone(),
+		withInvitationTokens:   _q.withInvitationTokens.Clone(),
+		withNotifiers:          _q.withNotifiers.Clone(),
+		withEntityTemplates:    _q.withEntityTemplates.Clone(),
+		withExports:            _q.withExports.Clone(),
+		withBackupDestinations: _q.withBackupDestinations.Clone(),
+		withUserGroups:         _q.withUserGroups.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -571,6 +596,17 @@ func (_q *GroupQuery) WithExports(opts ...func(*ExportQuery)) *GroupQuery {
 	return _q
 }
 
+// WithBackupDestinations tells the query-builder to eager-load the nodes that are connected to
+// the "backup_destinations" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *GroupQuery) WithBackupDestinations(opts ...func(*BackupDestinationQuery)) *GroupQuery {
+	query := (&BackupDestinationClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withBackupDestinations = query
+	return _q
+}
+
 // WithUserGroups tells the query-builder to eager-load the nodes that are connected to
 // the "user_groups" edge. The optional arguments are used to configure the query builder of the edge.
 func (_q *GroupQuery) WithUserGroups(opts ...func(*UserGroupQuery)) *GroupQuery {
@@ -660,7 +696,7 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 	var (
 		nodes       = []*Group{}
 		_spec       = _q.querySpec()
-		loadedTypes = [9]bool{
+		loadedTypes = [10]bool{
 			_q.withUsers != nil,
 			_q.withEntityTypes != nil,
 			_q.withEntities != nil,
@@ -669,6 +705,7 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 			_q.withNotifiers != nil,
 			_q.withEntityTemplates != nil,
 			_q.withExports != nil,
+			_q.withBackupDestinations != nil,
 			_q.withUserGroups != nil,
 		}
 	)
@@ -745,6 +782,15 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 		if err := _q.loadExports(ctx, query, nodes,
 			func(n *Group) { n.Edges.Exports = []*Export{} },
 			func(n *Group, e *Export) { n.Edges.Exports = append(n.Edges.Exports, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withBackupDestinations; query != nil {
+		if err := _q.loadBackupDestinations(ctx, query, nodes,
+			func(n *Group) { n.Edges.BackupDestinations = []*BackupDestination{} },
+			func(n *Group, e *BackupDestination) {
+				n.Edges.BackupDestinations = append(n.Edges.BackupDestinations, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -1019,6 +1065,36 @@ func (_q *GroupQuery) loadExports(ctx context.Context, query *ExportQuery, nodes
 	}
 	query.Where(predicate.Export(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(group.ExportsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.GroupID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "group_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *GroupQuery) loadBackupDestinations(ctx context.Context, query *BackupDestinationQuery, nodes []*Group, init func(*Group), assign func(*Group, *BackupDestination)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Group)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(backupdestination.FieldGroupID)
+	}
+	query.Where(predicate.BackupDestination(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(group.BackupDestinationsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

@@ -64,6 +64,55 @@ type Config struct {
 	Auth       AuthConfig     `yaml:"auth"`
 	Notifier   NotifierConf   `yaml:"notifier"`
 	Search     SearchConf     `yaml:"search"`
+	Backup     BackupConf     `yaml:"backup"`
+}
+
+// BackupConf controls scheduled backups and their destinations.
+type BackupConf struct {
+	// Enabled turns the scheduler, health checks and destination management
+	// on or off. Manual exports are unaffected.
+	Enabled bool `yaml:"enabled" conf:"default:true"`
+	// LocalRoot is the directory under which "local" destinations may create
+	// sub-directories. Empty disables local destinations; the primary
+	// storage and cloud destinations still work.
+	LocalRoot string `yaml:"local_root"`
+	// AllowCustomEndpoints lets collection owners point destinations at addresses
+	// they choose: cloud URLs with a custom endpoint (S3-compatible servers, NAS
+	// gateways, emulators) and SFTP, WebDAV and SMB servers. Each is a connection
+	// the server makes on the owner's behalf, to wherever the server can reach,
+	// so it is off by default and an operator opts in.
+	AllowCustomEndpoints bool `yaml:"allow_custom_endpoints" conf:"default:false"`
+	// EncryptionKey seals the credentials of SFTP and WebDAV destinations at
+	// rest. Without it those destination types are unavailable. Keep it
+	// stable: changing it makes stored credentials unreadable. Generate one
+	// with `openssl rand -base64 32`.
+	EncryptionKey string `yaml:"encryption_key" conf:"mask"`
+
+	// OAuth apps for the cloud-drive destination types. Register one app per
+	// provider and set its redirect URI to
+	// {your Homebox URL}/api/v1/group/backup-oauth/callback. A provider is
+	// offered only when its client ID and secret are set, and the cloud-drive
+	// types also need EncryptionKey to store the refresh token.
+	GoogleClientID        string `yaml:"google_client_id"`
+	GoogleClientSecret    string `yaml:"google_client_secret"    conf:"mask"`
+	MicrosoftClientID     string `yaml:"microsoft_client_id"`
+	MicrosoftClientSecret string `yaml:"microsoft_client_secret" conf:"mask"`
+	// MicrosoftTenant is the Entra tenant: "common" for any account, or a
+	// tenant ID / "consumers" / "organizations" to restrict sign-in.
+	MicrosoftTenant     string `yaml:"microsoft_tenant"      conf:"default:common"`
+	DropboxClientID     string `yaml:"dropbox_client_id"`
+	DropboxClientSecret string `yaml:"dropbox_client_secret" conf:"mask"`
+}
+
+func (c BackupConf) MarshalJSON() ([]byte, error) {
+	type alias BackupConf
+	a := alias(c)
+	for _, v := range []*string{&a.EncryptionKey, &a.GoogleClientSecret, &a.MicrosoftClientSecret, &a.DropboxClientSecret} {
+		if *v != "" {
+			*v = redactedValue
+		}
+	}
+	return json.Marshal(a)
 }
 
 // SearchConf selects and configures the free-text search engine. The default

@@ -9,6 +9,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/apikey"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/backupdestination"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
@@ -126,6 +127,159 @@ func init() {
 	authtokensDescID := authtokensMixinFields0[0].Descriptor()
 	// authtokens.DefaultID holds the default value on creation for the id field.
 	authtokens.DefaultID = authtokensDescID.Default.(func() uuid.UUID)
+	backupdestinationMixin := schema.BackupDestination{}.Mixin()
+	backupdestinationMixinFields0 := backupdestinationMixin[0].Fields()
+	_ = backupdestinationMixinFields0
+	backupdestinationMixinFields1 := backupdestinationMixin[1].Fields()
+	_ = backupdestinationMixinFields1
+	backupdestinationFields := schema.BackupDestination{}.Fields()
+	_ = backupdestinationFields
+	// backupdestinationDescCreatedAt is the schema descriptor for created_at field.
+	backupdestinationDescCreatedAt := backupdestinationMixinFields0[1].Descriptor()
+	// backupdestination.DefaultCreatedAt holds the default value on creation for the created_at field.
+	backupdestination.DefaultCreatedAt = backupdestinationDescCreatedAt.Default.(func() time.Time)
+	// backupdestinationDescUpdatedAt is the schema descriptor for updated_at field.
+	backupdestinationDescUpdatedAt := backupdestinationMixinFields0[2].Descriptor()
+	// backupdestination.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	backupdestination.DefaultUpdatedAt = backupdestinationDescUpdatedAt.Default.(func() time.Time)
+	// backupdestination.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	backupdestination.UpdateDefaultUpdatedAt = backupdestinationDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// backupdestinationDescName is the schema descriptor for name field.
+	backupdestinationDescName := backupdestinationMixinFields1[0].Descriptor()
+	// backupdestination.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	backupdestination.NameValidator = func() func(string) error {
+		validators := backupdestinationDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// backupdestinationDescDescription is the schema descriptor for description field.
+	backupdestinationDescDescription := backupdestinationMixinFields1[1].Descriptor()
+	// backupdestination.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	backupdestination.DescriptionValidator = backupdestinationDescDescription.Validators[0].(func(string) error)
+	// backupdestinationDescConnString is the schema descriptor for conn_string field.
+	backupdestinationDescConnString := backupdestinationFields[1].Descriptor()
+	// backupdestination.ConnStringValidator is a validator for the "conn_string" field. It is called by the builders before save.
+	backupdestination.ConnStringValidator = backupdestinationDescConnString.Validators[0].(func(string) error)
+	// backupdestinationDescUsername is the schema descriptor for username field.
+	backupdestinationDescUsername := backupdestinationFields[2].Descriptor()
+	// backupdestination.UsernameValidator is a validator for the "username" field. It is called by the builders before save.
+	backupdestination.UsernameValidator = backupdestinationDescUsername.Validators[0].(func(string) error)
+	// backupdestinationDescHostKey is the schema descriptor for host_key field.
+	backupdestinationDescHostKey := backupdestinationFields[4].Descriptor()
+	// backupdestination.HostKeyValidator is a validator for the "host_key" field. It is called by the builders before save.
+	backupdestination.HostKeyValidator = backupdestinationDescHostKey.Validators[0].(func(string) error)
+	// backupdestinationDescPrefix is the schema descriptor for prefix field.
+	backupdestinationDescPrefix := backupdestinationFields[5].Descriptor()
+	// backupdestination.DefaultPrefix holds the default value on creation for the prefix field.
+	backupdestination.DefaultPrefix = backupdestinationDescPrefix.Default.(string)
+	// backupdestination.PrefixValidator is a validator for the "prefix" field. It is called by the builders before save.
+	backupdestination.PrefixValidator = backupdestinationDescPrefix.Validators[0].(func(string) error)
+	// backupdestinationDescEnabled is the schema descriptor for enabled field.
+	backupdestinationDescEnabled := backupdestinationFields[6].Descriptor()
+	// backupdestination.DefaultEnabled holds the default value on creation for the enabled field.
+	backupdestination.DefaultEnabled = backupdestinationDescEnabled.Default.(bool)
+	// backupdestinationDescScheduleEnabled is the schema descriptor for schedule_enabled field.
+	backupdestinationDescScheduleEnabled := backupdestinationFields[7].Descriptor()
+	// backupdestination.DefaultScheduleEnabled holds the default value on creation for the schedule_enabled field.
+	backupdestination.DefaultScheduleEnabled = backupdestinationDescScheduleEnabled.Default.(bool)
+	// backupdestinationDescCronExpr is the schema descriptor for cron_expr field.
+	backupdestinationDescCronExpr := backupdestinationFields[9].Descriptor()
+	// backupdestination.CronExprValidator is a validator for the "cron_expr" field. It is called by the builders before save.
+	backupdestination.CronExprValidator = backupdestinationDescCronExpr.Validators[0].(func(string) error)
+	// backupdestinationDescIntervalHours is the schema descriptor for interval_hours field.
+	backupdestinationDescIntervalHours := backupdestinationFields[10].Descriptor()
+	// backupdestination.DefaultIntervalHours holds the default value on creation for the interval_hours field.
+	backupdestination.DefaultIntervalHours = backupdestinationDescIntervalHours.Default.(int)
+	// backupdestinationDescAtHour is the schema descriptor for at_hour field.
+	backupdestinationDescAtHour := backupdestinationFields[11].Descriptor()
+	// backupdestination.DefaultAtHour holds the default value on creation for the at_hour field.
+	backupdestination.DefaultAtHour = backupdestinationDescAtHour.Default.(int)
+	// backupdestinationDescAtMinute is the schema descriptor for at_minute field.
+	backupdestinationDescAtMinute := backupdestinationFields[12].Descriptor()
+	// backupdestination.DefaultAtMinute holds the default value on creation for the at_minute field.
+	backupdestination.DefaultAtMinute = backupdestinationDescAtMinute.Default.(int)
+	// backupdestinationDescWeekday is the schema descriptor for weekday field.
+	backupdestinationDescWeekday := backupdestinationFields[13].Descriptor()
+	// backupdestination.DefaultWeekday holds the default value on creation for the weekday field.
+	backupdestination.DefaultWeekday = backupdestinationDescWeekday.Default.(int)
+	// backupdestinationDescDayOfMonth is the schema descriptor for day_of_month field.
+	backupdestinationDescDayOfMonth := backupdestinationFields[14].Descriptor()
+	// backupdestination.DefaultDayOfMonth holds the default value on creation for the day_of_month field.
+	backupdestination.DefaultDayOfMonth = backupdestinationDescDayOfMonth.Default.(int)
+	// backupdestinationDescSkipIfUnchanged is the schema descriptor for skip_if_unchanged field.
+	backupdestinationDescSkipIfUnchanged := backupdestinationFields[15].Descriptor()
+	// backupdestination.DefaultSkipIfUnchanged holds the default value on creation for the skip_if_unchanged field.
+	backupdestination.DefaultSkipIfUnchanged = backupdestinationDescSkipIfUnchanged.Default.(bool)
+	// backupdestinationDescKeepDaily is the schema descriptor for keep_daily field.
+	backupdestinationDescKeepDaily := backupdestinationFields[16].Descriptor()
+	// backupdestination.DefaultKeepDaily holds the default value on creation for the keep_daily field.
+	backupdestination.DefaultKeepDaily = backupdestinationDescKeepDaily.Default.(int)
+	// backupdestinationDescKeepWeekly is the schema descriptor for keep_weekly field.
+	backupdestinationDescKeepWeekly := backupdestinationFields[17].Descriptor()
+	// backupdestination.DefaultKeepWeekly holds the default value on creation for the keep_weekly field.
+	backupdestination.DefaultKeepWeekly = backupdestinationDescKeepWeekly.Default.(int)
+	// backupdestinationDescKeepMonthly is the schema descriptor for keep_monthly field.
+	backupdestinationDescKeepMonthly := backupdestinationFields[18].Descriptor()
+	// backupdestination.DefaultKeepMonthly holds the default value on creation for the keep_monthly field.
+	backupdestination.DefaultKeepMonthly = backupdestinationDescKeepMonthly.Default.(int)
+	// backupdestinationDescLastFingerprint is the schema descriptor for last_fingerprint field.
+	backupdestinationDescLastFingerprint := backupdestinationFields[23].Descriptor()
+	// backupdestination.LastFingerprintValidator is a validator for the "last_fingerprint" field. It is called by the builders before save.
+	backupdestination.LastFingerprintValidator = backupdestinationDescLastFingerprint.Validators[0].(func(string) error)
+	// backupdestinationDescLastError is the schema descriptor for last_error field.
+	backupdestinationDescLastError := backupdestinationFields[24].Descriptor()
+	// backupdestination.LastErrorValidator is a validator for the "last_error" field. It is called by the builders before save.
+	backupdestination.LastErrorValidator = backupdestinationDescLastError.Validators[0].(func(string) error)
+	// backupdestinationDescHealthError is the schema descriptor for health_error field.
+	backupdestinationDescHealthError := backupdestinationFields[27].Descriptor()
+	// backupdestination.HealthErrorValidator is a validator for the "health_error" field. It is called by the builders before save.
+	backupdestination.HealthErrorValidator = backupdestinationDescHealthError.Validators[0].(func(string) error)
+	// backupdestinationDescHealthFailures is the schema descriptor for health_failures field.
+	backupdestinationDescHealthFailures := backupdestinationFields[28].Descriptor()
+	// backupdestination.DefaultHealthFailures holds the default value on creation for the health_failures field.
+	backupdestination.DefaultHealthFailures = backupdestinationDescHealthFailures.Default.(int)
+	// backupdestinationDescHealthIntervalMinutes is the schema descriptor for health_interval_minutes field.
+	backupdestinationDescHealthIntervalMinutes := backupdestinationFields[29].Descriptor()
+	// backupdestination.DefaultHealthIntervalMinutes holds the default value on creation for the health_interval_minutes field.
+	backupdestination.DefaultHealthIntervalMinutes = backupdestinationDescHealthIntervalMinutes.Default.(int)
+	// backupdestinationDescAlertsEnabled is the schema descriptor for alerts_enabled field.
+	backupdestinationDescAlertsEnabled := backupdestinationFields[30].Descriptor()
+	// backupdestination.DefaultAlertsEnabled holds the default value on creation for the alerts_enabled field.
+	backupdestination.DefaultAlertsEnabled = backupdestinationDescAlertsEnabled.Default.(bool)
+	// backupdestinationDescAlertFailureThreshold is the schema descriptor for alert_failure_threshold field.
+	backupdestinationDescAlertFailureThreshold := backupdestinationFields[31].Descriptor()
+	// backupdestination.DefaultAlertFailureThreshold holds the default value on creation for the alert_failure_threshold field.
+	backupdestination.DefaultAlertFailureThreshold = backupdestinationDescAlertFailureThreshold.Default.(int)
+	// backupdestinationDescAlertStaleHours is the schema descriptor for alert_stale_hours field.
+	backupdestinationDescAlertStaleHours := backupdestinationFields[32].Descriptor()
+	// backupdestination.DefaultAlertStaleHours holds the default value on creation for the alert_stale_hours field.
+	backupdestination.DefaultAlertStaleHours = backupdestinationDescAlertStaleHours.Default.(int)
+	// backupdestinationDescAlertedUnreachable is the schema descriptor for alerted_unreachable field.
+	backupdestinationDescAlertedUnreachable := backupdestinationFields[33].Descriptor()
+	// backupdestination.DefaultAlertedUnreachable holds the default value on creation for the alerted_unreachable field.
+	backupdestination.DefaultAlertedUnreachable = backupdestinationDescAlertedUnreachable.Default.(bool)
+	// backupdestinationDescAlertedFailure is the schema descriptor for alerted_failure field.
+	backupdestinationDescAlertedFailure := backupdestinationFields[34].Descriptor()
+	// backupdestination.DefaultAlertedFailure holds the default value on creation for the alerted_failure field.
+	backupdestination.DefaultAlertedFailure = backupdestinationDescAlertedFailure.Default.(bool)
+	// backupdestinationDescAlertedStale is the schema descriptor for alerted_stale field.
+	backupdestinationDescAlertedStale := backupdestinationFields[35].Descriptor()
+	// backupdestination.DefaultAlertedStale holds the default value on creation for the alerted_stale field.
+	backupdestination.DefaultAlertedStale = backupdestinationDescAlertedStale.Default.(bool)
+	// backupdestinationDescID is the schema descriptor for id field.
+	backupdestinationDescID := backupdestinationMixinFields0[0].Descriptor()
+	// backupdestination.DefaultID holds the default value on creation for the id field.
+	backupdestination.DefaultID = backupdestinationDescID.Default.(func() uuid.UUID)
 	entityMixin := schema.Entity{}.Mixin()
 	entityMixinFields0 := entityMixin[0].Fields()
 	_ = entityMixinFields0

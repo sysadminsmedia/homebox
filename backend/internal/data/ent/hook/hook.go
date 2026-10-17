@@ -57,6 +57,18 @@ func (f AuthTokensFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AuthTokensMutation", m)
 }
 
+// The BackupDestinationFunc type is an adapter to allow the use of ordinary
+// function as BackupDestination mutator.
+type BackupDestinationFunc func(context.Context, *ent.BackupDestinationMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f BackupDestinationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.BackupDestinationMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BackupDestinationMutation", m)
+}
+
 // The EntityFunc type is an adapter to allow the use of ordinary
 // function as Entity mutator.
 type EntityFunc func(context.Context, *ent.EntityMutation) (ent.Value, error)
