@@ -35,22 +35,25 @@
         "no_invites": "Nenhum convite",
         "remaining_uses": "Usos restantes",
         "tabs": {
+            "entity_types": "Tipos de entidades",
             "invites": "Convites",
             "members": "Membros",
             "notifiers": "Notificadores",
-            "settings": "Definições"
-        }
+            "settings": "Definições",
+            "tools": "Ferramentas"
+        },
+        "uses": "Utilizadores"
     },
     "components": {
         "app": {
             "create_modal": {
                 "createAndAddAnother": "Use {shiftKey} + {enterKey} para criar e adicionar outro.",
-                "enter": "Enter",
+                "enter": "Entrar",
                 "shift": "Shift"
             },
             "import_dialog": {
-                "change_warning": "O comportamento para importações com import_refs existente foi alterado. Se um import_ref estiver presente no ficheiro CSV, \no item será atualizado com os valores do ficheiro CSV.",
-                "description": "Importe um ficheiro CSV contendo os seus itens, etiquetas e localizações. Consulte a documentação para mais \ninformações sobre o formato necessário.",
+                "change_warning": "O comportamento para importações com import_refs existente foi alterado. Se um import_ref estiver presente no ficheiro CSV, o item será atualizado com os valores do ficheiro CSV.",
+                "description": "Importe um ficheiro CSV contendo os seus itens, etiquetas e localizações. Consulte a documentação para mais \ninformações sobre o formato exigido.",
                 "title": "Importar Ficheiro CSV",
                 "toast": {
                     "import_failed": "Falha na importação. Tente novamente mais tarde.",
@@ -66,12 +69,79 @@
                 "new_version_available_link": "Clique aqui para ver as notas da versão"
             }
         },
+        "collection": {
+            "create_modal": {
+                "name_label": "Nome da coleção",
+                "title": "Criar Coleção",
+                "toast": {
+                    "already_creating": "A criar uma coleção",
+                    "create_failed": "Falha ao criar coleção",
+                    "create_success": "Coleção criada",
+                    "please_enter_name": "Por favor introduza o nome da coleção"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Por favor Selecione uma data e hora de expiração.",
+                    "invalid_expiry_past": "A data de expiração tem de ser no futuro.",
+                    "invalid_uses": "O número de utilizações tem de ser entre 1 e 100."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Código de Convite da Coleção",
+                "invites_should_look_like": "Os convites devem ser semelhantes a:",
+                "join": "Aderir a Coleção",
+                "no_invite_code_create_one": "Não tem um código de convite? Crie uma nova coleção",
+                "title": "Participar na coleção",
+                "toast": {
+                    "already_joining": "Já integrando na coleção",
+                    "join_failed": "Falha ao integrar na coleção",
+                    "join_success": "Coleção aderida",
+                    "please_enter_valid_join_code": "Introduza um código de convite de coleção válido"
+                }
+            },
+            "selector": {
+                "collection_options": "Opções da coleção",
+                "create_collection": "Criar uma nova coleção",
+                "join_collection": "Aderir a uma coleção existente",
+                "no_collection_found": "Nenhuma coleção encontrada",
+                "search_collections": "Pesquisar coleções…",
+                "select_collection": "Selecionar coleção",
+                "your_collections": "Suas Coleções"
+            }
+        },
         "color_selector": {
             "clear": "Limpar cor",
             "color": "Cor",
             "no_color": "Sem cor",
             "no_color_selected": "Nenhuma cor selecionada",
             "randomize": "Cor aleatória"
+        },
+        "entity": {
+            "create_modal": {
+                "clear_template": "Limpar modelo",
+                "delete_photo": "Apagar foto",
+                "entity_description": "{type} Description",
+                "entity_name": "{type} Nome",
+                "entity_photo": "{type} Foto 📷",
+                "entity_quantity": "{type} Quantidade",
+                "item_selector_no_results_text": "Digite para pesquisar…",
+                "parent_item": "Item pai",
+                "product_tooltip_input_barcode": "Autopreencher com um código de barras introduzido manualmente",
+                "product_tooltip_scan_barcode": "Autopreencher com código de barras da 📷",
+                "rotate_photo": "Girar foto",
+                "set_as_primary_photo": "Definir como { isPrimary, select, true {non-} false {} other {}}foto principal",
+                "toast": {
+                    "already_creating": "Já a criar um {type}",
+                    "create_failed": "Não foi possível criar {type}",
+                    "create_success": "{type} criado",
+                    "failed_load_parent": "Falha ao carregar o item pai - por favor selecione manualmente",
+                    "no_canvas_support": "O seu navegador não suporta operações de canvas",
+                    "please_select_entity_type": "Por favor selecione um tipo de entidade.",
+                    "please_select_location": "Por favor, selecione um local.",
+                    "rotate_failed": "Falha ao rodar imagem: { error }"
+                }
+            }
         },
         "form": {
             "password": {
@@ -134,35 +204,6 @@
             "attachments_list": {
                 "download": "Transferir",
                 "open_new_tab": "Abrir em novo separador"
-            },
-            "create_modal": {
-                "delete_photo": "Eliminar foto",
-                "item_description": "Descrição do Item",
-                "item_name": "Nome do Item",
-                "item_photo": "Foto do Item 📷",
-                "item_quantity": "Quantidade do Item",
-                "parent_item": "Item Principal",
-                "product_tooltip_input_barcode": "Preenchimento automático com um código de barras fornecido manualmente",
-                "product_tooltip_scan_barcode": "Preenchimento automático com um código de barras da 📷",
-                "rotate_photo": "Rodar foto",
-                "set_as_primary_photo": "Definir como foto { isPrimary, select, true {não-} false {} other {}}principal",
-                "title": "Criar Item",
-                "toast": {
-                    "already_creating": "Já está a criar um item",
-                    "create_failed": "Não foi possível criar o item",
-                    "create_success": "Item criado",
-                    "failed_load_parent": "Falha ao carregar item principal - por favor, selecione manualmente",
-                    "no_canvas_support": "O seu navegador não suporta operações de canvas",
-                    "please_select_location": "Selecione uma localização.",
-                    "rotate_failed": "Falha ao rodar imagem: { error }",
-                    "rotate_process_failed": "Falha ao processar imagem rodada",
-                    "some_photos_failed": "{count, plural, =0 {Sem fotos para carregar.} =1 {1 foto falhou ao carregar.} other {Algumas fotos falharam ao carregar.}}",
-                    "upload_failed": "Falha ao carregar foto: { photoName }",
-                    "upload_success": "{count, plural, =0 {Sem fotos carregadas.} =1 {Foto carregada com sucesso.} other {Todas as fotos foram carregadas com sucesso.}}",
-                    "uploading_photos": "{count, plural, =0 {Sem fotos para carregar} =1 {A carregar 1 foto…} other {A carregar {count} fotos…}}"
-                },
-                "upload_photos": "Carregar Fotos",
-                "uploaded": "Foto Carregada"
             },
             "product_import": {
                 "barcode": "Código de Barras do Produto",
@@ -227,16 +268,6 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Descrição da Localização",
-                "location_name": "Nome da Localização",
-                "title": "Criar Localização",
-                "toast": {
-                    "already_creating": "Já está a criar uma localização",
-                    "create_failed": "Não foi possível criar localização",
-                    "create_success": "Localização criada"
-                }
-            },
             "selector": {
                 "no_location_found": "Nenhuma localização encontrada",
                 "parent_location": "Localização principal",
@@ -244,7 +275,7 @@
                 "select_location": "Selecionar uma Localização"
             },
             "tree": {
-                "no_locations": "Sem localizações disponíveis. Adicione novas localizações através do botão \n'<span class=\"link-primary\">'Criar'</span>' na barra de navegação."
+                "no_locations": "Sem localizações disponíveis. Utilize o botão Criar para adicionar um novo local."
             }
         },
         "quick_menu": {
@@ -335,7 +366,7 @@
         "advanced": "Avançado",
         "archived": "Arquivado",
         "asset_id": "ID do Ativo",
-        "associated_with_multiple": "Este ID de Ativo está associado a vários itens",
+        "associated_with_multiple": "Este ID de ativo está associado a vários itens",
         "attachment": "Anexo",
         "attachments": "Anexos",
         "changes_persisted_immediately": "Alterações nos anexos serão guardadas imediatamente",

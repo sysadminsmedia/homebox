@@ -67,6 +67,7 @@
 
 <script lang="ts" setup>
   import { useI18n } from "vue-i18n";
+  import { utf8Length } from "@/lib/utils";
   import { Label } from "~/components/ui/label";
   import { Input } from "~/components/ui/input";
 
@@ -188,8 +189,8 @@
     }
 
     return (
-      (props.maxLength !== -1 && value.value.length > props.maxLength) ||
-      (props.minLength !== -1 && value.value.length < props.minLength)
+      (props.maxLength !== -1 && utf8Length(value.value) > props.maxLength) ||
+      (props.minLength !== -1 && utf8Length(value.value) < props.minLength)
     );
   });
 
@@ -200,11 +201,11 @@
 
     if (props.maxLength !== -1) {
       const minText = props.minLength !== -1 ? ` (${t("components.form.min_length", { min: props.minLength })})` : "";
-      return `${value.value.length}/${props.maxLength}${minText}`;
+      return `${utf8Length(value.value)}/${props.maxLength}${minText}`;
     }
 
     if (props.minLength !== -1) {
-      return `${value.value.length} (${t("components.form.min_length", { min: props.minLength })})`;
+      return `${utf8Length(value.value)} (${t("components.form.min_length", { min: props.minLength })})`;
     }
 
     return "";

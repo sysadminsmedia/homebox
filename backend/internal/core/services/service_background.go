@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/containrrr/shoutrrr"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
@@ -91,7 +90,7 @@ func (svc *BackgroundService) SendNotifiersToday(ctx context.Context) error {
 				continue
 			}
 
-			err := shoutrrr.Send(notifiers[i].URL, bldr.String())
+			err := validate.SendNotifierMessage(notifiers[i].URL, bldr.String(), svc.notifierConfig)
 
 			if err != nil {
 				sendErrs = append(sendErrs, err)

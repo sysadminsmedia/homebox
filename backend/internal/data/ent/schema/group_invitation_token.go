@@ -32,11 +32,10 @@ func (GroupInvitationToken) Fields() []ent.Field {
 		field.Int("uses").
 			Default(0),
 		// Tenant-wide permissions applied to the membership created when the
-		// invitation is accepted. Defaults to the full-access wildcard so
-		// invites behave like they did before the permission system existed
-		// and keep covering permissions added to the catalog later.
+		// invitation is accepted. Defaults to the ordinary member list so an
+		// invitation never confers collection administration by accident.
 		field.Strings("permissions").
-			Default(authz.FullAccess()),
+			Default(authz.DefaultMember()),
 	}
 }
 

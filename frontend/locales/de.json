@@ -35,6 +35,7 @@
         "no_invites": "Keine Einladungen",
         "remaining_uses": "Verbleibende Nutzungen",
         "tabs": {
+            "entity_types": "Entitätstypen",
             "invites": "Einladungen",
             "members": "Mitglieder",
             "notifiers": "Benachrichtigungen",
@@ -116,6 +117,86 @@
             "no_color_selected": "Keine Farbe ausgewählt",
             "randomize": "Zufällige Farbe"
         },
+        "entity": {
+            "create_modal": {
+                "clear_template": "Vorlage leeren",
+                "delete_photo": "Foto löschen",
+                "entity_description": "{type} Beschreibung",
+                "entity_name": "{type} Name",
+                "entity_photo": "{type} Foto 📷",
+                "entity_quantity": "{type} Anzahl",
+                "item_selector_no_results_text": "Für Suche tippen…",
+                "parent_item": "Übergeordneter Artikel",
+                "product_tooltip_input_barcode": "Automatisch ausfüllen mit einem manuell bereitgestellten Barcode",
+                "product_tooltip_scan_barcode": "Automatisch ausfüllen mit einem Barcode von 📷",
+                "rotate_photo": "Foto drehen",
+                "set_as_primary_photo": "Als { isPrimary, select, true {non-} false {} other {}}primäres Foto auswählen",
+                "toast": {
+                    "already_creating": "Es wird bereits ein {type} erstellt",
+                    "create_failed": "Konnte {type} nicht erstellen",
+                    "create_success": "{type} erstellt",
+                    "failed_load_parent": "Übergeordnetes Element konnte nicht geladen werden - Bitte manuell auswählen",
+                    "no_canvas_support": "Ihr Browser unterstützt Canvas-Operationen nicht",
+                    "please_select_entity_type": "Bitte einen Typ auswählen.",
+                    "please_select_location": "Bitte einen Ort auswählen.",
+                    "rotate_failed": "Drehen des Bildes fehlgeschlagen: {error}",
+                    "rotate_process_failed": "Das gedrehte Bild konnte nicht verarbeitet werden",
+                    "some_photos_failed": "{count, plural, =0 {Keine Fotos zum Hochladen.} =1 {1 Foto konnte nicht hochgeladen werden.} other {Einige Fotos konnten nicht hochgeladen werden.}}",
+                    "upload_failed": "Hochladen des Fotos fehlgeschlagen: { photoName }",
+                    "upload_success": "{count, plural, =0 {Keine Fotos hochgeladen.} =1 {Foto erfolgreich hochgeladen.} other {Alle Fotos erfolgreich hochgeladen.}}",
+                    "uploading_photos": "{count, plural, =0 {Keine Fotos zum Hochladen} =1 {1 Foto wird hochgeladen...} other {{count} Fotos werden hochgeladen...}}"
+                },
+                "upload_photos": "Fotos hochladen",
+                "uploaded": "Foto hochgeladen"
+            },
+            "selector": {
+                "placeholder": "Typ auswählen…"
+            }
+        },
+        "entityTypes": {
+            "card": {
+                "actions": {
+                    "delete": "Löschen"
+                },
+                "badge_container": "Container",
+                "default_template": "Standardvorlage: {name}",
+                "tooltip": {
+                    "delete": "Löschen",
+                    "edit": "Bearbeiten"
+                }
+            },
+            "confirm": {
+                "convert_item_to_location": "Die Umwandlung eines Artikel-Typs in einen Lagerort-Typ führt zum Verlust von Feldern bei Objekten, die diesen Typ verwenden. Möchten Sie wirklich fortfahren?",
+                "delete_entity_type": "Sind Sie sicher, dass Sie \"{name}\" löschen möchten?"
+            },
+            "create_dialog": {
+                "button": "Erstellen",
+                "is_container_location_type_label": "Ist ein Container/Lagerort",
+                "name_label": "Name",
+                "title": "Objekttyp erstellen"
+            },
+            "page": {
+                "create": "Erstellen",
+                "empty_button": "Objekttyp erstellen",
+                "empty_title": "Noch keine Objekttypen definiert.",
+                "title": "Objekttypen"
+            },
+            "toasts": {
+                "create_failed": "Objekttyp konnte nicht erstellt werden",
+                "create_success": "Objekttyp erstellt",
+                "delete_confirm_failed": "Objekttyp konnte nicht gelöscht werden. Stellen Sie sicher, dass er nicht verwendet wird.",
+                "delete_success": "Objekttyp gelöscht",
+                "name_required": "Name benötigt",
+                "update_failed": "Objekttyp konnte nicht aktualisiert werden",
+                "update_success": "Objekttyp aktualisiert"
+            },
+            "update_dialog": {
+                "button": "Aktualisieren",
+                "is_container_location_type_label": "Ist ein Container/Lagerort",
+                "name_label": "Name",
+                "title": "Aktualisiere Objekttyp"
+            }
+        },
         "form": {
             "min_length": "mind. {min}",
             "password": {
@@ -172,6 +253,7 @@
                 "qr_tooltip": "QR Code anzeigen"
             },
             "password_score": {
+                "does_not_meet_requirement": "Passwort zu schwach",
                 "password_strength": "Passwortstärke"
             }
         },
@@ -179,36 +261,6 @@
             "attachments_list": {
                 "download": "Herunterladen",
                 "open_new_tab": "In einem neuen Tab öffnen"
-            },
-            "create_modal": {
-                "clear_template": "Vorlage leeren",
-                "delete_photo": "Photo löschen",
-                "item_description": "Artikelbeschreibung",
-                "item_name": "Artikelname",
-                "item_photo": "Artikelbild",
-                "item_quantity": "Anzahl der Artikel",
-                "parent_item": "Übergeordneter Artikel",
-                "product_tooltip_input_barcode": "Automatisch ausfüllen mit einem manuell bereitgestellten Barcode",
-                "product_tooltip_scan_barcode": "Automatisch ausfüllen mit einem Barcode von 📷",
-                "rotate_photo": "Foto drehen",
-                "set_as_primary_photo": "Festlegen als { isPrimary, select, true {non-} false {} other {}}primäres Bild",
-                "title": "Artikel erstellen",
-                "toast": {
-                    "already_creating": "Artikel wird bereits erstellt",
-                    "create_failed": "Artikel konnte nicht erstellt werden",
-                    "create_success": "Artikel erstellt",
-                    "failed_load_parent": "Übergeordneter Artikel konnte nicht geladen werden - Bitte manuell auswählen",
-                    "no_canvas_support": "Ihr Browser unterstützt Canvas-Operationen nicht",
-                    "please_select_location": "Bitte wählen Sie einen Lagerort aus.",
-                    "rotate_failed": "Drehen des Bildes fehlgeschlagen: {error}",
-                    "rotate_process_failed": "Das gedrehte Bild konnte nicht verarbeitet werden",
-                    "some_photos_failed": "{count, plural, =0 {Keine Fotos zum Hochladen.} =1 {1 Foto konnte nicht hochgeladen werden.} other {Einige Fotos konnten nicht hochgeladen werden.}}",
-                    "upload_failed": "Hochladen des Bildes fehlgeschlagen: { photoName }",
-                    "upload_success": "{count, plural, =0 {Keine Fotos hochgeladen.} =1 {Foto erfolgreich hochgeladen.} other {Alle Fotos erfolgreich hochgeladen.}}",
-                    "uploading_photos": "{count, plural, =0 {Keine Fotos zum Hochladen} =1 {1 Foto wird hochgeladen...} other {{count} Fotos werden hochgeladen...}}"
-                },
-                "upload_photos": "Bilder hochladen",
-                "uploaded": "Foto hochgeladen"
             },
             "product_import": {
                 "barcode": "Produkt-Strichcode",
@@ -279,16 +331,7 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Lagerortbeschreibung",
-                "location_name": "Lagerortname",
-                "title": "Lagerort erstellen",
-                "toast": {
-                    "already_creating": "Ein Lagerort wird bereits erstellt",
-                    "create_failed": "Lagerort konnte nicht erstellt werden",
-                    "create_success": "Lagerort erstellt"
-                }
-            },
+            "create_item": "Artikel erstellen",
             "selector": {
                 "clear": "Lagerortauswahl aufheben",
                 "no_location_found": "Kein Lagerort gefunden",
@@ -313,7 +356,9 @@
             "create_modal": {
                 "tag_color": "Label-Farbe",
                 "tag_description": "Label-Beschreibung",
+                "tag_icon": "Label-Symbol",
                 "tag_name": "Label-Name",
+                "tag_parent": "Eltern-Label",
                 "title": "Label erstellen",
                 "toast": {
                     "already_creating": "Es wird bereits ein Label erstellt",
@@ -410,6 +455,8 @@
         "duplicate": "Duplizieren",
         "edit": "Bearbeiten",
         "email": "E-Mail",
+        "entity": "Objekt",
+        "entity_type": "Objekttyp",
         "follow_dev": "Dem Entwickler folgen",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
@@ -417,9 +464,11 @@
         },
         "github": "GitHub-Projekt",
         "insured": "Versichert",
+        "item": "Artikel",
         "items": "Artikel",
         "join_discord": "Discord beitreten",
         "loading": "Wird geladen…",
+        "location": "Lagerort",
         "locations": "Lagerorte",
         "maintenance": "Wartung",
         "name": "Name",
@@ -460,16 +509,23 @@
     "index": {
         "back_to_login": "Zurück zur Anmeldung",
         "disabled_registration": "Registrierung deaktiviert",
-        "dont_join_group": "Möchtest du nicht einer Gruppe beitreten?",
+        "dont_join_group": "Möchtest du keiner Gruppe beitreten?",
         "forgot_password": "Passwort vergessen?",
+        "forgot_password_check_email": "Wenn diese E-Mail-Adresse mit einem Konto verknüpft ist, wird dir ein Link zum Zurücksetzen zugesendet. Der Link läuft in einer Stunde ab.",
+        "forgot_password_send": "Zurücksetzungslink senden",
+        "forgot_password_subtitle": "Gebe die E-Mail-Adresse deines Kontos ein, und wir senden dir einen Link zum Zurücksetzen deines Passworts.",
+        "forgot_password_title": "Setze dein Passwort zurück",
         "joining_group": "Du trittst einer bereits bestehenden Gruppe bei!",
         "login": "Anmelden",
         "or": "oder",
         "register": "Registrieren",
         "remember_me": "Angemeldet bleiben",
         "reset_password_invalid": "Der Link zum zurücksetzen des Kennworts ist abgelaufen. Bitte fordere einen Neuen an.",
+        "reset_password_missing_token": "Reset-Token fehlt. Öffnen Sie den Link aus Ihrer E-Mail erneut oder fordern Sie einen neuen an.",
+        "reset_password_set": "Neues Kennwort setzen",
         "reset_password_subtitle": "Wähle ein neues Kennwort für dein Konto.",
         "reset_password_success": "Dein Kennwort wurde zurückgesetzt. Melde dich mit deinem neuen Kennwort an.",
+        "reset_password_title": "Passwort zurücksetzen",
         "set_email": "Was ist deine E-Mail?",
         "set_name": "Wie heißt du?",
         "set_password": "Setze dein Passwort",
@@ -520,6 +576,7 @@
             "title": "Einstellungen duplizieren"
         },
         "edit": {
+            "change_entity_type_confirm": "Das Ändern des Objekttyps kann zu Datenverlusten in Feldern führen, die im neuen Objekttyp nicht mehr vorhanden sind. Sind Sie sicher, dass Sie den Objekttyp ändern möchten?",
             "edit_attachment_dialog": {
                 "attachment_title": "Anhangsüberschrift",
                 "attachment_type": "Anhangstyp",
@@ -588,11 +645,12 @@
         "toast": {
             "asset_not_found": "Asset nicht gefunden",
             "attachment_deleted": "Anhang gelöscht",
+            "attachment_too_large": "Anhang zu groß: Die Datei überschreitet das Upload Limit des Servers",
             "attachment_updated": "Anhang aktualisiert",
             "attachment_uploaded": "Anhang hochgeladen",
             "child_items_location_no_longer_synced": "Die Lagerorte von untergeordneten Artikeln werden nicht mehr mit diesem Artikel synchronisiert.",
             "child_items_location_synced": "Die Lagerorte von untergeordneten Artikeln wurden mit diesem Artikel synchronisiert",
-            "child_location_desync": "Änderung des Lagerorts hat eine Desynchronisation mit dem übergeordneten Lagerort zur Folge",
+            "child_location_desync": "Übergeordnetes Element entfernt — das Element befindet sich jetzt direkt am ausgewählten Ort",
             "error_loading_parent_data": "Beim Versuch, übergeordnete Daten zu laden, ist etwas schief gelaufen",
             "failed_adjust_quantity": "Anpassen der Menge ist fehlgeschlagen",
             "failed_delete_attachment": "Löschen des Anhangs ist fehlgeschlagen",
@@ -651,6 +709,8 @@
         "zh-TW": "Chinesisch (traditionell)"
     },
     "languages.da-DK": "Dänisch",
+    "languages.el-GR": "Griechisch",
+    "languages.en@pirate": "Englisch (Pirate)",
     "languages.ro-RO": "Rumänisch",
     "languages.sk-SK": "Slowakisch",
     "languages.sq-AL": "Albanisch",
@@ -730,11 +790,20 @@
         "active": "Aktiv",
         "api_key_copied": "Zur Zwischenablage hinzugefügt",
         "api_key_copy": "Kopieren",
+        "api_key_create": "API-Key erstellen",
+        "api_key_created": "Erstellt",
+        "api_key_delete_confirm": "Sind Sie sicher, dass Sie diesen API-Key widerrufen möchten? Alle Clients, die ihn verwenden, verlieren sofort den Zugriff.",
+        "api_key_expires_at": "Verfällt",
         "api_key_last_used": "Zuletzt verwendet",
+        "api_key_name": "Name",
         "api_key_name_placeholder": "z.B. Home Assistant",
         "api_key_never_used": "Niemals",
         "api_key_no_expiration": "Unbegrenzt",
         "api_key_set_expiration": "Setze ein Ablaufdatum",
+        "api_key_token_label": "Ihr neuer API-Key",
+        "api_key_token_warning": "Kopieren Sie diesen Token jetzt. Er wird aus Sicherheitsgründen nicht erneut angezeigt.",
+        "api_keys": "API-Keys",
+        "api_keys_sub": "Statische Token für den programmatischen Zugriff. Jeder Schlüssel verfügt über dieselben Berechtigungen wie Ihr Konto.",
         "change_password": "Passwort ändern",
         "currency_format": "Währungsformat",
         "current_password": "Aktuelles Passwort",
@@ -750,6 +819,8 @@
         "inactive": "Inaktiv",
         "language": "Sprache",
         "legacy_image_fit": "{ currentValue, select, true {Legacy-Anpassung deaktivieren: Bild mit Balken anpassen} false {Legacy-Anpassung aktivieren: Bild mit Zuschneiden füllen} other {Nicht getroffen}}",
+        "logout_all_confirm": "Dies meldet Sie auf jedem Gerät ab, einschließlich diesem. Sie müssen sich erneut anmelden. Fortfahren?",
+        "logout_all_devices": "Von allen Geräten abmelden",
         "moved_notice_body": "Benachrichtigungen, Einladungen und Währungseinstellungen wurden auf die Sammlungsseiten verschoben.",
         "moved_notice_description": "Diese Einstellungen werden nun pro Sammlung verwaltet.",
         "moved_notice_link_invites": "Sammlungseinladungen",
@@ -757,6 +828,7 @@
         "moved_notice_link_settings": "Währungseinstellungen der Sammlung",
         "moved_notice_title": "Suchen Sie nach Benachrichtigungs-, Einladungs- oder Währungseinstellungen?",
         "new_password": "Neues Passwort",
+        "no_api_keys": "Keine API-Keys vorhanden",
         "no_notifiers": "Keine Benachrichtigungen konfiguriert",
         "no_override": "Kein Überschreiben",
         "notifier_modal": "{ type, select, true {Bearbeiten} false {Erstellen} other {Andere}} Notifier",
@@ -768,15 +840,21 @@
         "theme_settings_sub": "Theme-Einstellungen werden im lokalen Speicher deines Browsers gespeichert. Du kannst das Theme jederzeit ändern.\nWenn du Probleme hast, dein Theme einzustellen, versuche, die Seite neu zu laden.",
         "toast": {
             "account_deleted": "Ihr Konto wurde gelöscht.",
+            "api_key_created": "API-Key erstellt.",
+            "api_key_deleted": "API-Key widerrufen.",
+            "failed_api_key_create": "API-Key konnte nicht erstellt werden.",
+            "failed_api_key_delete": "API-Key konnte nicht widerrufen werden.",
             "failed_change_password": "Das Ändern des Kennworts ist fehlgeschlagen.",
             "failed_create_notifier": "Erstellen des Notifiers ist fehlgeschlagen.",
             "failed_delete_account": "Das Löschen Ihres Kontos ist fehlgeschlagen.",
             "failed_delete_notifier": "Das Löschen des Notifiers ist fehlgeschlagen.",
             "failed_get_currencies": "Währungen konnten nicht abgerufen werden",
+            "failed_logout_all": "Das Abmelden von allen Geräten hat nicht geklappt.",
             "failed_test_notifier": "Der Test des Notifiers ist fehlgeschlagen.",
             "failed_update_group": "Aktualisierung der Gruppe fehlgeschlagen",
             "failed_update_notifier": "Die Aktualisierung des Notifiers ist fehlgeschlagen.",
             "group_updated": "Gruppe aktualisiert",
+            "logout_all_success": "Von allen Geräten abgemeldet.",
             "notifier_test_success": "Notifier-Test erfolgreich.",
             "password_changed": "Passwort erfolgreich geändert."
         },
@@ -799,7 +877,7 @@
             "instruction_3": "Diese Funktion ist in einer frühen Entwicklungsphase und kann sich in zukünftigen Versionen ändern. Wenn Sie Feedback geben möchten, können Sie das hier tun:\n '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub Discussion'</a>'",
             "label_height": "Etikettenhöhe",
             "label_width": "Etikettenbreite",
-            "measure_type": "Art der Messung",
+            "measure_type": "Maßeinheit",
             "page_bottom_padding": "Abstand am Seitenende",
             "page_height": "Seitenhöhe",
             "page_left_padding": "Seitenabstand links",
@@ -844,7 +922,10 @@
         "not_found": "Gegenstand nicht gefunden",
         "qty": "Menge",
         "retry": "Wiederholen",
-        "switch_camera": "Kamera wechseln"
+        "scanning": "Scanne",
+        "switch_camera": "Kamera wechseln",
+        "title": "AR-Scanner",
+        "unsupported": "AR-Scannen wird von diesem Browser nicht unterstützt"
     },
     "tags": {
         "no_results": "Keine Tags gefunden",
@@ -890,6 +971,26 @@
             "zero_datetimes_sub": "Setzt den Zeitwert für alle Datums-Zeit-Felder in Ihrem Inventar auf den Anfang des Datums zurück. Damit wird ein Fehler behoben, der zu Beginn der Entwicklung der Website eingeführt wurde und dazu führte, dass das Datum zusammen mit der Uhrzeit gespeichert wurde, was zu Problemen bei der Anzeige von genauen Werten in Datumsfeldern führte. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
         },
         "actions_sub": "Aktionen in großen Mengen auf das Inventar anwenden. Diese Aktionen sind unumkehrbar. '<b>'Sei vorsichtig.'</b>'",
+        "backups": "Sicherung & Wiederherstellung",
+        "backups_set": {
+            "create": "Sicherung erstellen",
+            "create_button": "Sicherung starten",
+            "create_sub": "Erstellt eine ZIP-Datei mit allen Objekten, Tags, benutzerdefinierten Feldern, Anhängen und Wartungseinträgen dieser Sammlung. Der Vorgang läuft im Hintergrund; die Datei erscheint in der untenstehenden Tabelle, sobald sie fertiggestellt ist.",
+            "delete_confirm": "Diese Sicherungsdatei löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+            "download": "Herunterladen",
+            "failed": "Sicherung fehlgeschlagen. Überprüfen Sie die Serverprotokolle für Details.",
+            "list_empty": "Keine Sicherungen vorhanden.",
+            "restore": "Aus Sicherung wiederherstellen",
+            "restore_button": "Hochladen & Wiederherstellen",
+            "restore_sub": "Laden Sie eine Backup-ZIP-Datei hoch, um diese Sammlung zu befüllen. Die Sammlung darf noch keine Elemente enthalten – Standard-Lagerorte und -Tags werden im Zuge der Wiederherstellung automatisch gelöscht.",
+            "table": {
+                "actions": "Aktionen",
+                "created": "Erstellt",
+                "size": "Größe",
+                "status": "Status"
+            }
+        },
+        "backups_sub": "Exportieren Sie Ihre gesamte Sammlung – Objekte, Tags, Anhänge und Metadaten – in ein portables ZIP-Archiv. Stellen Sie das Archiv in einer neu registrierten, leeren Sammlung auf diesem oder einem anderen Server wieder her.",
         "demo_mode_error": {
             "wipe_inventory": "Inventar, Tags, Standorte und Wartungsmeldungen können nicht gelöscht werden, solange sich Homebox im Demo-Modus befindet. Bitte stellen Sie sicher, dass Sie sich nicht im Demo-Modus befinden, und versuchen Sie es erneut."
         },
@@ -916,12 +1017,18 @@
         "reports_sub": "Erstellen Sie verschiedene Berichte für Ihr Inventar.",
         "toast": {
             "asset_success": "{ results } Assets wurden aktualisiert.",
+            "backup_delete_failed": "Löschen der Sicherung fehlgeschlagen.",
+            "backup_start_failed": "Start der Sicherung fehlgeschlagen.",
+            "backup_started": "Sicherung gestartet — sie erscheint in der Tabelle, sobald sie abgeschlossen ist.",
             "failed_create_missing_thumbnails": "Fehlende Miniaturbilder konnten nicht erstellt werden.",
             "failed_ensure_ids": "Fehler beim Sicherstellen von Asset-IDs.",
             "failed_ensure_import_refs": "Fehler beim Sicherstellen der Import-Referenzen.",
             "failed_set_primary_photos": "Das Festlegen der primären Bilder ist fehlgeschlagen.",
             "failed_wipe_inventory": "Inventar konnte nicht gelöscht werden.",
             "failed_zero_datetimes": "Datums- und Uhrzeitwerte konnten nicht zurückgesetzt werden.",
+            "restore_failed": "Wiederherstellung fehlgeschlagen.",
+            "restore_requires_empty": "Für die Wiederherstellung ist eine Sammlung ohne Elemente erforderlich. Wechseln Sie zu einer neu registrierten Sammlung (Standard-Lagerorte und -Tags sind in Ordnung) und versuchen Sie es erneut.",
+            "restore_started": "Wiederherstellung gestartet — Seite aktualisieren, um die importierten Elemente zu sehen.",
             "wipe_inventory_success": "Lagerbestand erfolgreich gelöscht. { results } Artikel gelöscht."
         }
     }

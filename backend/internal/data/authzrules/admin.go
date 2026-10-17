@@ -18,8 +18,8 @@ import (
 )
 
 // GroupMutationRule: any authenticated viewer may create a new tenant;
-// updating or deleting one requires settings:manage and is pinned to the
-// viewer's active tenant.
+// updating one requires settings:manage and deleting one collection:delete.
+// Both are pinned to the viewer's active tenant.
 func GroupMutationRule() privacy.MutationRule {
 	return privacy.GroupMutationRuleFunc(func(ctx context.Context, m *ent.GroupMutation) error {
 		v, err := viewerFor(ctx)
@@ -29,8 +29,12 @@ func GroupMutationRule() privacy.MutationRule {
 		if m.Op().Is(ent.OpCreate) {
 			return privacy.Allow
 		}
-		if !v.Has(authz.PermSettingsManage) {
-			return privacy.Denyf("authz: missing %s", authz.PermSettingsManage)
+		need := authz.PermSettingsManage
+		if m.Op().Is(ent.OpDelete | ent.OpDeleteOne) {
+			need = authz.PermCollectionDelete
+		}
+		if !v.Has(need) {
+			return privacy.Denyf("authz: missing %s", need)
 		}
 		m.Where(group.ID(v.TenantID))
 		return privacy.Allow

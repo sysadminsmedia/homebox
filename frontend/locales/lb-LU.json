@@ -92,36 +92,6 @@
                 "download": "Download",
                 "open_new_tab": "An engen neiem Tab op maachen"
             },
-            "create_modal": {
-                "clear_template": "Virlag eidel maachen",
-                "delete_photo": "Foto läschen",
-                "item_description": "Artikelbeschreiwung",
-                "item_name": "Artikelnumm",
-                "item_photo": "Artikelphoto 📷",
-                "item_quantity": "Artikelunzuel",
-                "parent_item": "Elteren element",
-                "product_tooltip_input_barcode": "Automatesch fëlle mat manuellem Barcode",
-                "product_tooltip_scan_barcode": "Fëlle mat Barcode vum 📷",
-                "rotate_photo": "Foto dréinen",
-                "set_as_primary_photo": "Setz als { isPrimary, select, true {non-} false {} other {}}Primärfoto",
-                "title": "Artikel erstellen",
-                "toast": {
-                    "already_creating": "Schonn am gaang een Element ze maachen",
-                    "create_failed": "Konnt den Artikel net erstellen",
-                    "create_success": "Artikel erstallt",
-                    "failed_load_parent": "Elterenartikel ass net gelueden - wielt w.e.g. manuell",
-                    "no_canvas_support": "Äre Browser ënnerstëtzt keng Canvas Operatiounen",
-                    "please_select_location": "Wielt w.e.g. eng Plaz.",
-                    "rotate_failed": "Konnt d'Bild net dréinen: { error }",
-                    "rotate_process_failed": "Konnt dat gedréinte Bild net verschaffen",
-                    "some_photos_failed": "{count, plural, =0 {Keng Fotoe fir erop ze lueden.} =1 {1 Fehler beim eroplueden.} other {E puer Fotoen konnten net eropgeluede ginn.}}",
-                    "upload_failed": "Foto net eropgelueden: { photoName }",
-                    "upload_success": "{count, plural, =0 {Keng Fotoenerop gelueden.} =1 {Foto erfollegräich eropgelueden.} other {All Fotoen erfollegräich eropgelueden.}}",
-                    "uploading_photos": "{count, plural, =0 {Keng Fotoe fir erop ze lueden} =1 { 1 Foto eroplueden…} other {{count} Fotoen eroplueden…}}"
-                },
-                "upload_photos": "Fotoen eroplueden",
-                "uploaded": "Foto eropgelueden"
-            },
             "product_import": {
                 "barcode": "Barcode vum Artikel",
                 "db_source": "DB Quell",
@@ -184,13 +154,6 @@
                     "table_settings": "Tabellastellungen",
                     "view_item": "Artikel uweisen"
                 }
-            }
-        },
-        "location": {
-            "create_modal": {
-                "location_description": "Beschreiwung vun der Plaz",
-                "location_name": "Numm vun der Plaz",
-                "title": "Nei Plaz uleeën"
             }
         },
         "tag": {

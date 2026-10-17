@@ -34,7 +34,7 @@ type GroupRepository struct {
 	dialect string
 }
 
-func NewGroupRepository(db *ent.Client, dialect string) *GroupRepository {
+func NewGroupRepository(db *ent.Client, attachments *AttachmentRepo, dialect string) *GroupRepository {
 	gmap := func(g *ent.Group) Group {
 		return Group{
 			ID:        g.ID,
@@ -59,6 +59,7 @@ func NewGroupRepository(db *ent.Client, dialect string) *GroupRepository {
 		db:               db,
 		groupMapper:      gmap,
 		invitationMapper: imap,
+		attachments:      attachments,
 		dialect:          dialect,
 	}
 }
@@ -348,15 +349,22 @@ func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) error {
 		WithAttachments(func(aq *ent.AttachmentQuery) { aq.WithThumbnail() }).
 		All(ctx)
 	if err != nil {
+		if rerr := tx.Rollback(); rerr != nil {
+			log.Error().Err(rerr).Msg("failed to rollback transaction")
+		}
 		return err
 	}
 
-	// Delete all attachments (and their files) before deleting the entities
+	// Keep attachment row operations on the same transaction.
+	attachments := *r.attachments
+	attachments.db = tx.Client()
+
+	// Delete all attachments (and their files) before deleting the entities.
 	for _, it := range itm {
 		for _, att := range it.Edges.Attachments {
-			if err := r.attachments.Delete(ctx, id, att.ID); err != nil {
-				log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during entity deletion")
-				// Continue with other attachments even if one fails
+			if err := attachments.Delete(ctx, id, att.ID); err != nil {
+				log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during group deletion")
+				// Continue with other attachments even if one fails.
 			}
 		}
 	}
@@ -568,6 +576,12 @@ func (r *GroupRepository) InvitationDecrement(ctx context.Context, id uuid.UUID)
 		return fmt.Errorf("invitation used up")
 	}
 	return nil
+}
+
+// InvitationRefund returns a use claimed with InvitationDecrement, for when the
+// registration it was reserved for fails afterwards.
+func (r *GroupRepository) InvitationRefund(ctx context.Context, id uuid.UUID) error {
+	return r.db.GroupInvitationToken.UpdateOneID(id).AddUses(1).Exec(ctx)
 }
 
 func (r *GroupRepository) InvitationAccept(ctx context.Context, token []byte, userID uuid.UUID) (Group, error) {

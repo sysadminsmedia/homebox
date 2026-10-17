@@ -117,6 +117,37 @@
             "no_color_selected": "Nessun colore selezionato",
             "randomize": "Colore casuale"
         },
+        "entity": {
+            "create_modal": {
+                "clear_template": "Pulisci il Template",
+                "delete_photo": "Elimina foto",
+                "entity_description": "{type} Descrizione",
+                "entity_name": "{type} Nome",
+                "entity_photo": "{type} Foto 📷",
+                "entity_quantity": "{type} Quantità",
+                "parent_item": "Oggetto padre",
+                "product_tooltip_input_barcode": "Inserisci automaticamente dal barcode segnalato a mano",
+                "product_tooltip_scan_barcode": "Inserisci automaticamente dal barcode preso con 📷",
+                "rotate_photo": "Ruota la foto",
+                "toast": {
+                    "already_creating": "Già creando un {type}",
+                    "create_failed": "Non ho potuto creare un {type}",
+                    "create_success": "{type} creato",
+                    "failed_load_parent": "Non è possibile caricare l'oggetto parent - seleziona manualmente",
+                    "no_canvas_support": "Il browser non supporta operazioni canvas",
+                    "please_select_entity_type": "Per favore seleziona un tipo di entità.",
+                    "please_select_location": "Per favore seleziona un luogo.",
+                    "rotate_failed": "Errore nel ruotare l' immagine: { error }",
+                    "rotate_process_failed": "Errore nel processare l'immagine ruotata",
+                    "upload_failed": "Caricamento della foto fallito: { photoName }"
+                },
+                "upload_photos": "Carica Foto",
+                "uploaded": "Foto Caricate"
+            },
+            "selector": {
+                "placeholder": "Seleziona un tipo…"
+            }
+        },
         "form": {
             "min_length": "min {min}",
             "password": {
@@ -180,36 +211,6 @@
             "attachments_list": {
                 "download": "Download",
                 "open_new_tab": "Apri in una nuova scheda"
-            },
-            "create_modal": {
-                "clear_template": "Resetta Template",
-                "delete_photo": "Elimina foto",
-                "item_description": "Descrizione Articolo",
-                "item_name": "Nome articolo",
-                "item_photo": "Foto dell'articolo 📷",
-                "item_quantity": "Quantità Articoli",
-                "parent_item": "Articolo principale",
-                "product_tooltip_input_barcode": "Compilazione automatica con un codice a barre fornito manualmente",
-                "product_tooltip_scan_barcode": "Riempimento automatico con un codice a barre da 📷",
-                "rotate_photo": "Ruota foto",
-                "set_as_primary_photo": "Imposta come { isPrimary, select, true {non} false {} other {}} foto principale",
-                "title": "Crea Articolo",
-                "toast": {
-                    "already_creating": "Stai già creando un articolo",
-                    "create_failed": "Impossibile creare l'articolo",
-                    "create_success": "Articolo creato",
-                    "failed_load_parent": "Impossibile caricare l'elemento principale - seleziona manualmente",
-                    "no_canvas_support": "Il tuo browser non supporta le operazioni canvas",
-                    "please_select_location": "Per favore seleziona un luogo.",
-                    "rotate_failed": "Impossibile ruotare l'immagine: { error }",
-                    "rotate_process_failed": "Impossibile elaborare l'immagine ruotata",
-                    "some_photos_failed": "{count, plural, =0 {Nessuna foto da caricare.} =1 {1 foto non caricata.} other {Alcune foto non caricate.}}",
-                    "upload_failed": "Impossibile caricare la foto: { photoName }",
-                    "upload_success": "{count, plural, =0 {Nessuna foto caricata.} =1 {Foto caricata correttamente.} other {Tutte le foto caricate correttamente.}}",
-                    "uploading_photos": "{count, plural, =0 {Nessuna foto da caricare} =1 {Caricamento di 1 foto...} other {Caricamento di {count} foto...}}"
-                },
-                "upload_photos": "Carica Foto",
-                "uploaded": "Foto caricata"
             },
             "product_import": {
                 "barcode": "Codice a barre del prodotto",
@@ -280,17 +281,6 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Descrizione ubicazione",
-                "location_name": "Nome ubicazione",
-                "location_photo": "Foto Posizione",
-                "title": "Crea Posizione",
-                "toast": {
-                    "already_creating": "Già in fase di creazione di una posizione",
-                    "create_failed": "Impossibile creare la posizione",
-                    "create_success": "Posizione creata"
-                }
-            },
             "selector": {
                 "clear": "Rimuovi Selezione Posizione",
                 "no_location_found": "Nessusa posizione trovata",

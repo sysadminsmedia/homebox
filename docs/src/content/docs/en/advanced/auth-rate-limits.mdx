@@ -37,3 +37,8 @@ If all these attempts are made within 1 minute, the following table shows the ra
 | 11+     | Locked 5 minutes   |
 
 As you can see, the rate limit increases exponentially as the number of failed attempts increases until it reaches the maximum limit.
+## Registration
+Account registration (`POST /api/v1/users/register`) has its own fixed limit of 5 requests per minute per IP address.
+Unlike the login limiter, it counts every attempt, including successful ones, because each registration hashes a
+password and creates a new user and collection. Setting `HBOX_AUTH_RATE_LIMIT_ENABLED` to `false` disables this
+limit as well.

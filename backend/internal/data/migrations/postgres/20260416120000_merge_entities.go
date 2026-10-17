@@ -37,7 +37,7 @@ func Up20260402120000(ctx context.Context, tx *sql.Tx) error {
 	// 2. Seed default entity types per group
 	_, err = tx.ExecContext(ctx, `
 		INSERT INTO entity_types (id, created_at, updated_at, name, description, is_location, group_entity_types)
-		SELECT gen_random_uuid(), now(), now(), 'Location', '', true, g.id FROM groups g;
+		SELECT gen_random_uuid(), now(), now(), 'global.location', '', true, g.id FROM groups g;
 	`)
 	if err != nil {
 		return fmt.Errorf("step 2a: seed Location entity type: %w", err)
@@ -45,7 +45,7 @@ func Up20260402120000(ctx context.Context, tx *sql.Tx) error {
 
 	_, err = tx.ExecContext(ctx, `
 		INSERT INTO entity_types (id, created_at, updated_at, name, description, is_location, group_entity_types)
-		SELECT gen_random_uuid(), now(), now(), 'Item', '', false, g.id FROM groups g;
+		SELECT gen_random_uuid(), now(), now(), 'global.item', '', false, g.id FROM groups g;
 	`)
 	if err != nil {
 		return fmt.Errorf("step 2b: seed Item entity type: %w", err)
@@ -68,7 +68,32 @@ func Up20260402120000(ctx context.Context, tx *sql.Tx) error {
 		return fmt.Errorf("step 4b: rename item_children: %w", err)
 	}
 
-	_, err = tx.ExecContext(ctx, `ALTER TABLE "entities" RENAME COLUMN "sync_child_items_locations" TO "sync_child_entity_locations";`)
+	// A plain rename here is not safe: databases migrated before the
+	// 20250112202302 guard was schema-qualified can arrive with that migration
+	// marked applied but the legacy column never actually added. Goose will not
+	// re-run an applied migration, so those databases would fail this rename on
+	// every start forever. Create the column outright in that case, and treat an
+	// already-renamed column as done.
+	_, err = tx.ExecContext(ctx, `
+		DO $$
+		BEGIN
+			IF EXISTS (
+				SELECT 1 FROM information_schema.columns
+				WHERE table_schema = current_schema()
+				  AND table_name = 'entities'
+				  AND column_name = 'sync_child_items_locations'
+			) THEN
+				ALTER TABLE "entities" RENAME COLUMN "sync_child_items_locations" TO "sync_child_entity_locations";
+			ELSIF NOT EXISTS (
+				SELECT 1 FROM information_schema.columns
+				WHERE table_schema = current_schema()
+				  AND table_name = 'entities'
+				  AND column_name = 'sync_child_entity_locations'
+			) THEN
+				ALTER TABLE "entities" ADD COLUMN "sync_child_entity_locations" boolean NOT NULL DEFAULT false;
+			END IF;
+		END $$;
+	`)
 	if err != nil {
 		return fmt.Errorf("step 4c: rename sync_child_items_locations: %w", err)
 	}
@@ -83,7 +108,7 @@ func Up20260402120000(ctx context.Context, tx *sql.Tx) error {
 	_, err = tx.ExecContext(ctx, `
 		UPDATE entities SET entity_type_entities = et.id
 		FROM entity_types et
-		WHERE et.group_entity_types = entities.group_entities AND et.name = 'Item';
+		WHERE et.group_entity_types = entities.group_entities AND et.name = 'global.item';
 	`)
 	if err != nil {
 		return fmt.Errorf("step 6: set entity_type on existing entities: %w", err)
@@ -112,7 +137,7 @@ func Up20260402120000(ctx context.Context, tx *sql.Tx) error {
 			1, false, false, 0, 0, 0, false, false,
 			l.group_locations, et.id, l.location_children
 		FROM locations l
-		JOIN entity_types et ON et.group_entity_types = l.group_locations AND et.name = 'Location';
+		JOIN entity_types et ON et.group_entity_types = l.group_locations AND et.name = 'global.location';
 	`)
 	if err != nil {
 		return fmt.Errorf("step 8: insert locations as entities: %w", err)

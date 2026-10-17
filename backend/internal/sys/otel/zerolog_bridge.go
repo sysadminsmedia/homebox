@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/rs/zerolog"
+	"go.opentelemetry.io/otel/attribute"
 	otellog "go.opentelemetry.io/otel/log"
 )
 
@@ -32,7 +33,9 @@ func (h *ZerologOTelHook) Run(e *zerolog.Event, level zerolog.Level, msg string)
 	rec.SetTimestamp(time.Now())
 	rec.SetSeverity(mapZerologLevel(level))
 	rec.SetSeverityText(level.String())
-	rec.SetBody(otellog.StringValue(msg))
+	// otel/log now models bodies and attributes as attribute.Value rather than
+	// carrying its own Value type.
+	rec.SetBody(attribute.StringValue(msg))
 
 	ctx := context.Background()
 	if e != nil {

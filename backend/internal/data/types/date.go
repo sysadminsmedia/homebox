@@ -29,6 +29,25 @@ func DateFromTime(t time.Time) Date {
 	return Date(dateOnlyTime)
 }
 
+// DateFromDBTime returns a Date from a timestamp read out of a date-only
+// database column.
+//
+// Date-only columns always hold UTC midnight of the intended calendar day —
+// that is the invariant DateFromTime establishes on the way in. Drivers are
+// not required to hand that instant back in UTC though: pgx decodes timestamptz
+// into the process's local zone, so a server running with TZ=America/Chicago
+// gets 2006-01-02T00:00:00Z back as 2006-01-01 18:00 CST. Reading the calendar
+// components off that value yields the day before, and saving the entity again
+// persists the shift. Normalize to UTC first so the stored day is recovered
+// exactly, on every driver and in every server timezone.
+func DateFromDBTime(t time.Time) Date {
+	if t.IsZero() {
+		return Date{}
+	}
+
+	return DateFromTime(t.UTC())
+}
+
 // DateFromString returns a Date type from a string by parsing the
 // string into a time.Time type and then stripping the time and
 // timezone information.
@@ -61,7 +80,13 @@ func (d Date) String() string {
 		return ""
 	}
 
-	return time.Time(d).Format("2006-01-02")
+	// Formatted in UTC, not in the value's own zone: every constructor here
+	// normalizes to UTC midnight, so UTC is where the intended calendar day
+	// lives. A Date produced by converting a driver-supplied time.Time
+	// directly (types.Date(row.Field)) may still carry a local zone, and
+	// formatting that in place would render the previous day west of
+	// Greenwich. See DateFromDBTime.
+	return time.Time(d).UTC().Format("2006-01-02")
 }
 
 func (d Date) MarshalJSON() ([]byte, error) {

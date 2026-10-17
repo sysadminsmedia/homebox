@@ -92,32 +92,6 @@
                 "download": "Preuzimanje",
                 "open_new_tab": "Otvori u novom tabu"
             },
-            "create_modal": {
-                "delete_photo": "Obriši fotografiju",
-                "item_description": "Opis stavke",
-                "item_name": "Naziv stavke",
-                "item_photo": "Fotografija stavke 📷",
-                "item_quantity": "Količina stavke",
-                "product_tooltip_input_barcode": "Automatski popuni s ručno unesenim barkodom",
-                "product_tooltip_scan_barcode": "Automatski popuni s barkodom sa 📷",
-                "rotate_photo": "Okreni fotografiju",
-                "title": "Kreiraj stavku",
-                "toast": {
-                    "already_creating": "Već kreiram stavku",
-                    "create_failed": "Ne mogu kreirati stavku",
-                    "create_success": "Stavka kreirana",
-                    "no_canvas_support": "Vaš browser ne podržava canvas operacije",
-                    "please_select_location": "Molim odaberite lokaciju.",
-                    "rotate_failed": "Ne mogu rotirati fotografiju: { error }",
-                    "rotate_process_failed": "Ne mogu obraditi rotiranu fotografiju",
-                    "some_photos_failed": "{count, plural, =0 {Nema fotografija za upload.} =1 {1 fotografiju nije moguće uplodovati.} other {Neke fotografije nije moguće uploadovati.}}",
-                    "upload_failed": "Ne mogu uploadovati fotografiju: { photoName }",
-                    "upload_success": "{count, plural, =0 {Nema fotografija za upload.} =1 {Fotografija uspješno uploadovana.} other {Sve fotografije uspješno uploadovane.}}",
-                    "uploading_photos": "{count, plural, =0 {Nema fotografija za upload.} =1 {Uploadujem 1 fotografiju…} other {Uploadujem {count} fotografija…}}"
-                },
-                "upload_photos": "Uploaduj fotografije",
-                "uploaded": "Uploadovane fotografije"
-            },
             "product_import": {
                 "barcode": "Barkod proizvoda"
             },

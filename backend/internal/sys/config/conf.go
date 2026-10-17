@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net"
 	"net/url"
 	"os"
 	"time"
@@ -62,17 +63,86 @@ type Config struct {
 	Otel       OTelConfig     `yaml:"otel"`
 	Auth       AuthConfig     `yaml:"auth"`
 	Notifier   NotifierConf   `yaml:"notifier"`
+	Search     SearchConf     `yaml:"search"`
+}
+
+// SearchConf selects and configures the free-text search engine. The default
+// "database" driver searches directly in SQLite/PostgreSQL and needs no extra
+// services. The "meilisearch" driver delegates matching to an external
+// Meilisearch instance for typo-tolerant, relevance-ranked search.
+type SearchConf struct {
+	Driver      string          `yaml:"driver"      conf:"default:database"`
+	Meilisearch MeilisearchConf `yaml:"meilisearch"`
+}
+
+// MeilisearchConf configures the connection to a Meilisearch instance when
+// SearchConf.Driver is "meilisearch".
+type MeilisearchConf struct {
+	Host   string `yaml:"host"    conf:"default:http://localhost:7700"`
+	APIKey string `yaml:"api_key"`
+	// Index is the Meilisearch index uid entities are stored in.
+	Index string `yaml:"index" conf:"default:homebox_entities"`
+	// MaxHits caps how many matching entity IDs a single search retrieves
+	// from Meilisearch before the database applies its own filters and
+	// pagination.
+	MaxHits int64 `yaml:"max_hits" conf:"default:1000"`
+}
+
+func (c MeilisearchConf) MarshalJSON() ([]byte, error) {
+	type alias MeilisearchConf
+	a := alias(c)
+	if a.APIKey != "" {
+		a.APIKey = redactedValue
+	}
+	return json.Marshal(a)
+}
+
+// Validate enforces secure transport for the Meilisearch connection. The API
+// key is sent on every request, so a non-local endpoint reached over plaintext
+// http would leak it on the wire. https is always allowed; http is permitted
+// only for loopback and private addresses (see IsLocalNetworkIP). A literal IP host is checked here; a hostname (e.g. a
+// Docker Compose service name) can only be checked once resolved, so the
+// Meilisearch client enforces the same rule on every connection it dials.
+func (c MeilisearchConf) Validate() error {
+	if c.Host == "" {
+		return errors.New("search.meilisearch.host must not be empty")
+	}
+	u, err := url.Parse(c.Host)
+	if err != nil {
+		return fmt.Errorf("search.meilisearch.host is not a valid URL: %w", err)
+	}
+	switch u.Scheme {
+	case "https":
+		return nil
+	case "http":
+		if u.Hostname() == "" {
+			return errors.New("search.meilisearch.host must include a hostname")
+		}
+		if ip := net.ParseIP(u.Hostname()); ip != nil && !IsLocalNetworkIP(ip) {
+			return fmt.Errorf("search.meilisearch.host uses insecure http for non-local host %q: use https", u.Host)
+		}
+		return nil
+	default:
+		return fmt.Errorf("search.meilisearch.host has unsupported scheme %q: must be http or https", u.Scheme)
+	}
+}
+
+// IsLocalNetworkIP reports whether ip is a loopback address or a private
+// address (RFC 1918 IPv4 or RFC 4193 IPv6 unique local), i.e. a destination
+// plaintext http may be used for.
+func IsLocalNetworkIP(ip net.IP) bool {
+	return ip.IsLoopback() || ip.IsPrivate()
 }
 
 type Options struct {
+	CurrencyConfig       string `yaml:"currencies"`
+	Hostname             string `yaml:"hostname"`
 	AllowRegistration    bool   `yaml:"disable_registration"    conf:"default:true"`
 	AutoIncrementAssetID bool   `yaml:"auto_increment_asset_id" conf:"default:true"`
-	CurrencyConfig       string `yaml:"currencies"`
 	GithubReleaseCheck   bool   `yaml:"check_github_release"    conf:"default:true"`
 	AllowAnalytics       bool   `yaml:"allow_analytics"         conf:"default:false"`
 	AllowLocalLogin      bool   `yaml:"allow_local_login"       conf:"default:true"`
 	TrustProxy           bool   `yaml:"trust_proxy"             conf:"default:false"`
-	Hostname             string `yaml:"hostname"`
 }
 
 type Thumbnail struct {
@@ -96,10 +166,14 @@ type WebConfig struct {
 	// (POST /v1/group/import). Set independently because a full collection
 	// backup including attachments can be much larger than a single asset
 	// upload. Defaults to 1 GB.
-	MaxImportSize int64         `yaml:"max_import_upload" conf:"default:1024"`
-	ReadTimeout   time.Duration `yaml:"read_timeout"      conf:"default:10s"`
-	WriteTimeout  time.Duration `yaml:"write_timeout"     conf:"default:10s"`
-	IdleTimeout   time.Duration `yaml:"idle_timeout"      conf:"default:30s"`
+	MaxImportSize int64 `yaml:"max_import_size" conf:"default:1024"`
+	// MaxParseMemory is the amount of memory used when parsing multipart form
+	// the data that does not fit into this memory will spil to temp files.
+	// Defaults to 64 MB.
+	MaxParseMemory int64         `yaml:"max_parse_memory" conf:"default:64"`
+	ReadTimeout    time.Duration `yaml:"read_timeout"     conf:"default:10s"`
+	WriteTimeout   time.Duration `yaml:"write_timeout"    conf:"default:10s"`
+	IdleTimeout    time.Duration `yaml:"idle_timeout"     conf:"default:30s"`
 }
 
 type LabelMakerConf struct {
@@ -118,14 +192,11 @@ type LabelMakerConf struct {
 }
 
 type OIDCConf struct {
-	Enabled            bool          `yaml:"enabled"              conf:"default:false"`
 	IssuerURL          string        `yaml:"issuer_url"`
 	ClientID           string        `yaml:"client_id"`
 	ClientSecret       string        `yaml:"client_secret"`
 	Scope              string        `yaml:"scope"                conf:"default:openid profile email"`
 	AllowedGroups      string        `yaml:"allowed_groups"`
-	AutoRedirect       bool          `yaml:"auto_redirect"        conf:"default:false"`
-	VerifyEmail        bool          `yaml:"verify_email"         conf:"default:false"`
 	GroupClaim         string        `yaml:"group_claim"          conf:"default:groups"`
 	EmailClaim         string        `yaml:"email_claim"          conf:"default:email"`
 	NameClaim          string        `yaml:"name_claim"           conf:"default:name"`
@@ -133,6 +204,9 @@ type OIDCConf struct {
 	ButtonText         string        `yaml:"button_text"          conf:"default:Sign in with OIDC"`
 	StateExpiry        time.Duration `yaml:"state_expiry"         conf:"default:10m"`
 	RequestTimeout     time.Duration `yaml:"request_timeout"      conf:"default:30s"`
+	Enabled            bool          `yaml:"enabled"              conf:"default:false"`
+	AutoRedirect       bool          `yaml:"auto_redirect"        conf:"default:false"`
+	VerifyEmail        bool          `yaml:"verify_email"         conf:"default:false"`
 }
 
 func (c OIDCConf) MarshalJSON() ([]byte, error) {
@@ -202,6 +276,14 @@ func New(buildstr string, description string) (*Config, error) {
 			os.Exit(0)
 		}
 		return &cfg, fmt.Errorf("parsing config: %w", err)
+	}
+
+	// Only enforce Meilisearch transport rules when that driver is selected;
+	// the unused default host is otherwise irrelevant.
+	if cfg.Search.Driver == "meilisearch" {
+		if err := cfg.Search.Meilisearch.Validate(); err != nil {
+			return &cfg, fmt.Errorf("invalid meilisearch config: %w", err)
+		}
 	}
 
 	return &cfg, nil

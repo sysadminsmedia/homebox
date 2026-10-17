@@ -21,6 +21,9 @@ node_modules
 *.so
 *.dylib
 
+# Nix build dir
+/result
+
 # Test binary, built with `go test -c`
 *.test
 

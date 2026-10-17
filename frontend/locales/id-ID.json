@@ -1,4 +1,31 @@
 {
+    "collection": {
+        "copy_invite": "Salin tautan undangan",
+        "create_invite": "Buat undangan",
+        "delete_collection": "Hapus Koleksi",
+        "deleted_collection": "Koleksi telah dihapus.",
+        "expires_at": "Kedaluwarsa",
+        "invite_token": "Token",
+        "invites_delete_confirm": "Anda yakin ingin menghapus undangan ini?",
+        "manage_collection": "Kelola Koleksi",
+        "members": {
+            "email": "Surel",
+            "empty": "Koleksi ini belum memiliki anggota.",
+            "member": "Anggota",
+            "name": "Nama",
+            "owner": "Pemilik",
+            "remove_confirm": "Anda yakin ingin menghapus anggota ini?",
+            "removed": "Anggota telah dihapus",
+            "role": "Peran"
+        },
+        "no_collections": {
+            "create": "Buat sebuah koleksi baru"
+        },
+        "tabs": {
+            "settings": "Pengaturan",
+            "tools": "Perkakas"
+        }
+    },
     "components": {
         "app": {
             "create_modal": {
@@ -93,27 +120,6 @@
                 "download": "Unduh",
                 "open_new_tab": "Buka di tab baru"
             },
-            "create_modal": {
-                "delete_photo": "Hapus foto",
-                "item_description": "Deskripsi item",
-                "item_name": "Nama item",
-                "item_photo": "Foto Item 📷",
-                "item_quantity": "Jumlah Item",
-                "parent_item": "Item Induk",
-                "product_tooltip_input_barcode": "Isi otomatis dengan barcode yang disediakan secara manual",
-                "product_tooltip_scan_barcode": "Isi otomatis dengan barcode dari 📷",
-                "rotate_photo": "Putar foto",
-                "set_as_primary_photo": "Atur sebagai { isPrimary, select, true {non} false {} other {}} foto utama",
-                "title": "Buat item",
-                "toast": {
-                    "already_creating": "Sudah membuat item",
-                    "create_failed": "Tidak dapat membuat item",
-                    "create_success": "Item dibuat",
-                    "failed_load_parent": "Gagal memuat item induk - silakan pilih secara manual",
-                    "no_canvas_support": "Browser Anda tidak mendukung operasi kanvas",
-                    "please_select_location": "Silakan pilih Lokasi."
-                }
-            },
             "view": {
                 "selectable": {
                     "card": "Kartu",
@@ -128,16 +134,6 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Deskripsi lokasi",
-                "location_name": "Nama lokasi",
-                "title": "Tambah Lokasi",
-                "toast": {
-                    "already_creating": "Lokasi telah dibuat",
-                    "create_failed": "Tidak dapat membuat lokasi",
-                    "create_success": "Lokasi telah dibuat"
-                }
-            },
             "selector": {
                 "no_location_found": "Lokasi tidak ditemukan",
                 "parent_location": "Lokasi Induk",
@@ -449,6 +445,12 @@
             "bill_of_materials_button": "Download Daftar Inventaris",
             "bill_of_materials_sub": "Menghasilkan file CSV (Comma Separated Values) yang dapat diimpor ke program spreadsheet. Ini adalah ringkasan inventaris Anda dengan info dasar beserta harganya."
         },
-        "reports_sub": "Buat laporan yang berbeda untuk inventaris Anda."
+        "reports_sub": "Buat laporan yang berbeda untuk inventaris Anda.",
+        "toast": {
+            "backup_delete_failed": "Gagal menghapus cadangan.",
+            "backup_start_failed": "Gagal memulai cadangan.",
+            "failed_set_primary_photos": "Gagal menetapkan foto utama.",
+            "restore_failed": "Gagal memulihkan."
+        }
     }
 }

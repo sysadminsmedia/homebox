@@ -70,8 +70,8 @@ var (
 func mapMaintenanceEntry(entry *ent.MaintenanceEntry) MaintenanceEntry {
 	return MaintenanceEntry{
 		ID:            entry.ID,
-		CompletedDate: types.Date(entry.Date),
-		ScheduledDate: types.Date(entry.ScheduledDate),
+		CompletedDate: types.DateFromDBTime(entry.Date),
+		ScheduledDate: types.DateFromDBTime(entry.ScheduledDate),
 		Name:          entry.Name,
 		Description:   entry.Description,
 		Cost:          entry.Cost,

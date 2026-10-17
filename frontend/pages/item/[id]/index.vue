@@ -57,7 +57,6 @@
   });
 
   const route = useRoute();
-  const router = useRouter();
   const api = useUserApi();
   const { can } = usePermissions();
 
@@ -631,14 +630,12 @@
   }
 
   async function createSubitem() {
-    // setting URL Parameter that is read and immidiately removed in the Item-CreateModal
-    await router.push({
-      query: {
-        subItemCreate: "y",
+    openDialog(DialogID.CreateEntity, {
+      params: {
+        baseType: "item",
+        subItem: true,
       },
     });
-
-    openDialog(DialogID.CreateItem);
   }
 </script>
 
@@ -723,12 +720,14 @@
               </div>
             </div>
             <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-2">
-              <LabelMaker
-                v-if="typeof item.assetId === 'string' && item.assetId != ''"
-                :id="item.assetId"
-                type="asset"
-              />
-              <LabelMaker v-else :id="item.id" type="item" />
+              <template v-if="can('label:print')">
+                <LabelMaker
+                  v-if="typeof item.assetId === 'string' && item.assetId != ''"
+                  :id="item.assetId"
+                  type="asset"
+                />
+                <LabelMaker v-else :id="item.id" type="item" />
+              </template>
               <Button
                 v-if="can('entity:create')"
                 class="w-9 md:w-auto"
@@ -840,10 +839,7 @@
             <template #title> {{ $t("items.photos") }} </template>
             <div class="scroll-bg container mx-auto flex max-h-[500px] flex-wrap gap-2 overflow-y-scroll border-t p-4">
               <button v-for="(img, i) in photos" :key="i" @click="openImageDialog(img, item.id)">
-                <picture>
-                  <source :srcset="img.originalSrc" :type="img.originalType" />
-                  <img class="max-h-[200px] rounded" :src="img.thumbnailSrc" alt="attachment image" />
-                </picture>
+                <img class="max-h-[200px] rounded" :src="img.thumbnailSrc" :alt="$t('items.photo')" loading="lazy" />
               </button>
             </div>
           </BaseCard>

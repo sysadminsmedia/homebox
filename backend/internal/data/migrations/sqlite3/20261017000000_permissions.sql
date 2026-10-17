@@ -1,20 +1,28 @@
 -- +goose Up
 -- Permission system: per-membership permission lists, tenant-scoped
 -- permission groups (with user membership), and row-level access grants on
--- entities. Backfill grants every existing membership the full-access
--- wildcard "*" so upgrade behavior is unchanged and permissions added to
--- the catalog later automatically reach them; admins restrict afterwards.
+-- entities. The backfill preserves pre-upgrade behavior: owners get the
+-- full-access wildcard "*" (so permissions added to the catalog later reach
+-- them), while other members get an explicit list matching what they could
+-- already do. Collection administration (settings, members, permissions,
+-- deleting the collection, wiping inventory) was owner-only before this
+-- migration and must stay that way, so it is excluded from the member list.
 
 -- 1. Direct permissions on tenant memberships.
 ALTER TABLE user_groups ADD COLUMN permissions JSON NOT NULL DEFAULT '[]';
 
-UPDATE user_groups SET permissions =
- '["*"]';
+UPDATE user_groups SET permissions = CASE
+    WHEN role = 'owner' THEN '["*"]'
+    ELSE '["entity:*","tag:manage","entitytype:manage","template:manage","notifier:manage","data:export","data:import","statistics:read","tools:run","label:print","report:generate","barcode:lookup"]'
+END;
 
--- 2. Permissions applied by invitations on acceptance. Existing (and
---    unspecified future) invitations keep today's behavior: full access.
+-- 2. Permissions applied by invitations on acceptance. The default is the
+--    ordinary member list (authz.DefaultMember, matching the ent schema), so
+--    existing invitations — which created non-owner memberships before this
+--    migration — and any invite created without permissions never confer
+--    collection administration.
 ALTER TABLE group_invitation_tokens ADD COLUMN permissions JSON NOT NULL DEFAULT
- '["*"]';
+ '["entity:*","tag:manage","entitytype:manage","template:manage","notifier:manage","data:export","data:import","statistics:read","tools:run","label:print","report:generate","barcode:lookup"]';
 
 -- 3. Permission groups (tenant-scoped permission bundles).
 CREATE TABLE permission_groups (

@@ -27,7 +27,6 @@ type PasswordResetTokensQuery struct {
 	inters     []Interceptor
 	predicates []predicate.PasswordResetTokens
 	withUser   *UserQuery
-	withFKs    bool
 	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -380,18 +379,11 @@ func (_q *PasswordResetTokensQuery) prepareQuery(ctx context.Context) error {
 func (_q *PasswordResetTokensQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*PasswordResetTokens, error) {
 	var (
 		nodes       = []*PasswordResetTokens{}
-		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
 		loadedTypes = [1]bool{
 			_q.withUser != nil,
 		}
 	)
-	if _q.withUser != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, passwordresettokens.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*PasswordResetTokens).scanValues(nil, columns)
 	}
@@ -426,10 +418,7 @@ func (_q *PasswordResetTokensQuery) loadUser(ctx context.Context, query *UserQue
 	ids := make([]uuid.UUID, 0, len(nodes))
 	nodeids := make(map[uuid.UUID][]*PasswordResetTokens)
 	for i := range nodes {
-		if nodes[i].user_password_reset_tokens == nil {
-			continue
-		}
-		fk := *nodes[i].user_password_reset_tokens
+		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -446,7 +435,7 @@ func (_q *PasswordResetTokensQuery) loadUser(ctx context.Context, query *UserQue
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_password_reset_tokens" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -482,6 +471,9 @@ func (_q *PasswordResetTokensQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != passwordresettokens.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if _q.withUser != nil {
+			_spec.Node.AddColumnOnce(passwordresettokens.FieldUserID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

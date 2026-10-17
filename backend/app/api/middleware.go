@@ -16,6 +16,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/authz"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
@@ -46,6 +47,21 @@ type tokenHasKey struct {
 }
 
 var hashedToken = tokenHasKey{key: "hashedToken"}
+
+// allowQuerySessionToken marks routes that may receive a full session token via
+// the access_token query parameter. See mwAllowQuerySessionToken.
+var allowQuerySessionToken = tokenHasKey{key: "allowQuerySessionToken"}
+
+// mwAllowQuerySessionToken lets mwAuthToken accept a session token from the
+// access_token query parameter on this route. Use it only for WebSocket
+// upgrades: browsers cannot set an Authorization header on a WebSocket, and
+// non-cookie clients (and clients older than the Sec-WebSocket-Protocol auth)
+// rely on the query parameter. It must run before mwAuthToken.
+func (a *app) mwAllowQuerySessionToken(next errchain.Handler) errchain.Handler {
+	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+		return next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), allowQuerySessionToken, true)))
+	})
+}
 
 type RoleMode int
 
@@ -170,11 +186,14 @@ func getWebSocketProtocolToken(r *http.Request) (string, error) {
 
 // mwAuthToken is a middleware that will check the database for a stateful token
 // and attach it's user to the request context, or return an appropriate error.
-// Authorization support is by token via Headers or Query Parameter
+// Authorization support is by token via Headers or Query Parameter. The query
+// parameter only accepts attachment-scoped tokens; session tokens are rejected
+// unless the route opts in with mwAllowQuerySessionToken, and API keys are
+// never accepted that way.
 //
 // Example:
 //   - header = "Bearer 1234567890"
-//   - query = "?access_token=1234567890"
+//   - query = "?access_token=<attachment token>"
 func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
 		spanCtx, span := mwTracer().Start(r.Context(), "middleware.mwAuthToken",
@@ -234,11 +253,34 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 
 		r = r.WithContext(context.WithValue(spanCtx, hashedToken, requestToken))
 
+		// Credential lookups run before any viewer exists; the presented token
+		// is the authorization, so they bypass the privacy layer (as GetSelf
+		// does internally). This context is never attached to the request.
+		authCtx := authz.NewSystemContext(r.Context())
+
 		usr, err := a.services.User.GetSelf(r.Context(), requestToken)
 		if err != nil && !ent.IsNotFound(err) {
 			recordMwSpanError(span, err)
 			span.SetAttributes(attribute.String("auth.outcome", "lookup_error"))
 			return err
+		}
+
+		// Query-string tokens end up in browser history, proxy logs, and shared
+		// links, so they are only accepted for the attachment-scoped token the
+		// frontend embeds in <img>/download URLs. Full session tokens must be
+		// sent via cookie or the Authorization header, except on routes that
+		// opt in with mwAllowQuerySessionToken (WebSocket upgrades).
+		if err == nil && tokenSource == "query" && r.Context().Value(allowQuerySessionToken) == nil {
+			roles, rolesErr := a.repos.AuthTokens.GetRoles(authCtx, requestToken)
+			if rolesErr != nil {
+				recordMwSpanError(span, rolesErr)
+				span.SetAttributes(attribute.String("auth.outcome", "lookup_error"))
+				return rolesErr
+			}
+			if roles.Contains(authroles.RoleUser.String()) {
+				span.SetAttributes(attribute.String("auth.outcome", "session_token_in_query"))
+				return validate.NewRequestError(errors.New("session tokens are not accepted in the query string"), http.StatusUnauthorized)
+			}
 		}
 
 		isAPIKey := false
@@ -253,7 +295,7 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 			}
 
 			tokenHash := hasher.HashAPIKey(requestToken)
-			keyUsr, keyID, keyErr := a.repos.APIKeys.GetUserFromToken(r.Context(), tokenHash)
+			keyUsr, keyID, keyErr := a.repos.APIKeys.GetUserFromToken(authCtx, tokenHash)
 			if keyErr != nil {
 				if ent.IsNotFound(keyErr) {
 					span.SetAttributes(attribute.String("auth.outcome", "token_not_found"))
@@ -268,7 +310,7 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 
 			// Best-effort last_used_at update; failure must not break the
 			// request, but we want it surfaced in logs.
-			if touchErr := a.repos.APIKeys.TouchLastUsed(r.Context(), keyID, time.Now()); touchErr != nil {
+			if touchErr := a.repos.APIKeys.TouchLastUsed(authCtx, keyID, time.Now()); touchErr != nil {
 				log.Warn().Err(touchErr).Str("api_key.id", keyID.String()).Msg("failed to update api key last_used_at")
 			}
 		}
@@ -559,6 +601,17 @@ func (a *app) mwAuthRateLimit(next errchain.Handler) errchain.Handler {
 		)
 		return err
 	})
+}
+
+// mwRegisterRateLimit caps registration attempts per client, successful or not.
+// Each registration runs a full Argon2id hash and creates a user and group, so
+// unlike login it must be throttled even when every request succeeds. It is
+// turned off together with the other auth limits via auth.rate_limit.enabled.
+func (a *app) mwRegisterRateLimit(next errchain.Handler) errchain.Handler {
+	if a.registerLimiter == nil || !a.conf.Auth.RateLimit.Enabled {
+		return next
+	}
+	return a.registerLimiter.middleware(next)
 }
 
 // shouldAllow checks if the client should be allowed to authenticate based on the configured rate limit.

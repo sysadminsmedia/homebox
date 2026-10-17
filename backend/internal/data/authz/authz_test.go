@@ -149,3 +149,27 @@ func TestFullAccessIsWildcard(t *testing.T) {
 		t.Errorf("FullAccess() = %v, want [\"*\"]: stored full access must be the wildcard, not an enumerated snapshot", fa)
 	}
 }
+
+func TestDefaultMemberExcludesAdministration(t *testing.T) {
+	dm := DefaultMember()
+	if invalid := ValidateStrings(dm); len(invalid) > 0 {
+		t.Fatalf("DefaultMember() contains unknown permissions: %v", invalid)
+	}
+	for _, p := range []Permission{
+		PermSettingsManage, PermMembersManage, PermPermissionsManage, PermCollectionDelete, PermToolsWipe,
+	} {
+		if SetHas(dm, p) {
+			t.Errorf("DefaultMember() grants admin-only permission %q", p)
+		}
+	}
+	for _, p := range []Permission{PermEntityRead, PermEntityCreate, PermEntityUpdate, PermEntityDelete} {
+		if !SetHas(dm, p) {
+			t.Errorf("DefaultMember() lacks inventory permission %q", p)
+		}
+	}
+	for _, s := range dm {
+		if s == Wildcard {
+			t.Error("DefaultMember() must not contain the full-access wildcard")
+		}
+	}
+}

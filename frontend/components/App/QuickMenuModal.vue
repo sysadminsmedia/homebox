@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
-  import { DialogID, type NoParamDialogIDs, type OptionalDialogIDs } from "@/components/ui/dialog-provider/utils";
+  import { DialogID, type NoParamDialogIDs } from "@/components/ui/dialog-provider/utils";
   import {
     CommandDialog,
     CommandEmpty,
@@ -15,7 +15,7 @@
 
   export type QuickMenuAction =
     | { text: string; href: string; type: "navigate" }
-    | { text: string; dialogId: NoParamDialogIDs | OptionalDialogIDs; shortcut: string; type: "create" };
+    | { text: string; dialogId: DialogID; shortcut: string; type: "create"; id?: number };
 
   const props = defineProps({
     actions: {
@@ -40,7 +40,15 @@
           const item = props.actions.filter(item => 'shortcut' in item).find(item => item.shortcut === e.key);
           if (item) {
             e.preventDefault();
-            openDialog(item.dialogId as NoParamDialogIDs);
+            if (item.dialogId === DialogID.CreateEntity) {
+              if (item.id === 0) {
+                openDialog(DialogID.CreateEntity, { params: { baseType: 'item' } });
+              } else if (item.id === 1) {
+                openDialog(DialogID.CreateEntity, { params: { baseType: 'location' } });
+              }
+            } else {
+              openDialog(item.dialogId as NoParamDialogIDs);
+            }
           }
           // if esc is pressed, close the dialog
           if (e.key === 'Escape') {

@@ -31,7 +31,7 @@
 
   const currentPath = computed(() => route.path);
 
-  const { can } = usePermissions();
+  const { can, canAny } = usePermissions();
 
   const tabs = computed(() =>
     [
@@ -82,7 +82,7 @@
         label: "collection.tabs.tools",
         to: "/collection/tools",
         icon: MdiWrench,
-        visible: can("settings:manage"),
+        visible: canAny("tools:run", "tools:wipe", "data:import", "data:export", "label:print", "report:generate"),
       },
     ].filter(tab => tab.visible)
   );
@@ -257,6 +257,7 @@
 
         <div id="collection-header-actions" class="ml-auto flex items-center gap-1">
           <Button
+            v-if="!isOnlyMember || can('collection:delete')"
             variant="outline"
             size="icon"
             class="size-8"

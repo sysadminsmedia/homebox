@@ -30,7 +30,9 @@ func TestUserRepo_GetOneEmail(t *testing.T) {
 
 	assert.NotNil(foundUser)
 	require.NoError(t, err)
-	assert.Equal(user.Email, foundUser.Email)
+	// Emails are canonicalized (lowercased/trimmed) on storage to keep the
+	// case-sensitive DB unique constraint effective; compare against that form.
+	assert.Equal(normalizeEmail(user.Email), foundUser.Email)
 	assert.Equal(user.Name, foundUser.Name)
 
 	// Cleanup
@@ -48,7 +50,7 @@ func TestUserRepo_GetOneId(t *testing.T) {
 
 	assert.NotNil(foundUser)
 	require.NoError(t, err)
-	assert.Equal(user.Email, foundUser.Email)
+	assert.Equal(normalizeEmail(user.Email), foundUser.Email)
 	assert.Equal(user.Name, foundUser.Name)
 
 	// Cleanup

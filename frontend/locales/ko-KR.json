@@ -117,6 +117,16 @@
             "no_color_selected": "선택된 색상 없음",
             "randomize": "랜덤 색상"
         },
+        "entity": {
+            "create_modal": {
+                "clear_template": "템플렛 삭제",
+                "delete_photo": "사진 삭제",
+                "entity_photo": "사진",
+                "entity_quantity": "수량",
+                "item_selector_no_results_text": "검색어를 입력하세요…",
+                "parent_item": "상위 항목"
+            }
+        },
         "form": {
             "min_length": "최소 {min}",
             "password": {
@@ -180,36 +190,6 @@
             "attachments_list": {
                 "download": "다운로드",
                 "open_new_tab": "새 탭에서 열기"
-            },
-            "create_modal": {
-                "clear_template": "템플릿 초기화",
-                "delete_photo": "사진 삭제",
-                "item_description": "설명",
-                "item_name": "품목명",
-                "item_photo": "품목 사진 📷",
-                "item_quantity": "품목 수량",
-                "parent_item": "상위 품목",
-                "product_tooltip_input_barcode": "바코드로 품목 정보 자동 입력",
-                "product_tooltip_scan_barcode": "바코드 스캔 시 자동 입력 📷",
-                "rotate_photo": "사진 회전",
-                "set_as_primary_photo": "{isPrimary, select, true {일반} false {대표} other {}} 사진으로 설정",
-                "title": "품목 추가",
-                "toast": {
-                    "already_creating": "품목 추가 중",
-                    "create_failed": "품목을 추가할 수 없습니다",
-                    "create_success": "품목이 추가되었습니다",
-                    "failed_load_parent": "상위 품목을 불러오지 못했습니다 - 직접 선택해 주세요",
-                    "no_canvas_support": "브라우저가 캔버스 기능을 지원하지 않습니다",
-                    "please_select_location": "위치를 선택해 주세요.",
-                    "rotate_failed": "사진 회전 실패: { error }",
-                    "rotate_process_failed": "회전된 사진을 처리하지 못했습니다",
-                    "some_photos_failed": "{count, plural, =0 {업로드할 사진이 없습니다.} =1 {사진 1장 업로드에 실패했습니다.} other {사진 일부의 업로드에 실패했습니다.}}",
-                    "upload_failed": "사진 업로드 실패: { photoName }",
-                    "upload_success": "{count, plural, =0 {업로드된 사진이 없습니다.} =1 {사진이 성공적으로 업로드되었습니다.} other {모든 사진이 성공적으로 업로드되었습니다.}}",
-                    "uploading_photos": "{count, plural, =0 {업로드할 사진이 없습니다} =1 {사진 1장을 업로드 중입니다…} other {사진 {count}장을 업로드 중입니다…}}"
-                },
-                "upload_photos": "사진 업로드",
-                "uploaded": "업로드된 사진"
             },
             "product_import": {
                 "barcode": "품목 바코드",
@@ -280,17 +260,6 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "위치 설명",
-                "location_name": "장소명",
-                "location_photo": "위치 사진",
-                "title": "위치 생성",
-                "toast": {
-                    "already_creating": "이미 위치를 생성하고 있습니다",
-                    "create_failed": "위치를 생성할 수 없습니다",
-                    "create_success": "위치가 생성되었습니다"
-                }
-            },
             "selector": {
                 "clear": "위치 선택 해제",
                 "no_location_found": "검색된 위치가 없습니다",

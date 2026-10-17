@@ -134,9 +134,10 @@
         form.expiresAt = defaultExpiry();
         loading.value = false;
         showPermissions.value = false;
-        // Default to full access: all catalog permissions checked.
+        // Default to the ordinary member permissions; administration
+        // (settings, members, permissions, deletion) must be opted into.
         void loadCatalog().then(() => {
-          selectedPermissions.value = catalog.value.map(def => def.key);
+          selectedPermissions.value = catalog.value.filter(def => def.memberDefault).map(def => def.key);
         });
       }
     }

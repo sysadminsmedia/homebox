@@ -47,6 +47,8 @@ export default defineConfig({
                 baseUrl: 'https://github.com/sysadminsmedia/homebox/edit/main/docs/',
             },
             lastUpdated: true,
+            // 404 page comes from src/content/docs/404.md via the regular docs route.
+            disable404Route: true,
             plugins: [
                 starlightThemeNova({
                     // nav: [
@@ -117,6 +119,10 @@ export default defineConfig({
                                         {
                                             label: 'Code of Conduct',
                                             slug: 'contribute/code-of-conduct',
+                                        },
+                                        {
+                                            label: 'Security Policy',
+                                            slug: 'contribute/security',
                                         },
                                         {
                                             label: 'Development',
@@ -203,7 +209,7 @@ export default defineConfig({
                 useThemedSelectionColors: true,
                 minSyntaxHighlightingColorContrast: 5.0, // Ensure the minimum contrast is at least .5 units higher than WCAG 2.2 AA
                 shiki: { // We set the languages we actually use to try to reduce bundle sizes
-                    bundledLangs: ['bash', 'typescript', 'javascript', 'json', 'yaml', 'go', 'systemd', 'vue', 'vue-html', 'astro', 'css', 'sql'],
+                    bundledLangs: ['shellscript', 'typescript', 'javascript', 'json', 'yaml', 'go', 'systemd', 'vue', 'vue-html', 'astro', 'css', 'sql'],
                 }
             }
         }),
@@ -220,5 +226,16 @@ export default defineConfig({
 
     vite: {
         plugins: [tailwindcss()],
+        build: {
+            rolldownOptions: {
+                onLog(level, log, handler) {
+                    // Astro's content-assets plugin emits a "use astro:head-inject" directive
+                    // that Astro consumes itself; Rolldown warns about it for every MDX file
+                    // that imports components. The warning is harmless, so drop it.
+                    if (log.code === 'MODULE_LEVEL_DIRECTIVE' && log.message.includes('astro:head-inject')) return;
+                    handler(level, log);
+                },
+            },
+        },
     },
 });

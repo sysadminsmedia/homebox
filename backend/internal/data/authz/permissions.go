@@ -36,6 +36,33 @@ const (
 	PermSettingsManage    Permission = "settings:manage"
 	PermMembersManage     Permission = "members:manage"
 	PermPermissionsManage Permission = "permissions:manage"
+
+	// PermCollectionDelete permanently deletes the collection and everything
+	// in it. Kept apart from settings:manage so renaming a collection or
+	// changing its currency doesn't also confer the ability to destroy it.
+	PermCollectionDelete Permission = "collection:delete"
+
+	// Feature-level permissions for actions that are not tied to a single
+	// entity. Where a feature also reads or writes entities through the ORM,
+	// row-level grants still apply on top of these.
+
+	// PermStatisticsRead exposes collection-wide aggregates (totals, value
+	// over time, per-location/tag breakdowns). The aggregates are computed
+	// over the whole tenant and ignore row-level grants.
+	PermStatisticsRead Permission = "statistics:read"
+	// PermToolsRun runs the bulk maintenance tools (ensure asset IDs, ensure
+	// import refs, zero time fields, set primary photos, create missing
+	// thumbnails). Routes also require entity:update.
+	PermToolsRun Permission = "tools:run"
+	// PermToolsWipe runs the destructive wipe-inventory tool.
+	PermToolsWipe Permission = "tools:wipe"
+	// PermLabelPrint generates printable labels.
+	PermLabelPrint Permission = "label:print"
+	// PermReportGenerate generates reports such as the bill of materials.
+	PermReportGenerate Permission = "report:generate"
+	// PermBarcodeLookup queries external product databases by barcode, which
+	// spends the instance's third-party API quota.
+	PermBarcodeLookup Permission = "barcode:lookup"
 )
 
 // allPermissions is the canonical ordered catalog. Order is stable and used
@@ -54,6 +81,13 @@ var allPermissions = []Permission{
 	PermSettingsManage,
 	PermMembersManage,
 	PermPermissionsManage,
+	PermCollectionDelete,
+	PermStatisticsRead,
+	PermToolsRun,
+	PermToolsWipe,
+	PermLabelPrint,
+	PermReportGenerate,
+	PermBarcodeLookup,
 }
 
 // All returns a copy of the full permission catalog.
@@ -90,6 +124,35 @@ const Wildcard = "*"
 // list. Use this — not AllStrings — wherever "everything" is persisted.
 func FullAccess() []string {
 	return []string{Wildcard}
+}
+
+// defaultMemberPermissions is what an ordinary (non-admin) member can do: work
+// with the inventory and its reference data, move data in and out, and use the
+// non-destructive tools. Collection administration — settings, members,
+// permissions, deleting the collection, wiping inventory — is deliberately
+// absent. It is an explicit list, not wildcards over admin resources, so new
+// catalog permissions are not granted to members until added here.
+var defaultMemberPermissions = []string{
+	PermEntityRead.Resource() + ":*",
+	string(PermTagManage),
+	string(PermEntityTypeManage),
+	string(PermTemplateManage),
+	string(PermNotifierManage),
+	string(PermDataExport),
+	string(PermDataImport),
+	string(PermStatisticsRead),
+	string(PermToolsRun),
+	string(PermLabelPrint),
+	string(PermReportGenerate),
+	string(PermBarcodeLookup),
+}
+
+// DefaultMember returns a copy of the default permission list for ordinary
+// members, used when an invitation does not specify permissions.
+func DefaultMember() []string {
+	out := make([]string, len(defaultMemberPermissions))
+	copy(out, defaultMemberPermissions)
+	return out
 }
 
 // Resource returns p's resource segment ("entity:read" -> "entity").

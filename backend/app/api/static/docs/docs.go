@@ -211,7 +211,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/currency": {
+        "/v1/currencies": {
             "get": {
                 "produces": [
                     "application/json"
@@ -247,7 +247,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "search string",
+                        "description": "search string; matches names, descriptions, serial/model numbers, manufacturers, notes, purchase sources, tag names, and custom field values. Use #\u003cassetId\u003e to look up by asset ID and double quotes for exact phrases",
                         "name": "q",
                         "in": "query"
                     },
@@ -274,6 +274,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "description": "require all selected tags to match (AND) instead of any (OR)",
+                        "name": "matchAllTags",
+                        "in": "query"
+                    },
+                    {
                         "type": "array",
                         "items": {
                             "type": "string"
@@ -281,6 +287,28 @@ const docTemplate = `{
                         "collectionFormat": "multi",
                         "description": "parent Ids",
                         "name": "parentIds",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
+                        "description": "entity type IDs; when provided this filter takes precedence over isLocation",
+                        "name": "entityTypeIds",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "field to order by; valid values: name, createdAt, updatedAt, assetId",
+                        "name": "orderBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "order direction; valid values: asc, desc. Defaults to desc for createdAt and updatedAt, asc otherwise",
+                        "name": "orderDirection",
                         "in": "query"
                     }
                 ],
@@ -3296,6 +3324,25 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/users/logout/all": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Revokes every session token for the authenticated user across all\ndevices, including the current one. Use this to invalidate a session\ntoken that may have been leaked or stolen. API keys are stored\nseparately and are not affected; revoke them from the API keys page.",
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Log Out Of All Sessions",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
         "/v1/users/refresh": {
             "get": {
                 "security": [
@@ -4199,6 +4246,21 @@ const docTemplate = `{
                         }
                     ]
                 },
+                "location": {
+                    "description": "Location holds the value of the location edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Entity"
+                        }
+                    ]
+                },
+                "location_entities": {
+                    "description": "LocationEntities holds the value of the location_entities edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Entity"
+                    }
+                },
                 "maintenance_entries": {
                     "description": "MaintenanceEntries holds the value of the maintenance_entries edge.",
                     "type": "array",
@@ -4888,6 +4950,10 @@ const docTemplate = `{
                 "used_at": {
                     "description": "UsedAt holds the value of the \"used_at\" field.",
                     "type": "string"
+                },
+                "user_id": {
+                    "description": "UserID holds the value of the \"user_id\" field.",
+                    "type": "string"
                 }
             }
         },
@@ -5523,6 +5589,25 @@ const docTemplate = `{
                 "entityTypeId": {
                     "type": "string"
                 },
+                "locationId": {
+                    "description": "Only needed when ParentID is another item and this lives elsewhere (#1688).",
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "manufacturer": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "modelNumber": {
+                    "description": "Identifications — optional at create time; populated e.g. by the\nbarcode product-search import flow (#1578).",
+                    "type": "string",
+                    "maxLength": 255,
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
                 "name": {
                     "type": "string",
                     "maxLength": 255,
@@ -5660,6 +5745,22 @@ const docTemplate = `{
                     "description": "Warranty",
                     "type": "boolean"
                 },
+                "location": {
+                    "description": "Location is resolved: this entity's own location, else the nearest\nlocation ancestor. Read-only — write via LocationID.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/repo.EntitySummary"
+                        }
+                    ],
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "locationId": {
+                    "description": "LocationID is set only when this entity has its own location, nil when\ninherited. Same name as the EntityUpdate field so a GET/PUT round trip\ndoesn't pin an inherited location or drop an explicit one.",
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
                 "manufacturer": {
                     "type": "string"
                 },
@@ -5750,6 +5851,11 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "locationId": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "parentId": {
                     "type": "string",
@@ -6252,6 +6358,12 @@ const docTemplate = `{
                 "lifetimeWarranty": {
                     "description": "Warranty",
                     "type": "boolean"
+                },
+                "locationId": {
+                    "description": "Only needed when ParentID is another item and this lives elsewhere (#1688).\nOtherwise ParentID carries the location. See resolveLocationOverride.",
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "manufacturer": {
                     "type": "string"
@@ -7318,6 +7430,15 @@ const docTemplate = `{
                 "description": {
                     "type": "string",
                     "maxLength": 1000
+                },
+                "entityTypeId": {
+                    "description": "EntityTypeID is the entity type selected by the user. When set it takes\nprecedence; when empty the repository falls back to the group's default.",
+                    "type": "string"
+                },
+                "locationId": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "name": {
                     "type": "string",

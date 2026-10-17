@@ -34,7 +34,7 @@
         "tabs": {
             "invites": "招待",
             "members": "メンバー",
-            "notifiers": "通知機能",
+            "notifiers": "通知設定",
             "settings": "設定",
             "tools": "ツール"
         },
@@ -172,35 +172,6 @@
                 "download": "ダウンロード",
                 "open_new_tab": "新しいタブで開く"
             },
-            "create_modal": {
-                "delete_photo": "写真を削除",
-                "item_description": "説明",
-                "item_name": "名称",
-                "item_photo": "商品写真 📷",
-                "item_quantity": "数量",
-                "parent_item": "関連アイテム",
-                "product_tooltip_input_barcode": "バーコードを手動入力して自動取得を試みる",
-                "product_tooltip_scan_barcode": "バーコードを撮影して自動取得を試みる",
-                "rotate_photo": "写真を回転",
-                "set_as_primary_photo": "{isPrimary, select, true {non} false {} other {}} サムネイルに設定",
-                "title": "アイテムの追加",
-                "toast": {
-                    "already_creating": "既に同じアイテムがあります",
-                    "create_failed": "アイテムを作成できませんでした",
-                    "create_success": "アイテムを作成しました",
-                    "failed_load_parent": "親アイテムの読み込みに失敗しました。手動で選択してください",
-                    "no_canvas_support": "このブラウザはHTML5 canvasをサポートしていません",
-                    "please_select_location": "ロケーションを選択",
-                    "rotate_failed": "画像の回転ができませんでした。エラー内容: { error }",
-                    "rotate_process_failed": "画像回転の処理でエラーが発生しました",
-                    "some_photos_failed": "{count, plural, = 0 {アップロードする写真がありません。} = 1 {1枚の写真をアップロードできませんでした。} other {一部の写真をアップロードできませんでした。}}",
-                    "upload_failed": "画像のアップロードに失敗しました ({ photoName })",
-                    "upload_success": "{count, plural, = 0 {画像はアップロードされていません} = 1 {画像をアップロードしました} other {すべての画像をアップロードしました}}",
-                    "uploading_photos": "{count, plural, = 0 {アップロード可能な画像がありません} = 1 {画像をアップロードしています} other {{count}枚の画像をアップロードしています…}}"
-                },
-                "upload_photos": "画像をアップロード",
-                "uploaded": "アップロードした画像"
-            },
             "product_import": {
                 "barcode": "商品のバーコード",
                 "db_source": "情報提供元",
@@ -217,13 +188,26 @@
                 "searching": "検索中…"
             },
             "view": {
+                "change_details": {
+                    "add_tags": "タグの追加",
+                    "remove_tags": "タグの削除",
+                    "title": "アイテム詳細の変更"
+                },
                 "selectable": {
                     "card": "カード",
                     "items": "アイテム",
                     "no_items": "ここにアイテムはありません",
+                    "select_all": "すべてを選択",
+                    "select_card": "カードを選択",
+                    "select_row": "行を選択",
                     "table": "テーブル"
                 },
                 "table": {
+                    "dropdown": {
+                        "actions": "アクション",
+                        "change_location": "ロケーションの変更",
+                        "change_tags": "タグの変更"
+                    },
                     "headers": "ヘッダー",
                     "page": "ページ",
                     "rows_per_page": "表示件数",
@@ -234,16 +218,6 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "場所の詳細",
-                "location_name": "名称",
-                "title": "ロケーション(場所)の追加",
-                "toast": {
-                    "already_creating": "既に同じロケーションがあります",
-                    "create_failed": "ロケーションを作成できませんでした",
-                    "create_success": "ロケーションを作成しました"
-                }
-            },
             "selector": {
                 "no_location_found": "一致するロケーションがありません",
                 "parent_location": "親項目 (選択された項目の下位にネスト)",
@@ -555,6 +529,21 @@
     },
     "profile": {
         "active": "有効",
+        "api_key_copied": "クリップボードにコピーしました",
+        "api_key_create": "APIキーの生成",
+        "api_key_created": "生成日",
+        "api_key_delete_confirm": "APIキーを削除してもよろしいですか?\nこのキーを利用してアクセスすることはできなくなります。",
+        "api_key_expires_at": "有効期限",
+        "api_key_last_used": "最終使用",
+        "api_key_name": "APIキーの名称",
+        "api_key_name_placeholder": "例) Home Assistant",
+        "api_key_never_used": "未使用",
+        "api_key_no_expiration": "なし",
+        "api_key_set_expiration": "有効期限を設定する",
+        "api_key_token_label": "APIキーの生成完了",
+        "api_key_token_warning": "APIキーをコピーしてください。\nセキュリティ上の理由から、APIキーを再表示することはできません。",
+        "api_keys": "APIキー",
+        "api_keys_sub": "APIキーを管理します。\n【注意】このキーはアカウントにフルアクセスできます。",
         "change_password": "パスワードを変更",
         "currency_format": "通貨の種類",
         "current_password": "現在のパスワード",
@@ -571,11 +560,13 @@
         "language": "言語",
         "moved_notice_body": "通知、招待、通貨の設定はプロファイルページに移動しました。",
         "moved_notice_description": "設定は、プロファイルごと管理されるようになりました。",
-        "moved_notice_link_invites": "プロファイルに招待する",
+        "moved_notice_link_invites": "招待する",
         "moved_notice_link_notifiers": "通知機能",
         "moved_notice_link_settings": "通貨設定",
+        "moved_notice_title": "通知・招待・通貨の設定は移動しました",
         "new_password": "新しいパスワード",
-        "no_notifiers": "通知機能は設定されていません",
+        "no_api_keys": "有効なAPIキーはありません",
+        "no_notifiers": "通知の設定はありません",
         "no_override": "既定の言語",
         "notifier_modal": "{type, select, true {編集} false {作成} other {その他}}通知者",
         "notifiers": "通知",
@@ -586,6 +577,10 @@
         "theme_settings_sub": "テーマ設定はブラウザに保存されます。いつでも変更できます。\nテーマ設定によって問題が発生した場合は、再読み込みを行ってください。",
         "toast": {
             "account_deleted": "アカウントを削除しました",
+            "api_key_created": "APIキーを生成しました",
+            "api_key_deleted": "APIキーを削除しました",
+            "failed_api_key_create": "APIキーの生成に失敗しました",
+            "failed_api_key_delete": "APIキーの削除ができませんでした",
             "failed_change_password": "パスワードを変更できませんでした",
             "failed_create_notifier": "通知設定の作成に失敗しました。",
             "failed_delete_account": "アカウントの削除に失敗しました",

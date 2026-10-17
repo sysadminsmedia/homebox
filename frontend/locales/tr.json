@@ -1,4 +1,48 @@
 {
+    "collection": {
+        "copy_invite": "Davet Bağlantısını Kopyala",
+        "create_invite": "Davet Oluştur",
+        "delete_collection": "Koleksiyonu Sil",
+        "delete_confirm": "Bu koleksiyonu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+        "deleted_collection": "Koleksiyon silindi.",
+        "invite_token": "Token",
+        "invite_token_hidden": "Artık görünmüyor",
+        "invite_token_warning": "Davet tokenları yalnızca bir kez gösterilir. Bağlantıyı şimdi kopyalayın; bu sayfadan ayrıldıktan veya sayfayı yeniledikten sonra bu tokenı tekrar görüntüleyemezsiniz.",
+        "invites": "Davetler",
+        "invites_delete_confirm": "Bu daveti silmek istediğinizden emin misiniz?",
+        "leave_collection": "Koleksiyondan Ayrıl",
+        "leave_confirm": "Bu koleksiyondan ayrılmak istediğinizden emin misiniz?",
+        "left_collection": "Koleksiyondan ayrıldınız.",
+        "manage_collection": "Koleksiyonu Yönet",
+        "members": {
+            "cannot_remove_last": "Son üyeyi çıkaramazsınız.",
+            "email": "E-posta",
+            "empty": "Bu koleksiyonda henüz üye yok.",
+            "member": "Üye",
+            "name": "İsim",
+            "owner": "Sahip",
+            "remove_confirm": "Bu üyeyi çıkarmak istediğinizden emin misiniz?",
+            "removed": "Üye çıkarıldı",
+            "role": "Rol"
+        },
+        "no_collections": {
+            "create": "Yeni bir koleksiyon oluştur",
+            "join": "Mevcut bir koleksiyona katıl",
+            "message": "Bir koleksiyonun parçası değilsiniz. Eşyalarınız için yeni bir koleksiyon oluşturun veya davet edildiğiniz bir koleksiyona katılın.",
+            "title": "Koleksiyon Bulunamadı"
+        },
+        "no_invites": "Davet yok",
+        "remaining_uses": "Kalan kullanım",
+        "tabs": {
+            "entity_types": "Varlık Türleri",
+            "invites": "Davetler",
+            "members": "Üyeler",
+            "notifiers": "Bildirimler",
+            "settings": "Ayarlar",
+            "tools": "Araçlar"
+        },
+        "uses": "Kullanımlar"
+    },
     "components": {
         "app": {
             "create_modal": {
@@ -18,10 +62,51 @@
             },
             "outdated": {
                 "current_version": "Güncel Sürüm",
-                "dismiss": "Yok say",
+                "dismiss": "Yoksay",
                 "latest_version": "Son Sürüm",
                 "new_version_available": "Yeni sürüm mevcut",
                 "new_version_available_link": "Sürüm notlarını görüntülemek için buraya tıklayın"
+            }
+        },
+        "collection": {
+            "create_modal": {
+                "name_label": "Koleksiyon Adı",
+                "title": "Koleksiyon Oluştur",
+                "toast": {
+                    "already_creating": "Zaten bir koleksiyon oluşturuluyor",
+                    "create_failed": "Koleksiyon oluşturulamadı",
+                    "create_success": "Koleksiyon oluşturuldu",
+                    "please_enter_name": "Lütfen bir koleksiyon adı girin"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Lütfen bir son geçerlilik tarihi ve saati seçin.",
+                    "invalid_expiry_past": "Son geçerlilik tarihi gelecekte bir tarih olmalıdır.",
+                    "invalid_uses": "Kullanım sayısı 1 ile 100 arasında bir sayı olmalıdır."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Koleksiyon Davet Kodu",
+                "invites_should_look_like": "Davetler şu şekilde görünmelidir:",
+                "join": "Koleksiyona Katıl",
+                "no_invite_code_create_one": "Davet kodu yok mu? Bunun yerine yeni bir koleksiyon oluşturun",
+                "title": "Koleksiyona Katıl",
+                "toast": {
+                    "already_joining": "Zaten bir koleksiyona katılıyorsunuz",
+                    "join_failed": "Koleksiyona katılım başarısız oldu",
+                    "join_success": "Koleksiyona katılındı",
+                    "please_enter_valid_join_code": "Lütfen geçerli bir koleksiyon davet kodu girin"
+                }
+            },
+            "selector": {
+                "collection_options": "Koleksiyon Seçenekleri",
+                "create_collection": "Yeni Koleksiyon Oluştur",
+                "join_collection": "Mevcut Koleksiyona Katıl",
+                "no_collection_found": "Koleksiyon bulunamadı",
+                "search_collections": "Koleksiyon Ara…",
+                "select_collection": "Koleksiyon Seç",
+                "your_collections": "Koleksiyonlarınız"
             }
         },
         "color_selector": {
@@ -30,6 +115,75 @@
             "no_color": "Renksiz",
             "no_color_selected": "Renk seçilmedi",
             "randomize": "Rastgele renk"
+        },
+        "entity": {
+            "create_modal": {
+                "clear_template": "Şablonu Temizle",
+                "delete_photo": "Fotoğrafı Sil",
+                "entity_description": "{type} Açıklaması",
+                "entity_name": "{type} Adı",
+                "entity_photo": "{type} Fotoğrafı 📷",
+                "entity_quantity": "{type} Miktarı",
+                "item_selector_no_results_text": "Aramak için yazın…",
+                "parent_item": "Üst Öğe",
+                "product_tooltip_input_barcode": "Manuel olarak sağlanan barkod ile otomatik doldur",
+                "product_tooltip_scan_barcode": "📷 ile barkod kullanarak otomatik doldur",
+                "rotate_photo": "Fotoğrafı Döndür",
+                "toast": {
+                    "already_creating": "Zaten bir {type} oluşturuluyor",
+                    "create_failed": "{type} oluşturulamadı",
+                    "create_success": "{type} oluşturuldu",
+                    "failed_load_parent": "Üst öğe yüklenemedi - lütfen manuel olarak seçin",
+                    "no_canvas_support": "Tarayıcınız canvas işlemlerini desteklemiyor",
+                    "please_select_entity_type": "Lütfen bir varlık türü seçin.",
+                    "please_select_location": "Lütfen bir konum seçin.",
+                    "rotate_failed": "Görüntü döndürülemedi: { error }",
+                    "rotate_process_failed": "Döndürülen görüntü işlenemedi",
+                    "upload_failed": "Fotoğraf yüklenemedi: { photoName }"
+                },
+                "upload_photos": "Fotoğrafları Yükle",
+                "uploaded": "Yüklenen Fotoğraf"
+            },
+            "selector": {
+                "placeholder": "Bir tür seçin…"
+            }
+        },
+        "entityTypes": {
+            "card": {
+                "actions": {
+                    "delete": "Sil"
+                },
+                "badge_container": "Konteyner",
+                "default_template": "Varsayılan şablon: {name}",
+                "tooltip": {
+                    "delete": "Sil",
+                    "edit": "Düzenle"
+                }
+            },
+            "confirm": {
+                "convert_item_to_location": "Bir öğe türünü bir konum türüne dönüştürmek, bu türü kullanan varlıklar için alanların kaybına neden olacaktır. Devam etmek istediğinizden emin misiniz?",
+                "delete_entity_type": "\"{name}\" öğesini silmek istediğinizden emin misiniz?"
+            },
+            "create_dialog": {
+                "button": "Oluştur",
+                "is_container_location_type_label": "Bir konteyner / konum türüdür",
+                "name_label": "İsim",
+                "title": "Varlık Türü Oluştur"
+            },
+            "page": {
+                "create": "Oluştur",
+                "empty_button": "Varlık Türü Oluştur",
+                "empty_title": "Henüz tanımlanmış bir varlık türü yok.",
+                "title": "Varlık Türleri"
+            },
+            "toasts": {
+                "create_failed": "Varlık türü oluşturulamadı",
+                "create_success": "Varlık türü oluşturuldu",
+                "delete_confirm_failed": "Varlık türü silinemedi. Hiçbir varlığın bu türü kullanmadığundan emin olun.",
+                "delete_success": "Varlık türü silindi",
+                "name_required": "İsim gereklidir",
+                "update_failed": "Varlık türü güncellenemedi"
+            }
         },
         "form": {
             "password": {
@@ -92,36 +246,6 @@
             "attachments_list": {
                 "download": "İndir",
                 "open_new_tab": "Yeni sekmede aç"
-            },
-            "create_modal": {
-                "clear_template": "Şablonu Temizle",
-                "delete_photo": "Fotoğrafı sil",
-                "item_description": "Ürün Açıklaması",
-                "item_name": "Ürün Adı",
-                "item_photo": "Öğe Fotoğrafı 📷",
-                "item_quantity": "Öğe Miktarı",
-                "parent_item": "Ana Öğe",
-                "product_tooltip_input_barcode": "Elle girilen barkod ile otomatik doldur",
-                "product_tooltip_scan_barcode": "Fotoğrafdaki barkod ile doldur",
-                "rotate_photo": "Fotoğrafı döndür",
-                "set_as_primary_photo": "{isPrimary, select, true {non} false {} other {}}ana fotoğraf olarak ayarla",
-                "title": "Eşya Oluştur",
-                "toast": {
-                    "already_creating": "Zaten bir ürün oluşturuluyor",
-                    "create_failed": "Üürn oluşturulamadı",
-                    "create_success": "Ürün yaratıldı",
-                    "failed_load_parent": "Ana öğe yüklenemedi - lütfen elle seçin",
-                    "no_canvas_support": "Tarayıcınız canvas işlemlerini desteklemiyor",
-                    "please_select_location": "Lütfen bir konum seçin.",
-                    "rotate_failed": "Fotoğraf döndürme başarısız: { error }",
-                    "rotate_process_failed": "Döndürülmüş görüntü işlenemedi",
-                    "some_photos_failed": "{count, plural, =0 {Yüklenecek fotoğraf yok.} =1 {1 fotoğraf yüklenemedi.} other {Bazı fotoğraflar yüklenemedi.}}",
-                    "upload_failed": "Fotoğraf yüklenemedi: { photoName }",
-                    "upload_success": "{count, plural, =0 {Fotoğraf yüklenmedi.} =1 {Fotoğraf başarıyla yüklendi.} other {Tüm fotoğraflar başarıyla yüklendi.}}",
-                    "uploading_photos": "{count, plural, =0 {Yüklenecek fotoğraf yok} =1 {1 fotoğraf yükleniyor...} other {{count} fotoğraf yükleniyor...}}"
-                },
-                "upload_photos": "Fotoğrafları Yükle",
-                "uploaded": "Yüklenen Fotoğraf"
             },
             "product_import": {
                 "barcode": "Ürün barkodu",
@@ -189,16 +313,6 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Konum Açıklaması",
-                "location_name": "Konum Adı",
-                "title": "Konum oluştur",
-                "toast": {
-                    "already_creating": "Zaten bir konum oluşturuluyor",
-                    "create_failed": "Konum oluşturulamadı",
-                    "create_success": "Konum oluşturuldu"
-                }
-            },
             "selector": {
                 "no_location_found": "Konum bulunamadı",
                 "parent_location": "Üst Konum",

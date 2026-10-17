@@ -147,7 +147,7 @@ func (s *IOSheet) Read(data io.Reader) error {
 
 			switch field.Type {
 			case reflect.TypeOf(""):
-				v = val
+				v = restoreCSVCell(val)
 			case reflect.TypeOf(int(0)):
 				v = parseInt(val)
 			case reflect.TypeOf(bool(false)):
@@ -161,9 +161,9 @@ func (s *IOSheet) Read(data io.Reader) error {
 			case reflect.TypeOf(repo.AssetID(0)):
 				v, _ = repo.ParseAssetID(val)
 			case reflect.TypeOf(LocationString{}):
-				v = parseLocationString(val)
+				v = parseLocationString(restoreCSVCell(val))
 			case reflect.TypeOf(TagString{}):
-				v = parseTagString(val)
+				v = parseTagString(restoreCSVCell(val))
 			}
 
 			log.Debug().
@@ -183,7 +183,7 @@ func (s *IOSheet) Read(data io.Reader) error {
 
 		for _, col := range s.custom {
 			colName := strings.TrimPrefix(s.headers[col], "HB.field.")
-			customVal := row[col]
+			customVal := restoreCSVCell(row[col])
 			if customVal == "" {
 				continue
 			}
@@ -355,7 +355,7 @@ func (s *IOSheet) CSV() ([][]string, error) {
 
 			switch field.Type {
 			case reflect.TypeOf(""):
-				v = val.String()
+				v = neutralizeCSVCell(val.String())
 			case reflect.TypeOf(int(0)):
 				v = strconv.Itoa(int(val.Int()))
 			case reflect.TypeOf(bool(false)):
@@ -369,9 +369,9 @@ func (s *IOSheet) CSV() ([][]string, error) {
 			case reflect.TypeOf(repo.AssetID(0)):
 				v = val.Interface().(repo.AssetID).String()
 			case reflect.TypeOf(LocationString{}):
-				v = val.Interface().(LocationString).String()
+				v = neutralizeCSVCell(val.Interface().(LocationString).String())
 			case reflect.TypeOf(TagString{}):
-				v = val.Interface().(TagString).String()
+				v = neutralizeCSVCell(val.Interface().(TagString).String())
 			default:
 				log.Debug().Str("type", field.Type.String()).Msg("unknown type")
 			}
@@ -385,7 +385,7 @@ func (s *IOSheet) CSV() ([][]string, error) {
 				continue
 			}
 
-			memcsv[i+1][col] = f.Value
+			memcsv[i+1][col] = neutralizeCSVCell(f.Value)
 		}
 	}
 

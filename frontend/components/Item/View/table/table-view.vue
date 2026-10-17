@@ -47,7 +47,7 @@
               :key="cell.id"
               :href="
                 cell.column.id !== 'select' && cell.column.id !== 'actions' && cell.column.id !== 'location'
-                  ? `/item/${row.original.id}`
+                  ? `/${cell.row.original.entityType?.isLocation ? 'location' : 'item'}/${row.original.id}`
                   : undefined
               "
               :class="cell.column.id === 'select' || cell.column.id === 'actions' ? 'w-10 px-3' : ''"

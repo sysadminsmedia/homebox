@@ -35,6 +35,7 @@
         "no_invites": "Aucun inviter",
         "remaining_uses": "Utilisations restantes",
         "tabs": {
+            "entity_types": "Types d'objet",
             "invites": "Invitations",
             "members": "Membres",
             "notifiers": "Notifiants",
@@ -116,7 +117,88 @@
             "no_color_selected": "Aucune couleur sélectionnée",
             "randomize": "Couleur aléatoire"
         },
+        "entity": {
+            "create_modal": {
+                "clear_template": "Effacer le modèle",
+                "delete_photo": "Supprimer la photo",
+                "entity_description": "{type} Description",
+                "entity_name": "{type} Nom",
+                "entity_photo": "{type} Photo 📷",
+                "entity_quantity": "{type} Quantité",
+                "item_selector_no_results_text": "Taper pour rechercher…",
+                "parent_item": "Article Parent",
+                "product_tooltip_input_barcode": "Remplir automatiquement avec un code-barre fourni manuellement",
+                "product_tooltip_scan_barcode": "Remplir automatiquement avec un code-barre à partir de 📷",
+                "rotate_photo": "Tourner la photo",
+                "set_as_primary_photo": "Définir en tant que { isPrimary, select, true {non-} false {} other {}}photo principale",
+                "toast": {
+                    "already_creating": "Déjà en train de créer un {type}",
+                    "create_failed": "Impossible de créer {type}",
+                    "create_success": "{type} créé",
+                    "failed_load_parent": "Échec du chargement de l'article parent - merci de sélectionner manuellement",
+                    "no_canvas_support": "Votre navigateur ne supporte pas les opérations sur le canvas",
+                    "please_select_entity_type": "S'il vous plaît, entrez un type d'objet.",
+                    "please_select_location": "S'il vous plait, sélectionnez une localisation.",
+                    "rotate_failed": "Impossible de tourner l'image : { error }",
+                    "rotate_process_failed": "Impossible de traiter l'image tournée",
+                    "some_photos_failed": "{count, plural, =0 {No photos to upload.} =1 {Echec du téléversement de 1 photo.} other {Echec du téléversement de plusieurs photos.}}",
+                    "upload_failed": "Impossible de téléverser la photo : { photoName }",
+                    "upload_success": "{count, plural, =0 {Aucune photo téléversée.} =1 {Réussite du téléversement des photos.} other {Réussite du téléversement de toutes les photos.}}",
+                    "uploading_photos": "{count, plural, =0 {Aucune photo à téléverser} =1 {Téléversement de 1 photo…} other {Téléversement de {count} photos…}}"
+                },
+                "upload_photos": "Charger des photos",
+                "uploaded": "Photo téléversée"
+            },
+            "selector": {
+                "placeholder": "Sélectionnez un type…"
+            }
+        },
+        "entityTypes": {
+            "card": {
+                "actions": {
+                    "delete": "Supprimer"
+                },
+                "badge_container": "Conteneur",
+                "default_template": "Modèle par défaut :{name}",
+                "tooltip": {
+                    "delete": "Supprimer",
+                    "edit": "Editer"
+                }
+            },
+            "confirm": {
+                "convert_item_to_location": "Convertir un article en emplacement aboutira à la perte de champs pour les entités utilisant ce type. Êtes vous sur de vouloir continuer ?",
+                "delete_entity_type": "Êtes vous sur de vouloir supprimer \"{name}\" ?"
+            },
+            "create_dialog": {
+                "button": "Créer",
+                "is_container_location_type_label": "Est un contenant / type d'emplacement",
+                "name_label": "Nom",
+                "title": "Créer un type d'objet"
+            },
+            "page": {
+                "create": "Créer",
+                "empty_button": "Créer un type d'objet",
+                "empty_title": "Pas de type d'objet crée pour l'instant.",
+                "title": "Type d'objet"
+            },
+            "toasts": {
+                "create_failed": "Echec de la création d'un type d'objet",
+                "create_success": "Type d'objet créé",
+                "delete_confirm_failed": "Echec de la suppression du type d'objet. Assurez vous qu'aucun objet ne l'utilise.",
+                "delete_success": "Type d'objet supprimé",
+                "name_required": "Le nom est requis",
+                "update_failed": "Echec de la mise à jour du type d'objet",
+                "update_success": "Type d'objet mis à jour"
+            },
+            "update_dialog": {
+                "button": "Mise à jour",
+                "is_container_location_type_label": "Est un contenant / type d'emplacement",
+                "name_label": "Nom",
+                "title": "Mettre à jour le type d'objet"
+            }
+        },
         "form": {
+            "min_length": "min{min}",
             "password": {
                 "toggle_show": "Activer/désactiver l'affichage du mot de passe"
             }
@@ -171,6 +253,7 @@
                 "qr_tooltip": "Afficher le QR code"
             },
             "password_score": {
+                "does_not_meet_requirement": "Ne remplis pas les conditions de sécurité du mot de passe",
                 "password_strength": "Force du mot de passe"
             }
         },
@@ -178,36 +261,6 @@
             "attachments_list": {
                 "download": "Télécharger",
                 "open_new_tab": "Ouvrir dans un nouvel onglet"
-            },
-            "create_modal": {
-                "clear_template": "Effacer modèle",
-                "delete_photo": "Supprimer la photo",
-                "item_description": "Description de l'article",
-                "item_name": "Nom de l'article",
-                "item_photo": "Photo de l'article 📷",
-                "item_quantity": "Quantité d'articles",
-                "parent_item": "Article parent",
-                "product_tooltip_input_barcode": "Remplir avec un code-barre entré manuellement",
-                "product_tooltip_scan_barcode": "Remplir avec un barre-code d'une 📷",
-                "rotate_photo": "Faire pivoter la photo",
-                "set_as_primary_photo": "Définir comme photo { isPrimary, select, true {non-} false {} other {}}principale",
-                "title": "Créer un article",
-                "toast": {
-                    "already_creating": "Déjà en train de créer un article",
-                    "create_failed": "Impossible de créer l'article",
-                    "create_success": "Article créé",
-                    "failed_load_parent": "Échec du chargement de l'article parent - veuillez sélectionner manuellement",
-                    "no_canvas_support": "Votre navigateur ne supporte les opérations «canvas»",
-                    "please_select_location": "Veuillez sélectionner un emplacement.",
-                    "rotate_failed": "Impossible de faire pivoter l'image : { error }",
-                    "rotate_process_failed": "Échec du traitement de l'image pivotée",
-                    "some_photos_failed": "{count, plural, =0 {Aucune photo à téléverser.} =1 {1 photo n'a pas pu être téléversée.} other {Certaines photos n'ont pas pu être téléversées.}}",
-                    "upload_failed": "Échec du téléversement de la photo : { photoName }",
-                    "upload_success": "{count, plural, =0 {Aucune photo téléversée.} =1 {Photo téléversée avec succès.} other {Toutes les photos téléversées avec succès.}}",
-                    "uploading_photos": "{count, plural, =0 {Aucune photo à téléverser} =1 {Téléversement d'1 photo...} other {Téléversement de {count} photos...}}"
-                },
-                "upload_photos": "Transférer des photos",
-                "uploaded": "Photo téléversée"
             },
             "product_import": {
                 "barcode": "Code-barre produit",
@@ -278,16 +331,7 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Description de l'emplacement",
-                "location_name": "Nom de l'emplacement",
-                "title": "Créer un emplacement",
-                "toast": {
-                    "already_creating": "Déjà en train de créer un emplacement",
-                    "create_failed": "Impossible de créer l'emplacement",
-                    "create_success": "Emplacement créé"
-                }
-            },
+            "create_item": "Créer l'article",
             "selector": {
                 "clear": "Effacer les emplacements sélectionnés",
                 "no_location_found": "Aucun emplacement trouvé",
@@ -312,7 +356,9 @@
             "create_modal": {
                 "tag_color": "Couleur de l'étiquette",
                 "tag_description": "Description de l'étiquette",
+                "tag_icon": "Icône de la balise",
                 "tag_name": "Nom de l'étiquette",
+                "tag_parent": "Etiquette parent",
                 "title": "Créer une étiquette",
                 "toast": {
                     "already_creating": "Étiquette déjà en cours de création",
@@ -322,6 +368,8 @@
                 }
             },
             "selector": {
+                "clear": "Effacer",
+                "no_tags_found": "Pas d'étiquette trouvée",
                 "select_tags": "Sélectionnez des étiquettes"
             }
         },
@@ -407,16 +455,20 @@
         "duplicate": "Dupliquer",
         "edit": "Modifier",
         "email": "Courriel",
+        "entity": "Objet",
+        "entity_type": "Type d'objet",
         "follow_dev": "Suivre le développeur",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' Version: { version } Build: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' Version : { version } Build : { build } '</a>'"
         },
         "github": "Projet GitHub",
         "insured": "Assuré",
+        "item": "Article",
         "items": "Articles",
         "join_discord": "Rejoindre le Discord",
         "loading": "Chargement…",
+        "location": "Emplacement",
         "locations": "Emplacements",
         "maintenance": "Entretien",
         "name": "Nom",
@@ -449,19 +501,31 @@
         "recently_added": "Ajoutés récemment",
         "storage_locations": "Emplacements de stockage",
         "tags": "Balises",
-        "total_items": "Total d'objets",
+        "total_items": "Total d'article",
         "total_locations": "Total d'emplacements",
         "total_tags": "Nombre total de balises",
         "total_value": "Valeur totale"
     },
     "index": {
+        "back_to_login": "Retour à la page de connexion",
         "disabled_registration": "Les inscriptions sont désactivées",
         "dont_join_group": "Vous ne voulez pas joindre un groupe ?",
+        "forgot_password": "Mot de passe oublié ?",
+        "forgot_password_check_email": "Si cet e-mail est associé à un compte, un lien de réinitialisation sera envoyé. Le lien expire dans 1h.",
+        "forgot_password_send": "Envoyer un lien de réinitialisation",
+        "forgot_password_subtitle": "Entrer l'e-mail de votre compte et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+        "forgot_password_title": "Réinitialiser votre mot de passe",
         "joining_group": "Vous rejoignez un groupe existant !",
         "login": "Se connecter",
         "or": "ou",
         "register": "S'enregistrer",
         "remember_me": "Se souvenir de moi",
+        "reset_password_invalid": "Le lien de réinitialisation est invalide ou a expiré. Faites une nouvelle demande.",
+        "reset_password_missing_token": "Jeton de réinitialisation manquant. Cliquez à nouveau sur le lien figurant dans votre e-mail ou demandez-en un nouveau.",
+        "reset_password_set": "Définir le nouveau mot de passe",
+        "reset_password_subtitle": "Choisissez un nouveau mot de passe pour votre compte.",
+        "reset_password_success": "Votre mot de passe a été réinitialisé. Connectez vous avec le nouveau mot de passe.",
+        "reset_password_title": "Réinitialisez votre mot de passe",
         "set_email": "Quel est votre courriel ?",
         "set_name": "Quel est votre nom ?",
         "set_password": "Définir votre mot de passe",
@@ -512,6 +576,7 @@
             "title": "Paramètres de duplication"
         },
         "edit": {
+            "change_entity_type_confirm": "Changer le type d'objet peut conduire à une perte de données dans les champs qui ne sont pas partagés entre le type d'objet actuel et le nouveau. Êtes vous de vouloir changer le type d'objet ?",
             "edit_attachment_dialog": {
                 "attachment_title": "Titre de la pièce jointe",
                 "attachment_type": "Type de la pièce jointe",
@@ -548,7 +613,7 @@
         "options": "Options",
         "order_by": "Trier par",
         "pages": "Page { page } sur { totalPages }",
-        "parent_item": "Objet parent",
+        "parent_item": "Article parent",
         "photo": "Photo",
         "photos": "Photos",
         "prev_page": "Page précédente",
@@ -580,11 +645,12 @@
         "toast": {
             "asset_not_found": "Ressource introuvable",
             "attachment_deleted": "Pièce jointe supprimée",
+            "attachment_too_large": "La pièce jointe est trop grande : la taille dépasse la limite de téléversement du serveur",
             "attachment_updated": "Pièce jointe mise à jour",
             "attachment_uploaded": "Pièce jointe téléversée",
             "child_items_location_no_longer_synced": "Les emplacements des articles enfants ne seront plus synchronisés avec cet article.",
             "child_items_location_synced": "Les emplacements des articles enfants ont été synchronisés avec cet article",
-            "child_location_desync": "Changer d'emplacement le désynchronisera de l'emplacement de son parent",
+            "child_location_desync": "Article parent supprimé - l'article est désormais directement à l'emplacement choisi",
             "error_loading_parent_data": "Une erreur s'est produite lors du chargement des données parent",
             "failed_adjust_quantity": "Échec de l'ajustement de la quantité",
             "failed_delete_attachment": "Échec de la suppression de la pièce jointe",
@@ -643,9 +709,12 @@
         "zh-TW": "Chinois (traditionnel)"
     },
     "languages.da-DK": "Danois",
+    "languages.el-GR": "Grec",
+    "languages.en@pirate": "Anglais (pirate)",
     "languages.ro-RO": "Roumain",
     "languages.sk-SK": "Slovaque",
     "languages.sq-AL": "Albanais",
+    "languages.sr-RS": "Serbe (Serbe)",
     "locations": {
         "child_locations": "Sous-emplacements",
         "collapse_tree": "Minimiser la liste",
@@ -719,6 +788,23 @@
     },
     "profile": {
         "active": "Actif",
+        "api_key_copied": "Copié dans le presse-papier",
+        "api_key_copy": "Copier",
+        "api_key_create": "Créer une clé API",
+        "api_key_created": "Créé",
+        "api_key_default_expiration": "Les clefs expirent après 30 jours sauf si vous indiquez une date de fin.",
+        "api_key_delete_confirm": "Etes vous sûr de vouloir révoquer cette clé API ? Tous les utilisateurs l'utilisant perdront l'accès immédiatement.",
+        "api_key_expires_at": "Expire",
+        "api_key_last_used": "Dernière fois utilisé",
+        "api_key_name": "Nom",
+        "api_key_name_placeholder": "P. ex. Home assistant",
+        "api_key_never_used": "Jamais",
+        "api_key_no_expiration": "Pas d'expiration",
+        "api_key_set_expiration": "Définir une date d'expiration",
+        "api_key_token_label": "Votre nouvelle clé API",
+        "api_key_token_warning": "Copier ce jeton maintenant. Pour votre sécurité, il ne sera plus affiché.",
+        "api_keys": "Clés API",
+        "api_keys_sub": "Jetons statiques pour l'accès programmatique. Chaque clé a les mêmes permissions que votre compte.",
         "change_password": "Changer de mot de passe",
         "currency_format": "Format de la devise",
         "current_password": "Mot de passe actuel",
@@ -733,7 +819,9 @@
         "group_settings_sub": "Paramètres du groupe partagé. Il peut être nécessaire de recharger la page pour qu’ils deviennent effectifs.",
         "inactive": "Inactif",
         "language": "Langue",
-        "legacy_image_fit": "{ currentValue, select, true {Disable Legacy Fit: Fit Image with Bars} false {Enable Legacy Fit: Fill Image with Crop} other {Not Hit}}",
+        "legacy_image_fit": "{ currentValue, select, true {Désactiver l'ajustement hérité : Ajuster l'image avec des bandes} false {Activer l'ajustement hérité : Remplir l'image par recadrage} other {Not Hit}}",
+        "logout_all_confirm": "Cela vous déconnectera de tous les appareils, y compris celui-ci. Vous devrez vous connecter à nouveau. Continuer ?",
+        "logout_all_devices": "Se déconnecter de tous les appareils",
         "moved_notice_body": "Les notifications, les invitations et les paramètres de devise ont été déplacés vers les pages de collection.",
         "moved_notice_description": "Ces paramètres sont désormais gérés par collection.",
         "moved_notice_link_invites": "Invitations pour cette collection",
@@ -741,6 +829,7 @@
         "moved_notice_link_settings": "Paramètres de devise monétaire pour la collection",
         "moved_notice_title": "Vous recherchez les paramètres de notification, d'invitation ou de devise monétaire ?",
         "new_password": "Nouveau mot de passe",
+        "no_api_keys": "Pas de clé API actuellement",
         "no_notifiers": "Aucun notificateur configuré",
         "no_override": "Aucun remplacement",
         "notifier_modal": "{ type, select, true {Modifier} false {Créer} other {Autre}} Notificateur",
@@ -752,15 +841,21 @@
         "theme_settings_sub": "Les paramètres du thème sont stockés dans le navigateur. Vous pouvez les changer à tout moment. Si vous\nrencontrez des problèmes, il est conseillé de rafraichir la page.",
         "toast": {
             "account_deleted": "Votre compte a été supprimé.",
+            "api_key_created": "Clé API créée.",
+            "api_key_deleted": "Clé API révoquée.",
+            "failed_api_key_create": "Echec de la création de la clé API.",
+            "failed_api_key_delete": "Echec de la révocation de la clé API.",
             "failed_change_password": "Échec de la modification du mot de passe.",
             "failed_create_notifier": "Échec de la création du notificateur.",
             "failed_delete_account": "Échec de la suppression de votre compte.",
             "failed_delete_notifier": "Échec de la suppression du notificateur.",
             "failed_get_currencies": "Échec de l'obtention des devises",
+            "failed_logout_all": "Echec de la déconnexion de tous les appareils.",
             "failed_test_notifier": "Échec du test du notificateur.",
             "failed_update_group": "Échec de la mise à jour du groupe",
             "failed_update_notifier": "Échec de la mise à jour du notificateur.",
             "group_updated": "Groupe mis à jour",
+            "logout_all_success": "Déconnecté de tous les appareils.",
             "notifier_test_success": "Test du notificateur réussi.",
             "password_changed": "Mot de passe changé avec succès."
         },
@@ -790,6 +885,7 @@
             "page_right_padding": "Marge droite de la page",
             "page_top_padding": "Marge du haut de la page",
             "page_width": "Largeur de la page",
+            "print_location_row": "Imprimer la ligne de l'emplacement",
             "qr_code_example": "Exemple de QR code",
             "replace_homebox_behavior": "Remplacer le comportement du texte « HomeBox »",
             "replace_homebox_behavior_always_replace": "Toujours remplacez « HomeBox »",
@@ -798,6 +894,7 @@
             "replace_homebox_behavior_item_no_name_no_location": "Remplacez « HomeBox » lorsque l'élément n'a ni nom ni emplacement",
             "replace_homebox_behavior_show_homebox": "Afficher \"HomeBox\"",
             "replace_homebox_text": "Texte de remplacement",
+            "skip_first_labels": "Passer les premières étiquettes",
             "tip_1": "Ces valeurs par défaut sont configurées pour les\n '<a href=\"https://www.avery.com/templates/5260\">' étiquettes Avery 5260 '</a>'. Si vous utilisez des étiquettes différentes,\n vous devrez ajuster les paramètres correspondre à vos étiquettes.",
             "tip_2": "Si vous personnalisez votre étiquette, les dimensions sont en pouces. Lors de la conception des étiquettes 5260, j'ai remarqué que les\n dimensions utilisées dans leur template ne correspondaient pas à ce qui était nécessaire pour imprimer à l'intérieur des boîtes.\n '<b>'Soyez prêts à faire de l'essai-erreur.'</b>'",
             "tip_3": "Lors de l'impression, assurez-vous de:\n '<ol><li>'Définir les marges à 0 ou Aucune'</li><li>'Définir la mise à l'échelle à 100%'</li><li>'Désactiver l'impression recto-verso'</li><li>'Imprimer une page de test avant d'imprimer plusieurs pages'</li></ol>'",
@@ -818,6 +915,22 @@
         "select_video_source": "Choisir une source vidéo",
         "title": "Numériser",
         "unsupported": "L’API <i>Media Stream</i> n’est pas prise en charge sans HTTPS"
+    },
+    "scanner_ar": {
+        "ar_mode": "Mode RA",
+        "back": "Retour",
+        "child_items": "{count, plural, one {article enfant} other {articles enfants}}",
+        "children": "{count, plural, one {sous-emplacement} other {sous-emplacements}}",
+        "items": "{count, plural, one {article} other {articles}}",
+        "items_in_location": "{count, plural, one {articles} other {articles}}",
+        "more": "Plus",
+        "not_found": "Article non trouvé",
+        "qty": "Qté",
+        "retry": "Réessayer",
+        "scanning": "Numérisation",
+        "switch_camera": "Changer de caméra",
+        "title": "Scanner RA",
+        "unsupported": "La numérisation RA n'est pas prise en charge par ce navigateur"
     },
     "tags": {
         "no_results": "Aucune étiquette d'Hébergement n'a été trouvée",
@@ -863,6 +976,26 @@
             "zero_datetimes_sub": "Réinitialise la valeur de tous les champs date/heure de votre inventaire à la date de début. Il s'agit de corriger une anomalie introduite au début du développement du site qui entraînait le stockage de la valeur temporelle avec l'heure, ce qui provoquait des problèmes avec les champs de date affichant des valeurs précises. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Voir le rapport 236 de Github pour plus de détails.'</a> '"
         },
         "actions_sub": "Appliquer des actions en masse à votre inventaire. Ces actions sont irréversibles. '<b>'Soyez vigilant.'</b>'",
+        "backups": "Sauvegarde et restauration",
+        "backups_set": {
+            "create": "Créer une sauvegarde",
+            "create_button": "Démarrer la sauvegarde",
+            "create_sub": "Créer unzip avec tous les objets, balises, champs personnalisées, pièces jointes, et les enregistrements de maintenance de cette collection. Le travail s'effectue en arrière plan ; le symbole apparaîtra dans la table dessous quand le zip est prêt.",
+            "delete_confirm": "Supprimer cet élément de sauvegarde ? Cette action est irréversible.",
+            "download": "Télécharger",
+            "failed": "Sauvegarde échouée. Regarder les logs du serveur pour le détail.",
+            "list_empty": "Pas de sauvegarde actuellement.",
+            "restore": "Restaurer depuis une sauvegarde",
+            "restore_button": "Téléversement & restauration",
+            "restore_sub": "Téléverser une sauvegarde zip pour remplir cette collection. La collection ne doit contenir aucun article - les emplacements par défaut et les balises sont automatiquement supprimés pendant le processus de restauration.",
+            "table": {
+                "actions": "Actions",
+                "created": "Créé",
+                "size": "Taille",
+                "status": "Statut"
+            }
+        },
+        "backups_sub": "Exporter l'intégralité de votre collection - entités, balises, pièces jointe, et métadata - vers un fichier archive ZIP portable. Restaurer une archive vers une nouvelle collection vide sur ce serveur ou un autre.",
         "demo_mode_error": {
             "wipe_inventory": "L'inventaire, les étiquettes, les emplacements et les entretiens ne peuvent pas être effacés lorsque HomeBox est en mode démonstration. Veuillez vérifier que vous n'êtes pas en mode démo et réessayer."
         },
@@ -889,12 +1022,18 @@
         "reports_sub": "Générez différents rapports pour votre inventaire.",
         "toast": {
             "asset_success": "{ results } ressources ont été mises à jour.",
+            "backup_delete_failed": "Echec de la suppression de la sauvegarde.",
+            "backup_start_failed": "Echec du démarrage de la sauvegarde.",
+            "backup_started": "Sauvegarde démarré - elle apparaîtra dans la table quand elle sera prête.",
             "failed_create_missing_thumbnails": "Échec de la création des vignettes manquantes.",
             "failed_ensure_ids": "Échec de la vérification des ID de ressources.",
             "failed_ensure_import_refs": "Échec de la vérifications des références d'importation.",
             "failed_set_primary_photos": "Échec de la définition des photos principales.",
             "failed_wipe_inventory": "Échec de l'effacement de l'inventaire.",
             "failed_zero_datetimes": "Échec de la réinitialisation des valeurs de date et d'heure.",
+            "restore_failed": "Echec de la restauration.",
+            "restore_requires_empty": "La restauration exige une collection sans article. Changer pour une nouvelle collection (les emplacements par défaut et les balises sont bons) et réessayer.",
+            "restore_started": "Restauration commencée - actualisez la page dans quelques instants pour voir les articles importés.",
             "wipe_inventory_success": "Inventaire effacé avec succès. {results} articles ont été effacés."
         }
     }

@@ -1,6 +1,47 @@
 {
     "collection": {
-        "invite_token": "Token"
+        "copy_invite": "Copiază linkul de invitație",
+        "create_invite": "Creează invitație",
+        "delete_collection": "Șterge colecție",
+        "delete_confirm": "Ești sigur că vrei să ștergi colecția? Această acțiune nu poate fi anulată!",
+        "deleted_collection": "Colecția a fost ștearsă.",
+        "expires_at": "Expiră",
+        "invite_token": "Token",
+        "invite_token_hidden": "Nu mai este vizibil",
+        "invite_token_warning": "Tokenii de invitație se pot vedea o singură dată. Copiază linkul acum. Nu vei mai putea vedea tokenul după ce închizi pagina sau dacă dai refresh.",
+        "invites": "Invitații",
+        "invites_delete_confirm": "Ești sigur că vrei să ștergi această invitație?",
+        "leave_collection": "Părăsește Colecție",
+        "leave_confirm": "Ești sigur că vrei să părăsești colecția?",
+        "left_collection": "Ai părăsit colecția.",
+        "manage_collection": "Administrează colecție",
+        "members": {
+            "cannot_remove_last": "Nu poți șterge ultimul membru.",
+            "email": "Email",
+            "empty": "Nu ai membri in această colecție deocamdată.",
+            "member": "Membru",
+            "name": "Nume",
+            "owner": "Proprietar",
+            "remove_confirm": "Sunteți sigur cā doriți eliminarea acestui utilizator?",
+            "removed": "Utilizator eliminat",
+            "role": "Rol"
+        },
+        "no_collections": {
+            "create": "Creați o colecție nouā",
+            "message": "Nu faceți parte dintr-o colecție. Creați o colecție nouā pentru lucrurile dumneavoastrā, sau alāturațivā unei colecții la care ați fost invitat.",
+            "title": "Nu s-a gāsit nicio colecție"
+        },
+        "no_invites": "Nicio invitație",
+        "remaining_uses": "Utilizāri rāmase",
+        "tabs": {
+            "entity_types": "Tipuri de entitāți",
+            "invites": "Invitații",
+            "members": "Membrii",
+            "notifiers": "Notificatori",
+            "settings": "Configurații",
+            "tools": "Unelte"
+        },
+        "uses": "Utilizāri"
     },
     "components": {
         "app": {
@@ -26,11 +67,78 @@
                 "new_version_available_link": "Dă click aici pentru a vedea notele de lansare"
             }
         },
+        "collection": {
+            "create_modal": {
+                "name_label": "Numele colecției",
+                "title": "Creați o colecție",
+                "toast": {
+                    "already_creating": "Deja în cursul creārii unei colecții",
+                    "create_failed": "Colecția nu a putut fi creată",
+                    "create_success": "Colecție creatã",
+                    "please_enter_name": "Introduceți un nume pentru colecție"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Alegeți o datã de expirare.",
+                    "invalid_expiry_past": "Data de expirare trebuie sã fie în viitor.",
+                    "invalid_uses": "Numãrul de utilizãri trebuie sã fie între 1 și 100."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Codul invitației pentru colecție",
+                "invites_should_look_like": "Invitațiile ar trebuie sã arate ca:",
+                "join": "Alãturați-vã colecției",
+                "no_invite_code_create_one": "Nu aveți un cod de invitație? Creați o colecție nouã în schimb",
+                "title": "Alãturați-vã colecției",
+                "toast": {
+                    "already_joining": "Deja în procesul de a te alãtura unei colecții",
+                    "join_failed": "Alãturarea la colecție nu a putut fii efectuatã",
+                    "please_enter_valid_join_code": "Introduceți o invitație validã pentru o colecție"
+                }
+            },
+            "selector": {
+                "collection_options": "Opțiunile colecției",
+                "create_collection": "Creați o colecție nouã",
+                "join_collection": "Alãturați-vã unei colecții existente",
+                "no_collection_found": "Nu s-a gãsit nicio colecție",
+                "search_collections": "Cãutați colecții…",
+                "select_collection": "Selectați colecția",
+                "your_collections": "Colecțiile dumneavoastrã"
+            }
+        },
         "color_selector": {
             "clear": "Elimina culoarea",
             "color": "Culoare",
             "no_color": "Fara culoare",
-            "no_color_selected": "Nici o culoare selectata"
+            "no_color_selected": "Nici o culoare selectata",
+            "randomize": "Culoare aleatorie"
+        },
+        "entity": {
+            "create_modal": {
+                "clear_template": "Goliți șablonul",
+                "delete_photo": "Ștergeți poza",
+                "entity_description": "{type} Descriere",
+                "entity_name": "{type} Nume",
+                "entity_photo": "{type} Pozã 📷",
+                "entity_quantity": "{type} Cantitate",
+                "item_selector_no_results_text": "Tastați pentru a cãuta…",
+                "parent_item": "Element pãrinte",
+                "product_tooltip_input_barcode": "Completare automatã cu un cod de bare furnizat manual",
+                "product_tooltip_scan_barcode": "Completare automată cu un cod de bare de la 📷",
+                "rotate_photo": "Rotește fotografia",
+                "set_as_primary_photo": "Setați ca { isPrimary, select, true {non-} false {} other {}} fotografie principală",
+                "toast": {
+                    "already_creating": "Deja în curs de creare a {type}",
+                    "create_failed": "Nu s-a putut crea {type}",
+                    "create_success": "{type} creat",
+                    "failed_load_parent": "Nu a fost posibilã încãrcarea pǎrintelui - selectați manual",
+                    "no_canvas_support": "Browser-ul dumneavoastrã nu suportã operații canvas",
+                    "please_select_entity_type": "Selectați un tip de entitate.",
+                    "please_select_location": "Selectați o locație.",
+                    "rotate_failed": "Nu s-a putut roti imaginea: { error }"
+                }
+            }
         },
         "global": {
             "copy_text": {
@@ -88,23 +196,6 @@
                 "download": "Descărcare",
                 "open_new_tab": "Deschideți într-o filă nouă"
             },
-            "create_modal": {
-                "delete_photo": "Ştergere fotografie",
-                "item_description": "Descriere articol",
-                "item_name": "Denumire articol",
-                "item_photo": "Fotografie de articol 📷",
-                "item_quantity": "Cantitate Articol",
-                "parent_item": "Articol Părinte",
-                "product_tooltip_input_barcode": "Completare automată cu un cod de bare furnizat manual",
-                "product_tooltip_scan_barcode": "Completare automată cu un cod de bare de la 📷",
-                "rotate_photo": "Rotește fotografia",
-                "set_as_primary_photo": "Setați ca { isPrimary, select, true {non-} false {} other {}} fotografie principală",
-                "title": "Crează articol",
-                "toast": {
-                    "create_failed": "Articolul nu a putut fi creat",
-                    "create_success": "Articol creat"
-                }
-            },
             "view": {
                 "selectable": {
                     "card": "Cartelă",
@@ -119,11 +210,6 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Descriere locatie",
-                "location_name": "Nume locație",
-                "title": "Crează Locație"
-            },
             "selector": {
                 "parent_location": "Locație Părinte"
             },
@@ -277,6 +363,7 @@
         "zh-TW": "Chineză (Tradițională)"
     },
     "languages.da-DK": "Daneză",
+    "languages.el-GR": "Greacã",
     "languages.ro-RO": "Română",
     "languages.sk-SK": "Slovacă",
     "locations": {

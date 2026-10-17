@@ -27,11 +27,11 @@ func BillOfMaterialsCSV(entities []repo.EntityOut) ([]byte, error) {
 	return gocsv.MarshalBytes(new(lo.Map(entities, func(entity repo.EntityOut, _ int) BillOfMaterialsEntry {
 		return BillOfMaterialsEntry{
 			PurchaseDate: entity.PurchaseDate,
-			Name:         entity.Name,
-			Description:  entity.Description,
-			Manufacturer: entity.Manufacturer,
-			SerialNumber: entity.SerialNumber,
-			ModelNumber:  entity.ModelNumber,
+			Name:         neutralizeCSVCell(entity.Name),
+			Description:  neutralizeCSVCell(entity.Description),
+			Manufacturer: neutralizeCSVCell(entity.Manufacturer),
+			SerialNumber: neutralizeCSVCell(entity.SerialNumber),
+			ModelNumber:  neutralizeCSVCell(entity.ModelNumber),
 			Quantity:     entity.Quantity,
 			Price:        entity.PurchasePrice,
 			TotalPrice:   entity.PurchasePrice * entity.Quantity,

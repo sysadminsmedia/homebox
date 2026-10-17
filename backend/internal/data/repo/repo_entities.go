@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/samber/lo"
@@ -21,6 +22,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/search"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -44,6 +46,7 @@ type EntityRepository struct {
 	db          *ent.Client
 	bus         *eventbus.EventBus
 	attachments *AttachmentRepo
+	search      search.Engine
 }
 
 type (
@@ -53,22 +56,25 @@ type (
 	}
 
 	EntityQuery struct {
-		Page             int
-		PageSize         int
+		IsLocation       *bool        `json:"isLocation"` // nil=all, true=locations only, false=items only
 		Search           string       `json:"search"`
-		AssetID          AssetID      `json:"assetId"`
+		SortBy           string       `json:"sortBy"`
+		OrderBy          string       `json:"orderBy"`
+		OrderDirection   string       `json:"orderDirection"`
+		EntityTypeIDs    []uuid.UUID  `json:"entityTypeIds"`
 		ParentIDs        []uuid.UUID  `json:"parentIds"`
 		TagIDs           []uuid.UUID  `json:"tagIds"`
-		NegateTags       bool         `json:"negateTags"`
-		OnlyWithoutPhoto bool         `json:"onlyWithoutPhoto"`
-		OnlyWithPhoto    bool         `json:"onlyWithPhoto"`
 		ParentItemIDs    []uuid.UUID  `json:"parentItemIds"`
-		SortBy           string       `json:"sortBy"`
-		IncludeArchived  bool         `json:"includeArchived"`
-		IsLocation       *bool        `json:"isLocation"`     // nil=all, true=locations only, false=items only
-		FilterChildren   bool         `json:"filterChildren"` // when true, only return root entities (no parent)
 		Fields           []FieldQuery `json:"fields"`
-		OrderBy          string       `json:"orderBy"`
+		Page             int
+		PageSize         int
+		AssetID          AssetID `json:"assetId"`
+		MatchAllTags     bool    `json:"matchAllTags"` // require every selected tag (AND) instead of any (OR); ignored when NegateTags is set
+		NegateTags       bool    `json:"negateTags"`
+		OnlyWithoutPhoto bool    `json:"onlyWithoutPhoto"`
+		OnlyWithPhoto    bool    `json:"onlyWithPhoto"`
+		IncludeArchived  bool    `json:"includeArchived"`
+		FilterChildren   bool    `json:"filterChildren"` // when true, only return root entities (no parent)
 	}
 
 	DuplicateOptions struct {
@@ -95,50 +101,54 @@ type (
 		Description  string    `json:"description"  validate:"max=1000"`
 		AssetID      AssetID   `json:"-"`
 		EntityTypeID uuid.UUID `json:"entityTypeId"`
+		// Only needed when ParentID is another item and this lives elsewhere (#1688).
+		LocationID uuid.UUID `json:"locationId" extensions:"x-nullable,x-omitempty"`
+
+		// Identifications — optional at create time; populated e.g. by the
+		// barcode product-search import flow (#1578).
+		ModelNumber  string `json:"modelNumber"  validate:"max=255" extensions:"x-nullable,x-omitempty"`
+		Manufacturer string `json:"manufacturer" validate:"max=255" extensions:"x-nullable,x-omitempty"`
 
 		// Edges
 		TagIDs []uuid.UUID `json:"tagIds"`
 	}
 
 	EntityUpdate struct {
-		ParentID                 uuid.UUID `json:"parentId"                 extensions:"x-nullable,x-omitempty"`
+		WarrantyExpires types.Date `json:"warrantyExpires"`
+		// Purchase
+		PurchaseDate types.Date `json:"purchaseDate"`
+		// Sold
+		SoldDate    types.Date `json:"soldDate"`
+		Name        string     `json:"name"        validate:"required,min=1,max=255"`
+		Description string     `json:"description" validate:"max=1000"`
+		// Identifications
+		SerialNumber    string `json:"serialNumber"`
+		ModelNumber     string `json:"modelNumber"`
+		Manufacturer    string `json:"manufacturer"`
+		WarrantyDetails string `json:"warrantyDetails"`
+		PurchaseFrom    string `json:"purchaseFrom"    validate:"max=255"`
+		SoldTo          string `json:"soldTo"          validate:"max=255"`
+		SoldNotes       string `json:"soldNotes"`
+		// Extras
+		Notes string `json:"notes"`
+		// Edges
+		TagIDs        []uuid.UUID       `json:"tagIds"`
+		Fields        []EntityFieldData `json:"fields"`
+		AssetID       AssetID           `json:"assetId"       swaggertype:"string"`
+		Quantity      float64           `json:"quantity"`
+		PurchasePrice float64           `json:"purchasePrice" extensions:"x-nullable,x-omitempty"`
+		SoldPrice     float64           `json:"soldPrice"     extensions:"x-nullable,x-omitempty"`
+		ParentID      uuid.UUID         `json:"parentId"      extensions:"x-nullable,x-omitempty"`
+		// Only needed when ParentID is another item and this lives elsewhere (#1688).
+		// Otherwise ParentID carries the location. See resolveLocationOverride.
+		LocationID               uuid.UUID `json:"locationId"               extensions:"x-nullable,x-omitempty"`
 		ID                       uuid.UUID `json:"id"`
-		AssetID                  AssetID   `json:"assetId"                  swaggertype:"string"`
-		Name                     string    `json:"name"                     validate:"required,min=1,max=255"`
-		Description              string    `json:"description"              validate:"max=1000"`
-		Quantity                 float64   `json:"quantity"`
+		EntityTypeID             uuid.UUID `json:"entityTypeId"`
 		Insured                  bool      `json:"insured"`
 		Archived                 bool      `json:"archived"`
 		SyncChildEntityLocations bool      `json:"syncChildEntityLocations"`
-		EntityTypeID             uuid.UUID `json:"entityTypeId"`
-
-		// Edges
-		TagIDs []uuid.UUID `json:"tagIds"`
-
-		// Identifications
-		SerialNumber string `json:"serialNumber"`
-		ModelNumber  string `json:"modelNumber"`
-		Manufacturer string `json:"manufacturer"`
-
 		// Warranty
-		LifetimeWarranty bool       `json:"lifetimeWarranty"`
-		WarrantyExpires  types.Date `json:"warrantyExpires"`
-		WarrantyDetails  string     `json:"warrantyDetails"`
-
-		// Purchase
-		PurchaseDate  types.Date `json:"purchaseDate"`
-		PurchaseFrom  string     `json:"purchaseFrom"  validate:"max=255"`
-		PurchasePrice float64    `json:"purchasePrice" extensions:"x-nullable,x-omitempty"`
-
-		// Sold
-		SoldDate  types.Date `json:"soldDate"`
-		SoldTo    string     `json:"soldTo"    validate:"max=255"`
-		SoldPrice float64    `json:"soldPrice" extensions:"x-nullable,x-omitempty"`
-		SoldNotes string     `json:"soldNotes"`
-
-		// Extras
-		Notes  string            `json:"notes"`
-		Fields []EntityFieldData `json:"fields"`
+		LifetimeWarranty bool `json:"lifetimeWarranty"`
 	}
 
 	EntityPatch struct {
@@ -146,6 +156,7 @@ type (
 		Quantity     *float64    `json:"quantity,omitempty" extensions:"x-nullable,x-omitempty"`
 		ImportRef    *string     `json:"-"                  extensions:"x-nullable,x-omitempty"`
 		ParentID     uuid.UUID   `json:"parentId"           extensions:"x-nullable,x-omitempty"`
+		LocationID   uuid.UUID   `json:"locationId"         extensions:"x-nullable,x-omitempty"`
 		EntityTypeID uuid.UUID   `json:"entityTypeId"       extensions:"x-nullable,x-omitempty"`
 		TagIDs       []uuid.UUID `json:"tagIds"             extensions:"x-nullable,x-omitempty"`
 	}
@@ -181,6 +192,13 @@ type (
 
 	EntityOut struct {
 		Parent *EntitySummary `json:"parent,omitempty" extensions:"x-nullable,x-omitempty"`
+		// Location is resolved: this entity's own location, else the nearest
+		// location ancestor. Read-only — write via LocationID.
+		Location *EntitySummary `json:"location,omitempty" extensions:"x-nullable,x-omitempty"`
+		// LocationID is set only when this entity has its own location, nil when
+		// inherited. Same name as the EntityUpdate field so a GET/PUT round trip
+		// doesn't pin an inherited location or drop an explicit one.
+		LocationID *uuid.UUID `json:"locationId,omitempty" extensions:"x-nullable,x-omitempty"`
 		EntitySummary
 		AssetID AssetID `json:"assetId,string"`
 
@@ -281,7 +299,7 @@ func mapEntitySummary(e *ent.Entity) EntitySummary {
 		ThumbnailId: thumbnailID,
 
 		// Sale
-		SoldDate: types.DateFromTime(e.SoldDate),
+		SoldDate: types.DateFromDBTime(e.SoldDate),
 	}
 }
 
@@ -336,7 +354,7 @@ func mapEntityOut(e *ent.Entity) EntityOut {
 		AssetID:                  AssetID(e.AssetID),
 		EntitySummary:            mapEntitySummary(e),
 		LifetimeWarranty:         e.LifetimeWarranty,
-		WarrantyExpires:          types.DateFromTime(e.WarrantyExpires),
+		WarrantyExpires:          types.DateFromDBTime(e.WarrantyExpires),
 		WarrantyDetails:          e.WarrantyDetails,
 		SyncChildEntityLocations: e.SyncChildEntityLocations,
 
@@ -346,11 +364,11 @@ func mapEntityOut(e *ent.Entity) EntityOut {
 		Manufacturer: e.Manufacturer,
 
 		// Purchase
-		PurchaseDate: types.DateFromTime(e.PurchaseDate),
+		PurchaseDate: types.DateFromDBTime(e.PurchaseDate),
 		PurchaseFrom: e.PurchaseFrom,
 
 		// Sold
-		SoldDate:  types.DateFromTime(e.SoldDate),
+		SoldDate:  types.DateFromDBTime(e.SoldDate),
 		SoldTo:    e.SoldTo,
 		SoldPrice: e.SoldPrice,
 		SoldNotes: e.SoldNotes,
@@ -432,10 +450,13 @@ func (r *EntityRepository) getOneTx(ctx context.Context, tx *ent.Tx, where ...pr
 		q = r.db.Entity.Query().Where(where...)
 	}
 
-	out, err := mapEntityOutErr(q.
+	e, err := q.
 		WithFields().
 		WithTag().
 		WithParent(func(eq *ent.EntityQuery) {
+			eq.WithEntityType()
+		}).
+		WithLocation(func(eq *ent.EntityQuery) {
 			eq.WithEntityType()
 		}).
 		WithEntityType().
@@ -444,12 +465,31 @@ func (r *EntityRepository) getOneTx(ctx context.Context, tx *ent.Tx, where ...pr
 			eq.WithEntityType()
 		}).
 		WithAttachments(func(aq *ent.AttachmentQuery) { aq.WithThumbnail() }).
-		Only(ctx),
-	)
+		Only(ctx)
 	if err != nil {
 		recordSpanError(span, err)
-		return out, err
+		return EntityOut{}, err
 	}
+
+	out := mapEntityOut(e)
+
+	var client *ent.EntityClient
+	if tx != nil {
+		client = tx.Entity
+	} else {
+		client = r.db.Entity
+	}
+	loc, err := resolveEntityLocation(ctx, client, e)
+	if err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+	out.Location = loc
+	if e.Edges.Location != nil {
+		id := e.Edges.Location.ID
+		out.LocationID = &id
+	}
+
 	span.SetAttributes(
 		attribute.String("entity.id", out.ID.String()),
 		attribute.Int("entity.fields.count", len(out.Fields)),
@@ -458,6 +498,38 @@ func (r *EntityRepository) getOneTx(ctx context.Context, tx *ent.Tx, where ...pr
 		attribute.Int("entity.children.count", len(out.Children)),
 	)
 	return out, nil
+}
+
+// maxAncestorDepth bounds the parent-chain walk in nearestLocationAncestor so
+// a corrupted tree with a cycle can't spin forever.
+const maxAncestorDepth = 64
+
+// nearestLocationAncestor walks up the parent chain starting at start (an
+// already-loaded direct parent, or nil) and returns the first ancestor whose
+// entity type is a location. Returns nil when the chain runs out without
+// hitting a location. start must have its EntityType edge loaded; ancestors
+// above it are fetched one level at a time.
+func nearestLocationAncestor(ctx context.Context, client *ent.EntityClient, start *ent.Entity) (*EntitySummary, error) {
+	cur := start
+	for depth := 0; cur != nil && depth < maxAncestorDepth; depth++ {
+		if cur.Edges.EntityType != nil && cur.Edges.EntityType.IsLocation {
+			s := mapEntitySummary(cur)
+			return &s, nil
+		}
+		next, err := client.Query().
+			Where(entity.ID(cur.ID)).
+			QueryParent().
+			WithEntityType().
+			First(ctx)
+		if err != nil {
+			if ent.IsNotFound(err) {
+				return nil, nil
+			}
+			return nil, err
+		}
+		cur = next
+	}
+	return nil, nil
 }
 
 func (r *EntityRepository) getOne(ctx context.Context, where ...predicate.Entity) (EntityOut, error) {
@@ -533,7 +605,9 @@ func entityQuerySpanAttrs(gid uuid.UUID, q EntityQuery) []attribute.KeyValue {
 		attribute.String("query.search", q.Search),
 		attribute.Int("query.tag_ids.count", len(q.TagIDs)),
 		attribute.Bool("query.negate_tags", q.NegateTags),
+		attribute.Bool("query.match_all_tags", q.MatchAllTags),
 		attribute.Int("query.parent_ids.count", len(q.ParentIDs)),
+		attribute.Int("query.entity_type_ids.count", len(q.EntityTypeIDs)),
 		attribute.Int("query.parent_item_ids.count", len(q.ParentItemIDs)),
 		attribute.Int("query.fields.count", len(q.Fields)),
 		attribute.Bool("query.only_with_photo", q.OnlyWithPhoto),
@@ -541,10 +615,198 @@ func entityQuerySpanAttrs(gid uuid.UUID, q EntityQuery) []attribute.KeyValue {
 		attribute.Bool("query.include_archived", q.IncludeArchived),
 		attribute.Bool("query.filter_children", q.FilterChildren),
 		attribute.String("query.order_by", q.OrderBy),
+		attribute.String("query.order_direction", q.OrderDirection),
 		attribute.Bool("query.is_location.set", isLocSet),
 		attribute.Bool("query.is_location.value", isLocValue),
 		attribute.Bool("query.asset_id.set", !q.AssetID.Nil()),
 	}
+}
+
+// tagPredicates translates the tag filter portion of q into predicates that
+// QueryByGroup ANDs with the rest of the query. Selected tags also match any
+// of their descendant tags.
+func (r *EntityRepository) tagPredicates(ctx context.Context, q EntityQuery) []predicate.Entity {
+	tagRepo := &TagRepository{r.db, r.bus}
+	ctxDescendants, descSpan := entityTracer().Start(ctx, "repo.EntityRepository.QueryByGroup.tagDescendants",
+		trace.WithAttributes(attribute.Int("query.tag_ids.count", len(q.TagIDs))))
+	defer descSpan.End()
+
+	// expandTags returns the given tags plus all their descendant tags,
+	// falling back to just the given tags when expansion fails.
+	expandTags := func(ids []uuid.UUID) []uuid.UUID {
+		descendants, err := tagRepo.GetDescendantTagIDs(ctxDescendants, ids)
+		if err != nil {
+			recordSpanError(descSpan, err)
+			log.Warn().Err(err).Msg("failed to get descendant tags, using only direct tags")
+			return ids
+		}
+		if len(descendants) == 0 {
+			return ids
+		}
+		return descendants
+	}
+
+	hasTag := func(l uuid.UUID, _ int) predicate.Entity {
+		return entity.HasTagWith(tag.ID(l))
+	}
+
+	switch {
+	case q.NegateTags:
+		descendants := expandTags(q.TagIDs)
+		descSpan.SetAttributes(attribute.Int("query.tag_descendants.count", len(descendants)))
+		notTag := lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
+			return entity.Not(entity.HasTagWith(tag.ID(l)))
+		})
+		return []predicate.Entity{entity.And(notTag...)}
+	case q.MatchAllTags:
+		// Every selected tag must be present, where each tag also counts as
+		// matched by any of its descendants.
+		preds := make([]predicate.Entity, 0, len(q.TagIDs))
+		for _, id := range q.TagIDs {
+			expanded := expandTags([]uuid.UUID{id})
+			preds = append(preds, entity.Or(lo.Map(expanded, hasTag)...))
+		}
+		return preds
+	default:
+		descendants := expandTags(q.TagIDs)
+		descSpan.SetAttributes(attribute.Int("query.tag_descendants.count", len(descendants)))
+		return []predicate.Entity{entity.Or(lo.Map(descendants, hasTag)...)}
+	}
+}
+
+// orderByLocation orders the entities of a group by their location, matching
+// the Location field computed by nearestLocationAncestor: when the direct
+// parent is a location it is used as-is, otherwise the parent chain is climbed
+// until a location is found. Ent has no support for recursive CTEs, so the
+// chain is walked with the dialect-aware sql builder, which keeps every value
+// bound as a query argument and every identifier quoted for the dialect in
+// use.
+//
+// Locations are compared by name. Entities without a location sort last in
+// both directions, and entities sharing a location fall back to their own name
+// so pages stay stable.
+func orderByLocation(gid uuid.UUID, desc bool) entity.OrderOption {
+	return func(s *sql.Selector) {
+		// Names of the CTEs and of the columns they add.
+		const (
+			ancestorsCTE       = "entity_ancestors"
+			nearestLocationCTE = "entity_nearest_location"
+
+			colAncestorID   = "ancestor_id"
+			colDepth        = "depth"
+			colLocationName = "location_name"
+		)
+
+		d := sql.Dialect(s.Dialect())
+
+		// Seed the walk with every entity in the group that has a parent,
+		// paired with that parent and a depth of zero.
+		child := d.Table(entity.Table)
+		seed := d.Select(child.C(entity.FieldID), child.C(entity.ParentColumn)).
+			AppendSelectExpr(sql.Expr("0")). // literal, so Postgres can type the depth column
+			From(child).
+			Where(sql.And(
+				sql.EQ(child.C(entity.GroupColumn), gid),
+				sql.NotNull(child.C(entity.ParentColumn)),
+			))
+
+		// Climb one level for as long as the ancestor reached so far is not a
+		// location, bounded by maxAncestorDepth so a cyclic tree terminates.
+		walked := d.Table(ancestorsCTE)
+		parent := d.Table(entity.Table).As("parent")
+		parentType := d.Table(entitytype.Table).As("parent_type")
+		climb := d.Select(walked.C(entity.FieldID), parent.C(entity.ParentColumn)).
+			AppendSelectExpr(sql.ExprFunc(func(b *sql.Builder) {
+				b.Ident(walked.C(colDepth)).WriteOp(sql.OpAdd).WriteString("1")
+			})).
+			From(walked).
+			Join(parent).On(parent.C(entity.FieldID), walked.C(colAncestorID)).
+			Join(parentType).On(parentType.C(entitytype.FieldID), parent.C(entity.EntityTypeColumn)).
+			Where(sql.And(
+				sql.EQ(parentType.C(entitytype.FieldIsLocation), false),
+				sql.NotNull(parent.C(entity.ParentColumn)),
+				sql.LT(walked.C(colDepth), maxAncestorDepth),
+			))
+
+		// Every chain stops at the first location it reaches, so at most one
+		// row per entity survives this filter.
+		ancestors := d.Table(ancestorsCTE)
+		location := d.Table(entity.Table).As("location")
+		locationType := d.Table(entitytype.Table).As("location_type")
+		nearest := d.Select(
+			ancestors.C(entity.FieldID),
+			sql.Min(sql.Lower(location.C(entity.FieldName))),
+		).
+			From(ancestors).
+			Join(location).On(location.C(entity.FieldID), ancestors.C(colAncestorID)).
+			Join(locationType).On(locationType.C(entitytype.FieldID), location.C(entity.EntityTypeColumn)).
+			Where(sql.EQ(locationType.C(entitytype.FieldIsLocation), true)).
+			GroupBy(ancestors.C(entity.FieldID))
+
+		ctes := sql.WithRecursive(ancestorsCTE, entity.FieldID, colAncestorID, colDepth).
+			As(seed.UnionAll(climb)).
+			With(nearestLocationCTE, entity.FieldID, colLocationName).
+			As(nearest)
+		ctes.SetDialect(s.Dialect())
+		s.Prefix(ctes)
+
+		nearestTable := d.Table(nearestLocationCTE)
+		s.LeftJoin(nearestTable).On(nearestTable.C(entity.FieldID), s.C(entity.FieldID))
+
+		// Ordering is written the same way ent writes its own order terms, see
+		// (*sql.OrderFieldTerm).ToFunc.
+		s.OrderExprFunc(func(b *sql.Builder) {
+			b.Ident(nearestTable.C(colLocationName))
+			if desc {
+				b.WriteString(" DESC")
+			}
+			// SQLite and Postgres disagree on where NULLs land by default, so
+			// the entities without a location are placed explicitly.
+			b.WriteString(" NULLS LAST")
+		})
+		// Tie-break so entities sharing a location paginate consistently.
+		s.OrderExprFunc(func(b *sql.Builder) {
+			b.Ident(sql.Lower(s.C(entity.FieldName)))
+		})
+	}
+}
+
+// applyEntityOrder applies the ORDER BY for q.OrderBy / q.OrderDirection and
+// returns the resolved order field name for logging. When no direction is
+// given, timestamps sort newest first and every other field ascending.
+func applyEntityOrder(qb *ent.EntityQuery, gid uuid.UUID, q EntityQuery) (*ent.EntityQuery, string) {
+	var orderBy string
+	defaultDesc := false
+
+	switch q.OrderBy {
+	case "createdAt":
+		orderBy = entity.FieldCreatedAt
+		defaultDesc = true
+	case "updatedAt":
+		orderBy = entity.FieldUpdatedAt
+		defaultDesc = true
+	case "assetId":
+		orderBy = entity.FieldAssetID
+	case "quantity":
+		orderBy = entity.FieldQuantity
+	case "insured":
+		orderBy = entity.FieldInsured
+	case "archived":
+		orderBy = entity.FieldArchived
+	case "purchasePrice":
+		orderBy = entity.FieldPurchasePrice
+	case "location":
+		// Sort by the name of the nearest location ancestor.
+		return qb.Order(orderByLocation(gid, q.OrderDirection == "desc")), "location"
+	default: // "name"
+		orderBy = entity.FieldName
+	}
+
+	desc := q.OrderDirection == "desc" || (q.OrderDirection == "" && defaultDesc)
+	if desc {
+		return qb.Order(ent.Desc(orderBy)), orderBy
+	}
+	return qb.Order(ent.Asc(orderBy)), orderBy
 }
 
 // QueryByGroup returns a list of entities that belong to a specific group based on the provided query.
@@ -557,19 +819,23 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 		entity.HasGroupWith(group.ID(gid)),
 	)
 
-	// Filter by entity type (location vs item) when specified.
-	// Default (nil) = items only (excludes locations for backward compat)
-	switch {
-	case q.IsLocation != nil && *q.IsLocation:
-		qb = qb.Where(entity.HasEntityTypeWith(entitytype.IsLocation(true)))
-	default:
-		// nil or false: exclude locations
-		qb = qb.Where(
-			entity.Or(
-				entity.Not(entity.HasEntityType()),
-				entity.HasEntityTypeWith(entitytype.IsLocation(false)),
-			),
-		)
+	// Filter by exact entity types when provided; otherwise use legacy
+	// location-vs-item behavior for backward compatibility.
+	if len(q.EntityTypeIDs) > 0 {
+		qb = qb.Where(entity.HasEntityTypeWith(entitytype.IDIn(q.EntityTypeIDs...)))
+	} else {
+		switch {
+		case q.IsLocation != nil && *q.IsLocation:
+			qb = qb.Where(entity.HasEntityTypeWith(entitytype.IsLocation(true)))
+		default:
+			// nil or false: exclude locations
+			qb = qb.Where(
+				entity.Or(
+					entity.Not(entity.HasEntityType()),
+					entity.HasEntityTypeWith(entitytype.IsLocation(false)),
+				),
+			)
+		}
 	}
 
 	if q.FilterChildren {
@@ -588,16 +854,14 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 	}
 
 	if q.Search != "" {
-		qb.Where(
-			entity.Or(
-				entity.NameContainsFold(q.Search),
-				entity.DescriptionContainsFold(q.Search),
-				entity.SerialNumberContainsFold(q.Search),
-				entity.ModelNumberContainsFold(q.Search),
-				entity.ManufacturerContainsFold(q.Search),
-				entity.NotesContainsFold(q.Search),
-			),
-		)
+		searchPred, err := r.search.Predicate(ctx, gid, q.Search)
+		if err != nil {
+			recordSpanError(span, err)
+			return PaginationResult[EntitySummary]{}, err
+		}
+		if searchPred != nil {
+			qb = qb.Where(searchPred)
+		}
 	}
 
 	if !q.AssetID.Nil() {
@@ -607,32 +871,7 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 	var andPredicates []predicate.Entity
 	{
 		if len(q.TagIDs) > 0 {
-			tagRepo := &TagRepository{r.db, r.bus}
-			ctxDescendants, descSpan := entityTracer().Start(ctx, "repo.EntityRepository.QueryByGroup.tagDescendants",
-				trace.WithAttributes(attribute.Int("query.tag_ids.count", len(q.TagIDs))))
-			descendants, err := tagRepo.GetDescendantTagIDs(ctxDescendants, q.TagIDs)
-			if err != nil {
-				recordSpanError(descSpan, err)
-				log.Warn().Err(err).Msg("failed to get descendant tags, using only direct tags")
-				descendants = q.TagIDs
-			} else if len(descendants) == 0 {
-				descendants = q.TagIDs
-			}
-			descSpan.SetAttributes(attribute.Int("query.tag_descendants.count", len(descendants)))
-			descSpan.End()
-
-			var tagPredicates []predicate.Entity
-			if !q.NegateTags {
-				tagPredicates = lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
-					return entity.HasTagWith(tag.ID(l))
-				})
-				andPredicates = append(andPredicates, entity.Or(tagPredicates...))
-			} else {
-				tagPredicates = lo.Map(descendants, func(l uuid.UUID, _ int) predicate.Entity {
-					return entity.Not(entity.HasTagWith(tag.ID(l)))
-				})
-				andPredicates = append(andPredicates, entity.And(tagPredicates...))
-			}
+			andPredicates = append(andPredicates, r.tagPredicates(ctx, q)...)
 		}
 
 		if q.OnlyWithoutPhoto {
@@ -657,10 +896,10 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 		}
 
 		if len(q.ParentIDs) > 0 {
-			parentPredicates := lo.Map(q.ParentIDs, func(l uuid.UUID, _ int) predicate.Entity {
-				return entity.HasParentWith(entity.ID(l))
-			})
-			andPredicates = append(andPredicates, entity.Or(parentPredicates...))
+			// The UI's location filter. Matches the effective location so an
+			// item nested under another item but stored elsewhere lands in the
+			// right list (#1688).
+			andPredicates = append(andPredicates, effectiveLocationIn(q.ParentIDs))
 		}
 
 		if len(q.Fields) > 0 {
@@ -697,17 +936,14 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 	countSpan.SetAttributes(attribute.Int("query.total.count", count))
 	countSpan.End()
 
-	// Order
-	switch q.OrderBy {
-	case "createdAt":
-		qb = qb.Order(ent.Desc(entity.FieldCreatedAt))
-	case "updatedAt":
-		qb = qb.Order(ent.Desc(entity.FieldUpdatedAt))
-	case "assetId":
-		qb = qb.Order(ent.Asc(entity.FieldAssetID))
-	default: // "name"
-		qb = qb.Order(ent.Asc(entity.FieldName))
-	}
+	var orderBy string
+	qb, orderBy = applyEntityOrder(qb, gid, q)
+
+	// log order direction
+	log.Debug().
+		Str("orderBy", orderBy).
+		Str("orderDirection", q.OrderDirection).
+		Msg("QueryByGroup order")
 
 	qb = qb.
 		WithTag().
@@ -790,16 +1026,18 @@ func (r *EntityRepository) getChildItemCounts(ctx context.Context, gid uuid.UUID
 		args = append(args, id)
 	}
 
+	// Count by effective location, not by parent (#1688).
+	eff := locationOrParentColumn("e")
 	query := fmt.Sprintf(`
-		SELECT e.entity_children, COALESCE(SUM(e.quantity), 0)
+		SELECT %s, COALESCE(SUM(e.quantity), 0)
 		FROM entities e
 		JOIN entity_types et ON et.id = e.entity_type_entities
 		WHERE e.group_entities = $1
 			AND et.is_location = false
 			AND e.archived = false
-			AND e.entity_children IN (%s)
-		GROUP BY e.entity_children
-	`, strings.Join(placeholders, ","))
+			AND %s IN (%s)
+		GROUP BY %s
+	`, eff, eff, strings.Join(placeholders, ","), eff)
 
 	rows, err := r.db.Sql().QueryContext(ctx, query, args...)
 	if err != nil {
@@ -976,6 +1214,9 @@ func validateQuantity(op string, quantity float64) error {
 	if math.IsNaN(quantity) || math.IsInf(quantity, 0) {
 		return fmt.Errorf("%s: invalid quantity: must be a finite number", op)
 	}
+	if quantity < 0 {
+		return fmt.Errorf("%s: invalid quantity: must not be negative", op)
+	}
 
 	return nil
 }
@@ -1015,16 +1256,28 @@ func (r *EntityRepository) Create(ctx context.Context, gid uuid.UUID, data Entit
 		return EntityOut{}, err
 	}
 
+	parentID, locationOverride, err := resolveLocationOverride(ctx, r.db.Entity, gid, uuid.Nil, data.ParentID, data.LocationID)
+	if err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+
 	q := r.db.Entity.Create().
 		SetImportRef(data.ImportRef).
 		SetName(data.Name).
 		SetQuantity(data.Quantity).
 		SetDescription(data.Description).
+		SetModelNumber(data.ModelNumber).
+		SetManufacturer(data.Manufacturer).
 		SetGroupID(gid).
 		SetAssetID(int64(data.AssetID))
 
-	if data.ParentID != uuid.Nil {
-		q.SetParentID(data.ParentID)
+	if parentID != uuid.Nil {
+		q.SetParentID(parentID)
+	}
+
+	if locationOverride != uuid.Nil {
+		q.SetLocationID(locationOverride)
 	}
 
 	if data.EntityTypeID != uuid.Nil {
@@ -1049,7 +1302,10 @@ func (r *EntityRepository) Create(ctx context.Context, gid uuid.UUID, data Entit
 		return EntityOut{}, err
 	}
 
-	span.SetAttributes(attribute.String("entity.id", result.ID.String()))
+	span.SetAttributes(
+		attribute.String("entity.id", result.ID.String()),
+		attribute.Bool("entity.location_override.set", locationOverride != uuid.Nil),
+	)
 	r.publishMutationEvent(gid)
 	out, err := r.GetOne(ctx, result.ID)
 	recordSpanError(span, err)
@@ -1060,16 +1316,17 @@ func (r *EntityRepository) Create(ctx context.Context, gid uuid.UUID, data Entit
 type EntityCreateFromTemplate struct {
 	Name             string
 	Description      string
-	Quantity         float64
-	ParentID         uuid.UUID
-	EntityTypeID     uuid.UUID
-	TagIDs           []uuid.UUID
-	Insured          bool
 	Manufacturer     string
 	ModelNumber      string
-	LifetimeWarranty bool
 	WarrantyDetails  string
+	TagIDs           []uuid.UUID
 	Fields           []EntityFieldData
+	Quantity         float64
+	ParentID         uuid.UUID
+	LocationID       uuid.UUID
+	EntityTypeID     uuid.UUID
+	Insured          bool
+	LifetimeWarranty bool
 }
 
 // CreateFromTemplate creates an entity with all template data in a single transaction.
@@ -1102,6 +1359,24 @@ func (r *EntityRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID
 		return EntityOut{}, err
 	}
 	if err := assertTagsInGroup(ctx, r.db.Tag, gid, data.TagIDs); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+
+	// entity_type is a required edge. The user-selected type takes precedence;
+	// fall back to the group's default item type when none was provided so
+	// creation from a template doesn't fail the required-edge validation.
+	if data.EntityTypeID == uuid.Nil {
+		etID, err := r.resolveDefaultEntityType(ctx, gid, false)
+		if err != nil {
+			recordSpanError(span, err)
+			return EntityOut{}, err
+		}
+		data.EntityTypeID = etID
+	}
+
+	templateParentID, templateLocationOverride, err := resolveLocationOverride(ctx, r.db.Entity, gid, uuid.Nil, data.ParentID, data.LocationID)
+	if err != nil {
 		recordSpanError(span, err)
 		return EntityOut{}, err
 	}
@@ -1147,13 +1422,15 @@ func (r *EntityRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID
 		SetLifetimeWarranty(data.LifetimeWarranty).
 		SetWarrantyDetails(data.WarrantyDetails)
 
-	if data.ParentID != uuid.Nil {
-		entityBuilder.SetParentID(data.ParentID)
+	if templateParentID != uuid.Nil {
+		entityBuilder.SetParentID(templateParentID)
 	}
 
-	if data.EntityTypeID != uuid.Nil {
-		entityBuilder.SetEntityTypeID(data.EntityTypeID)
+	if templateLocationOverride != uuid.Nil {
+		entityBuilder.SetLocationID(templateLocationOverride)
 	}
+
+	entityBuilder.SetEntityTypeID(data.EntityTypeID)
 
 	if len(data.TagIDs) > 0 {
 		entityBuilder.AddTagIDs(data.TagIDs...)
@@ -1467,6 +1744,22 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		return EntityOut{}, err
 	}
 
+	// The entity being updated must itself live in the caller's group. The
+	// group predicate on the update below makes a cross-tenant ID a silent
+	// no-op rather than an error, so without this guard execution falls
+	// through to the field sync — which can only scope by entity ID — and
+	// mutates a foreign group's fields before the scoped read at the end
+	// turns the request into a 404. Fail closed up front instead, so any
+	// edge added to this function later inherits the check.
+	if data.ID == uuid.Nil {
+		err := &ent.NotFoundError{}
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+	if err := assertEntityInGroup(ctx, r.db.Entity, gid, data.ID); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
 	// The viewer must be able to update this row (tenant permission or row
 	// grant); otherwise the pinned mutation would silently match nothing.
 	if err := assertEntityUpdatable(ctx, r.db.Entity, data.ID); err != nil {
@@ -1489,6 +1782,14 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		recordSpanError(span, err)
 		return EntityOut{}, err
 	}
+
+	// parentID may come back rewritten; see repo_entity_location.go.
+	parentID, locationOverride, err := resolveLocationOverride(ctx, r.db.Entity, gid, data.ID, data.ParentID, data.LocationID)
+	if err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+	span.SetAttributes(attribute.Bool("entity.location_override.set", locationOverride != uuid.Nil))
 
 	q := r.db.Entity.Update().Where(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))).
 		SetName(data.Name).
@@ -1534,7 +1835,9 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 	}
 
 	tagsCtx, tagsSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.tags")
-	currentTags, err := r.db.Entity.Query().Where(entity.ID(data.ID)).QueryTag().All(tagsCtx)
+	currentTags, err := r.db.Entity.Query().
+		Where(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))).
+		QueryTag().All(tagsCtx)
 	if err != nil {
 		recordSpanError(tagsSpan, err)
 		tagsSpan.End()
@@ -1564,41 +1867,16 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 	)
 	tagsSpan.End()
 
-	if data.ParentID != uuid.Nil {
-		q.SetParentID(data.ParentID)
+	if parentID != uuid.Nil {
+		q.SetParentID(parentID)
 	} else {
 		q.ClearParent()
 	}
 
-	if data.SyncChildEntityLocations {
-		syncCtx, syncSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.syncChildLocations")
-		children, err := r.db.Entity.Query().Where(entity.ID(data.ID)).QueryChildren().All(syncCtx)
-		if err != nil {
-			recordSpanError(syncSpan, err)
-			syncSpan.End()
-			recordSpanError(span, err)
-			return EntityOut{}, err
-		}
-
-		syncSpan.SetAttributes(attribute.Int("children.count", len(children)))
-		updatedCount := 0
-		for _, child := range children {
-			if data.ParentID != uuid.Nil {
-				childParent, err := child.QueryParent().First(syncCtx)
-				if err != nil || childParent.ID != data.ParentID {
-					err = child.Update().SetParentID(data.ParentID).Exec(syncCtx)
-					if err != nil {
-						recordSpanError(syncSpan, err)
-						syncSpan.End()
-						recordSpanError(span, err)
-						return EntityOut{}, err
-					}
-					updatedCount++
-				}
-			}
-		}
-		syncSpan.SetAttributes(attribute.Int("children.updated.count", updatedCount))
-		syncSpan.End()
+	if locationOverride != uuid.Nil {
+		q.SetLocationID(locationOverride)
+	} else {
+		q.ClearLocation()
 	}
 
 	_, execSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.exec")
@@ -1611,9 +1889,27 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 	}
 	execSpan.End()
 
+	// Sync means "children have no location of their own", so drop theirs.
+	// Only the location column: touching parent here is what flattened the
+	// hierarchy on every save before #1591.
+	if data.SyncChildEntityLocations {
+		syncCtx, syncSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.syncChildLocations")
+		cleared, err := clearChildLocationOverrides(syncCtx, r.db.Entity, gid, data.ID)
+		if err != nil {
+			recordSpanError(syncSpan, err)
+			syncSpan.End()
+			recordSpanError(span, err)
+			return EntityOut{}, err
+		}
+		syncSpan.SetAttributes(attribute.Int("children.location_overrides.cleared", cleared))
+		syncSpan.End()
+	}
+
 	fieldsCtx, fieldsSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.fields",
 		trace.WithAttributes(attribute.Int("fields.input.count", len(data.Fields))))
-	fields, err := r.db.EntityField.Query().Where(entityfield.HasEntityWith(entity.ID(data.ID))).All(fieldsCtx)
+	fields, err := r.db.EntityField.Query().
+		Where(entityfield.HasEntityWith(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid)))).
+		All(fieldsCtx)
 	if err != nil {
 		recordSpanError(fieldsSpan, err)
 		fieldsSpan.End()
@@ -1649,7 +1945,7 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		opt := r.db.EntityField.Update().
 			Where(
 				entityfield.ID(f.ID),
-				entityfield.HasEntityWith(entity.ID(data.ID)),
+				entityfield.HasEntityWith(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))),
 			).
 			SetType(entityfield.Type(f.Type)).
 			SetName(f.Name).
@@ -1675,7 +1971,7 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		deletedFields, err = r.db.EntityField.Delete().
 			Where(
 				entityfield.IDIn(fieldIds.Slice()...),
-				entityfield.HasEntityWith(entity.ID(data.ID)),
+				entityfield.HasEntityWith(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))),
 			).Exec(fieldsCtx)
 		if err != nil {
 			recordSpanError(fieldsSpan, err)
@@ -1692,7 +1988,11 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 	fieldsSpan.End()
 
 	r.publishMutationEvent(gid)
-	out, err := r.GetOne(ctx, data.ID)
+	// Fetch the returned record scoped to the caller's group. The update above is
+	// group-scoped and a no-op across tenants, so an unscoped GetOne would return
+	// another group's entity in the response body. GetOneByGroup returns not-found
+	// for a foreign entity, matching the 404 behavior of GET/DELETE.
+	out, err := r.GetOneByGroup(ctx, gid, data.ID)
 	recordSpanError(span, err)
 	return out, err
 }
@@ -1773,57 +2073,6 @@ func patchSyncTags(ctx context.Context, tx *ent.Tx, gid, id uuid.UUID, want []uu
 	return nil
 }
 
-// patchSyncChildLocations propagates a parent move down to children when the
-// entity has SyncChildEntityLocations enabled. No-op when the flag is off.
-func patchSyncChildLocations(ctx context.Context, tx *ent.Tx, gid, id, parentID uuid.UUID) error {
-	syncCtx, syncSpan := entityTracer().Start(ctx, "repo.EntityRepository.Patch.syncChildLocations")
-	defer syncSpan.End()
-
-	entityEnt, err := tx.Entity.Query().Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).Only(syncCtx)
-	if err != nil {
-		recordSpanError(syncSpan, err)
-		return err
-	}
-	syncSpan.SetAttributes(attribute.Bool("entity.sync_child_locations", entityEnt.SyncChildEntityLocations))
-	if !entityEnt.SyncChildEntityLocations {
-		return nil
-	}
-
-	children, err := tx.Entity.Query().Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).QueryChildren().All(syncCtx)
-	if err != nil {
-		recordSpanError(syncSpan, err)
-		return err
-	}
-	updatedCount := 0
-	for _, child := range children {
-		childParent, err := child.QueryParent().First(syncCtx)
-		switch {
-		case err == nil:
-			if childParent.ID == parentID {
-				continue
-			}
-		case ent.IsNotFound(err):
-			// Child has no parent yet — treat as "needs the new parent."
-		default:
-			// Any other error (transient DB failure, context cancel, etc.)
-			// must NOT be interpreted as "missing parent → reparent" — that
-			// would silently move rows on a network blip.
-			recordSpanError(syncSpan, err)
-			return err
-		}
-		if err := child.Update().SetParentID(parentID).Exec(syncCtx); err != nil {
-			recordSpanError(syncSpan, err)
-			return err
-		}
-		updatedCount++
-	}
-	syncSpan.SetAttributes(
-		attribute.Int("children.count", len(children)),
-		attribute.Int("children.updated.count", updatedCount),
-	)
-	return nil
-}
-
 func (r *EntityRepository) Patch(ctx context.Context, gid, id uuid.UUID, data EntityPatch) error {
 	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.Patch",
 		trace.WithAttributes(
@@ -1894,8 +2143,58 @@ func (r *EntityRepository) Patch(ctx context.Context, gid, id uuid.UUID, data En
 		q.SetQuantity(*data.Quantity)
 	}
 
-	if data.ParentID != uuid.Nil {
+	switch {
+	case data.LocationID != uuid.Nil:
+		// Validate against the parent we'll end up with, not the one we were
+		// handed — a location-only patch doesn't carry a parent.
+		parentID := data.ParentID
+		if parentID == uuid.Nil {
+			current, err := tx.Entity.Query().
+				Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).
+				QueryParent().
+				OnlyID(ctx)
+			if err != nil && !ent.IsNotFound(err) {
+				recordSpanError(span, err)
+				return err
+			}
+			if err == nil {
+				parentID = current
+			}
+		}
+
+		resolvedParent, override, err := resolveLocationOverride(ctx, tx.Entity, gid, id, parentID, data.LocationID)
+		if err != nil {
+			recordSpanError(span, err)
+			return err
+		}
+		if resolvedParent != uuid.Nil {
+			q.SetParentID(resolvedParent)
+		}
+		if override != uuid.Nil {
+			q.SetLocationID(override)
+		} else {
+			q.ClearLocation()
+		}
+
+	case data.ParentID != uuid.Nil:
 		q.SetParentID(data.ParentID)
+
+		// Moving under a location makes any override redundant, and leaving it
+		// breaks the invariant the read paths rely on.
+		parentIsLocation, err := tx.Entity.Query().
+			Where(
+				entity.ID(data.ParentID),
+				entity.HasGroupWith(group.ID(gid)),
+				entity.HasEntityTypeWith(entitytype.IsLocation(true)),
+			).
+			Exist(ctx)
+		if err != nil {
+			recordSpanError(span, err)
+			return err
+		}
+		if parentIsLocation {
+			q.ClearLocation()
+		}
 	}
 
 	if data.EntityTypeID != uuid.Nil {
@@ -1919,12 +2218,8 @@ func (r *EntityRepository) Patch(ctx context.Context, gid, id uuid.UUID, data En
 		}
 	}
 
-	if data.ParentID != uuid.Nil {
-		if err := patchSyncChildLocations(ctx, tx, gid, id, data.ParentID); err != nil {
-			recordSpanError(span, err)
-			return err
-		}
-	}
+	// A parent change deliberately leaves children alone: they stay attached
+	// to this entity and follow it through the ancestor chain (#1591).
 
 	_, commitSpan := entityTracer().Start(ctx, "repo.EntityRepository.Patch.commit")
 	if err := tx.Commit(); err != nil {
@@ -2042,8 +2337,12 @@ func (r *EntityRepository) ZeroOutTimeFields(ctx context.Context, gid uuid.UUID)
 	loadSpan.SetAttributes(attribute.Int("entities.count", len(entities)))
 	loadSpan.End()
 
+	// Normalize in UTC, not in t's own zone. Drivers may return a date-only
+	// column in the server's local zone (pgx does), and re-zeroing that value
+	// in place would write back the previous calendar day — turning a
+	// cosmetic read shift into permanent data loss.
 	toDateOnly := func(t time.Time) time.Time {
-		return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
+		return types.DateFromDBTime(t).Time()
 	}
 
 	_, updateSpan := entityTracer().Start(ctx, "repo.EntityRepository.ZeroOutTimeFields.update",
@@ -2259,6 +2558,17 @@ func (r *EntityRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opt
 
 	if originalEntity.Parent != nil {
 		entityBuilder.SetParentID(originalEntity.Parent.ID)
+	}
+
+	// Read the raw edge, not originalEntity.Location — that one is resolved, so
+	// copying it would pin a duplicate that should have kept inheriting.
+	srcLocationID, err := tx.Entity.Query().Where(entity.ID(id)).QueryLocation().OnlyID(ctx)
+	switch {
+	case err == nil:
+		entityBuilder.SetLocationID(srcLocationID)
+	case !ent.IsNotFound(err):
+		recordSpanError(span, err)
+		return EntityOut{}, err
 	}
 
 	if originalEntity.EntityType != nil {
@@ -2642,7 +2952,10 @@ func (r *EntityRepository) UpdateContainer(ctx context.Context, gid, id uuid.UUI
 	}
 
 	r.publishMutationEvent(gid)
-	out, err := r.GetOne(ctx, id)
+	// Scope the returned record to the caller's group (see UpdateByGroup). The update
+	// is group-scoped, so an unscoped GetOne would return a foreign group's entity
+	// when id belongs to another tenant.
+	out, err := r.GetOneByGroup(ctx, gid, id)
 	recordSpanError(span, err)
 	return out, err
 }
@@ -2728,6 +3041,7 @@ func (r *EntityRepository) PathForEntity(ctx context.Context, gid, entityID uuid
 		SELECT e.id, e.name, e.entity_children
 		FROM entities e
 		JOIN entity_path ep ON e.id = ep.entity_children
+		WHERE e.group_entities = $2
 	  )
 
 	  SELECT id, name
@@ -2807,6 +3121,7 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 			ON     c.entity_children = p.id
 			WHERE  level < 10 -- prevent infinite loop & excessive recursion
 			AND    ct.is_location = true
+			AND    c.group_entities = $1
 		){{ WITH_ITEMS }}
 
 		SELECT   id,
@@ -2826,30 +3141,38 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 				 lower(NAME)`
 
 	if tq.WithItems {
+		// Items hang off their effective location. The same expression has to be
+		// used in both arms: an overridden child's effective parent is a
+		// location, so the recursive arm (items only) can't also pick it up and
+		// list it twice.
+		eff := locationOrParentColumn("e")
+		effChild := locationOrParentColumn("c")
 		itemQuery := `, item_tree(id, NAME, parent_id, level, node_type) AS
 		(
 			SELECT  e.id,
 					e.NAME,
-					e.entity_children as parent_id,
+					` + eff + ` as parent_id,
 					0 AS level,
 					'item' AS node_type
 			FROM    entities e
 			JOIN    entity_types et ON et.id = e.entity_type_entities
 			WHERE   et.is_location = false
-			AND     e.entity_children IN (SELECT id FROM entity_tree)
+			AND     e.group_entities = $1
+			AND     ` + eff + ` IN (SELECT id FROM entity_tree)
 
 			UNION ALL
 
 			SELECT  c.id,
 					c.NAME,
-					c.entity_children AS parent_id,
+					` + effChild + ` AS parent_id,
 					level + 1,
 					'item' AS node_type
 			FROM    entities c
 			JOIN    entity_types ct ON ct.id = c.entity_type_entities
 			JOIN    item_tree p
-			ON      c.entity_children = p.id
+			ON      ` + effChild + ` = p.id
 			WHERE   ct.is_location = false
+			AND     c.group_entities = $1
 			AND     level < 10 -- prevent infinite loop & excessive recursion
 		)`
 

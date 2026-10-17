@@ -14,6 +14,32 @@ We use the `main` branch as the development branch. All PRs should be made to th
 4. Ensure that the test suite and linters pass
 5. Issue your pull request
 
+## AI-Assisted Contributions
+
+**We do not accept AI-only pull requests.** A pull request where an AI tool or agent produced the
+change and a human just submitted it — or where an agent opened it on its own — will be closed
+without review. Every contribution needs a human author who did the work, understands it, and stands
+behind it.
+
+You may use AI assistants as a tool while you do that work, but you are accountable for everything
+you submit, however it was produced. Before opening a pull request or issue:
+
+- **Understand every change.** You should be able to explain why each line is there and answer
+  review questions about it yourself. "The AI wrote it" is not an answer.
+- **Run it.** Build the project, run the test suite and linters, and exercise the change in the
+  running app. Do not submit code you have not executed.
+- **Check it against `main`.** Confirm the bug still exists and the code you are changing is current.
+  Do not submit fixes for problems that were already resolved.
+- **Keep it focused.** Submit the change you set out to make, not unrelated refactors, reformatting,
+  or rewritten comments the tool added along the way.
+- **Write your own description.** Pull request and issue text should describe what you changed and
+  how you tested it, in your own words.
+
+Contributions that read as unreviewed tool output — invented APIs, file paths, or function names,
+code that does not build or was never run, fixes for issues that do not exist, or large generated
+diffs with no explanation — will be closed without review. Repeated submissions of that kind will be
+treated as spam.
+
 ## How To Get Started
 
 ### Prerequisites

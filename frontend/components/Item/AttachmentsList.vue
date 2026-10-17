@@ -7,7 +7,7 @@
     >
       <template v-if="isExternalURLAttachment(attachment)">
         <div class="flex w-0 flex-1 items-center">
-          <MdiLinkVariant class="size-5 shrink-0 text-gray-400" aria-hidden="true" />
+          <MdiLinkVariant class="size-5 shrink-0 text-foreground/50" aria-hidden="true" />
           <a
             class="ml-2 w-0 flex-1 truncate text-primary underline"
             :href="attachment.path"
@@ -37,7 +37,7 @@
       </template>
       <template v-else>
         <div class="flex w-0 flex-1 items-center">
-          <MdiPaperclip class="size-5 shrink-0 text-gray-400" aria-hidden="true" />
+          <MdiPaperclip class="size-5 shrink-0 text-foreground/50" aria-hidden="true" />
           <span class="ml-2 w-0 flex-1 truncate"> {{ attachment.title }}</span>
         </div>
         <div class="ml-4 flex shrink-0 gap-2">

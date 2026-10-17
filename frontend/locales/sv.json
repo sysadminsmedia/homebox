@@ -117,6 +117,86 @@
             "no_color_selected": "Ingen färg vald",
             "randomize": "Slumpad färg"
         },
+        "entity": {
+            "create_modal": {
+                "clear_template": "Rensa mall",
+                "delete_photo": "Radera bild",
+                "entity_description": "{type} Beskrivning",
+                "entity_name": "{type} Namn",
+                "entity_photo": "{type} Foto 📷",
+                "entity_quantity": "{type} Antal",
+                "item_selector_no_results_text": "Skriv för att söka…",
+                "parent_item": "Överordnat objekt",
+                "product_tooltip_input_barcode": "Fyll automatisk med manuellt inmatad streckkod",
+                "product_tooltip_scan_barcode": "Auto fyll med streckkod från 📷",
+                "rotate_photo": "Rotera foto",
+                "set_as_primary_photo": "Sätt som { isPrimary, select, true {non-} false {} other {}} primär bild",
+                "toast": {
+                    "already_creating": "Skapar redan en {type}",
+                    "create_failed": "Kunde inte skapa {type}",
+                    "create_success": "{type} Skapad",
+                    "failed_load_parent": "Överordnat objekt kunde inte läsas in – välj manuellt",
+                    "no_canvas_support": "Din webbläsare stödjer inte canvas",
+                    "please_select_entity_type": "Välj en objekttyp.",
+                    "please_select_location": "Välj en plats.",
+                    "rotate_failed": "Misslyckades rotera bild: { error }",
+                    "rotate_process_failed": "Misslyckades hantera roterad bild",
+                    "some_photos_failed": "{count, plural, =0 {Inga bilder att ladda upp.} =1 {1 bild kunde inte laddas upp.} other {Vissa bilder kunde inte laddas upp.}}",
+                    "upload_failed": "Det gick inte att ladda upp bilden: { photoName }",
+                    "upload_success": "{count, plural, =0 {Inga bilder har laddats upp.} =1 {Bilden har laddats upp.} other {Alla bilder har laddats upp.}}",
+                    "uploading_photos": "{count, plural, =0 {Inga bilder att ladda upp.} =1 {Laddar upp 1 bild…} other {Laddar upp {count} bilder…}}"
+                },
+                "upload_photos": "Ladda upp bilder",
+                "uploaded": "Uppladdade Foton"
+            },
+            "selector": {
+                "placeholder": "Välj en typ…"
+            }
+        },
+        "entityTypes": {
+            "card": {
+                "actions": {
+                    "delete": "Ta bort"
+                },
+                "badge_container": "Behållare",
+                "default_template": "Standardmall: {name}",
+                "tooltip": {
+                    "delete": "Ta bort",
+                    "edit": "Ändra"
+                }
+            },
+            "confirm": {
+                "convert_item_to_location": "Om du ändrar en objekttyp till en platstyp kommer fält för objekt som använder denna typ att försvinna. Är du säker på att du vill fortsätta?",
+                "delete_entity_type": "Är du säker på att du vill ta bort \"{name}\"?"
+            },
+            "create_dialog": {
+                "button": "Skapa",
+                "is_container_location_type_label": "Är en behållare/plats-typ",
+                "name_label": "Namn",
+                "title": "Skapa objekttyp"
+            },
+            "page": {
+                "create": "Skapa",
+                "empty_button": "Skapa objekttyp",
+                "empty_title": "Inga objekttyper har definierats ännu.",
+                "title": "Objekttyper"
+            },
+            "toasts": {
+                "create_failed": "Det gick inte att skapa objekttypen",
+                "create_success": "Objekttyp skapad",
+                "delete_confirm_failed": "Det gick inte att ta bort objekttypen. Kontrollera att inga objekt använder den.",
+                "delete_success": "Objekttyp borttagen",
+                "name_required": "Ett namn måste anges",
+                "update_failed": "Det gick inte att uppdatera objekttypen",
+                "update_success": "Objekttyp uppdaterad"
+            },
+            "update_dialog": {
+                "button": "Uppdatera",
+                "is_container_location_type_label": "Är en behållare/plats-typ",
+                "name_label": "Namn",
+                "title": "Uppdatera objekttyp"
+            }
+        },
         "form": {
             "min_length": "min {min}",
             "password": {
@@ -173,6 +253,7 @@
                 "qr_tooltip": "Visa QR-kod"
             },
             "password_score": {
+                "does_not_meet_requirement": "Uppfyller inte kraven på lösenordsstyrka",
                 "password_strength": "Lösenordsstyrka"
             }
         },
@@ -180,36 +261,6 @@
             "attachments_list": {
                 "download": "Ladda ner",
                 "open_new_tab": "Öppna i ny flik"
-            },
-            "create_modal": {
-                "clear_template": "Rensa mall",
-                "delete_photo": "Radera foto",
-                "item_description": "Objektbeskrivning",
-                "item_name": "Objektnamn",
-                "item_photo": "Artikelfoto 📷",
-                "item_quantity": "Artikel mängd",
-                "parent_item": "Föräldrar artikel",
-                "product_tooltip_input_barcode": "Fyll automatisk med manuellt inmatad streckkod",
-                "product_tooltip_scan_barcode": "Auto fyll med streckkod från 📷",
-                "rotate_photo": "Rotera foto",
-                "set_as_primary_photo": "Sätt som { isPrimary, select, true {non-} false {} other {}} primärt foto",
-                "title": "Skapa artikel",
-                "toast": {
-                    "already_creating": "Skapar redan en artikel",
-                    "create_failed": "Kunde inte skapa artikel",
-                    "create_success": "Artikel skapad",
-                    "failed_load_parent": "Det gick inte att ladda det överordnade objektet - välj manuellt",
-                    "no_canvas_support": "Din webbläsare stödjer inte canvas",
-                    "please_select_location": "Välj en plats.",
-                    "rotate_failed": "Misslyckades rotera bild: { error }",
-                    "rotate_process_failed": "Misslyckades hantera roterad bild",
-                    "some_photos_failed": "{count, plural, =0 {Inga foton att ladda upp.} =1 {1 foto kunde inte laddas upp.} other {Vissa foton kunde inte laddas upp.}}",
-                    "upload_failed": "Uppladdning av foto misslyckades : { photoName }",
-                    "upload_success": "{count, plural, =0 {Inga foton uppladdade.} =1 {Foto uppladdat framgångsrikt.} other {Alla foton uppladdade framgångsrikt.}}",
-                    "uploading_photos": "{count, plural, =0 {Inga foton att ladda upp} =1 {Laddar upp 1 foto...} other {Laddar upp {count} foton...}}"
-                },
-                "upload_photos": "Ladda upp bilder",
-                "uploaded": "Uppladdade Foton"
             },
             "product_import": {
                 "barcode": "Produktens streckkod",
@@ -280,17 +331,7 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Platsbeskrivning",
-                "location_name": "Platsnamn",
-                "location_photo": "Platsfoto 📷",
-                "title": "Skapa plats",
-                "toast": {
-                    "already_creating": "Skapar redan en plats",
-                    "create_failed": "Det gick inte att skapa plats",
-                    "create_success": "Plats skapad"
-                }
-            },
+            "create_item": "Skapa föremål",
             "selector": {
                 "clear": "Rensa platsval",
                 "no_location_found": "Ingen plats hittades",
@@ -414,6 +455,8 @@
         "duplicate": "Duplicera",
         "edit": "Ändra",
         "email": "Epost",
+        "entity": "Objekt",
+        "entity_type": "Objekttyp",
         "follow_dev": "Följ utvecklaren",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
@@ -421,9 +464,11 @@
         },
         "github": "GitHub-projekt",
         "insured": "Försäkrad",
+        "item": "Föremål",
         "items": "Föremål",
         "join_discord": "Gå med i Discord",
         "loading": "Laddar…",
+        "location": "Plats",
         "locations": "Platser",
         "maintenance": "Underhåll",
         "name": "Namn",
@@ -531,6 +576,7 @@
             "title": "Duplicera inställningar"
         },
         "edit": {
+            "change_entity_type_confirm": "Om du ändrar objekttypen kan data i fält som inte delas mellan den nuvarande och den nya objekttypen gå förlorad. Är du säker på att du vill ändra objekttypen?",
             "edit_attachment_dialog": {
                 "attachment_title": "Titel på bilaga",
                 "attachment_type": "Typ av bilaga",
@@ -599,11 +645,12 @@
         "toast": {
             "asset_not_found": "Tillgång hittades inte",
             "attachment_deleted": "Bilaga borttagen",
+            "attachment_too_large": "Bilagan är för stor: den överskrider serverns gräns för uppladdningsstorlek",
             "attachment_updated": "Bilaga uppdaterad",
             "attachment_uploaded": "Bilaga uppladdad",
             "child_items_location_no_longer_synced": "Platser för underordnade objekt synkroniseras inte längre med det här objektet.",
             "child_items_location_synced": "Platser för underordnade artiklar har synkroniserats med detta objekt",
-            "child_location_desync": "Att ändra plats kommer koppla loss den från överordnad plats",
+            "child_location_desync": "Överordnat objekt har tagits bort – objektet finns nu direkt på den valda platsen",
             "error_loading_parent_data": "Något gick fel när överordnade data skulle laddas",
             "failed_adjust_quantity": "Det gick inte att justera antalet",
             "failed_delete_attachment": "Det gick inte att ta bort bilagan",
@@ -662,6 +709,8 @@
         "zh-TW": "Kinesiska (traditionell)"
     },
     "languages.da-DK": "Danska",
+    "languages.el-GR": "Grekiska",
+    "languages.en@pirate": "Engelska (Piratspråk)",
     "languages.ro-RO": "Rumänska",
     "languages.sk-SK": "Slovakiska",
     "languages.sq-AL": "Albanska",

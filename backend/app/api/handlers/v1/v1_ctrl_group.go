@@ -20,7 +20,7 @@ type (
 		Uses      int       `json:"uses"      validate:"required,min=1,max=100"`
 		ExpiresAt time.Time `json:"expiresAt"`
 		// Permissions applied to the membership created on acceptance.
-		// Empty means full access (matches pre-permission behavior).
+		// Empty means the default member permissions (no administration).
 		Permissions []string `json:"permissions"`
 	}
 
@@ -237,7 +237,7 @@ func (ctrl *V1Controller) HandleGroupMembersGetAll() errchain.HandlerFunc {
 //	@Summary	Remove User from Group
 //	@Tags		Group
 //	@Produce	json
-//	@Param		user_id	path		string	true	"User ID"
+//	@Param		user_id	path	string	true	"User ID"
 //	@Success	204
 //	@Router		/v1/groups/members/{user_id} [Delete]
 //	@Security	Bearer
@@ -291,7 +291,7 @@ func (ctrl *V1Controller) HandleGroupInvitationsDelete() errchain.HandlerFunc {
 //	@ID			groupInvitationAccept
 //	@Tags		Group
 //	@Produce	json
-//	@Param		id	path	string	true	"Invitation Token"
+//	@Param		id	path		string	true	"Invitation Token"
 //	@Success	200	{object}	GroupAcceptInvitationResponse
 //	@Router		/v1/groups/invitations/{id} [Post]
 //	@Security	Bearer

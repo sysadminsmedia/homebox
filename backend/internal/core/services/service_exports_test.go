@@ -1,9 +1,11 @@
 package services
 
 import (
+	"archive/zip"
 	"bytes"
 	"context"
 	"encoding/csv"
+	"encoding/json"
 	"io"
 	"strings"
 	"testing"
@@ -420,6 +422,22 @@ func TestIsGroupReadyForImport_BlocksUserCreatedRows(t *testing.T) {
 	})
 }
 
+// TestPublishJobsTopicReuse guards against #1592: the mem:// pubsub driver
+// returns a shared singleton topic per URL, so the old per-publish Shutdown
+// permanently broke every publish after the first ("pubsub: Topic has been
+// Shutdown") until the process restarted. Publishing twice on each topic
+// must succeed.
+func TestPublishJobsTopicReuse(t *testing.T) {
+	ctx := testCtx()
+
+	for i := 1; i <= 2; i++ {
+		require.NoError(t, tSvc.Exports.publishExportJob(ctx, uuid.New(), uuid.New()),
+			"export publish attempt %d", i)
+		require.NoError(t, tSvc.Exports.publishImportJob(ctx, uuid.New(), uuid.New(), uuid.New()),
+			"import publish attempt %d", i)
+	}
+}
+
 // copyBlobUnderTest reuses the export service's bucket plumbing to copy a
 // blob from one key to another in the same backing store. Used to "stage"
 // the just-produced export under the destination group's import prefix.
@@ -446,4 +464,171 @@ func copyBlobUnderTest(ctx context.Context, svc *ExportService, srcKey, dstKey s
 		return err
 	}
 	return w.Close()
+}
+
+// tamperedImportZip rebuilds the export zip stored at srcKey with the rows of
+// one table rewritten by mutate, stages the result as an import upload for
+// dst, and returns the upload key and size.
+func tamperedImportZip(t *testing.T, ctx context.Context, srcKey string, dst uuid.UUID, table string, mutate func(rows []map[string]any)) (string, int64) {
+	t.Helper()
+	att := tSvc.Exports.repos.Attachments
+	bk, err := blob.OpenBucket(ctx, att.GetConnString())
+	require.NoError(t, err)
+	defer func() { _ = bk.Close() }()
+
+	raw, err := bk.ReadAll(ctx, att.GetFullPath(srcKey))
+	require.NoError(t, err)
+	zr, err := zip.NewReader(bytes.NewReader(raw), int64(len(raw)))
+	require.NoError(t, err)
+
+	var out bytes.Buffer
+	zw := zip.NewWriter(&out)
+	for _, f := range zr.File {
+		rc, err := f.Open()
+		require.NoError(t, err)
+		data, err := io.ReadAll(rc)
+		_ = rc.Close()
+		require.NoError(t, err)
+		if f.Name == table+".json" {
+			var rows []map[string]any
+			require.NoError(t, json.Unmarshal(data, &rows))
+			mutate(rows)
+			data, err = json.Marshal(rows)
+			require.NoError(t, err)
+		}
+		w, err := zw.Create(f.Name)
+		require.NoError(t, err)
+		_, err = w.Write(data)
+		require.NoError(t, err)
+	}
+	require.NoError(t, zw.Close())
+
+	importKey := dst.String() + "/imports/" + uuid.New().String() + ".zip"
+	require.NoError(t, bk.WriteAll(ctx, att.GetFullPath(importKey), out.Bytes(), nil))
+	return importKey, int64(out.Len())
+}
+
+// TestImportRejectsForeignKeyOutsideArchive asserts that an import cannot
+// smuggle a reference to a row owned by another group. Every FK in a
+// legitimate export resolves inside the archive; a UUID that is not in the
+// archive's id map used to be passed through verbatim and accepted by the
+// id-only DB FK constraint, which let an attacker parent their entity under
+// a victim group's location and read its ancestor chain.
+func TestImportRejectsForeignKeyOutsideArchive(t *testing.T) {
+	ctx := testCtx()
+
+	// Victim group with a location whose id the attacker "knows".
+	victim, err := tRepos.Groups.GroupCreate(ctx, "victim-"+fk.Str(4), uuid.Nil)
+	require.NoError(t, err)
+	victimLocET, err := tRepos.EntityTypes.GetDefault(ctx, victim.ID, true)
+	require.NoError(t, err)
+	victimLoc, err := tRepos.Entities.Create(ctx, victim.ID, repo.EntityCreate{
+		Name:         "Victim Vault",
+		EntityTypeID: victimLocET.ID,
+	})
+	require.NoError(t, err)
+
+	// Attacker's source group: produce a legitimate export to tamper with.
+	src, err := tRepos.Groups.GroupCreate(ctx, "attacker-src-"+fk.Str(4), uuid.Nil)
+	require.NoError(t, err)
+	srcItemET, err := tRepos.EntityTypes.GetDefault(ctx, src.ID, false)
+	require.NoError(t, err)
+	_, err = tRepos.Entities.Create(ctx, src.ID, repo.EntityCreate{
+		Name:         "Probe",
+		EntityTypeID: srcItemET.ID,
+	})
+	require.NoError(t, err)
+	expRow, err := tRepos.Exports.Create(ctx, src.ID)
+	require.NoError(t, err)
+	artifactPath, _, err := tSvc.Exports.buildArtifact(ctx, expRow.ID, src.ID)
+	require.NoError(t, err)
+
+	cases := []struct{ name, col string }{
+		{"parent FK", "entity_children"},
+		{"location override FK", "entity_location_entities"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			dst, err := tRepos.Groups.GroupCreate(ctx, "attacker-dst-"+fk.Str(4), uuid.Nil)
+			require.NoError(t, err)
+
+			importKey, size := tamperedImportZip(t, ctx, artifactPath, dst.ID, "entities", func(rows []map[string]any) {
+				for _, r := range rows {
+					if r["name"] == "Probe" {
+						r[tc.col] = victimLoc.ID.String()
+					}
+				}
+			})
+			impRow, err := tRepos.Exports.CreateImport(ctx, dst.ID, importKey, size)
+			require.NoError(t, err)
+
+			err = tSvc.Exports.runImport(ctx, dst.ID, tUser.ID, impRow.ID, importKey)
+			require.Error(t, err, "import pointing at another group's row must fail")
+			assert.ErrorContains(t, err, "not part of this export")
+
+			// The tx rolled back: nothing from the archive landed in dst and no
+			// row anywhere references the victim's location.
+			n, err := tClient.Entity.Query().
+				Where(entity.HasGroupWith(group.ID(dst.ID)), entity.Name("Probe")).
+				Count(ctx)
+			require.NoError(t, err)
+			assert.Zero(t, n, "tampered row must not be inserted")
+
+			refs, err := tClient.Entity.Query().
+				Where(entity.Or(
+					entity.HasParentWith(entity.ID(victimLoc.ID)),
+					entity.HasLocationWith(entity.ID(victimLoc.ID)),
+				)).
+				Count(ctx)
+			require.NoError(t, err)
+			assert.Zero(t, refs, "no entity may reference the victim's location")
+		})
+	}
+}
+
+// TestExportTablesCoverAllForeignKeys guards against schema drift: every FK
+// column the destination database has on an exported table must be handled
+// by the tableSpec (group/user/fk/defer). A FK column the spec does not know
+// about would otherwise be inserted verbatim from the archive — which is
+// exactly what rejectUnmappedFKColumns refuses at import time, so this test
+// makes a legitimate export carrying such a column fail here first.
+func TestExportTablesCoverAllForeignKeys(t *testing.T) {
+	ctx := testCtx()
+	db := tSvc.Exports.db.Sql()
+	for _, spec := range exportTables {
+		dbFKs, err := fkColumns(ctx, db, tSvc.Exports.dialect, spec.name)
+		require.NoError(t, err)
+		require.NotEmpty(t, dbFKs, "introspection returned no FK columns for %s", spec.name)
+
+		known := map[string]struct{}{}
+		for _, c := range spec.groupCols {
+			known[c] = struct{}{}
+		}
+		for _, c := range spec.userCols {
+			known[c] = struct{}{}
+		}
+		for c := range spec.fkCols {
+			known[c] = struct{}{}
+		}
+		for c := range spec.deferCols {
+			known[c] = struct{}{}
+		}
+		for col := range dbFKs {
+			_, ok := known[col]
+			assert.True(t, ok, "table %s: FK column %q is not covered by exportTables", spec.name, col)
+		}
+	}
+}
+
+func TestRejectUnmappedFKColumns(t *testing.T) {
+	dbFKs := map[string]struct{}{"a_fk": {}, "b_fk": {}}
+	known := map[string]struct{}{"a_fk": {}}
+
+	require.NoError(t, rejectUnmappedFKColumns(map[string]any{"a_fk": "x", "name": "n"}, "t", dbFKs, known))
+	require.NoError(t, rejectUnmappedFKColumns(map[string]any{"b_fk": nil}, "t", dbFKs, known))
+	require.NoError(t, rejectUnmappedFKColumns(map[string]any{"b_fk": ""}, "t", dbFKs, known))
+
+	err := rejectUnmappedFKColumns(map[string]any{"b_fk": uuid.NewString()}, "t", dbFKs, known)
+	require.Error(t, err)
+	assert.ErrorContains(t, err, `"b_fk"`)
 }

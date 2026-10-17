@@ -26,6 +26,9 @@ type PermissionDefinition struct {
 	Key      string `json:"key"`
 	Resource string `json:"resource"`
 	Action   string `json:"action"`
+	// MemberDefault marks permissions in the default member list, which the
+	// UI preselects when inviting someone.
+	MemberDefault bool `json:"memberDefault"`
 }
 
 // EffectivePermissionsOut is the caller's resolved permission picture for the
@@ -40,13 +43,15 @@ type EffectivePermissionsOut struct {
 // Catalog returns the full permission catalog.
 func (svc *PermissionService) Catalog() []PermissionDefinition {
 	all := authz.All()
+	memberDefault := authz.DefaultMember()
 	out := make([]PermissionDefinition, 0, len(all))
 	for _, p := range all {
 		resource, action, _ := strings.Cut(string(p), ":")
 		out = append(out, PermissionDefinition{
-			Key:      string(p),
-			Resource: resource,
-			Action:   action,
+			Key:           string(p),
+			Resource:      resource,
+			Action:        action,
+			MemberDefault: authz.SetHas(memberDefault, p),
 		})
 	}
 	return out

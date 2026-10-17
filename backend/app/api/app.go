@@ -21,6 +21,7 @@ type app struct {
 	bus                 *eventbus.EventBus
 	authLimiter         *authRateLimiter
 	notifierTestLimiter *simpleRateLimiter
+	registerLimiter     *simpleRateLimiter
 	otel                *otel.Provider
 }
 
@@ -39,6 +40,9 @@ func new(conf *config.Config) *app {
 
 	s.authLimiter = newAuthRateLimiter(s.conf.Auth.RateLimit)
 	s.notifierTestLimiter = newSimpleRateLimiter(10, time.Minute, s.conf.Options.TrustProxy) // 10 requests per minute
+	// Registration succeeds with a fresh email each time, so the failure-based
+	// authLimiter never trips on it; cap every attempt instead.
+	s.registerLimiter = newSimpleRateLimiter(5, time.Minute, s.conf.Options.TrustProxy) // 5 requests per minute
 
 	return s
 }

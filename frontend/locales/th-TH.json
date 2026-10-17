@@ -93,13 +93,6 @@
                 "download": "ดาวน์โหลด",
                 "open_new_tab": "เปิดในแท็บใหม่"
             },
-            "create_modal": {
-                "delete_photo": "ลบรูปภาพ",
-                "item_description": "รายละเอียดรายการ",
-                "item_name": "ชื่อรายการ",
-                "item_photo": "ภาพถ่ายสิ่งของ 📷",
-                "item_quantity": "จำนวนสิ่งของ"
-            },
             "view": {
                 "table": {
                     "page": "หน้า"

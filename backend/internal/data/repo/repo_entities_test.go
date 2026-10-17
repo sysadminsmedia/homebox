@@ -449,6 +449,69 @@ func TestEntityRepository_CreateFromTemplate_RejectsNonFiniteQuantity(t *testing
 	require.NoError(t, err)
 }
 
+// TestEntityRepository_CreateFromTemplate_DefaultsEntityType verifies that
+// creating an entity from a template without an explicit entity type still
+// succeeds and resolves the group's default item type, rather than failing the
+// required entity_type edge (regression test for #1548).
+func TestEntityRepository_CreateFromTemplate_DefaultsEntityType(t *testing.T) {
+	containerET := useContainerEntityType(t)
+
+	cf := containerFactory()
+	cf.EntityTypeID = containerET.ID
+	container, err := tRepos.Entities.Create(testCtx(), tGroup.ID, cf)
+	require.NoError(t, err)
+
+	out, err := tRepos.Entities.CreateFromTemplate(testCtx(), tGroup.ID, EntityCreateFromTemplate{
+		Name:        fk.Str(10),
+		Description: fk.Str(20),
+		Quantity:    1,
+		ParentID:    container.ID,
+		// EntityTypeID intentionally left zero to exercise the fallback.
+	})
+	require.NoError(t, err)
+	require.NotNil(t, out.EntityType)
+	assert.False(t, out.EntityType.IsLocation)
+
+	// Cleanup
+	err = tRepos.Entities.Delete(testCtx(), out.ID)
+	require.NoError(t, err)
+	err = tRepos.Entities.Delete(testCtx(), container.ID)
+	require.NoError(t, err)
+}
+
+// TestEntityRepository_CreateFromTemplate_UsesSelectedEntityType verifies that
+// the user-selected entity type takes precedence over the default fallback.
+func TestEntityRepository_CreateFromTemplate_UsesSelectedEntityType(t *testing.T) {
+	containerET := useContainerEntityType(t)
+
+	cf := containerFactory()
+	cf.EntityTypeID = containerET.ID
+	container, err := tRepos.Entities.Create(testCtx(), tGroup.ID, cf)
+	require.NoError(t, err)
+
+	selectedET, err := tRepos.EntityTypes.Create(testCtx(), tGroup.ID, EntityTypeCreate{
+		Name: fk.Str(10),
+	})
+	require.NoError(t, err)
+
+	out, err := tRepos.Entities.CreateFromTemplate(testCtx(), tGroup.ID, EntityCreateFromTemplate{
+		Name:         fk.Str(10),
+		Description:  fk.Str(20),
+		Quantity:     1,
+		ParentID:     container.ID,
+		EntityTypeID: selectedET.ID,
+	})
+	require.NoError(t, err)
+	require.NotNil(t, out.EntityType)
+	assert.Equal(t, selectedET.ID, out.EntityType.ID)
+
+	// Cleanup
+	err = tRepos.Entities.Delete(testCtx(), out.ID)
+	require.NoError(t, err)
+	err = tRepos.Entities.Delete(testCtx(), container.ID)
+	require.NoError(t, err)
+}
+
 func TestEntityRepository_GetAllCustomFields(t *testing.T) {
 	const FieldsCount = 5
 
@@ -729,4 +792,245 @@ func TestEntityRepository_WipeInventory_OnlyItems(t *testing.T) {
 
 	// Cleanup
 	_ = tRepos.Tags.DeleteByGroup(testCtx(), tGroup.ID, tagObj.ID)
+}
+
+// mustCreateEntity is a helper for the hierarchy tests below: creates an
+// entity with the given type/parent and registers cleanup.
+func mustCreateEntity(t *testing.T, name string, entityTypeID, parentID uuid.UUID) EntityOut {
+	t.Helper()
+	e, err := tRepos.Entities.Create(testCtx(), tGroup.ID, EntityCreate{
+		Name:         name,
+		Description:  "hierarchy test entity",
+		EntityTypeID: entityTypeID,
+		ParentID:     parentID,
+	})
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = tRepos.Entities.Delete(testCtx(), e.ID) })
+	return e
+}
+
+// TestEntityRepository_SyncChildLocations_KeepsChildrenAttached guards
+// against #1591: updating a box that has SyncChildEntityLocations enabled
+// (with or without a parent change) must NOT reparent the box's children to
+// the box's own parent. Children stay attached to the box and follow it
+// through the ancestor chain.
+func TestEntityRepository_SyncChildLocations_KeepsChildrenAttached(t *testing.T) {
+	ctx := testCtx()
+	containerET := useContainerEntityType(t)
+	itemET := useItemEntityType(t)
+
+	// Location1 > Box1, Box2 > Box2.1 > Item1, Item2  (issue #1591 repro)
+	loc1 := mustCreateEntity(t, "Location1", containerET.ID, uuid.Nil)
+	box1 := mustCreateEntity(t, "Box1", itemET.ID, loc1.ID)
+	box2 := mustCreateEntity(t, "Box2", itemET.ID, loc1.ID)
+	box21 := mustCreateEntity(t, "Box2.1", itemET.ID, box2.ID)
+	item1 := mustCreateEntity(t, "Item1", itemET.ID, box21.ID)
+	item2 := mustCreateEntity(t, "Item2", itemET.ID, box21.ID)
+
+	assertParent := func(childID, wantParent uuid.UUID, msg string) {
+		t.Helper()
+		out, err := tRepos.Entities.GetOne(ctx, childID)
+		require.NoError(t, err)
+		require.NotNil(t, out.Parent, msg)
+		assert.Equal(t, wantParent, out.Parent.ID, msg)
+	}
+
+	update := EntityUpdate{
+		ID:                       box21.ID,
+		Name:                     box21.Name,
+		Description:              box21.Description,
+		Quantity:                 1,
+		EntityTypeID:             itemET.ID,
+		SyncChildEntityLocations: true,
+		ParentID:                 box2.ID,
+	}
+
+	// Plain save with sync ON and unchanged parent must not touch children.
+	_, err := tRepos.Entities.UpdateByGroup(ctx, tGroup.ID, update)
+	require.NoError(t, err)
+	assertParent(item1.ID, box21.ID, "item1 must stay in box2.1 after plain save")
+	assertParent(item2.ID, box21.ID, "item2 must stay in box2.1 after plain save")
+
+	// Move Box2.1 from Box2 into Box1 — the issue's repro.
+	update.ParentID = box1.ID
+	_, err = tRepos.Entities.UpdateByGroup(ctx, tGroup.ID, update)
+	require.NoError(t, err)
+	assertParent(box21.ID, box1.ID, "box2.1 must move under box1")
+	assertParent(item1.ID, box21.ID, "item1 must stay in box2.1 after move")
+	assertParent(item2.ID, box21.ID, "item2 must stay in box2.1 after move")
+
+	// Same guarantee for the Patch path.
+	err = tRepos.Entities.Patch(ctx, tGroup.ID, box21.ID, EntityPatch{ID: box21.ID, ParentID: box2.ID})
+	require.NoError(t, err)
+	assertParent(box21.ID, box2.ID, "box2.1 must move back under box2 via patch")
+	assertParent(item1.ID, box21.ID, "item1 must stay in box2.1 after patch")
+	assertParent(item2.ID, box21.ID, "item2 must stay in box2.1 after patch")
+}
+
+// TestEntityRepository_GetOne_DerivedLocation covers the Location field used
+// by the frontend to show where an item lives (#1589): the nearest ancestor
+// whose entity type is a location, however deeply the item is nested.
+func TestEntityRepository_GetOne_DerivedLocation(t *testing.T) {
+	ctx := testCtx()
+	containerET := useContainerEntityType(t)
+	itemET := useItemEntityType(t)
+
+	loc := mustCreateEntity(t, "Attic", containerET.ID, uuid.Nil)
+	box := mustCreateEntity(t, "Testbox", itemET.ID, loc.ID)
+	nested := mustCreateEntity(t, "Testbox2", itemET.ID, box.ID)
+	direct := mustCreateEntity(t, "DirectItem", itemET.ID, loc.ID)
+
+	out, err := tRepos.Entities.GetOne(ctx, nested.ID)
+	require.NoError(t, err)
+	require.NotNil(t, out.Location, "nested item must derive a location")
+	assert.Equal(t, loc.ID, out.Location.ID, "nested item's location is the box's location")
+	require.NotNil(t, out.Parent)
+	assert.Equal(t, box.ID, out.Parent.ID, "parent stays the box itself")
+
+	out, err = tRepos.Entities.GetOne(ctx, direct.ID)
+	require.NoError(t, err)
+	require.NotNil(t, out.Location)
+	assert.Equal(t, loc.ID, out.Location.ID, "direct child's location is its parent")
+
+	out, err = tRepos.Entities.GetOne(ctx, loc.ID)
+	require.NoError(t, err)
+	assert.Nil(t, out.Location, "top-level location has no derived location")
+}
+
+// TestEntityRepository_Create_WithManufacturerModel guards #1578: the barcode
+// import flow creates items with manufacturer/model in the create payload.
+func TestEntityRepository_Create_WithManufacturerModel(t *testing.T) {
+	itemET := useItemEntityType(t)
+
+	e, err := tRepos.Entities.Create(testCtx(), tGroup.ID, EntityCreate{
+		Name:         "Barcode Item",
+		Description:  "created via barcode import",
+		EntityTypeID: itemET.ID,
+		Manufacturer: "ACME",
+		ModelNumber:  "X-1000",
+	})
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = tRepos.Entities.Delete(testCtx(), e.ID) })
+
+	assert.Equal(t, "ACME", e.Manufacturer)
+	assert.Equal(t, "X-1000", e.ModelNumber)
+}
+
+// TestEntityRepository_RejectsNegativeQuantity guards #1231 across all
+// quantity-accepting write paths.
+func TestEntityRepository_RejectsNegativeQuantity(t *testing.T) {
+	ctx := testCtx()
+	itemET := useItemEntityType(t)
+
+	_, err := tRepos.Entities.Create(ctx, tGroup.ID, EntityCreate{
+		Name:         "Negative",
+		EntityTypeID: itemET.ID,
+		Quantity:     -1,
+	})
+	require.ErrorContains(t, err, "must not be negative")
+
+	e := mustCreateEntity(t, "QuantityGuard", itemET.ID, uuid.Nil)
+
+	_, err = tRepos.Entities.UpdateByGroup(ctx, tGroup.ID, EntityUpdate{
+		ID:           e.ID,
+		Name:         e.Name,
+		EntityTypeID: itemET.ID,
+		Quantity:     -3,
+	})
+	require.ErrorContains(t, err, "must not be negative")
+
+	negative := -2.0
+	err = tRepos.Entities.Patch(ctx, tGroup.ID, e.ID, EntityPatch{ID: e.ID, Quantity: &negative})
+	require.ErrorContains(t, err, "must not be negative")
+}
+
+// TestEntityRepository_QueryByGroup_OrderByLocation verifies that ordering by
+// "location" uses the nearest location ancestor rather than the direct parent:
+// an item nested inside another item must sort under the location that item
+// ultimately lives in, and items without any location ancestor sort last in
+// both directions.
+func TestEntityRepository_QueryByGroup_OrderByLocation(t *testing.T) {
+	ctx := testCtx()
+	containerET := useContainerEntityType(t)
+	itemET := useItemEntityType(t)
+
+	// Alpha Room > direct-item
+	// Zulu Room  > nested-box > nested-item
+	// (no parent) > orphan-item
+	alpha := mustCreateEntity(t, "Alpha Room", containerET.ID, uuid.Nil)
+	zulu := mustCreateEntity(t, "Zulu Room", containerET.ID, uuid.Nil)
+	box := mustCreateEntity(t, "nested-box", itemET.ID, zulu.ID)
+	nested := mustCreateEntity(t, "nested-item", itemET.ID, box.ID)
+	direct := mustCreateEntity(t, "direct-item", itemET.ID, alpha.ID)
+	orphan := mustCreateEntity(t, "orphan-item", itemET.ID, uuid.Nil)
+
+	// The test group is shared, so only the entities created here are ordered.
+	mine := map[uuid.UUID]bool{box.ID: true, nested.ID: true, direct.ID: true, orphan.ID: true}
+	order := func(direction string) []uuid.UUID {
+		t.Helper()
+		res, err := tRepos.Entities.QueryByGroup(ctx, tGroup.ID, EntityQuery{
+			Page:           -1,
+			PageSize:       -1,
+			OrderBy:        "location",
+			OrderDirection: direction,
+		})
+		require.NoError(t, err)
+
+		ids := make([]uuid.UUID, 0, len(mine))
+		for _, e := range res.Items {
+			if mine[e.ID] {
+				ids = append(ids, e.ID)
+			}
+		}
+		return ids
+	}
+
+	// Alpha Room, then Zulu Room (nested-box and nested-item tie on location
+	// and fall back to their own name), then the location-less item.
+	assert.Equal(t, []uuid.UUID{direct.ID, box.ID, nested.ID, orphan.ID}, order("asc"))
+	assert.Equal(t, []uuid.UUID{box.ID, nested.ID, direct.ID, orphan.ID}, order("desc"))
+}
+
+// TestEntityRepository_QueryByGroup_TimestampOrderDefaultsDesc verifies that
+// ordering by createdAt/updatedAt without a direction returns the newest
+// entities first, while an explicit direction is still respected.
+func TestEntityRepository_QueryByGroup_TimestampOrderDefaultsDesc(t *testing.T) {
+	ctx := testCtx()
+	itemET := useItemEntityType(t)
+
+	first := mustCreateEntity(t, "ts-first", itemET.ID, uuid.Nil)
+	second := mustCreateEntity(t, "ts-second", itemET.ID, uuid.Nil)
+	third := mustCreateEntity(t, "ts-third", itemET.ID, uuid.Nil)
+
+	// Touch the first entity so it becomes the most recently updated.
+	_, err := tClient.Entity.UpdateOneID(first.ID).SetDescription("touched").Save(ctx)
+	require.NoError(t, err)
+
+	// The test group is shared, so only the entities created here are ordered.
+	mine := map[uuid.UUID]bool{first.ID: true, second.ID: true, third.ID: true}
+	order := func(orderBy, direction string) []uuid.UUID {
+		t.Helper()
+		res, err := tRepos.Entities.QueryByGroup(ctx, tGroup.ID, EntityQuery{
+			Page:           -1,
+			PageSize:       -1,
+			OrderBy:        orderBy,
+			OrderDirection: direction,
+		})
+		require.NoError(t, err)
+
+		ids := make([]uuid.UUID, 0, len(mine))
+		for _, e := range res.Items {
+			if mine[e.ID] {
+				ids = append(ids, e.ID)
+			}
+		}
+		return ids
+	}
+
+	assert.Equal(t, []uuid.UUID{third.ID, second.ID, first.ID}, order("createdAt", ""))
+	assert.Equal(t, []uuid.UUID{third.ID, second.ID, first.ID}, order("createdAt", "desc"))
+	assert.Equal(t, []uuid.UUID{first.ID, second.ID, third.ID}, order("createdAt", "asc"))
+
+	assert.Equal(t, []uuid.UUID{first.ID, third.ID, second.ID}, order("updatedAt", ""))
+	assert.Equal(t, []uuid.UUID{second.ID, third.ID, first.ID}, order("updatedAt", "asc"))
 }

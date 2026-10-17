@@ -19,6 +19,7 @@
     locationFlatTree?: FlatTreeItem[];
     pagination?: Pagination;
     disableSort?: boolean;
+    title?: string;
   }>();
 
   const emit = defineEmits<{
@@ -57,7 +58,7 @@
 
     <BaseSectionHeader class="flex items-center justify-between" :class="{ 'mb-2 mt-4': !externalPagination }">
       <div class="flex gap-2 text-nowrap">
-        {{ $t("components.item.view.selectable.items") }}
+        {{ title ? title : $t("components.item.view.selectable.items") }}
         <Badge v-if="!externalPagination">
           {{ items.length }}
         </Badge>

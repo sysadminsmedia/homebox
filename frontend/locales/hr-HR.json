@@ -1,18 +1,44 @@
 {
     "collection": {
+        "copy_invite": "Kopiraj vezu pozivnice",
+        "create_invite": "Kreiraj pozivnicu",
         "delete_collection": "Obriši zbirku",
+        "delete_confirm": "Sigurno želiš izbrisati ovu zbirku? Tu akciju ne možeš poništiti.",
         "deleted_collection": "Zbirka obrisana.",
-        "manage_collection": "Upravljaj Zbirkom",
+        "expires_at": "Istječe",
+        "invite_token": "Token",
+        "invite_token_hidden": "Više nije vidljivo",
+        "invite_token_warning": "Tokeni za poziv se prikazuju samo jednom. Sada kopiraj vezu; nećeš moći ponovno vidjeti ovaj token nakon što napustiš ili osvježiš ovu stranicu.",
+        "invites": "Pozivnice",
+        "invites_delete_confirm": "Sigurno želiš izbrisati ovu pozivnicu?",
+        "leave_collection": "Napusti zbirku",
+        "leave_confirm": "Sigurno želiš napustiti ovu zbirku?",
+        "left_collection": "Napustili ste zbirku.",
+        "manage_collection": "Upravljaj zbirkom",
         "members": {
+            "cannot_remove_last": "Ne možeš maknuti zadnjega člana.",
             "email": "Email",
+            "empty": "Ova zbirka još nema članova.",
+            "member": "Član",
             "name": "Ime",
-            "owner": "Vlasnik"
+            "owner": "Vlasnik",
+            "remove_confirm": "Sigurno želiš maknuti ovoga člana?",
+            "removed": "Član je maknut",
+            "role": "Uloga"
         },
         "no_collections": {
             "create": "Napravi novu zbirku",
+            "join": "Pridruži postojećoj zbirci",
+            "message": "Izgleda da nisi dio zbirke. Izradi novu zbirku za svoje stvari ili se pridruži onoj u koju si pozvan/a.",
             "title": "Zbirka nije pronađena"
         },
+        "no_invites": "Nema pozivnice",
+        "remaining_uses": "Preostale upotrebe",
         "tabs": {
+            "entity_types": "Vrste entiteta",
+            "invites": "Pozivnice",
+            "members": "Članovi",
+            "notifiers": "Obavijestitelji",
             "settings": "Postavke",
             "tools": "Alati"
         },
@@ -20,8 +46,251 @@
     },
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "Koristi {shiftKey} + {enterKey} za stvaranje i dodavanje još jedne.",
+                "enter": "Enter",
+                "shift": "Shift"
+            },
             "import_dialog": {
-                "title": "Uvezi CSV Datoteku"
+                "change_warning": "Ponašanje uvoza s postojećim import_refs se promijenilo. Ako je import_ref prisutan u CSV datoteci, \nstavka će se ažurirati s vrijednostima iz CSV datoteke.",
+                "description": "Uvezi CSV datoteku koja sadrži vaše stavke, oznake i lokacije. Za više informacija o potrebnom formatu pogledaj \ndokumentaciju.",
+                "title": "Uvezi CSV Datoteku",
+                "toast": {
+                    "import_failed": "Uvoz nije uspio. Pokušaj ponovno kasnije.",
+                    "import_success": "Uvoz uspješan!",
+                    "please_select_file": "Molimo odaberi datoteku za uvoz."
+                }
+            },
+            "outdated": {
+                "current_version": "Trenutna verzija",
+                "dismiss": "Odbaci",
+                "latest_version": "Zadnja verzija",
+                "new_version_available": "Dostupna je nova verzija",
+                "new_version_available_link": "Klikni za pregled bilješke o izdanju"
+            }
+        },
+        "collection": {
+            "create_modal": {
+                "name_label": "Ime zbirke",
+                "title": "Napravi zbirku",
+                "toast": {
+                    "already_creating": "Već stvaram zbirku",
+                    "create_failed": "Neuspjelo stvaranje zbirke",
+                    "create_success": "Zbirka napravljenja",
+                    "please_enter_name": "Molim unesite ime zbirke"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Molimo odaberi datum i vrijeme isteka.",
+                    "invalid_expiry_past": "Datum isteka mora biti u budućnosti.",
+                    "invalid_uses": "Upotreba mora biti broj između 1 i 100."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Pozivni kod za zbriku",
+                "invites_should_look_like": "Pozivnice bi ovako trebale izgledati:",
+                "join": "Pridruži se zbirki",
+                "no_invite_code_create_one": "Nemaš pozivni kod? Umjesto toga stvori novu kolekciju",
+                "title": "Pridruži se zbirci",
+                "toast": {
+                    "already_joining": "Već se pridružuješ zbirci",
+                    "join_failed": "Pridruživanje zbirci nije uspjelo",
+                    "join_success": "Pridružio/la si se kolekciji",
+                    "please_enter_valid_join_code": "Unesite važeći kod pozivnice za zbirku"
+                }
+            },
+            "selector": {
+                "collection_options": "Opcije zbirke",
+                "create_collection": "Napravi novu zbirku",
+                "join_collection": "Pridruži se postojećoj zbirci",
+                "no_collection_found": "Zbirka nije pronađena",
+                "search_collections": "Pretraži zbirke…",
+                "select_collection": "Izaberi zbirku",
+                "your_collections": "Vaše zbirke"
+            }
+        },
+        "color_selector": {
+            "clear": "Prozirna boja",
+            "color": "Boja",
+            "no_color": "Bez boje",
+            "no_color_selected": "Nije izabrana boja",
+            "randomize": "Slučajna boja"
+        },
+        "entity": {
+            "create_modal": {
+                "clear_template": "Očisti predložak",
+                "delete_photo": "Izbriši sliku",
+                "entity_description": "{type} Opis",
+                "entity_name": "{type} Ime",
+                "entity_photo": "{type} Foto 📷",
+                "entity_quantity": "{type} Količina",
+                "item_selector_no_results_text": "Upiši za pretraživanje…",
+                "parent_item": "Nadređena stavka",
+                "product_tooltip_input_barcode": "Automatsko popunjavanje ručno unesenim barkodom",
+                "product_tooltip_scan_barcode": "Automatsko popunjavanje barkodom iz 📷",
+                "rotate_photo": "Rotiranje fotografije",
+                "set_as_primary_photo": "Postavi kao { isPrimary, select, true {non-} false {} other {}}primarna fotografija",
+                "toast": {
+                    "already_creating": "Već se stvara {type}",
+                    "create_failed": "Nije moguće stvoriti {type}",
+                    "create_success": "{type} je napravljen",
+                    "failed_load_parent": "Nije uspjelo učitavanje nadređene stavke - odaberi ručno",
+                    "no_canvas_support": "Vaš preglednik ne podržava operacije s platnom (canvas)",
+                    "please_select_entity_type": "Molimo odaberi vrstu entiteta.",
+                    "please_select_location": "Molim odaberi lokaciju.",
+                    "rotate_failed": "Nije uspjelo rotiranje slike: { error }",
+                    "rotate_process_failed": "Nije uspjela obrada rotirane slike",
+                    "some_photos_failed": "{count, plural, =0 {Nema fotografija za prijenos.} =1 {1 fotografija nije uspjela prijeći.} other {Neke fotografije nisu uspjele prijeći.}}",
+                    "upload_failed": "Prijenos fotografije nije uspio: { photoName }",
+                    "upload_success": "{count, plural, =0 {No photos uploaded.} =1 {Fotografija uspješno prenesena.} other {Sve fotografije uspješno prenesene.}}",
+                    "uploading_photos": "{count}{count, plural, =0 {Nema fotografija za prijenos} =1 {Prijenos 1 fotografije…} other {Prijenos {count} fotografija…}}"
+                },
+                "upload_photos": "Prenesi fotografije",
+                "uploaded": "Prenesena fotografija"
+            },
+            "selector": {
+                "placeholder": "Odaberi vrstu…"
+            }
+        },
+        "entityTypes": {
+            "card": {
+                "actions": {
+                    "delete": "Izbrisati"
+                },
+                "badge_container": "Kontejner",
+                "default_template": "Zadani predložak: {name}",
+                "tooltip": {
+                    "delete": "Izbrisati",
+                    "edit": "Uredi"
+                }
+            },
+            "confirm": {
+                "convert_item_to_location": "Pretvaranje vrste \"stavka\"u vrstu \"lokacija\" rezultirat će gubitkom polja za entitete koji koriste ovu vrstu. Jeste li sigurni da želite nastaviti?",
+                "delete_entity_type": "Jeste li sigurni da želite izbrisati \"{name}\"?"
+            },
+            "create_dialog": {
+                "button": "Stvori",
+                "is_container_location_type_label": "Vrsta je kontejnera/lokacije",
+                "name_label": "Ime",
+                "title": "Stvori vrstu entiteta"
+            },
+            "page": {
+                "create": "Stvori",
+                "empty_button": "Stvori vrstu entiteta",
+                "empty_title": "Još nisu definirane vrste entiteta.",
+                "title": "Vrste entiteta"
+            },
+            "toasts": {
+                "create_failed": "Nije uspjelo stvaranje vrste entiteta",
+                "create_success": "Stvorena je vrsta entiteta",
+                "delete_confirm_failed": "Brisanje vrste entiteta nije uspjelo. Provjerite da je ne koriste nijedni entiteti.",
+                "delete_success": "Izbrisana je vrsta entiteta",
+                "name_required": "Ime je obavezno",
+                "update_failed": "Nije uspjelo ažuriranje vrste entiteta",
+                "update_success": "Vrsta entiteta je ažurirana"
+            },
+            "update_dialog": {
+                "button": "Ažuriraj",
+                "is_container_location_type_label": "Vrsta je kontejnera/lokacije",
+                "name_label": "Ime",
+                "title": "Ažuriraj vrstu entiteta"
+            }
+        },
+        "form": {
+            "min_length": "min {min}",
+            "password": {
+                "toggle_show": "Uključi/isključi prikaz lozinke"
+            }
+        },
+        "global": {
+            "copy_text": {
+                "continue": "Nastavi",
+                "documentation": "dokumentacija",
+                "failed_to_copy": "Nije uspjelo kopiranje teksta u međuspremnik",
+                "https_required": "jer je HTTPS potreban",
+                "learn_more": "Saznajte više u našem"
+            },
+            "date_time": {
+                "ago": "{0} prije",
+                "days": "dani",
+                "hour": "sat",
+                "hours": "sati",
+                "in": "u {0}",
+                "just-now": "upravo sada",
+                "last-month": "prošli mjesec",
+                "last-week": "prošli tjedan",
+                "last-year": "prošle godine",
+                "minute": "minuta",
+                "minutes": "minute",
+                "months": "mjeseci",
+                "next-month": "sljedeći mjesec",
+                "next-week": "sljedeći tjedan",
+                "next-year": "sljedeće godine",
+                "second": "sekunda",
+                "seconds": "sekunde",
+                "tomorrow": "sutra",
+                "week": "tjedan",
+                "weeks": "tjedana",
+                "years": "godina",
+                "yesterday": "jučer"
+            },
+            "label_maker": {
+                "browser_print": "Ispis iz preglednika",
+                "confirm_description": "Jeste li sigurni da želite ispisati ovu naljepnicu?",
+                "download": "Preuzmi naljepnicu",
+                "print": "Ispis naljepnice",
+                "server_print": "Ispis na poslužitelju",
+                "titles": "Naljepnice",
+                "toast": {
+                    "load_status_failed": "Nije uspjelo učitavanje statusa",
+                    "print_failed": "Ispis naljepnice nije uspio",
+                    "print_success": "Otisnuta naljepnica"
+                }
+            },
+            "page_qr_code": {
+                "page_url": "URL stranice",
+                "qr_tooltip": "Prikaži QR kod"
+            },
+            "password_score": {
+                "does_not_meet_requirement": "Ne ispunjava zahtjev za jačinu lozinke",
+                "password_strength": "Jačina lozinke"
+            }
+        },
+        "item": {
+            "attachments_list": {
+                "download": "Preuzmi",
+                "open_new_tab": "Otvori u novoj kartici"
+            },
+            "product_import": {
+                "barcode": "Barkod proizvoda",
+                "db_source": "Izvor baze podataka",
+                "error_exception": "Došlo je do iznimke prilikom preuzimanja barkoda artikla: ",
+                "error_invalid_barcode": "Uneseni su nevažeći barkod",
+                "error_not_found": "Nije pronađen proizvod s navedenim barkodom.",
+                "import_selected": "Uvezi odabrano",
+                "search_item": "Pretraži proizvod",
+                "title": "Uvoz proizvoda"
+            },
+            "selector": {
+                "clear": "Poništi odabir stavke",
+                "no_results": "Nema pronađenih rezultata",
+                "placeholder": "Odaberi…",
+                "search_placeholder": "Upiši za pretraživanje…",
+                "searching": "Pretraživanje…"
+            },
+            "view": {
+                "change_details": {
+                    "add_tags": "Dodaj oznake",
+                    "failed_to_update_item": "Nije uspjelo ažuriranje stavke",
+                    "remove_tags": "Ukloni oznake",
+                    "title": "Promjena detalja stavke"
+                },
+                "selectable": {
+                    "card": "Kartica",
+                    "items": "Stavke",
+                    "no_items": "Nema stavki za prikaz"
+                }
             }
         }
     }

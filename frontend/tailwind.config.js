@@ -126,6 +126,20 @@ export default {
       typography: {
         DEFAULT: {
           css: {
+            "--tw-prose-headings": "hsl(var(--foreground))",
+            "--tw-prose-lead": "hsl(var(--muted-foreground))",
+            "--tw-prose-bold": "hsl(var(--foreground))",
+            "--tw-prose-counters": "hsl(var(--foreground) / 0.7)",
+            "--tw-prose-bullets": "hsl(var(--foreground) / 0.7)",
+            "--tw-prose-hr": "hsl(var(--foreground) / 0.25)",
+            "--tw-prose-quotes": "hsl(var(--foreground))",
+            "--tw-prose-quote-borders": "hsl(var(--foreground) / 0.4)",
+            "--tw-prose-captions": "hsl(var(--muted-foreground))",
+            "--tw-prose-kbd": "hsl(var(--foreground))",
+            "--tw-prose-kbd-shadows": "hsl(var(--foreground) / 0.1)",
+            "--tw-prose-code": "hsl(var(--foreground))",
+            "--tw-prose-th-borders": "hsl(var(--foreground) / 0.25)",
+            "--tw-prose-td-borders": "hsl(var(--foreground) / 0.2)",
             color: "hsl(var(--foreground))",
             a: {
               color: "hsl(var(--primary))",

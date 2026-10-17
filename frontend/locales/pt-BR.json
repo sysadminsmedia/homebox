@@ -117,7 +117,88 @@
             "no_color_selected": "Nenhuma cor selecionada",
             "randomize": "Cor aleatória"
         },
+        "entity": {
+            "create_modal": {
+                "clear_template": "Limpar Template",
+                "delete_photo": "Apagar foto",
+                "entity_description": "{type} Descrição",
+                "entity_name": "{type} Nome",
+                "entity_photo": "{type} Foto 📷",
+                "entity_quantity": "{type} Quantidade",
+                "item_selector_no_results_text": "Escreva para buscar…",
+                "parent_item": "Item pai",
+                "product_tooltip_input_barcode": "Autopreencher com um código de barras manualmente informado",
+                "product_tooltip_scan_barcode": "Autopreencher com código de barras da 📷",
+                "rotate_photo": "Girar foto",
+                "set_as_primary_photo": "Definir como { isPrimary, select, true {non-} false {} other {}}foto principal",
+                "toast": {
+                    "already_creating": "Já criando um {type}",
+                    "create_failed": "Não foi possível criar {type}",
+                    "create_success": "{type} criado",
+                    "failed_load_parent": "Carregamento do item pai falhou - por favor selecione manualmente",
+                    "no_canvas_support": "O seu navegador não suporta operações canvas",
+                    "please_select_entity_type": "Por favor selecione um tipo de entidade.",
+                    "please_select_location": "Por favor seleciona uma localização.",
+                    "rotate_failed": "Rotação da imagem falhou: { error }",
+                    "rotate_process_failed": "O processo de rotação da imagem falhou",
+                    "some_photos_failed": "{count, plural, =0 {Sem fotos para carregar.} =1 {1 foto falhou ao carregar.} other {Algumas fotos falharam ao carregar.}}",
+                    "upload_failed": "Falha ao carregar a foto: { photoName }",
+                    "upload_success": "{count, plural, =0 {Nenhuma foto carregada.} =1 {Foto carregada com sucesso.} other {Fotos carregadas com sucesso.}}",
+                    "uploading_photos": "{count, plural, =0 {Nenhuma foto para carregar} =1 {Carregando 1 foto…} other {Carregando {count} fotos…}}"
+                },
+                "upload_photos": "Carregar Fotos",
+                "uploaded": "Foto Carregada"
+            },
+            "selector": {
+                "placeholder": "Selecione um tipo…"
+            }
+        },
+        "entityTypes": {
+            "card": {
+                "actions": {
+                    "delete": "Deletar"
+                },
+                "badge_container": "Contêiner",
+                "default_template": "Template padrão: {name}",
+                "tooltip": {
+                    "delete": "Deletar",
+                    "edit": "Editar"
+                }
+            },
+            "confirm": {
+                "convert_item_to_location": "Converter um tipo de item em um tipo de local resultará na perda de campos para as entidades que utilizam esse tipo. Tem certeza de que deseja continuar?",
+                "delete_entity_type": "Você tem certeza que quer deletar \"{name}\"?"
+            },
+            "create_dialog": {
+                "button": "Criar",
+                "is_container_location_type_label": "É um container / tipo de localização",
+                "name_label": "Nome",
+                "title": "Criar Entidade de Tipo"
+            },
+            "page": {
+                "create": "Criar",
+                "empty_button": "Criar Entidade de Tipo",
+                "empty_title": "Nenhuma entidade de tipo definida ainda.",
+                "title": "Tipos de entidades"
+            },
+            "toasts": {
+                "create_failed": "Falha ao criar o tipo de entidade",
+                "create_success": "Tipo de entidade criada",
+                "delete_confirm_failed": "Falha ao apagar tipo de entidade. Confirme que nenhuma entidade está utilizando esse tipo.",
+                "delete_success": "Tipo de entidade deletada",
+                "name_required": "Nome é obrigatório",
+                "update_failed": "Falha ao atualizar o tipo de entidade",
+                "update_success": "Tipo de entidade atualizada"
+            },
+            "update_dialog": {
+                "button": "Atualizar",
+                "is_container_location_type_label": "É um container / tipo de localização",
+                "name_label": "Nome",
+                "title": "Carregar Entidade de Tipo"
+            }
+        },
         "form": {
+            "min_length": "min{min}",
             "password": {
                 "toggle_show": "Alternar Mostrar Senha"
             }
@@ -172,6 +253,7 @@
                 "qr_tooltip": "Exibir o Código QR"
             },
             "password_score": {
+                "does_not_meet_requirement": "Não cumpre os requisitos mínimos para senha segura",
                 "password_strength": "Força da Senha"
             }
         },
@@ -179,36 +261,6 @@
             "attachments_list": {
                 "download": "Download",
                 "open_new_tab": "Abrir em uma nova aba"
-            },
-            "create_modal": {
-                "clear_template": "Template limpo",
-                "delete_photo": "Deletar foto",
-                "item_description": "Descrição do Item",
-                "item_name": "Nome do Item",
-                "item_photo": "Foto do Item 📷",
-                "item_quantity": "Quantidade de Itens",
-                "parent_item": "Item Pai",
-                "product_tooltip_input_barcode": "Preenchimento automático com um código de barras fornecido manualmente",
-                "product_tooltip_scan_barcode": "Preenchimento automático com um código de barras da 📷",
-                "rotate_photo": "Girar imagem",
-                "set_as_primary_photo": "Definir como { isPrimary, select, true {non-} false {} other {}} foto primária",
-                "title": "Criar Item",
-                "toast": {
-                    "already_creating": "Já está criando um item",
-                    "create_failed": "Não foi possível criar o item",
-                    "create_success": "Item criado",
-                    "failed_load_parent": "Falhou ao carregar item pai - por favor selecione manualmente",
-                    "no_canvas_support": "Seu navegador não suporta operações de tela",
-                    "please_select_location": "Por favor, selecione uma localização.",
-                    "rotate_failed": "Falha ao rotacionar imagem: { error }",
-                    "rotate_process_failed": "Falhou ao processar imagem rotacionada",
-                    "some_photos_failed": "{count, plural, =0 {Nenhuma foto para upload.} =1 {1 imagem falhou no upload.} other {Algumas fotos falharam durante upload.}}",
-                    "upload_failed": "Falhou ao carregar a imagem: { photoName }",
-                    "upload_success": "{count, plural, =0 {Nenhuma foto carregada.} =1 {Foto carregada com sucesso..} other {Todas as fotos carregadas com sucesso .}}",
-                    "uploading_photos": "{count, plural, =0 {Nenhuma foto para enviar.} =1 {Enviando 1 foto…} other {Enviando {count} fotos…}}"
-                },
-                "upload_photos": "Carregar Fotos",
-                "uploaded": "Fotos enviadas"
             },
             "product_import": {
                 "barcode": "Código de barras do produto",
@@ -279,16 +331,7 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Descrição do Local",
-                "location_name": "Nome do Local",
-                "title": "Criar Localização",
-                "toast": {
-                    "already_creating": "Localização já foi criada",
-                    "create_failed": "Não foi possível criar a localização",
-                    "create_success": "Localização criada"
-                }
-            },
+            "create_item": "Criar item",
             "selector": {
                 "clear": "Limpar seleção de locais",
                 "no_location_found": "Nenhum local encontrado",
@@ -399,6 +442,7 @@
         "archived": "Arquivado",
         "build": "Compilação: { build }",
         "cancel": "Cancelar",
+        "close": "Fechar",
         "confirm": "Confirmar",
         "create": "Criar",
         "create_and_add": "Criar e Adicionar Outro",
@@ -411,6 +455,7 @@
         "duplicate": "Duplicar",
         "edit": "Editar",
         "email": "Email",
+        "entity": "Entidade",
         "follow_dev": "Seguir o desenvolvedor",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
@@ -418,9 +463,11 @@
         },
         "github": "Projeto GitHub",
         "insured": "Segurado",
+        "item": "Item",
         "items": "Items",
         "join_discord": "Ingresse no Discord",
         "loading": "Carregando…",
+        "location": "Local",
         "locations": "Locais",
         "maintenance": "Manutenção",
         "name": "Nome",
@@ -823,16 +870,16 @@
         "no_sources": "Nenhuma fonte de vídeo disponível",
         "permission_denied": "Permissão de câmera negada, permita o acesso à câmera nas configurações do seu navegador",
         "select_video_source": "Escolha uma fonte de vídeo",
-        "title": "Escâner",
+        "title": "Scanner",
         "unsupported": "A API do Fluxo de Mídia não é suportada sem o protocolo HTTPS"
     },
     "scanner_ar": {
         "ar_mode": "Modo RA",
         "back": "Voltar",
-        "child_items": "{contagem, plural, este {item filho} outros {itens filhos}}",
-        "children": "{contagem, plural, este {sub-local} outros {sub-locais}}",
-        "items": "{contagem, plural, este {item} outros {itens}}",
-        "items_in_location": "{contagem, plural, este {item} outros {itens}}",
+        "child_items": "{count, plural, one {child item} outro {child items}}",
+        "children": "{count, plural, um {sub-location} outros {sub-locations}}",
+        "items": "{count, plural, este {item} outros {items}}",
+        "items_in_location": "{count, plural, este {item} outros {items}}",
         "more": "mais",
         "not_found": "Item não encontrado",
         "qty": "Qtdd",

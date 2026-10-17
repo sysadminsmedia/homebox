@@ -35,6 +35,7 @@
         "no_invites": "Brak zaproszeń",
         "remaining_uses": "Pozostałe zastosowania",
         "tabs": {
+            "entity_types": "Typy Obiektów",
             "invites": "Zaproszenia",
             "members": "Członkowie",
             "notifiers": "Powiadomienia",
@@ -116,7 +117,88 @@
             "no_color_selected": "Żaden kolor nie został wybrany",
             "randomize": "Losuj kolor"
         },
+        "entity": {
+            "create_modal": {
+                "clear_template": "Wyczyść szablon",
+                "delete_photo": "Usuń zdjęcie",
+                "entity_description": "{type} Opis",
+                "entity_name": "{type} Nazwa",
+                "entity_photo": "{type} Zdjęcie 📷",
+                "entity_quantity": "{type} Ilość",
+                "item_selector_no_results_text": "Wpisz, aby wyszukać…",
+                "parent_item": "Przedmiot nadrzędny",
+                "product_tooltip_input_barcode": "Autouzupełnianie za pomocą ręcznie dostarczonego kodu kreskowego",
+                "product_tooltip_scan_barcode": "Autouzupełnianie kodem kreskowym z 📷",
+                "rotate_photo": "Obróć zdjęcie",
+                "set_as_primary_photo": "Ustaw jako zdjęcie { isPrimary, select, true {dodatkowe} false {główne} other {}}",
+                "toast": {
+                    "already_creating": "{type} już jest w trakcie tworzenia",
+                    "create_failed": "Nie udało się utworzyć {type}",
+                    "create_success": "{type} utworzono",
+                    "failed_load_parent": "Nie udało się załadować przedmiotu nadrzędnego - proszę wybrać go ręcznie",
+                    "no_canvas_support": "Twoja przeglądarka nie obsługuje operacji na obszarze canvas",
+                    "please_select_entity_type": "Wybierz typ obiektu.",
+                    "please_select_location": "Proszę wybrać lokalizację.",
+                    "rotate_failed": "Nie udało się obrócić zdjęcia: { error }",
+                    "rotate_process_failed": "Nie udało się przetworzyć obróconego zdjęcia",
+                    "some_photos_failed": "{count, plural, =0 {Brak zdjęć do przesłania.} =1 {Nie udało się przesłać 1 zdjęcia.} other {Nie udało się przesłać niektórych zdjęć.}}",
+                    "upload_failed": "Nie udało się wysłać zdjęcia: { photoName }",
+                    "upload_success": "{count, plural, =0 {Nie przesłano zdjęć.} =1 {Zdjęcie zostało pomyślnie przesłane.} other {Wszystkie zdjęcia zostały pomyślnie przesłane.}}",
+                    "uploading_photos": "{count, plural, =0 {Brak zdjęć do przesłania} =1 {Przesyłanie 1 zdjęcia…} other {Przesyłanie {count} zdjęć…}}"
+                },
+                "upload_photos": "Prześlij Zdjęcia",
+                "uploaded": "Przesłane Zdjęcie"
+            },
+            "selector": {
+                "placeholder": "Wybierz typ…"
+            }
+        },
+        "entityTypes": {
+            "card": {
+                "actions": {
+                    "delete": "Usuń"
+                },
+                "badge_container": "Kontener",
+                "default_template": "Domyślny szablon: {name}",
+                "tooltip": {
+                    "delete": "Usuń",
+                    "edit": "Edytuj"
+                }
+            },
+            "confirm": {
+                "convert_item_to_location": "Konwersja typu obiektu w lokalizację spowoduje utratę pól dla obiektów używających tego typu. Czy na pewno chcesz kontynuować?",
+                "delete_entity_type": "Czy na pewno chcesz usunąć \"{name}\"?"
+            },
+            "create_dialog": {
+                "button": "Utwórz",
+                "is_container_location_type_label": "Jest kontenerem / lokalizacją",
+                "name_label": "Nazwa",
+                "title": "Utwórz Typ Obiektu"
+            },
+            "page": {
+                "create": "Utwórz",
+                "empty_button": "Utwórz Typ Obiektu",
+                "empty_title": "Nie zdefiniowano jeszcze żadnych typów obiektów.",
+                "title": "Typy Obiektów"
+            },
+            "toasts": {
+                "create_failed": "Nie udało się utworzyć typu obiektu",
+                "create_success": "Typ obiektu utworzony",
+                "delete_confirm_failed": "Nie udało się usunąć typu obiektu. Upewnij się, że żadne obiekty go nie używają.",
+                "delete_success": "Usunięto typ obiektu",
+                "name_required": "Nazwa jest wymagana",
+                "update_failed": "Nie udało się zaktualizować typu obiektu",
+                "update_success": "Typ obiektu zaktualizowany"
+            },
+            "update_dialog": {
+                "button": "Aktualizuj",
+                "is_container_location_type_label": "Jest kontenerem / lokalizacją",
+                "name_label": "Nazwa",
+                "title": "Zaktualizuj Typ Obiektu"
+            }
+        },
         "form": {
+            "min_length": "min. {min}",
             "password": {
                 "toggle_show": "Przełącz wyświetlanie hasła"
             }
@@ -171,6 +253,7 @@
                 "qr_tooltip": "Pokaż kod QR"
             },
             "password_score": {
+                "does_not_meet_requirement": "Nie spełnia wymagań siły hasła",
                 "password_strength": "Siła hasła"
             }
         },
@@ -178,36 +261,6 @@
             "attachments_list": {
                 "download": "Pobierz",
                 "open_new_tab": "Otwórz w nowej karcie"
-            },
-            "create_modal": {
-                "clear_template": "Wyczyść szablon",
-                "delete_photo": "Usuń zdjęcie",
-                "item_description": "Opis przedmiotu",
-                "item_name": "Nazwa przedmiotu",
-                "item_photo": "Zdjęcie Przedmiotu 📷",
-                "item_quantity": "Ilość przedmiotu",
-                "parent_item": "Przedmiot nadrzędny",
-                "product_tooltip_input_barcode": "Autouzupełnianie za pomocą ręcznie dostarczonego kodu kreskowego",
-                "product_tooltip_scan_barcode": "Autouzupełnianie kodem kreskowym z 📷",
-                "rotate_photo": "Obróć zdjęcie",
-                "set_as_primary_photo": "Ustaw jako { isPrimary, select, true {non-} false {} other {}}główne zdjęcie",
-                "title": "Utwórz przedmiot",
-                "toast": {
-                    "already_creating": "Przedmiot w trakcie tworzenia",
-                    "create_failed": "Nie udało się utworzyć przedmiotu",
-                    "create_success": "Przedmiot utworzony",
-                    "failed_load_parent": "Nie udało się załadować przedmiotu nadrzędnego - proszę wybrać go ręcznie",
-                    "no_canvas_support": "Twoja przeglądarka nie wspiera operacji przy użyciu canvas",
-                    "please_select_location": "Proszę wybrać lokalizację.",
-                    "rotate_failed": "Nie udało się obrócić zdjęcia: { error }",
-                    "rotate_process_failed": "Nie udało się przetworzyć obróconego zdjęcia",
-                    "some_photos_failed": "{count, plural, =0 {Brak zdjęć do przesłania.} =1 {Nie udało się przesłać 1 zdjęcia.} other {Nie udało się przesłać niektórych zdjęć.}}",
-                    "upload_failed": "Nie udało się wysłać zdjęcia: { photoName }",
-                    "upload_success": "{count, plural, =0 {Nie przesłano zdjęć.} =1 {Zdjęcie zostało pomyślnie przesłane.} other {Wszystkie zdjęcia zostały pomyślnie przesłane.}}",
-                    "uploading_photos": "{count, plural, =0 {Brak zdjęć do przesłania} =1 {Przesyłanie 1 zdjęcia…} other {Przesyłanie {count} zdjęć…}}"
-                },
-                "upload_photos": "Prześlij Zdjęcia",
-                "uploaded": "Przesłane Zdjęcie"
             },
             "product_import": {
                 "barcode": "Kod Kreskowy Produktu",
@@ -278,17 +331,7 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Opis lokalizacji",
-                "location_name": "Nazwa lokalizacji",
-                "location_photo": "Zdjęcie lokalizacji",
-                "title": "Utwórz lokalizację",
-                "toast": {
-                    "already_creating": "Lokalizacja jest w trakcie tworzenia",
-                    "create_failed": "Nie udało się utworzyć lokalizacji",
-                    "create_success": "Lokalizacja utworzona"
-                }
-            },
+            "create_item": "Utwórz przedmiot",
             "selector": {
                 "clear": "Wyczyść wybór lokalizacji",
                 "no_location_found": "Nie znaleziono żadnej lokalizacji",
@@ -412,6 +455,8 @@
         "duplicate": "Duplikat",
         "edit": "Edytuj",
         "email": "E-mail",
+        "entity": "Obiekt",
+        "entity_type": "Typ Obiektu",
         "follow_dev": "Śledź dewelopera",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
@@ -419,9 +464,11 @@
         },
         "github": "Projekt na GitHubie",
         "insured": "Ubezpieczony",
+        "item": "Przedmiot",
         "items": "Przedmioty",
         "join_discord": "Dołącz do Discorda",
         "loading": "Wczytywanie…",
+        "location": "Lokalizacja",
         "locations": "Lokalizacje",
         "maintenance": "Konserwacja",
         "name": "Nazwa",
@@ -529,6 +576,7 @@
             "title": "Duplikuj ustawienia"
         },
         "edit": {
+            "change_entity_type_confirm": "Zmiana typu obiektu może spowodować utratę danych w polach, które nie są współdzielone pomiędzy aktualnym i nowym typem obiektu. Czy na pewno chcesz zmienić typ obiektu?",
             "edit_attachment_dialog": {
                 "attachment_title": "Tytuł załącznika",
                 "attachment_type": "Typ załącznika",
@@ -597,17 +645,18 @@
         "toast": {
             "asset_not_found": "Nie znaleziono przedmiotu",
             "attachment_deleted": "Załącznik został usunięty",
+            "attachment_too_large": "Załącznik jest zbyt duży: przekracza limit przesyłania plików na serwer",
             "attachment_updated": "Załącznik zaktualizowany",
             "attachment_uploaded": "Załącznik przesłany",
             "child_items_location_no_longer_synced": "Lokalizacje przedmiotów podrzędnych nie będą już synchronizowane z tym przedmiotem.",
             "child_items_location_synced": "Lokalizacje przedmiotów podrzędnych zostały zsynchronizowane z tym przedmiotem",
-            "child_location_desync": "Zmiana lokalizacji spowoduje desynchronizację z lokalizacją przedmiotu nadrzędnego",
+            "child_location_desync": "Wyczyszczono przedmiot nadrzędny - przedmiot znajduje się teraz bezpośrednio we wskazanej lokalizacji",
             "error_loading_parent_data": "Wystąpił błąd podczas próby załadowania danych nadrzędnych",
             "failed_adjust_quantity": "Nie udało się dostosować ilości",
             "failed_delete_attachment": "Nie udało się usunąć załącznika",
             "failed_delete_item": "Nie udało się usunąć przedmiotu",
             "failed_duplicate_item": "Nie udało się zduplikować przedmiotu",
-            "failed_load_asset": "Nie udało się załadować przedmiotu",
+            "failed_load_asset": "Nie udało się załadować zasobu",
             "failed_load_item": "Nie udało się załadować przedmiotu",
             "failed_load_items": "Nie udało się załadować przedmiotów",
             "failed_save": "Nie udało się zapisać przedmiotu",
@@ -660,6 +709,8 @@
         "zh-TW": "chiński (tradycyjny)"
     },
     "languages.da-DK": "duńska",
+    "languages.el-GR": "Grecki",
+    "languages.en@pirate": "Angielski (Piracki)",
     "languages.ro-RO": "rumuńska",
     "languages.sk-SK": "słowacka",
     "languages.sq-AL": "Albański",
@@ -737,16 +788,21 @@
     },
     "profile": {
         "active": "Aktywny",
+        "api_key_copied": "Skopiowany do schowka",
+        "api_key_copy": "Skopiuj",
         "api_key_create": "Utwórz klucz API",
         "api_key_created": "Utworzony",
+        "api_key_default_expiration": "Klucze tracą ważność po 30 dniach, chyba że ustawisz datę.",
+        "api_key_delete_confirm": "Czy na pewno chcesz unieważnić ten klucz API? Wszyscy klienci, którzy go używają, natychmiast utracą dostęp.",
         "api_key_expires_at": "Wygasa",
         "api_key_last_used": "Ostatnio użyty",
         "api_key_name": "Nazwa",
         "api_key_name_placeholder": "np. Asystent Domowy",
         "api_key_never_used": "Nigdy",
         "api_key_no_expiration": "Brak daty wygasania",
-        "api_key_set_expiration": "Ustaw datę wygasania",
+        "api_key_set_expiration": "Ustaw niestandardową datę wygaśnięcia",
         "api_key_token_label": "Twój nowy klucz API",
+        "api_key_token_warning": "Skopiuj ten token teraz. Dla twojego bezpieczeństwa ten token nie zostanie pokazany ponownie.",
         "api_keys": "Klucze API",
         "api_keys_sub": "Tokeny statyczne do dostępu prrogramistycznego. Każdy klucz ma takie same uprawnienia jak Twoje konto.",
         "change_password": "Zmiana hasła",
@@ -764,6 +820,8 @@
         "inactive": "Nieaktywny",
         "language": "Język",
         "legacy_image_fit": "{ currentValue, select, true {Wyłącz dopasowanie starszej wersji: Dopasuj obraz za pomocą pasków} false {Włącz dopasowanie starszej wersji: Wypełnij obraz za pomocą kadrowania} other {Nie trafiono}}",
+        "logout_all_confirm": "To wylogowuje Cię na wszystkich urządzeniach, włącznie z obecnym. Konieczne będzie ponowne zalogowanie się. Kontynuować?",
+        "logout_all_devices": "Wyloguj ze Wszystkich Urządzeń",
         "moved_notice_body": "Ustawienia powiadomień, zaproszeń i walut zostały przeniesione na strony kolekcji.",
         "moved_notice_description": "Te ustawienia są teraz zarządzane według kolekcji.",
         "moved_notice_link_invites": "Zaproszenia do kolekcji",
@@ -771,6 +829,7 @@
         "moved_notice_link_settings": "Ustawienia waluty kolekcji",
         "moved_notice_title": "Szukasz ustawień dla powiadomień, zaproszeń lub waluty?",
         "new_password": "Nowe hasło",
+        "no_api_keys": "Brak kluczy API",
         "no_notifiers": "Nie skonfigurowano powiadomień",
         "no_override": "Bez nadpisania",
         "notifier_modal": "{type, select, true {Edytuj} false {Utwórz} other {Inny}} Powiadomiacz",
@@ -782,15 +841,21 @@
         "theme_settings_sub": "Ustawienia motywu są przechowywane w lokalnej pamięci przeglądarki. Możesz zmienić motyw w dowolnym momencie. \nJeśli masz problemy z ustawieniem motywu, spróbuj odświeżyć przeglądarkę.",
         "toast": {
             "account_deleted": "Twoje konto zostało usunięte.",
+            "api_key_created": "Utworzono klucz API.",
+            "api_key_deleted": "Klucz API został unieważniony.",
+            "failed_api_key_create": "Nie udało się utworzyć klucz API.",
+            "failed_api_key_delete": "Nie udało się unieważnić klucza API.",
             "failed_change_password": "Nie udało się zmienić hasła.",
             "failed_create_notifier": "Nie udało się utworzyć powiadamiacza.",
             "failed_delete_account": "Nie udało się usunąć konta.",
             "failed_delete_notifier": "Nie udało się usunąć powiadamiacza.",
             "failed_get_currencies": "Nie udało się pobrać walut",
+            "failed_logout_all": "Nie udało się wylogować na wszystkich urządzeniach.",
             "failed_test_notifier": "Nie udało się przetestować powiadamiacza.",
             "failed_update_group": "Nie udało się zaktualizować grupy",
             "failed_update_notifier": "Nie udało się zaktualizować powiadamiacza.",
             "group_updated": "Grupa zaktualizowana",
+            "logout_all_success": "Wylogowano na wszystkich urządzeniach.",
             "notifier_test_success": "Test powiadamiania zakończony pomyślnie.",
             "password_changed": "Hasło zostało pomyślnie zmienione."
         },
@@ -820,6 +885,7 @@
             "page_right_padding": "Wypełnienie prawej strony",
             "page_top_padding": "Wypełnienie górnej części strony",
             "page_width": "Szerokość strony",
+            "print_location_row": "Wydrukuj wiersz lokalizacji",
             "qr_code_example": "Przykład kodu QR",
             "replace_homebox_behavior": "Zastąp zachowanie tekstu „HomeBox”",
             "replace_homebox_behavior_always_replace": "Zawsze wymieniaj „HomeBox”",
@@ -828,6 +894,7 @@
             "replace_homebox_behavior_item_no_name_no_location": "Zastąp „HomeBox”, gdy element nie ma nazwy ani lokalizacji",
             "replace_homebox_behavior_show_homebox": "Pokaż \"HomeBox\"",
             "replace_homebox_text": "Wstawiany tekst",
+            "skip_first_labels": "Pomiń pierwsze etykiety",
             "tip_1": "Ustawienia domyślne są skonfigurowane dla\n'<a href=\"https://www.avery.com/templates/5260\">'arkuszy etykiet Avery 5260'</a>'. Jeśli używasz innego arkusza,\nmusisz dostosować ustawienia do swojego arkusza.",
             "tip_2": "Jeśli dostosowujesz arkusz, jego wymiary są podane w calach. Podczas tworzenia arkusza 5260 zauważyłem, że\nwymiary użyte w ich szablonie nie odpowiadały wymiarom potrzebnym do wydrukowania w polach.\n'<b>'Przygotuj się na metodę prób i błędów.'</b>'",
             "tip_3": "Podczas drukowania pamiętaj o:\n'<ol><li>'Ustaw marginesy na 0 lub Brak'</li><li>'Ustaw skalowanie na 100%'</li><li>'Wyłącz drukowanie dwustronne'</li><li>'Wydrukuj stronę testową przed wydrukowaniem wielu stron'</li></ol>'",
@@ -848,6 +915,22 @@
         "select_video_source": "Wybierz źródło wideo",
         "title": "Skaner",
         "unsupported": "Media Stream API nie jest obsługiwany bez HTTPS"
+    },
+    "scanner_ar": {
+        "ar_mode": "Tryb AR",
+        "back": "Wróć",
+        "child_items": "{count, plural, one {obiekt podrzędny} other {obiekty podrzędne}}",
+        "children": "{count, plural, one {lokalizacja podrzędna} other {lokalizacje podrzędne}}",
+        "items": "{count, plural, one {obiekt} other {obiekty}}",
+        "items_in_location": "{count, plural, one {obiekt} other {obiekty}}",
+        "more": "więcej",
+        "not_found": "Nie znaleziono pozycji",
+        "qty": "Ilość",
+        "retry": "Spróbuj ponownie",
+        "scanning": "Skanuje",
+        "switch_camera": "Przełącz kamerę",
+        "title": "Skaner AR",
+        "unsupported": "Skanownie AR nie jest wspierane w tej przeglądarce"
     },
     "tags": {
         "no_results": "Nie znaleziono żadnych tagów",
@@ -893,6 +976,26 @@
             "zero_datetimes_sub": "Resetuje wartość czasu dla wszystkich pól daty i godziny w Twoim inwentarzu, ustawiając ją na początek dnia. Jest to rozwiązanie problemu, który pojawił się we wczesnej fazie rozwoju aplikacji, powodując zapisywanie wartości czasu wraz z datą, co skutkowało nieprawidłowym wyświetlaniem wartości w polach daty. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Zobacz szczegóły w GitHub Issue #236'</a>'"
         },
         "actions_sub": "Zastosuj akcje zbiorczo do swojego inwentarza. Są to działania nieodwracalne. '<b>'Bądź ostrożny.'</b>",
+        "backups": "Kopia zapasowa & Przywracanie",
+        "backups_set": {
+            "create": "Utwórz kopię zapasową",
+            "create_button": "Rozpocznij tworzenie kopii zapasowej",
+            "create_sub": "Buduje zip z każdym obiektem, tagiem, polem niestandardowym, załącznikiem i wpisem konserwacji w tej kolekcji. Zadanie wykonywane jest w tle; rezultat pojawi się w tabeli poniżej, gdy będzie gotowy.",
+            "delete_confirm": "Usunąć tę kopię zapasową? Ta akcja jest nieodwracalna.",
+            "download": "Pobierz",
+            "failed": "Utworzenie kopii zapasowej nie udało się. Po więcej szczegółów sprawdź logi serwera.",
+            "list_empty": "Nie ma kopii zapasowych.",
+            "restore": "Przywróć z kopii zapasowej",
+            "restore_button": "Prześlij i Przywróć",
+            "restore_sub": "Prześlij kopię zapasową zip, aby wypełnić tę kolekcję. Kolekcja musi nie posiadać jeszcze żadnych przedmiotów — domyślne lokalizacje i tagi zostaną automatycznie usunięte jako część przywracania.",
+            "table": {
+                "actions": "Akcje",
+                "created": "Utworzono",
+                "size": "Rozmiar",
+                "status": "Status"
+            }
+        },
+        "backups_sub": "Eksportuj swoją całą kolekcję — obiekty, tagi, załączniki i metadane — do przenośnego archiwum zip. Przywróć archiwum do nowo zarejestrowanej, pustej kolekcji na tym lub innym serwerze.",
         "demo_mode_error": {
             "wipe_inventory": "Zapasy, tagi, lokalizacje i rejestry konserwacji nie mogą zostać wyczyszczone, gdy HomeBox jest w trybie demonstracyjnym."
         },
@@ -919,13 +1022,19 @@
         "reports_sub": "Generuj różne raporty dla swojego inwentarza.",
         "toast": {
             "asset_success": "Zaktualizowano { results } przedmiotów.",
+            "backup_delete_failed": "Nie udało sie usunąć kopii zapasowej.",
+            "backup_start_failed": "Nie udało się rozpocząć tworzenie kopii zapasowej.",
+            "backup_started": "Rozpoczęto tworzenie kopii zapasowej — pojawi się w tabeli, gdy będzie gotowa.",
             "failed_create_missing_thumbnails": "Nie udało się utworzyć brakujących miniatur.",
             "failed_ensure_ids": "Nie udało się sprawdzić identyfikatorów zasobów.",
             "failed_ensure_import_refs": "Nie udało się zapewnić import_ref.",
             "failed_set_primary_photos": "Nie udało się ustawić głównych zdjęć.",
             "failed_wipe_inventory": "Nie udało się wyczyścić inwentarza.",
             "failed_zero_datetimes": "Nie udało się zresetować wartości daty i godziny.",
-            "wipe_inventory_success": "Pomyślnie wyczyszczono zasoby. Usunięto: { results }"
+            "restore_failed": "Nie udało się przywrócić.",
+            "restore_requires_empty": "Przywracanie wymaga kolekcji bez przedmiotów. Przełącz na świeżo utworzoną kolekcję (może zawierać domyślne lokalizacje i tagi) i spróbuj ponownie.",
+            "restore_started": "Rozpoczęto przywracanie — odśwież wkrótce, by zobaczyć zaimportowane przedmioty.",
+            "wipe_inventory_success": "Pomyślnie wyczyszczono inwentarz. Usunięto przedmioty: { results }."
         }
     }
 }

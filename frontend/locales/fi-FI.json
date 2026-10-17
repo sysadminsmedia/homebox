@@ -116,6 +116,13 @@
             "no_color_selected": "Väriä ei valittu",
             "randomize": "Satunnainen väri"
         },
+        "entity": {
+            "create_modal": {
+                "clear_template": "Tyhjennä mallipohja",
+                "delete_photo": "Poista kuva",
+                "item_selector_no_results_text": "Kirjoita hakusana…"
+            }
+        },
         "form": {
             "password": {
                 "toggle_show": "Näytä salasana"
@@ -178,36 +185,6 @@
             "attachments_list": {
                 "download": "Lataa",
                 "open_new_tab": "Avaa uudessa välilehdessä"
-            },
-            "create_modal": {
-                "clear_template": "Tyhjennä mallipohja",
-                "delete_photo": "Poista kuva",
-                "item_description": "Esineen kuvaus",
-                "item_name": "Esineen nimi",
-                "item_photo": "Esineen kuva 📷",
-                "item_quantity": "Esineen määrä",
-                "parent_item": "Ylätason esine",
-                "product_tooltip_input_barcode": "Täytä automaattisesti manuaalisesti annetusta viivakoodista",
-                "product_tooltip_scan_barcode": "Täytä automaattisesti viivakoodista kuvasta",
-                "rotate_photo": "Käännä kuva",
-                "set_as_primary_photo": "Aseta {isPrimary, select, true {non} false {} other {}}pääkuvaksi",
-                "title": "Luo esine",
-                "toast": {
-                    "already_creating": "Luodaan jo esinettä",
-                    "create_failed": "Esinettä ei voitu luoda",
-                    "create_success": "Esine luotu",
-                    "failed_load_parent": "Ylemmän tason esineen lataaminen epäonnistui - valitse manuaalisesti",
-                    "no_canvas_support": "Selaimesi ei tue sisältöä",
-                    "please_select_location": "Valitse sijainti.",
-                    "rotate_failed": "Kuvan kääntäminen epäonnistui: { error }",
-                    "rotate_process_failed": "Käännetyn kuvan käsittely epäonnistui",
-                    "some_photos_failed": "{count, plural, =0 {Ei ladattavia kuvia.} =1 {1 kuvan lataus epäonnistui} other {Joidenkin kuvien lataaminen epäonnistui.}}",
-                    "upload_failed": "Kuvan lähettäminen epäonnistui: { photoName }",
-                    "upload_success": "{count, plural, =0 {Ei ladattuja kuvia.} =1 {Kuva ladattu onnistuneesti.} other {Kaikki kuvat ladattu onnistuneesti.}}",
-                    "uploading_photos": "{count, plural, =0 {Ei ladattavia kuvia} =1 {Ladataan 1 kuva…} other {Ladataan {count} kuvaa…}}"
-                },
-                "upload_photos": "Lataa kuvia",
-                "uploaded": "Ladattu kuva"
             },
             "product_import": {
                 "barcode": "Tuotteen viivakoodi",
@@ -278,16 +255,6 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Sijainnin kuvaus",
-                "location_name": "Sijainnin nimi",
-                "title": "Luo sijainti",
-                "toast": {
-                    "already_creating": "Luodaan jo sijaintia",
-                    "create_failed": "Sijaintia ei voitu luoda",
-                    "create_success": "Sijainti luotu"
-                }
-            },
             "selector": {
                 "clear": "Tyhjennä sijainnin valinta",
                 "no_location_found": "Sijaintia ei löytynyt",

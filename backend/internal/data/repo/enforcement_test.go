@@ -288,6 +288,26 @@ func TestEnforcement_ManageGates(t *testing.T) {
 	require.True(t, ent.IsNotFound(err), "expected NotFound, got %v", err)
 }
 
+// settings:manage covers renaming the collection; destroying it needs the
+// separate collection:delete permission, at the ORM layer as well as the route.
+func TestEnforcement_CollectionDeleteGate(t *testing.T) {
+	tn := newAuthzTenant(t)
+
+	settings := newAuthzMember(t, tn.group.ID, []string{string(authz.PermSettingsManage)}, false)
+	sCtx := viewerCtx(t, settings.ID, tn.group.ID, false)
+
+	require.NoError(t, tClient.Group.UpdateOneID(tn.group.ID).SetName("renamed-"+fk.Str(6)).Exec(sCtx))
+
+	err := tClient.Group.DeleteOneID(tn.group.ID).Exec(sCtx)
+	require.ErrorIs(t, err, privacy.Deny, "expected privacy deny, got %v", err)
+
+	deleter := newAuthzMember(t, tn.group.ID, []string{string(authz.PermCollectionDelete)}, false)
+	dCtx := viewerCtx(t, deleter.ID, tn.group.ID, false)
+
+	err = tClient.Group.UpdateOneID(tn.group.ID).SetName("nope").Exec(dCtx)
+	require.ErrorIs(t, err, privacy.Deny, "collection:delete alone must not allow renaming, got %v", err)
+}
+
 func TestEnforcement_LastAdmin(t *testing.T) {
 	tn := newAuthzTenant(t)
 	member := newAuthzMember(t, tn.group.ID, []string{"entity:read"}, false)

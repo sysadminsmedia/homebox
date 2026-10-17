@@ -1,13 +1,16 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"sync/atomic"
 	"testing"
 	"time"
 
+	"github.com/hay-kot/httpkit/errchain"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
 
 const (
@@ -470,4 +473,63 @@ func TestAuthRateLimiterStop(t *testing.T) {
 
 	// Verify the cleanup goroutine exits (this test passes if no panic occurs)
 	time.Sleep(10 * time.Millisecond)
+}
+
+func TestRegisterRateLimitCountsSuccesses(t *testing.T) {
+	newApp := func(enabled bool) *app {
+		a := &app{
+			conf:            &config.Config{Auth: config.AuthConfig{RateLimit: config.AuthRateLimit{Enabled: enabled}}},
+			registerLimiter: newSimpleRateLimiter(5, time.Minute, false),
+		}
+		t.Cleanup(a.registerLimiter.Stop)
+		return a
+	}
+
+	var calls atomic.Int32
+	ok := errchain.HandlerFunc(func(http.ResponseWriter, *http.Request) error {
+		calls.Add(1)
+		return nil
+	})
+
+	serve := func(h errchain.Handler, ip string) error {
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/users/register", nil)
+		req.RemoteAddr = ip + ":1234"
+		return h.ServeHTTP(httptest.NewRecorder(), req)
+	}
+
+	t.Run("Enabled", func(t *testing.T) {
+		calls.Store(0)
+		h := newApp(true).mwRegisterRateLimit(ok)
+
+		// Every attempt succeeds, yet the 6th must still be throttled.
+		for i := 0; i < 5; i++ {
+			if err := serve(h, testClientIPAddress); err != nil {
+				t.Fatalf("request %d should be allowed: %v", i+1, err)
+			}
+		}
+
+		err := serve(h, testClientIPAddress)
+		var reqErr *validate.RequestError
+		if !errors.As(err, &reqErr) || reqErr.Status != http.StatusTooManyRequests {
+			t.Fatalf("6th request should be rejected with 429, got %v", err)
+		}
+		if got := calls.Load(); got != 5 {
+			t.Fatalf("handler should run 5 times, ran %d", got)
+		}
+
+		if err := serve(h, "192.168.1.2"); err != nil {
+			t.Fatalf("different client should be allowed: %v", err)
+		}
+	})
+
+	t.Run("DisabledByConfig", func(t *testing.T) {
+		calls.Store(0)
+		h := newApp(false).mwRegisterRateLimit(ok)
+
+		for i := 0; i < 10; i++ {
+			if err := serve(h, testClientIPAddress); err != nil {
+				t.Fatalf("request %d should be allowed when rate limiting is disabled: %v", i+1, err)
+			}
+		}
+	})
 }

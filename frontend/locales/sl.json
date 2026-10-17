@@ -93,33 +93,6 @@
                 "download": "Prenesi",
                 "open_new_tab": "Odpri v novem zavihku"
             },
-            "create_modal": {
-                "delete_photo": "Izbrišite fotografijo",
-                "item_description": "opis predmeta",
-                "item_name": "ime predmeta",
-                "item_photo": "fotografija predmeta 📷",
-                "item_quantity": "količina",
-                "parent_item": "Nadrejeni predmet",
-                "rotate_photo": "Zasukaj fotografijo",
-                "set_as_primary_photo": "Nastavi kot { isPrimary, select, true {non-} false {} other {}}glavno fotografijo",
-                "title": "Ustvari predmet",
-                "toast": {
-                    "already_creating": "Že v ustvarjanju predmeta",
-                    "create_failed": "Predmeta ni bilo mogoče ustvariti",
-                    "create_success": "Predmet ustvarjen",
-                    "failed_load_parent": "Nalaganje nadrejenega elementa ni uspelo - izberite ročno",
-                    "no_canvas_support": "Vaš brskalnik ne podpira canvas funkcionalnosti",
-                    "please_select_location": "Prosimo izberite lokacijo.",
-                    "rotate_failed": "Slike ni bilo mogoče zavrteti: { error }",
-                    "rotate_process_failed": "Obdelava zasukane slike ni uspela",
-                    "some_photos_failed": "{count, plural, =0 {Ni fotografij za nalaganje.} =1 {1 fotografija ni bila naložena.} other {Nekatere fotografije niso bile naložene.}}",
-                    "upload_failed": "Ni uspelo nalaganje fotografije: {photoName}",
-                    "upload_success": "{count, plural, =0 {Ni naloženih fotografij.} =1 {Fotografija je bila uspešno naložena.} other {Vse fotografije so bile uspešno naložene.}}",
-                    "uploading_photos": "{count, plural, =0 {Ni fotografij za nalaganje} =1 {Nalaganje 1 fotografije...} other {Nalaganje {count} fotografij...}}"
-                },
-                "upload_photos": "Naloži fotografije",
-                "uploaded": "Naložena fotografija"
-            },
             "selector": {
                 "no_results": "Ni zadetkov",
                 "placeholder": "Izberi...",
@@ -142,16 +115,6 @@
             }
         },
         "location": {
-            "create_modal": {
-                "location_description": "Opis lokacije",
-                "location_name": "Naziv lokacije",
-                "title": "Ustvari lokacijo",
-                "toast": {
-                    "already_creating": "Že v ustvarjanju lokacije",
-                    "create_failed": "Lokacije ni bilo mogoče ustvariti",
-                    "create_success": "Lokacija je ustvarjena"
-                }
-            },
             "selector": {
                 "no_location_found": "Nobena lokacija ni bila najdena",
                 "parent_location": "Glavna lokacija",
