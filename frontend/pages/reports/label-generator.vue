@@ -2,6 +2,18 @@
   import { useI18n } from "vue-i18n";
   import DOMPurify from "dompurify";
   import { route } from "../../lib/api/base";
+  import {
+    buildPageCss,
+    buildRotateCss,
+    calculateGridData,
+    calculateMakerGrid,
+    fmtAssetID,
+    makerPageSize,
+    presetFor,
+    type GridData,
+    type LabelMode,
+    type PrintRotation,
+  } from "../../lib/reports/label-generator";
   import { Toaster, toast } from "@/components/ui/sonner";
   import { Separator } from "@/components/ui/separator";
   import { Button } from "@/components/ui/button";
@@ -24,6 +36,9 @@
 
   const bordered = ref(false);
   const printLocationRow = ref(true);
+  // Rotation applied to maker labels when printing, for printers (e.g. Brother QL) that rotate the page onto the tape.
+  const printRotation = ref<PrintRotation>(0);
+  const PRINT_ROTATIONS: PrintRotation[] = [0, 90, 180, 270];
   const labelBlankLine = "_______________";
 
   // Behavior constants for HomeBox text replacement
@@ -36,6 +51,12 @@
   const replaceHomeboxBehavior = ref(BEHAVIOR_SHOW);
   const replaceHomeboxText = ref(labelBlankLine);
 
+  // Output target: a sheet of labels, a Brother-style label maker (continuous tape), or fully custom.
+  const MODE_SHEET: LabelMode = "sheet";
+  const MODE_MAKER: LabelMode = "maker";
+  const MODE_CUSTOM: LabelMode = "custom";
+  const mode = ref<LabelMode>(MODE_SHEET);
+
   const displayProperties = reactive({
     baseURL: window.location.origin,
     assetRange: 1,
@@ -46,6 +67,8 @@
     columns: 3,
     cardHeight: 1,
     cardWidth: 2.63,
+    labelsPerRow: 1,
+    labelGap: 0,
     pageWidth: 8.5,
     pageHeight: 11,
     pageTopPadding: 0.52,
@@ -54,90 +77,17 @@
     pageRightPadding: 0.1,
   });
 
-  type LabelOptionInput = {
-    measure: string;
-    page: {
-      height: number;
-      width: number;
-      pageTopPadding: number;
-      pageBottomPadding: number;
-      pageLeftPadding: number;
-      pageRightPadding: number;
-    };
-    cardHeight: number;
-    cardWidth: number;
-  };
-
-  type Output = {
-    measure: string;
-    cols: number;
-    rows: number;
-    gapY: number;
-    gapX: number;
-    card: {
-      width: number;
-      height: number;
-    };
-    page: {
-      width: number;
-      height: number;
-      pt: number;
-      pb: number;
-      pl: number;
-      pr: number;
-    };
-  };
-
-  function calculateGridData(input: LabelOptionInput): Output {
-    const { page, cardHeight, cardWidth } = input;
-
-    const measureRegex = /in|cm|mm/;
-    const measure = measureRegex.test(input.measure) ? input.measure : "in";
-
-    const availablePageWidth = page.width - page.pageLeftPadding - page.pageRightPadding;
-    const availablePageHeight = page.height - page.pageTopPadding - page.pageBottomPadding;
-
-    if (availablePageWidth < cardWidth || availablePageHeight < cardHeight) {
-      toast.error(t("reports.label_generator.toast.page_too_small_card"));
-      return out.value;
-    }
-
-    const cols = Math.floor(availablePageWidth / cardWidth);
-    const rows = Math.floor(availablePageHeight / cardHeight);
-    const gapX = (availablePageWidth - cols * cardWidth) / (cols - 1);
-    const gapY = (page.height - rows * cardHeight) / (rows - 1);
-
-    return {
-      measure,
-      cols,
-      rows,
-      gapX,
-      gapY,
-      card: {
-        width: cardWidth,
-        height: cardHeight,
-      },
-      page: {
-        width: page.width,
-        height: page.height,
-        pt: page.pageTopPadding,
-        pb: page.pageBottomPadding,
-        pl: page.pageLeftPadding,
-        pr: page.pageRightPadding,
-      },
-    };
-  }
-
   interface InputDef {
     label: string;
     ref: keyof typeof displayProperties;
     type?: "number" | "text";
     min?: number;
     step?: number;
+    modes?: LabelMode[];
   }
 
   const propertyInputs = computed<InputDef[]>(() => {
-    return [
+    const inputs: InputDef[] = [
       {
         label: t("reports.label_generator.asset_start"),
         ref: "assetRange",
@@ -166,28 +116,47 @@
         ref: "cardWidth",
       },
       {
+        label: t("reports.label_generator.labels_per_row"),
+        ref: "labelsPerRow",
+        min: 1,
+        step: 1,
+        modes: [MODE_MAKER],
+      },
+      {
+        label: t("reports.label_generator.label_gap"),
+        ref: "labelGap",
+        min: 0,
+        modes: [MODE_MAKER],
+      },
+      {
         label: t("reports.label_generator.page_width"),
         ref: "pageWidth",
+        modes: [MODE_SHEET, MODE_CUSTOM],
       },
       {
         label: t("reports.label_generator.page_height"),
         ref: "pageHeight",
+        modes: [MODE_SHEET, MODE_CUSTOM],
       },
       {
         label: t("reports.label_generator.page_top_padding"),
         ref: "pageTopPadding",
+        modes: [MODE_SHEET, MODE_CUSTOM],
       },
       {
         label: t("reports.label_generator.page_bottom_padding"),
         ref: "pageBottomPadding",
+        modes: [MODE_SHEET, MODE_CUSTOM],
       },
       {
         label: t("reports.label_generator.page_left_padding"),
         ref: "pageLeftPadding",
+        modes: [MODE_SHEET, MODE_CUSTOM],
       },
       {
         label: t("reports.label_generator.page_right_padding"),
         ref: "pageRightPadding",
+        modes: [MODE_SHEET, MODE_CUSTOM],
       },
       {
         label: t("reports.label_generator.base_url"),
@@ -195,6 +164,8 @@
         type: "text",
       },
     ];
+
+    return inputs.filter(input => !input.modes || input.modes.includes(mode.value));
   });
 
   type LabelData = {
@@ -203,14 +174,6 @@
     assetID: string;
     location: string;
   };
-
-  function fmtAssetID(aid: number | string) {
-    aid = aid.toString();
-
-    let aidStr = aid.toString().padStart(6, "0");
-    aidStr = aidStr.slice(0, 3) + "-" + aidStr.slice(3);
-    return aidStr;
-  }
 
   function getQRCodeUrl(assetID: string): string {
     let origin = displayProperties.baseURL.trim();
@@ -312,7 +275,7 @@
 
   const pages = ref<Page[]>([]);
 
-  const out = ref({
+  const out = ref<GridData>({
     measure: "in",
     cols: 0,
     rows: 0,
@@ -334,19 +297,37 @@
 
   function calcPages() {
     // Set Out Dimensions
-    out.value = calculateGridData({
-      measure: displayProperties.measure,
-      page: {
-        height: displayProperties.pageHeight,
-        width: displayProperties.pageWidth,
-        pageTopPadding: displayProperties.pageTopPadding,
-        pageBottomPadding: displayProperties.pageBottomPadding,
-        pageLeftPadding: displayProperties.pageLeftPadding,
-        pageRightPadding: displayProperties.pageRightPadding,
-      },
-      cardHeight: displayProperties.cardHeight,
-      cardWidth: displayProperties.cardWidth,
-    });
+    if (mode.value === MODE_MAKER) {
+      out.value = calculateMakerGrid({
+        measure: displayProperties.measure,
+        labelWidth: displayProperties.cardWidth,
+        labelHeight: displayProperties.cardHeight,
+        labelsPerRow: displayProperties.labelsPerRow,
+        labelGap: displayProperties.labelGap,
+      });
+    } else {
+      const result = calculateGridData({
+        measure: displayProperties.measure,
+        page: {
+          height: displayProperties.pageHeight,
+          width: displayProperties.pageWidth,
+          pageTopPadding: displayProperties.pageTopPadding,
+          pageBottomPadding: displayProperties.pageBottomPadding,
+          pageLeftPadding: displayProperties.pageLeftPadding,
+          pageRightPadding: displayProperties.pageRightPadding,
+        },
+        cardHeight: displayProperties.cardHeight,
+        cardWidth: displayProperties.cardWidth,
+      });
+
+      if (!result.ok) {
+        toast.error(t(`reports.label_generator.toast.${result.error}`));
+        pages.value = [];
+        return;
+      }
+
+      out.value = result.data;
+    }
 
     const calc: Page[] = [];
 
@@ -398,6 +379,47 @@
     pages.value = calc;
   }
 
+  // Regenerate so the print reflects current settings, then open the print dialog (the form is print:hidden).
+  async function printLabels() {
+    calcPages();
+    await nextTick();
+    // A failed geometry recalculation clears pages (and toasts); don't open the print dialog on stale/empty output.
+    if (pages.value.length === 0) {
+      return;
+    }
+    window.print();
+  }
+
+  // Seed the dimension fields with the preset for the chosen mode (custom keeps the current values).
+  watch(mode, newMode => {
+    const preset = presetFor(newMode);
+    if (preset) {
+      Object.assign(displayProperties, preset);
+    }
+    calcPages();
+  });
+
+  // Size each printed page to a single tape segment so label-maker output feeds correctly.
+  const makerSize = computed(() =>
+    makerPageSize({
+      measure: displayProperties.measure,
+      labelWidth: displayProperties.cardWidth,
+      labelHeight: displayProperties.cardHeight,
+      labelsPerRow: displayProperties.labelsPerRow,
+      labelGap: displayProperties.labelGap,
+    })
+  );
+
+  useHead(() => ({
+    style: [
+      {
+        innerHTML:
+          buildPageCss(mode.value, makerSize.value, printRotation.value) +
+          buildRotateCss(mode.value, makerSize.value, printRotation.value),
+      },
+    ],
+  }));
+
   onMounted(() => {
     calcPages();
   });
@@ -428,8 +450,32 @@
     </div>
     <Separator class="mx-auto max-w-4xl" />
     <div class="container mx-auto max-w-4xl p-4">
+      <div class="mb-4 flex w-full max-w-xs flex-col">
+        <Label for="select-mode">
+          {{ $t("reports.label_generator.mode") }}
+        </Label>
+        <Select id="select-mode" v-model="mode" class="w-full max-w-xs">
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem :value="MODE_MAKER">
+              {{ $t("reports.label_generator.mode_label_maker") }}
+            </SelectItem>
+            <SelectItem :value="MODE_SHEET">
+              {{ $t("reports.label_generator.mode_label_sheet") }}
+            </SelectItem>
+            <SelectItem :value="MODE_CUSTOM">
+              {{ $t("reports.label_generator.mode_custom") }}
+            </SelectItem>
+          </SelectContent>
+        </Select>
+        <p v-if="mode === MODE_MAKER" class="mt-1 text-xs text-muted-foreground">
+          {{ $t("reports.label_generator.maker_instruction") }}
+        </p>
+      </div>
       <div class="mx-auto grid grid-cols-2 gap-3">
-        <div v-for="(prop, i) in propertyInputs" :key="i" class="flex w-full max-w-xs flex-col">
+        <div v-for="prop in propertyInputs" :key="prop.ref" class="flex w-full max-w-xs flex-col">
           <Label :for="`input-${prop.ref}`">
             {{ prop.label }}
           </Label>
@@ -497,21 +543,49 @@
             {{ $t("reports.label_generator.print_location_row") }}
           </Label>
         </div>
+        <div v-if="mode === MODE_MAKER" class="flex flex-col py-4">
+          <Label for="select-printRotation">
+            {{ $t("reports.label_generator.rotate_print") }}
+          </Label>
+          <Select id="select-printRotation" v-model="printRotation" class="w-full max-w-xs">
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="deg in PRINT_ROTATIONS" :key="deg" :value="deg">
+                {{ deg === 0 ? $t("reports.label_generator.rotate_none") : `${deg}°` }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div>
         <p>{{ $t("reports.label_generator.qr_code_example") }} {{ displayProperties.baseURL }}/a/{asset_id}</p>
-        <Button size="lg" class="my-4 w-full" @click="calcPages">
-          {{ $t("reports.label_generator.generate_page") }}
-        </Button>
+        <div class="my-4 flex gap-2">
+          <Button size="lg" variant="outline" class="flex-1" @click="calcPages">
+            {{ $t("reports.label_generator.generate_page") }}
+          </Button>
+          <Button size="lg" class="flex-1" :disabled="pages.length === 0" @click="printLabels">
+            {{ $t("reports.label_generator.print_page") }}
+          </Button>
+        </div>
       </div>
     </div>
   </div>
-  <div class="flex flex-col items-center">
+  <div
+    class="flex"
+    :class="
+      mode === MODE_MAKER
+        ? 'flex-row flex-wrap content-start justify-center gap-2 print:block print:gap-0'
+        : 'flex-col items-center'
+    "
+  >
     <section
       v-for="(page, pi) in pages"
       :key="pi"
       class="border-2 print:border-none"
+      :class="mode === MODE_MAKER ? 'maker-label print:[&:not(:last-child)]:break-after-page' : ''"
       :style="{
         paddingTop: `${out.page.pt}${out.measure}`,
         paddingBottom: `${out.page.pb}${out.measure}`,
