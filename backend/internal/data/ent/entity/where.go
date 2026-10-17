@@ -141,6 +141,11 @@ func WarrantyDetails(v string) predicate.Entity {
 	return predicate.Entity(sql.FieldEQ(FieldWarrantyDetails, v))
 }
 
+// NotifyWarrantyExpiration applies equality check predicate on the "notify_warranty_expiration" field. It's identical to NotifyWarrantyExpirationEQ.
+func NotifyWarrantyExpiration(v bool) predicate.Entity {
+	return predicate.Entity(sql.FieldEQ(FieldNotifyWarrantyExpiration, v))
+}
+
 // PurchaseDate applies equality check predicate on the "purchase_date" field. It's identical to PurchaseDateEQ.
 func PurchaseDate(v time.Time) predicate.Entity {
 	return predicate.Entity(sql.FieldEQ(FieldPurchaseDate, v))
@@ -1014,6 +1019,16 @@ func WarrantyDetailsEqualFold(v string) predicate.Entity {
 // WarrantyDetailsContainsFold applies the ContainsFold predicate on the "warranty_details" field.
 func WarrantyDetailsContainsFold(v string) predicate.Entity {
 	return predicate.Entity(sql.FieldContainsFold(FieldWarrantyDetails, v))
+}
+
+// NotifyWarrantyExpirationEQ applies the EQ predicate on the "notify_warranty_expiration" field.
+func NotifyWarrantyExpirationEQ(v bool) predicate.Entity {
+	return predicate.Entity(sql.FieldEQ(FieldNotifyWarrantyExpiration, v))
+}
+
+// NotifyWarrantyExpirationNEQ applies the NEQ predicate on the "notify_warranty_expiration" field.
+func NotifyWarrantyExpirationNEQ(v bool) predicate.Entity {
+	return predicate.Entity(sql.FieldNEQ(FieldNotifyWarrantyExpiration, v))
 }
 
 // PurchaseDateEQ applies the EQ predicate on the "purchase_date" field.
