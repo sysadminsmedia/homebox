@@ -898,6 +898,47 @@ func TestEntityRepository_GetOne_DerivedLocation(t *testing.T) {
 	assert.Nil(t, out.Location, "top-level location has no derived location")
 }
 
+// TestEntityRepository_GetOne_ChildrenSortedByName guards #1644: the location
+// page must list child locations in the same order as the locations tree,
+// which sorts by name case-insensitively (ties broken by id), not in
+// insertion order.
+func TestEntityRepository_GetOne_ChildrenSortedByName(t *testing.T) {
+	containerET := useContainerEntityType(t)
+
+	parent := mustCreateEntity(t, "Garage", containerET.ID, uuid.Nil)
+	for _, name := range []string{"Shelf C", "shelf a", "Shelf B", "Shelf A"} {
+		mustCreateEntity(t, name, containerET.ID, parent.ID)
+	}
+
+	out, err := tRepos.Entities.GetOneByGroup(context.Background(), tGroup.ID, parent.ID)
+	require.NoError(t, err)
+
+	names := make([]string, len(out.Children))
+	ids := make([]uuid.UUID, len(out.Children))
+	for i, c := range out.Children {
+		names[i] = strings.ToLower(c.Name)
+		ids[i] = c.ID
+	}
+	assert.Equal(t, []string{"shelf a", "shelf a", "shelf b", "shelf c"}, names)
+
+	// "Shelf A" and "shelf a" tie on the name key; both queries must break
+	// the tie the same way.
+	tree, err := tRepos.Entities.Tree(context.Background(), tGroup.ID, TreeQuery{})
+	require.NoError(t, err)
+	for _, root := range tree {
+		if root.ID != parent.ID {
+			continue
+		}
+		treeIDs := make([]uuid.UUID, len(root.Children))
+		for i, c := range root.Children {
+			treeIDs[i] = c.ID
+		}
+		assert.Equal(t, treeIDs, ids)
+		return
+	}
+	t.Fatal("parent location not found in tree")
+}
+
 // TestEntityRepository_Create_WithManufacturerModel guards #1578: the barcode
 // import flow creates items with manufacturer/model in the create payload.
 func TestEntityRepository_Create_WithManufacturerModel(t *testing.T) {
