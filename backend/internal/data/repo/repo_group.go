@@ -127,14 +127,14 @@ func (r *GroupRepository) StatsLocationsByPurchasePrice(ctx context.Context, gid
 	// Query entities that are containers (is_location=true) and sum purchase prices of their children
 	q := `
 		SELECT parent.id, parent.name,
-			COALESCE(SUM(child.purchase_price), 0) AS total
+			COALESCE(SUM(child.purchase_price*child.quantity), 0) AS total
 		FROM entities parent
 		JOIN entity_types et ON et.id = parent.entity_type_entities
 		LEFT JOIN entities child ON child.entity_children = parent.id
 			AND child.entity_type_entities IN (SELECT id FROM entity_types WHERE is_location = false)
 		WHERE parent.group_entities = $1 AND et.is_location = true
 		GROUP BY parent.id, parent.name
-		HAVING COALESCE(SUM(child.purchase_price), 0) > 0
+		HAVING COALESCE(SUM(child.purchase_price*child.quantity), 0) > 0
 	`
 
 	rows, err := r.db.Sql().QueryContext(ctx, q, gid)
@@ -170,7 +170,8 @@ func (r *GroupRepository) StatsTagsByPurchasePrice(ctx context.Context, gid uuid
 			sq.Join(jt).On(sq.C(tag.FieldID), jt.C(tag.EntitiesPrimaryKey[0]))
 			sq.Join(entityTable).On(jt.C(tag.EntitiesPrimaryKey[1]), entityTable.C(entity.FieldID))
 
-			return sql.As(sql.Sum(entityTable.C(entity.FieldPurchasePrice)), "total")
+			total := sql.Mul(entityTable.C(entity.FieldPurchasePrice), entityTable.C(entity.FieldQuantity))
+			return sql.As(sql.Sum(total), "total")
 		}).
 		Scan(ctx, &v)
 	if err != nil {
