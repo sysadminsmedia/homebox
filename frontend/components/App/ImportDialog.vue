@@ -108,6 +108,8 @@
       importRef.value.value = "";
     }
 
-    toast.success(t("components.app.import_dialog.toast.import_success"));
+    if (!error) {
+      toast.success(t("components.app.import_dialog.toast.import_success"));
+    }
   }
 </script>
