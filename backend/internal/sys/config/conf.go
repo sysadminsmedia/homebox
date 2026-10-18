@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net"
 	"net/url"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/ardanlabs/conf/v3"
@@ -100,7 +100,9 @@ func (c MeilisearchConf) MarshalJSON() ([]byte, error) {
 // Validate enforces secure transport for the Meilisearch connection. The API
 // key is sent on every request, so a non-local endpoint reached over plaintext
 // http would leak it on the wire. https is always allowed; http is permitted
-// only for loopback hosts.
+// only for loopback and private addresses (see IsLocalNetworkIP). A literal IP host is checked here; a hostname (e.g. a
+// Docker Compose service name) can only be checked once resolved, so the
+// Meilisearch client enforces the same rule on every connection it dials.
 func (c MeilisearchConf) Validate() error {
 	if c.Host == "" {
 		return errors.New("search.meilisearch.host must not be empty")
@@ -113,15 +115,23 @@ func (c MeilisearchConf) Validate() error {
 	case "https":
 		return nil
 	case "http":
-		switch strings.ToLower(u.Hostname()) {
-		case "localhost", "127.0.0.1", "::1":
-			return nil
-		default:
+		if u.Hostname() == "" {
+			return errors.New("search.meilisearch.host must include a hostname")
+		}
+		if ip := net.ParseIP(u.Hostname()); ip != nil && !IsLocalNetworkIP(ip) {
 			return fmt.Errorf("search.meilisearch.host uses insecure http for non-local host %q: use https", u.Host)
 		}
+		return nil
 	default:
 		return fmt.Errorf("search.meilisearch.host has unsupported scheme %q: must be http or https", u.Scheme)
 	}
+}
+
+// IsLocalNetworkIP reports whether ip is a loopback address or a private
+// address (RFC 1918 IPv4 or RFC 4193 IPv6 unique local), i.e. a destination
+// plaintext http may be used for.
+func IsLocalNetworkIP(ip net.IP) bool {
+	return ip.IsLoopback() || ip.IsPrivate()
 }
 
 type Options struct {

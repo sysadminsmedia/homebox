@@ -30,6 +30,8 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
 	"github.com/zeebo/blake3"
 	"go.opentelemetry.io/otel"
+
+	entsql "entgo.io/ent/dialect/sql"
 	"golang.org/x/image/draw"
 
 	"gocloud.dev/blob"
@@ -560,10 +562,35 @@ func (r *AttachmentRepo) Delete(ctx context.Context, gid uuid.UUID, id uuid.UUID
 	}
 	// If this is the last attachment for this path, delete the file
 	if len(all) == 1 {
-		thumb, err := doc.QueryThumbnail().First(ctx)
+		// Only follow the thumbnail edge to a row whose blob lives under this
+		// group's prefix. The attachment_thumbnail FK is id-only, so a row
+		// that was linked to another group's thumbnail (e.g. via a crafted
+		// import) must not be able to delete that group's blob or row.
+		thumb, err := doc.QueryThumbnail().
+			Where(attachment.PathHasPrefix(gid.String() + "/")).
+			First(ctx)
 		if err != nil && !ent.IsNotFound(err) {
 			log.Err(err).Msg("failed to query thumbnail for attachment")
 			return err
+		}
+		if thumb != nil {
+			// If any other attachment row still points at this thumbnail,
+			// just unlink ours and leave the shared row and blob alone.
+			others, err := r.db.Attachment.Query().
+				Where(
+					attachment.IDNEQ(doc.ID),
+					func(s *entsql.Selector) {
+						s.Where(entsql.EQ(s.C(attachment.ThumbnailColumn), thumb.ID))
+					},
+				).
+				Count(ctx)
+			if err != nil {
+				return err
+			}
+			if others > 0 {
+				_ = doc.Update().SetNillableThumbnailID(nil).SaveX(ctx)
+				thumb = nil
+			}
 		}
 		if thumb != nil {
 			thumbBucket, err := blob.OpenBucket(ctx, r.GetConnString())
