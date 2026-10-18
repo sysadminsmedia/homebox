@@ -3004,6 +3004,7 @@ func (r *EntityRepository) PathForEntity(ctx context.Context, gid, entityID uuid
 		SELECT e.id, e.name, e.entity_children
 		FROM entities e
 		JOIN entity_path ep ON e.id = ep.entity_children
+		WHERE e.group_entities = $2
 	  )
 
 	  SELECT id, name
@@ -3083,6 +3084,7 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 			ON     c.entity_children = p.id
 			WHERE  level < 10 -- prevent infinite loop & excessive recursion
 			AND    ct.is_location = true
+			AND    c.group_entities = $1
 		){{ WITH_ITEMS }}
 
 		SELECT   id,
@@ -3118,6 +3120,7 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 			FROM    entities e
 			JOIN    entity_types et ON et.id = e.entity_type_entities
 			WHERE   et.is_location = false
+			AND     e.group_entities = $1
 			AND     ` + eff + ` IN (SELECT id FROM entity_tree)
 
 			UNION ALL
@@ -3132,6 +3135,7 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 			JOIN    item_tree p
 			ON      ` + effChild + ` = p.id
 			WHERE   ct.is_location = false
+			AND     c.group_entities = $1
 			AND     level < 10 -- prevent infinite loop & excessive recursion
 		)`
 
