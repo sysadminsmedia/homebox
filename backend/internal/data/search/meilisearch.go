@@ -4,8 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net"
+	"net/http"
+	"net/url"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/google/uuid"
@@ -99,12 +103,48 @@ type MeilisearchEngine struct {
 	timer   *time.Timer
 }
 
+// localNetworkOnlyOptions restricts a plaintext http client to loopback and
+// private (RFC 1918 / RFC 4193) peers. The check runs on the resolved address
+// of every connection, so hostnames such as Docker Compose service names work,
+// and a name that resolves (or later re-resolves) to a public address is
+// refused before the API key is sent. Proxies are bypassed so the guarded peer
+// is Meilisearch itself rather than an intermediary that would forward the
+// request onward.
+func localNetworkOnlyOptions() []meilisearch.Option {
+	dialer := &net.Dialer{
+		Timeout:   30 * time.Second,
+		KeepAlive: 30 * time.Second,
+		Control:   rejectNonLocalNetwork,
+	}
+	return []meilisearch.Option{
+		meilisearch.WithCustomDialContext(dialer.DialContext),
+		meilisearch.WithCustomProxy(func(*http.Request) (*url.URL, error) { return nil, nil }),
+	}
+}
+
+// rejectNonLocalNetwork is a net.Dialer Control hook that fails the dial
+// unless the resolved peer address is loopback or private.
+func rejectNonLocalNetwork(_, address string, _ syscall.RawConn) error {
+	host, _, err := net.SplitHostPort(address)
+	if err != nil {
+		return err
+	}
+	if ip := net.ParseIP(host); ip == nil || !config.IsLocalNetworkIP(ip) {
+		return fmt.Errorf("refusing insecure http connection to non-local address %s: use https", host)
+	}
+	return nil
+}
+
 // NewMeilisearchEngine connects to Meilisearch, ensures the index and its
 // settings exist, subscribes to mutation events for incremental indexing, and
 // kicks off a full reindex in the background. It fails fast when the instance
 // is unreachable so a misconfiguration is caught at startup.
 func NewMeilisearchEngine(cfg config.MeilisearchConf, db *ent.Client, bus *eventbus.EventBus) (*MeilisearchEngine, error) {
-	client := meilisearch.New(cfg.Host, meilisearch.WithAPIKey(cfg.APIKey))
+	opts := []meilisearch.Option{meilisearch.WithAPIKey(cfg.APIKey)}
+	if u, err := url.Parse(cfg.Host); err == nil && u.Scheme == "http" {
+		opts = append(opts, localNetworkOnlyOptions()...)
+	}
+	client := meilisearch.New(cfg.Host, opts...)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()

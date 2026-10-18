@@ -1,7 +1,7 @@
 # ---------------------------------------
 # Node dependencies stage
 # ---------------------------------------
-FROM public.ecr.aws/docker/library/node:22-alpine AS frontend-dependencies
+FROM mirror.gcr.io/library/node:22-alpine AS frontend-dependencies
 WORKDIR /app
 
 # Install pnpm 10 (latest stable, works reliably in Alpine)
@@ -14,7 +14,7 @@ RUN pnpm install --frozen-lockfile
 # ---------------------------------------
 # Build Nuxt (frontend) stage
 # ---------------------------------------
-FROM public.ecr.aws/docker/library/node:22-alpine AS frontend-builder
+FROM mirror.gcr.io/library/node:22-alpine AS frontend-builder
 WORKDIR /app
 
 # Install pnpm globally again with a stable version (it can reuse the cache if not changed)
@@ -28,7 +28,7 @@ RUN pnpm build
 # ---------------------------------------
 # Go dependencies stage
 # ---------------------------------------
-FROM public.ecr.aws/docker/library/golang:alpine AS builder-dependencies
+FROM mirror.gcr.io/library/golang:alpine AS builder-dependencies
 WORKDIR /go/src/app
 
 # Copy go.mod and go.sum for better caching
@@ -38,7 +38,7 @@ RUN go mod download
 # ---------------------------------------
 # Build API + healthcheck stage
 # ---------------------------------------
-FROM public.ecr.aws/docker/library/golang:alpine AS builder
+FROM mirror.gcr.io/library/golang:alpine AS builder
 ARG TARGETOS
 ARG TARGETARCH
 ARG BUILD_TIME
