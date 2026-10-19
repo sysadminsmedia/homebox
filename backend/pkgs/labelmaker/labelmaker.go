@@ -545,9 +545,10 @@ func PrintLabel(cfg *config.Config, params *GenerateParameters) error {
 
 	command := exec.Command(commandParts[0], commandParts[1:]...)
 
-	_, err = command.CombinedOutput()
-	if err != nil {
-		return err
+	output, commandErr := command.CombinedOutput()
+	if commandErr != nil {
+		log.Printf("Could not print label on server: %v\nCommand Output: %s", commandErr, string(output))
+		return commandErr
 	}
 
 	return nil
