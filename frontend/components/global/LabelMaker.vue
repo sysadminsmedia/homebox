@@ -56,8 +56,8 @@
     serverPrinting.value = true;
     try {
       const response = await fetch(getLabelUrl(true));
-      if(!resopnse.ok) {
-        throw new Error(`Received ${response.status}`)
+      if (!response.ok) {
+        throw new Error(`Received ${response.status}`);
       }
     } catch (err) {
       console.error("Failed to print labels:", err);
