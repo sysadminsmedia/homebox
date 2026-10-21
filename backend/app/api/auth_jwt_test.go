@@ -19,6 +19,8 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
 )
 
+const claimEmail = "email"
+
 // testIdP is a minimal OIDC issuer: discovery + JWKS, and a signer for tokens.
 type testIdP struct {
 	srv    *httptest.Server
@@ -63,7 +65,7 @@ func (p *testIdP) token(t *testing.T, claims map[string]any) string {
 		"sub":            "abc",
 		"exp":            time.Now().Add(10 * time.Minute).Unix(),
 		"iat":            time.Now().Unix(),
-		"email":          "auth-test@example.com",
+		claimEmail:       "auth-test@example.com",
 		"email_verified": true,
 	}
 	for k, v := range claims {
@@ -98,7 +100,7 @@ func TestAuthTokenBearerJWT(t *testing.T) {
 				IssuerURL:   idp.issuer(),
 				Audience:    "api-things",
 				JWKSURL:     mode.jwks,
-				EmailClaim:  "email",
+				EmailClaim:  claimEmail,
 				VerifyEmail: true,
 			}, a.repos.Users)
 			require.NotNil(t, a.jwtAuth)
@@ -144,7 +146,7 @@ func TestAuthTokenBearerJWT(t *testing.T) {
 			})
 
 			t.Run("EmailIsCaseInsensitive", func(t *testing.T) {
-				require.NoError(t, serve(idp.token(t, map[string]any{"email": "Auth-Test@Example.com"})))
+				require.NoError(t, serve(idp.token(t, map[string]any{claimEmail: "Auth-Test@Example.com"})))
 			})
 
 			t.Run("WrongAudienceRejected", func(t *testing.T) {
@@ -165,7 +167,7 @@ func TestAuthTokenBearerJWT(t *testing.T) {
 			})
 
 			t.Run("UnknownEmailRejectedAndNotCreated", func(t *testing.T) {
-				unauthorized(t, serve(idp.token(t, map[string]any{"email": "stranger@example.com"})))
+				unauthorized(t, serve(idp.token(t, map[string]any{claimEmail: "stranger@example.com"})))
 				_, err := a.repos.Users.GetOneEmail(t.Context(), "stranger@example.com")
 				assert.Error(t, err)
 			})
@@ -176,7 +178,7 @@ func TestAuthTokenBearerJWT(t *testing.T) {
 			})
 
 			t.Run("MissingEmailRejected", func(t *testing.T) {
-				unauthorized(t, serve(idp.token(t, map[string]any{"email": nil})))
+				unauthorized(t, serve(idp.token(t, map[string]any{claimEmail: nil})))
 			})
 
 			t.Run("SessionTokensStillWork", func(t *testing.T) {
