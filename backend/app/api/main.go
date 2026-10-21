@@ -180,6 +180,10 @@ func run(cfg *config.Config) error {
 		return err
 	}
 	app.repos = repo.New(c, app.bus, cfg.Storage, cfg.Database.PubSubConnString, cfg.Thumbnail, searchEngine)
+	app.jwtAuth = newJWTAuthenticator(cfg.Auth.JWT, app.repos.Users)
+	if app.jwtAuth != nil {
+		log.Info().Str("issuer", cfg.Auth.JWT.IssuerURL).Str("audience", cfg.Auth.JWT.Audience).Msg("bearer JWT authentication enabled")
+	}
 
 	// Attachment-key escaping in fileblob only flattens paths on Windows
 	// (where os.PathSeparator is "\"), so the legacy-path rename is a Windows-

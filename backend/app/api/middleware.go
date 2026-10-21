@@ -288,6 +288,27 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 				return validate.NewRequestError(errors.New("valid authorization token is required"), http.StatusUnauthorized)
 			}
 
+			// Bearer JWT from an external identity provider (HBOX_AUTH_JWT_*).
+			// Treated like an API key: same access as the user it maps to, and
+			// it cannot manage API keys or refresh into a session.
+			if a.jwtAuth != nil && looksLikeJWT(requestToken) {
+				jwtUsr, jwtErr := a.jwtAuth.authenticate(r.Context(), requestToken)
+				if jwtErr != nil {
+					outcome := "jwt_rejected"
+					if ent.IsNotFound(jwtErr) {
+						outcome = "jwt_user_not_found"
+					} else if !errors.Is(jwtErr, errJWTRejected) {
+						log.Warn().Err(jwtErr).Msg("bearer JWT could not be verified")
+						outcome = "jwt_error"
+					}
+					span.SetAttributes(attribute.String("auth.outcome", outcome))
+					return validate.NewRequestError(errors.New("valid authorization token is required"), http.StatusUnauthorized)
+				}
+				span.SetAttributes(attribute.String("auth.method", "jwt"))
+				ctxOut := services.SetAPIKeyAuth(services.SetUserCtx(r.Context(), &jwtUsr, requestToken))
+				return next.ServeHTTP(w, r.WithContext(ctxOut))
+			}
+
 			tokenHash := hasher.HashAPIKey(requestToken)
 			keyUsr, keyID, keyErr := a.repos.APIKeys.GetUserFromToken(r.Context(), tokenHash)
 			if keyErr != nil {
