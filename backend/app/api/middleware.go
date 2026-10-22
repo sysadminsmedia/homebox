@@ -289,8 +289,10 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 			}
 
 			// Bearer JWT from an external identity provider (HBOX_AUTH_JWT_*).
-			// Treated like an API key: same access as the user it maps to, and
-			// it cannot manage API keys or refresh into a session.
+			// Treated like an API key for refresh/logout, and additionally marked
+			// so mwDenyJWT keeps it away from credential, session, account and
+			// membership management: a short-lived token must not be able to mint
+			// a long-lived credential.
 			if a.jwtAuth != nil && looksLikeJWT(requestToken) {
 				jwtUsr, jwtErr := a.jwtAuth.authenticate(r.Context(), requestToken)
 				if jwtErr != nil {
@@ -305,7 +307,7 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 					return validate.NewRequestError(errors.New("valid authorization token is required"), http.StatusUnauthorized)
 				}
 				span.SetAttributes(attribute.String("auth.method", "jwt"))
-				ctxOut := services.SetAPIKeyAuth(services.SetUserCtx(r.Context(), &jwtUsr, requestToken))
+				ctxOut := services.SetJWTAuth(services.SetAPIKeyAuth(services.SetUserCtx(r.Context(), &jwtUsr, requestToken)))
 				return next.ServeHTTP(w, r.WithContext(ctxOut))
 			}
 
@@ -344,6 +346,21 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 			ctxOut = services.SetAPIKeyAuth(ctxOut)
 		}
 		r = r.WithContext(ctxOut)
+		return next.ServeHTTP(w, r)
+	})
+}
+
+// mwDenyJWT refuses requests authenticated with an external identity
+// provider's bearer JWT (403). Use it on routes that create or manage
+// credentials (API keys, passwords, sessions, invitations) or administer the
+// account or collection membership.
+//
+// WARNING: This middleware _MUST_ be called after mwAuthToken
+func (a *app) mwDenyJWT(next errchain.Handler) errchain.Handler {
+	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+		if services.IsJWTAuth(r.Context()) {
+			return validate.NewRequestError(errors.New("not available with an identity provider token"), http.StatusForbidden)
+		}
 		return next.ServeHTTP(w, r)
 	})
 }

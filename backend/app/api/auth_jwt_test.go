@@ -134,15 +134,17 @@ func TestAuthTokenBearerJWT(t *testing.T) {
 			})
 
 			t.Run("TreatedLikeAnAPIKey", func(t *testing.T) {
-				var isKey bool
+				var isKey, isJWT bool
 				h := a.mwAuthToken(errchain.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) error {
 					isKey = services.IsAPIKeyAuth(r.Context())
+					isJWT = services.IsJWTAuth(r.Context())
 					return nil
 				}))
 				req := httptest.NewRequest(http.MethodGet, "/api/v1/entities", nil)
 				req.Header.Set("Authorization", "Bearer "+idp.token(t, nil))
 				require.NoError(t, h.ServeHTTP(httptest.NewRecorder(), req))
 				assert.True(t, isKey)
+				assert.True(t, isJWT)
 			})
 
 			t.Run("EmailIsCaseInsensitive", func(t *testing.T) {
