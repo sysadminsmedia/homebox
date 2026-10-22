@@ -10,6 +10,7 @@
     <EntityCreateModal />
     <WipeInventoryDialog />
     <TagCreateModal />
+    <LabelTemplatePrintDialog />
     <ItemBarcodeModal />
     <AppQuickMenuModal :actions="quickMenuActions" />
     <AppScannerModal />
@@ -253,7 +254,6 @@
   import MdiLogout from "~icons/mdi/logout";
   import MdiFileDocumentMultiple from "~icons/mdi/file-document-multiple";
   import MdiLabel from "~icons/mdi/label";
-  import MdiPrinter from "~icons/mdi/printer";
   import MdiChevronRight from "~icons/mdi/chevron-right";
 
   import {
@@ -292,6 +292,7 @@
   import EntityCreateModal from "~/components/Entity/CreateModal.vue";
   import WipeInventoryDialog from "~/components/WipeInventoryDialog.vue";
   import TagCreateModal from "~/components/Tag/CreateModal.vue";
+  import LabelTemplatePrintDialog from "~/components/LabelTemplate/PrintDialog.vue";
   import ItemBarcodeModal from "~/components/Item/BarcodeModal.vue";
   import AppQuickMenuModal from "~/components/App/QuickMenuModal.vue";
   import AppScannerModal from "~/components/App/ScannerModal.vue";
@@ -446,13 +447,6 @@
       to: "/label-templates",
     },
     {
-      icon: MdiPrinter,
-      id: 8,
-      active: computed(() => route.path === "/printers"),
-      name: computed(() => t("menu.printers")),
-      to: "/printers",
-    },
-    {
       icon: MdiWrench,
       id: 5,
       active: computed(() => route.path === "/maintenance"),
@@ -502,6 +496,12 @@
           active: computed(() => route.path === "/collection/entity-types"),
           name: computed(() => t("collection.tabs.entity_types")),
           to: "/collection/entity-types",
+        },
+        {
+          id: 67,
+          active: computed(() => route.path === "/collection/printers"),
+          name: computed(() => t("collection.tabs.printers")),
+          to: "/collection/printers",
         },
         {
           id: 66,

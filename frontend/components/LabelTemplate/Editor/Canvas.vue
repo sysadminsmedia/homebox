@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { onMounted, onBeforeUnmount, watch, nextTick } from "vue";
-  import { Canvas, IText, Textbox, Rect, Line, Group, type FabricObject } from "fabric";
+  import { Canvas, IText, Textbox, Rect, Line, Group, FabricImage, type FabricObject } from "fabric";
+  import type { AlignTarget } from "./ToolRail.vue";
 
   // Type for textbox data properties
   interface TextBoxData {
@@ -23,6 +24,7 @@
   const emit = defineEmits<{
     "update:canvasData": [data: Record<string, unknown>];
     selectionChanged: [object: FabricObject | null];
+    loaded: [];
   }>();
 
   const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -42,14 +44,12 @@
     zoomLevel.value = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, level));
     if (fabricCanvas) {
       fabricCanvas.setZoom(zoomLevel.value);
-      // Update canvas viewport dimensions to account for zoom
       fabricCanvas.setDimensions({
         width: displayWidth.value * zoomLevel.value,
         height: displayHeight.value * zoomLevel.value,
       });
       fabricCanvas.renderAll();
     }
-    // Redraw grid at new zoom level
     drawGrid();
   }
 
@@ -67,8 +67,8 @@
       return;
     }
 
-    const containerWidth = canvasContainerRef.value.clientWidth - 40; // Account for padding
-    const containerHeight = canvasContainerRef.value.clientHeight - 40;
+    const containerWidth = canvasContainerRef.value.clientWidth - 40;
+    const containerHeight = Math.max(canvasContainerRef.value.clientHeight - 40, 200);
 
     const scaleX = containerWidth / displayWidth.value;
     const scaleY = containerHeight / displayHeight.value;
@@ -89,6 +89,58 @@
   const displayWidth = computed(() => Math.round((props.width / 25.4) * screenDPI));
   const displayHeight = computed(() => Math.round((props.height / 25.4) * screenDPI));
 
+  // ---------------------------------------------------------------------------
+  // History (undo / redo). Each entry is the serialized canvas; the current
+  // state is history[historyIndex].
+  // ---------------------------------------------------------------------------
+  const history = ref<string[]>([]);
+  const historyIndex = ref(-1);
+  const MAX_HISTORY = 50;
+  let isRestoringHistory = false;
+
+  const canUndo = computed(() => historyIndex.value > 0);
+  const canRedo = computed(() => historyIndex.value >= 0 && historyIndex.value < history.value.length - 1);
+
+  function pushHistory(json: Record<string, unknown>) {
+    if (isRestoringHistory) return;
+    const serialized = JSON.stringify(json);
+    if (history.value[historyIndex.value] === serialized) return;
+    const next = history.value.slice(0, historyIndex.value + 1);
+    next.push(serialized);
+    if (next.length > MAX_HISTORY) next.shift();
+    history.value = next;
+    historyIndex.value = next.length - 1;
+  }
+
+  async function restoreHistory(index: number) {
+    if (!fabricCanvas) return;
+    const serialized = history.value[index];
+    if (!serialized) return;
+    isRestoringHistory = true;
+    isLoadingData = true;
+    try {
+      const data = JSON.parse(serialized) as Record<string, unknown>;
+      await fabricCanvas.loadFromJSON(data);
+      fabricCanvas.discardActiveObject();
+      fabricCanvas.renderAll();
+      historyIndex.value = index;
+      emit("update:canvasData", data);
+      emit("selectionChanged", null);
+    } finally {
+      isLoadingData = false;
+      isRestoringHistory = false;
+      nextTick(() => drawGrid());
+    }
+  }
+
+  function undo() {
+    if (canUndo.value) restoreHistory(historyIndex.value - 1);
+  }
+
+  function redo() {
+    if (canRedo.value) restoreHistory(historyIndex.value + 1);
+  }
+
   function initCanvas() {
     if (!canvasRef.value) return;
 
@@ -97,6 +149,7 @@
       height: displayHeight.value,
       backgroundColor: "transparent", // Grid canvas provides the white background
       selection: true,
+      preserveObjectStacking: true,
     });
 
     // Load existing canvas data if provided
@@ -106,14 +159,16 @@
       fabricCanvas.loadFromJSON(props.canvasData).then(() => {
         fabricCanvas?.renderAll();
         isLoadingData = false;
+        onInitialLoad();
       });
+    } else {
+      nextTick(() => onInitialLoad());
     }
 
     // Listen for changes
     fabricCanvas.on("object:modified", saveCanvas);
     fabricCanvas.on("object:added", () => {
       saveCanvas();
-      // Ensure grid stays visible after object addition
       nextTick(() => drawGrid());
     });
     fabricCanvas.on("object:removed", () => {
@@ -139,7 +194,6 @@
       const obj = e.target;
       const gridSize = effectiveGridSize.value;
 
-      // Snap left and top to grid
       obj.set({
         left: Math.round((obj.left || 0) / gridSize) * gridSize,
         top: Math.round((obj.top || 0) / gridSize) * gridSize,
@@ -151,27 +205,23 @@
       const obj = e.target as Textbox & { data?: TextBoxData };
       if (obj?.type !== "textbox") return;
 
-      // Calculate the new dimensions based on scale
       const scaleX = obj.scaleX || 1;
       const scaleY = obj.scaleY || 1;
       const newWidth = Math.round((obj.width || 150) * scaleX);
       const newHeight = Math.round((obj.height || 50) * scaleY);
 
-      // Update the textbox width (this controls word wrap)
       obj.set({
         width: newWidth,
         scaleX: 1,
         scaleY: 1,
       });
 
-      // Store the fixed dimensions in data for autofit
       obj.data = {
         ...obj.data,
         fixedWidth: newWidth,
         fixedHeight: newHeight,
       };
 
-      // If autofit is enabled, adjust font size
       if (obj.data?.autofit) {
         applyAutofit(obj);
       }
@@ -198,16 +248,11 @@
     const maxFontSize = textObj.data.maxFontSize || 72;
     const minFontSize = 6;
 
-    // Ensure the textbox has the correct width for word wrapping
     textObj.set({ width: maxWidth });
 
-    // Calculate if text overflows
     const textOverflows = () => {
-      // Check if text height exceeds max height
       if ((textObj.height || 0) > maxHeight) return true;
 
-      // For textbox, check if any line exceeds the width
-      // This is indicated by text being cut off or wrapped excessively
       const textLines = textObj.textLines || [];
       const ctx = textObj.canvas?.getContext();
       if (ctx && textLines.length > 0) {
@@ -215,7 +260,6 @@
         for (const line of textLines) {
           const lineWidth = ctx.measureText(line).width;
           if (lineWidth > maxWidth * 0.98) {
-            // Text line is close to or exceeding width
             return true;
           }
         }
@@ -223,12 +267,10 @@
       return false;
     };
 
-    // Shrink font if text exceeds bounds
     while (textOverflows() && (textObj.fontSize || 16) > minFontSize) {
       textObj.set("fontSize", (textObj.fontSize || 16) - 1);
     }
 
-    // Grow font back if there's room (up to max)
     while ((textObj.fontSize || 16) < maxFontSize) {
       textObj.set("fontSize", (textObj.fontSize || 16) + 1);
       if (textOverflows()) {
@@ -250,22 +292,17 @@
     const height = displayHeight.value * zoom;
     const gridSize = effectiveGridSize.value * zoom;
 
-    // Update grid canvas size
     gridCanvasRef.value.width = width;
     gridCanvasRef.value.height = height;
 
-    // Draw white background (label area)
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, width, height);
 
-    // Only draw grid lines if enabled
     if (!props.showGrid) return;
 
-    // Draw grid lines
     ctx.strokeStyle = "#e0e0e0";
     ctx.lineWidth = 0.5;
 
-    // Vertical lines
     for (let x = 0; x <= width; x += gridSize) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
@@ -273,7 +310,6 @@
       ctx.stroke();
     }
 
-    // Horizontal lines
     for (let y = 0; y <= height; y += gridSize) {
       ctx.beginPath();
       ctx.moveTo(0, y);
@@ -284,7 +320,8 @@
 
   function saveCanvas() {
     if (!fabricCanvas || isLoadingData) return;
-    const json = fabricCanvas.toObject(["data"]);
+    const json = fabricCanvas.toObject(["data"]) as Record<string, unknown>;
+    pushHistory(json);
     emit("update:canvasData", json);
   }
 
@@ -297,13 +334,12 @@
     const textObj = new Textbox(text, {
       left: 20,
       top: 20,
-      width: defaultWidth, // Width controls word wrap
+      width: defaultWidth,
       fontSize: 16,
       fontFamily: "Arial",
       fill: "#000000",
       textAlign: "left",
-      splitByGrapheme: false, // Wrap by word, not character
-      // Custom data for autofit settings
+      splitByGrapheme: false,
       data: {
         autofit: false,
         maxFontSize: 16,
@@ -322,7 +358,6 @@
   function addBarcode(format: string, contentSource: string) {
     if (!fabricCanvas) return;
 
-    // Create a placeholder rectangle for the barcode
     const rect = new Rect({
       left: 0,
       top: 0,
@@ -333,7 +368,6 @@
       strokeWidth: 1,
     });
 
-    // Add label text
     const label = new IText(`[${format.toUpperCase()}]`, {
       left: 5,
       top: 40,
@@ -344,7 +378,6 @@
       evented: false,
     });
 
-    // Group them with data in constructor for proper serialization
     const group = new Group([rect, label], {
       left: 20,
       top: 20,
@@ -391,15 +424,91 @@
     saveCanvas();
   }
 
+  // Embed a raster image. The data URL travels inside the template JSON and is
+  // decoded by the server renderer, so there is nothing to upload separately.
+  async function addImage(file: File) {
+    if (!fabricCanvas) return;
+
+    const dataUrl = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+
+    const img = await FabricImage.fromURL(dataUrl);
+    // Fit into 40% of the label, keeping aspect ratio
+    const maxW = displayWidth.value * 0.4;
+    const maxH = displayHeight.value * 0.8;
+    const scale = Math.min(maxW / (img.width || 1), maxH / (img.height || 1), 1);
+    img.set({ left: 20, top: 20, scaleX: scale, scaleY: scale });
+
+    fabricCanvas.add(img);
+    fabricCanvas.setActiveObject(img);
+    fabricCanvas.renderAll();
+    saveCanvas();
+  }
+
   function deleteSelected() {
     if (!fabricCanvas) return;
 
-    const activeObject = fabricCanvas.getActiveObject();
-    if (activeObject) {
-      fabricCanvas.remove(activeObject);
-      fabricCanvas.renderAll();
-      saveCanvas();
+    const active = fabricCanvas.getActiveObjects();
+    if (active.length === 0) return;
+    for (const obj of active) {
+      fabricCanvas.remove(obj);
     }
+    fabricCanvas.discardActiveObject();
+    fabricCanvas.renderAll();
+    saveCanvas();
+  }
+
+  // Align the selected object against the label edges / center.
+  function alignSelected(target: AlignTarget) {
+    if (!fabricCanvas) return;
+    const obj = fabricCanvas.getActiveObject();
+    if (!obj) return;
+
+    const rect = obj.getBoundingRect();
+    const dx = (obj.left || 0) - rect.left;
+    const dy = (obj.top || 0) - rect.top;
+    const W = displayWidth.value;
+    const H = displayHeight.value;
+
+    switch (target) {
+      case "left":
+        obj.set({ left: dx });
+        break;
+      case "center":
+        obj.set({ left: (W - rect.width) / 2 + dx });
+        break;
+      case "right":
+        obj.set({ left: W - rect.width + dx });
+        break;
+      case "top":
+        obj.set({ top: dy });
+        break;
+      case "middle":
+        obj.set({ top: (H - rect.height) / 2 + dy });
+        break;
+      case "bottom":
+        obj.set({ top: H - rect.height + dy });
+        break;
+    }
+    obj.setCoords();
+    fabricCanvas.renderAll();
+    saveCanvas();
+    emit("selectionChanged", obj);
+  }
+
+  function nudgeSelected(dx: number, dy: number) {
+    if (!fabricCanvas) return;
+    const obj = fabricCanvas.getActiveObject();
+    if (!obj) return;
+    obj.set({ left: (obj.left || 0) + dx, top: (obj.top || 0) + dy });
+    obj.setCoords();
+    fabricCanvas.renderAll();
+    saveCanvas();
+    emit("selectionChanged", obj);
   }
 
   function updateSelectedObject(updates: Record<string, unknown>) {
@@ -407,13 +516,11 @@
 
     const activeObject = fabricCanvas.getActiveObject();
     if (activeObject) {
-      // Handle custom 'data' property separately as Fabric.js set() may not handle it properly
       if ("data" in updates) {
         (activeObject as FabricObject & { data?: Record<string, unknown> }).data = updates.data as Record<
           string,
           unknown
         >;
-        // Remove data from updates so we don't try to set() it again
         const { data: _, ...restUpdates } = updates;
         if (Object.keys(restUpdates).length > 0) {
           activeObject.set(restUpdates as Partial<FabricObject>);
@@ -421,9 +528,9 @@
       } else {
         activeObject.set(updates as Partial<FabricObject>);
       }
+      activeObject.setCoords();
       fabricCanvas.renderAll();
       saveCanvas();
-      // Re-emit selection to trigger reactivity update in properties panel
       emit("selectionChanged", activeObject);
     }
   }
@@ -445,7 +552,6 @@
     if (!fabricCanvas) return [];
 
     const objects = fabricCanvas.getObjects();
-    // Return in reverse order so top layer appears first in the list
     return objects
       .map((obj, index) => ({
         index,
@@ -460,8 +566,7 @@
   function selectLayerByIndex(index: number) {
     if (!fabricCanvas) return;
 
-    const objects = fabricCanvas.getObjects();
-    const obj = objects[index];
+    const obj = fabricCanvas.getObjects()[index];
     if (obj) {
       fabricCanvas.setActiveObject(obj);
       fabricCanvas.renderAll();
@@ -471,10 +576,8 @@
 
   function bringForward(index: number) {
     if (!fabricCanvas) return;
-
     const objects = fabricCanvas.getObjects();
     const obj = objects[index];
-    // Can bring forward if not already at front (highest index)
     if (obj && index < objects.length - 1) {
       fabricCanvas.bringObjectForward(obj);
       fabricCanvas.renderAll();
@@ -484,10 +587,7 @@
 
   function sendBackward(index: number) {
     if (!fabricCanvas) return;
-
-    const objects = fabricCanvas.getObjects();
-    const obj = objects[index];
-    // Can send backward if not already at back (index 0)
+    const obj = fabricCanvas.getObjects()[index];
     if (obj && index > 0) {
       fabricCanvas.sendObjectBackwards(obj);
       fabricCanvas.renderAll();
@@ -497,10 +597,8 @@
 
   function bringToFront(index: number) {
     if (!fabricCanvas) return;
-
     const objects = fabricCanvas.getObjects();
     const obj = objects[index];
-    // Can bring to front if not already at front
     if (obj && index < objects.length - 1) {
       fabricCanvas.bringObjectToFront(obj);
       fabricCanvas.renderAll();
@@ -510,10 +608,7 @@
 
   function sendToBack(index: number) {
     if (!fabricCanvas) return;
-
-    const objects = fabricCanvas.getObjects();
-    const obj = objects[index];
-    // Can send to back if not already at back
+    const obj = fabricCanvas.getObjects()[index];
     if (obj && index > 0) {
       fabricCanvas.sendObjectToBack(obj);
       fabricCanvas.renderAll();
@@ -523,9 +618,7 @@
 
   function toggleLayerVisibility(index: number) {
     if (!fabricCanvas) return;
-
-    const objects = fabricCanvas.getObjects();
-    const obj = objects[index];
+    const obj = fabricCanvas.getObjects()[index];
     if (obj) {
       obj.visible = !obj.visible;
       fabricCanvas.renderAll();
@@ -533,12 +626,13 @@
     }
   }
 
-  // Expose methods for parent components
   defineExpose({
     addText,
     addBarcode,
     addShape,
+    addImage,
     deleteSelected,
+    alignSelected,
     updateSelectedObject,
     getCanvas,
     getLayers,
@@ -548,27 +642,72 @@
     bringToFront,
     sendToBack,
     toggleLayerVisibility,
-    // Zoom controls
+    undo,
+    redo,
+    canUndo,
+    canRedo,
     zoomIn,
     zoomOut,
     zoomToFit,
     zoomTo100,
     zoomLevel,
+    displayWidth,
+    displayHeight,
   });
+
+  function isTypingTarget(target: EventTarget | null): boolean {
+    const el = target as HTMLElement | null;
+    if (!el) return false;
+    const tag = el.tagName?.toLowerCase();
+    return tag === "input" || tag === "textarea" || tag === "select" || el.isContentEditable;
+  }
 
   function handleKeyDown(e: KeyboardEvent) {
     if (!fabricCanvas) return;
+    if (isTypingTarget(e.target)) return;
 
-    // Delete or Backspace to remove selected object
+    const activeObject = fabricCanvas.getActiveObject();
+    if (activeObject && (activeObject as { isEditing?: boolean }).isEditing) {
+      return;
+    }
+
+    const mod = e.metaKey || e.ctrlKey;
+    if (mod && e.key.toLowerCase() === "z") {
+      e.preventDefault();
+      if (e.shiftKey) redo();
+      else undo();
+      return;
+    }
+    if (mod && e.key.toLowerCase() === "y") {
+      e.preventDefault();
+      redo();
+      return;
+    }
+
     if (e.key === "Delete" || e.key === "Backspace") {
-      // Don't delete if we're editing text
-      const activeObject = fabricCanvas.getActiveObject();
-      if (activeObject && (activeObject as { isEditing?: boolean }).isEditing) {
-        return;
-      }
-
       e.preventDefault();
       deleteSelected();
+      return;
+    }
+
+    const step = e.shiftKey ? 10 : 1;
+    switch (e.key) {
+      case "ArrowLeft":
+        e.preventDefault();
+        nudgeSelected(-step, 0);
+        break;
+      case "ArrowRight":
+        e.preventDefault();
+        nudgeSelected(step, 0);
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        nudgeSelected(0, -step);
+        break;
+      case "ArrowDown":
+        e.preventDefault();
+        nudgeSelected(0, step);
+        break;
     }
   }
 
@@ -578,7 +717,6 @@
       drawGrid();
     });
 
-    // Add keyboard listener
     window.addEventListener("keydown", handleKeyDown);
   });
 
@@ -601,7 +739,6 @@
       });
       fabricCanvas.renderAll();
     }
-    // Redraw grid with zoom
     drawGrid();
   });
 
@@ -618,22 +755,37 @@
   watch(
     () => props.canvasData,
     newData => {
-      // Only load once when data first arrives
       if (fabricCanvas && newData && Object.keys(newData).length > 0 && !hasInitiallyLoaded.value) {
         hasInitiallyLoaded.value = true;
         isLoadingData = true;
         fabricCanvas.loadFromJSON(newData).then(() => {
           fabricCanvas?.renderAll();
           isLoadingData = false;
+          onInitialLoad();
         });
       }
     },
     { immediate: true }
   );
+
+  // After the template's objects are on the canvas: seed the history, fit the
+  // label into the viewport (a 62x29mm label is only ~234px wide at 100%) and
+  // let the parent refresh its layer list.
+  function onInitialLoad() {
+    if (fabricCanvas) {
+      const json = fabricCanvas.toObject(["data"]) as Record<string, unknown>;
+      history.value = [JSON.stringify(json)];
+      historyIndex.value = 0;
+    }
+    nextTick(() => {
+      zoomToFit();
+      emit("loaded");
+    });
+  }
 </script>
 
 <template>
-  <div ref="canvasContainerRef" class="canvas-container overflow-auto rounded border bg-gray-100 p-4">
+  <div ref="canvasContainerRef" class="min-h-[300px] overflow-auto rounded border bg-gray-100 p-4 dark:bg-zinc-800">
     <div class="relative inline-block shadow-lg">
       <!-- Grid layer (behind fabric canvas) -->
       <canvas
@@ -648,9 +800,3 @@
     </div>
   </div>
 </template>
-
-<style scoped>
-  .canvas-container {
-    min-height: 300px;
-  }
-</style>

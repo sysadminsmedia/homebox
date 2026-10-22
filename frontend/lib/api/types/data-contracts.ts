@@ -1810,6 +1810,8 @@ export interface LabelTemplateRenderLocationsRequest {
   pageSize: string;
   /** Draw light borders around labels for cutting */
   showCutGuides: boolean;
+  /** Leave this many positions empty on the first sheet */
+  skipLabels: number;
 }
 
 export interface LabelTemplateRenderRequest {
@@ -1823,6 +1825,8 @@ export interface LabelTemplateRenderRequest {
   pageSize: string;
   /** Draw light borders around labels for cutting */
   showCutGuides: boolean;
+  /** Leave this many positions empty on the first sheet */
+  skipLabels: number;
 }
 
 export interface LoginForm {

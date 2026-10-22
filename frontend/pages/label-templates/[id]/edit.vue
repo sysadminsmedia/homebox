@@ -1,27 +1,33 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
+  import { useEventListener } from "@vueuse/core";
   import { toast } from "@/components/ui/sonner";
   import MdiArrowLeft from "~icons/mdi/arrow-left";
   import MdiContentSave from "~icons/mdi/content-save";
-  import MdiCog from "~icons/mdi/cog";
   import MdiMinus from "~icons/mdi/minus";
   import MdiPlus from "~icons/mdi/plus";
   import MdiFitToScreen from "~icons/mdi/fit-to-screen";
-  import MdiMagnify from "~icons/mdi/magnify";
+  import MdiPrinterPos from "~icons/mdi/printer-pos";
+  import MdiDelete from "~icons/mdi/delete";
+  import MdiLoading from "~icons/mdi/loading";
   import { Button } from "@/components/ui/button";
   import { Input } from "@/components/ui/input";
-  import { Label } from "@/components/ui/label";
-  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-  import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+  import { Badge } from "@/components/ui/badge";
   import BaseContainer from "@/components/Base/Container.vue";
   import LabelTemplateEditorCanvas from "~/components/LabelTemplate/Editor/Canvas.vue";
-  import LabelTemplateEditorToolbar from "~/components/LabelTemplate/Editor/Toolbar.vue";
+  import LabelTemplateEditorToolRail, { type AlignTarget } from "~/components/LabelTemplate/Editor/ToolRail.vue";
   import LabelTemplateEditorTextToolbar from "~/components/LabelTemplate/Editor/TextToolbar.vue";
-  import LabelTemplateEditorTransformPanel from "~/components/LabelTemplate/Editor/TransformPanel.vue";
+  import LabelTemplateEditorTransformPanel, {
+    type EditorUnit,
+  } from "~/components/LabelTemplate/Editor/TransformPanel.vue";
   import LabelTemplateEditorLayerPanel from "~/components/LabelTemplate/Editor/LayerPanel.vue";
   import LabelTemplateEditorRuler from "~/components/LabelTemplate/Editor/Ruler.vue";
   import LabelTemplateEditorPreviewPanel from "~/components/LabelTemplate/Editor/PreviewPanel.vue";
-  import type { LabelmakerLabelPreset } from "~/lib/api/types/data-contracts";
+  import LabelTemplateEditorLabelSettings, {
+    type EditorSettings,
+    type DisplaySettings,
+  } from "~/components/LabelTemplate/Editor/LabelSettings.vue";
+  import type { EntitySummary } from "~/lib/api/types/data-contracts";
 
   definePageMeta({
     middleware: ["auth"],
@@ -29,7 +35,6 @@
 
   const { t } = useI18n();
   const route = useRoute();
-  const api = useUserApi();
   const templateId = computed(() => route.params.id as string);
 
   useHead({
@@ -38,162 +43,89 @@
 
   const { template, pending, refresh } = useLabelTemplate(templateId);
   const { update } = useLabelTemplateActions();
+  const { presets } = useLabelPresets();
+  const { title: presetTitle } = useLabelPresetLookup();
+  const { defaultPrinter } = useQuickPrint();
+  const { printLabels } = useDirectPrint();
 
-  // Label presets for dimension constraints
-  const labelPresets = ref<LabelmakerLabelPreset[]>([]);
-
-  onMounted(async () => {
-    try {
-      const { data } = await api.labelTemplates.getPresets();
-      if (data) {
-        labelPresets.value = data;
-      }
-    } catch {
-      // Silently fail - presets are optional
-    }
+  // ---------------------------------------------------------------------------
+  // Editable copies of the template's settings and canvas
+  // ---------------------------------------------------------------------------
+  const settings = reactive<EditorSettings>({
+    name: "",
+    description: "",
+    width: 62,
+    height: 29,
+    preset: "",
+    dpi: 300,
+    mediaType: "",
+    isShared: false,
   });
 
-  // Local editable values for template settings
-  const localWidth = ref(62);
-  const localHeight = ref(29);
-  const localPreset = ref<string | undefined>(undefined);
-
-  // Initialize local values from template
-  watch(
-    template,
-    newTemplate => {
-      if (newTemplate) {
-        localWidth.value = newTemplate.width;
-        localHeight.value = newTemplate.height;
-        localPreset.value = newTemplate.preset || undefined;
-      }
-    },
-    { immediate: true }
-  );
-
-  // Get selected preset info
-  const selectedPreset = computed(() => {
-    if (!localPreset.value) return null;
-    return labelPresets.value.find(p => p.key === localPreset.value) || null;
+  const display = reactive<DisplaySettings>({
+    showRuler: true,
+    showGrid: false,
+    snapToGrid: false,
+    gridSize: 10,
   });
 
-  // Determine if dimensions should be locked
-  const isWidthLocked = computed(() => !!selectedPreset.value);
-  const isHeightLocked = computed(() => (selectedPreset.value ? !selectedPreset.value.continuous : false));
+  const unit = ref<EditorUnit>("mm");
+  const localCanvasData = ref<Record<string, unknown>>({});
 
-  // Categorize a preset
-  type PresetCategory = "sheet" | "continuous" | "die-cut";
-  function getPresetCategory(preset: LabelmakerLabelPreset): PresetCategory {
-    if (preset.sheetLayout) return "sheet";
-    if (preset.continuous) return "continuous";
-    return "die-cut";
+  function loadFromTemplate() {
+    const tpl = template.value;
+    if (!tpl) return;
+    settings.name = tpl.name;
+    settings.description = tpl.description ?? "";
+    settings.width = tpl.width;
+    settings.height = tpl.height;
+    settings.preset = tpl.preset || "";
+    settings.dpi = tpl.dpi;
+    settings.mediaType = tpl.mediaType || "";
+    settings.isShared = tpl.isShared;
+    if (tpl.canvasData) localCanvasData.value = tpl.canvasData;
   }
 
-  // Group presets by brand and category
-  interface PresetGroup {
-    brand: string;
-    category: PresetCategory;
-    label: string;
-    presets: LabelmakerLabelPreset[];
-  }
+  watch(template, loadFromTemplate, { immediate: true });
 
-  const presetGroups = computed(() => {
-    const groups: PresetGroup[] = [];
-    const brandMap: Record<string, Record<PresetCategory, LabelmakerLabelPreset[]>> = {};
-
-    for (const preset of labelPresets.value) {
-      const brand = preset.brand || "Custom";
-      const category = getPresetCategory(preset);
-
-      if (!brandMap[brand]) {
-        brandMap[brand] = { sheet: [], continuous: [], "die-cut": [] };
-      }
-      brandMap[brand][category].push(preset);
-    }
-
-    // Sort presets within each category
-    for (const brand of Object.keys(brandMap)) {
-      const brandCategories = brandMap[brand];
-      if (!brandCategories) continue;
-      for (const category of Object.keys(brandCategories) as PresetCategory[]) {
-        const presets = brandCategories[category];
-        if (presets) {
-          presets.sort((a, b) => a.name.localeCompare(b.name));
-        }
-      }
-    }
-
-    // Define brand order
-    const brandOrder = ["Avery", "Brother", "Dymo", "Brady", "Zebra", "Custom"];
-    const categoryLabels: Record<PresetCategory, string> = {
-      sheet: t("components.label_template.form.sheet_labels"),
-      continuous: t("components.label_template.form.continuous_labels"),
-      "die-cut": t("components.label_template.form.die_cut_labels"),
-    };
-    const categoryOrder: PresetCategory[] = ["sheet", "die-cut", "continuous"];
-
-    // Build ordered groups
-    const orderedBrands = [...brandOrder];
-    for (const brand of Object.keys(brandMap)) {
-      if (!orderedBrands.includes(brand)) {
-        orderedBrands.push(brand);
-      }
-    }
-
-    for (const brand of orderedBrands) {
-      const brandCategories = brandMap[brand];
-      if (!brandCategories) continue;
-
-      for (const category of categoryOrder) {
-        const presets = brandCategories[category];
-        if (presets && presets.length > 0) {
-          groups.push({
-            brand,
-            category,
-            label: `${brand} - ${categoryLabels[category]}`,
-            presets,
-          });
-        }
-      }
-    }
-
-    return groups;
+  const isDirty = computed(() => {
+    const tpl = template.value;
+    if (!tpl) return false;
+    const settingsChanged =
+      settings.name !== tpl.name ||
+      settings.description !== (tpl.description ?? "") ||
+      settings.width !== tpl.width ||
+      settings.height !== tpl.height ||
+      settings.preset !== (tpl.preset || "") ||
+      settings.dpi !== tpl.dpi ||
+      settings.mediaType !== (tpl.mediaType || "") ||
+      settings.isShared !== tpl.isShared;
+    const canvasChanged = JSON.stringify(localCanvasData.value) !== JSON.stringify(tpl.canvasData ?? {});
+    return settingsChanged || canvasChanged;
   });
 
-  function handlePresetChange(value: unknown) {
-    const v = String(value || "");
-    if (v === "none" || v === "" || v === "custom") {
-      localPreset.value = undefined;
-      return;
+  useEventListener(window, "beforeunload", (e: BeforeUnloadEvent) => {
+    if (isDirty.value) e.preventDefault();
+  });
+
+  const sizeLabel = computed(() => {
+    if (unit.value === "in") {
+      return `${(settings.width / 25.4).toFixed(2)} × ${(settings.height / 25.4).toFixed(2)} in`;
     }
+    return formatLabelSize(settings.width, settings.height);
+  });
 
-    localPreset.value = v;
-
-    const preset = labelPresets.value.find(p => p.key === v);
-    if (preset) {
-      localWidth.value = preset.width;
-      if (!preset.continuous) {
-        localHeight.value = preset.height;
-      }
-    }
-  }
-
+  // ---------------------------------------------------------------------------
+  // Canvas interaction
+  // ---------------------------------------------------------------------------
   const canvasRef = ref<InstanceType<typeof LabelTemplateEditorCanvas> | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const selectedObject = ref<any>(null);
-  // Track the object ID to detect when a different object is selected
-  const selectedObjectId = ref<number | null>(null);
   const isSaving = ref(false);
+  const isTestPrinting = ref(false);
+  const activeTab = ref<"element" | "layers" | "label">("element");
+  const previewItem = ref<EntitySummary | null>(null);
 
-  // Check if a text object is selected (for showing text toolbar)
-  const isTextSelected = computed(() => {
-    const type = selectedObject.value?.type?.toLowerCase();
-    return type === "textbox" || type === "i-text" || type === "itext" || type === "text";
-  });
-
-  const localCanvasData = ref<Record<string, unknown>>({});
-
-  // Layer management
   interface LayerItem {
     index: number;
     type: string;
@@ -204,121 +136,89 @@
   }
   const layers = ref<LayerItem[]>([]);
 
-  // Grid settings
-  const showGrid = ref(false);
-  const snapToGrid = ref(false);
-  const gridSize = ref(10); // pixels
-
-  // Ruler settings
-  const showRuler = ref(true);
-  const rulerUnit = ref<"metric" | "imperial">("metric");
-
-  // Orientation computed - horizontal when width > height
-  const orientation = computed(() => (localWidth.value >= localHeight.value ? "horizontal" : "vertical"));
-
-  // Toggle orientation by swapping width and height
-  function toggleOrientation() {
-    const temp = localWidth.value;
-    localWidth.value = localHeight.value;
-    localHeight.value = temp;
-  }
-
-  // Conversion helpers
-  const mmPerInch = 25.4;
-  const formatDimension = (mm: number) => {
-    if (rulerUnit.value === "imperial") {
-      const inches = mm / mmPerInch;
-      return `${inches.toFixed(2)}"`;
+  const selectedType = computed(() => String(selectedObject.value?.type || "").toLowerCase());
+  const isTextSelected = computed(() => ["textbox", "i-text", "itext", "text"].includes(selectedType.value));
+  const selectedTypeLabel = computed(() => {
+    if (!selectedObject.value) return "";
+    if (selectedObject.value.data?.type === "barcode") {
+      return t("components.label_template.editor.element.type_barcode");
     }
-    return `${mm}mm`;
-  };
+    const map: Record<string, string> = {
+      textbox: "type_text",
+      "i-text": "type_text",
+      itext: "type_text",
+      text: "type_text",
+      rect: "type_rect",
+      line: "type_line",
+      image: "type_image",
+      group: "type_group",
+    };
+    return t(`components.label_template.editor.element.${map[selectedType.value] ?? "type_group"}`);
+  });
 
-  // Computed pixel dimensions for ruler
+  const canUndo = computed(() => canvasRef.value?.canUndo ?? false);
+  const canRedo = computed(() => canvasRef.value?.canRedo ?? false);
+  const zoomLevel = computed(() => canvasRef.value?.zoomLevel ?? 1);
+
+  // Ruler pixel sizes follow the canvas zoom
   const screenDPI = 96;
-  const pixelWidth = computed(() => Math.round((localWidth.value / 25.4) * screenDPI));
-  const pixelHeight = computed(() => Math.round((localHeight.value / 25.4) * screenDPI));
+  const pixelWidth = computed(() => Math.round((settings.width / 25.4) * screenDPI * zoomLevel.value));
+  const pixelHeight = computed(() => Math.round((settings.height / 25.4) * screenDPI * zoomLevel.value));
 
   function refreshLayers() {
     layers.value = canvasRef.value?.getLayers() || [];
   }
 
-  // Watch for template changes to initialize canvas data
-  watch(
-    template,
-    newTemplate => {
-      if (newTemplate?.canvasData) {
-        localCanvasData.value = newTemplate.canvasData;
-      }
-    },
-    { immediate: true }
-  );
-
   function handleCanvasUpdate(data: Record<string, unknown>) {
     localCanvasData.value = data;
-    // Refresh layers when canvas changes
     nextTick(() => refreshLayers());
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function handleSelectionChanged(obj: any) {
-    // Get the object's unique ID (Fabric.js assigns __id or we can use object reference)
-    const newObjectId = obj ? (obj.__id ?? obj.id ?? null) : null;
-
-    // Only update if it's a different object (not just property changes on the same object)
-    if (newObjectId !== selectedObjectId.value || obj !== selectedObject.value) {
-      selectedObjectId.value = newObjectId;
-      selectedObject.value = obj;
-    }
+    selectedObject.value = obj;
+    // Jump to the element tab on selection unless the user is working in the layer list
+    if (obj && activeTab.value !== "layers") activeTab.value = "element";
   }
 
-  function handleAddText() {
-    canvasRef.value?.addText();
-  }
+  const quickFields = ["item_name", "asset_id", "location", "location_path", "serial_number", "tags", "current_date"];
 
   function handleInsertField(fieldName: string) {
-    // Get the fabric canvas and the active object
     const canvas = canvasRef.value?.getCanvas();
     if (!canvas) return;
 
     const activeObject = canvas.getActiveObject();
-    if (!activeObject) return;
-
-    // Check if it's a textbox
-    const type = activeObject.type?.toLowerCase();
-    if (type !== "textbox") return;
+    if (!activeObject || activeObject.type?.toLowerCase() !== "textbox") return;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const textbox = activeObject as any;
     const placeholder = `{{${fieldName}}}`;
 
-    // If the textbox is being edited, insert at cursor position
     if (textbox.isEditing) {
       const selectionStart = textbox.selectionStart || 0;
       const selectionEnd = textbox.selectionEnd || 0;
       const currentText = textbox.text || "";
-
-      // Replace selection or insert at cursor
-      const newText = currentText.substring(0, selectionStart) + placeholder + currentText.substring(selectionEnd);
-      textbox.set("text", newText);
-
-      // Move cursor after the inserted placeholder
+      textbox.set("text", currentText.substring(0, selectionStart) + placeholder + currentText.substring(selectionEnd));
       textbox.selectionStart = selectionStart + placeholder.length;
       textbox.selectionEnd = selectionStart + placeholder.length;
     } else {
-      // Append to end of text
       textbox.set("text", (textbox.text || "") + placeholder);
     }
 
     canvas.renderAll();
-    canvasRef.value?.updateSelectedObject({}); // Trigger save
+    canvasRef.value?.updateSelectedObject({});
   }
 
-  function handleAddBarcode(format: string, contentSource: string) {
-    canvasRef.value?.addBarcode(format, contentSource);
+  function handleAlign(target: AlignTarget) {
+    canvasRef.value?.alignSelected(target);
   }
 
-  function handleAddShape(type: "rect" | "line") {
-    canvasRef.value?.addShape(type);
+  async function handleAddImage(file: File) {
+    try {
+      await canvasRef.value?.addImage(file);
+    } catch {
+      toast.error(t("components.label_template.editor.tools.image_failed"));
+    }
   }
 
   function handleDeleteSelected() {
@@ -330,77 +230,92 @@
     canvasRef.value?.updateSelectedObject(updates);
   }
 
-  // Layer management handlers
-  function handleSelectLayer(index: number) {
-    canvasRef.value?.selectLayerByIndex(index);
+  function withLayerRefresh(fn: (index: number) => void) {
+    return (index: number) => {
+      fn(index);
+      nextTick(() => refreshLayers());
+    };
   }
+  const bringForward = withLayerRefresh(i => canvasRef.value?.bringForward(i));
+  const sendBackward = withLayerRefresh(i => canvasRef.value?.sendBackward(i));
+  const bringToFront = withLayerRefresh(i => canvasRef.value?.bringToFront(i));
+  const sendToBack = withLayerRefresh(i => canvasRef.value?.sendToBack(i));
+  const toggleVisibility = withLayerRefresh(i => canvasRef.value?.toggleLayerVisibility(i));
 
-  function handleBringForward(index: number) {
-    canvasRef.value?.bringForward(index);
-    nextTick(() => refreshLayers());
-  }
-
-  function handleSendBackward(index: number) {
-    canvasRef.value?.sendBackward(index);
-    nextTick(() => refreshLayers());
-  }
-
-  function handleBringToFront(index: number) {
-    canvasRef.value?.bringToFront(index);
-    nextTick(() => refreshLayers());
-  }
-
-  function handleSendToBack(index: number) {
-    canvasRef.value?.sendToBack(index);
-    nextTick(() => refreshLayers());
-  }
-
-  function handleToggleVisibility(index: number) {
-    canvasRef.value?.toggleLayerVisibility(index);
-    nextTick(() => refreshLayers());
-  }
-
-  async function handleSave() {
-    if (!template.value) return;
+  // ---------------------------------------------------------------------------
+  // Save / test print
+  // ---------------------------------------------------------------------------
+  async function handleSave(): Promise<boolean> {
+    if (!template.value) return false;
+    if (!settings.name.trim()) {
+      toast.error(t("components.label_template.validation.name_required"));
+      return false;
+    }
 
     isSaving.value = true;
-
     try {
       await update(templateId.value, {
         id: templateId.value,
-        name: template.value.name,
-        description: template.value.description,
-        width: localWidth.value,
-        height: localHeight.value,
-        preset: localPreset.value || "",
-        isShared: template.value.isShared,
-        outputFormat: template.value.outputFormat as "png" | "pdf",
-        dpi: template.value.dpi,
+        name: settings.name.trim(),
+        description: settings.description,
+        width: settings.width,
+        height: settings.height,
+        preset: settings.preset || "",
+        isShared: settings.isShared,
+        outputFormat: (template.value.outputFormat as "png" | "pdf") || "png",
+        dpi: settings.dpi,
+        mediaType: settings.mediaType || null,
         canvasData: localCanvasData.value,
       });
-
       toast.success(t("components.label_template.toast.updated"));
       await refresh();
+      return true;
     } catch {
       toast.error(t("components.label_template.toast.update_failed"));
+      return false;
     } finally {
       isSaving.value = false;
     }
   }
 
-  // Track if dimensions have changed for canvas update
-  const dimensionsChanged = computed(() => {
-    if (!template.value) return false;
-    return localWidth.value !== template.value.width || localHeight.value !== template.value.height;
+  const canTestPrint = computed(() => !!previewItem.value && !!defaultPrinter.value);
+  const testPrintHint = computed(() => {
+    if (!defaultPrinter.value) return t("components.label_template.editor.toast.test_print_needs_printer");
+    if (!previewItem.value) return t("components.label_template.editor.toast.test_print_needs_item");
+    return t("components.label_template.editor.header.test_print_hint", { printer: defaultPrinter.value.name });
   });
 
-  // Serialized canvas data for live preview
-  const canvasDataJson = computed(() => {
-    if (!localCanvasData.value || Object.keys(localCanvasData.value).length === 0) {
-      return "";
+  async function handleTestPrint() {
+    if (!previewItem.value || !defaultPrinter.value) return;
+    isTestPrinting.value = true;
+    try {
+      // The printer renders the saved template, so persist pending edits first.
+      if (isDirty.value) {
+        const ok = await handleSave();
+        if (!ok) return;
+      }
+      const result = await printLabels(templateId.value, [previewItem.value.id], defaultPrinter.value.id, 1);
+      if (result?.success) {
+        toast.success(t("components.label_template.editor.toast.test_print_sent", { printer: result.printerName }));
+      } else {
+        toast.error(result?.message || t("components.label_template.editor.toast.test_print_failed"));
+      }
+    } catch {
+      toast.error(t("components.label_template.editor.toast.test_print_failed"));
+    } finally {
+      isTestPrinting.value = false;
     }
-    return JSON.stringify(localCanvasData.value);
-  });
+  }
+
+  const canvasDataJson = computed(() =>
+    localCanvasData.value && Object.keys(localCanvasData.value).length > 0 ? JSON.stringify(localCanvasData.value) : ""
+  );
+
+  const tabs = computed(() => [
+    { id: "element" as const, label: t("components.label_template.editor.tabs.element"), count: undefined },
+    { id: "layers" as const, label: t("components.label_template.editor.tabs.layers"), count: layers.value.length },
+    { id: "label" as const, label: t("components.label_template.editor.tabs.label"), count: undefined },
+  ]);
 </script>
 
 <template>
@@ -410,188 +325,90 @@
     </div>
 
     <template v-else-if="template">
-      <div class="mb-4 flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <Button variant="ghost" size="icon" as-child>
-            <NuxtLink to="/label-templates">
-              <MdiArrowLeft class="size-5" />
-            </NuxtLink>
+      <!-- Header -->
+      <div class="mb-3 flex flex-wrap items-center gap-3 rounded-lg border bg-card px-3 py-2">
+        <Button variant="ghost" size="icon" as-child>
+          <NuxtLink to="/label-templates" :aria-label="$t('components.label_template.editor.header.back')">
+            <MdiArrowLeft class="size-5" />
+          </NuxtLink>
+        </Button>
+        <Input
+          v-model="settings.name"
+          :aria-label="$t('components.label_template.editor.header.name_label')"
+          class="h-9 w-56 border-transparent text-base font-semibold shadow-none hover:border-input focus-visible:border-input"
+        />
+        <Badge v-if="isDirty" variant="outline" class="border-amber-300 bg-amber-50 text-amber-800">
+          {{ $t("components.label_template.editor.header.unsaved") }}
+        </Badge>
+
+        <div class="ml-auto flex flex-wrap items-center gap-2">
+          <Button variant="outline" size="sm" class="h-9 gap-2" @click="activeTab = 'label'">
+            <span class="font-semibold">
+              {{ settings.preset ? presetTitle(settings.preset) : $t("components.label_template.form.preset_custom") }}
+            </span>
+            <span class="text-muted-foreground">{{ sizeLabel }} · {{ settings.dpi }} dpi</span>
           </Button>
-          <div>
-            <h1 class="text-xl font-semibold">{{ template.name }}</h1>
-            <p class="text-sm text-muted-foreground">
-              {{ formatDimension(localWidth) }} x {{ formatDimension(localHeight) }} @ {{ template.dpi }} DPI
-              <span v-if="selectedPreset" class="ml-1">({{ selectedPreset.brand }} {{ selectedPreset.name }})</span>
-              <span v-if="dimensionsChanged" class="ml-2 text-amber-600">*unsaved</span>
-            </p>
+          <div
+            role="group"
+            :aria-label="$t('components.label_template.editor.header.units')"
+            class="inline-flex h-9 overflow-hidden rounded-md border text-sm"
+          >
+            <button
+              type="button"
+              class="px-3"
+              :class="unit === 'mm' ? 'bg-accent font-semibold' : 'text-muted-foreground'"
+              :aria-pressed="unit === 'mm'"
+              @click="unit = 'mm'"
+            >
+              mm
+            </button>
+            <button
+              type="button"
+              class="border-l px-3"
+              :class="unit === 'in' ? 'bg-accent font-semibold' : 'text-muted-foreground'"
+              :aria-pressed="unit === 'in'"
+              @click="unit = 'in'"
+            >
+              in
+            </button>
           </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <Popover>
-            <PopoverTrigger as-child>
-              <Button variant="outline" size="icon">
-                <MdiCog class="size-4" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent class="w-80" align="end">
-              <div class="space-y-4">
-                <h3 class="font-medium">{{ $t("components.label_template.editor.settings.title") }}</h3>
-
-                <div class="space-y-2">
-                  <Label>{{ $t("components.label_template.form.label_preset") }}</Label>
-                  <Select :model-value="localPreset || 'none'" @update:model-value="handlePresetChange">
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent class="max-h-80">
-                      <SelectItem value="none">{{ $t("components.label_template.form.preset_custom") }}</SelectItem>
-                      <template v-for="group in presetGroups" :key="`${group.brand}-${group.category}`">
-                        <div class="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
-                          {{ group.label }}
-                        </div>
-                        <SelectItem v-for="preset in group.presets" :key="preset.key" :value="preset.key">
-                          {{ preset.name }}
-                          <span v-if="preset.twoColor" class="ml-1 font-medium text-red-600 dark:text-red-400">
-                            {{ $t("components.label_template.form.two_color") }}
-                          </span>
-                          <span class="text-muted-foreground">
-                            ({{ preset.width }}{{ preset.continuous ? "mm wide" : `x${preset.height}mm` }})
-                          </span>
-                        </SelectItem>
-                      </template>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                  <div class="space-y-2">
-                    <Label>{{ $t("components.label_template.form.width") }}</Label>
-                    <div class="flex items-center gap-1">
-                      <Input v-model.number="localWidth" type="number" step="0.1" min="1" :disabled="isWidthLocked" />
-                      <span class="text-xs text-muted-foreground">mm</span>
-                    </div>
-                  </div>
-                  <div class="space-y-2">
-                    <Label>{{ $t("components.label_template.form.height") }}</Label>
-                    <div class="flex items-center gap-1">
-                      <Input v-model.number="localHeight" type="number" step="0.1" min="1" :disabled="isHeightLocked" />
-                      <span class="text-xs text-muted-foreground">mm</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Orientation toggle (only when dimensions are not locked) -->
-                <div v-if="!isWidthLocked && !isHeightLocked" class="flex items-center justify-between">
-                  <Label class="text-sm">{{ $t("components.label_template.editor.display.orientation") }}</Label>
-                  <Button variant="outline" size="sm" @click="toggleOrientation">
-                    {{
-                      orientation === "horizontal"
-                        ? $t("components.label_template.editor.display.horizontal")
-                        : $t("components.label_template.editor.display.vertical")
-                    }}
-                  </Button>
-                </div>
-
-                <p v-if="selectedPreset?.sheetLayout" class="text-xs text-muted-foreground">
-                  {{
-                    $t("components.label_template.form.sheet_preset_hint", {
-                      cols: selectedPreset.sheetLayout.columns,
-                      rows: selectedPreset.sheetLayout.rows,
-                    })
-                  }}
-                </p>
-                <p v-else-if="selectedPreset?.continuous" class="text-xs text-muted-foreground">
-                  {{ $t("components.label_template.form.continuous_hint") }}
-                </p>
-                <p v-else-if="selectedPreset" class="text-xs text-muted-foreground">
-                  {{ $t("components.label_template.form.die_cut_hint") }}
-                </p>
-
-                <!-- Grid & Display Settings -->
-                <div class="border-t pt-4">
-                  <h4 class="mb-3 text-sm font-medium">{{ $t("components.label_template.editor.display.title") }}</h4>
-                  <div class="space-y-3">
-                    <div class="space-y-2">
-                      <Label class="text-sm">{{ $t("components.label_template.editor.display.ruler_units") }}</Label>
-                      <Select v-model="rulerUnit">
-                        <SelectTrigger class="h-8">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="metric">{{
-                            $t("components.label_template.editor.display.metric")
-                          }}</SelectItem>
-                          <SelectItem value="imperial">{{
-                            $t("components.label_template.editor.display.imperial")
-                          }}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div class="flex items-center justify-between">
-                      <Label for="showRuler" class="text-sm">{{
-                        $t("components.label_template.editor.display.show_ruler")
-                      }}</Label>
-                      <input id="showRuler" v-model="showRuler" type="checkbox" class="size-4" />
-                    </div>
-                    <div class="flex items-center justify-between">
-                      <Label for="showGrid" class="text-sm">{{
-                        $t("components.label_template.editor.display.show_grid")
-                      }}</Label>
-                      <input id="showGrid" v-model="showGrid" type="checkbox" class="size-4" />
-                    </div>
-                    <div class="flex items-center justify-between">
-                      <Label for="snapToGrid" class="text-sm">{{
-                        $t("components.label_template.editor.display.snap_to_grid")
-                      }}</Label>
-                      <input id="snapToGrid" v-model="snapToGrid" type="checkbox" class="size-4" />
-                    </div>
-                    <div class="space-y-2">
-                      <Label for="gridSize" class="text-sm">{{
-                        $t("components.label_template.editor.display.grid_size")
-                      }}</Label>
-                      <div class="flex items-center gap-2">
-                        <Input
-                          id="gridSize"
-                          v-model.number="gridSize"
-                          type="number"
-                          min="5"
-                          max="50"
-                          step="5"
-                          class="h-8"
-                        />
-                        <span class="text-xs text-muted-foreground">px</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <p v-if="dimensionsChanged" class="text-xs text-amber-600">
-                  {{ $t("components.label_template.editor.settings.save_reminder") }}
-                </p>
-              </div>
-            </PopoverContent>
-          </Popover>
-          <Button :disabled="isSaving" @click="handleSave">
+          <Button
+            variant="outline"
+            size="sm"
+            class="h-9"
+            :disabled="!canTestPrint || isTestPrinting"
+            :title="testPrintHint"
+            @click="handleTestPrint"
+          >
+            <MdiLoading v-if="isTestPrinting" class="mr-2 size-4 animate-spin" />
+            <MdiPrinterPos v-else class="mr-2 size-4" />
+            {{ $t("components.label_template.editor.header.test_print") }}
+          </Button>
+          <Button :disabled="isSaving" class="h-9" @click="handleSave">
             <MdiContentSave class="mr-2 size-4" />
             {{ $t("global.save") }}
           </Button>
         </div>
       </div>
 
-      <!-- Object Toolbar (Add Text, Barcode, Shape, Delete) -->
-      <div class="mb-4">
-        <LabelTemplateEditorToolbar
-          @add-text="handleAddText"
-          @add-barcode="handleAddBarcode"
-          @add-shape="handleAddShape"
+      <div class="flex flex-col gap-3 lg:flex-row lg:items-start">
+        <!-- Tool rail -->
+        <LabelTemplateEditorToolRail
+          :has-selection="!!selectedObject"
+          :can-undo="canUndo"
+          :can-redo="canRedo"
+          @add-text="canvasRef?.addText()"
+          @add-barcode="(format, source) => canvasRef?.addBarcode(format, source)"
+          @add-shape="type => canvasRef?.addShape(type)"
+          @add-image="handleAddImage"
+          @align="handleAlign"
+          @undo="canvasRef?.undo()"
+          @redo="canvasRef?.redo()"
           @delete-selected="handleDeleteSelected"
         />
-      </div>
 
-      <div class="flex gap-4">
-        <!-- Left Column: Text Toolbar + Canvas + Preview -->
-        <div class="flex min-w-0 flex-1 flex-col gap-4">
-          <!-- Text Toolbar (only visible when text is selected) -->
+        <!-- Workspace -->
+        <div class="flex min-w-0 flex-1 flex-col gap-3">
           <LabelTemplateEditorTextToolbar
             v-if="isTextSelected"
             :selected-object="selectedObject"
@@ -599,107 +416,210 @@
             @insert-field="handleInsertField"
           />
 
-          <!-- Canvas with Ruler -->
-          <div class="flex-1">
-            <LabelTemplateEditorRuler
-              v-if="showRuler"
-              :width="localWidth"
-              :height="localHeight"
-              :pixel-width="Math.round(pixelWidth * (canvasRef?.zoomLevel ?? 1))"
-              :pixel-height="Math.round(pixelHeight * (canvasRef?.zoomLevel ?? 1))"
-              :unit="rulerUnit"
+          <div class="flex flex-col gap-6 rounded-lg border bg-muted/40 p-4 2xl:flex-row 2xl:items-start">
+            <!-- Design -->
+            <section
+              class="flex min-w-0 shrink-0 flex-col gap-2"
+              :aria-label="$t('components.label_template.editor.design')"
             >
+              <span class="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                {{ $t("components.label_template.editor.design") }}
+              </span>
+              <LabelTemplateEditorRuler
+                v-if="display.showRuler"
+                :width="settings.width"
+                :height="settings.height"
+                :pixel-width="pixelWidth"
+                :pixel-height="pixelHeight"
+                :unit="unit === 'mm' ? 'metric' : 'imperial'"
+              >
+                <LabelTemplateEditorCanvas
+                  ref="canvasRef"
+                  :width="settings.width"
+                  :height="settings.height"
+                  :dpi="settings.dpi"
+                  :canvas-data="localCanvasData"
+                  :snap-to-grid="display.snapToGrid"
+                  :show-grid="display.showGrid"
+                  :grid-size="display.gridSize"
+                  @update:canvas-data="handleCanvasUpdate"
+                  @selection-changed="handleSelectionChanged"
+                  @loaded="refreshLayers"
+                />
+              </LabelTemplateEditorRuler>
               <LabelTemplateEditorCanvas
+                v-else
                 ref="canvasRef"
-                :width="localWidth"
-                :height="localHeight"
-                :dpi="template.dpi"
+                :width="settings.width"
+                :height="settings.height"
+                :dpi="settings.dpi"
                 :canvas-data="localCanvasData"
-                :snap-to-grid="snapToGrid"
-                :show-grid="showGrid"
-                :grid-size="gridSize"
+                :snap-to-grid="display.snapToGrid"
+                :show-grid="display.showGrid"
+                :grid-size="display.gridSize"
                 @update:canvas-data="handleCanvasUpdate"
                 @selection-changed="handleSelectionChanged"
+                @loaded="refreshLayers"
               />
-            </LabelTemplateEditorRuler>
-            <LabelTemplateEditorCanvas
-              v-else
-              ref="canvasRef"
-              :width="localWidth"
-              :height="localHeight"
-              :dpi="template.dpi"
+
+              <!-- Zoom + canvas toggles -->
+              <div class="flex flex-wrap items-center gap-2 text-sm">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  class="size-7"
+                  :disabled="zoomLevel <= 0.25"
+                  :aria-label="$t('components.label_template.editor.zoom.out')"
+                  @click="canvasRef?.zoomOut()"
+                >
+                  <MdiMinus class="size-4" />
+                </Button>
+                <span class="w-12 text-center font-medium">{{ Math.round(zoomLevel * 100) }}%</span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  class="size-7"
+                  :disabled="zoomLevel >= 4"
+                  :aria-label="$t('components.label_template.editor.zoom.in')"
+                  @click="canvasRef?.zoomIn()"
+                >
+                  <MdiPlus class="size-4" />
+                </Button>
+                <Button variant="outline" size="sm" class="h-7 px-2 text-xs" @click="canvasRef?.zoomToFit()">
+                  <MdiFitToScreen class="mr-1 size-3" />
+                  {{ $t("components.label_template.editor.zoom.fit") }}
+                </Button>
+                <Button variant="outline" size="sm" class="h-7 px-2 text-xs" @click="canvasRef?.zoomTo100()">
+                  100%
+                </Button>
+                <span class="mx-1 h-4 w-px bg-border" />
+                <label class="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <input v-model="display.showGrid" type="checkbox" class="size-3.5" />
+                  {{ $t("components.label_template.editor.display.grid") }}
+                </label>
+                <label class="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <input v-model="display.snapToGrid" type="checkbox" class="size-3.5" />
+                  {{ $t("components.label_template.editor.display.snap") }}
+                </label>
+                <label class="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <input v-model="display.showRuler" type="checkbox" class="size-3.5" />
+                  {{ $t("components.label_template.editor.display.rulers") }}
+                </label>
+              </div>
+            </section>
+
+            <!-- Live print preview -->
+            <LabelTemplateEditorPreviewPanel
+              :template-id="templateId"
               :canvas-data="localCanvasData"
-              :snap-to-grid="snapToGrid"
-              :show-grid="showGrid"
-              :grid-size="gridSize"
-              @update:canvas-data="handleCanvasUpdate"
-              @selection-changed="handleSelectionChanged"
+              :canvas-data-json="canvasDataJson"
+              :width="settings.width"
+              :height="settings.height"
+              :dpi="settings.dpi"
+              @update:item="previewItem = $event"
             />
           </div>
+        </div>
 
-          <!-- Zoom Controls -->
-          <div class="flex items-center gap-2 rounded-lg border bg-card px-3 py-2">
-            <Button
-              variant="outline"
-              size="icon"
-              class="size-7"
-              :disabled="(canvasRef?.zoomLevel ?? 1) <= 0.25"
-              @click="canvasRef?.zoomOut()"
+        <!-- Inspector -->
+        <aside
+          class="flex w-full shrink-0 flex-col rounded-lg border bg-card lg:w-80"
+          :aria-label="$t('components.label_template.editor.inspector')"
+        >
+          <div role="tablist" class="flex border-b text-sm">
+            <button
+              v-for="tab in tabs"
+              :key="tab.id"
+              type="button"
+              role="tab"
+              :aria-selected="activeTab === tab.id"
+              class="flex h-10 flex-1 items-center justify-center gap-1.5 border-b-2 px-2"
+              :class="
+                activeTab === tab.id ? 'border-primary font-semibold' : 'border-transparent text-muted-foreground'
+              "
+              @click="activeTab = tab.id"
             >
-              <MdiMinus class="size-4" />
-            </Button>
-            <span class="w-12 text-center text-sm font-medium">
-              {{ Math.round((canvasRef?.zoomLevel ?? 1) * 100) }}%
-            </span>
-            <Button
-              variant="outline"
-              size="icon"
-              class="size-7"
-              :disabled="(canvasRef?.zoomLevel ?? 1) >= 4"
-              @click="canvasRef?.zoomIn()"
-            >
-              <MdiPlus class="size-4" />
-            </Button>
-            <div class="h-4 w-px bg-border" />
-            <Button variant="outline" size="sm" class="h-7 px-2 text-xs" @click="canvasRef?.zoomToFit()">
-              <MdiFitToScreen class="mr-1 size-3" />
-              {{ $t("components.label_template.editor.zoom.fit") }}
-            </Button>
-            <Button variant="outline" size="sm" class="h-7 px-2 text-xs" @click="canvasRef?.zoomTo100()">
-              <MdiMagnify class="mr-1 size-3" />
-              100%
-            </Button>
+              {{ tab.label }}
+              <span v-if="tab.count !== undefined" class="text-xs text-muted-foreground">{{ tab.count }}</span>
+            </button>
           </div>
 
-          <!-- Preview Panel (moved below canvas) -->
-          <LabelTemplateEditorPreviewPanel
-            :template-id="templateId"
-            :canvas-data="localCanvasData"
-            :canvas-data-json="canvasDataJson"
-          />
-        </div>
+          <div class="p-4">
+            <!-- Element -->
+            <div v-if="activeTab === 'element'">
+              <div
+                v-if="!selectedObject"
+                class="rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground"
+              >
+                {{ $t("components.label_template.editor.element.no_selection") }}
+              </div>
+              <div v-else class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-semibold">{{ selectedTypeLabel }}</span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    class="size-7 text-destructive hover:text-destructive"
+                    :aria-label="$t('components.label_template.editor.tools.delete')"
+                    @click="handleDeleteSelected"
+                  >
+                    <MdiDelete class="size-4" />
+                  </Button>
+                </div>
+                <LabelTemplateEditorTransformPanel
+                  :selected-object="selectedObject"
+                  :unit="unit"
+                  @update-object="handleUpdateObject"
+                />
+                <div v-if="isTextSelected" class="space-y-2">
+                  <span class="text-sm font-semibold">
+                    {{ $t("components.label_template.editor.element.insert_field") }}
+                  </span>
+                  <div class="flex flex-wrap gap-1.5">
+                    <Button
+                      v-for="field in quickFields"
+                      :key="field"
+                      variant="secondary"
+                      size="sm"
+                      class="h-7 rounded-full px-2.5 text-xs"
+                      @click="handleInsertField(field)"
+                    >
+                      + {{ field }}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-        <!-- Right Sidebar: Transform + Layers only -->
-        <div class="flex w-64 shrink-0 flex-col gap-4">
-          <LabelTemplateEditorTransformPanel :selected-object="selectedObject" @update-object="handleUpdateObject" />
-          <LabelTemplateEditorLayerPanel
-            :layers="layers"
-            :selected-object="selectedObject"
-            @select-layer="handleSelectLayer"
-            @bring-forward="handleBringForward"
-            @send-backward="handleSendBackward"
-            @bring-to-front="handleBringToFront"
-            @send-to-back="handleSendToBack"
-            @toggle-visibility="handleToggleVisibility"
-          />
-        </div>
+            <!-- Layers -->
+            <LabelTemplateEditorLayerPanel
+              v-else-if="activeTab === 'layers'"
+              :layers="layers"
+              :selected-object="selectedObject"
+              @select-layer="canvasRef?.selectLayerByIndex($event)"
+              @bring-forward="bringForward"
+              @send-backward="sendBackward"
+              @bring-to-front="bringToFront"
+              @send-to-back="sendToBack"
+              @toggle-visibility="toggleVisibility"
+            />
+
+            <!-- Label -->
+            <LabelTemplateEditorLabelSettings
+              v-else
+              v-model="settings"
+              v-model:display="display"
+              :presets="presets ?? []"
+            />
+          </div>
+        </aside>
       </div>
     </template>
 
     <div v-else class="flex flex-col items-center justify-center py-12">
-      <p class="text-muted-foreground">Template not found</p>
+      <p class="text-muted-foreground">{{ $t("components.label_template.editor.not_found") }}</p>
       <Button variant="outline" class="mt-4" as-child>
-        <NuxtLink to="/label-templates">Back to Templates</NuxtLink>
+        <NuxtLink to="/label-templates">{{ $t("components.label_template.editor.header.back") }}</NuxtLink>
       </Button>
     </div>
   </BaseContainer>

@@ -123,7 +123,14 @@ export function useLabelTemplateActions() {
     showCutGuides: boolean = false,
     canvasData?: string
   ): Promise<Blob> {
-    return api.labelTemplates.render(id, { itemIds, format, pageSize, showCutGuides, canvasData: canvasData || "" });
+    return api.labelTemplates.render(id, {
+      itemIds,
+      format,
+      pageSize,
+      showCutGuides,
+      skipLabels: 0,
+      canvasData: canvasData || "",
+    });
   }
 
   async function renderLocations(
@@ -133,7 +140,7 @@ export function useLabelTemplateActions() {
     pageSize: string = "Letter",
     showCutGuides: boolean = false
   ): Promise<Blob> {
-    return api.labelTemplates.renderLocations(id, { locationIds, format, pageSize, showCutGuides });
+    return api.labelTemplates.renderLocations(id, { locationIds, format, pageSize, showCutGuides, skipLabels: 0 });
   }
 
   function getPreviewUrl(id: string): string {
@@ -149,4 +156,62 @@ export function useLabelTemplateActions() {
     renderLocations,
     getPreviewUrl,
   };
+}
+
+export type PresetKind = "sheet" | "continuous" | "die-cut";
+
+export interface PresetInfo {
+  key: string;
+  brand: string;
+  name: string;
+  kind: PresetKind;
+  /** labels per sheet, for sheet presets */
+  perSheet?: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * Looks up label presets by key so the UI can show "Brother DK-22205" instead of
+ * the raw preset key stored on a template.
+ */
+export function useLabelPresetLookup() {
+  const { presets, pending } = useLabelPresets();
+
+  const byKey = computed(() => {
+    const map = new Map<string, PresetInfo>();
+    for (const p of presets.value ?? []) {
+      const kind: PresetKind = p.sheetLayout ? "sheet" : p.continuous ? "continuous" : "die-cut";
+      map.set(p.key, {
+        key: p.key,
+        brand: p.brand || "",
+        name: p.name,
+        kind,
+        perSheet: p.sheetLayout ? p.sheetLayout.columns * p.sheetLayout.rows : undefined,
+        width: p.width,
+        height: p.height,
+      });
+    }
+    return map;
+  });
+
+  function find(key?: string | null): PresetInfo | null {
+    if (!key) return null;
+    return byKey.value.get(key) ?? null;
+  }
+
+  /** "Brother DK-22205" or the raw key while presets are still loading */
+  function title(key?: string | null): string {
+    const p = find(key);
+    if (!p) return key ?? "";
+    return [p.brand, p.name].filter(Boolean).join(" ");
+  }
+
+  return { presets, pending, find, title };
+}
+
+/** "62 × 29 mm" */
+export function formatLabelSize(width: number, height: number): string {
+  const fmt = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(1));
+  return `${fmt(width)} × ${fmt(height)} mm`;
 }

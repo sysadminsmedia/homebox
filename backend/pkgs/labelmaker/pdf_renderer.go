@@ -35,6 +35,7 @@ type PDFRenderOptions struct {
 	LabelsPerRow  int     // 0 = auto-calculate
 	LabelsPerCol  int     // 0 = auto-calculate
 	ShowCutGuides bool    // Draw light borders around labels for cutting (disable for pre-cut sheets)
+	SkipLabels    int     // Leave this many positions empty on the first sheet (partially used label sheets)
 }
 
 // DefaultPDFOptions returns sensible defaults for PDF generation
@@ -109,14 +110,16 @@ func (r *TemplateRenderer) renderPDFWithSheetLayout(template *TemplateData, item
 
 	// Render labels page by page
 	skipped := 0
+	skip := normalizeSkip(opts.SkipLabels, labelsPerPage)
 	for i, item := range items {
+		pos := i + skip
 		// Add new page if needed
-		if i%labelsPerPage == 0 {
+		if i == 0 || pos%labelsPerPage == 0 {
 			pdf.AddPage()
 		}
 
 		// Calculate position on page
-		posInPage := i % labelsPerPage
+		posInPage := pos % labelsPerPage
 		col := posInPage % layout.Columns
 		row := posInPage / layout.Columns
 
@@ -166,6 +169,14 @@ func (r *TemplateRenderer) renderPDFWithSheetLayout(template *TemplateData, item
 	return buf.Bytes(), nil
 }
 
+// normalizeSkip clamps a requested skip count to a valid offset within one sheet.
+func normalizeSkip(skip, labelsPerPage int) int {
+	if skip <= 0 || labelsPerPage <= 0 {
+		return 0
+	}
+	return skip % labelsPerPage
+}
+
 // RenderLocationsToPDFWithSheetLayout renders location labels to PDF using Avery-style sheet layout if available
 func (r *TemplateRenderer) RenderLocationsToPDFWithSheetLayout(template *TemplateData, locations []*LocationData, opts PDFRenderOptions, sheetLayout *SheetLayout) ([]byte, error) {
 	if sheetLayout != nil {
@@ -202,14 +213,16 @@ func (r *TemplateRenderer) renderLocationsPDFWithSheetLayout(template *TemplateD
 
 	// Render labels page by page
 	skipped := 0
+	skip := normalizeSkip(opts.SkipLabels, labelsPerPage)
 	for i, location := range locations {
+		pos := i + skip
 		// Add new page if needed
-		if i%labelsPerPage == 0 {
+		if i == 0 || pos%labelsPerPage == 0 {
 			pdf.AddPage()
 		}
 
 		// Calculate position on page
-		posInPage := i % labelsPerPage
+		posInPage := pos % labelsPerPage
 		col := posInPage % layout.Columns
 		row := posInPage / layout.Columns
 

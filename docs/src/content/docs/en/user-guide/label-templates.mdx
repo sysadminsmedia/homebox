@@ -3,285 +3,220 @@ title: Label Templates
 description: Design, preview and print custom labels for items and locations.
 ---
 
-Label templates allow you to design custom labels for your items and locations. You can create professional-looking labels with barcodes, text, and data fields that automatically populate with your item information.
+import { Steps } from "@astrojs/starlight/components";
 
-## Getting Started
+Label templates let you design your own labels: text, data fields, barcodes, shapes and images laid out on a real
+label size. Items and locations then print with the template on a label printer, in the browser, or as a PDF sheet.
 
-### Accessing Label Templates
+![Label templates list with thumbnails of each design](../../../../assets/user-guide/labels/templates-list.png)
 
-Navigate to **Label Templates** from the sidebar menu. Here you can:
-- View all your label templates
-- Create new templates
-- Edit, duplicate, or delete existing templates
-- Set a default template for quick printing
+Open **Label Templates** in the sidebar to see your designs. Each card shows a rendered sample, the label stock it is
+made for and whether it is shared with the collection. The star badge marks the template that **Print label** uses by
+default.
 
-### Creating Your First Template
+## Create a template
 
-1. Click **Create Template** button
-2. Enter a name for your template (e.g., "Asset Label")
-3. Choose a label size:
-   - Select a **preset** for common label formats (Avery, Brother, Dymo)
-   - Or use **Custom Dimensions** for any size
-4. Click **Create** to open the label editor
+<Steps>
 
-::: tip
-If you have a Brother or Dymo label printer, select the matching preset for your label stock. This ensures proper sizing and alignment.
-:::
+1. Click **New template**.
+2. Name it and pick a **label preset**: Avery sheet labels, Brother DK rolls, Dymo and Brady die-cut labels and Zebra
+   stock are included. Pick **Custom** to type any width and height in millimetres.
+3. Leave the resolution at 300 dpi unless your printer needs something else.
+4. Click **Create**. The editor opens with an empty label at the chosen size.
 
-## Label Editor
+</Steps>
 
-The label editor provides a visual canvas where you design your label layout.
+> [!TIP]
+> If you own a Brother or Dymo label printer, choose the preset that matches the roll you have loaded. The template
+> then prints edge to edge without scaling.
 
-### Adding Elements
+## The editor
 
-Use the toolbar at the top to add elements:
+![The template editor with the tool rail, canvas, print preview and inspector](../../../../assets/user-guide/labels/editor.png)
 
-| Element | Description |
-|---------|-------------|
-| **Text** | Static text or data field placeholders |
-| **Barcode** | QR codes, Code128, DataMatrix, and more |
-| **Shape** | Rectangles and lines for borders/separators |
+The editor has three parts:
 
-### Working with Text
+- **Tool rail** (left): add text, a barcode, a rectangle or line, or an image. Below it: align the selection against
+  the label edges, undo and redo, and delete.
+- **Canvas** (middle): the label at real proportions with rulers. Drag elements to move them, drag the handles to
+  resize, double-click text to edit it. Zoom controls, grid, snap-to-grid and rulers sit under the canvas. The
+  **Print preview** under the canvas shows the label rendered by the server for a real item.
+- **Inspector** (right): tabs for the selected **Element**, the **Layers** list and the **Label** itself.
 
-1. Click **Add Text** to create a text element
-2. Select the text element on the canvas
-3. Use the **Text Toolbar** (appears above canvas) to:
-   - Change font size
-   - Toggle bold
-   - Set alignment (left, center, right)
-   - Pick text color
-   - Enable auto-fit (text scales to fit bounds)
+The header shows the label stock and size, a **mm / in** switch that changes every measurement in the editor, a
+**Test print** button and **Save**. An amber **Unsaved changes** badge appears as soon as you edit something, and the
+browser warns you before you leave with unsaved work.
 
-### Inserting Data Fields
+### Working with elements
 
-Data fields are placeholders that get replaced with actual item data when printing.
+![A text element selected, with the formatting toolbar above the canvas and the Element tab open](../../../../assets/user-guide/labels/editor-element.png)
 
-1. Select a text element
-2. Click **Insert Data Field** in the text toolbar
-3. Choose from available fields:
+Selecting an element opens its properties in the **Element** tab: position, size and rotation in the unit you chose.
+Text elements also get a formatting toolbar above the canvas (size, bold, alignment, colour, box width) and an
+**Auto-fit** switch that shrinks the font until the text fits its box, which keeps long item names on the label.
 
-**Item Fields:**
-- Item Name, Description, Asset ID
-- Serial Number, Model Number, Manufacturer
-- Location, Location Path
-- Tags, Quantity, Notes
-- Item URL (for QR codes)
+Text can mix fixed words with **data fields** in double braces, for example `Asset #{{asset_id}}`. Use the **Insert
+data field** menu in the toolbar or the chips in the Element tab:
 
-**Location Fields:**
-- Location Name, Description, Full Path
-- Item Count, Location URL
+| Field | Prints |
+| --- | --- |
+| `{{item_name}}`, `{{description}}`, `{{notes}}` | The item's name, description and notes |
+| `{{asset_id}}`, `{{serial_number}}`, `{{model_number}}`, `{{manufacturer}}` | Identification fields |
+| `{{location}}`, `{{location_path}}` | The item's location and its full path, for example `Garage > Shelf B` |
+| `{{tags}}`, `{{quantity}}` | Comma-separated tags and the quantity |
+| `{{item_url}}`, `{{location_url}}` | Links back to HomeBox, handy inside a QR code |
+| `{{custom_<name>}}` | Any custom field, by name |
+| `{{current_date}}`, `{{current_time}}` | When the label was printed |
 
-**Common Fields:**
-- Current Date, Current Time
+Location labels use `{{location_name}}`, `{{location_path}}`, `{{item_count}}` and `{{location_url}}`.
 
-::: info
-Data fields appear as `{{field_name}}` in the editor. They're replaced with real data when you preview or print.
-:::
+**Barcodes** are added from the tool rail. Pick the symbology (QR code, DataMatrix, Code 128, Code 39, EAN-13, EAN-8
+or UPC-A) and what it should encode. Only compatible sources are offered: a numeric-only symbology such as EAN cannot
+encode a URL, so it lists the asset id only. The canvas shows a placeholder; the print preview shows the real code.
 
-### Adding Barcodes
+**Images** such as a logo are embedded in the template, so keep them small (under 512 KB). PNG, JPEG and GIF work.
 
-1. Click **Add Barcode** in the toolbar
-2. Select the barcode format:
-   - **QR Code** - Best for URLs and longer data
-   - **Code128** - Common 1D barcode for asset IDs
-   - **DataMatrix** - Compact 2D barcode
-   - **EAN13/UPC** - Product barcodes
-3. Choose the data source (Item URL, Asset ID, Serial Number, etc.)
+### Layers and the Label tab
 
-### Layer Management
+The **Layers** tab lists every element, top layer first. Click a row to select it, use the eye to hide it from the
+print, and the arrows to change the stacking order.
 
-The **Layers Panel** (right sidebar) shows all elements on your canvas:
+![The Label tab with name, preset, size, resolution, media type and sharing](../../../../assets/user-guide/labels/editor-label-settings.png)
 
-- Click a layer to select that element
-- Drag layers to reorder (or use the arrow buttons)
-- Click the eye icon to hide/show elements
-- Use "Bring to Front" / "Send to Back" for precise ordering
+The **Label** tab holds everything about the template itself: its name and description, the preset and size,
+orientation, print resolution, the Brother **media type** used for direct printing, and the **Share with collection**
+switch. Display settings for rulers, grid and snap live at the bottom.
 
-::: tip
-If a shape is blocking selection of text underneath, use the Layers panel to select the text, or send the shape to the back.
-:::
+### Preview and test print
 
-### Canvas Tools
+Pick an item in the **Print preview** panel and the server renders the label with that item's data every time you
+stop editing for half a second. This is exactly what will print. **Test print** sends one copy of that preview label
+to your default printer; it saves the template first if there are unsaved changes.
 
-**Zoom Controls** (below canvas):
-- Use +/- buttons to zoom in/out (25% to 400%)
-- Click "Fit" to fit the label to the view
-- Click "100%" to reset to actual size
+### Keyboard shortcuts
 
-**Grid & Snap** (Settings gear icon):
-- Enable grid overlay for alignment guides
-- Enable snap-to-grid for precise positioning
-- Adjust grid size (default: 10px)
+| Keys | Action |
+| --- | --- |
+| Arrow keys, Shift + arrows | Nudge the selection by 1 px or 10 px |
+| Delete or Backspace | Remove the selection |
+| ⌘Z / Ctrl+Z, ⇧⌘Z / Ctrl+Y | Undo, redo |
 
-**Ruler** (Settings gear icon):
-- Toggle ruler visibility
-- Switch between metric (mm) and imperial (inches)
+On a phone the editor stacks: canvas on top, the add-element row below it, then the inspector tabs.
 
-### Live Preview
+## Printing
 
-The **Preview Panel** (below canvas) shows how your label will look with real data:
+### From an item or location
 
-1. Search for and select an item
-2. The preview updates automatically as you edit
-3. No need to save before previewing
+![Item header with the Print label split button](../../../../assets/user-guide/labels/item-print-button.png)
 
-## Printing Labels
+Every item and location has a **Print label** button. The main part does the quickest thing: when you have a default
+template and a default printer, one click prints a single label. Without defaults it opens the print dialog instead.
 
-### From the Editor
+![The Print label menu](../../../../assets/user-guide/labels/item-print-menu.png)
 
-1. Click **Save** to save your template
-2. Navigate to an item or location page
-3. Click the **Print Label** button
-4. Select your template and print options
+The arrow opens more options:
 
-### Batch Printing
+- **Print with &lt;template&gt;**, the one-click quick print, with the destination spelled out.
+- **Choose template, printer, copies…** opens the print dialog.
+- **Download label as PNG** renders the label with your default template.
+- **Basic label** opens HomeBox's built-in QR label card, which needs no template at all.
 
-For printing multiple labels at once:
+The QR button next to it still shows a QR code for the page you are on.
 
-1. Go to **Label Templates** > **Batch Print**
-2. Select a template
-3. Search and select items to include
-4. Choose output format:
-   - **PNG** - Single image (or sheet for Avery-style)
-   - **PDF** - Multi-page document
-5. Adjust quantities per item if needed
-6. Click **Download** or **Print**
+### The print dialog
 
-### Quick Print from Items
+![Print dialog with template cards, preview, copies and destination](../../../../assets/user-guide/labels/print-dialog.png)
 
-On any item page:
-1. Click the **Print** button in the item actions
-2. If you have a default template set, it prints immediately
-3. Otherwise, select a template from the dialog
+Templates are shown as cards with a sample, so you can tell them apart at a glance; your default is pre-selected.
+The preview on the right is rendered with the first selected item. Set the number of copies per item, then choose
+where to send the labels:
 
-### Direct Printing to Label Makers
+- a **network printer** (IPP or CUPS) or a **Brother** label printer configured under Collection › Printers, with its
+  last known status as a dot,
+- a **USB or Bluetooth** printer paired in this browser, or
+- **This browser**, which opens the label in a print window.
 
-If you've configured a printer (see [Printer Setup](#printer-setup)), you can print directly:
+**Download** saves a PNG, or a PDF when there is more than one label or the template is a sheet.
 
-1. Open the Print Dialog
-2. Select your printer from the dropdown
-3. Click **Print to Label Maker**
+### Several at once
 
-## Printer Setup
+![Bulk actions menu on a list of items](../../../../assets/user-guide/labels/bulk-print-menu.png)
 
-### Adding a Printer
+Select items in any list (home, search, a location or a tag) and open the **⋯** actions menu. **Print labels for
+selected items** opens the same dialog with a copies field per item.
 
-1. Navigate to **Printers** from the sidebar
-2. Click **Add Printer**
-3. Enter printer details:
-   - **Name** - Friendly name (e.g., "Office Label Printer")
-   - **Type** - IPP/CUPS or Brother Raster
-   - **Address** - Network address (e.g., `192.168.1.100` or `printer.local`)
+![Print dialog for two selected items](../../../../assets/user-guide/labels/print-dialog-multiple.png)
 
-### Supported Printers
+### Batch print
 
-**IPP/CUPS Printers:**
-- Most network printers
-- Printers shared via CUPS on Linux/macOS
-- AirPrint-compatible printers
+![Batch print page with items selected and a template preview](../../../../assets/user-guide/labels/batch-print.png)
 
-**Brother Label Printers:**
-- QL-800, QL-810W, QL-820NWB
-- QL-1100, QL-1110NWB
-- Other QL-series with network connectivity
+**Label Templates › Batch print** is for bigger jobs. Search and filter items (or switch to **Locations**), tick what
+you want, set copies per row and drag the selected rows into the order you want them printed. The right column holds
+the template, a preview and the destination; the footer sums it up and prints or downloads.
 
-::: warning
-Brother printers must be connected via network (not USB) for direct printing from Homebox.
-:::
+![Batch print with an Avery sheet template, showing skip-first, cut guides and paper size](../../../../assets/user-guide/labels/batch-print-sheet.png)
 
-### Testing Your Printer
+For **sheet templates** (Avery and similar) the preview shows the first sheet. **Skip first** leaves positions empty
+on a partly used sheet, **cut guides** adds thin borders for plain paper, and you can pick Letter or A4. Sheets always
+go out as PDF or to a page printer; roll printers are greyed out because they cannot print a sheet.
 
-1. Go to **Printers**
-2. Click the menu on your printer card
-3. Select **Test Print**
-4. A test label will be sent to verify connectivity
+> [!TIP]
+> The classic **Asset ID label generator** under Collection › Tools still exists for pre-printing numbered QR labels
+> before items are entered.
 
-### Setting a Default Printer
+## Printers
 
-1. Go to **Printers**
-2. Click the menu on your preferred printer
-3. Select **Set as Default**
+![Printers tab under Collection](../../../../assets/user-guide/labels/printers.png)
 
-The default printer will be pre-selected in print dialogs.
+Printers live under **Collection › Printers** because they are shared with everyone in the collection.
 
-## Label Presets
+### Adding a printer
 
-### Sheet Labels (Avery-style)
+<Steps>
 
-Sheet label presets include layout information for proper alignment:
+1. Click **Add printer**.
+2. Choose the type:
+   - **IPP (Network Printer)** for any printer that speaks IPP, address like `ipp://192.168.1.100:631/ipp/print`.
+   - **CUPS** for a printer shared by a CUPS server, address like `http://cups.local:631/printers/Office`.
+   - **Brother Raster** for QL-series label printers on the network, address `192.168.1.50` (port 9100 is assumed).
+3. Set the printer's resolution (most label printers are 300 dpi) and save.
 
-| Preset | Size | Layout |
-|--------|------|--------|
-| Avery 5160 | 1" x 2-5/8" | 3 × 10 per sheet |
-| Avery 5163 | 2" x 4" | 2 × 5 per sheet |
-| Avery 5167 | 0.5" x 1.75" | 4 × 20 per sheet |
+</Steps>
 
-When printing to PDF, labels are automatically arranged in the correct grid layout.
+**Test print** sends a small test label. **Check status** in the row menu asks the printer and stores the result,
+which is the dot you see in print dialogs. Mark one printer as **default**; Quick print uses it.
 
-### Brother Labels
+For printers over USB or Bluetooth, use **Pair USB printer** or **Pair Bluetooth printer**. These are paired by the
+browser (Chrome and Edge) and only this device can print to them.
 
-| Preset | Size | Type |
-|--------|------|------|
-| DK-11201 | 29mm × 90mm | Die-cut address |
-| DK-11204 | 17mm × 54mm | Die-cut multi-purpose |
-| DK-22205 | 62mm wide | Continuous roll |
-| DK-22251 | 62mm wide | Red/Black continuous |
+### Printing defaults
 
-::: tip
-For Brother printers, select the matching DK label type to ensure proper print dimensions.
-:::
+Under the printer list you pick the **default template for Quick print**. This is a personal preference, synced with
+your account, so each member of the collection can choose their own. The default printer is shared.
 
-### Dymo Labels
+> [!NOTE]
+> Only printers on private network addresses are accepted. To print to a public address the server has to be started
+> with `HBOX_PRINTER_ALLOW_PUBLIC_ADDRESSES=true`.
 
-Common Dymo LabelWriter sizes are available as presets.
+## Tips
 
-## Tips & Best Practices
-
-### Design Tips
-
-1. **Keep it simple** - Labels are small, don't overcrowd
-2. **Use auto-fit** - For variable-length data like item names
-3. **Test with real data** - Use the preview to check different items
-4. **Consider barcode size** - QR codes need adequate size to scan reliably
-
-### Barcode Guidelines
-
-- **QR Codes**: Minimum 15mm × 15mm for reliable scanning
-- **Code128**: Works well for short alphanumeric data
-- **Quiet zone**: Leave small margins around barcodes
-
-### Template Organization
-
-- Create templates for different purposes (asset tags, shelf labels, etc.)
-- Use descriptive names
-- Share templates with your group for consistency
-- Set frequently used template as default
+- Keep text inside the label with a small margin; printers rarely print to the very edge.
+- Give QR codes at least 15 mm on a 300 dpi printer so phones scan them from a shelf away.
+- Use **Auto-fit** for item names and keep fixed-size text for labels such as "SN".
+- Make one template per label stock and share it with the collection; duplicate it to try variations.
+- **Export JSON** in a template's menu saves the design to a file you can keep or share.
 
 ## Troubleshooting
 
-### Labels Not Aligning
+**Labels do not line up on a sheet.** Use the preset for your exact Avery number, turn off cut guides, and print the
+PDF at 100% scale (no "fit to page").
 
-- Verify you selected the correct preset for your label stock
-- Check that your printer margins match the label sheet
-- For sheet labels, ensure the PDF page size matches (Letter vs A4)
+**A barcode will not scan.** Check the symbology supports the data: EAN and UPC need digits only. Make the barcode
+larger and keep white space around it.
 
-### Barcode Won't Scan
+**The printer shows Offline or does not print.** Confirm the address and that HomeBox can reach it on the network.
+Brother printers need the raster protocol enabled and the right media type set on the template.
 
-- Increase barcode size
-- Ensure adequate contrast (black on white)
-- Check that data doesn't exceed format limits
-- Print at highest quality setting
-
-### Printer Connection Issues
-
-- Verify printer IP address is correct
-- Ensure printer is on the same network
-- Check firewall isn't blocking port 631 (IPP) or 9100 (raw)
-- Try the printer's hostname instead of IP
-
-### Preview Not Updating
-
-- Check that an item is selected in the preview panel
-- Save the template and refresh the page
-- Clear browser cache if issues persist
+**The preview does not update.** Pick a preview item first; without one there is nothing to render. Use **Refresh** if
+the server was busy.

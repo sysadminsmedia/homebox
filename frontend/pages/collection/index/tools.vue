@@ -29,6 +29,41 @@
       <BaseCard>
         <template #title>
           <BaseSectionHeader>
+            <MdiLabel class="mr-2" />
+            <span> {{ $t("tools.labels") }} </span>
+            <template #description> {{ $t("tools.labels_sub") }} </template>
+          </BaseSectionHeader>
+        </template>
+        <div class="divide-y border-t px-6 pb-3">
+          <DetailAction to="/label-templates">
+            <template #title>{{ $t("tools.labels_set.templates") }}</template>
+            {{ $t("tools.labels_set.templates_sub") }}
+            <template #button>
+              {{ $t("tools.labels_set.templates_button") }}
+              <MdiArrowRight class="ml-2" />
+            </template>
+          </DetailAction>
+          <DetailAction to="/label-templates/batch">
+            <template #title>{{ $t("tools.labels_set.batch") }}</template>
+            {{ $t("tools.labels_set.batch_sub") }}
+            <template #button>
+              {{ $t("tools.labels_set.batch_button") }}
+              <MdiArrowRight class="ml-2" />
+            </template>
+          </DetailAction>
+          <DetailAction to="/collection/printers">
+            <template #title>{{ $t("tools.labels_set.printers") }}</template>
+            {{ $t("tools.labels_set.printers_sub") }}
+            <template #button>
+              {{ $t("tools.labels_set.printers_button") }}
+              <MdiArrowRight class="ml-2" />
+            </template>
+          </DetailAction>
+        </div>
+      </BaseCard>
+      <BaseCard>
+        <template #title>
+          <BaseSectionHeader>
             <MdiDatabase class="mr-2" />
             <span> {{ $t("tools.import_export") }} </span>
             <template #description>
@@ -178,6 +213,7 @@
   import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import MdiFileChart from "~icons/mdi/file-chart";
+  import MdiLabel from "~icons/mdi/label";
   import MdiArrowRight from "~icons/mdi/arrow-right";
   import MdiDatabase from "~icons/mdi/database";
   import MdiAlert from "~icons/mdi/alert";

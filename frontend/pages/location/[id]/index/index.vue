@@ -8,9 +8,6 @@
   import MdiPlus from "~icons/mdi/plus";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiDelete from "~icons/mdi/delete";
-  import MdiLabel from "~icons/mdi/label";
-  import MdiPrinterPos from "~icons/mdi/printer-pos";
-  import MdiLoading from "~icons/mdi/loading";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { Card } from "@/components/ui/card";
   import {
@@ -27,7 +24,8 @@
   import BaseCard from "@/components/Base/Card.vue";
   import Currency from "~/components/global/Currency.vue";
   import DateTime from "~/components/global/DateTime.vue";
-  import LabelMaker from "~/components/global/LabelMaker.vue";
+  import PageQRCode from "~/components/global/PageQRCode.vue";
+  import LabelTemplatePrintButton from "~/components/LabelTemplate/PrintButton.vue";
   import Markdown from "~/components/global/Markdown.vue";
   import DetailsSection from "~/components/global/DetailsSection/DetailsSection.vue";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
@@ -63,31 +61,6 @@
   });
 
   const confirm = useConfirm();
-
-  // Label template printing
-  const { isQuickPrintAvailable, quickPrintLocations } = useQuickPrint();
-  const isQuickPrinting = ref(false);
-
-  async function handleQuickPrint() {
-    isQuickPrinting.value = true;
-    try {
-      const success = await quickPrintLocations([locationId.value]);
-      if (success) {
-        toast.success(t("locations.quick_print_success"));
-      } else {
-        // Fall back to the dialog when no default template/printer is configured
-        openPrintLabelTemplate();
-      }
-    } catch {
-      toast.error(t("locations.quick_print_failed"));
-    } finally {
-      isQuickPrinting.value = false;
-    }
-  }
-
-  function openPrintLabelTemplate() {
-    openDialog(DialogID.PrintLabelTemplate, { params: { locationIds: [locationId.value] } });
-  }
 
   async function confirmDelete() {
     const { isCanceled } = await confirm.open(t("locations.location_items_delete_confirm"));
@@ -310,28 +283,8 @@
               </div>
             </div>
             <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-2">
-              <LabelMaker :id="location.id" type="location" />
-              <Button
-                v-if="isQuickPrintAvailable"
-                variant="outline"
-                class="w-9 md:w-auto"
-                :disabled="isQuickPrinting"
-                :aria-label="$t('locations.quick_print')"
-                @click="handleQuickPrint"
-              >
-                <MdiLoading v-if="isQuickPrinting" class="animate-spin" />
-                <MdiPrinterPos v-else />
-                <span class="hidden md:inline">{{ $t("locations.quick_print") }}</span>
-              </Button>
-              <Button
-                variant="outline"
-                class="w-9 md:w-auto"
-                :aria-label="$t('locations.print_label_template')"
-                @click="openPrintLabelTemplate"
-              >
-                <MdiLabel />
-                <span class="hidden md:inline">{{ $t("locations.print_label_template") }}</span>
-              </Button>
+              <LabelTemplatePrintButton :id="location.id" type="location" variant="outline" />
+              <PageQRCode />
               <Button class="w-9 md:w-auto" @click="openCreateItem">
                 <MdiPlus name="mdi-plus" />
                 <span class="hidden md:inline">

@@ -5549,6 +5549,9 @@ components:
         showCutGuides:
           description: Draw light borders around labels for cutting
           type: boolean
+        skipLabels:
+          description: Leave this many positions empty on the first sheet
+          type: integer
     v1.LabelTemplateRenderRequest:
       type: object
       required:
@@ -5571,6 +5574,9 @@ components:
         showCutGuides:
           description: Draw light borders around labels for cutting
           type: boolean
+        skipLabels:
+          description: Leave this many positions empty on the first sheet
+          type: integer
     v1.LoginForm:
       type: object
       properties:

@@ -3,11 +3,15 @@ package labelmaker
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
+	_ "image/gif"  // register GIF decoder for embedded images
+	_ "image/jpeg" // register JPEG decoder for embedded images
 	"image/png"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -93,6 +97,7 @@ type CanvasElement struct {
 	Y1          float64                `json:"y1"`
 	X2          float64                `json:"x2"`
 	Y2          float64                `json:"y2"`
+	Src         string                 `json:"src"`     // Image source (data: URL) for image elements
 	Data        map[string]interface{} `json:"data"`    // Custom data (field type, barcode config, etc.)
 	Objects     []interface{}          `json:"objects"` // For groups
 }
@@ -273,6 +278,9 @@ func parseCanvasElement(m map[string]interface{}) CanvasElement {
 	if v, ok := m["y2"].(float64); ok {
 		elem.Y2 = v
 	}
+	if v, ok := m["src"].(string); ok {
+		elem.Src = v
+	}
 	if v, ok := m["data"].(map[string]interface{}); ok {
 		elem.Data = v
 	}
@@ -310,7 +318,7 @@ func (r *TemplateRenderer) renderElement(img *image.RGBA, elem CanvasElement, it
 	case "group":
 		return r.renderGroup(img, elem, item, location, dpi)
 	case "image":
-		return r.renderBarcode(img, elem, item, location, dpi)
+		return r.renderImage(img, elem, dpi)
 	}
 
 	return nil
@@ -822,6 +830,56 @@ func (r *TemplateRenderer) renderBarcode(img *image.RGBA, elem CanvasElement, it
 	draw.Draw(img, destRect, barcodeImg, image.Point{}, draw.Over)
 
 	return nil
+}
+
+// renderImage draws an embedded image element (Fabric.js "Image" with a data: URL source).
+// Remote URLs are deliberately not fetched: a template is user-supplied JSON and must not
+// turn the server into an HTTP client. Unsupported sources render as nothing.
+func (r *TemplateRenderer) renderImage(img *image.RGBA, elem CanvasElement, dpi int) error {
+	src, err := decodeImageSource(elem.Src)
+	if err != nil || src == nil {
+		return nil
+	}
+
+	width := scaleCoord(elem.Width*elem.ScaleX, dpi)
+	height := scaleCoord(elem.Height*elem.ScaleY, dpi)
+	if width <= 0 || height <= 0 {
+		return nil
+	}
+
+	resized := transform.Resize(src, width, height, transform.Lanczos)
+	x := scaleCoord(elem.Left, dpi)
+	y := scaleCoord(elem.Top, dpi)
+	draw.Draw(img, image.Rect(x, y, x+width, y+height), resized, image.Point{}, draw.Over)
+	return nil
+}
+
+// decodeImageSource decodes a data: URL (base64 or percent-encoded) into an image.
+func decodeImageSource(src string) (image.Image, error) {
+	if !strings.HasPrefix(src, "data:") {
+		return nil, fmt.Errorf("unsupported image source")
+	}
+	comma := strings.Index(src, ",")
+	if comma < 0 {
+		return nil, fmt.Errorf("malformed data url")
+	}
+	meta, payload := src[5:comma], src[comma+1:]
+
+	var raw []byte
+	var err error
+	if strings.HasSuffix(meta, ";base64") {
+		raw, err = base64.StdEncoding.DecodeString(payload)
+	} else {
+		var unescaped string
+		unescaped, err = url.QueryUnescape(payload)
+		raw = []byte(unescaped)
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	decoded, _, err := image.Decode(bytes.NewReader(raw))
+	return decoded, err
 }
 
 // renderRect renders a rectangle element

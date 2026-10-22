@@ -2964,6 +2964,9 @@ definitions:
       showCutGuides:
         description: Draw light borders around labels for cutting
         type: boolean
+      skipLabels:
+        description: Leave this many positions empty on the first sheet
+        type: integer
     required:
     - locationIds
     type: object
@@ -2986,6 +2989,9 @@ definitions:
       showCutGuides:
         description: Draw light borders around labels for cutting
         type: boolean
+      skipLabels:
+        description: Leave this many positions empty on the first sheet
+        type: integer
     required:
     - itemIds
     type: object

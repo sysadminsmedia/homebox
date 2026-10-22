@@ -217,6 +217,7 @@ type LabelTemplateRenderRequest struct {
 	Format        string      `json:"format"`               // "png" or "pdf", defaults to "png"
 	PageSize      string      `json:"pageSize"`             // "Letter", "A4", or "Custom" for PDF
 	ShowCutGuides bool        `json:"showCutGuides"`        // Draw light borders around labels for cutting
+	SkipLabels    int         `json:"skipLabels"`           // Leave this many positions empty on the first sheet
 	CanvasData    string      `json:"canvasData,omitempty"` // Optional: canvas data for live preview (overrides saved template)
 }
 
@@ -464,6 +465,7 @@ func renderLabelsPDF(w http.ResponseWriter, renderer *labelmaker.TemplateRendere
 		pdfOpts.PageSize = labelmaker.PDFPageLetter
 	}
 	pdfOpts.ShowCutGuides = req.ShowCutGuides
+	pdfOpts.SkipLabels = req.SkipLabels
 
 	pdfData, err := renderer.RenderToPDFWithSheetLayout(templateData, items, pdfOpts, sheetLayout)
 	if err != nil {
@@ -739,6 +741,7 @@ type LabelTemplateRenderLocationsRequest struct {
 	Format        string      `json:"format"`        // "png" or "pdf", defaults to "png"
 	PageSize      string      `json:"pageSize"`      // "Letter", "A4", or "Custom" for PDF
 	ShowCutGuides bool        `json:"showCutGuides"` // Draw light borders around labels for cutting
+	SkipLabels    int         `json:"skipLabels"`    // Leave this many positions empty on the first sheet
 }
 
 // HandleLabelTemplatesRenderLocations godoc
@@ -821,6 +824,7 @@ func (ctrl *V1Controller) HandleLabelTemplatesRenderLocations() errchain.Handler
 				pdfOpts.PageSize = labelmaker.PDFPageLetter
 			}
 			pdfOpts.ShowCutGuides = req.ShowCutGuides
+			pdfOpts.SkipLabels = req.SkipLabels
 
 			// Check if template has a preset with sheet layout (Avery-style)
 			var sheetLayout *labelmaker.SheetLayout

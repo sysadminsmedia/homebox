@@ -3,105 +3,56 @@ title: Label Editor
 description: Feature inventory and roadmap for the label template editor.
 ---
 
-This document tracks the features of the label template editor.
+This page tracks what the label template system does today and what is planned. The user-facing guide is
+[Label Templates](/en/user-guide/label-templates).
 
-## Implemented Features (v0.1)
+## Implemented
 
-### Label Template System
-- Create, edit, duplicate, and delete label templates
-- Support for custom dimensions or preset label sizes
-- Presets for common label formats:
-  - **Avery** sheet labels (5160, 5163, 5167, etc.)
-  - **Brother** continuous and die-cut labels (DK series)
-  - **Dymo** labels (various sizes)
-- Shared templates within groups
-- Default template for quick printing
+### Templates
+- Create, edit, duplicate, delete and export (JSON) templates; share a template with the collection.
+- Presets for Avery sheet labels, Brother DK rolls, Dymo, Brady and Zebra stock, plus custom sizes.
+- A per-user default template (synced preference) used by Quick print.
+- List cards show a server-rendered thumbnail of each design.
 
-### Canvas Editor
-- Visual WYSIWYG label design
-- Add text elements with data field placeholders
-- Add barcodes (QR Code, Code128, DataMatrix, etc.)
-- Add shapes (rectangles, lines)
-- Drag and resize elements
-- Rotation support
-
-### Text Formatting
-- Font size control
-- Bold text toggle
-- Text alignment (left, center, right)
-- Text color picker
-- Auto-fit text (scales font to fit within bounds)
-- Insert data field placeholders:
-  - Item fields: name, description, asset ID, serial number, etc.
-  - Location fields: name, path, item count
-  - Common fields: current date, current time
-
-### Layer Management
-- Layers panel showing all canvas objects
-- Reorder objects (bring forward, send backward, to front, to back)
-- Click layer items to select objects on canvas
-- Toggle layer visibility
-
-### Grid and Snap
-- Optional grid overlay on canvas
-- Snap objects to grid when moving/resizing
-- Configurable grid size
-
-### Ruler
-- Rulers along top and left edges of canvas
-- Display measurements in millimeters or inches
-- Zoom-aware ruler scaling
-
-### Zoom Controls
-- Zoom in/out buttons
-- Fit to view
-- Reset to 100%
-- Zoom range: 25% to 400%
-
-### Live Preview
-- Real-time preview with actual item data
-- Preview updates automatically when canvas changes (debounced)
-- No need to save before previewing
+### Editor
+- Fabric.js canvas with rulers, zoom (fit, 25–400%), grid and snap; mm or inch units everywhere.
+- Elements: text (auto-fit, bold, alignment, colour), barcodes (QR, DataMatrix, Code 128, Code 39, EAN-13, EAN-8,
+  UPC-A) with compatibility-filtered data sources, rectangles, lines and embedded raster images (data URLs).
+- Data field placeholders for item, location and common fields, including custom fields.
+- Align the selection to the label edges or centre; nudge with the arrow keys; undo and redo.
+- Inspector with Element, Layers and Label tabs; the Label tab holds name, preset, size, orientation, DPI, Brother
+  media type and sharing.
+- Live print preview rendered by the backend with a real item, and a Test print to the default printer.
+- Responsive layout: tool rail and inspector stack under the canvas on narrow screens.
 
 ### Printing
-- Download as PNG or PDF
-- Multi-page PDF support for batch printing
-- Sheet layout support (Avery-style label sheets)
-- Cut guides option for manual cutting
-- Direct printing to network printers (IPP/CUPS)
-- Direct printing to Brother label printers (raster protocol)
+- One **Print label** split button on items and locations: quick print with defaults, the full dialog, PNG download
+  and the legacy built-in QR label.
+- Print dialog with template cards, per-entity copies, printer status and a browser destination; PDF for sheets.
+- Bulk print from any item list; batch print page for items or locations with print order, copies, sheet options
+  (skip first, cut guides, paper size) and a first-sheet preview.
+- Direct printing to IPP/CUPS (URF) and Brother QL (raster protocol); WebUSB and Web Bluetooth printing from the
+  browser.
 
-### Printer Management
-- Add and configure network printers
-- Support for IPP/CUPS printers
-- Support for Brother QL-series label printers
-- Printer status checking
-- Test print functionality
-- Default printer selection
+### Printers
+- Printers are a Collection tab: add, edit, test, check status, set default, delete; browser-paired USB/Bluetooth
+  devices listed alongside.
+- Address validation rejects public addresses unless `HBOX_PRINTER_ALLOW_PUBLIC_ADDRESSES=true`.
 
-## Future Considerations
+## Backend notes
 
-### Object Alignment Tools
-- Align selected objects (left, center, right, top, middle, bottom)
-- Distribute objects evenly
-- Match width/height of selected objects
+- Renderer: `backend/pkgs/labelmaker/template_renderer.go` parses the Fabric.js JSON and draws text, barcodes, shapes
+  and images onto an RGBA image at the template DPI. Image elements accept `data:` URLs only; remote URLs are not
+  fetched.
+- Sheets: `pdf_renderer.go` places labels on Avery-style layouts; `SkipLabels` offsets the first sheet.
+- Entities: handlers resolve items and locations through the entity repository (`GetOneByGroup`,
+  `GetContainerByGroup`, `PathForEntity`).
 
-### Undo/Redo
-- Track canvas state history
-- Keyboard shortcuts (Ctrl+Z, Ctrl+Y)
-- Visual undo history panel
+## Planned
 
-### Templates Library
-- Pre-built template designs
-- Import/export templates
-- Template categories and search
-
-### Advanced Text Features
-- Multi-line text with line breaks
-- Text along path (curved text)
-- Character spacing control
-- Text outline/shadow effects
-
-### Smart Guides
-- Snap to other objects' edges
-- Alignment guides when moving objects
+- Templates scoped to an entity type (for example a different default for containers).
+- Template import from JSON and a small gallery of starter designs.
+- Smart guides (snap to other elements) and multi-select alignment.
+- Barcode content from custom fields.
+- Print history with job status, and printing through API keys for print-on-scan automations.
+- Text along a path, character spacing and outlines.

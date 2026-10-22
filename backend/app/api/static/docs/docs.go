@@ -8257,6 +8257,10 @@ const docTemplate = `{
                 "showCutGuides": {
                     "description": "Draw light borders around labels for cutting",
                     "type": "boolean"
+                },
+                "skipLabels": {
+                    "description": "Leave this many positions empty on the first sheet",
+                    "type": "integer"
                 }
             }
         },
@@ -8288,6 +8292,10 @@ const docTemplate = `{
                 "showCutGuides": {
                     "description": "Draw light borders around labels for cutting",
                     "type": "boolean"
+                },
+                "skipLabels": {
+                    "description": "Leave this many positions empty on the first sheet",
+                    "type": "integer"
                 }
             }
         },

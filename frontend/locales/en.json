@@ -40,7 +40,8 @@
             "members": "Members",
             "notifiers": "Notifiers",
             "settings": "Settings",
-            "tools": "Tools"
+            "tools": "Tools",
+            "printers": "Printers"
         },
         "uses": "Uses"
     },
@@ -445,7 +446,14 @@
                 "duplicate": "Duplicate label template",
                 "edit": "Edit label template",
                 "set_default": "Set as default for quick printing",
-                "clear_default": "Remove as default template"
+                "clear_default": "Remove as default template",
+                "sheet_up": "{count}-up sheet",
+                "continuous": "continuous roll",
+                "die_cut": "die-cut",
+                "thumbnail_alt": "Preview of {name}",
+                "edited": "Edited",
+                "more_actions": "More actions for {name}",
+                "export_json": "Export JSON"
             },
             "confirm_delete": "Delete this label template?",
             "default": "Default",
@@ -502,7 +510,8 @@
                 "print_failed": "Failed to print label",
                 "render_failed": "Failed to render label",
                 "default_set": "\"{name}\" set as default for quick printing",
-                "default_cleared": "Default template cleared"
+                "default_cleared": "Default template cleared",
+                "export_failed": "Failed to export label template"
             },
             "editor": {
                 "title": "Edit Label Template",
@@ -581,7 +590,10 @@
                     "select_item_hint": "Select an item to preview the label with real data",
                     "rendering": "Rendering...",
                     "retry": "Retry",
-                    "refresh": "Refresh Preview"
+                    "refresh": "Refresh Preview",
+                    "print_preview": "Print preview",
+                    "pick_item": "Pick an item…",
+                    "render_hint": "Rendered by the server at {dpi} dpi with the item you picked, exactly as it prints. Updates shortly after you stop editing."
                 },
                 "layers": {
                     "title": "Layers",
@@ -591,7 +603,8 @@
                     "bring_to_front": "Bring to Front",
                     "send_to_back": "Send to Back",
                     "show": "Show Layer",
-                    "hide": "Hide Layer"
+                    "hide": "Hide Layer",
+                    "order_hint": "Top layer first"
                 },
                 "display": {
                     "title": "Display",
@@ -604,7 +617,10 @@
                     "grid_size": "Grid Size",
                     "orientation": "Orientation",
                     "horizontal": "Horizontal",
-                    "vertical": "Vertical"
+                    "vertical": "Vertical",
+                    "grid": "Grid",
+                    "snap": "Snap",
+                    "rulers": "Rulers"
                 },
                 "transform": {
                     "title": "Transform",
@@ -614,7 +630,63 @@
                     "zoom_in": "Zoom in",
                     "zoom_out": "Zoom out",
                     "fit": "Fit to view",
-                    "actual": "Actual size"
+                    "actual": "Actual size",
+                    "in": "Zoom in",
+                    "out": "Zoom out"
+                },
+                "design": "Design",
+                "inspector": "Inspector",
+                "not_found": "Template not found",
+                "tools": {
+                    "title": "Tools",
+                    "select": "Select",
+                    "image": "Add image",
+                    "image_too_large": "Image must be under {max}",
+                    "image_failed": "Could not add image",
+                    "rectangle": "Rectangle",
+                    "line": "Line",
+                    "align": "Align",
+                    "align_to_label": "Align to label",
+                    "undo": "Undo",
+                    "redo": "Redo",
+                    "delete": "Delete element"
+                },
+                "align": {
+                    "left": "Left edge",
+                    "center": "Center horizontally",
+                    "right": "Right edge",
+                    "top": "Top edge",
+                    "middle": "Center vertically",
+                    "bottom": "Bottom edge"
+                },
+                "header": {
+                    "back": "Back to label templates",
+                    "name_label": "Template name",
+                    "unsaved": "Unsaved changes",
+                    "units": "Units",
+                    "test_print": "Test print",
+                    "test_print_hint": "Print one label for the preview item on {printer}"
+                },
+                "tabs": {
+                    "element": "Element",
+                    "layers": "Layers",
+                    "label": "Label"
+                },
+                "element": {
+                    "no_selection": "Select an element on the canvas to edit its position, size and content.",
+                    "insert_field": "Insert data field",
+                    "type_text": "Text",
+                    "type_barcode": "Barcode",
+                    "type_rect": "Rectangle",
+                    "type_line": "Line",
+                    "type_image": "Image",
+                    "type_group": "Group"
+                },
+                "toast": {
+                    "test_print_sent": "Test label sent to {printer}",
+                    "test_print_failed": "Test print failed",
+                    "test_print_needs_item": "Pick a preview item first",
+                    "test_print_needs_printer": "Set a default printer under Collection › Printers first"
                 }
             },
             "print_dialog": {
@@ -638,7 +710,43 @@
                 "preview_of_locations": "Preview of first location ({count} locations total)",
                 "item_quantities": "Label Quantities",
                 "location_quantities": "Location Label Quantities",
-                "total_labels": "{count} labels total"
+                "total_labels": "{count} labels",
+                "template": "Template",
+                "manage_templates": "Manage templates",
+                "preview_of": "Preview of the first label · {size}",
+                "copies_per_item": "Copies per item",
+                "copies_per_location": "Copies per location",
+                "total": "Total",
+                "send_to": "Send to",
+                "this_browser": "This browser",
+                "status_online": "Online",
+                "status_offline": "Offline",
+                "status_unknown": "Status unknown",
+                "roll_not_for_sheets": "Roll printer, not for sheets",
+                "sheet_pdf_hint": "sheet templates print as PDF",
+                "download_pdf": "Download PDF",
+                "download_png": "Download PNG",
+                "no_templates": "No label templates yet.",
+                "create_template": "Create a template",
+                "subtitle_items_one": "1 item selected",
+                "subtitle_items_many": "{count} items selected",
+                "subtitle_locations_one": "1 location selected",
+                "subtitle_locations_many": "{count} locations selected",
+                "print_one": "Print 1 label",
+                "print_many": "Print {count} labels"
+            },
+            "print_button": {
+                "print_label": "Print label",
+                "more": "More print options",
+                "quick_with": "Print with {template}",
+                "quick_hint": "1 copy → {printer}. Your defaults.",
+                "choose": "Choose template, printer, copies…",
+                "download_png": "Download label as PNG",
+                "basic_label": "Basic label",
+                "basic_label_hint": "built-in QR card",
+                "change_defaults": "Change defaults in Collection › Printers",
+                "no_defaults": "No default template or printer yet",
+                "sent": "Label sent to {printer}"
             }
         }
     },
@@ -1051,8 +1159,33 @@
                 "select_printer_placeholder": "Choose a printer",
                 "send_to_printer": "Send {count} to Printer",
                 "direct_print_success": "Sent {count} labels to printer",
-                "direct_print_failed": "Failed to print labels"
-            }
+                "direct_print_failed": "Failed to print labels",
+                "kind_items": "Items",
+                "kind_locations": "Locations",
+                "results_selected": "{results} results, {selected} selected",
+                "drag_hint": "Drag selected rows to set the print order",
+                "item_count": "{count} items",
+                "preview_hint": "Select items and a template to preview the first label or sheet.",
+                "sheet_preview": "First sheet · {per} per sheet · {sheets} sheet(s)",
+                "skip_first": "Skip first",
+                "download_pdf": "Download PDF",
+                "download_png": "Download PNG",
+                "sheets_need_pdf": "sheets need PDF",
+                "print_browser": "Print in this browser",
+                "roll_not_for_sheets": "roll printer, not for sheets",
+                "summary": "{labels} labels from {count} selected · {template}",
+                "nothing_selected": "Nothing selected yet.",
+                "clear_selection": "Clear selection",
+                "action_download_png": "Download PNG",
+                "action_print_browser": "Print {count} labels",
+                "sheet_count_one": "1 sheet",
+                "sheet_count_many": "{count} sheets",
+                "action_download_pdf_one": "Download PDF, 1 sheet",
+                "action_download_pdf_many": "Download PDF, {count} sheets"
+            },
+            "subtitle": "{count} total · {shared} shared with the collection",
+            "new_template": "New template",
+            "empty_hint": "A template is a label design: text, data fields and barcodes laid out on a label size. Items and locations print with it."
         },
         "printers": {
             "network_printers": "Network Printers",
@@ -1093,8 +1226,42 @@
                 "test_failed": "Test print failed",
                 "paired": "Paired with {name}",
                 "removed": "Printer removed",
-                "required_fields": "Name and address are required"
-            }
+                "required_fields": "Name and address are required",
+                "status_checked": "Printer status: {status}",
+                "status_failed": "Could not reach the printer"
+            },
+            "title": "Printers",
+            "subtitle": "Shared with everyone in this collection. Quick print uses the default printer with your default template.",
+            "table": {
+                "printer": "Printer",
+                "connection": "Connection",
+                "media": "Label size",
+                "status": "Status",
+                "actions": "Actions"
+            },
+            "types": {
+                "ipp": "IPP",
+                "cups": "CUPS",
+                "brother_raster": "Brother raster"
+            },
+            "status_online": "Online",
+            "status_offline": "Offline",
+            "status_unknown": "Unknown · never checked",
+            "status_paired": "Paired in this browser",
+            "test_print": "Test print",
+            "check_status": "Check status",
+            "set_default": "Set as default",
+            "more_actions": "More actions for {name}",
+            "this_device_only": "This device only",
+            "forget": "Forget",
+            "local_note": "USB and Bluetooth printers are paired per browser (Chrome and Edge) and listed here with the shared ones.",
+            "defaults_title": "Printing defaults",
+            "defaults_sub": "What Quick print uses when you press Print label on an item or location.",
+            "default_template": "Default template for Quick print",
+            "default_template_none": "No default template",
+            "default_template_hint": "Your choice, synced with your account like other preferences. Each member picks their own. The default printer is shared.",
+            "address_policy": "Printer address policy",
+            "address_policy_text": "Only private network addresses are accepted. To allow public addresses, start the server with"
         }
     },
     "profile": {
@@ -1346,6 +1513,19 @@
             "restore_requires_empty": "Restore requires a collection with no items. Switch to a freshly registered collection (default locations and tags are fine) and try again.",
             "restore_started": "Restore started — refresh shortly to see imported items.",
             "wipe_inventory_success": "Successfully wiped inventory. { results } items deleted."
+        },
+        "labels": "Labels",
+        "labels_sub": "Design label templates and print them for items and locations.",
+        "labels_set": {
+            "templates": "Label templates",
+            "templates_sub": "Design labels with text, data fields, barcodes and images for Brother, Dymo and Avery label stock.",
+            "templates_button": "Open templates",
+            "batch": "Batch print",
+            "batch_sub": "Pick many items or locations, choose a template and print to a label printer, a PDF or a sheet.",
+            "batch_button": "Batch print",
+            "printers": "Printers",
+            "printers_sub": "Add network and Brother label printers, pick defaults for Quick print.",
+            "printers_button": "Manage printers"
         }
     }
 }

@@ -24,12 +24,19 @@
   const { openDialog } = useDialog();
 
   const handleRefresh = () => refresh();
+
+  const sharedCount = computed(() => (templates.value ?? []).filter(tpl => tpl.isShared).length);
 </script>
 
 <template>
   <BaseContainer>
-    <div class="mb-4 flex justify-between">
-      <BaseSectionHeader>{{ $t("pages.label_templates.title") }}</BaseSectionHeader>
+    <div class="mb-4 flex flex-wrap items-start justify-between gap-3">
+      <div>
+        <BaseSectionHeader>{{ $t("pages.label_templates.title") }}</BaseSectionHeader>
+        <p v-if="templates" class="text-sm text-muted-foreground">
+          {{ $t("pages.label_templates.subtitle", { count: templates.length, shared: sharedCount }) }}
+        </p>
+      </div>
       <div class="flex gap-2">
         <Button variant="outline" as-child>
           <NuxtLink to="/label-templates/batch">
@@ -39,7 +46,7 @@
         </Button>
         <Button @click="openDialog(DialogID.CreateLabelTemplate)">
           <MdiPlus class="mr-2" />
-          {{ $t("global.create") }}
+          {{ $t("pages.label_templates.new_template") }}
         </Button>
       </div>
     </div>
@@ -60,8 +67,9 @@
       />
     </div>
 
-    <div v-else class="flex flex-col items-center justify-center py-12 text-center">
-      <p class="mb-4 text-muted-foreground">{{ $t("pages.label_templates.no_templates") }}</p>
+    <div v-else class="flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center">
+      <p class="mb-1 font-medium">{{ $t("pages.label_templates.no_templates") }}</p>
+      <p class="mb-4 max-w-md text-sm text-muted-foreground">{{ $t("pages.label_templates.empty_hint") }}</p>
       <Button @click="openDialog(DialogID.CreateLabelTemplate)">
         <MdiPlus class="mr-2" />
         {{ $t("components.label_template.create_modal.title") }}

@@ -110,7 +110,7 @@
             {{ $t("components.label_template.form.share_description") }}
           </p>
         </div>
-        <Switch id="shared" v-model:checked="form.isShared" />
+        <Switch id="shared" v-model="form.isShared" />
       </div>
 
       <div class="flex justify-end gap-2 pt-2">
