@@ -25,10 +25,23 @@
           :src="imageUrl"
           :alt="item.name"
         />
-        <div v-if="item.parent" class="absolute inset-x-1 bottom-1">
-          <Badge class="text-wrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline">
-            <NuxtLink v-if="item.parent" :to="`/location/${item.parent.id}`">
+        <div v-if="item.parent || item.location" class="absolute inset-x-1 bottom-1 flex flex-wrap gap-1">
+          <Badge
+            v-if="item.parent"
+            class="text-wrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline"
+          >
+            <NuxtLink :to="parentLink">
               {{ locationString }}
+            </NuxtLink>
+          </Badge>
+          <Badge
+            v-if="item.location"
+            class="gap-1 text-wrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline"
+            :title="$t('items.own_location')"
+          >
+            <MdiMapMarkerOutline class="size-3 shrink-0" />
+            <NuxtLink :to="`/location/${item.location.id}`">
+              {{ ownLocationString }}
             </NuxtLink>
           </Badge>
         </div>
@@ -80,6 +93,7 @@
   import type { EntityOut, EntitySummary } from "~~/lib/api/types/data-contracts";
   import MdiShieldCheck from "~icons/mdi/shield-check";
   import MdiArchive from "~icons/mdi/archive";
+  import MdiMapMarkerOutline from "~icons/mdi/map-marker-outline";
   import { Badge } from "@/components/ui/badge";
   import { Card } from "@/components/ui/card";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -128,6 +142,16 @@
 
   const locationString = computed(
     () => props.locationFlatTree.find(l => l.id === props.item.parent?.id)?.treeString || props.item.parent?.name
+  );
+
+  // The parent can be an item, which lives under /item, not /location.
+  const parentLink = computed(
+    () => `/${props.item.parent?.entityType?.isLocation === false ? "item" : "location"}/${props.item.parent?.id}`
+  );
+
+  // Only set when the item is stored somewhere other than its parent item.
+  const ownLocationString = computed(
+    () => props.locationFlatTree.find(l => l.id === props.item.location?.id)?.treeString || props.item.location?.name
   );
 </script>
 

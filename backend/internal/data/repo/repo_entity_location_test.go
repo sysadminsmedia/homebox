@@ -314,7 +314,8 @@ func TestEntityLocation_QueryByLocationFindsOverriddenChild(t *testing.T) {
 }
 
 // The item page lists an item's children by parent, not by location, so a
-// spare part stored elsewhere still shows up under the product it belongs to.
+// spare part stored elsewhere still shows up under the product it belongs to,
+// and its card can say where it is stored.
 func TestEntityLocation_QueryByParentItemFindsOverriddenChild(t *testing.T) {
 	ctx := context.Background()
 	f := newLocationFixture(t, "loc-query-parent-item")
@@ -344,6 +345,17 @@ func TestEntityLocation_QueryByParentItemFindsOverriddenChild(t *testing.T) {
 	ids := make([]uuid.UUID, 0, len(children.Items))
 	for _, e := range children.Items {
 		ids = append(ids, e.ID)
+
+		switch e.ID {
+		case storedElsewhere.ID:
+			require.NotNil(t, e.Location, "own location should be listed")
+			assert.Equal(t, f.basement.ID, e.Location.ID)
+		case inherited.ID:
+			assert.Nil(t, e.Location, "an inherited location is not the item's own")
+		}
+		require.NotNil(t, e.Parent)
+		require.NotNil(t, e.Parent.EntityType, "the UI needs the parent's type to link it")
+		assert.False(t, e.Parent.EntityType.IsLocation)
 	}
 	assert.ElementsMatch(t, []uuid.UUID{storedElsewhere.ID, inherited.ID}, ids)
 }

@@ -304,6 +304,7 @@ describe("user should be able to create an item and add an attachment", () => {
     const { response, data } = await api.items.getAll({ parentItemIds: [parent.id] });
     expect(response.status).toBe(200);
     expect(data.items.map(i => i.id)).toEqual([child.id]);
+    expect(data.items[0]?.location?.id).toBe(storageLocation.id);
 
     await api.items.delete(child.id);
     await api.items.delete(parent.id);

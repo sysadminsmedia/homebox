@@ -3351,7 +3351,6 @@ components:
           description: Extras
           type: string
         parent:
-          description: Edges
           allOf:
             - $ref: "#/components/schemas/repo.EntitySummary"
           x-omitempty: true
@@ -3466,6 +3465,18 @@ components:
         itemCount:
           description: Container-specific (populated when querying locations)
           type: number
+        location:
+          description: >-
+            Location is set only when this entity has its own location, i.e. it
+            is
+
+            stored somewhere other than its parent item. Unlike EntityOut.Location
+
+            it is not resolved, which would cost an ancestor walk per row.
+          allOf:
+            - $ref: "#/components/schemas/repo.EntitySummary"
+          x-omitempty: true
+          nullable: true
         name:
           type: string
         parent:

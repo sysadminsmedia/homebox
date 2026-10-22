@@ -821,7 +821,6 @@ export interface EntityOut {
   name: string;
   /** Extras */
   notes: string;
-  /** Edges */
   parent?: EntitySummary | null;
   /** Purchase */
   purchaseDate: Date | string;
@@ -870,6 +869,12 @@ export interface EntitySummary {
   insured: boolean;
   /** Container-specific (populated when querying locations) */
   itemCount: number;
+  /**
+   * Location is set only when this entity has its own location, i.e. it is
+   * stored somewhere other than its parent item. Unlike EntityOut.Location
+   * it is not resolved, which would cost an ancestor walk per row.
+   */
+  location?: EntitySummary | null;
   name: string;
   /** Edges */
   parent?: EntitySummary | null;
