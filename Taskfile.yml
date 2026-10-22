@@ -210,6 +210,8 @@ tasks:
   test:ci:
     env:
       UNSAFE_DISABLE_PASSWORD_PROJECTION: "yes_i_am_sure"
+      # The suite registers and logs in many users from one address
+      HBOX_AUTH_RATE_LIMIT_ENABLED: "false"
     desc: Runs end-to-end test on a live server (only for use in CI)
     cmds:
       - cd backend && go build ./app/api
@@ -221,6 +223,7 @@ tasks:
   test:ci:postgresql:
     env:
       UNSAFE_DISABLE_PASSWORD_PROJECTION: "yes_i_am_sure"
+      HBOX_AUTH_RATE_LIMIT_ENABLED: "false"
       HBOX_DATABASE_DRIVER: postgres
       HBOX_DATABASE_USERNAME: homebox
       HBOX_DATABASE_PASSWORD: homebox
