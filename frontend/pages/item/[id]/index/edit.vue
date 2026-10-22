@@ -554,14 +554,27 @@
         return;
       }
 
+      const parentLocation = data.location ?? (data.parent?.entityType?.isLocation ? data.parent : null);
+
+      // A syncing parent clears its children's own locations whenever it is
+      // saved, so an own location picked here wouldn't stick.
+      if (data.syncChildEntityLocations) {
+        location.value = parentLocation;
+        locationExplicit.value = false;
+        toast.info(t("items.toast.sync_child_location"));
+        return;
+      }
+
       // Show where it lands by default, i.e. the parent's location (#1589).
       // Leave a location the user picked alone — overwriting it here is what
-      // made "child of X, stored in Y" impossible (#1688).
+      // made "child of X, stored in Y" impossible (#1688). Say so when the
+      // location changes, so an accessory stored elsewhere isn't moved silently.
       if (!locationExplicit.value) {
-        location.value = data.location ?? (data.parent?.entityType?.isLocation ? data.parent : null);
-      }
-      if (data.syncChildEntityLocations) {
-        toast.info(t("items.toast.sync_child_location"));
+        const previousId = location.value?.id;
+        location.value = parentLocation;
+        if (previousId && parentLocation && previousId !== parentLocation.id) {
+          toast.info(t("items.toast.location_follows_parent", { location: parentLocation.name }));
+        }
       }
     }
   }
@@ -683,7 +696,12 @@
         <BaseCard class="overflow-visible">
           <template #title> {{ $t("items.edit_details") }} </template>
           <div class="mb-6 grid gap-4 border-t px-5 pt-2 md:grid-cols-2">
-            <LocationSelector v-model="location" @update:model-value="onLocationChanged()" />
+            <div class="flex flex-col gap-1">
+              <LocationSelector v-model="location" @update:model-value="onLocationChanged()" />
+              <p v-if="parent?.id && location?.id" class="px-1 text-xs text-muted-foreground">
+                {{ locationExplicit ? $t("items.location_hint_own") : $t("items.location_hint_inherited") }}
+              </p>
+            </div>
             <ItemSelector
               v-model="parent"
               v-model:search="query"
