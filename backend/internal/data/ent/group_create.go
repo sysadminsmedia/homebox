@@ -17,7 +17,9 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/export"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/labeltemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/printer"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
@@ -209,6 +211,36 @@ func (_c *GroupCreate) AddExports(v ...*Export) *GroupCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddExportIDs(ids...)
+}
+
+// AddLabelTemplateIDs adds the "label_templates" edge to the LabelTemplate entity by IDs.
+func (_c *GroupCreate) AddLabelTemplateIDs(ids ...uuid.UUID) *GroupCreate {
+	_c.mutation.AddLabelTemplateIDs(ids...)
+	return _c
+}
+
+// AddLabelTemplates adds the "label_templates" edges to the LabelTemplate entity.
+func (_c *GroupCreate) AddLabelTemplates(v ...*LabelTemplate) *GroupCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddLabelTemplateIDs(ids...)
+}
+
+// AddPrinterIDs adds the "printers" edge to the Printer entity by IDs.
+func (_c *GroupCreate) AddPrinterIDs(ids ...uuid.UUID) *GroupCreate {
+	_c.mutation.AddPrinterIDs(ids...)
+	return _c
+}
+
+// AddPrinters adds the "printers" edges to the Printer entity.
+func (_c *GroupCreate) AddPrinters(v ...*Printer) *GroupCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddPrinterIDs(ids...)
 }
 
 // Mutation returns the GroupMutation object of the builder.
@@ -459,6 +491,38 @@ func (_c *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(export.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.LabelTemplatesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.LabelTemplatesTable,
+			Columns: []string{group.LabelTemplatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(labeltemplate.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.PrintersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.PrintersTable,
+			Columns: []string{group.PrintersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(printer.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

@@ -23,6 +23,8 @@ type AllRepos struct {
 	MaintEntry          *MaintenanceEntryRepository
 	Notifiers           *NotifierRepository
 	Exports             *ExportRepository
+	LabelTemplates      *LabelTemplatesRepository
+	Printers            *PrintersRepository
 }
 
 // New constructs the repository container. searchEngine selects the free-text
@@ -46,5 +48,7 @@ func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubC
 		MaintEntry:          &MaintenanceEntryRepository{db},
 		Notifiers:           NewNotifierRepository(db),
 		Exports:             &ExportRepository{db},
+		LabelTemplates:      &LabelTemplatesRepository{db, bus},
+		Printers:            &PrintersRepository{db, bus},
 	}
 }

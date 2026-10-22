@@ -252,6 +252,8 @@
   import MdiPlus from "~icons/mdi/plus";
   import MdiLogout from "~icons/mdi/logout";
   import MdiFileDocumentMultiple from "~icons/mdi/file-document-multiple";
+  import MdiLabel from "~icons/mdi/label";
+  import MdiPrinter from "~icons/mdi/printer";
   import MdiChevronRight from "~icons/mdi/chevron-right";
 
   import {
@@ -435,6 +437,20 @@
       active: computed(() => route.path === "/templates"),
       name: computed(() => t("menu.templates")),
       to: "/templates",
+    },
+    {
+      icon: MdiLabel,
+      id: 7,
+      active: computed(() => route.path.startsWith("/label-templates")),
+      name: computed(() => t("menu.label_templates")),
+      to: "/label-templates",
+    },
+    {
+      icon: MdiPrinter,
+      id: 8,
+      active: computed(() => route.path === "/printers"),
+      name: computed(() => t("menu.printers")),
+      to: "/printers",
     },
     {
       icon: MdiWrench,

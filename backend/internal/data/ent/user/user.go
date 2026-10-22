@@ -49,6 +49,8 @@ const (
 	EdgeAPIKeys = "api_keys"
 	// EdgeNotifiers holds the string denoting the notifiers edge name in mutations.
 	EdgeNotifiers = "notifiers"
+	// EdgeLabelTemplates holds the string denoting the label_templates edge name in mutations.
+	EdgeLabelTemplates = "label_templates"
 	// EdgeUserGroups holds the string denoting the user_groups edge name in mutations.
 	EdgeUserGroups = "user_groups"
 	// Table holds the table name of the user in the database.
@@ -86,6 +88,13 @@ const (
 	NotifiersInverseTable = "notifiers"
 	// NotifiersColumn is the table column denoting the notifiers relation/edge.
 	NotifiersColumn = "user_id"
+	// LabelTemplatesTable is the table that holds the label_templates relation/edge.
+	LabelTemplatesTable = "label_templates"
+	// LabelTemplatesInverseTable is the table name for the LabelTemplate entity.
+	// It exists in this package in order to avoid circular dependency with the "labeltemplate" package.
+	LabelTemplatesInverseTable = "label_templates"
+	// LabelTemplatesColumn is the table column denoting the label_templates relation/edge.
+	LabelTemplatesColumn = "owner_id"
 	// UserGroupsTable is the table that holds the user_groups relation/edge.
 	UserGroupsTable = "user_groups"
 	// UserGroupsInverseTable is the table name for the UserGroup entity.
@@ -282,6 +291,20 @@ func ByNotifiers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByLabelTemplatesCount orders the results by label_templates count.
+func ByLabelTemplatesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newLabelTemplatesStep(), opts...)
+	}
+}
+
+// ByLabelTemplates orders the results by label_templates terms.
+func ByLabelTemplates(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newLabelTemplatesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByUserGroupsCount orders the results by user_groups count.
 func ByUserGroupsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -328,6 +351,13 @@ func newNotifiersStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(NotifiersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, NotifiersTable, NotifiersColumn),
+	)
+}
+func newLabelTemplatesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(LabelTemplatesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, LabelTemplatesTable, LabelTemplatesColumn),
 	)
 }
 func newUserGroupsStep() *sqlgraph.Step {

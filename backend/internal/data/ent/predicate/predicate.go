@@ -39,6 +39,9 @@ type Group func(*sql.Selector)
 // GroupInvitationToken is the predicate function for groupinvitationtoken builders.
 type GroupInvitationToken func(*sql.Selector)
 
+// LabelTemplate is the predicate function for labeltemplate builders.
+type LabelTemplate func(*sql.Selector)
+
 // MaintenanceEntry is the predicate function for maintenanceentry builders.
 type MaintenanceEntry func(*sql.Selector)
 
@@ -47,6 +50,9 @@ type Notifier func(*sql.Selector)
 
 // PasswordResetTokens is the predicate function for passwordresettokens builders.
 type PasswordResetTokens func(*sql.Selector)
+
+// Printer is the predicate function for printer builders.
+type Printer func(*sql.Selector)
 
 // Tag is the predicate function for tag builders.
 type Tag func(*sql.Selector)
