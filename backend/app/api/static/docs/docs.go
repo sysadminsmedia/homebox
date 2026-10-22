@@ -295,6 +295,16 @@ const docTemplate = `{
                             "type": "string"
                         },
                         "collectionFormat": "multi",
+                        "description": "parent item IDs; matches direct children wherever they are stored",
+                        "name": "parentItemIds",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
                         "description": "entity type IDs; when provided this filter takes precedence over isLocation",
                         "name": "entityTypeIds",
                         "in": "query"

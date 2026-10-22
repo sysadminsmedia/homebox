@@ -274,4 +274,40 @@ describe("user should be able to create an item and add an attachment", () => {
     parentCleanup();
     childsCleanup();
   });
+
+  test("child items stored elsewhere are listed under their parent item", async () => {
+    const api = await sharedUserClient();
+    const [parentLocation, parentCleanup] = await useLocation(api);
+    const [storageLocation, storageCleanup] = await useLocation(api);
+
+    const { response: parentResponse, data: parent } = await api.items.create({
+      name: "parent-item",
+      tagIds: [],
+      description: "test-description",
+      quantity: 1,
+      parentId: parentLocation.id,
+    });
+    expect(parentResponse.status).toBe(201);
+
+    const { response: childResponse, data: child } = await api.items.create({
+      name: "child-item",
+      tagIds: [],
+      description: "test-description",
+      quantity: 1,
+      parentId: parent.id,
+      locationId: storageLocation.id,
+    });
+    expect(childResponse.status).toBe(201);
+
+    // parentIds matches by location, so it only finds the child under the
+    // location it's stored in; parentItemIds finds it under its parent item.
+    const { response, data } = await api.items.getAll({ parentItemIds: [parent.id] });
+    expect(response.status).toBe(200);
+    expect(data.items.map(i => i.id)).toEqual([child.id]);
+
+    await api.items.delete(child.id);
+    await api.items.delete(parent.id);
+    await parentCleanup();
+    await storageCleanup();
+  });
 });

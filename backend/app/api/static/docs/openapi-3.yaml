@@ -183,6 +183,14 @@ paths:
             type: array
             items:
               type: string
+        - description: parent item IDs; matches direct children wherever they are stored
+          name: parentItemIds
+          in: query
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
         - description: entity type IDs; when provided this filter takes precedence over
             isLocation
           name: entityTypeIds

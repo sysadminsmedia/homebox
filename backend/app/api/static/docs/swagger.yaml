@@ -2574,6 +2574,13 @@ paths:
         name: parentIds
         type: array
       - collectionFormat: multi
+        description: parent item IDs; matches direct children wherever they are stored
+        in: query
+        items:
+          type: string
+        name: parentItemIds
+        type: array
+      - collectionFormat: multi
         description: entity type IDs; when provided this filter takes precedence over
           isLocation
         in: query

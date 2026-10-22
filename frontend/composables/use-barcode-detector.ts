@@ -393,7 +393,7 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
             if (data.items.length === 1) {
               const [itemRes, childRes] = await Promise.all([
                 api.items.get(data.items[0]!.id),
-                api.items.getAll({ parentIds: [data.items[0]!.id] }),
+                api.items.getAll({ parentItemIds: [data.items[0]!.id] }),
               ]);
               const result: EntityData = { item: itemRes.data ?? undefined, childItems: childRes.data?.items ?? [] };
               entityCache.set(cacheKey, { data: result, fetchedAt: Date.now() });
@@ -407,7 +407,7 @@ export function useBarcodeDetector(videoRef: Ref<HTMLVideoElement | undefined>) 
         }
 
         if (entityType === "item") {
-          const [itemRes, childRes] = await Promise.all([api.items.get(id), api.items.getAll({ parentIds: [id] })]);
+          const [itemRes, childRes] = await Promise.all([api.items.get(id), api.items.getAll({ parentItemIds: [id] })]);
           if (itemRes.data) {
             const result: EntityData = { item: itemRes.data, childItems: childRes.data?.items ?? [] };
             entityCache.set(cacheKey, { data: result, fetchedAt: Date.now() });

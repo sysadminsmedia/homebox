@@ -525,8 +525,9 @@
         return [];
       }
 
+      // parentIds matches by location, which drops children stored elsewhere.
       const resp = await api.items.getAll({
-        parentIds: [itemId.value],
+        parentItemIds: [itemId.value],
       });
 
       if (resp.error) {
