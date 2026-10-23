@@ -942,7 +942,9 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 
 	qb = qb.
 		WithTag().
-		WithParent().
+		WithParent(func(pq *ent.EntityQuery) {
+			pq.WithEntityType()
+		}).
 		WithEntityType().
 		WithAttachments(func(aq *ent.AttachmentQuery) {
 			aq.Where(

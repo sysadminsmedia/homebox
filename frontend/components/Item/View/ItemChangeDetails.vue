@@ -59,9 +59,10 @@
       enabled.removeTags = params.removeTags ?? false;
 
       if (params.changeLocation && params.items.length > 0) {
-        // if all items share the same parent then preselect it
-        if (params.items[0]!.parent && params.items.every(item => item.parent?.id === params.items[0]!.parent?.id)) {
-          newLocation.value = params.items[0]!.parent;
+        // if all items share the same location parent then preselect it
+        const first = params.items[0]!.parent;
+        if (first?.entityType?.isLocation && params.items.every(item => item.parent?.id === first.id)) {
+          newLocation.value = first;
         }
       }
 
