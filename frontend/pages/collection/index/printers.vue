@@ -113,12 +113,25 @@
                       <Badge variant="secondary">{{ $t("pages.printers.this_device_only") }}</Badge>
                     </span>
                     <span class="text-xs text-muted-foreground">
-                      {{ printer.connectionType === "usb" ? "USB" : "Bluetooth" }} · {{ printer.protocol }}
+                      {{
+                        $t(
+                          printer.connectionType === "usb"
+                            ? "pages.printers.connection.usb"
+                            : "pages.printers.connection.bluetooth"
+                        )
+                      }}
+                      · {{ printer.protocol }}
                     </span>
                   </div>
                 </td>
                 <td class="hidden p-3 text-xs text-muted-foreground md:table-cell">
-                  {{ printer.connectionType === "usb" ? "WebUSB" : "Web Bluetooth" }}
+                  {{
+                    $t(
+                      printer.connectionType === "usb"
+                        ? "pages.printers.connection.webusb"
+                        : "pages.printers.connection.web_bluetooth"
+                    )
+                  }}
                 </td>
                 <td class="hidden p-3 text-muted-foreground lg:table-cell">—</td>
                 <td class="p-3 text-muted-foreground">
@@ -225,9 +238,9 @@
                 <SelectValue :placeholder="$t('pages.printers.form.type_placeholder')" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ipp">IPP (Network Printer)</SelectItem>
-                <SelectItem value="cups">CUPS (Local Printer Server)</SelectItem>
-                <SelectItem value="brother_raster">Brother Raster (QL Series)</SelectItem>
+                <SelectItem value="ipp">{{ $t("pages.printers.form.type_ipp") }}</SelectItem>
+                <SelectItem value="cups">{{ $t("pages.printers.form.type_cups") }}</SelectItem>
+                <SelectItem value="brother_raster">{{ $t("pages.printers.form.type_brother_raster") }}</SelectItem>
               </SelectContent>
             </Select>
           </div>

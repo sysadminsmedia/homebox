@@ -47,11 +47,11 @@
   const presetGroups = computed(() => {
     const brandMap: Record<string, Record<PresetCategory, LabelmakerLabelPreset[]>> = {};
     for (const preset of props.presets) {
-      const brand = preset.brand || "Custom";
+      const brand = preset.brand || t("components.label_template.form.brand_custom");
       brandMap[brand] ??= { sheet: [], continuous: [], "die-cut": [] };
       brandMap[brand][categoryOf(preset)].push(preset);
     }
-    const brandOrder = ["Avery", "Brother", "Dymo", "Brady", "Zebra", "Custom"];
+    const brandOrder = ["Avery", "Brother", "Dymo", "Brady", "Zebra", t("components.label_template.form.brand_custom")];
     for (const brand of Object.keys(brandMap)) if (!brandOrder.includes(brand)) brandOrder.push(brand);
     const categoryLabels: Record<PresetCategory, string> = {
       sheet: t("components.label_template.form.sheet_labels"),

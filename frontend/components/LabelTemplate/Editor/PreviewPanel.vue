@@ -1,10 +1,12 @@
 <script setup lang="ts">
   import { watchDebounced } from "@vueuse/core";
+  import { useI18n } from "vue-i18n";
   import MdiRefresh from "~icons/mdi/refresh";
   import { Button } from "@/components/ui/button";
   import ItemSelector from "~/components/Item/Selector.vue";
   import type { EntitySummary } from "~/lib/api/types/data-contracts";
 
+  const { t } = useI18n();
   const props = defineProps<{
     templateId: string;
     canvasData: Record<string, unknown>;
@@ -51,7 +53,7 @@
       );
       previewUrl.value = URL.createObjectURL(blob);
     } catch (err) {
-      previewError.value = "Failed to render preview";
+      previewError.value = t("components.label_template.editor.preview.render_failed");
       console.error("Preview render error:", err);
     } finally {
       isRenderingPreview.value = false;

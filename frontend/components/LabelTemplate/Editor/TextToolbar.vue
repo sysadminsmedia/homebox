@@ -201,7 +201,7 @@
       :variant="objectProps.fontWeight === 'bold' ? 'default' : 'outline'"
       size="icon"
       class="size-8"
-      aria-label="Toggle bold"
+      :aria-label="$t('components.label_template.editor.toolbar.bold')"
       @click="handleFontWeightChange(objectProps.fontWeight !== 'bold')"
     >
       <MdiFormatBold class="size-4" />
@@ -215,7 +215,7 @@
         :variant="objectProps.textAlign === 'left' ? 'default' : 'outline'"
         size="icon"
         class="size-8 rounded-r-none"
-        aria-label="Align left"
+        :aria-label="$t('components.label_template.editor.toolbar.align_left')"
         @click="handleTextAlignChange('left')"
       >
         <MdiFormatAlignLeft class="size-4" />
@@ -224,7 +224,7 @@
         :variant="objectProps.textAlign === 'center' ? 'default' : 'outline'"
         size="icon"
         class="size-8 rounded-none border-x-0"
-        aria-label="Align center"
+        :aria-label="$t('components.label_template.editor.toolbar.align_center')"
         @click="handleTextAlignChange('center')"
       >
         <MdiFormatAlignCenter class="size-4" />
@@ -233,7 +233,7 @@
         :variant="objectProps.textAlign === 'right' ? 'default' : 'outline'"
         size="icon"
         class="size-8 rounded-l-none"
-        aria-label="Align right"
+        :aria-label="$t('components.label_template.editor.toolbar.align_right')"
         @click="handleTextAlignChange('right')"
       >
         <MdiFormatAlignRight class="size-4" />

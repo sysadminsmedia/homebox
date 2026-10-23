@@ -490,7 +490,12 @@
                 "two_color": "Black/Red",
                 "two_color_hint": "Two-color roll: Use black and red elements in your label design.",
                 "share_with_group": "Share with Group",
-                "share_description": "Allow others in your group to use this template"
+                "share_description": "Allow others in your group to use this template",
+                "brand_custom": "Custom",
+                "dpi_option": "{dpi} DPI",
+                "dpi_recommended": "{dpi} DPI (Recommended)",
+                "size_continuous": "{width} mm wide",
+                "size_die_cut": "{width} × {height} mm"
             },
             "validation": {
                 "name_required": "Template name is required"
@@ -519,7 +524,11 @@
                     "add_text": "Add Text",
                     "add_data_field": "Add Data Field",
                     "add_barcode": "Add Barcode",
-                    "add_shape": "Add Shape"
+                    "add_shape": "Add Shape",
+                    "bold": "Toggle bold",
+                    "align_left": "Align left",
+                    "align_center": "Align center",
+                    "align_right": "Align right"
                 },
                 "data_fields": {
                     "item_name": "Item Name",
@@ -593,7 +602,8 @@
                     "refresh": "Refresh Preview",
                     "print_preview": "Print preview",
                     "pick_item": "Pick an item…",
-                    "render_hint": "Rendered by the server at {dpi} dpi with the item you picked, exactly as it prints. Updates shortly after you stop editing."
+                    "render_hint": "Rendered by the server at {dpi} dpi with the item you picked, exactly as it prints. Updates shortly after you stop editing.",
+                    "render_failed": "Failed to render preview"
                 },
                 "layers": {
                     "title": "Layers",
@@ -604,7 +614,16 @@
                     "send_to_back": "Send to Back",
                     "show": "Show Layer",
                     "hide": "Hide Layer",
-                    "order_hint": "Top layer first"
+                    "order_hint": "Top layer first",
+                    "data_field": "Data field",
+                    "barcode": "Barcode",
+                    "custom": "custom",
+                    "text": "Text",
+                    "rectangle": "Rectangle",
+                    "line": "Line",
+                    "image": "Image",
+                    "group": "Group",
+                    "object": "Object"
                 },
                 "display": {
                     "title": "Display",
@@ -1212,7 +1231,10 @@
                 "address_hint": "IPP: ipp://hostname:631/ipp. CUPS: http://localhost:631/printers/PrinterName. Brother Raster: IP address or hostname (e.g. 192.168.1.100)",
                 "width": "Label Width (mm)",
                 "height": "Label Height (mm)",
-                "dpi": "DPI"
+                "dpi": "DPI",
+                "type_ipp": "IPP (Network Printer)",
+                "type_cups": "CUPS (Local Printer Server)",
+                "type_brother_raster": "Brother Raster (QL Series)"
             },
             "toast": {
                 "created": "Printer added successfully",
@@ -1261,7 +1283,13 @@
             "default_template_none": "No default template",
             "default_template_hint": "Your choice, synced with your account like other preferences. Each member picks their own. The default printer is shared.",
             "address_policy": "Printer address policy",
-            "address_policy_text": "Only private network addresses are accepted. To allow public addresses, start the server with"
+            "address_policy_text": "Only private network addresses are accepted. To allow public addresses, start the server with",
+            "connection": {
+                "usb": "USB",
+                "bluetooth": "Bluetooth",
+                "webusb": "WebUSB",
+                "web_bluetooth": "Web Bluetooth"
+            }
         }
     },
     "profile": {

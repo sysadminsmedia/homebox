@@ -584,7 +584,7 @@
                       class="h-7 rounded-full px-2.5 text-xs"
                       @click="handleInsertField(field)"
                     >
-                      + {{ field }}
+                      + {{ $t(`components.label_template.editor.data_fields.${field}`) }}
                     </Button>
                   </div>
                 </div>

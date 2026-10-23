@@ -176,21 +176,24 @@ func (ctrl *V1Controller) HandlePrintersStatus() errchain.HandlerFunc {
 		// Create printer client
 		client, err := printer.NewPrinterClient(printer.PrinterType(p.PrinterType), p.Address, printer.WithAllowPublicAddresses(ctrl.config.Printer.AllowPublicAddresses))
 		if err != nil {
+			log.Warn().Err(err).Str("printer", p.Name).Msg("could not create printer client for status check")
 			return PrinterStatusResponse{
 				Status:      "offline",
-				Message:     err.Error(),
+				Message:     "Printer address could not be used",
 				SupportsIPP: false,
 			}, nil
 		}
 
-		// Get printer info
+		// Get printer info. The raw network error is logged, not returned: it
+		// describes the server's network, which the browser does not need.
 		info, err := client.GetPrinterInfo(r.Context())
 		if err != nil {
+			log.Warn().Err(err).Str("printer", p.Name).Msg("printer status check failed")
 			// Update status in database
 			_ = ctrl.repo.Printers.UpdateStatus(r.Context(), auth.GID, ID, "offline")
 			return PrinterStatusResponse{
 				Status:      "offline",
-				Message:     err.Error(),
+				Message:     "Printer did not respond",
 				SupportsIPP: true,
 			}, nil
 		}
@@ -272,6 +275,20 @@ func (ctrl *V1Controller) HandlePrintersTest() errchain.HandlerFunc {
 
 		// Create a simple test label (1x1 inch white PNG)
 		testData := createTestLabelPNG()
+		contentType := mimePNG
+		if printer.PrinterType(p.PrinterType) != printer.PrinterTypeBrotherRaster {
+			// IPP/CUPS printers get URF, the same format real label prints use;
+			// most of them reject a raw PNG document.
+			urf, err := printer.ConvertPNGToURF(testData, p.DPI)
+			if err != nil {
+				return server.JSON(w, http.StatusOK, PrinterTestResponse{
+					Success: false,
+					Message: "Failed to prepare test label: " + err.Error(),
+				})
+			}
+			testData = urf
+			contentType = "image/urf"
+		}
 
 		// Use custom message if provided, otherwise use default
 		docName := "HomeBox Test Print"
@@ -282,7 +299,7 @@ func (ctrl *V1Controller) HandlePrintersTest() errchain.HandlerFunc {
 		// Send test print
 		result, err := client.Print(r.Context(), &printer.PrintJob{
 			DocumentName: docName,
-			ContentType:  mimePNG,
+			ContentType:  contentType,
 			Data:         testData,
 			Copies:       1,
 		})

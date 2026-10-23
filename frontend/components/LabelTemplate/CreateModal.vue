@@ -34,7 +34,14 @@
                   {{ $t("components.label_template.form.two_color") }}
                 </span>
                 <span class="text-muted-foreground">
-                  ({{ preset.width }}{{ preset.continuous ? "mm wide" : `x${preset.height}mm` }})
+                  ({{
+                    preset.continuous
+                      ? $t("components.label_template.form.size_continuous", { width: preset.width })
+                      : $t("components.label_template.form.size_die_cut", {
+                          width: preset.width,
+                          height: preset.height,
+                        })
+                  }})
                 </span>
               </SelectItem>
             </template>
@@ -95,10 +102,12 @@
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="150">150 DPI</SelectItem>
-            <SelectItem value="203">203 DPI</SelectItem>
-            <SelectItem value="300">300 DPI (Recommended)</SelectItem>
-            <SelectItem value="600">600 DPI</SelectItem>
+            <SelectItem value="150">{{ $t("components.label_template.form.dpi_option", { dpi: 150 }) }}</SelectItem>
+            <SelectItem value="203">{{ $t("components.label_template.form.dpi_option", { dpi: 203 }) }}</SelectItem>
+            <SelectItem value="300">{{
+              $t("components.label_template.form.dpi_recommended", { dpi: 300 })
+            }}</SelectItem>
+            <SelectItem value="600">{{ $t("components.label_template.form.dpi_option", { dpi: 600 }) }}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -195,7 +204,7 @@
     const brandMap: Record<string, Record<PresetCategory, LabelmakerLabelPreset[]>> = {};
 
     for (const preset of labelPresets.value) {
-      const brand = preset.brand || "Custom";
+      const brand = preset.brand || t("components.label_template.form.brand_custom");
       const category = getPresetCategory(preset);
 
       if (!brandMap[brand]) {
@@ -217,7 +226,7 @@
     }
 
     // Define brand order
-    const brandOrder = ["Avery", "Brother", "Dymo", "Brady", "Zebra", "Custom"];
+    const brandOrder = ["Avery", "Brother", "Dymo", "Brady", "Zebra", t("components.label_template.form.brand_custom")];
     const categoryLabels: Record<PresetCategory, string> = {
       sheet: t("components.label_template.form.sheet_labels"),
       continuous: t("components.label_template.form.continuous_labels"),

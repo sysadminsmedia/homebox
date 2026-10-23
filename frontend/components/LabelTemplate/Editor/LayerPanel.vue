@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { Button } from "@/components/ui/button";
   import MdiFormatText from "~icons/mdi/format-text";
   import MdiDatabase from "~icons/mdi/database";
@@ -49,22 +50,25 @@
     return MdiRectangleOutline;
   }
 
+  const { t } = useI18n();
+  const layerName = (key: string) => t(`components.label_template.editor.layers.${key}`);
+
   function getLayerName(layer: LayerItem): string {
     const data = layer.object?.data;
     const type = layer.type?.toLowerCase() || "";
 
-    if (data?.type === "data_field") return data.displayName || data.field || "Data Field";
+    if (data?.type === "data_field") return data.displayName || data.field || layerName("data_field");
     if (data?.type === "barcode")
-      return `${data.format?.toUpperCase() || "Barcode"} (${data.contentSource || "custom"})`;
+      return `${data.format?.toUpperCase() || layerName("barcode")} (${data.contentSource || layerName("custom")})`;
     if (type.includes("text") || type === "i-text" || type === "itext") {
       const text = layer.object?.text || "";
-      return text.length > 24 ? text.substring(0, 24) + "…" : text || "Text";
+      return text.length > 24 ? text.substring(0, 24) + "…" : text || layerName("text");
     }
-    if (type === "rect") return "Rectangle";
-    if (type === "line") return "Line";
-    if (type === "image") return "Image";
-    if (type === "group") return "Group";
-    return type || "Object";
+    if (type === "rect") return layerName("rectangle");
+    if (type === "line") return layerName("line");
+    if (type === "image") return layerName("image");
+    if (type === "group") return layerName("group");
+    return type || layerName("object");
   }
 
   function isSelected(layer: LayerItem): boolean {
