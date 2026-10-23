@@ -79,7 +79,8 @@
 
   function handlePresetChange(value: unknown) {
     const v = String(value ?? "");
-    if (v === "none" || v === "") {
+    // "custom" is the backend's free-size preset (0 x 0 mm); treat it as no preset.
+    if (v === "none" || v === "" || v === "custom") {
       settings.value.preset = "";
       return;
     }

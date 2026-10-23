@@ -312,8 +312,8 @@ func (r *LabelTemplatesRepository) Duplicate(ctx context.Context, gid, uid, id u
 	const maxNameLen = 255
 	const suffix = " (Copy)"
 	newName := source.Name
-	if len(newName)+len(suffix) > maxNameLen {
-		newName = newName[:maxNameLen-len(suffix)]
+	if runes := []rune(newName); len(runes)+len(suffix) > maxNameLen {
+		newName = string(runes[:maxNameLen-len(suffix)])
 	}
 	newName += suffix
 
@@ -330,6 +330,10 @@ func (r *LabelTemplatesRepository) Duplicate(ctx context.Context, gid, uid, id u
 
 	if source.Preset != "" {
 		q.SetPreset(source.Preset)
+	}
+
+	if source.MediaType != "" {
+		q.SetMediaType(source.MediaType)
 	}
 
 	if source.CanvasData != nil {

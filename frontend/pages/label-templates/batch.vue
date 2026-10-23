@@ -194,14 +194,15 @@
       { id: BROWSER, label: t("pages.label_templates.batch.print_browser"), icon: MdiDesktopClassic },
     ];
     for (const p of printers.value ?? []) {
-      const disabled = isSheet.value && p.printerType === "brother_raster";
+      // Server-side printing renders one label per page; sheets go out as PDF.
+      const disabled = isSheet.value;
       list.push({
         id: p.id,
         label: p.isDefault ? `${p.name} (${t("components.label_template.default").toLowerCase()})` : p.name,
         icon: MdiPrinter,
         status: p.status || "unknown",
         disabled,
-        hint: disabled ? t("pages.label_templates.batch.roll_not_for_sheets") : undefined,
+        hint: disabled ? t("pages.label_templates.batch.printer_not_for_sheets") : undefined,
       });
     }
     for (const p of localPrinters.value) {
@@ -210,7 +211,7 @@
         label: p.name,
         icon: p.connectionType === "usb" ? MdiUsb : MdiBluetooth,
         disabled: isSheet.value,
-        hint: isSheet.value ? t("pages.label_templates.batch.roll_not_for_sheets") : undefined,
+        hint: isSheet.value ? t("pages.label_templates.batch.printer_not_for_sheets") : undefined,
       });
     }
     return list;

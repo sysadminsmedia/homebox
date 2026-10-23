@@ -1,7 +1,13 @@
 <script setup lang="ts">
   import { onMounted, onBeforeUnmount, watch, nextTick } from "vue";
-  import { Canvas, IText, Textbox, Rect, Line, Group, FabricImage, type FabricObject } from "fabric";
+  import { Canvas, IText, Textbox, Rect, Line, Group, FabricImage, FabricObject } from "fabric";
   import type { AlignTarget } from "./ToolRail.vue";
+
+  // Fabric 7 anchors new objects at their centre by default. The server
+  // renderer and the transform panel work in top-left coordinates, so keep
+  // every object created in the editor on a left/top origin.
+  FabricObject.ownDefaults.originX = "left";
+  FabricObject.ownDefaults.originY = "top";
 
   // Type for textbox data properties
   interface TextBoxData {

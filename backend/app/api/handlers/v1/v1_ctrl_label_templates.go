@@ -13,6 +13,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/labelmaker"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/printer"
@@ -505,6 +506,23 @@ type LabelPrintItem struct {
 	Quantity int       `json:"quantity"` // Number of copies for this item
 }
 
+// Limits for a single direct-print request. Each copy is a separate render
+// and print job, so unbounded values would tie up the server and the printer.
+const (
+	maxPrintCopies           = 100
+	maxPrintLabelsPerRequest = 500
+)
+
+func clampCopies(n int) int {
+	if n <= 0 {
+		return 1
+	}
+	if n > maxPrintCopies {
+		return maxPrintCopies
+	}
+	return n
+}
+
 // LabelTemplatePrintRequest represents a request to print labels directly to a printer
 type LabelTemplatePrintRequest struct {
 	ItemIDs   []uuid.UUID      `json:"itemIds,omitempty"`   // Simple list (1 copy each) - for backward compatibility
@@ -560,6 +578,9 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrint() errchain.HandlerFunc {
 			}
 		default:
 			return fmt.Errorf("at least one item is required (provide itemIds or items)")
+		}
+		if len(itemsToPrint) > maxPrintLabelsPerRequest {
+			return validate.NewRequestError(fmt.Errorf("too many items in one print request (max %d)", maxPrintLabelsPerRequest), http.StatusBadRequest)
 		}
 
 		// Get the printer
@@ -634,10 +655,7 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrint() errchain.HandlerFunc {
 		}
 
 		// Default copies (used when item quantity is 0 or not specified)
-		defaultCopies := req.Copies
-		if defaultCopies <= 0 {
-			defaultCopies = 1
-		}
+		defaultCopies := clampCopies(req.Copies)
 
 		var lastJobID int
 		labelsPrinted := 0
@@ -687,9 +705,9 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrint() errchain.HandlerFunc {
 			}
 
 			// Determine copies for this item (use per-item quantity if set, otherwise default)
-			copies := printItem.Quantity
-			if copies <= 0 {
-				copies = defaultCopies
+			copies := defaultCopies
+			if printItem.Quantity > 0 {
+				copies = clampCopies(printItem.Quantity)
 			}
 
 			// Send to printer
@@ -930,6 +948,9 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrintLocations() errchain.HandlerF
 		default:
 			return fmt.Errorf("at least one location is required (provide locationIds or locations)")
 		}
+		if len(locationsToPrint) > maxPrintLabelsPerRequest {
+			return validate.NewRequestError(fmt.Errorf("too many locations in one print request (max %d)", maxPrintLabelsPerRequest), http.StatusBadRequest)
+		}
 
 		// Get the printer
 		var printerOut repo.PrinterOut
@@ -1003,10 +1024,7 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrintLocations() errchain.HandlerF
 		}
 
 		// Default copies
-		defaultCopies := req.Copies
-		if defaultCopies <= 0 {
-			defaultCopies = 1
-		}
+		defaultCopies := clampCopies(req.Copies)
 
 		var lastJobID int
 		labelsPrinted := 0
@@ -1057,9 +1075,9 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrintLocations() errchain.HandlerF
 			}
 
 			// Determine copies for this location
-			copies := printLoc.Quantity
-			if copies <= 0 {
-				copies = defaultCopies
+			copies := defaultCopies
+			if printLoc.Quantity > 0 {
+				copies = clampCopies(printLoc.Quantity)
 			}
 
 			// Send to printer

@@ -152,6 +152,12 @@ func (r *TemplateRenderer) renderPDFWithSheetLayout(template *TemplateData, item
 		// Place image on PDF
 		pdf.ImageOptions(imgName, x, y, labelWidth, labelHeight, false, fpdf.ImageOptions{ImageType: "PNG"}, 0, "")
 
+		// Light border around the label for cutting on plain paper
+		if opts.ShowCutGuides {
+			pdf.SetDrawColor(200, 200, 200)
+			pdf.Rect(x, y, labelWidth, labelHeight, "D")
+		}
+
 		_ = img
 	}
 
@@ -254,6 +260,12 @@ func (r *TemplateRenderer) renderLocationsPDFWithSheetLayout(template *TemplateD
 
 		// Place image on PDF
 		pdf.ImageOptions(imgName, x, y, labelWidth, labelHeight, false, fpdf.ImageOptions{ImageType: "PNG"}, 0, "")
+
+		// Light border around the label for cutting on plain paper
+		if opts.ShowCutGuides {
+			pdf.SetDrawColor(200, 200, 200)
+			pdf.Rect(x, y, labelWidth, labelHeight, "D")
+		}
 
 		_ = img
 	}

@@ -289,8 +289,8 @@
   const destinations = computed<Destination[]>(() => {
     const list: Destination[] = [];
     for (const p of printers.value ?? []) {
-      const isRoll = p.printerType === "brother_raster";
-      const disabled = isSheet.value && isRoll;
+      // Server-side printing renders one label per page; sheets go out as PDF.
+      const disabled = isSheet.value;
       list.push({
         id: p.id,
         label: p.isDefault ? `${p.name} (${t("components.label_template.default").toLowerCase()})` : p.name,

@@ -301,6 +301,7 @@
 
   const { printers, pending: printersPending, refresh: refreshPrinters } = usePrinters();
   const { create, update, remove, setDefault, testPrint, getStatus } = usePrinterActions();
+  const api = useUserApi();
   const { templates } = useLabelTemplates();
 
   const {
@@ -352,8 +353,11 @@
     editingPrinter.value = null;
   }
 
-  function handleEditPrinter(printer: PrinterSummary) {
+  async function handleEditPrinter(printer: PrinterSummary) {
     editingPrinter.value = printer;
+    // Update replaces every field and the summary has no media type, so load
+    // the full printer first to keep its label size and media type intact.
+    const { data: full } = await api.printers.get(printer.id);
     printerForm.value = {
       name: printer.name,
       printerType: printer.printerType as "ipp" | "cups" | "brother_raster",
@@ -361,6 +365,9 @@
       description: printer.description || "",
       dpi: printer.dpi || 300,
       isDefault: printer.isDefault,
+      labelWidthMm: full?.labelWidthMm || printer.labelWidthMm || null,
+      labelHeightMm: full?.labelHeightMm || printer.labelHeightMm || null,
+      mediaType: full?.mediaType || null,
     };
     showAddPrinterDialog.value = true;
   }

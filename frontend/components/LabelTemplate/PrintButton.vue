@@ -62,8 +62,8 @@
       } else {
         openChooser();
       }
-    } catch {
-      toast.error(t("components.label_template.toast.print_failed"));
+    } catch (e) {
+      toast.error(t("components.label_template.toast.print_failed"), { description: (e as Error).message });
     } finally {
       busy.value = false;
     }

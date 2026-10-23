@@ -361,19 +361,25 @@ func (r *PrintersRepository) SetDefault(ctx context.Context, gid, id uuid.UUID) 
 		return fmt.Errorf("printer not found")
 	}
 
-	// Clear existing default
-	err = r.clearDefault(ctx, gid)
+	// Clear the old default and set the new one atomically so two concurrent
+	// calls cannot leave the group with two defaults.
+	tx, err := r.db.Tx(ctx)
 	if err != nil {
 		return err
 	}
-
-	// Set new default
-	_, err = r.db.Printer.UpdateOneID(id).
+	if err := r.clearDefaultTx(ctx, tx, gid); err != nil {
+		_ = tx.Rollback()
+		return err
+	}
+	_, err = tx.Printer.UpdateOneID(id).
 		Where(printer.HasGroupWith(group.ID(gid))).
 		SetIsDefault(true).
 		Save(ctx)
-
 	if err != nil {
+		_ = tx.Rollback()
+		return err
+	}
+	if err := tx.Commit(); err != nil {
 		return err
 	}
 
@@ -394,18 +400,6 @@ func (r *PrintersRepository) UpdateStatus(ctx context.Context, gid, id uuid.UUID
 }
 
 // clearDefault clears the default flag from all printers in the group
-func (r *PrintersRepository) clearDefault(ctx context.Context, gid uuid.UUID) error {
-	_, err := r.db.Printer.Update().
-		Where(
-			printer.HasGroupWith(group.ID(gid)),
-			printer.IsDefault(true),
-		).
-		SetIsDefault(false).
-		Save(ctx)
-
-	return err
-}
-
 // clearDefaultTx clears the default flag within a transaction
 func (r *PrintersRepository) clearDefaultTx(ctx context.Context, tx *ent.Tx, gid uuid.UUID) error {
 	_, err := tx.Printer.Update().

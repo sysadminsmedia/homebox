@@ -210,7 +210,10 @@ export function useQuickPrint() {
       return false;
     }
 
-    await printLabels(defaultTemplateId.value, itemIds, defaultPrinter.value.id);
+    const result = await printLabels(defaultTemplateId.value, itemIds, defaultPrinter.value.id);
+    if (!result?.success) {
+      throw new Error(result?.message || "Print failed");
+    }
     return true;
   }
 
@@ -223,7 +226,10 @@ export function useQuickPrint() {
       return false;
     }
 
-    await printLocationLabels(defaultTemplateId.value, locationIds, defaultPrinter.value.id);
+    const result = await printLocationLabels(defaultTemplateId.value, locationIds, defaultPrinter.value.id);
+    if (!result?.success) {
+      throw new Error(result?.message || "Print failed");
+    }
     return true;
   }
 

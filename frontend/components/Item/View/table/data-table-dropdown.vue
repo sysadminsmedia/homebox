@@ -36,8 +36,8 @@
         // Should not happen if isQuickPrintAvailable is true, but fallback to dialog
         openDialog(DialogID.PrintLabelTemplate, { params: { itemIds } });
       }
-    } catch {
-      toast.error(t("components.item.view.table.dropdown.quick_print_failed"));
+    } catch (e) {
+      toast.error(t("components.item.view.table.dropdown.quick_print_failed"), { description: (e as Error).message });
     } finally {
       isQuickPrinting.value = false;
     }

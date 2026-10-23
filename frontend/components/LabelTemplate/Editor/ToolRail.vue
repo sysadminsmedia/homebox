@@ -65,7 +65,7 @@
 
   const itemBarcodeContentSources: BarcodeContentSource[] = [
     { value: "item_url", labelKey: "item_url", contentType: "any" },
-    { value: "asset_id", labelKey: "asset_id", contentType: "numeric" },
+    { value: "asset_id", labelKey: "asset_id", contentType: "alphanumeric" },
     { value: "serial_number", labelKey: "serial_number", contentType: "alphanumeric" },
     { value: "model_number", labelKey: "model_number", contentType: "alphanumeric" },
     { value: "id", labelKey: "item_id", contentType: "any" },

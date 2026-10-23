@@ -11,6 +11,7 @@ import (
 	_ "image/gif"  // register GIF decoder for embedded images
 	_ "image/jpeg" // register JPEG decoder for embedded images
 	"image/png"
+	"math"
 	"net/url"
 	"strconv"
 	"strings"
@@ -260,11 +261,17 @@ func parseCanvasElement(m map[string]interface{}) CanvasElement {
 	if v, ok := m["textAlign"].(string); ok {
 		elem.TextAlign = v
 	}
-	if v, ok := m["originX"].(string); ok {
+	switch v := m["originX"].(type) {
+	case string:
 		elem.OriginX = v
+	case float64:
+		elem.OriginX = strconv.FormatFloat(v, 'f', -1, 64)
 	}
-	if v, ok := m["originY"].(string); ok {
+	switch v := m["originY"].(type) {
+	case string:
 		elem.OriginY = v
+	case float64:
+		elem.OriginY = strconv.FormatFloat(v, 'f', -1, 64)
 	}
 	if v, ok := m["x1"].(float64); ok {
 		elem.X1 = v
@@ -288,7 +295,54 @@ func parseCanvasElement(m map[string]interface{}) CanvasElement {
 		elem.Objects = v
 	}
 
+	normalizeOrigin(&elem)
+
 	return elem
+}
+
+// normalizeOrigin converts Fabric's originX/originY anchoring into top-left
+// coordinates, which is what every render function expects. Fabric 7 defaults
+// new objects to a "center" origin, so left/top then point at the middle of
+// the object. The offset is rotated by the element angle because Fabric
+// rotates objects about their origin point.
+func normalizeOrigin(elem *CanvasElement) {
+	if elem.Type == "line" {
+		// Lines are positioned by their endpoints, not by origin.
+		return
+	}
+	fx := originFactor(elem.OriginX, "left", "right")
+	fy := originFactor(elem.OriginY, "top", "bottom")
+	if fx == 0 && fy == 0 {
+		return
+	}
+	dx := -elem.Width * elem.ScaleX * fx
+	dy := -elem.Height * elem.ScaleY * fy
+	if elem.Angle != 0 {
+		rad := elem.Angle * math.Pi / 180
+		sin, cos := math.Sin(rad), math.Cos(rad)
+		dx, dy = dx*cos-dy*sin, dx*sin+dy*cos
+	}
+	elem.Left += dx
+	elem.Top += dy
+	elem.OriginX = "left"
+	elem.OriginY = "top"
+}
+
+// originFactor maps a Fabric origin keyword (or a 0..1 number) to the fraction
+// of the object's extent that lies before the anchor point.
+func originFactor(origin, start, end string) float64 {
+	switch origin {
+	case "", start:
+		return 0
+	case "center":
+		return 0.5
+	case end:
+		return 1
+	}
+	if f, err := strconv.ParseFloat(origin, 64); err == nil && f >= 0 && f <= 1 {
+		return f
+	}
+	return 0
 }
 
 // renderElement renders a single element onto the image
@@ -522,9 +576,6 @@ func (r *TemplateRenderer) renderTextDirect(img *image.RGBA, elem CanvasElement,
 	baseX := scaleCoord(elem.Left, dpi)
 	baseY := scaleCoord(elem.Top, dpi) + ctx.metrics.Ascent.Round()
 
-	fmt.Printf("DEBUG renderTextDirect: drawing %d lines at baseX=%d, baseY=%d, textAlign=%s\n",
-		len(ctx.lines), baseX, baseY, ctx.textAlign)
-
 	for i, line := range ctx.lines {
 		lineWidth := measureTextWidth(ctx.face, line)
 		x := calculateAlignedX(ctx.textAlign, ctx.scaledContainerWidth, lineWidth, baseX)
@@ -594,26 +645,16 @@ func (r *TemplateRenderer) renderTextRotated(img *image.RGBA, elem CanvasElement
 	destRect := image.Rect(x, y, x+rotatedBounds.Dx(), y+rotatedBounds.Dy())
 	draw.Draw(img, destRect, rotatedImg, rotatedBounds.Min, draw.Over)
 
-	fmt.Printf("DEBUG renderTextRotated: destRect=%v, rotatedSize=%dx%d\n",
-		destRect, rotatedBounds.Dx(), rotatedBounds.Dy())
-
 	return nil
 }
 
 // renderText renders a text element
 func (r *TemplateRenderer) renderText(img *image.RGBA, elem CanvasElement, item *ItemData, location *LocationData, dpi int) error {
-	fmt.Printf("DEBUG renderText ENTRY: elem.Text=%q, elem.Angle=%.1f, elem.Left=%.1f, elem.Top=%.1f, dpi=%d\n",
-		elem.Text, elem.Angle, elem.Left, elem.Top, dpi)
-
 	// Resolve text content with placeholder replacement
 	text := r.resolveTextContent(elem.Text, item, location)
 	if text == "" {
-		fmt.Printf("DEBUG renderText: text is empty after placeholder replacement, returning\n")
 		return nil
 	}
-
-	fmt.Printf("DEBUG renderText RENDERING: text=%q, angle=%.1f, fontSize=%.1f, scaleX=%.2f, scaleY=%.2f\n",
-		text, elem.Angle, elem.FontSize, elem.ScaleX, elem.ScaleY)
 
 	// Prepare all rendering context
 	ctx := r.prepareTextRender(elem, text, dpi)
@@ -736,16 +777,12 @@ func (r *TemplateRenderer) findOptimalFontSize(text string, fontFace *truetype.F
 		}
 	}
 
-	fmt.Printf("DEBUG findOptimalFontSize: text=%q maxWidth=%.1f maxHeight=%.1f maxFontSize=%.1f -> bestSize=%.1f\n",
-		text, maxWidth, maxHeight, maxFontSize, bestSize)
-
 	return bestSize
 }
 
 // renderDataField renders a data field element with word wrap and auto-fit support
 func (r *TemplateRenderer) renderDataField(img *image.RGBA, elem CanvasElement, item *ItemData, location *LocationData, dpi int) error {
 	if elem.Data == nil {
-		fmt.Printf("DEBUG renderDataField: elem.Data is nil - returning early\n")
 		return nil
 	}
 
@@ -756,19 +793,13 @@ func (r *TemplateRenderer) renderDataField(img *image.RGBA, elem CanvasElement, 
 	switch {
 	case item != nil:
 		value = r.getFieldValue(field, item)
-		fmt.Printf("DEBUG renderDataField: field=%q, value=%q, item.Name=%q, item.Description=%q\n",
-			field, value, item.Name, item.Description)
 	case location != nil:
 		value = r.getLocationFieldValue(field, location)
-		fmt.Printf("DEBUG renderDataField: field=%q, value=%q, location.Name=%q\n",
-			field, value, location.Name)
 	default:
-		fmt.Printf("DEBUG renderDataField: no item or location data - returning early\n")
 		return nil
 	}
 
 	if value == "" {
-		fmt.Printf("DEBUG renderDataField: value is empty, returning without rendering\n")
 		return nil
 	}
 

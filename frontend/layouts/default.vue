@@ -441,7 +441,7 @@
     },
     {
       icon: MdiLabel,
-      id: 7,
+      id: 8,
       active: computed(() => route.path.startsWith("/label-templates")),
       name: computed(() => t("menu.label_templates")),
       to: "/label-templates",
