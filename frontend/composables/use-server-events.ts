@@ -8,7 +8,6 @@ export enum ServerEvent {
   ExportMutation = "export.mutation",
   ImportMutation = "import.mutation",
   LabelTemplateMutation = "label_template.mutation",
-  PrinterMutation = "printer.mutation",
 }
 
 export type EventMessage = {

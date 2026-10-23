@@ -21,7 +21,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/labeltemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/printer"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
@@ -206,21 +205,6 @@ func (_u *GroupUpdate) AddLabelTemplates(v ...*LabelTemplate) *GroupUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.AddLabelTemplateIDs(ids...)
-}
-
-// AddPrinterIDs adds the "printers" edge to the Printer entity by IDs.
-func (_u *GroupUpdate) AddPrinterIDs(ids ...uuid.UUID) *GroupUpdate {
-	_u.mutation.AddPrinterIDs(ids...)
-	return _u
-}
-
-// AddPrinters adds the "printers" edges to the Printer entity.
-func (_u *GroupUpdate) AddPrinters(v ...*Printer) *GroupUpdate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.AddPrinterIDs(ids...)
 }
 
 // Mutation returns the GroupMutation object of the builder.
@@ -415,27 +399,6 @@ func (_u *GroupUpdate) RemoveLabelTemplates(v ...*LabelTemplate) *GroupUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveLabelTemplateIDs(ids...)
-}
-
-// ClearPrinters clears all "printers" edges to the Printer entity.
-func (_u *GroupUpdate) ClearPrinters() *GroupUpdate {
-	_u.mutation.ClearPrinters()
-	return _u
-}
-
-// RemovePrinterIDs removes the "printers" edge to Printer entities by IDs.
-func (_u *GroupUpdate) RemovePrinterIDs(ids ...uuid.UUID) *GroupUpdate {
-	_u.mutation.RemovePrinterIDs(ids...)
-	return _u
-}
-
-// RemovePrinters removes "printers" edges to Printer entities.
-func (_u *GroupUpdate) RemovePrinters(v ...*Printer) *GroupUpdate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.RemovePrinterIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -922,51 +885,6 @@ func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.PrintersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.PrintersTable,
-			Columns: []string{group.PrintersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(printer.FieldID, field.TypeUUID),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.RemovedPrintersIDs(); len(nodes) > 0 && !_u.mutation.PrintersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.PrintersTable,
-			Columns: []string{group.PrintersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(printer.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.PrintersIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.PrintersTable,
-			Columns: []string{group.PrintersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(printer.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{group.Label}
@@ -1154,21 +1072,6 @@ func (_u *GroupUpdateOne) AddLabelTemplates(v ...*LabelTemplate) *GroupUpdateOne
 		ids[i] = v[i].ID
 	}
 	return _u.AddLabelTemplateIDs(ids...)
-}
-
-// AddPrinterIDs adds the "printers" edge to the Printer entity by IDs.
-func (_u *GroupUpdateOne) AddPrinterIDs(ids ...uuid.UUID) *GroupUpdateOne {
-	_u.mutation.AddPrinterIDs(ids...)
-	return _u
-}
-
-// AddPrinters adds the "printers" edges to the Printer entity.
-func (_u *GroupUpdateOne) AddPrinters(v ...*Printer) *GroupUpdateOne {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.AddPrinterIDs(ids...)
 }
 
 // Mutation returns the GroupMutation object of the builder.
@@ -1363,27 +1266,6 @@ func (_u *GroupUpdateOne) RemoveLabelTemplates(v ...*LabelTemplate) *GroupUpdate
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveLabelTemplateIDs(ids...)
-}
-
-// ClearPrinters clears all "printers" edges to the Printer entity.
-func (_u *GroupUpdateOne) ClearPrinters() *GroupUpdateOne {
-	_u.mutation.ClearPrinters()
-	return _u
-}
-
-// RemovePrinterIDs removes the "printers" edge to Printer entities by IDs.
-func (_u *GroupUpdateOne) RemovePrinterIDs(ids ...uuid.UUID) *GroupUpdateOne {
-	_u.mutation.RemovePrinterIDs(ids...)
-	return _u
-}
-
-// RemovePrinters removes "printers" edges to Printer entities.
-func (_u *GroupUpdateOne) RemovePrinters(v ...*Printer) *GroupUpdateOne {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.RemovePrinterIDs(ids...)
 }
 
 // Where appends a list predicates to the GroupUpdate builder.
@@ -1893,51 +1775,6 @@ func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error)
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(labeltemplate.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if _u.mutation.PrintersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.PrintersTable,
-			Columns: []string{group.PrintersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(printer.FieldID, field.TypeUUID),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.RemovedPrintersIDs(); len(nodes) > 0 && !_u.mutation.PrintersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.PrintersTable,
-			Columns: []string{group.PrintersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(printer.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.PrintersIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.PrintersTable,
-			Columns: []string{group.PrintersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(printer.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

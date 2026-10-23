@@ -51,14 +51,6 @@
               <MdiArrowRight class="ml-2" />
             </template>
           </DetailAction>
-          <DetailAction to="/collection/printers">
-            <template #title>{{ $t("tools.labels_set.printers") }}</template>
-            {{ $t("tools.labels_set.printers_sub") }}
-            <template #button>
-              {{ $t("tools.labels_set.printers_button") }}
-              <MdiArrowRight class="ml-2" />
-            </template>
-          </DetailAction>
         </div>
       </BaseCard>
       <BaseCard>

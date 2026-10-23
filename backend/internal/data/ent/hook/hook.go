@@ -189,18 +189,6 @@ func (f PasswordResetTokensFunc) Mutate(ctx context.Context, m ent.Mutation) (en
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PasswordResetTokensMutation", m)
 }
 
-// The PrinterFunc type is an adapter to allow the use of ordinary
-// function as Printer mutator.
-type PrinterFunc func(context.Context, *ent.PrinterMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f PrinterFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.PrinterMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PrinterMutation", m)
-}
-
 // The TagFunc type is an adapter to allow the use of ordinary
 // function as Tag mutator.
 type TagFunc func(context.Context, *ent.TagMutation) (ent.Value, error)

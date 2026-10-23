@@ -37,8 +37,6 @@ const (
 	FieldOutputFormat = "output_format"
 	// FieldDpi holds the string denoting the dpi field in the database.
 	FieldDpi = "dpi"
-	// FieldMediaType holds the string denoting the media_type field in the database.
-	FieldMediaType = "media_type"
 	// FieldOwnerID holds the string denoting the owner_id field in the database.
 	FieldOwnerID = "owner_id"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
@@ -77,7 +75,6 @@ var Columns = []string{
 	FieldCanvasData,
 	FieldOutputFormat,
 	FieldDpi,
-	FieldMediaType,
 	FieldOwnerID,
 }
 
@@ -125,8 +122,6 @@ var (
 	DefaultOutputFormat string
 	// DefaultDpi holds the default value on creation for the "dpi" field.
 	DefaultDpi int
-	// MediaTypeValidator is a validator for the "media_type" field. It is called by the builders before save.
-	MediaTypeValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
@@ -187,11 +182,6 @@ func ByOutputFormat(opts ...sql.OrderTermOption) OrderOption {
 // ByDpi orders the results by the dpi field.
 func ByDpi(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDpi, opts...).ToFunc()
-}
-
-// ByMediaType orders the results by the media_type field.
-func ByMediaType(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldMediaType, opts...).ToFunc()
 }
 
 // ByOwnerID orders the results by the owner_id field.

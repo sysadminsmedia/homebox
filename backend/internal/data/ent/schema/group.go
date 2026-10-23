@@ -54,7 +54,6 @@ func (Group) Edges() []ent.Edge {
 		owned("entity_templates", EntityTemplate.Type),
 		owned("exports", Export.Type),
 		owned("label_templates", LabelTemplate.Type),
-		owned("printers", Printer.Type),
 		// $scaffold_edge
 	}
 }

@@ -65,10 +65,10 @@ export class LabelTemplatesApi extends BaseAPI {
     return this.renderBlob(route(`/label-templates/${id}/render`), body);
   }
 
-  print(id: string, body: Omit<LabelTemplatePrintRequest, "printerId"> & { printerId?: string }) {
+  print(id: string, body: LabelTemplatePrintRequest) {
     return this.http.post<LabelTemplatePrintRequest, LabelTemplatePrintResponse>({
       url: route(`/label-templates/${id}/print`),
-      body: body as LabelTemplatePrintRequest,
+      body,
     });
   }
 
@@ -76,10 +76,10 @@ export class LabelTemplatesApi extends BaseAPI {
     return this.renderBlob(route(`/label-templates/${id}/render-locations`), body);
   }
 
-  printLocations(id: string, body: Omit<LabelTemplatePrintLocationsRequest, "printerId"> & { printerId?: string }) {
+  printLocations(id: string, body: LabelTemplatePrintLocationsRequest) {
     return this.http.post<LabelTemplatePrintLocationsRequest, LabelTemplatePrintResponse>({
       url: route(`/label-templates/${id}/print-locations`),
-      body: body as LabelTemplatePrintLocationsRequest,
+      body,
     });
   }
 }

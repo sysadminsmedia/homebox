@@ -35,13 +35,6 @@ export enum EntityPathType {
   EntityPathTypeItem = "item",
 }
 
-export enum PrinterStatus {
-  DefaultStatus = "unknown",
-  StatusOnline = "online",
-  StatusOffline = "offline",
-  StatusUnknown = "unknown",
-}
-
 export enum LabelmakerContentType {
   /** Can encode any text (URLs, names, etc.) */
   ContentTypeAny = "any",
@@ -59,13 +52,6 @@ export enum LabelmakerBarcodeFormat {
   BarcodeEAN13 = "ean13",
   BarcodeEAN8 = "ean8",
   BarcodeUPCA = "upca",
-}
-
-export enum GithubComSysadminsmediaHomeboxBackendInternalDataEntPrinterPrinterType {
-  DefaultPrinterType = "ipp",
-  PrinterTypeIpp = "ipp",
-  PrinterTypeCups = "cups",
-  PrinterTypeBrotherRaster = "brother_raster",
 }
 
 export enum ExportStatus {
@@ -478,8 +464,6 @@ export interface EntGroupEdges {
   label_templates: EntLabelTemplate[];
   /** Notifiers holds the value of the notifiers edge. */
   notifiers: EntNotifier[];
-  /** Printers holds the value of the printers edge. */
-  printers: EntPrinter[];
   /** Tags holds the value of the tags edge. */
   tags: EntTag[];
   /** UserGroups holds the value of the user_groups edge. */
@@ -533,8 +517,6 @@ export interface EntLabelTemplate {
   id: string;
   /** Whether template is shared with group */
   is_shared: boolean;
-  /** Brother media type like 'DK-22251' for direct printing */
-  media_type: string;
   /** Name holds the value of the "name" field. */
   name: string;
   /** Output format: png, pdf */
@@ -641,47 +623,6 @@ export interface EntPasswordResetTokens {
 export interface EntPasswordResetTokensEdges {
   /** User holds the value of the user edge. */
   user: EntUser;
-}
-
-export interface EntPrinter {
-  /** IPP URI (ipp://host:port/path) or CUPS printer name */
-  address: string;
-  /** CreatedAt holds the value of the "created_at" field. */
-  created_at: string;
-  /** Description holds the value of the "description" field. */
-  description: string;
-  /** Printer DPI for optimal rendering */
-  dpi: number;
-  /**
-   * Edges holds the relations/edges for other nodes in the graph.
-   * The values are being populated by the PrinterQuery when eager-loading is set.
-   */
-  edges: EntPrinterEdges;
-  /** ID of the ent. */
-  id: string;
-  /** Whether this is the default label printer */
-  is_default: boolean;
-  /** Expected label height in mm for validation */
-  label_height_mm: number;
-  /** Expected label width in mm for validation */
-  label_width_mm: number;
-  /** When status was last verified */
-  last_status_check: string;
-  /** Media type identifier for IPP (e.g., 'labels') */
-  media_type: string;
-  /** Name holds the value of the "name" field. */
-  name: string;
-  /** Type of printer connection */
-  printer_type: GithubComSysadminsmediaHomeboxBackendInternalDataEntPrinterPrinterType;
-  /** Cached printer status */
-  status: PrinterStatus;
-  /** UpdatedAt holds the value of the "updated_at" field. */
-  updated_at: string;
-}
-
-export interface EntPrinterEdges {
-  /** Group holds the value of the group edge. */
-  group: EntGroup;
 }
 
 export interface EntTag {
@@ -1312,7 +1253,6 @@ export interface LabelTemplateCreate {
   /** @max 1000 */
   height: number;
   isShared: boolean;
-  mediaType?: string | null;
   /**
    * @minLength 1
    * @maxLength 255
@@ -1333,7 +1273,6 @@ export interface LabelTemplateOut {
   id: string;
   isOwner: boolean;
   isShared: boolean;
-  mediaType: string;
   name: string;
   outputFormat: string;
   ownerId: string;
@@ -1368,7 +1307,6 @@ export interface LabelTemplateUpdate {
   height: number;
   id: string;
   isShared: boolean;
-  mediaType?: string | null;
   /**
    * @minLength 1
    * @maxLength 255
@@ -1456,89 +1394,6 @@ export interface PaginationResultEntitySummary {
   page: number;
   pageSize: number;
   total: number;
-}
-
-export interface PrinterCreate {
-  /**
-   * @minLength 1
-   * @maxLength 512
-   */
-  address: string;
-  /** @maxLength 1000 */
-  description: string;
-  /**
-   * @min 72
-   * @max 1200
-   */
-  dpi: number;
-  isDefault: boolean;
-  labelHeightMm?: number | null;
-  labelWidthMm?: number | null;
-  mediaType?: string | null;
-  /**
-   * @minLength 1
-   * @maxLength 255
-   */
-  name: string;
-  printerType: "ipp" | "cups" | "brother_raster";
-}
-
-export interface PrinterOut {
-  address: string;
-  createdAt: Date | string;
-  description: string;
-  dpi: number;
-  id: string;
-  isDefault: boolean;
-  labelHeightMm: number;
-  labelWidthMm: number;
-  lastStatusCheck: string;
-  mediaType: string;
-  name: string;
-  printerType: string;
-  status: string;
-  updatedAt: Date | string;
-}
-
-export interface PrinterSummary {
-  address: string;
-  createdAt: Date | string;
-  description: string;
-  dpi: number;
-  id: string;
-  isDefault: boolean;
-  labelHeightMm: number;
-  labelWidthMm: number;
-  name: string;
-  printerType: string;
-  status: string;
-  updatedAt: Date | string;
-}
-
-export interface PrinterUpdate {
-  /**
-   * @minLength 1
-   * @maxLength 512
-   */
-  address: string;
-  /** @maxLength 1000 */
-  description: string;
-  /**
-   * @min 72
-   * @max 1200
-   */
-  dpi: number;
-  id: string;
-  isDefault: boolean;
-  labelHeightMm?: number | null;
-  labelWidthMm?: number | null;
-  mediaType?: string | null;
-  /**
-   * @minLength 1
-   * @maxLength 255
-   */
-  name: string;
-  printerType: "ipp" | "cups" | "brother_raster";
 }
 
 export interface TagCreate {
@@ -1693,16 +1548,6 @@ export interface ActionAmountResult {
   completed: number;
 }
 
-export interface BrotherMediaInfo {
-  id: string;
-  isContinuous: boolean;
-  /** 0 for continuous */
-  lengthMm: number;
-  name: string;
-  twoColor: boolean;
-  widthMm: number;
-}
-
 export interface Build {
   buildTime: string;
   commit: string;
@@ -1782,8 +1627,6 @@ export interface LabelTemplatePrintLocationsRequest {
   locationIds: string[];
   /** Locations with individual quantities */
   locations: LabelPrintLocation[];
-  /** If nil, uses default printer */
-  printerId: string;
 }
 
 export interface LabelTemplatePrintRequest {
@@ -1793,15 +1636,11 @@ export interface LabelTemplatePrintRequest {
   itemIds: string[];
   /** Items with individual quantities */
   items: LabelPrintItem[];
-  /** If nil, uses default printer */
-  printerId: string;
 }
 
 export interface LabelTemplatePrintResponse {
-  jobId: number;
   labelCount: number;
   message: string;
-  printerName: string;
   success: boolean;
 }
 
@@ -1846,23 +1685,6 @@ export interface OIDCStatus {
   autoRedirect: boolean;
   buttonText: string;
   enabled: boolean;
-}
-
-export interface PrinterStatusResponse {
-  mediaReady: string[];
-  message: string;
-  status: string;
-  supportsIpp: boolean;
-}
-
-export interface PrinterTestRequest {
-  message: string;
-}
-
-export interface PrinterTestResponse {
-  jobId: number;
-  message: string;
-  success: boolean;
 }
 
 export interface ResetPasswordRequest {

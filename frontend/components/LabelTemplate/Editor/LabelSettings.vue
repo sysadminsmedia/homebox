@@ -6,7 +6,7 @@
   import { Switch } from "@/components/ui/switch";
   import { Button } from "@/components/ui/button";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-  import type { LabelmakerLabelPreset, BrotherMediaInfo } from "~/lib/api/types/data-contracts";
+  import type { LabelmakerLabelPreset } from "~/lib/api/types/data-contracts";
 
   export interface EditorSettings {
     name: string;
@@ -15,7 +15,6 @@
     height: number;
     preset: string;
     dpi: number;
-    mediaType: string;
     isShared: boolean;
   }
 
@@ -34,7 +33,6 @@
   }>();
 
   const { t } = useI18n();
-  const api = useUserApi();
 
   // --- presets grouped by brand and kind -------------------------------------
   type PresetCategory = "sheet" | "continuous" | "die-cut";
@@ -75,7 +73,6 @@
   const selectedPreset = computed(() => props.presets.find(p => p.key === settings.value.preset) ?? null);
   const isWidthLocked = computed(() => !!selectedPreset.value);
   const isHeightLocked = computed(() => (selectedPreset.value ? !selectedPreset.value.continuous : false));
-  const isBrother = computed(() => selectedPreset.value?.brand === "Brother");
 
   function handlePresetChange(value: unknown) {
     const v = String(value ?? "");
@@ -98,13 +95,6 @@
     settings.value.width = settings.value.height;
     settings.value.height = w;
   }
-
-  // --- Brother media types (for direct raster printing) ----------------------
-  const mediaTypes = ref<BrotherMediaInfo[]>([]);
-  onMounted(async () => {
-    const { data } = await api.printers.getMediaTypes();
-    if (data) mediaTypes.value = [...data].sort((a, b) => a.id.localeCompare(b.id));
-  });
 
   const dpiOptions = [150, 203, 300, 600];
 </script>
@@ -174,7 +164,7 @@
             min="1"
             :disabled="isWidthLocked"
           />
-          <span class="text-xs text-muted-foreground">mm</span>
+          <span class="shrink-0 text-xs text-muted-foreground">mm</span>
         </div>
       </div>
       <div class="space-y-2">
@@ -188,7 +178,7 @@
             min="1"
             :disabled="isHeightLocked"
           />
-          <span class="text-xs text-muted-foreground">mm</span>
+          <span class="shrink-0 text-xs text-muted-foreground">mm</span>
         </div>
       </div>
     </div>
@@ -216,27 +206,7 @@
           </SelectContent>
         </Select>
       </div>
-      <div class="space-y-2">
-        <Label>{{ $t("components.label_template.form.media_type") }}</Label>
-        <Select
-          :model-value="settings.mediaType || 'none'"
-          @update:model-value="v => (settings.mediaType = v === 'none' ? '' : String(v))"
-        >
-          <SelectTrigger>
-            <SelectValue :placeholder="$t('components.label_template.form.media_type_placeholder')" />
-          </SelectTrigger>
-          <SelectContent class="max-h-72">
-            <SelectItem value="none">{{ $t("components.label_template.form.media_type_none") }}</SelectItem>
-            <SelectItem v-for="m in mediaTypes" :key="m.id" :value="m.id">
-              {{ m.id }} <span class="text-muted-foreground">· {{ m.name }}</span>
-            </SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
     </div>
-    <p v-if="isBrother" class="-mt-3 text-xs text-muted-foreground">
-      {{ $t("components.label_template.form.media_type_hint") }}
-    </p>
 
     <div class="flex items-center justify-between gap-4 rounded-md border p-3">
       <div class="space-y-0.5">

@@ -20,30 +20,30 @@ This page tracks what the label template system does today and what is planned. 
   UPC-A) with compatibility-filtered data sources, rectangles, lines and embedded raster images (data URLs).
 - Data field placeholders for item, location and common fields, including custom fields.
 - Align the selection to the label edges or centre; nudge with the arrow keys; undo and redo.
-- Inspector with Element, Layers and Label tabs; the Label tab holds name, preset, size, orientation, DPI, Brother
-  media type and sharing.
-- Live print preview rendered by the backend with a real item, and a Test print to the default printer.
+- Inspector with Element, Layers and Label tabs; the Label tab holds name, description, preset, size, orientation,
+  DPI and sharing.
+- Live print preview rendered by the backend with a real item, and a Test print that sends the preview label through
+  the server print command.
 - Responsive layout: tool rail and inspector stack under the canvas on narrow screens.
 
 ### Printing
-- One **Print label** split button on items and locations: quick print with defaults, the full dialog, PNG download
-  and the legacy built-in QR label.
-- Print dialog with template cards, per-entity copies, printer status and a browser destination; PDF for sheets.
-- Bulk print from any item list; batch print page for items or locations with print order, copies, sheet options
-  (skip first, cut guides, paper size) and a first-sheet preview.
-- Direct printing to IPP/CUPS (URF) and Brother QL (raster protocol); WebUSB and Web Bluetooth printing from the
-  browser.
-
-### Printers
-- Printers are a Collection tab: add, edit, test, check status, set default, delete; browser-paired USB/Bluetooth
-  devices listed alongside.
-- Address validation rejects public addresses unless `HBOX_PRINTER_ALLOW_PUBLIC_ADDRESSES=true`.
+- One **Print label** split button on items and locations: quick print with the default template, the full dialog, PNG
+  download and the legacy built-in QR label.
+- Print dialog with template cards, per-entity copies and three destinations: **Label printer** (only when the server
+  has `HBOX_LABEL_MAKER_PRINT_COMMAND` set, disabled for sheet templates), **This browser** (print window) and
+  **Download** (PNG, or PDF for several labels or sheets).
+- Bulk print from any item list, including a bulk Quick print; batch print page for items or locations with print
+  order, copies, sheet options (skip first, cut guides, paper size) and a first-sheet preview.
+- HomeBox does not print directly: there is no IPP/CUPS/Brother support and no WebUSB or Web Bluetooth. Server-side
+  printing goes through the configured print command.
 
 ## Backend notes
 
 - Renderer: `backend/pkgs/labelmaker/template_renderer.go` parses the Fabric.js JSON and draws text, barcodes, shapes
   and images onto an RGBA image at the template DPI. Image elements accept `data:` URLs only; remote URLs are not
   fetched.
+- Printing: template printing calls the labelmaker print-command runner (`labelmaker.PrintPNG`) with the rendered PNG.
+  HomeBox never speaks a printer protocol.
 - Sheets: `pdf_renderer.go` places labels on Avery-style layouts; `SkipLabels` offsets the first sheet.
 - Entities: handlers resolve items and locations through the entity repository (`GetOneByGroup`,
   `GetContainerByGroup`, `PathForEntity`).
@@ -55,4 +55,5 @@ This page tracks what the label template system does today and what is planned. 
 - Smart guides (snap to other elements) and multi-select alignment.
 - Barcode content from custom fields.
 - Print history with job status, and printing through API keys for print-on-scan automations.
+- Several named print commands (for example a roll printer and a sheet printer) selectable per user.
 - Text along a path, character spacing and outlines.

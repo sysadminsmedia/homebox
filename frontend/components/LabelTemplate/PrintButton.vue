@@ -31,7 +31,7 @@
 
   const { t } = useI18n();
   const { openDialog } = useDialog();
-  const { isQuickPrintAvailable, quickPrintItems, quickPrintLocations, defaultPrinter, defaultTemplateId } =
+  const { isQuickPrintAvailable, quickPrintItems, quickPrintLocations, defaultTemplateId, labelPrinting } =
     useQuickPrint();
   const { templates } = useLabelTemplates();
   const { render, renderLocations } = useLabelTemplateActions();
@@ -58,7 +58,7 @@
     try {
       const ok = props.type === "item" ? await quickPrintItems([props.id]) : await quickPrintLocations([props.id]);
       if (ok) {
-        toast.success(t("components.label_template.print_button.sent", { printer: defaultPrinter.value?.name ?? "" }));
+        toast.success(t("components.label_template.print_button.sent"));
       } else {
         openChooser();
       }
@@ -126,13 +126,13 @@
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" class="w-80">
-          <template v-if="isQuickPrintAvailable && defaultTemplate && defaultPrinter">
+          <template v-if="isQuickPrintAvailable && defaultTemplate">
             <DropdownMenuItem class="flex-col items-start gap-0.5" @click="quickPrint">
               <span class="font-medium">
                 {{ $t("components.label_template.print_button.quick_with", { template: defaultTemplate.name }) }}
               </span>
               <span class="text-xs text-muted-foreground">
-                {{ $t("components.label_template.print_button.quick_hint", { printer: defaultPrinter.name }) }}
+                {{ $t("components.label_template.print_button.quick_hint") }}
               </span>
             </DropdownMenuItem>
           </template>
@@ -153,11 +153,20 @@
             </span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem as-child>
-            <NuxtLink to="/collection/printers" class="text-muted-foreground">
-              {{ $t("components.label_template.print_button.change_defaults") }}
+          <DropdownMenuItem v-if="labelPrinting" as-child>
+            <NuxtLink to="/label-templates" class="text-muted-foreground">
+              {{
+                $t(
+                  defaultTemplate
+                    ? "components.label_template.print_button.change_default"
+                    : "components.label_template.print_button.set_default"
+                )
+              }}
             </NuxtLink>
           </DropdownMenuItem>
+          <p v-else class="px-2 py-1.5 text-xs text-muted-foreground">
+            {{ $t("components.label_template.print_button.server_print_hint") }}
+          </p>
         </DropdownMenuContent>
       </DropdownMenu>
     </ButtonGroup>

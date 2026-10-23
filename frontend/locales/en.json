@@ -40,8 +40,7 @@
             "members": "Members",
             "notifiers": "Notifiers",
             "settings": "Settings",
-            "tools": "Tools",
-            "printers": "Printers"
+            "tools": "Tools"
         },
         "uses": "Uses"
     },
@@ -478,10 +477,6 @@
                 "width": "Width",
                 "height": "Height",
                 "dpi": "Print Resolution",
-                "media_type": "Brother Media Type",
-                "media_type_placeholder": "Select media type for direct printing",
-                "media_type_none": "None (custom dimensions)",
-                "media_type_hint": "Select a media type to set dimensions, or use custom dimensions for PDF/image export",
                 "sheet_labels": "Sheet Labels",
                 "continuous_labels": "Continuous Rolls",
                 "die_cut_labels": "Die-Cut Labels",
@@ -489,8 +484,8 @@
                 "die_cut_hint": "Dimensions are fixed by the selected label size.",
                 "two_color": "Black/Red",
                 "two_color_hint": "Two-color roll: Use black and red elements in your label design.",
-                "share_with_group": "Share with Group",
-                "share_description": "Allow others in your group to use this template",
+                "share_with_group": "Share with collection",
+                "share_description": "Allow others in your collection to use this template",
                 "brand_custom": "Custom",
                 "dpi_option": "{dpi} DPI",
                 "dpi_recommended": "{dpi} DPI (Recommended)",
@@ -511,7 +506,7 @@
                 "update_failed": "Failed to update label template",
                 "downloaded": "Label downloaded",
                 "printed": "Label sent to print",
-                "print_sent": "Label sent to {printer}",
+                "print_sent": "Sent {count} label(s) to the printer",
                 "print_failed": "Failed to print label",
                 "render_failed": "Failed to render label",
                 "default_set": "\"{name}\" set as default for quick printing",
@@ -684,7 +679,7 @@
                     "unsaved": "Unsaved changes",
                     "units": "Units",
                     "test_print": "Test print",
-                    "test_print_hint": "Print one label for the preview item on {printer}"
+                    "test_print_hint": "Print one label for the preview item on the server's label printer"
                 },
                 "tabs": {
                     "element": "Element",
@@ -702,10 +697,10 @@
                     "type_group": "Group"
                 },
                 "toast": {
-                    "test_print_sent": "Test label sent to {printer}",
+                    "test_print_sent": "Test label sent to the printer",
                     "test_print_failed": "Test print failed",
                     "test_print_needs_item": "Pick a preview item first",
-                    "test_print_needs_printer": "Set a default printer under Collection › Printers first"
+                    "test_print_needs_server": "Server-side label printing is not configured"
                 }
             },
             "print_dialog": {
@@ -714,16 +709,11 @@
                 "select_placeholder": "Choose a template",
                 "download": "Download",
                 "print": "Print",
-                "print_direct": "Print to Label Maker",
-                "printer": "Printer",
-                "select_printer": "Select a printer",
                 "browser_print": "Browser Print Dialog",
-                "manage_printers": "Manage Printers",
                 "copies": "Copies",
                 "label_size": "Label Size",
                 "width": "Width",
                 "height": "Height",
-                "label_size_hint": "Enter the physical dimensions of the label stock in your printer",
                 "loading_preview": "Loading preview...",
                 "preview_of_items": "Preview of first item ({count} items total)",
                 "preview_of_locations": "Preview of first location ({count} locations total)",
@@ -738,9 +728,6 @@
                 "total": "Total",
                 "send_to": "Send to",
                 "this_browser": "This browser",
-                "status_online": "Online",
-                "status_offline": "Offline",
-                "status_unknown": "Status unknown",
                 "printer_not_for_sheets": "Prints single labels only; download the sheet as PDF",
                 "sheet_pdf_hint": "sheet templates print as PDF",
                 "download_pdf": "Download PDF",
@@ -752,20 +739,25 @@
                 "subtitle_locations_one": "1 location selected",
                 "subtitle_locations_many": "{count} locations selected",
                 "print_one": "Print 1 label",
-                "print_many": "Print {count} labels"
+                "print_many": "Print {count} labels",
+                "label_printer": "Label printer",
+                "label_printer_hint": "Configured on the server",
+                "server_print_disabled_hint": "Admins can enable server printing with HBOX_LABEL_MAKER_PRINT_COMMAND."
             },
             "print_button": {
                 "print_label": "Print label",
                 "more": "More print options",
                 "quick_with": "Print with {template}",
-                "quick_hint": "1 copy → {printer}. Your defaults.",
-                "choose": "Choose template, printer, copies…",
+                "quick_hint": "Prints 1 copy on the label printer with your default template.",
+                "choose": "Choose template, copies…",
                 "download_png": "Download label as PNG",
                 "basic_label": "Basic label",
                 "basic_label_hint": "built-in QR card",
-                "change_defaults": "Change defaults in Collection › Printers",
-                "no_defaults": "No default template or printer yet",
-                "sent": "Label sent to {printer}"
+                "no_defaults": "Quick print needs a default template and server printing",
+                "sent": "Label sent to the printer",
+                "server_print_hint": "Admins can enable server printing with HBOX_LABEL_MAKER_PRINT_COMMAND.",
+                "set_default": "Set a default template…",
+                "change_default": "Change the default template…"
             }
         }
     },
@@ -1136,8 +1128,7 @@
         "scanner": "Scanner",
         "search": "Search",
         "templates": "Templates",
-        "label_templates": "Label Templates",
-        "printers": "Printers"
+        "label_templates": "Label Templates"
     },
     "pages": {
         "templates": {
@@ -1172,10 +1163,6 @@
                 "print_queue_description": "Reorder items to change print order. Labels will print in the order shown.",
                 "move_up": "Move up",
                 "move_down": "Move down",
-                "direct_print": "Direct Print to Label Maker",
-                "direct_print_description": "Send labels directly to a connected label printer (Brother, etc.)",
-                "select_printer": "Select Printer",
-                "select_printer_placeholder": "Choose a printer",
                 "send_to_printer": "Send {count} to Printer",
                 "direct_print_success": "Sent {count} labels to printer",
                 "direct_print_failed": "Failed to print labels",
@@ -1191,7 +1178,7 @@
                 "download_png": "Download PNG",
                 "sheets_need_pdf": "sheets need PDF",
                 "print_browser": "Print in this browser",
-                "printer_not_for_sheets": "prints single labels only, use PDF for sheets",
+                "printer_not_for_sheets": "not for sheets, use PDF",
                 "summary": "{labels} labels from {count} selected · {template}",
                 "nothing_selected": "Nothing selected yet.",
                 "clear_selection": "Clear selection",
@@ -1205,91 +1192,6 @@
             "subtitle": "{count} total · {shared} shared with the collection",
             "new_template": "New template",
             "empty_hint": "A template is a label design: text, data fields and barcodes laid out on a label size. Items and locations print with it."
-        },
-        "printers": {
-            "network_printers": "Network Printers",
-            "network_printers_sub": "Printers connected via network using IPP or CUPS",
-            "local_printers": "Local Printers",
-            "local_printers_sub": "USB and Bluetooth printers connected directly to your device (Chrome/Edge only)",
-            "no_printers": "No network printers configured yet.",
-            "no_local_printers": "No local printers paired yet.",
-            "browser_not_supported": "Your browser does not support WebUSB or Web Bluetooth.",
-            "browser_not_supported_hint": "Please use Chrome or Edge to pair local USB and Bluetooth printers.",
-            "add_printer": "Add Printer",
-            "edit_printer": "Edit Printer",
-            "pair_usb": "Pair USB Printer",
-            "pair_bluetooth": "Pair Bluetooth Printer",
-            "default": "Default",
-            "delete_confirm": "Are you sure you want to delete this printer?",
-            "form": {
-                "name": "Printer Name",
-                "name_placeholder": "My Label Printer",
-                "type": "Printer Type",
-                "type_placeholder": "Select printer type",
-                "address": "Address",
-                "address_placeholder": "e.g. ipp://192.168.1.100:631/ipp or 192.168.1.100",
-                "address_hint": "IPP: ipp://hostname:631/ipp. CUPS: http://localhost:631/printers/PrinterName. Brother Raster: IP address or hostname (e.g. 192.168.1.100)",
-                "width": "Label Width (mm)",
-                "height": "Label Height (mm)",
-                "dpi": "DPI",
-                "type_ipp": "IPP (Network Printer)",
-                "type_cups": "CUPS (Local Printer Server)",
-                "type_brother_raster": "Brother Raster (QL Series)"
-            },
-            "toast": {
-                "created": "Printer added successfully",
-                "updated": "Printer updated successfully",
-                "deleted": "Printer deleted",
-                "delete_failed": "Failed to delete printer",
-                "save_failed": "Failed to save printer",
-                "set_default": "Default printer updated",
-                "set_default_failed": "Failed to set default printer",
-                "test_success": "Test print sent successfully",
-                "test_failed": "Test print failed",
-                "paired": "Paired with {name}",
-                "removed": "Printer removed",
-                "required_fields": "Name and address are required",
-                "status_checked": "Printer status: {status}",
-                "status_failed": "Could not reach the printer"
-            },
-            "title": "Printers",
-            "subtitle": "Shared with everyone in this collection. Quick print uses the default printer with your default template.",
-            "table": {
-                "printer": "Printer",
-                "connection": "Connection",
-                "media": "Label size",
-                "status": "Status",
-                "actions": "Actions"
-            },
-            "types": {
-                "ipp": "IPP",
-                "cups": "CUPS",
-                "brother_raster": "Brother raster"
-            },
-            "status_online": "Online",
-            "status_offline": "Offline",
-            "status_unknown": "Unknown · never checked",
-            "status_paired": "Paired in this browser",
-            "test_print": "Test print",
-            "check_status": "Check status",
-            "set_default": "Set as default",
-            "more_actions": "More actions for {name}",
-            "this_device_only": "This device only",
-            "forget": "Forget",
-            "local_note": "USB and Bluetooth printers are paired per browser (Chrome and Edge) and listed here with the shared ones.",
-            "defaults_title": "Printing defaults",
-            "defaults_sub": "What Quick print uses when you press Print label on an item or location.",
-            "default_template": "Default template for Quick print",
-            "default_template_none": "No default template",
-            "default_template_hint": "Your choice, synced with your account like other preferences. Each member picks their own. The default printer is shared.",
-            "address_policy": "Printer address policy",
-            "address_policy_text": "Only private network addresses are accepted. To allow public addresses, start the server with",
-            "connection": {
-                "usb": "USB",
-                "bluetooth": "Bluetooth",
-                "webusb": "WebUSB",
-                "web_bluetooth": "Web Bluetooth"
-            }
         }
     },
     "profile": {
@@ -1550,10 +1452,7 @@
             "templates_button": "Open templates",
             "batch": "Batch print",
             "batch_sub": "Pick many items or locations, choose a template and print to a label printer, a PDF or a sheet.",
-            "batch_button": "Batch print",
-            "printers": "Printers",
-            "printers_sub": "Add network and Brother label printers, pick defaults for Quick print.",
-            "printers_button": "Manage printers"
+            "batch_button": "Batch print"
         }
     }
 }

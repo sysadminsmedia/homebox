@@ -11,8 +11,9 @@ label size. Items and locations then print with the template on a label printer,
 ![Label templates list with thumbnails of each design](../../../../assets/user-guide/labels/templates-list.png)
 
 Open **Label Templates** in the sidebar to see your designs. Each card shows a rendered sample, the label stock it is
-made for and whether it is shared with the collection. The star badge marks the template that **Print label** uses by
-default.
+made for and whether it is shared with the collection. The star badge marks your **default template**, the one that
+**Quick print** uses. Choose it from a card's menu. The default is a personal preference synced with your account, so
+every member of the collection can pick their own.
 
 ## Create a template
 
@@ -27,8 +28,8 @@ default.
 </Steps>
 
 > [!TIP]
-> If you own a Brother or Dymo label printer, choose the preset that matches the roll you have loaded. The template
-> then prints edge to edge without scaling.
+> Choose the preset that matches the label stock you have loaded. The template then prints edge to edge without
+> scaling.
 
 ## The editor
 
@@ -81,17 +82,19 @@ encode a URL, so it lists the asset id only. The canvas shows a placeholder; the
 The **Layers** tab lists every element, top layer first. Click a row to select it, use the eye to hide it from the
 print, and the arrows to change the stacking order.
 
-![The Label tab with name, preset, size, resolution, media type and sharing](../../../../assets/user-guide/labels/editor-label-settings.png)
+![The Label tab with name, preset, size, resolution and sharing](../../../../assets/user-guide/labels/editor-label-settings.png)
 
 The **Label** tab holds everything about the template itself: its name and description, the preset and size,
-orientation, print resolution, the Brother **media type** used for direct printing, and the **Share with collection**
-switch. Display settings for rulers, grid and snap live at the bottom.
+orientation, print resolution and the **Share with collection** switch. Display settings for rulers, grid and snap
+live at the bottom.
 
 ### Preview and test print
 
 Pick an item in the **Print preview** panel and the server renders the label with that item's data every time you
 stop editing for half a second. This is exactly what will print. **Test print** sends one copy of that preview label
-to your default printer; it saves the template first if there are unsaved changes.
+through the server's print command (see [Server-side printing](#server-side-printing)); it saves the template first if
+there are unsaved changes. If no print command is configured, the button tells you that server-side printing is not
+set up and you need to ask your administrator.
 
 ### Keyboard shortcuts
 
@@ -110,14 +113,15 @@ On a phone the editor stacks: canvas on top, the add-element row below it, then 
 ![Item header with the Print label split button](../../../../assets/user-guide/labels/item-print-button.png)
 
 Every item and location has a **Print label** button. The main part does the quickest thing: when you have a default
-template and a default printer, one click prints a single label. Without defaults it opens the print dialog instead.
+template and the server has a label printer configured, one click prints a single label. Otherwise it opens the print
+dialog instead.
 
 ![The Print label menu](../../../../assets/user-guide/labels/item-print-menu.png)
 
 The arrow opens more options:
 
-- **Print with &lt;template&gt;**, the one-click quick print, with the destination spelled out.
-- **Choose template, printer, copies…** opens the print dialog.
+- **Print with &lt;template&gt;**, the one-click quick print with your default template on the server's label printer.
+- **Choose template, copies…** opens the print dialog.
 - **Download label as PNG** renders the label with your default template.
 - **Basic label** opens HomeBox's built-in QR label card, which needs no template at all.
 
@@ -131,19 +135,19 @@ Templates are shown as cards with a sample, so you can tell them apart at a glan
 The preview on the right is rendered with the first selected item. Set the number of copies per item, then choose
 where to send the labels:
 
-- a **network printer** (IPP or CUPS) or a **Brother** label printer configured under Collection › Printers, with its
-  last known status as a dot,
-- a **USB or Bluetooth** printer paired in this browser, or
+- **Label printer**, the printer attached to the HomeBox server. It only appears when the administrator has set a
+  print command, and it is greyed out for sheet templates because the server prints one label at a time. When it is
+  not available the dialog tells you to ask your administrator.
 - **This browser**, which opens the label in a print window.
-
-**Download** saves a PNG, or a PDF when there is more than one label or the template is a sheet.
+- **Download** saves a PNG, or a PDF when there is more than one label or the template is a sheet.
 
 ### Several at once
 
 ![Bulk actions menu on a list of items](../../../../assets/user-guide/labels/bulk-print-menu.png)
 
 Select items in any list (home, search, a location or a tag) and open the **⋯** actions menu. **Print labels for
-selected items** opens the same dialog with a copies field per item.
+selected items** opens the same dialog with a copies field per item. **Quick Print Selected** prints one label per
+selected item with your default template on the server's label printer, without opening the dialog.
 
 ![Print dialog for two selected items](../../../../assets/user-guide/labels/print-dialog-multiple.png)
 
@@ -153,55 +157,44 @@ selected items** opens the same dialog with a copies field per item.
 
 **Label Templates › Batch print** is for bigger jobs. Search and filter items (or switch to **Locations**), tick what
 you want, set copies per row and drag the selected rows into the order you want them printed. The right column holds
-the template, a preview and the destination; the footer sums it up and prints or downloads.
+the template, a preview and the destination (**Download PDF**, **Print in this browser** or **Label printer**); the
+footer sums it up and prints or downloads.
 
 ![Batch print with an Avery sheet template, showing skip-first, cut guides and paper size](../../../../assets/user-guide/labels/batch-print-sheet.png)
 
 For **sheet templates** (Avery and similar) the preview shows the first sheet. **Skip first** leaves positions empty
 on a partly used sheet, **cut guides** adds thin borders for plain paper, and you can pick Letter or A4. Sheets always
-go out as PDF; configured printers are greyed out because the server prints one label at a time.
+go out as PDF or through the browser; the label printer is greyed out because the server prints one label at a time.
 
 > [!TIP]
 > The classic **Asset ID label generator** under Collection › Tools still exists for pre-printing numbered QR labels
 > before items are entered.
 
-## Printers
+### Server-side printing
 
-![Printers tab under Collection](../../../../assets/user-guide/labels/printers.png)
+HomeBox does not talk to printers itself. To print from the server, the administrator sets
+`HBOX_LABEL_MAKER_PRINT_COMMAND` in the environment or config file (it is not a UI setting). HomeBox renders the label
+to a temporary PNG and runs that command once per copy, replacing `{{.FileName}}` with the file's path. The same
+command also prints the built-in basic label. For example:
 
-Printers live under **Collection › Printers** because they are shared with everyone in the collection.
+```sh
+# Brother QL printer on the network, 62 mm tape
+HBOX_LABEL_MAKER_PRINT_COMMAND="brother_ql -b network -p tcp://192.168.1.50 print -l 62 {{.FileName}}"
 
-### Adding a printer
+# A printer shared through CUPS
+HBOX_LABEL_MAKER_PRINT_COMMAND="lp -d labelprinter {{.FileName}}"
+```
 
-<Steps>
+Template labels can also use `{{.Width}}`, `{{.Height}}`, `{{.WidthMm}}`, `{{.HeightMm}}`, `{{.Dpi}}`, `{{.TitleText}}`,
+`{{.URL}}` and `{{.Copies}}`. See the [configuration page](/en/quick-start/configure) for the full list.
 
-1. Click **Add printer**.
-2. Choose the type:
-   - **IPP (Network Printer)** for any printer that speaks IPP, address like `ipp://192.168.1.100:631/ipp/print`.
-   - **CUPS** for a printer shared by a CUPS server, address like `http://cups.local:631/printers/Office`.
-   - **Brother Raster** for QL-series label printers on the network, address `192.168.1.50` (port 9100 is assumed).
-3. Set the printer's resolution (most label printers are 300 dpi) and save.
-
-</Steps>
-
-**Test print** sends a small test label. **Check status** in the row menu asks the printer and stores the result,
-which is the dot you see in print dialogs. Mark one printer as **default**; Quick print uses it.
-
-For printers over USB or Bluetooth, use **Pair USB printer** or **Pair Bluetooth printer**. These are paired by the
-browser (Chrome and Edge) and only this device can print to them.
-
-### Printing defaults
-
-Under the printer list you pick the **default template for Quick print**. This is a personal preference, synced with
-your account, so each member of the collection can choose their own. The default printer is shared.
-
-> [!NOTE]
-> Only printers on private network addresses are accepted. To print to a public address the server has to be started
-> with `HBOX_PRINTER_ALLOW_PUBLIC_ADDRESSES=true`.
+Because the server does the printing, one tap prints from a phone or tablet too, with no browser print dialog, as long
+as the administrator has set the command. If it is not set, the **Label printer** destination is hidden; use **This
+browser** or **Download** instead, or ask your administrator.
 
 ## Tips
 
-- Keep text inside the label with a small margin; printers rarely print to the very edge.
+- Keep text inside the label with a small margin; label printers rarely print to the very edge.
 - Give QR codes at least 15 mm on a 300 dpi printer so phones scan them from a shelf away.
 - Use **Auto-fit** for item names and keep fixed-size text for labels such as "SN".
 - Make one template per label stock and share it with the collection; duplicate it to try variations.
@@ -215,8 +208,10 @@ PDF at 100% scale (no "fit to page").
 **A barcode will not scan.** Check the symbology supports the data: EAN and UPC need digits only. Make the barcode
 larger and keep white space around it.
 
-**The printer shows Offline or does not print.** Confirm the address and that HomeBox can reach it on the network.
-Brother printers need the raster protocol enabled and the right media type set on the template.
+**The label printer does not print.** HomeBox runs the print command and reports an error if it fails, so check the
+server log first. Then run the same command by hand on the server, with a PNG file in place of `{{.FileName}}`. The
+file HomeBox passes is a PNG at the template's DPI, so the command and printer need to accept that. If the **Label
+printer** destination is missing, no print command is configured.
 
 **The preview does not update.** Pick a preview item first; without one there is nothing to render. Use **Refresh** if
 the server was busy.

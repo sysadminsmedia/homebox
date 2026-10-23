@@ -106,11 +106,6 @@ func Dpi(v int) predicate.LabelTemplate {
 	return predicate.LabelTemplate(sql.FieldEQ(FieldDpi, v))
 }
 
-// MediaType applies equality check predicate on the "media_type" field. It's identical to MediaTypeEQ.
-func MediaType(v string) predicate.LabelTemplate {
-	return predicate.LabelTemplate(sql.FieldEQ(FieldMediaType, v))
-}
-
 // OwnerID applies equality check predicate on the "owner_id" field. It's identical to OwnerIDEQ.
 func OwnerID(v uuid.UUID) predicate.LabelTemplate {
 	return predicate.LabelTemplate(sql.FieldEQ(FieldOwnerID, v))
@@ -614,81 +609,6 @@ func DpiLT(v int) predicate.LabelTemplate {
 // DpiLTE applies the LTE predicate on the "dpi" field.
 func DpiLTE(v int) predicate.LabelTemplate {
 	return predicate.LabelTemplate(sql.FieldLTE(FieldDpi, v))
-}
-
-// MediaTypeEQ applies the EQ predicate on the "media_type" field.
-func MediaTypeEQ(v string) predicate.LabelTemplate {
-	return predicate.LabelTemplate(sql.FieldEQ(FieldMediaType, v))
-}
-
-// MediaTypeNEQ applies the NEQ predicate on the "media_type" field.
-func MediaTypeNEQ(v string) predicate.LabelTemplate {
-	return predicate.LabelTemplate(sql.FieldNEQ(FieldMediaType, v))
-}
-
-// MediaTypeIn applies the In predicate on the "media_type" field.
-func MediaTypeIn(vs ...string) predicate.LabelTemplate {
-	return predicate.LabelTemplate(sql.FieldIn(FieldMediaType, vs...))
-}
-
-// MediaTypeNotIn applies the NotIn predicate on the "media_type" field.
-func MediaTypeNotIn(vs ...string) predicate.LabelTemplate {
-	return predicate.LabelTemplate(sql.FieldNotIn(FieldMediaType, vs...))
-}
-
-// MediaTypeGT applies the GT predicate on the "media_type" field.
-func MediaTypeGT(v string) predicate.LabelTemplate {
-	return predicate.LabelTemplate(sql.FieldGT(FieldMediaType, v))
-}
-
-// MediaTypeGTE applies the GTE predicate on the "media_type" field.
-func MediaTypeGTE(v string) predicate.LabelTemplate {
-	return predicate.LabelTemplate(sql.FieldGTE(FieldMediaType, v))
-}
-
-// MediaTypeLT applies the LT predicate on the "media_type" field.
-func MediaTypeLT(v string) predicate.LabelTemplate {
-	return predicate.LabelTemplate(sql.FieldLT(FieldMediaType, v))
-}
-
-// MediaTypeLTE applies the LTE predicate on the "media_type" field.
-func MediaTypeLTE(v string) predicate.LabelTemplate {
-	return predicate.LabelTemplate(sql.FieldLTE(FieldMediaType, v))
-}
-
-// MediaTypeContains applies the Contains predicate on the "media_type" field.
-func MediaTypeContains(v string) predicate.LabelTemplate {
-	return predicate.LabelTemplate(sql.FieldContains(FieldMediaType, v))
-}
-
-// MediaTypeHasPrefix applies the HasPrefix predicate on the "media_type" field.
-func MediaTypeHasPrefix(v string) predicate.LabelTemplate {
-	return predicate.LabelTemplate(sql.FieldHasPrefix(FieldMediaType, v))
-}
-
-// MediaTypeHasSuffix applies the HasSuffix predicate on the "media_type" field.
-func MediaTypeHasSuffix(v string) predicate.LabelTemplate {
-	return predicate.LabelTemplate(sql.FieldHasSuffix(FieldMediaType, v))
-}
-
-// MediaTypeIsNil applies the IsNil predicate on the "media_type" field.
-func MediaTypeIsNil() predicate.LabelTemplate {
-	return predicate.LabelTemplate(sql.FieldIsNull(FieldMediaType))
-}
-
-// MediaTypeNotNil applies the NotNil predicate on the "media_type" field.
-func MediaTypeNotNil() predicate.LabelTemplate {
-	return predicate.LabelTemplate(sql.FieldNotNull(FieldMediaType))
-}
-
-// MediaTypeEqualFold applies the EqualFold predicate on the "media_type" field.
-func MediaTypeEqualFold(v string) predicate.LabelTemplate {
-	return predicate.LabelTemplate(sql.FieldEqualFold(FieldMediaType, v))
-}
-
-// MediaTypeContainsFold applies the ContainsFold predicate on the "media_type" field.
-func MediaTypeContainsFold(v string) predicate.LabelTemplate {
-	return predicate.LabelTemplate(sql.FieldContainsFold(FieldMediaType, v))
 }
 
 // OwnerIDEQ applies the EQ predicate on the "owner_id" field.

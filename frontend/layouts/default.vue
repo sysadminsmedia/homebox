@@ -498,12 +498,6 @@
           to: "/collection/entity-types",
         },
         {
-          id: 67,
-          active: computed(() => route.path === "/collection/printers"),
-          name: computed(() => t("collection.tabs.printers")),
-          to: "/collection/printers",
-        },
-        {
           id: 66,
           active: computed(() => route.path === "/collection/tools"),
           name: computed(() => t("collection.tabs.tools")),

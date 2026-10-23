@@ -19,30 +19,28 @@ type LabelTemplatesRepository struct {
 
 type (
 	LabelTemplateCreate struct {
-		Name         string                 `json:"name"                validate:"required,min=1,max=255"`
-		Description  string                 `json:"description"         validate:"max=1000"`
-		Width        float64                `json:"width"               validate:"required,gt=0,lte=1000"`
-		Height       float64                `json:"height"              validate:"required,gt=0,lte=1000"`
-		Preset       *string                `json:"preset,omitempty"    extensions:"x-nullable"`
+		Name         string                 `json:"name"             validate:"required,min=1,max=255"`
+		Description  string                 `json:"description"      validate:"max=1000"`
+		Width        float64                `json:"width"            validate:"required,gt=0,lte=1000"`
+		Height       float64                `json:"height"           validate:"required,gt=0,lte=1000"`
+		Preset       *string                `json:"preset,omitempty" extensions:"x-nullable"`
 		IsShared     bool                   `json:"isShared"`
 		CanvasData   map[string]interface{} `json:"canvasData"`
-		OutputFormat string                 `json:"outputFormat"        validate:"oneof=png pdf"`
-		DPI          int                    `json:"dpi"                 validate:"gte=72,lte=1200"`
-		MediaType    *string                `json:"mediaType,omitempty" extensions:"x-nullable"`
+		OutputFormat string                 `json:"outputFormat"     validate:"oneof=png pdf"`
+		DPI          int                    `json:"dpi"              validate:"gte=72,lte=1200"`
 	}
 
 	LabelTemplateUpdate struct {
 		ID           uuid.UUID              `json:"id"`
-		Name         string                 `json:"name"                validate:"required,min=1,max=255"`
-		Description  string                 `json:"description"         validate:"max=1000"`
-		Width        float64                `json:"width"               validate:"required,gt=0,lte=1000"`
-		Height       float64                `json:"height"              validate:"required,gt=0,lte=1000"`
-		Preset       *string                `json:"preset,omitempty"    extensions:"x-nullable"`
+		Name         string                 `json:"name"             validate:"required,min=1,max=255"`
+		Description  string                 `json:"description"      validate:"max=1000"`
+		Width        float64                `json:"width"            validate:"required,gt=0,lte=1000"`
+		Height       float64                `json:"height"           validate:"required,gt=0,lte=1000"`
+		Preset       *string                `json:"preset,omitempty" extensions:"x-nullable"`
 		IsShared     bool                   `json:"isShared"`
 		CanvasData   map[string]interface{} `json:"canvasData"`
-		OutputFormat string                 `json:"outputFormat"        validate:"oneof=png pdf"`
-		DPI          int                    `json:"dpi"                 validate:"gte=72,lte=1200"`
-		MediaType    *string                `json:"mediaType,omitempty" extensions:"x-nullable"`
+		OutputFormat string                 `json:"outputFormat"     validate:"oneof=png pdf"`
+		DPI          int                    `json:"dpi"              validate:"gte=72,lte=1200"`
 	}
 
 	LabelTemplateSummary struct {
@@ -70,7 +68,6 @@ type (
 		CanvasData   map[string]interface{} `json:"canvasData"`
 		OutputFormat string                 `json:"outputFormat"`
 		DPI          int                    `json:"dpi"`
-		MediaType    string                 `json:"mediaType"`
 		OwnerID      uuid.UUID              `json:"ownerId"`
 		CreatedAt    time.Time              `json:"createdAt"`
 		UpdatedAt    time.Time              `json:"updatedAt"`
@@ -120,7 +117,6 @@ func mapLabelTemplateOut(template *ent.LabelTemplate, currentUserID uuid.UUID) L
 		CanvasData:   canvasData,
 		OutputFormat: template.OutputFormat,
 		DPI:          template.Dpi,
-		MediaType:    template.MediaType,
 		OwnerID:      template.OwnerID,
 		CreatedAt:    template.CreatedAt,
 		UpdatedAt:    template.UpdatedAt,
@@ -202,10 +198,6 @@ func (r *LabelTemplatesRepository) Create(ctx context.Context, gid, uid uuid.UUI
 		q.SetCanvasData(data.CanvasData)
 	}
 
-	if data.MediaType != nil && *data.MediaType != "" {
-		q.SetMediaType(*data.MediaType)
-	}
-
 	template, err := q.Save(ctx)
 	if err != nil {
 		return LabelTemplateOut{}, err
@@ -248,12 +240,6 @@ func (r *LabelTemplatesRepository) Update(ctx context.Context, gid, uid uuid.UUI
 
 	if data.CanvasData != nil {
 		updateQ.SetCanvasData(data.CanvasData)
-	}
-
-	if data.MediaType != nil && *data.MediaType != "" {
-		updateQ.SetMediaType(*data.MediaType)
-	} else {
-		updateQ.ClearMediaType()
 	}
 
 	_, err = updateQ.Save(ctx)
@@ -330,10 +316,6 @@ func (r *LabelTemplatesRepository) Duplicate(ctx context.Context, gid, uid, id u
 
 	if source.Preset != "" {
 		q.SetPreset(source.Preset)
-	}
-
-	if source.MediaType != "" {
-		q.SetMediaType(source.MediaType)
 	}
 
 	if source.CanvasData != nil {

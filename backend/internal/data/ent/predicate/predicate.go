@@ -51,9 +51,6 @@ type Notifier func(*sql.Selector)
 // PasswordResetTokens is the predicate function for passwordresettokens builders.
 type PasswordResetTokens func(*sql.Selector)
 
-// Printer is the predicate function for printer builders.
-type Printer func(*sql.Selector)
-
 // Tag is the predicate function for tag builders.
 type Tag func(*sql.Selector)
 

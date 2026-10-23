@@ -64,14 +64,6 @@ type Config struct {
 	Auth       AuthConfig     `yaml:"auth"`
 	Notifier   NotifierConf   `yaml:"notifier"`
 	Search     SearchConf     `yaml:"search"`
-	Printer    PrinterConf    `yaml:"printer"`
-}
-
-type PrinterConf struct {
-	// AllowPublicAddresses allows printer addresses outside of private IP ranges.
-	// When false (default), only RFC 1918 private IPs, localhost, and link-local
-	// addresses are allowed. This prevents SSRF attacks via printer configuration.
-	AllowPublicAddresses bool `yaml:"allow_public_addresses" conf:"default:false"`
 }
 
 // SearchConf selects and configures the free-text search engine. The default

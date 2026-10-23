@@ -24,7 +24,6 @@ type AllRepos struct {
 	Notifiers           *NotifierRepository
 	Exports             *ExportRepository
 	LabelTemplates      *LabelTemplatesRepository
-	Printers            *PrintersRepository
 }
 
 // New constructs the repository container. searchEngine selects the free-text
@@ -49,6 +48,5 @@ func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubC
 		Notifiers:           NewNotifierRepository(db),
 		Exports:             &ExportRepository{db},
 		LabelTemplates:      &LabelTemplatesRepository{db, bus},
-		Printers:            &PrintersRepository{db, bus},
 	}
 }

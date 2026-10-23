@@ -91,7 +91,7 @@
             </span>
           </div>
 
-          <table class="w-full text-sm">
+          <table class="w-full table-fixed text-sm">
             <caption class="pb-1 text-left text-sm font-semibold">
               {{
                 mode === "location"
@@ -102,7 +102,7 @@
             <tbody>
               <tr v-for="id in currentIds" :key="id" class="border-t">
                 <td class="truncate py-1.5 pr-2">{{ nameFor(id) }}</td>
-                <td class="py-1.5 text-right">
+                <td class="w-20 py-1.5 text-right">
                   <Input
                     :model-value="getQuantity(id)"
                     type="number"
@@ -127,16 +127,7 @@
 
       <!-- Destination -->
       <div class="space-y-2 border-t pt-3">
-        <div class="flex items-center justify-between">
-          <Label class="text-sm font-semibold">{{ $t("components.label_template.print_dialog.send_to") }}</Label>
-          <NuxtLink
-            to="/collection/printers"
-            class="text-xs text-muted-foreground hover:underline"
-            @click="closeDialog(DialogID.PrintLabelTemplate)"
-          >
-            {{ $t("components.label_template.print_dialog.manage_printers") }}
-          </NuxtLink>
-        </div>
+        <Label class="text-sm font-semibold">{{ $t("components.label_template.print_dialog.send_to") }}</Label>
         <div role="radiogroup" class="flex flex-wrap gap-2">
           <button
             v-for="dest in destinations"
@@ -154,20 +145,13 @@
           >
             <component :is="dest.icon" class="size-4 text-muted-foreground" />
             <span>{{ dest.label }}</span>
-            <span
-              v-if="dest.status"
-              class="size-2 rounded-full"
-              :class="{
-                'bg-green-500': dest.status === 'online',
-                'bg-red-500': dest.status === 'offline',
-                'bg-gray-400': dest.status === 'unknown',
-              }"
-              :title="statusLabel(dest.status)"
-            />
           </button>
         </div>
-        <p v-if="selectedDestinationInfo?.disabledReason" class="text-xs text-muted-foreground">
-          {{ selectedDestinationInfo.disabledReason }}
+        <p v-if="selectedDestinationInfo?.hint" class="text-xs text-muted-foreground">
+          {{ selectedDestinationInfo.hint }}
+        </p>
+        <p v-if="!labelPrinting" class="text-xs text-muted-foreground">
+          {{ $t("components.label_template.print_dialog.server_print_disabled_hint") }}
         </p>
       </div>
 
@@ -203,17 +187,15 @@
   import MdiPrinter from "~icons/mdi/printer";
   import MdiLoading from "~icons/mdi/loading";
   import MdiDesktopClassic from "~icons/mdi/desktop-classic";
-  import MdiUsb from "~icons/mdi/usb";
-  import MdiBluetooth from "~icons/mdi/bluetooth";
   import { Button } from "@/components/ui/button";
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
   import { useDialog, DialogID } from "@/components/ui/dialog-provider/utils";
   import BaseModal from "@/components/App/CreateModal.vue";
-  import type { LocalPrinter } from "~~/lib/printing/types";
 
   type PrintMode = "item" | "location";
   const BROWSER = "_browser";
+  const SERVER = "_server";
 
   const { t } = useI18n();
   const api = useUserApi();
@@ -221,10 +203,8 @@
   const { closeDialog, registerOpenDialogCallback } = useDialog();
   const { templates, pending } = useLabelTemplates();
   const { find: findPreset, title: presetTitle } = useLabelPresetLookup();
-  const { printers } = usePrinters();
   const { printLabels, printLocationLabels } = useDirectPrint();
-  const { localPrinters } = useLocalPrinters();
-  const { print: printToLocal, isPrinting: isLocalPrinting } = useLocalPrint();
+  const { labelPrinting } = useServerLabelPrinting();
 
   const mode = ref<PrintMode>("item");
   const itemIds = ref<string[]>([]);
@@ -233,7 +213,7 @@
   const selectedTemplateId = ref<string>("");
   const selectedDestination = ref<string>(BROWSER);
   const isRendering = ref(false);
-  const isBusy = computed(() => isRendering.value || isLocalPrinting.value);
+  const isBusy = computed(() => isRendering.value);
 
   const currentIds = computed(() => (mode.value === "item" ? itemIds.value : locationIds.value));
 
@@ -281,33 +261,23 @@
     id: string;
     label: string;
     icon: Component;
-    status?: string;
     disabled?: boolean;
     disabledReason?: string;
+    hint?: string;
   }
 
   const destinations = computed<Destination[]>(() => {
     const list: Destination[] = [];
-    for (const p of printers.value ?? []) {
+    if (labelPrinting.value) {
       // Server-side printing renders one label per page; sheets go out as PDF.
       const disabled = isSheet.value;
       list.push({
-        id: p.id,
-        label: p.isDefault ? `${p.name} (${t("components.label_template.default").toLowerCase()})` : p.name,
+        id: SERVER,
+        label: t("components.label_template.print_dialog.label_printer"),
         icon: MdiPrinter,
-        status: p.status || "unknown",
         disabled,
-        disabledReason: disabled ? t("components.label_template.print_dialog.roll_not_for_sheets") : undefined,
-      });
-    }
-    for (const p of localPrinters.value) {
-      const disabled = isSheet.value;
-      list.push({
-        id: p.id,
-        label: p.name,
-        icon: p.connectionType === "usb" ? MdiUsb : MdiBluetooth,
-        disabled,
-        disabledReason: disabled ? t("components.label_template.print_dialog.roll_not_for_sheets") : undefined,
+        disabledReason: disabled ? t("components.label_template.print_dialog.printer_not_for_sheets") : undefined,
+        hint: disabled ? undefined : t("components.label_template.print_dialog.label_printer_hint"),
       });
     }
     list.push({
@@ -319,19 +289,13 @@
   });
 
   const selectedDestinationInfo = computed(() => destinations.value.find(d => d.id === selectedDestination.value));
-  const selectedServerPrinter = computed(() => printers.value?.find(p => p.id === selectedDestination.value) ?? null);
-  const selectedLocalPrinter = computed(
-    () => localPrinters.value.find(p => p.id === selectedDestination.value) as LocalPrinter | undefined
-  );
 
-  // Fall back to the browser when the chosen printer cannot take this template
+  // Fall back to the browser when the chosen destination cannot take this template
   watch([isSheet, destinations], () => {
-    if (selectedDestinationInfo.value?.disabled) selectedDestination.value = BROWSER;
+    if (!selectedDestinationInfo.value || selectedDestinationInfo.value.disabled) {
+      selectedDestination.value = BROWSER;
+    }
   });
-
-  function statusLabel(status: string) {
-    return t(`components.label_template.print_dialog.status_${status}`);
-  }
 
   // --- preview ----------------------------------------------------------------
   const previewUrl = ref<string | null>(null);
@@ -395,8 +359,7 @@
 
   async function handlePrint() {
     if (!selectedTemplateId.value || currentIds.value.length === 0) return;
-    if (selectedServerPrinter.value) return handleServerPrint();
-    if (selectedLocalPrinter.value) return handleLocalPrint(selectedLocalPrinter.value);
+    if (selectedDestination.value === SERVER) return handleServerPrint();
     return handleBrowserPrint();
   }
 
@@ -425,43 +388,17 @@
       const withQty = currentIds.value.map(id => ({ id, quantity: getQuantity(id) }));
       const result =
         mode.value === "location"
-          ? await printLocationLabels(selectedTemplateId.value, withQty, selectedDestination.value)
-          : await printLabels(selectedTemplateId.value, withQty, selectedDestination.value);
+          ? await printLocationLabels(selectedTemplateId.value, withQty)
+          : await printLabels(selectedTemplateId.value, withQty);
 
       if (result?.success) {
-        toast.success(t("components.label_template.toast.print_sent", { printer: result.printerName }));
+        toast.success(result.message || t("components.label_template.toast.print_sent", { count: result.labelCount }));
         closeDialog(DialogID.PrintLabelTemplate);
       } else {
         toast.error(result?.message || t("components.label_template.toast.print_failed"));
       }
     } catch {
       toast.error(t("components.label_template.toast.print_failed"));
-    } finally {
-      isRendering.value = false;
-    }
-  }
-
-  async function handleLocalPrint(printer: LocalPrinter) {
-    if (!selectedTemplate.value) return;
-    isRendering.value = true;
-    try {
-      for (const id of currentIds.value) {
-        const blob = await renderBlob("png", [id]);
-        const imageData = new Uint8Array(await blob.arrayBuffer());
-        const result = await printToLocal(printer, imageData, {
-          copies: getQuantity(id),
-          labelWidth: selectedTemplate.value.width,
-          labelHeight: selectedTemplate.value.height,
-        });
-        if (!result.success) {
-          toast.error(result.message || t("components.label_template.toast.print_failed"));
-          return;
-        }
-      }
-      toast.success(t("components.label_template.toast.print_sent", { printer: printer.name }));
-      closeDialog(DialogID.PrintLabelTemplate);
-    } catch (error) {
-      toast.error((error as Error).message || t("components.label_template.toast.print_failed"));
     } finally {
       isRendering.value = false;
     }
@@ -490,8 +427,7 @@
       const preferred = available.find(tpl => tpl.id === preferences.value.defaultTemplateId);
       selectedTemplateId.value = preferred?.id ?? available[0]?.id ?? "";
 
-      const defaultPrinter = printers.value?.find(p => p.isDefault);
-      selectedDestination.value = defaultPrinter?.id || BROWSER;
+      selectedDestination.value = labelPrinting.value && !isSheet.value ? SERVER : BROWSER;
 
       void loadNames(currentIds.value);
     });

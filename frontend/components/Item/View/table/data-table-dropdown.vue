@@ -263,7 +263,7 @@
             : t("components.item.view.table.dropdown.duplicate_item")
         }}
       </DropdownMenuItem>
-      <!-- quick print (when defaults configured) -->
+      <!-- quick print (default template and server label printer configured) -->
       <DropdownMenuItem
         v-if="isQuickPrintAvailable"
         :disabled="isQuickPrinting"

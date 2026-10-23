@@ -1,10 +1,14 @@
 package v1
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"image/png"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/google/uuid"
@@ -13,10 +17,10 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/labelmaker"
-	"github.com/sysadminsmedia/homebox/backend/pkgs/printer"
 )
 
 // mimePNG is the content type used for rendered label images.
@@ -500,13 +504,35 @@ func renderLabelsPNGSheet(w http.ResponseWriter, renderer *labelmaker.TemplateRe
 	return err
 }
 
+// printTemplateLabel sends a rendered label PNG to the admin-configured print
+// command. Width and Height are the rendered image size in pixels at the
+// template DPI, WidthMm and HeightMm come from the template itself.
+func printTemplateLabel(cfg *config.Config, tmpl repo.LabelTemplateOut, pngData []byte, title, labelURL string, copies int) error {
+	dpi := tmpl.DPI
+	if dpi <= 0 {
+		dpi = 300
+	}
+	data := map[string]string{
+		"TitleText": title,
+		"URL":       labelURL,
+		"Dpi":       strconv.Itoa(dpi),
+		"WidthMm":   strconv.FormatFloat(tmpl.Width, 'f', -1, 64),
+		"HeightMm":  strconv.FormatFloat(tmpl.Height, 'f', -1, 64),
+	}
+	if cfgImg, err := png.DecodeConfig(bytes.NewReader(pngData)); err == nil {
+		data["Width"] = strconv.Itoa(cfgImg.Width)
+		data["Height"] = strconv.Itoa(cfgImg.Height)
+	}
+	return labelmaker.PrintPNG(cfg, pngData, data, copies)
+}
+
 // LabelPrintItem represents an item to print with its quantity
 type LabelPrintItem struct {
 	ID       uuid.UUID `json:"id"       validate:"required"`
 	Quantity int       `json:"quantity"` // Number of copies for this item
 }
 
-// Limits for a single direct-print request. Each copy is a separate render
+// Limits for a single print request. Each copy is a separate render
 // and print job, so unbounded values would tie up the server and the printer.
 const (
 	maxPrintCopies           = 100
@@ -523,26 +549,23 @@ func clampCopies(n int) int {
 	return n
 }
 
-// LabelTemplatePrintRequest represents a request to print labels directly to a printer
+// LabelTemplatePrintRequest represents a request to print labels with the configured print command
 type LabelTemplatePrintRequest struct {
-	ItemIDs   []uuid.UUID      `json:"itemIds,omitempty"`   // Simple list (1 copy each) - for backward compatibility
-	Items     []LabelPrintItem `json:"items,omitempty"`     // Items with individual quantities
-	PrinterID *uuid.UUID       `json:"printerId,omitempty"` // If nil, uses default printer
-	Copies    int              `json:"copies"`              // Default copies per label (used if item.quantity is 0)
+	ItemIDs []uuid.UUID      `json:"itemIds,omitempty"` // Simple list (1 copy each) - for backward compatibility
+	Items   []LabelPrintItem `json:"items,omitempty"`   // Items with individual quantities
+	Copies  int              `json:"copies"`            // Default copies per label (used if item.quantity is 0)
 }
 
 // LabelTemplatePrintResponse represents the result of a direct print operation
 type LabelTemplatePrintResponse struct {
-	Success     bool   `json:"success"`
-	JobID       int    `json:"jobId,omitempty"`
-	Message     string `json:"message"`
-	LabelCount  int    `json:"labelCount"`
-	PrinterName string `json:"printerName"`
+	Success    bool   `json:"success"`
+	Message    string `json:"message"`
+	LabelCount int    `json:"labelCount"`
 }
 
 // HandleLabelTemplatesPrint godoc
 //
-//	@Summary	Print Labels Directly to Printer
+//	@Summary	Print Labels
 //	@Tags		Label Templates
 //	@Accept		json
 //	@Produce	json
@@ -583,18 +606,8 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrint() errchain.HandlerFunc {
 			return validate.NewRequestError(fmt.Errorf("too many items in one print request (max %d)", maxPrintLabelsPerRequest), http.StatusBadRequest)
 		}
 
-		// Get the printer
-		var printerOut repo.PrinterOut
-		if req.PrinterID != nil {
-			printerOut, err = ctrl.repo.Printers.GetOne(r.Context(), auth.GID, *req.PrinterID)
-		} else {
-			printerOut, err = ctrl.repo.Printers.GetDefault(r.Context(), auth.GID)
-		}
-		if err != nil {
-			return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
-				Success: false,
-				Message: "No printer found. Please configure a printer first.",
-			})
+		if cmd := ctrl.config.LabelMaker.PrintCommand; cmd == nil || *cmd == "" {
+			return validate.NewRequestError(errors.New("server-side label printing is not configured; set HBOX_LABEL_MAKER_PRINT_COMMAND"), http.StatusBadRequest)
 		}
 
 		// Get the template
@@ -618,46 +631,9 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrint() errchain.HandlerFunc {
 			CanvasData: template.CanvasData,
 		}
 
-		// Re-validate printer address for defense-in-depth (prevents SSRF if DB is compromised)
-		if err := printer.ValidatePrinterAddress(printerOut.Address, ctrl.config.Printer.AllowPublicAddresses); err != nil {
-			return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
-				Success:     false,
-				Message:     "Printer address validation failed: " + err.Error(),
-				PrinterName: printerOut.Name,
-			})
-		}
-
-		// Create printer client
-		printerClient, err := printer.NewPrinterClient(printer.PrinterType(printerOut.PrinterType), printerOut.Address, printer.WithAllowPublicAddresses(ctrl.config.Printer.AllowPublicAddresses))
-		if err != nil {
-			return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
-				Success:     false,
-				Message:     "Failed to connect to printer: " + err.Error(),
-				PrinterName: printerOut.Name,
-			})
-		}
-
-		// Configure Brother raster client with media type from template
-		if printer.PrinterType(printerOut.PrinterType) == printer.PrinterTypeBrotherRaster {
-			if brotherClient, ok := printerClient.(*printer.BrotherRasterClient); ok {
-				mediaType := template.MediaType
-				if mediaType == "" {
-					mediaType = "DK-22251" // Default to DK-22251
-				}
-				if err := brotherClient.SetMediaType(mediaType); err != nil {
-					return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
-						Success:     false,
-						Message:     "Invalid media type: " + err.Error(),
-						PrinterName: printerOut.Name,
-					})
-				}
-			}
-		}
-
 		// Default copies (used when item quantity is 0 or not specified)
 		defaultCopies := clampCopies(req.Copies)
 
-		var lastJobID int
 		labelsPrinted := 0
 		labelsSkipped := 0
 
@@ -680,75 +656,40 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrint() errchain.HandlerFunc {
 				continue
 			}
 
-			// Prepare print data based on printer type
-			var printData []byte
-			var contentType string
-
-			if printer.PrinterType(printerOut.PrinterType) == printer.PrinterTypeBrotherRaster {
-				// Brother raster printers: send PNG directly (client converts to raster)
-				printData = pngData
-				contentType = mimePNG
-			} else {
-				// IPP/CUPS printers: convert PNG to URF format
-				dpi := template.DPI
-				if dpi <= 0 {
-					dpi = 300
-				}
-				urfData, err := printer.ConvertPNGToURF(pngData, dpi)
-				if err != nil {
-					log.Warn().Err(err).Str("itemID", printItem.ID.String()).Str("itemName", itemData.Name).Msg("failed to convert label to URF format")
-					labelsSkipped++
-					continue
-				}
-				printData = urfData
-				contentType = "image/urf"
-			}
-
 			// Determine copies for this item (use per-item quantity if set, otherwise default)
 			copies := defaultCopies
 			if printItem.Quantity > 0 {
 				copies = clampCopies(printItem.Quantity)
 			}
 
-			// Send to printer
-			result, err := printerClient.Print(r.Context(), &printer.PrintJob{
-				DocumentName: fmt.Sprintf("Label - %s", itemData.Name),
-				ContentType:  contentType,
-				Data:         printData,
-				Copies:       copies,
-			})
-			if err != nil {
+			if err := printTemplateLabel(ctrl.config, template, pngData, itemData.Name, itemData.ItemURL, copies); err != nil {
+				log.Warn().Err(err).Str("itemID", printItem.ID.String()).Msg("print command failed")
 				return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
-					Success:     false,
-					Message:     fmt.Sprintf("Print failed after %d labels: %v", labelsPrinted, err),
-					LabelCount:  labelsPrinted,
-					PrinterName: printerOut.Name,
+					Success:    false,
+					Message:    fmt.Sprintf("Print failed after %d labels: %v", labelsPrinted, err),
+					LabelCount: labelsPrinted,
 				})
 			}
 
-			lastJobID = result.JobID
 			labelsPrinted += copies
 		}
 
 		if labelsPrinted == 0 {
 			return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
-				Success:     false,
-				Message:     "No labels were printed. Check that the items exist.",
-				PrinterName: printerOut.Name,
+				Success: false,
+				Message: "No labels were printed. Check that the items exist.",
 			})
 		}
 
-		message := fmt.Sprintf("Successfully sent %d label(s) to printer", labelsPrinted)
+		message := fmt.Sprintf("Successfully sent %d label(s) to the print command", labelsPrinted)
 		if labelsSkipped > 0 {
-			message = fmt.Sprintf("Sent %d label(s) to printer (%d skipped due to errors)", labelsPrinted, labelsSkipped)
+			message = fmt.Sprintf("Sent %d label(s) to the print command (%d skipped due to errors)", labelsPrinted, labelsSkipped)
 		}
 
 		return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
-			Success:     true,
-			JobID:       lastJobID,
-			Message:     message,
-			LabelCount:  labelsPrinted,
-			PrinterName: printerOut.Name,
+			Success:    true,
+			Message:    message,
+			LabelCount: labelsPrinted,
 		})
 	}
 }
@@ -906,13 +847,12 @@ type LabelPrintLocation struct {
 type LabelTemplatePrintLocationsRequest struct {
 	LocationIDs []uuid.UUID          `json:"locationIds,omitempty"` // Simple list (1 copy each)
 	Locations   []LabelPrintLocation `json:"locations,omitempty"`   // Locations with individual quantities
-	PrinterID   *uuid.UUID           `json:"printerId,omitempty"`   // If nil, uses default printer
 	Copies      int                  `json:"copies"`                // Default copies per label
 }
 
 // HandleLabelTemplatesPrintLocations godoc
 //
-//	@Summary	Print Location Labels Directly to Printer
+//	@Summary	Print Location Labels
 //	@Tags		Label Templates
 //	@Accept		json
 //	@Produce	json
@@ -952,18 +892,8 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrintLocations() errchain.HandlerF
 			return validate.NewRequestError(fmt.Errorf("too many locations in one print request (max %d)", maxPrintLabelsPerRequest), http.StatusBadRequest)
 		}
 
-		// Get the printer
-		var printerOut repo.PrinterOut
-		if req.PrinterID != nil {
-			printerOut, err = ctrl.repo.Printers.GetOne(r.Context(), auth.GID, *req.PrinterID)
-		} else {
-			printerOut, err = ctrl.repo.Printers.GetDefault(r.Context(), auth.GID)
-		}
-		if err != nil {
-			return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
-				Success: false,
-				Message: "No printer found. Please configure a printer first.",
-			})
+		if cmd := ctrl.config.LabelMaker.PrintCommand; cmd == nil || *cmd == "" {
+			return validate.NewRequestError(errors.New("server-side label printing is not configured; set HBOX_LABEL_MAKER_PRINT_COMMAND"), http.StatusBadRequest)
 		}
 
 		// Get the template
@@ -987,46 +917,9 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrintLocations() errchain.HandlerF
 			CanvasData: template.CanvasData,
 		}
 
-		// Re-validate printer address for defense-in-depth (prevents SSRF if DB is compromised)
-		if err := printer.ValidatePrinterAddress(printerOut.Address, ctrl.config.Printer.AllowPublicAddresses); err != nil {
-			return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
-				Success:     false,
-				Message:     "Printer address validation failed: " + err.Error(),
-				PrinterName: printerOut.Name,
-			})
-		}
-
-		// Create printer client
-		printerClient, err := printer.NewPrinterClient(printer.PrinterType(printerOut.PrinterType), printerOut.Address, printer.WithAllowPublicAddresses(ctrl.config.Printer.AllowPublicAddresses))
-		if err != nil {
-			return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
-				Success:     false,
-				Message:     "Failed to connect to printer: " + err.Error(),
-				PrinterName: printerOut.Name,
-			})
-		}
-
-		// Configure Brother raster client with media type from template
-		if printer.PrinterType(printerOut.PrinterType) == printer.PrinterTypeBrotherRaster {
-			if brotherClient, ok := printerClient.(*printer.BrotherRasterClient); ok {
-				mediaType := template.MediaType
-				if mediaType == "" {
-					mediaType = "DK-22251"
-				}
-				if err := brotherClient.SetMediaType(mediaType); err != nil {
-					return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
-						Success:     false,
-						Message:     "Invalid media type: " + err.Error(),
-						PrinterName: printerOut.Name,
-					})
-				}
-			}
-		}
-
 		// Default copies
 		defaultCopies := clampCopies(req.Copies)
 
-		var lastJobID int
 		labelsPrinted := 0
 		labelsSkipped := 0
 
@@ -1052,73 +945,40 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrintLocations() errchain.HandlerF
 				continue
 			}
 
-			// Prepare print data based on printer type
-			var printData []byte
-			var contentType string
-
-			if printer.PrinterType(printerOut.PrinterType) == printer.PrinterTypeBrotherRaster {
-				printData = pngData
-				contentType = mimePNG
-			} else {
-				dpi := template.DPI
-				if dpi <= 0 {
-					dpi = 300
-				}
-				urfData, err := printer.ConvertPNGToURF(pngData, dpi)
-				if err != nil {
-					log.Warn().Err(err).Str("locationID", printLoc.ID.String()).Str("locationName", loc.Name).Msg("failed to convert location label to URF format")
-					labelsSkipped++
-					continue
-				}
-				printData = urfData
-				contentType = "image/urf"
-			}
-
 			// Determine copies for this location
 			copies := defaultCopies
 			if printLoc.Quantity > 0 {
 				copies = clampCopies(printLoc.Quantity)
 			}
 
-			// Send to printer
-			result, err := printerClient.Print(r.Context(), &printer.PrintJob{
-				DocumentName: fmt.Sprintf("Location Label - %s", loc.Name),
-				ContentType:  contentType,
-				Data:         printData,
-				Copies:       copies,
-			})
-			if err != nil {
+			if err := printTemplateLabel(ctrl.config, template, pngData, loc.Name, locationData.LocationURL, copies); err != nil {
+				log.Warn().Err(err).Str("locationID", printLoc.ID.String()).Msg("print command failed")
 				return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
-					Success:     false,
-					Message:     fmt.Sprintf("Print failed after %d labels: %v", labelsPrinted, err),
-					LabelCount:  labelsPrinted,
-					PrinterName: printerOut.Name,
+					Success:    false,
+					Message:    fmt.Sprintf("Print failed after %d labels: %v", labelsPrinted, err),
+					LabelCount: labelsPrinted,
 				})
 			}
 
-			lastJobID = result.JobID
 			labelsPrinted += copies
 		}
 
 		if labelsPrinted == 0 {
 			return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
-				Success:     false,
-				Message:     "No labels were printed. Check that the locations exist.",
-				PrinterName: printerOut.Name,
+				Success: false,
+				Message: "No labels were printed. Check that the locations exist.",
 			})
 		}
 
-		message := fmt.Sprintf("Successfully sent %d location label(s) to printer", labelsPrinted)
+		message := fmt.Sprintf("Successfully sent %d location label(s) to the print command", labelsPrinted)
 		if labelsSkipped > 0 {
-			message = fmt.Sprintf("Sent %d location label(s) to printer (%d skipped due to errors)", labelsPrinted, labelsSkipped)
+			message = fmt.Sprintf("Sent %d location label(s) to the print command (%d skipped due to errors)", labelsPrinted, labelsSkipped)
 		}
 
 		return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
-			Success:     true,
-			JobID:       lastJobID,
-			Message:     message,
-			LabelCount:  labelsPrinted,
-			PrinterName: printerOut.Name,
+			Success:    true,
+			Message:    message,
+			LabelCount: labelsPrinted,
 		})
 	}
 }

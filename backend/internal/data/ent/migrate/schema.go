@@ -426,7 +426,6 @@ var (
 		{Name: "canvas_data", Type: field.TypeJSON, Nullable: true},
 		{Name: "output_format", Type: field.TypeString, Default: "png"},
 		{Name: "dpi", Type: field.TypeInt, Default: 300},
-		{Name: "media_type", Type: field.TypeString, Nullable: true, Size: 50},
 		{Name: "group_label_templates", Type: field.TypeUUID},
 		{Name: "owner_id", Type: field.TypeUUID},
 	}
@@ -438,13 +437,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "label_templates_groups_label_templates",
-				Columns:    []*schema.Column{LabelTemplatesColumns[13]},
+				Columns:    []*schema.Column{LabelTemplatesColumns[12]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "label_templates_users_label_templates",
-				Columns:    []*schema.Column{LabelTemplatesColumns[14]},
+				Columns:    []*schema.Column{LabelTemplatesColumns[13]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -574,55 +573,6 @@ var (
 				Name:    "passwordresettokens_token",
 				Unique:  false,
 				Columns: []*schema.Column{PasswordResetTokensColumns[3]},
-			},
-		},
-	}
-	// PrintersColumns holds the columns for the "printers" table.
-	PrintersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString, Size: 255},
-		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
-		{Name: "printer_type", Type: field.TypeEnum, Enums: []string{"ipp", "cups", "brother_raster"}, Default: "ipp"},
-		{Name: "address", Type: field.TypeString, Size: 512},
-		{Name: "is_default", Type: field.TypeBool, Default: false},
-		{Name: "label_width_mm", Type: field.TypeFloat64, Nullable: true},
-		{Name: "label_height_mm", Type: field.TypeFloat64, Nullable: true},
-		{Name: "dpi", Type: field.TypeInt, Default: 300},
-		{Name: "media_type", Type: field.TypeString, Nullable: true, Size: 100},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"online", "offline", "unknown"}, Default: "unknown"},
-		{Name: "last_status_check", Type: field.TypeTime, Nullable: true},
-		{Name: "group_printers", Type: field.TypeUUID},
-	}
-	// PrintersTable holds the schema information for the "printers" table.
-	PrintersTable = &schema.Table{
-		Name:       "printers",
-		Columns:    PrintersColumns,
-		PrimaryKey: []*schema.Column{PrintersColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "printers_groups_printers",
-				Columns:    []*schema.Column{PrintersColumns[14]},
-				RefColumns: []*schema.Column{GroupsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "printer_name",
-				Unique:  false,
-				Columns: []*schema.Column{PrintersColumns[3]},
-			},
-			{
-				Name:    "printer_is_default",
-				Unique:  false,
-				Columns: []*schema.Column{PrintersColumns[7]},
-			},
-			{
-				Name:    "printer_printer_type",
-				Unique:  false,
-				Columns: []*schema.Column{PrintersColumns[5]},
 			},
 		},
 	}
@@ -783,7 +733,6 @@ var (
 		MaintenanceEntriesTable,
 		NotifiersTable,
 		PasswordResetTokensTable,
-		PrintersTable,
 		TagsTable,
 		TemplateFieldsTable,
 		UsersTable,
@@ -815,7 +764,6 @@ func init() {
 	NotifiersTable.ForeignKeys[0].RefTable = GroupsTable
 	NotifiersTable.ForeignKeys[1].RefTable = UsersTable
 	PasswordResetTokensTable.ForeignKeys[0].RefTable = UsersTable
-	PrintersTable.ForeignKeys[0].RefTable = GroupsTable
 	TagsTable.ForeignKeys[0].RefTable = GroupsTable
 	TagsTable.ForeignKeys[1].RefTable = TagsTable
 	TemplateFieldsTable.ForeignKeys[0].RefTable = EntityTemplatesTable

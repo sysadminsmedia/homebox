@@ -10,8 +10,6 @@
   import MdiPrinter from "~icons/mdi/printer";
   import MdiDownload from "~icons/mdi/download";
   import MdiDesktopClassic from "~icons/mdi/desktop-classic";
-  import MdiUsb from "~icons/mdi/usb";
-  import MdiBluetooth from "~icons/mdi/bluetooth";
   import MdiDrag from "~icons/mdi/drag";
   import MdiArrowLeft from "~icons/mdi/arrow-left";
   import { Input } from "~/components/ui/input";
@@ -22,7 +20,6 @@
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import BaseContainer from "@/components/Base/Container.vue";
   import SearchFilter from "~/components/Search/Filter.vue";
-  import type { LocalPrinter } from "~~/lib/printing/types";
 
   const { t } = useI18n();
 
@@ -163,13 +160,12 @@
     perSheet.value ? Math.ceil((totalLabels.value + skipLabels.value) / perSheet.value) : 0
   );
 
-  const { printers } = usePrinters();
   const { printLabels, printLocationLabels } = useDirectPrint();
-  const { localPrinters } = useLocalPrinters();
-  const { print: printToLocal, isPrinting: isLocalPrinting } = useLocalPrint();
+  const { labelPrinting } = useServerLabelPrinting();
 
   const DOWNLOAD = "_download";
   const BROWSER = "_browser";
+  const SERVER = "_server";
   const destination = ref<string>(DOWNLOAD);
 
   interface Destination {
@@ -177,7 +173,6 @@
     label: string;
     icon: Component;
     hint?: string;
-    status?: string;
     disabled?: boolean;
   }
   const destinations = computed<Destination[]>(() => {
@@ -193,25 +188,16 @@
       },
       { id: BROWSER, label: t("pages.label_templates.batch.print_browser"), icon: MdiDesktopClassic },
     ];
-    for (const p of printers.value ?? []) {
+    if (labelPrinting.value) {
       // Server-side printing renders one label per page; sheets go out as PDF.
-      const disabled = isSheet.value;
       list.push({
-        id: p.id,
-        label: p.isDefault ? `${p.name} (${t("components.label_template.default").toLowerCase()})` : p.name,
+        id: SERVER,
+        label: t("components.label_template.print_dialog.label_printer"),
         icon: MdiPrinter,
-        status: p.status || "unknown",
-        disabled,
-        hint: disabled ? t("pages.label_templates.batch.printer_not_for_sheets") : undefined,
-      });
-    }
-    for (const p of localPrinters.value) {
-      list.push({
-        id: p.id,
-        label: p.name,
-        icon: p.connectionType === "usb" ? MdiUsb : MdiBluetooth,
         disabled: isSheet.value,
-        hint: isSheet.value ? t("pages.label_templates.batch.printer_not_for_sheets") : undefined,
+        hint: isSheet.value
+          ? t("pages.label_templates.batch.printer_not_for_sheets")
+          : t("components.label_template.print_dialog.label_printer_hint"),
       });
     }
     return list;
@@ -219,6 +205,21 @@
   watch(destinations, list => {
     if (list.find(d => d.id === destination.value)?.disabled) destination.value = DOWNLOAD;
   });
+  // Prefer the server's label printer once we know it exists, unless the user already chose
+  let destinationTouched = false;
+  function pickDestination(id: string) {
+    destinationTouched = true;
+    destination.value = id;
+  }
+  watch(
+    [labelPrinting, isSheet],
+    ([enabled, sheet]) => {
+      if (enabled && !sheet && !destinationTouched) {
+        destination.value = SERVER;
+      }
+    },
+    { immediate: true }
+  );
 
   // Sheet preview (first sheet) or a single label
   const previewUrl = ref<string | null>(null);
@@ -261,7 +262,7 @@
   // Go
   // ---------------------------------------------------------------------------
   const isWorking = ref(false);
-  const isBusy = computed(() => isWorking.value || isLocalPrinting.value);
+  const isBusy = computed(() => isWorking.value);
   const canGo = computed(() => !!selectedTemplateId.value && selectedIds.value.length > 0 && !isBusy.value);
 
   const summary = computed(() => {
@@ -314,36 +315,28 @@
         const w = window.open(url, "_blank");
         if (w) w.onload = () => w.print();
         toast.success(t("components.label_template.toast.printed"));
-      } else if (printers.value?.some(p => p.id === destination.value)) {
+      } else if (destination.value === SERVER) {
         const withQty = selectedIds.value.map(id => ({ id, quantity: getQuantity(id) }));
         const result =
           kind.value === "locations"
-            ? await printLocationLabels(selectedTemplateId.value, withQty, destination.value)
-            : await printLabels(selectedTemplateId.value, withQty, destination.value);
+            ? await printLocationLabels(selectedTemplateId.value, withQty)
+            : await printLabels(selectedTemplateId.value, withQty);
         if (!result?.success) {
           toast.error(result?.message || t("pages.label_templates.batch.direct_print_failed"));
           return;
         }
-        toast.success(t("pages.label_templates.batch.direct_print_success", { count: totalLabels.value }));
-      } else {
-        const local = localPrinters.value.find(p => p.id === destination.value) as LocalPrinter | undefined;
-        if (!local || !selectedTemplate.value) return;
-        for (const id of selectedIds.value) {
-          const blob = await renderBlob("png", [id]);
-          const result = await printToLocal(local, new Uint8Array(await blob.arrayBuffer()), {
-            copies: getQuantity(id),
-            labelWidth: selectedTemplate.value.width,
-            labelHeight: selectedTemplate.value.height,
-          });
-          if (!result.success) {
-            toast.error(result.message || t("pages.label_templates.batch.direct_print_failed"));
-            return;
-          }
-        }
-        toast.success(t("pages.label_templates.batch.direct_print_success", { count: totalLabels.value }));
+        toast.success(
+          result.message || t("pages.label_templates.batch.direct_print_success", { count: result.labelCount })
+        );
       }
     } catch {
-      toast.error(t("components.label_template.toast.render_failed"));
+      toast.error(
+        t(
+          destination.value === SERVER
+            ? "components.label_template.toast.print_failed"
+            : "components.label_template.toast.render_failed"
+        )
+      );
     } finally {
       isWorking.value = false;
     }
@@ -555,12 +548,7 @@
         </section>
 
         <section class="space-y-2 rounded-lg border bg-card p-4">
-          <div class="flex items-center justify-between">
-            <Label class="text-sm font-semibold">{{ $t("components.label_template.print_dialog.send_to") }}</Label>
-            <NuxtLink to="/collection/printers" class="text-xs text-muted-foreground hover:underline">
-              {{ $t("components.label_template.print_dialog.manage_printers") }}
-            </NuxtLink>
-          </div>
+          <Label class="text-sm font-semibold">{{ $t("components.label_template.print_dialog.send_to") }}</Label>
           <div role="radiogroup" class="flex flex-col gap-1.5">
             <button
               v-for="dest in destinations"
@@ -571,22 +559,18 @@
               :disabled="dest.disabled"
               class="flex items-center gap-3 rounded-md border px-3 py-2 text-left text-sm disabled:cursor-not-allowed disabled:opacity-50"
               :class="destination === dest.id ? 'border-primary bg-primary/5 font-medium ring-1 ring-primary' : ''"
-              @click="destination = dest.id"
+              @click="pickDestination(dest.id)"
             >
               <component :is="dest.icon" class="size-4 shrink-0 text-muted-foreground" />
-              <span class="flex-1">{{ dest.label }}</span>
-              <span v-if="dest.hint" class="text-xs font-normal text-muted-foreground">{{ dest.hint }}</span>
-              <span
-                v-if="dest.status"
-                class="size-2 shrink-0 rounded-full"
-                :class="{
-                  'bg-green-500': dest.status === 'online',
-                  'bg-red-500': dest.status === 'offline',
-                  'bg-gray-400': dest.status === 'unknown',
-                }"
-              />
+              <span class="flex-1 whitespace-nowrap">{{ dest.label }}</span>
+              <span v-if="dest.hint" class="min-w-0 truncate text-right text-xs font-normal text-muted-foreground">{{
+                dest.hint
+              }}</span>
             </button>
           </div>
+          <p v-if="!labelPrinting" class="text-xs text-muted-foreground">
+            {{ $t("components.label_template.print_dialog.server_print_disabled_hint") }}
+          </p>
         </section>
       </aside>
     </div>

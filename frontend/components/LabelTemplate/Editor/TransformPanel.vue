@@ -83,7 +83,7 @@
             class="h-8"
             @change="handlePositionChange('left', ($event.target as HTMLInputElement).value)"
           />
-          <span class="w-6 text-xs text-muted-foreground">{{ unit }}</span>
+          <span class="w-6 shrink-0 text-xs text-muted-foreground">{{ unit }}</span>
         </div>
       </div>
       <div class="space-y-1">
@@ -97,7 +97,7 @@
             class="h-8"
             @change="handlePositionChange('top', ($event.target as HTMLInputElement).value)"
           />
-          <span class="w-6 text-xs text-muted-foreground">{{ unit }}</span>
+          <span class="w-6 shrink-0 text-xs text-muted-foreground">{{ unit }}</span>
         </div>
       </div>
       <div class="space-y-1">
@@ -114,7 +114,7 @@
             :disabled="!canResize"
             @change="handleSizeChange('width', ($event.target as HTMLInputElement).value)"
           />
-          <span class="w-6 text-xs text-muted-foreground">{{ unit }}</span>
+          <span class="w-6 shrink-0 text-xs text-muted-foreground">{{ unit }}</span>
         </div>
       </div>
       <div class="space-y-1">
@@ -131,7 +131,7 @@
             :disabled="!canResize"
             @change="handleSizeChange('height', ($event.target as HTMLInputElement).value)"
           />
-          <span class="w-6 text-xs text-muted-foreground">{{ unit }}</span>
+          <span class="w-6 shrink-0 text-xs text-muted-foreground">{{ unit }}</span>
         </div>
       </div>
     </div>

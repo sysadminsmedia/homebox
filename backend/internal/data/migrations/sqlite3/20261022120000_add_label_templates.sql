@@ -15,7 +15,6 @@ create table if not exists label_templates
     canvas_data              json,
     output_format            text     default 'png'   not null,
     dpi                      integer  default 300     not null,
-    media_type               text,
     owner_id                 uuid                     not null
         constraint label_templates_users_label_templates
             references users

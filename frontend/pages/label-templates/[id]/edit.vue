@@ -45,7 +45,7 @@
   const { update } = useLabelTemplateActions();
   const { presets } = useLabelPresets();
   const { title: presetTitle } = useLabelPresetLookup();
-  const { defaultPrinter } = useQuickPrint();
+  const { labelPrinting } = useServerLabelPrinting();
   const { printLabels } = useDirectPrint();
 
   // ---------------------------------------------------------------------------
@@ -58,7 +58,6 @@
     height: 29,
     preset: "",
     dpi: 300,
-    mediaType: "",
     isShared: false,
   });
 
@@ -81,7 +80,6 @@
     settings.height = tpl.height;
     settings.preset = tpl.preset || "";
     settings.dpi = tpl.dpi;
-    settings.mediaType = tpl.mediaType || "";
     settings.isShared = tpl.isShared;
     if (tpl.canvasData) localCanvasData.value = tpl.canvasData;
   }
@@ -98,7 +96,6 @@
       settings.height !== tpl.height ||
       settings.preset !== (tpl.preset || "") ||
       settings.dpi !== tpl.dpi ||
-      settings.mediaType !== (tpl.mediaType || "") ||
       settings.isShared !== tpl.isShared;
     const canvasChanged = JSON.stringify(localCanvasData.value) !== JSON.stringify(tpl.canvasData ?? {});
     return settingsChanged || canvasChanged;
@@ -264,7 +261,6 @@
         isShared: settings.isShared,
         outputFormat: (template.value.outputFormat as "png" | "pdf") || "png",
         dpi: settings.dpi,
-        mediaType: settings.mediaType || null,
         canvasData: localCanvasData.value,
       });
       toast.success(t("components.label_template.toast.updated"));
@@ -278,15 +274,15 @@
     }
   }
 
-  const canTestPrint = computed(() => !!previewItem.value && !!defaultPrinter.value);
+  const canTestPrint = computed(() => !!previewItem.value && labelPrinting.value);
   const testPrintHint = computed(() => {
-    if (!defaultPrinter.value) return t("components.label_template.editor.toast.test_print_needs_printer");
+    if (!labelPrinting.value) return t("components.label_template.editor.toast.test_print_needs_server");
     if (!previewItem.value) return t("components.label_template.editor.toast.test_print_needs_item");
-    return t("components.label_template.editor.header.test_print_hint", { printer: defaultPrinter.value.name });
+    return t("components.label_template.editor.header.test_print_hint");
   });
 
   async function handleTestPrint() {
-    if (!previewItem.value || !defaultPrinter.value) return;
+    if (!previewItem.value || !labelPrinting.value) return;
     isTestPrinting.value = true;
     try {
       // The printer renders the saved template, so persist pending edits first.
@@ -294,9 +290,9 @@
         const ok = await handleSave();
         if (!ok) return;
       }
-      const result = await printLabels(templateId.value, [previewItem.value.id], defaultPrinter.value.id, 1);
+      const result = await printLabels(templateId.value, [previewItem.value.id], 1);
       if (result?.success) {
-        toast.success(t("components.label_template.editor.toast.test_print_sent", { printer: result.printerName }));
+        toast.success(result.message || t("components.label_template.editor.toast.test_print_sent"));
       } else {
         toast.error(result?.message || t("components.label_template.editor.toast.test_print_failed"));
       }
@@ -412,6 +408,7 @@
           <LabelTemplateEditorTextToolbar
             v-if="isTextSelected"
             :selected-object="selectedObject"
+            :unit="unit"
             @update-object="handleUpdateObject"
             @insert-field="handleInsertField"
           />

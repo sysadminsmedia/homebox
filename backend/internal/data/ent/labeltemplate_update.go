@@ -194,26 +194,6 @@ func (_u *LabelTemplateUpdate) AddDpi(v int) *LabelTemplateUpdate {
 	return _u
 }
 
-// SetMediaType sets the "media_type" field.
-func (_u *LabelTemplateUpdate) SetMediaType(v string) *LabelTemplateUpdate {
-	_u.mutation.SetMediaType(v)
-	return _u
-}
-
-// SetNillableMediaType sets the "media_type" field if the given value is not nil.
-func (_u *LabelTemplateUpdate) SetNillableMediaType(v *string) *LabelTemplateUpdate {
-	if v != nil {
-		_u.SetMediaType(*v)
-	}
-	return _u
-}
-
-// ClearMediaType clears the value of the "media_type" field.
-func (_u *LabelTemplateUpdate) ClearMediaType() *LabelTemplateUpdate {
-	_u.mutation.ClearMediaType()
-	return _u
-}
-
 // SetOwnerID sets the "owner_id" field.
 func (_u *LabelTemplateUpdate) SetOwnerID(v uuid.UUID) *LabelTemplateUpdate {
 	_u.mutation.SetOwnerID(v)
@@ -314,11 +294,6 @@ func (_u *LabelTemplateUpdate) check() error {
 			return &ValidationError{Name: "preset", err: fmt.Errorf(`ent: validator failed for field "LabelTemplate.preset": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.MediaType(); ok {
-		if err := labeltemplate.MediaTypeValidator(v); err != nil {
-			return &ValidationError{Name: "media_type", err: fmt.Errorf(`ent: validator failed for field "LabelTemplate.media_type": %w`, err)}
-		}
-	}
 	if _u.mutation.GroupCleared() && len(_u.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "LabelTemplate.group"`)
 	}
@@ -387,12 +362,6 @@ func (_u *LabelTemplateUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	}
 	if value, ok := _u.mutation.AddedDpi(); ok {
 		_spec.AddField(labeltemplate.FieldDpi, field.TypeInt, value)
-	}
-	if value, ok := _u.mutation.MediaType(); ok {
-		_spec.SetField(labeltemplate.FieldMediaType, field.TypeString, value)
-	}
-	if _u.mutation.MediaTypeCleared() {
-		_spec.ClearField(labeltemplate.FieldMediaType, field.TypeString)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -635,26 +604,6 @@ func (_u *LabelTemplateUpdateOne) AddDpi(v int) *LabelTemplateUpdateOne {
 	return _u
 }
 
-// SetMediaType sets the "media_type" field.
-func (_u *LabelTemplateUpdateOne) SetMediaType(v string) *LabelTemplateUpdateOne {
-	_u.mutation.SetMediaType(v)
-	return _u
-}
-
-// SetNillableMediaType sets the "media_type" field if the given value is not nil.
-func (_u *LabelTemplateUpdateOne) SetNillableMediaType(v *string) *LabelTemplateUpdateOne {
-	if v != nil {
-		_u.SetMediaType(*v)
-	}
-	return _u
-}
-
-// ClearMediaType clears the value of the "media_type" field.
-func (_u *LabelTemplateUpdateOne) ClearMediaType() *LabelTemplateUpdateOne {
-	_u.mutation.ClearMediaType()
-	return _u
-}
-
 // SetOwnerID sets the "owner_id" field.
 func (_u *LabelTemplateUpdateOne) SetOwnerID(v uuid.UUID) *LabelTemplateUpdateOne {
 	_u.mutation.SetOwnerID(v)
@@ -768,11 +717,6 @@ func (_u *LabelTemplateUpdateOne) check() error {
 			return &ValidationError{Name: "preset", err: fmt.Errorf(`ent: validator failed for field "LabelTemplate.preset": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.MediaType(); ok {
-		if err := labeltemplate.MediaTypeValidator(v); err != nil {
-			return &ValidationError{Name: "media_type", err: fmt.Errorf(`ent: validator failed for field "LabelTemplate.media_type": %w`, err)}
-		}
-	}
 	if _u.mutation.GroupCleared() && len(_u.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "LabelTemplate.group"`)
 	}
@@ -858,12 +802,6 @@ func (_u *LabelTemplateUpdateOne) sqlSave(ctx context.Context) (_node *LabelTemp
 	}
 	if value, ok := _u.mutation.AddedDpi(); ok {
 		_spec.AddField(labeltemplate.FieldDpi, field.TypeInt, value)
-	}
-	if value, ok := _u.mutation.MediaType(); ok {
-		_spec.SetField(labeltemplate.FieldMediaType, field.TypeString, value)
-	}
-	if _u.mutation.MediaTypeCleared() {
-		_spec.ClearField(labeltemplate.FieldMediaType, field.TypeString)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{

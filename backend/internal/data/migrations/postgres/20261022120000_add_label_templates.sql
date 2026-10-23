@@ -13,7 +13,6 @@ CREATE TABLE IF NOT EXISTS "label_templates" (
     "canvas_data" jsonb NULL,
     "output_format" character varying NOT NULL DEFAULT 'png',
     "dpi" bigint NOT NULL DEFAULT 300,
-    "media_type" character varying NULL,
     "owner_id" uuid NOT NULL,
     "group_label_templates" uuid NOT NULL,
     PRIMARY KEY ("id"),

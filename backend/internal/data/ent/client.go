@@ -31,7 +31,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/passwordresettokens"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/printer"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
@@ -73,8 +72,6 @@ type Client struct {
 	Notifier *NotifierClient
 	// PasswordResetTokens is the client for interacting with the PasswordResetTokens builders.
 	PasswordResetTokens *PasswordResetTokensClient
-	// Printer is the client for interacting with the Printer builders.
-	Printer *PrinterClient
 	// Tag is the client for interacting with the Tag builders.
 	Tag *TagClient
 	// TemplateField is the client for interacting with the TemplateField builders.
@@ -109,7 +106,6 @@ func (c *Client) init() {
 	c.MaintenanceEntry = NewMaintenanceEntryClient(c.config)
 	c.Notifier = NewNotifierClient(c.config)
 	c.PasswordResetTokens = NewPasswordResetTokensClient(c.config)
-	c.Printer = NewPrinterClient(c.config)
 	c.Tag = NewTagClient(c.config)
 	c.TemplateField = NewTemplateFieldClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -221,7 +217,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		MaintenanceEntry:     NewMaintenanceEntryClient(cfg),
 		Notifier:             NewNotifierClient(cfg),
 		PasswordResetTokens:  NewPasswordResetTokensClient(cfg),
-		Printer:              NewPrinterClient(cfg),
 		Tag:                  NewTagClient(cfg),
 		TemplateField:        NewTemplateFieldClient(cfg),
 		User:                 NewUserClient(cfg),
@@ -260,7 +255,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		MaintenanceEntry:     NewMaintenanceEntryClient(cfg),
 		Notifier:             NewNotifierClient(cfg),
 		PasswordResetTokens:  NewPasswordResetTokensClient(cfg),
-		Printer:              NewPrinterClient(cfg),
 		Tag:                  NewTagClient(cfg),
 		TemplateField:        NewTemplateFieldClient(cfg),
 		User:                 NewUserClient(cfg),
@@ -296,8 +290,8 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.APIKey, c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity, c.EntityField,
 		c.EntityTemplate, c.EntityType, c.Export, c.Group, c.GroupInvitationToken,
-		c.LabelTemplate, c.MaintenanceEntry, c.Notifier, c.PasswordResetTokens,
-		c.Printer, c.Tag, c.TemplateField, c.User, c.UserGroup,
+		c.LabelTemplate, c.MaintenanceEntry, c.Notifier, c.PasswordResetTokens, c.Tag,
+		c.TemplateField, c.User, c.UserGroup,
 	} {
 		n.Use(hooks...)
 	}
@@ -309,8 +303,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.APIKey, c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity, c.EntityField,
 		c.EntityTemplate, c.EntityType, c.Export, c.Group, c.GroupInvitationToken,
-		c.LabelTemplate, c.MaintenanceEntry, c.Notifier, c.PasswordResetTokens,
-		c.Printer, c.Tag, c.TemplateField, c.User, c.UserGroup,
+		c.LabelTemplate, c.MaintenanceEntry, c.Notifier, c.PasswordResetTokens, c.Tag,
+		c.TemplateField, c.User, c.UserGroup,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -349,8 +343,6 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Notifier.mutate(ctx, m)
 	case *PasswordResetTokensMutation:
 		return c.PasswordResetTokens.mutate(ctx, m)
-	case *PrinterMutation:
-		return c.Printer.mutate(ctx, m)
 	case *TagMutation:
 		return c.Tag.mutate(ctx, m)
 	case *TemplateFieldMutation:
@@ -2197,22 +2189,6 @@ func (c *GroupClient) QueryLabelTemplates(_m *Group) *LabelTemplateQuery {
 	return query
 }
 
-// QueryPrinters queries the printers edge of a Group.
-func (c *GroupClient) QueryPrinters(_m *Group) *PrinterQuery {
-	query := (&PrinterClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(group.Table, group.FieldID, id),
-			sqlgraph.To(printer.Table, printer.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, group.PrintersTable, group.PrintersColumn),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryUserGroups queries the user_groups edge of a Group.
 func (c *GroupClient) QueryUserGroups(_m *Group) *UserGroupQuery {
 	query := (&UserGroupClient{config: c.config}).Query()
@@ -3031,155 +3007,6 @@ func (c *PasswordResetTokensClient) mutate(ctx context.Context, m *PasswordReset
 	}
 }
 
-// PrinterClient is a client for the Printer schema.
-type PrinterClient struct {
-	config
-}
-
-// NewPrinterClient returns a client for the Printer from the given config.
-func NewPrinterClient(c config) *PrinterClient {
-	return &PrinterClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `printer.Hooks(f(g(h())))`.
-func (c *PrinterClient) Use(hooks ...Hook) {
-	c.hooks.Printer = append(c.hooks.Printer, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `printer.Intercept(f(g(h())))`.
-func (c *PrinterClient) Intercept(interceptors ...Interceptor) {
-	c.inters.Printer = append(c.inters.Printer, interceptors...)
-}
-
-// Create returns a builder for creating a Printer entity.
-func (c *PrinterClient) Create() *PrinterCreate {
-	mutation := newPrinterMutation(c.config, OpCreate)
-	return &PrinterCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Printer entities.
-func (c *PrinterClient) CreateBulk(builders ...*PrinterCreate) *PrinterCreateBulk {
-	return &PrinterCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *PrinterClient) MapCreateBulk(slice any, setFunc func(*PrinterCreate, int)) *PrinterCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &PrinterCreateBulk{err: fmt.Errorf("calling to PrinterClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*PrinterCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &PrinterCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Printer.
-func (c *PrinterClient) Update() *PrinterUpdate {
-	mutation := newPrinterMutation(c.config, OpUpdate)
-	return &PrinterUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *PrinterClient) UpdateOne(_m *Printer) *PrinterUpdateOne {
-	mutation := newPrinterMutation(c.config, OpUpdateOne, withPrinter(_m))
-	return &PrinterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *PrinterClient) UpdateOneID(id uuid.UUID) *PrinterUpdateOne {
-	mutation := newPrinterMutation(c.config, OpUpdateOne, withPrinterID(id))
-	return &PrinterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Printer.
-func (c *PrinterClient) Delete() *PrinterDelete {
-	mutation := newPrinterMutation(c.config, OpDelete)
-	return &PrinterDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *PrinterClient) DeleteOne(_m *Printer) *PrinterDeleteOne {
-	return c.DeleteOneID(_m.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *PrinterClient) DeleteOneID(id uuid.UUID) *PrinterDeleteOne {
-	builder := c.Delete().Where(printer.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &PrinterDeleteOne{builder}
-}
-
-// Query returns a query builder for Printer.
-func (c *PrinterClient) Query() *PrinterQuery {
-	return &PrinterQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypePrinter},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a Printer entity by its id.
-func (c *PrinterClient) Get(ctx context.Context, id uuid.UUID) (*Printer, error) {
-	return c.Query().Where(printer.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *PrinterClient) GetX(ctx context.Context, id uuid.UUID) *Printer {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryGroup queries the group edge of a Printer.
-func (c *PrinterClient) QueryGroup(_m *Printer) *GroupQuery {
-	query := (&GroupClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(printer.Table, printer.FieldID, id),
-			sqlgraph.To(group.Table, group.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, printer.GroupTable, printer.GroupColumn),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *PrinterClient) Hooks() []Hook {
-	return c.hooks.Printer
-}
-
-// Interceptors returns the client interceptors.
-func (c *PrinterClient) Interceptors() []Interceptor {
-	return c.inters.Printer
-}
-
-func (c *PrinterClient) mutate(ctx context.Context, m *PrinterMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&PrinterCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&PrinterUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&PrinterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&PrinterDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown Printer mutation op: %q", m.Op())
-	}
-}
-
 // TagClient is a client for the Tag schema.
 type TagClient struct {
 	config
@@ -3892,13 +3719,13 @@ type (
 	hooks struct {
 		APIKey, Attachment, AuthRoles, AuthTokens, Entity, EntityField, EntityTemplate,
 		EntityType, Export, Group, GroupInvitationToken, LabelTemplate,
-		MaintenanceEntry, Notifier, PasswordResetTokens, Printer, Tag, TemplateField,
-		User, UserGroup []ent.Hook
+		MaintenanceEntry, Notifier, PasswordResetTokens, Tag, TemplateField, User,
+		UserGroup []ent.Hook
 	}
 	inters struct {
 		APIKey, Attachment, AuthRoles, AuthTokens, Entity, EntityField, EntityTemplate,
 		EntityType, Export, Group, GroupInvitationToken, LabelTemplate,
-		MaintenanceEntry, Notifier, PasswordResetTokens, Printer, Tag, TemplateField,
-		User, UserGroup []ent.Interceptor
+		MaintenanceEntry, Notifier, PasswordResetTokens, Tag, TemplateField, User,
+		UserGroup []ent.Interceptor
 	}
 )

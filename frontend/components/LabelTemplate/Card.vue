@@ -102,7 +102,6 @@
       preset: data.preset,
       dpi: data.dpi,
       outputFormat: data.outputFormat,
-      mediaType: data.mediaType,
       canvasData: data.canvasData,
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });

@@ -161,20 +161,6 @@ func (_c *LabelTemplateCreate) SetNillableDpi(v *int) *LabelTemplateCreate {
 	return _c
 }
 
-// SetMediaType sets the "media_type" field.
-func (_c *LabelTemplateCreate) SetMediaType(v string) *LabelTemplateCreate {
-	_c.mutation.SetMediaType(v)
-	return _c
-}
-
-// SetNillableMediaType sets the "media_type" field if the given value is not nil.
-func (_c *LabelTemplateCreate) SetNillableMediaType(v *string) *LabelTemplateCreate {
-	if v != nil {
-		_c.SetMediaType(*v)
-	}
-	return _c
-}
-
 // SetOwnerID sets the "owner_id" field.
 func (_c *LabelTemplateCreate) SetOwnerID(v uuid.UUID) *LabelTemplateCreate {
 	_c.mutation.SetOwnerID(v)
@@ -321,11 +307,6 @@ func (_c *LabelTemplateCreate) check() error {
 	if _, ok := _c.mutation.Dpi(); !ok {
 		return &ValidationError{Name: "dpi", err: errors.New(`ent: missing required field "LabelTemplate.dpi"`)}
 	}
-	if v, ok := _c.mutation.MediaType(); ok {
-		if err := labeltemplate.MediaTypeValidator(v); err != nil {
-			return &ValidationError{Name: "media_type", err: fmt.Errorf(`ent: validator failed for field "LabelTemplate.media_type": %w`, err)}
-		}
-	}
 	if _, ok := _c.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`ent: missing required field "LabelTemplate.owner_id"`)}
 	}
@@ -413,10 +394,6 @@ func (_c *LabelTemplateCreate) createSpec() (*LabelTemplate, *sqlgraph.CreateSpe
 	if value, ok := _c.mutation.Dpi(); ok {
 		_spec.SetField(labeltemplate.FieldDpi, field.TypeInt, value)
 		_node.Dpi = value
-	}
-	if value, ok := _c.mutation.MediaType(); ok {
-		_spec.SetField(labeltemplate.FieldMediaType, field.TypeString, value)
-		_node.MediaType = value
 	}
 	if nodes := _c.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

@@ -14,10 +14,20 @@
 
   const { t } = useI18n();
 
-  const props = defineProps<{
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    selectedObject: any;
-  }>();
+  const props = withDefaults(
+    defineProps<{
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      selectedObject: any;
+      /** Unit the width field is shown in; the canvas itself works in CSS pixels at 96 dpi */
+      unit?: "mm" | "in";
+    }>(),
+    { unit: "mm" }
+  );
+
+  const PX_PER_MM = 96 / 25.4;
+  const PX_PER_IN = 96;
+  const widthPxPerUnit = computed(() => (props.unit === "in" ? PX_PER_IN : PX_PER_MM));
+  const widthStep = computed(() => (props.unit === "in" ? 0.05 : 0.5));
 
   const emit = defineEmits<{
     updateObject: [updates: Record<string, unknown>];
@@ -96,10 +106,16 @@
     emit("updateObject", { textAlign: align });
   }
 
+  const textboxWidthInUnit = computed(() =>
+    objectProps.value
+      ? (objectProps.value.textboxWidth / widthPxPerUnit.value).toFixed(props.unit === "in" ? 2 : 1)
+      : ""
+  );
+
   function handleTextboxWidthChange(value: string) {
-    const numValue = parseInt(value, 10);
+    const numValue = parseFloat(value);
     if (!isNaN(numValue) && numValue > 0) {
-      emit("updateObject", { width: numValue });
+      emit("updateObject", { width: Math.max(1, Math.round(numValue * widthPxPerUnit.value)) });
     }
   }
 
@@ -259,11 +275,13 @@
       <Label class="text-xs text-muted-foreground">W</Label>
       <Input
         type="number"
-        :model-value="objectProps.textboxWidth"
-        class="h-8 w-16"
-        min="20"
-        @update:model-value="handleTextboxWidthChange(String($event))"
+        :model-value="textboxWidthInUnit"
+        :step="widthStep"
+        class="h-8 w-20"
+        min="0"
+        @change="handleTextboxWidthChange(($event.target as HTMLInputElement).value)"
       />
+      <span class="shrink-0 text-xs text-muted-foreground">{{ unit }}</span>
     </div>
 
     <!-- Autofit Popover -->

@@ -11,7 +11,6 @@
   import MdiCog from "~icons/mdi/cog";
   import MdiShape from "~icons/mdi/shape";
   import MdiWrench from "~icons/mdi/wrench";
-  import MdiPrinter from "~icons/mdi/printer";
   import MdiLogout from "~icons/mdi/logout";
   import MdiDelete from "~icons/mdi/delete";
   import type { UserSummary } from "~/lib/api/types/data-contracts";
@@ -61,12 +60,6 @@
       label: "collection.tabs.entity_types",
       to: "/collection/entity-types",
       icon: MdiShape,
-    },
-    {
-      id: "printers",
-      label: "collection.tabs.printers",
-      to: "/collection/printers",
-      icon: MdiPrinter,
     },
     {
       id: "tools",

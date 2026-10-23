@@ -65,12 +65,6 @@ func (LabelTemplate) Fields() []ent.Field {
 			Default(300).
 			Comment("Output DPI for rendering"),
 
-		// Brother printer media type (for direct printing)
-		field.String("media_type").
-			Optional().
-			MaxLen(50).
-			Comment("Brother media type like 'DK-22251' for direct printing"),
-
 		// Owner tracking for private templates
 		field.UUID("owner_id", uuid.UUID{}).
 			Comment("User who created this template"),

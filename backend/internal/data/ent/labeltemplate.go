@@ -43,8 +43,6 @@ type LabelTemplate struct {
 	OutputFormat string `json:"output_format,omitempty"`
 	// Output DPI for rendering
 	Dpi int `json:"dpi,omitempty"`
-	// Brother media type like 'DK-22251' for direct printing
-	MediaType string `json:"media_type,omitempty"`
 	// User who created this template
 	OwnerID uuid.UUID `json:"owner_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -100,7 +98,7 @@ func (*LabelTemplate) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case labeltemplate.FieldDpi:
 			values[i] = new(sql.NullInt64)
-		case labeltemplate.FieldName, labeltemplate.FieldDescription, labeltemplate.FieldPreset, labeltemplate.FieldOutputFormat, labeltemplate.FieldMediaType:
+		case labeltemplate.FieldName, labeltemplate.FieldDescription, labeltemplate.FieldPreset, labeltemplate.FieldOutputFormat:
 			values[i] = new(sql.NullString)
 		case labeltemplate.FieldCreatedAt, labeltemplate.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -197,12 +195,6 @@ func (_m *LabelTemplate) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Dpi = int(value.Int64)
 			}
-		case labeltemplate.FieldMediaType:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field media_type", values[i])
-			} else if value.Valid {
-				_m.MediaType = value.String
-			}
 		case labeltemplate.FieldOwnerID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field owner_id", values[i])
@@ -294,9 +286,6 @@ func (_m *LabelTemplate) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("dpi=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Dpi))
-	builder.WriteString(", ")
-	builder.WriteString("media_type=")
-	builder.WriteString(_m.MediaType)
 	builder.WriteString(", ")
 	builder.WriteString("owner_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.OwnerID))
