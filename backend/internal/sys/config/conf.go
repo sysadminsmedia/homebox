@@ -239,6 +239,26 @@ type AuthConfig struct {
 	// Must stay stable across restarts — rotating it invalidates every issued key.
 	// Generate with `openssl rand -base64 48`.
 	APIKeyPepper string `yaml:"api_key_pepper" conf:"mask"`
+	// JWT lets API clients authenticate with a bearer JWT issued by an external
+	// identity provider (for example a token-exchange flow in Authentik or
+	// Keycloak). Off unless IssuerURL and Audience are set.
+	JWT AuthJWTConf `yaml:"jwt"`
+}
+
+// AuthJWTConf configures bearer-JWT authentication on the API. A valid token
+// (signature, issuer, audience, expiry) is mapped to an EXISTING user by its
+// email claim; users are never created this way.
+type AuthJWTConf struct {
+	IssuerURL   string `yaml:"issuer_url"`
+	Audience    string `yaml:"audience"`
+	JWKSURL     string `yaml:"jwks_url"` // optional; discovered from the issuer when empty
+	EmailClaim  string `yaml:"email_claim"  conf:"default:email"`
+	VerifyEmail bool   `yaml:"verify_email" conf:"default:true"` // require email_verified=true in the token
+}
+
+// Enabled reports whether bearer-JWT authentication is configured.
+func (c AuthJWTConf) Enabled() bool {
+	return c.IssuerURL != "" && c.Audience != ""
 }
 
 func (c AuthConfig) MarshalJSON() ([]byte, error) {
