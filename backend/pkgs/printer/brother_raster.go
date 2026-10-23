@@ -16,6 +16,7 @@ type BrotherRasterClient struct {
 	address string
 	port    string
 	media   BrotherMediaType
+	dial    func(ctx context.Context, network, addr string) (net.Conn, error)
 }
 
 // BrotherPrintOptions contains options for a Brother print job
@@ -26,11 +27,13 @@ type BrotherPrintOptions struct {
 
 // NewBrotherRasterClient creates a new Brother raster client
 // Address should be the IP or hostname of the printer
-func NewBrotherRasterClient(address string) (*BrotherRasterClient, error) {
+func NewBrotherRasterClient(address string, opts ...ClientOption) (*BrotherRasterClient, error) {
+	o := applyOptions(opts)
 	return &BrotherRasterClient{
 		address: address,
 		port:    "9100",
 		media:   BrotherMediaTypes["DK-22251"], // Default to DK-22251
+		dial:    safeDialContext(o.allowPublic),
 	}, nil
 }
 
@@ -65,8 +68,11 @@ func (c *BrotherRasterClient) Print(ctx context.Context, job *PrintJob) (*PrintR
 	// Convert to Brother raster format
 	rasterData := c.convertToRaster(img)
 
-	// Connect to printer
-	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%s", c.address, c.port), 10*time.Second)
+	// Connect to printer; the dialer applies the private-network policy to
+	// the resolved IP and times out after dialTimeout.
+	dialCtx, cancel := context.WithTimeout(ctx, dialTimeout)
+	defer cancel()
+	conn, err := c.dial(dialCtx, "tcp", net.JoinHostPort(c.address, c.port))
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to printer: %w", err)
 	}

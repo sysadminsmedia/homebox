@@ -7295,7 +7295,8 @@
                         "minimum": 72
                     },
                     "height": {
-                        "type": "number"
+                        "type": "number",
+                        "maximum": 1000
                     },
                     "isShared": {
                         "type": "boolean"
@@ -7321,7 +7322,8 @@
                         "nullable": true
                     },
                     "width": {
-                        "type": "number"
+                        "type": "number",
+                        "maximum": 1000
                     }
                 }
             },
@@ -7433,7 +7435,8 @@
                         "minimum": 72
                     },
                     "height": {
-                        "type": "number"
+                        "type": "number",
+                        "maximum": 1000
                     },
                     "id": {
                         "type": "string"
@@ -7462,7 +7465,8 @@
                         "nullable": true
                     },
                     "width": {
-                        "type": "number"
+                        "type": "number",
+                        "maximum": 1000
                     }
                 }
             },

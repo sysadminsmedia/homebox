@@ -628,7 +628,7 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrint() errchain.HandlerFunc {
 		}
 
 		// Create printer client
-		printerClient, err := printer.NewPrinterClient(printer.PrinterType(printerOut.PrinterType), printerOut.Address)
+		printerClient, err := printer.NewPrinterClient(printer.PrinterType(printerOut.PrinterType), printerOut.Address, printer.WithAllowPublicAddresses(ctrl.config.Printer.AllowPublicAddresses))
 		if err != nil {
 			return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
 				Success:     false,
@@ -997,7 +997,7 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrintLocations() errchain.HandlerF
 		}
 
 		// Create printer client
-		printerClient, err := printer.NewPrinterClient(printer.PrinterType(printerOut.PrinterType), printerOut.Address)
+		printerClient, err := printer.NewPrinterClient(printer.PrinterType(printerOut.PrinterType), printerOut.Address, printer.WithAllowPublicAddresses(ctrl.config.Printer.AllowPublicAddresses))
 		if err != nil {
 			return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
 				Success:     false,

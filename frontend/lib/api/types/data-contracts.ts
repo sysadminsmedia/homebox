@@ -1309,6 +1309,7 @@ export interface LabelTemplateCreate {
    * @max 1200
    */
   dpi: number;
+  /** @max 1000 */
   height: number;
   isShared: boolean;
   mediaType?: string | null;
@@ -1319,6 +1320,7 @@ export interface LabelTemplateCreate {
   name: string;
   outputFormat: "png" | "pdf";
   preset?: string | null;
+  /** @max 1000 */
   width: number;
 }
 
@@ -1362,6 +1364,7 @@ export interface LabelTemplateUpdate {
    * @max 1200
    */
   dpi: number;
+  /** @max 1000 */
   height: number;
   id: string;
   isShared: boolean;
@@ -1373,6 +1376,7 @@ export interface LabelTemplateUpdate {
   name: string;
   outputFormat: "png" | "pdf";
   preset?: string | null;
+  /** @max 1000 */
   width: number;
 }
 

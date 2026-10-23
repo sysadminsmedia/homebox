@@ -21,8 +21,8 @@ type (
 	LabelTemplateCreate struct {
 		Name         string                 `json:"name"                validate:"required,min=1,max=255"`
 		Description  string                 `json:"description"         validate:"max=1000"`
-		Width        float64                `json:"width"               validate:"required,gt=0"`
-		Height       float64                `json:"height"              validate:"required,gt=0"`
+		Width        float64                `json:"width"               validate:"required,gt=0,lte=1000"`
+		Height       float64                `json:"height"              validate:"required,gt=0,lte=1000"`
 		Preset       *string                `json:"preset,omitempty"    extensions:"x-nullable"`
 		IsShared     bool                   `json:"isShared"`
 		CanvasData   map[string]interface{} `json:"canvasData"`
@@ -35,8 +35,8 @@ type (
 		ID           uuid.UUID              `json:"id"`
 		Name         string                 `json:"name"                validate:"required,min=1,max=255"`
 		Description  string                 `json:"description"         validate:"max=1000"`
-		Width        float64                `json:"width"               validate:"required,gt=0"`
-		Height       float64                `json:"height"              validate:"required,gt=0"`
+		Width        float64                `json:"width"               validate:"required,gt=0,lte=1000"`
+		Height       float64                `json:"height"              validate:"required,gt=0,lte=1000"`
 		Preset       *string                `json:"preset,omitempty"    extensions:"x-nullable"`
 		IsShared     bool                   `json:"isShared"`
 		CanvasData   map[string]interface{} `json:"canvasData"`

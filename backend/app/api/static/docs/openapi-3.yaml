@@ -4685,6 +4685,7 @@ components:
           minimum: 72
         height:
           type: number
+          maximum: 1000
         isShared:
           type: boolean
         mediaType:
@@ -4704,6 +4705,7 @@ components:
           nullable: true
         width:
           type: number
+          maximum: 1000
     repo.LabelTemplateOut:
       type: object
       properties:
@@ -4780,6 +4782,7 @@ components:
           minimum: 72
         height:
           type: number
+          maximum: 1000
         id:
           type: string
         isShared:
@@ -4801,6 +4804,7 @@ components:
           nullable: true
         width:
           type: number
+          maximum: 1000
     repo.MaintenanceEntry:
       type: object
       properties:

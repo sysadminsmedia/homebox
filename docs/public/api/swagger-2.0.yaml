@@ -2099,6 +2099,7 @@ definitions:
         minimum: 72
         type: integer
       height:
+        maximum: 1000
         type: number
       isShared:
         type: boolean
@@ -2118,6 +2119,7 @@ definitions:
         type: string
         x-nullable: true
       width:
+        maximum: 1000
         type: number
     required:
     - height
@@ -2194,6 +2196,7 @@ definitions:
         minimum: 72
         type: integer
       height:
+        maximum: 1000
         type: number
       id:
         type: string
@@ -2215,6 +2218,7 @@ definitions:
         type: string
         x-nullable: true
       width:
+        maximum: 1000
         type: number
     required:
     - height

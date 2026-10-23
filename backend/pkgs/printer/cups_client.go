@@ -14,12 +14,12 @@ type CUPSClient struct {
 
 // NewCUPSClient creates a new CUPS client for the given printer name
 // The printer name should be the CUPS printer name (e.g., "Brother_QL820NWB")
-func NewCUPSClient(printerName string) (*CUPSClient, error) {
+func NewCUPSClient(printerName string, opts ...ClientOption) (*CUPSClient, error) {
 	// CUPS runs on localhost:631 by default
 	// The IPP address for a CUPS printer is: ipp://localhost:631/printers/{printer_name}
 	ippAddress := fmt.Sprintf("ipp://localhost:631/printers/%s", printerName)
 
-	ippClient, err := NewIPPClient(ippAddress)
+	ippClient, err := NewIPPClient(ippAddress, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create CUPS client: %w", err)
 	}

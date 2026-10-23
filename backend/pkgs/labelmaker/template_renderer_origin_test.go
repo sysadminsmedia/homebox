@@ -5,14 +5,23 @@ import (
 	"testing"
 )
 
+// canvasObject builds a Fabric-style object map for parser tests.
+func canvasObject(kind string, left, top, width, height float64, extra map[string]interface{}) map[string]interface{} {
+	m := map[string]interface{}{"type": kind, "left": left, "top": top, "width": width, "height": height}
+	for k, v := range extra {
+		m[k] = v
+	}
+	return m
+}
+
 func TestNormalizeOrigin(t *testing.T) {
 	near := func(a, b float64) bool { return math.Abs(a-b) < 0.01 }
+	centered := map[string]interface{}{"originX": "center", "originY": "center"}
 
 	// Fabric 7 default: left/top point at the centre of the object.
-	elem := parseCanvasElement(map[string]interface{}{
-		"type": "textbox", "left": 100.0, "top": 50.0, "width": 40.0, "height": 20.0,
+	elem := parseCanvasElement(canvasObject("textbox", 100, 50, 40, 20, map[string]interface{}{
 		"scaleX": 2.0, "originX": "center", "originY": "center",
-	})
+	}))
 	if !near(elem.Left, 60) || !near(elem.Top, 40) {
 		t.Fatalf("center origin: got left=%.2f top=%.2f, want 60, 40", elem.Left, elem.Top)
 	}
@@ -21,29 +30,21 @@ func TestNormalizeOrigin(t *testing.T) {
 	}
 
 	// Explicit left/top origins are untouched.
-	elem = parseCanvasElement(map[string]interface{}{
-		"type": "rect", "left": 10.0, "top": 20.0, "width": 30.0, "height": 30.0,
-		"originX": "left", "originY": "top",
-	})
+	elem = parseCanvasElement(canvasObject("rect", 10, 20, 30, 30, map[string]interface{}{"originX": "left", "originY": "top"}))
 	if !near(elem.Left, 10) || !near(elem.Top, 20) {
 		t.Fatalf("left/top origin moved: left=%.2f top=%.2f", elem.Left, elem.Top)
 	}
 
 	// Rotation happens about the origin point: a centred 40x20 box rotated 90
 	// degrees has its top-left corner at (cx+10, cy-20).
-	elem = parseCanvasElement(map[string]interface{}{
-		"type": "rect", "left": 100.0, "top": 100.0, "width": 40.0, "height": 20.0,
-		"angle": 90.0, "originX": "center", "originY": "center",
-	})
+	centered["angle"] = 90.0
+	elem = parseCanvasElement(canvasObject("rect", 100, 100, 40, 20, centered))
 	if !near(elem.Left, 110) || !near(elem.Top, 80) {
 		t.Fatalf("rotated center origin: got left=%.2f top=%.2f, want 110, 80", elem.Left, elem.Top)
 	}
 
 	// Numeric origins (0..1) are accepted too.
-	elem = parseCanvasElement(map[string]interface{}{
-		"type": "rect", "left": 100.0, "top": 100.0, "width": 40.0, "height": 20.0,
-		"originX": 1.0, "originY": 0.5,
-	})
+	elem = parseCanvasElement(canvasObject("rect", 100, 100, 40, 20, map[string]interface{}{"originX": 1.0, "originY": 0.5}))
 	if !near(elem.Left, 60) || !near(elem.Top, 90) {
 		t.Fatalf("numeric origin: got left=%.2f top=%.2f, want 60, 90", elem.Left, elem.Top)
 	}

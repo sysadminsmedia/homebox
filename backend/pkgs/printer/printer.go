@@ -79,15 +79,15 @@ type PrinterClient interface {
 }
 
 // NewPrinterClient creates a new printer client based on the printer type and address
-func NewPrinterClient(printerType PrinterType, address string) (PrinterClient, error) {
+func NewPrinterClient(printerType PrinterType, address string, opts ...ClientOption) (PrinterClient, error) {
 	switch printerType {
 	case PrinterTypeIPP:
-		return NewIPPClient(address)
+		return NewIPPClient(address, opts...)
 	case PrinterTypeCUPS:
-		return NewCUPSClient(address)
+		return NewCUPSClient(address, opts...)
 	case PrinterTypeBrotherRaster:
-		return NewBrotherRasterClient(address)
+		return NewBrotherRasterClient(address, opts...)
 	default:
-		return NewIPPClient(address)
+		return NewIPPClient(address, opts...)
 	}
 }

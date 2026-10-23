@@ -174,7 +174,7 @@ func (ctrl *V1Controller) HandlePrintersStatus() errchain.HandlerFunc {
 		}
 
 		// Create printer client
-		client, err := printer.NewPrinterClient(printer.PrinterType(p.PrinterType), p.Address)
+		client, err := printer.NewPrinterClient(printer.PrinterType(p.PrinterType), p.Address, printer.WithAllowPublicAddresses(ctrl.config.Printer.AllowPublicAddresses))
 		if err != nil {
 			return PrinterStatusResponse{
 				Status:      "offline",
@@ -262,7 +262,7 @@ func (ctrl *V1Controller) HandlePrintersTest() errchain.HandlerFunc {
 		}
 
 		// Create printer client
-		client, err := printer.NewPrinterClient(printer.PrinterType(p.PrinterType), p.Address)
+		client, err := printer.NewPrinterClient(printer.PrinterType(p.PrinterType), p.Address, printer.WithAllowPublicAddresses(ctrl.config.Printer.AllowPublicAddresses))
 		if err != nil {
 			return server.JSON(w, http.StatusOK, PrinterTestResponse{
 				Success: false,

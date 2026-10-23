@@ -103,6 +103,14 @@ type CanvasElement struct {
 	Objects     []interface{}          `json:"objects"` // For groups
 }
 
+// Limits on what a template may ask the renderer to allocate. Templates and
+// render-time canvas overrides are user input, so sizes must be bounded.
+const (
+	maxRenderPixels     = 50_000_000 // ~200 MB RGBA; a 100x150 mm label at 1200 dpi is ~33 MP
+	maxImageSourceBytes = 2 << 20    // embedded image payload (the editor caps uploads at 512 KB)
+	maxImageSourceDim   = 4096       // declared width/height of an embedded image
+)
+
 // TemplateRenderer handles rendering of label templates
 type TemplateRenderer struct {
 	regularFont *truetype.Font
@@ -158,6 +166,12 @@ func (r *TemplateRenderer) RenderTemplate(ctx RenderContext) ([]byte, error) {
 
 	width := mmToPixels(ctx.Template.Width, dpi)
 	height := mmToPixels(ctx.Template.Height, dpi)
+	if width <= 0 || height <= 0 {
+		return nil, fmt.Errorf("template size %gx%g mm renders to an empty image", ctx.Template.Width, ctx.Template.Height)
+	}
+	if width*height > maxRenderPixels {
+		return nil, fmt.Errorf("template size %gx%g mm at %d dpi exceeds the renderer limit of %d pixels", ctx.Template.Width, ctx.Template.Height, dpi, maxRenderPixels)
+	}
 
 	// Create blank white image
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
@@ -634,14 +648,21 @@ func (r *TemplateRenderer) renderTextRotated(img *image.RGBA, elem CanvasElement
 		}
 	}
 
-	// Rotate the temporary image
+	// Rotate the temporary image about its centre, growing the bounds so a
+	// wide line of text turned on end is not clipped to its unrotated box.
 	// Fabric.js uses clockwise rotation, bild's transform.Rotate uses counter-clockwise
-	rotatedImg := transform.Rotate(tempImg, -elem.Angle, nil)
-
-	// Get rotated image dimensions and composite onto main image
+	rotatedImg := transform.Rotate(tempImg, -elem.Angle, &transform.RotationOptions{ResizeBounds: true})
 	rotatedBounds := rotatedImg.Bounds()
-	x := scaleCoord(elem.Left, dpi)
-	y := scaleCoord(elem.Top, dpi)
+
+	// Fabric rotates an object about its (top-left) origin, so find where the
+	// source's top-left corner ended up and put that corner on (Left, Top).
+	rad := elem.Angle * math.Pi / 180
+	sin, cos := math.Sin(rad), math.Cos(rad)
+	cx, cy := float64(tempWidth)/2, float64(tempHeight)/2
+	cornerX := float64(rotatedBounds.Dx())/2 - cx*cos + cy*sin
+	cornerY := float64(rotatedBounds.Dy())/2 - cx*sin - cy*cos
+	x := scaleCoord(elem.Left, dpi) - int(math.Round(cornerX))
+	y := scaleCoord(elem.Top, dpi) - int(math.Round(cornerY))
 	destRect := image.Rect(x, y, x+rotatedBounds.Dx(), y+rotatedBounds.Dy())
 	draw.Draw(img, destRect, rotatedImg, rotatedBounds.Min, draw.Over)
 
@@ -839,6 +860,9 @@ func (r *TemplateRenderer) renderBarcode(img *image.RGBA, elem CanvasElement, it
 		width = 100
 		height = 100
 	}
+	// A huge scale must not drive a huge allocation; anything beyond twice
+	// the label is clipped away regardless.
+	width, height = capToLabel(width, height, img.Bounds())
 
 	// Generate barcode
 	opts := BarcodeOptions{
@@ -877,12 +901,31 @@ func (r *TemplateRenderer) renderImage(img *image.RGBA, elem CanvasElement, dpi 
 	if width <= 0 || height <= 0 {
 		return nil
 	}
+	width, height = capToLabel(width, height, img.Bounds())
 
-	resized := transform.Resize(src, width, height, transform.Lanczos)
 	x := scaleCoord(elem.Left, dpi)
 	y := scaleCoord(elem.Top, dpi)
-	draw.Draw(img, image.Rect(x, y, x+width, y+height), resized, image.Point{}, draw.Over)
+	dest := image.Rect(x, y, x+width, y+height).Intersect(img.Bounds())
+	if dest.Empty() {
+		return nil
+	}
+
+	resized := transform.Resize(src, width, height, transform.Lanczos)
+	draw.Draw(img, dest, resized, dest.Min.Sub(image.Pt(x, y)), draw.Over)
 	return nil
+}
+
+// capToLabel limits an element's pixel size to twice the label in each
+// direction so that scale factors from untrusted canvas JSON cannot request
+// arbitrarily large intermediate images.
+func capToLabel(width, height int, bounds image.Rectangle) (int, int) {
+	if maxW := 2 * bounds.Dx(); width > maxW {
+		width = maxW
+	}
+	if maxH := 2 * bounds.Dy(); height > maxH {
+		height = maxH
+	}
+	return width, height
 }
 
 // decodeImageSource decodes a data: URL (base64 or percent-encoded) into an image.
@@ -908,68 +951,62 @@ func decodeImageSource(src string) (image.Image, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(raw) > maxImageSourceBytes {
+		return nil, fmt.Errorf("embedded image is %d bytes, limit is %d", len(raw), maxImageSourceBytes)
+	}
+
+	// Check the declared dimensions before decoding: a tiny PNG can declare a
+	// huge canvas and image.Decode would allocate all of it.
+	cfg, _, err := image.DecodeConfig(bytes.NewReader(raw))
+	if err != nil {
+		return nil, err
+	}
+	if cfg.Width <= 0 || cfg.Height <= 0 || cfg.Width > maxImageSourceDim || cfg.Height > maxImageSourceDim {
+		return nil, fmt.Errorf("embedded image is %dx%d, limit is %dx%d", cfg.Width, cfg.Height, maxImageSourceDim, maxImageSourceDim)
+	}
 
 	decoded, _, err := image.Decode(bytes.NewReader(raw))
 	return decoded, err
 }
 
-// renderRect renders a rectangle element
+// renderRect renders a rectangle element. Every band is clipped to the image
+// first so an element placed far outside the label costs nothing.
 func (r *TemplateRenderer) renderRect(img *image.RGBA, elem CanvasElement, dpi int) error {
 	x := scaleCoord(elem.Left, dpi)
 	y := scaleCoord(elem.Top, dpi)
 	width := scaleCoord(elem.Width*elem.ScaleX, dpi)
 	height := scaleCoord(elem.Height*elem.ScaleY, dpi)
+	rect := image.Rect(x, y, x+width, y+height)
+	if rect.Intersect(img.Bounds()).Empty() {
+		return nil
+	}
 
 	// Draw fill if not transparent
 	if elem.Fill != "" && elem.Fill != "transparent" {
-		fillColor := parseColor(elem.Fill)
-		for py := y; py < y+height && py < img.Bounds().Max.Y; py++ {
-			for px := x; px < x+width && px < img.Bounds().Max.X; px++ {
-				if px >= 0 && py >= 0 {
-					img.Set(px, py, fillColor)
-				}
-			}
-		}
+		fillRect(img, rect, parseColor(elem.Fill))
 	}
 
 	// Draw stroke if present
 	if elem.Stroke != "" && elem.Stroke != "transparent" {
 		strokeColor := parseColor(elem.Stroke)
-		strokeWidth := scaleCoord(elem.StrokeWidth, dpi)
-		if strokeWidth < 1 {
-			strokeWidth = 1
+		sw := scaleCoord(elem.StrokeWidth, dpi)
+		if sw < 1 {
+			sw = 1
 		}
-
-		// Draw horizontal lines (top and bottom)
-		for sw := 0; sw < strokeWidth; sw++ {
-			for px := x; px < x+width && px < img.Bounds().Max.X; px++ {
-				if px >= 0 {
-					if y+sw >= 0 && y+sw < img.Bounds().Max.Y {
-						img.Set(px, y+sw, strokeColor)
-					}
-					if y+height-1-sw >= 0 && y+height-1-sw < img.Bounds().Max.Y {
-						img.Set(px, y+height-1-sw, strokeColor)
-					}
-				}
-			}
-		}
-
-		// Draw vertical lines (left and right)
-		for sw := 0; sw < strokeWidth; sw++ {
-			for py := y; py < y+height && py < img.Bounds().Max.Y; py++ {
-				if py >= 0 {
-					if x+sw >= 0 && x+sw < img.Bounds().Max.X {
-						img.Set(x+sw, py, strokeColor)
-					}
-					if x+width-1-sw >= 0 && x+width-1-sw < img.Bounds().Max.X {
-						img.Set(x+width-1-sw, py, strokeColor)
-					}
-				}
-			}
-		}
+		fillRect(img, image.Rect(rect.Min.X, rect.Min.Y, rect.Max.X, rect.Min.Y+sw), strokeColor) // top
+		fillRect(img, image.Rect(rect.Min.X, rect.Max.Y-sw, rect.Max.X, rect.Max.Y), strokeColor) // bottom
+		fillRect(img, image.Rect(rect.Min.X, rect.Min.Y, rect.Min.X+sw, rect.Max.Y), strokeColor) // left
+		fillRect(img, image.Rect(rect.Max.X-sw, rect.Min.Y, rect.Max.X, rect.Max.Y), strokeColor) // right
 	}
 
 	return nil
+}
+
+// fillRect paints the part of rect that lies inside img.
+func fillRect(img *image.RGBA, rect image.Rectangle, c color.Color) {
+	if visible := rect.Intersect(img.Bounds()); !visible.Empty() {
+		draw.Draw(img, visible, &image.Uniform{C: c}, image.Point{}, draw.Src)
+	}
 }
 
 // renderLine renders a line element

@@ -6993,7 +6993,8 @@ const docTemplate = `{
                     "minimum": 72
                 },
                 "height": {
-                    "type": "number"
+                    "type": "number",
+                    "maximum": 1000
                 },
                 "isShared": {
                     "type": "boolean"
@@ -7019,7 +7020,8 @@ const docTemplate = `{
                     "x-nullable": true
                 },
                 "width": {
-                    "type": "number"
+                    "type": "number",
+                    "maximum": 1000
                 }
             }
         },
@@ -7131,7 +7133,8 @@ const docTemplate = `{
                     "minimum": 72
                 },
                 "height": {
-                    "type": "number"
+                    "type": "number",
+                    "maximum": 1000
                 },
                 "id": {
                     "type": "string"
@@ -7160,7 +7163,8 @@ const docTemplate = `{
                     "x-nullable": true
                 },
                 "width": {
-                    "type": "number"
+                    "type": "number",
+                    "maximum": 1000
                 }
             }
         },

@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/phin1x/go-ipp"
 )
@@ -33,7 +34,8 @@ var commonIPPPaths = []string{
 
 // NewIPPClient creates a new IPP client for the given printer address
 // Address should be in the format: ipp://hostname:port/path or ipps://hostname:port/path
-func NewIPPClient(address string) (*IPPClient, error) {
+func NewIPPClient(address string, opts ...ClientOption) (*IPPClient, error) {
+	o := applyOptions(opts)
 	// Parse the address to extract components
 	u, err := url.Parse(address)
 	if err != nil {
@@ -68,11 +70,17 @@ func NewIPPClient(address string) (*IPPClient, error) {
 		}
 	}
 
-	// Create HTTP client
+	// Create HTTP client. The dialer re-checks the resolved IP against the
+	// private-network policy right before connecting, and every phase of the
+	// request is bounded so a stalled printer cannot hold a handler forever.
 	httpClient := &http.Client{
+		Timeout: 60 * time.Second,
 		Transport: &http.Transport{
+			DialContext:           safeDialContext(o.allowPublic),
+			TLSHandshakeTimeout:   10 * time.Second,
+			ResponseHeaderTimeout: 30 * time.Second,
 			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
+				InsecureSkipVerify: true, //nolint:gosec // label printers use self-signed certificates
 			},
 		},
 	}
