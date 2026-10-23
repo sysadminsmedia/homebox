@@ -15,6 +15,17 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/pkgs/labelmaker"
 )
 
+// labelText returns the caller-supplied translation for a fixed string printed
+// on a label, falling back to English when the client doesn't provide one. The
+// backend has no translation catalog of its own, so the frontend passes the
+// user's selected language along with the label request.
+func labelText(r *http.Request, param string, fallback string) string {
+	if v := strings.TrimSpace(r.URL.Query().Get(param)); v != "" {
+		return v
+	}
+	return fallback
+}
+
 func generateOrPrint(ctrl *V1Controller, w http.ResponseWriter, r *http.Request, title string, description string, url string) error {
 	params := labelmaker.NewGenerateParams(int(ctrl.config.LabelMaker.Width), int(ctrl.config.LabelMaker.Height), int(ctrl.config.LabelMaker.Margin), int(ctrl.config.LabelMaker.Padding), ctrl.config.LabelMaker.FontSize, title, description, url, ctrl.config.LabelMaker.DynamicLength, ctrl.config.LabelMaker.AdditionalInformation)
 
@@ -38,9 +49,10 @@ func generateOrPrint(ctrl *V1Controller, w http.ResponseWriter, r *http.Request,
 //	@Summary	Get Location label
 //	@Tags		Locations
 //	@Produce	json
-//	@Param		id		path		string	true	"Location ID"
-//	@Param		print	query		bool	false	"Print this label, defaults to false"
-//	@Success	200		{string}	string	"image/png"
+//	@Param		id					path		string	true	"Location ID"
+//	@Param		print				query		bool	false	"Print this label, defaults to false"
+//	@Param		locationDescription	query		string	false	"Translated description text, defaults to 'Homebox Location'"
+//	@Success	200					{string}	string	"image/png"
 //	@Router		/v1/labelmaker/location/{id} [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGetLocationLabel() errchain.HandlerFunc {
@@ -57,7 +69,8 @@ func (ctrl *V1Controller) HandleGetLocationLabel() errchain.HandlerFunc {
 		}
 
 		hbURL := GetHBURL(r, &ctrl.config.Options, ctrl.url)
-		return generateOrPrint(ctrl, w, r, location.Name, "Homebox Location", fmt.Sprintf("%s/location/%s", hbURL, location.ID))
+		description := labelText(r, "locationDescription", "Homebox Location")
+		return generateOrPrint(ctrl, w, r, location.Name, description, fmt.Sprintf("%s/location/%s", hbURL, location.ID))
 	}
 }
 
@@ -66,9 +79,10 @@ func (ctrl *V1Controller) HandleGetLocationLabel() errchain.HandlerFunc {
 //	@Summary	Get Item label
 //	@Tags		Items
 //	@Produce	json
-//	@Param		id		path		string	true	"Item ID"
-//	@Param		print	query		bool	false	"Print this label, defaults to false"
-//	@Success	200		{string}	string	"image/png"
+//	@Param		id				path		string	true	"Item ID"
+//	@Param		print			query		bool	false	"Print this label, defaults to false"
+//	@Param		locationLabel	query		string	false	"Translated word for 'Location', used as the location line prefix"
+//	@Success	200				{string}	string	"image/png"
 //	@Router		/v1/labelmaker/item/{id} [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGetItemLabel() errchain.HandlerFunc {
@@ -87,7 +101,7 @@ func (ctrl *V1Controller) HandleGetItemLabel() errchain.HandlerFunc {
 		description := ""
 
 		if item.Parent != nil {
-			description += fmt.Sprintf("\nLocation: %s", item.Parent.Name)
+			description += fmt.Sprintf("\n%s: %s", labelText(r, "locationLabel", "Location"), item.Parent.Name)
 		}
 
 		hbURL := GetHBURL(r, &ctrl.config.Options, ctrl.url)
@@ -100,9 +114,10 @@ func (ctrl *V1Controller) HandleGetItemLabel() errchain.HandlerFunc {
 //	@Summary	Get Asset label
 //	@Tags		Items
 //	@Produce	json
-//	@Param		id		path		string	true	"Asset ID"
-//	@Param		print	query		bool	false	"Print this label, defaults to false"
-//	@Success	200		{string}	string	"image/png"
+//	@Param		id				path		string	true	"Asset ID"
+//	@Param		print			query		bool	false	"Print this label, defaults to false"
+//	@Param		locationLabel	query		string	false	"Translated word for 'Location', used as the location line prefix"
+//	@Success	200				{string}	string	"image/png"
 //	@Router		/v1/labelmaker/asset/{id} [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGetAssetLabel() errchain.HandlerFunc {
@@ -127,7 +142,7 @@ func (ctrl *V1Controller) HandleGetAssetLabel() errchain.HandlerFunc {
 		description := item.Items[0].Name
 
 		if item.Items[0].Parent != nil {
-			description += fmt.Sprintf("\nLocation: %s", item.Items[0].Parent.Name)
+			description += fmt.Sprintf("\n%s: %s", labelText(r, "locationLabel", "Location"), item.Items[0].Parent.Name)
 		}
 
 		hbURL := GetHBURL(r, &ctrl.config.Options, ctrl.url)
