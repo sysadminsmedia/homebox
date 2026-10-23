@@ -1104,7 +1104,12 @@ func (r *EntityRepository) QueryByAssetID(ctx context.Context, gid uuid.UUID, as
 	entities, err := mapEntitiesSummaryErr(
 		qb.Order(ent.Asc(entity.FieldName)).
 			WithTag().
-			WithParent().
+			// Same edges as QueryByGroup, so cards on the asset page show the
+			// own-location badge and link item parents correctly.
+			WithParent(func(eq *ent.EntityQuery) {
+				eq.WithEntityType()
+			}).
+			WithLocation().
 			WithEntityType().
 			All(ctx),
 	)
