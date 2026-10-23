@@ -11,6 +11,7 @@
   import MdiPlusBoxMultipleOutline from "~icons/mdi/plus-box-multiple-outline";
   import MdiContentSaveEdit from "~icons/mdi/content-save-edit";
   import MdiDotsVertical from "~icons/mdi/dots-vertical";
+  import MdiMapMarkerOutline from "~icons/mdi/map-marker-outline";
   import { Separator } from "@/components/ui/separator";
   import {
     DropdownMenu,
@@ -213,6 +214,12 @@
     ];
   });
 
+  // The breadcrumb follows the parent chain, so when the parent is an item it
+  // shows where the parent is, not necessarily where this item is (#1688).
+  const hasParentItem = computed(() => !!item.value?.parent && !item.value.parent.entityType?.isLocation);
+  // locationId is only set when the item has a location of its own.
+  const hasOwnLocation = computed(() => hasParentItem.value && !!item.value?.locationId);
+
   const itemDetails = computed<Details>(() => {
     if (!item.value) {
       return [];
@@ -223,6 +230,11 @@
         name: "items.quantity",
         text: item.value?.quantity,
         slot: "quantity",
+      },
+      {
+        name: "items.location",
+        text: item.value?.location?.name || "",
+        slot: "location",
       },
       {
         name: "items.serial_number",
@@ -492,6 +504,20 @@
     return resp.data;
   });
 
+  const ownLocationPath = computedAsync(async () => {
+    const locationId = hasOwnLocation.value ? item.value?.location?.id : undefined;
+    if (!locationId) {
+      return [];
+    }
+
+    const resp = await api.items.fullpath(locationId);
+    if (resp.error) {
+      return [];
+    }
+
+    return resp.data;
+  });
+
   const { data: items, refresh: refreshItemList } = useAsyncData(
     () => itemId.value + "_item_list",
     async () => {
@@ -499,8 +525,9 @@
         return [];
       }
 
+      // parentIds matches by location, which drops children stored elsewhere.
       const resp = await api.items.getAll({
-        parentIds: [itemId.value],
+        parentItemIds: [itemId.value],
       });
 
       if (resp.error) {
@@ -681,6 +708,25 @@
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
+              <div
+                v-if="ownLocationPath && ownLocationPath.length > 0"
+                class="flex flex-wrap items-center gap-1 text-sm text-foreground/70"
+              >
+                <MdiMapMarkerOutline class="size-4 shrink-0" />
+                <Breadcrumb :aria-label="$t('items.location')">
+                  <BreadcrumbList>
+                    <BreadcrumbItem v-for="(part, idx) in ownLocationPath" :key="part.id">
+                      <BreadcrumbLink as-child class="text-foreground/70 hover:underline">
+                        <NuxtLink :to="`/${part.type}/${part.id}`">
+                          {{ part.name }}
+                        </NuxtLink>
+                      </BreadcrumbLink>
+                      <BreadcrumbSeparator v-if="idx < ownLocationPath.length - 1" :key="`sep-${part.id}`" />
+                    </BreadcrumbItem>
+                  </BreadcrumbList>
+                </Breadcrumb>
+                <span>({{ $t("items.own_location") }})</span>
+              </div>
               <h1 class="text-wrap pb-1 text-2xl">
                 {{ item ? item.name : "" }}
               </h1>
@@ -780,6 +826,14 @@
             </div>
           </template>
           <DetailsSection :details="itemDetails">
+            <template #location="{ detail }">
+              <NuxtLink v-if="item.location" :to="`/location/${item.location.id}`" class="hover:underline">
+                {{ detail.text }}
+              </NuxtLink>
+              <span v-if="item.location && hasParentItem" class="ml-1 text-foreground/70">
+                ({{ hasOwnLocation ? $t("items.own_location") : $t("items.location_from_parent") }})
+              </span>
+            </template>
             <template #quantity="{ detail }">
               <div class="flex items-center">
                 {{ detail.text }}

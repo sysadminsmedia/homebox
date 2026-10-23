@@ -295,6 +295,16 @@ const docTemplate = `{
                             "type": "string"
                         },
                         "collectionFormat": "multi",
+                        "description": "parent item IDs; matches direct children wherever they are stored",
+                        "name": "parentItemIds",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi",
                         "description": "entity type IDs; when provided this filter takes precedence over isLocation",
                         "name": "entityTypeIds",
                         "in": "query"
@@ -5016,7 +5026,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "parent": {
-                    "description": "Edges",
                     "allOf": [
                         {
                             "$ref": "#/definitions/repo.EntitySummary"
@@ -5182,6 +5191,16 @@ const docTemplate = `{
                 "itemCount": {
                     "description": "Container-specific (populated when querying locations)",
                     "type": "number"
+                },
+                "location": {
+                    "description": "Location is set only when this entity has its own location, i.e. it is\nstored somewhere other than its parent item. Unlike EntityOut.Location\nit is not resolved, which would cost an ancestor walk per row.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/repo.EntitySummary"
+                        }
+                    ],
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "name": {
                     "type": "string"

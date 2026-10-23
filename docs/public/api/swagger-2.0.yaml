@@ -1247,7 +1247,6 @@ definitions:
       parent:
         allOf:
         - $ref: '#/definitions/repo.EntitySummary'
-        description: Edges
         x-nullable: true
         x-omitempty: true
       purchaseDate:
@@ -1360,6 +1359,15 @@ definitions:
       itemCount:
         description: Container-specific (populated when querying locations)
         type: number
+      location:
+        allOf:
+        - $ref: '#/definitions/repo.EntitySummary'
+        description: |-
+          Location is set only when this entity has its own location, i.e. it is
+          stored somewhere other than its parent item. Unlike EntityOut.Location
+          it is not resolved, which would cost an ancestor walk per row.
+        x-nullable: true
+        x-omitempty: true
       name:
         type: string
       parent:
@@ -2572,6 +2580,13 @@ paths:
         items:
           type: string
         name: parentIds
+        type: array
+      - collectionFormat: multi
+        description: parent item IDs; matches direct children wherever they are stored
+        in: query
+        items:
+          type: string
+        name: parentItemIds
         type: array
       - collectionFormat: multi
         description: entity type IDs; when provided this filter takes precedence over

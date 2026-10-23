@@ -25,13 +25,6 @@
           :src="imageUrl"
           :alt="item.name"
         />
-        <div v-if="item.parent" class="absolute inset-x-1 bottom-1">
-          <Badge class="text-wrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline">
-            <NuxtLink v-if="item.parent" :to="`/location/${item.parent.id}`">
-              {{ locationString }}
-            </NuxtLink>
-          </Badge>
-        </div>
       </div>
       <div class="col-span-4 flex grow flex-col gap-y-1 p-4 pt-2">
         <h2 class="line-clamp-2 text-ellipsis text-wrap text-lg font-bold">{{ item.name }}</h2>
@@ -73,6 +66,29 @@
         </div>
       </div>
     </NuxtLink>
+    <!-- Overlaid on the image rather than nested in the card link, since links can't contain links. -->
+    <div v-if="item.parent || item.location" class="pointer-events-none absolute inset-x-0 top-0 h-[200px]">
+      <div class="absolute inset-x-1 bottom-1 flex flex-wrap gap-1">
+        <Badge
+          v-if="item.parent"
+          class="pointer-events-auto text-wrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline"
+        >
+          <NuxtLink :to="parentLink">
+            {{ locationString }}
+          </NuxtLink>
+        </Badge>
+        <Badge
+          v-if="item.location"
+          class="pointer-events-auto gap-1 text-wrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline"
+          :title="$t('items.own_location')"
+        >
+          <MdiMapMarkerOutline class="size-3 shrink-0" />
+          <NuxtLink :to="`/location/${item.location.id}`">
+            {{ ownLocationString }}
+          </NuxtLink>
+        </Badge>
+      </div>
+    </div>
   </Card>
 </template>
 
@@ -80,6 +96,7 @@
   import type { EntityOut, EntitySummary } from "~~/lib/api/types/data-contracts";
   import MdiShieldCheck from "~icons/mdi/shield-check";
   import MdiArchive from "~icons/mdi/archive";
+  import MdiMapMarkerOutline from "~icons/mdi/map-marker-outline";
   import { Badge } from "@/components/ui/badge";
   import { Card } from "@/components/ui/card";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -128,6 +145,16 @@
 
   const locationString = computed(
     () => props.locationFlatTree.find(l => l.id === props.item.parent?.id)?.treeString || props.item.parent?.name
+  );
+
+  // The parent can be an item, which lives under /item, not /location.
+  const parentLink = computed(
+    () => `/${props.item.parent?.entityType?.isLocation === false ? "item" : "location"}/${props.item.parent?.id}`
+  );
+
+  // Only set when the item is stored somewhere other than its parent item.
+  const ownLocationString = computed(
+    () => props.locationFlatTree.find(l => l.id === props.item.location?.id)?.treeString || props.item.location?.name
   );
 </script>
 

@@ -176,7 +176,11 @@ type (
 		PurchasePrice float64 `json:"purchasePrice"`
 
 		// Edges
-		Parent     *EntitySummary     `json:"parent,omitempty"     extensions:"x-nullable,x-omitempty"`
+		Parent *EntitySummary `json:"parent,omitempty" extensions:"x-nullable,x-omitempty"`
+		// Location is set only when this entity has its own location, i.e. it is
+		// stored somewhere other than its parent item. Unlike EntityOut.Location
+		// it is not resolved, which would cost an ancestor walk per row.
+		Location   *EntitySummary     `json:"location,omitempty"   extensions:"x-nullable,x-omitempty"`
 		EntityType *EntityTypeSummary `json:"entityType,omitempty" extensions:"x-nullable,x-omitempty"`
 		Tags       []TagSummary       `json:"tags"`
 
@@ -191,6 +195,9 @@ type (
 	}
 
 	EntityOut struct {
+		// Embedded first: swag merges fields in order, so the Parent and Location
+		// below must come after it to keep their own docs in the generated spec.
+		EntitySummary
 		Parent *EntitySummary `json:"parent,omitempty" extensions:"x-nullable,x-omitempty"`
 		// Location is resolved: this entity's own location, else the nearest
 		// location ancestor. Read-only — write via LocationID.
@@ -199,8 +206,7 @@ type (
 		// inherited. Same name as the EntityUpdate field so a GET/PUT round trip
 		// doesn't pin an inherited location or drop an explicit one.
 		LocationID *uuid.UUID `json:"locationId,omitempty" extensions:"x-nullable,x-omitempty"`
-		EntitySummary
-		AssetID AssetID `json:"assetId,string"`
+		AssetID    AssetID    `json:"assetId,string"`
 
 		SyncChildEntityLocations bool `json:"syncChildEntityLocations"`
 
@@ -250,6 +256,12 @@ func mapEntitySummary(e *ent.Entity) EntitySummary {
 		parent = &p
 	}
 
+	var location *EntitySummary
+	if e.Edges.Location != nil {
+		l := mapEntitySummary(e.Edges.Location)
+		location = &l
+	}
+
 	var et *EntityTypeSummary
 	if e.Edges.EntityType != nil {
 		s := mapEntityTypeSummary(e.Edges.EntityType)
@@ -285,6 +297,7 @@ func mapEntitySummary(e *ent.Entity) EntitySummary {
 
 		// Edges
 		Parent:     parent,
+		Location:   location,
 		EntityType: et,
 		Tags:       tags,
 
@@ -942,7 +955,12 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 
 	qb = qb.
 		WithTag().
-		WithParent().
+		// The parent's type tells the UI whether to link it as an item or a
+		// location; the location edge is the item's own location (#1688).
+		WithParent(func(eq *ent.EntityQuery) {
+			eq.WithEntityType()
+		}).
+		WithLocation().
 		WithEntityType().
 		WithAttachments(func(aq *ent.AttachmentQuery) {
 			aq.Where(
@@ -1086,7 +1104,12 @@ func (r *EntityRepository) QueryByAssetID(ctx context.Context, gid uuid.UUID, as
 	entities, err := mapEntitiesSummaryErr(
 		qb.Order(ent.Asc(entity.FieldName)).
 			WithTag().
-			WithParent().
+			// Same edges as QueryByGroup, so cards on the asset page show the
+			// own-location badge and link item parents correctly.
+			WithParent(func(eq *ent.EntityQuery) {
+				eq.WithEntityType()
+			}).
+			WithLocation().
 			WithEntityType().
 			All(ctx),
 	)
