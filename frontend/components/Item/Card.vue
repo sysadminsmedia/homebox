@@ -25,26 +25,6 @@
           :src="imageUrl"
           :alt="item.name"
         />
-        <div v-if="item.parent || item.location" class="absolute inset-x-1 bottom-1 flex flex-wrap gap-1">
-          <Badge
-            v-if="item.parent"
-            class="text-wrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline"
-          >
-            <NuxtLink :to="parentLink">
-              {{ locationString }}
-            </NuxtLink>
-          </Badge>
-          <Badge
-            v-if="item.location"
-            class="gap-1 text-wrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline"
-            :title="$t('items.own_location')"
-          >
-            <MdiMapMarkerOutline class="size-3 shrink-0" />
-            <NuxtLink :to="`/location/${item.location.id}`">
-              {{ ownLocationString }}
-            </NuxtLink>
-          </Badge>
-        </div>
       </div>
       <div class="col-span-4 flex grow flex-col gap-y-1 p-4 pt-2">
         <h2 class="line-clamp-2 text-ellipsis text-wrap text-lg font-bold">{{ item.name }}</h2>
@@ -86,6 +66,29 @@
         </div>
       </div>
     </NuxtLink>
+    <!-- Overlaid on the image rather than nested in the card link, since links can't contain links. -->
+    <div v-if="item.parent || item.location" class="pointer-events-none absolute inset-x-0 top-0 h-[200px]">
+      <div class="absolute inset-x-1 bottom-1 flex flex-wrap gap-1">
+        <Badge
+          v-if="item.parent"
+          class="pointer-events-auto text-wrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline"
+        >
+          <NuxtLink :to="parentLink">
+            {{ locationString }}
+          </NuxtLink>
+        </Badge>
+        <Badge
+          v-if="item.location"
+          class="pointer-events-auto gap-1 text-wrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline"
+          :title="$t('items.own_location')"
+        >
+          <MdiMapMarkerOutline class="size-3 shrink-0" />
+          <NuxtLink :to="`/location/${item.location.id}`">
+            {{ ownLocationString }}
+          </NuxtLink>
+        </Badge>
+      </div>
+    </div>
   </Card>
 </template>
 

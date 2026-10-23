@@ -547,7 +547,13 @@
 
   async function maybeSyncWithParentLocation() {
     if (parent.value && parent.value.id) {
-      const { data, error } = await api.items.get(parent.value.id);
+      const parentId = parent.value.id;
+      const { data, error } = await api.items.get(parentId);
+
+      // The parent was changed again while this one loaded; its own call wins.
+      if (parent.value?.id !== parentId) {
+        return;
+      }
 
       if (error) {
         toast.error(t("items.toast.error_loading_parent_data"));

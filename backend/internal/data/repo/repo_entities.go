@@ -206,7 +206,7 @@ type (
 		// inherited. Same name as the EntityUpdate field so a GET/PUT round trip
 		// doesn't pin an inherited location or drop an explicit one.
 		LocationID *uuid.UUID `json:"locationId,omitempty" extensions:"x-nullable,x-omitempty"`
-		AssetID AssetID `json:"assetId,string"`
+		AssetID    AssetID    `json:"assetId,string"`
 
 		SyncChildEntityLocations bool `json:"syncChildEntityLocations"`
 
