@@ -23,6 +23,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/export"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/labeltemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/passwordresettokens"
@@ -53,6 +54,7 @@ const (
 	TypeExport               = "Export"
 	TypeGroup                = "Group"
 	TypeGroupInvitationToken = "GroupInvitationToken"
+	TypeLabelTemplate        = "LabelTemplate"
 	TypeMaintenanceEntry     = "MaintenanceEntry"
 	TypeNotifier             = "Notifier"
 	TypePasswordResetTokens  = "PasswordResetTokens"
@@ -9671,6 +9673,9 @@ type GroupMutation struct {
 	exports                  map[uuid.UUID]struct{}
 	removedexports           map[uuid.UUID]struct{}
 	clearedexports           bool
+	label_templates          map[uuid.UUID]struct{}
+	removedlabel_templates   map[uuid.UUID]struct{}
+	clearedlabel_templates   bool
 	done                     bool
 	oldValue                 func(context.Context) (*Group, error)
 	predicates               []predicate.Group
@@ -10356,6 +10361,60 @@ func (m *GroupMutation) ResetExports() {
 	m.removedexports = nil
 }
 
+// AddLabelTemplateIDs adds the "label_templates" edge to the LabelTemplate entity by ids.
+func (m *GroupMutation) AddLabelTemplateIDs(ids ...uuid.UUID) {
+	if m.label_templates == nil {
+		m.label_templates = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		m.label_templates[ids[i]] = struct{}{}
+	}
+}
+
+// ClearLabelTemplates clears the "label_templates" edge to the LabelTemplate entity.
+func (m *GroupMutation) ClearLabelTemplates() {
+	m.clearedlabel_templates = true
+}
+
+// LabelTemplatesCleared reports if the "label_templates" edge to the LabelTemplate entity was cleared.
+func (m *GroupMutation) LabelTemplatesCleared() bool {
+	return m.clearedlabel_templates
+}
+
+// RemoveLabelTemplateIDs removes the "label_templates" edge to the LabelTemplate entity by IDs.
+func (m *GroupMutation) RemoveLabelTemplateIDs(ids ...uuid.UUID) {
+	if m.removedlabel_templates == nil {
+		m.removedlabel_templates = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		delete(m.label_templates, ids[i])
+		m.removedlabel_templates[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedLabelTemplates returns the removed IDs of the "label_templates" edge to the LabelTemplate entity.
+func (m *GroupMutation) RemovedLabelTemplatesIDs() (ids []uuid.UUID) {
+	for id := range m.removedlabel_templates {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// LabelTemplatesIDs returns the "label_templates" edge IDs in the mutation.
+func (m *GroupMutation) LabelTemplatesIDs() (ids []uuid.UUID) {
+	for id := range m.label_templates {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetLabelTemplates resets all changes to the "label_templates" edge.
+func (m *GroupMutation) ResetLabelTemplates() {
+	m.label_templates = nil
+	m.clearedlabel_templates = false
+	m.removedlabel_templates = nil
+}
+
 // Where appends a list predicates to the GroupMutation builder.
 func (m *GroupMutation) Where(ps ...predicate.Group) {
 	m.predicates = append(m.predicates, ps...)
@@ -10540,7 +10599,7 @@ func (m *GroupMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *GroupMutation) AddedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 9)
 	if m.users != nil {
 		edges = append(edges, group.EdgeUsers)
 	}
@@ -10564,6 +10623,9 @@ func (m *GroupMutation) AddedEdges() []string {
 	}
 	if m.exports != nil {
 		edges = append(edges, group.EdgeExports)
+	}
+	if m.label_templates != nil {
+		edges = append(edges, group.EdgeLabelTemplates)
 	}
 	return edges
 }
@@ -10620,13 +10682,19 @@ func (m *GroupMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case group.EdgeLabelTemplates:
+		ids := make([]ent.Value, 0, len(m.label_templates))
+		for id := range m.label_templates {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *GroupMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 9)
 	if m.removedusers != nil {
 		edges = append(edges, group.EdgeUsers)
 	}
@@ -10650,6 +10718,9 @@ func (m *GroupMutation) RemovedEdges() []string {
 	}
 	if m.removedexports != nil {
 		edges = append(edges, group.EdgeExports)
+	}
+	if m.removedlabel_templates != nil {
+		edges = append(edges, group.EdgeLabelTemplates)
 	}
 	return edges
 }
@@ -10706,13 +10777,19 @@ func (m *GroupMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case group.EdgeLabelTemplates:
+		ids := make([]ent.Value, 0, len(m.removedlabel_templates))
+		for id := range m.removedlabel_templates {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *GroupMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 9)
 	if m.clearedusers {
 		edges = append(edges, group.EdgeUsers)
 	}
@@ -10737,6 +10814,9 @@ func (m *GroupMutation) ClearedEdges() []string {
 	if m.clearedexports {
 		edges = append(edges, group.EdgeExports)
 	}
+	if m.clearedlabel_templates {
+		edges = append(edges, group.EdgeLabelTemplates)
+	}
 	return edges
 }
 
@@ -10760,6 +10840,8 @@ func (m *GroupMutation) EdgeCleared(name string) bool {
 		return m.clearedentity_templates
 	case group.EdgeExports:
 		return m.clearedexports
+	case group.EdgeLabelTemplates:
+		return m.clearedlabel_templates
 	}
 	return false
 }
@@ -10799,6 +10881,9 @@ func (m *GroupMutation) ResetEdge(name string) error {
 		return nil
 	case group.EdgeExports:
 		m.ResetExports()
+		return nil
+	case group.EdgeLabelTemplates:
+		m.ResetLabelTemplates()
 		return nil
 	}
 	return fmt.Errorf("unknown Group edge %s", name)
@@ -11453,6 +11538,1207 @@ func (m *GroupInvitationTokenMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown GroupInvitationToken edge %s", name)
+}
+
+// LabelTemplateMutation represents an operation that mutates the LabelTemplate nodes in the graph.
+type LabelTemplateMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uuid.UUID
+	created_at    *time.Time
+	updated_at    *time.Time
+	name          *string
+	description   *string
+	width         *float64
+	addwidth      *float64
+	height        *float64
+	addheight     *float64
+	preset        *string
+	is_shared     *bool
+	canvas_data   *map[string]interface{}
+	output_format *string
+	dpi           *int
+	adddpi        *int
+	clearedFields map[string]struct{}
+	group         *uuid.UUID
+	clearedgroup  bool
+	owner         *uuid.UUID
+	clearedowner  bool
+	done          bool
+	oldValue      func(context.Context) (*LabelTemplate, error)
+	predicates    []predicate.LabelTemplate
+}
+
+var _ ent.Mutation = (*LabelTemplateMutation)(nil)
+
+// labeltemplateOption allows management of the mutation configuration using functional options.
+type labeltemplateOption func(*LabelTemplateMutation)
+
+// newLabelTemplateMutation creates new mutation for the LabelTemplate entity.
+func newLabelTemplateMutation(c config, op Op, opts ...labeltemplateOption) *LabelTemplateMutation {
+	m := &LabelTemplateMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeLabelTemplate,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withLabelTemplateID sets the ID field of the mutation.
+func withLabelTemplateID(id uuid.UUID) labeltemplateOption {
+	return func(m *LabelTemplateMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *LabelTemplate
+		)
+		m.oldValue = func(ctx context.Context) (*LabelTemplate, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().LabelTemplate.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withLabelTemplate sets the old LabelTemplate of the mutation.
+func withLabelTemplate(node *LabelTemplate) labeltemplateOption {
+	return func(m *LabelTemplateMutation) {
+		m.oldValue = func(context.Context) (*LabelTemplate, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m LabelTemplateMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m LabelTemplateMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of LabelTemplate entities.
+func (m *LabelTemplateMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *LabelTemplateMutation) ID() (id uuid.UUID, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *LabelTemplateMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uuid.UUID{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().LabelTemplate.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *LabelTemplateMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *LabelTemplateMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the LabelTemplate entity.
+// If the LabelTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelTemplateMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *LabelTemplateMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *LabelTemplateMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *LabelTemplateMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the LabelTemplate entity.
+// If the LabelTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelTemplateMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *LabelTemplateMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetName sets the "name" field.
+func (m *LabelTemplateMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *LabelTemplateMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the LabelTemplate entity.
+// If the LabelTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelTemplateMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *LabelTemplateMutation) ResetName() {
+	m.name = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *LabelTemplateMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *LabelTemplateMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the LabelTemplate entity.
+// If the LabelTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelTemplateMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *LabelTemplateMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[labeltemplate.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *LabelTemplateMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[labeltemplate.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *LabelTemplateMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, labeltemplate.FieldDescription)
+}
+
+// SetWidth sets the "width" field.
+func (m *LabelTemplateMutation) SetWidth(f float64) {
+	m.width = &f
+	m.addwidth = nil
+}
+
+// Width returns the value of the "width" field in the mutation.
+func (m *LabelTemplateMutation) Width() (r float64, exists bool) {
+	v := m.width
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWidth returns the old "width" field's value of the LabelTemplate entity.
+// If the LabelTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelTemplateMutation) OldWidth(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWidth is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWidth requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWidth: %w", err)
+	}
+	return oldValue.Width, nil
+}
+
+// AddWidth adds f to the "width" field.
+func (m *LabelTemplateMutation) AddWidth(f float64) {
+	if m.addwidth != nil {
+		*m.addwidth += f
+	} else {
+		m.addwidth = &f
+	}
+}
+
+// AddedWidth returns the value that was added to the "width" field in this mutation.
+func (m *LabelTemplateMutation) AddedWidth() (r float64, exists bool) {
+	v := m.addwidth
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetWidth resets all changes to the "width" field.
+func (m *LabelTemplateMutation) ResetWidth() {
+	m.width = nil
+	m.addwidth = nil
+}
+
+// SetHeight sets the "height" field.
+func (m *LabelTemplateMutation) SetHeight(f float64) {
+	m.height = &f
+	m.addheight = nil
+}
+
+// Height returns the value of the "height" field in the mutation.
+func (m *LabelTemplateMutation) Height() (r float64, exists bool) {
+	v := m.height
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHeight returns the old "height" field's value of the LabelTemplate entity.
+// If the LabelTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelTemplateMutation) OldHeight(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHeight is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHeight requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHeight: %w", err)
+	}
+	return oldValue.Height, nil
+}
+
+// AddHeight adds f to the "height" field.
+func (m *LabelTemplateMutation) AddHeight(f float64) {
+	if m.addheight != nil {
+		*m.addheight += f
+	} else {
+		m.addheight = &f
+	}
+}
+
+// AddedHeight returns the value that was added to the "height" field in this mutation.
+func (m *LabelTemplateMutation) AddedHeight() (r float64, exists bool) {
+	v := m.addheight
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetHeight resets all changes to the "height" field.
+func (m *LabelTemplateMutation) ResetHeight() {
+	m.height = nil
+	m.addheight = nil
+}
+
+// SetPreset sets the "preset" field.
+func (m *LabelTemplateMutation) SetPreset(s string) {
+	m.preset = &s
+}
+
+// Preset returns the value of the "preset" field in the mutation.
+func (m *LabelTemplateMutation) Preset() (r string, exists bool) {
+	v := m.preset
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPreset returns the old "preset" field's value of the LabelTemplate entity.
+// If the LabelTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelTemplateMutation) OldPreset(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPreset is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPreset requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPreset: %w", err)
+	}
+	return oldValue.Preset, nil
+}
+
+// ClearPreset clears the value of the "preset" field.
+func (m *LabelTemplateMutation) ClearPreset() {
+	m.preset = nil
+	m.clearedFields[labeltemplate.FieldPreset] = struct{}{}
+}
+
+// PresetCleared returns if the "preset" field was cleared in this mutation.
+func (m *LabelTemplateMutation) PresetCleared() bool {
+	_, ok := m.clearedFields[labeltemplate.FieldPreset]
+	return ok
+}
+
+// ResetPreset resets all changes to the "preset" field.
+func (m *LabelTemplateMutation) ResetPreset() {
+	m.preset = nil
+	delete(m.clearedFields, labeltemplate.FieldPreset)
+}
+
+// SetIsShared sets the "is_shared" field.
+func (m *LabelTemplateMutation) SetIsShared(b bool) {
+	m.is_shared = &b
+}
+
+// IsShared returns the value of the "is_shared" field in the mutation.
+func (m *LabelTemplateMutation) IsShared() (r bool, exists bool) {
+	v := m.is_shared
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsShared returns the old "is_shared" field's value of the LabelTemplate entity.
+// If the LabelTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelTemplateMutation) OldIsShared(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsShared is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsShared requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsShared: %w", err)
+	}
+	return oldValue.IsShared, nil
+}
+
+// ResetIsShared resets all changes to the "is_shared" field.
+func (m *LabelTemplateMutation) ResetIsShared() {
+	m.is_shared = nil
+}
+
+// SetCanvasData sets the "canvas_data" field.
+func (m *LabelTemplateMutation) SetCanvasData(value map[string]interface{}) {
+	m.canvas_data = &value
+}
+
+// CanvasData returns the value of the "canvas_data" field in the mutation.
+func (m *LabelTemplateMutation) CanvasData() (r map[string]interface{}, exists bool) {
+	v := m.canvas_data
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCanvasData returns the old "canvas_data" field's value of the LabelTemplate entity.
+// If the LabelTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelTemplateMutation) OldCanvasData(ctx context.Context) (v map[string]interface{}, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCanvasData is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCanvasData requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCanvasData: %w", err)
+	}
+	return oldValue.CanvasData, nil
+}
+
+// ClearCanvasData clears the value of the "canvas_data" field.
+func (m *LabelTemplateMutation) ClearCanvasData() {
+	m.canvas_data = nil
+	m.clearedFields[labeltemplate.FieldCanvasData] = struct{}{}
+}
+
+// CanvasDataCleared returns if the "canvas_data" field was cleared in this mutation.
+func (m *LabelTemplateMutation) CanvasDataCleared() bool {
+	_, ok := m.clearedFields[labeltemplate.FieldCanvasData]
+	return ok
+}
+
+// ResetCanvasData resets all changes to the "canvas_data" field.
+func (m *LabelTemplateMutation) ResetCanvasData() {
+	m.canvas_data = nil
+	delete(m.clearedFields, labeltemplate.FieldCanvasData)
+}
+
+// SetOutputFormat sets the "output_format" field.
+func (m *LabelTemplateMutation) SetOutputFormat(s string) {
+	m.output_format = &s
+}
+
+// OutputFormat returns the value of the "output_format" field in the mutation.
+func (m *LabelTemplateMutation) OutputFormat() (r string, exists bool) {
+	v := m.output_format
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOutputFormat returns the old "output_format" field's value of the LabelTemplate entity.
+// If the LabelTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelTemplateMutation) OldOutputFormat(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOutputFormat is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOutputFormat requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOutputFormat: %w", err)
+	}
+	return oldValue.OutputFormat, nil
+}
+
+// ResetOutputFormat resets all changes to the "output_format" field.
+func (m *LabelTemplateMutation) ResetOutputFormat() {
+	m.output_format = nil
+}
+
+// SetDpi sets the "dpi" field.
+func (m *LabelTemplateMutation) SetDpi(i int) {
+	m.dpi = &i
+	m.adddpi = nil
+}
+
+// Dpi returns the value of the "dpi" field in the mutation.
+func (m *LabelTemplateMutation) Dpi() (r int, exists bool) {
+	v := m.dpi
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDpi returns the old "dpi" field's value of the LabelTemplate entity.
+// If the LabelTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelTemplateMutation) OldDpi(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDpi is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDpi requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDpi: %w", err)
+	}
+	return oldValue.Dpi, nil
+}
+
+// AddDpi adds i to the "dpi" field.
+func (m *LabelTemplateMutation) AddDpi(i int) {
+	if m.adddpi != nil {
+		*m.adddpi += i
+	} else {
+		m.adddpi = &i
+	}
+}
+
+// AddedDpi returns the value that was added to the "dpi" field in this mutation.
+func (m *LabelTemplateMutation) AddedDpi() (r int, exists bool) {
+	v := m.adddpi
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDpi resets all changes to the "dpi" field.
+func (m *LabelTemplateMutation) ResetDpi() {
+	m.dpi = nil
+	m.adddpi = nil
+}
+
+// SetOwnerID sets the "owner_id" field.
+func (m *LabelTemplateMutation) SetOwnerID(u uuid.UUID) {
+	m.owner = &u
+}
+
+// OwnerID returns the value of the "owner_id" field in the mutation.
+func (m *LabelTemplateMutation) OwnerID() (r uuid.UUID, exists bool) {
+	v := m.owner
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwnerID returns the old "owner_id" field's value of the LabelTemplate entity.
+// If the LabelTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelTemplateMutation) OldOwnerID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwnerID: %w", err)
+	}
+	return oldValue.OwnerID, nil
+}
+
+// ResetOwnerID resets all changes to the "owner_id" field.
+func (m *LabelTemplateMutation) ResetOwnerID() {
+	m.owner = nil
+}
+
+// SetGroupID sets the "group" edge to the Group entity by id.
+func (m *LabelTemplateMutation) SetGroupID(id uuid.UUID) {
+	m.group = &id
+}
+
+// ClearGroup clears the "group" edge to the Group entity.
+func (m *LabelTemplateMutation) ClearGroup() {
+	m.clearedgroup = true
+}
+
+// GroupCleared reports if the "group" edge to the Group entity was cleared.
+func (m *LabelTemplateMutation) GroupCleared() bool {
+	return m.clearedgroup
+}
+
+// GroupID returns the "group" edge ID in the mutation.
+func (m *LabelTemplateMutation) GroupID() (id uuid.UUID, exists bool) {
+	if m.group != nil {
+		return *m.group, true
+	}
+	return
+}
+
+// GroupIDs returns the "group" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// GroupID instead. It exists only for internal usage by the builders.
+func (m *LabelTemplateMutation) GroupIDs() (ids []uuid.UUID) {
+	if id := m.group; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetGroup resets all changes to the "group" edge.
+func (m *LabelTemplateMutation) ResetGroup() {
+	m.group = nil
+	m.clearedgroup = false
+}
+
+// ClearOwner clears the "owner" edge to the User entity.
+func (m *LabelTemplateMutation) ClearOwner() {
+	m.clearedowner = true
+	m.clearedFields[labeltemplate.FieldOwnerID] = struct{}{}
+}
+
+// OwnerCleared reports if the "owner" edge to the User entity was cleared.
+func (m *LabelTemplateMutation) OwnerCleared() bool {
+	return m.clearedowner
+}
+
+// OwnerIDs returns the "owner" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OwnerID instead. It exists only for internal usage by the builders.
+func (m *LabelTemplateMutation) OwnerIDs() (ids []uuid.UUID) {
+	if id := m.owner; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOwner resets all changes to the "owner" edge.
+func (m *LabelTemplateMutation) ResetOwner() {
+	m.owner = nil
+	m.clearedowner = false
+}
+
+// Where appends a list predicates to the LabelTemplateMutation builder.
+func (m *LabelTemplateMutation) Where(ps ...predicate.LabelTemplate) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the LabelTemplateMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *LabelTemplateMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.LabelTemplate, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *LabelTemplateMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *LabelTemplateMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (LabelTemplate).
+func (m *LabelTemplateMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *LabelTemplateMutation) Fields() []string {
+	fields := make([]string, 0, 12)
+	if m.created_at != nil {
+		fields = append(fields, labeltemplate.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, labeltemplate.FieldUpdatedAt)
+	}
+	if m.name != nil {
+		fields = append(fields, labeltemplate.FieldName)
+	}
+	if m.description != nil {
+		fields = append(fields, labeltemplate.FieldDescription)
+	}
+	if m.width != nil {
+		fields = append(fields, labeltemplate.FieldWidth)
+	}
+	if m.height != nil {
+		fields = append(fields, labeltemplate.FieldHeight)
+	}
+	if m.preset != nil {
+		fields = append(fields, labeltemplate.FieldPreset)
+	}
+	if m.is_shared != nil {
+		fields = append(fields, labeltemplate.FieldIsShared)
+	}
+	if m.canvas_data != nil {
+		fields = append(fields, labeltemplate.FieldCanvasData)
+	}
+	if m.output_format != nil {
+		fields = append(fields, labeltemplate.FieldOutputFormat)
+	}
+	if m.dpi != nil {
+		fields = append(fields, labeltemplate.FieldDpi)
+	}
+	if m.owner != nil {
+		fields = append(fields, labeltemplate.FieldOwnerID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *LabelTemplateMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case labeltemplate.FieldCreatedAt:
+		return m.CreatedAt()
+	case labeltemplate.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case labeltemplate.FieldName:
+		return m.Name()
+	case labeltemplate.FieldDescription:
+		return m.Description()
+	case labeltemplate.FieldWidth:
+		return m.Width()
+	case labeltemplate.FieldHeight:
+		return m.Height()
+	case labeltemplate.FieldPreset:
+		return m.Preset()
+	case labeltemplate.FieldIsShared:
+		return m.IsShared()
+	case labeltemplate.FieldCanvasData:
+		return m.CanvasData()
+	case labeltemplate.FieldOutputFormat:
+		return m.OutputFormat()
+	case labeltemplate.FieldDpi:
+		return m.Dpi()
+	case labeltemplate.FieldOwnerID:
+		return m.OwnerID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *LabelTemplateMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case labeltemplate.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case labeltemplate.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case labeltemplate.FieldName:
+		return m.OldName(ctx)
+	case labeltemplate.FieldDescription:
+		return m.OldDescription(ctx)
+	case labeltemplate.FieldWidth:
+		return m.OldWidth(ctx)
+	case labeltemplate.FieldHeight:
+		return m.OldHeight(ctx)
+	case labeltemplate.FieldPreset:
+		return m.OldPreset(ctx)
+	case labeltemplate.FieldIsShared:
+		return m.OldIsShared(ctx)
+	case labeltemplate.FieldCanvasData:
+		return m.OldCanvasData(ctx)
+	case labeltemplate.FieldOutputFormat:
+		return m.OldOutputFormat(ctx)
+	case labeltemplate.FieldDpi:
+		return m.OldDpi(ctx)
+	case labeltemplate.FieldOwnerID:
+		return m.OldOwnerID(ctx)
+	}
+	return nil, fmt.Errorf("unknown LabelTemplate field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *LabelTemplateMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case labeltemplate.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case labeltemplate.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case labeltemplate.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case labeltemplate.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case labeltemplate.FieldWidth:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWidth(v)
+		return nil
+	case labeltemplate.FieldHeight:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHeight(v)
+		return nil
+	case labeltemplate.FieldPreset:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPreset(v)
+		return nil
+	case labeltemplate.FieldIsShared:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsShared(v)
+		return nil
+	case labeltemplate.FieldCanvasData:
+		v, ok := value.(map[string]interface{})
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCanvasData(v)
+		return nil
+	case labeltemplate.FieldOutputFormat:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOutputFormat(v)
+		return nil
+	case labeltemplate.FieldDpi:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDpi(v)
+		return nil
+	case labeltemplate.FieldOwnerID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwnerID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown LabelTemplate field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *LabelTemplateMutation) AddedFields() []string {
+	var fields []string
+	if m.addwidth != nil {
+		fields = append(fields, labeltemplate.FieldWidth)
+	}
+	if m.addheight != nil {
+		fields = append(fields, labeltemplate.FieldHeight)
+	}
+	if m.adddpi != nil {
+		fields = append(fields, labeltemplate.FieldDpi)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *LabelTemplateMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case labeltemplate.FieldWidth:
+		return m.AddedWidth()
+	case labeltemplate.FieldHeight:
+		return m.AddedHeight()
+	case labeltemplate.FieldDpi:
+		return m.AddedDpi()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *LabelTemplateMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case labeltemplate.FieldWidth:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddWidth(v)
+		return nil
+	case labeltemplate.FieldHeight:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddHeight(v)
+		return nil
+	case labeltemplate.FieldDpi:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDpi(v)
+		return nil
+	}
+	return fmt.Errorf("unknown LabelTemplate numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *LabelTemplateMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(labeltemplate.FieldDescription) {
+		fields = append(fields, labeltemplate.FieldDescription)
+	}
+	if m.FieldCleared(labeltemplate.FieldPreset) {
+		fields = append(fields, labeltemplate.FieldPreset)
+	}
+	if m.FieldCleared(labeltemplate.FieldCanvasData) {
+		fields = append(fields, labeltemplate.FieldCanvasData)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *LabelTemplateMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *LabelTemplateMutation) ClearField(name string) error {
+	switch name {
+	case labeltemplate.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case labeltemplate.FieldPreset:
+		m.ClearPreset()
+		return nil
+	case labeltemplate.FieldCanvasData:
+		m.ClearCanvasData()
+		return nil
+	}
+	return fmt.Errorf("unknown LabelTemplate nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *LabelTemplateMutation) ResetField(name string) error {
+	switch name {
+	case labeltemplate.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case labeltemplate.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case labeltemplate.FieldName:
+		m.ResetName()
+		return nil
+	case labeltemplate.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case labeltemplate.FieldWidth:
+		m.ResetWidth()
+		return nil
+	case labeltemplate.FieldHeight:
+		m.ResetHeight()
+		return nil
+	case labeltemplate.FieldPreset:
+		m.ResetPreset()
+		return nil
+	case labeltemplate.FieldIsShared:
+		m.ResetIsShared()
+		return nil
+	case labeltemplate.FieldCanvasData:
+		m.ResetCanvasData()
+		return nil
+	case labeltemplate.FieldOutputFormat:
+		m.ResetOutputFormat()
+		return nil
+	case labeltemplate.FieldDpi:
+		m.ResetDpi()
+		return nil
+	case labeltemplate.FieldOwnerID:
+		m.ResetOwnerID()
+		return nil
+	}
+	return fmt.Errorf("unknown LabelTemplate field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *LabelTemplateMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.group != nil {
+		edges = append(edges, labeltemplate.EdgeGroup)
+	}
+	if m.owner != nil {
+		edges = append(edges, labeltemplate.EdgeOwner)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *LabelTemplateMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case labeltemplate.EdgeGroup:
+		if id := m.group; id != nil {
+			return []ent.Value{*id}
+		}
+	case labeltemplate.EdgeOwner:
+		if id := m.owner; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *LabelTemplateMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *LabelTemplateMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *LabelTemplateMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedgroup {
+		edges = append(edges, labeltemplate.EdgeGroup)
+	}
+	if m.clearedowner {
+		edges = append(edges, labeltemplate.EdgeOwner)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *LabelTemplateMutation) EdgeCleared(name string) bool {
+	switch name {
+	case labeltemplate.EdgeGroup:
+		return m.clearedgroup
+	case labeltemplate.EdgeOwner:
+		return m.clearedowner
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *LabelTemplateMutation) ClearEdge(name string) error {
+	switch name {
+	case labeltemplate.EdgeGroup:
+		m.ClearGroup()
+		return nil
+	case labeltemplate.EdgeOwner:
+		m.ClearOwner()
+		return nil
+	}
+	return fmt.Errorf("unknown LabelTemplate unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *LabelTemplateMutation) ResetEdge(name string) error {
+	switch name {
+	case labeltemplate.EdgeGroup:
+		m.ResetGroup()
+		return nil
+	case labeltemplate.EdgeOwner:
+		m.ResetOwner()
+		return nil
+	}
+	return fmt.Errorf("unknown LabelTemplate edge %s", name)
 }
 
 // MaintenanceEntryMutation represents an operation that mutates the MaintenanceEntry nodes in the graph.
@@ -15667,6 +16953,9 @@ type UserMutation struct {
 	notifiers                    map[uuid.UUID]struct{}
 	removednotifiers             map[uuid.UUID]struct{}
 	clearednotifiers             bool
+	label_templates              map[uuid.UUID]struct{}
+	removedlabel_templates       map[uuid.UUID]struct{}
+	clearedlabel_templates       bool
 	done                         bool
 	oldValue                     func(context.Context) (*User, error)
 	predicates                   []predicate.User
@@ -16556,6 +17845,60 @@ func (m *UserMutation) ResetNotifiers() {
 	m.removednotifiers = nil
 }
 
+// AddLabelTemplateIDs adds the "label_templates" edge to the LabelTemplate entity by ids.
+func (m *UserMutation) AddLabelTemplateIDs(ids ...uuid.UUID) {
+	if m.label_templates == nil {
+		m.label_templates = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		m.label_templates[ids[i]] = struct{}{}
+	}
+}
+
+// ClearLabelTemplates clears the "label_templates" edge to the LabelTemplate entity.
+func (m *UserMutation) ClearLabelTemplates() {
+	m.clearedlabel_templates = true
+}
+
+// LabelTemplatesCleared reports if the "label_templates" edge to the LabelTemplate entity was cleared.
+func (m *UserMutation) LabelTemplatesCleared() bool {
+	return m.clearedlabel_templates
+}
+
+// RemoveLabelTemplateIDs removes the "label_templates" edge to the LabelTemplate entity by IDs.
+func (m *UserMutation) RemoveLabelTemplateIDs(ids ...uuid.UUID) {
+	if m.removedlabel_templates == nil {
+		m.removedlabel_templates = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		delete(m.label_templates, ids[i])
+		m.removedlabel_templates[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedLabelTemplates returns the removed IDs of the "label_templates" edge to the LabelTemplate entity.
+func (m *UserMutation) RemovedLabelTemplatesIDs() (ids []uuid.UUID) {
+	for id := range m.removedlabel_templates {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// LabelTemplatesIDs returns the "label_templates" edge IDs in the mutation.
+func (m *UserMutation) LabelTemplatesIDs() (ids []uuid.UUID) {
+	for id := range m.label_templates {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetLabelTemplates resets all changes to the "label_templates" edge.
+func (m *UserMutation) ResetLabelTemplates() {
+	m.label_templates = nil
+	m.clearedlabel_templates = false
+	m.removedlabel_templates = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -16915,7 +18258,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.groups != nil {
 		edges = append(edges, user.EdgeGroups)
 	}
@@ -16930,6 +18273,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.notifiers != nil {
 		edges = append(edges, user.EdgeNotifiers)
+	}
+	if m.label_templates != nil {
+		edges = append(edges, user.EdgeLabelTemplates)
 	}
 	return edges
 }
@@ -16968,13 +18314,19 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeLabelTemplates:
+		ids := make([]ent.Value, 0, len(m.label_templates))
+		for id := range m.label_templates {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.removedgroups != nil {
 		edges = append(edges, user.EdgeGroups)
 	}
@@ -16989,6 +18341,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removednotifiers != nil {
 		edges = append(edges, user.EdgeNotifiers)
+	}
+	if m.removedlabel_templates != nil {
+		edges = append(edges, user.EdgeLabelTemplates)
 	}
 	return edges
 }
@@ -17027,13 +18382,19 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeLabelTemplates:
+		ids := make([]ent.Value, 0, len(m.removedlabel_templates))
+		for id := range m.removedlabel_templates {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.clearedgroups {
 		edges = append(edges, user.EdgeGroups)
 	}
@@ -17048,6 +18409,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.clearednotifiers {
 		edges = append(edges, user.EdgeNotifiers)
+	}
+	if m.clearedlabel_templates {
+		edges = append(edges, user.EdgeLabelTemplates)
 	}
 	return edges
 }
@@ -17066,6 +18430,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedapi_keys
 	case user.EdgeNotifiers:
 		return m.clearednotifiers
+	case user.EdgeLabelTemplates:
+		return m.clearedlabel_templates
 	}
 	return false
 }
@@ -17096,6 +18462,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeNotifiers:
 		m.ResetNotifiers()
+		return nil
+	case user.EdgeLabelTemplates:
+		m.ResetLabelTemplates()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

@@ -3,9 +3,12 @@ module github.com/sysadminsmedia/homebox/backend
 go 1.27.0
 
 require (
+	codeberg.org/go-pdf/fpdf v0.11.1
 	entgo.io/ent v0.14.6
 	github.com/XSAM/otelsql v0.44.0
+	github.com/anthonynsimon/bild v0.14.0
 	github.com/ardanlabs/conf/v3 v3.13.0
+	github.com/boombuler/barcode v1.1.0
 	github.com/coreos/go-oidc/v3 v3.21.0
 	github.com/evanoberholster/imagemeta v1.1.0
 	github.com/gen2brain/avif v0.6.0
@@ -23,6 +26,7 @@ require (
 	github.com/meilisearch/meilisearch-go v0.36.3
 	github.com/nicholas-fedor/shoutrrr v0.22.0
 	github.com/olahol/melody v1.4.0
+	github.com/phin1x/go-ipp v1.6.1
 	github.com/pkg/errors v0.9.1
 	github.com/pressly/goose/v3 v3.29.0
 	github.com/riandyrn/otelchi v0.12.3
@@ -184,7 +188,6 @@ require (
 	github.com/pierrec/lz4/v4 v4.1.33 // indirect
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c // indirect
 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
-	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/power-devops/perfstat v0.0.0-20260805114148-88456608a4f6 // indirect
 	github.com/rabbitmq/amqp091-go v1.15.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 // indirect

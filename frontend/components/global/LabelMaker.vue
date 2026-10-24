@@ -26,6 +26,8 @@
   const props = defineProps<{
     type: string;
     id: string;
+    /** Render only the print dialog; another control opens it via DialogID.PrintLabel */
+    dialogOnly?: boolean;
   }>();
 
   const pubApi = usePublicApi();
@@ -124,7 +126,7 @@
       </DialogContent>
     </Dialog>
 
-    <TooltipProvider :delay-duration="0">
+    <TooltipProvider v-if="!dialogOnly" :delay-duration="0">
       <ButtonGroup>
         <Button variant="outline" disabled class="disabled:opacity-100">
           {{ $t("components.global.label_maker.titles") }}

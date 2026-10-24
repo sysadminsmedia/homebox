@@ -412,6 +412,60 @@ var (
 			},
 		},
 	}
+	// LabelTemplatesColumns holds the columns for the "label_templates" table.
+	LabelTemplatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 255},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "width", Type: field.TypeFloat64, Default: 62},
+		{Name: "height", Type: field.TypeFloat64, Default: 29},
+		{Name: "preset", Type: field.TypeString, Nullable: true, Size: 50},
+		{Name: "is_shared", Type: field.TypeBool, Default: false},
+		{Name: "canvas_data", Type: field.TypeJSON, Nullable: true},
+		{Name: "output_format", Type: field.TypeString, Default: "png"},
+		{Name: "dpi", Type: field.TypeInt, Default: 300},
+		{Name: "group_label_templates", Type: field.TypeUUID},
+		{Name: "owner_id", Type: field.TypeUUID},
+	}
+	// LabelTemplatesTable holds the schema information for the "label_templates" table.
+	LabelTemplatesTable = &schema.Table{
+		Name:       "label_templates",
+		Columns:    LabelTemplatesColumns,
+		PrimaryKey: []*schema.Column{LabelTemplatesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "label_templates_groups_label_templates",
+				Columns:    []*schema.Column{LabelTemplatesColumns[12]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "label_templates_users_label_templates",
+				Columns:    []*schema.Column{LabelTemplatesColumns[13]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "labeltemplate_name",
+				Unique:  false,
+				Columns: []*schema.Column{LabelTemplatesColumns[3]},
+			},
+			{
+				Name:    "labeltemplate_is_shared",
+				Unique:  false,
+				Columns: []*schema.Column{LabelTemplatesColumns[8]},
+			},
+			{
+				Name:    "labeltemplate_preset",
+				Unique:  false,
+				Columns: []*schema.Column{LabelTemplatesColumns[7]},
+			},
+		},
+	}
 	// MaintenanceEntriesColumns holds the columns for the "maintenance_entries" table.
 	MaintenanceEntriesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -675,6 +729,7 @@ var (
 		ExportsTable,
 		GroupsTable,
 		GroupInvitationTokensTable,
+		LabelTemplatesTable,
 		MaintenanceEntriesTable,
 		NotifiersTable,
 		PasswordResetTokensTable,
@@ -703,6 +758,8 @@ func init() {
 	EntityTypesTable.ForeignKeys[1].RefTable = GroupsTable
 	ExportsTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupInvitationTokensTable.ForeignKeys[0].RefTable = GroupsTable
+	LabelTemplatesTable.ForeignKeys[0].RefTable = GroupsTable
+	LabelTemplatesTable.ForeignKeys[1].RefTable = UsersTable
 	MaintenanceEntriesTable.ForeignKeys[0].RefTable = EntitiesTable
 	NotifiersTable.ForeignKeys[0].RefTable = GroupsTable
 	NotifiersTable.ForeignKeys[1].RefTable = UsersTable

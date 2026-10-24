@@ -23,6 +23,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/export"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/labeltemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/passwordresettokens"
@@ -101,6 +102,7 @@ func checkColumn(t, c string) error {
 			export.Table:               export.ValidColumn,
 			group.Table:                group.ValidColumn,
 			groupinvitationtoken.Table: groupinvitationtoken.ValidColumn,
+			labeltemplate.Table:        labeltemplate.ValidColumn,
 			maintenanceentry.Table:     maintenanceentry.ValidColumn,
 			notifier.Table:             notifier.ValidColumn,
 			passwordresettokens.Table:  passwordresettokens.ValidColumn,

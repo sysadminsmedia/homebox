@@ -38,7 +38,8 @@
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import TagChip from "~/components/Tag/Chip.vue";
   import DateTime from "~/components/global/DateTime.vue";
-  import LabelMaker from "~/components/global/LabelMaker.vue";
+  import PageQRCode from "~/components/global/PageQRCode.vue";
+  import LabelTemplatePrintButton from "~/components/LabelTemplate/PrintButton.vue";
   import Markdown from "~/components/global/Markdown.vue";
   import BaseCard from "@/components/Base/Card.vue";
   import CopyText from "@/components/global/CopyText.vue";
@@ -700,12 +701,12 @@
               </div>
             </div>
             <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-2">
-              <LabelMaker
-                v-if="typeof item.assetId === 'string' && item.assetId != ''"
-                :id="item.assetId"
-                type="asset"
+              <LabelTemplatePrintButton
+                :id="item.id"
+                type="item"
+                :asset-id="typeof item.assetId === 'string' && item.assetId != '' ? item.assetId : ''"
               />
-              <LabelMaker v-else :id="item.id" type="item" />
+              <PageQRCode />
               <Button class="w-9 md:w-auto" :aria-label="$t('global.create_subitem')" @click="createSubitem">
                 <MdiPlus />
                 <span class="hidden md:inline">{{ $t("global.create_subitem") }}</span>
