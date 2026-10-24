@@ -1109,6 +1109,8 @@ definitions:
         type: string
       entityTypeId:
         type: string
+        x-nullable: true
+        x-omitempty: true
       locationId:
         description: Only needed when ParentID is another item and this lives elsewhere
           (#1688).
@@ -1637,6 +1639,8 @@ definitions:
         type: string
       entityTypeId:
         type: string
+        x-nullable: true
+        x-omitempty: true
       fields:
         items:
           $ref: '#/definitions/repo.EntityFieldData'
@@ -2044,16 +2048,22 @@ definitions:
     properties:
       booleanValue:
         type: boolean
+        x-nullable: true
+        x-omitempty: true
       id:
         type: string
       name:
         type: string
       numberValue:
         type: integer
+        x-nullable: true
+        x-omitempty: true
       textValue:
         type: string
       timeValue:
         type: string
+        x-nullable: true
+        x-omitempty: true
       type:
         type: string
     type: object

@@ -100,7 +100,7 @@ type (
 		Quantity     float64   `json:"quantity"`
 		Description  string    `json:"description"  validate:"max=1000"`
 		AssetID      AssetID   `json:"-"`
-		EntityTypeID uuid.UUID `json:"entityTypeId"`
+		EntityTypeID uuid.UUID `json:"entityTypeId" extensions:"x-nullable,x-omitempty"`
 		// Only needed when ParentID is another item and this lives elsewhere (#1688).
 		LocationID uuid.UUID `json:"locationId" extensions:"x-nullable,x-omitempty"`
 
@@ -143,7 +143,7 @@ type (
 		// Otherwise ParentID carries the location. See resolveLocationOverride.
 		LocationID               uuid.UUID `json:"locationId"               extensions:"x-nullable,x-omitempty"`
 		ID                       uuid.UUID `json:"id"`
-		EntityTypeID             uuid.UUID `json:"entityTypeId"`
+		EntityTypeID             uuid.UUID `json:"entityTypeId"             extensions:"x-nullable,x-omitempty"`
 		Insured                  bool      `json:"insured"`
 		Archived                 bool      `json:"archived"`
 		SyncChildEntityLocations bool      `json:"syncChildEntityLocations"`
@@ -942,7 +942,9 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 
 	qb = qb.
 		WithTag().
-		WithParent().
+		WithParent(func(pq *ent.EntityQuery) {
+			pq.WithEntityType()
+		}).
 		WithEntityType().
 		WithAttachments(func(aq *ent.AttachmentQuery) {
 			aq.Where(

@@ -1,12 +1,12 @@
 import { ref, type Ref, watch, onUnmounted } from "vue";
 import { useDocumentVisibility } from "@vueuse/core";
-import type { ItemOut, ItemSummary, LocationOut } from "~~/lib/api/types/data-contracts";
+import type { EntityOut, EntitySummary } from "~~/lib/api/types/data-contracts";
 import type { WorkerResponse } from "~~/workers/barcode-detector";
 
 export interface EntityData {
-  item?: ItemOut;
-  location?: LocationOut;
-  childItems?: ItemSummary[];
+  item?: EntityOut;
+  location?: EntityOut;
+  childItems?: EntitySummary[];
 }
 
 export interface Point2D {

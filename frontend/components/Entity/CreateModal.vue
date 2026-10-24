@@ -673,7 +673,7 @@
       const templateRequest = {
         name: form.name,
         description: form.description,
-        parentId: form.location.id as string,
+        parentId: form.location?.id as string,
         tagIds: form.tags,
         quantity: form.quantity,
         entityTypeId: selectedEntityType.value?.id || "",
@@ -688,7 +688,7 @@
       // so it otherwise still follows the parent (#1688).
       const chosenLocationId = (form.location?.id as string) || null;
       const out: EntityCreate = {
-        parentId: form.parentId || (form.location.id as string),
+        parentId: form.parentId || (form.location?.id as string),
         locationId:
           form.parentId && chosenLocationId && chosenLocationId !== inheritedLocationId.value ? chosenLocationId : null,
         name: form.name,
