@@ -155,15 +155,7 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 
 		_, totalSpan := startEntityCtrlSpan(spanCtx, "controller.V1.HandleEntitiesGetAll.totalPrice",
 			attribute.Int("items.count", len(items.Items)))
-		totalPrice := new(big.Int)
-		for _, item := range items.Items {
-			if !item.SoldDate.Time().IsZero() {
-				continue
-			}
-			totalPrice.Add(totalPrice, big.NewInt(int64(math.Round(item.PurchasePrice*100))))
-		}
-
-		totalPriceFloat, _ := new(big.Float).Quo(new(big.Float).SetInt(totalPrice), big.NewFloat(100)).Float64()
+		totalPriceFloat := entitiesTotalPrice(items.Items)
 		totalSpan.SetAttributes(attribute.Float64("total_price", totalPriceFloat))
 		totalSpan.End()
 
@@ -178,6 +170,21 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 			TotalPrice:       totalPriceFloat,
 		})
 	}
+}
+
+// entitiesTotalPrice sums purchase price times quantity for unsold entities,
+// accumulating in cents to avoid float drift.
+func entitiesTotalPrice(items []repo.EntitySummary) float64 {
+	totalPrice := new(big.Int)
+	for _, item := range items {
+		if !item.SoldDate.Time().IsZero() {
+			continue
+		}
+		totalPrice.Add(totalPrice, big.NewInt(int64(math.Round(item.PurchasePrice*item.Quantity*100))))
+	}
+
+	totalPriceFloat, _ := new(big.Float).Quo(new(big.Float).SetInt(totalPrice), big.NewFloat(100)).Float64()
+	return totalPriceFloat
 }
 
 // HandleEntityFullPath godoc
