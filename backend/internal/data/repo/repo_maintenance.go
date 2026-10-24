@@ -53,15 +53,23 @@ func (r *MaintenanceEntryRepository) GetAllMaintenance(ctx context.Context, grou
 
 	switch filters.Status {
 	case MaintenanceFilterStatusScheduled:
+		// DateGT(now) belongs here, and its absence is what made the two maintenance
+		// endpoints disagree: a completedDate in the FUTURE is a date that has not
+		// happened yet, so the entry is scheduled rather than completed. The per-entity
+		// query (GetMaintenanceByItemID) has always applied this clause; this one did
+		// not, so the same entry read as scheduled from one endpoint and completed from
+		// the other, with the same status filter.
 		query = query.Where(maintenanceentry.Or(
 			maintenanceentry.DateIsNil(),
 			maintenanceentry.DateEQ(time.Time{}),
+			maintenanceentry.DateGT(time.Now()),
 		))
 	case MaintenanceFilterStatusCompleted:
 		query = query.Where(
 			maintenanceentry.Not(maintenanceentry.Or(
 				maintenanceentry.DateIsNil(),
-				maintenanceentry.DateEQ(time.Time{})),
+				maintenanceentry.DateEQ(time.Time{}),
+				maintenanceentry.DateGT(time.Now())),
 			))
 	case MaintenanceFilterStatusBoth:
 		// No additional filters needed

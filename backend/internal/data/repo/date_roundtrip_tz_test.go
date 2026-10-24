@@ -130,7 +130,7 @@ func TestMaintenanceEntryDatesRoundTripUnchanged(t *testing.T) {
 		CompletedDate: unmarshalDate(t, completed),
 		ScheduledDate: unmarshalDate(t, scheduled),
 		Name:          "Oil change",
-		Description:   "Maintenance description",
+		Description:   maintenanceDescription,
 		Cost:          10,
 	})
 	require.NoError(t, err)
