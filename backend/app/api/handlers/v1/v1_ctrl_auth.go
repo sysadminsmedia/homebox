@@ -3,6 +3,7 @@ package v1
 import (
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"strconv"
 	"strings"
@@ -41,6 +42,20 @@ type CookieContents struct {
 	Token     string
 	ExpiresAt time.Time
 	Remember  bool
+}
+
+func getClientIP(r *http.Request) string {
+	xff := r.Header.Get("X-Forwarded-For")
+	if xff != "" {
+		ips := strings.Split(xff, ",")
+		return strings.TrimSpace(ips[0])
+	}
+
+	ip, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		return r.RemoteAddr
+	}
+	return ip
 }
 
 func GetCookies(r *http.Request) (*CookieContents, error) {
@@ -126,7 +141,7 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 		if err != nil {
 			recordCtrlSpanError(span, err)
 			span.SetAttributes(attribute.String("auth.outcome", "authenticate_failed"))
-			log.Warn().Err(err).Msg("authentication failed")
+			log.Warn().Err(err).Str("ip", userIP).Msg("authentication failed")
 			return validate.NewUnauthorizedError()
 		}
 		span.SetAttributes(
