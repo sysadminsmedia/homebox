@@ -1,7 +1,6 @@
 package search
 
 import (
-	"context"
 	"database/sql"
 	"os"
 	"testing"
@@ -35,7 +34,7 @@ func renderPredicate(t *testing.T, dialectName string, p predicate.Entity) (stri
 func TestDatabaseEngine_SQLiteSQL(t *testing.T) {
 	e := &DatabaseEngine{dialect: dialect.SQLite}
 
-	pred, err := e.Predicate(context.Background(), uuid.Nil, "Straße")
+	pred, err := e.Predicate(testCtx(), uuid.Nil, "Straße")
 	require.NoError(t, err)
 	require.NotNil(t, pred)
 
@@ -51,7 +50,7 @@ func TestDatabaseEngine_PostgresSQL(t *testing.T) {
 	// plain ILIKE fallback
 	e := &DatabaseEngine{dialect: dialect.Postgres}
 
-	pred, err := e.Predicate(context.Background(), uuid.Nil, "café")
+	pred, err := e.Predicate(testCtx(), uuid.Nil, "café")
 	require.NoError(t, err)
 	require.NotNil(t, pred)
 
@@ -66,7 +65,7 @@ func TestDatabaseEngine_PostgresSQL(t *testing.T) {
 func TestDatabaseEngine_PostgresUnaccentSQL(t *testing.T) {
 	e := &DatabaseEngine{dialect: dialect.Postgres, unaccent: true, unaccentChecked: true} // mark probed
 
-	pred, err := e.Predicate(context.Background(), uuid.Nil, "café")
+	pred, err := e.Predicate(testCtx(), uuid.Nil, "café")
 	require.NoError(t, err)
 	require.NotNil(t, pred)
 
@@ -79,7 +78,7 @@ func TestDatabaseEngine_PostgresUnaccentSQL(t *testing.T) {
 func TestDatabaseEngine_EmptyQuery(t *testing.T) {
 	e := &DatabaseEngine{dialect: dialect.SQLite}
 
-	pred, err := e.Predicate(context.Background(), uuid.Nil, "   ")
+	pred, err := e.Predicate(testCtx(), uuid.Nil, "   ")
 	require.NoError(t, err)
 	assert.Nil(t, pred)
 }
@@ -103,7 +102,7 @@ func TestDatabaseEngine_FacetsPostgres(t *testing.T) {
 // shared so SQLite and PostgreSQL are held to identical expectations.
 func assertFacets(t *testing.T, db *ent.Client) {
 	t.Helper()
-	ctx := context.Background()
+	ctx := testCtx()
 	e := NewDatabaseEngine(db)
 
 	g1 := db.Group.Create().SetName("g1").SaveX(ctx)
@@ -187,14 +186,14 @@ func newTestPostgresClient(t *testing.T) *ent.Client {
 	require.NoError(t, err)
 	client := ent.NewClient(ent.Driver(entsql.OpenDB(dialect.Postgres, db)))
 	t.Cleanup(func() { _ = client.Close() })
-	require.NoError(t, client.Schema.Create(context.Background()))
+	require.NoError(t, client.Schema.Create(testCtx()))
 	return client
 }
 
 func TestDatabaseEngine_MultiTokenStructure(t *testing.T) {
 	e := &DatabaseEngine{dialect: dialect.SQLite}
 
-	pred, err := e.Predicate(context.Background(), uuid.Nil, "red box")
+	pred, err := e.Predicate(testCtx(), uuid.Nil, "red box")
 	require.NoError(t, err)
 
 	query, args := renderPredicate(t, dialect.SQLite, pred)

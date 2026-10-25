@@ -16,6 +16,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/passwordresettokens"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/permissiongroup"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -259,6 +260,21 @@ func (_c *UserCreate) AddNotifiers(v ...*Notifier) *UserCreate {
 	return _c.AddNotifierIDs(ids...)
 }
 
+// AddPermissionGroupIDs adds the "permission_groups" edge to the PermissionGroup entity by IDs.
+func (_c *UserCreate) AddPermissionGroupIDs(ids ...uuid.UUID) *UserCreate {
+	_c.mutation.AddPermissionGroupIDs(ids...)
+	return _c
+}
+
+// AddPermissionGroups adds the "permission_groups" edges to the PermissionGroup entity.
+func (_c *UserCreate) AddPermissionGroups(v ...*PermissionGroup) *UserCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddPermissionGroupIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_c *UserCreate) Mutation() *UserMutation {
 	return _c.mutation
@@ -266,7 +282,9 @@ func (_c *UserCreate) Mutation() *UserMutation {
 
 // Save creates the User in the database.
 func (_c *UserCreate) Save(ctx context.Context) (*User, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -293,12 +311,18 @@ func (_c *UserCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *UserCreate) defaults() {
+func (_c *UserCreate) defaults() error {
 	if _, ok := _c.mutation.CreatedAt(); !ok {
+		if user.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized user.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := user.DefaultCreatedAt()
 		_c.mutation.SetCreatedAt(v)
 	}
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		if user.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized user.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := user.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
 	}
@@ -311,9 +335,13 @@ func (_c *UserCreate) defaults() {
 		_c.mutation.SetSuperuser(v)
 	}
 	if _, ok := _c.mutation.ID(); !ok {
+		if user.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized user.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := user.DefaultID()
 		_c.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -449,7 +477,7 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		createE := &UserGroupCreate{config: _c.config, mutation: newUserGroupMutation(_c.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges = append(_spec.Edges, edge)
@@ -511,6 +539,22 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(notifier.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.PermissionGroupsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.PermissionGroupsTable,
+			Columns: user.PermissionGroupsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(permissiongroup.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

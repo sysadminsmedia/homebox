@@ -108,6 +108,47 @@ export interface EntAPIKeyEdges {
   user: EntUser;
 }
 
+export interface EntAccessGrant {
+  /** CanAttachments holds the value of the "can_attachments" field. */
+  can_attachments: boolean;
+  /** CanDelete holds the value of the "can_delete" field. */
+  can_delete: boolean;
+  /** CanRead holds the value of the "can_read" field. */
+  can_read: boolean;
+  /** CanUpdate holds the value of the "can_update" field. */
+  can_update: boolean;
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the AccessGrantQuery when eager-loading is set.
+   */
+  edges: EntAccessGrantEdges;
+  /** EntityID holds the value of the "entity_id" field. */
+  entity_id: string;
+  /** GroupID holds the value of the "group_id" field. */
+  group_id: string;
+  /** ID of the ent. */
+  id: string;
+  /** PermissionGroupID holds the value of the "permission_group_id" field. */
+  permission_group_id: string;
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+  /** UserID holds the value of the "user_id" field. */
+  user_id: string;
+}
+
+export interface EntAccessGrantEdges {
+  /** Entity holds the value of the entity edge. */
+  entity: EntEntity;
+  /** Group holds the value of the group edge. */
+  group: EntGroup;
+  /** PermissionGroup holds the value of the permission_group edge. */
+  permission_group: EntPermissionGroup;
+  /** User holds the value of the user edge. */
+  user: EntUser;
+}
+
 export interface EntAttachment {
   /** CreatedAt holds the value of the "created_at" field. */
   created_at: string;
@@ -240,6 +281,8 @@ export interface EntEntity {
 }
 
 export interface EntEntityEdges {
+  /** AccessGrants holds the value of the access_grants edge. */
+  access_grants: EntAccessGrant[];
   /** Attachments holds the value of the attachments edge. */
   attachments: EntAttachment[];
   /** Children holds the value of the children edge. */
@@ -431,6 +474,8 @@ export interface EntGroup {
 }
 
 export interface EntGroupEdges {
+  /** AccessGrants holds the value of the access_grants edge. */
+  access_grants: EntAccessGrant[];
   /** Entities holds the value of the entities edge. */
   entities: EntEntity[];
   /** EntityTemplates holds the value of the entity_templates edge. */
@@ -443,6 +488,8 @@ export interface EntGroupEdges {
   invitation_tokens: EntGroupInvitationToken[];
   /** Notifiers holds the value of the notifiers edge. */
   notifiers: EntNotifier[];
+  /** PermissionGroups holds the value of the permission_groups edge. */
+  permission_groups: EntPermissionGroup[];
   /** Tags holds the value of the tags edge. */
   tags: EntTag[];
   /** UserGroups holds the value of the user_groups edge. */
@@ -463,6 +510,8 @@ export interface EntGroupInvitationToken {
   expires_at: string;
   /** ID of the ent. */
   id: string;
+  /** Permissions holds the value of the "permissions" field. */
+  permissions: string[];
   /** Token holds the value of the "token" field. */
   token: number[];
   /** UpdatedAt holds the value of the "updated_at" field. */
@@ -561,6 +610,35 @@ export interface EntPasswordResetTokens {
 export interface EntPasswordResetTokensEdges {
   /** User holds the value of the user edge. */
   user: EntUser;
+}
+
+export interface EntPermissionGroup {
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /** Description holds the value of the "description" field. */
+  description: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the PermissionGroupQuery when eager-loading is set.
+   */
+  edges: EntPermissionGroupEdges;
+  /** GroupID holds the value of the "group_id" field. */
+  group_id: string;
+  /** ID of the ent. */
+  id: string;
+  /** Name holds the value of the "name" field. */
+  name: string;
+  /** Permissions holds the value of the "permissions" field. */
+  permissions: string[];
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+}
+
+export interface EntPermissionGroupEdges {
+  /** Group holds the value of the group edge. */
+  group: EntGroup;
+  /** Users holds the value of the users edge. */
+  users: EntUser[];
 }
 
 export interface EntTag {
@@ -672,6 +750,8 @@ export interface EntUserEdges {
   notifiers: EntNotifier[];
   /** PasswordResetTokens holds the value of the password_reset_tokens edge. */
   password_reset_tokens: EntPasswordResetTokens[];
+  /** PermissionGroups holds the value of the permission_groups edge. */
+  permission_groups: EntPermissionGroup[];
   /** UserGroups holds the value of the user_groups edge. */
   user_groups: EntUserGroup[];
 }
@@ -684,6 +764,8 @@ export interface EntUserGroup {
   edges: EntUserGroupEdges;
   /** GroupID holds the value of the "group_id" field. */
   group_id: string;
+  /** Permissions holds the value of the "permissions" field. */
+  permissions: string[];
   /** Role holds the value of the "role" field. */
   role: UsergroupRole;
   /** UserID holds the value of the "user_id" field. */
@@ -723,6 +805,23 @@ export interface APIKeyOut {
   lastUsedAt?: string | null;
   name: string;
   userId: string;
+}
+
+export interface AccessGrantCreate {
+  /** @minItems 1 */
+  actions: string[];
+  targetId: string;
+  targetType: "user" | "permissionGroup";
+}
+
+export interface AccessGrantOut {
+  actions: string[];
+  createdAt: Date | string;
+  entityId: string;
+  id: string;
+  targetId: string;
+  targetName: string;
+  targetType: "user" | "permissionGroup";
 }
 
 export interface BarcodeProduct {
@@ -792,6 +891,12 @@ export interface EntityOut {
   /** @example "0" */
   assetId: string;
   attachments: ItemAttachment[];
+  /**
+   * Capabilities lists the actions the caller may perform on this
+   * entity (read, update, delete, attachments, permissions). Populated
+   * only on single-entity fetches.
+   */
+  capabilities: string[];
   /** Container-specific fields (for entities whose entity_type.is_location = true) */
   children: EntitySummary[];
   createdAt: Date | string;
@@ -1092,6 +1197,7 @@ export interface GroupInvitation {
   expiresAt: Date | string;
   group: Group;
   id: string;
+  permissions: string[];
   uses: number;
 }
 
@@ -1167,6 +1273,14 @@ export interface MaintenanceEntryWithDetails {
   scheduledDate: Date | string;
 }
 
+export interface MemberPermissions {
+  direct: string[];
+  effective: string[];
+  permissionGroups: PermissionGroupSummary[];
+  role: string;
+  userId: string;
+}
+
 export interface NotifierCreate {
   isActive: boolean;
   /**
@@ -1203,6 +1317,38 @@ export interface PaginationResultEntitySummary {
   page: number;
   pageSize: number;
   total: number;
+}
+
+export interface PermissionGroupCreate {
+  /** @maxLength 1000 */
+  description: string;
+  /** @maxLength 255 */
+  name: string;
+  permissions: string[];
+}
+
+export interface PermissionGroupOut {
+  createdAt: Date | string;
+  description: string;
+  id: string;
+  members: UserSummary[];
+  name: string;
+  permissions: string[];
+  updatedAt: Date | string;
+}
+
+export interface PermissionGroupSummary {
+  id: string;
+  name: string;
+  permissions: string[];
+}
+
+export interface PermissionGroupUpdate {
+  /** @maxLength 1000 */
+  description: string;
+  /** @maxLength 255 */
+  name: string;
+  permissions: string[];
 }
 
 export interface TagCreate {
@@ -1327,9 +1473,27 @@ export interface ValueOverTimeEntry {
   value: number;
 }
 
+export interface EffectivePermissionsOut {
+  groupId: string;
+  isOwner: boolean;
+  isSuperuser: boolean;
+  permissions: string[];
+}
+
 export interface Latest {
   date: Date | string;
   version: string;
+}
+
+export interface PermissionDefinition {
+  action: string;
+  key: string;
+  /**
+   * MemberDefault marks permissions in the default member list, which the
+   * UI preselects when inviting someone.
+   */
+  memberDefault: boolean;
+  resource: string;
 }
 
 export interface UserRegistration {
@@ -1351,6 +1515,11 @@ export interface APISummary {
   telemetry: TelemetryStatus;
   title: string;
   versions: string[];
+}
+
+export interface AccessGrantUpdate {
+  /** @minItems 1 */
+  actions: string[];
 }
 
 export interface ActionAmountResult {
@@ -1404,12 +1573,18 @@ export interface GroupAcceptInvitationResponse {
 export interface GroupInvitation {
   expiresAt: Date | string;
   id: string;
+  permissions: string[];
   token: string;
   uses: number;
 }
 
 export interface GroupInvitationCreate {
   expiresAt: Date | string;
+  /**
+   * Permissions applied to the membership created on acceptance.
+   * Empty means full access (matches pre-permission behavior).
+   */
+  permissions: string[];
   /**
    * @min 1
    * @max 100
@@ -1425,11 +1600,19 @@ export interface LoginForm {
   username: string;
 }
 
+export interface MemberPermissionsSet {
+  permissions: string[];
+}
+
 export interface OIDCStatus {
   allowLocal: boolean;
   autoRedirect: boolean;
   buttonText: string;
   enabled: boolean;
+}
+
+export interface PermissionGroupSetMembers {
+  userIds: string[];
 }
 
 export interface ResetPasswordRequest {

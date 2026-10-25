@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/accessgrant"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
@@ -519,6 +520,21 @@ func (_c *EntityCreate) AddAttachments(v ...*Attachment) *EntityCreate {
 	return _c.AddAttachmentIDs(ids...)
 }
 
+// AddAccessGrantIDs adds the "access_grants" edge to the AccessGrant entity by IDs.
+func (_c *EntityCreate) AddAccessGrantIDs(ids ...uuid.UUID) *EntityCreate {
+	_c.mutation.AddAccessGrantIDs(ids...)
+	return _c
+}
+
+// AddAccessGrants adds the "access_grants" edges to the AccessGrant entity.
+func (_c *EntityCreate) AddAccessGrants(v ...*AccessGrant) *EntityCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddAccessGrantIDs(ids...)
+}
+
 // Mutation returns the EntityMutation object of the builder.
 func (_c *EntityCreate) Mutation() *EntityMutation {
 	return _c.mutation
@@ -526,7 +542,9 @@ func (_c *EntityCreate) Mutation() *EntityMutation {
 
 // Save creates the Entity in the database.
 func (_c *EntityCreate) Save(ctx context.Context) (*Entity, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -553,12 +571,18 @@ func (_c *EntityCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *EntityCreate) defaults() {
+func (_c *EntityCreate) defaults() error {
 	if _, ok := _c.mutation.CreatedAt(); !ok {
+		if entity.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized entity.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := entity.DefaultCreatedAt()
 		_c.mutation.SetCreatedAt(v)
 	}
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		if entity.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized entity.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := entity.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
 	}
@@ -595,9 +619,13 @@ func (_c *EntityCreate) defaults() {
 		_c.mutation.SetSoldPrice(v)
 	}
 	if _, ok := _c.mutation.ID(); !ok {
+		if entity.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized entity.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := entity.DefaultID()
 		_c.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -974,6 +1002,22 @@ func (_c *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.AccessGrantsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.AccessGrantsTable,
+			Columns: []string{entity.AccessGrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(accessgrant.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

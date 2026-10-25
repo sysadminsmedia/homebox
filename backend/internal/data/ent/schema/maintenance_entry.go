@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authzrules"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
@@ -45,4 +46,15 @@ func (MaintenanceEntry) Edges() []ent.Edge {
 			Required().
 			Unique(),
 	}
+}
+
+// Policy of the MaintenanceEntry: mutations require the matching permission and are
+// pinned to the viewer's tenant; reads are filtered by Interceptors.
+func (MaintenanceEntry) Policy() ent.Policy {
+	return authzrules.NewPolicy(authzrules.MaintenanceEntryMutationRule())
+}
+
+// Interceptors of the MaintenanceEntry scope every read to the request viewer.
+func (MaintenanceEntry) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{authzrules.FilterMaintenanceEntry()}
 }

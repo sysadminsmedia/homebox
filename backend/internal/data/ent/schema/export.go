@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authzrules"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
@@ -59,4 +60,15 @@ func (Export) Indexes() []ent.Index {
 		index.Fields("group_id"),
 		index.Fields("group_id", "status"),
 	}
+}
+
+// Policy of the Export: mutations require the matching permission and are
+// pinned to the viewer's tenant; reads are filtered by Interceptors.
+func (Export) Policy() ent.Policy {
+	return authzrules.NewPolicy(authzrules.ExportMutationRule())
+}
+
+// Interceptors of the Export scope every read to the request viewer.
+func (Export) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{authzrules.FilterExport()}
 }

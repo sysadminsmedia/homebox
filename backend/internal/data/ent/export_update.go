@@ -178,7 +178,9 @@ func (_u *ExportUpdate) ClearGroup() *ExportUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *ExportUpdate) Save(ctx context.Context) (int, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -205,11 +207,15 @@ func (_u *ExportUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *ExportUpdate) defaults() {
+func (_u *ExportUpdate) defaults() error {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		if export.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized export.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := export.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -490,7 +496,9 @@ func (_u *ExportUpdateOne) Select(field string, fields ...string) *ExportUpdateO
 
 // Save executes the query and returns the updated Export entity.
 func (_u *ExportUpdateOne) Save(ctx context.Context) (*Export, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -517,11 +525,15 @@ func (_u *ExportUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *ExportUpdateOne) defaults() {
+func (_u *ExportUpdateOne) defaults() error {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		if export.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized export.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := export.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

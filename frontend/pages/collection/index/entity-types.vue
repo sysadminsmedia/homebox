@@ -31,6 +31,7 @@
   const api = useUserApi();
   const confirm = useConfirm();
   const { openDialog, closeDialog } = useDialog();
+  const { can } = usePermissions();
   const entityTypeStore = useEntityTypeStore();
 
   const entityTypes = computed(() => entityTypeStore.allTypes);
@@ -207,7 +208,7 @@
     <!-- Page Content -->
     <div class="mb-4 flex items-center justify-between">
       <h3 class="text-lg font-medium">{{ t("components.entityTypes.page.title") }}</h3>
-      <Button size="sm" @click="openDialog(DialogID.CreateEntityType)">
+      <Button v-if="can('entitytype:manage')" size="sm" @click="openDialog(DialogID.CreateEntityType)">
         <MdiPlus class="mr-1 size-4" />
         {{ t("components.entityTypes.page.create") }}
       </Button>
@@ -235,7 +236,7 @@
             </p>
           </div>
 
-          <TooltipProvider :delay-duration="0">
+          <TooltipProvider v-if="can('entitytype:manage')" :delay-duration="0">
             <div class="flex gap-1">
               <Tooltip>
                 <TooltipTrigger as-child>
@@ -261,7 +262,7 @@
 
     <div v-else class="flex flex-col items-center justify-center py-12 text-center">
       <p class="mb-4 text-muted-foreground">{{ t("components.entityTypes.page.empty_title") }}</p>
-      <Button @click="openDialog(DialogID.CreateEntityType)">
+      <Button v-if="can('entitytype:manage')" @click="openDialog(DialogID.CreateEntityType)">
         <MdiPlus class="mr-2" />
         {{ t("components.entityTypes.page.empty_button") }}
       </Button>

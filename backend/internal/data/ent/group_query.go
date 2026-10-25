@@ -5,14 +5,17 @@ package ent
 import (
 	"context"
 	"database/sql/driver"
+	"errors"
 	"fmt"
 	"math"
 
 	"entgo.io/ent"
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/accessgrant"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
@@ -20,6 +23,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/permissiongroup"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
@@ -41,7 +45,10 @@ type GroupQuery struct {
 	withNotifiers        *NotifierQuery
 	withEntityTemplates  *EntityTemplateQuery
 	withExports          *ExportQuery
+	withPermissionGroups *PermissionGroupQuery
+	withAccessGrants     *AccessGrantQuery
 	withUserGroups       *UserGroupQuery
+	modifiers            []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -247,6 +254,50 @@ func (_q *GroupQuery) QueryExports() *ExportQuery {
 			sqlgraph.From(group.Table, group.FieldID, selector),
 			sqlgraph.To(export.Table, export.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, group.ExportsTable, group.ExportsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPermissionGroups chains the current query on the "permission_groups" edge.
+func (_q *GroupQuery) QueryPermissionGroups() *PermissionGroupQuery {
+	query := (&PermissionGroupClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(permissiongroup.Table, permissiongroup.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.PermissionGroupsTable, group.PermissionGroupsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAccessGrants chains the current query on the "access_grants" edge.
+func (_q *GroupQuery) QueryAccessGrants() *AccessGrantQuery {
+	query := (&AccessGrantClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(accessgrant.Table, accessgrant.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.AccessGrantsTable, group.AccessGrantsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -476,6 +527,8 @@ func (_q *GroupQuery) Clone() *GroupQuery {
 		withNotifiers:        _q.withNotifiers.Clone(),
 		withEntityTemplates:  _q.withEntityTemplates.Clone(),
 		withExports:          _q.withExports.Clone(),
+		withPermissionGroups: _q.withPermissionGroups.Clone(),
+		withAccessGrants:     _q.withAccessGrants.Clone(),
 		withUserGroups:       _q.withUserGroups.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
@@ -571,6 +624,28 @@ func (_q *GroupQuery) WithExports(opts ...func(*ExportQuery)) *GroupQuery {
 	return _q
 }
 
+// WithPermissionGroups tells the query-builder to eager-load the nodes that are connected to
+// the "permission_groups" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *GroupQuery) WithPermissionGroups(opts ...func(*PermissionGroupQuery)) *GroupQuery {
+	query := (&PermissionGroupClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withPermissionGroups = query
+	return _q
+}
+
+// WithAccessGrants tells the query-builder to eager-load the nodes that are connected to
+// the "access_grants" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *GroupQuery) WithAccessGrants(opts ...func(*AccessGrantQuery)) *GroupQuery {
+	query := (&AccessGrantClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withAccessGrants = query
+	return _q
+}
+
 // WithUserGroups tells the query-builder to eager-load the nodes that are connected to
 // the "user_groups" edge. The optional arguments are used to configure the query builder of the edge.
 func (_q *GroupQuery) WithUserGroups(opts ...func(*UserGroupQuery)) *GroupQuery {
@@ -653,6 +728,12 @@ func (_q *GroupQuery) prepareQuery(ctx context.Context) error {
 		}
 		_q.sql = prev
 	}
+	if group.Policy == nil {
+		return errors.New("ent: uninitialized group.Policy (forgotten import ent/runtime?)")
+	}
+	if err := group.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -660,7 +741,7 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 	var (
 		nodes       = []*Group{}
 		_spec       = _q.querySpec()
-		loadedTypes = [9]bool{
+		loadedTypes = [11]bool{
 			_q.withUsers != nil,
 			_q.withEntityTypes != nil,
 			_q.withEntities != nil,
@@ -669,6 +750,8 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 			_q.withNotifiers != nil,
 			_q.withEntityTemplates != nil,
 			_q.withExports != nil,
+			_q.withPermissionGroups != nil,
+			_q.withAccessGrants != nil,
 			_q.withUserGroups != nil,
 		}
 	)
@@ -680,6 +763,9 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
+	}
+	if len(_q.modifiers) > 0 {
+		_spec.Modifiers = _q.modifiers
 	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
@@ -745,6 +831,20 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 		if err := _q.loadExports(ctx, query, nodes,
 			func(n *Group) { n.Edges.Exports = []*Export{} },
 			func(n *Group, e *Export) { n.Edges.Exports = append(n.Edges.Exports, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withPermissionGroups; query != nil {
+		if err := _q.loadPermissionGroups(ctx, query, nodes,
+			func(n *Group) { n.Edges.PermissionGroups = []*PermissionGroup{} },
+			func(n *Group, e *PermissionGroup) { n.Edges.PermissionGroups = append(n.Edges.PermissionGroups, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withAccessGrants; query != nil {
+		if err := _q.loadAccessGrants(ctx, query, nodes,
+			func(n *Group) { n.Edges.AccessGrants = []*AccessGrant{} },
+			func(n *Group, e *AccessGrant) { n.Edges.AccessGrants = append(n.Edges.AccessGrants, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1034,6 +1134,66 @@ func (_q *GroupQuery) loadExports(ctx context.Context, query *ExportQuery, nodes
 	}
 	return nil
 }
+func (_q *GroupQuery) loadPermissionGroups(ctx context.Context, query *PermissionGroupQuery, nodes []*Group, init func(*Group), assign func(*Group, *PermissionGroup)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Group)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(permissiongroup.FieldGroupID)
+	}
+	query.Where(predicate.PermissionGroup(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(group.PermissionGroupsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.GroupID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "group_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *GroupQuery) loadAccessGrants(ctx context.Context, query *AccessGrantQuery, nodes []*Group, init func(*Group), assign func(*Group, *AccessGrant)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Group)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(accessgrant.FieldGroupID)
+	}
+	query.Where(predicate.AccessGrant(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(group.AccessGrantsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.GroupID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "group_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
 func (_q *GroupQuery) loadUserGroups(ctx context.Context, query *UserGroupQuery, nodes []*Group, init func(*Group), assign func(*Group, *UserGroup)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[uuid.UUID]*Group)
@@ -1067,6 +1227,9 @@ func (_q *GroupQuery) loadUserGroups(ctx context.Context, query *UserGroupQuery,
 
 func (_q *GroupQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
+	if len(_q.modifiers) > 0 {
+		_spec.Modifiers = _q.modifiers
+	}
 	_spec.Node.Columns = _q.ctx.Fields
 	if len(_q.ctx.Fields) > 0 {
 		_spec.Unique = _q.ctx.Unique != nil && *_q.ctx.Unique
@@ -1129,6 +1292,9 @@ func (_q *GroupQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if _q.ctx.Unique != nil && *_q.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range _q.modifiers {
+		m(selector)
+	}
 	for _, p := range _q.predicates {
 		p(selector)
 	}
@@ -1144,6 +1310,32 @@ func (_q *GroupQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// ForUpdate locks the selected rows against concurrent updates, and prevent them from being
+// updated, deleted or "selected ... for update" by other sessions, until the transaction is
+// either committed or rolled-back.
+func (_q *GroupQuery) ForUpdate(opts ...sql.LockOption) *GroupQuery {
+	if _q.driver.Dialect() == dialect.Postgres {
+		_q.Unique(false)
+	}
+	_q.modifiers = append(_q.modifiers, func(s *sql.Selector) {
+		s.ForUpdate(opts...)
+	})
+	return _q
+}
+
+// ForShare behaves similarly to ForUpdate, except that it acquires a shared mode lock
+// on any rows that are read. Other sessions can read the rows, but cannot modify them
+// until your transaction commits.
+func (_q *GroupQuery) ForShare(opts ...sql.LockOption) *GroupQuery {
+	if _q.driver.Dialect() == dialect.Postgres {
+		_q.Unique(false)
+	}
+	_q.modifiers = append(_q.modifiers, func(s *sql.Selector) {
+		s.ForShare(opts...)
+	})
+	return _q
 }
 
 // GroupGroupBy is the group-by builder for Group entities.

@@ -144,7 +144,9 @@ func (_c *MaintenanceEntryCreate) Mutation() *MaintenanceEntryMutation {
 
 // Save creates the MaintenanceEntry in the database.
 func (_c *MaintenanceEntryCreate) Save(ctx context.Context) (*MaintenanceEntry, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -171,12 +173,18 @@ func (_c *MaintenanceEntryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *MaintenanceEntryCreate) defaults() {
+func (_c *MaintenanceEntryCreate) defaults() error {
 	if _, ok := _c.mutation.CreatedAt(); !ok {
+		if maintenanceentry.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized maintenanceentry.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := maintenanceentry.DefaultCreatedAt()
 		_c.mutation.SetCreatedAt(v)
 	}
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		if maintenanceentry.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized maintenanceentry.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := maintenanceentry.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
 	}
@@ -185,9 +193,13 @@ func (_c *MaintenanceEntryCreate) defaults() {
 		_c.mutation.SetCost(v)
 	}
 	if _, ok := _c.mutation.ID(); !ok {
+		if maintenanceentry.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized maintenanceentry.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := maintenanceentry.DefaultID()
 		_c.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

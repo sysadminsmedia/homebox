@@ -4,6 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authzrules"
 )
 
 // AuthRoles holds the schema definition for the AuthRoles entity.
@@ -31,4 +32,15 @@ func (AuthRoles) Edges() []ent.Edge {
 			Ref("roles").
 			Unique(),
 	}
+}
+
+// Policy of the AuthRoles: mutations require the matching permission and are
+// pinned to the viewer's tenant; reads are filtered by Interceptors.
+func (AuthRoles) Policy() ent.Policy {
+	return authzrules.NewPolicy()
+}
+
+// Interceptors of the AuthRoles scope every read to the request viewer.
+func (AuthRoles) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{authzrules.FilterAuthRoles()}
 }

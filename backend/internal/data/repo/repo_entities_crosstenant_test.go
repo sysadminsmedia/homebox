@@ -1,7 +1,6 @@
 package repo
 
 import (
-	"context"
 	"testing"
 
 	"github.com/google/uuid"
@@ -16,7 +15,7 @@ import (
 // leaks another tenant's full inventory record (name, notes, purchase/sale details)
 // even though nothing is written.
 func TestEntityRepository_UpdateByGroup_CrossTenantLeak(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	// Victim tenant: a separate group with an entity holding sensitive data.
 	victimGroup, err := tRepos.Groups.GroupCreate(ctx, "victim-group", uuid.Nil)
@@ -59,7 +58,7 @@ func TestEntityRepository_UpdateByGroup_CrossTenantLeak(t *testing.T) {
 // inject fields on another tenant's entity — blindly, since the response is a
 // 404 from the group-scoped read at the end.
 func TestEntityRepository_UpdateByGroup_CrossTenantFieldWrite(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	victimGroup, err := tRepos.Groups.GroupCreate(ctx, "victim-group-fields", uuid.Nil)
 	require.NoError(t, err)

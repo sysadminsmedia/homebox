@@ -163,7 +163,9 @@ func (_u *AttachmentUpdate) ClearThumbnail() *AttachmentUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *AttachmentUpdate) Save(ctx context.Context) (int, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -190,11 +192,15 @@ func (_u *AttachmentUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *AttachmentUpdate) defaults() {
+func (_u *AttachmentUpdate) defaults() error {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		if attachment.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized attachment.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := attachment.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -461,7 +467,9 @@ func (_u *AttachmentUpdateOne) Select(field string, fields ...string) *Attachmen
 
 // Save executes the query and returns the updated Attachment entity.
 func (_u *AttachmentUpdateOne) Save(ctx context.Context) (*Attachment, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -488,11 +496,15 @@ func (_u *AttachmentUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *AttachmentUpdateOne) defaults() {
+func (_u *AttachmentUpdateOne) defaults() error {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		if attachment.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized attachment.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := attachment.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

@@ -36,7 +36,7 @@ func tagInGroup(gid uuid.UUID) predicate.Tag {
 // path: anything that doesn't round-trip cleanly (timestamps, UUIDs, JSON
 // columns, self-referential FKs) shows up here.
 func TestExportRoundTrip(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	// --- Source group with data ----------------------------------------
 	src, err := tRepos.Groups.GroupCreate(ctx, "export-src-"+fk.Str(4), uuid.Nil)
@@ -217,7 +217,7 @@ func TestExportRoundTrip(t *testing.T) {
 }
 
 func TestCSVExportImportPreservesItemParent(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	src, err := tRepos.Groups.GroupCreate(ctx, "csv-parent-src-"+fk.Str(4), uuid.Nil)
 	require.NoError(t, err)
@@ -306,7 +306,7 @@ func TestCSVExportImportPreservesItemParent(t *testing.T) {
 }
 
 func TestCSVImportRejectsSelfParentRef(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	dst, err := tRepos.Groups.GroupCreate(ctx, "csv-self-parent-"+fk.Str(4), uuid.Nil)
 	require.NoError(t, err)
@@ -328,7 +328,7 @@ func TestCSVImportRejectsSelfParentRef(t *testing.T) {
 // and custom locations beyond the seeded baseline). The pure-seed and
 // pure-empty cases must still pass.
 func TestIsGroupReadyForImport_BlocksUserCreatedRows(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	t.Run("empty group passes", func(t *testing.T) {
 		g, err := tRepos.Groups.GroupCreate(ctx, "ready-empty-"+fk.Str(4), uuid.Nil)
@@ -428,7 +428,7 @@ func TestIsGroupReadyForImport_BlocksUserCreatedRows(t *testing.T) {
 // Shutdown") until the process restarted. Publishing twice on each topic
 // must succeed.
 func TestPublishJobsTopicReuse(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	for i := 1; i <= 2; i++ {
 		require.NoError(t, tSvc.Exports.publishExportJob(ctx, uuid.New(), uuid.New()),
@@ -515,7 +515,7 @@ func tamperedImportZip(t *testing.T, ctx context.Context, srcKey string, dst uui
 // id-only DB FK constraint, which let an attacker parent their entity under
 // a victim group's location and read its ancestor chain.
 func TestImportRejectsForeignKeyOutsideArchive(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	// Victim group with a location whose id the attacker "knows".
 	victim, err := tRepos.Groups.GroupCreate(ctx, "victim-"+fk.Str(4), uuid.Nil)
@@ -593,7 +593,7 @@ func TestImportRejectsForeignKeyOutsideArchive(t *testing.T) {
 // exactly what rejectUnmappedFKColumns refuses at import time, so this test
 // makes a legitimate export carrying such a column fail here first.
 func TestExportTablesCoverAllForeignKeys(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	db := tSvc.Exports.db.Sql()
 	for _, spec := range exportTables {
 		dbFKs, err := fkColumns(ctx, db, tSvc.Exports.dialect, spec.name)

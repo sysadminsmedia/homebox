@@ -130,7 +130,9 @@ func (_c *AuthTokensCreate) Mutation() *AuthTokensMutation {
 
 // Save creates the AuthTokens in the database.
 func (_c *AuthTokensCreate) Save(ctx context.Context) (*AuthTokens, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -157,23 +159,36 @@ func (_c *AuthTokensCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *AuthTokensCreate) defaults() {
+func (_c *AuthTokensCreate) defaults() error {
 	if _, ok := _c.mutation.CreatedAt(); !ok {
+		if authtokens.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized authtokens.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := authtokens.DefaultCreatedAt()
 		_c.mutation.SetCreatedAt(v)
 	}
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		if authtokens.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized authtokens.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := authtokens.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := _c.mutation.ExpiresAt(); !ok {
+		if authtokens.DefaultExpiresAt == nil {
+			return fmt.Errorf("ent: uninitialized authtokens.DefaultExpiresAt (forgotten import ent/runtime?)")
+		}
 		v := authtokens.DefaultExpiresAt()
 		_c.mutation.SetExpiresAt(v)
 	}
 	if _, ok := _c.mutation.ID(); !ok {
+		if authtokens.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized authtokens.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := authtokens.DefaultID()
 		_c.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

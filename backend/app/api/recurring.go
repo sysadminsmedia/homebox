@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/graceful"
 	"github.com/rs/zerolog/log"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authz"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
 	"gocloud.dev/blob"
@@ -32,35 +33,35 @@ func registerRecurringTasks(app *app, cfg *config.Config, runner *graceful.Runne
 	})
 
 	runner.AddPlugin(NewTask("purge-tokens", 24*time.Hour, func(ctx context.Context) {
-		_, err := app.repos.AuthTokens.PurgeExpiredTokens(ctx)
+		_, err := app.repos.AuthTokens.PurgeExpiredTokens(authz.NewSystemContext(ctx))
 		if err != nil {
 			log.Error().Err(err).Msg("failed to purge expired tokens")
 		}
 	}))
 
 	runner.AddPlugin(NewTask("purge-password-reset-tokens", 24*time.Hour, func(ctx context.Context) {
-		_, err := app.repos.PasswordResetTokens.PurgeExpired(ctx)
+		_, err := app.repos.PasswordResetTokens.PurgeExpired(authz.NewSystemContext(ctx))
 		if err != nil {
 			log.Error().Err(err).Msg("failed to purge expired password reset tokens")
 		}
 	}))
 
 	runner.AddPlugin(NewTask("purge-invitations", 24*time.Hour, func(ctx context.Context) {
-		_, err := app.repos.Groups.InvitationPurge(ctx)
+		_, err := app.repos.Groups.InvitationPurge(authz.NewSystemContext(ctx))
 		if err != nil {
 			log.Error().Err(err).Msg("failed to purge expired invitations")
 		}
 	}))
 
 	runner.AddPlugin(NewTask("purge-stale-exports", 24*time.Hour, func(ctx context.Context) {
-		purgeStaleExports(ctx, app)
+		purgeStaleExports(authz.NewSystemContext(ctx), app)
 	}))
 
 	runner.AddPlugin(NewTask("send-notifications", time.Hour, func(ctx context.Context) {
 		now := time.Now()
 		if now.Hour() == 8 {
 			fmt.Println("run notifiers")
-			err := app.services.BackgroundService.SendNotifiersToday(context.Background())
+			err := app.services.BackgroundService.SendNotifiersToday(authz.NewSystemContext(ctx))
 			if err != nil {
 				log.Error().Err(err).Msg("failed to send notifiers")
 			}
@@ -79,7 +80,7 @@ func registerRecurringTasks(app *app, cfg *config.Config, runner *graceful.Runne
 				log.Err(err).Str("export_id", msg.Metadata["export_id"]).Msg("export job: bad export_id")
 				return
 			}
-			app.services.Exports.RunExport(ctx, exportID, gid)
+			app.services.Exports.RunExport(authz.NewSystemContext(ctx), exportID, gid)
 		})
 	})
 
@@ -100,7 +101,7 @@ func registerRecurringTasks(app *app, cfg *config.Config, runner *graceful.Runne
 				log.Err(err).Str("import_id", msg.Metadata["import_id"]).Msg("import job: bad import_id")
 				return
 			}
-			app.services.Exports.RunImport(ctx, gid, userID, importID)
+			app.services.Exports.RunImport(authz.NewSystemContext(ctx), gid, userID, importID)
 		})
 	})
 
@@ -157,7 +158,7 @@ func registerRecurringTasks(app *app, cfg *config.Config, runner *graceful.Runne
 					if err != nil {
 						log.Error().Err(err).Str("attachment_id", msg.Metadata["attachment_id"]).Msg("failed to parse attachment ID from message metadata")
 					}
-					err = app.repos.Attachments.CreateThumbnail(ctx, groupId, attachmentId, msg.Metadata["title"], msg.Metadata["path"])
+					err = app.repos.Attachments.CreateThumbnail(authz.NewSystemContext(ctx), groupId, attachmentId, msg.Metadata["title"], msg.Metadata["path"])
 					if err != nil {
 						log.Err(err).Msg("failed to create thumbnail")
 					}

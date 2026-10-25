@@ -191,7 +191,9 @@ func (_u *TemplateFieldUpdate) ClearEntityTemplate() *TemplateFieldUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *TemplateFieldUpdate) Save(ctx context.Context) (int, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -218,11 +220,15 @@ func (_u *TemplateFieldUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *TemplateFieldUpdate) defaults() {
+func (_u *TemplateFieldUpdate) defaults() error {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		if templatefield.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized templatefield.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := templatefield.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -521,7 +527,9 @@ func (_u *TemplateFieldUpdateOne) Select(field string, fields ...string) *Templa
 
 // Save executes the query and returns the updated TemplateField entity.
 func (_u *TemplateFieldUpdateOne) Save(ctx context.Context) (*TemplateField, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -548,11 +556,15 @@ func (_u *TemplateFieldUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *TemplateFieldUpdateOne) defaults() {
+func (_u *TemplateFieldUpdateOne) defaults() error {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		if templatefield.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized templatefield.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := templatefield.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

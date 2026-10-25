@@ -1,7 +1,6 @@
 package repo
 
 import (
-	"context"
 	"encoding/json"
 	"testing"
 
@@ -25,7 +24,7 @@ func unmarshalDate(t *testing.T, yyyymmdd string) types.Date {
 // under TZ=America/Chicago (or any zone west of Greenwich) to cover the
 // timezone shift that made purchase dates drift a day earlier per save.
 func TestEntityDatesRoundTripUnchanged(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	itemET := useItemEntityType(t)
 
 	cf := containerFactory()
@@ -81,7 +80,7 @@ func TestEntityDatesRoundTripUnchanged(t *testing.T) {
 // ZeroOutTimeFields rewrites every date column in the group. It must not move
 // the day while it strips the time.
 func TestZeroOutTimeFieldsKeepsTheDay(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	itemET := useItemEntityType(t)
 
 	cf := containerFactory()
@@ -118,7 +117,7 @@ func TestZeroOutTimeFieldsKeepsTheDay(t *testing.T) {
 // Maintenance entries map their dates with a plain type conversion, which is
 // exactly where a driver-supplied local zone used to leak through.
 func TestMaintenanceEntryDatesRoundTripUnchanged(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	item := useEntities(t, 1)[0]
 
 	const (

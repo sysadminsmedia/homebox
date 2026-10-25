@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
@@ -77,6 +78,18 @@ func (_u *GroupInvitationTokenUpdate) AddUses(v int) *GroupInvitationTokenUpdate
 	return _u
 }
 
+// SetPermissions sets the "permissions" field.
+func (_u *GroupInvitationTokenUpdate) SetPermissions(v []string) *GroupInvitationTokenUpdate {
+	_u.mutation.SetPermissions(v)
+	return _u
+}
+
+// AppendPermissions appends value to the "permissions" field.
+func (_u *GroupInvitationTokenUpdate) AppendPermissions(v []string) *GroupInvitationTokenUpdate {
+	_u.mutation.AppendPermissions(v)
+	return _u
+}
+
 // SetGroupID sets the "group" edge to the Group entity by ID.
 func (_u *GroupInvitationTokenUpdate) SetGroupID(id uuid.UUID) *GroupInvitationTokenUpdate {
 	_u.mutation.SetGroupID(id)
@@ -109,7 +122,9 @@ func (_u *GroupInvitationTokenUpdate) ClearGroup() *GroupInvitationTokenUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *GroupInvitationTokenUpdate) Save(ctx context.Context) (int, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -136,11 +151,15 @@ func (_u *GroupInvitationTokenUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *GroupInvitationTokenUpdate) defaults() {
+func (_u *GroupInvitationTokenUpdate) defaults() error {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		if groupinvitationtoken.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized groupinvitationtoken.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := groupinvitationtoken.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 func (_u *GroupInvitationTokenUpdate) sqlSave(ctx context.Context) (_node int, err error) {
@@ -166,6 +185,14 @@ func (_u *GroupInvitationTokenUpdate) sqlSave(ctx context.Context) (_node int, e
 	}
 	if value, ok := _u.mutation.AddedUses(); ok {
 		_spec.AddField(groupinvitationtoken.FieldUses, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.Permissions(); ok {
+		_spec.SetField(groupinvitationtoken.FieldPermissions, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedPermissions(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, groupinvitationtoken.FieldPermissions, value)
+		})
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -263,6 +290,18 @@ func (_u *GroupInvitationTokenUpdateOne) AddUses(v int) *GroupInvitationTokenUpd
 	return _u
 }
 
+// SetPermissions sets the "permissions" field.
+func (_u *GroupInvitationTokenUpdateOne) SetPermissions(v []string) *GroupInvitationTokenUpdateOne {
+	_u.mutation.SetPermissions(v)
+	return _u
+}
+
+// AppendPermissions appends value to the "permissions" field.
+func (_u *GroupInvitationTokenUpdateOne) AppendPermissions(v []string) *GroupInvitationTokenUpdateOne {
+	_u.mutation.AppendPermissions(v)
+	return _u
+}
+
 // SetGroupID sets the "group" edge to the Group entity by ID.
 func (_u *GroupInvitationTokenUpdateOne) SetGroupID(id uuid.UUID) *GroupInvitationTokenUpdateOne {
 	_u.mutation.SetGroupID(id)
@@ -308,7 +347,9 @@ func (_u *GroupInvitationTokenUpdateOne) Select(field string, fields ...string) 
 
 // Save executes the query and returns the updated GroupInvitationToken entity.
 func (_u *GroupInvitationTokenUpdateOne) Save(ctx context.Context) (*GroupInvitationToken, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -335,11 +376,15 @@ func (_u *GroupInvitationTokenUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *GroupInvitationTokenUpdateOne) defaults() {
+func (_u *GroupInvitationTokenUpdateOne) defaults() error {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		if groupinvitationtoken.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized groupinvitationtoken.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := groupinvitationtoken.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 func (_u *GroupInvitationTokenUpdateOne) sqlSave(ctx context.Context) (_node *GroupInvitationToken, err error) {
@@ -382,6 +427,14 @@ func (_u *GroupInvitationTokenUpdateOne) sqlSave(ctx context.Context) (_node *Gr
 	}
 	if value, ok := _u.mutation.AddedUses(); ok {
 		_spec.AddField(groupinvitationtoken.FieldUses, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.Permissions(); ok {
+		_spec.SetField(groupinvitationtoken.FieldPermissions, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedPermissions(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, groupinvitationtoken.FieldPermissions, value)
+		})
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{

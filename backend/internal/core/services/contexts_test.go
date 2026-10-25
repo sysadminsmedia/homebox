@@ -1,7 +1,6 @@
 package services
 
 import (
-	"context"
 	"testing"
 
 	"github.com/google/uuid"
@@ -16,7 +15,7 @@ func Test_SetAuthContext(t *testing.T) {
 
 	token := uuid.New().String()
 
-	ctx := SetUserCtx(context.Background(), user, token)
+	ctx := SetUserCtx(testCtx(), user, token)
 
 	ctxUser := UseUserCtx(ctx)
 
@@ -28,7 +27,7 @@ func Test_SetAuthContext(t *testing.T) {
 }
 
 func Test_SetAuthContext_Nulls(t *testing.T) {
-	ctx := SetUserCtx(context.Background(), nil, "")
+	ctx := SetUserCtx(testCtx(), nil, "")
 
 	ctxUser := UseUserCtx(ctx)
 

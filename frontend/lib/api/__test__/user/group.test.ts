@@ -43,6 +43,7 @@ describe("first time user workflow (register, login, join group)", () => {
     const { response, data } = await client.group.createInvitation({
       expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
       uses: 1,
+      permissions: [],
     });
 
     expect(response.status).toBe(201);

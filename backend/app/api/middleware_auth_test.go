@@ -14,6 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authz"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
@@ -24,7 +25,8 @@ import (
 
 func newAuthTestApp(t *testing.T) (*app, services.UserAuthTokenDetail) {
 	t.Helper()
-	ctx := context.Background()
+	// Fixture setup runs outside any request, so it bypasses the privacy layer.
+	ctx := authz.NewSystemContext(context.Background())
 
 	client, err := ent.Open("sqlite3", "file:"+uuid.NewString()+"?mode=memory&cache=shared&_fk=1&_time_format=sqlite")
 	require.NoError(t, err)
@@ -34,7 +36,7 @@ func newAuthTestApp(t *testing.T) (*app, services.UserAuthTokenDetail) {
 	repos := repo.New(client, eventbus.New(), config.Storage{
 		PrefixPath: "/",
 		ConnString: "file://" + os.TempDir(),
-	}, "mem://{{ .Topic }}", config.Thumbnail{}, nil)
+	}, "mem://{{ .Topic }}", config.Thumbnail{}, nil, "sqlite3")
 
 	group, err := repos.Groups.GroupCreate(ctx, "auth-test", uuid.Nil)
 	require.NoError(t, err)

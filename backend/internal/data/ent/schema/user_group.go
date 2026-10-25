@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/authzrules"
 )
 
 // UserGroup is the through entity for the User<->Group M:M relation. It carries
@@ -30,6 +31,11 @@ func (UserGroup) Fields() []ent.Field {
 		field.Enum("role").
 			Values("user", "owner").
 			Default("user"),
+		// Tenant-wide permissions granted directly to this membership
+		// (authz.Permission strings). Effective permissions are the union of
+		// these and the member's permission groups in the same tenant.
+		field.Strings("permissions").
+			Default([]string{}),
 	}
 }
 
@@ -46,4 +52,15 @@ func (UserGroup) Edges() []ent.Edge {
 			Required().
 			Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 	}
+}
+
+// Policy of the UserGroup: mutations require the matching permission and are
+// pinned to the viewer's tenant; reads are filtered by Interceptors.
+func (UserGroup) Policy() ent.Policy {
+	return authzrules.NewPolicy(authzrules.UserGroupMutationRule())
+}
+
+// Interceptors of the UserGroup scope every read to the request viewer.
+func (UserGroup) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{authzrules.FilterUserGroup()}
 }

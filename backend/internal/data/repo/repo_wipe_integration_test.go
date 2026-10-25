@@ -1,7 +1,6 @@
 package repo
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -22,7 +21,7 @@ func TestWipeInventory_Integration(t *testing.T) {
 		Description:  "Garage container",
 		EntityTypeID: containerET.ID,
 	}
-	container1, err := tRepos.Entities.Create(context.Background(), tGroup.ID, c1f)
+	container1, err := tRepos.Entities.Create(testCtx(), tGroup.ID, c1f)
 	require.NoError(t, err)
 
 	c2f := EntityCreate{
@@ -30,24 +29,24 @@ func TestWipeInventory_Integration(t *testing.T) {
 		Description:  "Basement container",
 		EntityTypeID: containerET.ID,
 	}
-	container2, err := tRepos.Entities.Create(context.Background(), tGroup.ID, c2f)
+	container2, err := tRepos.Entities.Create(testCtx(), tGroup.ID, c2f)
 	require.NoError(t, err)
 
 	// 2. Create tags
-	tag1, err := tRepos.Tags.Create(context.Background(), tGroup.ID, TagCreate{
+	tag1, err := tRepos.Tags.Create(testCtx(), tGroup.ID, TagCreate{
 		Name:        "Test Electronics",
 		Description: "Electronics tag",
 	})
 	require.NoError(t, err)
 
-	tag2, err := tRepos.Tags.Create(context.Background(), tGroup.ID, TagCreate{
+	tag2, err := tRepos.Tags.Create(testCtx(), tGroup.ID, TagCreate{
 		Name:        "Test Tools",
 		Description: "Tools tag",
 	})
 	require.NoError(t, err)
 
 	// 3. Create items
-	entity1, err := tRepos.Entities.Create(context.Background(), tGroup.ID, EntityCreate{
+	entity1, err := tRepos.Entities.Create(testCtx(), tGroup.ID, EntityCreate{
 		Name:         "Test Laptop",
 		Description:  "Work laptop",
 		ParentID:     container1.ID,
@@ -56,7 +55,7 @@ func TestWipeInventory_Integration(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	entity2, err := tRepos.Entities.Create(context.Background(), tGroup.ID, EntityCreate{
+	entity2, err := tRepos.Entities.Create(testCtx(), tGroup.ID, EntityCreate{
 		Name:         "Test Drill",
 		Description:  "Power drill",
 		ParentID:     container2.ID,
@@ -65,7 +64,7 @@ func TestWipeInventory_Integration(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	entity3, err := tRepos.Entities.Create(context.Background(), tGroup.ID, EntityCreate{
+	entity3, err := tRepos.Entities.Create(testCtx(), tGroup.ID, EntityCreate{
 		Name:         "Test Monitor",
 		Description:  "Computer monitor",
 		ParentID:     container1.ID,
@@ -75,7 +74,7 @@ func TestWipeInventory_Integration(t *testing.T) {
 	require.NoError(t, err)
 
 	// 4. Create maintenance entries
-	_, err = tRepos.MaintEntry.Create(context.Background(), tGroup.ID, entity1.ID, MaintenanceEntryCreate{
+	_, err = tRepos.MaintEntry.Create(testCtx(), tGroup.ID, entity1.ID, MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now()),
 		Name:          "Laptop cleaning",
 		Description:   "Cleaned keyboard and screen",
@@ -83,7 +82,7 @@ func TestWipeInventory_Integration(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	_, err = tRepos.MaintEntry.Create(context.Background(), tGroup.ID, entity2.ID, MaintenanceEntryCreate{
+	_, err = tRepos.MaintEntry.Create(testCtx(), tGroup.ID, entity2.ID, MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now()),
 		Name:          "Drill maintenance",
 		Description:   "Oiled motor",
@@ -91,7 +90,7 @@ func TestWipeInventory_Integration(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	_, err = tRepos.MaintEntry.Create(context.Background(), tGroup.ID, entity3.ID, MaintenanceEntryCreate{
+	_, err = tRepos.MaintEntry.Create(testCtx(), tGroup.ID, entity3.ID, MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now()),
 		Name:          "Monitor calibration",
 		Description:   "Color calibration",
@@ -100,39 +99,39 @@ func TestWipeInventory_Integration(t *testing.T) {
 	require.NoError(t, err)
 
 	// 5. Verify entities exist
-	allEntities, err := tRepos.Entities.GetAll(context.Background(), tGroup.ID)
+	allEntities, err := tRepos.Entities.GetAll(testCtx(), tGroup.ID)
 	require.NoError(t, err)
 	assert.GreaterOrEqual(t, len(allEntities), 3, "Should have at least 3 entities")
 
 	// 6. Verify maintenance entries exist
-	maint1List, err := tRepos.MaintEntry.GetMaintenanceByItemID(context.Background(), tGroup.ID, entity1.ID, MaintenanceFilters{})
+	maint1List, err := tRepos.MaintEntry.GetMaintenanceByItemID(testCtx(), tGroup.ID, entity1.ID, MaintenanceFilters{})
 	require.NoError(t, err)
 	assert.NotEmpty(t, maint1List, "Entity 1 should have maintenance records")
 
-	maint2List, err := tRepos.MaintEntry.GetMaintenanceByItemID(context.Background(), tGroup.ID, entity2.ID, MaintenanceFilters{})
+	maint2List, err := tRepos.MaintEntry.GetMaintenanceByItemID(testCtx(), tGroup.ID, entity2.ID, MaintenanceFilters{})
 	require.NoError(t, err)
 	assert.NotEmpty(t, maint2List, "Entity 2 should have maintenance records")
 
 	// 7. Test wipe inventory with all options enabled
-	deleted, err := tRepos.Entities.WipeInventory(context.Background(), tGroup.ID, true, true, true)
+	deleted, err := tRepos.Entities.WipeInventory(testCtx(), tGroup.ID, true, true, true)
 	require.NoError(t, err)
 	assert.Positive(t, deleted, "Should have deleted entities")
 
 	// 8. Verify all entities are deleted
-	allEntitiesAfter, err := tRepos.Entities.GetAll(context.Background(), tGroup.ID)
+	allEntitiesAfter, err := tRepos.Entities.GetAll(testCtx(), tGroup.ID)
 	require.NoError(t, err)
 	assert.Empty(t, allEntitiesAfter, "All entities should be deleted")
 
 	// 9. Verify maintenance entries are deleted
-	maint1After, err := tRepos.MaintEntry.GetMaintenanceByItemID(context.Background(), tGroup.ID, entity1.ID, MaintenanceFilters{})
+	maint1After, err := tRepos.MaintEntry.GetMaintenanceByItemID(testCtx(), tGroup.ID, entity1.ID, MaintenanceFilters{})
 	require.NoError(t, err)
 	assert.Empty(t, maint1After, "Entity 1 maintenance records should be deleted")
 
 	// 10. Verify tags are deleted
-	_, err = tRepos.Tags.GetOneByGroup(context.Background(), tGroup.ID, tag1.ID)
+	_, err = tRepos.Tags.GetOneByGroup(testCtx(), tGroup.ID, tag1.ID)
 	require.Error(t, err, "Tag 1 should be deleted")
 
-	_, err = tRepos.Tags.GetOneByGroup(context.Background(), tGroup.ID, tag2.ID)
+	_, err = tRepos.Tags.GetOneByGroup(testCtx(), tGroup.ID, tag2.ID)
 	require.Error(t, err, "Tag 2 should be deleted")
 }
 
@@ -142,20 +141,20 @@ func TestWipeInventory_SelectiveWipe(t *testing.T) {
 	itemET := useItemEntityType(t)
 
 	// Create test data
-	container, err := tRepos.Entities.Create(context.Background(), tGroup.ID, EntityCreate{
+	container, err := tRepos.Entities.Create(testCtx(), tGroup.ID, EntityCreate{
 		Name:         "Test Office",
 		Description:  "Office container",
 		EntityTypeID: containerET.ID,
 	})
 	require.NoError(t, err)
 
-	tagObj, err := tRepos.Tags.Create(context.Background(), tGroup.ID, TagCreate{
+	tagObj, err := tRepos.Tags.Create(testCtx(), tGroup.ID, TagCreate{
 		Name:        "Test Important",
 		Description: "Important tag",
 	})
 	require.NoError(t, err)
 
-	e, err := tRepos.Entities.Create(context.Background(), tGroup.ID, EntityCreate{
+	e, err := tRepos.Entities.Create(testCtx(), tGroup.ID, EntityCreate{
 		Name:         "Test Computer",
 		Description:  "Desktop computer",
 		ParentID:     container.ID,
@@ -164,7 +163,7 @@ func TestWipeInventory_SelectiveWipe(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	_, err = tRepos.MaintEntry.Create(context.Background(), tGroup.ID, e.ID, MaintenanceEntryCreate{
+	_, err = tRepos.MaintEntry.Create(testCtx(), tGroup.ID, e.ID, MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now()),
 		Name:          "System update",
 		Description:   "OS update",
@@ -173,23 +172,23 @@ func TestWipeInventory_SelectiveWipe(t *testing.T) {
 	require.NoError(t, err)
 
 	// Test: Wipe only items (keep tags and containers)
-	deleted, err := tRepos.Entities.WipeInventory(context.Background(), tGroup.ID, false, false, false)
+	deleted, err := tRepos.Entities.WipeInventory(testCtx(), tGroup.ID, false, false, false)
 	require.NoError(t, err)
 	assert.Positive(t, deleted, "Should have deleted at least entities")
 
 	// Verify entity is deleted
-	_, err = tRepos.Entities.GetOneByGroup(context.Background(), tGroup.ID, e.ID)
+	_, err = tRepos.Entities.GetOneByGroup(testCtx(), tGroup.ID, e.ID)
 	require.Error(t, err, "Entity should be deleted")
 
 	// Verify maintenance is cascade deleted
-	maintList, err := tRepos.MaintEntry.GetMaintenanceByItemID(context.Background(), tGroup.ID, e.ID, MaintenanceFilters{})
+	maintList, err := tRepos.MaintEntry.GetMaintenanceByItemID(testCtx(), tGroup.ID, e.ID, MaintenanceFilters{})
 	require.NoError(t, err)
 	assert.Empty(t, maintList, "Maintenance should be cascade deleted")
 
 	// Verify tag still exists
-	_, err = tRepos.Tags.GetOneByGroup(context.Background(), tGroup.ID, tagObj.ID)
+	_, err = tRepos.Tags.GetOneByGroup(testCtx(), tGroup.ID, tagObj.ID)
 	require.NoError(t, err, "Tag should still exist")
 
 	// Cleanup
-	_ = tRepos.Tags.DeleteByGroup(context.Background(), tGroup.ID, tagObj.ID)
+	_ = tRepos.Tags.DeleteByGroup(testCtx(), tGroup.ID, tagObj.ID)
 }

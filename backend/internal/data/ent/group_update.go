@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/accessgrant"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
@@ -19,6 +20,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/permissiongroup"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
@@ -189,6 +191,36 @@ func (_u *GroupUpdate) AddExports(v ...*Export) *GroupUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.AddExportIDs(ids...)
+}
+
+// AddPermissionGroupIDs adds the "permission_groups" edge to the PermissionGroup entity by IDs.
+func (_u *GroupUpdate) AddPermissionGroupIDs(ids ...uuid.UUID) *GroupUpdate {
+	_u.mutation.AddPermissionGroupIDs(ids...)
+	return _u
+}
+
+// AddPermissionGroups adds the "permission_groups" edges to the PermissionGroup entity.
+func (_u *GroupUpdate) AddPermissionGroups(v ...*PermissionGroup) *GroupUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddPermissionGroupIDs(ids...)
+}
+
+// AddAccessGrantIDs adds the "access_grants" edge to the AccessGrant entity by IDs.
+func (_u *GroupUpdate) AddAccessGrantIDs(ids ...uuid.UUID) *GroupUpdate {
+	_u.mutation.AddAccessGrantIDs(ids...)
+	return _u
+}
+
+// AddAccessGrants adds the "access_grants" edges to the AccessGrant entity.
+func (_u *GroupUpdate) AddAccessGrants(v ...*AccessGrant) *GroupUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddAccessGrantIDs(ids...)
 }
 
 // Mutation returns the GroupMutation object of the builder.
@@ -364,9 +396,53 @@ func (_u *GroupUpdate) RemoveExports(v ...*Export) *GroupUpdate {
 	return _u.RemoveExportIDs(ids...)
 }
 
+// ClearPermissionGroups clears all "permission_groups" edges to the PermissionGroup entity.
+func (_u *GroupUpdate) ClearPermissionGroups() *GroupUpdate {
+	_u.mutation.ClearPermissionGroups()
+	return _u
+}
+
+// RemovePermissionGroupIDs removes the "permission_groups" edge to PermissionGroup entities by IDs.
+func (_u *GroupUpdate) RemovePermissionGroupIDs(ids ...uuid.UUID) *GroupUpdate {
+	_u.mutation.RemovePermissionGroupIDs(ids...)
+	return _u
+}
+
+// RemovePermissionGroups removes "permission_groups" edges to PermissionGroup entities.
+func (_u *GroupUpdate) RemovePermissionGroups(v ...*PermissionGroup) *GroupUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemovePermissionGroupIDs(ids...)
+}
+
+// ClearAccessGrants clears all "access_grants" edges to the AccessGrant entity.
+func (_u *GroupUpdate) ClearAccessGrants() *GroupUpdate {
+	_u.mutation.ClearAccessGrants()
+	return _u
+}
+
+// RemoveAccessGrantIDs removes the "access_grants" edge to AccessGrant entities by IDs.
+func (_u *GroupUpdate) RemoveAccessGrantIDs(ids ...uuid.UUID) *GroupUpdate {
+	_u.mutation.RemoveAccessGrantIDs(ids...)
+	return _u
+}
+
+// RemoveAccessGrants removes "access_grants" edges to AccessGrant entities.
+func (_u *GroupUpdate) RemoveAccessGrants(v ...*AccessGrant) *GroupUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveAccessGrantIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *GroupUpdate) Save(ctx context.Context) (int, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -393,11 +469,15 @@ func (_u *GroupUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *GroupUpdate) defaults() {
+func (_u *GroupUpdate) defaults() error {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		if group.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized group.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := group.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -443,7 +523,7 @@ func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			},
 		}
 		createE := &UserGroupCreate{config: _u.config, mutation: newUserGroupMutation(_u.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -463,7 +543,7 @@ func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		createE := &UserGroupCreate{config: _u.config, mutation: newUserGroupMutation(_u.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -483,7 +563,7 @@ func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		createE := &UserGroupCreate{config: _u.config, mutation: newUserGroupMutation(_u.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
@@ -796,6 +876,96 @@ func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(export.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.PermissionGroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.PermissionGroupsTable,
+			Columns: []string{group.PermissionGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(permissiongroup.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedPermissionGroupsIDs(); len(nodes) > 0 && !_u.mutation.PermissionGroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.PermissionGroupsTable,
+			Columns: []string{group.PermissionGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(permissiongroup.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.PermissionGroupsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.PermissionGroupsTable,
+			Columns: []string{group.PermissionGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(permissiongroup.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.AccessGrantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.AccessGrantsTable,
+			Columns: []string{group.AccessGrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(accessgrant.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedAccessGrantsIDs(); len(nodes) > 0 && !_u.mutation.AccessGrantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.AccessGrantsTable,
+			Columns: []string{group.AccessGrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(accessgrant.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.AccessGrantsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.AccessGrantsTable,
+			Columns: []string{group.AccessGrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(accessgrant.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -977,6 +1147,36 @@ func (_u *GroupUpdateOne) AddExports(v ...*Export) *GroupUpdateOne {
 	return _u.AddExportIDs(ids...)
 }
 
+// AddPermissionGroupIDs adds the "permission_groups" edge to the PermissionGroup entity by IDs.
+func (_u *GroupUpdateOne) AddPermissionGroupIDs(ids ...uuid.UUID) *GroupUpdateOne {
+	_u.mutation.AddPermissionGroupIDs(ids...)
+	return _u
+}
+
+// AddPermissionGroups adds the "permission_groups" edges to the PermissionGroup entity.
+func (_u *GroupUpdateOne) AddPermissionGroups(v ...*PermissionGroup) *GroupUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddPermissionGroupIDs(ids...)
+}
+
+// AddAccessGrantIDs adds the "access_grants" edge to the AccessGrant entity by IDs.
+func (_u *GroupUpdateOne) AddAccessGrantIDs(ids ...uuid.UUID) *GroupUpdateOne {
+	_u.mutation.AddAccessGrantIDs(ids...)
+	return _u
+}
+
+// AddAccessGrants adds the "access_grants" edges to the AccessGrant entity.
+func (_u *GroupUpdateOne) AddAccessGrants(v ...*AccessGrant) *GroupUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddAccessGrantIDs(ids...)
+}
+
 // Mutation returns the GroupMutation object of the builder.
 func (_u *GroupUpdateOne) Mutation() *GroupMutation {
 	return _u.mutation
@@ -1150,6 +1350,48 @@ func (_u *GroupUpdateOne) RemoveExports(v ...*Export) *GroupUpdateOne {
 	return _u.RemoveExportIDs(ids...)
 }
 
+// ClearPermissionGroups clears all "permission_groups" edges to the PermissionGroup entity.
+func (_u *GroupUpdateOne) ClearPermissionGroups() *GroupUpdateOne {
+	_u.mutation.ClearPermissionGroups()
+	return _u
+}
+
+// RemovePermissionGroupIDs removes the "permission_groups" edge to PermissionGroup entities by IDs.
+func (_u *GroupUpdateOne) RemovePermissionGroupIDs(ids ...uuid.UUID) *GroupUpdateOne {
+	_u.mutation.RemovePermissionGroupIDs(ids...)
+	return _u
+}
+
+// RemovePermissionGroups removes "permission_groups" edges to PermissionGroup entities.
+func (_u *GroupUpdateOne) RemovePermissionGroups(v ...*PermissionGroup) *GroupUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemovePermissionGroupIDs(ids...)
+}
+
+// ClearAccessGrants clears all "access_grants" edges to the AccessGrant entity.
+func (_u *GroupUpdateOne) ClearAccessGrants() *GroupUpdateOne {
+	_u.mutation.ClearAccessGrants()
+	return _u
+}
+
+// RemoveAccessGrantIDs removes the "access_grants" edge to AccessGrant entities by IDs.
+func (_u *GroupUpdateOne) RemoveAccessGrantIDs(ids ...uuid.UUID) *GroupUpdateOne {
+	_u.mutation.RemoveAccessGrantIDs(ids...)
+	return _u
+}
+
+// RemoveAccessGrants removes "access_grants" edges to AccessGrant entities.
+func (_u *GroupUpdateOne) RemoveAccessGrants(v ...*AccessGrant) *GroupUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveAccessGrantIDs(ids...)
+}
+
 // Where appends a list predicates to the GroupUpdate builder.
 func (_u *GroupUpdateOne) Where(ps ...predicate.Group) *GroupUpdateOne {
 	_u.mutation.Where(ps...)
@@ -1165,7 +1407,9 @@ func (_u *GroupUpdateOne) Select(field string, fields ...string) *GroupUpdateOne
 
 // Save executes the query and returns the updated Group entity.
 func (_u *GroupUpdateOne) Save(ctx context.Context) (*Group, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -1192,11 +1436,15 @@ func (_u *GroupUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *GroupUpdateOne) defaults() {
+func (_u *GroupUpdateOne) defaults() error {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		if group.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized group.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := group.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -1259,7 +1507,7 @@ func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error)
 			},
 		}
 		createE := &UserGroupCreate{config: _u.config, mutation: newUserGroupMutation(_u.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1279,7 +1527,7 @@ func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error)
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		createE := &UserGroupCreate{config: _u.config, mutation: newUserGroupMutation(_u.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1299,7 +1547,7 @@ func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error)
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		createE := &UserGroupCreate{config: _u.config, mutation: newUserGroupMutation(_u.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
@@ -1612,6 +1860,96 @@ func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error)
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(export.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.PermissionGroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.PermissionGroupsTable,
+			Columns: []string{group.PermissionGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(permissiongroup.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedPermissionGroupsIDs(); len(nodes) > 0 && !_u.mutation.PermissionGroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.PermissionGroupsTable,
+			Columns: []string{group.PermissionGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(permissiongroup.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.PermissionGroupsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.PermissionGroupsTable,
+			Columns: []string{group.PermissionGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(permissiongroup.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.AccessGrantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.AccessGrantsTable,
+			Columns: []string{group.AccessGrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(accessgrant.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedAccessGrantsIDs(); len(nodes) > 0 && !_u.mutation.AccessGrantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.AccessGrantsTable,
+			Columns: []string{group.AccessGrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(accessgrant.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.AccessGrantsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.AccessGrantsTable,
+			Columns: []string{group.AccessGrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(accessgrant.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

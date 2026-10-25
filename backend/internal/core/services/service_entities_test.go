@@ -1,7 +1,6 @@
 package services
 
 import (
-	"context"
 	"strings"
 	"testing"
 
@@ -18,7 +17,7 @@ import (
 // assigns an asset ID, and subsequent imports of the unchanged file must leave
 // that asset ID untouched.
 func TestEntityService_CsvImport_AssetIDIdempotent(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	grp, err := tRepos.Groups.GroupCreate(ctx, "csv-assetid-"+fk.Str(4), uuid.Nil)
 	require.NoError(t, err)
@@ -52,7 +51,7 @@ func TestEntityService_CsvImport_AssetIDIdempotent(t *testing.T) {
 // path that issue #1100's fix must preserve: genuinely new items imported in a
 // single file still receive distinct, sequential asset IDs.
 func TestEntityService_CsvImport_AssetIDAutoIncrement(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 
 	grp, err := tRepos.Groups.GroupCreate(ctx, "csv-assetid-inc-"+fk.Str(4), uuid.Nil)
 	require.NoError(t, err)

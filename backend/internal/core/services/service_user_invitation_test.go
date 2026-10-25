@@ -1,7 +1,6 @@
 package services
 
 import (
-	"context"
 	"sync"
 	"testing"
 	"time"
@@ -18,7 +17,7 @@ import (
 // returns the group ID, invitation ID and raw token.
 func newInvitation(t *testing.T, uses int) (uuid.UUID, uuid.UUID, string) {
 	t.Helper()
-	ctx := context.Background()
+	ctx := testCtx()
 
 	g, err := tRepos.Groups.GroupCreate(ctx, "invite-"+fk.Str(8), uuid.Nil)
 	require.NoError(t, err)
@@ -36,7 +35,7 @@ func newInvitation(t *testing.T, uses int) (uuid.UUID, uuid.UUID, string) {
 
 func memberCount(t *testing.T, gid uuid.UUID) int {
 	t.Helper()
-	n, err := tClient.UserGroup.Query().Where(usergroup.GroupID(gid)).Count(context.Background())
+	n, err := tClient.UserGroup.Query().Where(usergroup.GroupID(gid)).Count(testCtx())
 	require.NoError(t, err)
 	return n
 }
@@ -56,7 +55,7 @@ func TestRegisterUser_InvitationNotOversubscribedByConcurrentRegistrations(t *te
 		go func() {
 			defer wg.Done()
 			<-start
-			_, err := tSvc.User.RegisterUser(context.Background(), UserRegistration{
+			_, err := tSvc.User.RegisterUser(testCtx(), UserRegistration{
 				GroupToken: token,
 				Name:       fk.Str(10),
 				Email:      fk.Email(),
@@ -75,7 +74,7 @@ func TestRegisterUser_InvitationNotOversubscribedByConcurrentRegistrations(t *te
 	assert.Equal(t, 1, successes, "a uses=1 invitation must admit exactly one registration")
 	assert.Equal(t, 1, memberCount(t, gid), "only one membership may be created")
 
-	invs, err := tRepos.Groups.InvitationGetAll(context.Background(), gid)
+	invs, err := tRepos.Groups.InvitationGetAll(testCtx(), gid)
 	require.NoError(t, err)
 	for _, inv := range invs {
 		if inv.ID == invID {
@@ -88,7 +87,7 @@ func TestRegisterUser_FailedRegistrationRefundsInvitationUse(t *testing.T) {
 	gid, invID, token := newInvitation(t, 1)
 
 	// tUser's email already exists, so user creation fails after the use is claimed.
-	_, err := tSvc.User.RegisterUser(context.Background(), UserRegistration{
+	_, err := tSvc.User.RegisterUser(testCtx(), UserRegistration{
 		GroupToken: token,
 		Name:       fk.Str(10),
 		Email:      tUser.Email,
@@ -96,7 +95,7 @@ func TestRegisterUser_FailedRegistrationRefundsInvitationUse(t *testing.T) {
 	})
 	require.Error(t, err)
 
-	invs, err := tRepos.Groups.InvitationGetAll(context.Background(), gid)
+	invs, err := tRepos.Groups.InvitationGetAll(testCtx(), gid)
 	require.NoError(t, err)
 	found := false
 	for _, inv := range invs {
@@ -108,7 +107,7 @@ func TestRegisterUser_FailedRegistrationRefundsInvitationUse(t *testing.T) {
 	require.True(t, found)
 
 	// The refunded use is still redeemable.
-	_, err = tSvc.User.RegisterUser(context.Background(), UserRegistration{
+	_, err = tSvc.User.RegisterUser(testCtx(), UserRegistration{
 		GroupToken: token,
 		Name:       fk.Str(10),
 		Email:      fk.Email(),

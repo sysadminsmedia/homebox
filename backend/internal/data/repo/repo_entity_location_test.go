@@ -1,7 +1,6 @@
 package repo
 
 import (
-	"context"
 	"testing"
 
 	"github.com/google/uuid"
@@ -28,7 +27,7 @@ type locationFixture struct {
 
 func newLocationFixture(t *testing.T, name string) locationFixture {
 	t.Helper()
-	ctx := context.Background()
+	ctx := testCtx()
 
 	g, err := tRepos.Groups.GroupCreate(ctx, name, uuid.Nil)
 	require.NoError(t, err)
@@ -57,7 +56,7 @@ func newLocationFixture(t *testing.T, name string) locationFixture {
 // shelf. Step 4 used to drag the child into the parent's location, and step 5
 // couldn't put it back.
 func TestEntityLocation_ChildKeepsOwnLocation(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	f := newLocationFixture(t, "loc-child-own-location")
 
 	// 1. Parent in the Attic.
@@ -110,7 +109,7 @@ func TestEntityLocation_ChildKeepsOwnLocation(t *testing.T) {
 // The default is unchanged: no locationId means the child still follows its
 // parent. This is what makes the upgrade a no-op for existing rows.
 func TestEntityLocation_InheritsWhenNoOverride(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	f := newLocationFixture(t, "loc-inherit-default")
 
 	parent, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
@@ -141,7 +140,7 @@ func TestEntityLocation_InheritsWhenNoOverride(t *testing.T) {
 // Naming a location with no parent item is just a parent change, so no override
 // is written and there stays one way to express it.
 func TestEntityLocation_DirectLocationStoresNoOverride(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	f := newLocationFixture(t, "loc-normalizes-direct")
 
 	item, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
@@ -166,7 +165,7 @@ func TestEntityLocation_DirectLocationStoresNoOverride(t *testing.T) {
 // Parent is one location, locationId is another. Both claim to say where this
 // lives; silently honoring one is how #1691-class data loss happens.
 func TestEntityLocation_RejectsConflictingLocation(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	f := newLocationFixture(t, "loc-conflict")
 
 	item, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
@@ -192,7 +191,7 @@ func TestEntityLocation_RejectsConflictingLocation(t *testing.T) {
 // An item can't be used as a location — that would build a second, competing
 // containment hierarchy.
 func TestEntityLocation_RejectsNonLocationTarget(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	f := newLocationFixture(t, "loc-non-location-target")
 
 	parent, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
@@ -216,7 +215,7 @@ func TestEntityLocation_RejectsNonLocationTarget(t *testing.T) {
 // The override must not reach another tenant's location: that corrupts their
 // tree and confirms a guessed UUID.
 func TestEntityLocation_RejectsCrossGroupLocation(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	a := newLocationFixture(t, "loc-tenant-a")
 	b := newLocationFixture(t, "loc-tenant-b")
 
@@ -239,7 +238,7 @@ func TestEntityLocation_RejectsCrossGroupLocation(t *testing.T) {
 // and this change. Turning it on drops the children's own locations — and must
 // leave their parent edge alone, which is what flattened the tree before #1591.
 func TestEntityLocation_SyncChildLocationsClearsOverrides(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	f := newLocationFixture(t, "loc-sync-toggle")
 
 	parent, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
@@ -274,7 +273,7 @@ func TestEntityLocation_SyncChildLocationsClearsOverrides(t *testing.T) {
 // The location page must list the spare part stored in the Basement even though
 // it hangs off a product in the Attic.
 func TestEntityLocation_QueryByLocationFindsOverriddenChild(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	f := newLocationFixture(t, "loc-query-filter")
 
 	parent, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
@@ -317,7 +316,7 @@ func TestEntityLocation_QueryByLocationFindsOverriddenChild(t *testing.T) {
 // belongs under the Basement, exactly once — handling only one arm lists it
 // twice, which is worse than the bug we're fixing.
 func TestEntityLocation_TreePlacesOverriddenChildUnderItsLocation(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	f := newLocationFixture(t, "loc-tree-placement")
 
 	parent, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
@@ -369,7 +368,7 @@ func TestEntityLocation_TreePlacesOverriddenChildUnderItsLocation(t *testing.T) 
 // the entity must not move. An inherited location must not become a pinned
 // override, and an override must not be dropped.
 func TestEntityLocation_RoundTripPreservesPlacement(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	f := newLocationFixture(t, "loc-roundtrip")
 
 	parent, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
@@ -429,7 +428,7 @@ func TestEntityLocation_RoundTripPreservesPlacement(t *testing.T) {
 // ON DELETE SET NULL: deleting a location that items only point at must not take
 // them with it. They fall back to inheriting through their parent.
 func TestEntityLocation_DeletingLocationFallsBackToInheritance(t *testing.T) {
-	ctx := context.Background()
+	ctx := testCtx()
 	f := newLocationFixture(t, "loc-delete-target")
 
 	parent, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{

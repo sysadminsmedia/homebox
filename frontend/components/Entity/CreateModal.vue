@@ -24,7 +24,7 @@
             </TooltipContent>
           </Tooltip>
 
-          <ButtonGroup>
+          <ButtonGroup v-if="can('barcode:lookup')">
             <Tooltip>
               <TooltipTrigger>
                 <Button variant="outline" :disabled="loading" size="icon" data-pos="start" @click="openQrScannerPage()">
@@ -280,6 +280,7 @@
   const entityTypeStore = useEntityTypeStore();
 
   const api = useUserApi();
+  const { can } = usePermissions();
 
   const locationsStore = useLocationStore();
   const locations = computed(() => locationsStore.allLocations);
