@@ -159,94 +159,105 @@
         <TooltipContent side="right">{{ $t("components.label_template.editor.toolbar.add_text") }}</TooltipContent>
       </Tooltip>
 
-      <DropdownMenu>
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <DropdownMenuTrigger as-child>
-              <Button
-                variant="ghost"
-                size="icon"
-                class="size-10"
-                :aria-label="$t('components.label_template.editor.toolbar.add_barcode')"
-              >
-                <MdiQrcode class="size-5" />
-              </Button>
-            </DropdownMenuTrigger>
-          </TooltipTrigger>
-          <TooltipContent side="right">{{ $t("components.label_template.editor.toolbar.add_barcode") }}</TooltipContent>
-        </Tooltip>
-        <DropdownMenuContent side="right" align="start" class="w-56">
-          <template v-for="format in formats ?? []" :key="format.format">
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                {{ format.name }}
-                <span v-if="format.is2D" class="ml-1 text-xs text-muted-foreground">(2D)</span>
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent class="max-h-80">
-                <template v-if="compatibleItemSources(format).length > 0">
-                  <DropdownMenuLabel class="text-xs text-muted-foreground">
-                    {{ $t("components.label_template.editor.properties.item_fields") }}
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem
-                    v-for="source in compatibleItemSources(format)"
-                    :key="source.value"
-                    @click="emit('addBarcode', format.format, source.value)"
-                  >
-                    {{ t(`components.label_template.editor.barcode_sources.${source.labelKey}`) }}
-                  </DropdownMenuItem>
-                </template>
-                <template v-if="compatibleLocationSources(format).length > 0">
-                  <DropdownMenuSeparator v-if="compatibleItemSources(format).length > 0" />
-                  <DropdownMenuLabel class="text-xs text-muted-foreground">
-                    {{ $t("components.label_template.editor.properties.location_fields") }}
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem
-                    v-for="source in compatibleLocationSources(format)"
-                    :key="source.value"
-                    @click="emit('addBarcode', format.format, source.value)"
-                  >
-                    {{ t(`components.label_template.editor.barcode_sources.${source.labelKey}`) }}
-                  </DropdownMenuItem>
-                </template>
-                <DropdownMenuItem
-                  v-if="compatibleItemSources(format).length === 0 && compatibleLocationSources(format).length === 0"
-                  disabled
+      <!--
+        Each popover trigger registers with the nearest popper root above it, so a DropdownMenuTrigger
+        nested inside a TooltipTrigger would anchor to the tooltip and the menu would never be positioned.
+        The tooltip therefore wraps the whole menu through a plain span.
+      -->
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <span class="inline-flex">
+            <DropdownMenu>
+              <DropdownMenuTrigger as-child>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  class="size-10"
+                  :aria-label="$t('components.label_template.editor.toolbar.add_barcode')"
                 >
-                  {{ $t("components.label_template.editor.barcode_sources.no_compatible") }}
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-          </template>
-        </DropdownMenuContent>
-      </DropdownMenu>
+                  <MdiQrcode class="size-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="right" align="start" class="w-56">
+                <template v-for="format in formats ?? []" :key="format.format">
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                      {{ format.name }}
+                      <span v-if="format.is2D" class="ml-1 text-xs text-muted-foreground">(2D)</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent class="max-h-80">
+                      <template v-if="compatibleItemSources(format).length > 0">
+                        <DropdownMenuLabel class="text-xs text-muted-foreground">
+                          {{ $t("components.label_template.editor.properties.item_fields") }}
+                        </DropdownMenuLabel>
+                        <DropdownMenuItem
+                          v-for="source in compatibleItemSources(format)"
+                          :key="source.value"
+                          @click="emit('addBarcode', format.format, source.value)"
+                        >
+                          {{ t(`components.label_template.editor.barcode_sources.${source.labelKey}`) }}
+                        </DropdownMenuItem>
+                      </template>
+                      <template v-if="compatibleLocationSources(format).length > 0">
+                        <DropdownMenuSeparator v-if="compatibleItemSources(format).length > 0" />
+                        <DropdownMenuLabel class="text-xs text-muted-foreground">
+                          {{ $t("components.label_template.editor.properties.location_fields") }}
+                        </DropdownMenuLabel>
+                        <DropdownMenuItem
+                          v-for="source in compatibleLocationSources(format)"
+                          :key="source.value"
+                          @click="emit('addBarcode', format.format, source.value)"
+                        >
+                          {{ t(`components.label_template.editor.barcode_sources.${source.labelKey}`) }}
+                        </DropdownMenuItem>
+                      </template>
+                      <DropdownMenuItem
+                        v-if="
+                          compatibleItemSources(format).length === 0 && compatibleLocationSources(format).length === 0
+                        "
+                        disabled
+                      >
+                        {{ $t("components.label_template.editor.barcode_sources.no_compatible") }}
+                      </DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
+                </template>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </span>
+        </TooltipTrigger>
+        <TooltipContent side="right">{{ $t("components.label_template.editor.toolbar.add_barcode") }}</TooltipContent>
+      </Tooltip>
 
-      <DropdownMenu>
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <DropdownMenuTrigger as-child>
-              <Button
-                variant="ghost"
-                size="icon"
-                class="size-10"
-                :aria-label="$t('components.label_template.editor.toolbar.add_shape')"
-              >
-                <MdiShapeRectanglePlus class="size-5" />
-              </Button>
-            </DropdownMenuTrigger>
-          </TooltipTrigger>
-          <TooltipContent side="right">{{ $t("components.label_template.editor.toolbar.add_shape") }}</TooltipContent>
-        </Tooltip>
-        <DropdownMenuContent side="right" align="start">
-          <DropdownMenuItem @click="emit('addShape', 'rect')">
-            <MdiShapeRectanglePlus class="mr-2 size-4" />
-            {{ $t("components.label_template.editor.tools.rectangle") }}
-          </DropdownMenuItem>
-          <DropdownMenuItem @click="emit('addShape', 'line')">
-            <MdiMinus class="mr-2 size-4" />
-            {{ $t("components.label_template.editor.tools.line") }}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <span class="inline-flex">
+            <DropdownMenu>
+              <DropdownMenuTrigger as-child>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  class="size-10"
+                  :aria-label="$t('components.label_template.editor.toolbar.add_shape')"
+                >
+                  <MdiShapeRectanglePlus class="size-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="right" align="start">
+                <DropdownMenuItem @click="emit('addShape', 'rect')">
+                  <MdiShapeRectanglePlus class="mr-2 size-4" />
+                  {{ $t("components.label_template.editor.tools.rectangle") }}
+                </DropdownMenuItem>
+                <DropdownMenuItem @click="emit('addShape', 'line')">
+                  <MdiMinus class="mr-2 size-4" />
+                  {{ $t("components.label_template.editor.tools.line") }}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </span>
+        </TooltipTrigger>
+        <TooltipContent side="right">{{ $t("components.label_template.editor.toolbar.add_shape") }}</TooltipContent>
+      </Tooltip>
 
       <Tooltip>
         <TooltipTrigger as-child>
@@ -272,33 +283,35 @@
 
       <div class="mx-1 h-6 w-px bg-border lg:mx-0 lg:my-1 lg:h-px lg:w-8" />
 
-      <DropdownMenu>
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <DropdownMenuTrigger as-child>
-              <Button
-                variant="ghost"
-                size="icon"
-                class="size-10"
-                :disabled="!props.hasSelection"
-                :aria-label="$t('components.label_template.editor.tools.align')"
-              >
-                <MdiAlignHorizontalCenter class="size-5" />
-              </Button>
-            </DropdownMenuTrigger>
-          </TooltipTrigger>
-          <TooltipContent side="right">{{ $t("components.label_template.editor.tools.align") }}</TooltipContent>
-        </Tooltip>
-        <DropdownMenuContent side="right" align="start">
-          <DropdownMenuLabel class="text-xs text-muted-foreground">
-            {{ $t("components.label_template.editor.tools.align_to_label") }}
-          </DropdownMenuLabel>
-          <DropdownMenuItem v-for="a in alignTargets" :key="a.target" @click="emit('align', a.target)">
-            <component :is="a.icon" class="mr-2 size-4" />
-            {{ t(`components.label_template.editor.align.${a.key}`) }}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <span class="inline-flex">
+            <DropdownMenu>
+              <DropdownMenuTrigger as-child>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  class="size-10"
+                  :disabled="!props.hasSelection"
+                  :aria-label="$t('components.label_template.editor.tools.align')"
+                >
+                  <MdiAlignHorizontalCenter class="size-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="right" align="start">
+                <DropdownMenuLabel class="text-xs text-muted-foreground">
+                  {{ $t("components.label_template.editor.tools.align_to_label") }}
+                </DropdownMenuLabel>
+                <DropdownMenuItem v-for="a in alignTargets" :key="a.target" @click="emit('align', a.target)">
+                  <component :is="a.icon" class="mr-2 size-4" />
+                  {{ t(`components.label_template.editor.align.${a.key}`) }}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </span>
+        </TooltipTrigger>
+        <TooltipContent side="right">{{ $t("components.label_template.editor.tools.align") }}</TooltipContent>
+      </Tooltip>
 
       <Tooltip>
         <TooltipTrigger as-child>
