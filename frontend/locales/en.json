@@ -559,7 +559,11 @@
                     "location_url": "Location URL",
                     "location_name": "Location Name",
                     "location_full_path": "Location Path",
-                    "no_compatible": "No compatible data sources for this format"
+                    "no_compatible": "No compatible data sources for this format",
+                "fixed_value": "Fixed value…",
+                "fixed_value_option": "Fixed value",
+                "fixed_value_hint": "Printed as typed on every label",
+                "digits_only": "Digits only"
                 },
                 "properties": {
                     "title": "Properties",
@@ -580,7 +584,10 @@
                     "rotation": "Rotation",
                     "item_fields": "Item Fields",
                     "location_fields": "Location Fields",
-                    "common_fields": "Common Fields"
+                    "barcode_format": "Format",
+                "barcode_source": "Data source",
+                "barcode_value": "Value",
+                "common_fields": "Common Fields"
                 },
                 "settings": {
                     "title": "Template Settings",

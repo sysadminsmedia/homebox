@@ -73,7 +73,9 @@ Location labels use `{{location_name}}`, `{{location_path}}`, `{{item_count}}` a
 
 **Barcodes** are added from the tool rail. Pick the symbology (QR code, DataMatrix, Code 128, Code 39, EAN-13, EAN-8
 or UPC-A) and what it should encode. Only compatible sources are offered: a numeric-only symbology such as EAN cannot
-encode a URL, so it lists the asset id only. The canvas shows a placeholder; the print preview shows the real code.
+encode a URL or an asset id, so it offers a **Fixed value** instead, a number you type in the Element tab that prints
+the same on every label. The data source and fixed value of a selected barcode can be changed in the Element tab at
+any time. The canvas shows a placeholder; the print preview shows the real code.
 
 **Images** such as a logo are embedded in the template, so keep them small (under 512 KB). PNG, JPEG and GIF work.
 
@@ -174,8 +176,9 @@ go out as PDF or through the browser; the label printer is greyed out because th
 
 HomeBox does not talk to printers itself. To print from the server, the administrator sets
 `HBOX_LABEL_MAKER_PRINT_COMMAND` in the environment or config file (it is not a UI setting). HomeBox renders the label
-to a temporary PNG and runs that command once per copy, replacing `{{.FileName}}` with the file's path. The same
-command also prints the built-in basic label. For example:
+to a temporary PNG and runs that command, replacing `{{.FileName}}` with the file's path. If the command uses
+`{{.Copies}}` it runs once with the copy count; otherwise it runs once per copy. The same command also prints the
+built-in basic label. For example:
 
 ```sh
 # Brother QL printer on the network, 62 mm tape

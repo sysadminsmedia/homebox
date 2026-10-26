@@ -17,6 +17,7 @@
   import LabelTemplateEditorCanvas from "~/components/LabelTemplate/Editor/Canvas.vue";
   import LabelTemplateEditorToolRail, { type AlignTarget } from "~/components/LabelTemplate/Editor/ToolRail.vue";
   import LabelTemplateEditorTextToolbar from "~/components/LabelTemplate/Editor/TextToolbar.vue";
+  import LabelTemplateEditorBarcodePanel from "~/components/LabelTemplate/Editor/BarcodePanel.vue";
   import LabelTemplateEditorTransformPanel, {
     type EditorUnit,
   } from "~/components/LabelTemplate/Editor/TransformPanel.vue";
@@ -566,6 +567,11 @@
                 <LabelTemplateEditorTransformPanel
                   :selected-object="selectedObject"
                   :unit="unit"
+                  @update-object="handleUpdateObject"
+                />
+                <LabelTemplateEditorBarcodePanel
+                  v-if="selectedObject?.data?.type === 'barcode'"
+                  :selected-object="selectedObject"
                   @update-object="handleUpdateObject"
                 />
                 <div v-if="isTextSelected" class="space-y-2">

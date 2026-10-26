@@ -29,7 +29,7 @@
     DropdownMenuSeparator,
     DropdownMenuLabel,
   } from "@/components/ui/dropdown-menu";
-  import { LabelmakerContentType, type LabelmakerBarcodeFormatInfo } from "~~/lib/api/types/data-contracts";
+  import { compatibleItemSources, compatibleLocationSources } from "./barcode-sources";
 
   export type AlignTarget = "left" | "center" | "right" | "top" | "middle" | "bottom";
 
@@ -52,46 +52,6 @@
 
   const { t } = useI18n();
   const { formats } = useBarcodeFormats();
-
-  // Content type compatibility between a barcode symbology and the data it encodes:
-  // "any" = URLs and arbitrary text, "alphanumeric" = letters and digits, "numeric" = digits only.
-  type SourceContentType = "any" | "alphanumeric" | "numeric";
-
-  interface BarcodeContentSource {
-    value: string;
-    labelKey: string;
-    contentType: SourceContentType;
-  }
-
-  const itemBarcodeContentSources: BarcodeContentSource[] = [
-    { value: "item_url", labelKey: "item_url", contentType: "any" },
-    { value: "asset_id", labelKey: "asset_id", contentType: "alphanumeric" },
-    { value: "serial_number", labelKey: "serial_number", contentType: "alphanumeric" },
-    { value: "model_number", labelKey: "model_number", contentType: "alphanumeric" },
-    { value: "id", labelKey: "item_id", contentType: "any" },
-  ];
-
-  const locationBarcodeContentSources: BarcodeContentSource[] = [
-    { value: "location_url", labelKey: "location_url", contentType: "any" },
-    { value: "location_name", labelKey: "location_name", contentType: "alphanumeric" },
-    { value: "location_path", labelKey: "location_full_path", contentType: "any" },
-  ];
-
-  function isSourceCompatible(source: BarcodeContentSource, format: LabelmakerBarcodeFormatInfo): boolean {
-    if (format.contentType === LabelmakerContentType.ContentTypeAny) return true;
-    if (format.contentType === LabelmakerContentType.ContentTypeAlphanumeric) {
-      return source.contentType === "alphanumeric" || source.contentType === "numeric";
-    }
-    if (format.contentType === LabelmakerContentType.ContentTypeNumeric) {
-      return source.contentType === "numeric";
-    }
-    return true;
-  }
-
-  const compatibleItemSources = (format: LabelmakerBarcodeFormatInfo) =>
-    itemBarcodeContentSources.filter(s => isSourceCompatible(s, format));
-  const compatibleLocationSources = (format: LabelmakerBarcodeFormatInfo) =>
-    locationBarcodeContentSources.filter(s => isSourceCompatible(s, format));
 
   // Image picking: small raster logos only; the data URL is stored inside the template JSON.
   const MAX_IMAGE_BYTES = 512 * 1024;
@@ -211,13 +171,12 @@
                           {{ t(`components.label_template.editor.barcode_sources.${source.labelKey}`) }}
                         </DropdownMenuItem>
                       </template>
-                      <DropdownMenuItem
-                        v-if="
-                          compatibleItemSources(format).length === 0 && compatibleLocationSources(format).length === 0
-                        "
-                        disabled
-                      >
-                        {{ $t("components.label_template.editor.barcode_sources.no_compatible") }}
+                      <DropdownMenuSeparator
+                        v-if="compatibleItemSources(format).length > 0 || compatibleLocationSources(format).length > 0"
+                      />
+                      <!-- A value typed in the Element tab; the only option for digits-only formats such as EAN and UPC -->
+                      <DropdownMenuItem @click="emit('addBarcode', format.format, '')">
+                        {{ $t("components.label_template.editor.barcode_sources.fixed_value") }}
                       </DropdownMenuItem>
                     </DropdownMenuSubContent>
                   </DropdownMenuSub>
