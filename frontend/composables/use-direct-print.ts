@@ -1,3 +1,4 @@
+import { useI18n } from "vue-i18n";
 import type { LabelTemplatePrintResponse, LabelPrintItem, LabelPrintLocation } from "~~/lib/api/types/data-contracts";
 
 /**
@@ -20,6 +21,7 @@ export function useServerLabelPrinting() {
 
 export function useDirectPrint() {
   const api = useUserApi();
+  const { t } = useI18n();
 
   /**
    * Print labels with optional per-item quantities
@@ -41,7 +43,7 @@ export function useDirectPrint() {
       copies: defaultCopies,
     });
     if (error) {
-      throw new Error("Failed to print labels");
+      throw new Error(t("components.label_template.toast.print_failed"));
     }
     return data;
   }
@@ -66,7 +68,7 @@ export function useDirectPrint() {
       copies: defaultCopies,
     });
     if (error) {
-      throw new Error("Failed to print location labels");
+      throw new Error(t("components.label_template.toast.print_failed"));
     }
     return data;
   }
@@ -84,13 +86,25 @@ export function useDirectPrint() {
  */
 export function useQuickPrint() {
   const preferences = useViewPreferences();
+  const { t } = useI18n();
   const { printLabels, printLocationLabels } = useDirectPrint();
   const { labelPrinting } = useServerLabelPrinting();
+  const { templates } = useLabelTemplates();
+  const { find: findPreset } = useLabelPresetLookup();
 
   // Get the default template ID from user preferences
   const defaultTemplateId = computed(() => preferences.value.defaultTemplateId);
 
-  const isQuickPrintAvailable = computed(() => labelPrinting.value && !!defaultTemplateId.value);
+  // The server prints one label at a time, so a sheet template (Avery and the
+  // like) cannot be quick printed; the print dialog offers PDF instead.
+  const defaultIsSheet = computed(() => {
+    const tpl = templates.value?.find(item => item.id === defaultTemplateId.value);
+    return findPreset(tpl?.preset)?.kind === "sheet";
+  });
+
+  const isQuickPrintAvailable = computed(
+    () => labelPrinting.value && !!defaultTemplateId.value && !defaultIsSheet.value
+  );
 
   /**
    * Quick print items using the default template.
@@ -103,7 +117,7 @@ export function useQuickPrint() {
 
     const result = await printLabels(defaultTemplateId.value, itemIds);
     if (!result?.success) {
-      throw new Error(result?.message || "Print failed");
+      throw new Error(result?.message || t("components.label_template.toast.print_failed"));
     }
     return true;
   }
@@ -119,7 +133,7 @@ export function useQuickPrint() {
 
     const result = await printLocationLabels(defaultTemplateId.value, locationIds);
     if (!result?.success) {
-      throw new Error(result?.message || "Print failed");
+      throw new Error(result?.message || t("components.label_template.toast.print_failed"));
     }
     return true;
   }

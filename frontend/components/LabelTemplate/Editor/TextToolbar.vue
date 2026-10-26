@@ -115,7 +115,9 @@
   function handleTextboxWidthChange(value: string) {
     const numValue = parseFloat(value);
     if (!isNaN(numValue) && numValue > 0) {
-      emit("updateObject", { width: Math.max(1, Math.round(numValue * widthPxPerUnit.value)) });
+      const width = Math.max(1, Math.round(numValue * widthPxPerUnit.value));
+      // Autofit sizes the box back to data.fixedWidth, so keep both in step.
+      emit("updateObject", { width, data: { ...(props.selectedObject?.data || {}), fixedWidth: width } });
     }
   }
 
