@@ -102,4 +102,8 @@ func TestRunPrintCommand_TimesOut(t *testing.T) {
 	defer cancel()
 	err := runPrintCommand(ctx, printCfg("sleep 5"), map[string]string{})
 	require.Error(t, err)
+	// The caller's deadline ended the command, so the error says so instead of
+	// claiming the 60 s command timeout fired.
+	require.ErrorIs(t, err, context.DeadlineExceeded)
+	assert.Contains(t, err.Error(), "aborted")
 }

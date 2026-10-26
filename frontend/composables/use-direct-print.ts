@@ -95,16 +95,15 @@ export function useQuickPrint() {
   // Get the default template ID from user preferences
   const defaultTemplateId = computed(() => preferences.value.defaultTemplateId);
 
+  // The saved preference may point at a template that was deleted since, or
+  // the list may still be loading; quick print needs a template it can see.
+  const defaultTemplate = computed(() => templates.value?.find(item => item.id === defaultTemplateId.value) ?? null);
+
   // The server prints one label at a time, so a sheet template (Avery and the
   // like) cannot be quick printed; the print dialog offers PDF instead.
-  const defaultIsSheet = computed(() => {
-    const tpl = templates.value?.find(item => item.id === defaultTemplateId.value);
-    return findPreset(tpl?.preset)?.kind === "sheet";
-  });
+  const defaultIsSheet = computed(() => findPreset(defaultTemplate.value?.preset)?.kind === "sheet");
 
-  const isQuickPrintAvailable = computed(
-    () => labelPrinting.value && !!defaultTemplateId.value && !defaultIsSheet.value
-  );
+  const isQuickPrintAvailable = computed(() => labelPrinting.value && !!defaultTemplate.value && !defaultIsSheet.value);
 
   /**
    * Quick print items using the default template.

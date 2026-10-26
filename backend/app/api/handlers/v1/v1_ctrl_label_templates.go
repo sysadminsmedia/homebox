@@ -254,6 +254,9 @@ func (ctrl *V1Controller) HandleLabelTemplatesRender() errchain.HandlerFunc {
 		if len(req.ItemIDs) == 0 {
 			return fmt.Errorf("at least one item ID is required")
 		}
+		if len(req.ItemIDs) > maxPrintLabelsPerRequest {
+			return validate.NewRequestError(fmt.Errorf("too many items in one render request (max %d)", maxPrintLabelsPerRequest), http.StatusBadRequest)
+		}
 
 		template, err := ctrl.repo.LabelTemplates.GetOne(r.Context(), auth.GID, auth.UID, id)
 		if err != nil {
@@ -753,6 +756,9 @@ func (ctrl *V1Controller) HandleLabelTemplatesRenderLocations() errchain.Handler
 
 		if len(req.LocationIDs) == 0 {
 			return fmt.Errorf("at least one location ID is required")
+		}
+		if len(req.LocationIDs) > maxPrintLabelsPerRequest {
+			return validate.NewRequestError(fmt.Errorf("too many locations in one render request (max %d)", maxPrintLabelsPerRequest), http.StatusBadRequest)
 		}
 
 		template, err := ctrl.repo.LabelTemplates.GetOne(r.Context(), auth.GID, auth.UID, id)
