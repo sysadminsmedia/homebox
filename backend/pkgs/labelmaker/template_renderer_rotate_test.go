@@ -7,6 +7,8 @@ import (
 	"testing"
 )
 
+const alignCenter = "center"
+
 // inkBounds returns the bounding box of non-white pixels.
 func inkBounds(img image.Image) (image.Rectangle, bool) {
 	b := img.Bounds()
@@ -71,5 +73,32 @@ func TestRotatedTextKeepsOriginAndIsNotClipped(t *testing.T) {
 	}
 	if box.Dy() < 40 {
 		t.Errorf("text looks clipped: height %d px for a 5-letter word", box.Dy())
+	}
+}
+
+func TestRotatedTextRejectsOversizedBuffers(t *testing.T) {
+	r, err := NewTemplateRenderer()
+	if err != nil {
+		t.Fatal(err)
+	}
+	// A centre-aligned box 100k px wide with a 2000 px font asks for a temporary
+	// buffer far beyond maxRenderPixels; it must be refused before allocation.
+	tpl := &TemplateData{
+		Width:  60,
+		Height: 60,
+		DPI:    96,
+		CanvasData: map[string]interface{}{
+			"objects": []interface{}{
+				canvasObject("textbox", 0, 0, 100000, 3000, map[string]interface{}{
+					"text": "HUGE", "fontSize": 2000.0, "fill": "#000000", "angle": 45.0, "textAlign": alignCenter,
+				}),
+			},
+		},
+	}
+	// RenderTemplate skips elements that fail, so check the element renderer itself.
+	elem := parseCanvasElement(tpl.CanvasData["objects"].([]interface{})[0].(map[string]interface{}))
+	img := image.NewRGBA(image.Rect(0, 0, 60, 60))
+	if err := r.renderElement(img, elem, nil, nil, 96); err == nil {
+		t.Fatal("expected an error for an oversized rotated text element")
 	}
 }

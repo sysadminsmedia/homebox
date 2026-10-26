@@ -2,6 +2,7 @@
 package labelmaker
 
 import (
+	"context"
 	"fmt"
 	"image"
 	"image/color"
@@ -487,7 +488,7 @@ func printCommandDefaults() map[string]string {
 	return m
 }
 
-func PrintLabel(cfg *config.Config, params *GenerateParameters) error {
+func PrintLabel(ctx context.Context, cfg *config.Config, params *GenerateParameters) error {
 	tmpFile := filepath.Join(os.TempDir(), fmt.Sprintf("label-%d.png", time.Now().UnixNano()))
 	f, err := os.OpenFile(tmpFile, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
 	if err != nil {
@@ -535,7 +536,7 @@ func PrintLabel(cfg *config.Config, params *GenerateParameters) error {
 		templateData[k] = v
 	}
 
-	return runPrintCommand(cfg, templateData)
+	return runPrintCommand(ctx, cfg, templateData)
 }
 
 // PrintPNG writes png to a private temporary file, runs the configured print
@@ -543,7 +544,7 @@ func PrintLabel(cfg *config.Config, params *GenerateParameters) error {
 // printCommandDefaults and FileName is always set to the temporary file. When
 // the command references .Copies it runs once with Copies=copies, otherwise it
 // runs copies times with Copies=1.
-func PrintPNG(cfg *config.Config, png []byte, data map[string]string, copies int) error {
+func PrintPNG(ctx context.Context, cfg *config.Config, png []byte, data map[string]string, copies int) error {
 	if cfg.LabelMaker.PrintCommand == nil || *cfg.LabelMaker.PrintCommand == "" {
 		return fmt.Errorf("no print command specified")
 	}
@@ -576,20 +577,28 @@ func PrintPNG(cfg *config.Config, png []byte, data map[string]string, copies int
 
 	if strings.Contains(*cfg.LabelMaker.PrintCommand, ".Copies") {
 		tmplData["Copies"] = fmt.Sprintf("%d", copies)
-		return runPrintCommand(cfg, tmplData)
+		return runPrintCommand(ctx, cfg, tmplData)
 	}
 
 	tmplData["Copies"] = "1"
 	for i := 0; i < copies; i++ {
-		if err := runPrintCommand(cfg, tmplData); err != nil {
+		// A cancelled request (client gone, server shutting down) stops the remaining copies.
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		if err := runPrintCommand(ctx, cfg, tmplData); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
+// printCommandTimeout bounds one invocation of the print command so a tool
+// waiting on an unreachable printer cannot hold the request goroutine forever.
+const printCommandTimeout = 60 * time.Second
+
 // runPrintCommand renders cfg.LabelMaker.PrintCommand with data and executes it.
-func runPrintCommand(cfg *config.Config, templateData map[string]string) error {
+func runPrintCommand(ctx context.Context, cfg *config.Config, templateData map[string]string) error {
 	if cfg.LabelMaker.PrintCommand == nil {
 		return fmt.Errorf("no print command specified")
 	}
@@ -623,9 +632,14 @@ func runPrintCommand(cfg *config.Config, templateData map[string]string) error {
 		return nil
 	}
 
-	command := exec.Command(commandParts[0], commandParts[1:]...)
+	cmdCtx, cancel := context.WithTimeout(ctx, printCommandTimeout)
+	defer cancel()
+	command := exec.CommandContext(cmdCtx, commandParts[0], commandParts[1:]...)
 
 	if _, err := command.CombinedOutput(); err != nil {
+		if cmdCtx.Err() == context.DeadlineExceeded {
+			return fmt.Errorf("print command timed out after %s", printCommandTimeout)
+		}
 		return err
 	}
 

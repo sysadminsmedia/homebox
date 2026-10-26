@@ -615,6 +615,18 @@ func (r *TemplateRenderer) renderTextRotated(img *image.RGBA, elem CanvasElement
 	}
 	tempHeight := ctx.textHeight + margin*2
 
+	// The box size comes from user-supplied canvas JSON, and rotation grows the
+	// bounds again, so reject (rather than clamp, which would move the text
+	// origin for centre and right alignment) anything beyond the pixel budget
+	// before either buffer is allocated.
+	theta := math.Abs(elem.Angle * math.Pi / 180)
+	sinA, cosA := math.Abs(math.Sin(theta)), math.Abs(math.Cos(theta))
+	rotW := float64(tempWidth)*cosA + float64(tempHeight)*sinA
+	rotH := float64(tempWidth)*sinA + float64(tempHeight)*cosA
+	if float64(tempWidth)*float64(tempHeight) > maxRenderPixels || rotW*rotH > maxRenderPixels {
+		return fmt.Errorf("rotated text %dx%d px exceeds the renderer limit of %d pixels", tempWidth, tempHeight, maxRenderPixels)
+	}
+
 	// Create temporary image with transparent background
 	tempImg := image.NewRGBA(image.Rect(0, 0, tempWidth, tempHeight))
 

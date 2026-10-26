@@ -507,7 +507,7 @@ func renderLabelsPNGSheet(w http.ResponseWriter, renderer *labelmaker.TemplateRe
 // printTemplateLabel sends a rendered label PNG to the admin-configured print
 // command. Width and Height are the rendered image size in pixels at the
 // template DPI, WidthMm and HeightMm come from the template itself.
-func printTemplateLabel(cfg *config.Config, tmpl repo.LabelTemplateOut, pngData []byte, title, labelURL string, copies int) error {
+func printTemplateLabel(ctx context.Context, cfg *config.Config, tmpl repo.LabelTemplateOut, pngData []byte, title, labelURL string, copies int) error {
 	dpi := tmpl.DPI
 	if dpi <= 0 {
 		dpi = 300
@@ -523,7 +523,7 @@ func printTemplateLabel(cfg *config.Config, tmpl repo.LabelTemplateOut, pngData 
 		data["Width"] = strconv.Itoa(cfgImg.Width)
 		data["Height"] = strconv.Itoa(cfgImg.Height)
 	}
-	return labelmaker.PrintPNG(cfg, pngData, data, copies)
+	return labelmaker.PrintPNG(ctx, cfg, pngData, data, copies)
 }
 
 // LabelPrintItem represents an item to print with its quantity
@@ -537,7 +537,22 @@ type LabelPrintItem struct {
 const (
 	maxPrintCopies           = 100
 	maxPrintLabelsPerRequest = 500
+	maxPrintTotalLabels      = 500 // copies summed over every entity in the request
 )
+
+// totalLabelCount sums the copies a request will print, applying the same
+// clamping as the print loop, so a request can be rejected before any work.
+func totalLabelCount(defaultCopies int, quantities []int) int {
+	total := 0
+	for _, q := range quantities {
+		if q > 0 {
+			total += clampCopies(q)
+		} else {
+			total += defaultCopies
+		}
+	}
+	return total
+}
 
 func clampCopies(n int) int {
 	if n <= 0 {
@@ -605,6 +620,13 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrint() errchain.HandlerFunc {
 		if len(itemsToPrint) > maxPrintLabelsPerRequest {
 			return validate.NewRequestError(fmt.Errorf("too many items in one print request (max %d)", maxPrintLabelsPerRequest), http.StatusBadRequest)
 		}
+		itemQuantities := make([]int, len(itemsToPrint))
+		for i, it := range itemsToPrint {
+			itemQuantities[i] = it.Quantity
+		}
+		if total := totalLabelCount(clampCopies(req.Copies), itemQuantities); total > maxPrintTotalLabels {
+			return validate.NewRequestError(fmt.Errorf("too many labels in one print request (%d, max %d)", total, maxPrintTotalLabels), http.StatusBadRequest)
+		}
 
 		if cmd := ctrl.config.LabelMaker.PrintCommand; cmd == nil || *cmd == "" {
 			return validate.NewRequestError(errors.New("server-side label printing is not configured; set HBOX_LABEL_MAKER_PRINT_COMMAND"), http.StatusBadRequest)
@@ -662,7 +684,7 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrint() errchain.HandlerFunc {
 				copies = clampCopies(printItem.Quantity)
 			}
 
-			if err := printTemplateLabel(ctrl.config, template, pngData, itemData.Name, itemData.ItemURL, copies); err != nil {
+			if err := printTemplateLabel(r.Context(), ctrl.config, template, pngData, itemData.Name, itemData.ItemURL, copies); err != nil {
 				log.Warn().Err(err).Str("itemID", printItem.ID.String()).Msg("print command failed")
 				return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
 					Success:    false,
@@ -891,6 +913,13 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrintLocations() errchain.HandlerF
 		if len(locationsToPrint) > maxPrintLabelsPerRequest {
 			return validate.NewRequestError(fmt.Errorf("too many locations in one print request (max %d)", maxPrintLabelsPerRequest), http.StatusBadRequest)
 		}
+		locationQuantities := make([]int, len(locationsToPrint))
+		for i, loc := range locationsToPrint {
+			locationQuantities[i] = loc.Quantity
+		}
+		if total := totalLabelCount(clampCopies(req.Copies), locationQuantities); total > maxPrintTotalLabels {
+			return validate.NewRequestError(fmt.Errorf("too many labels in one print request (%d, max %d)", total, maxPrintTotalLabels), http.StatusBadRequest)
+		}
 
 		if cmd := ctrl.config.LabelMaker.PrintCommand; cmd == nil || *cmd == "" {
 			return validate.NewRequestError(errors.New("server-side label printing is not configured; set HBOX_LABEL_MAKER_PRINT_COMMAND"), http.StatusBadRequest)
@@ -951,7 +980,7 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrintLocations() errchain.HandlerF
 				copies = clampCopies(printLoc.Quantity)
 			}
 
-			if err := printTemplateLabel(ctrl.config, template, pngData, loc.Name, locationData.LocationURL, copies); err != nil {
+			if err := printTemplateLabel(r.Context(), ctrl.config, template, pngData, loc.Name, locationData.LocationURL, copies); err != nil {
 				log.Warn().Err(err).Str("locationID", printLoc.ID.String()).Msg("print command failed")
 				return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
 					Success:    false,
