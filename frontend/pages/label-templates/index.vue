@@ -2,6 +2,8 @@
   import { useI18n } from "vue-i18n";
   import MdiPlus from "~icons/mdi/plus";
   import MdiPrinter from "~icons/mdi/printer";
+  import MdiUpload from "~icons/mdi/upload";
+  import { toast } from "@/components/ui/sonner";
   import { Button } from "@/components/ui/button";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
@@ -9,6 +11,7 @@
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import LabelTemplateCard from "~/components/LabelTemplate/Card.vue";
   import LabelTemplateCreateModal from "~/components/LabelTemplate/CreateModal.vue";
+  import type { LabelTemplateCreate } from "~~/lib/api/types/data-contracts";
 
   definePageMeta({
     middleware: ["auth"],
@@ -21,9 +24,68 @@
   });
 
   const { templates, refresh, pending } = useLabelTemplates();
+  const { create } = useLabelTemplateActions();
   const { openDialog } = useDialog();
 
   const handleRefresh = () => refresh();
+
+  // Import: the file is the payload written by a card's "Export JSON", which matches the create request.
+  const importInput = ref<HTMLInputElement | null>(null);
+  const importing = ref(false);
+
+  function parseTemplateExport(raw: unknown): LabelTemplateCreate | null {
+    if (!raw || typeof raw !== "object") return null;
+    const o = raw as Record<string, unknown>;
+    const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : NaN);
+    const width = num(o.width);
+    const height = num(o.height);
+    const dpi = num(o.dpi);
+    if (typeof o.name !== "string" || !o.name.trim()) return null;
+    if (!(width > 0 && width <= 1000) || !(height > 0 && height <= 1000)) return null;
+    if (!(dpi >= 72 && dpi <= 1200)) return null;
+    if (!o.canvasData || typeof o.canvasData !== "object" || Array.isArray(o.canvasData)) return null;
+    return {
+      name: o.name.trim().slice(0, 255),
+      description: typeof o.description === "string" ? o.description.slice(0, 1000) : "",
+      width,
+      height,
+      dpi,
+      preset: typeof o.preset === "string" ? o.preset : null,
+      outputFormat: o.outputFormat === "pdf" ? "pdf" : "png",
+      // Imported designs start private; the owner can share them afterwards.
+      isShared: false,
+      canvasData: o.canvasData as Record<string, unknown>,
+    };
+  }
+
+  async function handleImport(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = "";
+    if (!file) return;
+    importing.value = true;
+    try {
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(await file.text());
+      } catch {
+        toast.error(t("components.label_template.toast.import_invalid"));
+        return;
+      }
+      const body = parseTemplateExport(parsed);
+      if (!body) {
+        toast.error(t("components.label_template.toast.import_invalid"));
+        return;
+      }
+      const created = await create(body);
+      toast.success(t("components.label_template.toast.imported", { name: created?.name ?? body.name }));
+      await refresh();
+    } catch {
+      toast.error(t("components.label_template.toast.import_failed"));
+    } finally {
+      importing.value = false;
+    }
+  }
 
   const sharedCount = computed(() => (templates.value ?? []).filter(tpl => tpl.isShared).length);
 </script>
@@ -44,6 +106,11 @@
             {{ $t("pages.label_templates.batch.title") }}
           </NuxtLink>
         </Button>
+        <Button variant="outline" :disabled="importing" @click="importInput?.click()">
+          <MdiUpload class="mr-2" />
+          {{ $t("pages.label_templates.import_json") }}
+        </Button>
+        <input ref="importInput" type="file" accept="application/json,.json" class="hidden" @change="handleImport" />
         <Button @click="openDialog(DialogID.CreateLabelTemplate)">
           <MdiPlus class="mr-2" />
           {{ $t("pages.label_templates.new_template") }}

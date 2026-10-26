@@ -511,7 +511,10 @@
                 "render_failed": "Failed to render label",
                 "default_set": "\"{name}\" set as default for quick printing",
                 "default_cleared": "Default template cleared",
-                "export_failed": "Failed to export label template"
+                "export_failed": "Failed to export label template",
+                "imported": "Label template \"{name}\" imported",
+                "import_invalid": "This file is not a label template export",
+                "import_failed": "Failed to import label template"
             },
             "editor": {
                 "title": "Edit Label Template",
@@ -1198,6 +1201,7 @@
             },
             "subtitle": "{count} total · {shared} shared with the collection",
             "new_template": "New template",
+            "import_json": "Import JSON",
             "empty_hint": "A template is a label design: text, data fields and barcodes laid out on a label size. Items and locations print with it."
         }
     },
