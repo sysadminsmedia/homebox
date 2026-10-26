@@ -514,6 +514,7 @@
                 "export_failed": "Failed to export label template",
                 "imported": "Label template \"{name}\" imported",
                 "import_invalid": "This file is not a label template export",
+                "import_too_large": "This file is larger than {max}, so it cannot be a label template export",
                 "import_failed": "Failed to import label template"
             },
             "editor": {

@@ -32,6 +32,9 @@
   // Import: the file is the payload written by a card's "Export JSON", which matches the create request.
   const importInput = ref<HTMLInputElement | null>(null);
   const importing = ref(false);
+  // An export is a few KB of JSON plus any embedded images (the editor caps each at 512 KB),
+  // so anything beyond this is not a template and must not be read into memory.
+  const MAX_IMPORT_BYTES = 4 * 1024 * 1024;
 
   function parseTemplateExport(raw: unknown): LabelTemplateCreate | null {
     if (!raw || typeof raw !== "object") return null;
@@ -63,6 +66,10 @@
     const file = input.files?.[0];
     input.value = "";
     if (!file) return;
+    if (file.size > MAX_IMPORT_BYTES) {
+      toast.error(t("components.label_template.toast.import_too_large", { max: "4 MB" }));
+      return;
+    }
     importing.value = true;
     try {
       let parsed: unknown;
