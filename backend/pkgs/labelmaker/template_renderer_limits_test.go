@@ -72,7 +72,6 @@ func TestRenderTemplateRejectsOversizedOutput(t *testing.T) {
 
 func TestRenderElementsWithExtremeScaleAreBounded(t *testing.T) {
 	r := newLimitsRenderer(t)
-	img := whiteLabel(400, 200)
 	item := &ItemData{ID: uuid.New(), Name: "x", ItemURL: "https://example.test/item/1"}
 	huge := map[string]interface{}{"scaleX": 1e5, "scaleY": 1e5, keyOriginX: topLeft, keyOriginY: "top"}
 
@@ -83,12 +82,15 @@ func TestRenderElementsWithExtremeScaleAreBounded(t *testing.T) {
 	}
 	for name, obj := range cases {
 		withinBudget(t, name, func() {
+			img := whiteLabel(400, 200)
 			elem := parseCanvasElement(obj)
 			require.NoError(t, r.renderElement(img, elem, item, nil, 300))
+			if name == "rect" {
+				// The clipped fill still landed: the rect covers the whole label.
+				assert.Equal(t, color.RGBA{0, 0, 0, 255}, img.RGBAAt(200, 100))
+			}
 		})
 	}
-	// The rect filled the whole label: its clipped draw still landed.
-	assert.Equal(t, color.RGBA{0, 0, 0, 255}, img.RGBAAt(200, 100))
 }
 
 func TestRenderElementsFarOutsideLabelAreSkippedQuickly(t *testing.T) {
