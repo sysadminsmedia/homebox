@@ -13,6 +13,7 @@ import (
 	"image/png"
 	"math"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -21,6 +22,7 @@ import (
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
 	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/gofont/gobold"
 	"golang.org/x/image/font/gofont/goregular"
@@ -849,6 +851,10 @@ func (r *TemplateRenderer) renderBarcode(img *image.RGBA, elem CanvasElement, it
 	}
 
 	if content == "" {
+		// Nothing to encode: usually a missing HBOX_OPTIONS_HOSTNAME for URL sources, or a
+		// field the item does not have. Skip the element rather than print a placeholder.
+		log.Debug().Str("format", format).Str("source", contentSource).
+			Msg("label template barcode skipped, content is empty")
 		return nil
 	}
 
@@ -1133,7 +1139,16 @@ func (r *TemplateRenderer) replaceDataPlaceholders(text string, item *ItemData) 
 		result = strings.ReplaceAll(result, placeholder, value)
 	}
 
-	return result
+	return stripUnknownPlaceholders(result)
+}
+
+// placeholderPattern matches any {{field}} token left after substitution.
+var placeholderPattern = regexp.MustCompile(`\{\{[A-Za-z0-9_]+\}\}`)
+
+// stripUnknownPlaceholders removes placeholders that have no value in the current context,
+// so an item template used for a location (or the reverse) does not print "{{asset_id}}" literally.
+func stripUnknownPlaceholders(text string) string {
+	return placeholderPattern.ReplaceAllString(text, "")
 }
 
 // getFieldValue returns the value for a specific field name
@@ -1206,7 +1221,7 @@ func (r *TemplateRenderer) replaceLocationPlaceholders(text string, location *Lo
 		result = strings.ReplaceAll(result, placeholder, value)
 	}
 
-	return result
+	return stripUnknownPlaceholders(result)
 }
 
 // getLocationFieldValue returns the value for a specific field name from location data
