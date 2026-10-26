@@ -153,6 +153,16 @@ var LabelPresets = []LabelPreset{
 		Description: "Continuous Film Tape 2.4\" wide",
 	},
 	{
+		// 38 mm tape prints 413 dots at 300 dpi, so the preset uses the printable width.
+		Key:         "brother_dk2225",
+		Name:        "DK-2225",
+		Brand:       brandBrother,
+		Width:       35,
+		Height:      15.24,
+		Continuous:  true,
+		Description: "Continuous Paper Tape 1.5\" (38 mm) wide, 35 mm printable",
+	},
+	{
 		Key:         "brother_dk2243",
 		Name:        "DK-2243",
 		Brand:       brandBrother,

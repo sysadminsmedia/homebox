@@ -192,6 +192,31 @@ Because the server does the printing, one tap prints from a phone or tablet too,
 as the administrator has set the command. If it is not set, the **Label printer** destination is hidden; use **This
 browser** or **Download** instead, or ask your administrator.
 
+### Brother continuous tape
+
+Continuous DK tape prints a little narrower than the tape itself, and the printer adds a feed margin of about
+3 mm at each end of every label. Two consequences for templates:
+
+- Make the template as wide as the **printable** width, not the tape width, so the image prints 1:1 instead of
+  being scaled down by the print tool. The **DK-2225** preset is already 35 mm wide for 38 mm tape; for other
+  widths pick **Custom** and use the table below.
+- Make the template about 6 mm shorter than the sticker you want. A 15 mm high template on 38 mm tape comes out
+  as a sticker about 21 mm long.
+
+| Tape | Printable width at 300 dpi |
+| --- | --- |
+| 12 mm | 9 mm (106 dots) |
+| 29 mm | 26 mm (306 dots) |
+| 38 mm | 35 mm (413 dots) |
+| 50 mm | 47 mm (554 dots) |
+| 54 mm | 50 mm (590 dots) |
+| 62 mm | 59 mm (696 dots) |
+| 102 mm | 99 mm (1164 dots) |
+
+A working item label on 38 mm tape is 35 × 15 mm: a 15 mm QR code on the left, the name with **Auto-fit** and
+the asset id on the right. For locations, 35 × 30 mm with the name on top and a 20 mm QR code below leaves room
+for the path next to the code.
+
 ## Tips
 
 - Keep text inside the label with a small margin; label printers rarely print to the very edge.
@@ -212,6 +237,10 @@ larger and keep white space around it.
 server log first. Then run the same command by hand on the server, with a PNG file in place of `{{.FileName}}`. The
 file HomeBox passes is a PNG at the template's DPI, so the command and printer need to accept that. If the **Label
 printer** destination is missing, no print command is configured.
+
+**A location label prints `{{asset_id}}` or another item field as text.** Item-only fields have no value on
+a location label and print as nothing. If you see the raw placeholder, the server is older than this behaviour;
+otherwise check the spelling of the field name against the tables above.
 
 **The preview does not update.** Pick a preview item first; without one there is nothing to render. Use **Refresh** if
 the server was busy.
