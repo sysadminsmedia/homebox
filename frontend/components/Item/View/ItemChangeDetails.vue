@@ -58,6 +58,9 @@
       enabled.addTags = params.addTags ?? false;
       enabled.removeTags = params.removeTags ?? false;
 
+      // Start from a clean selection: a location picked on an earlier open must not
+      // be applied to a new set of items that do not share it.
+      newLocation.value = null;
       if (params.changeLocation && params.items.length > 0) {
         // if all items share the same location parent then preselect it
         const first = params.items[0]!.parent;
