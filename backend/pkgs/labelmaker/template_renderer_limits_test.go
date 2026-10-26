@@ -74,7 +74,7 @@ func TestRenderElementsWithExtremeScaleAreBounded(t *testing.T) {
 	r := newLimitsRenderer(t)
 	img := whiteLabel(400, 200)
 	item := &ItemData{ID: uuid.New(), Name: "x", ItemURL: "https://example.test/item/1"}
-	huge := map[string]interface{}{"scaleX": 1e5, "scaleY": 1e5, keyOriginX: topLeft, "originY": "top"}
+	huge := map[string]interface{}{"scaleX": 1e5, "scaleY": 1e5, keyOriginX: topLeft, keyOriginY: "top"}
 
 	cases := map[string]map[string]interface{}{
 		"rect":    canvasObject("rect", 0, 0, 100, 100, mergeMaps(huge, map[string]interface{}{"fill": black, "stroke": "#ff0000", "strokeWidth": 2.0})),
@@ -94,7 +94,7 @@ func TestRenderElementsWithExtremeScaleAreBounded(t *testing.T) {
 func TestRenderElementsFarOutsideLabelAreSkippedQuickly(t *testing.T) {
 	r := newLimitsRenderer(t)
 	item := &ItemData{ID: uuid.New(), Name: "x", ItemURL: "https://example.test/item/1"}
-	far := map[string]interface{}{keyOriginX: topLeft, "originY": "top"}
+	far := map[string]interface{}{keyOriginX: topLeft, keyOriginY: "top"}
 
 	cases := map[string]map[string]interface{}{
 		"rect negative":    canvasObject("rect", -1e9, -1e9, 100, 100, mergeMaps(far, map[string]interface{}{"fill": black})),
