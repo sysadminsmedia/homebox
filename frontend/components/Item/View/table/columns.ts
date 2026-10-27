@@ -89,7 +89,13 @@ export function makeColumns({
           },
           () => sortable(column, "items.name")
         ),
-      cell: ({ row }) => h("span", { class: "text-sm font-medium" }, row.getValue("name")),
+      cell: ({ row }) => {
+        const path = (row.original as EntitySummary & { locationPath?: string }).locationPath;
+        return h("div", { class: "flex flex-col gap-1" }, [
+          h("span", { class: "text-sm font-medium" }, String(row.getValue("name") ?? "")),
+          ...(path ? [h("span", { class: "text-xs text-muted-foreground" }, path)] : []),
+        ]);
+      },
     },
     {
       id: "quantity",

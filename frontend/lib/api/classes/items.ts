@@ -17,6 +17,18 @@ import type { AttachmentTypes } from "../types/non-generated";
 import type { MaintenanceFilters } from "./maintenance.ts";
 import type { Requests } from "~~/lib/requests";
 
+// "direct" retains the existing location item listing for backwards compatibility.
+export type LocationItemDepth = "direct" | "1" | "2" | "3" | "all";
+export type LocationDescendantDepth = Exclude<LocationItemDepth, "direct">;
+export type LocationItem = EntitySummary & { locationPath?: string };
+export type LocationDescendantResult = {
+  items: LocationItem[];
+  page: number;
+  pageSize: number;
+  total: number;
+  directTotal: number;
+};
+
 export type ItemsQuery = {
   orderBy?: string;
   orderDirection?: string;
@@ -220,6 +232,12 @@ export class ItemsApi extends BaseAPI {
 
   getLocation(id: string) {
     return this.http.get<EntityOut>({ url: route(`/entities/${id}`) });
+  }
+
+  getLocationDescendants(id: string, depth: LocationDescendantDepth, page = 1, pageSize = 24) {
+    return this.http.get<LocationDescendantResult>({
+      url: route("/entities/" + id + "/descendant-items", { depth, page, pageSize }),
+    });
   }
 
   deleteLocation(id: string) {

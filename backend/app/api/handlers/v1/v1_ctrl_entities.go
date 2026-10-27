@@ -9,6 +9,7 @@ import (
 	"math"
 	"math/big"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -206,6 +207,58 @@ func (ctrl *V1Controller) HandleEntityFullPath() errchain.HandlerFunc {
 		return out, nil
 	}
 
+	return adapters.CommandID("id", fn, http.StatusOK)
+}
+
+// HandleLocationDescendantItems godoc
+//
+//	@Summary	List the inventory contained in a location with configurable child depth
+//	@Tags		Entities
+//	@Produce	json
+//	@Param		id		path	string	true	"Location ID"
+//	@Param		depth	query	string	true	"Child-location depth: 1, 2, 3 or all"
+//	@Param		page	query	int	false	"Page number (default 1)"
+//	@Param		pageSize	query	int	false	"Page size, maximum 96 (default 24)"
+//	@Success	200	{object}	repo.LocationItemsResult
+//	@Router		/v1/entities/{id}/descendant-items [GET]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleLocationDescendantItems() errchain.HandlerFunc {
+	fn := func(r *http.Request, id uuid.UUID) (repo.LocationItemsResult, error) {
+		params := r.URL.Query()
+		depth := 0
+		switch params.Get("depth") {
+		case "1", "2", "3":
+			depth, _ = strconv.Atoi(params.Get("depth"))
+		case "all":
+			depth = 64 // matches the bounded repository ancestor traversal
+		default:
+			return repo.LocationItemsResult{}, validate.NewRequestError(
+				fmt.Errorf("depth must be 1, 2, 3 or all"), http.StatusBadRequest)
+		}
+		page, pageSize := 1, 24
+		if raw := params.Get("page"); raw != "" {
+			var err error
+			page, err = strconv.Atoi(raw)
+			if err != nil {
+				return repo.LocationItemsResult{}, validate.NewRequestError(
+					fmt.Errorf("invalid page number"), http.StatusBadRequest)
+			}
+		}
+		if raw := params.Get("pageSize"); raw != "" {
+			var err error
+			pageSize, err = strconv.Atoi(raw)
+			if err != nil {
+				return repo.LocationItemsResult{}, validate.NewRequestError(
+					fmt.Errorf("invalid page size"), http.StatusBadRequest)
+			}
+		}
+		if page < 1 || pageSize < 1 || pageSize > 96 {
+			return repo.LocationItemsResult{}, validate.NewRequestError(
+				fmt.Errorf("page must be positive and pageSize between 1 and 96"), http.StatusBadRequest)
+		}
+		ctx := services.NewContext(r.Context())
+		return ctrl.repo.Entities.QueryLocationDescendants(ctx, ctx.GID, id, depth, page, pageSize)
+	}
 	return adapters.CommandID("id", fn, http.StatusOK)
 }
 

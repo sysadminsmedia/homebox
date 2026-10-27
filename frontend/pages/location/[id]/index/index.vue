@@ -20,6 +20,9 @@
   import { Button } from "@/components/ui/button";
   import { Badge } from "@/components/ui/badge";
   import { Separator } from "@/components/ui/separator";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import { Switch } from "@/components/ui/switch";
+  import type { LocationItemDepth, LocationDescendantDepth, LocationItem } from "~~/lib/api/classes/items";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
   import BaseCard from "@/components/Base/Card.vue";
   import Currency from "~/components/global/Currency.vue";
@@ -192,28 +195,94 @@
     return ret;
   });
 
-  const { data: items, refresh: refreshItemList } = useAsyncData(
-    () => locationId.value + "_item_list",
+  // Keep the original direct-only listing unchanged. Opting into a child depth
+  // uses a dedicated, paginated backend query that follows physical placement
+  // overrides and returns each item's storage path.
+  const depth = computed<LocationItemDepth>(() => {
+    const saved = preferences.value.locationItemDepth;
+    return ["direct", "1", "2", "3", "all"].includes(saved) ? saved : "direct";
+  });
+  const locationPage = ref(1);
+  const locationPageSize = computed(() => Math.min(96, Math.max(1, preferences.value.itemsPerTablePage || 24)));
+  const descendantTotal = ref(0);
+
+  function setDepth(next: unknown) {
+    if (["direct", "1", "2", "3", "all"].includes(String(next))) {
+      preferences.value.locationItemDepth = String(next) as LocationItemDepth;
+    }
+  }
+
+  watch([locationId, depth, locationPageSize], () => {
+    locationPage.value = 1;
+  });
+
+  const { data: itemList, refresh: refreshItemList } = useAsyncData(
+    () => locationId.value + "_item_list_" + depth.value + "_" + locationPage.value + "_" + locationPageSize.value,
     async () => {
       if (!locationId.value) {
-        return [];
+        return { items: [] as LocationItem[], total: 0, directTotal: 0 };
       }
 
-      const resp = await api.items.getAll({
-        parentIds: [locationId.value],
-      });
+      if (depth.value === "direct") {
+        const resp = await api.items.getAll({ parentIds: [locationId.value] });
+        if (resp.error || !resp.data) {
+          toast.error(t("items.toast.failed_load_items"));
+          return { items: [] as LocationItem[], total: 0, directTotal: 0 };
+        }
+        return {
+          items: resp.data.items as LocationItem[],
+          total: resp.data.items.length,
+          directTotal: resp.data.items.length,
+        };
+      }
 
-      if (resp.error) {
+      const response = await api.items.getLocationDescendants(
+        locationId.value,
+        depth.value as LocationDescendantDepth,
+        locationPage.value,
+        locationPageSize.value
+      );
+      if (response.error || !response.data) {
         toast.error(t("items.toast.failed_load_items"));
-        return [];
+        return { items: [] as LocationItem[], total: 0, directTotal: 0 };
       }
-
-      return resp.data.items;
+      return response.data;
     },
-    {
-      watch: [locationId],
-    }
+    { watch: [locationId, depth, locationPage, locationPageSize] }
   );
+
+  const items = computed(() => {
+    const rows = itemList.value?.items ?? [];
+    if (depth.value === "direct" || preferences.value.showLocationPaths) return rows;
+    return rows.map(item => ({ ...item, locationPath: undefined }));
+  });
+
+  watch(
+    () => itemList.value?.total,
+    total => {
+      descendantTotal.value = total ?? 0;
+    },
+    { immediate: true }
+  );
+
+  const directItemTotal = computed(() => itemList.value?.directTotal ?? 0);
+  const nestedItemTotal = computed(() =>
+    Math.max(0, (itemList.value?.total ?? 0) - (itemList.value?.directTotal ?? 0))
+  );
+
+  const descendantPagination = proxyRefs({
+    page: computed({
+      get: () => locationPage.value,
+      set: (value: number) => {
+        locationPage.value = value;
+      },
+    }),
+    pageSize: locationPageSize,
+    totalSize: descendantTotal,
+    setPage: (newPage: number) => {
+      locationPage.value = Math.max(1, newPage);
+    },
+  });
 </script>
 
 <template>
@@ -341,9 +410,52 @@
         </div>
       </BaseCard>
 
-      <!-- Items in this location -->
-      <section v-if="location && items">
-        <ItemViewSelectable :items="items" @refresh="refreshItemList" />
+      <!-- Items in this location, optionally including child-location descendants -->
+      <section v-if="location" class="mt-4 space-y-3">
+        <div class="flex flex-wrap items-end gap-3 rounded-lg border p-3" data-location-depth-controls>
+          <div class="flex min-w-56 flex-col gap-1">
+            <label for="location-depth-select" class="text-sm font-medium">
+              {{ $t("locations.item_depth_label") }}
+            </label>
+            <Select :model-value="depth" @update:model-value="setDepth">
+              <SelectTrigger id="location-depth-select" data-location-depth-select class="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="direct">{{ $t("locations.item_depth_direct") }}</SelectItem>
+                <SelectItem value="1">{{ $t("locations.item_depth_1") }}</SelectItem>
+                <SelectItem value="2">{{ $t("locations.item_depth_2") }}</SelectItem>
+                <SelectItem value="3">{{ $t("locations.item_depth_3") }}</SelectItem>
+                <SelectItem value="all">{{ $t("locations.item_depth_all") }}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div v-if="depth !== 'direct'" class="flex items-center gap-2 pb-2">
+            <Switch id="location-show-paths" v-model="preferences.showLocationPaths" />
+            <label for="location-show-paths" class="text-sm">
+              {{ $t("locations.show_item_paths") }}
+            </label>
+          </div>
+          <p
+            v-if="depth !== 'direct' && itemList"
+            data-location-depth-count
+            class="ml-auto text-xs text-muted-foreground"
+          >
+            {{
+              $t("locations.direct_item_count", {
+                direct: directItemTotal,
+                nested: nestedItemTotal,
+              })
+            }}
+          </p>
+        </div>
+        <ItemViewSelectable
+          :key="'location-items-' + depth"
+          :items="items"
+          :pagination="depth === 'direct' ? undefined : descendantPagination"
+          :disable-sort="depth !== 'direct'"
+          @refresh="refreshItemList"
+        />
       </section>
 
       <!-- Child locations -->
