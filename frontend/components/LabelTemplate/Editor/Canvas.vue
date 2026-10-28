@@ -1,7 +1,8 @@
 <script setup lang="ts">
   import { onMounted, onBeforeUnmount, watch, nextTick } from "vue";
-  import { Canvas, IText, Textbox, Rect, Line, Group, FabricImage, FabricObject } from "fabric";
+  import { ActiveSelection, Canvas, IText, Textbox, Rect, Line, Group, FabricImage, FabricObject } from "fabric";
   import type { AlignTarget } from "./ToolRail.vue";
+  import { MM_TO_PX, type LabelBorder } from "./label-border";
 
   // Fabric 7 anchors new objects at their centre by default. The server
   // renderer and the transform panel work in top-left coordinates, so keep
@@ -25,6 +26,7 @@
     snapToGrid?: boolean;
     gridSize?: number;
     showGrid?: boolean;
+    labelBorder?: LabelBorder;
   }>();
 
   const emit = defineEmits<{
@@ -39,6 +41,7 @@
   let fabricCanvas: Canvas | null = null;
   let isLoadingData = false; // Prevent save during load
   const hasInitiallyLoaded = ref(false); // Track if initial data was loaded
+  const selectionCount = ref(0);
 
   // Zoom controls
   const zoomLevel = ref(1);
@@ -184,12 +187,15 @@
 
     // Listen for selection changes
     fabricCanvas.on("selection:created", e => {
+      selectionCount.value = fabricCanvas?.getActiveObjects().length ?? 0;
       emit("selectionChanged", e.selected?.[0] || null);
     });
     fabricCanvas.on("selection:updated", e => {
+      selectionCount.value = fabricCanvas?.getActiveObjects().length ?? 0;
       emit("selectionChanged", e.selected?.[0] || null);
     });
     fabricCanvas.on("selection:cleared", () => {
+      selectionCount.value = 0;
       emit("selectionChanged", null);
     });
 
@@ -304,24 +310,41 @@
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, width, height);
 
-    if (!props.showGrid) return;
+    if (props.showGrid) {
+      ctx.strokeStyle = "#e0e0e0";
+      ctx.lineWidth = 0.5;
 
-    ctx.strokeStyle = "#e0e0e0";
-    ctx.lineWidth = 0.5;
+      for (let x = 0; x <= width; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
 
-    for (let x = 0; x <= width; x += gridSize) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, height);
-      ctx.stroke();
+      for (let y = 0; y <= height; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
     }
 
-    for (let y = 0; y <= height; y += gridSize) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
-      ctx.stroke();
-    }
+    drawLabelBorder(ctx, width, height, zoom);
+  }
+
+  // The label border is not a canvas object: it is painted on the background
+  // layer exactly where the server renderer draws it, behind every element.
+  function drawLabelBorder(ctx: CanvasRenderingContext2D, width: number, height: number, zoom: number) {
+    const border = props.labelBorder;
+    if (!border?.enabled) return;
+    const lineWidth = Math.max(0.5, border.width * MM_TO_PX * zoom);
+    const inset = Math.max(0, border.inset * MM_TO_PX * zoom);
+    const w = width - inset * 2 - lineWidth;
+    const h = height - inset * 2 - lineWidth;
+    if (w <= 0 || h <= 0) return;
+    ctx.strokeStyle = border.color || "#000000";
+    ctx.lineWidth = lineWidth;
+    ctx.strokeRect(inset + lineWidth / 2, inset + lineWidth / 2, w, h);
   }
 
   function saveCanvas() {
@@ -392,7 +415,9 @@
         format,
         contentSource,
       },
-    } as ConstructorParameters<typeof Group>[1] & { data: Record<string, unknown> });
+    } as ConstructorParameters<typeof Group>[1] & {
+      data: Record<string, unknown>;
+    });
 
     fabricCanvas.add(group);
     fabricCanvas.setActiveObject(group);
@@ -406,11 +431,14 @@
     let shape: FabricObject;
 
     if (shapeType === "rect") {
+      // A new rectangle frames the label with a 1 mm inset, so a border is one
+      // click; it can still be dragged smaller.
+      const inset = Math.round(MM_TO_PX);
       shape = new Rect({
-        left: 20,
-        top: 20,
-        width: 100,
-        height: 50,
+        left: inset,
+        top: inset,
+        width: Math.max(10, displayWidth.value - inset * 2),
+        height: Math.max(10, displayHeight.value - inset * 2),
         fill: "transparent",
         stroke: "#000000",
         strokeWidth: 1,
@@ -468,42 +496,82 @@
     saveCanvas();
   }
 
-  // Align the selected object against the label edges / center.
+  interface Bounds {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  }
+
+  // Move obj so that its bounding box sits against the given edge or centre
+  // line of bounds. Works for rotated objects because it goes through the
+  // bounding rect rather than left/top directly.
+  function alignObjectTo(obj: FabricObject, target: AlignTarget, bounds: Bounds) {
+    const rect = obj.getBoundingRect();
+    const dx = (obj.left || 0) - rect.left;
+    const dy = (obj.top || 0) - rect.top;
+
+    switch (target) {
+      case "left":
+        obj.set({ left: bounds.left + dx });
+        break;
+      case "center":
+        obj.set({ left: bounds.left + (bounds.width - rect.width) / 2 + dx });
+        break;
+      case "right":
+        obj.set({ left: bounds.left + bounds.width - rect.width + dx });
+        break;
+      case "top":
+        obj.set({ top: bounds.top + dy });
+        break;
+      case "middle":
+        obj.set({ top: bounds.top + (bounds.height - rect.height) / 2 + dy });
+        break;
+      case "bottom":
+        obj.set({ top: bounds.top + bounds.height - rect.height + dy });
+        break;
+    }
+    obj.setCoords();
+  }
+
+  // Align the selected object (or a whole multi-selection) against the label edges / center.
   function alignSelected(target: AlignTarget) {
     if (!fabricCanvas) return;
     const obj = fabricCanvas.getActiveObject();
     if (!obj) return;
 
-    const rect = obj.getBoundingRect();
-    const dx = (obj.left || 0) - rect.left;
-    const dy = (obj.top || 0) - rect.top;
-    const W = displayWidth.value;
-    const H = displayHeight.value;
-
-    switch (target) {
-      case "left":
-        obj.set({ left: dx });
-        break;
-      case "center":
-        obj.set({ left: (W - rect.width) / 2 + dx });
-        break;
-      case "right":
-        obj.set({ left: W - rect.width + dx });
-        break;
-      case "top":
-        obj.set({ top: dy });
-        break;
-      case "middle":
-        obj.set({ top: (H - rect.height) / 2 + dy });
-        break;
-      case "bottom":
-        obj.set({ top: H - rect.height + dy });
-        break;
-    }
-    obj.setCoords();
+    alignObjectTo(obj, target, {
+      left: 0,
+      top: 0,
+      width: displayWidth.value,
+      height: displayHeight.value,
+    });
     fabricCanvas.renderAll();
     saveCanvas();
     emit("selectionChanged", obj);
+  }
+
+  // Align every object of a multi-selection against the selection's own bounds,
+  // e.g. left edges flush or centred on a common line.
+  function alignWithinSelection(target: AlignTarget) {
+    if (!fabricCanvas) return;
+    const active = fabricCanvas.getActiveObject();
+    if (!(active instanceof ActiveSelection)) return;
+    const objects = active.getObjects();
+    if (objects.length < 2) return;
+
+    const bounds = active.getBoundingRect();
+    // Objects inside a selection carry selection-relative coordinates; leave the
+    // selection so each one can be moved in label coordinates, then reselect.
+    fabricCanvas.discardActiveObject();
+    for (const obj of objects) {
+      alignObjectTo(obj, target, bounds);
+    }
+    const reselected = new ActiveSelection(objects, { canvas: fabricCanvas });
+    fabricCanvas.setActiveObject(reselected);
+    fabricCanvas.requestRenderAll();
+    saveCanvas();
+    emit("selectionChanged", objects[0] ?? null);
   }
 
   function nudgeSelected(dx: number, dy: number) {
@@ -639,6 +707,8 @@
     addImage,
     deleteSelected,
     alignSelected,
+    alignWithinSelection,
+    selectionCount,
     updateSelectedObject,
     getCanvas,
     getLayers,
@@ -748,12 +818,13 @@
     drawGrid();
   });
 
-  // Watch for grid settings changes
+  // Watch for grid and border settings changes
   watch(
-    () => [props.showGrid, props.gridSize],
+    () => [props.showGrid, props.gridSize, props.labelBorder],
     () => {
       drawGrid();
-    }
+    },
+    { deep: true }
   );
 
   // Watch for canvas data changes (e.g., when template loads asynchronously)
@@ -793,14 +864,12 @@
 <template>
   <div ref="canvasContainerRef" class="min-h-[300px] overflow-auto rounded border bg-gray-100 p-4 dark:bg-zinc-800">
     <div class="relative inline-block shadow-lg">
-      <!-- Grid layer (behind fabric canvas) -->
-      <canvas
-        ref="gridCanvasRef"
-        class="pointer-events-none absolute left-0 top-0"
-        :style="{ zIndex: 0 }"
-        :width="displayWidth * zoomLevel"
-        :height="displayHeight * zoomLevel"
-      />
+      <!--
+        Grid layer (behind fabric canvas). drawGrid sizes it; binding width/height
+        here as well would let Vue reset the element, and with it the drawing,
+        on the render that follows every zoom change.
+      -->
+      <canvas ref="gridCanvasRef" class="pointer-events-none absolute left-0 top-0" :style="{ zIndex: 0 }" />
       <!-- Fabric canvas (front, with transparent background area) -->
       <canvas ref="canvasRef" class="relative" :style="{ zIndex: 1 }" />
     </div>

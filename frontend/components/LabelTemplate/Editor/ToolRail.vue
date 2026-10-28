@@ -35,6 +35,8 @@
 
   const props = defineProps<{
     hasSelection: boolean;
+    /** Number of objects in the current selection; two or more enable "Align to selection". */
+    selectionCount?: number;
     canUndo: boolean;
     canRedo: boolean;
   }>();
@@ -45,6 +47,7 @@
     addShape: [type: "rect" | "line"];
     addImage: [file: File];
     align: [target: AlignTarget];
+    alignSelection: [target: AlignTarget];
     undo: [];
     redo: [];
     deleteSelected: [];
@@ -67,7 +70,11 @@
     input.value = "";
     if (!file) return;
     if (file.size > MAX_IMAGE_BYTES) {
-      toast.error(t("components.label_template.editor.tools.image_too_large", { max: "512 KB" }));
+      toast.error(
+        t("components.label_template.editor.tools.image_too_large", {
+          max: "512 KB",
+        })
+      );
       return;
     }
     emit("addImage", file);
@@ -265,6 +272,20 @@
                   <component :is="a.icon" class="mr-2 size-4" />
                   {{ t(`components.label_template.editor.align.${a.key}`) }}
                 </DropdownMenuItem>
+                <template v-if="(props.selectionCount ?? 0) > 1">
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel class="text-xs text-muted-foreground">
+                    {{ $t("components.label_template.editor.tools.align_to_selection") }}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem
+                    v-for="a in alignTargets"
+                    :key="`sel-${a.target}`"
+                    @click="emit('alignSelection', a.target)"
+                  >
+                    <component :is="a.icon" class="mr-2 size-4" />
+                    {{ t(`components.label_template.editor.align.${a.key}`) }}
+                  </DropdownMenuItem>
+                </template>
               </DropdownMenuContent>
             </DropdownMenu>
           </span>

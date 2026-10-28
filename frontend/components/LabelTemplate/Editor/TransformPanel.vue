@@ -7,8 +7,21 @@
   const props = defineProps<{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     selectedObject: any;
+    /** Bumped by the parent after in-place changes to the selected Fabric object */
+    revision?: number;
     unit: EditorUnit;
   }>();
+
+  // Fabric changes objects in place, so re-read the selection whenever the parent says so.
+  const object = shallowRef(props.selectedObject);
+  watch(
+    () => [props.selectedObject, props.revision],
+    () => {
+      object.value = props.selectedObject;
+      triggerRef(object);
+    },
+    { flush: "sync" }
+  );
 
   const emit = defineEmits<{
     updateObject: [updates: Record<string, unknown>];
@@ -32,12 +45,12 @@
     return n * pxPerUnit.value;
   }
 
-  const type = computed(() => String(props.selectedObject?.type || "").toLowerCase());
+  const type = computed(() => String(object.value?.type || "").toLowerCase());
   const canResize = computed(() => type.value === "rect" || type.value === "image" || type.value === "group");
 
   const objectProps = computed(() => {
-    if (!props.selectedObject) return null;
-    const obj = props.selectedObject;
+    if (!object.value) return null;
+    const obj = object.value;
     return {
       left: toUnit(obj.left || 0),
       top: toUnit(obj.top || 0),

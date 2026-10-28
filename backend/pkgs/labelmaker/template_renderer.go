@@ -181,6 +181,9 @@ func (r *TemplateRenderer) RenderTemplate(ctx RenderContext) ([]byte, error) {
 
 	// Parse and render canvas elements
 	if ctx.Template.CanvasData != nil {
+		if border, ok := parseLabelBorder(ctx.Template.CanvasData); ok {
+			renderLabelBorder(img, border, dpi)
+		}
 		err := r.renderCanvasElements(img, ctx.Template.CanvasData, ctx.Item, ctx.Location, dpi)
 		if err != nil {
 			return nil, fmt.Errorf("failed to render canvas elements: %w", err)
@@ -194,6 +197,72 @@ func (r *TemplateRenderer) RenderTemplate(ctx RenderContext) ([]byte, error) {
 	}
 
 	return buf.Bytes(), nil
+}
+
+// labelBorder is the optional frame around the printable area. It is stored
+// under canvasData["labelBorder"] (sizes in mm) so it travels with the design
+// and needs no schema change; the editor draws the same frame on its background.
+type labelBorder struct {
+	Width float64 // mm
+	Inset float64 // mm
+	Color color.Color
+}
+
+const (
+	minLabelBorderWidthMM     = 0.1
+	maxLabelBorderWidthMM     = 10.0
+	defaultLabelBorderWidthMM = 0.3
+	defaultLabelBorderInsetMM = 1.0
+)
+
+// parseLabelBorder reads the border settings from canvas data. The second
+// result is false when no border should be drawn.
+func parseLabelBorder(canvasData map[string]interface{}) (labelBorder, bool) {
+	raw, ok := canvasData["labelBorder"].(map[string]interface{})
+	if !ok {
+		return labelBorder{}, false
+	}
+	if enabled, _ := raw["enabled"].(bool); !enabled {
+		return labelBorder{}, false
+	}
+	b := labelBorder{Width: defaultLabelBorderWidthMM, Inset: defaultLabelBorderInsetMM, Color: color.Black}
+	if v, ok := raw["width"].(float64); ok && v > 0 {
+		b.Width = v
+	}
+	if v, ok := raw["inset"].(float64); ok && v >= 0 {
+		b.Inset = v
+	}
+	if v, ok := raw["color"].(string); ok && v != "" {
+		b.Color = parseColor(v)
+	}
+	b.Width = math.Min(math.Max(b.Width, minLabelBorderWidthMM), maxLabelBorderWidthMM)
+	return b, true
+}
+
+// renderLabelBorder draws the frame inset from every label edge. The values
+// come from user input, so the inset is clamped until the frame fits.
+func renderLabelBorder(img *image.RGBA, b labelBorder, dpi int) {
+	bounds := img.Bounds()
+	w := mmToPixels(b.Width, dpi)
+	if w < 1 {
+		w = 1
+	}
+	inset := mmToPixels(b.Inset, dpi)
+	maxInset := (min(bounds.Dx(), bounds.Dy()) - w) / 2
+	if maxInset < 0 {
+		maxInset = 0
+	}
+	if inset > maxInset {
+		inset = maxInset
+	}
+	rect := bounds.Inset(inset)
+	if rect.Empty() {
+		return
+	}
+	fillRect(img, image.Rect(rect.Min.X, rect.Min.Y, rect.Max.X, rect.Min.Y+w), b.Color) // top
+	fillRect(img, image.Rect(rect.Min.X, rect.Max.Y-w, rect.Max.X, rect.Max.Y), b.Color) // bottom
+	fillRect(img, image.Rect(rect.Min.X, rect.Min.Y, rect.Min.X+w, rect.Max.Y), b.Color) // left
+	fillRect(img, image.Rect(rect.Max.X-w, rect.Min.Y, rect.Max.X, rect.Max.Y), b.Color) // right
 }
 
 // renderCanvasElements renders all elements from the canvas data
@@ -211,6 +280,10 @@ func (r *TemplateRenderer) renderCanvasElements(img *image.RGBA, canvasData map[
 
 		elem := parseCanvasElement(objMap)
 		if err := r.renderElement(img, elem, item, location, dpi); err != nil {
+			// One bad element must not spoil the label, but say why it is missing
+			// (for example a Code 128 whose content needs more modules than the
+			// element has pixels).
+			log.Debug().Err(err).Str("type", elem.Type).Msg("label template element skipped")
 			continue
 		}
 	}

@@ -486,6 +486,11 @@
                 "two_color_hint": "Two-color roll: Use black and red elements in your label design.",
                 "share_with_group": "Share with collection",
                 "share_description": "Allow others in your collection to use this template",
+                "border": "Border",
+                "border_description": "Frame the printable area; printed with every label",
+                "border_width": "Line width",
+                "border_inset": "Inset",
+                "border_color": "Color",
                 "brand_custom": "Custom",
                 "dpi_option": "{dpi} DPI",
                 "dpi_recommended": "{dpi} DPI (Recommended)",
@@ -567,7 +572,8 @@
                 "fixed_value": "Fixed value…",
                 "fixed_value_option": "Fixed value",
                 "fixed_value_hint": "Printed as typed on every label",
-                "digits_only": "Digits only"
+                "digits_only": "Digits only",
+                "density_warning": "About {dots} printer dots per bar at {dpi} dpi; a barcode needs at least {min} to scan reliably. Widen it or choose a shorter data source."
                 },
                 "properties": {
                     "title": "Properties",
@@ -672,6 +678,7 @@
                     "line": "Line",
                     "align": "Align",
                     "align_to_label": "Align to label",
+                    "align_to_selection": "Align to selection",
                     "undo": "Undo",
                     "redo": "Redo",
                     "delete": "Delete element"

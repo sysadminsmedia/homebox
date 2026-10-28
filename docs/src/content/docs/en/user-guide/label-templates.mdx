@@ -38,7 +38,7 @@ every member of the collection can pick their own.
 The editor has three parts:
 
 - **Tool rail** (left): add text, a barcode, a rectangle or line, or an image. Below it: align the selection against
-  the label edges, undo and redo, and delete.
+  the label edges (or, with several elements selected, against each other), undo and redo, and delete.
 - **Canvas** (middle): the label at real proportions with rulers. Drag elements to move them, drag the handles to
   resize, double-click text to edit it. Zoom controls, grid, snap-to-grid and rulers sit under the canvas. The
   **Print preview** under the canvas shows the label rendered by the server for a real item.
@@ -74,10 +74,20 @@ Location labels use `{{location_name}}`, `{{location_path}}`, `{{item_count}}` a
 **Barcodes** are added from the tool rail. Pick the symbology (QR code, DataMatrix, Code 128, Code 39, EAN-13, EAN-8
 or UPC-A) and what it should encode. Only compatible sources are offered: a numeric-only symbology such as EAN cannot
 encode a URL or an asset id, so it offers a **Fixed value** instead, a number you type in the Element tab that prints
-the same on every label. The data source and fixed value of a selected barcode can be changed in the Element tab at
-any time. The canvas shows a placeholder; the print preview shows the real code.
+the same on every label. Linear symbologies (Code 128, Code 39) do not offer URLs or the item id either: a 60-character
+URL needs around 700 bars, more than a small label has printer dots, so those belong in a QR code or DataMatrix. The
+Element tab warns when a linear barcode would get fewer than two printer dots per bar at the template's resolution;
+widen the element or pick a shorter source such as the asset id. The data source and fixed value of a selected barcode
+can be changed in the Element tab at any time. The canvas shows a placeholder; the print preview shows the real code.
 
 **Images** such as a logo are embedded in the template, so keep them small (under 512 KB). PNG, JPEG and GIF work.
+
+**Shapes**: a new rectangle is sized to the label with a 1 mm inset, so a frame is one click away; drag its handles to
+make it smaller. For a frame that is part of the label itself, use the **Border** setting in the Label tab instead.
+
+**Align**: with one element selected, the Align menu moves it against the label edges or centres it. Shift-click or
+drag a box to select several elements and the same menu offers **Align to selection**, which lines them up against
+each other: left edges flush, centred on a common line, and so on.
 
 ### Layers and the Label tab
 
@@ -87,8 +97,10 @@ print, and the arrows to change the stacking order.
 ![The Label tab with name, preset, size, resolution and sharing](../../../../assets/user-guide/labels/editor-label-settings.png)
 
 The **Label** tab holds everything about the template itself: its name and description, the preset and size,
-orientation, print resolution and the **Share with collection** switch. Display settings for rulers, grid and snap
-live at the bottom.
+orientation, print resolution and the **Share with collection** switch. A **Border** switch frames the printable
+area with a line of the width, inset and colour you choose (default 0.3 mm, 1 mm in from the edge); it is drawn
+behind the elements in the editor and printed with every label. Display settings for rulers, grid and snap live at
+the bottom.
 
 ### Preview and test print
 

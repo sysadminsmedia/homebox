@@ -7,6 +7,7 @@
   import { Button } from "@/components/ui/button";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import type { LabelmakerLabelPreset } from "~/lib/api/types/data-contracts";
+  import type { LabelBorder } from "./label-border";
 
   export interface EditorSettings {
     name: string;
@@ -27,6 +28,7 @@
 
   const settings = defineModel<EditorSettings>({ required: true });
   const display = defineModel<DisplaySettings>("display", { required: true });
+  const border = defineModel<LabelBorder>("border", { required: true });
 
   const props = defineProps<{
     presets: LabelmakerLabelPreset[];
@@ -56,7 +58,11 @@
       continuous: t("components.label_template.form.continuous_labels"),
       "die-cut": t("components.label_template.form.die_cut_labels"),
     };
-    const groups: { key: string; label: string; presets: LabelmakerLabelPreset[] }[] = [];
+    const groups: {
+      key: string;
+      label: string;
+      presets: LabelmakerLabelPreset[];
+    }[] = [];
     for (const brand of brandOrder) {
       const cats = brandMap[brand];
       if (!cats) continue;
@@ -64,7 +70,11 @@
         const list = cats[category];
         if (list.length === 0) continue;
         list.sort((a, b) => a.name.localeCompare(b.name));
-        groups.push({ key: `${brand}-${category}`, label: `${brand} · ${categoryLabels[category]}`, presets: list });
+        groups.push({
+          key: `${brand}-${category}`,
+          label: `${brand} · ${categoryLabels[category]}`,
+          presets: list,
+        });
       }
     }
     return groups;
@@ -119,7 +129,9 @@
         <SelectContent class="max-h-80">
           <SelectItem value="none">{{ $t("components.label_template.form.preset_custom") }}</SelectItem>
           <template v-for="group in presetGroups" :key="group.key">
-            <div class="px-2 py-1.5 text-xs font-semibold text-muted-foreground">{{ group.label }}</div>
+            <div class="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+              {{ group.label }}
+            </div>
             <SelectItem v-for="preset in group.presets" :key="preset.key" :value="preset.key">
               {{ preset.name }}
               <span v-if="preset.twoColor" class="ml-1 font-medium text-red-600 dark:text-red-400">
@@ -211,13 +223,68 @@
     <div class="flex items-center justify-between gap-4 rounded-md border p-3">
       <div class="space-y-0.5">
         <Label for="ls-shared">{{ $t("components.label_template.form.share_with_group") }}</Label>
-        <p class="text-xs text-muted-foreground">{{ $t("components.label_template.form.share_description") }}</p>
+        <p class="text-xs text-muted-foreground">
+          {{ $t("components.label_template.form.share_description") }}
+        </p>
       </div>
       <Switch id="ls-shared" v-model="settings.isShared" />
     </div>
 
+    <div class="space-y-3 rounded-md border p-3">
+      <div class="flex items-center justify-between gap-4">
+        <div class="space-y-0.5">
+          <Label for="ls-border">{{ $t("components.label_template.form.border") }}</Label>
+          <p class="text-xs text-muted-foreground">
+            {{ $t("components.label_template.form.border_description") }}
+          </p>
+        </div>
+        <Switch id="ls-border" v-model="border.enabled" />
+      </div>
+      <div v-if="border.enabled" class="grid grid-cols-3 gap-3">
+        <div class="space-y-1">
+          <Label for="ls-border-width" class="text-xs text-muted-foreground">
+            {{ $t("components.label_template.form.border_width") }}
+          </Label>
+          <div class="flex items-center gap-1">
+            <Input
+              id="ls-border-width"
+              v-model.number="border.width"
+              type="number"
+              step="0.1"
+              min="0.1"
+              max="10"
+              class="h-8"
+            />
+            <span class="shrink-0 text-xs text-muted-foreground">mm</span>
+          </div>
+        </div>
+        <div class="space-y-1">
+          <Label for="ls-border-inset" class="text-xs text-muted-foreground">
+            {{ $t("components.label_template.form.border_inset") }}
+          </Label>
+          <div class="flex items-center gap-1">
+            <Input id="ls-border-inset" v-model.number="border.inset" type="number" step="0.5" min="0" class="h-8" />
+            <span class="shrink-0 text-xs text-muted-foreground">mm</span>
+          </div>
+        </div>
+        <div class="space-y-1">
+          <Label for="ls-border-color" class="text-xs text-muted-foreground">
+            {{ $t("components.label_template.form.border_color") }}
+          </Label>
+          <input
+            id="ls-border-color"
+            v-model="border.color"
+            type="color"
+            class="h-8 w-full cursor-pointer rounded border bg-background"
+          />
+        </div>
+      </div>
+    </div>
+
     <div class="space-y-3 border-t pt-4">
-      <h4 class="text-sm font-medium">{{ $t("components.label_template.editor.display.title") }}</h4>
+      <h4 class="text-sm font-medium">
+        {{ $t("components.label_template.editor.display.title") }}
+      </h4>
       <label class="flex items-center justify-between text-sm">
         {{ $t("components.label_template.editor.display.show_ruler") }}
         <input v-model="display.showRuler" type="checkbox" class="size-4" />

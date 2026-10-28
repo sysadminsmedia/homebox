@@ -18,10 +18,23 @@
     defineProps<{
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       selectedObject: any;
+      /** Bumped by the parent after in-place changes to the selected Fabric object */
+      revision?: number;
       /** Unit the width field is shown in; the canvas itself works in CSS pixels at 96 dpi */
       unit?: "mm" | "in";
     }>(),
-    { unit: "mm" }
+    { unit: "mm", revision: 0 }
+  );
+
+  // Fabric changes objects in place, so re-read the selection whenever the parent says so.
+  const object = shallowRef(props.selectedObject);
+  watch(
+    () => [props.selectedObject, props.revision],
+    () => {
+      object.value = props.selectedObject;
+      triggerRef(object);
+    },
+    { flush: "sync" }
   );
 
   const PX_PER_MM = 96 / 25.4;
@@ -67,9 +80,9 @@
 
   // Reactive properties
   const objectProps = computed(() => {
-    if (!props.selectedObject) return null;
+    if (!object.value) return null;
 
-    const obj = props.selectedObject;
+    const obj = object.value;
     const data = obj.data || {};
 
     return {

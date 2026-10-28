@@ -28,6 +28,12 @@
     type EditorSettings,
     type DisplaySettings,
   } from "~/components/LabelTemplate/Editor/LabelSettings.vue";
+  import {
+    DEFAULT_LABEL_BORDER,
+    readLabelBorder,
+    withLabelBorder,
+    type LabelBorder,
+  } from "~/components/LabelTemplate/Editor/label-border";
   import type { EntitySummary } from "~/lib/api/types/data-contracts";
 
   definePageMeta({
@@ -69,6 +75,10 @@
     gridSize: 10,
   });
 
+  // The border is part of canvasData, so it is saved with the design and
+  // rendered by the server; here it is edited as its own small object.
+  const border = reactive<LabelBorder>({ ...DEFAULT_LABEL_BORDER });
+
   const unit = ref<EditorUnit>("mm");
   const localCanvasData = ref<Record<string, unknown>>({});
 
@@ -83,9 +93,28 @@
     settings.dpi = tpl.dpi;
     settings.isShared = tpl.isShared;
     if (tpl.canvasData) localCanvasData.value = tpl.canvasData;
+    Object.assign(border, readLabelBorder(tpl.canvasData));
   }
 
   watch(template, loadFromTemplate, { immediate: true });
+
+  watch(border, () => {
+    localCanvasData.value = withLabelBorder(localCanvasData.value, border);
+  });
+
+  // The API returns JSON objects with sorted keys while the editor builds them
+  // in insertion order, so compare canvas data independent of key order.
+  function stableStringify(value: unknown): string {
+    if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
+    if (value && typeof value === "object") {
+      const o = value as Record<string, unknown>;
+      return `{${Object.keys(o)
+        .sort()
+        .map(k => `${JSON.stringify(k)}:${stableStringify(o[k])}`)
+        .join(",")}}`;
+    }
+    return JSON.stringify(value) ?? "null";
+  }
 
   const isDirty = computed(() => {
     const tpl = template.value;
@@ -98,7 +127,7 @@
       settings.preset !== (tpl.preset || "") ||
       settings.dpi !== tpl.dpi ||
       settings.isShared !== tpl.isShared;
-    const canvasChanged = JSON.stringify(localCanvasData.value) !== JSON.stringify(tpl.canvasData ?? {});
+    const canvasChanged = stableStringify(localCanvasData.value) !== stableStringify(tpl.canvasData ?? {});
     return settingsChanged || canvasChanged;
   });
 
@@ -119,6 +148,9 @@
   const canvasRef = ref<InstanceType<typeof LabelTemplateEditorCanvas> | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const selectedObject = ref<any>(null);
+  // Fabric mutates objects in place, which Vue cannot see; the panels re-read
+  // the selection whenever this counter moves.
+  const selectionRevision = ref(0);
   const isSaving = ref(false);
   const isTestPrinting = ref(false);
   const activeTab = ref<"element" | "layers" | "label">("element");
@@ -154,6 +186,7 @@
     return t(`components.label_template.editor.element.${map[selectedType.value] ?? "type_group"}`);
   });
 
+  const selectionCount = computed(() => canvasRef.value?.selectionCount ?? 0);
   const canUndo = computed(() => canvasRef.value?.canUndo ?? false);
   const canRedo = computed(() => canvasRef.value?.canRedo ?? false);
   const zoomLevel = computed(() => canvasRef.value?.zoomLevel ?? 1);
@@ -168,13 +201,15 @@
   }
 
   function handleCanvasUpdate(data: Record<string, unknown>) {
-    localCanvasData.value = data;
+    // Fabric serialises only its own objects; keep the label-level settings with them.
+    localCanvasData.value = withLabelBorder(data, border);
     nextTick(() => refreshLayers());
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function handleSelectionChanged(obj: any) {
     selectedObject.value = obj;
+    selectionRevision.value++;
     // Jump to the element tab on selection unless the user is working in the layer list
     if (obj && activeTab.value !== "layers") activeTab.value = "element";
   }
@@ -309,9 +344,21 @@
   );
 
   const tabs = computed(() => [
-    { id: "element" as const, label: t("components.label_template.editor.tabs.element"), count: undefined },
-    { id: "layers" as const, label: t("components.label_template.editor.tabs.layers"), count: layers.value.length },
-    { id: "label" as const, label: t("components.label_template.editor.tabs.label"), count: undefined },
+    {
+      id: "element" as const,
+      label: t("components.label_template.editor.tabs.element"),
+      count: undefined,
+    },
+    {
+      id: "layers" as const,
+      label: t("components.label_template.editor.tabs.layers"),
+      count: layers.value.length,
+    },
+    {
+      id: "label" as const,
+      label: t("components.label_template.editor.tabs.label"),
+      count: undefined,
+    },
   ]);
 </script>
 
@@ -392,6 +439,7 @@
         <!-- Tool rail -->
         <LabelTemplateEditorToolRail
           :has-selection="!!selectedObject"
+          :selection-count="selectionCount"
           :can-undo="canUndo"
           :can-redo="canRedo"
           @add-text="canvasRef?.addText()"
@@ -399,6 +447,7 @@
           @add-shape="type => canvasRef?.addShape(type)"
           @add-image="handleAddImage"
           @align="handleAlign"
+          @align-selection="target => canvasRef?.alignWithinSelection(target)"
           @undo="canvasRef?.undo()"
           @redo="canvasRef?.redo()"
           @delete-selected="handleDeleteSelected"
@@ -409,6 +458,7 @@
           <LabelTemplateEditorTextToolbar
             v-if="isTextSelected"
             :selected-object="selectedObject"
+            :revision="selectionRevision"
             :unit="unit"
             @update-object="handleUpdateObject"
             @insert-field="handleInsertField"
@@ -440,6 +490,7 @@
                   :snap-to-grid="display.snapToGrid"
                   :show-grid="display.showGrid"
                   :grid-size="display.gridSize"
+                  :label-border="border"
                   @update:canvas-data="handleCanvasUpdate"
                   @selection-changed="handleSelectionChanged"
                   @loaded="refreshLayers"
@@ -455,6 +506,7 @@
                 :snap-to-grid="display.snapToGrid"
                 :show-grid="display.showGrid"
                 :grid-size="display.gridSize"
+                :label-border="border"
                 @update:canvas-data="handleCanvasUpdate"
                 @selection-changed="handleSelectionChanged"
                 @loaded="refreshLayers"
@@ -566,12 +618,15 @@
                 </div>
                 <LabelTemplateEditorTransformPanel
                   :selected-object="selectedObject"
+                  :revision="selectionRevision"
                   :unit="unit"
                   @update-object="handleUpdateObject"
                 />
                 <LabelTemplateEditorBarcodePanel
                   v-if="selectedObject?.data?.type === 'barcode'"
                   :selected-object="selectedObject"
+                  :revision="selectionRevision"
+                  :dpi="settings.dpi"
                   @update-object="handleUpdateObject"
                 />
                 <div v-if="isTextSelected" class="space-y-2">
@@ -587,7 +642,8 @@
                       class="h-7 rounded-full px-2.5 text-xs"
                       @click="handleInsertField(field)"
                     >
-                      + {{ $t(`components.label_template.editor.data_fields.${field}`) }}
+                      +
+                      {{ $t(`components.label_template.editor.data_fields.${field}`) }}
                     </Button>
                   </div>
                 </div>
@@ -612,6 +668,7 @@
               v-else
               v-model="settings"
               v-model:display="display"
+              v-model:border="border"
               :presets="presets ?? []"
             />
           </div>
@@ -620,7 +677,9 @@
     </template>
 
     <div v-else class="flex flex-col items-center justify-center py-12">
-      <p class="text-muted-foreground">{{ $t("components.label_template.editor.not_found") }}</p>
+      <p class="text-muted-foreground">
+        {{ $t("components.label_template.editor.not_found") }}
+      </p>
       <Button variant="outline" class="mt-4" as-child>
         <NuxtLink to="/label-templates">{{ $t("components.label_template.editor.header.back") }}</NuxtLink>
       </Button>
