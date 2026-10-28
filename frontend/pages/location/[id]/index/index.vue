@@ -32,6 +32,7 @@
   import DetailsSection from "~/components/global/DetailsSection/DetailsSection.vue";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
+  import { clampPageToTotal } from "~/components/Item/View/pagination";
   import ItemAttachmentsList from "~/components/Item/AttachmentsList.vue";
   import ItemImageDialog from "~/components/Item/ImageDialog.vue";
   import LocationCard from "~/components/Location/Card.vue";
@@ -261,6 +262,12 @@
     () => itemList.value?.total,
     total => {
       descendantTotal.value = total ?? 0;
+      // A delete/move can shrink the final page. Jump to the last valid page
+      // and let the page-sensitive async-data key fetch its contents.
+      if (depth.value !== "direct" && total !== undefined) {
+        const validPage = clampPageToTotal(locationPage.value, total, locationPageSize.value);
+        if (validPage !== locationPage.value) locationPage.value = validPage;
+      }
     },
     { immediate: true }
   );

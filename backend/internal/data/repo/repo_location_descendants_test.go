@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/google/uuid"
@@ -210,4 +211,33 @@ func TestLocationDescendants_CyclicLocations(t *testing.T) {
 	require.Len(t, second.Items, 1)
 	assert.NotEqual(t, first.Items[0].ID, second.Items[0].ID)
 	assert.Equal(t, 2, second.Total)
+}
+
+// Deeply nested item containers do not increment the location depth, and must
+// remain visible even when they exceed the original 64-edge traversal guard.
+func TestLocationDescendants_DeepNonLocationContainerChain(t *testing.T) {
+	ctx := context.Background()
+	f := newLocationFixture(t, "location-depth-deep-items")
+
+	const containerCount = 70
+	parentID := f.attic.ID
+	for i := range containerCount {
+		container := makeNestedItem(t, f, fmt.Sprintf("Box %03d", i), parentID, uuid.Nil)
+		parentID = container.ID
+	}
+	leaf := makeNestedItem(t, f, "Deepest spare part", parentID, uuid.Nil)
+
+	for _, depth := range []int{1, MaxLocationDepth} {
+		got, err := tRepos.Entities.QueryLocationDescendants(ctx, f.gid, f.attic.ID, depth, 1, 24)
+		require.NoError(t, err)
+		require.Equal(t, containerCount+1, got.Total)
+		require.Equal(t, 1, got.DirectTotal)
+		assert.Len(t, got.Items, 24)
+		// The nested leaf sorts after the numbered containers.
+		lastPage, err := tRepos.Entities.QueryLocationDescendants(ctx, f.gid, f.attic.ID, depth, 3, 24)
+		require.NoError(t, err)
+		require.Len(t, lastPage.Items, containerCount+1-2*24)
+		assert.Equal(t, leaf.ID, lastPage.Items[len(lastPage.Items)-1].ID)
+		assert.Contains(t, lastPage.Items[len(lastPage.Items)-1].LocationPath, "Box 069")
+	}
 }

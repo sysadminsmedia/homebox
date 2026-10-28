@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 )
 
 // LocationItemsResult includes exact server-side pagination totals and the
@@ -38,8 +40,8 @@ type locationItemRow struct {
 // reintroducing the root or duplicates while preserving each item's path.
 // The two indexed parent columns support fast, override-aware traversal.
 const locationDescendantCTE = `
-WITH RECURSIVE location_scope(id, location_depth, hops, path, parent_path, visited) AS (
-    SELECT root.id, 0, 0, CAST(root.name AS TEXT), CAST('' AS TEXT),
+WITH RECURSIVE location_scope(id, location_depth, path, parent_path, visited) AS (
+    SELECT root.id, 0, CAST(root.name AS TEXT), CAST('' AS TEXT),
            '|' || CAST(root.id AS TEXT) || '|'
     FROM entities root
     JOIN entity_types rt ON rt.id = root.entity_type_entities
@@ -49,7 +51,6 @@ WITH RECURSIVE location_scope(id, location_depth, hops, path, parent_path, visit
 
     SELECT child.id,
            node.location_depth + CASE WHEN ct.is_location = true THEN 1 ELSE 0 END,
-           node.hops + 1,
            node.path || ' / ' || child.name,
            node.path,
            node.visited || CAST(child.id AS TEXT) || '|'
@@ -59,7 +60,6 @@ WITH RECURSIVE location_scope(id, location_depth, hops, path, parent_path, visit
            OR (child.entity_location_entities IS NULL AND child.entity_children = node.id))
     LEFT JOIN entity_types ct ON ct.id = child.entity_type_entities
     WHERE child.group_entities = $2
-      AND node.hops < 64
       AND node.visited NOT LIKE '%|' || CAST(child.id AS TEXT) || '|%'
       AND node.location_depth + CASE WHEN ct.is_location = true THEN 1 ELSE 0 END <= $3
 )
@@ -69,7 +69,7 @@ const locationDescendantWhere = `
  FROM location_scope node
  JOIN entities e ON e.id = node.id AND e.group_entities = $2
  LEFT JOIN entity_types et ON et.id = e.entity_type_entities
- WHERE node.hops > 0
+ WHERE node.id <> $1
    AND COALESCE(et.is_location, false) = false
    AND e.archived = false
 `
@@ -77,7 +77,8 @@ const locationDescendantWhere = `
 // QueryLocationDescendants selects at the database level, not by loading the
 // whole inventory into the browser. The recursive scope never crosses group
 // boundaries; pagination occurs before hydrating the page of item cards.
-// depth is 1, 2, 3, or 64 (for All). A hop guard prevents corrupt cycles.
+// depth is 1, 2, 3, or MaxLocationDepth (for All). The visited UUID
+// chain prevents cycles without limiting non-location containment depth.
 func (r *EntityRepository) QueryLocationDescendants(
 	ctx context.Context, gid, locationID uuid.UUID, depth, page, pageSize int,
 ) (LocationItemsResult, error) {
@@ -89,11 +90,16 @@ func (r *EntityRepository) QueryLocationDescendants(
 	if page-1 > int(^uint(0)>>1)/pageSize {
 		return LocationItemsResult{}, fmt.Errorf("%w: location page offset is too large", ErrInvalidLocationQuery)
 	}
-	root, err := r.GetOneByGroup(ctx, gid, locationID)
+	// Only load the root and its type. GetOneByGroup eagerly hydrates children,
+	// attachments and other unrelated data, defeating bounded pagination.
+	root, err := r.db.Entity.Query().
+		Where(entity.ID(locationID), entity.HasGroupWith(group.ID(gid))).
+		WithEntityType().
+		Only(ctx)
 	if err != nil {
 		return LocationItemsResult{}, err
 	}
-	if root.EntityType == nil || !root.EntityType.IsLocation {
+	if root.Edges.EntityType == nil || !root.Edges.EntityType.IsLocation {
 		return LocationItemsResult{}, ErrLocationRootNotLocation
 	}
 
