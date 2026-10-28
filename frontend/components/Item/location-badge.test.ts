@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { isScopedLocationItem, shouldShowParentLocationBadge } from "./location-badge";
+import { isScopedLocationItem, shouldShowParentLocationBadge, withScopedLocationPath } from "./location-badge";
 
 describe("shouldShowParentLocationBadge", () => {
   const parent = { id: "parent-in-another-room", name: "Remote container" };
@@ -24,5 +24,33 @@ describe("shouldShowParentLocationBadge", () => {
     expect(isScopedLocationItem({ locationPath: undefined })).toBe(true);
     expect(isScopedLocationItem({ locationPath: "Attic / Shelf" })).toBe(true);
     expect(isScopedLocationItem({})).toBe(false);
+  });
+});
+
+describe("withScopedLocationPath", () => {
+  const item = {
+    parent: { id: "parent-in-basement", name: "Basement box" },
+    locationPath: "Attic / Shelf",
+  };
+
+  test("preserves a visible physical path and scoped marker", () => {
+    const projected = withScopedLocationPath(item, true);
+    expect(projected.locationPath).toBe("Attic / Shelf");
+    expect(isScopedLocationItem(projected)).toBe(true);
+    expect(shouldShowParentLocationBadge(projected)).toBe(false);
+  });
+
+  test("does not leak a hidden path or fall back to another room's parent", () => {
+    const projected = withScopedLocationPath(item, false);
+    expect(projected.locationPath).toBeUndefined();
+    expect(Object.hasOwn(projected, "locationPath")).toBe(true);
+    expect(shouldShowParentLocationBadge(projected)).toBe(false);
+    expect(item.locationPath).toBe("Attic / Shelf");
+  });
+
+  test("marks a scoped result even when the API omitted an empty path", () => {
+    const projected = withScopedLocationPath({ parent: item.parent }, true);
+    expect(Object.hasOwn(projected, "locationPath")).toBe(true);
+    expect(shouldShowParentLocationBadge(projected)).toBe(false);
   });
 });

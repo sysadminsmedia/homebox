@@ -32,7 +32,8 @@
   import DetailsSection from "~/components/global/DetailsSection/DetailsSection.vue";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
-  import { clampPageToTotal } from "~/components/Item/View/pagination";
+  import { withScopedLocationPath } from "~/components/Item/location-badge";
+  import { clampPageToTotal, isCurrentLocationPage } from "~/components/Item/View/pagination";
   import ItemAttachmentsList from "~/components/Item/AttachmentsList.vue";
   import ItemImageDialog from "~/components/Item/ImageDialog.vue";
   import LocationCard from "~/components/Location/Card.vue";
@@ -217,20 +218,45 @@
     locationPage.value = 1;
   });
 
-  const { data: itemList, refresh: refreshItemList } = useAsyncData(
-    () => locationId.value + "_item_list_" + depth.value + "_" + locationPage.value + "_" + locationPageSize.value,
+  const itemListKey = computed(
+    () => locationId.value + "_item_list_" + depth.value + "_" + locationPage.value + "_" + locationPageSize.value
+  );
+  const {
+    data: itemList,
+    status: itemListStatus,
+    refresh: refreshItemList,
+  } = useAsyncData(
+    () => itemListKey.value,
     async () => {
-      if (!locationId.value) {
-        return { items: [] as LocationItem[], total: 0, directTotal: 0 };
+      // Snapshot the parameters associated with this request so stale
+      // responses cannot be mistaken for the currently selected page.
+      const requestKey = itemListKey.value;
+      const requestedLocation = locationId.value;
+      const requestedDepth = depth.value;
+      const requestedPage = locationPage.value;
+      const requestedPageSize = locationPageSize.value;
+      if (!requestedLocation) {
+        return {
+          requestKey,
+          items: [] as LocationItem[],
+          total: 0,
+          directTotal: 0,
+        };
       }
 
-      if (depth.value === "direct") {
-        const resp = await api.items.getAll({ parentIds: [locationId.value] });
+      if (requestedDepth === "direct") {
+        const resp = await api.items.getAll({ parentIds: [requestedLocation] });
         if (resp.error || !resp.data) {
           toast.error(t("items.toast.failed_load_items"));
-          return { items: [] as LocationItem[], total: 0, directTotal: 0 };
+          return {
+            requestKey,
+            items: [] as LocationItem[],
+            total: 0,
+            directTotal: 0,
+          };
         }
         return {
+          requestKey,
           items: resp.data.items as LocationItem[],
           total: resp.data.items.length,
           directTotal: resp.data.items.length,
@@ -238,28 +264,43 @@
       }
 
       const response = await api.items.getLocationDescendants(
-        locationId.value,
-        depth.value as LocationDescendantDepth,
-        locationPage.value,
-        locationPageSize.value
+        requestedLocation,
+        requestedDepth as LocationDescendantDepth,
+        requestedPage,
+        requestedPageSize
       );
       if (response.error || !response.data) {
         toast.error(t("items.toast.failed_load_items"));
-        return { items: [] as LocationItem[], total: 0, directTotal: 0 };
+        return {
+          requestKey,
+          items: [] as LocationItem[],
+          total: 0,
+          directTotal: 0,
+        };
       }
-      return response.data;
+      return { ...response.data, requestKey };
     },
     { watch: [locationId, depth, locationPage, locationPageSize] }
   );
 
+  // Nuxt can retain the prior async-data result while a new key loads.
+  // Only permit currently loaded rows/counts into a selectable location view.
+  const activeItemList = computed(() =>
+    isCurrentLocationPage(itemListStatus.value, itemListKey.value, itemList.value?.requestKey)
+      ? itemList.value
+      : undefined
+  );
+
   const items = computed(() => {
-    const rows = itemList.value?.items ?? [];
-    if (depth.value === "direct" || preferences.value.showLocationPaths) return rows;
-    return rows.map(item => ({ ...item, locationPath: undefined }));
+    const rows = activeItemList.value?.items ?? [];
+    if (depth.value === "direct") return rows;
+    // Even with an omitted/empty path, the scoped marker prevents displaying
+    // a logical parent from another room as this item's physical location.
+    return rows.map(item => withScopedLocationPath(item, preferences.value.showLocationPaths));
   });
 
   watch(
-    () => itemList.value?.total,
+    () => activeItemList.value?.total,
     total => {
       descendantTotal.value = total ?? 0;
       // A delete/move can shrink the final page. Jump to the last valid page
@@ -272,9 +313,9 @@
     { immediate: true }
   );
 
-  const directItemTotal = computed(() => itemList.value?.directTotal ?? 0);
+  const directItemTotal = computed(() => activeItemList.value?.directTotal ?? 0);
   const nestedItemTotal = computed(() =>
-    Math.max(0, (itemList.value?.total ?? 0) - (itemList.value?.directTotal ?? 0))
+    Math.max(0, (activeItemList.value?.total ?? 0) - (activeItemList.value?.directTotal ?? 0))
   );
 
   const descendantPagination = proxyRefs({
@@ -444,7 +485,7 @@
             </label>
           </div>
           <p
-            v-if="depth !== 'direct' && itemList"
+            v-if="depth !== 'direct' && activeItemList"
             data-location-depth-count
             class="ml-auto text-xs text-muted-foreground"
           >

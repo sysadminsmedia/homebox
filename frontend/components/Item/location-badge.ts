@@ -13,3 +13,10 @@ export function isScopedLocationItem(item: { locationPath?: string }): boolean {
 export function shouldShowParentLocationBadge(item: { parent?: unknown; locationPath?: string }): boolean {
   return Boolean(item.parent) && !isScopedLocationItem(item);
 }
+
+// Always mark descendant results as scoped, even when their API path is empty
+// and omitted by the server. Do not pass a hidden path to card/table views.
+export function withScopedLocationPath<T extends object>(item: T, showPaths: boolean) {
+  const path = "locationPath" in item ? (item as { locationPath?: string }).locationPath : undefined;
+  return { ...item, locationPath: showPaths ? path : undefined };
+}
