@@ -3373,6 +3373,8 @@ components:
         locationPath:
           description: scoped location view only
           type: string
+          x-omitempty: true
+          nullable: true
         manufacturer:
           type: string
         modelNumber:
@@ -3501,6 +3503,8 @@ components:
         locationPath:
           description: scoped location view only
           type: string
+          x-omitempty: true
+          nullable: true
         name:
           type: string
         parent:

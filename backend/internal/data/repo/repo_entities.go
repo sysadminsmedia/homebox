@@ -165,7 +165,7 @@ type (
 	EntitySummary struct {
 		ImportRef    string    `json:"-"`
 		ID           uuid.UUID `json:"id"`
-		LocationPath string    `json:"locationPath,omitempty"` // scoped location view only
+		LocationPath string    `json:"locationPath,omitempty" extensions:"x-nullable,x-omitempty"` // scoped location view only
 		AssetID      AssetID   `json:"assetId,string"`
 		Name         string    `json:"name"`
 		Description  string    `json:"description"`

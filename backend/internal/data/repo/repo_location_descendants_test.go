@@ -12,6 +12,7 @@ import (
 const (
 	batteryChargerName = "01 Battery Charger"
 	resinCleanerName   = "02 Resin Cleaner"
+	filamentDryerName  = "03 Filament Dryer"
 )
 
 func makeNestedLocation(t *testing.T, f locationFixture, name string, parentID uuid.UUID) EntityOut {
@@ -42,7 +43,7 @@ func TestLocationDescendants_DepthsPathsAndPagination(t *testing.T) {
 	shelf := makeNestedLocation(t, f, "Upper Storage Shelf", f.attic.ID)
 	one := makeNestedItem(t, f, resinCleanerName, shelf.ID, uuid.Nil)
 	box := makeNestedLocation(t, f, "3D Printing Box", shelf.ID)
-	two := makeNestedItem(t, f, "03 Filament Dryer", box.ID, uuid.Nil)
+	two := makeNestedItem(t, f, filamentDryerName, box.ID, uuid.Nil)
 	tray := makeNestedLocation(t, f, "Maintenance Tray", box.ID)
 	three := makeNestedItem(t, f, "04 Silicone Socks", tray.ID, uuid.Nil)
 	compartment := makeNestedLocation(t, f, "Tiny Tray", tray.ID)
@@ -61,9 +62,9 @@ func TestLocationDescendants_DepthsPathsAndPagination(t *testing.T) {
 		names []string
 	}{
 		{1, []string{batteryChargerName, resinCleanerName}},
-		{2, []string{batteryChargerName, resinCleanerName, "03 Filament Dryer"}},
-		{3, []string{batteryChargerName, resinCleanerName, "03 Filament Dryer", "04 Silicone Socks"}},
-		{maxAncestorDepth, []string{batteryChargerName, resinCleanerName, "03 Filament Dryer", "04 Silicone Socks", "05 Spare Nozzle"}},
+		{2, []string{batteryChargerName, resinCleanerName, filamentDryerName}},
+		{3, []string{batteryChargerName, resinCleanerName, filamentDryerName, "04 Silicone Socks"}},
+		{maxAncestorDepth, []string{batteryChargerName, resinCleanerName, filamentDryerName, "04 Silicone Socks", "05 Spare Nozzle"}},
 	} {
 		got, err := tRepos.Entities.QueryLocationDescendants(ctx, f.gid, f.attic.ID, tc.depth, 1, 24)
 		require.NoError(t, err)
@@ -83,7 +84,7 @@ func TestLocationDescendants_DepthsPathsAndPagination(t *testing.T) {
 	page3, err := tRepos.Entities.QueryLocationDescendants(ctx, f.gid, f.attic.ID, maxAncestorDepth, 3, 2)
 	require.NoError(t, err)
 	assert.Equal(t, []string{batteryChargerName, resinCleanerName}, []string{page1.Items[0].Name, page1.Items[1].Name})
-	assert.Equal(t, []string{"03 Filament Dryer", "04 Silicone Socks"}, []string{page2.Items[0].Name, page2.Items[1].Name})
+	assert.Equal(t, []string{filamentDryerName, "04 Silicone Socks"}, []string{page2.Items[0].Name, page2.Items[1].Name})
 	assert.Equal(t, all.ID, page3.Items[0].ID)
 	assert.Equal(t, 5, page1.Total)
 	assert.Equal(t, 5, page2.Total)
