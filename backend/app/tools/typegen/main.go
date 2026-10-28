@@ -47,7 +47,17 @@ func main() {
 		os.Exit(1)
 	}
 	text += string(data)
+	text = postProcessTypes(text)
 
+	err = os.WriteFile(path, []byte(text), 0644)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+}
+
+// postProcessTypes applies Homebox-specific corrections to the generated API types.
+func postProcessTypes(text string) string {
 	replaces := [...]ReReplace{
 		NewReReplace(` Repo`, " "),
 		NewReReplace(` PaginationResultRepo`, " PaginationResult"),
@@ -55,6 +65,10 @@ func main() {
 		NewReReplace(` V1`, " "),
 		NewReReplace(`\?:`, ":"),
 		NewReReplace(`(\w+):\s(.*null.*)`, "$1?: $2"), // make null union types optional
+		// Homebox normally makes all generated properties required, but the
+		// scoped location path is omitted from regular entity responses.
+		// Restore optionality without falsely declaring that it can be null.
+		NewReReplace(`(?m)^([ \t]*)locationPath: string;`, "${1}locationPath?: string;"),
 		NewReDate("createdAt"),
 		NewReDate("updatedAt"),
 		NewReDate("soldDate"),
@@ -71,11 +85,5 @@ func main() {
 		text = replace.Regex.ReplaceAllString(text, replace.Text)
 	}
 
-	err = os.WriteFile(path, []byte(text), 0644)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	os.Exit(0)
+	return text
 }

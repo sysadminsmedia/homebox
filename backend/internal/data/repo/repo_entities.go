@@ -63,6 +63,7 @@ type (
 		OrderDirection   string       `json:"orderDirection"`
 		EntityTypeIDs    []uuid.UUID  `json:"entityTypeIds"`
 		ParentIDs        []uuid.UUID  `json:"parentIds"`
+		IDs              []uuid.UUID  `json:"-"` // internal-only scoped-page hydration
 		TagIDs           []uuid.UUID  `json:"tagIds"`
 		ParentItemIDs    []uuid.UUID  `json:"parentItemIds"`
 		Fields           []FieldQuery `json:"fields"`
@@ -162,16 +163,17 @@ type (
 	}
 
 	EntitySummary struct {
-		ImportRef   string    `json:"-"`
-		ID          uuid.UUID `json:"id"`
-		AssetID     AssetID   `json:"assetId,string"`
-		Name        string    `json:"name"`
-		Description string    `json:"description"`
-		Quantity    float64   `json:"quantity"`
-		Insured     bool      `json:"insured"`
-		Archived    bool      `json:"archived"`
-		CreatedAt   time.Time `json:"createdAt"`
-		UpdatedAt   time.Time `json:"updatedAt"`
+		ImportRef    string    `json:"-"`
+		ID           uuid.UUID `json:"id"`
+		LocationPath string    `json:"locationPath,omitempty" extensions:"x-omitempty"` // scoped location view only
+		AssetID      AssetID   `json:"assetId,string"`
+		Name         string    `json:"name"`
+		Description  string    `json:"description"`
+		Quantity     float64   `json:"quantity"`
+		Insured      bool      `json:"insured"`
+		Archived     bool      `json:"archived"`
+		CreatedAt    time.Time `json:"createdAt"`
+		UpdatedAt    time.Time `json:"updatedAt"`
 
 		PurchasePrice float64 `json:"purchasePrice"`
 
@@ -831,6 +833,10 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 				),
 			)
 		}
+	}
+
+	if len(q.IDs) > 0 {
+		qb = qb.Where(entity.IDIn(q.IDs...))
 	}
 
 	if q.FilterChildren {

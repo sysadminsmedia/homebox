@@ -81,6 +81,7 @@
 
   const table = useVueTable<EntitySummary>({
     manualPagination: !!props.externalPagination,
+    getRowId: row => row.id,
 
     get data() {
       return props.data;

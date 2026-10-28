@@ -1235,6 +1235,10 @@ definitions:
         type: string
         x-nullable: true
         x-omitempty: true
+      locationPath:
+        description: scoped location view only
+        type: string
+        x-omitempty: true
       manufacturer:
         type: string
       modelNumber:
@@ -1360,6 +1364,10 @@ definitions:
       itemCount:
         description: Container-specific (populated when querying locations)
         type: number
+      locationPath:
+        description: scoped location view only
+        type: string
+        x-omitempty: true
       name:
         type: string
       parent:
@@ -1813,6 +1821,21 @@ definitions:
         type: string
       type:
         type: string
+    type: object
+  repo.LocationItemsResult:
+    properties:
+      directTotal:
+        type: integer
+      items:
+        items:
+          $ref: '#/definitions/repo.EntitySummary'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
     type: object
   repo.MaintenanceEntry:
     properties:
@@ -2861,6 +2884,44 @@ paths:
       summary: Create External Link Attachment
       tags:
       - Entities Attachments
+  /v1/entities/{id}/descendant-items:
+    get:
+      parameters:
+      - description: Location ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 'Child-location depth: 1, 2, 3 or all'
+        in: query
+        name: depth
+        required: true
+        type: string
+      - description: Page number (default 1)
+        in: query
+        name: page
+        type: integer
+      - description: Page size, maximum 96 (default 24)
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.LocationItemsResult'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/validate.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: List the inventory contained in a location with configurable child
+        depth
+      tags:
+      - Entities
   /v1/entities/{id}/duplicate:
     post:
       parameters:

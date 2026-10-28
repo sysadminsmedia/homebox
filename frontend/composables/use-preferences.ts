@@ -14,6 +14,8 @@ export type DuplicateSettings = {
 export type LocationViewPreferences = {
   showDetails: boolean;
   showEmpty: boolean;
+  locationItemDepth: "direct" | "1" | "2" | "3" | "all";
+  showLocationPaths: boolean;
   editorAdvancedView: boolean;
   itemDisplayView: ViewType;
   theme: DaisyTheme;
@@ -45,6 +47,8 @@ type PreferenceChanges = Partial<Record<keyof LocationViewPreferences, Preferenc
 const DEFAULT_PREFERENCES: LocationViewPreferences = {
   showDetails: true,
   showEmpty: true,
+  locationItemDepth: "direct",
+  showLocationPaths: true,
   editorAdvancedView: false,
   itemDisplayView: "card",
   theme: "homebox",

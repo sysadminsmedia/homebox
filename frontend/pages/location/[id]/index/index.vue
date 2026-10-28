@@ -20,6 +20,9 @@
   import { Button } from "@/components/ui/button";
   import { Badge } from "@/components/ui/badge";
   import { Separator } from "@/components/ui/separator";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import { Switch } from "@/components/ui/switch";
+  import type { LocationItemDepth, LocationDescendantDepth, LocationItem } from "~~/lib/api/classes/items";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
   import BaseCard from "@/components/Base/Card.vue";
   import Currency from "~/components/global/Currency.vue";
@@ -29,6 +32,8 @@
   import DetailsSection from "~/components/global/DetailsSection/DetailsSection.vue";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
+  import { withScopedLocationPath } from "~/components/Item/location-badge";
+  import { clampPageToTotal, isCurrentLocationPage } from "~/components/Item/View/pagination";
   import ItemAttachmentsList from "~/components/Item/AttachmentsList.vue";
   import ItemImageDialog from "~/components/Item/ImageDialog.vue";
   import LocationCard from "~/components/Location/Card.vue";
@@ -192,28 +197,140 @@
     return ret;
   });
 
-  const { data: items, refresh: refreshItemList } = useAsyncData(
-    () => locationId.value + "_item_list",
-    async () => {
-      if (!locationId.value) {
-        return [];
-      }
+  // Keep the original direct-only listing unchanged. Opting into a child depth
+  // uses a dedicated, paginated backend query that follows physical placement
+  // overrides and returns each item's storage path.
+  const depth = computed<LocationItemDepth>(() => {
+    const saved = preferences.value.locationItemDepth;
+    return ["direct", "1", "2", "3", "all"].includes(saved) ? saved : "direct";
+  });
+  const locationPage = ref(1);
+  const locationPageSize = computed(() => Math.min(96, Math.max(1, preferences.value.itemsPerTablePage || 24)));
+  const descendantTotal = ref(0);
 
-      const resp = await api.items.getAll({
-        parentIds: [locationId.value],
-      });
-
-      if (resp.error) {
-        toast.error(t("items.toast.failed_load_items"));
-        return [];
-      }
-
-      return resp.data.items;
-    },
-    {
-      watch: [locationId],
+  function setDepth(next: unknown) {
+    if (["direct", "1", "2", "3", "all"].includes(String(next))) {
+      preferences.value.locationItemDepth = String(next) as LocationItemDepth;
     }
+  }
+
+  watch([locationId, depth, locationPageSize], () => {
+    locationPage.value = 1;
+  });
+
+  const itemListKey = computed(
+    () => locationId.value + "_item_list_" + depth.value + "_" + locationPage.value + "_" + locationPageSize.value
   );
+  const {
+    data: itemList,
+    status: itemListStatus,
+    refresh: refreshItemList,
+  } = useAsyncData(
+    () => itemListKey.value,
+    async () => {
+      // Snapshot the parameters associated with this request so stale
+      // responses cannot be mistaken for the currently selected page.
+      const requestKey = itemListKey.value;
+      const requestedLocation = locationId.value;
+      const requestedDepth = depth.value;
+      const requestedPage = locationPage.value;
+      const requestedPageSize = locationPageSize.value;
+      if (!requestedLocation) {
+        return {
+          requestKey,
+          items: [] as LocationItem[],
+          total: 0,
+          directTotal: 0,
+        };
+      }
+
+      if (requestedDepth === "direct") {
+        const resp = await api.items.getAll({ parentIds: [requestedLocation] });
+        if (resp.error || !resp.data) {
+          toast.error(t("items.toast.failed_load_items"));
+          return {
+            requestKey,
+            items: [] as LocationItem[],
+            total: 0,
+            directTotal: 0,
+          };
+        }
+        return {
+          requestKey,
+          items: resp.data.items as LocationItem[],
+          total: resp.data.items.length,
+          directTotal: resp.data.items.length,
+        };
+      }
+
+      const response = await api.items.getLocationDescendants(
+        requestedLocation,
+        requestedDepth as LocationDescendantDepth,
+        requestedPage,
+        requestedPageSize
+      );
+      if (response.error || !response.data) {
+        toast.error(t("items.toast.failed_load_items"));
+        return {
+          requestKey,
+          items: [] as LocationItem[],
+          total: 0,
+          directTotal: 0,
+        };
+      }
+      return { ...response.data, requestKey };
+    },
+    { watch: [locationId, depth, locationPage, locationPageSize] }
+  );
+
+  // Nuxt can retain the prior async-data result while a new key loads.
+  // Only permit currently loaded rows/counts into a selectable location view.
+  const activeItemList = computed(() =>
+    isCurrentLocationPage(itemListStatus.value, itemListKey.value, itemList.value?.requestKey)
+      ? itemList.value
+      : undefined
+  );
+
+  const items = computed(() => {
+    const rows = activeItemList.value?.items ?? [];
+    if (depth.value === "direct") return rows;
+    // Even with an omitted/empty path, the scoped marker prevents displaying
+    // a logical parent from another room as this item's physical location.
+    return rows.map(item => withScopedLocationPath(item, preferences.value.showLocationPaths));
+  });
+
+  watch(
+    () => activeItemList.value?.total,
+    total => {
+      descendantTotal.value = total ?? 0;
+      // A delete/move can shrink the final page. Jump to the last valid page
+      // and let the page-sensitive async-data key fetch its contents.
+      if (depth.value !== "direct" && total !== undefined) {
+        const validPage = clampPageToTotal(locationPage.value, total, locationPageSize.value);
+        if (validPage !== locationPage.value) locationPage.value = validPage;
+      }
+    },
+    { immediate: true }
+  );
+
+  const directItemTotal = computed(() => activeItemList.value?.directTotal ?? 0);
+  const nestedItemTotal = computed(() =>
+    Math.max(0, (activeItemList.value?.total ?? 0) - (activeItemList.value?.directTotal ?? 0))
+  );
+
+  const descendantPagination = proxyRefs({
+    page: computed({
+      get: () => locationPage.value,
+      set: (value: number) => {
+        locationPage.value = value;
+      },
+    }),
+    pageSize: locationPageSize,
+    totalSize: descendantTotal,
+    setPage: (newPage: number) => {
+      locationPage.value = Math.max(1, newPage);
+    },
+  });
 </script>
 
 <template>
@@ -341,9 +458,52 @@
         </div>
       </BaseCard>
 
-      <!-- Items in this location -->
-      <section v-if="location && items">
-        <ItemViewSelectable :items="items" @refresh="refreshItemList" />
+      <!-- Items in this location, optionally including child-location descendants -->
+      <section v-if="location" class="mt-4 space-y-3">
+        <div class="flex flex-wrap items-end gap-3 rounded-lg border p-3" data-location-depth-controls>
+          <div class="flex min-w-56 flex-col gap-1">
+            <label for="location-depth-select" class="text-sm font-medium">
+              {{ $t("locations.item_depth_label") }}
+            </label>
+            <Select :model-value="depth" @update:model-value="setDepth">
+              <SelectTrigger id="location-depth-select" data-location-depth-select class="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="direct">{{ $t("locations.item_depth_direct") }}</SelectItem>
+                <SelectItem value="1">{{ $t("locations.item_depth_1") }}</SelectItem>
+                <SelectItem value="2">{{ $t("locations.item_depth_2") }}</SelectItem>
+                <SelectItem value="3">{{ $t("locations.item_depth_3") }}</SelectItem>
+                <SelectItem value="all">{{ $t("locations.item_depth_all") }}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div v-if="depth !== 'direct'" class="flex items-center gap-2 pb-2">
+            <Switch id="location-show-paths" v-model="preferences.showLocationPaths" />
+            <label for="location-show-paths" class="text-sm">
+              {{ $t("locations.show_item_paths") }}
+            </label>
+          </div>
+          <p
+            v-if="depth !== 'direct' && activeItemList"
+            data-location-depth-count
+            class="ml-auto text-xs text-muted-foreground"
+          >
+            {{
+              $t("locations.direct_item_count", {
+                direct: directItemTotal,
+                nested: nestedItemTotal,
+              })
+            }}
+          </p>
+        </div>
+        <ItemViewSelectable
+          :key="'location-items-' + locationId + '-' + depth + '-' + locationPage + '-' + locationPageSize"
+          :items="items"
+          :pagination="depth === 'direct' ? undefined : descendantPagination"
+          :disable-sort="depth !== 'direct'"
+          @refresh="refreshItemList"
+        />
       </section>
 
       <!-- Child locations -->

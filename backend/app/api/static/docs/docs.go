@@ -884,6 +884,64 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/entities/{id}/descendant-items": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Entities"
+                ],
+                "summary": "List the inventory contained in a location with configurable child depth",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Location ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Child-location depth: 1, 2, 3 or all",
+                        "name": "depth",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number (default 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size, maximum 96 (default 24)",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.LocationItemsResult"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/validate.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/entities/{id}/duplicate": {
             "post": {
                 "security": [
@@ -5002,6 +5060,11 @@ const docTemplate = `{
                     "x-nullable": true,
                     "x-omitempty": true
                 },
+                "locationPath": {
+                    "description": "scoped location view only",
+                    "type": "string",
+                    "x-omitempty": true
+                },
                 "manufacturer": {
                     "type": "string"
                 },
@@ -5182,6 +5245,11 @@ const docTemplate = `{
                 "itemCount": {
                     "description": "Container-specific (populated when querying locations)",
                     "type": "number"
+                },
+                "locationPath": {
+                    "description": "scoped location view only",
+                    "type": "string",
+                    "x-omitempty": true
                 },
                 "name": {
                     "type": "string"
@@ -5830,6 +5898,29 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "string"
+                }
+            }
+        },
+        "repo.LocationItemsResult": {
+            "type": "object",
+            "properties": {
+                "directTotal": {
+                    "type": "integer"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.EntitySummary"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },

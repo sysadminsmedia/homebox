@@ -5,6 +5,7 @@ import { ArrowDown, ArrowUpDown, Check, X } from "lucide-vue-next";
 import Button from "~/components/ui/button/Button.vue";
 import Checkbox from "~/components/Form/Checkbox.vue";
 import type { EntitySummary } from "~/lib/api/types/data-contracts";
+import { isScopedLocationItem } from "../../location-badge";
 
 import Currency from "~/components/global/Currency.vue";
 import DateTime from "~/components/global/DateTime.vue";
@@ -89,7 +90,13 @@ export function makeColumns({
           },
           () => sortable(column, "items.name")
         ),
-      cell: ({ row }) => h("span", { class: "text-sm font-medium" }, row.getValue("name")),
+      cell: ({ row }) => {
+        const path = (row.original as EntitySummary & { locationPath?: string }).locationPath;
+        return h("div", { class: "flex flex-col gap-1" }, [
+          h("span", { class: "text-sm font-medium" }, String(row.getValue("name") ?? "")),
+          ...(path ? [h("span", { class: "text-xs text-muted-foreground" }, path)] : []),
+        ]);
+      },
     },
     {
       id: "quantity",
@@ -155,6 +162,11 @@ export function makeColumns({
         ),
       cell: ({ row }) => {
         const item = row.original as EntitySummary;
+        // A scoped descendant's logical parent may be stored in another room.
+        // Show only its physical path (if enabled), never the parent as a location.
+        if (isScopedLocationItem(item)) {
+          return h("div", { class: "text-sm text-muted-foreground" }, item.locationPath ?? "");
+        }
         const loc = (item.location || item.parent) as { id: string; name: string } | null;
         if (loc) {
           return h("a", { href: `/location/${loc.id}`, class: "hover:underline text-sm" }, loc.name);

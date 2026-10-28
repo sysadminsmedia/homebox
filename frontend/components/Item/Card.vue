@@ -25,7 +25,7 @@
           :src="imageUrl"
           :alt="item.name"
         />
-        <div v-if="item.parent" class="absolute inset-x-1 bottom-1">
+        <div v-if="showParentLocationBadge" class="absolute inset-x-1 bottom-1">
           <Badge class="text-wrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline">
             <NuxtLink v-if="item.parent" :to="`/location/${item.parent.id}`">
               {{ locationString }}
@@ -35,6 +35,9 @@
       </div>
       <div class="col-span-4 flex grow flex-col gap-y-1 p-4 pt-2">
         <h2 class="line-clamp-2 text-ellipsis text-wrap text-lg font-bold">{{ item.name }}</h2>
+        <p v-if="storagePath" class="text-xs text-muted-foreground" data-item-storage-path>
+          {{ storagePath }}
+        </p>
         <Separator class="mb-1" />
         <TooltipProvider :delay-duration="0">
           <div class="flex items-center gap-2">
@@ -87,6 +90,7 @@
   import Markdown from "@/components/global/Markdown.vue";
   import TagChip from "@/components/Tag/Chip.vue";
   import type { Row } from "@tanstack/vue-table";
+  import { shouldShowParentLocationBadge } from "./location-badge";
   import { Checkbox } from "@/components/ui/checkbox";
 
   const api = useUserApi();
@@ -123,6 +127,13 @@
       default: () => null,
     },
   });
+
+  const storagePath = computed(() => {
+    const item = props.item as EntitySummary & { locationPath?: string };
+    return item.locationPath ?? "";
+  });
+
+  const showParentLocationBadge = computed(() => shouldShowParentLocationBadge(props.item));
 
   const objectContain = computed(() => imageUrl.value !== "/no-image.jpg" && !preferences.value.legacyImageFit);
 

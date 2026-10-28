@@ -816,6 +816,8 @@ export interface EntityOut {
    * doesn't pin an inherited location or drop an explicit one.
    */
   locationId?: string | null;
+  /** scoped location view only */
+  locationPath?: string;
   manufacturer: string;
   modelNumber: string;
   name: string;
@@ -870,6 +872,8 @@ export interface EntitySummary {
   insured: boolean;
   /** Container-specific (populated when querying locations) */
   itemCount: number;
+  /** scoped location view only */
+  locationPath?: string;
   name: string;
   /** Edges */
   parent?: EntitySummary | null;
@@ -1125,6 +1129,14 @@ export interface ItemAttachmentUpdate {
   primary: boolean;
   title: string;
   type: string;
+}
+
+export interface LocationItemsResult {
+  directTotal: number;
+  items: EntitySummary[];
+  page: number;
+  pageSize: number;
+  total: number;
 }
 
 export interface MaintenanceEntry {

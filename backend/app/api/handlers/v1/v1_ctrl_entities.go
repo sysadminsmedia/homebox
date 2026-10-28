@@ -9,6 +9,8 @@ import (
 	"math"
 	"math/big"
 	"net/http"
+	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -207,6 +209,76 @@ func (ctrl *V1Controller) HandleEntityFullPath() errchain.HandlerFunc {
 	}
 
 	return adapters.CommandID("id", fn, http.StatusOK)
+}
+
+// HandleLocationDescendantItems godoc
+//
+//	@Summary	List the inventory contained in a location with configurable child depth
+//	@Tags		Entities
+//	@Produce	json
+//	@Param		id			path		string	true	"Location ID"
+//	@Param		depth		query		string	true	"Child-location depth: 1, 2, 3 or all"
+//	@Param		page		query		int		false	"Page number (default 1)"
+//	@Param		pageSize	query		int		false	"Page size, maximum 96 (default 24)"
+//	@Success	200			{object}	repo.LocationItemsResult
+//	@Failure	400			{object}	validate.ErrorResponse
+//	@Router		/v1/entities/{id}/descendant-items [GET]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleLocationDescendantItems() errchain.HandlerFunc {
+	fn := func(r *http.Request, id uuid.UUID) (repo.LocationItemsResult, error) {
+		depth, page, pageSize, err := parseLocationDescendantQuery(r.URL.Query())
+		if err != nil {
+			return repo.LocationItemsResult{}, err
+		}
+		ctx := services.NewContext(r.Context())
+		items, err := ctrl.repo.Entities.QueryLocationDescendants(ctx, ctx.GID, id, depth, page, pageSize)
+		return items, locationDescendantHTTPError(err)
+	}
+	return adapters.CommandID("id", fn, http.StatusOK)
+}
+
+// parseLocationDescendantQuery validates user-supplied depth and pagination
+// before passing the bounds to the repository. The repository checks for
+// arithmetic overflow before calculating an OFFSET.
+func parseLocationDescendantQuery(params url.Values) (depth, page, pageSize int, err error) {
+	switch params.Get("depth") {
+	case "1", "2", "3":
+		depth, _ = strconv.Atoi(params.Get("depth"))
+	case "all":
+		depth = repo.MaxLocationDepth
+	default:
+		return 0, 0, 0, validate.NewRequestError(
+			fmt.Errorf("depth must be 1, 2, 3 or all"), http.StatusBadRequest)
+	}
+
+	page, pageSize = 1, 24
+	if raw := params.Get("page"); raw != "" {
+		page, err = strconv.Atoi(raw)
+		if err != nil {
+			return 0, 0, 0, validate.NewRequestError(
+				fmt.Errorf("invalid page number"), http.StatusBadRequest)
+		}
+	}
+	if raw := params.Get("pageSize"); raw != "" {
+		pageSize, err = strconv.Atoi(raw)
+		if err != nil {
+			return 0, 0, 0, validate.NewRequestError(
+				fmt.Errorf("invalid page size"), http.StatusBadRequest)
+		}
+	}
+	if page < 1 || pageSize < 1 || pageSize > 96 {
+		return 0, 0, 0, validate.NewRequestError(
+			fmt.Errorf("page must be positive and pageSize between 1 and 96"), http.StatusBadRequest)
+	}
+	return depth, page, pageSize, nil
+}
+
+// locationDescendantHTTPError maps client input failures without changing database errors.
+func locationDescendantHTTPError(err error) error {
+	if errors.Is(err, repo.ErrLocationRootNotLocation) || errors.Is(err, repo.ErrInvalidLocationQuery) {
+		return validate.NewRequestError(err, http.StatusBadRequest)
+	}
+	return err
 }
 
 // HandleEntitiesCreate godoc

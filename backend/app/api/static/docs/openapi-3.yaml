@@ -589,6 +589,49 @@ paths:
       responses:
         "204":
           description: No Content
+  "/v1/entities/{id}/descendant-items":
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Entities
+      summary: List the inventory contained in a location with configurable child depth
+      parameters:
+        - description: Location ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - description: "Child-location depth: 1, 2, 3 or all"
+          name: depth
+          in: query
+          required: true
+          schema:
+            type: string
+        - description: Page number (default 1)
+          name: page
+          in: query
+          schema:
+            type: integer
+        - description: Page size, maximum 96 (default 24)
+          name: pageSize
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/repo.LocationItemsResult"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/validate.ErrorResponse"
   "/v1/entities/{id}/duplicate":
     post:
       security:
@@ -3333,6 +3376,10 @@ components:
           type: string
           x-omitempty: true
           nullable: true
+        locationPath:
+          description: scoped location view only
+          type: string
+          x-omitempty: true
         manufacturer:
           type: string
         modelNumber:
@@ -3458,6 +3505,10 @@ components:
         itemCount:
           description: Container-specific (populated when querying locations)
           type: number
+        locationPath:
+          description: scoped location view only
+          type: string
+          x-omitempty: true
         name:
           type: string
         parent:
@@ -3913,6 +3964,21 @@ components:
           type: string
         type:
           type: string
+    repo.LocationItemsResult:
+      type: object
+      properties:
+        directTotal:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/repo.EntitySummary"
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        total:
+          type: integer
     repo.MaintenanceEntry:
       type: object
       properties:
