@@ -483,11 +483,17 @@ func isBoldFont(fontWeight interface{}) bool {
 	return false
 }
 
-// autofitConfig holds autofit settings extracted from element data
+// autofitConfig holds the text frame settings extracted from element data.
+// A frame (wrap set, or autofit on) keeps the size the editor gave it: text
+// wraps or stays on one line inside fixedWidth x fixedHeight and anything past
+// the edges is cut off. Elements without these keys are legacy boxes that
+// print one unclipped line.
 type autofitConfig struct {
-	enabled     bool
+	enabled     bool // shrink the font until the text fits the frame
+	wrap        bool // wrap at the frame width
+	frame       bool // the element is a text frame
 	fixedWidth  float64
-	fixedHeight float64
+	fixedHeight float64 // 0 = the frame grows with its text
 	maxFontSize float64
 }
 
@@ -507,6 +513,7 @@ type textRenderContext struct {
 	textHeight           int
 	containerWidth       float64
 	scaledContainerWidth int
+	frameHeight          int // render pixels; 0 = unbounded
 	metrics              font.Metrics
 	autofit              autofitConfig
 }
@@ -519,6 +526,13 @@ func getAutofitConfig(elem CanvasElement) autofitConfig {
 	}
 	if v, ok := elem.Data["autofit"].(bool); ok {
 		cfg.enabled = v
+	}
+	if v, ok := elem.Data["wrap"].(bool); ok {
+		cfg.wrap = v
+		cfg.frame = true
+	}
+	if cfg.enabled {
+		cfg.frame = true
 	}
 	if v, ok := elem.Data["fixedWidth"].(float64); ok {
 		cfg.fixedWidth = v
@@ -601,11 +615,23 @@ func (r *TemplateRenderer) prepareTextRender(elem CanvasElement, text string, dp
 	ctx.lineHeight = (ctx.metrics.Ascent + ctx.metrics.Descent).Round()
 
 	// Word wrapping
-	if ctx.autofit.enabled && ctx.autofit.fixedWidth > 0 {
+	if (ctx.autofit.enabled || ctx.autofit.wrap) && ctx.autofit.fixedWidth > 0 {
 		scaledWidth := scaleCoord(ctx.autofit.fixedWidth, dpi)
 		ctx.lines = wrapTextSimple(ctx.face, text, scaledWidth)
 	} else {
 		ctx.lines = []string{text}
+	}
+
+	// A frame shows only what fits: lines that start below its bottom edge are
+	// dropped here and the pixel clip in the renderers cuts the rest.
+	if ctx.autofit.frame && ctx.autofit.fixedHeight > 0 {
+		ctx.frameHeight = scaleCoord(ctx.autofit.fixedHeight, dpi)
+		if ctx.lineHeight > 0 {
+			visible := (ctx.frameHeight + ctx.lineHeight - 1) / ctx.lineHeight
+			if visible < len(ctx.lines) {
+				ctx.lines = ctx.lines[:visible]
+			}
+		}
 	}
 
 	// Calculate text dimensions
@@ -634,6 +660,20 @@ func (r *TemplateRenderer) prepareTextRender(elem CanvasElement, text string, dp
 	return ctx
 }
 
+// frameClip returns the pixel rectangle a text frame may draw into, given the
+// frame's top-left corner in render pixels. Without a frame it is unbounded.
+func (ctx textRenderContext) frameClip(x, y int, unbounded image.Rectangle) image.Rectangle {
+	if !ctx.autofit.frame {
+		return unbounded
+	}
+	right := x + ctx.scaledContainerWidth
+	bottom := unbounded.Max.Y
+	if ctx.frameHeight > 0 {
+		bottom = y + ctx.frameHeight
+	}
+	return unbounded.Intersect(image.Rect(x, y, right, bottom))
+}
+
 // calculateAlignedX computes the x position for a line based on text alignment
 func calculateAlignedX(align string, containerWidth, lineWidth, baseX int) int {
 	switch align {
@@ -658,12 +698,11 @@ func (r *TemplateRenderer) renderTextDirect(img *image.RGBA, elem CanvasElement,
 	c.SetDPI(72)
 	c.SetFont(ctx.font)
 	c.SetFontSize(ctx.scaledFontSize)
-	c.SetClip(img.Bounds())
-	c.SetDst(img)
-	c.SetSrc(image.NewUniform(ctx.textColor))
-
 	baseX := scaleCoord(elem.Left, dpi)
 	baseY := scaleCoord(elem.Top, dpi) + ctx.metrics.Ascent.Round()
+	c.SetClip(ctx.frameClip(baseX, scaleCoord(elem.Top, dpi), img.Bounds()))
+	c.SetDst(img)
+	c.SetSrc(image.NewUniform(ctx.textColor))
 
 	for i, line := range ctx.lines {
 		lineWidth := measureTextWidth(ctx.face, line)
@@ -687,6 +726,13 @@ func (r *TemplateRenderer) renderTextRotated(img *image.RGBA, elem CanvasElement
 		tempWidth = ctx.scaledContainerWidth + margin*2
 	}
 	tempHeight := ctx.textHeight + margin*2
+	if ctx.autofit.frame {
+		// The frame, not the text, decides the box that gets rotated.
+		tempWidth = ctx.scaledContainerWidth + margin*2
+		if ctx.frameHeight > 0 {
+			tempHeight = ctx.frameHeight + margin*2
+		}
+	}
 
 	// The box size comes from user-supplied canvas JSON, and rotation grows the
 	// bounds again, so reject (rather than clamp, which would move the text
@@ -708,7 +754,7 @@ func (r *TemplateRenderer) renderTextRotated(img *image.RGBA, elem CanvasElement
 	c.SetDPI(72)
 	c.SetFont(ctx.font)
 	c.SetFontSize(ctx.scaledFontSize)
-	c.SetClip(tempImg.Bounds())
+	c.SetClip(ctx.frameClip(margin, margin, tempImg.Bounds()))
 	c.SetDst(tempImg)
 	c.SetSrc(image.NewUniform(ctx.textColor))
 

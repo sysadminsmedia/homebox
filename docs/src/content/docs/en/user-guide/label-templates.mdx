@@ -53,8 +53,15 @@ browser warns you before you leave with unsaved work.
 ![A text element selected, with the formatting toolbar above the canvas and the Element tab open](../../../../assets/user-guide/labels/editor-element.png)
 
 Selecting an element opens its properties in the **Element** tab: position, size and rotation in the unit you chose.
-Text elements also get a formatting toolbar above the canvas (size, bold, alignment, colour, box width) and an
+Text elements also get a formatting toolbar above the canvas (size, bold, wrap, alignment, colour, box width) and an
 **Auto-fit** switch that shrinks the font until the text fits its box, which keeps long item names on the label.
+
+A text element is a **frame**: drag its side handles to set the width and its top or bottom handles to set the
+height, or type both in the Element tab. With **Wrap text** on (the default for new text) long text wraps onto
+further lines inside the frame; with it off the text stays on one line. Either way nothing prints outside the
+frame: whatever does not fit is cut off at its edges, in the editor and on paper, so a two-line frame prints at most
+two lines of a long location path. Leave the height empty and the frame grows with its text instead. Text elements
+made before this version keep their old behaviour until you toggle **Wrap text** once.
 
 Text can mix fixed words with **data fields** in double braces, for example `Asset #{{asset_id}}`. Use the **Insert
 data field** menu in the toolbar or the chips in the Element tab:

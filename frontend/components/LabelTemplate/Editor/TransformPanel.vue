@@ -47,6 +47,13 @@
 
   const type = computed(() => String(object.value?.type || "").toLowerCase());
   const canResize = computed(() => type.value === "rect" || type.value === "image" || type.value === "group");
+  const isText = computed(() => type.value === "textbox");
+  // A text frame (wrap set or autofit on) owns its height; a legacy text box grows with its text.
+  const isTextFrame = computed(
+    () => isText.value && (object.value?.data?.wrap !== undefined || !!object.value?.data?.autofit)
+  );
+  const canResizeWidth = computed(() => canResize.value || isText.value);
+  const canResizeHeight = computed(() => canResize.value || isTextFrame.value);
 
   const objectProps = computed(() => {
     if (!object.value) return null;
@@ -69,8 +76,16 @@
   // the renderer multiplies width by scaleX the same way.
   function handleSizeChange(prop: "width" | "height", value: string) {
     const px = toPx(value);
-    if (px === null || px <= 0 || !props.selectedObject) return;
-    const base = prop === "width" ? props.selectedObject.width || 1 : props.selectedObject.height || 1;
+    if (px === null || px <= 0 || !object.value) return;
+    if (isText.value) {
+      // Text is never scaled: the box (frame) itself changes size and the font stays put.
+      const size = Math.round(px);
+      const data = object.value.data || {};
+      if (prop === "width") emit("updateObject", { width: size, data: { ...data, fixedWidth: size } });
+      else emit("updateObject", { data: { ...data, fixedHeight: size } });
+      return;
+    }
+    const base = prop === "width" ? object.value.width || 1 : object.value.height || 1;
     emit("updateObject", { [prop === "width" ? "scaleX" : "scaleY"]: px / base });
   }
 
@@ -124,7 +139,7 @@
             :step="step"
             :model-value="objectProps.width"
             class="h-8"
-            :disabled="!canResize"
+            :disabled="!canResizeWidth"
             @change="handleSizeChange('width', ($event.target as HTMLInputElement).value)"
           />
           <span class="w-6 shrink-0 text-xs text-muted-foreground">{{ unit }}</span>
@@ -141,7 +156,7 @@
             :step="step"
             :model-value="objectProps.height"
             class="h-8"
-            :disabled="!canResize"
+            :disabled="!canResizeHeight"
             @change="handleSizeChange('height', ($event.target as HTMLInputElement).value)"
           />
           <span class="w-6 shrink-0 text-xs text-muted-foreground">{{ unit }}</span>

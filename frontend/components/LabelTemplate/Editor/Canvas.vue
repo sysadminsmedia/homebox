@@ -3,6 +3,7 @@
   import { ActiveSelection, Canvas, IText, Textbox, Rect, Line, Group, FabricImage, FabricObject } from "fabric";
   import type { AlignTarget } from "./ToolRail.vue";
   import { MM_TO_PX, type LabelBorder } from "./label-border";
+  import { applyTextFrame, installTextFrameSupport, type FrameTextbox, type TextBoxData } from "./text-frame";
 
   // Fabric 7 anchors new objects at their centre by default. The server
   // renderer and the transform panel work in top-left coordinates, so keep
@@ -10,13 +11,7 @@
   FabricObject.ownDefaults.originX = "left";
   FabricObject.ownDefaults.originY = "top";
 
-  // Type for textbox data properties
-  interface TextBoxData {
-    autofit?: boolean;
-    maxFontSize?: number;
-    fixedWidth?: number | null;
-    fixedHeight?: number | null;
-  }
+  installTextFrameSupport();
 
   const props = defineProps<{
     width: number;
@@ -130,6 +125,7 @@
     try {
       const data = JSON.parse(serialized) as Record<string, unknown>;
       await fabricCanvas.loadFromJSON(data);
+      prepareLoadedObjects();
       fabricCanvas.discardActiveObject();
       fabricCanvas.renderAll();
       historyIndex.value = index;
@@ -166,6 +162,7 @@
       hasInitiallyLoaded.value = true;
       isLoadingData = true;
       fabricCanvas.loadFromJSON(props.canvasData).then(() => {
+        prepareLoadedObjects();
         fabricCanvas?.renderAll();
         isLoadingData = false;
         onInitialLoad();
@@ -175,7 +172,11 @@
     }
 
     // Listen for changes
-    fabricCanvas.on("object:modified", saveCanvas);
+    fabricCanvas.on("object:modified", e => {
+      saveCanvas();
+      // Typing into a text box changes its size; let the inspector re-read it.
+      if (e.target) emit("selectionChanged", e.target);
+    });
     fabricCanvas.on("object:added", () => {
       saveCanvas();
       nextTick(() => drawGrid());
@@ -214,25 +215,24 @@
 
     // Handle textbox scaling - capture the final dimensions and reset scale
     fabricCanvas.on("object:scaling", e => {
-      const obj = e.target as Textbox & { data?: TextBoxData };
-      if (obj?.type !== "textbox") return;
+      const obj = e.target as FrameTextbox;
+      if (!(obj instanceof Textbox)) return;
 
-      const scaleX = obj.scaleX || 1;
-      const scaleY = obj.scaleY || 1;
-      const newWidth = Math.round((obj.width || 150) * scaleX);
-      const newHeight = Math.round((obj.height || 50) * scaleY);
+      const newWidth = Math.round((obj.width || 150) * (obj.scaleX || 1));
+      const newHeight = Math.round((obj.height || 50) * (obj.scaleY || 1));
 
-      obj.set({
-        width: newWidth,
-        scaleX: 1,
-        scaleY: 1,
-      });
-
+      // Data first: a frame reads its height back when the width change re-measures the box.
       obj.data = {
         ...obj.data,
         fixedWidth: newWidth,
         fixedHeight: newHeight,
       };
+      obj.set({
+        width: newWidth,
+        scaleX: 1,
+        scaleY: 1,
+      });
+      obj.initDimensions();
 
       if (obj.data?.autofit) {
         applyAutofit(obj);
@@ -249,6 +249,14 @@
       applyAutofit(textObj);
       fabricCanvas.renderAll();
     });
+  }
+
+  // Text frames need their handles and measurements set up after every load.
+  function prepareLoadedObjects() {
+    if (!fabricCanvas) return;
+    for (const obj of fabricCanvas.getObjects()) {
+      if (obj instanceof Textbox) applyTextFrame(obj as FrameTextbox);
+    }
   }
 
   // Apply autofit to a textbox - adjust font size to fit within fixed bounds
@@ -358,8 +366,9 @@
     if (!fabricCanvas) return;
 
     const defaultWidth = 150;
-    const defaultHeight = 30;
 
+    // New text is a wrapping frame whose height follows the text until the
+    // user drags the bottom handle or types a height.
     const textObj = new Textbox(text, {
       left: 20,
       top: 20,
@@ -371,12 +380,14 @@
       splitByGrapheme: false,
       data: {
         autofit: false,
+        wrap: true,
         maxFontSize: 16,
         fixedWidth: defaultWidth,
-        fixedHeight: defaultHeight,
+        fixedHeight: null,
       },
       ...options,
     } as ConstructorParameters<typeof Textbox>[1] & { data: TextBoxData });
+    applyTextFrame(textObj as FrameTextbox);
 
     fabricCanvas.add(textObj);
     fabricCanvas.setActiveObject(textObj);
@@ -602,6 +613,7 @@
       } else {
         activeObject.set(updates as Partial<FabricObject>);
       }
+      if (activeObject instanceof Textbox) applyTextFrame(activeObject as FrameTextbox);
       activeObject.setCoords();
       fabricCanvas.renderAll();
       saveCanvas();
@@ -836,6 +848,7 @@
         hasInitiallyLoaded.value = true;
         isLoadingData = true;
         fabricCanvas.loadFromJSON(newData).then(() => {
+          prepareLoadedObjects();
           fabricCanvas?.renderAll();
           isLoadingData = false;
           onInitialLoad();

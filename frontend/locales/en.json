@@ -530,6 +530,7 @@
                     "add_barcode": "Add Barcode",
                     "add_shape": "Add Shape",
                     "bold": "Toggle bold",
+                    "wrap": "Wrap text in its frame",
                     "align_left": "Align left",
                     "align_center": "Align center",
                     "align_right": "Align right"
@@ -585,7 +586,7 @@
                     "max_width": "Max Width",
                     "max_height": "Max Height",
                     "autofit": "Auto-fit Text",
-                    "autofit_hint": "Resize textbox to set bounds. Font will scale to fit.",
+                    "autofit_hint": "Resize the frame to set the bounds. The font scales down until the text fits.",
                     "insert_field": "Insert Data Field",
                     "select_field": "Select field...",
                     "auto": "Auto",

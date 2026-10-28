@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
   import MdiFormatBold from "~icons/mdi/format-bold";
+  import MdiWrap from "~icons/mdi/wrap";
   import MdiFormatAlignLeft from "~icons/mdi/format-align-left";
   import MdiFormatAlignCenter from "~icons/mdi/format-align-center";
   import MdiFormatAlignRight from "~icons/mdi/format-align-right";
@@ -93,6 +94,7 @@
       // Textbox-specific
       textboxWidth: Math.round(obj.width || 150),
       autofit: data.autofit || false,
+      wrap: data.wrap === true,
       fixedWidth: data.fixedWidth || Math.round(obj.width || 150),
       fixedHeight: data.fixedHeight || null,
       maxFontSize: data.maxFontSize || obj.fontSize || 16,
@@ -142,6 +144,21 @@
         ...currentData,
         autofit: target.checked,
         maxFontSize: currentData.maxFontSize || props.selectedObject?.fontSize || 16,
+        // Autofit needs a bound to fit into; start from the box as it is.
+        fixedHeight: currentData.fixedHeight || Math.round(props.selectedObject?.height || 30),
+      },
+    });
+  }
+
+  // Wrapping turns the box into a frame: text stays inside it and the frame
+  // keeps its size. Off means one line, cut at the frame's right edge.
+  function handleWrapChange(wrap: boolean) {
+    const currentData = props.selectedObject?.data || {};
+    emit("updateObject", {
+      data: {
+        ...currentData,
+        wrap,
+        fixedWidth: currentData.fixedWidth || Math.round(props.selectedObject?.width || 150),
       },
     });
   }
@@ -236,6 +253,17 @@
       @click="handleFontWeightChange(objectProps.fontWeight !== 'bold')"
     >
       <MdiFormatBold class="size-4" />
+    </Button>
+    <Button
+      :variant="objectProps.wrap ? 'default' : 'outline'"
+      size="icon"
+      class="size-8"
+      :aria-pressed="objectProps.wrap"
+      :aria-label="$t('components.label_template.editor.toolbar.wrap')"
+      :title="$t('components.label_template.editor.toolbar.wrap')"
+      @click="handleWrapChange(!objectProps.wrap)"
+    >
+      <MdiWrap class="size-4" />
     </Button>
 
     <div class="h-6 w-px bg-border" />
