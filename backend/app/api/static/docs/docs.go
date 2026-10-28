@@ -932,6 +932,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/repo.LocationItemsResult"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/validate.ErrorResponse"
+                        }
                     }
                 }
             }

@@ -626,6 +626,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/repo.LocationItemsResult"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/validate.ErrorResponse"
   "/v1/entities/{id}/duplicate":
     post:
       security:

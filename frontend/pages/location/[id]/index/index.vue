@@ -450,7 +450,7 @@
           </p>
         </div>
         <ItemViewSelectable
-          :key="'location-items-' + depth"
+          :key="'location-items-' + locationId + '-' + depth + '-' + locationPage + '-' + locationPageSize"
           :items="items"
           :pagination="depth === 'direct' ? undefined : descendantPagination"
           :disable-sort="depth !== 'direct'"

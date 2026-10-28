@@ -176,3 +176,38 @@ func TestLocationDescendants_RejectsInvalidDepthAndPage(t *testing.T) {
 	require.NotErrorIs(t, err, ErrLocationRootNotLocation)
 	require.NotErrorIs(t, err, ErrInvalidLocationQuery)
 }
+
+// A corrupt two-location parent cycle must not repeat entities or inflate page
+// totals. The root has already been visited before traversal begins.
+func TestLocationDescendants_CyclicLocations(t *testing.T) {
+	ctx := context.Background()
+	f := newLocationFixture(t, "location-depth-cycle")
+	shelf := makeNestedLocation(t, f, "Cycle Shelf", f.attic.ID)
+	direct := makeNestedItem(t, f, "One Direct Item", f.attic.ID, uuid.Nil)
+	nested := makeNestedItem(t, f, "Two Nested Item", shelf.ID, uuid.Nil)
+
+	// Existing entity updates can form a loop. Protect the reader even when
+	// that corrupt state exists, without changing ordinary update semantics.
+	_, err := tClient.Entity.UpdateOneID(f.attic.ID).SetParentID(shelf.ID).Save(ctx)
+	require.NoError(t, err)
+
+	for _, depth := range []int{1, 2, 3, MaxLocationDepth} {
+		got, queryErr := tRepos.Entities.QueryLocationDescendants(ctx, f.gid, f.attic.ID, depth, 1, 24)
+		require.NoError(t, queryErr)
+		require.Equal(t, 2, got.Total)
+		require.Equal(t, 1, got.DirectTotal)
+		require.Len(t, got.Items, 2)
+		assert.Equal(t, []uuid.UUID{direct.ID, nested.ID}, []uuid.UUID{got.Items[0].ID, got.Items[1].ID})
+		assert.Equal(t, "Attic", got.Items[0].LocationPath)
+		assert.Equal(t, "Attic / Cycle Shelf", got.Items[1].LocationPath)
+	}
+
+	first, err := tRepos.Entities.QueryLocationDescendants(ctx, f.gid, f.attic.ID, MaxLocationDepth, 1, 1)
+	require.NoError(t, err)
+	second, err := tRepos.Entities.QueryLocationDescendants(ctx, f.gid, f.attic.ID, MaxLocationDepth, 2, 1)
+	require.NoError(t, err)
+	require.Len(t, first.Items, 1)
+	require.Len(t, second.Items, 1)
+	assert.NotEqual(t, first.Items[0].ID, second.Items[0].ID)
+	assert.Equal(t, 2, second.Total)
+}

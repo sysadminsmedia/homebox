@@ -22,6 +22,9 @@ var ErrLocationRootNotLocation = errors.New("select a location, not an inventory
 // ErrInvalidLocationQuery identifies invalid location depth or pagination values.
 var ErrInvalidLocationQuery = errors.New("invalid location depth or pagination parameters")
 
+// MaxLocationDepth is the maximum descendant depth used for the "all" option.
+const MaxLocationDepth = maxAncestorDepth
+
 type locationItemRow struct {
 	id   uuid.UUID
 	path string
@@ -31,10 +34,13 @@ type locationItemRow struct {
 // take precedence over an item's ordinary parent; the same COALESCE rule is
 // used by the existing Homebox location tree. The CTE counts only location
 // nodes as depth, so grouping items inside other items doesn't consume an
-// additional location level.
+// additional location level. The visited UUID chain prevents cycles from
+// reintroducing the root or duplicates while preserving each item's path.
+// The two indexed parent columns support fast, override-aware traversal.
 const locationDescendantCTE = `
-WITH RECURSIVE location_scope(id, location_depth, hops, path, parent_path) AS (
-    SELECT root.id, 0, 0, CAST(root.name AS TEXT), CAST('' AS TEXT)
+WITH RECURSIVE location_scope(id, location_depth, hops, path, parent_path, visited) AS (
+    SELECT root.id, 0, 0, CAST(root.name AS TEXT), CAST('' AS TEXT),
+           '|' || CAST(root.id AS TEXT) || '|'
     FROM entities root
     JOIN entity_types rt ON rt.id = root.entity_type_entities
     WHERE root.id = $1 AND root.group_entities = $2 AND rt.is_location = true
@@ -45,13 +51,16 @@ WITH RECURSIVE location_scope(id, location_depth, hops, path, parent_path) AS (
            node.location_depth + CASE WHEN ct.is_location = true THEN 1 ELSE 0 END,
            node.hops + 1,
            node.path || ' / ' || child.name,
-           node.path
+           node.path,
+           node.visited || CAST(child.id AS TEXT) || '|'
     FROM entities child
     JOIN location_scope node
-       ON COALESCE(child.entity_location_entities, child.entity_children) = node.id
+       ON (child.entity_location_entities = node.id
+           OR (child.entity_location_entities IS NULL AND child.entity_children = node.id))
     LEFT JOIN entity_types ct ON ct.id = child.entity_type_entities
     WHERE child.group_entities = $2
       AND node.hops < 64
+      AND node.visited NOT LIKE '%|' || CAST(child.id AS TEXT) || '|%'
       AND node.location_depth + CASE WHEN ct.is_location = true THEN 1 ELSE 0 END <= $3
 )
 `

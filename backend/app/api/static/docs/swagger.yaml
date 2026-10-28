@@ -2912,6 +2912,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/repo.LocationItemsResult'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/validate.ErrorResponse'
       security:
       - Bearer: []
       summary: List the inventory contained in a location with configurable child
