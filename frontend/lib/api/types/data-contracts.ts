@@ -817,7 +817,7 @@ export interface EntityOut {
    */
   locationId?: string | null;
   /** scoped location view only */
-  locationPath?: string | null;
+  locationPath?: string;
   manufacturer: string;
   modelNumber: string;
   name: string;
@@ -873,7 +873,7 @@ export interface EntitySummary {
   /** Container-specific (populated when querying locations) */
   itemCount: number;
   /** scoped location view only */
-  locationPath?: string | null;
+  locationPath?: string;
   name: string;
   /** Edges */
   parent?: EntitySummary | null;

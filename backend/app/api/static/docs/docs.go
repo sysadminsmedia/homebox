@@ -5057,7 +5057,6 @@ const docTemplate = `{
                 "locationPath": {
                     "description": "scoped location view only",
                     "type": "string",
-                    "x-nullable": true,
                     "x-omitempty": true
                 },
                 "manufacturer": {
@@ -5244,7 +5243,6 @@ const docTemplate = `{
                 "locationPath": {
                     "description": "scoped location view only",
                     "type": "string",
-                    "x-nullable": true,
                     "x-omitempty": true
                 },
                 "name": {

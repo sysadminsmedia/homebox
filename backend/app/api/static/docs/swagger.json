@@ -5054,7 +5054,6 @@
                 "locationPath": {
                     "description": "scoped location view only",
                     "type": "string",
-                    "x-nullable": true,
                     "x-omitempty": true
                 },
                 "manufacturer": {
@@ -5241,7 +5240,6 @@
                 "locationPath": {
                     "description": "scoped location view only",
                     "type": "string",
-                    "x-nullable": true,
                     "x-omitempty": true
                 },
                 "name": {
