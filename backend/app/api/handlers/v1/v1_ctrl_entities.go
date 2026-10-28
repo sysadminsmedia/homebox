@@ -258,12 +258,17 @@ func (ctrl *V1Controller) HandleLocationDescendantItems() errchain.HandlerFunc {
 		}
 		ctx := services.NewContext(r.Context())
 		items, err := ctrl.repo.Entities.QueryLocationDescendants(ctx, ctx.GID, id, depth, page, pageSize)
-		if errors.Is(err, repo.ErrLocationRootNotLocation) {
-			return repo.LocationItemsResult{}, validate.NewRequestError(err, http.StatusBadRequest)
-		}
-		return items, err
+		return items, locationDescendantHTTPError(err)
 	}
 	return adapters.CommandID("id", fn, http.StatusOK)
+}
+
+// locationDescendantHTTPError maps client input failures without changing database errors.
+func locationDescendantHTTPError(err error) error {
+	if errors.Is(err, repo.ErrLocationRootNotLocation) || errors.Is(err, repo.ErrInvalidLocationQuery) {
+		return validate.NewRequestError(err, http.StatusBadRequest)
+	}
+	return err
 }
 
 // HandleEntitiesCreate godoc

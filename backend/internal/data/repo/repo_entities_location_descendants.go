@@ -19,6 +19,9 @@ type LocationItemsResult struct {
 // ErrLocationRootNotLocation identifies an inventory item used in place of a location root.
 var ErrLocationRootNotLocation = errors.New("select a location, not an inventory item")
 
+// ErrInvalidLocationQuery identifies invalid location depth or pagination values.
+var ErrInvalidLocationQuery = errors.New("invalid location depth or pagination parameters")
+
 type locationItemRow struct {
 	id   uuid.UUID
 	path string
@@ -70,12 +73,12 @@ func (r *EntityRepository) QueryLocationDescendants(
 	ctx context.Context, gid, locationID uuid.UUID, depth, page, pageSize int,
 ) (LocationItemsResult, error) {
 	if depth < 1 || depth > maxAncestorDepth || page < 1 || pageSize < 1 || pageSize > 96 {
-		return LocationItemsResult{}, fmt.Errorf("invalid location depth or pagination parameters")
+		return LocationItemsResult{}, ErrInvalidLocationQuery
 	}
 	// The API accepts integer pages; reject an offset that would overflow on
 	// either 32- or 64-bit servers rather than returning a wrapped page.
 	if page-1 > int(^uint(0)>>1)/pageSize {
-		return LocationItemsResult{}, fmt.Errorf("location page offset is too large")
+		return LocationItemsResult{}, fmt.Errorf("%w: location page offset is too large", ErrInvalidLocationQuery)
 	}
 	root, err := r.GetOneByGroup(ctx, gid, locationID)
 	if err != nil {

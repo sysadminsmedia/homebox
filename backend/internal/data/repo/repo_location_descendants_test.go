@@ -164,7 +164,7 @@ func TestLocationDescendants_RejectsInvalidDepthAndPage(t *testing.T) {
 		{1, int(^uint(0) >> 1), 96},
 	} {
 		_, err := tRepos.Entities.QueryLocationDescendants(ctx, f.gid, f.attic.ID, tc.depth, tc.page, tc.size)
-		require.Error(t, err)
+		require.ErrorIs(t, err, ErrInvalidLocationQuery)
 	}
 	// A normal item cannot be used as the root location.
 	item := makeNestedItem(t, f, "Not a location", f.attic.ID, uuid.Nil)
@@ -174,4 +174,5 @@ func TestLocationDescendants_RejectsInvalidDepthAndPage(t *testing.T) {
 	_, err = tRepos.Entities.QueryLocationDescendants(ctx, f.gid, uuid.New(), 1, 1, 24)
 	require.Error(t, err)
 	require.NotErrorIs(t, err, ErrLocationRootNotLocation)
+	require.NotErrorIs(t, err, ErrInvalidLocationQuery)
 }
