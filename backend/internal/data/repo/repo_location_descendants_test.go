@@ -9,6 +9,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const (
+	batteryChargerName = "01 Battery Charger"
+	resinCleanerName   = "02 Resin Cleaner"
+)
+
 func makeNestedLocation(t *testing.T, f locationFixture, name string, parentID uuid.UUID) EntityOut {
 	t.Helper()
 	ct, err := tRepos.EntityTypes.GetDefault(context.Background(), f.gid, true)
@@ -33,9 +38,9 @@ func TestLocationDescendants_DepthsPathsAndPagination(t *testing.T) {
 	ctx := context.Background()
 	f := newLocationFixture(t, "location-depths-and-pagination")
 
-	rootItem := makeNestedItem(t, f, "01 Battery Charger", f.attic.ID, uuid.Nil)
+	rootItem := makeNestedItem(t, f, batteryChargerName, f.attic.ID, uuid.Nil)
 	shelf := makeNestedLocation(t, f, "Upper Storage Shelf", f.attic.ID)
-	one := makeNestedItem(t, f, "02 Resin Cleaner", shelf.ID, uuid.Nil)
+	one := makeNestedItem(t, f, resinCleanerName, shelf.ID, uuid.Nil)
 	box := makeNestedLocation(t, f, "3D Printing Box", shelf.ID)
 	two := makeNestedItem(t, f, "03 Filament Dryer", box.ID, uuid.Nil)
 	tray := makeNestedLocation(t, f, "Maintenance Tray", box.ID)
@@ -55,10 +60,10 @@ func TestLocationDescendants_DepthsPathsAndPagination(t *testing.T) {
 		depth int
 		names []string
 	}{
-		{1, []string{"01 Battery Charger", "02 Resin Cleaner"}},
-		{2, []string{"01 Battery Charger", "02 Resin Cleaner", "03 Filament Dryer"}},
-		{3, []string{"01 Battery Charger", "02 Resin Cleaner", "03 Filament Dryer", "04 Silicone Socks"}},
-		{maxAncestorDepth, []string{"01 Battery Charger", "02 Resin Cleaner", "03 Filament Dryer", "04 Silicone Socks", "05 Spare Nozzle"}},
+		{1, []string{batteryChargerName, resinCleanerName}},
+		{2, []string{batteryChargerName, resinCleanerName, "03 Filament Dryer"}},
+		{3, []string{batteryChargerName, resinCleanerName, "03 Filament Dryer", "04 Silicone Socks"}},
+		{maxAncestorDepth, []string{batteryChargerName, resinCleanerName, "03 Filament Dryer", "04 Silicone Socks", "05 Spare Nozzle"}},
 	} {
 		got, err := tRepos.Entities.QueryLocationDescendants(ctx, f.gid, f.attic.ID, tc.depth, 1, 24)
 		require.NoError(t, err)
@@ -77,7 +82,7 @@ func TestLocationDescendants_DepthsPathsAndPagination(t *testing.T) {
 	require.NoError(t, err)
 	page3, err := tRepos.Entities.QueryLocationDescendants(ctx, f.gid, f.attic.ID, maxAncestorDepth, 3, 2)
 	require.NoError(t, err)
-	assert.Equal(t, []string{"01 Battery Charger", "02 Resin Cleaner"}, []string{page1.Items[0].Name, page1.Items[1].Name})
+	assert.Equal(t, []string{batteryChargerName, resinCleanerName}, []string{page1.Items[0].Name, page1.Items[1].Name})
 	assert.Equal(t, []string{"03 Filament Dryer", "04 Silicone Socks"}, []string{page2.Items[0].Name, page2.Items[1].Name})
 	assert.Equal(t, all.ID, page3.Items[0].ID)
 	assert.Equal(t, 5, page1.Total)
@@ -163,5 +168,9 @@ func TestLocationDescendants_RejectsInvalidDepthAndPage(t *testing.T) {
 	// A normal item cannot be used as the root location.
 	item := makeNestedItem(t, f, "Not a location", f.attic.ID, uuid.Nil)
 	_, err := tRepos.Entities.QueryLocationDescendants(ctx, f.gid, item.ID, 1, 1, 24)
+	require.ErrorIs(t, err, ErrLocationRootNotLocation)
+	// A nonexistent root stays distinct from the invalid-location sentinel.
+	_, err = tRepos.Entities.QueryLocationDescendants(ctx, f.gid, uuid.New(), 1, 1, 24)
 	require.Error(t, err)
+	require.NotErrorIs(t, err, ErrLocationRootNotLocation)
 }

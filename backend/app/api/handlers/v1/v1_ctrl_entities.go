@@ -215,11 +215,11 @@ func (ctrl *V1Controller) HandleEntityFullPath() errchain.HandlerFunc {
 //	@Summary	List the inventory contained in a location with configurable child depth
 //	@Tags		Entities
 //	@Produce	json
-//	@Param		id		path	string	true	"Location ID"
-//	@Param		depth	query	string	true	"Child-location depth: 1, 2, 3 or all"
-//	@Param		page	query	int	false	"Page number (default 1)"
-//	@Param		pageSize	query	int	false	"Page size, maximum 96 (default 24)"
-//	@Success	200	{object}	repo.LocationItemsResult
+//	@Param		id			path		string	true	"Location ID"
+//	@Param		depth		query		string	true	"Child-location depth: 1, 2, 3 or all"
+//	@Param		page		query		int		false	"Page number (default 1)"
+//	@Param		pageSize	query		int		false	"Page size, maximum 96 (default 24)"
+//	@Success	200			{object}	repo.LocationItemsResult
 //	@Router		/v1/entities/{id}/descendant-items [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleLocationDescendantItems() errchain.HandlerFunc {
@@ -257,7 +257,11 @@ func (ctrl *V1Controller) HandleLocationDescendantItems() errchain.HandlerFunc {
 				fmt.Errorf("page must be positive and pageSize between 1 and 96"), http.StatusBadRequest)
 		}
 		ctx := services.NewContext(r.Context())
-		return ctrl.repo.Entities.QueryLocationDescendants(ctx, ctx.GID, id, depth, page, pageSize)
+		items, err := ctrl.repo.Entities.QueryLocationDescendants(ctx, ctx.GID, id, depth, page, pageSize)
+		if errors.Is(err, repo.ErrLocationRootNotLocation) {
+			return repo.LocationItemsResult{}, validate.NewRequestError(err, http.StatusBadRequest)
+		}
+		return items, err
 	}
 	return adapters.CommandID("id", fn, http.StatusOK)
 }

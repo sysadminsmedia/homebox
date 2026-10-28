@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -15,6 +16,9 @@ type LocationItemsResult struct {
 	DirectTotal int `json:"directTotal"`
 }
 
+// ErrLocationRootNotLocation identifies an inventory item used in place of a location root.
+var ErrLocationRootNotLocation = errors.New("select a location, not an inventory item")
+
 type locationItemRow struct {
 	id   uuid.UUID
 	path string
@@ -27,7 +31,7 @@ type locationItemRow struct {
 // additional location level.
 const locationDescendantCTE = `
 WITH RECURSIVE location_scope(id, location_depth, hops, path, parent_path) AS (
-    SELECT root.id, 0, 0, root.name, ''
+    SELECT root.id, 0, 0, CAST(root.name AS TEXT), CAST('' AS TEXT)
     FROM entities root
     JOIN entity_types rt ON rt.id = root.entity_type_entities
     WHERE root.id = $1 AND root.group_entities = $2 AND rt.is_location = true
@@ -78,7 +82,7 @@ func (r *EntityRepository) QueryLocationDescendants(
 		return LocationItemsResult{}, err
 	}
 	if root.EntityType == nil || !root.EntityType.IsLocation {
-		return LocationItemsResult{}, fmt.Errorf("select a location, not an inventory item")
+		return LocationItemsResult{}, ErrLocationRootNotLocation
 	}
 
 	result := LocationItemsResult{
