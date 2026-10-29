@@ -85,8 +85,10 @@
     setZoom(1);
   }
 
-  // Default grid size in pixels (10 pixels = approx 2.6mm at 96 DPI)
-  const effectiveGridSize = computed(() => props.gridSize || 10);
+  // Default grid size in pixels (10 pixels = approx 2.6mm at 96 DPI). The
+  // value is typed by the user; a zero or negative step would never end the
+  // grid loops, so keep it at the input's minimum.
+  const effectiveGridSize = computed(() => Math.max(5, Number(props.gridSize) || 10));
 
   // Convert mm to pixels for display (at 96 DPI for screen)
   const screenDPI = 96;

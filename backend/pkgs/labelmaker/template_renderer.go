@@ -150,6 +150,14 @@ func scaleCoord(coord float64, renderDPI int) int {
 	return int(coord * float64(renderDPI) / screenDPI)
 }
 
+// clampRenderDim keeps a frame dimension taken from the canvas JSON inside
+// [0, maxRenderPixels]. A negative value, or one so large that the float-to-int
+// conversion wrapped, would otherwise give the rotated-text buffer a "negative"
+// size that slips past the pixel budget, or a negative line count to slice by.
+func clampRenderDim(px int) int {
+	return min(max(px, 0), maxRenderPixels)
+}
+
 // scaleSize scales a size value from screen DPI to render DPI
 func scaleSize(size float64, renderDPI int) float64 {
 	return size * float64(renderDPI) / screenDPI
@@ -625,9 +633,12 @@ func (r *TemplateRenderer) prepareTextRender(elem CanvasElement, text string, dp
 	// A frame shows only what fits: lines that start below its bottom edge are
 	// dropped here and the pixel clip in the renderers cuts the rest.
 	if ctx.autofit.frame && ctx.autofit.fixedHeight > 0 {
-		ctx.frameHeight = scaleCoord(ctx.autofit.fixedHeight, dpi)
-		if ctx.lineHeight > 0 {
-			visible := (ctx.frameHeight + ctx.lineHeight - 1) / ctx.lineHeight
+		ctx.frameHeight = clampRenderDim(scaleCoord(ctx.autofit.fixedHeight, dpi))
+		if ctx.frameHeight > 0 && ctx.lineHeight > 0 {
+			visible := ctx.frameHeight / ctx.lineHeight
+			if ctx.frameHeight%ctx.lineHeight != 0 {
+				visible++
+			}
 			if visible < len(ctx.lines) {
 				ctx.lines = ctx.lines[:visible]
 			}
@@ -655,7 +666,7 @@ func (r *TemplateRenderer) prepareTextRender(elem CanvasElement, text string, dp
 	if ctx.containerWidth <= 0 {
 		ctx.containerWidth = elem.Width
 	}
-	ctx.scaledContainerWidth = scaleCoord(ctx.containerWidth, dpi)
+	ctx.scaledContainerWidth = clampRenderDim(scaleCoord(ctx.containerWidth, dpi))
 
 	return ctx
 }
@@ -742,7 +753,8 @@ func (r *TemplateRenderer) renderTextRotated(img *image.RGBA, elem CanvasElement
 	sinA, cosA := math.Abs(math.Sin(theta)), math.Abs(math.Cos(theta))
 	rotW := float64(tempWidth)*cosA + float64(tempHeight)*sinA
 	rotH := float64(tempWidth)*sinA + float64(tempHeight)*cosA
-	if float64(tempWidth)*float64(tempHeight) > maxRenderPixels || rotW*rotH > maxRenderPixels {
+	if tempWidth <= 0 || tempHeight <= 0 ||
+		float64(tempWidth)*float64(tempHeight) > maxRenderPixels || rotW*rotH > maxRenderPixels {
 		return fmt.Errorf("rotated text %dx%d px exceeds the renderer limit of %d pixels", tempWidth, tempHeight, maxRenderPixels)
 	}
 

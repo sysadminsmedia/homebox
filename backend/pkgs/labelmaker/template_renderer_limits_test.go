@@ -117,6 +117,37 @@ func TestRenderElementsFarOutsideLabelAreSkippedQuickly(t *testing.T) {
 	}
 }
 
+// A text frame's width comes from the canvas JSON. Negative or absurd values
+// must not turn into a negative buffer size that image.Rect silently flips
+// into a multi-gigabyte allocation for the rotated-text pass.
+func TestRenderRotatedTextFrameWithBadWidthIsBounded(t *testing.T) {
+	r := newLimitsRenderer(t)
+	frame := func(data map[string]interface{}) map[string]interface{} {
+		d := mergeMaps(map[string]interface{}{"wrap": true}, data)
+		return map[string]interface{}{
+			"text": "frame", "fontSize": 12.0, "fill": black, "angle": 90.0,
+			keyOriginX: topLeft, keyOriginY: "top", "data": d,
+		}
+	}
+
+	cases := map[string]map[string]interface{}{
+		"negative element width": canvasObject("textbox", 10, 10, -40000, 20, frame(nil)),
+		"negative fixed width":   canvasObject("textbox", 10, 10, 0, 20, frame(map[string]interface{}{"fixedWidth": -40000.0})),
+		"absurd element width":   canvasObject("textbox", 10, 10, 1e300, 20, frame(nil)),
+		"absurd fixed width":     canvasObject("textbox", 10, 10, 0, 20, frame(map[string]interface{}{"fixedWidth": 1e300})),
+		"absurd fixed height":    canvasObject("textbox", 10, 10, 100, 20, frame(map[string]interface{}{"fixedHeight": 1e300})),
+	}
+	for name, obj := range cases {
+		withinBudget(t, name, func() {
+			img := whiteLabel(400, 200)
+			elem := parseCanvasElement(obj)
+			// Refusing the element or drawing nothing are both fine; a large
+			// allocation or a panic is not.
+			_ = r.renderElement(img, elem, nil, nil, 300)
+		})
+	}
+}
+
 func TestDecodeImageSourceRejectsBombsAndOversizedPayloads(t *testing.T) {
 	// A 44-byte PNG that declares a 50000 x 50000 canvas; image.Decode would
 	// allocate 10 GB for it. DecodeConfig sees the declared size first.
