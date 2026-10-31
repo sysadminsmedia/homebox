@@ -589,6 +589,14 @@ func init() {
 	labeltemplateDescDpi := labeltemplateFields[6].Descriptor()
 	// labeltemplate.DefaultDpi holds the default value on creation for the dpi field.
 	labeltemplate.DefaultDpi = labeltemplateDescDpi.Default.(int)
+	// labeltemplateDescOffsetX is the schema descriptor for offset_x field.
+	labeltemplateDescOffsetX := labeltemplateFields[8].Descriptor()
+	// labeltemplate.DefaultOffsetX holds the default value on creation for the offset_x field.
+	labeltemplate.DefaultOffsetX = labeltemplateDescOffsetX.Default.(float64)
+	// labeltemplateDescOffsetY is the schema descriptor for offset_y field.
+	labeltemplateDescOffsetY := labeltemplateFields[9].Descriptor()
+	// labeltemplate.DefaultOffsetY holds the default value on creation for the offset_y field.
+	labeltemplate.DefaultOffsetY = labeltemplateDescOffsetY.Default.(float64)
 	// labeltemplateDescID is the schema descriptor for id field.
 	labeltemplateDescID := labeltemplateMixinFields0[0].Descriptor()
 	// labeltemplate.DefaultID holds the default value on creation for the id field.

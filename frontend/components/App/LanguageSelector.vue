@@ -4,6 +4,7 @@
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import { Label } from "@/components/ui/label";
   import { fmtDate } from "~~/composables/use-formatters";
+  import { localeMeasurementSystem, measurementLocale } from "~~/composables/use-measurement";
   import { useViewPreferences } from "~~/composables/use-preferences";
 
   const preferences = useViewPreferences();
@@ -34,6 +35,21 @@
       preferences.value.overrideFormatLocale = locale;
     }
   }
+
+  // "auto" stands in for a null preference, which follows the locale
+  const measurementSystem = computed({
+    get: () => preferences.value.measurementSystem ?? "auto",
+    set: (value: string) => {
+      preferences.value.measurementSystem = value === "metric" || value === "imperial" ? value : null;
+    },
+  });
+
+  const localeSystem = computed(() => {
+    // read the override so the label updates when it changes
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const locale = preferences.value.overrideFormatLocale;
+    return localeMeasurementSystem(measurementLocale());
+  });
 
   const dateExample = computed(() => {
     // hack to force vue to update
@@ -85,6 +101,19 @@
         </SelectContent>
       </Select>
       <p class="m-2 text-sm">{{ $t("profile.example") }}: {{ $t("global.created") }} {{ dateExample }}</p>
+      <Label for="measurementSystem"> {{ $t("profile.measurement_system") }} </Label>
+      <Select id="measurementSystem" v-model="measurementSystem">
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="auto">
+            {{ $t("profile.measurement_auto", { system: $t(`profile.measurement_${localeSystem}`) }) }}
+          </SelectItem>
+          <SelectItem value="metric">{{ $t("profile.measurement_metric") }}</SelectItem>
+          <SelectItem value="imperial">{{ $t("profile.measurement_imperial") }}</SelectItem>
+        </SelectContent>
+      </Select>
     </template>
   </div>
 </template>

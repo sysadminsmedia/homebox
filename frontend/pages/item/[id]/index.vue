@@ -708,11 +708,7 @@
               </div>
             </div>
             <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-2">
-              <LabelTemplatePrintButton
-                :id="item.id"
-                type="item"
-                :asset-id="typeof item.assetId === 'string' && item.assetId != '' ? item.assetId : ''"
-              />
+              <LabelTemplatePrintButton :id="item.id" type="item" />
               <PageQRCode />
               <Button class="w-9 md:w-auto" :aria-label="$t('global.create_subitem')" @click="createSubitem">
                 <MdiPlus />

@@ -14,6 +14,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/labeltemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/labelmaker"
 )
 
 // LabelTemplateCreate is the builder for creating a LabelTemplate entity.
@@ -161,6 +162,40 @@ func (_c *LabelTemplateCreate) SetNillableDpi(v *int) *LabelTemplateCreate {
 	return _c
 }
 
+// SetSheetLayout sets the "sheet_layout" field.
+func (_c *LabelTemplateCreate) SetSheetLayout(v *labelmaker.SheetLayout) *LabelTemplateCreate {
+	_c.mutation.SetSheetLayout(v)
+	return _c
+}
+
+// SetOffsetX sets the "offset_x" field.
+func (_c *LabelTemplateCreate) SetOffsetX(v float64) *LabelTemplateCreate {
+	_c.mutation.SetOffsetX(v)
+	return _c
+}
+
+// SetNillableOffsetX sets the "offset_x" field if the given value is not nil.
+func (_c *LabelTemplateCreate) SetNillableOffsetX(v *float64) *LabelTemplateCreate {
+	if v != nil {
+		_c.SetOffsetX(*v)
+	}
+	return _c
+}
+
+// SetOffsetY sets the "offset_y" field.
+func (_c *LabelTemplateCreate) SetOffsetY(v float64) *LabelTemplateCreate {
+	_c.mutation.SetOffsetY(v)
+	return _c
+}
+
+// SetNillableOffsetY sets the "offset_y" field if the given value is not nil.
+func (_c *LabelTemplateCreate) SetNillableOffsetY(v *float64) *LabelTemplateCreate {
+	if v != nil {
+		_c.SetOffsetY(*v)
+	}
+	return _c
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (_c *LabelTemplateCreate) SetOwnerID(v uuid.UUID) *LabelTemplateCreate {
 	_c.mutation.SetOwnerID(v)
@@ -260,6 +295,14 @@ func (_c *LabelTemplateCreate) defaults() {
 		v := labeltemplate.DefaultDpi
 		_c.mutation.SetDpi(v)
 	}
+	if _, ok := _c.mutation.OffsetX(); !ok {
+		v := labeltemplate.DefaultOffsetX
+		_c.mutation.SetOffsetX(v)
+	}
+	if _, ok := _c.mutation.OffsetY(); !ok {
+		v := labeltemplate.DefaultOffsetY
+		_c.mutation.SetOffsetY(v)
+	}
 	if _, ok := _c.mutation.ID(); !ok {
 		v := labeltemplate.DefaultID()
 		_c.mutation.SetID(v)
@@ -306,6 +349,12 @@ func (_c *LabelTemplateCreate) check() error {
 	}
 	if _, ok := _c.mutation.Dpi(); !ok {
 		return &ValidationError{Name: "dpi", err: errors.New(`ent: missing required field "LabelTemplate.dpi"`)}
+	}
+	if _, ok := _c.mutation.OffsetX(); !ok {
+		return &ValidationError{Name: "offset_x", err: errors.New(`ent: missing required field "LabelTemplate.offset_x"`)}
+	}
+	if _, ok := _c.mutation.OffsetY(); !ok {
+		return &ValidationError{Name: "offset_y", err: errors.New(`ent: missing required field "LabelTemplate.offset_y"`)}
 	}
 	if _, ok := _c.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`ent: missing required field "LabelTemplate.owner_id"`)}
@@ -394,6 +443,18 @@ func (_c *LabelTemplateCreate) createSpec() (*LabelTemplate, *sqlgraph.CreateSpe
 	if value, ok := _c.mutation.Dpi(); ok {
 		_spec.SetField(labeltemplate.FieldDpi, field.TypeInt, value)
 		_node.Dpi = value
+	}
+	if value, ok := _c.mutation.SheetLayout(); ok {
+		_spec.SetField(labeltemplate.FieldSheetLayout, field.TypeJSON, value)
+		_node.SheetLayout = value
+	}
+	if value, ok := _c.mutation.OffsetX(); ok {
+		_spec.SetField(labeltemplate.FieldOffsetX, field.TypeFloat64, value)
+		_node.OffsetX = value
+	}
+	if value, ok := _c.mutation.OffsetY(); ok {
+		_spec.SetField(labeltemplate.FieldOffsetY, field.TypeFloat64, value)
+		_node.OffsetY = value
 	}
 	if nodes := _c.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

@@ -253,7 +253,6 @@
   import MdiPlus from "~icons/mdi/plus";
   import MdiLogout from "~icons/mdi/logout";
   import MdiFileDocumentMultiple from "~icons/mdi/file-document-multiple";
-  import MdiLabel from "~icons/mdi/label";
   import MdiChevronRight from "~icons/mdi/chevron-right";
 
   import {
@@ -440,13 +439,6 @@
       to: "/templates",
     },
     {
-      icon: MdiLabel,
-      id: 8,
-      active: computed(() => route.path.startsWith("/label-templates")),
-      name: computed(() => t("menu.label_templates")),
-      to: "/label-templates",
-    },
-    {
       icon: MdiWrench,
       id: 5,
       active: computed(() => route.path === "/maintenance"),
@@ -456,9 +448,24 @@
     {
       icon: MdiAccount,
       id: 6,
-      active: computed(() => route.path === "/profile"),
+      active: computed(() => route.path === "/profile" || route.path.startsWith("/label-templates")),
       name: computed(() => t("menu.profile")),
       to: "/profile",
+      // Label templates are personal unless shared, so they live under the profile
+      collapsible: [
+        {
+          id: 51,
+          active: computed(() => route.path === "/profile"),
+          name: computed(() => t("profile.user_profile")),
+          to: "/profile",
+        },
+        {
+          id: 52,
+          active: computed(() => route.path.startsWith("/label-templates")),
+          name: computed(() => t("menu.label_templates")),
+          to: "/label-templates",
+        },
+      ],
     },
     {
       icon: MdiCog,

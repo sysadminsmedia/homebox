@@ -32,6 +32,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/usergroup"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/labelmaker"
 )
 
 const (
@@ -11560,6 +11561,11 @@ type LabelTemplateMutation struct {
 	output_format *string
 	dpi           *int
 	adddpi        *int
+	sheet_layout  **labelmaker.SheetLayout
+	offset_x      *float64
+	addoffset_x   *float64
+	offset_y      *float64
+	addoffset_y   *float64
 	clearedFields map[string]struct{}
 	group         *uuid.UUID
 	clearedgroup  bool
@@ -12169,6 +12175,167 @@ func (m *LabelTemplateMutation) ResetDpi() {
 	m.adddpi = nil
 }
 
+// SetSheetLayout sets the "sheet_layout" field.
+func (m *LabelTemplateMutation) SetSheetLayout(ll *labelmaker.SheetLayout) {
+	m.sheet_layout = &ll
+}
+
+// SheetLayout returns the value of the "sheet_layout" field in the mutation.
+func (m *LabelTemplateMutation) SheetLayout() (r *labelmaker.SheetLayout, exists bool) {
+	v := m.sheet_layout
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSheetLayout returns the old "sheet_layout" field's value of the LabelTemplate entity.
+// If the LabelTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelTemplateMutation) OldSheetLayout(ctx context.Context) (v *labelmaker.SheetLayout, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSheetLayout is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSheetLayout requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSheetLayout: %w", err)
+	}
+	return oldValue.SheetLayout, nil
+}
+
+// ClearSheetLayout clears the value of the "sheet_layout" field.
+func (m *LabelTemplateMutation) ClearSheetLayout() {
+	m.sheet_layout = nil
+	m.clearedFields[labeltemplate.FieldSheetLayout] = struct{}{}
+}
+
+// SheetLayoutCleared returns if the "sheet_layout" field was cleared in this mutation.
+func (m *LabelTemplateMutation) SheetLayoutCleared() bool {
+	_, ok := m.clearedFields[labeltemplate.FieldSheetLayout]
+	return ok
+}
+
+// ResetSheetLayout resets all changes to the "sheet_layout" field.
+func (m *LabelTemplateMutation) ResetSheetLayout() {
+	m.sheet_layout = nil
+	delete(m.clearedFields, labeltemplate.FieldSheetLayout)
+}
+
+// SetOffsetX sets the "offset_x" field.
+func (m *LabelTemplateMutation) SetOffsetX(f float64) {
+	m.offset_x = &f
+	m.addoffset_x = nil
+}
+
+// OffsetX returns the value of the "offset_x" field in the mutation.
+func (m *LabelTemplateMutation) OffsetX() (r float64, exists bool) {
+	v := m.offset_x
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOffsetX returns the old "offset_x" field's value of the LabelTemplate entity.
+// If the LabelTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelTemplateMutation) OldOffsetX(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOffsetX is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOffsetX requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOffsetX: %w", err)
+	}
+	return oldValue.OffsetX, nil
+}
+
+// AddOffsetX adds f to the "offset_x" field.
+func (m *LabelTemplateMutation) AddOffsetX(f float64) {
+	if m.addoffset_x != nil {
+		*m.addoffset_x += f
+	} else {
+		m.addoffset_x = &f
+	}
+}
+
+// AddedOffsetX returns the value that was added to the "offset_x" field in this mutation.
+func (m *LabelTemplateMutation) AddedOffsetX() (r float64, exists bool) {
+	v := m.addoffset_x
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetOffsetX resets all changes to the "offset_x" field.
+func (m *LabelTemplateMutation) ResetOffsetX() {
+	m.offset_x = nil
+	m.addoffset_x = nil
+}
+
+// SetOffsetY sets the "offset_y" field.
+func (m *LabelTemplateMutation) SetOffsetY(f float64) {
+	m.offset_y = &f
+	m.addoffset_y = nil
+}
+
+// OffsetY returns the value of the "offset_y" field in the mutation.
+func (m *LabelTemplateMutation) OffsetY() (r float64, exists bool) {
+	v := m.offset_y
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOffsetY returns the old "offset_y" field's value of the LabelTemplate entity.
+// If the LabelTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LabelTemplateMutation) OldOffsetY(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOffsetY is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOffsetY requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOffsetY: %w", err)
+	}
+	return oldValue.OffsetY, nil
+}
+
+// AddOffsetY adds f to the "offset_y" field.
+func (m *LabelTemplateMutation) AddOffsetY(f float64) {
+	if m.addoffset_y != nil {
+		*m.addoffset_y += f
+	} else {
+		m.addoffset_y = &f
+	}
+}
+
+// AddedOffsetY returns the value that was added to the "offset_y" field in this mutation.
+func (m *LabelTemplateMutation) AddedOffsetY() (r float64, exists bool) {
+	v := m.addoffset_y
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetOffsetY resets all changes to the "offset_y" field.
+func (m *LabelTemplateMutation) ResetOffsetY() {
+	m.offset_y = nil
+	m.addoffset_y = nil
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (m *LabelTemplateMutation) SetOwnerID(u uuid.UUID) {
 	m.owner = &u
@@ -12305,7 +12472,7 @@ func (m *LabelTemplateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *LabelTemplateMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 15)
 	if m.created_at != nil {
 		fields = append(fields, labeltemplate.FieldCreatedAt)
 	}
@@ -12338,6 +12505,15 @@ func (m *LabelTemplateMutation) Fields() []string {
 	}
 	if m.dpi != nil {
 		fields = append(fields, labeltemplate.FieldDpi)
+	}
+	if m.sheet_layout != nil {
+		fields = append(fields, labeltemplate.FieldSheetLayout)
+	}
+	if m.offset_x != nil {
+		fields = append(fields, labeltemplate.FieldOffsetX)
+	}
+	if m.offset_y != nil {
+		fields = append(fields, labeltemplate.FieldOffsetY)
 	}
 	if m.owner != nil {
 		fields = append(fields, labeltemplate.FieldOwnerID)
@@ -12372,6 +12548,12 @@ func (m *LabelTemplateMutation) Field(name string) (ent.Value, bool) {
 		return m.OutputFormat()
 	case labeltemplate.FieldDpi:
 		return m.Dpi()
+	case labeltemplate.FieldSheetLayout:
+		return m.SheetLayout()
+	case labeltemplate.FieldOffsetX:
+		return m.OffsetX()
+	case labeltemplate.FieldOffsetY:
+		return m.OffsetY()
 	case labeltemplate.FieldOwnerID:
 		return m.OwnerID()
 	}
@@ -12405,6 +12587,12 @@ func (m *LabelTemplateMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldOutputFormat(ctx)
 	case labeltemplate.FieldDpi:
 		return m.OldDpi(ctx)
+	case labeltemplate.FieldSheetLayout:
+		return m.OldSheetLayout(ctx)
+	case labeltemplate.FieldOffsetX:
+		return m.OldOffsetX(ctx)
+	case labeltemplate.FieldOffsetY:
+		return m.OldOffsetY(ctx)
 	case labeltemplate.FieldOwnerID:
 		return m.OldOwnerID(ctx)
 	}
@@ -12493,6 +12681,27 @@ func (m *LabelTemplateMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDpi(v)
 		return nil
+	case labeltemplate.FieldSheetLayout:
+		v, ok := value.(*labelmaker.SheetLayout)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSheetLayout(v)
+		return nil
+	case labeltemplate.FieldOffsetX:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOffsetX(v)
+		return nil
+	case labeltemplate.FieldOffsetY:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOffsetY(v)
+		return nil
 	case labeltemplate.FieldOwnerID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
@@ -12517,6 +12726,12 @@ func (m *LabelTemplateMutation) AddedFields() []string {
 	if m.adddpi != nil {
 		fields = append(fields, labeltemplate.FieldDpi)
 	}
+	if m.addoffset_x != nil {
+		fields = append(fields, labeltemplate.FieldOffsetX)
+	}
+	if m.addoffset_y != nil {
+		fields = append(fields, labeltemplate.FieldOffsetY)
+	}
 	return fields
 }
 
@@ -12531,6 +12746,10 @@ func (m *LabelTemplateMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedHeight()
 	case labeltemplate.FieldDpi:
 		return m.AddedDpi()
+	case labeltemplate.FieldOffsetX:
+		return m.AddedOffsetX()
+	case labeltemplate.FieldOffsetY:
+		return m.AddedOffsetY()
 	}
 	return nil, false
 }
@@ -12561,6 +12780,20 @@ func (m *LabelTemplateMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddDpi(v)
 		return nil
+	case labeltemplate.FieldOffsetX:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddOffsetX(v)
+		return nil
+	case labeltemplate.FieldOffsetY:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddOffsetY(v)
+		return nil
 	}
 	return fmt.Errorf("unknown LabelTemplate numeric field %s", name)
 }
@@ -12577,6 +12810,9 @@ func (m *LabelTemplateMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(labeltemplate.FieldCanvasData) {
 		fields = append(fields, labeltemplate.FieldCanvasData)
+	}
+	if m.FieldCleared(labeltemplate.FieldSheetLayout) {
+		fields = append(fields, labeltemplate.FieldSheetLayout)
 	}
 	return fields
 }
@@ -12600,6 +12836,9 @@ func (m *LabelTemplateMutation) ClearField(name string) error {
 		return nil
 	case labeltemplate.FieldCanvasData:
 		m.ClearCanvasData()
+		return nil
+	case labeltemplate.FieldSheetLayout:
+		m.ClearSheetLayout()
 		return nil
 	}
 	return fmt.Errorf("unknown LabelTemplate nullable field %s", name)
@@ -12641,6 +12880,15 @@ func (m *LabelTemplateMutation) ResetField(name string) error {
 		return nil
 	case labeltemplate.FieldDpi:
 		m.ResetDpi()
+		return nil
+	case labeltemplate.FieldSheetLayout:
+		m.ResetSheetLayout()
+		return nil
+	case labeltemplate.FieldOffsetX:
+		m.ResetOffsetX()
+		return nil
+	case labeltemplate.FieldOffsetY:
+		m.ResetOffsetY()
 		return nil
 	case labeltemplate.FieldOwnerID:
 		m.ResetOwnerID()

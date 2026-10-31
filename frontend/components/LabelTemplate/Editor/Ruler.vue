@@ -1,6 +1,11 @@
-<script setup lang="ts">
+<script lang="ts">
   export type RulerUnit = "metric" | "imperial";
 
+  // Thickness of the rulers in pixels
+  export const RULER_SIZE = 20;
+</script>
+
+<script setup lang="ts">
   const props = withDefaults(
     defineProps<{
       width: number; // in mm
@@ -8,14 +13,16 @@
       pixelWidth: number; // canvas width in pixels
       pixelHeight: number; // canvas height in pixels
       unit?: RulerUnit;
+      visible?: boolean;
     }>(),
     {
       unit: "metric",
+      visible: true,
     }
   );
 
-  // Size of the ruler in pixels
-  const rulerSize = 20;
+  // Collapse to zero when hidden so the slot keeps its DOM (the canvas lives in it)
+  const rulerSize = computed(() => (props.visible ? RULER_SIZE : 0));
 
   // Conversion factor: 1 inch = 25.4mm
   const mmPerInch = 25.4;
@@ -93,9 +100,10 @@
 </script>
 
 <template>
-  <div class="relative">
+  <div class="relative inline-block align-top">
     <!-- Corner square -->
     <div
+      v-if="visible"
       class="absolute left-0 top-0 z-10 flex items-center justify-center bg-muted text-[8px] text-muted-foreground"
       :style="{ width: `${rulerSize}px`, height: `${rulerSize}px` }"
     >
@@ -104,6 +112,7 @@
 
     <!-- Horizontal ruler -->
     <div
+      v-if="visible"
       class="absolute top-0 overflow-hidden bg-muted"
       :style="{ left: `${rulerSize}px`, width: `${pixelWidth}px`, height: `${rulerSize}px` }"
     >
@@ -127,6 +136,7 @@
 
     <!-- Vertical ruler -->
     <div
+      v-if="visible"
       class="absolute left-0 overflow-hidden bg-muted"
       :style="{ top: `${rulerSize}px`, width: `${rulerSize}px`, height: `${pixelHeight}px` }"
     >
@@ -150,6 +160,7 @@
 
     <!-- Canvas slot -->
     <div
+      class="leading-none"
       :style="{
         marginLeft: `${rulerSize}px`,
         marginTop: `${rulerSize}px`,

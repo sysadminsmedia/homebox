@@ -36,10 +36,11 @@
                 <span class="text-muted-foreground">
                   ({{
                     preset.continuous
-                      ? $t("components.label_template.form.size_continuous", { width: preset.width })
+                      ? $t("components.label_template.form.size_continuous", {
+                          width: measurement.format(preset.width),
+                        })
                       : $t("components.label_template.form.size_die_cut", {
-                          width: preset.width,
-                          height: preset.height,
+                          size: measurement.formatSize(preset.width, preset.height),
                         })
                   }})
                 </span>
@@ -74,24 +75,11 @@
       <div class="grid grid-cols-2 gap-4">
         <div class="space-y-2">
           <Label for="width">{{ $t("components.label_template.form.width") }}</Label>
-          <div class="flex items-center gap-2">
-            <Input id="width" v-model.number="form.width" type="number" step="0.1" min="1" :disabled="isWidthLocked" />
-            <span class="text-sm text-muted-foreground">mm</span>
-          </div>
+          <LabelTemplateMeasurementInput id="width" v-model="form.width" :min="1" :disabled="isWidthLocked" />
         </div>
         <div class="space-y-2">
           <Label for="height">{{ $t("components.label_template.form.height") }}</Label>
-          <div class="flex items-center gap-2">
-            <Input
-              id="height"
-              v-model.number="form.height"
-              type="number"
-              step="0.1"
-              min="1"
-              :disabled="isHeightLocked"
-            />
-            <span class="text-sm text-muted-foreground">mm</span>
-          </div>
+          <LabelTemplateMeasurementInput id="height" v-model="form.height" :min="1" :disabled="isHeightLocked" />
         </div>
       </div>
 
@@ -146,6 +134,7 @@
   import { useDialog, DialogID } from "@/components/ui/dialog-provider/utils";
   import BaseModal from "@/components/App/CreateModal.vue";
   import type { LabelTemplateCreate, LabelmakerLabelPreset } from "~/lib/api/types/data-contracts";
+  import LabelTemplateMeasurementInput from "~/components/LabelTemplate/MeasurementInput.vue";
 
   const emit = defineEmits<{
     created: [id: string];
@@ -154,6 +143,7 @@
   const { t } = useI18n();
   const { closeDialog, registerOpenDialogCallback } = useDialog();
   const { create } = useLabelTemplateActions();
+  const measurement = useMeasurement();
   const api = useUserApi();
 
   const form = reactive<LabelTemplateCreate>({
@@ -166,6 +156,8 @@
     outputFormat: "png",
     dpi: 300,
     canvasData: {},
+    offsetX: 0,
+    offsetY: 0,
   });
 
   const isSubmitting = ref(false);

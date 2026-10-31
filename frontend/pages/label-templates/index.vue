@@ -11,7 +11,7 @@
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import LabelTemplateCard from "~/components/LabelTemplate/Card.vue";
   import LabelTemplateCreateModal from "~/components/LabelTemplate/CreateModal.vue";
-  import type { LabelTemplateCreate } from "~~/lib/api/types/data-contracts";
+  import type { LabelTemplateCreate, LabelmakerSheetLayout } from "~~/lib/api/types/data-contracts";
 
   definePageMeta({
     middleware: ["auth"],
@@ -58,6 +58,13 @@
       // Imported designs start private; the owner can share them afterwards.
       isShared: false,
       canvasData: o.canvasData as Record<string, unknown>,
+      // The server validates the layout's values
+      sheetLayout:
+        o.sheetLayout && typeof o.sheetLayout === "object" && !Array.isArray(o.sheetLayout)
+          ? (o.sheetLayout as LabelmakerSheetLayout)
+          : null,
+      offsetX: 0,
+      offsetY: 0,
     };
   }
 

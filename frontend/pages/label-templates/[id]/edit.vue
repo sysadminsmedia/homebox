@@ -22,8 +22,8 @@
     type EditorUnit,
   } from "~/components/LabelTemplate/Editor/TransformPanel.vue";
   import LabelTemplateEditorLayerPanel from "~/components/LabelTemplate/Editor/LayerPanel.vue";
-  import LabelTemplateEditorRuler from "~/components/LabelTemplate/Editor/Ruler.vue";
   import LabelTemplateEditorPreviewPanel from "~/components/LabelTemplate/Editor/PreviewPanel.vue";
+  import LabelTemplateEditorSheetLayoutPanel from "~/components/LabelTemplate/Editor/SheetLayoutPanel.vue";
   import LabelTemplateEditorLabelSettings, {
     type EditorSettings,
     type DisplaySettings,
@@ -34,7 +34,7 @@
     withLabelBorder,
     type LabelBorder,
   } from "~/components/LabelTemplate/Editor/label-border";
-  import type { EntitySummary } from "~/lib/api/types/data-contracts";
+  import type { EntitySummary, LabelmakerSheetLayout } from "~/lib/api/types/data-contracts";
 
   definePageMeta({
     middleware: ["auth"],
@@ -79,8 +79,22 @@
   // rendered by the server; here it is edited as its own small object.
   const border = reactive<LabelBorder>({ ...DEFAULT_LABEL_BORDER });
 
-  const unit = ref<EditorUnit>("mm");
+  // The unit follows the user's measurement preference; the toggle below changes it
+  const measurement = useMeasurement();
+  const preferences = useViewPreferences();
+  const unit = computed<EditorUnit>({
+    get: () => (measurement.isImperial.value ? "in" : "mm"),
+    set: value => {
+      preferences.value.measurementSystem = value === "in" ? "imperial" : "metric";
+    },
+  });
   const localCanvasData = ref<Record<string, unknown>>({});
+
+  // Page layout for sheet printing (null follows the preset) and the printer calibration offset
+  const sheetLayout = ref<LabelmakerSheetLayout | null>(null);
+  const offsetX = ref(0);
+  const offsetY = ref(0);
+  const selectedPreset = computed(() => presets.value?.find(p => p.key === settings.preset) ?? null);
 
   function loadFromTemplate() {
     const tpl = template.value;
@@ -94,9 +108,21 @@
     settings.isShared = tpl.isShared;
     if (tpl.canvasData) localCanvasData.value = tpl.canvasData;
     Object.assign(border, readLabelBorder(tpl.canvasData));
+    sheetLayout.value = tpl.sheetLayout ? { ...tpl.sheetLayout } : null;
+    offsetX.value = tpl.offsetX ?? 0;
+    offsetY.value = tpl.offsetY ?? 0;
   }
 
   watch(template, loadFromTemplate, { immediate: true });
+
+  // A custom layout is measured for one sheet; picking another preset drops it
+  // so the new preset's layout applies.
+  watch(
+    () => settings.preset,
+    preset => {
+      if (preset !== (template.value?.preset || "")) sheetLayout.value = null;
+    }
+  );
 
   watch(border, () => {
     localCanvasData.value = withLabelBorder(localCanvasData.value, border);
@@ -126,7 +152,10 @@
       settings.height !== tpl.height ||
       settings.preset !== (tpl.preset || "") ||
       settings.dpi !== tpl.dpi ||
-      settings.isShared !== tpl.isShared;
+      settings.isShared !== tpl.isShared ||
+      offsetX.value !== (tpl.offsetX ?? 0) ||
+      offsetY.value !== (tpl.offsetY ?? 0) ||
+      stableStringify(sheetLayout.value) !== stableStringify(tpl.sheetLayout ?? null);
     const canvasChanged = stableStringify(localCanvasData.value) !== stableStringify(tpl.canvasData ?? {});
     return settingsChanged || canvasChanged;
   });
@@ -135,12 +164,7 @@
     if (isDirty.value) e.preventDefault();
   });
 
-  const sizeLabel = computed(() => {
-    if (unit.value === "in") {
-      return `${(settings.width / 25.4).toFixed(2)} × ${(settings.height / 25.4).toFixed(2)} in`;
-    }
-    return formatLabelSize(settings.width, settings.height);
-  });
+  const sizeLabel = computed(() => measurement.formatSize(settings.width, settings.height));
 
   // ---------------------------------------------------------------------------
   // Canvas interaction
@@ -191,11 +215,6 @@
   const canRedo = computed(() => canvasRef.value?.canRedo ?? false);
   const zoomLevel = computed(() => canvasRef.value?.zoomLevel ?? 1);
 
-  // Ruler pixel sizes follow the canvas zoom
-  const screenDPI = 96;
-  const pixelWidth = computed(() => Math.round((settings.width / 25.4) * screenDPI * zoomLevel.value));
-  const pixelHeight = computed(() => Math.round((settings.height / 25.4) * screenDPI * zoomLevel.value));
-
   function refreshLayers() {
     layers.value = canvasRef.value?.getLayers() || [];
   }
@@ -214,7 +233,7 @@
     if (obj && activeTab.value !== "layers") activeTab.value = "element";
   }
 
-  const quickFields = ["item_name", "asset_id", "location", "location_path", "serial_number", "tags", "current_date"];
+  const quickFields = ["name", "asset_id", "location", "location_path", "serial_number", "tags", "current_date"];
 
   function handleInsertField(fieldName: string) {
     const canvas = canvasRef.value?.getCanvas();
@@ -298,6 +317,9 @@
         outputFormat: (template.value.outputFormat as "png" | "pdf") || "png",
         dpi: settings.dpi,
         canvasData: localCanvasData.value,
+        sheetLayout: sheetLayout.value,
+        offsetX: offsetX.value,
+        offsetY: offsetY.value,
       });
       toast.success(t("components.label_template.toast.updated"));
       await refresh();
@@ -455,14 +477,26 @@
 
         <!-- Workspace -->
         <div class="flex min-w-0 flex-1 flex-col gap-3">
-          <LabelTemplateEditorTextToolbar
-            v-if="isTextSelected"
-            :selected-object="selectedObject"
-            :revision="selectionRevision"
-            :unit="unit"
-            @update-object="handleUpdateObject"
-            @insert-field="handleInsertField"
-          />
+          <!--
+            The slot keeps its height when nothing is selected; otherwise the canvas
+            jumps down when the toolbar appears mid-drag and the text lands off the label.
+          -->
+          <div class="min-h-[50px]">
+            <LabelTemplateEditorTextToolbar
+              v-if="isTextSelected"
+              :selected-object="selectedObject"
+              :revision="selectionRevision"
+              :unit="unit"
+              @update-object="handleUpdateObject"
+              @insert-field="handleInsertField"
+            />
+            <div
+              v-else
+              class="flex h-[50px] items-center rounded-lg border border-dashed px-3 text-sm text-muted-foreground"
+            >
+              {{ $t("components.label_template.editor.text_toolbar_hint") }}
+            </div>
+          </div>
 
           <div class="flex flex-col gap-6 rounded-lg border bg-muted/40 p-4 2xl:flex-row 2xl:items-start">
             <!-- Design -->
@@ -473,31 +507,8 @@
               <span class="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                 {{ $t("components.label_template.editor.design") }}
               </span>
-              <LabelTemplateEditorRuler
-                v-if="display.showRuler"
-                :width="settings.width"
-                :height="settings.height"
-                :pixel-width="pixelWidth"
-                :pixel-height="pixelHeight"
-                :unit="unit === 'mm' ? 'metric' : 'imperial'"
-              >
-                <LabelTemplateEditorCanvas
-                  ref="canvasRef"
-                  :width="settings.width"
-                  :height="settings.height"
-                  :dpi="settings.dpi"
-                  :canvas-data="localCanvasData"
-                  :snap-to-grid="display.snapToGrid"
-                  :show-grid="display.showGrid"
-                  :grid-size="display.gridSize"
-                  :label-border="border"
-                  @update:canvas-data="handleCanvasUpdate"
-                  @selection-changed="handleSelectionChanged"
-                  @loaded="refreshLayers"
-                />
-              </LabelTemplateEditorRuler>
+              <!-- One canvas instance: toggling the rulers must not recreate it and lose the undo history -->
               <LabelTemplateEditorCanvas
-                v-else
                 ref="canvasRef"
                 :width="settings.width"
                 :height="settings.height"
@@ -507,6 +518,8 @@
                 :show-grid="display.showGrid"
                 :grid-size="display.gridSize"
                 :label-border="border"
+                :show-ruler="display.showRuler"
+                :ruler-unit="unit === 'mm' ? 'metric' : 'imperial'"
                 @update:canvas-data="handleCanvasUpdate"
                 @selection-changed="handleSelectionChanged"
                 @loaded="refreshLayers"
@@ -664,13 +677,24 @@
             />
 
             <!-- Label -->
-            <LabelTemplateEditorLabelSettings
-              v-else
-              v-model="settings"
-              v-model:display="display"
-              v-model:border="border"
-              :presets="presets ?? []"
-            />
+            <div v-else class="space-y-5">
+              <LabelTemplateEditorLabelSettings
+                v-model="settings"
+                v-model:display="display"
+                v-model:border="border"
+                :presets="presets ?? []"
+              />
+              <div class="border-t pt-4">
+                <LabelTemplateEditorSheetLayoutPanel
+                  v-model:sheet-layout="sheetLayout"
+                  v-model:offset-x="offsetX"
+                  v-model:offset-y="offsetY"
+                  :preset="selectedPreset"
+                  :label-width="settings.width"
+                  :label-height="settings.height"
+                />
+              </div>
+            </div>
           </div>
         </aside>
       </div>

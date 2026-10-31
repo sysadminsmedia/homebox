@@ -10,6 +10,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/labeltemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/labelmaker"
 )
 
 type LabelTemplatesRepository struct {
@@ -28,6 +29,10 @@ type (
 		CanvasData   map[string]interface{} `json:"canvasData"`
 		OutputFormat string                 `json:"outputFormat"     validate:"oneof=png pdf"`
 		DPI          int                    `json:"dpi"              validate:"gte=72,lte=1200"`
+		// SheetLayout overrides the preset's page layout; null follows the preset
+		SheetLayout *labelmaker.SheetLayout `json:"sheetLayout,omitempty" extensions:"x-nullable"`
+		OffsetX     float64                 `json:"offsetX"               validate:"gte=-50,lte=50"`
+		OffsetY     float64                 `json:"offsetY"               validate:"gte=-50,lte=50"`
 	}
 
 	LabelTemplateUpdate struct {
@@ -41,6 +46,10 @@ type (
 		CanvasData   map[string]interface{} `json:"canvasData"`
 		OutputFormat string                 `json:"outputFormat"     validate:"oneof=png pdf"`
 		DPI          int                    `json:"dpi"              validate:"gte=72,lte=1200"`
+		// SheetLayout overrides the preset's page layout; null follows the preset
+		SheetLayout *labelmaker.SheetLayout `json:"sheetLayout,omitempty" extensions:"x-nullable"`
+		OffsetX     float64                 `json:"offsetX"               validate:"gte=-50,lte=50"`
+		OffsetY     float64                 `json:"offsetY"               validate:"gte=-50,lte=50"`
 	}
 
 	LabelTemplateSummary struct {
@@ -54,23 +63,28 @@ type (
 		IsOwner     bool      `json:"isOwner"`
 		CreatedAt   time.Time `json:"createdAt"`
 		UpdatedAt   time.Time `json:"updatedAt"`
+		// SheetLayout is the template's own page layout, null when it follows the preset
+		SheetLayout *labelmaker.SheetLayout `json:"sheetLayout,omitempty" extensions:"x-nullable"`
 	}
 
 	LabelTemplateOut struct {
-		ID           uuid.UUID              `json:"id"`
-		Name         string                 `json:"name"`
-		Description  string                 `json:"description"`
-		Width        float64                `json:"width"`
-		Height       float64                `json:"height"`
-		Preset       *string                `json:"preset,omitempty"`
-		IsShared     bool                   `json:"isShared"`
-		IsOwner      bool                   `json:"isOwner"`
-		CanvasData   map[string]interface{} `json:"canvasData"`
-		OutputFormat string                 `json:"outputFormat"`
-		DPI          int                    `json:"dpi"`
-		OwnerID      uuid.UUID              `json:"ownerId"`
-		CreatedAt    time.Time              `json:"createdAt"`
-		UpdatedAt    time.Time              `json:"updatedAt"`
+		ID           uuid.UUID               `json:"id"`
+		Name         string                  `json:"name"`
+		Description  string                  `json:"description"`
+		Width        float64                 `json:"width"`
+		Height       float64                 `json:"height"`
+		Preset       *string                 `json:"preset,omitempty"`
+		IsShared     bool                    `json:"isShared"`
+		IsOwner      bool                    `json:"isOwner"`
+		CanvasData   map[string]interface{}  `json:"canvasData"`
+		OutputFormat string                  `json:"outputFormat"`
+		DPI          int                     `json:"dpi"`
+		SheetLayout  *labelmaker.SheetLayout `json:"sheetLayout,omitempty" extensions:"x-nullable"`
+		OffsetX      float64                 `json:"offsetX"`
+		OffsetY      float64                 `json:"offsetY"`
+		OwnerID      uuid.UUID               `json:"ownerId"`
+		CreatedAt    time.Time               `json:"createdAt"`
+		UpdatedAt    time.Time               `json:"updatedAt"`
 	}
 )
 
@@ -91,6 +105,7 @@ func mapLabelTemplateSummary(template *ent.LabelTemplate, currentUserID uuid.UUI
 		IsOwner:     template.OwnerID == currentUserID,
 		CreatedAt:   template.CreatedAt,
 		UpdatedAt:   template.UpdatedAt,
+		SheetLayout: template.SheetLayout,
 	}
 }
 
@@ -117,6 +132,9 @@ func mapLabelTemplateOut(template *ent.LabelTemplate, currentUserID uuid.UUID) L
 		CanvasData:   canvasData,
 		OutputFormat: template.OutputFormat,
 		DPI:          template.Dpi,
+		SheetLayout:  template.SheetLayout,
+		OffsetX:      template.OffsetX,
+		OffsetY:      template.OffsetY,
 		OwnerID:      template.OwnerID,
 		CreatedAt:    template.CreatedAt,
 		UpdatedAt:    template.UpdatedAt,
@@ -187,11 +205,17 @@ func (r *LabelTemplatesRepository) Create(ctx context.Context, gid, uid uuid.UUI
 		SetIsShared(data.IsShared).
 		SetOutputFormat(data.OutputFormat).
 		SetDpi(data.DPI).
+		SetOffsetX(data.OffsetX).
+		SetOffsetY(data.OffsetY).
 		SetOwnerID(uid).
 		SetGroupID(gid)
 
 	if data.Preset != nil && *data.Preset != "" {
 		q.SetPreset(*data.Preset)
+	}
+
+	if data.SheetLayout != nil {
+		q.SetSheetLayout(data.SheetLayout)
 	}
 
 	if data.CanvasData != nil {
@@ -230,12 +254,20 @@ func (r *LabelTemplatesRepository) Update(ctx context.Context, gid, uid uuid.UUI
 		SetHeight(data.Height).
 		SetIsShared(data.IsShared).
 		SetOutputFormat(data.OutputFormat).
-		SetDpi(data.DPI)
+		SetDpi(data.DPI).
+		SetOffsetX(data.OffsetX).
+		SetOffsetY(data.OffsetY)
 
 	if data.Preset != nil && *data.Preset != "" {
 		updateQ.SetPreset(*data.Preset)
 	} else {
 		updateQ.ClearPreset()
+	}
+
+	if data.SheetLayout != nil {
+		updateQ.SetSheetLayout(data.SheetLayout)
+	} else {
+		updateQ.ClearSheetLayout()
 	}
 
 	if data.CanvasData != nil {
@@ -311,11 +343,17 @@ func (r *LabelTemplatesRepository) Duplicate(ctx context.Context, gid, uid, id u
 		SetIsShared(false). // Copies are private by default
 		SetOutputFormat(source.OutputFormat).
 		SetDpi(source.Dpi).
+		SetOffsetX(source.OffsetX).
+		SetOffsetY(source.OffsetY).
 		SetOwnerID(uid).
 		SetGroupID(gid)
 
 	if source.Preset != "" {
 		q.SetPreset(source.Preset)
+	}
+
+	if source.SheetLayout != nil {
+		q.SetSheetLayout(source.SheetLayout)
 	}
 
 	if source.CanvasData != nil {

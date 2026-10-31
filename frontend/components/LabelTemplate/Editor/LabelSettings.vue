@@ -8,6 +8,7 @@
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import type { LabelmakerLabelPreset } from "~/lib/api/types/data-contracts";
   import type { LabelBorder } from "./label-border";
+  import LabelTemplateMeasurementInput from "~/components/LabelTemplate/MeasurementInput.vue";
 
   export interface EditorSettings {
     name: string;
@@ -35,6 +36,7 @@
   }>();
 
   const { t } = useI18n();
+  const measurement = useMeasurement();
 
   // --- presets grouped by brand and kind -------------------------------------
   type PresetCategory = "sheet" | "continuous" | "die-cut";
@@ -138,7 +140,11 @@
                 {{ $t("components.label_template.form.two_color") }}
               </span>
               <span class="ml-1 text-muted-foreground">
-                ({{ preset.width }}{{ preset.continuous ? " mm" : ` × ${preset.height} mm` }})
+                ({{
+                  preset.continuous
+                    ? measurement.format(preset.width)
+                    : measurement.formatSize(preset.width, preset.height)
+                }})
               </span>
             </SelectItem>
           </template>
@@ -167,31 +173,11 @@
     <div class="grid grid-cols-2 gap-3">
       <div class="space-y-2">
         <Label for="ls-width">{{ $t("components.label_template.form.width") }}</Label>
-        <div class="flex items-center gap-1">
-          <Input
-            id="ls-width"
-            v-model.number="settings.width"
-            type="number"
-            step="0.1"
-            min="1"
-            :disabled="isWidthLocked"
-          />
-          <span class="shrink-0 text-xs text-muted-foreground">mm</span>
-        </div>
+        <LabelTemplateMeasurementInput id="ls-width" v-model="settings.width" :min="1" :disabled="isWidthLocked" />
       </div>
       <div class="space-y-2">
         <Label for="ls-height">{{ $t("components.label_template.form.height") }}</Label>
-        <div class="flex items-center gap-1">
-          <Input
-            id="ls-height"
-            v-model.number="settings.height"
-            type="number"
-            step="0.1"
-            min="1"
-            :disabled="isHeightLocked"
-          />
-          <span class="shrink-0 text-xs text-muted-foreground">mm</span>
-        </div>
+        <LabelTemplateMeasurementInput id="ls-height" v-model="settings.height" :min="1" :disabled="isHeightLocked" />
       </div>
     </div>
 
@@ -245,27 +231,19 @@
           <Label for="ls-border-width" class="text-xs text-muted-foreground">
             {{ $t("components.label_template.form.border_width") }}
           </Label>
-          <div class="flex items-center gap-1">
-            <Input
-              id="ls-border-width"
-              v-model.number="border.width"
-              type="number"
-              step="0.1"
-              min="0.1"
-              max="10"
-              class="h-8"
-            />
-            <span class="shrink-0 text-xs text-muted-foreground">mm</span>
-          </div>
+          <LabelTemplateMeasurementInput
+            id="ls-border-width"
+            v-model="border.width"
+            :min="0.1"
+            :max="10"
+            input-class="h-8"
+          />
         </div>
         <div class="space-y-1">
           <Label for="ls-border-inset" class="text-xs text-muted-foreground">
             {{ $t("components.label_template.form.border_inset") }}
           </Label>
-          <div class="flex items-center gap-1">
-            <Input id="ls-border-inset" v-model.number="border.inset" type="number" step="0.5" min="0" class="h-8" />
-            <span class="shrink-0 text-xs text-muted-foreground">mm</span>
-          </div>
+          <LabelTemplateMeasurementInput id="ls-border-inset" v-model="border.inset" :min="0" input-class="h-8" />
         </div>
         <div class="space-y-1">
           <Label for="ls-border-color" class="text-xs text-muted-foreground">

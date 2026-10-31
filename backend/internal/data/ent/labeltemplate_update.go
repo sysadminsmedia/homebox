@@ -16,6 +16,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/labeltemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/labelmaker"
 )
 
 // LabelTemplateUpdate is the builder for updating LabelTemplate entities.
@@ -194,6 +195,60 @@ func (_u *LabelTemplateUpdate) AddDpi(v int) *LabelTemplateUpdate {
 	return _u
 }
 
+// SetSheetLayout sets the "sheet_layout" field.
+func (_u *LabelTemplateUpdate) SetSheetLayout(v *labelmaker.SheetLayout) *LabelTemplateUpdate {
+	_u.mutation.SetSheetLayout(v)
+	return _u
+}
+
+// ClearSheetLayout clears the value of the "sheet_layout" field.
+func (_u *LabelTemplateUpdate) ClearSheetLayout() *LabelTemplateUpdate {
+	_u.mutation.ClearSheetLayout()
+	return _u
+}
+
+// SetOffsetX sets the "offset_x" field.
+func (_u *LabelTemplateUpdate) SetOffsetX(v float64) *LabelTemplateUpdate {
+	_u.mutation.ResetOffsetX()
+	_u.mutation.SetOffsetX(v)
+	return _u
+}
+
+// SetNillableOffsetX sets the "offset_x" field if the given value is not nil.
+func (_u *LabelTemplateUpdate) SetNillableOffsetX(v *float64) *LabelTemplateUpdate {
+	if v != nil {
+		_u.SetOffsetX(*v)
+	}
+	return _u
+}
+
+// AddOffsetX adds value to the "offset_x" field.
+func (_u *LabelTemplateUpdate) AddOffsetX(v float64) *LabelTemplateUpdate {
+	_u.mutation.AddOffsetX(v)
+	return _u
+}
+
+// SetOffsetY sets the "offset_y" field.
+func (_u *LabelTemplateUpdate) SetOffsetY(v float64) *LabelTemplateUpdate {
+	_u.mutation.ResetOffsetY()
+	_u.mutation.SetOffsetY(v)
+	return _u
+}
+
+// SetNillableOffsetY sets the "offset_y" field if the given value is not nil.
+func (_u *LabelTemplateUpdate) SetNillableOffsetY(v *float64) *LabelTemplateUpdate {
+	if v != nil {
+		_u.SetOffsetY(*v)
+	}
+	return _u
+}
+
+// AddOffsetY adds value to the "offset_y" field.
+func (_u *LabelTemplateUpdate) AddOffsetY(v float64) *LabelTemplateUpdate {
+	_u.mutation.AddOffsetY(v)
+	return _u
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (_u *LabelTemplateUpdate) SetOwnerID(v uuid.UUID) *LabelTemplateUpdate {
 	_u.mutation.SetOwnerID(v)
@@ -362,6 +417,24 @@ func (_u *LabelTemplateUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	}
 	if value, ok := _u.mutation.AddedDpi(); ok {
 		_spec.AddField(labeltemplate.FieldDpi, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.SheetLayout(); ok {
+		_spec.SetField(labeltemplate.FieldSheetLayout, field.TypeJSON, value)
+	}
+	if _u.mutation.SheetLayoutCleared() {
+		_spec.ClearField(labeltemplate.FieldSheetLayout, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.OffsetX(); ok {
+		_spec.SetField(labeltemplate.FieldOffsetX, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedOffsetX(); ok {
+		_spec.AddField(labeltemplate.FieldOffsetX, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.OffsetY(); ok {
+		_spec.SetField(labeltemplate.FieldOffsetY, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedOffsetY(); ok {
+		_spec.AddField(labeltemplate.FieldOffsetY, field.TypeFloat64, value)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -604,6 +677,60 @@ func (_u *LabelTemplateUpdateOne) AddDpi(v int) *LabelTemplateUpdateOne {
 	return _u
 }
 
+// SetSheetLayout sets the "sheet_layout" field.
+func (_u *LabelTemplateUpdateOne) SetSheetLayout(v *labelmaker.SheetLayout) *LabelTemplateUpdateOne {
+	_u.mutation.SetSheetLayout(v)
+	return _u
+}
+
+// ClearSheetLayout clears the value of the "sheet_layout" field.
+func (_u *LabelTemplateUpdateOne) ClearSheetLayout() *LabelTemplateUpdateOne {
+	_u.mutation.ClearSheetLayout()
+	return _u
+}
+
+// SetOffsetX sets the "offset_x" field.
+func (_u *LabelTemplateUpdateOne) SetOffsetX(v float64) *LabelTemplateUpdateOne {
+	_u.mutation.ResetOffsetX()
+	_u.mutation.SetOffsetX(v)
+	return _u
+}
+
+// SetNillableOffsetX sets the "offset_x" field if the given value is not nil.
+func (_u *LabelTemplateUpdateOne) SetNillableOffsetX(v *float64) *LabelTemplateUpdateOne {
+	if v != nil {
+		_u.SetOffsetX(*v)
+	}
+	return _u
+}
+
+// AddOffsetX adds value to the "offset_x" field.
+func (_u *LabelTemplateUpdateOne) AddOffsetX(v float64) *LabelTemplateUpdateOne {
+	_u.mutation.AddOffsetX(v)
+	return _u
+}
+
+// SetOffsetY sets the "offset_y" field.
+func (_u *LabelTemplateUpdateOne) SetOffsetY(v float64) *LabelTemplateUpdateOne {
+	_u.mutation.ResetOffsetY()
+	_u.mutation.SetOffsetY(v)
+	return _u
+}
+
+// SetNillableOffsetY sets the "offset_y" field if the given value is not nil.
+func (_u *LabelTemplateUpdateOne) SetNillableOffsetY(v *float64) *LabelTemplateUpdateOne {
+	if v != nil {
+		_u.SetOffsetY(*v)
+	}
+	return _u
+}
+
+// AddOffsetY adds value to the "offset_y" field.
+func (_u *LabelTemplateUpdateOne) AddOffsetY(v float64) *LabelTemplateUpdateOne {
+	_u.mutation.AddOffsetY(v)
+	return _u
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (_u *LabelTemplateUpdateOne) SetOwnerID(v uuid.UUID) *LabelTemplateUpdateOne {
 	_u.mutation.SetOwnerID(v)
@@ -802,6 +929,24 @@ func (_u *LabelTemplateUpdateOne) sqlSave(ctx context.Context) (_node *LabelTemp
 	}
 	if value, ok := _u.mutation.AddedDpi(); ok {
 		_spec.AddField(labeltemplate.FieldDpi, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.SheetLayout(); ok {
+		_spec.SetField(labeltemplate.FieldSheetLayout, field.TypeJSON, value)
+	}
+	if _u.mutation.SheetLayoutCleared() {
+		_spec.ClearField(labeltemplate.FieldSheetLayout, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.OffsetX(); ok {
+		_spec.SetField(labeltemplate.FieldOffsetX, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedOffsetX(); ok {
+		_spec.AddField(labeltemplate.FieldOffsetX, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.OffsetY(); ok {
+		_spec.SetField(labeltemplate.FieldOffsetY, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedOffsetY(); ok {
+		_spec.AddField(labeltemplate.FieldOffsetY, field.TypeFloat64, value)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
