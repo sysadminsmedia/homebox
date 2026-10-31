@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
-  import { useTreeState } from "~~/components/Location/Tree/tree-state";
+  import { useShowItems, useTreeState } from "~~/components/Location/Tree/tree-state";
   import MdiCollapseAllOutline from "~icons/mdi/collapse-all-outline";
   import MdiExpandAllOutline from "~icons/mdi/expand-all-outline";
   import MdiPackageVariant from "~icons/mdi/package-variant";
@@ -43,7 +43,7 @@
   const showItemsKey = "showItems";
 
   const treeState = useTreeState(locationTreeId);
-  const showItems = ref(true);
+  const showItems = useShowItems(locationTreeId);
 
   const route = useRouter();
 
