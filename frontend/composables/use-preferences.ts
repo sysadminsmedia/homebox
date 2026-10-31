@@ -37,6 +37,8 @@ export type LocationViewPreferences = {
     query: string;
     id: string;
   }[];
+  // Label template preferences
+  defaultTemplateId: string | null;
 };
 export type PreferenceSyncConfig = Partial<Record<keyof LocationViewPreferences, boolean>>;
 // An interface breaks the self-reference that a type alias cannot express.
@@ -68,6 +70,7 @@ const DEFAULT_PREFERENCES: LocationViewPreferences = {
     enabled: true,
   },
   savedSearches: [],
+  defaultTemplateId: null,
 };
 let syncConfig: PreferenceSyncConfig = {
   itemDisplayView: false,

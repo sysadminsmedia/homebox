@@ -35,6 +35,25 @@ export enum EntityPathType {
   EntityPathTypeItem = "item",
 }
 
+export enum LabelmakerContentType {
+  /** Can encode any text (URLs, names, etc.) */
+  ContentTypeAny = "any",
+  /** Letters, numbers, limited symbols */
+  ContentTypeAlphanumeric = "alphanumeric",
+  /** Digits only */
+  ContentTypeNumeric = "numeric",
+}
+
+export enum LabelmakerBarcodeFormat {
+  BarcodeQR = "qr",
+  BarcodeCode128 = "code128",
+  BarcodeCode39 = "code39",
+  BarcodeDataMatrix = "datamatrix",
+  BarcodeEAN13 = "ean13",
+  BarcodeEAN8 = "ean8",
+  BarcodeUPCA = "upca",
+}
+
 export enum ExportStatus {
   DefaultStatus = "pending",
   StatusPending = "pending",
@@ -441,6 +460,8 @@ export interface EntGroupEdges {
   exports: EntExport[];
   /** InvitationTokens holds the value of the invitation_tokens edge. */
   invitation_tokens: EntGroupInvitationToken[];
+  /** LabelTemplates holds the value of the label_templates edge. */
+  label_templates: EntLabelTemplate[];
   /** Notifiers holds the value of the notifiers edge. */
   notifiers: EntNotifier[];
   /** Tags holds the value of the tags edge. */
@@ -474,6 +495,47 @@ export interface EntGroupInvitationToken {
 export interface EntGroupInvitationTokenEdges {
   /** Group holds the value of the group edge. */
   group: EntGroup;
+}
+
+export interface EntLabelTemplate {
+  /** Fabric.js compatible canvas JSON */
+  canvas_data: Record<string, any>;
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /** Description holds the value of the "description" field. */
+  description: string;
+  /** Output DPI for rendering */
+  dpi: number;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the LabelTemplateQuery when eager-loading is set.
+   */
+  edges: EntLabelTemplateEdges;
+  /** Label height in mm */
+  height: number;
+  /** ID of the ent. */
+  id: string;
+  /** Whether template is shared with group */
+  is_shared: boolean;
+  /** Name holds the value of the "name" field. */
+  name: string;
+  /** Output format: png, pdf */
+  output_format: string;
+  /** User who created this template */
+  owner_id: string;
+  /** Preset size key like 'brother_dk2205' */
+  preset: string;
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+  /** Label width in mm */
+  width: number;
+}
+
+export interface EntLabelTemplateEdges {
+  /** Group holds the value of the group edge. */
+  group: EntGroup;
+  /** Owner holds the value of the owner edge. */
+  owner: EntUser;
 }
 
 export interface EntMaintenanceEntry {
@@ -668,6 +730,8 @@ export interface EntUserEdges {
   auth_tokens: EntAuthTokens[];
   /** Groups holds the value of the groups edge. */
   groups: EntGroup[];
+  /** LabelTemplates holds the value of the label_templates edge. */
+  label_templates: EntLabelTemplate[];
   /** Notifiers holds the value of the notifiers edge. */
   notifiers: EntNotifier[];
   /** PasswordResetTokens holds the value of the password_reset_tokens edge. */
@@ -695,6 +759,56 @@ export interface EntUserGroupEdges {
   group: EntGroup;
   /** User holds the value of the user edge. */
   user: EntUser;
+}
+
+export interface LabelmakerBarcodeFormatInfo {
+  /** What kind of content this format supports */
+  contentType: LabelmakerContentType;
+  description: string;
+  format: LabelmakerBarcodeFormat;
+  is2D: boolean;
+  /** 0 means variable/unlimited */
+  maxLength: number;
+  name: string;
+}
+
+export interface LabelmakerLabelPreset {
+  brand: string;
+  /** Whether this is continuous tape */
+  continuous: boolean;
+  description: string;
+  /** Height in mm */
+  height: number;
+  key: string;
+  name: string;
+  /**
+   * Sheet layout information (for Avery-style sheet labels)
+   * If SheetLayout is set, labels are arranged on a printable sheet
+   */
+  sheetLayout: LabelmakerSheetLayout;
+  /** Whether this supports two-color printing (black/red) */
+  twoColor: boolean;
+  /** Width in mm */
+  width: number;
+}
+
+export interface LabelmakerSheetLayout {
+  /** Number of labels across */
+  columns: number;
+  /** Horizontal gap between labels in mm */
+  gutterH: number;
+  /** Vertical gap between labels in mm */
+  gutterV: number;
+  /** Left margin in mm */
+  marginLeft: number;
+  /** Top margin in mm */
+  marginTop: number;
+  /** Sheet height in mm (e.g., 279.4 for Letter, 297 for A4) */
+  pageHeight: number;
+  /** Sheet width in mm (e.g., 215.9 for Letter, 210 for A4) */
+  pageWidth: number;
+  /** Number of labels down */
+  rows: number;
 }
 
 export interface APIKeyCreate {
@@ -1127,6 +1241,83 @@ export interface ItemAttachmentUpdate {
   type: string;
 }
 
+export interface LabelTemplateCreate {
+  canvasData: Record<string, any>;
+  /** @maxLength 1000 */
+  description: string;
+  /**
+   * @min 72
+   * @max 1200
+   */
+  dpi: number;
+  /** @max 1000 */
+  height: number;
+  isShared: boolean;
+  /**
+   * @minLength 1
+   * @maxLength 255
+   */
+  name: string;
+  outputFormat: "png" | "pdf";
+  preset?: string | null;
+  /** @max 1000 */
+  width: number;
+}
+
+export interface LabelTemplateOut {
+  canvasData: Record<string, any>;
+  createdAt: Date | string;
+  description: string;
+  dpi: number;
+  height: number;
+  id: string;
+  isOwner: boolean;
+  isShared: boolean;
+  name: string;
+  outputFormat: string;
+  ownerId: string;
+  preset: string;
+  updatedAt: Date | string;
+  width: number;
+}
+
+export interface LabelTemplateSummary {
+  createdAt: Date | string;
+  description: string;
+  height: number;
+  id: string;
+  isOwner: boolean;
+  isShared: boolean;
+  name: string;
+  preset: string;
+  updatedAt: Date | string;
+  width: number;
+}
+
+export interface LabelTemplateUpdate {
+  canvasData: Record<string, any>;
+  /** @maxLength 1000 */
+  description: string;
+  /**
+   * @min 72
+   * @max 1200
+   */
+  dpi: number;
+  /** @max 1000 */
+  height: number;
+  id: string;
+  isShared: boolean;
+  /**
+   * @minLength 1
+   * @maxLength 255
+   */
+  name: string;
+  outputFormat: "png" | "pdf";
+  preset?: string | null;
+  /** @max 1000 */
+  width: number;
+}
+
 export interface MaintenanceEntry {
   completedDate: Date | string;
   /** @example "0" */
@@ -1415,6 +1606,70 @@ export interface GroupInvitationCreate {
    * @max 100
    */
   uses: number;
+}
+
+export interface LabelPrintItem {
+  id: string;
+  /** Number of copies for this item */
+  quantity: number;
+}
+
+export interface LabelPrintLocation {
+  id: string;
+  /** Number of copies for this location */
+  quantity: number;
+}
+
+export interface LabelTemplatePrintLocationsRequest {
+  /** Default copies per label */
+  copies: number;
+  /** Simple list (1 copy each) */
+  locationIds: string[];
+  /** Locations with individual quantities */
+  locations: LabelPrintLocation[];
+}
+
+export interface LabelTemplatePrintRequest {
+  /** Default copies per label (used if item.quantity is 0) */
+  copies: number;
+  /** Simple list (1 copy each) - for backward compatibility */
+  itemIds: string[];
+  /** Items with individual quantities */
+  items: LabelPrintItem[];
+}
+
+export interface LabelTemplatePrintResponse {
+  labelCount: number;
+  message: string;
+  success: boolean;
+}
+
+export interface LabelTemplateRenderLocationsRequest {
+  /** "png" or "pdf", defaults to "png" */
+  format: string;
+  /** @minItems 1 */
+  locationIds: string[];
+  /** "Letter", "A4", or "Custom" for PDF */
+  pageSize: string;
+  /** Draw light borders around labels for cutting */
+  showCutGuides: boolean;
+  /** Leave this many positions empty on the first sheet */
+  skipLabels: number;
+}
+
+export interface LabelTemplateRenderRequest {
+  /** Optional: canvas data for live preview (overrides saved template) */
+  canvasData: string;
+  /** "png" or "pdf", defaults to "png" */
+  format: string;
+  /** @minItems 1 */
+  itemIds: string[];
+  /** "Letter", "A4", or "Custom" for PDF */
+  pageSize: string;
+  /** Draw light borders around labels for cutting */
+  showCutGuides: boolean;
+  /** Leave this many positions empty on the first sheet */
+  skipLabels: number;
 }
 
 export interface LoginForm {
