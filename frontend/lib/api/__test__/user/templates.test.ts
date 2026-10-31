@@ -4,6 +4,15 @@ import type { UserClient } from "../../user";
 import { factories } from "../factories";
 import { sharedUserClient } from "../test-utils";
 
+/** The group's location entity type; an entity without it would be created as an item. */
+async function locationTypeId(api: UserClient): Promise<string> {
+  const { response, data } = await api.entityTypes.getAll();
+  expect(response.status).toBe(200);
+  const type = data.find(t => t.isLocation);
+  expect(type).toBeTruthy();
+  return type!.id;
+}
+
 describe("templates lifecycle (create, update, delete)", () => {
   /**
    * useTemplate sets up a template resource for testing, and returns a function
@@ -202,7 +211,7 @@ describe("templates with location and tags", () => {
     const api = await sharedUserClient();
 
     // First create a location
-    const locationData = factories.location();
+    const locationData = factories.location(await locationTypeId(api));
     const { response: locResponse, data: location } = await api.items.createLocation(locationData);
     expect(locResponse.status).toBe(201);
 
@@ -253,7 +262,9 @@ describe("templates with location and tags", () => {
     const api = await sharedUserClient();
 
     // Create a location
-    const { response: locResponse, data: location } = await api.items.createLocation(factories.location());
+    const { response: locResponse, data: location } = await api.items.createLocation(
+      factories.location(await locationTypeId(api))
+    );
     expect(locResponse.status).toBe(201);
 
     // Create template with location

@@ -8,6 +8,15 @@ import { sharedUserClient } from "../test-utils";
 
 describe("user should be able to create an item and add an attachment", () => {
   let increment = 0;
+  /** The group's location entity type; an entity without it would be created as an item. */
+  async function locationTypeId(api: UserClient): Promise<string> {
+    const { response, data } = await api.entityTypes.getAll();
+    expect(response.status).toBe(200);
+    const type = data.find(t => t.isLocation);
+    expect(type).toBeTruthy();
+    return type!.id;
+  }
+
   /**
    * useLocation sets up a location resource for testing, and returns a function
    * that can be used to delete the location from the backend server.
@@ -15,16 +24,11 @@ describe("user should be able to create an item and add an attachment", () => {
   async function useLocation(api: UserClient): Promise<[EntityOut, () => Promise<void>]> {
     // Locations must carry the group's location entity type; without an
     // entityTypeId the backend defaults new entities to the item type.
-    const { response: typesResponse, data: entityTypes } = await api.entityTypes.getAll();
-    expect(typesResponse.status).toBe(200);
-    const locationType = entityTypes.find(t => t.isLocation);
-    expect(locationType).toBeTruthy();
-
     const { response, data } = await api.items.createLocation({
       parentId: null,
       name: `__test__.location.name_${increment}`,
       description: `__test__.location.description_${increment}`,
-      entityTypeId: locationType!.id,
+      entityTypeId: await locationTypeId(api),
       quantity: 1,
       tagIds: [],
     });
@@ -176,6 +180,7 @@ describe("user should be able to create an item and add an attachment", () => {
         parentId: lastLocationId,
         name: locations[i]!,
         description: "",
+        entityTypeId: await locationTypeId(api),
         quantity: 1,
         tagIds: [],
       });

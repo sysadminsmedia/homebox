@@ -17,6 +17,13 @@ import type { AttachmentTypes } from "../types/non-generated";
 import type { MaintenanceFilters } from "./maintenance.ts";
 import type { Requests } from "~~/lib/requests";
 
+/**
+ * A location is an entity whose type is a location type. The backend defaults an
+ * omitted entityTypeId to the item type, so it is required here to keep a caller
+ * from creating an item by accident.
+ */
+export type LocationCreate = EntityCreate & { entityTypeId: string };
+
 export type ItemsQuery = {
   orderBy?: string;
   orderDirection?: string;
@@ -214,8 +221,8 @@ export class ItemsApi extends BaseAPI {
     return this.http.get<TreeItem[]>({ url: route("/entities/tree", tq) });
   }
 
-  createLocation(body: EntityCreate) {
-    return this.http.post<EntityCreate, EntityOut>({ url: route("/entities"), body });
+  createLocation(body: LocationCreate) {
+    return this.http.post<LocationCreate, EntityOut>({ url: route("/entities"), body });
   }
 
   getLocation(id: string) {

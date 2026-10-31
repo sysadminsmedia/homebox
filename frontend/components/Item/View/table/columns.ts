@@ -155,7 +155,8 @@ export function makeColumns({
         ),
       cell: ({ row }) => {
         const item = row.original as EntitySummary;
-        const loc = item.parent;
+        // An item can be nested under another item; only a location parent gets the location link.
+        const loc = item.parent?.entityType?.isLocation ? item.parent : null;
         if (loc) {
           return h("a", { href: `/location/${loc.id}`, class: "hover:underline text-sm" }, loc.name);
         }

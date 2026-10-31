@@ -2,13 +2,8 @@ import { faker } from "@faker-js/faker";
 import { expect } from "vitest";
 import { overrideParts } from "../../base/urls";
 import { PublicApi } from "../../public";
-import type {
-  EntityFieldData,
-  EntityTemplateCreate,
-  TagCreate,
-  EntityCreate,
-  UserRegistration,
-} from "../../types/data-contracts";
+import type { EntityFieldData, EntityTemplateCreate, TagCreate, UserRegistration } from "../../types/data-contracts";
+import type { LocationCreate } from "../../classes/items";
 import * as config from "../../../../test/config";
 import { UserClient } from "../../user";
 import { Requests } from "../../../requests";
@@ -39,8 +34,9 @@ function user(): UserRegistration {
   };
 }
 
-function location(parentId: string | null = null): EntityCreate {
+function location(entityTypeId: string, parentId: string | null = null): LocationCreate {
   return {
+    entityTypeId,
     parentId,
     name: faker.location.city(),
     description: faker.lorem.sentence(),
