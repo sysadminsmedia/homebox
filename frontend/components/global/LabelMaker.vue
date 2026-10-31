@@ -55,7 +55,10 @@
   async function serverPrint() {
     serverPrinting.value = true;
     try {
-      await fetch(getLabelUrl(true));
+      const response = await fetch(getLabelUrl(true));
+      if (!response.ok) {
+        throw new Error(`Received ${response.status}`);
+      }
     } catch (err) {
       console.error("Failed to print labels:", err);
       serverPrinting.value = false;
