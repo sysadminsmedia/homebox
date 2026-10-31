@@ -203,7 +203,7 @@
                 </Button>
               </div>
               <div>
-                <Button size="icon" @click="openScanner">
+                <Button size="icon" :aria-label="$t('menu.scanner')" @click="openDialog(DialogID.Scanner)">
                   <MdiQrcodeScan />
                 </Button>
               </div>
@@ -285,7 +285,6 @@
   import { useDialog } from "~/components/ui/dialog-provider";
   import { Input } from "~/components/ui/input";
   import { Button } from "~/components/ui/button";
-  import { toast } from "@/components/ui/sonner";
   import { DialogID, type NoParamDialogIDs } from "~/components/ui/dialog-provider/utils";
   import ModalConfirm from "~/components/ModalConfirm.vue";
   import OutdatedModal from "~/components/App/OutdatedModal.vue";
@@ -337,23 +336,6 @@
       if (document.activeElement && "blur" in document.activeElement) {
         (document.activeElement as HTMLElement).blur();
       }
-    }
-  };
-
-  const openScanner = () => {
-    // request permission
-    if (navigator.mediaDevices) {
-      navigator.mediaDevices
-        .getUserMedia({ video: true })
-        .then(() => {
-          openDialog(DialogID.Scanner);
-        })
-        .catch(err => {
-          console.error(err);
-          toast.error(t("scanner.permission_denied"));
-        });
-    } else {
-      toast.error(t("scanner.unsupported"));
     }
   };
 
