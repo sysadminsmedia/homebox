@@ -1662,7 +1662,10 @@ func (r *EntityRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wip
 
 	loadCtx, loadSpan := entityTracer().Start(ctx, "repo.EntityRepository.WipeInventory.loadEntities")
 	entities, err := r.db.Entity.Query().
-		Where(entity.HasGroupWith(group.ID(gid))).
+		Where(
+			entity.HasGroupWith(group.ID(gid)),
+			entity.HasEntityTypeWith(entitytype.IsLocation(false)),
+		).
 		WithAttachments().
 		All(loadCtx)
 	if err != nil {
@@ -1694,6 +1697,7 @@ func (r *EntityRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wip
 			Where(
 				entity.ID(e.ID),
 				entity.HasGroupWith(group.ID(gid)),
+				entity.HasEntityTypeWith(entitytype.IsLocation(false)),
 			).Exec(entCtx)
 		if err != nil {
 			recordSpanError(entSpan, err)
