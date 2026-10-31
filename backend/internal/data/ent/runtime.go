@@ -16,6 +16,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/export"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/labeltemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/passwordresettokens"
@@ -525,6 +526,73 @@ func init() {
 	groupinvitationtokenDescID := groupinvitationtokenMixinFields0[0].Descriptor()
 	// groupinvitationtoken.DefaultID holds the default value on creation for the id field.
 	groupinvitationtoken.DefaultID = groupinvitationtokenDescID.Default.(func() uuid.UUID)
+	labeltemplateMixin := schema.LabelTemplate{}.Mixin()
+	labeltemplateMixinFields0 := labeltemplateMixin[0].Fields()
+	_ = labeltemplateMixinFields0
+	labeltemplateMixinFields1 := labeltemplateMixin[1].Fields()
+	_ = labeltemplateMixinFields1
+	labeltemplateFields := schema.LabelTemplate{}.Fields()
+	_ = labeltemplateFields
+	// labeltemplateDescCreatedAt is the schema descriptor for created_at field.
+	labeltemplateDescCreatedAt := labeltemplateMixinFields0[1].Descriptor()
+	// labeltemplate.DefaultCreatedAt holds the default value on creation for the created_at field.
+	labeltemplate.DefaultCreatedAt = labeltemplateDescCreatedAt.Default.(func() time.Time)
+	// labeltemplateDescUpdatedAt is the schema descriptor for updated_at field.
+	labeltemplateDescUpdatedAt := labeltemplateMixinFields0[2].Descriptor()
+	// labeltemplate.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	labeltemplate.DefaultUpdatedAt = labeltemplateDescUpdatedAt.Default.(func() time.Time)
+	// labeltemplate.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	labeltemplate.UpdateDefaultUpdatedAt = labeltemplateDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// labeltemplateDescName is the schema descriptor for name field.
+	labeltemplateDescName := labeltemplateMixinFields1[0].Descriptor()
+	// labeltemplate.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	labeltemplate.NameValidator = func() func(string) error {
+		validators := labeltemplateDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// labeltemplateDescDescription is the schema descriptor for description field.
+	labeltemplateDescDescription := labeltemplateMixinFields1[1].Descriptor()
+	// labeltemplate.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	labeltemplate.DescriptionValidator = labeltemplateDescDescription.Validators[0].(func(string) error)
+	// labeltemplateDescWidth is the schema descriptor for width field.
+	labeltemplateDescWidth := labeltemplateFields[0].Descriptor()
+	// labeltemplate.DefaultWidth holds the default value on creation for the width field.
+	labeltemplate.DefaultWidth = labeltemplateDescWidth.Default.(float64)
+	// labeltemplateDescHeight is the schema descriptor for height field.
+	labeltemplateDescHeight := labeltemplateFields[1].Descriptor()
+	// labeltemplate.DefaultHeight holds the default value on creation for the height field.
+	labeltemplate.DefaultHeight = labeltemplateDescHeight.Default.(float64)
+	// labeltemplateDescPreset is the schema descriptor for preset field.
+	labeltemplateDescPreset := labeltemplateFields[2].Descriptor()
+	// labeltemplate.PresetValidator is a validator for the "preset" field. It is called by the builders before save.
+	labeltemplate.PresetValidator = labeltemplateDescPreset.Validators[0].(func(string) error)
+	// labeltemplateDescIsShared is the schema descriptor for is_shared field.
+	labeltemplateDescIsShared := labeltemplateFields[3].Descriptor()
+	// labeltemplate.DefaultIsShared holds the default value on creation for the is_shared field.
+	labeltemplate.DefaultIsShared = labeltemplateDescIsShared.Default.(bool)
+	// labeltemplateDescOutputFormat is the schema descriptor for output_format field.
+	labeltemplateDescOutputFormat := labeltemplateFields[5].Descriptor()
+	// labeltemplate.DefaultOutputFormat holds the default value on creation for the output_format field.
+	labeltemplate.DefaultOutputFormat = labeltemplateDescOutputFormat.Default.(string)
+	// labeltemplateDescDpi is the schema descriptor for dpi field.
+	labeltemplateDescDpi := labeltemplateFields[6].Descriptor()
+	// labeltemplate.DefaultDpi holds the default value on creation for the dpi field.
+	labeltemplate.DefaultDpi = labeltemplateDescDpi.Default.(int)
+	// labeltemplateDescID is the schema descriptor for id field.
+	labeltemplateDescID := labeltemplateMixinFields0[0].Descriptor()
+	// labeltemplate.DefaultID holds the default value on creation for the id field.
+	labeltemplate.DefaultID = labeltemplateDescID.Default.(func() uuid.UUID)
 	maintenanceentryMixin := schema.MaintenanceEntry{}.Mixin()
 	maintenanceentryMixinFields0 := maintenanceentryMixin[0].Fields()
 	_ = maintenanceentryMixinFields0

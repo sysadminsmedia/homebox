@@ -13,6 +13,7 @@ import { MaintenanceAPI } from "./classes/maintenance";
 import { ProductAPI } from "./classes/product";
 import { TemplatesApi } from "./classes/templates";
 import { BackupsAPI } from "./classes/backups";
+import { LabelTemplatesApi } from "./classes/label-templates";
 import type { Requests } from "~~/lib/requests";
 
 export class UserClient extends BaseAPI {
@@ -20,6 +21,7 @@ export class UserClient extends BaseAPI {
   items: ItemsApi;
   templates: TemplatesApi;
   entityTypes: EntityTypesApi;
+  labelTemplates: LabelTemplatesApi;
   maintenance: MaintenanceAPI;
   group: GroupApi;
   user: UserApi;
@@ -48,6 +50,7 @@ export class UserClient extends BaseAPI {
     this.items = new ItemsApi(requests, attachmentToken);
     this.templates = new TemplatesApi(requests);
     this.entityTypes = new EntityTypesApi(requests);
+    this.labelTemplates = new LabelTemplatesApi(requests, attachmentToken);
     this.maintenance = new MaintenanceAPI(requests);
     this.group = new GroupApi(requests);
     this.user = new UserApi(requests);
