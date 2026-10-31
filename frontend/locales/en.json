@@ -1040,6 +1040,7 @@
         "quick_print_failed": "Failed to print label"
     },
     "languages": {
+        "bg": "Bulgarian",
         "bs-BA": "Bosnian (Bosnia and Herzegovina)",
         "ca": "Catalan",
         "cs-CZ": "Czech",
