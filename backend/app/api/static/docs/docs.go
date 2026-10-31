@@ -5550,7 +5550,9 @@ const docTemplate = `{
                     "maxLength": 1000
                 },
                 "entityTypeId": {
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "locationId": {
                     "description": "Only needed when ParentID is another item and this lives elsewhere (#1688).",
@@ -6297,7 +6299,9 @@ const docTemplate = `{
                     "maxLength": 1000
                 },
                 "entityTypeId": {
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "fields": {
                     "type": "array",
@@ -7072,7 +7076,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "booleanValue": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "id": {
                     "type": "string"
@@ -7081,13 +7087,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "numberValue": {
-                    "type": "integer"
+                    "type": "integer",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "textValue": {
                     "type": "string"
                 },
                 "timeValue": {
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "type": {
                     "type": "string"
