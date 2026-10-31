@@ -155,9 +155,11 @@ export function makeColumns({
         ),
       cell: ({ row }) => {
         const item = row.original as EntitySummary;
-        const loc = (item.location || item.parent) as { id: string; name: string } | null;
+        const loc = item.location || item.parent;
         if (loc) {
-          return h("a", { href: `/location/${loc.id}`, class: "hover:underline text-sm" }, loc.name);
+          // The parent can be an item, which lives under /item, not /location.
+          const type = loc.entityType?.isLocation === false ? "item" : "location";
+          return h("a", { href: `/${type}/${loc.id}`, class: "hover:underline text-sm" }, loc.name);
         }
         return h("div", { class: "text-sm text-muted-foreground" }, "");
       },

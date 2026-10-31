@@ -24,6 +24,7 @@ export type ItemsQuery = {
   page?: number;
   pageSize?: number;
   parentIds?: string[];
+  parentItemIds?: string[];
   entityTypeIds?: string[];
   tags?: string[];
   negateTags?: boolean;
