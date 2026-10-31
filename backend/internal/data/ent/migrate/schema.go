@@ -149,6 +149,7 @@ var (
 		{Name: "lifetime_warranty", Type: field.TypeBool, Default: false},
 		{Name: "warranty_expires", Type: field.TypeTime, Nullable: true},
 		{Name: "warranty_details", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "notify_warranty_expiration", Type: field.TypeBool, Default: false},
 		{Name: "purchase_date", Type: field.TypeTime, Nullable: true},
 		{Name: "purchase_from", Type: field.TypeString, Nullable: true},
 		{Name: "purchase_price", Type: field.TypeFloat64, Default: 0},
@@ -169,25 +170,25 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "entities_entities_children",
-				Columns:    []*schema.Column{EntitiesColumns[25]},
-				RefColumns: []*schema.Column{EntitiesColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:     "entities_entities_location_entities",
 				Columns:    []*schema.Column{EntitiesColumns[26]},
 				RefColumns: []*schema.Column{EntitiesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:     "entities_entity_types_entities",
+				Symbol:     "entities_entities_location_entities",
 				Columns:    []*schema.Column{EntitiesColumns[27]},
+				RefColumns: []*schema.Column{EntitiesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "entities_entity_types_entities",
+				Columns:    []*schema.Column{EntitiesColumns[28]},
 				RefColumns: []*schema.Column{EntityTypesColumns[0]},
 				OnDelete:   schema.Restrict,
 			},
 			{
 				Symbol:     "entities_groups_entities",
-				Columns:    []*schema.Column{EntitiesColumns[28]},
+				Columns:    []*schema.Column{EntitiesColumns[29]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
