@@ -62,14 +62,13 @@
 
 <script setup lang="ts">
   import { Check, ChevronsUpDown, X } from "lucide-vue-next";
-  import fuzzysort from "fuzzysort";
   import { Button } from "~/components/ui/button";
   import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "~/components/ui/command";
   import { Label } from "~/components/ui/label";
   import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
   import { cn } from "~/lib/utils";
   import type { EntitySummary } from "~~/lib/api/types/data-contracts";
-  import { useFlatLocations } from "~~/composables/use-location-helpers";
+  import { filterLocations, useFlatLocations } from "~~/composables/use-location-helpers";
 
   type Props = {
     modelValue?: EntitySummary | null;
@@ -101,10 +100,7 @@
   }
 
   const filteredLocations = computed(() => {
-    const keys = ["name", "treeString"];
-    const filtered = fuzzysort.go(search.value, locations.value, { keys, all: true }).map(i => i.obj);
-
-    return filtered;
+    return filterLocations(search.value, locations.value);
   });
 
   // Reset search when value is cleared
