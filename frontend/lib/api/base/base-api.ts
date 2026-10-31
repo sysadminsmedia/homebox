@@ -86,7 +86,7 @@ export class BaseAPI {
 
       return route(url, params);
     }
-    return url;
+    return route(url);
   }
 
   /**

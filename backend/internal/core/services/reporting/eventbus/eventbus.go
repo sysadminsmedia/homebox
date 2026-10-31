@@ -16,6 +16,8 @@ const (
 	EventUserMutation   Event = "user.mutation"
 	EventExportMutation Event = "export.mutation"
 	EventImportMutation Event = "import.mutation"
+
+	EventLabelTemplateMutation Event = "label_template.mutation"
 )
 
 type GroupMutationEvent struct {
@@ -44,6 +46,8 @@ func New() *EventBus {
 			EventUserMutation:   {},
 			EventExportMutation: {},
 			EventImportMutation: {},
+
+			EventLabelTemplateMutation: {},
 		},
 	}
 }

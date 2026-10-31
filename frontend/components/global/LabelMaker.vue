@@ -26,6 +26,8 @@
   const props = defineProps<{
     type: string;
     id: string;
+    /** Render only the print dialog; another control opens it via DialogID.PrintLabel */
+    dialogOnly?: boolean;
   }>();
 
   const pubApi = usePublicApi();
@@ -55,7 +57,10 @@
   async function serverPrint() {
     serverPrinting.value = true;
     try {
-      await fetch(getLabelUrl(true));
+      const response = await fetch(getLabelUrl(true));
+      if (!response.ok) {
+        throw new Error(`Received ${response.status}`);
+      }
     } catch (err) {
       console.error("Failed to print labels:", err);
       serverPrinting.value = false;
@@ -124,7 +129,7 @@
       </DialogContent>
     </Dialog>
 
-    <TooltipProvider :delay-duration="0">
+    <TooltipProvider v-if="!dialogOnly" :delay-duration="0">
       <ButtonGroup>
         <Button variant="outline" disabled class="disabled:opacity-100">
           {{ $t("components.global.label_maker.titles") }}

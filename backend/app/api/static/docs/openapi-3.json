@@ -1936,6 +1936,507 @@
                 }
             }
         },
+        "/v1/label-templates": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Get All Label Templates",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/repo.LabelTemplateSummary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Create Label Template",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/repo.LabelTemplateCreate"
+                            }
+                        }
+                    },
+                    "description": "Template Data",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.LabelTemplateOut"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/barcode-formats": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Get Supported Barcode Formats",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/labelmaker.BarcodeFormatInfo"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/presets": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Get Label Size Presets",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/labelmaker.LabelPreset"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Get Label Template",
+                "parameters": [
+                    {
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.LabelTemplateOut"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Update Label Template",
+                "parameters": [
+                    {
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/repo.LabelTemplateUpdate"
+                            }
+                        }
+                    },
+                    "description": "Template Data",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.LabelTemplateOut"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Delete Label Template",
+                "parameters": [
+                    {
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/duplicate": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Duplicate Label Template",
+                "parameters": [
+                    {
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.LabelTemplateOut"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/preview": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Preview Label Template",
+                "parameters": [
+                    {
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "image/png": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/print": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Print Labels",
+                "parameters": [
+                    {
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/v1.LabelTemplatePrintRequest"
+                            }
+                        }
+                    },
+                    "description": "Print request",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.LabelTemplatePrintResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/print-locations": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Print Location Labels",
+                "parameters": [
+                    {
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/v1.LabelTemplatePrintLocationsRequest"
+                            }
+                        }
+                    },
+                    "description": "Print request",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/v1.LabelTemplatePrintResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/render": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Render Label for Items",
+                "parameters": [
+                    {
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/v1.LabelTemplateRenderRequest"
+                            }
+                        }
+                    },
+                    "description": "Items to render",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "image/png": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            },
+                            "application/pdf": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/render-locations": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Render Label for Locations",
+                "parameters": [
+                    {
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/v1.LabelTemplateRenderLocationsRequest"
+                            }
+                        }
+                    },
+                    "description": "Locations to render",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "image/png": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            },
+                            "application/pdf": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/labelmaker/asset/{id}": {
             "get": {
                 "security": [
@@ -4339,6 +4840,13 @@
                             "$ref": "#/components/schemas/ent.GroupInvitationToken"
                         }
                     },
+                    "label_templates": {
+                        "description": "LabelTemplates holds the value of the label_templates edge.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ent.LabelTemplate"
+                        }
+                    },
                     "notifiers": {
                         "description": "Notifiers holds the value of the notifiers edge.",
                         "type": "array",
@@ -4417,6 +4925,93 @@
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/ent.Group"
+                            }
+                        ]
+                    }
+                }
+            },
+            "ent.LabelTemplate": {
+                "type": "object",
+                "properties": {
+                    "canvas_data": {
+                        "description": "Fabric.js compatible canvas JSON",
+                        "type": "object",
+                        "additionalProperties": true
+                    },
+                    "created_at": {
+                        "description": "CreatedAt holds the value of the \"created_at\" field.",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Description holds the value of the \"description\" field.",
+                        "type": "string"
+                    },
+                    "dpi": {
+                        "description": "Output DPI for rendering",
+                        "type": "integer"
+                    },
+                    "edges": {
+                        "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the LabelTemplateQuery when eager-loading is set.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.LabelTemplateEdges"
+                            }
+                        ]
+                    },
+                    "height": {
+                        "description": "Label height in mm",
+                        "type": "number"
+                    },
+                    "id": {
+                        "description": "ID of the ent.",
+                        "type": "string"
+                    },
+                    "is_shared": {
+                        "description": "Whether template is shared with group",
+                        "type": "boolean"
+                    },
+                    "name": {
+                        "description": "Name holds the value of the \"name\" field.",
+                        "type": "string"
+                    },
+                    "output_format": {
+                        "description": "Output format: png, pdf",
+                        "type": "string"
+                    },
+                    "owner_id": {
+                        "description": "User who created this template",
+                        "type": "string"
+                    },
+                    "preset": {
+                        "description": "Preset size key like 'brother_dk2205'",
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                        "type": "string"
+                    },
+                    "width": {
+                        "description": "Label width in mm",
+                        "type": "number"
+                    }
+                }
+            },
+            "ent.LabelTemplateEdges": {
+                "type": "object",
+                "properties": {
+                    "group": {
+                        "description": "Group holds the value of the group edge.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.Group"
+                            }
+                        ]
+                    },
+                    "owner": {
+                        "description": "Owner holds the value of the owner edge.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ent.User"
                             }
                         ]
                     }
@@ -4835,6 +5430,13 @@
                             "$ref": "#/components/schemas/ent.Group"
                         }
                     },
+                    "label_templates": {
+                        "description": "LabelTemplates holds the value of the label_templates edge.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ent.LabelTemplate"
+                        }
+                    },
                     "notifiers": {
                         "description": "Notifiers holds the value of the notifiers edge.",
                         "type": "array",
@@ -4952,6 +5554,157 @@
                     "StatusCompleted",
                     "StatusFailed"
                 ]
+            },
+            "labelmaker.BarcodeFormat": {
+                "type": "string",
+                "enum": [
+                    "qr",
+                    "code128",
+                    "code39",
+                    "datamatrix",
+                    "ean13",
+                    "ean8",
+                    "upca"
+                ],
+                "x-enum-varnames": [
+                    "BarcodeQR",
+                    "BarcodeCode128",
+                    "BarcodeCode39",
+                    "BarcodeDataMatrix",
+                    "BarcodeEAN13",
+                    "BarcodeEAN8",
+                    "BarcodeUPCA"
+                ]
+            },
+            "labelmaker.BarcodeFormatInfo": {
+                "type": "object",
+                "properties": {
+                    "contentType": {
+                        "description": "What kind of content this format supports",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/labelmaker.ContentType"
+                            }
+                        ]
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "format": {
+                        "$ref": "#/components/schemas/labelmaker.BarcodeFormat"
+                    },
+                    "is2D": {
+                        "type": "boolean"
+                    },
+                    "maxLength": {
+                        "description": "0 means variable/unlimited",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "labelmaker.ContentType": {
+                "type": "string",
+                "enum": [
+                    "any",
+                    "alphanumeric",
+                    "numeric"
+                ],
+                "x-enum-comments": {
+                    "ContentTypeAlphanumeric": "Letters, numbers, limited symbols",
+                    "ContentTypeAny": "Can encode any text (URLs, names, etc.)",
+                    "ContentTypeNumeric": "Digits only"
+                },
+                "x-enum-descriptions": [
+                    "Can encode any text (URLs, names, etc.)",
+                    "Letters, numbers, limited symbols",
+                    "Digits only"
+                ],
+                "x-enum-varnames": [
+                    "ContentTypeAny",
+                    "ContentTypeAlphanumeric",
+                    "ContentTypeNumeric"
+                ]
+            },
+            "labelmaker.LabelPreset": {
+                "type": "object",
+                "properties": {
+                    "brand": {
+                        "type": "string"
+                    },
+                    "continuous": {
+                        "description": "Whether this is continuous tape",
+                        "type": "boolean"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "height": {
+                        "description": "Height in mm",
+                        "type": "number"
+                    },
+                    "key": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "sheetLayout": {
+                        "description": "Sheet layout information (for Avery-style sheet labels)\nIf SheetLayout is set, labels are arranged on a printable sheet",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/labelmaker.SheetLayout"
+                            }
+                        ]
+                    },
+                    "twoColor": {
+                        "description": "Whether this supports two-color printing (black/red)",
+                        "type": "boolean"
+                    },
+                    "width": {
+                        "description": "Width in mm",
+                        "type": "number"
+                    }
+                }
+            },
+            "labelmaker.SheetLayout": {
+                "type": "object",
+                "properties": {
+                    "columns": {
+                        "description": "Number of labels across",
+                        "type": "integer"
+                    },
+                    "gutterH": {
+                        "description": "Horizontal gap between labels in mm",
+                        "type": "number"
+                    },
+                    "gutterV": {
+                        "description": "Vertical gap between labels in mm",
+                        "type": "number"
+                    },
+                    "marginLeft": {
+                        "description": "Left margin in mm",
+                        "type": "number"
+                    },
+                    "marginTop": {
+                        "description": "Top margin in mm",
+                        "type": "number"
+                    },
+                    "pageHeight": {
+                        "description": "Sheet height in mm (e.g., 279.4 for Letter, 297 for A4)",
+                        "type": "number"
+                    },
+                    "pageWidth": {
+                        "description": "Sheet width in mm (e.g., 215.9 for Letter, 210 for A4)",
+                        "type": "number"
+                    },
+                    "rows": {
+                        "description": "Number of labels down",
+                        "type": "integer"
+                    }
+                }
             },
             "repo.APIKeyCreate": {
                 "type": "object",
@@ -6080,6 +6833,192 @@
                     }
                 }
             },
+            "repo.LabelTemplateCreate": {
+                "type": "object",
+                "required": [
+                    "height",
+                    "name",
+                    "width"
+                ],
+                "properties": {
+                    "canvasData": {
+                        "type": "object",
+                        "additionalProperties": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 1000
+                    },
+                    "dpi": {
+                        "type": "integer",
+                        "maximum": 1200,
+                        "minimum": 72
+                    },
+                    "height": {
+                        "type": "number",
+                        "maximum": 1000
+                    },
+                    "isShared": {
+                        "type": "boolean"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1
+                    },
+                    "outputFormat": {
+                        "type": "string",
+                        "enum": [
+                            "png",
+                            "pdf"
+                        ]
+                    },
+                    "preset": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "width": {
+                        "type": "number",
+                        "maximum": 1000
+                    }
+                }
+            },
+            "repo.LabelTemplateOut": {
+                "type": "object",
+                "properties": {
+                    "canvasData": {
+                        "type": "object",
+                        "additionalProperties": true
+                    },
+                    "createdAt": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "dpi": {
+                        "type": "integer"
+                    },
+                    "height": {
+                        "type": "number"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "isOwner": {
+                        "type": "boolean"
+                    },
+                    "isShared": {
+                        "type": "boolean"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "outputFormat": {
+                        "type": "string"
+                    },
+                    "ownerId": {
+                        "type": "string"
+                    },
+                    "preset": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    },
+                    "width": {
+                        "type": "number"
+                    }
+                }
+            },
+            "repo.LabelTemplateSummary": {
+                "type": "object",
+                "properties": {
+                    "createdAt": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "height": {
+                        "type": "number"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "isOwner": {
+                        "type": "boolean"
+                    },
+                    "isShared": {
+                        "type": "boolean"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "preset": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    },
+                    "width": {
+                        "type": "number"
+                    }
+                }
+            },
+            "repo.LabelTemplateUpdate": {
+                "type": "object",
+                "required": [
+                    "height",
+                    "name",
+                    "width"
+                ],
+                "properties": {
+                    "canvasData": {
+                        "type": "object",
+                        "additionalProperties": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 1000
+                    },
+                    "dpi": {
+                        "type": "integer",
+                        "maximum": 1200,
+                        "minimum": 72
+                    },
+                    "height": {
+                        "type": "number",
+                        "maximum": 1000
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "isShared": {
+                        "type": "boolean"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1
+                    },
+                    "outputFormat": {
+                        "type": "string",
+                        "enum": [
+                            "png",
+                            "pdf"
+                        ]
+                    },
+                    "preset": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "width": {
+                        "type": "number",
+                        "maximum": 1000
+                    }
+                }
+            },
             "repo.MaintenanceEntry": {
                 "type": "object",
                 "properties": {
@@ -6823,6 +7762,162 @@
                         "type": "integer",
                         "maximum": 100,
                         "minimum": 1
+                    }
+                }
+            },
+            "v1.LabelPrintItem": {
+                "type": "object",
+                "required": [
+                    "id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "quantity": {
+                        "description": "Number of copies for this item",
+                        "type": "integer"
+                    }
+                }
+            },
+            "v1.LabelPrintLocation": {
+                "type": "object",
+                "required": [
+                    "id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "quantity": {
+                        "description": "Number of copies for this location",
+                        "type": "integer"
+                    }
+                }
+            },
+            "v1.LabelTemplatePrintLocationsRequest": {
+                "type": "object",
+                "properties": {
+                    "copies": {
+                        "description": "Default copies per label",
+                        "type": "integer"
+                    },
+                    "locationIds": {
+                        "description": "Simple list (1 copy each)",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "locations": {
+                        "description": "Locations with individual quantities",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/v1.LabelPrintLocation"
+                        }
+                    }
+                }
+            },
+            "v1.LabelTemplatePrintRequest": {
+                "type": "object",
+                "properties": {
+                    "copies": {
+                        "description": "Default copies per label (used if item.quantity is 0)",
+                        "type": "integer"
+                    },
+                    "itemIds": {
+                        "description": "Simple list (1 copy each) - for backward compatibility",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "items": {
+                        "description": "Items with individual quantities",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/v1.LabelPrintItem"
+                        }
+                    }
+                }
+            },
+            "v1.LabelTemplatePrintResponse": {
+                "type": "object",
+                "properties": {
+                    "labelCount": {
+                        "type": "integer"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "success": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "v1.LabelTemplateRenderLocationsRequest": {
+                "type": "object",
+                "required": [
+                    "locationIds"
+                ],
+                "properties": {
+                    "format": {
+                        "description": "\"png\" or \"pdf\", defaults to \"png\"",
+                        "type": "string"
+                    },
+                    "locationIds": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "pageSize": {
+                        "description": "\"Letter\", \"A4\", or \"Custom\" for PDF",
+                        "type": "string"
+                    },
+                    "showCutGuides": {
+                        "description": "Draw light borders around labels for cutting",
+                        "type": "boolean"
+                    },
+                    "skipLabels": {
+                        "description": "Leave this many positions empty on the first sheet",
+                        "type": "integer"
+                    }
+                }
+            },
+            "v1.LabelTemplateRenderRequest": {
+                "type": "object",
+                "required": [
+                    "itemIds"
+                ],
+                "properties": {
+                    "canvasData": {
+                        "description": "Optional: canvas data for live preview (overrides saved template)",
+                        "type": "string"
+                    },
+                    "format": {
+                        "description": "\"png\" or \"pdf\", defaults to \"png\"",
+                        "type": "string"
+                    },
+                    "itemIds": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "pageSize": {
+                        "description": "\"Letter\", \"A4\", or \"Custom\" for PDF",
+                        "type": "string"
+                    },
+                    "showCutGuides": {
+                        "description": "Draw light borders around labels for cutting",
+                        "type": "boolean"
+                    },
+                    "skipLabels": {
+                        "description": "Leave this many positions empty on the first sheet",
+                        "type": "integer"
                     }
                 }
             },
