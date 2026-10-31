@@ -638,7 +638,7 @@ func runPrintCommand(ctx context.Context, cfg *config.Config, templateData map[s
 	// A wrapper script may leave a descendant holding the output pipes after the
 	// direct child is killed; stop waiting on them shortly after the deadline.
 	command.WaitDelay = 5 * time.Second
-
+  
 	if _, err := command.CombinedOutput(); err != nil {
 		if ctxErr := ctx.Err(); ctxErr != nil {
 			// The caller's context ended first (request cancelled or its own deadline).
