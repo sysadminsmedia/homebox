@@ -58,12 +58,8 @@
       enabled.addTags = params.addTags ?? false;
       enabled.removeTags = params.removeTags ?? false;
 
-      if (params.changeLocation && params.items.length > 0) {
-        // if all items share the same parent then preselect it
-        if (params.items[0]!.parent && params.items.every(item => item.parent?.id === params.items[0]!.parent?.id)) {
-          newLocation.value = params.items[0]!.parent;
-        }
-      }
+      // No preselected location: EntitySummary carries only the direct parent,
+      // which may itself be an item, not the resolved location.
 
       if (params.addTags && params.items.length > 0) {
         const intersection = intersectTagIds(params.items);
