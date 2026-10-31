@@ -10,6 +10,7 @@
     <EntityCreateModal />
     <WipeInventoryDialog />
     <TagCreateModal />
+    <LabelTemplatePrintDialog />
     <ItemBarcodeModal />
     <AppQuickMenuModal :actions="quickMenuActions" />
     <AppScannerModal />
@@ -252,6 +253,7 @@
   import MdiPlus from "~icons/mdi/plus";
   import MdiLogout from "~icons/mdi/logout";
   import MdiFileDocumentMultiple from "~icons/mdi/file-document-multiple";
+  import MdiLabel from "~icons/mdi/label";
   import MdiChevronRight from "~icons/mdi/chevron-right";
 
   import {
@@ -290,6 +292,7 @@
   import EntityCreateModal from "~/components/Entity/CreateModal.vue";
   import WipeInventoryDialog from "~/components/WipeInventoryDialog.vue";
   import TagCreateModal from "~/components/Tag/CreateModal.vue";
+  import LabelTemplatePrintDialog from "~/components/LabelTemplate/PrintDialog.vue";
   import ItemBarcodeModal from "~/components/Item/BarcodeModal.vue";
   import AppQuickMenuModal from "~/components/App/QuickMenuModal.vue";
   import AppScannerModal from "~/components/App/ScannerModal.vue";
@@ -435,6 +438,13 @@
       active: computed(() => route.path === "/templates"),
       name: computed(() => t("menu.templates")),
       to: "/templates",
+    },
+    {
+      icon: MdiLabel,
+      id: 8,
+      active: computed(() => route.path.startsWith("/label-templates")),
+      name: computed(() => t("menu.label_templates")),
+      to: "/label-templates",
     },
     {
       icon: MdiWrench,

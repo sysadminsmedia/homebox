@@ -791,6 +791,29 @@ func HasNotifiersWith(preds ...predicate.Notifier) predicate.User {
 	})
 }
 
+// HasLabelTemplates applies the HasEdge predicate on the "label_templates" edge.
+func HasLabelTemplates() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, LabelTemplatesTable, LabelTemplatesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasLabelTemplatesWith applies the HasEdge predicate on the "label_templates" edge with a given conditions (other predicates).
+func HasLabelTemplatesWith(preds ...predicate.LabelTemplate) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newLabelTemplatesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasUserGroups applies the HasEdge predicate on the "user_groups" edge.
 func HasUserGroups() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

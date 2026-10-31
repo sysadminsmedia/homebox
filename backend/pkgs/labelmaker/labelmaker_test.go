@@ -1,6 +1,7 @@
 package labelmaker
 
 import (
+	"context"
 	"image"
 	"os"
 	"path/filepath"
@@ -247,7 +248,7 @@ func TestPrintLabel_ArgumentInjection(t *testing.T) {
 	const maliciousTitle = "evil title --output /etc/passwd"
 	params := NewGenerateParams(400, 200, 10, 5, 32, maliciousTitle, "desc", "http://localhost/item/1", false, nil)
 
-	require.NoError(t, PrintLabel(cfg, &params))
+	require.NoError(t, PrintLabel(context.Background(), cfg, &params))
 
 	raw, err := os.ReadFile(argsFile)
 	require.NoError(t, err)

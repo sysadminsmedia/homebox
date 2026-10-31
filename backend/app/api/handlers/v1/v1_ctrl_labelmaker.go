@@ -21,7 +21,7 @@ func generateOrPrint(ctrl *V1Controller, w http.ResponseWriter, r *http.Request,
 	print := queryBool(r.URL.Query().Get("print"))
 
 	if print {
-		err := labelmaker.PrintLabel(ctrl.config, &params)
+		err := labelmaker.PrintLabel(r.Context(), ctrl.config, &params)
 		if err != nil {
 			return err
 		}
