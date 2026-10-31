@@ -597,6 +597,40 @@ func PrintPNG(ctx context.Context, cfg *config.Config, png []byte, data map[stri
 // waiting on an unreachable printer cannot hold the request goroutine forever.
 const printCommandTimeout = 60 * time.Second
 
+// maxPrintCommandOutput bounds how much of a print command's output is kept
+// for the failure log.
+const maxPrintCommandOutput = 8 << 10
+
+// boundedBuffer keeps the first limit bytes written to it, drops the rest and
+// remembers that it did so. os/exec serialises writes when the same writer is
+// used for stdout and stderr, so no locking is needed.
+type boundedBuffer struct {
+	limit     int
+	buf       []byte
+	truncated bool
+}
+
+func (b *boundedBuffer) Write(p []byte) (int, error) {
+	if room := b.limit - len(b.buf); room >= len(p) {
+		b.buf = append(b.buf, p...)
+	} else {
+		if room > 0 {
+			b.buf = append(b.buf, p[:room]...)
+		}
+		b.truncated = true
+	}
+	return len(p), nil
+}
+
+func (b *boundedBuffer) Bytes() []byte { return b.buf }
+
+func (b *boundedBuffer) suffix() string {
+	if b.truncated {
+		return " (truncated)"
+	}
+	return ""
+}
+
 // runPrintCommand renders cfg.LabelMaker.PrintCommand with data and executes it.
 func runPrintCommand(ctx context.Context, cfg *config.Config, templateData map[string]string) error {
 	if cfg.LabelMaker.PrintCommand == nil {
@@ -638,11 +672,16 @@ func runPrintCommand(ctx context.Context, cfg *config.Config, templateData map[s
 	// A wrapper script may leave a descendant holding the output pipes after the
 	// direct child is killed; stop waiting on them shortly after the deadline.
 	command.WaitDelay = 5 * time.Second
+	// Keep only the start of what the command prints: it is logged on failure,
+	// and a runaway wrapper could otherwise fill memory until the timeout.
+	output := &boundedBuffer{limit: maxPrintCommandOutput}
+	command.Stdout = output
+	command.Stderr = output
 
-	output, err := command.CombinedOutput()
-	if err != nil {
+	if err := command.Run(); err != nil {
 		// The output is usually the only clue to why the command failed (#1803).
-		log.Printf("Could not print label on server: %v\nCommand Output: %s", err, string(output))
+		// %q keeps text a wrapper may echo back (item names) on a single log line.
+		log.Printf("Could not print label on server: %v; command output: %q%s", err, output.Bytes(), output.suffix())
 		if ctxErr := ctx.Err(); ctxErr != nil {
 			// The caller's context ended first (request cancelled or its own deadline).
 			return fmt.Errorf("print command aborted: %w", ctxErr)

@@ -1,7 +1,9 @@
 package labelmaker
 
 import (
+	"bytes"
 	"context"
+	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -106,4 +108,49 @@ func TestRunPrintCommand_TimesOut(t *testing.T) {
 	// claiming the 60 s command timeout fired.
 	require.ErrorIs(t, err, context.DeadlineExceeded)
 	assert.Contains(t, err.Error(), "aborted")
+}
+
+func TestBoundedBuffer_KeepsOnlyTheStart(t *testing.T) {
+	b := &boundedBuffer{limit: 8}
+	n, err := b.Write([]byte("12345"))
+	require.NoError(t, err)
+	assert.Equal(t, 5, n)
+	assert.Equal(t, "12345", string(b.Bytes()))
+	assert.Empty(t, b.suffix())
+
+	// Writes always report full success so the child never sees a short write.
+	n, err = b.Write([]byte("678910"))
+	require.NoError(t, err)
+	assert.Equal(t, 6, n)
+	assert.Equal(t, "12345678", string(b.Bytes()))
+	assert.Equal(t, " (truncated)", b.suffix())
+
+	n, err = b.Write([]byte("more"))
+	require.NoError(t, err)
+	assert.Equal(t, 4, n)
+	assert.Equal(t, "12345678", string(b.Bytes()))
+}
+
+func TestRunPrintCommand_FailureLogsBoundedEscapedOutput(t *testing.T) {
+	skipOnWindows(t, "uses sh")
+	var logged bytes.Buffer
+	prev := log.Writer()
+	log.SetOutput(&logged)
+	t.Cleanup(func() { log.SetOutput(prev) })
+
+	// The print command is split on whitespace without shell quoting, so the
+	// shell pipeline lives in a script: 100 kB of "y\n" lines, far past the
+	// cap, then a non-zero exit.
+	script := filepath.Join(t.TempDir(), "noisy-fail.sh")
+	require.NoError(t, os.WriteFile(script, []byte("#!/bin/sh\nyes | head -c 100000\nexit 3\n"), 0o700))
+	err := runPrintCommand(context.Background(), printCfg(script), map[string]string{})
+	require.Error(t, err)
+
+	out := logged.String()
+	assert.Contains(t, out, "Could not print label on server")
+	assert.Contains(t, out, "(truncated)")
+	// The output is quoted, so its newlines are escaped and the entry stays one line.
+	assert.Contains(t, out, `y\ny`)
+	assert.Equal(t, 1, strings.Count(out, "\n"), "log entry must be a single line: %q", out)
+	assert.Less(t, len(out), maxPrintCommandOutput*2, "log entry must be bounded")
 }
