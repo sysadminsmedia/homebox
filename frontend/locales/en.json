@@ -644,6 +644,7 @@
         "sold_details": "Sold Details",
         "sold_price": "Sold Price",
         "sold_to": "Sold To",
+        "sold_notes": "Sold Notes",
         "sync_child_locations": "Sync child items' locations",
         "tip_1": "Location and tag filters use the 'OR' operation. If more than one is selected only one will be\n required for a match.",
         "tip_2": "Searches prefixed with '#'' will query for a asset ID (example '#000-001')",
