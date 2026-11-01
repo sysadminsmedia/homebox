@@ -7,6 +7,9 @@ test("valid login", async ({ page }) => {
   await page.fill("input[type='password']", "demodemo");
   await page.click("button[type='submit']");
   await expect(page).toHaveURL("/home");
+  // Landing on /home is not enough: the browser must also have kept the session cookies.
+  const self = await page.request.get("/api/v1/users/self");
+  expect(self.status()).toBe(200);
 });
 
 test("invalid login", async ({ page }) => {
