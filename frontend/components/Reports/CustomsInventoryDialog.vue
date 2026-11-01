@@ -44,15 +44,15 @@
               {{ $t("components.reports.customs_inventory.group_tags_hint") }}
             </p>
           </template>
-          <label class="flex items-start gap-2 text-sm">
-            <Checkbox v-model="prefs.mergeIdentical" class="mt-0.5" />
-            <span>
-              {{ $t("components.reports.customs_inventory.merge") }}
-              <span class="block text-xs text-muted-foreground">
-                {{ $t("components.reports.customs_inventory.merge_hint") }}
-              </span>
-            </span>
-          </label>
+          <div class="flex items-start gap-2">
+            <Checkbox id="customs-merge" v-model="prefs.mergeIdentical" class="mt-0.5" />
+            <div>
+              <Label for="customs-merge" class="cursor-pointer">
+                {{ $t("components.reports.customs_inventory.merge") }}
+              </Label>
+              <p class="text-xs text-muted-foreground">{{ $t("components.reports.customs_inventory.merge_hint") }}</p>
+            </div>
+          </div>
         </fieldset>
 
         <fieldset class="space-y-3">
@@ -124,24 +124,27 @@
           <legend class="mb-1 text-sm font-semibold">
             {{ $t("components.reports.customs_inventory.receipts_legend") }}
           </legend>
-          <label class="flex items-start gap-2 text-sm">
-            <Checkbox v-model="prefs.includeReceipts" class="mt-0.5" />
-            <span>
-              {{ $t("components.reports.customs_inventory.receipts") }}
-              <span class="block text-xs text-muted-foreground">
+          <div class="flex items-start gap-2">
+            <Checkbox id="customs-receipts" v-model="prefs.includeReceipts" class="mt-0.5" />
+            <div>
+              <Label for="customs-receipts" class="cursor-pointer">
+                {{ $t("components.reports.customs_inventory.receipts") }}
+              </Label>
+              <p class="text-xs text-muted-foreground">
                 {{ $t("components.reports.customs_inventory.receipts_hint") }}
-              </span>
-            </span>
-          </label>
+              </p>
+            </div>
+          </div>
           <p class="text-sm">{{ $t("components.reports.customs_inventory.receipt_types") }}</p>
           <div class="flex flex-wrap gap-x-4 gap-y-1">
-            <label v-for="rt in receiptTypes" :key="rt.value" class="flex items-center gap-2 text-sm">
+            <div v-for="rt in receiptTypes" :key="rt.value" class="flex items-center gap-2">
               <Checkbox
+                :id="`customs-receipt-type-${rt.value}`"
                 :model-value="prefs.receiptTypes.includes(rt.value)"
                 @update:model-value="checked => toggleReceiptType(rt.value, checked === true)"
               />
-              {{ rt.label }}
-            </label>
+              <Label :for="`customs-receipt-type-${rt.value}`" class="cursor-pointer font-normal">{{ rt.label }}</Label>
+            </div>
           </div>
         </fieldset>
       </div>
