@@ -942,7 +942,9 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 
 	qb = qb.
 		WithTag().
-		WithParent().
+		WithParent(func(eq *ent.EntityQuery) {
+			eq.WithEntityType()
+		}).
 		WithEntityType().
 		WithAttachments(func(aq *ent.AttachmentQuery) {
 			aq.Where(
@@ -1086,7 +1088,9 @@ func (r *EntityRepository) QueryByAssetID(ctx context.Context, gid uuid.UUID, as
 	entities, err := mapEntitiesSummaryErr(
 		qb.Order(ent.Asc(entity.FieldName)).
 			WithTag().
-			WithParent().
+			WithParent(func(eq *ent.EntityQuery) {
+				eq.WithEntityType()
+			}).
 			WithEntityType().
 			All(ctx),
 	)

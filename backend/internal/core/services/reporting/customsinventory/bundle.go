@@ -38,7 +38,7 @@ func writeReceipt(zw *zip.Writer, rf ReceiptFile, modified time.Time, open OpenF
 	}
 	rc, err := open(rf)
 	if err != nil {
-		return err
+		return fmt.Errorf("customs inventory: open receipt %q: %w", rf.Name, err)
 	}
 	defer func() { _ = rc.Close() }()
 
@@ -46,6 +46,8 @@ func writeReceipt(zw *zip.Writer, rf ReceiptFile, modified time.Time, open OpenF
 	if err != nil {
 		return err
 	}
-	_, err = io.Copy(entry, rc)
-	return err
+	if _, err := io.Copy(entry, rc); err != nil {
+		return fmt.Errorf("customs inventory: copy receipt %q: %w", rf.Name, err)
+	}
+	return nil
 }

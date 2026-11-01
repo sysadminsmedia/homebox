@@ -992,6 +992,32 @@ func TestEntityRepository_QueryByGroup_OrderByLocation(t *testing.T) {
 	assert.Equal(t, []uuid.UUID{box.ID, nested.ID, direct.ID, orphan.ID}, order("desc"))
 }
 
+// The table links an item's parent to /location/ or /item/, so the summaries
+// must carry the parent's entity type.
+func TestEntityRepository_QueryByGroup_ParentHasEntityType(t *testing.T) {
+	ctx := context.Background()
+	room := mustCreateEntity(t, "Parent Type Room", useContainerEntityType(t).ID, uuid.Nil)
+	box := mustCreateEntity(t, "parent-type-box", useItemEntityType(t).ID, room.ID)
+	inner := mustCreateEntity(t, "parent-type-inner", useItemEntityType(t).ID, box.ID)
+
+	res, err := tRepos.Entities.QueryByGroup(ctx, tGroup.ID, EntityQuery{Page: -1, PageSize: -1})
+	require.NoError(t, err)
+
+	parents := map[uuid.UUID]*EntitySummary{}
+	for _, e := range res.Items {
+		if e.ID == box.ID || e.ID == inner.ID {
+			parents[e.ID] = e.Parent
+		}
+	}
+	require.Len(t, parents, 2)
+	require.NotNil(t, parents[box.ID])
+	require.NotNil(t, parents[box.ID].EntityType)
+	assert.True(t, parents[box.ID].EntityType.IsLocation, "the room is a location")
+	require.NotNil(t, parents[inner.ID])
+	require.NotNil(t, parents[inner.ID].EntityType)
+	assert.False(t, parents[inner.ID].EntityType.IsLocation, "the box is an item")
+}
+
 // TestEntityRepository_QueryByGroup_TimestampOrderDefaultsDesc verifies that
 // ordering by createdAt/updatedAt without a direction returns the newest
 // entities first, while an explicit direction is still respected.

@@ -1,6 +1,6 @@
 import { BaseAPI, route } from "../base";
 import type { CustomsInventoryPreview, CustomsInventoryRequest } from "../types/data-contracts";
-import { filenameFromDisposition } from "~~/lib/customs-inventory";
+import { fallbackExportFilename, filenameFromDisposition, serverErrorMessage } from "~~/lib/customs-inventory";
 
 export class ReportsAPI extends BaseAPI {
   billOfMaterialsURL(tenant?: string): string {
@@ -24,9 +24,14 @@ export class ReportsAPI extends BaseAPI {
       body,
     });
     if (resp.error) {
-      throw new Error(`Failed to export customs inventory: ${resp.response.statusText || resp.status}`);
+      // Rejected requests carry the reason, e.g. a scope that is too large.
+      throw new Error(serverErrorMessage(resp.data) || resp.response.statusText || String(resp.status));
     }
-    const filename = filenameFromDisposition(resp.response.headers.get("Content-Disposition"), "Inventarliste.zip");
+    const headers = resp.response.headers;
+    const filename = filenameFromDisposition(
+      headers.get("Content-Disposition"),
+      fallbackExportFilename(headers.get("Content-Type"))
+    );
     return { blob: await resp.response.blob(), filename };
   }
 }

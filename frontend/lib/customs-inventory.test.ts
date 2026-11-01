@@ -3,9 +3,11 @@ import {
   buildRequest,
   cutoffDate,
   DEFAULT_CUSTOMS_INVENTORY_PREFS,
+  fallbackExportFilename,
   filenameFromDisposition,
   formatCents,
   sanitizePrefs,
+  serverErrorMessage,
   type CustomsInventoryPrefs,
   type CustomsInventorySearchContext,
 } from "./customs-inventory";
@@ -120,5 +122,22 @@ describe("customs-inventory", () => {
     expect(filenameFromDisposition("attachment; filename=Inventarliste_x.xlsx", "f")).toBe("Inventarliste_x.xlsx");
     expect(filenameFromDisposition(null, "fallback.zip")).toBe("fallback.zip");
     expect(filenameFromDisposition("attachment", "fallback.zip")).toBe("fallback.zip");
+  });
+
+  test("fallbackExportFilename picks the extension from the content type", () => {
+    expect(fallbackExportFilename("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")).toBe(
+      "Inventarliste.xlsx"
+    );
+    expect(fallbackExportFilename("application/zip")).toBe("Inventarliste.zip");
+    expect(fallbackExportFilename(null)).toBe("Inventarliste.zip");
+  });
+
+  test("serverErrorMessage", () => {
+    expect(serverErrorMessage({ error: "customs inventory: scope too large: 3 entities, at most 2" })).toBe(
+      "customs inventory: scope too large: 3 entities, at most 2"
+    );
+    expect(serverErrorMessage({})).toBe("");
+    expect(serverErrorMessage({ error: 42 })).toBe("");
+    expect(serverErrorMessage(null)).toBe("");
   });
 });

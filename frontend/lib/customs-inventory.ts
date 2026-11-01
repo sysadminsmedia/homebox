@@ -159,3 +159,18 @@ export function filenameFromDisposition(h: string | null, fallback: string): str
   const match = h ? /filename="?([^";]+)"?/i.exec(h) : null;
   return match?.[1]?.trim() || fallback;
 }
+
+const XLSX_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+/** The download name to use when the response names no file, by its content type. */
+export function fallbackExportFilename(contentType: string | null): string {
+  return contentType?.startsWith(XLSX_CONTENT_TYPE) ? "Inventarliste.xlsx" : "Inventarliste.zip";
+}
+
+/** The `error` text of a JSON error response, or "" when the server sent none. */
+export function serverErrorMessage(data: unknown): string {
+  if (typeof data === "object" && data !== null && "error" in data && typeof data.error === "string") {
+    return data.error;
+  }
+  return "";
+}

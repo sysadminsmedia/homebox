@@ -1,7 +1,9 @@
 package v1
 
 import (
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -10,6 +12,7 @@ import (
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/customsinventory"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
@@ -53,4 +56,35 @@ func TestCustomsInventoryErrors_ScopeTooLargeIsBadRequest(t *testing.T) {
 	h(rec, httptest.NewRequest(http.MethodPost, "/", nil))
 	assert.Equal(t, http.StatusBadRequest, rec.Code)
 	assert.Contains(t, rec.Body.String(), "at most 5000")
+}
+
+// Once part of a download is sent, an error can no longer become an error
+// response, so the connection is aborted instead of ending a cut-off file.
+func TestStreamDownload(t *testing.T) {
+	boom := errors.New("receipt read failed")
+	req := httptest.NewRequest(http.MethodPost, "/", nil)
+
+	t.Run("error before the first byte is returned", func(t *testing.T) {
+		err := streamDownload(httptest.NewRecorder(), req, func(io.Writer) error { return boom })
+		assert.ErrorIs(t, err, boom)
+	})
+
+	t.Run("error after the first byte aborts the response", func(t *testing.T) {
+		assert.PanicsWithValue(t, http.ErrAbortHandler, func() {
+			_ = streamDownload(httptest.NewRecorder(), req, func(w io.Writer) error {
+				_, _ = w.Write([]byte("PK partial zip"))
+				return boom
+			})
+		})
+	})
+
+	t.Run("success writes the file", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		err := streamDownload(rec, req, func(w io.Writer) error {
+			_, err := w.Write([]byte("whole file"))
+			return err
+		})
+		require.NoError(t, err)
+		assert.Equal(t, "whole file", rec.Body.String())
+	})
 }
