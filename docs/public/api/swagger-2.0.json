@@ -2728,6 +2728,83 @@
                 }
             }
         },
+        "/v1/reporting/customs-inventory/export": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/zip",
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                ],
+                "tags": [
+                    "Reporting"
+                ],
+                "summary": "Export Customs Inventory List",
+                "parameters": [
+                    {
+                        "description": "Export request",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/customsinventory.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/reporting/customs-inventory/preview": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reporting"
+                ],
+                "summary": "Preview Customs Inventory List",
+                "parameters": [
+                    {
+                        "description": "Export request",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/customsinventory.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/customsinventory.Preview"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/status": {
             "get": {
                 "produces": [
@@ -3740,6 +3817,302 @@
                     "type": "string"
                 }
             }
+        },
+        "customsinventory.GroupBy": {
+            "type": "string",
+            "enum": [
+                "location",
+                "entityType",
+                "tag"
+            ],
+            "x-enum-varnames": [
+                "GroupByLocation",
+                "GroupByEntityType",
+                "GroupByTag"
+            ]
+        },
+        "customsinventory.Header": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "description": "newline-separated",
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "email": {
+                    "type": "string",
+                    "maxLength": 200
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 200
+                },
+                "phone": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 200
+                }
+            }
+        },
+        "customsinventory.Issue": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "$ref": "#/definitions/customsinventory.IssueCode"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/customsinventory.IssueItem"
+                    }
+                },
+                "severity": {
+                    "$ref": "#/definitions/customsinventory.Severity"
+                }
+            }
+        },
+        "customsinventory.IssueCode": {
+            "type": "string",
+            "enum": [
+                "missing_purchase_date",
+                "conflict_date_tag",
+                "conflict_tags",
+                "purchased_after_reference",
+                "missing_price",
+                "negative_value",
+                "zero_quantity",
+                "missing_asset_id",
+                "duplicate_asset_id",
+                "dutiable_without_receipt",
+                "receipt_is_link",
+                "excluded_location",
+                "excluded_archived",
+                "excluded_sold",
+                "excluded_not_found"
+            ],
+            "x-enum-varnames": [
+                "IssueMissingPurchaseDate",
+                "IssueConflictDateTag",
+                "IssueConflictTags",
+                "IssuePurchasedAfterReference",
+                "IssueMissingPrice",
+                "IssueNegativeValue",
+                "IssueZeroQuantity",
+                "IssueMissingAssetID",
+                "IssueDuplicateAssetID",
+                "IssueDutiableWithoutReceipt",
+                "IssueReceiptIsLink",
+                "IssueExcludedLocation",
+                "IssueExcludedArchived",
+                "IssueExcludedSold",
+                "IssueExcludedNotFound"
+            ]
+        },
+        "customsinventory.IssueItem": {
+            "type": "object",
+            "properties": {
+                "assetId": {
+                    "type": "string"
+                },
+                "detail": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "customsinventory.Options": {
+            "type": "object",
+            "properties": {
+                "dutiableTagIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "dutyFreeTagIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "groupBy": {
+                    "$ref": "#/definitions/customsinventory.GroupBy"
+                },
+                "groupTagIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "includeReceipts": {
+                    "type": "boolean"
+                },
+                "mergeIdentical": {
+                    "type": "boolean"
+                },
+                "minMonths": {
+                    "description": "0 → DefaultMinMonths; allowed 1..MaxMinMonths",
+                    "type": "integer"
+                },
+                "receiptTypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "referenceDate": {
+                    "description": "YYYY-MM-DD",
+                    "type": "string"
+                }
+            }
+        },
+        "customsinventory.Preview": {
+            "type": "object",
+            "properties": {
+                "currency": {
+                    "type": "string"
+                },
+                "cutoff": {
+                    "type": "string"
+                },
+                "dutiableItemCount": {
+                    "type": "integer"
+                },
+                "dutiableTotalCents": {
+                    "type": "integer"
+                },
+                "dutyFreeTotalCents": {
+                    "type": "integer"
+                },
+                "excludedCount": {
+                    "type": "integer"
+                },
+                "grandTotalCents": {
+                    "type": "integer"
+                },
+                "issues": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/customsinventory.Issue"
+                    }
+                },
+                "itemCount": {
+                    "type": "integer"
+                },
+                "lineCount": {
+                    "type": "integer"
+                },
+                "minMonths": {
+                    "description": "after applying the default",
+                    "type": "integer"
+                },
+                "receiptCount": {
+                    "type": "integer"
+                },
+                "referenceDate": {
+                    "type": "string"
+                }
+            }
+        },
+        "customsinventory.Request": {
+            "type": "object",
+            "properties": {
+                "header": {
+                    "$ref": "#/definitions/customsinventory.Header"
+                },
+                "options": {
+                    "$ref": "#/definitions/customsinventory.Options"
+                },
+                "scope": {
+                    "$ref": "#/definitions/customsinventory.Scope"
+                }
+            }
+        },
+        "customsinventory.Scope": {
+            "type": "object",
+            "properties": {
+                "itemIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "query": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/customsinventory.ScopeQuery"
+                        }
+                    ],
+                    "x-nullable": true
+                }
+            }
+        },
+        "customsinventory.ScopeQuery": {
+            "type": "object",
+            "properties": {
+                "entityTypeIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "fields": {
+                    "description": "\"name=value\"",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "includeArchived": {
+                    "type": "boolean"
+                },
+                "matchAllTags": {
+                    "type": "boolean"
+                },
+                "negateTags": {
+                    "type": "boolean"
+                },
+                "onlyWithPhoto": {
+                    "type": "boolean"
+                },
+                "onlyWithoutPhoto": {
+                    "type": "boolean"
+                },
+                "parentIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "q": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "customsinventory.Severity": {
+            "type": "string",
+            "enum": [
+                "warning",
+                "info"
+            ],
+            "x-enum-varnames": [
+                "SeverityWarning",
+                "SeverityInfo"
+            ]
         },
         "ent.APIKey": {
             "type": "object",

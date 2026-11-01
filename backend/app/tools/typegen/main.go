@@ -53,6 +53,7 @@ func main() {
 		NewReReplace(` PaginationResultRepo`, " PaginationResult"),
 		NewReReplace(` Services`, " "),
 		NewReReplace(` V1`, " "),
+		NewReReplace(` Customsinventory`, " CustomsInventory"),
 		NewReReplace(`\?:`, ":"),
 		NewReReplace(`(\w+):\s(.*null.*)`, "$1?: $2"), // make null union types optional
 		NewReDate("createdAt"),
