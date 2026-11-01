@@ -55,7 +55,7 @@ func TestWriteBundle_OpenError(t *testing.T) {
 	boom := errors.New("boom")
 	open := func(ReceiptFile) (io.ReadCloser, error) { return nil, boom }
 	err := WriteBundle(io.Discard, "x", time.Now(), nil, []ReceiptFile{{Name: "Belege/a_Rechnung.pdf"}}, open)
-	assert.ErrorIs(t, err, boom)
+	require.ErrorIs(t, err, boom)
 	assert.ErrorContains(t, err, "Belege/a_Rechnung.pdf")
 }
 
@@ -66,7 +66,7 @@ func TestWriteBundle_ReadError(t *testing.T) {
 		return io.NopCloser(io.MultiReader(strings.NewReader("first bytes"), iotest.ErrReader(boom))), nil
 	}
 	err := WriteBundle(io.Discard, "x", time.Now(), nil, []ReceiptFile{{Name: "Belege/b_Rechnung.pdf"}}, open)
-	assert.ErrorIs(t, err, boom)
+	require.ErrorIs(t, err, boom)
 	assert.ErrorContains(t, err, "Belege/b_Rechnung.pdf")
 }
 

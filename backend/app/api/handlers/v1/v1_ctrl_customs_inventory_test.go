@@ -12,6 +12,7 @@ import (
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/customsinventory"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
@@ -83,7 +84,7 @@ func TestStreamDownload(t *testing.T) {
 			_, err := w.Write([]byte("whole file"))
 			return err
 		})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, "whole file", rec.Body.String())
 	})
 }
