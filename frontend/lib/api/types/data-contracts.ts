@@ -75,6 +75,35 @@ export enum EntityfieldType {
   TypeTime = "time",
 }
 
+export enum CustomsInventorySeverity {
+  SeverityWarning = "warning",
+  SeverityInfo = "info",
+}
+
+export enum CustomsInventoryIssueCode {
+  IssueMissingPurchaseDate = "missing_purchase_date",
+  IssueConflictDateTag = "conflict_date_tag",
+  IssueConflictTags = "conflict_tags",
+  IssuePurchasedAfterReference = "purchased_after_reference",
+  IssueMissingPrice = "missing_price",
+  IssueNegativeValue = "negative_value",
+  IssueZeroQuantity = "zero_quantity",
+  IssueMissingAssetID = "missing_asset_id",
+  IssueDuplicateAssetID = "duplicate_asset_id",
+  IssueDutiableWithoutReceipt = "dutiable_without_receipt",
+  IssueReceiptIsLink = "receipt_is_link",
+  IssueExcludedLocation = "excluded_location",
+  IssueExcludedArchived = "excluded_archived",
+  IssueExcludedSold = "excluded_sold",
+  IssueExcludedNotFound = "excluded_not_found",
+}
+
+export enum CustomsInventoryGroupBy {
+  GroupByLocation = "location",
+  GroupByEntityType = "entityType",
+  GroupByTag = "tag",
+}
+
 export enum AuthrolesRole {
   DefaultRole = "user",
   RoleAdmin = "admin",
@@ -98,6 +127,91 @@ export interface CurrenciesCurrency {
   local: string;
   name: string;
   symbol: string;
+}
+
+export interface CustomsInventoryHeader {
+  /**
+   * newline-separated
+   * @maxLength 1000
+   */
+  address: string;
+  /** @maxLength 200 */
+  email: string;
+  /** @maxLength 200 */
+  name: string;
+  /** @maxLength 100 */
+  phone: string;
+  /** @maxLength 200 */
+  title: string;
+}
+
+export interface CustomsInventoryIssue {
+  code: CustomsInventoryIssueCode;
+  items: CustomsInventoryIssueItem[];
+  severity: CustomsInventorySeverity;
+}
+
+export interface CustomsInventoryIssueItem {
+  assetId: string;
+  detail: string;
+  id: string;
+  name: string;
+}
+
+export interface CustomsInventoryOptions {
+  dutiableTagIds: string[];
+  dutyFreeTagIds: string[];
+  groupBy: CustomsInventoryGroupBy;
+  groupTagIds: string[];
+  includeReceipts: boolean;
+  mergeIdentical: boolean;
+  /** 0 → DefaultMinMonths; allowed 1..MaxMinMonths */
+  minMonths: number;
+  receiptTypes: string[];
+  /** YYYY-MM-DD */
+  referenceDate: string;
+}
+
+export interface CustomsInventoryPreview {
+  currency: string;
+  cutoff: string;
+  dutiableItemCount: number;
+  dutiableTotalCents: number;
+  dutyFreeTotalCents: number;
+  excludedCount: number;
+  grandTotalCents: number;
+  issues: CustomsInventoryIssue[];
+  itemCount: number;
+  lineCount: number;
+  /** after applying the default */
+  minMonths: number;
+  receiptCount: number;
+  referenceDate: string;
+}
+
+export interface CustomsInventoryRequest {
+  header: CustomsInventoryHeader;
+  options: CustomsInventoryOptions;
+  scope: CustomsInventoryScope;
+}
+
+export interface CustomsInventoryScope {
+  itemIds: string[];
+  query?: CustomsInventoryScopeQuery | null;
+}
+
+export interface CustomsInventoryScopeQuery {
+  entityTypeIds: string[];
+  /** "name=value" */
+  fields: string[];
+  includeArchived: boolean;
+  matchAllTags: boolean;
+  negateTags: boolean;
+  onlyWithPhoto: boolean;
+  onlyWithoutPhoto: boolean;
+  parentIds: string[];
+  q: string;
+  tags: string[];
 }
 
 export interface EntAPIKey {
