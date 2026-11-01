@@ -5920,7 +5920,9 @@
                         "maxLength": 1000
                     },
                     "entityTypeId": {
-                        "type": "string"
+                        "type": "string",
+                        "x-omitempty": true,
+                        "nullable": true
                     },
                     "locationId": {
                         "description": "Only needed when ParentID is another item and this lives elsewhere (#1688).",
@@ -6667,7 +6669,9 @@
                         "maxLength": 1000
                     },
                     "entityTypeId": {
-                        "type": "string"
+                        "type": "string",
+                        "x-omitempty": true,
+                        "nullable": true
                     },
                     "fields": {
                         "type": "array",
@@ -7503,7 +7507,9 @@
                 "type": "object",
                 "properties": {
                     "booleanValue": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "x-omitempty": true,
+                        "nullable": true
                     },
                     "id": {
                         "type": "string"
@@ -7512,13 +7518,17 @@
                         "type": "string"
                     },
                     "numberValue": {
-                        "type": "integer"
+                        "type": "integer",
+                        "x-omitempty": true,
+                        "nullable": true
                     },
                     "textValue": {
                         "type": "string"
                     },
                     "timeValue": {
-                        "type": "string"
+                        "type": "string",
+                        "x-omitempty": true,
+                        "nullable": true
                     },
                     "type": {
                         "type": "string"

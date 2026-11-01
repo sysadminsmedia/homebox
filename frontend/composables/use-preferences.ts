@@ -43,7 +43,11 @@ export type LocationViewPreferences = {
   measurementSystem: "metric" | "imperial" | null;
 };
 export type PreferenceSyncConfig = Partial<Record<keyof LocationViewPreferences, boolean>>;
-type PreferenceChange = true | Record<string, PreferenceChange>;
+// An interface breaks the self-reference that a type alias cannot express.
+interface PreferenceChangeTree {
+  [key: string]: PreferenceChange;
+}
+type PreferenceChange = true | PreferenceChangeTree;
 type PreferenceChanges = Partial<Record<keyof LocationViewPreferences, PreferenceChange>>;
 
 const DEFAULT_PREFERENCES: LocationViewPreferences = {

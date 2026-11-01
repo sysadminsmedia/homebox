@@ -26,9 +26,9 @@ type (
 		Type         string     `json:"type"`
 		Name         string     `json:"name"`
 		TextValue    string     `json:"textValue"`
-		NumberValue  int        `json:"numberValue"`
-		BooleanValue bool       `json:"booleanValue"`
-		TimeValue    time.Time  `json:"timeValue"`
+		NumberValue  int        `json:"numberValue"  extensions:"x-nullable,x-omitempty"`
+		BooleanValue bool       `json:"booleanValue" extensions:"x-nullable,x-omitempty"`
+		TimeValue    time.Time  `json:"timeValue"    extensions:"x-nullable,x-omitempty"`
 	}
 
 	TemplateTagSummary struct {
