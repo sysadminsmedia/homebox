@@ -5,25 +5,17 @@
 # disables scheduled workflows in forks: "disabled_fork"); this file is
 # fork-only, so it never conflicts with upstream syncs.
 #
-# Images are only published when a release tag is pushed, so merging to main
-# never builds one:
+# Images are only built when a release tag is pushed or the workflow is run by
+# hand, so pull requests and merges to main never build one (saves CI minutes):
 #
 #   push tag v*.*.*   -> release, e.g. v0.27.0-ak.2: :0.27.0-ak.2, :latest, :sha-<short>
-#   pull request      -> build only, nothing published (catches a broken build before merging)
-#   manual run        -> :<branch-name> (Actions tab -> Run workflow)
+#   manual run        -> :<branch-name> (Actions tab -> Run workflow); use this to
+#                        check a Dockerfile change on a branch before merging it
 name: AK Docker publish
 
 on:
   push:
     tags: ['v*.*.*']
-  pull_request:
-    branches: [main]
-    paths:
-      - 'backend/**'
-      - 'frontend/**'
-      - 'Dockerfile'
-      - '.dockerignore'
-      - '.github/workflows/ak-docker-publish.yaml'
   workflow_dispatch:
 
 env:
@@ -58,11 +50,9 @@ jobs:
             type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=semver,pattern={{version}}
             type=ref,event=branch
-            type=ref,event=pr
             type=sha
 
       - name: Log in to GHCR
-        if: github.event_name != 'pull_request'
         uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
         with:
           registry: ghcr.io
@@ -83,7 +73,7 @@ jobs:
         with:
           context: .
           platforms: linux/amd64 # Synology is x86_64; add linux/arm64 here (plus a QEMU step) if that changes
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           # Shown in the app footer. A release tag (v1.2.3) reads as a version;
@@ -100,7 +90,6 @@ jobs:
           cache-to: type=gha,mode=max,ignore-error=true
 
       - name: Summary
-        if: github.event_name != 'pull_request'
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
         run: |
