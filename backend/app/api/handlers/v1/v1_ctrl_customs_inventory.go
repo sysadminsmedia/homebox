@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/hay-kot/httpkit/errchain"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/customsinventory"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
@@ -34,7 +35,7 @@ func customsInventoryErrors(h errchain.HandlerFunc) errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleCustomsInventoryPreview() errchain.HandlerFunc {
 	fn := func(r *http.Request, req customsinventory.Request) (customsinventory.Preview, error) {
-		return customsinventory.Preview{}, validate.NewRequestError(errors.New("not implemented"), http.StatusNotImplemented)
+		return ctrl.svc.CustomsInventory.Preview(services.NewContext(r.Context()), req)
 	}
 
 	return customsInventoryErrors(adapters.Action(fn, http.StatusOK))
@@ -52,9 +53,18 @@ func (ctrl *V1Controller) HandleCustomsInventoryPreview() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleCustomsInventoryExport() errchain.HandlerFunc {
 	return customsInventoryErrors(func(w http.ResponseWriter, r *http.Request) error {
-		if _, err := adapters.DecodeBody[customsinventory.Request](r); err != nil {
+		req, err := adapters.DecodeBody[customsinventory.Request](r)
+		if err != nil {
 			return err
 		}
-		return validate.NewRequestError(errors.New("not implemented"), http.StatusNotImplemented)
+
+		file, err := ctrl.svc.CustomsInventory.Export(services.NewContext(r.Context()), req)
+		if err != nil {
+			return err
+		}
+
+		w.Header().Set("Content-Type", file.ContentType)
+		w.Header().Set("Content-Disposition", `attachment; filename="`+file.Name+`"`)
+		return file.Write(w)
 	})
 }
