@@ -2209,6 +2209,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/label-templates/{id}/render-assets": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Renders one label per asset ID in the range. Asset IDs that no entity has yet get a label with only the asset ID and asset URL, for pre-printing tags.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "image/png",
+                    "application/pdf"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Render Labels for an Asset ID Range",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Asset range to render",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.LabelTemplateRenderAssetsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/label-templates/{id}/render-locations": {
             "post": {
                 "security": [
@@ -4689,6 +4736,14 @@ const docTemplate = `{
                     "description": "Name holds the value of the \"name\" field.",
                     "type": "string"
                 },
+                "offset_x": {
+                    "description": "Horizontal print offset in mm; positive moves labels right",
+                    "type": "number"
+                },
+                "offset_y": {
+                    "description": "Vertical print offset in mm; positive moves labels down",
+                    "type": "number"
+                },
                 "output_format": {
                     "description": "Output format: png, pdf",
                     "type": "string"
@@ -4700,6 +4755,14 @@ const docTemplate = `{
                 "preset": {
                     "description": "Preset size key like 'brother_dk2205'",
                     "type": "string"
+                },
+                "sheet_layout": {
+                    "description": "Custom sheet layout (page size, grid, margins, gaps in mm); overrides the preset's",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/labelmaker.SheetLayout"
+                        }
+                    ]
                 },
                 "updated_at": {
                     "description": "UpdatedAt holds the value of the \"updated_at\" field.",
@@ -5389,35 +5452,49 @@ const docTemplate = `{
             "properties": {
                 "columns": {
                     "description": "Number of labels across",
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 50,
+                    "minimum": 1
                 },
                 "gutterH": {
                     "description": "Horizontal gap between labels in mm",
-                    "type": "number"
+                    "type": "number",
+                    "maximum": 500,
+                    "minimum": 0
                 },
                 "gutterV": {
                     "description": "Vertical gap between labels in mm",
-                    "type": "number"
+                    "type": "number",
+                    "maximum": 500,
+                    "minimum": 0
                 },
                 "marginLeft": {
                     "description": "Left margin in mm",
-                    "type": "number"
+                    "type": "number",
+                    "maximum": 500,
+                    "minimum": 0
                 },
                 "marginTop": {
                     "description": "Top margin in mm",
-                    "type": "number"
+                    "type": "number",
+                    "maximum": 500,
+                    "minimum": 0
                 },
                 "pageHeight": {
                     "description": "Sheet height in mm (e.g., 279.4 for Letter, 297 for A4)",
-                    "type": "number"
+                    "type": "number",
+                    "maximum": 1000
                 },
                 "pageWidth": {
                     "description": "Sheet width in mm (e.g., 215.9 for Letter, 210 for A4)",
-                    "type": "number"
+                    "type": "number",
+                    "maximum": 1000
                 },
                 "rows": {
                     "description": "Number of labels down",
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
                 }
             }
         },
@@ -6581,6 +6658,16 @@ const docTemplate = `{
                     "maxLength": 255,
                     "minLength": 1
                 },
+                "offsetX": {
+                    "type": "number",
+                    "maximum": 50,
+                    "minimum": -50
+                },
+                "offsetY": {
+                    "type": "number",
+                    "maximum": 50,
+                    "minimum": -50
+                },
                 "outputFormat": {
                     "type": "string",
                     "enum": [
@@ -6590,6 +6677,15 @@ const docTemplate = `{
                 },
                 "preset": {
                     "type": "string",
+                    "x-nullable": true
+                },
+                "sheetLayout": {
+                    "description": "SheetLayout overrides the preset's page layout; null follows the preset",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/labelmaker.SheetLayout"
+                        }
+                    ],
                     "x-nullable": true
                 },
                 "width": {
@@ -6629,6 +6725,12 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "offsetX": {
+                    "type": "number"
+                },
+                "offsetY": {
+                    "type": "number"
+                },
                 "outputFormat": {
                     "type": "string"
                 },
@@ -6637,6 +6739,14 @@ const docTemplate = `{
                 },
                 "preset": {
                     "type": "string"
+                },
+                "sheetLayout": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/labelmaker.SheetLayout"
+                        }
+                    ],
+                    "x-nullable": true
                 },
                 "updatedAt": {
                     "type": "string"
@@ -6672,6 +6782,15 @@ const docTemplate = `{
                 },
                 "preset": {
                     "type": "string"
+                },
+                "sheetLayout": {
+                    "description": "SheetLayout is the template's own page layout, null when it follows the preset",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/labelmaker.SheetLayout"
+                        }
+                    ],
+                    "x-nullable": true
                 },
                 "updatedAt": {
                     "type": "string"
@@ -6717,6 +6836,16 @@ const docTemplate = `{
                     "maxLength": 255,
                     "minLength": 1
                 },
+                "offsetX": {
+                    "type": "number",
+                    "maximum": 50,
+                    "minimum": -50
+                },
+                "offsetY": {
+                    "type": "number",
+                    "maximum": 50,
+                    "minimum": -50
+                },
                 "outputFormat": {
                     "type": "string",
                     "enum": [
@@ -6726,6 +6855,15 @@ const docTemplate = `{
                 },
                 "preset": {
                     "type": "string",
+                    "x-nullable": true
+                },
+                "sheetLayout": {
+                    "description": "SheetLayout overrides the preset's page layout; null follows the preset",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/labelmaker.SheetLayout"
+                        }
+                    ],
                     "x-nullable": true
                 },
                 "width": {
@@ -7567,6 +7705,37 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "v1.LabelTemplateRenderAssetsRequest": {
+            "type": "object",
+            "properties": {
+                "endAssetId": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "format": {
+                    "description": "\"png\" or \"pdf\", defaults to \"pdf\"",
+                    "type": "string"
+                },
+                "pageSize": {
+                    "description": "\"Letter\" or \"A4\" for PDF",
+                    "type": "string"
+                },
+                "showCutGuides": {
+                    "description": "Draw light borders around labels for cutting",
+                    "type": "boolean"
+                },
+                "skipLabels": {
+                    "description": "Empty slots before the first label, for partly used sheets",
+                    "type": "integer",
+                    "maximum": 1000,
+                    "minimum": 0
+                },
+                "startAssetId": {
+                    "type": "integer",
+                    "minimum": 1
                 }
             }
         },

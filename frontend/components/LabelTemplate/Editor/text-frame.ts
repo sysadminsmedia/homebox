@@ -31,6 +31,7 @@ interface TextboxInternals {
 }
 
 let installed = false;
+let baseCalcTextHeight: TextboxInternals["calcTextHeight"] | null = null;
 
 /**
  * Fabric's Textbox always wraps and always grows to fit its text. Three small
@@ -44,7 +45,7 @@ export function installTextFrameSupport() {
 
   const proto = Textbox.prototype as unknown as TextboxInternals;
   const baseWrapText = proto._wrapText;
-  const baseCalcTextHeight = proto.calcTextHeight;
+  baseCalcTextHeight = proto.calcTextHeight;
   const baseRender = proto._render;
 
   proto._wrapText = function (this: FrameTextbox & TextboxInternals, lines: string[], desiredWidth: number) {
@@ -53,7 +54,7 @@ export function installTextFrameSupport() {
   };
 
   proto.calcTextHeight = function (this: FrameTextbox & TextboxInternals) {
-    const textHeight = baseCalcTextHeight.call(this);
+    const textHeight = baseCalcTextHeight!.call(this);
     const frameHeight = this.data?.fixedHeight;
     return isTextFrame(this) && frameHeight && frameHeight > 0 ? frameHeight : textHeight;
   };
@@ -84,4 +85,13 @@ export function applyTextFrame(obj: FrameTextbox) {
   obj.setCoords();
   // Only data changed, which Fabric does not watch: drop the cached drawing.
   obj.dirty = true;
+}
+
+/**
+ * Height of the wrapped text itself, ignoring the frame height. A frame
+ * reports its own height to Fabric, so autofit measures overflow with this.
+ */
+export function naturalTextHeight(obj: FrameTextbox): number {
+  const internals = obj as unknown as TextboxInternals;
+  return baseCalcTextHeight ? baseCalcTextHeight.call(internals) : internals.calcTextHeight();
 }

@@ -1104,6 +1104,45 @@ func (r *EntityRepository) QueryByAssetID(ctx context.Context, gid uuid.UUID, as
 	}, nil
 }
 
+// GetIDsByAssetIDRange returns the IDs of entities in the group whose asset ID
+// falls within [start, end], keyed by asset ID. Asset IDs without an entity are
+// absent from the map.
+func (r *EntityRepository) GetIDsByAssetIDRange(ctx context.Context, gid uuid.UUID, start, end AssetID) (map[AssetID]uuid.UUID, error) {
+	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.GetIDsByAssetIDRange",
+		trace.WithAttributes(
+			attribute.String("group.id", gid.String()),
+			attribute.Int64("asset_id.start", int64(start)),
+			attribute.Int64("asset_id.end", int64(end)),
+		))
+	defer span.End()
+
+	entities, err := r.db.Entity.Query().
+		Where(
+			entity.HasGroupWith(group.ID(gid)),
+			entity.AssetIDGTE(int64(start)),
+			entity.AssetIDLTE(int64(end)),
+		).
+		// Same ordering as QueryByAssetID, so duplicates resolve the same way
+		Order(ent.Asc(entity.FieldName)).
+		Select(entity.FieldID, entity.FieldAssetID).
+		All(ctx)
+	if err != nil {
+		recordSpanError(span, err)
+		return nil, err
+	}
+
+	ids := make(map[AssetID]uuid.UUID, len(entities))
+	for _, e := range entities {
+		// Asset IDs aren't enforced unique; keep the first by name
+		if _, ok := ids[AssetID(e.AssetID)]; !ok {
+			ids[AssetID(e.AssetID)] = e.ID
+		}
+	}
+
+	span.SetAttributes(attribute.Int("results.count", len(ids)))
+	return ids, nil
+}
+
 // GetAll returns all the entities in the database with the Tags, Parent, and EntityType eager loaded.
 func (r *EntityRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]EntityOut, error) {
 	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.GetAll",
@@ -1623,7 +1662,10 @@ func (r *EntityRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wip
 
 	loadCtx, loadSpan := entityTracer().Start(ctx, "repo.EntityRepository.WipeInventory.loadEntities")
 	entities, err := r.db.Entity.Query().
-		Where(entity.HasGroupWith(group.ID(gid))).
+		Where(
+			entity.HasGroupWith(group.ID(gid)),
+			entity.HasEntityTypeWith(entitytype.IsLocation(false)),
+		).
 		WithAttachments().
 		All(loadCtx)
 	if err != nil {
@@ -1655,6 +1697,7 @@ func (r *EntityRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wip
 			Where(
 				entity.ID(e.ID),
 				entity.HasGroupWith(group.ID(gid)),
+				entity.HasEntityTypeWith(entitytype.IsLocation(false)),
 			).Exec(entCtx)
 		if err != nil {
 			recordSpanError(entSpan, err)
@@ -2761,6 +2804,16 @@ func (r *EntityRepository) GetAllContainers(ctx context.Context, gid uuid.UUID, 
 	}
 	span.SetAttributes(attribute.Int("containers.count", len(list)))
 	return list, nil
+}
+
+// GetItemCountByGroup returns the summed quantity of non-archived items whose
+// effective location is the given entity.
+func (r *EntityRepository) GetItemCountByGroup(ctx context.Context, gid, id uuid.UUID) (float64, error) {
+	counts, err := r.getChildItemCounts(ctx, gid, []uuid.UUID{id})
+	if err != nil {
+		return 0, err
+	}
+	return counts[id], nil
 }
 
 // GetContainerByGroup returns a single container entity by ID, verified to belong to a specific group.

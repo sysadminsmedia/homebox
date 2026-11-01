@@ -235,19 +235,6 @@
                 "years": "years",
                 "yesterday": "yesterday"
             },
-            "label_maker": {
-                "browser_print": "Print from Browser",
-                "confirm_description": "Are you sure you want to print this label?",
-                "download": "Download Label",
-                "print": "Print label",
-                "server_print": "Print on Server",
-                "titles": "Labels",
-                "toast": {
-                    "load_status_failed": "Failed to load status",
-                    "print_failed": "Failed to print label",
-                    "print_success": "Label printed"
-                }
-            },
             "page_qr_code": {
                 "page_url": "Page URL",
                 "qr_tooltip": "Show QR Code"
@@ -494,8 +481,8 @@
                 "brand_custom": "Custom",
                 "dpi_option": "{dpi} DPI",
                 "dpi_recommended": "{dpi} DPI (Recommended)",
-                "size_continuous": "{width} mm wide",
-                "size_die_cut": "{width} × {height} mm"
+                "size_continuous": "{width} wide",
+                "size_die_cut": "{size}"
             },
             "validation": {
                 "name_required": "Template name is required"
@@ -536,7 +523,7 @@
                     "align_right": "Align right"
                 },
                 "data_fields": {
-                    "item_name": "Item Name",
+                    "name": "Name",
                     "description": "Description",
                     "asset_id": "Asset ID",
                     "serial_number": "Serial Number",
@@ -548,11 +535,9 @@
                     "quantity": "Quantity",
                     "notes": "Notes",
                     "item_url": "Item URL",
+                    "asset_url": "Asset URL",
                     "current_date": "Current Date",
                     "current_time": "Current Time",
-                    "location_name": "Location Name",
-                    "location_description": "Location Description",
-                    "location_full_path": "Full Path",
                     "item_count": "Item Count",
                     "location_url": "Location URL"
                 },
@@ -562,13 +547,14 @@
                 },
                 "barcode_sources": {
                     "item_url": "Item URL",
+                    "location_url": "Location URL",
+                    "asset_url": "Asset URL",
                     "asset_id": "Asset ID",
                     "serial_number": "Serial Number",
                     "model_number": "Model Number",
-                    "item_id": "Item ID",
-                    "location_url": "Location URL",
-                    "location_name": "Location Name",
-                    "location_full_path": "Location Path",
+                    "name": "Name",
+                    "location_path": "Location Path",
+                    "id": "ID",
                     "no_compatible": "No compatible data sources for this format",
                 "fixed_value": "Fixed value…",
                 "fixed_value_option": "Fixed value",
@@ -593,8 +579,8 @@
                     "position": "Position",
                     "size": "Size",
                     "rotation": "Rotation",
-                    "item_fields": "Item Fields",
-                    "location_fields": "Location Fields",
+                    "entity_fields": "Fields",
+                    "link_fields": "Links",
                     "barcode_format": "Format",
                 "barcode_source": "Data source",
                 "barcode_value": "Value",
@@ -668,6 +654,29 @@
                 },
                 "design": "Design",
                 "inspector": "Inspector",
+                "sheet": {
+                    "columns": "Columns",
+                    "custom_hint": "Custom layout for this template. Reset to go back to the preset's measurements.",
+                    "disabled_hint": "Turn on to print several labels per page in PDFs, using your sheet's measurements.",
+                    "enable": "Print several labels per sheet",
+                    "gap_across": "Gap Across",
+                    "gap_down": "Gap Down",
+                    "manual_hint": "Measurements of your label sheet. Labels are placed from the top-left corner.",
+                    "margin_left": "Left Margin",
+                    "margin_top": "Top Margin",
+                    "offset_hint": "Shifts labels on the page to correct for your printer. Print a test page, measure how far off it is, and enter that here; positive moves right and down.",
+                    "offset_title": "Print Offset",
+                    "offset_x": "Horizontal",
+                    "offset_y": "Vertical",
+                    "overflow": "Labels run past the edge of the page with these measurements.",
+                    "page_height": "Page Height",
+                    "page_width": "Page Width",
+                    "preset_hint": "Using the {preset} sheet measurements. Change any value to adjust them for this template.",
+                    "reset": "Reset to {preset}",
+                    "rows": "Rows",
+                    "title": "Sheet Layout"
+                },
+                "text_toolbar_hint": "Select a text element to edit its formatting",
                 "not_found": "Template not found",
                 "tools": {
                     "title": "Tools",
@@ -770,8 +779,6 @@
                 "quick_hint": "Prints 1 copy on the label printer with your default template.",
                 "choose": "Choose template, copies…",
                 "download_png": "Download label as PNG",
-                "basic_label": "Basic label",
-                "basic_label_hint": "built-in QR card",
                 "no_defaults": "Quick print needs a default template and server printing",
                 "sent": "Label sent to the printer",
                 "server_print_hint": "Admins can enable server printing with HBOX_LABEL_MAKER_PRINT_COMMAND.",
@@ -1251,6 +1258,10 @@
         "legacy_image_fit": "{ currentValue, select, true {Disable Legacy Fit: Fit Image with Bars} false {Enable Legacy Fit: Fill Image with Crop} other {Not Hit}}",
         "logout_all_confirm": "This signs you out on every device, including this one. You will need to log in again. Continue?",
         "logout_all_devices": "Log Out of All Devices",
+        "measurement_auto": "Automatic: {system}",
+        "measurement_imperial": "Imperial (in)",
+        "measurement_metric": "Metric (mm)",
+        "measurement_system": "Label Measurement Units",
         "moved_notice_body": "Notifiers, invites, and currency settings have been moved to the collection pages.",
         "moved_notice_description": "These settings are now managed per collection.",
         "moved_notice_link_invites": "Collection invites",
@@ -1298,40 +1309,24 @@
         "label_generator": {
             "asset_end": "Asset End",
             "asset_start": "Asset Start",
-            "base_url": "Base URL",
-            "bordered_labels": "Bordered Labels",
-            "generate_page": "Generate Page",
-            "input_placeholder": "Type here",
-            "instruction_1": "The HomeBox Label Generator is a tool to help you print labels for your HomeBox inventory. These are intended to\n be print-ahead labels so you can print many labels and have them ready to apply",
-            "instruction_2": "As such, these labels work by printing a URL QR Code and AssetID information on a label. If you've disabled\n AssetID's in your HomeBox settings, you can still use this tool, but the AssetID's won't reference any item",
-            "instruction_3": "This feature is in early development stages and may change in future releases, if you have feedback please\n provide it in the '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub Discussion'</a>'",
-            "label_height": "Label Height",
-            "label_width": "Label Width",
-            "measure_type": "Measure Type",
-            "page_bottom_padding": "Page Bottom Padding",
-            "page_height": "Page Height",
-            "page_left_padding": "Page Left Padding",
-            "page_right_padding": "Page Right Padding",
-            "page_top_padding": "Page Top Padding",
-            "page_width": "Page Width",
-            "print_location_row": "Print Location Row",
-            "qr_code_example": "QR Code Example",
-            "replace_homebox_behavior": "Replace \"HomeBox\" text behavior",
-            "replace_homebox_behavior_always_replace": "Always Replace \"HomeBox\"",
-            "replace_homebox_behavior_item_no_location": "Replace \"HomeBox\" when item has no location",
-            "replace_homebox_behavior_item_no_name": "Replace \"HomeBox\" when item has no name",
-            "replace_homebox_behavior_item_no_name_no_location": "Replace \"HomeBox\" when item has no name and no location",
-            "replace_homebox_behavior_show_homebox": "Show \"HomeBox\"",
-            "replace_homebox_text": "Replacement text",
+            "description": "Print labels ahead of time for a range of asset IDs, using one of your label templates. Asset IDs that no item has yet get a label with just the asset ID and its link, ready to stick on items as they arrive.",
+            "download_pdf": "Download PDF",
+            "errors": {
+                "end_before_start": "Asset end must be a whole number no lower than asset start",
+                "skip_invalid": "Skip must be zero or a positive whole number",
+                "start_invalid": "Asset start must be a whole number of 1 or more",
+                "too_many": "At most {max} labels can be generated at once"
+            },
+            "label_count": "Labels to generate: {count}",
+            "page_size_sheet_hint": "Sheet templates use their own sheet size; this only applies to other templates.",
+            "print_pdf": "Print",
+            "print_tip": "When printing, set the scale to 100% and margins to none, and print a test page first.",
+            "range_hint": "Skip leaves that many label positions empty at the start, for reusing a partly used sheet.",
+            "range_title": "Asset IDs",
+            "sheet_capacity": "This template's sheet holds {count} labels.",
             "skip_first_labels": "Skip First Labels",
-            "tip_1": "The defaults here are setup for the\n '<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 label sheets'</a>'. If you're using a different sheet,\n you'll need to adjust the settings to match your sheet.",
-            "tip_2": "If you're customizing your sheet the dimensions are in inches. When building the 5260 sheet, I found that the\n dimensions used in their template, did not match what was needed to print within the boxes.\n '<b>'Be prepared for some trial and error.'</b>'",
-            "tip_3": "When printing be sure to:\n '<ol><li>'Set the margins to 0 or None'</li><li>'Set the scaling to 100%'</li><li>'Disable double-sided printing'</li><li>'Print a test page before printing multiple pages'</li></ol>'",
-            "tips": "Tips",
-            "title": "Label Generator",
-            "toast": {
-                "page_too_small_card": "Page size is too small for the card size"
-            }
+            "template_hint": "Use '{{asset_id}}' and a QR code with the Asset URL source for print-ahead tags. Item fields fill in for asset IDs already in use.",
+            "title": "Label Generator"
         }
     },
     "scanner": {
@@ -1443,7 +1438,7 @@
         "reports_set": {
             "asset_labels": "Asset ID Labels",
             "asset_labels_button": "Label Generator",
-            "asset_labels_sub": "Generates a printable PDF of labels for a range of Asset ID. These are not specific to your inventory so you are able to print labels ahead of time and apply them to your inventory when you receive them.",
+            "asset_labels_sub": "Prints labels for a range of asset IDs with one of your label templates, so you can print them ahead of time and apply them to your inventory as it arrives.",
             "bill_of_materials": "Bill of Materials",
             "bill_of_materials_button": "Generate BOM",
             "bill_of_materials_sub": "Generates a CSV (Comma Separated Values) file that can be imported into a spreadsheet program. This is a summary of your inventory with basic item and pricing information."

@@ -30,12 +30,13 @@
   const { find: findPreset, title: presetTitle } = useLabelPresetLookup();
   const confirm = useConfirm();
   const { t } = useI18n();
+  const measurement = useMeasurement();
   const preferences = useViewPreferences();
 
   const isDefault = computed(() => preferences.value.defaultTemplateId === props.template.id);
   const preset = computed(() => findPreset(props.template.preset));
   const previewUrl = computed(() => api.labelTemplates.getPreviewUrl(props.template.id));
-  const sizeLabel = computed(() => formatLabelSize(props.template.width, props.template.height));
+  const sizeLabel = computed(() => measurement.formatSize(props.template.width, props.template.height));
 
   const presetKind = computed(() => {
     const p = preset.value;
@@ -103,6 +104,9 @@
       dpi: data.dpi,
       outputFormat: data.outputFormat,
       canvasData: data.canvasData,
+      // The page layout describes the label stock; the print offset is left out
+      // because it calibrates one printer.
+      sheetLayout: data.sheetLayout ?? null,
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);

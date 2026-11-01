@@ -29,7 +29,7 @@
     DropdownMenuSeparator,
     DropdownMenuLabel,
   } from "@/components/ui/dropdown-menu";
-  import { compatibleItemSources, compatibleLocationSources } from "./barcode-sources";
+  import { compatibleEntitySources, compatibleLinkSources } from "./barcode-sources";
 
   export type AlignTarget = "left" | "center" | "right" | "top" | "middle" | "bottom";
 
@@ -153,25 +153,25 @@
                       <span v-if="format.is2D" class="ml-1 text-xs text-muted-foreground">(2D)</span>
                     </DropdownMenuSubTrigger>
                     <DropdownMenuSubContent class="max-h-80">
-                      <template v-if="compatibleItemSources(format).length > 0">
+                      <template v-if="compatibleEntitySources(format).length > 0">
                         <DropdownMenuLabel class="text-xs text-muted-foreground">
-                          {{ $t("components.label_template.editor.properties.item_fields") }}
+                          {{ $t("components.label_template.editor.properties.entity_fields") }}
                         </DropdownMenuLabel>
                         <DropdownMenuItem
-                          v-for="source in compatibleItemSources(format)"
+                          v-for="source in compatibleEntitySources(format)"
                           :key="source.value"
                           @click="emit('addBarcode', format.format, source.value)"
                         >
                           {{ t(`components.label_template.editor.barcode_sources.${source.labelKey}`) }}
                         </DropdownMenuItem>
                       </template>
-                      <template v-if="compatibleLocationSources(format).length > 0">
-                        <DropdownMenuSeparator v-if="compatibleItemSources(format).length > 0" />
+                      <template v-if="compatibleLinkSources(format).length > 0">
+                        <DropdownMenuSeparator v-if="compatibleEntitySources(format).length > 0" />
                         <DropdownMenuLabel class="text-xs text-muted-foreground">
-                          {{ $t("components.label_template.editor.properties.location_fields") }}
+                          {{ $t("components.label_template.editor.properties.link_fields") }}
                         </DropdownMenuLabel>
                         <DropdownMenuItem
-                          v-for="source in compatibleLocationSources(format)"
+                          v-for="source in compatibleLinkSources(format)"
                           :key="source.value"
                           @click="emit('addBarcode', format.format, source.value)"
                         >
@@ -179,7 +179,7 @@
                         </DropdownMenuItem>
                       </template>
                       <DropdownMenuSeparator
-                        v-if="compatibleItemSources(format).length > 0 || compatibleLocationSources(format).length > 0"
+                        v-if="compatibleEntitySources(format).length > 0 || compatibleLinkSources(format).length > 0"
                       />
                       <!-- A value typed in the Element tab; the only option for digits-only formats such as EAN and UPC -->
                       <DropdownMenuItem @click="emit('addBarcode', format.format, '')">

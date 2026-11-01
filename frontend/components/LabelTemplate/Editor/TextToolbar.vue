@@ -48,9 +48,10 @@
     insertField: [fieldName: string];
   }>();
 
-  // Item data fields available for insertion
-  const itemDataFields = [
-    { field: "item_name", key: "item_name" },
+  // Items and locations are both entities, so every field works on either.
+  // For a location, Location is the location itself.
+  const entityDataFields = [
+    { field: "name", key: "name" },
     { field: "description", key: "description" },
     { field: "asset_id", key: "asset_id" },
     { field: "serial_number", key: "serial_number" },
@@ -60,20 +61,18 @@
     { field: "location_path", key: "location_path" },
     { field: "tags", key: "tags" },
     { field: "quantity", key: "quantity" },
-    { field: "notes", key: "notes" },
-    { field: "item_url", key: "item_url" },
-  ];
-
-  // Location data fields available for insertion
-  const locationDataFields = [
-    { field: "location_name", key: "location_name" },
-    { field: "description", key: "location_description" },
-    { field: "location_path", key: "location_full_path" },
     { field: "item_count", key: "item_count" },
-    { field: "location_url", key: "location_url" },
+    { field: "notes", key: "notes" },
   ];
 
-  // Common fields (work for both item and location labels)
+  // Links to the entity's page; items and locations open different pages
+  const linkDataFields = [
+    { field: "item_url", key: "item_url" },
+    { field: "location_url", key: "location_url" },
+    { field: "asset_url", key: "asset_url" },
+  ];
+
+  // Fields that don't depend on the entity
   const commonDataFields = [
     { field: "current_date", key: "current_date" },
     { field: "current_time", key: "current_time" },
@@ -204,18 +203,16 @@
           <SelectValue :placeholder="$t('components.label_template.editor.properties.insert_field')" />
         </SelectTrigger>
         <SelectContent class="max-h-80">
-          <!-- Item Fields -->
           <div class="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
-            {{ $t("components.label_template.editor.properties.item_fields") }}
+            {{ $t("components.label_template.editor.properties.entity_fields") }}
           </div>
-          <SelectItem v-for="field in itemDataFields" :key="field.field" :value="field.field">
+          <SelectItem v-for="field in entityDataFields" :key="field.field" :value="field.field">
             {{ t(`components.label_template.editor.data_fields.${field.key}`) }}
           </SelectItem>
-          <!-- Location Fields -->
           <div class="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
-            {{ $t("components.label_template.editor.properties.location_fields") }}
+            {{ $t("components.label_template.editor.properties.link_fields") }}
           </div>
-          <SelectItem v-for="field in locationDataFields" :key="field.field" :value="field.field">
+          <SelectItem v-for="field in linkDataFields" :key="field.field" :value="field.field">
             {{ t(`components.label_template.editor.data_fields.${field.key}`) }}
           </SelectItem>
           <!-- Common Fields -->

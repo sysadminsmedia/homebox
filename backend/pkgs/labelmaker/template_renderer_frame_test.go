@@ -32,7 +32,7 @@ func renderTextFrame(t *testing.T, data map[string]interface{}) (image.Rectangle
 		frameKeyText: frameLongText, frameKeyFont: 16.0, "fill": black, keyOriginX: topLeft, keyOriginY: "top",
 		"data": frame,
 	}))
-	require.NoError(t, r.renderElement(img, elem, nil, nil, 96))
+	require.NoError(t, r.renderElement(img, elem, nil, 96))
 	return inkBounds(img)
 }
 
@@ -76,7 +76,7 @@ func TestTextFrameRotatedStaysInsideItsRotatedBox(t *testing.T) {
 		"angle": 90.0,
 		"data":  map[string]interface{}{frameKeyWrap: true, frameKeyWidth: 80.0, frameKeyHeight: 24.0},
 	}))
-	require.NoError(t, r.renderElement(img, elem, nil, nil, 96))
+	require.NoError(t, r.renderElement(img, elem, nil, 96))
 	ink, inked := inkBounds(img)
 	require.True(t, inked)
 	assert.LessOrEqual(t, ink.Dx(), 24+4, "the rotated frame is only as wide as its height")

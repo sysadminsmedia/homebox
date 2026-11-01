@@ -106,6 +106,16 @@ func Dpi(v int) predicate.LabelTemplate {
 	return predicate.LabelTemplate(sql.FieldEQ(FieldDpi, v))
 }
 
+// OffsetX applies equality check predicate on the "offset_x" field. It's identical to OffsetXEQ.
+func OffsetX(v float64) predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldEQ(FieldOffsetX, v))
+}
+
+// OffsetY applies equality check predicate on the "offset_y" field. It's identical to OffsetYEQ.
+func OffsetY(v float64) predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldEQ(FieldOffsetY, v))
+}
+
 // OwnerID applies equality check predicate on the "owner_id" field. It's identical to OwnerIDEQ.
 func OwnerID(v uuid.UUID) predicate.LabelTemplate {
 	return predicate.LabelTemplate(sql.FieldEQ(FieldOwnerID, v))
@@ -609,6 +619,96 @@ func DpiLT(v int) predicate.LabelTemplate {
 // DpiLTE applies the LTE predicate on the "dpi" field.
 func DpiLTE(v int) predicate.LabelTemplate {
 	return predicate.LabelTemplate(sql.FieldLTE(FieldDpi, v))
+}
+
+// SheetLayoutIsNil applies the IsNil predicate on the "sheet_layout" field.
+func SheetLayoutIsNil() predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldIsNull(FieldSheetLayout))
+}
+
+// SheetLayoutNotNil applies the NotNil predicate on the "sheet_layout" field.
+func SheetLayoutNotNil() predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldNotNull(FieldSheetLayout))
+}
+
+// OffsetXEQ applies the EQ predicate on the "offset_x" field.
+func OffsetXEQ(v float64) predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldEQ(FieldOffsetX, v))
+}
+
+// OffsetXNEQ applies the NEQ predicate on the "offset_x" field.
+func OffsetXNEQ(v float64) predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldNEQ(FieldOffsetX, v))
+}
+
+// OffsetXIn applies the In predicate on the "offset_x" field.
+func OffsetXIn(vs ...float64) predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldIn(FieldOffsetX, vs...))
+}
+
+// OffsetXNotIn applies the NotIn predicate on the "offset_x" field.
+func OffsetXNotIn(vs ...float64) predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldNotIn(FieldOffsetX, vs...))
+}
+
+// OffsetXGT applies the GT predicate on the "offset_x" field.
+func OffsetXGT(v float64) predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldGT(FieldOffsetX, v))
+}
+
+// OffsetXGTE applies the GTE predicate on the "offset_x" field.
+func OffsetXGTE(v float64) predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldGTE(FieldOffsetX, v))
+}
+
+// OffsetXLT applies the LT predicate on the "offset_x" field.
+func OffsetXLT(v float64) predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldLT(FieldOffsetX, v))
+}
+
+// OffsetXLTE applies the LTE predicate on the "offset_x" field.
+func OffsetXLTE(v float64) predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldLTE(FieldOffsetX, v))
+}
+
+// OffsetYEQ applies the EQ predicate on the "offset_y" field.
+func OffsetYEQ(v float64) predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldEQ(FieldOffsetY, v))
+}
+
+// OffsetYNEQ applies the NEQ predicate on the "offset_y" field.
+func OffsetYNEQ(v float64) predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldNEQ(FieldOffsetY, v))
+}
+
+// OffsetYIn applies the In predicate on the "offset_y" field.
+func OffsetYIn(vs ...float64) predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldIn(FieldOffsetY, vs...))
+}
+
+// OffsetYNotIn applies the NotIn predicate on the "offset_y" field.
+func OffsetYNotIn(vs ...float64) predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldNotIn(FieldOffsetY, vs...))
+}
+
+// OffsetYGT applies the GT predicate on the "offset_y" field.
+func OffsetYGT(v float64) predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldGT(FieldOffsetY, v))
+}
+
+// OffsetYGTE applies the GTE predicate on the "offset_y" field.
+func OffsetYGTE(v float64) predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldGTE(FieldOffsetY, v))
+}
+
+// OffsetYLT applies the LT predicate on the "offset_y" field.
+func OffsetYLT(v float64) predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldLT(FieldOffsetY, v))
+}
+
+// OffsetYLTE applies the LTE predicate on the "offset_y" field.
+func OffsetYLTE(v float64) predicate.LabelTemplate {
+	return predicate.LabelTemplate(sql.FieldLTE(FieldOffsetY, v))
 }
 
 // OwnerIDEQ applies the EQ predicate on the "owner_id" field.
