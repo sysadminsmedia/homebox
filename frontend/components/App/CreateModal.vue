@@ -1,6 +1,6 @@
 <template>
   <Dialog v-if="isDesktop" :dialog-id="dialogId">
-    <DialogScrollContent>
+    <DialogScrollContent :class="contentClass">
       <DialogHeader>
         <div class="mr-4 flex place-items-center justify-between">
           <DialogTitle>
@@ -64,5 +64,6 @@
     dialogId: DialogID;
     title?: string;
     hideFooter?: boolean;
+    contentClass?: string;
   }>();
 </script>
