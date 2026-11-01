@@ -1,0 +1,83 @@
+import type { Locator, Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+
+const EMAIL = "demo@example.com";
+const PASSWORD = process.env.E2E_PASSWORD || "demodemo";
+const FILE_NAME = /^Inventarliste_[a-z0-9-]+_\d{4}-\d{2}-\d{2}\.(xlsx|zip)$/;
+
+async function login(page: Page) {
+  await page.goto("/home");
+  await expect(page).toHaveURL("/");
+  await page.fill("input[type='text']", EMAIL);
+  await page.fill("input[type='password']", PASSWORD);
+  await page.click("button[type='submit']");
+  await expect(page).toHaveURL("/home");
+}
+
+// Selects every row on the search page and opens the export dialog from the actions menu.
+async function openExportDialog(page: Page): Promise<Locator> {
+  const header = page.locator("thead");
+  // The search can still be re-rendering the table; retry until the whole page is selected.
+  await expect(async () => {
+    if ((await header.getByRole("checkbox").getAttribute("data-state")) !== "checked") {
+      await header.getByRole("checkbox").click();
+    }
+    await expect(page.getByText(/^(\d+) of \1 rows selected\.$/).first()).toBeVisible({ timeout: 1000 });
+  }).toPass({ timeout: 15000 });
+  await header.getByRole("button", { name: "Open menu" }).click();
+  await page.getByRole("menuitem", { name: "Export as Customs Inventory List …" }).click();
+  const dialog = page.getByRole("dialog", { name: "Export customs inventory list" });
+  await expect(dialog).toBeVisible();
+  return dialog;
+}
+
+// The dialog restores the last used options, so set the checkbox explicitly.
+async function setIncludeInvoices(dialog: Locator, on: boolean) {
+  const checkbox = dialog.locator("#customs-receipts");
+  if (((await checkbox.getAttribute("data-state")) === "checked") !== on) {
+    await dialog.getByText("Include invoices (download as ZIP)").click();
+  }
+  await expect(checkbox).toHaveAttribute("data-state", on ? "checked" : "unchecked");
+}
+
+async function exportFile(page: Page, dialog: Locator): Promise<string> {
+  const exportButton = dialog.getByRole("button", { name: /^Export( anyway)?$/ });
+  await expect(exportButton).toBeEnabled();
+  const [download] = await Promise.all([page.waitForEvent("download"), exportButton.click()]);
+  await expect(dialog).toBeHidden();
+  return download.suggestedFilename();
+}
+
+test.describe("Customs inventory export", () => {
+  test("exports the customs inventory list from search", async ({ page }) => {
+    await login(page);
+    await page.goto("/search");
+    await page.getByRole("button", { name: "Table" }).click();
+    await page.waitForLoadState("networkidle");
+    await expect(page.getByText(/rows selected/).first()).toBeVisible();
+
+    let dialog = await openExportDialog(page);
+
+    // Pick the 15th of the month the picker opens on as the reference date.
+    await dialog.locator(".dp__input").click();
+    await page.locator(".dp__menu .dp__cell_inner:not(.dp__cell_offset)", { hasText: /^15$/ }).click();
+    await page.locator(".dp__action_select").click();
+
+    const total = dialog.getByText("Total value").locator("..");
+    await expect(total).toContainText(/\d/);
+
+    // Without invoices: only the workbook.
+    await setIncludeInvoices(dialog, false);
+    const xlsx = await exportFile(page, dialog);
+    expect(xlsx).toMatch(FILE_NAME);
+    expect(xlsx.endsWith(".xlsx")).toBe(true);
+
+    // With invoices on, the answer is a ZIP.
+    dialog = await openExportDialog(page);
+    await expect(total).toContainText(/\d/);
+    await setIncludeInvoices(dialog, true);
+    const zip = await exportFile(page, dialog);
+    expect(zip).toMatch(FILE_NAME);
+    expect(zip.endsWith(".zip")).toBe(true);
+  });
+});
