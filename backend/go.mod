@@ -26,7 +26,6 @@ require (
 	github.com/meilisearch/meilisearch-go v0.36.3
 	github.com/nicholas-fedor/shoutrrr v0.22.0
 	github.com/olahol/melody v1.4.0
-	github.com/phin1x/go-ipp v1.6.1
 	github.com/pkg/errors v0.9.1
 	github.com/pressly/goose/v3 v3.29.0
 	github.com/riandyrn/otelchi v0.12.3
