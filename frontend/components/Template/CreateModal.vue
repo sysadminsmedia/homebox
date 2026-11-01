@@ -114,6 +114,7 @@
   import TagSelector from "~/components/Tag/Selector.vue";
   import { useTagStore } from "~/stores/tags";
   import type { EntitySummary } from "~~/lib/api/types/data-contracts";
+  import { textTemplateField } from "~~/lib/api/classes/templates";
 
   const emit = defineEmits<{ created: [] }>();
   const { closeDialog } = useDialog();
@@ -199,7 +200,7 @@
       includeWarrantyFields: form.includeWarrantyFields,
       includePurchaseFields: form.includePurchaseFields,
       includeSoldFields: form.includeSoldFields,
-      fields: form.fields,
+      fields: form.fields.map(textTemplateField),
     };
 
     const { error } = await api.templates.create(createData);

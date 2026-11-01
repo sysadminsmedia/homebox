@@ -4,6 +4,7 @@
   import type { AnyDetail, Detail, Details } from "~~/components/global/DetailsSection/types";
   import { filterZeroValues } from "~~/components/global/DetailsSection/types";
   import type { ItemAttachment } from "~~/lib/api/types/data-contracts";
+  import { textTemplateField } from "~~/lib/api/classes/templates";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPlus from "~icons/mdi/plus";
   import MdiMinus from "~icons/mdi/minus";
@@ -607,12 +608,9 @@
       ),
       includePurchaseFields: !!(item.value.purchaseFrom || item.value.purchasePrice || item.value.purchaseDate),
       includeSoldFields: !!(item.value.soldTo || item.value.soldPrice || item.value.soldDate),
-      fields: item.value.fields.map(field => ({
-        id: NIL_UUID,
-        name: field.name,
-        type: "text",
-        textValue: field.textValue || "",
-      })),
+      fields: item.value.fields.map(field =>
+        textTemplateField({ id: NIL_UUID, name: field.name, textValue: field.textValue || "" })
+      ),
     };
 
     const { data, error } = await api.templates.create(templateData);

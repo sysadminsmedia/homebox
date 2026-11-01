@@ -63,12 +63,7 @@
       includeWarrantyFields: fullTemplate.includeWarrantyFields,
       includePurchaseFields: fullTemplate.includePurchaseFields,
       includeSoldFields: fullTemplate.includeSoldFields,
-      fields: fullTemplate.fields.map(field => ({
-        id: NIL_UUID,
-        name: field.name,
-        type: field.type,
-        textValue: field.textValue,
-      })),
+      fields: fullTemplate.fields.map(field => ({ ...field, id: NIL_UUID })),
     };
 
     const { data, error } = await api.templates.create(duplicateData);
