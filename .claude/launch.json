@@ -6,7 +6,7 @@
       "runtimeExecutable": "/bin/zsh",
       "runtimeArgs": [
         "-lc",
-        "cd backend && HBOX_LOG_LEVEL=debug HBOX_DATABASE_DRIVER=sqlite3 HBOX_DATABASE_SQLITE_PATH='.data/homebox.db?_pragma=busy_timeout=1000&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite' HBOX_OPTIONS_ALLOW_REGISTRATION=true HBOX_AUTH_API_KEY_PEPPER='dev-only-pepper-not-for-production-use-32b+' HBOX_DEMO=true UNSAFE_DISABLE_PASSWORD_PROJECTION=yes_i_am_sure /usr/local/go/bin/go run ./app/api"
+        "cd backend && HBOX_LOG_LEVEL=debug HBOX_DATABASE_DRIVER=sqlite3 HBOX_DATABASE_SQLITE_PATH='.data/homebox.db?_pragma=busy_timeout=1000&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite' HBOX_OPTIONS_ALLOW_REGISTRATION=true HBOX_AUTH_API_KEY_PEPPER='dev-only-pepper-not-for-production-use-32b+' HBOX_DEMO=false UNSAFE_DISABLE_PASSWORD_PROJECTION=yes_i_am_sure /usr/local/go/bin/go run ./app/api"
       ],
       "port": 7745
     },
