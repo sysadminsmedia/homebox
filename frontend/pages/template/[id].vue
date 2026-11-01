@@ -21,6 +21,7 @@
   import TagSelector from "~/components/Tag/Selector.vue";
   import { useTagStore } from "~/stores/tags";
   import type { EntityOut } from "~~/lib/api/types/data-contracts";
+  import { textTemplateField } from "~~/lib/api/classes/templates";
 
   definePageMeta({
     middleware: ["auth"],
@@ -120,6 +121,7 @@
     const payload = {
       ...updateData,
       defaultLocationId: updateData.defaultLocation?.id ?? null,
+      fields: updateData.fields.map(textTemplateField),
     };
 
     const { error, data } = await api.templates.update(templateId.value, payload);

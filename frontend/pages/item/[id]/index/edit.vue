@@ -591,6 +591,7 @@
       tagIds: item.value.tagIds,
       assetId: item.value.assetId,
       syncChildEntityLocations: item.value.syncChildEntityLocations,
+      entityTypeId: item.value.entityType!.id,
     };
 
     const { error } = await api.items.update(itemId.value, payload);

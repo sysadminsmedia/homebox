@@ -40,6 +40,19 @@ export async function sharedUserClient(): Promise<UserClient> {
   return factories.client.user(loginData.token);
 }
 
+/*
+ * Returns the id of one of the group's location or item entity types. Entities
+ * created without an entityTypeId default to the item type, so locations need
+ * this to actually be locations.
+ */
+export async function entityTypeId(api: UserClient, isLocation: boolean): Promise<string> {
+  const { response, data } = await api.entityTypes.getAll();
+  expect(response.status).toBe(200);
+  const entityType = data.find(t => t.isLocation === isLocation);
+  expect(entityType).toBeTruthy();
+  return entityType!.id;
+}
+
 beforeAll(async () => {
   await sharedUserClient();
 });
