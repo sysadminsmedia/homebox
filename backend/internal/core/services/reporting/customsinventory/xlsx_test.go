@@ -347,3 +347,32 @@ func TestWriteXLSX_DatesBefore1900AreText(t *testing.T) {
 		assert.Equal(t, excelize.CellTypeInlineString, typ, "%s: Excel's date serials start in 1900", name)
 	}
 }
+
+// Excel allows at most 255 arguments per function, so the duty-free total
+// can't list one subtotal per group when there are more groups than that.
+func TestWriteXLSX_ManyGroupsStayWithinExcelLimits(t *testing.T) {
+	r := testReport()
+	r.Groups = nil
+	r.DutyFreeTotalCents = 0
+	for i := range 300 {
+		r.Groups = append(r.Groups, Group{
+			Title:         fmt.Sprintf("Box %03d", i),
+			Lines:         []Line{{Pos: i + 1, Quantity: 1, Name: "Books", UnitCents: 100, HasPrice: true, LineCents: 100}},
+			SubtotalCents: 100,
+		})
+		r.DutyFreeTotalCents += 100
+	}
+	r.GrandTotalCents = r.DutyFreeTotalCents + r.DutiableTotalCents
+	f := openXLSX(t, r)
+
+	ref := fmt.Sprintf("I%d", findRow(t, f, "A", LabelDutyFreeTotal))
+	fx := formula(t, f, ref)
+	assert.LessOrEqual(t, strings.Count(fx, ",")+1, 255, "argument count of %.40s…", fx)
+	assert.Less(t, len(fx), 8192)
+	calc, err := f.CalcCellValue(SheetName, ref, excelize.Options{RawCellValue: true})
+	require.NoError(t, err)
+	v, err := strconv.ParseFloat(calc, 64)
+	require.NoError(t, err)
+	assert.Equal(t, int64(30000), ToCents(v))
+	assert.Equal(t, "300", rawCell(t, f, ref))
+}

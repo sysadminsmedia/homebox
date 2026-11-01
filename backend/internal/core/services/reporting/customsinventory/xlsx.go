@@ -38,6 +38,9 @@ func ColumnHeaders(currency string) []string {
 	}
 }
 
+// maxFunctionArgs is the most arguments an Excel function takes.
+const maxFunctionArgs = 255
+
 var columnWidths = []float64{6, 10, 34, 14, 26, 18, 14, 14, 18, 34, 40}
 
 // excelEpoch is day 0 of Excel's 1900 date system. Serials counted from it
@@ -228,6 +231,7 @@ func WriteXLSX(r Report) ([]byte, error) {
 	}, " · "))
 	w.put()
 
+	firstGroupRow := w.row
 	subtotals := make([]string, 0, len(r.Groups))
 	for _, g := range r.Groups {
 		w.put(w.bold(g.Title))
@@ -236,8 +240,13 @@ func WriteXLSX(r Report) ([]byte, error) {
 		w.put()
 	}
 	dutyFreeFormula := "0"
-	if len(subtotals) > 0 {
+	switch {
+	case len(subtotals) == 0:
+	case len(subtotals) <= maxFunctionArgs:
 		dutyFreeFormula = "SUM(" + strings.Join(subtotals, ",") + ")"
+	default:
+		// More groups than a function takes arguments: add up the subtotal rows by their label.
+		dutyFreeFormula = fmt.Sprintf(`SUMIF(A%d:A%d,"%s",I%d:I%d)`, firstGroupRow, w.row-1, LabelSubtotal, firstGroupRow, w.row-1)
 	}
 	dutyFreeRow := w.total(LabelDutyFreeTotal, r.DutyFreeTotalCents, dutyFreeFormula)
 	w.put()
