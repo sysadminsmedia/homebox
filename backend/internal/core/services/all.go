@@ -16,6 +16,7 @@ type AllServices struct {
 	Entities          *EntityService
 	BackgroundService *BackgroundService
 	Exports           *ExportService
+	CustomsInventory  *CustomsInventoryService
 	Currencies        *currencies.CurrencyRegistry
 }
 
@@ -126,6 +127,7 @@ func New(repos *repo.AllRepos, opts ...OptionsFunc) *AllServices {
 			pubSubConn: options.pubSubConn,
 			dialect:    options.dialect,
 		},
-		Currencies: currencies.NewCurrencyService(options.currencies),
+		CustomsInventory: &CustomsInventoryService{repos: repos},
+		Currencies:       currencies.NewCurrencyService(options.currencies),
 	}
 }
