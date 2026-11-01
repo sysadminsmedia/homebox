@@ -1,11 +1,11 @@
 package customsinventory
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func validRequest() Request {
@@ -16,7 +16,7 @@ func validRequest() Request {
 }
 
 func TestRequestValidate(t *testing.T) {
-	assert.NoError(t, validRequest().Validate())
+	require.NoError(t, validRequest().Validate())
 
 	ok := map[string]func(r *Request){
 		"nil receipt types": func(r *Request) { r.Options.ReceiptTypes = nil },
@@ -29,7 +29,7 @@ func TestRequestValidate(t *testing.T) {
 	for name, mutate := range ok {
 		r := validRequest()
 		mutate(&r)
-		assert.NoError(t, r.Validate(), name)
+		require.NoError(t, r.Validate(), name)
 	}
 
 	bad := map[string]func(r *Request){
@@ -46,7 +46,6 @@ func TestRequestValidate(t *testing.T) {
 	for name, mutate := range bad {
 		r := validRequest()
 		mutate(&r)
-		err := r.Validate()
-		assert.True(t, errors.Is(err, ErrInvalidRequest), "%s: got %v", name, err)
+		assert.ErrorIs(t, r.Validate(), ErrInvalidRequest, name)
 	}
 }

@@ -11,14 +11,14 @@ import (
 var (
 	tagP  = id(901) // "owned"
 	tagP2 = id(902) // "owned > 2 years", child of P
-	tagZ  = id(903) // "dutiable"
+	tagZ  = id(903) // tagNameDutiable
 )
 
 func classifyRules(minMonths int) Rules {
 	ti := NewTagIndex([]Tag{
 		{ID: tagP, Name: "owned"},
 		{ID: tagP2, ParentID: tagP, Name: "owned > 2 years"},
-		{ID: tagZ, Name: "dutiable"},
+		{ID: tagZ, Name: tagNameDutiable},
 	})
 	ref := d("2026-11-15")
 	return Rules{
@@ -45,8 +45,8 @@ func TestClassify(t *testing.T) {
 		tags []uuid.UUID
 		want Classification
 	}{
-		{"dutiable tag wins", "2019-03-12", []uuid.UUID{tagZ}, Classification{StatusDutiable, ReasonTagDutiable, "dutiable", nil}},
-		{"both tags", "", []uuid.UUID{tagZ, tagP2}, Classification{StatusDutiable, ReasonTagDutiable, "dutiable", []IssueCode{IssueConflictTags}}},
+		{"dutiable tag wins", "2019-03-12", []uuid.UUID{tagZ}, Classification{StatusDutiable, ReasonTagDutiable, tagNameDutiable, nil}},
+		{"both tags", "", []uuid.UUID{tagZ, tagP2}, Classification{StatusDutiable, ReasonTagDutiable, tagNameDutiable, []IssueCode{IssueConflictTags}}},
 		{"after reference date", "2026-11-16", nil, Classification{StatusDutiable, ReasonPurchasedAfterReference, "", []IssueCode{IssuePurchasedAfterReference}}},
 		{"reference day itself", "2026-11-15", nil, Classification{StatusDutiable, ReasonOwnedTooShort, "", nil}},
 		{"day after cutoff", "2026-05-16", nil, Classification{StatusDutiable, ReasonOwnedTooShort, "", nil}},
@@ -76,7 +76,7 @@ func TestReasonComment(t *testing.T) {
 		{Classification{Reason: ReasonOwnedTooShort}, 6, "Kauf nach Stichtag (< 6 Monate)"},
 		{Classification{Reason: ReasonOwnedTooShort}, 12, "Kauf nach Stichtag (< 12 Monate)"},
 		{Classification{Reason: ReasonMissingPurchaseDate}, 6, "Kaufdatum fehlt"},
-		{Classification{Reason: ReasonTagDutiable, ReasonTag: "dutiable"}, 6, "zu verzollen lt. Tag „dutiable“"},
+		{Classification{Reason: ReasonTagDutiable, ReasonTag: tagNameDutiable}, 6, "zu verzollen lt. Tag „dutiable“"},
 		{Classification{Reason: ReasonPurchasedAfterReference}, 6, "Kauf nach Referenzdatum"},
 		{Classification{Reason: ReasonTagDutyFree, ReasonTag: "owned > 2 years"}, 6, "zollfrei lt. Tag „owned > 2 years“"},
 		{Classification{Reason: ReasonDate}, 6, ""},

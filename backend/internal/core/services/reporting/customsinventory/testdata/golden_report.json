@@ -1,0 +1,808 @@
+{
+  "Header": {
+    "title": "Inventory list – Shipment A",
+    "name": "Jane Doe",
+    "address": "1 Example Street\n12345 Sample Town",
+    "phone": "+1 555 0100",
+    "email": "jane@example.com"
+  },
+  "Currency": "EUR",
+  "ReferenceDate": "2026-11-15",
+  "Cutoff": "2026-05-15",
+  "MinMonths": 6,
+  "GeneratedAt": "2026-10-31T10:00:00Z",
+  "ItemCount": 26,
+  "Groups": [
+    {
+      "Title": "Home › Living room",
+      "Lines": [
+        {
+          "Pos": 1,
+          "Quantity": 4,
+          "Name": "Dining chair",
+          "EntityTypeName": "Furniture",
+          "Locations": [
+            "Home › Living room"
+          ],
+          "AssetIDs": [
+            "000-103"
+          ],
+          "PurchaseDate": "2020-05-01",
+          "PurchaseDateText": "",
+          "UnitCents": 8950,
+          "HasPrice": true,
+          "LineCents": 35800,
+          "ReceiptNames": null,
+          "Comments": null,
+          "Status": "dutyFree",
+          "Reason": "date",
+          "MemberIDs": [
+            "00000000-0000-0000-0000-000000000103"
+          ],
+          "MemberQuantities": [
+            4
+          ]
+        },
+        {
+          "Pos": 2,
+          "Quantity": 1,
+          "Name": "Grandfather clock",
+          "EntityTypeName": "Furniture",
+          "Locations": [
+            "Home › Living room"
+          ],
+          "AssetIDs": [
+            "000-101"
+          ],
+          "PurchaseDate": "2019-03-12",
+          "PurchaseDateText": "",
+          "UnitCents": 120000,
+          "HasPrice": true,
+          "LineCents": 120000,
+          "ReceiptNames": [
+            "Belege/000-101_Rechnung.pdf"
+          ],
+          "Comments": null,
+          "Status": "dutyFree",
+          "Reason": "date",
+          "MemberIDs": [
+            "00000000-0000-0000-0000-000000000101"
+          ],
+          "MemberQuantities": [
+            1
+          ]
+        },
+        {
+          "Pos": 3,
+          "Quantity": 1,
+          "Name": "Sofa",
+          "EntityTypeName": "Furniture",
+          "Locations": [
+            "Home › Living room"
+          ],
+          "AssetIDs": [
+            "000-102"
+          ],
+          "PurchaseDate": "2021-06-01",
+          "PurchaseDateText": "",
+          "UnitCents": 89000,
+          "HasPrice": true,
+          "LineCents": 89000,
+          "ReceiptNames": null,
+          "Comments": null,
+          "Status": "dutyFree",
+          "Reason": "date",
+          "MemberIDs": [
+            "00000000-0000-0000-0000-000000000102"
+          ],
+          "MemberQuantities": [
+            1
+          ]
+        }
+      ],
+      "SubtotalCents": 244800
+    },
+    {
+      "Title": "Home › Office",
+      "Lines": [
+        {
+          "Pos": 4,
+          "Quantity": 14,
+          "Name": "Files",
+          "EntityTypeName": "Box",
+          "Locations": [
+            "Home › Office"
+          ],
+          "AssetIDs": [
+            "000-131",
+            "000-132",
+            "000-133",
+            "000-134",
+            "000-135",
+            "000-136",
+            "000-137",
+            "000-138",
+            "000-139",
+            "000-140",
+            "000-141",
+            "000-142",
+            "000-143",
+            "000-144"
+          ],
+          "PurchaseDate": "",
+          "PurchaseDateText": "",
+          "UnitCents": 0,
+          "HasPrice": false,
+          "LineCents": 0,
+          "ReceiptNames": null,
+          "Comments": [
+            "zollfrei lt. Tag „owned \u003e 2 years“; Wert fehlt"
+          ],
+          "Status": "dutyFree",
+          "Reason": "tag_duty_free",
+          "MemberIDs": [
+            "00000000-0000-0000-0000-000000000131",
+            "00000000-0000-0000-0000-000000000132",
+            "00000000-0000-0000-0000-000000000133",
+            "00000000-0000-0000-0000-000000000134",
+            "00000000-0000-0000-0000-000000000135",
+            "00000000-0000-0000-0000-000000000136",
+            "00000000-0000-0000-0000-000000000137",
+            "00000000-0000-0000-0000-000000000138",
+            "00000000-0000-0000-0000-000000000139",
+            "00000000-0000-0000-0000-000000000140",
+            "00000000-0000-0000-0000-000000000141",
+            "00000000-0000-0000-0000-000000000142",
+            "00000000-0000-0000-0000-000000000143",
+            "00000000-0000-0000-0000-000000000144"
+          ],
+          "MemberQuantities": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "Pos": 5,
+          "Quantity": 1,
+          "Name": "Files",
+          "EntityTypeName": "Box",
+          "Locations": [
+            "Home › Office"
+          ],
+          "AssetIDs": [
+            "000-145"
+          ],
+          "PurchaseDate": "",
+          "PurchaseDateText": "",
+          "UnitCents": 500,
+          "HasPrice": true,
+          "LineCents": 500,
+          "ReceiptNames": null,
+          "Comments": [
+            "zollfrei lt. Tag „owned \u003e 2 years“"
+          ],
+          "Status": "dutyFree",
+          "Reason": "tag_duty_free",
+          "MemberIDs": [
+            "00000000-0000-0000-0000-000000000145"
+          ],
+          "MemberQuantities": [
+            1
+          ]
+        },
+        {
+          "Pos": 6,
+          "Quantity": 2.5,
+          "Name": "Shelf",
+          "EntityTypeName": "Furniture",
+          "Locations": [
+            "Home › Office"
+          ],
+          "AssetIDs": [
+            "000-110"
+          ],
+          "PurchaseDate": "2020-01-01",
+          "PurchaseDateText": "",
+          "UnitCents": 33,
+          "HasPrice": true,
+          "LineCents": 83,
+          "ReceiptNames": null,
+          "Comments": null,
+          "Status": "dutyFree",
+          "Reason": "date",
+          "MemberIDs": [
+            "00000000-0000-0000-0000-000000000110"
+          ],
+          "MemberQuantities": [
+            2.5
+          ]
+        }
+      ],
+      "SubtotalCents": 583
+    },
+    {
+      "Title": "Ohne Lagerort / no location",
+      "Lines": [
+        {
+          "Pos": 7,
+          "Quantity": 1,
+          "Name": "Toolbox",
+          "EntityTypeName": "Tool",
+          "Locations": null,
+          "AssetIDs": null,
+          "PurchaseDate": "2018-01-01",
+          "PurchaseDateText": "",
+          "UnitCents": 3000,
+          "HasPrice": true,
+          "LineCents": 3000,
+          "ReceiptNames": null,
+          "Comments": null,
+          "Status": "dutyFree",
+          "Reason": "date",
+          "MemberIDs": [
+            "00000000-0000-0000-0000-000000000160"
+          ],
+          "MemberQuantities": [
+            1
+          ]
+        }
+      ],
+      "SubtotalCents": 3000
+    }
+  ],
+  "Dutiable": [
+    {
+      "Pos": 8,
+      "Quantity": 1,
+      "Name": "Bicycle",
+      "EntityTypeName": "Vehicle",
+      "Locations": [
+        "Home › Garage"
+      ],
+      "AssetIDs": [
+        "000-170"
+      ],
+      "PurchaseDate": "",
+      "PurchaseDateText": "",
+      "UnitCents": 0,
+      "HasPrice": false,
+      "LineCents": 0,
+      "ReceiptNames": null,
+      "Comments": [
+        "zu verzollen lt. Tag „dutiable“; Wert fehlt"
+      ],
+      "Status": "dutiable",
+      "Reason": "tag_dutiable",
+      "MemberIDs": [
+        "00000000-0000-0000-0000-000000000170"
+      ],
+      "MemberQuantities": [
+        1
+      ]
+    },
+    {
+      "Pos": 9,
+      "Quantity": 1,
+      "Name": "Tent",
+      "EntityTypeName": "Tool",
+      "Locations": [
+        "Home › Garage"
+      ],
+      "AssetIDs": [
+        "000-171"
+      ],
+      "PurchaseDate": "2026-11-20",
+      "PurchaseDateText": "",
+      "UnitCents": 0,
+      "HasPrice": false,
+      "LineCents": 0,
+      "ReceiptNames": null,
+      "Comments": [
+        "Kauf nach Referenzdatum; Wert fehlt"
+      ],
+      "Status": "dutiable",
+      "Reason": "purchased_after_reference",
+      "MemberIDs": [
+        "00000000-0000-0000-0000-000000000171"
+      ],
+      "MemberQuantities": [
+        1
+      ]
+    },
+    {
+      "Pos": 10,
+      "Quantity": 1,
+      "Name": "Espresso machine",
+      "EntityTypeName": "Appliance",
+      "Locations": [
+        "Home › Kitchen"
+      ],
+      "AssetIDs": [
+        "000-146"
+      ],
+      "PurchaseDate": "2026-09-02",
+      "PurchaseDateText": "",
+      "UnitCents": 64990,
+      "HasPrice": true,
+      "LineCents": 64990,
+      "ReceiptNames": [
+        "Belege/000-146_Rechnung.pdf",
+        "Belege/000-146_Rechnung_2.jpg"
+      ],
+      "Comments": [
+        "Kauf nach Stichtag (\u003c 6 Monate)"
+      ],
+      "Status": "dutiable",
+      "Reason": "owned_too_short",
+      "MemberIDs": [
+        "00000000-0000-0000-0000-000000000146"
+      ],
+      "MemberQuantities": [
+        1
+      ]
+    },
+    {
+      "Pos": 11,
+      "Quantity": 1,
+      "Name": "Desk lamp",
+      "EntityTypeName": "Furniture",
+      "Locations": [
+        "Home › Living room"
+      ],
+      "AssetIDs": [
+        "000-163"
+      ],
+      "PurchaseDate": "2026-10-01",
+      "PurchaseDateText": "",
+      "UnitCents": 4550,
+      "HasPrice": true,
+      "LineCents": 4550,
+      "ReceiptNames": [
+        "Belege/000-163_b_Rechnung.pdf"
+      ],
+      "Comments": [
+        "Kauf nach Stichtag (\u003c 6 Monate)"
+      ],
+      "Status": "dutiable",
+      "Reason": "owned_too_short",
+      "MemberIDs": [
+        "00000000-0000-0000-0000-000000001632"
+      ],
+      "MemberQuantities": [
+        1
+      ]
+    },
+    {
+      "Pos": 12,
+      "Quantity": 1,
+      "Name": "Floor lamp",
+      "EntityTypeName": "Furniture",
+      "Locations": [
+        "Home › Living room"
+      ],
+      "AssetIDs": [
+        "000-163"
+      ],
+      "PurchaseDate": "2026-10-01",
+      "PurchaseDateText": "",
+      "UnitCents": 7900,
+      "HasPrice": true,
+      "LineCents": 7900,
+      "ReceiptNames": [
+        "Belege/000-163_Rechnung.pdf"
+      ],
+      "Comments": [
+        "Kauf nach Stichtag (\u003c 6 Monate)"
+      ],
+      "Status": "dutiable",
+      "Reason": "owned_too_short",
+      "MemberIDs": [
+        "00000000-0000-0000-0000-000000001631"
+      ],
+      "MemberQuantities": [
+        1
+      ]
+    },
+    {
+      "Pos": 13,
+      "Quantity": 1,
+      "Name": "Office chair",
+      "EntityTypeName": "Furniture",
+      "Locations": [
+        "Home › Office"
+      ],
+      "AssetIDs": [
+        "000-150"
+      ],
+      "PurchaseDate": "",
+      "PurchaseDateText": "",
+      "UnitCents": 0,
+      "HasPrice": false,
+      "LineCents": 0,
+      "ReceiptNames": null,
+      "Comments": [
+        "Kaufdatum fehlt; Wert fehlt"
+      ],
+      "Status": "dutiable",
+      "Reason": "missing_purchase_date",
+      "MemberIDs": [
+        "00000000-0000-0000-0000-000000000150"
+      ],
+      "MemberQuantities": [
+        1
+      ]
+    }
+  ],
+  "DutyFreeTotalCents": 248383,
+  "DutiableTotalCents": 77440,
+  "GrandTotalCents": 325823,
+  "Excluded": [
+    {
+      "ID": "00000000-0000-0000-0000-000000000999",
+      "AssetID": "",
+      "Name": "",
+      "Code": "excluded_not_found"
+    },
+    {
+      "ID": "00000000-0000-0000-0000-000000000180",
+      "AssetID": "000-180",
+      "Name": "Basement",
+      "Code": "excluded_location"
+    },
+    {
+      "ID": "00000000-0000-0000-0000-000000000182",
+      "AssetID": "000-182",
+      "Name": "Bookshelf",
+      "Code": "excluded_sold"
+    },
+    {
+      "ID": "00000000-0000-0000-0000-000000000181",
+      "AssetID": "000-181",
+      "Name": "Old radio",
+      "Code": "excluded_archived"
+    }
+  ],
+  "Issues": [
+    {
+      "code": "missing_purchase_date",
+      "severity": "warning",
+      "items": [
+        {
+          "id": "00000000-0000-0000-0000-000000000150",
+          "assetId": "000-150",
+          "name": "Office chair",
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "code": "conflict_date_tag",
+      "severity": "warning",
+      "items": [
+        {
+          "id": "00000000-0000-0000-0000-000000000146",
+          "assetId": "000-146",
+          "name": "Espresso machine",
+          "detail": "2026-09-02"
+        }
+      ]
+    },
+    {
+      "code": "conflict_tags",
+      "severity": "warning",
+      "items": [
+        {
+          "id": "00000000-0000-0000-0000-000000000170",
+          "assetId": "000-170",
+          "name": "Bicycle",
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "code": "purchased_after_reference",
+      "severity": "warning",
+      "items": [
+        {
+          "id": "00000000-0000-0000-0000-000000000171",
+          "assetId": "000-171",
+          "name": "Tent",
+          "detail": "2026-11-20"
+        }
+      ]
+    },
+    {
+      "code": "missing_price",
+      "severity": "warning",
+      "items": [
+        {
+          "id": "00000000-0000-0000-0000-000000000170",
+          "assetId": "000-170",
+          "name": "Bicycle",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000000131",
+          "assetId": "000-131",
+          "name": "Files",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000000132",
+          "assetId": "000-132",
+          "name": "files",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000000133",
+          "assetId": "000-133",
+          "name": "Files",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000000134",
+          "assetId": "000-134",
+          "name": "files",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000000135",
+          "assetId": "000-135",
+          "name": "Files",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000000136",
+          "assetId": "000-136",
+          "name": "files",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000000137",
+          "assetId": "000-137",
+          "name": "Files",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000000138",
+          "assetId": "000-138",
+          "name": "files",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000000139",
+          "assetId": "000-139",
+          "name": "Files",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000000140",
+          "assetId": "000-140",
+          "name": "files",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000000141",
+          "assetId": "000-141",
+          "name": "Files",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000000142",
+          "assetId": "000-142",
+          "name": "files",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000000143",
+          "assetId": "000-143",
+          "name": "Files",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000000144",
+          "assetId": "000-144",
+          "name": "files",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000000150",
+          "assetId": "000-150",
+          "name": "Office chair",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000000171",
+          "assetId": "000-171",
+          "name": "Tent",
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "code": "missing_asset_id",
+      "severity": "warning",
+      "items": [
+        {
+          "id": "00000000-0000-0000-0000-000000000160",
+          "assetId": "",
+          "name": "Toolbox",
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "code": "duplicate_asset_id",
+      "severity": "warning",
+      "items": [
+        {
+          "id": "00000000-0000-0000-0000-000000001632",
+          "assetId": "000-163",
+          "name": "Desk lamp",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000001631",
+          "assetId": "000-163",
+          "name": "Floor lamp",
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "code": "dutiable_without_receipt",
+      "severity": "warning",
+      "items": [
+        {
+          "id": "00000000-0000-0000-0000-000000000170",
+          "assetId": "000-170",
+          "name": "Bicycle",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000000150",
+          "assetId": "000-150",
+          "name": "Office chair",
+          "detail": ""
+        },
+        {
+          "id": "00000000-0000-0000-0000-000000000171",
+          "assetId": "000-171",
+          "name": "Tent",
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "code": "receipt_is_link",
+      "severity": "warning",
+      "items": [
+        {
+          "id": "00000000-0000-0000-0000-000000000102",
+          "assetId": "000-102",
+          "name": "Sofa",
+          "detail": "https://shop.example/order/1"
+        }
+      ]
+    },
+    {
+      "code": "excluded_location",
+      "severity": "info",
+      "items": [
+        {
+          "id": "00000000-0000-0000-0000-000000000180",
+          "assetId": "000-180",
+          "name": "Basement",
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "code": "excluded_archived",
+      "severity": "info",
+      "items": [
+        {
+          "id": "00000000-0000-0000-0000-000000000181",
+          "assetId": "000-181",
+          "name": "Old radio",
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "code": "excluded_sold",
+      "severity": "info",
+      "items": [
+        {
+          "id": "00000000-0000-0000-0000-000000000182",
+          "assetId": "000-182",
+          "name": "Bookshelf",
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "code": "excluded_not_found",
+      "severity": "info",
+      "items": [
+        {
+          "id": "00000000-0000-0000-0000-000000000999",
+          "assetId": "",
+          "name": "",
+          "detail": ""
+        }
+      ]
+    }
+  ],
+  "Receipts": [
+    {
+      "Name": "Belege/000-101_Rechnung.pdf",
+      "AttachmentID": "00000000-0000-0000-0000-000000005101",
+      "ItemID": "00000000-0000-0000-0000-000000000101"
+    },
+    {
+      "Name": "Belege/000-146_Rechnung.pdf",
+      "AttachmentID": "00000000-0000-0000-0000-000000005145",
+      "ItemID": "00000000-0000-0000-0000-000000000146"
+    },
+    {
+      "Name": "Belege/000-146_Rechnung_2.jpg",
+      "AttachmentID": "00000000-0000-0000-0000-000000005146",
+      "ItemID": "00000000-0000-0000-0000-000000000146"
+    },
+    {
+      "Name": "Belege/000-163_b_Rechnung.pdf",
+      "AttachmentID": "00000000-0000-0000-0000-000000005164",
+      "ItemID": "00000000-0000-0000-0000-000000001632"
+    },
+    {
+      "Name": "Belege/000-163_Rechnung.pdf",
+      "AttachmentID": "00000000-0000-0000-0000-000000005163",
+      "ItemID": "00000000-0000-0000-0000-000000001631"
+    }
+  ],
+  "ScopeIDs": [
+    "00000000-0000-0000-0000-000000000101",
+    "00000000-0000-0000-0000-000000000102",
+    "00000000-0000-0000-0000-000000000103",
+    "00000000-0000-0000-0000-000000000110",
+    "00000000-0000-0000-0000-000000000131",
+    "00000000-0000-0000-0000-000000000132",
+    "00000000-0000-0000-0000-000000000133",
+    "00000000-0000-0000-0000-000000000134",
+    "00000000-0000-0000-0000-000000000135",
+    "00000000-0000-0000-0000-000000000136",
+    "00000000-0000-0000-0000-000000000137",
+    "00000000-0000-0000-0000-000000000138",
+    "00000000-0000-0000-0000-000000000139",
+    "00000000-0000-0000-0000-000000000140",
+    "00000000-0000-0000-0000-000000000141",
+    "00000000-0000-0000-0000-000000000142",
+    "00000000-0000-0000-0000-000000000143",
+    "00000000-0000-0000-0000-000000000144",
+    "00000000-0000-0000-0000-000000000145",
+    "00000000-0000-0000-0000-000000000146",
+    "00000000-0000-0000-0000-000000000150",
+    "00000000-0000-0000-0000-000000000160",
+    "00000000-0000-0000-0000-000000001631",
+    "00000000-0000-0000-0000-000000001632",
+    "00000000-0000-0000-0000-000000000170",
+    "00000000-0000-0000-0000-000000000171",
+    "00000000-0000-0000-0000-000000000180",
+    "00000000-0000-0000-0000-000000000181",
+    "00000000-0000-0000-0000-000000000182",
+    "00000000-0000-0000-0000-000000000999"
+  ]
+}

@@ -34,13 +34,13 @@ func testReport() Report {
 				Title: "Home › Living room",
 				Lines: []Line{
 					{
-						Pos: 1, Quantity: 4, Name: "Dining chair", EntityTypeName: "Furniture",
+						Pos: 1, Quantity: 4, Name: "Dining chair", EntityTypeName: typeNameFurniture,
 						Locations: []string{"Home › Living room"}, AssetIDs: []string{"000-103"},
 						PurchaseDate: d("2020-05-01"), UnitCents: 8950, HasPrice: true, LineCents: 35800,
 						Status: StatusDutyFree, Reason: ReasonDate,
 					},
 					{
-						Pos: 2, Quantity: 14, Name: "Files", EntityTypeName: "Box",
+						Pos: 2, Quantity: 14, Name: nameFiles, EntityTypeName: "Box",
 						Locations: []string{"Home › Living room"}, AssetIDs: []string{"000-131", "000-132"},
 						PurchaseDateText: "2019-01-01 – 2021-06-30",
 						Comments:         []string{"zollfrei lt. Tag „owned > 2 years“; Wert fehlt"},
@@ -53,7 +53,7 @@ func testReport() Report {
 				Title: "Home › Office",
 				Lines: []Line{
 					{
-						Pos: 3, Quantity: 2.5, Name: "Shelf", EntityTypeName: "Furniture",
+						Pos: 3, Quantity: 2.5, Name: "Shelf", EntityTypeName: typeNameFurniture,
 						Locations: []string{"-"}, AssetIDs: []string{"000-110"},
 						PurchaseDate: d("2020-01-01"), UnitCents: 33, HasPrice: true, LineCents: 83,
 						Status: StatusDutyFree, Reason: ReasonDate,
@@ -64,7 +64,7 @@ func testReport() Report {
 		},
 		Dutiable: []Line{
 			{
-				Pos: 4, Quantity: 1, Name: "Espresso machine", EntityTypeName: "Appliance",
+				Pos: 4, Quantity: 1, Name: nameEspresso, EntityTypeName: "Appliance",
 				Locations: []string{"Home › Kitchen"}, AssetIDs: []string{"000-146"},
 				PurchaseDate: d("2026-09-02"), UnitCents: 64990, HasPrice: true, LineCents: 64990,
 				ReceiptNames: []string{"Belege/000-146_Rechnung.pdf", "Belege/000-146_Rechnung_2.jpg"},
@@ -72,7 +72,7 @@ func testReport() Report {
 				Status:       StatusDutiable, Reason: ReasonOwnedTooShort,
 			},
 			{
-				Pos: 5, Quantity: 1, Name: "Office chair", EntityTypeName: "Furniture",
+				Pos: 5, Quantity: 1, Name: "Office chair", EntityTypeName: typeNameFurniture,
 				Locations: []string{"Home › Office"}, AssetIDs: []string{"000-150"},
 				Comments: []string{"Kaufdatum fehlt; Wert fehlt"},
 				Status:   StatusDutiable, Reason: ReasonMissingPurchaseDate,
@@ -263,11 +263,11 @@ func TestWriteXLSX_TextNeverFormula(t *testing.T) {
 func TestWriteXLSX_CellTypes(t *testing.T) {
 	f := openXLSX(t, testReport())
 	chair := findRow(t, f, "C", "Dining chair")
-	files := findRow(t, f, "C", "Files")
+	files := findRow(t, f, "C", nameFiles)
 
 	for _, ref := range []string{fmt.Sprintf("B%d", chair), fmt.Sprintf("H%d", chair), fmt.Sprintf("G%d", chair)} {
 		_, err := strconv.ParseFloat(rawCell(t, f, ref), 64)
-		assert.NoError(t, err, "%s is numeric", ref)
+		require.NoError(t, err, "%s is numeric", ref)
 		typ, err := f.GetCellType(SheetName, ref)
 		require.NoError(t, err)
 		assert.NotEqual(t, excelize.CellTypeInlineString, typ, ref)
@@ -277,7 +277,7 @@ func TestWriteXLSX_CellTypes(t *testing.T) {
 	assert.Empty(t, cell(t, f, fmt.Sprintf("H%d", files)), "no price → empty unit value")
 	assert.Equal(t, "000-131, 000-132", cell(t, f, fmt.Sprintf("F%d", files)))
 
-	espresso := findRow(t, f, "C", "Espresso machine")
+	espresso := findRow(t, f, "C", nameEspresso)
 	assert.Equal(t, "Belege/000-146_Rechnung.pdf, Belege/000-146_Rechnung_2.jpg", cell(t, f, fmt.Sprintf("J%d", espresso)))
 	assert.Equal(t, "Kauf nach Stichtag (< 6 Monate)", cell(t, f, fmt.Sprintf("K%d", espresso)))
 }
