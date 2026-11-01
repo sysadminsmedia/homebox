@@ -5,13 +5,15 @@ const EMAIL = "demo@example.com";
 const PASSWORD = process.env.E2E_PASSWORD || "demodemo";
 const FILE_NAME = /^Inventarliste_[a-z0-9-]+_\d{4}-\d{2}-\d{2}\.(xlsx|zip)$/;
 
+// Logs in through the API rather than the login form. The server sets its auth cookies
+// with Domain=localhost, which WebKit on Linux drops when the page receives them, so a
+// form login leaves the WebKit run signed out. Playwright's request context keeps the
+// cookies and shares them with the page on every browser.
 async function login(page: Page) {
-  await page.goto("/home");
-  await expect(page).toHaveURL("/");
-  await page.fill("input[type='text']", EMAIL);
-  await page.fill("input[type='password']", PASSWORD);
-  await page.click("button[type='submit']");
-  await expect(page).toHaveURL("/home");
+  const res = await page.request.post("/api/v1/users/login", {
+    data: { username: EMAIL, password: PASSWORD, stayLoggedIn: false },
+  });
+  expect(res.ok()).toBeTruthy();
 }
 
 // Selects every row on the search page and opens the export dialog from the actions menu.
