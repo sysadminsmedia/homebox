@@ -1,6 +1,7 @@
 import type { Ref } from "vue";
 import type { EntitySummary } from "~/lib/api/types/data-contracts";
 import type { DaisyTheme } from "~~/lib/data/themes";
+import type { CustomsInventoryPrefs } from "~~/lib/customs-inventory";
 
 export type ViewType = "table" | "card";
 
@@ -39,6 +40,8 @@ export type LocationViewPreferences = {
   }[];
   // Label template preferences
   defaultTemplateId: string | null;
+  // Last options of the customs inventory export dialog
+  customsInventory: CustomsInventoryPrefs | null;
 };
 export type PreferenceSyncConfig = Partial<Record<keyof LocationViewPreferences, boolean>>;
 type PreferenceChange = true | Record<string, PreferenceChange>;
@@ -67,6 +70,7 @@ const DEFAULT_PREFERENCES: LocationViewPreferences = {
   },
   savedSearches: [],
   defaultTemplateId: null,
+  customsInventory: null,
 };
 let syncConfig: PreferenceSyncConfig = {
   itemDisplayView: false,

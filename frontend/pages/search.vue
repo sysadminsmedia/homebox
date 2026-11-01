@@ -34,6 +34,10 @@
   const initialSearch = ref(true);
 
   const api = useUserApi();
+  const customsInventorySearch = useCustomsInventorySearch();
+  onBeforeUnmount(() => {
+    customsInventorySearch.value = null;
+  });
   const loading = useMinLoader(500);
   const items = ref<EntitySummary[]>([]);
   const total = ref(0);
@@ -345,7 +349,8 @@
 
     await router.push({ query: push_query as LocationQueryRaw });
 
-    const { data, error } = await api.items.getAll({
+    // The filters without paging; the customs inventory export reruns them on the server.
+    const filters = {
       q: query.value || "",
       parentIds: locIDs.value,
       entityTypeIds: effectiveEntityTypeIDs.value,
@@ -355,11 +360,15 @@
       onlyWithoutPhoto: onlyWithoutPhoto.value,
       onlyWithPhoto: onlyWithPhoto.value,
       includeArchived: includeArchived.value,
+      fields,
+    };
+
+    const { data, error } = await api.items.getAll({
+      ...filters,
       page: page.value,
       pageSize: pageSize.value,
       orderBy: orderBy.value,
       orderDirection: orderDirection.value,
-      fields,
     });
 
     function resetItems() {
@@ -371,17 +380,20 @@
 
     if (error) {
       resetItems();
+      customsInventorySearch.value = { query: filters, total: 0 };
       toast.error(t("items.toast.failed_search_items"));
       return;
     }
 
     if (!data.items || data.items.length === 0) {
       resetItems();
+      customsInventorySearch.value = { query: filters, total: 0 };
       return;
     }
 
     total.value = data.total;
     items.value = data.items;
+    customsInventorySearch.value = { query: filters, total: data.total };
 
     loading.value = false;
     initialSearch.value = false;

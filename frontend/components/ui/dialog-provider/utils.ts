@@ -8,6 +8,7 @@ import type {
   MaintenanceEntry,
   MaintenanceEntryWithDetails,
 } from "~~/lib/api/types/data-contracts";
+import type { CustomsInventorySearchContext } from "~~/lib/customs-inventory";
 
 export enum DialogID {
   AttachmentEdit = "attachment-edit",
@@ -22,6 +23,7 @@ export enum DialogID {
   JoinCollection = "join-collection",
   CreateNotifier = "create-notifier",
   CreateTemplate = "create-template",
+  CustomsInventoryExport = "customs-inventory-export",
   DuplicateSettings = "duplicate-settings",
   DuplicateTemporarySettings = "duplicate-temporary-settings",
   EditMaintenance = "edit-maintenance",
@@ -86,6 +88,10 @@ export type DialogParamsMap = {
   };
   [DialogID.UpdateLabelTemplate]: {
     templateId: string;
+  };
+  [DialogID.CustomsInventoryExport]: {
+    itemIds: string[];
+    search?: CustomsInventorySearchContext | null;
   };
 };
 

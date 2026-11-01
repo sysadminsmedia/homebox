@@ -11,6 +11,7 @@
     <WipeInventoryDialog />
     <TagCreateModal />
     <LabelTemplatePrintDialog />
+    <ReportsCustomsInventoryDialog />
     <ItemBarcodeModal />
     <AppQuickMenuModal :actions="quickMenuActions" />
     <AppScannerModal />
@@ -293,6 +294,7 @@
   import WipeInventoryDialog from "~/components/WipeInventoryDialog.vue";
   import TagCreateModal from "~/components/Tag/CreateModal.vue";
   import LabelTemplatePrintDialog from "~/components/LabelTemplate/PrintDialog.vue";
+  import ReportsCustomsInventoryDialog from "~/components/Reports/CustomsInventoryDialog.vue";
   import ItemBarcodeModal from "~/components/Item/BarcodeModal.vue";
   import AppQuickMenuModal from "~/components/App/QuickMenuModal.vue";
   import AppScannerModal from "~/components/App/ScannerModal.vue";
