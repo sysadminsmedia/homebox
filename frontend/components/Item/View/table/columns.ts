@@ -157,7 +157,8 @@ export function makeColumns({
         const item = row.original as EntitySummary;
         const loc = item.parent;
         if (loc) {
-          return h("a", { href: `/location/${loc.id}`, class: "hover:underline text-sm" }, loc.name);
+          const href = `/${loc.entityType?.isLocation ? "location" : "item"}/${loc.id}`;
+          return h("a", { href, class: "hover:underline text-sm" }, loc.name);
         }
         return h("div", { class: "text-sm text-muted-foreground" }, "");
       },

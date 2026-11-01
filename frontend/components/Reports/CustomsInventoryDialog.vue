@@ -278,6 +278,7 @@
     DEFAULT_CUSTOMS_INVENTORY_PREFS,
     formatCents,
     sanitizePrefs,
+    serverErrorMessage,
     type CustomsInventoryGrouping,
     type CustomsInventoryPrefs,
     type CustomsInventorySearchContext,
@@ -360,7 +361,9 @@
 
     if (error) {
       previewFailed.value = true;
-      toast.error(t("components.reports.customs_inventory.toast_preview_failed"));
+      toast.error(t("components.reports.customs_inventory.toast_preview_failed"), {
+        description: serverErrorMessage(data) || undefined,
+      });
       return;
     }
     previewFailed.value = false;
@@ -384,8 +387,10 @@
       preferences.value.customsInventory = JSON.parse(JSON.stringify(prefs.value));
       toast.success(t("components.reports.customs_inventory.toast_exported"));
       closeDialog(DialogID.CustomsInventoryExport);
-    } catch {
-      toast.error(t("components.reports.customs_inventory.toast_failed"));
+    } catch (e) {
+      toast.error(t("components.reports.customs_inventory.toast_failed"), {
+        description: e instanceof Error ? e.message : undefined,
+      });
     } finally {
       exporting.value = false;
     }
