@@ -18,9 +18,10 @@ import (
 )
 
 const (
-	cookieNameToken    = "hb.auth.token"
-	cookieNameRemember = "hb.auth.remember"
-	cookieNameSession  = "hb.auth.session"
+	cookieNameToken           = "hb.auth.token"
+	cookieNameRemember        = "hb.auth.remember"
+	cookieNameSession         = "hb.auth.session"
+	cookieNameAttachmentToken = "hb.auth.attachment_token"
 )
 
 type (
@@ -439,12 +440,34 @@ func noPort(host string) string {
 	return strings.Split(host, ":")[0]
 }
 
-func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string, expires time.Time, remember bool, attachmentToken string) {
+// expireLegacyCookies removes auth cookies that older versions set with Domain=<host>.
+// Browsers keep those apart from the host-only ones, so a request could carry both
+// and the server would read the stale token first.
+func (ctrl *V1Controller) expireLegacyCookies(w http.ResponseWriter, legacyDomain string) {
+	for _, name := range []string{cookieNameToken, cookieNameRemember, cookieNameSession, cookieNameAttachmentToken} {
+		http.SetCookie(w, &http.Cookie{
+			Name:     name,
+			Value:    "",
+			MaxAge:   -1,
+			Domain:   legacyDomain,
+			Secure:   ctrl.cookieSecure,
+			Path:     "/",
+			SameSite: http.SameSiteLaxMode,
+		})
+	}
+}
+
+// setCookies sets the auth cookies host-only, without a Domain attribute. WebKit on
+// Linux rejects Domain=localhost, which left the login form signed out there.
+func (ctrl *V1Controller) setCookies(w http.ResponseWriter, legacyDomain, token string, expires time.Time, remember bool, attachmentToken string) {
+	// Expire the old cookies first: a browser that treats both as the same cookie
+	// then keeps the new one.
+	ctrl.expireLegacyCookies(w, legacyDomain)
+
 	http.SetCookie(w, &http.Cookie{
 		Name:     cookieNameRemember,
 		Value:    strconv.FormatBool(remember),
 		Expires:  expires,
-		Domain:   domain,
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
@@ -456,7 +479,6 @@ func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string
 		Name:     cookieNameToken,
 		Value:    token,
 		Expires:  expires,
-		Domain:   domain,
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
@@ -468,7 +490,6 @@ func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string
 		Name:     cookieNameSession,
 		Value:    "true",
 		Expires:  expires,
-		Domain:   domain,
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: false,
 		Path:     "/",
@@ -478,10 +499,9 @@ func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string
 	// Set attachment token cookie (accessible to frontend, not HttpOnly)
 	if attachmentToken != "" {
 		http.SetCookie(w, &http.Cookie{
-			Name:     "hb.auth.attachment_token",
+			Name:     cookieNameAttachmentToken,
 			Value:    attachmentToken,
 			Expires:  expires,
-			Domain:   domain,
 			Secure:   ctrl.cookieSecure,
 			HttpOnly: false,
 			Path:     "/",
@@ -490,12 +510,13 @@ func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string
 	}
 }
 
-func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
+func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, legacyDomain string) {
+	ctrl.expireLegacyCookies(w, legacyDomain)
+
 	http.SetCookie(w, &http.Cookie{
 		Name:     cookieNameToken,
 		Value:    "",
 		Expires:  time.Unix(0, 0),
-		Domain:   domain,
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
@@ -506,7 +527,6 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 		Name:     cookieNameRemember,
 		Value:    "false",
 		Expires:  time.Unix(0, 0),
-		Domain:   domain,
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: true,
 		Path:     "/",
@@ -518,7 +538,6 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 		Name:     cookieNameSession,
 		Value:    "false",
 		Expires:  time.Unix(0, 0),
-		Domain:   domain,
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: false,
 		Path:     "/",
@@ -527,10 +546,9 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 
 	// Unset attachment token cookie
 	http.SetCookie(w, &http.Cookie{
-		Name:     "hb.auth.attachment_token",
+		Name:     cookieNameAttachmentToken,
 		Value:    "",
 		Expires:  time.Unix(0, 0),
-		Domain:   domain,
 		Secure:   ctrl.cookieSecure,
 		HttpOnly: false,
 		Path:     "/",
