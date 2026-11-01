@@ -40,8 +40,13 @@ func ColumnHeaders(currency string) []string {
 
 var columnWidths = []float64{6, 10, 34, 14, 26, 18, 14, 14, 18, 34, 40}
 
-// excelEpoch is day 0 of Excel's 1900 date system.
-var excelEpoch = time.Date(1899, 12, 30, 0, 0, 0, 0, time.UTC)
+// excelEpoch is day 0 of Excel's 1900 date system. Serials counted from it
+// match Excel only from 1900-03-01 on (Excel counts a 29 Feb 1900), so
+// earlier dates are written as text.
+var (
+	excelEpoch     = time.Date(1899, 12, 30, 0, 0, 0, 0, time.UTC)
+	firstSerialDay = time.Date(1900, 3, 1, 0, 0, 0, 0, time.UTC)
+)
 
 type sheetStyles struct {
 	bold, money, boldMoney, date int
@@ -88,7 +93,10 @@ func (w *sheetWriter) line(l Line) int {
 	switch {
 	case l.PurchaseDateText != "":
 		date = l.PurchaseDateText
-	case !l.PurchaseDate.Time().IsZero():
+	case l.PurchaseDate.Time().IsZero():
+	case l.PurchaseDate.Time().Before(firstSerialDay):
+		date = l.PurchaseDate.String()
+	default:
 		days := l.PurchaseDate.Time().UTC().Sub(excelEpoch).Hours() / 24
 		date = excelize.Cell{StyleID: w.st.date, Value: days}
 	}

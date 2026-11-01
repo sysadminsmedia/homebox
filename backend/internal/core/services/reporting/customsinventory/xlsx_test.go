@@ -332,3 +332,18 @@ func TestWriteXLSX_Deterministic(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, rowsA, rowsB)
 }
+
+func TestWriteXLSX_DatesBefore1900AreText(t *testing.T) {
+	r := testReport()
+	r.Groups[1].Lines[0].PurchaseDate = d("0202-09-30")
+	r.Groups[0].Lines[0].PurchaseDate = d("1900-02-28")
+	f := openXLSX(t, r)
+
+	for name, want := range map[string]string{"Shelf": "0202-09-30", "Dining chair": "1900-02-28"} {
+		ref := fmt.Sprintf("G%d", findRow(t, f, "C", name))
+		assert.Equal(t, want, cell(t, f, ref), name)
+		typ, err := f.GetCellType(SheetName, ref)
+		require.NoError(t, err)
+		assert.Equal(t, excelize.CellTypeInlineString, typ, "%s: Excel's date serials start in 1900", name)
+	}
+}
