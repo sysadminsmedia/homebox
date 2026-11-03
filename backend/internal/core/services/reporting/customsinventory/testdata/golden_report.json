@@ -100,7 +100,8 @@
           ]
         }
       ],
-      "SubtotalCents": 244800
+      "SubtotalCents": 244800,
+      "SubtotalQty": 6
     },
     {
       "Title": "Home › Office",
@@ -230,7 +231,8 @@
           ]
         }
       ],
-      "SubtotalCents": 583
+      "SubtotalCents": 583,
+      "SubtotalQty": 17.5
     },
     {
       "Title": "Ohne Lagerort / no location",
@@ -259,7 +261,8 @@
           ]
         }
       ],
-      "SubtotalCents": 3000
+      "SubtotalCents": 3000,
+      "SubtotalQty": 1
     }
   ],
   "Dutiable": [
@@ -448,6 +451,9 @@
   "DutyFreeTotalCents": 248383,
   "DutiableTotalCents": 77440,
   "GrandTotalCents": 325823,
+  "DutyFreeQty": 24.5,
+  "DutiableQty": 6,
+  "TotalQty": 30.5,
   "Excluded": [
     {
       "ID": "00000000-0000-0000-0000-000000000999",

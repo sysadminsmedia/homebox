@@ -366,3 +366,20 @@ func TestPreview_MatchesReport(t *testing.T) {
 	assert.Equal(t, r.GrandTotalCents, p.GrandTotalCents)
 	assert.Equal(t, r.Issues, p.Issues)
 }
+
+func TestBuild_PieceCounts(t *testing.T) {
+	in := smallInput(
+		furniture(1, 1, "Box books", 3, 10, "2019-01-01", locLiving, pathLiving),
+		furniture(2, 2, "Cable", 2.5, 1, "2019-01-01", locLiving, pathLiving),
+		furniture(3, 3, "Rope", 0.3, 1, "2019-01-01", locLiving, pathLiving),
+		furniture(4, 4, "New lamp", 4, 20, "2026-10-01", locLiving, pathLiving), // dutiable
+	)
+	r := mustBuild(t, in)
+	assert.InDelta(t, 5.8, r.DutyFreeQty, 0)
+	assert.InDelta(t, 5.8, r.Groups[0].SubtotalQty, 0)
+	assert.InDelta(t, 4.0, r.DutiableQty, 0)
+	assert.InDelta(t, 9.8, r.TotalQty, 0)
+	p := r.Preview()
+	assert.InDelta(t, 9.8, p.PieceCount, 0)
+	assert.InDelta(t, 4.0, p.DutiablePieceCount, 0)
+}

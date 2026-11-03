@@ -3989,6 +3989,10 @@ const docTemplate = `{
                 "dutiableItemCount": {
                     "type": "integer"
                 },
+                "dutiablePieceCount": {
+                    "description": "sum of the dutiable line quantities",
+                    "type": "number"
+                },
                 "dutiableTotalCents": {
                     "type": "integer"
                 },
@@ -4016,6 +4020,10 @@ const docTemplate = `{
                 "minMonths": {
                     "description": "after applying the default",
                     "type": "integer"
+                },
+                "pieceCount": {
+                    "description": "sum of all line quantities",
+                    "type": "number"
                 },
                 "receiptCount": {
                     "type": "integer"

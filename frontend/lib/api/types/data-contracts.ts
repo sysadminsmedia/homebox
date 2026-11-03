@@ -176,6 +176,8 @@ export interface CustomsInventoryPreview {
   currency: string;
   cutoff: string;
   dutiableItemCount: number;
+  /** sum of the dutiable line quantities */
+  dutiablePieceCount: number;
   dutiableTotalCents: number;
   dutyFreeTotalCents: number;
   excludedCount: number;
@@ -185,6 +187,8 @@ export interface CustomsInventoryPreview {
   lineCount: number;
   /** after applying the default */
   minMonths: number;
+  /** sum of all line quantities */
+  pieceCount: number;
   receiptCount: number;
   referenceDate: string;
 }

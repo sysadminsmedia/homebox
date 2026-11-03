@@ -48,6 +48,7 @@ func testReport() Report {
 					},
 				},
 				SubtotalCents: 35800,
+				SubtotalQty:   18,
 			},
 			{
 				Title: "Home › Office",
@@ -60,6 +61,7 @@ func testReport() Report {
 					},
 				},
 				SubtotalCents: 83,
+				SubtotalQty:   2.5,
 			},
 		},
 		Dutiable: []Line{
@@ -81,6 +83,9 @@ func testReport() Report {
 		DutyFreeTotalCents: 35883,
 		DutiableTotalCents: 64990,
 		GrandTotalCents:    100873,
+		DutyFreeQty:        20.5,
+		DutiableQty:        2,
+		TotalQty:           22.5,
 	}
 }
 
@@ -140,7 +145,8 @@ func TestWriteXLSX_LayoutAndLabels(t *testing.T) {
 	assert.Contains(t, a5, "Referenzdatum / reference date: 15.11.2026")
 	assert.Contains(t, a5, "Stichtag / cut-off (6 Monate / months): 15.05.2026")
 	assert.Contains(t, a5, "Währung / currency: EUR")
-	assert.Contains(t, a5, "Erstellt / generated: 31.10.2026 · 20 Artikel / items")
+	assert.Contains(t, a5, "Erstellt / generated: 31.10.2026 · 5 Positionen / lines · 22,5 Stück / pieces")
+	assert.NotContains(t, a5, "Artikel / items")
 	assert.Empty(t, cell(t, f, "A6"))
 	assert.Equal(t, "Home › Living room", cell(t, f, "A7"))
 
@@ -242,6 +248,66 @@ func TestWriteXLSX_FormulasRecalculateToCachedValues(t *testing.T) {
 	grandRow := findRow(t, f, "A", LabelGrandTotal)
 	assert.Equal(t, fmt.Sprintf("I%d+I%d", dutyFreeRow, dutiableRow), formula(t, f, fmt.Sprintf("I%d", grandRow)))
 	assert.Len(t, formulas, len(want))
+
+	// Every formula cell in column B recalculates to its stored quantity.
+	nB := 0
+	for i := range rows {
+		ref := fmt.Sprintf("B%d", i+1)
+		fx := formula(t, f, ref)
+		if fx == "" {
+			continue
+		}
+		nB++
+		cached, err := strconv.ParseFloat(rawCell(t, f, ref), 64)
+		require.NoError(t, err, "cached value of %s", ref)
+		calcStr, err := f.CalcCellValue(SheetName, ref, excelize.Options{RawCellValue: true})
+		require.NoError(t, err)
+		calc, err := strconv.ParseFloat(calcStr, 64)
+		require.NoError(t, err, "calc value of %s", ref)
+		assert.InDelta(t, RoundQty(cached), RoundQty(calc), 0, "cached vs recalculated %s (%s)", ref, fx)
+	}
+	assert.Equal(t, 5, nB, "two subtotals, duty-free total, dutiable total, grand total")
+}
+
+func TestWriteXLSX_QuantityTotals(t *testing.T) {
+	rep := testReport()
+	f := openXLSX(t, rep)
+
+	chair := findRow(t, f, "C", "Dining chair")
+	var subRows []int
+	rows, err := f.GetRows(SheetName)
+	require.NoError(t, err)
+	for i, row := range rows {
+		if len(row) > 0 && row[0] == LabelSubtotal {
+			subRows = append(subRows, i+1)
+		}
+	}
+	require.Len(t, subRows, 2)
+	first := fmt.Sprintf("B%d", subRows[0])
+	assert.Equal(t, fmt.Sprintf("SUBTOTAL(9,B%d:B%d)", chair, subRows[0]-1), formula(t, f, first))
+	assert.Equal(t, strconv.FormatFloat(rep.Groups[0].SubtotalQty, 'f', -1, 64), rawCell(t, f, first))
+
+	dutyFreeRow := findRow(t, f, "A", LabelDutyFreeTotal)
+	dutiableRow := findRow(t, f, "A", LabelDutiableTotal)
+	grandRow := findRow(t, f, "A", LabelGrandTotal)
+	assert.Equal(t, fmt.Sprintf("SUM(B%d,B%d)", subRows[0], subRows[1]), formula(t, f, fmt.Sprintf("B%d", dutyFreeRow)))
+	assert.Equal(t, fmt.Sprintf("B%d+B%d", dutyFreeRow, dutiableRow), formula(t, f, fmt.Sprintf("B%d", grandRow)))
+	assert.Equal(t, "22.5", rawCell(t, f, fmt.Sprintf("B%d", grandRow)))
+
+	style, err := f.GetCellStyle(SheetName, fmt.Sprintf("B%d", grandRow))
+	require.NoError(t, err)
+	st, err := f.GetStyle(style)
+	require.NoError(t, err)
+	require.NotNil(t, st.Font)
+	assert.True(t, st.Font.Bold, "quantity totals are bold")
+
+	rep.Dutiable = nil
+	rep.DutiableTotalCents, rep.DutiableQty = 0, 0
+	rep.GrandTotalCents, rep.TotalQty = rep.DutyFreeTotalCents, rep.DutyFreeQty
+	f = openXLSX(t, rep)
+	ref := fmt.Sprintf("B%d", findRow(t, f, "A", LabelDutiableTotal))
+	assert.Equal(t, "0", formula(t, f, ref))
+	assert.Equal(t, "0", rawCell(t, f, ref))
 }
 
 func TestWriteXLSX_TextNeverFormula(t *testing.T) {
@@ -359,9 +425,11 @@ func TestWriteXLSX_ManyGroupsStayWithinExcelLimits(t *testing.T) {
 			Title:         fmt.Sprintf("Box %03d", i),
 			Lines:         []Line{{Pos: i + 1, Quantity: 1, Name: "Books", UnitCents: 100, HasPrice: true, LineCents: 100}},
 			SubtotalCents: 100,
+			SubtotalQty:   1,
 		})
 		r.DutyFreeTotalCents += 100
 	}
+	r.DutyFreeQty = 300
 	r.GrandTotalCents = r.DutyFreeTotalCents + r.DutiableTotalCents
 	f := openXLSX(t, r)
 
@@ -375,4 +443,11 @@ func TestWriteXLSX_ManyGroupsStayWithinExcelLimits(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, int64(30000), ToCents(v))
 	assert.Equal(t, "300", rawCell(t, f, ref))
+
+	qref := fmt.Sprintf("B%d", findRow(t, f, "A", LabelDutyFreeTotal))
+	qfx := formula(t, f, qref)
+	assert.LessOrEqual(t, strings.Count(qfx, ",")+1, 255, "argument count of %.40s…", qfx)
+	qcalc, err := f.CalcCellValue(SheetName, qref, excelize.Options{RawCellValue: true})
+	require.NoError(t, err)
+	assert.Equal(t, "300", qcalc)
 }

@@ -178,7 +178,9 @@
               <div class="text-xs text-muted-foreground">
                 {{ $t("components.reports.customs_inventory.kpi_positions") }}
               </div>
-              <div class="text-lg font-semibold">{{ preview.lineCount }} / {{ preview.itemCount }}</div>
+              <div class="text-lg font-semibold">
+                {{ preview.lineCount }} / {{ formatQty(preview.pieceCount, locale) }}
+              </div>
             </div>
             <div class="rounded-lg border p-3">
               <div class="text-xs text-muted-foreground">
@@ -188,7 +190,11 @@
             </div>
             <div class="rounded-lg border p-3">
               <div class="text-xs text-muted-foreground">
-                {{ $t("components.reports.customs_inventory.kpi_dutiable", { count: preview.dutiableItemCount }) }}
+                {{
+                  $t("components.reports.customs_inventory.kpi_dutiable", {
+                    count: formatQty(preview.dutiablePieceCount, locale),
+                  })
+                }}
               </div>
               <div class="text-lg font-semibold">{{ money(preview.dutiableTotalCents) }}</div>
             </div>
@@ -277,6 +283,7 @@
     cutoffDate,
     DEFAULT_CUSTOMS_INVENTORY_PREFS,
     formatCents,
+    formatQty,
     sanitizePrefs,
     serverErrorMessage,
     type CustomsInventoryGrouping,

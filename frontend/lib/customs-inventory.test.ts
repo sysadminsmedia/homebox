@@ -6,6 +6,7 @@ import {
   fallbackExportFilename,
   filenameFromDisposition,
   formatCents,
+  formatQty,
   sanitizePrefs,
   serverErrorMessage,
   type CustomsInventoryPrefs,
@@ -139,5 +140,14 @@ describe("customs-inventory", () => {
     expect(serverErrorMessage({})).toBe("");
     expect(serverErrorMessage({ error: 42 })).toBe("");
     expect(serverErrorMessage(null)).toBe("");
+  });
+});
+
+describe("formatQty", () => {
+  test("formats pieces for the locale without float noise", () => {
+    expect(formatQty(12, "en")).toBe("12");
+    expect(formatQty(2.5, "en")).toBe("2.5");
+    expect(formatQty(2.5, "de")).toBe("2,5");
+    expect(formatQty(0.1 + 0.2, "en")).toBe("0.3");
   });
 });

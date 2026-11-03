@@ -217,6 +217,8 @@ type Preview struct {
 	ItemCount          int     `json:"itemCount"`
 	LineCount          int     `json:"lineCount"`
 	DutiableItemCount  int     `json:"dutiableItemCount"`
+	PieceCount         float64 `json:"pieceCount"`         // sum of all line quantities
+	DutiablePieceCount float64 `json:"dutiablePieceCount"` // sum of the dutiable line quantities
 	ExcludedCount      int     `json:"excludedCount"`
 	ReceiptCount       int     `json:"receiptCount"`
 	DutyFreeTotalCents int64   `json:"dutyFreeTotalCents"`
@@ -294,6 +296,9 @@ type Report struct {
 	DutyFreeTotalCents    int64
 	DutiableTotalCents    int64
 	GrandTotalCents       int64
+	DutyFreeQty           float64
+	DutiableQty           float64
+	TotalQty              float64
 	Excluded              []Excluded
 	Issues                []Issue
 	Receipts              []ReceiptFile
@@ -304,6 +309,7 @@ type Group struct {
 	Title         string
 	Lines         []Line
 	SubtotalCents int64
+	SubtotalQty   float64
 }
 
 type Line struct {
