@@ -426,6 +426,9 @@ var (
 		{Name: "canvas_data", Type: field.TypeJSON, Nullable: true},
 		{Name: "output_format", Type: field.TypeString, Default: "png"},
 		{Name: "dpi", Type: field.TypeInt, Default: 300},
+		{Name: "sheet_layout", Type: field.TypeJSON, Nullable: true},
+		{Name: "offset_x", Type: field.TypeFloat64, Default: 0},
+		{Name: "offset_y", Type: field.TypeFloat64, Default: 0},
 		{Name: "group_label_templates", Type: field.TypeUUID},
 		{Name: "owner_id", Type: field.TypeUUID},
 	}
@@ -437,13 +440,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "label_templates_groups_label_templates",
-				Columns:    []*schema.Column{LabelTemplatesColumns[12]},
+				Columns:    []*schema.Column{LabelTemplatesColumns[15]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "label_templates_users_label_templates",
-				Columns:    []*schema.Column{LabelTemplatesColumns[13]},
+				Columns:    []*schema.Column{LabelTemplatesColumns[16]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},

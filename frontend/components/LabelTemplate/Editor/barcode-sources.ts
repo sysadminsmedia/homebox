@@ -15,21 +15,34 @@ export interface BarcodeContentSource {
 /** Sentinel used by the editor UI for a value typed by the user; the renderer prints it as is. */
 export const FIXED_VALUE_SOURCE = "__fixed__";
 
-export const itemBarcodeContentSources: BarcodeContentSource[] = [
-  { value: "item_url", labelKey: "item_url", contentType: "any" },
+// Items and locations are both entities and share every field. Only the page
+// links differ, so they are listed separately.
+export const entityBarcodeContentSources: BarcodeContentSource[] = [
   { value: "asset_id", labelKey: "asset_id", contentType: "alphanumeric" },
   { value: "serial_number", labelKey: "serial_number", contentType: "alphanumeric" },
   { value: "model_number", labelKey: "model_number", contentType: "alphanumeric" },
-  { value: "id", labelKey: "item_id", contentType: "any" },
+  { value: "name", labelKey: "name", contentType: "alphanumeric" },
+  { value: "location_path", labelKey: "location_path", contentType: "any" },
+  { value: "id", labelKey: "id", contentType: "any" },
 ];
 
-export const locationBarcodeContentSources: BarcodeContentSource[] = [
+export const linkBarcodeContentSources: BarcodeContentSource[] = [
+  { value: "item_url", labelKey: "item_url", contentType: "any" },
   { value: "location_url", labelKey: "location_url", contentType: "any" },
-  { value: "location_name", labelKey: "location_name", contentType: "alphanumeric" },
-  { value: "location_path", labelKey: "location_full_path", contentType: "any" },
+  { value: "asset_url", labelKey: "asset_url", contentType: "any" },
 ];
 
-const knownSourceValues = new Set([...itemBarcodeContentSources, ...locationBarcodeContentSources].map(s => s.value));
+const allSources = [...entityBarcodeContentSources, ...linkBarcodeContentSources];
+
+// Names saved by templates from before the lists were merged; the renderer still resolves them
+const legacySources: Record<string, string> = {
+  location_name: "name",
+  item_name: "name",
+  path: "location_path",
+  url: "item_url",
+};
+
+const knownSourceValues = new Set([...allSources.map(s => s.value), ...Object.keys(legacySources)]);
 
 /** A contentSource that is not one of the named fields is a literal value the renderer encodes verbatim. */
 export function isFixedValueSource(source: string | undefined | null): boolean {
@@ -54,14 +67,15 @@ export function isSourceCompatible(source: BarcodeContentSource, format: Labelma
   return true;
 }
 
-export const compatibleItemSources = (format: LabelmakerBarcodeFormatInfo) =>
-  itemBarcodeContentSources.filter(s => isSourceCompatible(s, format));
-export const compatibleLocationSources = (format: LabelmakerBarcodeFormatInfo) =>
-  locationBarcodeContentSources.filter(s => isSourceCompatible(s, format));
+export const compatibleEntitySources = (format: LabelmakerBarcodeFormatInfo) =>
+  entityBarcodeContentSources.filter(s => isSourceCompatible(s, format));
+export const compatibleLinkSources = (format: LabelmakerBarcodeFormatInfo) =>
+  linkBarcodeContentSources.filter(s => isSourceCompatible(s, format));
 
-/** The named source for a value, or null for a fixed value. */
+/** The named source for a value (legacy names included), or undefined for a fixed value. */
 export function findSource(source: string): BarcodeContentSource | undefined {
-  return [...itemBarcodeContentSources, ...locationBarcodeContentSources].find(s => s.value === source);
+  const value = legacySources[source] ?? source;
+  return allSources.find(s => s.value === value);
 }
 
 /**
@@ -97,9 +111,12 @@ export function sampleContentForSource(source: string): string {
   const uuid = "00000000-0000-0000-0000-000000000000";
   switch (source) {
     case "item_url":
+    case "url":
       return `${origin}/item/${uuid}`;
     case "location_url":
       return `${origin}/location/${uuid}`;
+    case "asset_url":
+      return `${origin}/a/000-001`;
     case "id":
       return uuid;
     case "asset_id":
@@ -107,9 +124,12 @@ export function sampleContentForSource(source: string): string {
     case "serial_number":
     case "model_number":
       return "ABC-12345678";
+    case "name":
+    case "item_name":
     case "location_name":
       return "Garage shelf";
     case "location_path":
+    case "path":
       return "Garage > Shelf B > Box 3";
     default:
       // Fixed values are known exactly.

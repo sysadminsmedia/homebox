@@ -15,18 +15,15 @@
   } from "@/components/ui/dropdown-menu";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { DialogID } from "@/components/ui/dialog-provider/utils";
-  import LabelMaker from "~/components/global/LabelMaker.vue";
 
   const props = withDefaults(
     defineProps<{
       /** What the label is for */
       type: "item" | "location";
       id: string;
-      /** Items with an asset id get the legacy asset label instead of the item label */
-      assetId?: string;
       variant?: "default" | "outline";
     }>(),
-    { assetId: "", variant: "default" }
+    { variant: "default" }
   );
 
   const { t } = useI18n();
@@ -39,9 +36,6 @@
   const busy = ref(false);
 
   const defaultTemplate = computed(() => templates.value?.find(tpl => tpl.id === defaultTemplateId.value) ?? null);
-
-  const legacyType = computed(() => (props.type === "item" && props.assetId ? "asset" : props.type));
-  const legacyId = computed(() => (legacyType.value === "asset" ? props.assetId : props.id));
 
   function openChooser() {
     openDialog(DialogID.PrintLabelTemplate, {
@@ -99,9 +93,6 @@
 
 <template>
   <div class="flex items-center">
-    <!-- Legacy label maker dialog (the built-in QR card); its buttons are replaced by this control -->
-    <LabelMaker :id="legacyId" :type="legacyType" dialog-only />
-
     <ButtonGroup>
       <Button
         :variant="variant"
@@ -144,13 +135,6 @@
           </DropdownMenuItem>
           <DropdownMenuItem @click="downloadPng">
             {{ $t("components.label_template.print_button.download_png") }}
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem class="justify-between" @click="openDialog(DialogID.PrintLabel)">
-            {{ $t("components.label_template.print_button.basic_label") }}
-            <span class="text-xs text-muted-foreground">
-              {{ $t("components.label_template.print_button.basic_label_hint") }}
-            </span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem v-if="labelPrinting" as-child>

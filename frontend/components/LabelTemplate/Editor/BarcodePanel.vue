@@ -6,14 +6,14 @@
   import {
     FIXED_VALUE_SOURCE,
     MIN_DOTS_PER_MODULE,
-    compatibleItemSources,
-    compatibleLocationSources,
+    compatibleEntitySources,
+    compatibleLinkSources,
     dotsPerModule,
+    entityBarcodeContentSources,
     findSource,
     isFixedValueSource,
     isNumericFormat,
-    itemBarcodeContentSources,
-    locationBarcodeContentSources,
+    linkBarcodeContentSources,
     sampleContentForSource,
   } from "./barcode-sources";
 
@@ -51,18 +51,22 @@
 
   const contentSource = computed(() => String(data.value.contentSource ?? ""));
   const isFixed = computed(() => isFixedValueSource(contentSource.value));
-  const selectValue = computed(() => (isFixed.value ? FIXED_VALUE_SOURCE : contentSource.value));
+  // Legacy names such as location_name select their merged equivalent
+  const currentSource = computed(() => findSource(contentSource.value));
+  const selectValue = computed(() =>
+    isFixed.value ? FIXED_VALUE_SOURCE : (currentSource.value?.value ?? contentSource.value)
+  );
 
   // Compatible sources, plus the current one even when it no longer qualifies
   // (an older template may pair Code 128 with a URL), so the select stays readable.
-  const itemSources = computed(() => {
-    const list = format.value ? compatibleItemSources(format.value) : [];
-    const current = itemBarcodeContentSources.find(s => s.value === contentSource.value);
+  const entitySources = computed(() => {
+    const list = format.value ? compatibleEntitySources(format.value) : [];
+    const current = entityBarcodeContentSources.find(s => s === currentSource.value);
     return current && !list.includes(current) ? [...list, current] : list;
   });
-  const locationSources = computed(() => {
-    const list = format.value ? compatibleLocationSources(format.value) : [];
-    const current = locationBarcodeContentSources.find(s => s.value === contentSource.value);
+  const linkSources = computed(() => {
+    const list = format.value ? compatibleLinkSources(format.value) : [];
+    const current = linkBarcodeContentSources.find(s => s === currentSource.value);
     return current && !list.includes(current) ? [...list, current] : list;
   });
 
@@ -114,19 +118,19 @@
           <SelectValue />
         </SelectTrigger>
         <SelectContent class="max-h-80">
-          <template v-if="itemSources.length > 0">
+          <template v-if="entitySources.length > 0">
             <div class="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
-              {{ $t("components.label_template.editor.properties.item_fields") }}
+              {{ $t("components.label_template.editor.properties.entity_fields") }}
             </div>
-            <SelectItem v-for="source in itemSources" :key="source.value" :value="source.value">
+            <SelectItem v-for="source in entitySources" :key="source.value" :value="source.value">
               {{ t(`components.label_template.editor.barcode_sources.${source.labelKey}`) }}
             </SelectItem>
           </template>
-          <template v-if="locationSources.length > 0">
+          <template v-if="linkSources.length > 0">
             <div class="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
-              {{ $t("components.label_template.editor.properties.location_fields") }}
+              {{ $t("components.label_template.editor.properties.link_fields") }}
             </div>
-            <SelectItem v-for="source in locationSources" :key="source.value" :value="source.value">
+            <SelectItem v-for="source in linkSources" :key="source.value" :value="source.value">
               {{ t(`components.label_template.editor.barcode_sources.${source.labelKey}`) }}
             </SelectItem>
           </template>

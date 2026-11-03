@@ -42,6 +42,8 @@ export type LocationViewPreferences = {
   defaultTemplateId: string | null;
   // Last options of the customs inventory export dialog
   customsInventory: CustomsInventoryPrefs | null;
+  // Unit for label dimensions; null follows the locale
+  measurementSystem: "metric" | "imperial" | null;
 };
 export type PreferenceSyncConfig = Partial<Record<keyof LocationViewPreferences, boolean>>;
 type PreferenceChange = true | { [key: string]: PreferenceChange };
@@ -71,6 +73,7 @@ const DEFAULT_PREFERENCES: LocationViewPreferences = {
   savedSearches: [],
   defaultTemplateId: null,
   customsInventory: null,
+  measurementSystem: null,
 };
 let syncConfig: PreferenceSyncConfig = {
   itemDisplayView: false,

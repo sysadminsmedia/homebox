@@ -44,7 +44,8 @@ The editor has three parts:
   **Print preview** under the canvas shows the label rendered by the server for a real item.
 - **Inspector** (right): tabs for the selected **Element**, the **Layers** list and the **Label** itself.
 
-The header shows the label stock and size, a **mm / in** switch that changes every measurement in the editor, a
+The header shows the label stock and size, a **mm / in** switch that changes every measurement in the editor (it
+sets the same **Label Measurement Units** preference found on your profile, which otherwise follows your locale), a
 **Test print** button and **Save**. An amber **Unsaved changes** badge appears as soon as you edit something, and the
 browser warns you before you leave with unsaved work.
 
@@ -53,7 +54,8 @@ browser warns you before you leave with unsaved work.
 ![A text element selected, with the formatting toolbar above the canvas and the Element tab open](../../../../assets/user-guide/labels/editor-element.png)
 
 Selecting an element opens its properties in the **Element** tab: position, size and rotation in the unit you chose.
-Text elements also get a formatting toolbar above the canvas (size, bold, wrap, alignment, colour, box width) and an
+Text elements also get a formatting toolbar above the canvas (size, bold, wrap, alignment, colour, box width; the
+space it uses stays reserved when nothing is selected, so the canvas never jumps) and an
 **Auto-fit** switch that shrinks the font until the text fits its box, which keeps long item names on the label.
 
 A text element is a **frame**: drag its side handles to set the width and its top or bottom handles to set the
@@ -64,19 +66,20 @@ two lines of a long location path. Leave the height empty and the frame grows wi
 made before this version keep their old behaviour until you toggle **Wrap text** once.
 
 Text can mix fixed words with **data fields** in double braces, for example `Asset #{{asset_id}}`. Use the **Insert
-data field** menu in the toolbar or the chips in the Element tab:
+data field** menu in the toolbar or the chips in the Element tab. Items and locations are both entities, so every
+field works on either kind of label:
 
 | Field | Prints |
 | --- | --- |
-| `{{item_name}}`, `{{description}}`, `{{notes}}` | The item's name, description and notes |
+| `{{name}}`, `{{description}}`, `{{notes}}` | The name, description and notes |
 | `{{asset_id}}`, `{{serial_number}}`, `{{model_number}}`, `{{manufacturer}}` | Identification fields |
-| `{{location}}`, `{{location_path}}` | The item's location and its full path, for example `Garage > Shelf B` |
-| `{{tags}}`, `{{quantity}}` | Comma-separated tags and the quantity |
-| `{{item_url}}`, `{{location_url}}` | Links back to HomeBox, handy inside a QR code |
+| `{{location}}`, `{{location_path}}` | The location and its full path, for example `Garage > Shelf B`. On a location label this is the location itself |
+| `{{tags}}`, `{{quantity}}`, `{{item_count}}` | Comma-separated tags, the quantity, and the number of items stored there |
+| `{{item_url}}`, `{{location_url}}`, `{{asset_url}}` | Links back to HomeBox, handy inside a QR code. `{{asset_url}}` is the `/a/<asset id>` link, which keeps working if the asset ID moves to another item |
 | `{{custom_<name>}}` | Any custom field, by name |
 | `{{current_date}}`, `{{current_time}}` | When the label was printed |
 
-Location labels use `{{location_name}}`, `{{location_path}}`, `{{item_count}}` and `{{location_url}}`.
+Templates made with the older names (`{{item_name}}`, `{{location_name}}`, `{{path}}`, `{{labels}}`) keep working.
 
 **Barcodes** are added from the tool rail. Pick the symbology (QR code, DataMatrix, Code 128, Code 39, EAN-13, EAN-8
 or UPC-A) and what it should encode. Only compatible sources are offered: a numeric-only symbology such as EAN cannot
@@ -144,7 +147,6 @@ The arrow opens more options:
 - **Print with &lt;template&gt;**, the one-click quick print with your default template on the server's label printer.
 - **Choose template, copies…** opens the print dialog.
 - **Download label as PNG** renders the label with your default template.
-- **Basic label** opens HomeBox's built-in QR label card, which needs no template at all.
 
 The QR button next to it still shows a QR code for the page you are on.
 
@@ -187,9 +189,23 @@ For **sheet templates** (Avery and similar) the preview shows the first sheet. *
 on a partly used sheet, **cut guides** adds thin borders for plain paper, and you can pick Letter or A4. Sheets always
 go out as PDF or through the browser; the label printer is greyed out because the server prints one label at a time.
 
-> [!TIP]
-> The classic **Asset ID label generator** under Collection › Tools still exists for pre-printing numbered QR labels
-> before items are entered.
+#### Sheet layout and print offset
+
+The **Label** tab has a **Sheet Layout** section with the page size, columns and rows, margins and the gaps between
+labels. Templates on an Avery or similar preset start with the preset's measurements; change any of them to correct
+them for your sheets, and **Reset** to go back. Other templates can switch sheet printing on and enter their own
+sheet's measurements. Picking a different preset drops a custom layout.
+
+**Print Offset** moves every label on the page, to make up for a printer that prints a little off. Print a test page,
+measure how far the labels are from where they should be, and enter that; positive values move right and down. The
+offset applies to PDFs and sheets, not to the server's label printer.
+
+### Asset ID labels
+
+**Collection › Tools › Asset ID Labels** prints tags ahead of time for a range of asset IDs with one of your
+templates. Asset IDs already in use print with their item's fields; unused ones get a label with just the asset ID
+and `{{asset_url}}`, ready to stick on items as they arrive. Use `{{asset_id}}` and a QR code with the **Asset URL**
+source for these templates. **Skip first labels** leaves positions empty on a partly used sheet.
 
 ### Server-side printing
 
@@ -251,7 +267,8 @@ for the path next to the code.
 ## Troubleshooting
 
 **Labels do not line up on a sheet.** Use the preset for your exact Avery number, turn off cut guides, and print the
-PDF at 100% scale (no "fit to page").
+PDF at 100% scale (no "fit to page"). If they are still off by the same amount everywhere, set a **Print Offset**;
+if the error grows across the page, correct the gaps in the **Sheet Layout**.
 
 **A barcode will not scan.** Check the symbology supports the data: EAN and UPC need digits only. Make the barcode
 larger and keep white space around it.
@@ -261,9 +278,9 @@ server log first. Then run the same command by hand on the server, with a PNG fi
 file HomeBox passes is a PNG at the template's DPI, so the command and printer need to accept that. If the **Label
 printer** destination is missing, no print command is configured.
 
-**A location label prints `{{asset_id}}` or another item field as text.** Item-only fields have no value on
-a location label and print as nothing. If you see the raw placeholder, the server is older than this behaviour;
-otherwise check the spelling of the field name against the tables above.
+**A label prints a field name such as `{{asset_id}}` as text.** Unknown fields print as nothing, so if you see the
+raw placeholder the server is older than this behaviour; otherwise check the spelling of the field name against the
+table above. Fields the entity has no value for print as nothing.
 
 **The preview does not update.** Pick a preview item first; without one there is nothing to render. Use **Refresh** if
 the server was busy.

@@ -28,8 +28,10 @@ import (
 	"golang.org/x/image/font/gofont/goregular"
 )
 
-// ItemData contains all the data fields available for label rendering
-type ItemData struct {
+// EntityData contains all the data fields available for label rendering.
+// Items and locations are both entities and share the same fields; only the
+// URLs differ, since the frontend routes them to different pages.
+type EntityData struct {
 	ID              uuid.UUID         `json:"id"`
 	Name            string            `json:"name"`
 	Description     string            `json:"description"`
@@ -37,25 +39,26 @@ type ItemData struct {
 	SerialNumber    string            `json:"serialNumber"`
 	ModelNumber     string            `json:"modelNumber"`
 	Manufacturer    string            `json:"manufacturer"`
-	LocationName    string            `json:"locationName"`
-	LocationPath    []string          `json:"locationPath"`
+	IsLocation      bool              `json:"isLocation"`
+	LocationName    string            `json:"locationName"` // The entity itself for locations, otherwise its resolved location
+	LocationPath    []string          `json:"locationPath"` // Root-first path to LocationName, inclusive
 	Tags            []string          `json:"tags"`
 	CustomFields    map[string]string `json:"customFields"`
 	PrimaryImageURL *string           `json:"primaryImageUrl,omitempty"`
-	ItemURL         string            `json:"itemUrl"`
+	ItemCount       float64           `json:"itemCount"` // Quantity of non-archived items located here
 	Quantity        float64           `json:"quantity"`
 	Notes           string            `json:"notes"`
+	ItemURL         string            `json:"itemUrl"`
+	LocationURL     string            `json:"locationUrl"`
+	AssetURL        string            `json:"assetUrl"` // Stable /a/<asset id> link, set when the entity has an asset ID
 }
 
-// LocationData contains all the data fields available for location label rendering
-type LocationData struct {
-	ID          uuid.UUID `json:"id"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	Path        []string  `json:"path"`        // Hierarchy path (parent names)
-	FullPath    string    `json:"fullPath"`    // Full path as string
-	ItemCount   float64   `json:"itemCount"`   // Number of items in this location
-	LocationURL string    `json:"locationUrl"` // URL to view the location
+// URL returns the page URL that matches the entity's kind.
+func (e *EntityData) URL() string {
+	if e.IsLocation {
+		return e.LocationURL
+	}
+	return e.ItemURL
 }
 
 // TemplateData contains the template configuration
@@ -71,8 +74,7 @@ type TemplateData struct {
 
 // RenderContext contains all data needed to render a label
 type RenderContext struct {
-	Item     *ItemData     // Item data for item labels (mutually exclusive with Location)
-	Location *LocationData // Location data for location labels (mutually exclusive with Item)
+	Entity   *EntityData
 	Template *TemplateData
 }
 
@@ -163,7 +165,7 @@ func scaleSize(size float64, renderDPI int) float64 {
 	return size * float64(renderDPI) / screenDPI
 }
 
-// RenderTemplate renders a label template with item data
+// RenderTemplate renders a label template with entity data
 func (r *TemplateRenderer) RenderTemplate(ctx RenderContext) ([]byte, error) {
 	if ctx.Template == nil {
 		return nil, fmt.Errorf("template is required")
@@ -192,7 +194,7 @@ func (r *TemplateRenderer) RenderTemplate(ctx RenderContext) ([]byte, error) {
 		if border, ok := parseLabelBorder(ctx.Template.CanvasData); ok {
 			renderLabelBorder(img, border, dpi)
 		}
-		err := r.renderCanvasElements(img, ctx.Template.CanvasData, ctx.Item, ctx.Location, dpi)
+		err := r.renderCanvasElements(img, ctx.Template.CanvasData, ctx.Entity, dpi)
 		if err != nil {
 			return nil, fmt.Errorf("failed to render canvas elements: %w", err)
 		}
@@ -274,7 +276,7 @@ func renderLabelBorder(img *image.RGBA, b labelBorder, dpi int) {
 }
 
 // renderCanvasElements renders all elements from the canvas data
-func (r *TemplateRenderer) renderCanvasElements(img *image.RGBA, canvasData map[string]interface{}, item *ItemData, location *LocationData, dpi int) error {
+func (r *TemplateRenderer) renderCanvasElements(img *image.RGBA, canvasData map[string]interface{}, entity *EntityData, dpi int) error {
 	objects, ok := canvasData["objects"].([]interface{})
 	if !ok {
 		return nil // No objects to render
@@ -287,7 +289,7 @@ func (r *TemplateRenderer) renderCanvasElements(img *image.RGBA, canvasData map[
 		}
 
 		elem := parseCanvasElement(objMap)
-		if err := r.renderElement(img, elem, item, location, dpi); err != nil {
+		if err := r.renderElement(img, elem, entity, dpi); err != nil {
 			// One bad element must not spoil the label, but say why it is missing
 			// (for example a Code 128 whose content needs more modules than the
 			// element has pixels).
@@ -443,15 +445,15 @@ func originFactor(origin, start, end string) float64 {
 }
 
 // renderElement renders a single element onto the image
-func (r *TemplateRenderer) renderElement(img *image.RGBA, elem CanvasElement, item *ItemData, location *LocationData, dpi int) error {
+func (r *TemplateRenderer) renderElement(img *image.RGBA, elem CanvasElement, entity *EntityData, dpi int) error {
 	// First check custom data type - this takes priority for data_field and barcode
 	if elem.Data != nil {
 		if dataType, ok := elem.Data["type"].(string); ok {
 			switch dataType {
 			case "data_field":
-				return r.renderDataField(img, elem, item, location, dpi)
+				return r.renderDataField(img, elem, entity, dpi)
 			case "barcode":
-				return r.renderBarcode(img, elem, item, location, dpi)
+				return r.renderBarcode(img, elem, entity, dpi)
 			}
 		}
 	}
@@ -461,13 +463,13 @@ func (r *TemplateRenderer) renderElement(img *image.RGBA, elem CanvasElement, it
 
 	switch elemType {
 	case "itext", "i-text", "text", "textbox":
-		return r.renderText(img, elem, item, location, dpi)
+		return r.renderText(img, elem, entity, dpi)
 	case "rect":
 		return r.renderRect(img, elem, dpi)
 	case "line":
 		return r.renderLine(img, elem, dpi)
 	case "group":
-		return r.renderGroup(img, elem, item, location, dpi)
+		return r.renderGroup(img, elem, entity, dpi)
 	case "image":
 		return r.renderImage(img, elem, dpi)
 	}
@@ -554,15 +556,12 @@ func getAutofitConfig(elem CanvasElement) autofitConfig {
 	return cfg
 }
 
-// resolveTextContent replaces placeholders in text based on item or location data
-func (r *TemplateRenderer) resolveTextContent(text string, item *ItemData, location *LocationData) string {
-	if item != nil {
-		return r.replaceDataPlaceholders(text, item)
+// resolveTextContent replaces placeholders in text with the entity's values
+func (r *TemplateRenderer) resolveTextContent(text string, entity *EntityData) string {
+	if entity == nil {
+		return text
 	}
-	if location != nil {
-		return r.replaceLocationPlaceholders(text, location)
-	}
-	return text
+	return r.replaceDataPlaceholders(text, entity)
 }
 
 // prepareTextRender computes all values needed for text rendering
@@ -815,9 +814,9 @@ func (r *TemplateRenderer) renderTextRotated(img *image.RGBA, elem CanvasElement
 }
 
 // renderText renders a text element
-func (r *TemplateRenderer) renderText(img *image.RGBA, elem CanvasElement, item *ItemData, location *LocationData, dpi int) error {
+func (r *TemplateRenderer) renderText(img *image.RGBA, elem CanvasElement, entity *EntityData, dpi int) error {
 	// Resolve text content with placeholder replacement
-	text := r.resolveTextContent(elem.Text, item, location)
+	text := r.resolveTextContent(elem.Text, entity)
 	if text == "" {
 		return nil
 	}
@@ -947,7 +946,7 @@ func (r *TemplateRenderer) findOptimalFontSize(text string, fontFace *truetype.F
 }
 
 // renderDataField renders a data field element with word wrap and auto-fit support
-func (r *TemplateRenderer) renderDataField(img *image.RGBA, elem CanvasElement, item *ItemData, location *LocationData, dpi int) error {
+func (r *TemplateRenderer) renderDataField(img *image.RGBA, elem CanvasElement, entity *EntityData, dpi int) error {
 	if elem.Data == nil {
 		return nil
 	}
@@ -955,15 +954,10 @@ func (r *TemplateRenderer) renderDataField(img *image.RGBA, elem CanvasElement, 
 	field, _ := elem.Data["field"].(string)
 	var value string
 
-	// Get field value from item or location
-	switch {
-	case item != nil:
-		value = r.getFieldValue(field, item)
-	case location != nil:
-		value = r.getLocationFieldValue(field, location)
-	default:
+	if entity == nil {
 		return nil
 	}
+	value = r.getFieldValue(field, entity)
 
 	if value == "" {
 		return nil
@@ -973,11 +967,11 @@ func (r *TemplateRenderer) renderDataField(img *image.RGBA, elem CanvasElement, 
 	textElem := elem
 	textElem.Text = value
 
-	return r.renderText(img, textElem, item, location, dpi)
+	return r.renderText(img, textElem, entity, dpi)
 }
 
 // renderBarcode renders a barcode element
-func (r *TemplateRenderer) renderBarcode(img *image.RGBA, elem CanvasElement, item *ItemData, location *LocationData, dpi int) error {
+func (r *TemplateRenderer) renderBarcode(img *image.RGBA, elem CanvasElement, entity *EntityData, dpi int) error {
 	if elem.Data == nil {
 		return nil
 	}
@@ -985,13 +979,7 @@ func (r *TemplateRenderer) renderBarcode(img *image.RGBA, elem CanvasElement, it
 	format, _ := elem.Data["format"].(string)
 	contentSource, _ := elem.Data["contentSource"].(string)
 
-	// Get barcode content based on source - try item first, then location
-	var content string
-	if item != nil {
-		content = r.getBarcodeContent(contentSource, item)
-	} else if location != nil {
-		content = r.getLocationBarcodeContent(contentSource, location)
-	}
+	content := r.getBarcodeContent(contentSource, entity)
 
 	if content == "" {
 		// Nothing to encode: usually a missing HBOX_OPTIONS_HOSTNAME for URL sources, or a
@@ -1022,6 +1010,8 @@ func (r *TemplateRenderer) renderBarcode(img *image.RGBA, elem CanvasElement, it
 	barcodeImg, err := GenerateBarcode(BarcodeFormat(format), content, opts)
 	if err != nil {
 		// Draw placeholder on error
+		log.Warn().Err(err).Str("format", format).Str("source", contentSource).
+			Msg("label template barcode could not be generated, drawing a placeholder")
 		barcodeImg = CreatePlaceholderBarcode(width, height, BarcodeFormat(format))
 	}
 
@@ -1219,11 +1209,11 @@ func (r *TemplateRenderer) renderLine(img *image.RGBA, elem CanvasElement, dpi i
 }
 
 // renderGroup renders a group element (which may contain a barcode)
-func (r *TemplateRenderer) renderGroup(img *image.RGBA, elem CanvasElement, item *ItemData, location *LocationData, dpi int) error {
+func (r *TemplateRenderer) renderGroup(img *image.RGBA, elem CanvasElement, entity *EntityData, dpi int) error {
 	// Check if this group is a barcode
 	if elem.Data != nil {
 		if dataType, ok := elem.Data["type"].(string); ok && dataType == "barcode" {
-			return r.renderBarcode(img, elem, item, location, dpi)
+			return r.renderBarcode(img, elem, entity, dpi)
 		}
 	}
 
@@ -1245,39 +1235,55 @@ func formatNumber(v float64) string {
 	return strconv.FormatFloat(v, 'f', -1, 64)
 }
 
+// fieldValues returns every named field for an entity. Keys are the field
+// names used by data fields, {{placeholders}} and barcode sources; several
+// aliases are kept so templates saved before items and locations merged into
+// entities keep rendering.
+func fieldValues(entity *EntityData) map[string]string {
+	path := strings.Join(entity.LocationPath, " > ")
+	tags := strings.Join(entity.Tags, ", ")
+	now := time.Now()
+
+	return map[string]string{
+		"name":          entity.Name,
+		"item_name":     entity.Name,
+		"description":   entity.Description,
+		"asset_id":      entity.AssetID,
+		"serial_number": entity.SerialNumber,
+		"model_number":  entity.ModelNumber,
+		"manufacturer":  entity.Manufacturer,
+		"location":      entity.LocationName,
+		"location_name": entity.LocationName,
+		"location_path": path,
+		"path":          path,
+		"tags":          tags,
+		"labels":        tags, // legacy alias
+		"quantity":      formatNumber(entity.Quantity),
+		"item_count":    formatNumber(entity.ItemCount),
+		"notes":         entity.Notes,
+		"id":            entity.ID.String(),
+		"item_url":      entity.ItemURL,
+		"location_url":  entity.LocationURL,
+		"asset_url":     entity.AssetURL,
+		"url":           entity.URL(),
+		"current_date":  now.Format("2006-01-02"),
+		"current_time":  now.Format("15:04"),
+	}
+}
+
 // replaceDataPlaceholders replaces {{field}} placeholders with actual values
-func (r *TemplateRenderer) replaceDataPlaceholders(text string, item *ItemData) string {
-	if item == nil {
+func (r *TemplateRenderer) replaceDataPlaceholders(text string, entity *EntityData) string {
+	if entity == nil {
 		return text
 	}
 
-	replacements := map[string]string{
-		"{{item_name}}":     item.Name,
-		"{{name}}":          item.Name,
-		"{{description}}":   item.Description,
-		"{{asset_id}}":      item.AssetID,
-		"{{serial_number}}": item.SerialNumber,
-		"{{model_number}}":  item.ModelNumber,
-		"{{manufacturer}}":  item.Manufacturer,
-		"{{location}}":      item.LocationName,
-		"{{location_name}}": item.LocationName,
-		"{{location_path}}": strings.Join(item.LocationPath, " > "),
-		"{{tags}}":          strings.Join(item.Tags, ", "),
-		"{{labels}}":        strings.Join(item.Tags, ", "), // legacy alias
-		"{{item_url}}":      item.ItemURL,
-		"{{quantity}}":      formatNumber(item.Quantity),
-		"{{notes}}":         item.Notes,
-		"{{current_date}}":  time.Now().Format("2006-01-02"),
-		"{{current_time}}":  time.Now().Format("15:04"),
-	}
-
 	result := text
-	for placeholder, value := range replacements {
-		result = strings.ReplaceAll(result, placeholder, value)
+	for field, value := range fieldValues(entity) {
+		result = strings.ReplaceAll(result, "{{"+field+"}}", value)
 	}
 
 	// Handle custom fields
-	for key, value := range item.CustomFields {
+	for key, value := range entity.CustomFields {
 		placeholder := fmt.Sprintf("{{custom_%s}}", key)
 		result = strings.ReplaceAll(result, placeholder, value)
 	}
@@ -1288,155 +1294,46 @@ func (r *TemplateRenderer) replaceDataPlaceholders(text string, item *ItemData) 
 // placeholderPattern matches any {{field}} token left after substitution.
 var placeholderPattern = regexp.MustCompile(`\{\{[A-Za-z0-9_]+\}\}`)
 
-// stripUnknownPlaceholders removes placeholders that have no value in the current context,
-// so an item template used for a location (or the reverse) does not print "{{asset_id}}" literally.
+// stripUnknownPlaceholders removes placeholders that have no value, such as an
+// unknown custom field, so the label does not print "{{custom_x}}" literally.
 func stripUnknownPlaceholders(text string) string {
 	return placeholderPattern.ReplaceAllString(text, "")
 }
 
 // getFieldValue returns the value for a specific field name
-func (r *TemplateRenderer) getFieldValue(field string, item *ItemData) string {
-	if item == nil {
+func (r *TemplateRenderer) getFieldValue(field string, entity *EntityData) string {
+	if entity == nil {
 		return ""
 	}
 
-	switch field {
-	case "item_name", "name":
-		return item.Name
-	case "description":
-		return item.Description
-	case "asset_id":
-		return item.AssetID
-	case "serial_number":
-		return item.SerialNumber
-	case "model_number":
-		return item.ModelNumber
-	case "manufacturer":
-		return item.Manufacturer
-	case "location", "location_name":
-		return item.LocationName
-	case "location_path":
-		return strings.Join(item.LocationPath, " > ")
-	case "tags", "labels":
-		return strings.Join(item.Tags, ", ")
-	case "item_url":
-		return item.ItemURL
-	case "quantity":
-		return formatNumber(item.Quantity)
-	case "notes":
-		return item.Notes
-	case "current_date":
-		return time.Now().Format("2006-01-02")
-	case "current_time":
-		return time.Now().Format("15:04")
-	default:
-		// Check custom fields
-		if strings.HasPrefix(field, "custom_") {
-			key := strings.TrimPrefix(field, "custom_")
-			if value, ok := item.CustomFields[key]; ok {
-				return value
-			}
-		}
-		return ""
-	}
-}
-
-// replaceLocationPlaceholders replaces {{field}} placeholders with location data
-func (r *TemplateRenderer) replaceLocationPlaceholders(text string, location *LocationData) string {
-	if location == nil {
-		return text
+	if value, ok := fieldValues(entity)[field]; ok {
+		return value
 	}
 
-	replacements := map[string]string{
-		"{{location_name}}": location.Name,
-		"{{name}}":          location.Name,
-		"{{description}}":   location.Description,
-		"{{location_path}}": location.FullPath,
-		"{{path}}":          location.FullPath,
-		"{{item_count}}":    formatNumber(location.ItemCount),
-		"{{location_url}}":  location.LocationURL,
-		"{{current_date}}":  time.Now().Format("2006-01-02"),
-		"{{current_time}}":  time.Now().Format("15:04"),
+	// Check custom fields
+	if key, ok := strings.CutPrefix(field, "custom_"); ok {
+		return entity.CustomFields[key]
 	}
 
-	result := text
-	for placeholder, value := range replacements {
-		result = strings.ReplaceAll(result, placeholder, value)
-	}
-
-	return stripUnknownPlaceholders(result)
-}
-
-// getLocationFieldValue returns the value for a specific field name from location data
-func (r *TemplateRenderer) getLocationFieldValue(field string, location *LocationData) string {
-	if location == nil {
-		return ""
-	}
-
-	switch field {
-	case "location_name", "name":
-		return location.Name
-	case "description":
-		return location.Description
-	case "location_path", "path":
-		return location.FullPath
-	case "item_count":
-		return formatNumber(location.ItemCount)
-	case "location_url":
-		return location.LocationURL
-	case "current_date":
-		return time.Now().Format("2006-01-02")
-	case "current_time":
-		return time.Now().Format("15:04")
-	default:
-		return ""
-	}
-}
-
-// getLocationBarcodeContent returns the content for a barcode based on source type for locations
-func (r *TemplateRenderer) getLocationBarcodeContent(source string, location *LocationData) string {
-	if location == nil {
-		return ""
-	}
-
-	switch source {
-	case "location_url":
-		return location.LocationURL
-	case "location_name", "name":
-		return location.Name
-	case "location_path", "path":
-		return location.FullPath
-	case "id":
-		return location.ID.String()
-	default:
-		return location.LocationURL // Default to URL for QR codes
-	}
+	return ""
 }
 
 // getBarcodeContent returns the content for a barcode based on source type
-func (r *TemplateRenderer) getBarcodeContent(source string, item *ItemData) string {
-	if item == nil {
+func (r *TemplateRenderer) getBarcodeContent(source string, entity *EntityData) string {
+	if entity == nil {
 		return ""
 	}
 
-	switch source {
-	case "url", "item_url":
-		return item.ItemURL
-	case "asset_id":
-		return item.AssetID
-	case "serial_number":
-		return item.SerialNumber
-	case "model_number":
-		return item.ModelNumber
-	case "id":
-		return item.ID.String()
-	default:
-		// If source looks like a custom value, return it directly
-		if source != "" && !strings.HasPrefix(source, "{{") {
-			return source
-		}
-		return item.ItemURL
+	if value, ok := fieldValues(entity)[source]; ok {
+		return value
 	}
+
+	// Any other source is a fixed value typed in the editor and encoded verbatim
+	if source != "" && !strings.HasPrefix(source, "{{") {
+		return source
+	}
+
+	return entity.URL()
 }
 
 // parseColor parses a color string (hex or named) into a color.Color
@@ -1486,11 +1383,11 @@ func parseColor(s string) color.Color {
 
 // RenderPreview renders a template preview with sample data
 func (r *TemplateRenderer) RenderPreview(template *TemplateData) ([]byte, error) {
-	sampleItem := &ItemData{
+	sample := &EntityData{
 		ID:           uuid.New(),
 		Name:         "Sample Item",
 		Description:  "This is a sample item for preview",
-		AssetID:      "A-001234",
+		AssetID:      "000-001",
 		SerialNumber: "SN123456789",
 		ModelNumber:  "MODEL-X100",
 		Manufacturer: "Acme Corp",
@@ -1501,31 +1398,16 @@ func (r *TemplateRenderer) RenderPreview(template *TemplateData) ([]byte, error)
 			"color": "Blue",
 			"size":  "Medium",
 		},
-		ItemURL:  "https://example.com/items/sample",
-		Quantity: 1,
-		Notes:    "Sample notes for preview",
+		ItemCount:   1,
+		Quantity:    1,
+		Notes:       "Sample notes for preview",
+		ItemURL:     "https://example.com/item/sample",
+		LocationURL: "https://example.com/location/sample",
+		AssetURL:    "https://example.com/a/000-001",
 	}
 
 	return r.RenderTemplate(RenderContext{
-		Item:     sampleItem,
-		Template: template,
-	})
-}
-
-// RenderLocationPreview renders a template preview with sample location data
-func (r *TemplateRenderer) RenderLocationPreview(template *TemplateData) ([]byte, error) {
-	sampleLocation := &LocationData{
-		ID:          uuid.New(),
-		Name:        "Storage Room",
-		Description: "Main storage area for electronics",
-		Path:        []string{"Building A", "Floor 2"},
-		FullPath:    "Building A > Floor 2 > Storage Room",
-		ItemCount:   42,
-		LocationURL: "https://example.com/locations/sample",
-	}
-
-	return r.RenderTemplate(RenderContext{
-		Location: sampleLocation,
+		Entity:   sample,
 		Template: template,
 	})
 }

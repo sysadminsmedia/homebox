@@ -209,9 +209,3 @@ export function useLabelPresetLookup() {
 
   return { presets, pending, find, title };
 }
-
-/** "62 × 29 mm" */
-export function formatLabelSize(width: number, height: number): string {
-  const fmt = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(1));
-  return `${fmt(width)} × ${fmt(height)} mm`;
-}

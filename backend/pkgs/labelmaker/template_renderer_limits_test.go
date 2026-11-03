@@ -72,7 +72,7 @@ func TestRenderTemplateRejectsOversizedOutput(t *testing.T) {
 
 func TestRenderElementsWithExtremeScaleAreBounded(t *testing.T) {
 	r := newLimitsRenderer(t)
-	item := &ItemData{ID: uuid.New(), Name: "x", ItemURL: "https://example.test/item/1"}
+	item := &EntityData{ID: uuid.New(), Name: "x", ItemURL: "https://example.test/item/1"}
 	huge := map[string]interface{}{"scaleX": 1e5, "scaleY": 1e5, keyOriginX: topLeft, keyOriginY: "top"}
 
 	cases := map[string]map[string]interface{}{
@@ -84,7 +84,7 @@ func TestRenderElementsWithExtremeScaleAreBounded(t *testing.T) {
 		withinBudget(t, name, func() {
 			img := whiteLabel(400, 200)
 			elem := parseCanvasElement(obj)
-			require.NoError(t, r.renderElement(img, elem, item, nil, 300))
+			require.NoError(t, r.renderElement(img, elem, item, 300))
 			if name == "rect" {
 				// The clipped fill still landed: the rect covers the whole label.
 				assert.Equal(t, color.RGBA{0, 0, 0, 255}, img.RGBAAt(200, 100))
@@ -95,7 +95,7 @@ func TestRenderElementsWithExtremeScaleAreBounded(t *testing.T) {
 
 func TestRenderElementsFarOutsideLabelAreSkippedQuickly(t *testing.T) {
 	r := newLimitsRenderer(t)
-	item := &ItemData{ID: uuid.New(), Name: "x", ItemURL: "https://example.test/item/1"}
+	item := &EntityData{ID: uuid.New(), Name: "x", ItemURL: "https://example.test/item/1"}
 	far := map[string]interface{}{keyOriginX: topLeft, keyOriginY: "top"}
 
 	cases := map[string]map[string]interface{}{
@@ -109,7 +109,7 @@ func TestRenderElementsFarOutsideLabelAreSkippedQuickly(t *testing.T) {
 		withinBudget(t, name, func() {
 			img := whiteLabel(400, 200)
 			elem := parseCanvasElement(obj)
-			require.NoError(t, r.renderElement(img, elem, item, nil, 300))
+			require.NoError(t, r.renderElement(img, elem, item, 300))
 			// Nothing may land on the label.
 			box, inked := inkBounds(img)
 			assert.Falsef(t, inked, "%s drew at %v although it lies outside the label", name, box)
@@ -143,7 +143,7 @@ func TestRenderRotatedTextFrameWithBadWidthIsBounded(t *testing.T) {
 			elem := parseCanvasElement(obj)
 			// Refusing the element or drawing nothing are both fine; a large
 			// allocation or a panic is not.
-			_ = r.renderElement(img, elem, nil, nil, 300)
+			_ = r.renderElement(img, elem, nil, 300)
 		})
 	}
 }

@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/ardanlabs/conf/v3"
@@ -258,6 +259,30 @@ type AuthRateLimit struct {
 	MaxBackoff  time.Duration `yaml:"max_backoff"  conf:"default:5m"`
 }
 
+// loadEnvFiles sets <prefix>_<NAME> from the contents of the file named by <prefix>_<NAME>_FILE,
+// so secrets can be supplied as files (Docker/Kubernetes secrets, systemd credentials) instead of
+// plain environment variables. The _FILE variant takes precedence, and trailing newlines are trimmed.
+func loadEnvFiles(prefix string) error {
+	for _, kv := range os.Environ() {
+		key, path, _ := strings.Cut(kv, "=")
+		name, ok := strings.CutSuffix(key, "_FILE")
+		if !ok || !strings.HasPrefix(name, prefix+"_") {
+			continue
+		}
+
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return fmt.Errorf("reading %s: %w", key, err)
+		}
+
+		if err := os.Setenv(name, strings.TrimRight(string(data), "\r\n")); err != nil {
+			return fmt.Errorf("setting %s from %s: %w", name, key, err)
+		}
+	}
+
+	return nil
+}
+
 // New parses the CLI/Config file and returns a Config struct. If the file argument is an empty string, the
 // file is not read. If the file is not empty, the file is read and the Config struct is returned.
 func New(buildstr string, description string) (*Config, error) {
@@ -267,6 +292,10 @@ func New(buildstr string, description string) (*Config, error) {
 	cfg.Version = conf.Version{
 		Build: buildstr,
 		Desc:  description,
+	}
+
+	if err := loadEnvFiles(prefix); err != nil {
+		return &cfg, fmt.Errorf("loading config from files: %w", err)
 	}
 
 	help, err := conf.Parse(prefix, &cfg)

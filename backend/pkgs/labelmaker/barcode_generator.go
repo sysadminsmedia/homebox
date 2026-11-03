@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"strings"
 
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/code128"
@@ -12,6 +13,8 @@ import (
 	"github.com/boombuler/barcode/datamatrix"
 	"github.com/boombuler/barcode/ean"
 	"github.com/boombuler/barcode/qr"
+	"github.com/rs/zerolog/log"
+	"golang.org/x/image/draw"
 )
 
 // BarcodeFormat represents supported barcode types
@@ -79,13 +82,74 @@ func GenerateBarcode(format BarcodeFormat, content string, opts BarcodeOptions) 
 
 	// Scale to target size
 	if opts.Width > 0 && opts.Height > 0 {
-		bc, err = barcode.Scale(bc, opts.Width, opts.Height)
-		if err != nil {
-			return nil, fmt.Errorf("failed to scale barcode: %w", err)
-		}
+		return scaleToFit(bc, format, opts.Width, opts.Height)
 	}
 
 	return bc, nil
+}
+
+// scaleToFit scales a barcode into a width x height box. barcode.Scale only
+// scales by whole modules, so it refuses boxes smaller than one pixel per
+// module (e.g. a long URL in Code 128 on a small label). In that case the code
+// is shrunk to fit anyway so the label shows it rather than an empty box, and a
+// warning is logged because bars under a pixel wide may not scan.
+func scaleToFit(bc barcode.Barcode, format BarcodeFormat, width, height int) (image.Image, error) {
+	if scaled, err := barcode.Scale(bc, width, height); err == nil {
+		return scaled, nil
+	}
+
+	bounds := bc.Bounds()
+	var src image.Image = bc
+	target := image.Rect(0, 0, width, height)
+
+	if bounds.Dy() == 1 {
+		// 1D codes are one pixel tall; give them full height before shrinking the width
+		tall, err := barcode.Scale(bc, bounds.Dx(), height)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scale barcode: %w", err)
+		}
+		src = tall
+	} else {
+		// 2D codes must stay square; centre them in the box
+		side := min(width, height)
+		offset := image.Pt((width-side)/2, (height-side)/2)
+		target = image.Rectangle{Min: offset, Max: offset.Add(image.Pt(side, side))}
+	}
+
+	log.Warn().
+		Str("format", string(format)).
+		Int("modules", bounds.Dx()).
+		Int("width", width).
+		Msg("barcode is wider than its box at one pixel per module; shrinking to fit, it may not scan")
+
+	dst := image.NewRGBA(image.Rect(0, 0, width, height))
+	draw.Draw(dst, dst.Bounds(), image.White, image.Point{}, draw.Src)
+	draw.NearestNeighbor.Scale(dst, target, src, src.Bounds(), draw.Src, nil)
+	return dst, nil
+}
+
+// normalizeNumeric prepares content for digit-only formats. Formatting
+// characters such as the dash in asset IDs ("000-123") are dropped and short
+// values are left-padded with zeros to dataLen, the digit count before the
+// check digit. Any other non-digit character is an error.
+func normalizeNumeric(content string, dataLen int) (string, error) {
+	digits := strings.Map(func(r rune) rune {
+		if r == '-' || r == ' ' {
+			return -1
+		}
+		return r
+	}, content)
+
+	for _, r := range digits {
+		if r < '0' || r > '9' {
+			return "", fmt.Errorf("content %q is not numeric", content)
+		}
+	}
+
+	if len(digits) < dataLen {
+		digits = strings.Repeat("0", dataLen-len(digits)) + digits
+	}
+	return digits, nil
 }
 
 // generateQR creates a QR code
@@ -110,6 +174,10 @@ func generateDataMatrix(content string) (barcode.Barcode, error) {
 
 // generateEAN13 creates an EAN-13 barcode
 func generateEAN13(content string) (barcode.Barcode, error) {
+	content, err := normalizeNumeric(content, 12)
+	if err != nil {
+		return nil, err
+	}
 	// EAN-13 requires exactly 12 or 13 digits
 	if len(content) < 12 || len(content) > 13 {
 		return nil, fmt.Errorf("EAN-13 requires 12 or 13 digits, got %d", len(content))
@@ -119,6 +187,10 @@ func generateEAN13(content string) (barcode.Barcode, error) {
 
 // generateEAN8 creates an EAN-8 barcode
 func generateEAN8(content string) (barcode.Barcode, error) {
+	content, err := normalizeNumeric(content, 7)
+	if err != nil {
+		return nil, err
+	}
 	// EAN-8 requires exactly 7 or 8 digits
 	if len(content) < 7 || len(content) > 8 {
 		return nil, fmt.Errorf("EAN-8 requires 7 or 8 digits, got %d", len(content))
@@ -128,6 +200,10 @@ func generateEAN8(content string) (barcode.Barcode, error) {
 
 // generateUPCA creates a UPC-A barcode (via EAN-13 with leading zero)
 func generateUPCA(content string) (barcode.Barcode, error) {
+	content, err := normalizeNumeric(content, 11)
+	if err != nil {
+		return nil, err
+	}
 	// UPC-A requires exactly 11 or 12 digits
 	if len(content) < 11 || len(content) > 12 {
 		return nil, fmt.Errorf("UPC-A requires 11 or 12 digits, got %d", len(content))
