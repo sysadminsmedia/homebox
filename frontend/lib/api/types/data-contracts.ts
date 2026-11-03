@@ -183,7 +183,6 @@ export interface CustomsInventoryPreview {
   contentCount: number;
   currency: string;
   cutoff: string;
-  dutiableItemCount: number;
   /** sum of the dutiable line quantities */
   dutiablePieceCount: number;
   dutiableTotalCents: number;

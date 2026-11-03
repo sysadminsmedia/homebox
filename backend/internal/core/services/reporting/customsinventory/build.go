@@ -605,9 +605,6 @@ func (r Report) Preview() Preview {
 		p.LineCount += len(g.Lines)
 	}
 	p.LineCount += len(r.Dutiable)
-	for _, l := range r.Dutiable {
-		p.DutiableItemCount += len(l.MemberIDs)
-	}
 	for _, l := range allReportLines(r) {
 		p.ContentCount += len(l.Contents)
 	}

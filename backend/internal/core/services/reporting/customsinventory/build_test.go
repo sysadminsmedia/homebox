@@ -358,7 +358,7 @@ func TestPreview_MatchesReport(t *testing.T) {
 	assert.Equal(t, "2026-05-15", p.Cutoff)
 	assert.Equal(t, r.ItemCount, p.ItemCount)
 	assert.Equal(t, 13, p.LineCount)
-	assert.Equal(t, 6, p.DutiableItemCount)
+	assert.InDelta(t, r.DutiableQty, p.DutiablePieceCount, 0)
 	assert.Equal(t, 4, p.ExcludedCount)
 	assert.Equal(t, 5, p.ReceiptCount)
 	assert.Equal(t, r.DutyFreeTotalCents, p.DutyFreeTotalCents)
