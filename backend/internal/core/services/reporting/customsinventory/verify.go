@@ -3,6 +3,7 @@ package customsinventory
 import (
 	"errors"
 	"fmt"
+	"slices"
 
 	"github.com/google/uuid"
 )
@@ -14,7 +15,7 @@ func invariant(letter, format string, args ...any) error {
 	return fmt.Errorf("invariant (%s): %s: %w", letter, fmt.Sprintf(format, args...), ErrSelfCheck)
 }
 
-// Verify checks the report's invariants (NFR-1 (a)–(h)). The messages carry
+// Verify checks the report's invariants (NFR-1 (a)–(i)). The messages carry
 // counts and IDs only, never names or prices.
 func Verify(r Report) error {
 	lines := allReportLines(r)
@@ -55,6 +56,11 @@ func Verify(r Report) error {
 		if l.LineCents != LineCents(l.Quantity, l.UnitCents) {
 			return invariant("b", "line %d value doesn't recompute", l.Pos)
 		}
+	}
+
+	// (i) is checked before the sums, which a wrong rolled-up value would also break.
+	if err := verifyContents(lines); err != nil {
+		return err
 	}
 
 	// (c) group subtotals
@@ -149,10 +155,42 @@ func verifyQuantities(r Report) error {
 	return nil
 }
 
+// verifyContents checks invariant (i): each member's unit value is its own
+// price per piece plus its contents' values, every member with contents has
+// quantity 1, and every content's owner is a member of that line.
+func verifyContents(lines []Line) error {
+	for _, l := range lines {
+		if len(l.MemberOwnCents) != len(l.MemberIDs) {
+			return invariant("i", "line %d has %d members and %d own values", l.Pos, len(l.MemberIDs), len(l.MemberOwnCents))
+		}
+		contentCents := make(map[uuid.UUID]int64, len(l.MemberIDs))
+		hasContents := make(map[uuid.UUID]bool, len(l.MemberIDs))
+		for _, c := range l.Contents {
+			if !slices.Contains(l.MemberIDs, c.OwnerID) {
+				return invariant("i", "line %d has content whose owner isn't a member", l.Pos)
+			}
+			contentCents[c.OwnerID] += LineCents(c.Quantity, c.UnitCents)
+			hasContents[c.OwnerID] = true
+		}
+		for k, id := range l.MemberIDs {
+			if l.UnitCents != l.MemberOwnCents[k]+contentCents[id] {
+				return invariant("i", "line %d member %d unit value isn't its own value plus its contents", l.Pos, k+1)
+			}
+			if hasContents[id] && l.MemberQuantities[k] != 1 {
+				return invariant("i", "line %d member %d has contents but quantity isn't 1", l.Pos, k+1)
+			}
+		}
+	}
+	return nil
+}
+
 func memberAndExcludedIDs(r Report, lines []Line) []uuid.UUID {
 	var ids []uuid.UUID
 	for _, l := range lines {
 		ids = append(ids, l.MemberIDs...)
+		for _, c := range l.Contents {
+			ids = append(ids, c.ID)
+		}
 	}
 	for _, e := range r.Excluded {
 		ids = append(ids, e.ID)
