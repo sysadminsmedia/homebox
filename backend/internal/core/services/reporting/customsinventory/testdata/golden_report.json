@@ -41,7 +41,11 @@
           ],
           "MemberQuantities": [
             4
-          ]
+          ],
+          "MemberOwnCents": [
+            8950
+          ],
+          "Contents": null
         },
         {
           "Pos": 2,
@@ -70,7 +74,11 @@
           ],
           "MemberQuantities": [
             1
-          ]
+          ],
+          "MemberOwnCents": [
+            120000
+          ],
+          "Contents": null
         },
         {
           "Pos": 3,
@@ -97,7 +105,11 @@
           ],
           "MemberQuantities": [
             1
-          ]
+          ],
+          "MemberOwnCents": [
+            89000
+          ],
+          "Contents": null
         }
       ],
       "SubtotalCents": 244800,
@@ -172,7 +184,24 @@
             1,
             1,
             1
-          ]
+          ],
+          "MemberOwnCents": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "Contents": null
         },
         {
           "Pos": 5,
@@ -201,7 +230,11 @@
           ],
           "MemberQuantities": [
             1
-          ]
+          ],
+          "MemberOwnCents": [
+            500
+          ],
+          "Contents": null
         },
         {
           "Pos": 6,
@@ -228,7 +261,11 @@
           ],
           "MemberQuantities": [
             2.5
-          ]
+          ],
+          "MemberOwnCents": [
+            33
+          ],
+          "Contents": null
         }
       ],
       "SubtotalCents": 583,
@@ -258,7 +295,11 @@
           ],
           "MemberQuantities": [
             1
-          ]
+          ],
+          "MemberOwnCents": [
+            3000
+          ],
+          "Contents": null
         }
       ],
       "SubtotalCents": 3000,
@@ -293,7 +334,11 @@
       ],
       "MemberQuantities": [
         1
-      ]
+      ],
+      "MemberOwnCents": [
+        0
+      ],
+      "Contents": null
     },
     {
       "Pos": 9,
@@ -322,7 +367,11 @@
       ],
       "MemberQuantities": [
         1
-      ]
+      ],
+      "MemberOwnCents": [
+        0
+      ],
+      "Contents": null
     },
     {
       "Pos": 10,
@@ -354,7 +403,11 @@
       ],
       "MemberQuantities": [
         1
-      ]
+      ],
+      "MemberOwnCents": [
+        64990
+      ],
+      "Contents": null
     },
     {
       "Pos": 11,
@@ -385,7 +438,11 @@
       ],
       "MemberQuantities": [
         1
-      ]
+      ],
+      "MemberOwnCents": [
+        4550
+      ],
+      "Contents": null
     },
     {
       "Pos": 12,
@@ -416,7 +473,11 @@
       ],
       "MemberQuantities": [
         1
-      ]
+      ],
+      "MemberOwnCents": [
+        7900
+      ],
+      "Contents": null
     },
     {
       "Pos": 13,
@@ -445,7 +506,11 @@
       ],
       "MemberQuantities": [
         1
-      ]
+      ],
+      "MemberOwnCents": [
+        0
+      ],
+      "Contents": null
     }
   ],
   "DutyFreeTotalCents": 248383,

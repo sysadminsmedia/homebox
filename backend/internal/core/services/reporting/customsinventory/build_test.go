@@ -259,11 +259,11 @@ func TestBuild_Issues(t *testing.T) {
 	}
 	var want []IssueCode
 	for _, c := range IssueOrder {
-		if c != IssueNegativeValue && c != IssueZeroQuantity {
+		if !slices.Contains([]IssueCode{IssueNegativeValue, IssueZeroQuantity, IssueContentSplit, IssueContainerQuantity}, c) {
 			want = append(want, c)
 		}
 	}
-	assert.Equal(t, want, codes, "every code except negative_value and zero_quantity, in order")
+	assert.Equal(t, want, codes, "every code except negative_value, zero_quantity and the rollup codes, in order")
 
 	assert.Equal(t, []string{"Office chair"}, issueNames(r, IssueMissingPurchaseDate))
 	assert.Equal(t, []string{nameEspresso}, issueNames(r, IssueConflictDateTag))

@@ -25,6 +25,14 @@ type entry struct {
 	receiptNames []string     // ZIP names, parallel to receipts; empty when receipts are off
 	links        []Attachment
 	comment      string
+
+	// Contents (FR-27 to FR-36). Without RollUpContents, parent and owner
+	// stay nil and lineUnitCents equals unitCents.
+	parent        *entry   // the included parent, or nil
+	isParent      bool     // some included entry has this one as parent
+	owner         *entry   // the line member this entry is absorbed into, or nil
+	contents      []*entry // entries absorbed into this one, when it's a member
+	lineUnitCents int64    // unitCents + the value of contents
 }
 
 type groupAcc struct {
@@ -117,14 +125,8 @@ func Build(in Input) (Report, error) {
 	}
 
 	var entries []*entry
-	seen := make(map[uuid.UUID]bool, len(in.ScopeIDs))
-	for _, sid := range in.ScopeIDs {
-		if seen[sid] {
-			continue
-		}
-		seen[sid] = true
-		r.ScopeIDs = append(r.ScopeIDs, sid)
-
+	r.ScopeIDs = universe(in, byID)
+	for _, sid := range r.ScopeIDs {
 		it, ok := byID[sid]
 		if code, excluded := exclusion(it, ok); excluded {
 			ex := Excluded{ID: sid, Code: code}
@@ -135,7 +137,18 @@ func Build(in Input) (Report, error) {
 			issues.add(code, IssueItem{ID: ex.ID, AssetID: ex.AssetID, Name: ex.Name})
 			continue
 		}
-		entries = append(entries, newEntry(it, rules, receiptTypes, minMonths))
+		entries = append(entries, newEntry(it, receiptTypes))
+	}
+	linkParents(entries, o.RollUpContents)
+	for _, e := range entries {
+		it := e.it // a copy: tag grouping (FR-4) keeps using the item's own tags
+		it.TagIDs = effectiveTags(e)
+		e.class = Classify(it, rules)
+	}
+	assignOwners(entries)
+	computeValues(entries)
+	for _, e := range entries {
+		e.comment = entryComment(e, minMonths)
 	}
 	r.ItemCount = len(entries)
 	slices.SortFunc(r.Excluded, func(a, b Excluded) int {
@@ -145,7 +158,13 @@ func Build(in Input) (Report, error) {
 	assignReceiptNames(entries, o.IncludeReceipts)
 	itemIssues(entries, issues, o.IncludeReceipts)
 
-	groups := groupEntries(entries, o, tags)
+	var members []*entry
+	for _, e := range entries {
+		if e.owner == nil {
+			members = append(members, e)
+		}
+	}
+	groups := groupEntries(members, o, tags)
 	pos := 0
 	for _, g := range groups {
 		firstWord := o.MergeIdentical && o.MergeFirstWord
@@ -220,21 +239,16 @@ func exclusion(it Item, found bool) (IssueCode, bool) {
 	}
 }
 
-func newEntry(it Item, rules Rules, receiptTypes []string, minMonths int) *entry {
+// newEntry derives what doesn't depend on other entries. Classification,
+// values and the comment follow once parents are linked.
+func newEntry(it Item, receiptTypes []string) *entry {
 	e := &entry{
 		it:         it,
 		name:       normalizeName(it.Name),
 		firstWord:  FirstWord(it.Name),
-		class:      Classify(it, rules),
 		unitCents:  ToCents(it.PurchasePrice),
 		location:   strings.Join(it.LocationPath, " › "),
 		assetLabel: assetLabel(it),
-	}
-	e.hasPrice = e.unitCents != 0
-
-	e.comment = ReasonComment(e.class, minMonths)
-	if !e.hasPrice {
-		e.comment = strings.TrimPrefix(e.comment+"; Wert fehlt", "; ")
 	}
 
 	for _, a := range it.Attachments {
@@ -251,6 +265,22 @@ func newEntry(it Item, rules Rules, receiptTypes []string, minMonths int) *entry
 		return cmp.Or(a.CreatedAt.Compare(b.CreatedAt), strings.Compare(a.ID.String(), b.ID.String()))
 	})
 	return e
+}
+
+// entryComment joins the reason, a missing value and, for a member inside
+// another included entity, that entity's label (FR-32).
+func entryComment(e *entry, minMonths int) string {
+	var parts []string
+	if c := ReasonComment(e.class, minMonths); c != "" {
+		parts = append(parts, c)
+	}
+	if !e.hasPrice {
+		parts = append(parts, "Wert fehlt")
+	}
+	if e.owner == nil && e.parent != nil {
+		parts = append(parts, "Inhalt von "+e.parent.assetLabel)
+	}
+	return strings.Join(parts, "; ")
 }
 
 // assignReceiptNames names every bundled receipt (FR-19). Items that share an
@@ -291,7 +321,7 @@ func itemIssues(entries []*entry, issues *issueSet, include bool) {
 			}
 			issues.add(code, item)
 		}
-		if !e.hasPrice {
+		if e.unitCents == 0 && (len(e.contents) == 0 || e.lineUnitCents == 0) {
 			issues.add(IssueMissingPrice, ref)
 		}
 		if e.unitCents < 0 || e.it.Quantity < 0 {
@@ -312,6 +342,16 @@ func itemIssues(entries []*entry, issues *issueSet, include bool) {
 			item := ref
 			item.Detail = e.links[0].Title
 			issues.add(IssueReceiptIsLink, item)
+		}
+		if e.parent != nil && e.parent.class.Status != e.class.Status {
+			item := ref
+			item.Detail = e.parent.assetLabel
+			issues.add(IssueContentSplit, item)
+		}
+		if e.isParent && e.it.Quantity != 1 {
+			item := ref
+			item.Detail = FormatQtyDE(e.it.Quantity)
+			issues.add(IssueContainerQuantity, item)
 		}
 	}
 }
@@ -388,7 +428,7 @@ func makeLines(entries []*entry, merge, firstWord bool) []Line {
 		if firstWord {
 			name = e.firstWord
 		}
-		k := mergeKey{e.it.EntityTypeID, strings.ToLower(name), e.class.Status, e.unitCents}
+		k := mergeKey{e.it.EntityTypeID, strings.ToLower(name), e.class.Status, e.lineUnitCents}
 		if i, ok := index[k]; ok {
 			buckets[i] = append(buckets[i], e)
 			continue
@@ -422,28 +462,38 @@ func lineFrom(members []*entry, firstWord bool) Line {
 	l := Line{
 		Name:           name,
 		EntityTypeName: first.it.EntityTypeName,
-		UnitCents:      first.unitCents,
+		UnitCents:      first.lineUnitCents,
 		HasPrice:       first.hasPrice,
 		Status:         first.class.Status,
 		Reason:         first.class.Reason,
 	}
 
-	var qty float64
+	var qty, contentQty float64
 	var assetIDs []int64
 	var dates []types.Date
 	for _, m := range members {
 		qty += m.it.Quantity
 		l.MemberIDs = append(l.MemberIDs, m.it.ID)
 		l.MemberQuantities = append(l.MemberQuantities, m.it.Quantity)
+		l.MemberOwnCents = append(l.MemberOwnCents, m.unitCents)
 		l.Locations = appendUnique(l.Locations, m.location)
 		l.Comments = appendUnique(l.Comments, m.comment)
 		l.ReceiptNames = append(l.ReceiptNames, m.receiptNames...)
+		for _, c := range m.contents {
+			l.Contents = append(l.Contents, Content{ID: c.it.ID, OwnerID: m.it.ID, Quantity: c.it.Quantity, UnitCents: c.unitCents})
+			l.Comments = appendUnique(l.Comments, c.comment)
+			l.ReceiptNames = append(l.ReceiptNames, c.receiptNames...)
+			contentQty += c.it.Quantity
+		}
 		if m.it.AssetID > 0 {
 			assetIDs = append(assetIDs, m.it.AssetID)
 		}
 		if d := m.it.PurchaseDate; !d.Time().IsZero() && !slices.ContainsFunc(dates, func(x types.Date) bool { return x.Time().Equal(d.Time()) }) {
 			dates = append(dates, d)
 		}
+	}
+	if len(l.Contents) > 0 {
+		l.Comments = append(l.Comments, contentsLabel(contentQty))
 	}
 	l.Quantity = RoundQty(qty)
 	l.LineCents = LineCents(l.Quantity, l.UnitCents)
@@ -464,18 +514,25 @@ func lineFrom(members []*entry, firstWord bool) Line {
 	return l
 }
 
-// collectReceipts lists the bundled receipts in line order.
+// collectReceipts lists the bundled receipts in line order: each member's,
+// then those of its contents (FR-33).
 func collectReceipts(r Report, entries []*entry) []ReceiptFile {
 	byID := make(map[uuid.UUID]*entry, len(entries))
 	for _, e := range entries {
 		byID[e.it.ID] = e
 	}
 	var out []ReceiptFile
+	add := func(e *entry) {
+		for i, a := range e.receipts {
+			out = append(out, ReceiptFile{Name: e.receiptNames[i], AttachmentID: a.ID, ItemID: e.it.ID})
+		}
+	}
 	for _, l := range allReportLines(r) {
 		for _, m := range l.MemberIDs {
 			e := byID[m]
-			for i, a := range e.receipts {
-				out = append(out, ReceiptFile{Name: e.receiptNames[i], AttachmentID: a.ID, ItemID: e.it.ID})
+			add(e)
+			for _, c := range e.contents {
+				add(c)
 			}
 		}
 	}
@@ -550,6 +607,9 @@ func (r Report) Preview() Preview {
 	p.LineCount += len(r.Dutiable)
 	for _, l := range r.Dutiable {
 		p.DutiableItemCount += len(l.MemberIDs)
+	}
+	for _, l := range allReportLines(r) {
+		p.ContentCount += len(l.Contents)
 	}
 	return p
 }

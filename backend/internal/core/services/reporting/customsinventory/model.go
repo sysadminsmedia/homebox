@@ -77,6 +77,8 @@ const (
 	IssueDuplicateAssetID        IssueCode = "duplicate_asset_id"
 	IssueDutiableWithoutReceipt  IssueCode = "dutiable_without_receipt"
 	IssueReceiptIsLink           IssueCode = "receipt_is_link"
+	IssueContentSplit            IssueCode = "content_split"
+	IssueContainerQuantity       IssueCode = "container_quantity"
 	IssueExcludedLocation        IssueCode = "excluded_location"
 	IssueExcludedArchived        IssueCode = "excluded_archived"
 	IssueExcludedSold            IssueCode = "excluded_sold"
@@ -96,6 +98,8 @@ var IssueOrder = []IssueCode{
 	IssueDuplicateAssetID,
 	IssueDutiableWithoutReceipt,
 	IssueReceiptIsLink,
+	IssueContentSplit,
+	IssueContainerQuantity,
 	IssueExcludedLocation,
 	IssueExcludedArchived,
 	IssueExcludedSold,
@@ -110,10 +114,11 @@ const (
 )
 
 // SeverityOf returns the severity of an issue code: info for excluded
-// entities, warning for everything else.
+// entities and for containers whose contents are listed separately, warning
+// for everything else.
 func SeverityOf(c IssueCode) Severity {
 	switch c {
-	case IssueExcludedLocation, IssueExcludedArchived, IssueExcludedSold, IssueExcludedNotFound:
+	case IssueContainerQuantity, IssueExcludedLocation, IssueExcludedArchived, IssueExcludedSold, IssueExcludedNotFound:
 		return SeverityInfo
 	default:
 		return SeverityWarning
@@ -157,6 +162,7 @@ type Options struct {
 	MinMonths       int         `json:"minMonths"`     // 0 → DefaultMinMonths; allowed 1..MaxMinMonths
 	MergeIdentical  bool        `json:"mergeIdentical"`
 	MergeFirstWord  bool        `json:"mergeFirstWord"` // only with MergeIdentical: match on the first word of the name
+	RollUpContents  bool        `json:"rollUpContents"` // load the contents of the scope items and roll them into their containers
 	IncludeReceipts bool        `json:"includeReceipts"`
 	ReceiptTypes    []string    `json:"receiptTypes"`
 }
@@ -219,6 +225,7 @@ type Preview struct {
 	LineCount          int     `json:"lineCount"`
 	DutiableItemCount  int     `json:"dutiableItemCount"`
 	PieceCount         float64 `json:"pieceCount"`         // sum of all line quantities
+	ContentCount       int     `json:"contentCount"`       // entities absorbed into a container line
 	DutiablePieceCount float64 `json:"dutiablePieceCount"` // sum of the dutiable line quantities
 	ExcludedCount      int     `json:"excludedCount"`
 	ReceiptCount       int     `json:"receiptCount"`
@@ -257,6 +264,7 @@ type Attachment struct {
 
 type Item struct {
 	ID             uuid.UUID
+	ParentID       uuid.UUID // the parent entity (an item or a location), or uuid.Nil
 	AssetID        int64
 	Name           string
 	EntityTypeID   uuid.UUID
@@ -331,6 +339,15 @@ type Line struct {
 	Reason           Reason
 	MemberIDs        []uuid.UUID
 	MemberQuantities []float64
+	MemberOwnCents   []int64   // each member's own price per piece, parallel to MemberIDs
+	Contents         []Content // entities absorbed into the members, by member
+}
+
+// Content is an entity absorbed into a line member (FR-30, FR-31).
+type Content struct {
+	ID, OwnerID uuid.UUID
+	Quantity    float64
+	UnitCents   int64 // its own price per piece
 }
 
 type Excluded struct {

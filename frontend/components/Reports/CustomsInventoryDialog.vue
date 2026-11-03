@@ -69,6 +69,15 @@
               </p>
             </div>
           </div>
+          <div class="flex items-start gap-2">
+            <Checkbox id="customs-roll-up" v-model="prefs.rollUpContents" class="mt-0.5" />
+            <div>
+              <Label for="customs-roll-up" class="cursor-pointer">
+                {{ $t("components.reports.customs_inventory.roll_up") }}
+              </Label>
+              <p class="text-xs text-muted-foreground">{{ $t("components.reports.customs_inventory.roll_up_hint") }}</p>
+            </div>
+          </div>
         </fieldset>
 
         <fieldset class="space-y-3">
@@ -196,6 +205,9 @@
               </div>
               <div class="text-lg font-semibold">
                 {{ preview.lineCount }} / {{ formatQty(preview.pieceCount, locale) }}
+              </div>
+              <div v-if="preview.contentCount > 0" class="text-xs text-muted-foreground">
+                {{ $t("components.reports.customs_inventory.kpi_contents", { count: preview.contentCount }) }}
               </div>
             </div>
             <div class="rounded-lg border p-3">

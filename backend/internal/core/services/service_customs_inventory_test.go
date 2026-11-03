@@ -33,6 +33,8 @@ type customsFixture struct {
 	chairs   uuid.UUID // 3 × 89.50, 2020-05-01, Shipment A
 	espresso uuid.UUID // 1 × 649.90, 2026-09-02, Shipment A + owned (conflict)
 	lamp     uuid.UUID // 1 × 20.00, no date, owned
+	itemType uuid.UUID
+	living   uuid.UUID
 }
 
 func newCustomsFixture(t testing.TB) customsFixture {
@@ -54,8 +56,9 @@ func newCustomsFixture(t testing.TB) customsFixture {
 		return e.ID
 	}
 	home := newEntity("Home", uuid.Nil, locType.ID)
-	living := newEntity("Living room", home, locType.ID)
+	f.living = newEntity("Living room", home, locType.ID)
 	office := newEntity("Office", home, locType.ID)
+	f.itemType = itemType.ID
 
 	newTag := func(name string) uuid.UUID {
 		tg, err := tRepos.Tags.Create(bg, g.ID, repo.TagCreate{Name: name})
@@ -65,23 +68,10 @@ func newCustomsFixture(t testing.TB) customsFixture {
 	f.shipment = newTag("Shipment A")
 	f.owned = newTag("owned > 2 years")
 
-	newItem := func(name string, loc uuid.UUID, asset int64, qty, price float64, bought string, tags ...uuid.UUID) uuid.UUID {
-		id := newEntity(name, loc, itemType.ID)
-		upd := tClient.Entity.UpdateOneID(id).SetQuantity(qty).SetPurchasePrice(price).AddTagIDs(tags...)
-		if bought != "" {
-			d, err := time.Parse(time.DateOnly, bought)
-			require.NoError(t, err)
-			upd.SetPurchaseDate(d)
-		}
-		_, err := upd.Save(bg)
-		require.NoError(t, err)
-		require.NoError(t, tRepos.Entities.SetAssetID(bg, g.ID, id, repo.AssetID(asset)))
-		return id
-	}
-	f.clock = newItem("Grandfather clock", living, 1, 1, 1200.00, "2019-03-12", f.shipment)
-	f.chairs = newItem("Dining chair", living, 2, 3, 89.50, "2020-05-01", f.shipment)
-	f.espresso = newItem("Espresso machine", office, 3, 1, 649.90, "2026-09-02", f.shipment, f.owned)
-	f.lamp = newItem("Old lamp", office, 4, 1, 20.00, "", f.owned)
+	f.clock = f.newItem(t, "Grandfather clock", f.living, 1, 1, 1200.00, "2019-03-12", f.shipment)
+	f.chairs = f.newItem(t, "Dining chair", f.living, 2, 3, 89.50, "2020-05-01", f.shipment)
+	f.espresso = f.newItem(t, "Espresso machine", office, 3, 1, 649.90, "2026-09-02", f.shipment, f.owned)
+	f.lamp = f.newItem(t, "Old lamp", office, 4, 1, 20.00, "", f.owned)
 
 	_, err = tRepos.Attachments.Create(bg, f.clock,
 		repo.ItemCreateAttachment{Title: "rechnung.pdf", Content: bytes.NewReader([]byte(customsPDF))},
@@ -89,6 +79,37 @@ func newCustomsFixture(t testing.TB) customsFixture {
 	require.NoError(t, err)
 
 	return f
+}
+
+// newItem creates an item under parent (a location or another item).
+func (f customsFixture) newItem(t testing.TB, name string, parent uuid.UUID, asset int64, qty, price float64, bought string, tags ...uuid.UUID) uuid.UUID {
+	t.Helper()
+	e, err := tRepos.Entities.Create(f.ctx, f.ctx.GID, repo.EntityCreate{Name: name, ParentID: parent, EntityTypeID: f.itemType})
+	require.NoError(t, err)
+	upd := tClient.Entity.UpdateOneID(e.ID).SetQuantity(qty).SetPurchasePrice(price).AddTagIDs(tags...)
+	if bought != "" {
+		d, err := time.Parse(time.DateOnly, bought)
+		require.NoError(t, err)
+		upd.SetPurchaseDate(d)
+	}
+	_, err = upd.Save(f.ctx)
+	require.NoError(t, err)
+	require.NoError(t, tRepos.Entities.SetAssetID(f.ctx, f.ctx.GID, e.ID, repo.AssetID(asset)))
+	return e.ID
+}
+
+type customsBox struct{ box, book, pouch, pen uuid.UUID }
+
+// withBox adds a moving box in the living room holding books and a pouch with
+// pens. Contents value: 3 × 10.00 + 2.00 + 2 × 1.25 = 34.50.
+func withBox(t testing.TB, f customsFixture) customsBox {
+	t.Helper()
+	var b customsBox
+	b.box = f.newItem(t, "Moving box", f.living, 5, 1, 0, "2019-01-01", f.shipment)
+	b.book = f.newItem(t, "Book", b.box, 6, 3, 10.00, "2019-01-01")
+	b.pouch = f.newItem(t, "Pouch", b.box, 7, 1, 2.00, "2019-01-01")
+	b.pen = f.newItem(t, "Pen", b.pouch, 8, 2, 1.25, "2019-01-01")
+	return b
 }
 
 func (f customsFixture) request(ids ...uuid.UUID) customsinventory.Request {
@@ -303,4 +324,52 @@ func BenchmarkCustomsInventoryPreview1000(b *testing.B) {
 			b.Fatal(err)
 		}
 	}
+}
+
+func TestCustomsInventory_RollUpContents(t *testing.T) {
+	f := newCustomsFixture(t)
+	box := withBox(t, f).box
+	req := f.request(box)
+	req.Options.RollUpContents = true
+	p, err := customsService().Preview(f.ctx, req)
+	require.NoError(t, err)
+	assert.Equal(t, 1, p.LineCount)
+	assert.Equal(t, 3, p.ContentCount)
+	assert.Equal(t, 4, p.ItemCount)
+	assert.Equal(t, int64(3450), p.GrandTotalCents)
+}
+
+func TestCustomsInventory_RollUpByQuery(t *testing.T) {
+	f := newCustomsFixture(t)
+	withBox(t, f)
+	req := f.request()
+	req.Scope = customsinventory.Scope{Query: &customsinventory.ScopeQuery{TagIDs: []uuid.UUID{f.shipment}}}
+	req.Options.RollUpContents = true
+	p, err := customsService().Preview(f.ctx, req)
+	require.NoError(t, err)
+	assert.Equal(t, 3, p.ContentCount)
+	assert.Equal(t, 4, p.LineCount, "clock, chairs, espresso, box")
+}
+
+func TestCustomsInventory_RollUpCountsTowardLimit(t *testing.T) {
+	f := newCustomsFixture(t)
+	box := withBox(t, f).box
+	req := f.request(box)
+	req.Options.RollUpContents = true
+	svc := customsService()
+	svc.maxScope = 3
+	_, err := svc.Preview(f.ctx, req)
+	require.ErrorIs(t, err, customsinventory.ErrScopeTooLarge)
+}
+
+func TestCustomsInventory_RollUpOffByDefault(t *testing.T) {
+	f := newCustomsFixture(t)
+	box := withBox(t, f).box
+	p, err := customsService().Preview(f.ctx, f.request(box))
+	require.NoError(t, err)
+	assert.Equal(t, 0, p.ContentCount)
+	assert.Equal(t, int64(0), p.GrandTotalCents)
+	missing := issueByCode(p, customsinventory.IssueMissingPrice)
+	require.NotNil(t, missing)
+	assert.Equal(t, "Moving box", missing.Items[0].Name)
 }

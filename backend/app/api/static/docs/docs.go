@@ -3891,6 +3891,8 @@ const docTemplate = `{
                 "duplicate_asset_id",
                 "dutiable_without_receipt",
                 "receipt_is_link",
+                "content_split",
+                "container_quantity",
                 "excluded_location",
                 "excluded_archived",
                 "excluded_sold",
@@ -3908,6 +3910,8 @@ const docTemplate = `{
                 "IssueDuplicateAssetID",
                 "IssueDutiableWithoutReceipt",
                 "IssueReceiptIsLink",
+                "IssueContentSplit",
+                "IssueContainerQuantity",
                 "IssueExcludedLocation",
                 "IssueExcludedArchived",
                 "IssueExcludedSold",
@@ -3978,12 +3982,20 @@ const docTemplate = `{
                 "referenceDate": {
                     "description": "YYYY-MM-DD",
                     "type": "string"
+                },
+                "rollUpContents": {
+                    "description": "load the contents of the scope items and roll them into their containers",
+                    "type": "boolean"
                 }
             }
         },
         "customsinventory.Preview": {
             "type": "object",
             "properties": {
+                "contentCount": {
+                    "description": "entities absorbed into a container line",
+                    "type": "integer"
+                },
                 "currency": {
                     "type": "string"
                 },
