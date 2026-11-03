@@ -24,6 +24,7 @@ func TestVerify_RejectsCorruption(t *testing.T) {
 		"invariant (e)": func(r *Report) { r.GrandTotalCents++ },
 		"invariant (f)": func(r *Report) { r.Receipts = r.Receipts[1:] },
 		"invariant (g)": func(r *Report) { r.Receipts = append(r.Receipts, r.Receipts[0]) },
+		"invariant (h)": func(r *Report) { r.Groups[0].SubtotalQty++ },
 	}
 	for want, mutate := range cases {
 		r := mustBuild(t, goldenInput())
@@ -32,4 +33,12 @@ func TestVerify_RejectsCorruption(t *testing.T) {
 		require.Error(t, err, want)
 		assert.Contains(t, err.Error(), want)
 	}
+}
+
+func TestVerify_RejectsWrongTotalQuantity(t *testing.T) {
+	r := mustBuild(t, goldenInput())
+	r.TotalQty++
+	err := Verify(r)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "invariant (h)")
 }

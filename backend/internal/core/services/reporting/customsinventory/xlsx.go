@@ -52,7 +52,7 @@ var (
 )
 
 type sheetStyles struct {
-	bold, money, boldMoney, date int
+	bold, boldQty, money, boldMoney, date int
 }
 
 // sheetWriter writes the sheet top to bottom. The stream writer keeps each
@@ -126,9 +126,14 @@ func (w *sheetWriter) bold(s string) excelize.Cell {
 	return excelize.Cell{StyleID: w.st.bold, Value: s}
 }
 
-// total writes a bold label in A and a bold value in I.
-func (w *sheetWriter) total(label string, cents int64, formula string) int {
-	return w.put(w.bold(label), nil, nil, nil, nil, nil, nil, nil, w.money(cents, formula, true))
+// total writes a bold label in A, a bold quantity sum in B and a bold value in I.
+func (w *sheetWriter) total(label string, qty float64, qtyFormula string, cents int64, formula string) int {
+	return w.put(
+		w.bold(label),
+		excelize.Cell{StyleID: w.st.boldQty, Formula: qtyFormula, Value: RoundQty(qty)},
+		nil, nil, nil, nil, nil, nil,
+		w.money(cents, formula, true),
+	)
 }
 
 func (w *sheetWriter) headers(currency string) {
@@ -141,16 +146,17 @@ func (w *sheetWriter) headers(currency string) {
 }
 
 // section writes the lines and their subtotal row, and returns the subtotal row.
-func (w *sheetWriter) section(lines []Line, label string, cents int64) int {
+func (w *sheetWriter) section(lines []Line, label string, qty float64, cents int64) int {
 	first := w.row
 	for _, l := range lines {
 		w.line(l)
 	}
-	formula := "0"
+	qtyFormula, formula := "0", "0"
 	if len(lines) > 0 {
+		qtyFormula = fmt.Sprintf("SUBTOTAL(9,B%d:B%d)", first, w.row-1)
 		formula = fmt.Sprintf("SUBTOTAL(9,I%d:I%d)", first, w.row-1)
 	}
-	return w.total(label, cents, formula)
+	return w.total(label, qty, qtyFormula, cents, formula)
 }
 
 func newStyles(f *excelize.File) (sheetStyles, error) {
@@ -162,6 +168,7 @@ func newStyles(f *excelize.File) (sheetStyles, error) {
 		style excelize.Style
 	}{
 		{&st.bold, excelize.Style{Font: &excelize.Font{Bold: true}}},
+		{&st.boldQty, excelize.Style{Font: &excelize.Font{Bold: true}}}, // line quantities have no number format either
 		{&st.money, excelize.Style{NumFmt: moneyFmt}},
 		{&st.boldMoney, excelize.Style{NumFmt: moneyFmt, Font: &excelize.Font{Bold: true}}},
 		{&st.date, excelize.Style{CustomNumFmt: &dateFmt}},
@@ -196,6 +203,14 @@ func headerAddress(address string) string {
 	return strings.Join(lines, ", ")
 }
 
+func lineCount(r Report) int {
+	n := len(r.Dutiable)
+	for _, g := range r.Groups {
+		n += len(g.Lines)
+	}
+	return n
+}
+
 // WriteXLSX writes the report as a workbook with one sheet (FR-13 to FR-17).
 func WriteXLSX(r Report) ([]byte, error) {
 	f := excelize.NewFile()
@@ -227,35 +242,44 @@ func WriteXLSX(r Report) ([]byte, error) {
 		"Referenzdatum / reference date: " + FormatDE(r.ReferenceDate),
 		fmt.Sprintf("Stichtag / cut-off (%d Monate / months): %s", r.MinMonths, FormatDE(r.Cutoff)),
 		"Währung / currency: " + r.Currency,
-		fmt.Sprintf("Erstellt / generated: %s · %d Artikel / items", r.GeneratedAt.UTC().Format("02.01.2006"), r.ItemCount),
+		fmt.Sprintf("Erstellt / generated: %s · %d Positionen / lines · %s Stück / pieces",
+			r.GeneratedAt.UTC().Format("02.01.2006"), lineCount(r), FormatQtyDE(r.TotalQty)),
 	}, " · "))
 	w.put()
 
 	firstGroupRow := w.row
-	subtotals := make([]string, 0, len(r.Groups))
+	subtotalRows := make([]int, 0, len(r.Groups))
 	for _, g := range r.Groups {
 		w.put(w.bold(g.Title))
 		w.headers(r.Currency)
-		subtotals = append(subtotals, fmt.Sprintf("I%d", w.section(g.Lines, LabelSubtotal, g.SubtotalCents)))
+		subtotalRows = append(subtotalRows, w.section(g.Lines, LabelSubtotal, g.SubtotalQty, g.SubtotalCents))
 		w.put()
 	}
-	dutyFreeFormula := "0"
-	switch {
-	case len(subtotals) == 0:
-	case len(subtotals) <= maxFunctionArgs:
-		dutyFreeFormula = "SUM(" + strings.Join(subtotals, ",") + ")"
-	default:
-		// More groups than a function takes arguments: add up the subtotal rows by their label.
-		dutyFreeFormula = fmt.Sprintf(`SUMIF(A%d:A%d,"%s",I%d:I%d)`, firstGroupRow, w.row-1, LabelSubtotal, firstGroupRow, w.row-1)
+	// sumSubtotals adds up one column of the subtotal rows.
+	sumSubtotals := func(col string) string {
+		switch {
+		case len(subtotalRows) == 0:
+			return "0"
+		case len(subtotalRows) <= maxFunctionArgs:
+			refs := make([]string, len(subtotalRows))
+			for i, row := range subtotalRows {
+				refs[i] = fmt.Sprintf("%s%d", col, row)
+			}
+			return "SUM(" + strings.Join(refs, ",") + ")"
+		default:
+			// More groups than a function takes arguments: add up the subtotal rows by their label.
+			return fmt.Sprintf(`SUMIF(A%d:A%d,"%s",%s%d:%s%d)`, firstGroupRow, w.row-1, LabelSubtotal, col, firstGroupRow, col, w.row-1)
+		}
 	}
-	dutyFreeRow := w.total(LabelDutyFreeTotal, r.DutyFreeTotalCents, dutyFreeFormula)
+	dutyFreeRow := w.total(LabelDutyFreeTotal, r.DutyFreeQty, sumSubtotals("B"), r.DutyFreeTotalCents, sumSubtotals("I"))
 	w.put()
 
 	w.put(w.bold(LabelDutiable))
 	w.headers(r.Currency)
-	dutiableRow := w.section(r.Dutiable, LabelDutiableTotal, r.DutiableTotalCents)
+	dutiableRow := w.section(r.Dutiable, LabelDutiableTotal, r.DutiableQty, r.DutiableTotalCents)
 	w.put()
-	w.total(LabelGrandTotal, r.GrandTotalCents, fmt.Sprintf("I%d+I%d", dutyFreeRow, dutiableRow))
+	w.total(LabelGrandTotal, r.TotalQty, fmt.Sprintf("B%d+B%d", dutyFreeRow, dutiableRow),
+		r.GrandTotalCents, fmt.Sprintf("I%d+I%d", dutyFreeRow, dutiableRow))
 
 	if w.err != nil {
 		return nil, w.err

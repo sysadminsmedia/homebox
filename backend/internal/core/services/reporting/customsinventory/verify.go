@@ -14,7 +14,7 @@ func invariant(letter, format string, args ...any) error {
 	return fmt.Errorf("invariant (%s): %s: %w", letter, fmt.Sprintf(format, args...), ErrSelfCheck)
 }
 
-// Verify checks the report's invariants (NFR-1 (a)–(g)). The messages carry
+// Verify checks the report's invariants (NFR-1 (a)–(h)). The messages carry
 // counts and IDs only, never names or prices.
 func Verify(r Report) error {
 	lines := allReportLines(r)
@@ -114,6 +114,37 @@ func Verify(r Report) error {
 			return invariant("g", "receipt name used twice")
 		}
 		unique[rf.Name] = true
+	}
+
+	return verifyQuantities(r)
+}
+
+// verifyQuantities checks invariant (h): the quantity sums of the groups, of
+// both sections and of the whole sheet match their lines.
+func verifyQuantities(r Report) error {
+	var dutyFreeQty float64
+	for i, g := range r.Groups {
+		var sum float64
+		for _, l := range g.Lines {
+			sum += l.Quantity
+		}
+		if RoundQty(sum) != RoundQty(g.SubtotalQty) {
+			return invariant("h", "group %d quantity doesn't match its lines", i+1)
+		}
+		dutyFreeQty += g.SubtotalQty
+	}
+	if RoundQty(dutyFreeQty) != RoundQty(r.DutyFreeQty) {
+		return invariant("h", "duty-free quantity doesn't match the groups")
+	}
+	var dutiableQty float64
+	for _, l := range r.Dutiable {
+		dutiableQty += l.Quantity
+	}
+	if RoundQty(dutiableQty) != RoundQty(r.DutiableQty) {
+		return invariant("h", "dutiable quantity doesn't match its lines")
+	}
+	if RoundQty(r.TotalQty) != RoundQty(r.DutyFreeQty+r.DutiableQty) {
+		return invariant("h", "total quantity isn't duty-free + dutiable")
 	}
 	return nil
 }

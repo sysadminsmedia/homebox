@@ -40,3 +40,14 @@ func TestRoundQty(t *testing.T) {
 	assert.InDelta(t, 0.3, RoundQty(0.1+0.2), 0)
 	assert.InDelta(t, 1.5, RoundQty(0.5+0.5+0.5), 0)
 }
+
+func TestFormatQtyDE(t *testing.T) {
+	a, b, c := 2.5, 0.1, 0.2 // variables, so the sums carry float noise (constants would be exact)
+	cases := []struct {
+		in   float64
+		want string
+	}{{7, "7"}, {a, "2,5"}, {b + c, "0,3"}, {a + b + c, "2,8"}, {1e-7, "0"}, {1234.5, "1234,5"}}
+	for _, tc := range cases {
+		assert.Equal(t, tc.want, FormatQtyDE(tc.in), "%v", tc.in)
+	}
+}

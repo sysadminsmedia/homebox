@@ -3,6 +3,8 @@ package customsinventory
 import (
 	"fmt"
 	"math"
+	"strconv"
+	"strings"
 )
 
 // snap rounds x to 6 decimals to remove binary noise before the final rounding.
@@ -23,6 +25,12 @@ func LineCents(qty float64, unitCents int64) int64 {
 // RoundQty rounds a quantity to 6 decimals (CALC-5).
 func RoundQty(q float64) float64 {
 	return snap(q)
+}
+
+// FormatQtyDE renders a quantity with a German decimal comma and no
+// trailing zeros, for example "2,5".
+func FormatQtyDE(q float64) string {
+	return strings.Replace(strconv.FormatFloat(RoundQty(q), 'f', -1, 64), ".", ",", 1)
 }
 
 // FormatCents renders cents as a plain decimal string, for example "1234.50".

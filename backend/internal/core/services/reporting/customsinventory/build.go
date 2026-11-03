@@ -143,16 +143,23 @@ func Build(in Input) (Report, error) {
 			grp := Group{Title: g.title, Lines: makeLines(dutyFree, o.MergeIdentical)}
 			for i := range grp.Lines {
 				grp.SubtotalCents += grp.Lines[i].LineCents
+				grp.SubtotalQty += grp.Lines[i].Quantity
 			}
+			grp.SubtotalQty = RoundQty(grp.SubtotalQty)
 			r.Groups = append(r.Groups, grp)
 			r.DutyFreeTotalCents += grp.SubtotalCents
+			r.DutyFreeQty += grp.SubtotalQty
 		}
 		for _, l := range makeLines(dutiable, o.MergeIdentical) {
 			r.Dutiable = append(r.Dutiable, l)
 			r.DutiableTotalCents += l.LineCents
+			r.DutiableQty += l.Quantity
 		}
 	}
 	r.GrandTotalCents = r.DutyFreeTotalCents + r.DutiableTotalCents
+	r.DutyFreeQty = RoundQty(r.DutyFreeQty)
+	r.DutiableQty = RoundQty(r.DutiableQty)
+	r.TotalQty = RoundQty(r.DutyFreeQty + r.DutiableQty)
 
 	for gi := range r.Groups {
 		for li := range r.Groups[gi].Lines {
@@ -496,6 +503,8 @@ func (r Report) Preview() Preview {
 		DutyFreeTotalCents: r.DutyFreeTotalCents,
 		DutiableTotalCents: r.DutiableTotalCents,
 		GrandTotalCents:    r.GrandTotalCents,
+		PieceCount:         r.TotalQty,
+		DutiablePieceCount: r.DutiableQty,
 		Issues:             r.Issues,
 	}
 	for _, g := range r.Groups {
