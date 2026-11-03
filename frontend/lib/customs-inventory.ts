@@ -18,6 +18,7 @@ export type CustomsInventoryPrefs = {
   dutyFreeTagIds: string[];
   dutiableTagIds: string[];
   mergeIdentical: boolean;
+  mergeFirstWord: boolean;
   includeReceipts: boolean;
   receiptTypes: string[];
 };
@@ -36,6 +37,7 @@ export const DEFAULT_CUSTOMS_INVENTORY_PREFS: CustomsInventoryPrefs = Object.fre
   dutyFreeTagIds: [],
   dutiableTagIds: [],
   mergeIdentical: true,
+  mergeFirstWord: false,
   includeReceipts: true,
   receiptTypes: ["receipt"],
 }) as CustomsInventoryPrefs;
@@ -108,6 +110,7 @@ export function sanitizePrefs(
     dutyFreeTagIds: knownIds(saved.dutyFreeTagIds, knownTagIds),
     dutiableTagIds: knownIds(saved.dutiableTagIds, knownTagIds),
     mergeIdentical: typeof saved.mergeIdentical === "boolean" ? saved.mergeIdentical : d.mergeIdentical,
+    mergeFirstWord: typeof saved.mergeFirstWord === "boolean" ? saved.mergeFirstWord : d.mergeFirstWord,
     includeReceipts: typeof saved.includeReceipts === "boolean" ? saved.includeReceipts : d.includeReceipts,
     receiptTypes: receiptTypes.length > 0 ? receiptTypes : [...d.receiptTypes],
   };
@@ -140,6 +143,7 @@ export function buildRequest(a: {
       referenceDate: prefs.referenceDate,
       minMonths: prefs.minMonths,
       mergeIdentical: prefs.mergeIdentical,
+      mergeFirstWord: prefs.mergeFirstWord,
       includeReceipts: prefs.includeReceipts,
       receiptTypes: [...prefs.receiptTypes],
     },

@@ -151,3 +151,16 @@ describe("formatQty", () => {
     expect(formatQty(0.1 + 0.2, "en")).toBe("0.3");
   });
 });
+
+describe("mergeFirstWord", () => {
+  test("defaults to false and keeps a saved value", () => {
+    expect(sanitizePrefs(undefined, new Set()).mergeFirstWord).toBe(false);
+    expect(sanitizePrefs({ mergeFirstWord: true }, new Set()).mergeFirstWord).toBe(true);
+    expect(sanitizePrefs({ mergeFirstWord: "yes" as unknown as boolean }, new Set()).mergeFirstWord).toBe(false);
+  });
+
+  test("is sent with the request", () => {
+    const prefs = { ...sanitizePrefs(undefined, new Set()), mergeFirstWord: true };
+    expect(buildRequest({ scope: "selected", itemIds: ["a"], search: null, prefs }).options.mergeFirstWord).toBe(true);
+  });
+});

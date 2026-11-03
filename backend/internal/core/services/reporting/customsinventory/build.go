@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"slices"
 	"strings"
+	"unicode"
 
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
@@ -14,6 +15,7 @@ import (
 type entry struct {
 	it           Item
 	name         string // trimmed, inner spaces collapsed
+	firstWord    string // FirstWord(name)
 	class        Classification
 	unitCents    int64
 	hasPrice     bool
@@ -34,6 +36,22 @@ type groupAcc struct {
 
 func normalizeName(s string) string {
 	return strings.Join(strings.Fields(s), " ")
+}
+
+// FirstWord returns the first run of letters and digits in the normalized
+// name, or the whole normalized name when it has none (FR-24).
+func FirstWord(name string) string {
+	n := normalizeName(name)
+	isWord := func(r rune) bool { return unicode.IsLetter(r) || unicode.IsDigit(r) }
+	start := strings.IndexFunc(n, isWord)
+	if start < 0 {
+		return n
+	}
+	rest := n[start:]
+	if end := strings.IndexFunc(rest, func(r rune) bool { return !isWord(r) }); end >= 0 {
+		return rest[:end]
+	}
+	return rest
 }
 
 // compareFold compares two strings ignoring case.
@@ -130,7 +148,14 @@ func Build(in Input) (Report, error) {
 	groups := groupEntries(entries, o, tags)
 	pos := 0
 	for _, g := range groups {
-		slices.SortFunc(g.entries, compareEntries)
+		firstWord := o.MergeIdentical && o.MergeFirstWord
+		if firstWord {
+			slices.SortFunc(g.entries, func(a, b *entry) int {
+				return cmp.Or(compareFold(a.firstWord, b.firstWord), compareEntries(a, b))
+			})
+		} else {
+			slices.SortFunc(g.entries, compareEntries)
+		}
 		var dutyFree, dutiable []*entry
 		for _, e := range g.entries {
 			if e.class.Status == StatusDutyFree {
@@ -140,7 +165,7 @@ func Build(in Input) (Report, error) {
 			}
 		}
 		if len(dutyFree) > 0 {
-			grp := Group{Title: g.title, Lines: makeLines(dutyFree, o.MergeIdentical)}
+			grp := Group{Title: g.title, Lines: makeLines(dutyFree, o.MergeIdentical, firstWord)}
 			for i := range grp.Lines {
 				grp.SubtotalCents += grp.Lines[i].LineCents
 				grp.SubtotalQty += grp.Lines[i].Quantity
@@ -150,7 +175,7 @@ func Build(in Input) (Report, error) {
 			r.DutyFreeTotalCents += grp.SubtotalCents
 			r.DutyFreeQty += grp.SubtotalQty
 		}
-		for _, l := range makeLines(dutiable, o.MergeIdentical) {
+		for _, l := range makeLines(dutiable, o.MergeIdentical, firstWord) {
 			r.Dutiable = append(r.Dutiable, l)
 			r.DutiableTotalCents += l.LineCents
 			r.DutiableQty += l.Quantity
@@ -199,6 +224,7 @@ func newEntry(it Item, rules Rules, receiptTypes []string, minMonths int) *entry
 	e := &entry{
 		it:         it,
 		name:       normalizeName(it.Name),
+		firstWord:  FirstWord(it.Name),
 		class:      Classify(it, rules),
 		unitCents:  ToCents(it.PurchasePrice),
 		location:   strings.Join(it.LocationPath, " › "),
@@ -348,8 +374,9 @@ type mergeKey struct {
 }
 
 // makeLines turns sorted entries of one group and status into lines,
-// merging identical items when asked (FR-7).
-func makeLines(entries []*entry, merge bool) []Line {
+// merging identical items when asked (FR-7), by the first word of the name
+// in first-word mode (FR-25).
+func makeLines(entries []*entry, merge, firstWord bool) []Line {
 	var buckets [][]*entry
 	index := map[mergeKey]int{}
 	for _, e := range entries {
@@ -357,7 +384,11 @@ func makeLines(entries []*entry, merge bool) []Line {
 			buckets = append(buckets, []*entry{e})
 			continue
 		}
-		k := mergeKey{e.it.EntityTypeID, strings.ToLower(e.name), e.class.Status, e.unitCents}
+		name := e.name
+		if firstWord {
+			name = e.firstWord
+		}
+		k := mergeKey{e.it.EntityTypeID, strings.ToLower(name), e.class.Status, e.unitCents}
 		if i, ok := index[k]; ok {
 			buckets[i] = append(buckets[i], e)
 			continue
@@ -368,7 +399,7 @@ func makeLines(entries []*entry, merge bool) []Line {
 
 	lines := make([]Line, len(buckets))
 	for i, b := range buckets {
-		lines[i] = lineFrom(b)
+		lines[i] = lineFrom(b, firstWord)
 	}
 	return lines
 }
@@ -380,10 +411,16 @@ func appendUnique(list []string, s string) []string {
 	return append(list, s)
 }
 
-func lineFrom(members []*entry) Line {
+// lineFrom builds one line. In first-word mode, members with different full
+// names share the first member's first word as the line name (FR-26).
+func lineFrom(members []*entry, firstWord bool) Line {
 	first := members[0]
+	name := first.name
+	if firstWord && slices.ContainsFunc(members, func(m *entry) bool { return !strings.EqualFold(m.name, first.name) }) {
+		name = first.firstWord
+	}
 	l := Line{
-		Name:           first.name,
+		Name:           name,
 		EntityTypeName: first.it.EntityTypeName,
 		UnitCents:      first.unitCents,
 		HasPrice:       first.hasPrice,
