@@ -37,6 +37,12 @@ const (
 	FieldOutputFormat = "output_format"
 	// FieldDpi holds the string denoting the dpi field in the database.
 	FieldDpi = "dpi"
+	// FieldSheetLayout holds the string denoting the sheet_layout field in the database.
+	FieldSheetLayout = "sheet_layout"
+	// FieldOffsetX holds the string denoting the offset_x field in the database.
+	FieldOffsetX = "offset_x"
+	// FieldOffsetY holds the string denoting the offset_y field in the database.
+	FieldOffsetY = "offset_y"
 	// FieldOwnerID holds the string denoting the owner_id field in the database.
 	FieldOwnerID = "owner_id"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
@@ -75,6 +81,9 @@ var Columns = []string{
 	FieldCanvasData,
 	FieldOutputFormat,
 	FieldDpi,
+	FieldSheetLayout,
+	FieldOffsetX,
+	FieldOffsetY,
 	FieldOwnerID,
 }
 
@@ -122,6 +131,10 @@ var (
 	DefaultOutputFormat string
 	// DefaultDpi holds the default value on creation for the "dpi" field.
 	DefaultDpi int
+	// DefaultOffsetX holds the default value on creation for the "offset_x" field.
+	DefaultOffsetX float64
+	// DefaultOffsetY holds the default value on creation for the "offset_y" field.
+	DefaultOffsetY float64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
@@ -182,6 +195,16 @@ func ByOutputFormat(opts ...sql.OrderTermOption) OrderOption {
 // ByDpi orders the results by the dpi field.
 func ByDpi(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDpi, opts...).ToFunc()
+}
+
+// ByOffsetX orders the results by the offset_x field.
+func ByOffsetX(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOffsetX, opts...).ToFunc()
+}
+
+// ByOffsetY orders the results by the offset_y field.
+func ByOffsetY(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOffsetY, opts...).ToFunc()
 }
 
 // ByOwnerID orders the results by the owner_id field.

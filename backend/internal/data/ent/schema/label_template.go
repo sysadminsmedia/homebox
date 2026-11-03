@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/schema/index"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/labelmaker"
 )
 
 // LabelTemplate holds the schema definition for the LabelTemplate entity.
@@ -64,6 +65,19 @@ func (LabelTemplate) Fields() []ent.Field {
 		field.Int("dpi").
 			Default(300).
 			Comment("Output DPI for rendering"),
+
+		// Sheet layout for printing several labels per page. Empty follows the preset's layout.
+		field.JSON("sheet_layout", &labelmaker.SheetLayout{}).
+			Optional().
+			Comment("Custom sheet layout (page size, grid, margins, gaps in mm); overrides the preset's"),
+
+		// Printer calibration, applied when labels are placed on a page
+		field.Float("offset_x").
+			Default(0).
+			Comment("Horizontal print offset in mm; positive moves labels right"),
+		field.Float("offset_y").
+			Default(0).
+			Comment("Vertical print offset in mm; positive moves labels down"),
 
 		// Owner tracking for private templates
 		field.UUID("owner_id", uuid.UUID{}).

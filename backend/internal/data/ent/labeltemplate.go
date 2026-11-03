@@ -14,6 +14,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/labeltemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/labelmaker"
 )
 
 // LabelTemplate is the model entity for the LabelTemplate schema.
@@ -43,6 +44,12 @@ type LabelTemplate struct {
 	OutputFormat string `json:"output_format,omitempty"`
 	// Output DPI for rendering
 	Dpi int `json:"dpi,omitempty"`
+	// Custom sheet layout (page size, grid, margins, gaps in mm); overrides the preset's
+	SheetLayout *labelmaker.SheetLayout `json:"sheet_layout,omitempty"`
+	// Horizontal print offset in mm; positive moves labels right
+	OffsetX float64 `json:"offset_x,omitempty"`
+	// Vertical print offset in mm; positive moves labels down
+	OffsetY float64 `json:"offset_y,omitempty"`
 	// User who created this template
 	OwnerID uuid.UUID `json:"owner_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -90,11 +97,11 @@ func (*LabelTemplate) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case labeltemplate.FieldCanvasData:
+		case labeltemplate.FieldCanvasData, labeltemplate.FieldSheetLayout:
 			values[i] = new([]byte)
 		case labeltemplate.FieldIsShared:
 			values[i] = new(sql.NullBool)
-		case labeltemplate.FieldWidth, labeltemplate.FieldHeight:
+		case labeltemplate.FieldWidth, labeltemplate.FieldHeight, labeltemplate.FieldOffsetX, labeltemplate.FieldOffsetY:
 			values[i] = new(sql.NullFloat64)
 		case labeltemplate.FieldDpi:
 			values[i] = new(sql.NullInt64)
@@ -195,6 +202,26 @@ func (_m *LabelTemplate) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Dpi = int(value.Int64)
 			}
+		case labeltemplate.FieldSheetLayout:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field sheet_layout", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.SheetLayout); err != nil {
+					return fmt.Errorf("unmarshal field sheet_layout: %w", err)
+				}
+			}
+		case labeltemplate.FieldOffsetX:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field offset_x", values[i])
+			} else if value.Valid {
+				_m.OffsetX = value.Float64
+			}
+		case labeltemplate.FieldOffsetY:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field offset_y", values[i])
+			} else if value.Valid {
+				_m.OffsetY = value.Float64
+			}
 		case labeltemplate.FieldOwnerID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field owner_id", values[i])
@@ -286,6 +313,15 @@ func (_m *LabelTemplate) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("dpi=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Dpi))
+	builder.WriteString(", ")
+	builder.WriteString("sheet_layout=")
+	builder.WriteString(fmt.Sprintf("%v", _m.SheetLayout))
+	builder.WriteString(", ")
+	builder.WriteString("offset_x=")
+	builder.WriteString(fmt.Sprintf("%v", _m.OffsetX))
+	builder.WriteString(", ")
+	builder.WriteString("offset_y=")
+	builder.WriteString(fmt.Sprintf("%v", _m.OffsetY))
 	builder.WriteString(", ")
 	builder.WriteString("owner_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.OwnerID))

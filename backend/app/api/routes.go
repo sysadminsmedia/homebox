@@ -246,6 +246,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Get("/label-templates/{id}/preview", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesPreview(), userMW...))
 		r.Post("/label-templates/{id}/render", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesRender(), userMW...))
 		r.Post("/label-templates/{id}/print", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesPrint(), userMW...))
+		r.Post("/label-templates/{id}/render-assets", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesRenderAssets(), userMW...))
 		r.Post("/label-templates/{id}/render-locations", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesRenderLocations(), userMW...))
 		r.Post("/label-templates/{id}/print-locations", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesPrintLocations(), userMW...))
 

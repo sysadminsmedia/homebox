@@ -9,7 +9,6 @@ import (
 	"image/png"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
@@ -287,7 +286,7 @@ func (ctrl *V1Controller) HandleLabelTemplatesRender() errchain.HandlerFunc {
 		}
 
 		baseURL := GetHBURL(r, &ctrl.config.Options, ctrl.url)
-		sheetLayout := applyPresetAndGetSheetLayout(template, templateData)
+		sheetLayout := sheetLayoutFor(template, templateData)
 
 		// Handle PDF format
 		format := req.Format
@@ -296,30 +295,31 @@ func (ctrl *V1Controller) HandleLabelTemplatesRender() errchain.HandlerFunc {
 		}
 
 		if format == "pdf" {
-			items := ctrl.fetchItemsData(r.Context(), auth.GID, req.ItemIDs, baseURL)
-			if len(items) == 0 {
+			entities := ctrl.fetchEntitiesData(r.Context(), auth.GID, req.ItemIDs, baseURL)
+			if len(entities) == 0 {
 				return fmt.Errorf("no valid items found")
 			}
-			return renderLabelsPDF(w, renderer, templateData, items, req, sheetLayout)
+			pdfOpts := pdfOptionsFor(template, req.PageSize, req.ShowCutGuides, req.SkipLabels)
+			return renderLabelsPDF(w, renderer, templateData, entities, pdfOpts, sheetLayout, fmt.Sprintf("labels-%d.pdf", len(entities)))
 		}
 
 		// Handle PNG sheet format (multiple items with sheet layout)
 		if sheetLayout != nil && len(req.ItemIDs) > 1 {
-			items := ctrl.fetchItemsData(r.Context(), auth.GID, req.ItemIDs, baseURL)
-			if len(items) == 0 {
+			entities := ctrl.fetchEntitiesData(r.Context(), auth.GID, req.ItemIDs, baseURL)
+			if len(entities) == 0 {
 				return fmt.Errorf("no valid items found")
 			}
-			return renderLabelsPNGSheet(w, renderer, templateData, items, sheetLayout)
+			return renderLabelsPNGSheet(w, renderer, templateData, entities, sheetLayout)
 		}
 
-		// Default: render single item as PNG
-		itemData, err := ctrl.loadItemData(r.Context(), auth.GID, req.ItemIDs[0], baseURL)
+		// Default: render single entity as PNG
+		entity, err := ctrl.buildEntityData(r.Context(), auth.GID, req.ItemIDs[0], baseURL)
 		if err != nil {
 			return err
 		}
 
 		pngData, err := renderer.RenderTemplate(labelmaker.RenderContext{
-			Item:     itemData,
+			Entity:   entity,
 			Template: templateData,
 		})
 		if err != nil {
@@ -327,167 +327,165 @@ func (ctrl *V1Controller) HandleLabelTemplatesRender() errchain.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", mimePNG)
-		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=label-%s.png", itemData.ID.String()))
+		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=label-%s.png", entity.ID.String()))
 		_, err = w.Write(pngData)
 		return err
 	}
 }
 
-// buildLocationData converts a container entity and its path to labelmaker.LocationData
-func buildLocationData(loc repo.EntityOut, path []repo.EntityPath, baseURL string) *labelmaker.LocationData {
-	// Build the path names
-	pathNames := make([]string, 0, len(path))
-	for _, p := range path {
-		if p.ID != loc.ID { // Exclude the current location from path
-			pathNames = append(pathNames, p.Name)
+// buildEntityData fetches an entity and converts it to labelmaker.EntityData.
+// Items and locations are both entities and expose the same label fields; a
+// location describes itself, an item describes the location it resolves to.
+func (ctrl *V1Controller) buildEntityData(ctx context.Context, gid, id uuid.UUID, baseURL string) (*labelmaker.EntityData, error) {
+	e, err := ctrl.repo.Entities.GetOneByGroup(ctx, gid, id)
+	if err != nil {
+		return nil, err
+	}
+
+	isLocation := e.EntityType != nil && e.EntityType.IsLocation
+
+	var locationID uuid.UUID
+	var locationName string
+	switch {
+	case isLocation:
+		locationID, locationName = e.ID, e.Name
+	case e.Location != nil:
+		locationID, locationName = e.Location.ID, e.Location.Name
+	case e.Parent != nil:
+		locationID, locationName = e.Parent.ID, e.Parent.Name
+	}
+
+	locationPath := []string{}
+	if locationID != uuid.Nil {
+		path, err := ctrl.repo.Entities.PathForEntity(ctx, gid, locationID)
+		if err != nil {
+			log.Warn().Err(err).Str("entityID", id.String()).Msg("failed to resolve location path for label rendering")
 		}
-	}
-
-	// Build full path string
-	fullPath := loc.Name
-	if len(pathNames) > 0 {
-		fullPath = strings.Join(pathNames, " > ") + " > " + loc.Name
-	}
-
-	return &labelmaker.LocationData{
-		ID:          loc.ID,
-		Name:        loc.Name,
-		Description: loc.Description,
-		Path:        pathNames,
-		FullPath:    fullPath,
-		ItemCount:   containerItemCount(loc),
-		LocationURL: fmt.Sprintf("%s/location/%s", baseURL, loc.ID.String()),
-	}
-}
-
-// containerItemCount sums the quantity of non-location children of a container.
-func containerItemCount(loc repo.EntityOut) float64 {
-	var total float64
-	for _, child := range loc.Children {
-		if child.Archived {
-			continue
-		}
-		if child.EntityType != nil && child.EntityType.IsLocation {
-			continue
-		}
-		total += child.Quantity
-	}
-	return total
-}
-
-// buildItemData converts a repo.EntityOut (plus its ancestor path) to labelmaker.ItemData
-func buildItemData(item repo.EntityOut, path []repo.EntityPath, baseURL string) *labelmaker.ItemData {
-	tags := make([]string, len(item.Tags))
-	for i, t := range item.Tags {
-		tags[i] = t.Name
-	}
-
-	// Ancestor names, root first, excluding the item itself
-	locationPath := make([]string, 0, len(path))
-	for _, p := range path {
-		if p.ID != item.ID {
+		for _, p := range path {
 			locationPath = append(locationPath, p.Name)
 		}
 	}
 
-	customFields := make(map[string]string)
-	for _, f := range item.Fields {
+	itemCount, err := ctrl.repo.Entities.GetItemCountByGroup(ctx, gid, e.ID)
+	if err != nil {
+		log.Warn().Err(err).Str("entityID", id.String()).Msg("failed to count items for label rendering")
+	}
+
+	tags := make([]string, len(e.Tags))
+	for i, t := range e.Tags {
+		tags[i] = t.Name
+	}
+
+	customFields := make(map[string]string, len(e.Fields))
+	for _, f := range e.Fields {
 		customFields[f.Name] = f.TextValue
 	}
 
-	var locationName string
-	switch {
-	case item.Location != nil:
-		locationName = item.Location.Name
-	case item.Parent != nil:
-		locationName = item.Parent.Name
-	}
-
-	return &labelmaker.ItemData{
-		ID:           item.ID,
-		Name:         item.Name,
-		Description:  item.Description,
-		AssetID:      item.AssetID.String(),
-		SerialNumber: item.SerialNumber,
-		ModelNumber:  item.ModelNumber,
-		Manufacturer: item.Manufacturer,
+	return &labelmaker.EntityData{
+		ID:           e.ID,
+		Name:         e.Name,
+		Description:  e.Description,
+		AssetID:      e.AssetID.String(),
+		SerialNumber: e.SerialNumber,
+		ModelNumber:  e.ModelNumber,
+		Manufacturer: e.Manufacturer,
+		IsLocation:   isLocation,
 		LocationName: locationName,
 		LocationPath: locationPath,
 		Tags:         tags,
 		CustomFields: customFields,
-		ItemURL:      fmt.Sprintf("%s/item/%s", baseURL, item.ID.String()),
-		Quantity:     item.Quantity,
-		Notes:        item.Notes,
-	}
+		ItemCount:    itemCount,
+		Quantity:     e.Quantity,
+		Notes:        e.Notes,
+		ItemURL:      fmt.Sprintf("%s/item/%s", baseURL, e.ID.String()),
+		LocationURL:  fmt.Sprintf("%s/location/%s", baseURL, e.ID.String()),
+		AssetURL:     assetURL(baseURL, e.AssetID),
+	}, nil
 }
 
-// loadItemData fetches an entity and its ancestor path and converts it to labelmaker.ItemData
-func (ctrl *V1Controller) loadItemData(ctx context.Context, gid, id uuid.UUID, baseURL string) (*labelmaker.ItemData, error) {
-	item, err := ctrl.repo.Entities.GetOneByGroup(ctx, gid, id)
-	if err != nil {
-		return nil, err
+// assetURL returns the stable /a/<asset id> link, which keeps resolving after
+// a tag is printed even if the entity it points at changes. Empty without an asset ID.
+func assetURL(baseURL string, aid repo.AssetID) string {
+	if aid.Nil() {
+		return ""
 	}
-	path, err := ctrl.repo.Entities.PathForEntity(ctx, gid, id)
-	if err != nil {
-		log.Warn().Err(err).Str("itemID", id.String()).Msg("failed to resolve item path for label rendering")
-		path = nil
-	}
-	return buildItemData(item, path, baseURL), nil
+	return fmt.Sprintf("%s/a/%s", baseURL, aid.String())
 }
 
-// fetchItemsData fetches items by ID and converts them to labelmaker.ItemData
-func (ctrl *V1Controller) fetchItemsData(ctx context.Context, gid uuid.UUID, itemIDs []uuid.UUID, baseURL string) []*labelmaker.ItemData {
-	items := make([]*labelmaker.ItemData, 0, len(itemIDs))
-	for _, itemID := range itemIDs {
-		itemData, err := ctrl.loadItemData(ctx, gid, itemID, baseURL)
+// fetchEntitiesData fetches entities by ID and converts them to labelmaker.EntityData,
+// skipping any that can't be loaded
+func (ctrl *V1Controller) fetchEntitiesData(ctx context.Context, gid uuid.UUID, ids []uuid.UUID, baseURL string) []*labelmaker.EntityData {
+	entities := make([]*labelmaker.EntityData, 0, len(ids))
+	for _, id := range ids {
+		entity, err := ctrl.buildEntityData(ctx, gid, id, baseURL)
 		if err != nil {
-			log.Warn().Err(err).Str("itemID", itemID.String()).Msg("failed to fetch item for label rendering")
+			log.Warn().Err(err).Str("entityID", id.String()).Msg("failed to fetch entity for label rendering")
 			continue
 		}
-		items = append(items, itemData)
+		entities = append(entities, entity)
 	}
-	return items
+	return entities
 }
 
-// applyPresetAndGetSheetLayout extracts sheet layout from template preset if available
-func applyPresetAndGetSheetLayout(template repo.LabelTemplateOut, templateData *labelmaker.TemplateData) *labelmaker.SheetLayout {
-	if template.Preset == nil || *template.Preset == "" {
+// sheetLayoutFor returns the page layout for printing several labels per
+// sheet: the template's own layout if it has one, else its preset's. The
+// template's print offset is folded into the margins. Returns nil when the
+// template isn't laid out on sheets. Sheet presets also fix the label size.
+func sheetLayoutFor(template repo.LabelTemplateOut, templateData *labelmaker.TemplateData) *labelmaker.SheetLayout {
+	var base *labelmaker.SheetLayout
+	if template.Preset != nil && *template.Preset != "" {
+		if preset := labelmaker.GetPresetByKey(*template.Preset); preset != nil && preset.SheetLayout != nil {
+			// Use preset's exact dimensions for proper sheet alignment
+			templateData.Width = preset.Width
+			templateData.Height = preset.Height
+			base = preset.SheetLayout
+		}
+	}
+	if template.SheetLayout != nil {
+		base = template.SheetLayout
+	}
+	if base == nil {
 		return nil
 	}
-	preset := labelmaker.GetPresetByKey(*template.Preset)
-	if preset == nil || preset.SheetLayout == nil {
-		return nil
-	}
-	// Use preset's exact dimensions for proper sheet alignment
-	templateData.Width = preset.Width
-	templateData.Height = preset.Height
-	return preset.SheetLayout
+
+	// Copy so the shared preset isn't modified
+	layout := *base
+	layout.MarginLeft += template.OffsetX
+	layout.MarginTop += template.OffsetY
+	return &layout
 }
 
-// renderLabelsPDF renders labels to PDF format
-func renderLabelsPDF(w http.ResponseWriter, renderer *labelmaker.TemplateRenderer, templateData *labelmaker.TemplateData, items []*labelmaker.ItemData, req LabelTemplateRenderRequest, sheetLayout *labelmaker.SheetLayout) error {
+// pdfOptionsFor returns the PDF options for a render request. Templates
+// without a sheet layout use the plain grid, shifted by the print offset.
+func pdfOptionsFor(template repo.LabelTemplateOut, pageSize string, showCutGuides bool, skipLabels int) labelmaker.PDFRenderOptions {
 	pdfOpts := labelmaker.DefaultPDFOptions()
-	if req.PageSize == "A4" {
+	if pageSize == "A4" {
 		pdfOpts.PageSize = labelmaker.PDFPageA4
 	} else {
 		pdfOpts.PageSize = labelmaker.PDFPageLetter
 	}
-	pdfOpts.ShowCutGuides = req.ShowCutGuides
-	pdfOpts.SkipLabels = req.SkipLabels
+	pdfOpts.ShowCutGuides = showCutGuides
+	pdfOpts.SkipLabels = skipLabels
+	pdfOpts.MarginLeft += template.OffsetX
+	pdfOpts.MarginTop += template.OffsetY
+	return pdfOpts
+}
 
-	pdfData, err := renderer.RenderToPDFWithSheetLayout(templateData, items, pdfOpts, sheetLayout)
+// renderLabelsPDF renders labels to PDF format
+func renderLabelsPDF(w http.ResponseWriter, renderer *labelmaker.TemplateRenderer, templateData *labelmaker.TemplateData, entities []*labelmaker.EntityData, pdfOpts labelmaker.PDFRenderOptions, sheetLayout *labelmaker.SheetLayout, filename string) error {
+	pdfData, err := renderer.RenderToPDFWithSheetLayout(templateData, entities, pdfOpts, sheetLayout)
 	if err != nil {
 		return err
 	}
 
 	w.Header().Set("Content-Type", "application/pdf")
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=labels-%d.pdf", len(items)))
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
 	_, err = w.Write(pdfData)
 	return err
 }
 
 // renderLabelsPNGSheet renders multiple labels to a PNG sheet
-func renderLabelsPNGSheet(w http.ResponseWriter, renderer *labelmaker.TemplateRenderer, templateData *labelmaker.TemplateData, items []*labelmaker.ItemData, sheetLayout *labelmaker.SheetLayout) error {
+func renderLabelsPNGSheet(w http.ResponseWriter, renderer *labelmaker.TemplateRenderer, templateData *labelmaker.TemplateData, items []*labelmaker.EntityData, sheetLayout *labelmaker.SheetLayout) error {
 	sheets, err := renderer.RenderToSheets(templateData, items, sheetLayout)
 	if err != nil {
 		return err
@@ -663,7 +661,7 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrint() errchain.HandlerFunc {
 		labelsSkipped := 0
 
 		for _, printItem := range itemsToPrint {
-			itemData, err := ctrl.loadItemData(r.Context(), auth.GID, printItem.ID, GetHBURL(r, &ctrl.config.Options, ctrl.url))
+			itemData, err := ctrl.buildEntityData(r.Context(), auth.GID, printItem.ID, GetHBURL(r, &ctrl.config.Options, ctrl.url))
 			if err != nil {
 				log.Warn().Err(err).Str("itemID", printItem.ID.String()).Msg("failed to fetch item for printing")
 				labelsSkipped++
@@ -672,7 +670,7 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrint() errchain.HandlerFunc {
 
 			// Render label as PNG
 			pngData, err := renderer.RenderTemplate(labelmaker.RenderContext{
-				Item:     itemData,
+				Entity:   itemData,
 				Template: templateData,
 			})
 			if err != nil {
@@ -687,7 +685,7 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrint() errchain.HandlerFunc {
 				copies = clampCopies(printItem.Quantity)
 			}
 
-			if err := printTemplateLabel(r.Context(), ctrl.config, template, pngData, itemData.Name, itemData.ItemURL, copies); err != nil {
+			if err := printTemplateLabel(r.Context(), ctrl.config, template, pngData, itemData.Name, itemData.URL(), copies); err != nil {
 				log.Warn().Err(err).Str("itemID", printItem.ID.String()).Msg("print command failed")
 				return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
 					Success:    false,
@@ -716,6 +714,119 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrint() errchain.HandlerFunc {
 			Message:    message,
 			LabelCount: labelsPrinted,
 		})
+	}
+}
+
+// maxAssetLabelRange caps the number of labels one asset range request renders
+const maxAssetLabelRange = 1000
+
+// LabelTemplateRenderAssetsRequest represents a request to render labels for a range of asset IDs
+type LabelTemplateRenderAssetsRequest struct {
+	StartAssetID  int    `json:"startAssetId"  validate:"min=1"`
+	EndAssetID    int    `json:"endAssetId"    validate:"min=1"`
+	SkipLabels    int    `json:"skipLabels"    validate:"min=0,max=1000"` // Empty slots before the first label, for partly used sheets
+	Format        string `json:"format"`                                  // "png" or "pdf", defaults to "pdf"
+	PageSize      string `json:"pageSize"`                                // "Letter" or "A4" for PDF
+	ShowCutGuides bool   `json:"showCutGuides"`                           // Draw light borders around labels for cutting
+}
+
+// HandleLabelTemplatesRenderAssets godoc
+//
+//	@Summary		Render Labels for an Asset ID Range
+//	@Description	Renders one label per asset ID in the range. Asset IDs that no entity has yet get a label with only the asset ID and asset URL, for pre-printing tags.
+//	@Tags			Label Templates
+//	@Accept			json
+//	@Produce		image/png,application/pdf
+//	@Param			id		path	string								true	"Template ID"
+//	@Param			payload	body	LabelTemplateRenderAssetsRequest	true	"Asset range to render"
+//	@Success		200		{file}	binary
+//	@Router			/v1/label-templates/{id}/render-assets [POST]
+//	@Security		Bearer
+func (ctrl *V1Controller) HandleLabelTemplatesRenderAssets() errchain.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		auth := services.NewContext(r.Context())
+
+		id, err := adapters.RouteUUID(r, "id")
+		if err != nil {
+			return err
+		}
+
+		req, err := adapters.DecodeBody[LabelTemplateRenderAssetsRequest](r)
+		if err != nil {
+			return err
+		}
+
+		if req.EndAssetID < req.StartAssetID {
+			return validate.NewRequestError(errors.New("end asset ID must not be before the start"), http.StatusBadRequest)
+		}
+		if req.EndAssetID-req.StartAssetID+1 > maxAssetLabelRange {
+			return validate.NewRequestError(fmt.Errorf("at most %d asset labels can be rendered at once", maxAssetLabelRange), http.StatusBadRequest)
+		}
+
+		template, err := ctrl.repo.LabelTemplates.GetOne(r.Context(), auth.GID, auth.UID, id)
+		if err != nil {
+			return err
+		}
+
+		renderer, err := labelmaker.NewTemplateRenderer()
+		if err != nil {
+			return err
+		}
+
+		templateData := &labelmaker.TemplateData{
+			ID:         template.ID,
+			Name:       template.Name,
+			Width:      template.Width,
+			Height:     template.Height,
+			DPI:        template.DPI,
+			CanvasData: template.CanvasData,
+		}
+		sheetLayout := sheetLayoutFor(template, templateData)
+		baseURL := GetHBURL(r, &ctrl.config.Options, ctrl.url)
+
+		start, end := repo.AssetID(req.StartAssetID), repo.AssetID(req.EndAssetID)
+		existing, err := ctrl.repo.Entities.GetIDsByAssetIDRange(r.Context(), auth.GID, start, end)
+		if err != nil {
+			return err
+		}
+
+		labels := make([]*labelmaker.EntityData, 0, int(end-start)+1)
+		for aid := start; aid <= end; aid++ {
+			if entityID, ok := existing[aid]; ok {
+				entity, err := ctrl.buildEntityData(r.Context(), auth.GID, entityID, baseURL)
+				if err == nil {
+					labels = append(labels, entity)
+					continue
+				}
+				log.Warn().Err(err).Str("entityID", entityID.String()).Msg("failed to fetch entity for asset label, rendering it blank")
+			}
+
+			// No entity has this asset ID yet: a blank tag carrying only the ID
+			labels = append(labels, &labelmaker.EntityData{
+				AssetID:      aid.String(),
+				LocationPath: []string{},
+				CustomFields: map[string]string{},
+				AssetURL:     assetURL(baseURL, aid),
+			})
+		}
+
+		if req.Format == "png" {
+			pngData, err := renderer.RenderTemplate(labelmaker.RenderContext{
+				Entity:   labels[0],
+				Template: templateData,
+			})
+			if err != nil {
+				return err
+			}
+			w.Header().Set("Content-Type", mimePNG)
+			w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=asset-label-%s.png", start.String()))
+			_, err = w.Write(pngData)
+			return err
+		}
+
+		pdfOpts := pdfOptionsFor(template, req.PageSize, req.ShowCutGuides, req.SkipLabels)
+		return renderLabelsPDF(w, renderer, templateData, labels, pdfOpts, sheetLayout,
+			fmt.Sprintf("asset-labels-%s-%s.pdf", start.String(), end.String()))
 	}
 }
 
@@ -787,66 +898,25 @@ func (ctrl *V1Controller) HandleLabelTemplatesRenderLocations() errchain.Handler
 		}
 
 		if format == "pdf" {
-			// Render multiple locations to PDF
-			locations := make([]*labelmaker.LocationData, 0, len(req.LocationIDs))
-			for _, locID := range req.LocationIDs {
-				loc, err := ctrl.getLocationWithCount(r.Context(), auth.GID, locID)
-				if err != nil {
-					log.Warn().Err(err).Str("locationID", locID.String()).Msg("failed to fetch location for label rendering")
-					continue
-				}
-				path, _ := ctrl.repo.Entities.PathForEntity(r.Context(), auth.GID, locID)
-				locations = append(locations, buildLocationData(loc, path, GetHBURL(r, &ctrl.config.Options, ctrl.url)))
-			}
-
+			baseURL := GetHBURL(r, &ctrl.config.Options, ctrl.url)
+			locations := ctrl.fetchEntitiesData(r.Context(), auth.GID, req.LocationIDs, baseURL)
 			if len(locations) == 0 {
 				return fmt.Errorf("no valid locations found")
 			}
 
-			// Configure PDF options
-			pdfOpts := labelmaker.DefaultPDFOptions()
-			if req.PageSize == "A4" {
-				pdfOpts.PageSize = labelmaker.PDFPageA4
-			} else {
-				pdfOpts.PageSize = labelmaker.PDFPageLetter
-			}
-			pdfOpts.ShowCutGuides = req.ShowCutGuides
-			pdfOpts.SkipLabels = req.SkipLabels
-
-			// Check if template has a preset with sheet layout (Avery-style)
-			var sheetLayout *labelmaker.SheetLayout
-			if template.Preset != nil && *template.Preset != "" {
-				preset := labelmaker.GetPresetByKey(*template.Preset)
-				if preset != nil && preset.SheetLayout != nil {
-					sheetLayout = preset.SheetLayout
-					templateData.Width = preset.Width
-					templateData.Height = preset.Height
-				}
-			}
-
-			// Use sheet layout if available, otherwise use default grid layout
-			pdfData, err := renderer.RenderLocationsToPDFWithSheetLayout(templateData, locations, pdfOpts, sheetLayout)
-			if err != nil {
-				return err
-			}
-
-			w.Header().Set("Content-Type", "application/pdf")
-			w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=location-labels-%d.pdf", len(locations)))
-			_, err = w.Write(pdfData)
-			return err
+			sheetLayout := sheetLayoutFor(template, templateData)
+			pdfOpts := pdfOptionsFor(template, req.PageSize, req.ShowCutGuides, req.SkipLabels)
+			return renderLabelsPDF(w, renderer, templateData, locations, pdfOpts, sheetLayout, fmt.Sprintf("location-labels-%d.pdf", len(locations)))
 		}
 
 		// PNG format: render single location
-		loc, err := ctrl.getLocationWithCount(r.Context(), auth.GID, req.LocationIDs[0])
+		locationData, err := ctrl.buildEntityData(r.Context(), auth.GID, req.LocationIDs[0], GetHBURL(r, &ctrl.config.Options, ctrl.url))
 		if err != nil {
 			return err
 		}
 
-		path, _ := ctrl.repo.Entities.PathForEntity(r.Context(), auth.GID, req.LocationIDs[0])
-		locationData := buildLocationData(loc, path, GetHBURL(r, &ctrl.config.Options, ctrl.url))
-
 		pngData, err := renderer.RenderTemplate(labelmaker.RenderContext{
-			Location: locationData,
+			Entity:   locationData,
 			Template: templateData,
 		})
 		if err != nil {
@@ -854,15 +924,10 @@ func (ctrl *V1Controller) HandleLabelTemplatesRenderLocations() errchain.Handler
 		}
 
 		w.Header().Set("Content-Type", mimePNG)
-		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=location-label-%s.png", loc.ID.String()))
+		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=location-label-%s.png", locationData.ID.String()))
 		_, err = w.Write(pngData)
 		return err
 	}
-}
-
-// getLocationWithCount fetches a container entity with its children so an item count can be derived
-func (ctrl *V1Controller) getLocationWithCount(ctx context.Context, gid, locID uuid.UUID) (repo.EntityOut, error) {
-	return ctrl.repo.Entities.GetContainerByGroup(ctx, gid, locID)
 }
 
 // LabelPrintLocation represents a location to print with its quantity
@@ -959,23 +1024,20 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrintLocations() errchain.HandlerF
 		labelsSkipped := 0
 
 		for _, printLoc := range locationsToPrint {
-			loc, err := ctrl.getLocationWithCount(r.Context(), auth.GID, printLoc.ID)
+			locationData, err := ctrl.buildEntityData(r.Context(), auth.GID, printLoc.ID, GetHBURL(r, &ctrl.config.Options, ctrl.url))
 			if err != nil {
 				log.Warn().Err(err).Str("locationID", printLoc.ID.String()).Msg("failed to fetch location for printing")
 				labelsSkipped++
 				continue
 			}
 
-			path, _ := ctrl.repo.Entities.PathForEntity(r.Context(), auth.GID, printLoc.ID)
-			locationData := buildLocationData(loc, path, GetHBURL(r, &ctrl.config.Options, ctrl.url))
-
 			// Render label as PNG
 			pngData, err := renderer.RenderTemplate(labelmaker.RenderContext{
-				Location: locationData,
+				Entity:   locationData,
 				Template: templateData,
 			})
 			if err != nil {
-				log.Warn().Err(err).Str("locationID", printLoc.ID.String()).Str("locationName", loc.Name).Msg("failed to render location label for printing")
+				log.Warn().Err(err).Str("locationID", printLoc.ID.String()).Str("locationName", locationData.Name).Msg("failed to render location label for printing")
 				labelsSkipped++
 				continue
 			}
@@ -986,7 +1048,7 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrintLocations() errchain.HandlerF
 				copies = clampCopies(printLoc.Quantity)
 			}
 
-			if err := printTemplateLabel(r.Context(), ctrl.config, template, pngData, loc.Name, locationData.LocationURL, copies); err != nil {
+			if err := printTemplateLabel(r.Context(), ctrl.config, template, pngData, locationData.Name, locationData.URL(), copies); err != nil {
 				log.Warn().Err(err).Str("locationID", printLoc.ID.String()).Msg("print command failed")
 				return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
 					Success:    false,

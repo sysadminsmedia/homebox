@@ -28,7 +28,8 @@ This page tracks what the label template system does today and what is planned. 
 
 ### Printing
 - One **Print label** split button on items and locations: quick print with the default template, the full dialog, PNG
-  download and the legacy built-in QR label.
+  download. The legacy built-in QR label (`LabelMaker.vue`) is gone; the Asset ID Labels page renders a template
+  over an asset ID range (`POST /v1/label-templates/{id}/render-assets`).
 - Print dialog with template cards, per-entity copies and three destinations: **Label printer** (only when the server
   has `HBOX_LABEL_MAKER_PRINT_COMMAND` set, disabled for sheet templates), **This browser** (print window) and
   **Download** (PNG, or PDF for several labels or sheets).
@@ -44,9 +45,12 @@ This page tracks what the label template system does today and what is planned. 
   fetched.
 - Printing: template printing calls the labelmaker print-command runner (`labelmaker.PrintPNG`) with the rendered PNG.
   HomeBox never speaks a printer protocol.
-- Sheets: `pdf_renderer.go` places labels on Avery-style layouts; `SkipLabels` offsets the first sheet.
-- Entities: handlers resolve items and locations through the entity repository (`GetOneByGroup`,
-  `GetContainerByGroup`, `PathForEntity`).
+- Sheets: `pdf_renderer.go` places labels on Avery-style layouts; `SkipLabels` offsets the first sheet and a nil
+  entity leaves its slot empty. A template's own `sheet_layout` overrides its preset's, and `offset_x`/`offset_y`
+  are added to the margins (`sheetLayoutFor` and `pdfOptionsFor` in the handler).
+- Entities: items and locations render from one `labelmaker.EntityData` built by `buildEntityData` in the handler,
+  so every field works on both; only the page links (`item_url`, `location_url`, `url`) differ. Item counts use
+  `GetItemCountByGroup`, which counts by effective location.
 
 ## Planned
 

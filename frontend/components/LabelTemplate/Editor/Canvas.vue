@@ -2,8 +2,15 @@
   import { onMounted, onBeforeUnmount, watch, nextTick } from "vue";
   import { ActiveSelection, Canvas, IText, Textbox, Rect, Line, Group, FabricImage, FabricObject } from "fabric";
   import type { AlignTarget } from "./ToolRail.vue";
+  import LabelTemplateEditorRuler, { RULER_SIZE, type RulerUnit } from "./Ruler.vue";
   import { MM_TO_PX, type LabelBorder } from "./label-border";
-  import { applyTextFrame, installTextFrameSupport, type FrameTextbox, type TextBoxData } from "./text-frame";
+  import {
+    applyTextFrame,
+    installTextFrameSupport,
+    naturalTextHeight,
+    type FrameTextbox,
+    type TextBoxData,
+  } from "./text-frame";
 
   // Fabric 7 anchors new objects at their centre by default. The server
   // renderer and the transform panel work in top-left coordinates, so keep
@@ -22,6 +29,8 @@
     gridSize?: number;
     showGrid?: boolean;
     labelBorder?: LabelBorder;
+    showRuler?: boolean;
+    rulerUnit?: RulerUnit;
   }>();
 
   const emit = defineEmits<{
@@ -71,8 +80,10 @@
       return;
     }
 
-    const containerWidth = canvasContainerRef.value.clientWidth - 40;
-    const containerHeight = Math.max(canvasContainerRef.value.clientHeight - 40, 200);
+    // Padding, plus the rulers when they are shown
+    const chrome = 40 + (props.showRuler ? RULER_SIZE : 0);
+    const containerWidth = canvasContainerRef.value.clientWidth - chrome;
+    const containerHeight = Math.max(canvasContainerRef.value.clientHeight - chrome, 200);
 
     const scaleX = containerWidth / displayWidth.value;
     const scaleY = containerHeight / displayHeight.value;
@@ -167,6 +178,7 @@
         prepareLoadedObjects();
         fabricCanvas?.renderAll();
         isLoadingData = false;
+        recoverOffCanvasObjects();
         onInitialLoad();
       });
     } else {
@@ -175,6 +187,7 @@
 
     // Listen for changes
     fabricCanvas.on("object:modified", e => {
+      if (e.target) clampToCanvas(e.target);
       saveCanvas();
       // Typing into a text box changes its size; let the inspector re-read it.
       if (e.target) emit("selectionChanged", e.target);
@@ -202,17 +215,20 @@
       emit("selectionChanged", null);
     });
 
-    // Snap to grid on object moving
+    // Snap to grid on object moving, then keep the object on the label
     fabricCanvas.on("object:moving", e => {
-      if (!props.snapToGrid || !e.target) return;
+      if (!e.target) return;
 
       const obj = e.target;
-      const gridSize = effectiveGridSize.value;
+      if (props.snapToGrid) {
+        const gridSize = effectiveGridSize.value;
+        obj.set({
+          left: Math.round((obj.left || 0) / gridSize) * gridSize,
+          top: Math.round((obj.top || 0) / gridSize) * gridSize,
+        });
+      }
 
-      obj.set({
-        left: Math.round((obj.left || 0) / gridSize) * gridSize,
-        top: Math.round((obj.top || 0) / gridSize) * gridSize,
-      });
+      clampToCanvas(obj);
     });
 
     // Handle textbox scaling - capture the final dimensions and reset scale
@@ -253,6 +269,50 @@
     });
   }
 
+  // Move an object so its bounding box stays on the label. Objects larger than
+  // the label are pinned to the top/left edge so they remain reachable.
+  // Returns true if the object was moved.
+  function clampToCanvas(obj: FabricObject): boolean {
+    obj.setCoords();
+    const bounds = obj.getBoundingRect();
+    const maxW = displayWidth.value;
+    const maxH = displayHeight.value;
+
+    let dx = 0;
+    if (bounds.left < 0 || bounds.width >= maxW) {
+      dx = -bounds.left;
+    } else if (bounds.left + bounds.width > maxW) {
+      dx = maxW - (bounds.left + bounds.width);
+    }
+
+    let dy = 0;
+    if (bounds.top < 0 || bounds.height >= maxH) {
+      dy = -bounds.top;
+    } else if (bounds.top + bounds.height > maxH) {
+      dy = maxH - (bounds.top + bounds.height);
+    }
+
+    if (dx === 0 && dy === 0) return false;
+
+    obj.set({ left: (obj.left || 0) + dx, top: (obj.top || 0) + dy });
+    obj.setCoords();
+    return true;
+  }
+
+  // Bring back objects saved outside the label (e.g. dragged off before
+  // clamping existed) so they can be selected and edited again.
+  function recoverOffCanvasObjects() {
+    if (!fabricCanvas) return;
+
+    let moved = false;
+    for (const obj of fabricCanvas.getObjects()) {
+      if (clampToCanvas(obj)) moved = true;
+    }
+
+    fabricCanvas.renderAll();
+    if (moved) saveCanvas();
+  }
+
   // Text frames need their handles and measurements set up after every load.
   function prepareLoadedObjects() {
     if (!fabricCanvas) return;
@@ -273,7 +333,8 @@
     textObj.set({ width: maxWidth });
 
     const textOverflows = () => {
-      if ((textObj.height || 0) > maxHeight) return true;
+      // A frame reports its fixed height, so measure the wrapped text itself
+      if (naturalTextHeight(textObj) > maxHeight) return true;
 
       const textLines = textObj.textLines || [];
       const ctx = textObj.canvas?.getContext();
@@ -853,6 +914,7 @@
           prepareLoadedObjects();
           fabricCanvas?.renderAll();
           isLoadingData = false;
+          recoverOffCanvasObjects();
           onInitialLoad();
         });
       }
@@ -878,15 +940,25 @@
 
 <template>
   <div ref="canvasContainerRef" class="min-h-[300px] overflow-auto rounded border bg-gray-100 p-4 dark:bg-zinc-800">
-    <div class="relative inline-block shadow-lg">
-      <!--
-        Grid layer (behind fabric canvas). drawGrid sizes it; binding width/height
-        here as well would let Vue reset the element, and with it the drawing,
-        on the render that follows every zoom change.
-      -->
-      <canvas ref="gridCanvasRef" class="pointer-events-none absolute left-0 top-0" :style="{ zIndex: 0 }" />
-      <!-- Fabric canvas (front, with transparent background area) -->
-      <canvas ref="canvasRef" class="relative" :style="{ zIndex: 1 }" />
-    </div>
+    <!-- Rulers wrap the label itself so 0,0 lines up with its top-left corner and they scroll with it -->
+    <LabelTemplateEditorRuler
+      :visible="!!showRuler"
+      :width="props.width"
+      :height="props.height"
+      :pixel-width="displayWidth * zoomLevel"
+      :pixel-height="displayHeight * zoomLevel"
+      :unit="rulerUnit"
+    >
+      <div class="relative inline-block align-top shadow-lg">
+        <!--
+          Grid layer (behind fabric canvas). drawGrid sizes it; binding width/height
+          here as well would let Vue reset the element, and with it the drawing,
+          on the render that follows every zoom change.
+        -->
+        <canvas ref="gridCanvasRef" class="pointer-events-none absolute left-0 top-0" :style="{ zIndex: 0 }" />
+        <!-- Fabric canvas (front, with transparent background area) -->
+        <canvas ref="canvasRef" class="relative" :style="{ zIndex: 1 }" />
+      </div>
+    </LabelTemplateEditorRuler>
   </div>
 </template>

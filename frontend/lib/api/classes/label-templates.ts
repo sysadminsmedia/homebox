@@ -6,6 +6,7 @@ import type {
   LabelTemplateUpdate,
   LabelTemplateRenderRequest,
   LabelTemplateRenderLocationsRequest,
+  LabelTemplateRenderAssetsRequest,
   LabelmakerLabelPreset,
   LabelmakerBarcodeFormatInfo,
   LabelTemplatePrintRequest,
@@ -63,6 +64,11 @@ export class LabelTemplatesApi extends BaseAPI {
 
   render(id: string, body: LabelTemplateRenderRequest): Promise<Blob> {
     return this.renderBlob(route(`/label-templates/${id}/render`), body);
+  }
+
+  // Labels for a range of asset IDs; unused IDs get a blank tag with the ID and its /a/ link
+  renderAssets(id: string, body: LabelTemplateRenderAssetsRequest): Promise<Blob> {
+    return this.renderBlob(route(`/label-templates/${id}/render-assets`), body);
   }
 
   print(id: string, body: LabelTemplatePrintRequest) {

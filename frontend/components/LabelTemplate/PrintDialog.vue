@@ -56,7 +56,7 @@
               <span class="flex min-w-0 flex-col">
                 <span class="truncate text-sm font-medium">{{ tpl.name }}</span>
                 <span class="truncate text-xs text-muted-foreground">
-                  {{ presetTitle(tpl.preset) || formatLabelSize(tpl.width, tpl.height) }}
+                  {{ presetTitle(tpl.preset) || measurement.formatSize(tpl.width, tpl.height) }}
                   <template v-if="tpl.id === preferences.defaultTemplateId">
                     · {{ $t("components.label_template.default").toLowerCase() }}</template
                   >
@@ -84,7 +84,7 @@
             <span v-if="selectedTemplate" class="text-xs text-muted-foreground">
               {{
                 $t("components.label_template.print_dialog.preview_of", {
-                  size: formatLabelSize(selectedTemplate.width, selectedTemplate.height),
+                  size: measurement.formatSize(selectedTemplate.width, selectedTemplate.height),
                 })
               }}
               <template v-if="isSheet"> · {{ $t("components.label_template.print_dialog.sheet_pdf_hint") }}</template>
@@ -198,6 +198,7 @@
   const SERVER = "_server";
 
   const { t } = useI18n();
+  const measurement = useMeasurement();
   const api = useUserApi();
   const preferences = useViewPreferences();
   const { closeDialog, registerOpenDialogCallback } = useDialog();

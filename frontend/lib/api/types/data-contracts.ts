@@ -644,12 +644,18 @@ export interface EntLabelTemplate {
   is_shared: boolean;
   /** Name holds the value of the "name" field. */
   name: string;
+  /** Horizontal print offset in mm; positive moves labels right */
+  offset_x: number;
+  /** Vertical print offset in mm; positive moves labels down */
+  offset_y: number;
   /** Output format: png, pdf */
   output_format: string;
   /** User who created this template */
   owner_id: string;
   /** Preset size key like 'brother_dk2205' */
   preset: string;
+  /** Custom sheet layout (page size, grid, margins, gaps in mm); overrides the preset's */
+  sheet_layout: LabelmakerSheetLayout;
   /** UpdatedAt holds the value of the "updated_at" field. */
   updated_at: string;
   /** Label width in mm */
@@ -918,21 +924,51 @@ export interface LabelmakerLabelPreset {
 }
 
 export interface LabelmakerSheetLayout {
-  /** Number of labels across */
+  /**
+   * Number of labels across
+   * @min 1
+   * @max 50
+   */
   columns: number;
-  /** Horizontal gap between labels in mm */
+  /**
+   * Horizontal gap between labels in mm
+   * @min 0
+   * @max 500
+   */
   gutterH: number;
-  /** Vertical gap between labels in mm */
+  /**
+   * Vertical gap between labels in mm
+   * @min 0
+   * @max 500
+   */
   gutterV: number;
-  /** Left margin in mm */
+  /**
+   * Left margin in mm
+   * @min 0
+   * @max 500
+   */
   marginLeft: number;
-  /** Top margin in mm */
+  /**
+   * Top margin in mm
+   * @min 0
+   * @max 500
+   */
   marginTop: number;
-  /** Sheet height in mm (e.g., 279.4 for Letter, 297 for A4) */
+  /**
+   * Sheet height in mm (e.g., 279.4 for Letter, 297 for A4)
+   * @max 1000
+   */
   pageHeight: number;
-  /** Sheet width in mm (e.g., 215.9 for Letter, 210 for A4) */
+  /**
+   * Sheet width in mm (e.g., 215.9 for Letter, 210 for A4)
+   * @max 1000
+   */
   pageWidth: number;
-  /** Number of labels down */
+  /**
+   * Number of labels down
+   * @min 1
+   * @max 100
+   */
   rows: number;
 }
 
@@ -1383,8 +1419,20 @@ export interface LabelTemplateCreate {
    * @maxLength 255
    */
   name: string;
+  /**
+   * @min -50
+   * @max 50
+   */
+  offsetX: number;
+  /**
+   * @min -50
+   * @max 50
+   */
+  offsetY: number;
   outputFormat: "png" | "pdf";
   preset?: string | null;
+  /** SheetLayout overrides the preset's page layout; null follows the preset */
+  sheetLayout?: LabelmakerSheetLayout | null;
   /** @max 1000 */
   width: number;
 }
@@ -1399,9 +1447,12 @@ export interface LabelTemplateOut {
   isOwner: boolean;
   isShared: boolean;
   name: string;
+  offsetX: number;
+  offsetY: number;
   outputFormat: string;
   ownerId: string;
   preset: string;
+  sheetLayout?: LabelmakerSheetLayout | null;
   updatedAt: Date | string;
   width: number;
 }
@@ -1415,6 +1466,8 @@ export interface LabelTemplateSummary {
   isShared: boolean;
   name: string;
   preset: string;
+  /** SheetLayout is the template's own page layout, null when it follows the preset */
+  sheetLayout?: LabelmakerSheetLayout | null;
   updatedAt: Date | string;
   width: number;
 }
@@ -1437,8 +1490,20 @@ export interface LabelTemplateUpdate {
    * @maxLength 255
    */
   name: string;
+  /**
+   * @min -50
+   * @max 50
+   */
+  offsetX: number;
+  /**
+   * @min -50
+   * @max 50
+   */
+  offsetY: number;
   outputFormat: "png" | "pdf";
   preset?: string | null;
+  /** SheetLayout overrides the preset's page layout; null follows the preset */
+  sheetLayout?: LabelmakerSheetLayout | null;
   /** @max 1000 */
   width: number;
 }
@@ -1767,6 +1832,25 @@ export interface LabelTemplatePrintResponse {
   labelCount: number;
   message: string;
   success: boolean;
+}
+
+export interface LabelTemplateRenderAssetsRequest {
+  /** @min 1 */
+  endAssetId: number;
+  /** "png" or "pdf", defaults to "pdf" */
+  format: string;
+  /** "Letter" or "A4" for PDF */
+  pageSize: string;
+  /** Draw light borders around labels for cutting */
+  showCutGuides: boolean;
+  /**
+   * Empty slots before the first label, for partly used sheets
+   * @min 0
+   * @max 1000
+   */
+  skipLabels: number;
+  /** @min 1 */
+  startAssetId: number;
 }
 
 export interface LabelTemplateRenderLocationsRequest {

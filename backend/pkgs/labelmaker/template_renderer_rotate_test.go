@@ -43,7 +43,7 @@ func TestRotatedTextKeepsOriginAndIsNotClipped(t *testing.T) {
 		CanvasData: map[string]interface{}{
 			"objects": []interface{}{
 				canvasObject("textbox", left, top, 60, 24, map[string]interface{}{
-					"text": "HELLO", "fontSize": 20.0, "fill": "#000000", "angle": 90.0,
+					"text": "HELLO", frameKeyFont: 20.0, "fill": "#000000", "angle": 90.0,
 				}),
 			},
 		},
@@ -98,7 +98,7 @@ func TestRotatedTextRejectsOversizedBuffers(t *testing.T) {
 	// RenderTemplate skips elements that fail, so check the element renderer itself.
 	elem := parseCanvasElement(tpl.CanvasData["objects"].([]interface{})[0].(map[string]interface{}))
 	img := image.NewRGBA(image.Rect(0, 0, 60, 60))
-	if err := r.renderElement(img, elem, nil, nil, 96); err == nil {
+	if err := r.renderElement(img, elem, nil, 96); err == nil {
 		t.Fatal("expected an error for an oversized rotated text element")
 	}
 }

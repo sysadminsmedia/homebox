@@ -231,6 +231,27 @@ OPTIONS
     </TabItem>
 </Tabs>
 
+### Reading values from files
+
+Any `HBOX_*` environment variable can also be set from a file by appending `_FILE` to its name and pointing it
+at the file, e.g. `HBOX_AUTH_API_KEY_PEPPER_FILE=/run/secrets/homebox_pepper`. This works with Docker and
+Kubernetes secrets or systemd credentials, so secrets don't need to be stored in plain environment variables.
+Trailing newlines are trimmed, and the `_FILE` variant takes precedence when both are set.
+
+```yaml
+services:
+  homebox:
+    image: ghcr.io/sysadminsmedia/homebox:latest
+    environment:
+      HBOX_AUTH_API_KEY_PEPPER_FILE: /run/secrets/homebox_pepper
+    secrets:
+      - homebox_pepper
+
+secrets:
+  homebox_pepper:
+    file: ./homebox_pepper.txt
+```
+
 ### HBOX_WEB_HOST examples
 
 | Value                       | Notes                                                      |

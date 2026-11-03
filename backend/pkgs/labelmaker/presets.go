@@ -28,14 +28,14 @@ type LabelPreset struct {
 
 // SheetLayout defines how labels are arranged on a printable sheet
 type SheetLayout struct {
-	PageWidth  float64 `json:"pageWidth"`  // Sheet width in mm (e.g., 215.9 for Letter, 210 for A4)
-	PageHeight float64 `json:"pageHeight"` // Sheet height in mm (e.g., 279.4 for Letter, 297 for A4)
-	Columns    int     `json:"columns"`    // Number of labels across
-	Rows       int     `json:"rows"`       // Number of labels down
-	MarginTop  float64 `json:"marginTop"`  // Top margin in mm
-	MarginLeft float64 `json:"marginLeft"` // Left margin in mm
-	GutterH    float64 `json:"gutterH"`    // Horizontal gap between labels in mm
-	GutterV    float64 `json:"gutterV"`    // Vertical gap between labels in mm
+	PageWidth  float64 `json:"pageWidth"  validate:"gt=0,lte=1000"` // Sheet width in mm (e.g., 215.9 for Letter, 210 for A4)
+	PageHeight float64 `json:"pageHeight" validate:"gt=0,lte=1000"` // Sheet height in mm (e.g., 279.4 for Letter, 297 for A4)
+	Columns    int     `json:"columns"    validate:"min=1,max=50"`  // Number of labels across
+	Rows       int     `json:"rows"       validate:"min=1,max=100"` // Number of labels down
+	MarginTop  float64 `json:"marginTop"  validate:"gte=0,lte=500"` // Top margin in mm
+	MarginLeft float64 `json:"marginLeft" validate:"gte=0,lte=500"` // Left margin in mm
+	GutterH    float64 `json:"gutterH"    validate:"gte=0,lte=500"` // Horizontal gap between labels in mm
+	GutterV    float64 `json:"gutterV"    validate:"gte=0,lte=500"` // Vertical gap between labels in mm
 }
 
 // LabelPresets contains all supported label size presets

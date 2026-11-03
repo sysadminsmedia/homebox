@@ -22,6 +22,7 @@
   import SearchFilter from "~/components/Search/Filter.vue";
 
   const { t } = useI18n();
+  const measurement = useMeasurement();
 
   definePageMeta({
     middleware: ["auth"],
@@ -491,7 +492,7 @@
             <SelectContent>
               <SelectItem v-for="tpl in templates" :key="tpl.id" :value="tpl.id">
                 {{ tpl.name }}
-                <span class="ml-1 text-muted-foreground">· {{ formatLabelSize(tpl.width, tpl.height) }}</span>
+                <span class="ml-1 text-muted-foreground">· {{ measurement.formatSize(tpl.width, tpl.height) }}</span>
               </SelectItem>
             </SelectContent>
           </Select>
