@@ -92,6 +92,8 @@ export enum CustomsInventoryIssueCode {
   IssueDuplicateAssetID = "duplicate_asset_id",
   IssueDutiableWithoutReceipt = "dutiable_without_receipt",
   IssueReceiptIsLink = "receipt_is_link",
+  IssueContentSplit = "content_split",
+  IssueContainerQuantity = "container_quantity",
   IssueExcludedLocation = "excluded_location",
   IssueExcludedArchived = "excluded_archived",
   IssueExcludedSold = "excluded_sold",
@@ -172,9 +174,13 @@ export interface CustomsInventoryOptions {
   receiptTypes: string[];
   /** YYYY-MM-DD */
   referenceDate: string;
+  /** load the contents of the scope items and roll them into their containers */
+  rollUpContents: boolean;
 }
 
 export interface CustomsInventoryPreview {
+  /** entities absorbed into a container line */
+  contentCount: number;
   currency: string;
   cutoff: string;
   dutiableItemCount: number;

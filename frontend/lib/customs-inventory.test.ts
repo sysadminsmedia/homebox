@@ -164,3 +164,15 @@ describe("mergeFirstWord", () => {
     expect(buildRequest({ scope: "selected", itemIds: ["a"], search: null, prefs }).options.mergeFirstWord).toBe(true);
   });
 });
+
+describe("rollUpContents", () => {
+  test("defaults to true and keeps a saved false", () => {
+    expect(sanitizePrefs(undefined, new Set()).rollUpContents).toBe(true);
+    expect(sanitizePrefs({ rollUpContents: false }, new Set()).rollUpContents).toBe(false);
+  });
+
+  test("is sent with the request", () => {
+    const prefs = sanitizePrefs(undefined, new Set());
+    expect(buildRequest({ scope: "selected", itemIds: ["a"], search: null, prefs }).options.rollUpContents).toBe(true);
+  });
+});
