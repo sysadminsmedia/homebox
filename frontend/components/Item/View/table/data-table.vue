@@ -36,8 +36,9 @@
     externalPagination?: Pagination;
   }>();
 
-  defineEmits<{
+  const emit = defineEmits<{
     (e: "refresh"): void;
+    (e: "selectionChange", ids: string[]): void;
   }>();
 
   const preferences = useViewPreferences();
@@ -165,6 +166,23 @@
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  watch(
+    rowSelection,
+    () =>
+      emit(
+        "selectionChange",
+        table.getSelectedRowModel().rows.map(r => r.original.id)
+      ),
+    { deep: true }
+  );
+  // Selection is kept by row index, so a new result set must not inherit it.
+  watch(
+    () => props.data,
+    () => {
+      rowSelection.value = {};
+    }
+  );
 
   watch(() => pagination.value.pageIndex, scrollToTop);
   watch(() => props.externalPagination?.page, scrollToTop);

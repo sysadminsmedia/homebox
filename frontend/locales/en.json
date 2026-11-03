@@ -781,7 +781,7 @@
         },
         "reports": {
             "customs_inventory": {
-                "menu_entry": "Export as Customs Inventory List …",
+                "search_button": "Export inventory list …",
                 "title": "Export customs inventory list",
                 "currency_hint": "Values in {currency} (the collection's currency)",
                 "scope": "Scope",

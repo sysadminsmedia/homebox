@@ -23,7 +23,6 @@
   const preferences = useViewPreferences();
   const { openDialog } = useDialog();
   const { isQuickPrintAvailable, quickPrintItems } = useQuickPrint();
-  const customsInventorySearch = useCustomsInventorySearch();
 
   const isQuickPrinting = ref(false);
 
@@ -289,19 +288,6 @@
             ? t("components.item.view.table.dropdown.print_labels_selected")
             : t("components.item.view.table.dropdown.print_label_item")
         }}
-      </DropdownMenuItem>
-      <!-- customs inventory list (with dialog) -->
-      <DropdownMenuItem
-        @click="
-          openDialog(DialogID.CustomsInventoryExport, {
-            params: {
-              itemIds: multi ? multi.items.map(row => row.original.id) : [item!.id],
-              search: customsInventorySearch,
-            },
-          })
-        "
-      >
-        {{ t("components.reports.customs_inventory.menu_entry") }}
       </DropdownMenuItem>
       <!-- delete -->
       <DropdownMenuItem @click="deleteItems(multi ? multi.items.map(row => row.original.id) : [item!.id])">
