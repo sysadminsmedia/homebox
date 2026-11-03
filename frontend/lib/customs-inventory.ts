@@ -155,6 +155,10 @@ export function formatCents(cents: number, currency: string, locale: string): st
   }
 }
 
+export function formatQty(q: number, locale: string): string {
+  return new Intl.NumberFormat(locale, { maximumFractionDigits: 6 }).format(q);
+}
+
 export function filenameFromDisposition(h: string | null, fallback: string): string {
   const match = h ? /filename="?([^";]+)"?/i.exec(h) : null;
   return match?.[1]?.trim() || fallback;
