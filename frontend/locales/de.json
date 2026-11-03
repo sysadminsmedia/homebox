@@ -448,6 +448,8 @@
                 "group_tags_hint": "Tags in Reihenfolge wählen. Jeder Artikel kommt in die erste passende Gruppe, sonst unter „Übrige“.",
                 "merge": "Gleiche Positionen zusammenfassen",
                 "merge_hint": "Gleiche Gruppe, Typ, Name, Zollstatus und Einzelwert → eine Zeile, Menge = Summe.",
+                "merge_first_word": "Nur nach erstem Wort zusammenfassen",
+                "merge_first_word_hint": "„Bücher & Deko“ und „Bücher und Deko“ werden eine Zeile „Bücher“. Der Einzelwert muss gleich sein.",
                 "rules": "Zollregeln",
                 "reference_date": "Referenzdatum",
                 "reference_date_hint": "Zum Beispiel der Tag des Grenzübertritts.",

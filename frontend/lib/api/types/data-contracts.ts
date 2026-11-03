@@ -164,6 +164,8 @@ export interface CustomsInventoryOptions {
   groupBy: CustomsInventoryGroupBy;
   groupTagIds: string[];
   includeReceipts: boolean;
+  /** only with MergeIdentical: match on the first word of the name */
+  mergeFirstWord: boolean;
   mergeIdentical: boolean;
   /** 0 → DefaultMinMonths; allowed 1..MaxMinMonths */
   minMonths: number;

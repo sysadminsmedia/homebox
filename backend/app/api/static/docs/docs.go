@@ -3958,6 +3958,10 @@ const docTemplate = `{
                 "includeReceipts": {
                     "type": "boolean"
                 },
+                "mergeFirstWord": {
+                    "description": "only with MergeIdentical: match on the first word of the name",
+                    "type": "boolean"
+                },
                 "mergeIdentical": {
                     "type": "boolean"
                 },

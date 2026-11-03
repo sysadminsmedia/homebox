@@ -53,6 +53,22 @@
               <p class="text-xs text-muted-foreground">{{ $t("components.reports.customs_inventory.merge_hint") }}</p>
             </div>
           </div>
+          <div class="ml-6 flex items-start gap-2">
+            <Checkbox
+              id="customs-merge-first-word"
+              v-model="prefs.mergeFirstWord"
+              :disabled="!prefs.mergeIdentical"
+              class="mt-0.5"
+            />
+            <div :class="{ 'opacity-60': !prefs.mergeIdentical }">
+              <Label for="customs-merge-first-word" class="cursor-pointer">
+                {{ $t("components.reports.customs_inventory.merge_first_word") }}
+              </Label>
+              <p class="text-xs text-muted-foreground">
+                {{ $t("components.reports.customs_inventory.merge_first_word_hint") }}
+              </p>
+            </div>
+          </div>
         </fieldset>
 
         <fieldset class="space-y-3">

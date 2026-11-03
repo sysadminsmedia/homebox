@@ -794,6 +794,8 @@
                 "group_tags_hint": "Pick tags in order. Each item goes into the first matching group, otherwise into “other”.",
                 "merge": "Merge identical items",
                 "merge_hint": "Same group, type, name, customs status and unit value → one line, quantity = sum.",
+                "merge_first_word": "Match by first word only",
+                "merge_first_word_hint": "“Books & deco” and “books and deco” become one line “Books”. The unit value must still match.",
                 "rules": "Customs rules",
                 "reference_date": "Reference date",
                 "reference_date_hint": "For example, the day the goods cross the border.",
