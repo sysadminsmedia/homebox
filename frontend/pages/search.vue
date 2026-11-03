@@ -17,6 +17,8 @@
   import BaseContainer from "@/components/Base/Container.vue";
   import SearchFilter from "~/components/Search/Filter.vue";
   import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
+  import { useDialog } from "@/components/ui/dialog-provider";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
   import type { LocationQueryRaw } from "vue-router";
 
   const { t } = useI18n();
@@ -35,11 +37,17 @@
 
   const api = useUserApi();
   const customsInventorySearch = useCustomsInventorySearch();
+  const { openDialog } = useDialog();
   onBeforeUnmount(() => {
     customsInventorySearch.value = null;
   });
   const loading = useMinLoader(500);
   const items = ref<EntitySummary[]>([]);
+  const selectedIds = ref<string[]>([]);
+  // The table also clears its selection on new rows, but it may not be mounted when nothing matches.
+  watch(items, () => {
+    selectedIds.value = [];
+  });
   const total = ref(0);
 
   // Using useRouteQuery directly has two downsides
@@ -676,7 +684,23 @@
         :pagination="pagination"
         disable-sort
         @refresh="async () => search()"
-      />
+        @selection-change="ids => (selectedIds = ids)"
+      >
+        <template #actions>
+          <Button
+            size="sm"
+            variant="outline"
+            :disabled="!customsInventorySearch"
+            @click="
+              openDialog(DialogID.CustomsInventoryExport, {
+                params: { itemIds: [...selectedIds], search: customsInventorySearch },
+              })
+            "
+          >
+            {{ $t("components.reports.customs_inventory.search_button") }}
+          </Button>
+        </template>
+      </ItemViewSelectable>
     </section>
   </BaseContainer>
 </template>

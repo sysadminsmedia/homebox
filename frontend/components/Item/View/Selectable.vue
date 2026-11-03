@@ -24,6 +24,7 @@
 
   const emit = defineEmits<{
     (e: "refresh"): void;
+    (e: "selection-change", ids: string[]): void;
   }>();
 
   const preferences = useViewPreferences();
@@ -71,21 +72,28 @@
         />
       </template>
       <template #description>
-        <div v-if="!viewSet">
-          <ButtonGroup>
-            <Button size="sm" :variant="itemView === 'card' ? 'default' : 'outline'" @click="setViewPreference('card')">
-              <MdiCardTextOutline class="size-5" />
-              {{ $t("components.item.view.selectable.card") }}
-            </Button>
-            <Button
-              size="sm"
-              :variant="itemView === 'table' ? 'default' : 'outline'"
-              @click="setViewPreference('table')"
-            >
-              <MdiTable class="size-5" />
-              {{ $t("components.item.view.selectable.table") }}
-            </Button>
-          </ButtonGroup>
+        <div class="flex flex-wrap items-center gap-2">
+          <slot name="actions" />
+          <div v-if="!viewSet">
+            <ButtonGroup>
+              <Button
+                size="sm"
+                :variant="itemView === 'card' ? 'default' : 'outline'"
+                @click="setViewPreference('card')"
+              >
+                <MdiCardTextOutline class="size-5" />
+                {{ $t("components.item.view.selectable.card") }}
+              </Button>
+              <Button
+                size="sm"
+                :variant="itemView === 'table' ? 'default' : 'outline'"
+                @click="setViewPreference('table')"
+              >
+                <MdiTable class="size-5" />
+                {{ $t("components.item.view.selectable.table") }}
+              </Button>
+            </ButtonGroup>
+          </div>
         </div>
       </template>
     </BaseSectionHeader>
@@ -109,6 +117,7 @@
       :location-flat-tree="locationFlatTree"
       :external-pagination="pagination"
       @refresh="$emit('refresh')"
+      @selection-change="ids => emit('selection-change', ids)"
     />
   </section>
 </template>

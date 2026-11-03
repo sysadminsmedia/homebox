@@ -435,7 +435,7 @@
         },
         "reports": {
             "customs_inventory": {
-                "menu_entry": "Als Zoll-Inventarliste exportieren …",
+                "search_button": "Inventarliste exportieren …",
                 "title": "Zoll-Inventarliste exportieren",
                 "currency_hint": "Werte in {currency} (Währung der Sammlung)",
                 "scope": "Umfang",

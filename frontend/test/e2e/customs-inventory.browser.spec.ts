@@ -16,18 +16,23 @@ async function login(page: Page) {
   expect(res.ok()).toBeTruthy();
 }
 
-// Selects every row on the search page and opens the export dialog from the actions menu.
-async function openExportDialog(page: Page): Promise<Locator> {
+// Selects every row of the results table and returns how many are selected.
+async function selectAllRows(page: Page): Promise<number> {
   const header = page.locator("thead");
+  const selected = page.getByText(/^(\d+) of \1 rows selected\.$/).first();
   // The search can still be re-rendering the table; retry until the whole page is selected.
   await expect(async () => {
     if ((await header.getByRole("checkbox").getAttribute("data-state")) !== "checked") {
       await header.getByRole("checkbox").click();
     }
-    await expect(page.getByText(/^(\d+) of \1 rows selected\.$/).first()).toBeVisible({ timeout: 1000 });
+    await expect(selected).toBeVisible({ timeout: 1000 });
   }).toPass({ timeout: 15000 });
-  await header.getByRole("button", { name: "Open menu" }).click();
-  await page.getByRole("menuitem", { name: "Export as Customs Inventory List …" }).click();
+  return Number((await selected.textContent())!.match(/^(\d+)/)![1]);
+}
+
+// Opens the export dialog with the button in the search results header.
+async function openExportDialog(page: Page): Promise<Locator> {
+  await page.getByRole("button", { name: "Export inventory list …" }).click();
   const dialog = page.getByRole("dialog", { name: "Export customs inventory list" });
   await expect(dialog).toBeVisible();
   return dialog;
@@ -58,7 +63,15 @@ test.describe("Customs inventory export", () => {
     await page.waitForLoadState("networkidle");
     await expect(page.getByText(/rows selected/).first()).toBeVisible();
 
+    const count = await selectAllRows(page);
+
+    // The item table's actions menu no longer offers the export.
+    await page.locator("thead").getByRole("button", { name: "Open menu" }).click();
+    await expect(page.getByRole("menuitem", { name: /Customs Inventory/ })).toHaveCount(0);
+    await page.keyboard.press("Escape");
+
     let dialog = await openExportDialog(page);
+    await expect(dialog.getByRole("radio", { name: `Only selected items (${count})` })).toBeChecked();
 
     // Pick the 15th of the month the picker opens on as the reference date.
     await dialog.locator(".dp__input").click();
@@ -81,5 +94,16 @@ test.describe("Customs inventory export", () => {
     const zip = await exportFile(page, dialog);
     expect(zip).toMatch(FILE_NAME);
     expect(zip.endsWith(".zip")).toBe(true);
+
+    // A new search clears the selection, so no stale rows are exported.
+    const searched = page.waitForResponse(
+      r => r.url().includes("/api/v1/entities") && r.url().includes("zzz-no-match")
+    );
+    await page.getByRole("textbox", { name: "Search" }).fill("zzz-no-match");
+    await page.keyboard.press("Enter");
+    await searched;
+    dialog = await openExportDialog(page);
+    await expect(dialog.getByRole("radio", { name: "All items in the current search (0)" })).toBeVisible();
+    await expect(dialog.getByRole("radio", { name: "Only selected items (0)" })).toBeDisabled();
   });
 });
