@@ -156,6 +156,7 @@ type Options struct {
 	ReferenceDate   string      `json:"referenceDate"` // YYYY-MM-DD
 	MinMonths       int         `json:"minMonths"`     // 0 → DefaultMinMonths; allowed 1..MaxMinMonths
 	MergeIdentical  bool        `json:"mergeIdentical"`
+	MergeFirstWord  bool        `json:"mergeFirstWord"` // only with MergeIdentical: match on the first word of the name
 	IncludeReceipts bool        `json:"includeReceipts"`
 	ReceiptTypes    []string    `json:"receiptTypes"`
 }

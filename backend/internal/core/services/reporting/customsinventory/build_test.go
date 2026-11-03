@@ -383,3 +383,55 @@ func TestBuild_PieceCounts(t *testing.T) {
 	assert.InDelta(t, 9.8, p.PieceCount, 0)
 	assert.InDelta(t, 4.0, p.DutiablePieceCount, 0)
 }
+
+func TestFirstWord(t *testing.T) {
+	for in, want := range map[string]string{
+		"Books & deco": "Books", "  books   and deco": "books", "Bücher/Deko": "Bücher",
+		"3D-Drucker": "3D", "& more": "more", "—": "—", "": "",
+	} {
+		assert.Equal(t, want, FirstWord(in), "%q", in)
+	}
+}
+
+func bookBox(n int, name string, qty, price float64) Item {
+	it := furniture(n, int64(n), name, qty, price, "2019-01-01", locLiving, pathLiving)
+	it.EntityTypeID, it.EntityTypeName = typeBox, "Box"
+	return it
+}
+
+func booksInput(first bool) Input {
+	in := smallInput(
+		bookBox(1, "Books & deco", 2, 50), bookBox(2, "books and deco", 3, 50),
+		bookBox(3, "Books & material", 1, 50), bookBox(4, "Books & deco", 1, 80),
+		bookBox(5, "Linen", 1, 50),
+	)
+	in.Options.MergeFirstWord = first
+	return in
+}
+
+func TestBuild_MergeFirstWord(t *testing.T) {
+	r := mustBuild(t, booksInput(true))
+	lines := allLines(r)
+	require.Len(t, lines, 3)
+	books := lineByName(t, r, "Books")
+	assert.InDelta(t, 6.0, books.Quantity, 0)
+	assert.Equal(t, int64(5000), books.UnitCents)
+	assert.Equal(t, int64(30000), books.LineCents)
+	assert.Equal(t, []string{"000-001", "000-002", "000-003"}, books.AssetIDs)
+	assert.Equal(t, int64(8000), lineByName(t, r, "Books & deco").UnitCents) // own price, one member
+	assert.Equal(t, []string{"Books", "Books & deco", "Linen"}, []string{lines[0].Name, lines[1].Name, lines[2].Name})
+}
+
+func TestBuild_MergeFirstWordKeepsSharedFullName(t *testing.T) {
+	in := smallInput(bookBox(1, "Books & deco", 1, 50), bookBox(6, "books & DECO", 1, 50))
+	in.Options.MergeFirstWord = true
+	lines := allLines(mustBuild(t, in))
+	require.Len(t, lines, 1)
+	assert.Equal(t, "Books & deco", lines[0].Name)
+}
+
+func TestBuild_MergeFirstWordNeedsMerge(t *testing.T) {
+	in := booksInput(true)
+	in.Options.MergeIdentical = false
+	assert.Len(t, allLines(mustBuild(t, in)), 5)
+}
