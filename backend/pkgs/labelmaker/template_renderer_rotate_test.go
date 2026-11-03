@@ -43,7 +43,7 @@ func TestRotatedTextKeepsOriginAndIsNotClipped(t *testing.T) {
 		CanvasData: map[string]interface{}{
 			"objects": []interface{}{
 				canvasObject("textbox", left, top, 60, 24, map[string]interface{}{
-					"text": "HELLO", "fontSize": 20.0, "fill": "#000000", "angle": 90.0,
+					"text": "HELLO", frameKeyFont: 20.0, "fill": "#000000", "angle": 90.0,
 				}),
 			},
 		},

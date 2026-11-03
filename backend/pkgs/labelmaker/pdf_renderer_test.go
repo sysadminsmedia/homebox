@@ -18,7 +18,7 @@ func TestRenderPDFLeavesNilSlotsEmpty(t *testing.T) {
 		DPI:    150,
 		CanvasData: map[string]interface{}{
 			"objects": []interface{}{
-				map[string]interface{}{"type": "Textbox", "left": 4.0, "top": 4.0, "width": 200.0, "height": 30.0, "text": "{{asset_id}}", "fontSize": 16.0},
+				map[string]interface{}{"type": "Textbox", "left": 4.0, "top": 4.0, "width": 200.0, "height": 30.0, "text": "{{asset_id}}", frameKeyFont: 16.0},
 			},
 		},
 	}
