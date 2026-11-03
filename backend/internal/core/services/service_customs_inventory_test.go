@@ -146,7 +146,7 @@ func TestCustomsInventory_PreviewByIDs(t *testing.T) {
 
 	assert.Equal(t, 4, p.ItemCount)
 	assert.Equal(t, 4, p.LineCount)
-	assert.Equal(t, 1, p.DutiableItemCount)
+	assert.InDelta(t, 1.0, p.DutiablePieceCount, 0)
 	assert.Equal(t, 1, p.ReceiptCount)
 	// duty-free: 1200.00 + 3 × 89.50 + 20.00; dutiable: 649.90
 	assert.Equal(t, int64(120000+26850+2000), p.DutyFreeTotalCents)
@@ -204,7 +204,7 @@ func TestCustomsInventory_ForeignTagIgnored(t *testing.T) {
 	p, err := customsService().Preview(f.ctx, req)
 	require.NoError(t, err)
 
-	assert.Equal(t, 1, p.DutiableItemCount, "a tag from another group never makes an item duty-free")
+	assert.InDelta(t, 1.0, p.DutiablePieceCount, 0, "a tag from another group never makes an item duty-free")
 	assert.NotNil(t, issueByCode(p, customsinventory.IssueMissingPurchaseDate))
 }
 

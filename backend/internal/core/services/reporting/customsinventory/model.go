@@ -223,7 +223,6 @@ type Preview struct {
 	Cutoff             string  `json:"cutoff"`
 	ItemCount          int     `json:"itemCount"`
 	LineCount          int     `json:"lineCount"`
-	DutiableItemCount  int     `json:"dutiableItemCount"`
 	PieceCount         float64 `json:"pieceCount"`         // sum of all line quantities
 	ContentCount       int     `json:"contentCount"`       // entities absorbed into a container line
 	DutiablePieceCount float64 `json:"dutiablePieceCount"` // sum of the dutiable line quantities

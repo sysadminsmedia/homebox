@@ -4002,9 +4002,6 @@ const docTemplate = `{
                 "cutoff": {
                     "type": "string"
                 },
-                "dutiableItemCount": {
-                    "type": "integer"
-                },
                 "dutiablePieceCount": {
                     "description": "sum of the dutiable line quantities",
                     "type": "number"
