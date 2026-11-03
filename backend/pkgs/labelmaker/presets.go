@@ -7,6 +7,7 @@ const (
 	brandBrady   = "Brady"
 	brandBrother = "Brother"
 	brandDymo    = "Dymo"
+	brandHerma   = "Herma"
 	brandZebra   = "Zebra"
 )
 
@@ -416,6 +417,27 @@ var LabelPresets = []LabelPreset{
 			Rows:       1,
 			MarginTop:  0,
 			MarginLeft: 0,
+			GutterH:    0,
+			GutterV:    0,
+		},
+	},
+
+	// Herma sheet labels - A4 (210 x 297 mm)
+	{
+		Key:         "herma_5056",
+		Name:        "5056",
+		Brand:       brandHerma,
+		Width:       97.0,
+		Height:      42.3,
+		Continuous:  false,
+		Description: "Address Labels A4 97 x 42.3 mm (12/sheet)",
+		SheetLayout: &SheetLayout{
+			PageWidth:  210,
+			PageHeight: 297,
+			Columns:    2,
+			Rows:       6,
+			MarginTop:  21.6,
+			MarginLeft: 8,
 			GutterH:    0,
 			GutterV:    0,
 		},

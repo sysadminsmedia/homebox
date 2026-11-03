@@ -218,7 +218,15 @@
     }
 
     // Define brand order
-    const brandOrder = ["Avery", "Brother", "Dymo", "Brady", "Zebra", t("components.label_template.form.brand_custom")];
+    const brandOrder = [
+      "Avery",
+      "Brother",
+      "Dymo",
+      "Brady",
+      "Zebra",
+      "Herma",
+      t("components.label_template.form.brand_custom"),
+    ];
     const categoryLabels: Record<PresetCategory, string> = {
       sheet: t("components.label_template.form.sheet_labels"),
       continuous: t("components.label_template.form.continuous_labels"),
