@@ -179,34 +179,22 @@ func (s *CustomsInventoryService) buildInput(ctx context.Context, gid uuid.UUID,
 	paths := map[uuid.UUID]string{}
 	locationPaths := map[uuid.UUID][]string{}
 
+	var frontier []uuid.UUID
 	for _, id := range ids {
-		e, err := s.repos.Entities.GetOneByGroup(ctx, gid, id)
+		it, err := s.loadItem(ctx, gid, id, &in, paths, locationPaths)
 		if ent.IsNotFound(err) {
 			continue // stays in ScopeIDs, becomes excluded_not_found
 		}
 		if err != nil {
 			return customsinventory.Input{}, nil, err
 		}
-
-		var path []string
-		if e.Location != nil {
-			cached, ok := locationPaths[e.Location.ID]
-			if !ok {
-				entries, err := s.repos.Entities.PathForEntity(ctx, gid, e.Location.ID)
-				if err != nil {
-					return customsinventory.Input{}, nil, err
-				}
-				for _, p := range entries {
-					cached = append(cached, p.Name)
-				}
-				locationPaths[e.Location.ID] = cached
-			}
-			path = cached
+		if !it.IsLocation && descends(it) {
+			frontier = append(frontier, it.ID)
 		}
-
-		in.Items = append(in.Items, toCustomsItem(e, path))
-		for _, a := range e.Attachments {
-			paths[a.ID] = a.Path
+	}
+	if req.Options.RollUpContents {
+		if err := s.loadContents(ctx, gid, frontier, &in, paths, locationPaths, s.limit()); err != nil {
+			return customsinventory.Input{}, nil, err
 		}
 	}
 
@@ -225,6 +213,84 @@ func (s *CustomsInventoryService) buildInput(ctx context.Context, gid uuid.UUID,
 	in.Currency = group.Currency
 
 	return in, paths, nil
+}
+
+// loadItem loads one entity of the group, appends it to the input and records
+// its attachment paths. Location paths are cached by location ID.
+func (s *CustomsInventoryService) loadItem(ctx context.Context, gid, id uuid.UUID, in *customsinventory.Input, paths map[uuid.UUID]string, locationPaths map[uuid.UUID][]string) (customsinventory.Item, error) {
+	e, err := s.repos.Entities.GetOneByGroup(ctx, gid, id)
+	if err != nil {
+		return customsinventory.Item{}, err
+	}
+
+	var path []string
+	if e.Location != nil {
+		cached, ok := locationPaths[e.Location.ID]
+		if !ok {
+			entries, err := s.repos.Entities.PathForEntity(ctx, gid, e.Location.ID)
+			if err != nil {
+				return customsinventory.Item{}, err
+			}
+			for _, p := range entries {
+				cached = append(cached, p.Name)
+			}
+			locationPaths[e.Location.ID] = cached
+		}
+		path = cached
+	}
+
+	it := toCustomsItem(e, path)
+	in.Items = append(in.Items, it)
+	for _, a := range e.Attachments {
+		paths[a.ID] = a.Path
+	}
+	return it, nil
+}
+
+// descends reports whether the contents of an item are loaded: never below
+// an archived or sold entity (FR-28).
+func descends(it customsinventory.Item) bool {
+	return !it.Archived && it.SoldDate.Time().IsZero()
+}
+
+// loadContents loads the descendants of the frontier, level by level,
+// through item children only (FR-28). Archived children aren't loaded, as in
+// the search. Scope and contents together may hold at most budget entities.
+func (s *CustomsInventoryService) loadContents(ctx context.Context, gid uuid.UUID, frontier []uuid.UUID, in *customsinventory.Input, paths map[uuid.UUID]string, locationPaths map[uuid.UUID][]string, budget int) error {
+	loaded := make(map[uuid.UUID]bool, len(in.ScopeIDs))
+	for _, id := range in.ScopeIDs {
+		loaded[id] = true
+	}
+	count := len(in.ScopeIDs)
+	contents := 0
+	for len(frontier) > 0 {
+		res, err := s.repos.Entities.QueryByGroup(ctx, gid, repo.EntityQuery{Page: -1, PageSize: -1, ParentItemIDs: frontier})
+		if err != nil {
+			return err
+		}
+		var next []uuid.UUID
+		for _, child := range res.Items {
+			if loaded[child.ID] || (child.EntityType != nil && child.EntityType.IsLocation) {
+				continue
+			}
+			loaded[child.ID] = true
+			count++
+			if count > budget {
+				return fmt.Errorf("%w: %d entities, at most %d", customsinventory.ErrScopeTooLarge, count, budget)
+			}
+			it, err := s.loadItem(ctx, gid, child.ID, in, paths, locationPaths)
+			if err != nil {
+				return err
+			}
+			contents++
+			if descends(it) {
+				next = append(next, it.ID)
+			}
+		}
+		frontier = next
+	}
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int("contents.count", contents))
+	return nil
 }
 
 // scopeIDs returns the requested IDs, or runs the search again without
@@ -302,6 +368,9 @@ func toCustomsItem(e repo.EntityOut, locationPath []string) customsinventory.Ite
 	}
 	if e.Location != nil {
 		it.LocationID = e.Location.ID
+	}
+	if e.Parent != nil {
+		it.ParentID = e.Parent.ID
 	}
 	for _, t := range e.Tags {
 		it.TagIDs = append(it.TagIDs, t.ID)
