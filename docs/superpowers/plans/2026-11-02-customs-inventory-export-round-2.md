@@ -178,7 +178,7 @@ Expected: PASS, with no new lint warnings and no type errors.
 - [ ] **Step 6: Commit and open PR A**
 
 ```bash
-git add backend/app/api/static/docs frontend
+git add backend/app/api/static/docs docs/public/api frontend
 git commit -m "feat(customs): show pieces instead of entries in the export dialog"
 ```
 
@@ -328,7 +328,7 @@ Expected: PASS, clean.
 - [ ] **Step 6: Commit and open PR B**
 
 ```bash
-git add backend/app/api/static/docs frontend
+git add backend/app/api/static/docs docs/public/api frontend
 git commit -m "feat(customs): add the first-word merge option to the export dialog"
 ```
 
@@ -388,7 +388,9 @@ Tests, each built from `containerInput()` with one change:
 | `TestBuild_RollUp_ChildrenInScopeNotListedTwice` | `ScopeIDs` = box, book, pen | one line; `Verify` passes |
 | `TestBuild_RollUp_Off` | `RollUpContents=false`, `ScopeIDs` = box, book | two lines; `ScopeIDs` has 2 IDs; no `inkl. Inhalt` comment |
 | `TestBuild_RollUp_DutiableChildSplitOut` | vase bought `2026-10-01` | box `UnitCents` 3750; one dutiable line "Vase" with `Inhalt von 000-001` in its comments; `issueNames(r, IssueContentSplit)` = `["Vase"]` |
-| `TestBuild_RollUp_ContainerQuantityNotOne` | box quantity 2 | four lines: box, book, vase, and pouch (the pen is still absorbed into the pouch, `UnitCents` 750); `issueNames(..., IssueContainerQuantity)` = `["Box books"]`; `issueNames(..., IssueContentSplit)` = `["Book", "Pouch", "Vase"]` |
+| `TestBuild_RollUp_ContainerQuantityNotOne` | box quantity 2 | four lines: box, book, vase, and pouch (the pen is still absorbed into the pouch, `UnitCents` 750); `issueNames(..., IssueContainerQuantity)` = `["Box books"]`; `issueNames(..., IssueContentSplit)` is empty |
+| `TestBuild_RollUp_QuantityParentStopsWalk` | pouch quantity 2 | three lines: box with `UnitCents` 5550, pouch, and pen with `Inhalt von 000-004` (the pen doesn't skip the pouch into the box); `issueNames(..., IssueContainerQuantity)` = `["Pouch"]`; `issueNames(..., IssueContentSplit)` is empty |
+| `TestBuild_RollUp_DifferentStatusParentStopsWalk` | add "Bag" (asset 6, 1 × 40.00, bought `2026-10-01`, parent box) and "Scarf" (asset 7, 1 × 15.00, bought `2019-01-01`, parent bag) | box `UnitCents` 6300; a dutiable line "Bag" with `Inhalt von 000-001`; a duty-free line "Scarf" with `UnitCents` 1500 and `Inhalt von 000-006` (not rolled into the box); `issueNames(..., IssueContentSplit)` = `["Bag", "Scarf"]`; `Verify` passes |
 | `TestBuild_RollUp_MissingPrice` | book price 0 | `issueNames(..., IssueMissingPrice)` = `["Book"]` (the box isn't listed); box comments contain `Wert fehlt` |
 | `TestBuild_RollUp_ReceiptsOfContents` | `IncludeReceipts=true`; the vase has `receipt(1, "r.pdf", "application/pdf", "2024-01-01T00:00:00Z")` | the box line's `ReceiptNames` = `["000-003_Rechnung.pdf"]`; `r.Receipts` has that name with `ItemID` = vase |
 | `TestBuild_RollUp_SoldContentExcluded` | book `SoldDate` set | `Excluded` has the book with `IssueExcludedSold`; `UnitCents` 3300 |
@@ -428,8 +430,8 @@ How each step works:
 - `linkParents(entries)`: when the option is on, `e.parent` = the entry of `e.it.ParentID` when there is one, else nil. With the option off, it stays nil everywhere.
   - It then breaks cycles: for each entry, walk up `parent`. If the walk comes back to an entry already on the path, set `parent = nil` on the cycle member with the smallest ID (string compare). After that, every chain ends, and later walks need no guard for correctness. Keep a visited guard anyway.
 - Classification moves out of `newEntry`, to after `linkParents`. In this task it still uses the item's own tags.
-- `assignOwners(entries)`: for each entry, walk up through `parent`, with a visited guard. Remember the last ancestor `a` with `a.class.Status == e.class.Status && a.it.Quantity == 1`. If one was found, append `e` to `a.contents`. Sort each `contents` with `compareEntries`.
-  - The topmost candidate is never absorbed itself. Any container above it with the same status and quantity 1 would be a higher candidate. No second pass is needed.
+- `assignOwners(entries)`: for each entry, step up through `parent`, with a visited guard, while the parent `a` has `a.class.Status == e.class.Status && a.it.Quantity == 1`. Stop at the first parent that fails; never skip it (FR-30). If at least one step was taken, append `e` to the `contents` of the last `a` reached. Sort each `contents` with `compareEntries`.
+  - The owner is never absorbed itself: its parent fails the same test for it, because the owner has `e`'s status. No second pass is needed.
 - `lineUnitCents` = `unitCents` + Σ `LineCents(c.it.Quantity, c.unitCents)` over `contents`.
   - For a member, `hasPrice` = `lineUnitCents != 0`.
   - For absorbed content, `hasPrice` = `unitCents != 0`.
@@ -439,7 +441,7 @@ How each step works:
   - `Inhalt von <parent.assetLabel>` when `e` is a member and `e.parent != nil`.
 - Issues, in `itemIssues`:
   - `missing_price`: when `unitCents == 0 && !(len(contents) > 0 && lineUnitCents != 0)`.
-  - `content_split`: a member with `parent != nil`. The detail is the parent's label.
+  - `content_split`: an entry with `parent != nil && parent.class.Status != e.class.Status` (always a member, since its walk stops at once). The detail is the parent's label.
   - `container_quantity`: an entry with `Quantity != 1` that is the `parent` of at least one entry. The detail is `FormatQtyDE(Quantity)`.
 - Only members (entries with no owner) go into `groupEntries`. The merge key uses `lineUnitCents`.
 - `lineFrom`:
@@ -624,7 +626,7 @@ Expected: PASS, clean.
 - [ ] **Step 6: Commit and open PR C**
 
 ```bash
-git add backend/app/api/static/docs frontend
+git add backend/app/api/static/docs docs/public/api frontend
 git commit -m "feat(customs): add the contents rollup option to the export dialog"
 ```
 
