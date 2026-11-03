@@ -141,7 +141,9 @@ func Build(in Input) (Report, error) {
 	}
 	linkParents(entries, o.RollUpContents)
 	for _, e := range entries {
-		e.class = Classify(e.it, rules)
+		it := e.it // a copy: tag grouping (FR-4) keeps using the item's own tags
+		it.TagIDs = effectiveTags(e)
+		e.class = Classify(it, rules)
 	}
 	assignOwners(entries)
 	computeValues(entries)

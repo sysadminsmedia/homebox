@@ -97,6 +97,23 @@ func linkParents(entries []*entry, rollUp bool) {
 	}
 }
 
+// effectiveTags returns the item's own tags followed by the tags of every
+// ancestor along its included parents, deduplicated (FR-35). Without
+// RollUpContents no entry has a parent, so these are the item's own tags.
+func effectiveTags(e *entry) []uuid.UUID {
+	tags := slices.Clone(e.it.TagIDs)
+	seen := map[*entry]bool{e: true}
+	for a := e.parent; a != nil && !seen[a]; a = a.parent {
+		seen[a] = true
+		for _, t := range a.it.TagIDs {
+			if !slices.Contains(tags, t) {
+				tags = append(tags, t)
+			}
+		}
+	}
+	return tags
+}
+
 // assignOwners rolls each entry into the outermost container it reaches by
 // stepping to parents with the same customs status and quantity exactly 1,
 // never skipping one (FR-30). A container with another quantity is never

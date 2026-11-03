@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
 
 var (
@@ -221,4 +222,56 @@ func TestBuild_RollUp_MergedContainersKeepTheirContents(t *testing.T) {
 	}
 	assert.Equal(t, map[uuid.UUID]bool{boxID: true, box2.ID: true}, owners)
 	assert.NoError(t, Verify(r))
+}
+
+// taggedContainerInput: the box carries tag; the book has no purchase date.
+func taggedContainerInput(tag uuid.UUID) Input {
+	in := containerInput()
+	in.Tags = goldenInput().Tags
+	setItem(&in, boxID, func(it *Item) { it.TagIDs = []uuid.UUID{tag} })
+	setItem(&in, bookID, func(it *Item) { it.PurchaseDate = types.Date{} })
+	return in
+}
+
+func TestBuild_RollUp_ContentInheritsDutyFreeTag(t *testing.T) {
+	in := taggedContainerInput(tagP2)
+	in.Options.DutyFreeTagIDs = []uuid.UUID{tagP}
+	r := mustBuild(t, in)
+	lines := allLines(r)
+	require.Len(t, lines, 1)
+	assert.Empty(t, issueNames(r, IssueMissingPurchaseDate))
+	assert.True(t, hasComment(lines[0], "zollfrei lt. Tag „owned > 2 years“"))
+}
+
+func TestBuild_RollUp_ContentInheritsDutiableTag(t *testing.T) {
+	in := containerInput()
+	in.Tags = goldenInput().Tags
+	in.Options.DutiableTagIDs = []uuid.UUID{tagZ}
+	setItem(&in, boxID, func(it *Item) { it.TagIDs = []uuid.UUID{tagZ} })
+	r := mustBuild(t, in)
+	assert.Empty(t, r.Groups)
+	require.Len(t, r.Dutiable, 1)
+	assert.Equal(t, "Box books", r.Dutiable[0].Name)
+	assert.Equal(t, int64(6300), r.Dutiable[0].UnitCents)
+}
+
+func TestBuild_RollUp_DateBeatsInheritedTag(t *testing.T) {
+	in := taggedContainerInput(tagP2)
+	in.Options.DutyFreeTagIDs = []uuid.UUID{tagP}
+	setItem(&in, vaseID, func(it *Item) { it.PurchaseDate = d("2026-10-01") })
+	r := mustBuild(t, in)
+	require.Len(t, r.Dutiable, 1)
+	assert.Equal(t, "Vase", r.Dutiable[0].Name)
+	assert.Equal(t, []string{"Vase"}, issueNames(r, IssueConflictDateTag))
+}
+
+func TestBuild_NoInheritanceWhenRollUpOff(t *testing.T) {
+	in := taggedContainerInput(tagP2)
+	in.Options.DutyFreeTagIDs = []uuid.UUID{tagP}
+	in.Options.RollUpContents = false
+	in.ScopeIDs = []uuid.UUID{boxID, bookID}
+	r := mustBuild(t, in)
+	book := lineByName(t, r, "Book")
+	assert.Equal(t, StatusDutiable, book.Status)
+	assert.Equal(t, []string{"Book"}, issueNames(r, IssueMissingPurchaseDate))
 }
