@@ -54,6 +54,7 @@ func startEntityCtrlSpan(ctx context.Context, name string, attrs ...attribute.Ke
 //	@Param		tags			query		[]string	false	"tags Ids"	collectionFormat(multi)
 //	@Param		matchAllTags	query		bool		false	"require all selected tags to match (AND) instead of any (OR)"
 //	@Param		parentIds		query		[]string	false	"parent Ids"																	collectionFormat(multi)
+//	@Param		parentItemIds	query		[]string	false	"parent item IDs; matches direct children wherever they are stored"				collectionFormat(multi)
 //	@Param		entityTypeIds	query		[]string	false	"entity type IDs; when provided this filter takes precedence over isLocation"	collectionFormat(multi)
 //	@Param		orderBy			query		string		false	"field to order by; valid values: name, createdAt, updatedAt, assetId"
 //	@Param		orderDirection	query		string		false	"order direction; valid values: asc, desc. Defaults to desc for createdAt and updatedAt, asc otherwise"
@@ -82,6 +83,7 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 			PageSize:         queryIntOrNegativeOne(params.Get("pageSize")),
 			Search:           params.Get("q"),
 			ParentIDs:        queryUUIDList(params, "parentIds"),
+			ParentItemIDs:    queryUUIDList(params, "parentItemIds"),
 			EntityTypeIDs:    queryUUIDList(params, "entityTypeIds"),
 			TagIDs:           queryUUIDList(params, "tags"),
 			NegateTags:       queryBool(params.Get("negateTags")),
