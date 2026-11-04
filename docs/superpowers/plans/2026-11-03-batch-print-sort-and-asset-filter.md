@@ -19,7 +19,7 @@
 - Tests never use the local dev database.
 - **PR slicing.** Two PRs:
   - PR A: Tasks 1–2 (R1, R2), against `main`;
-  - PR B: Tasks 3–4 (R3), stacked on PR A, because both change `batch.vue`.
+  - PR B: Tasks 3–4 (R3), stacked on PR A, because both change `batch.vue`. It needs a push after PR A merges to get CI (see Task 4, Step 5).
 - PR bodies follow the repo's PR conventions (persona first line, signature).
 
 ## Review Focus
@@ -43,7 +43,7 @@
 
 - [ ] **Step 1: Write the failing test**
 
-`TestEntityRepository_QueryByGroup_TiesOrderByID`: create five items in one location, all named `"Same name"` and with equal quantity. Query with `OrderBy` set to `""` (name), `"quantity"` and `"location"`, `Page: -1, PageSize: -1`. Each time assert the returned IDs are in ascending `ID.String()` order. UUIDs are random, so insertion order won't pass by chance.
+`TestEntityRepository_QueryByGroup_TiesOrderByID`: create five items in one location, all named `"Same name"` and with equal quantity. Query with `OrderBy` set to `""` (name), `"quantity"` and `"location"`, `Page: -1, PageSize: -1`. The test group is shared with other tests, so keep only the five entities created here (a `mine` filter, as in `TestEntityRepository_QueryByGroup_OrderByLocation`). Each time assert their IDs are in ascending `ID.String()` order. UUIDs are random, so insertion order won't pass by chance.
 
 - [ ] **Step 2: Run it and see it fail**
 
@@ -109,6 +109,8 @@ describe("orderSelection", () => {
 7. Choose "Descending" and wait for the response. Assert the badges now follow the list: the row higher up has 1 (FR-5).
 8. Click "Locations" and assert the order-by select is gone (FR-1).
 
+A second test, `ignores a stale response` (FR-4): hold the `/api/v1/entities` request with `orderDirection=desc` in a `page.route` handler. Tick two rows, choose "Descending", then "Ascending", and wait for the ascending response. Release the held request and wait for its response. Assert the rows and the order badges still follow ascending order.
+
 - [ ] **Step 3: Run them and see them fail**
 
 Run:
@@ -122,10 +124,11 @@ Expected: FAIL. `orderSelection` doesn't exist, and the rows aren't in asset ID 
 - `label-batch.ts`: the helper and the constant.
 - `batch.vue`:
   - `const orderBy = ref("assetId")`, `const orderDirection = ref("asc")`, sent in the `getAll` call; `total` from `data.total`.
-  - Two `Select`s in the filter row, inside the existing `v-if="kind === 'items'"`, with `items.order_by` as the first one's accessible label. Option labels reuse the `items.*` keys the search page uses (`items.asset_id`, `items.name`, `items.location`, `items.created_at`, `items.updated_at`, `items.quantity`, `items.purchase_price`, `items.insured`, `items.asc`, `items.desc`).
-  - A separate `watch([orderBy, orderDirection], …)`: await `search()`, then `selectedIds.value = orderSelection(selectedIds.value, results.value.map(r => r.id))`. Don't add these refs to the existing `watchDebounced`, which must keep leaving the selection alone.
+  - `search(): Promise<boolean>` gets a request counter. Each call takes the next number. After the `await`, a call that is no longer the latest changes nothing (`results`, `total`, `loading`) and returns `false`; the latest returns `true`.
+  - Two `Select`s in the filter row, inside the existing `v-if="kind === 'items'"`, with `items.order_by` and `items.order_direction` as their accessible labels. Option labels reuse the `items.*` keys the search page uses (`items.asset_id`, `items.name`, `items.location`, `items.created_at`, `items.updated_at`, `items.quantity`, `items.purchase_price`, `items.insured`, `items.asc`, `items.desc`).
+  - A separate `watch([orderBy, orderDirection], …)`: when `await search()` returns `true`, set `selectedIds.value = orderSelection(selectedIds.value, results.value.map(r => r.id))`. Don't add these refs to the existing `watchDebounced`, which must keep leaving the selection alone.
   - Under the results line, show `results_truncated` with `{ shown: results.length, total }` when `kind === 'items' && total > results.length`.
-- Locales: `results_truncated` in en and de. `de.json` has no `pages.label_templates` block, so create it with this key. Add `items.asc` and `items.desc` to `de.json` (spec §3).
+- Locales: `results_truncated` in en and de. `de.json` has no `pages.label_templates` block, so create it with this key. Add `items.asc` and `items.desc` to `de.json`, and `items.order_direction` to both (spec §3).
 
 - [ ] **Step 5: Run the tests and checks**
 
@@ -171,17 +174,19 @@ func TestParseAssetIDSearch(t *testing.T) {
 		"#<=200":              {1, 200},
 		"#<200":               {1, 199},
 		"#>=100 <=200":        {100, 200},
+		"#>=100<=200":         {100, 200},
 		"#<=200 >=100":        {100, 200},
 		"#>=0":                {1, top},
 		"#<1":                 {1, 0},
 		"#>=200 <=100":        {200, 100},
+		"#>9223372036854775807": {1, 0},
 	}
 	for in, want := range valid {
 		got, ok := ParseAssetIDSearch(in)
 		assert.True(t, ok, in)
 		assert.Equal(t, want, got, in)
 	}
-	for _, in := range []string{"", "#", "#000-123", "#abc", "#>=", "#>=abc", "#>=100 books", "books #>=100", "asset-id", "asset-id 100", "#>=1 <=2 <=3"} {
+	for _, in := range []string{"", "#", "#000-123", "#abc", "#>=", "#>=abc", "#>=100 books", "books #>=100", "asset-id", "asset-id 100", "#>=1 <=2 <=3", "#>=99999999999999999999"} {
 		_, ok := ParseAssetIDSearch(in)
 		assert.False(t, ok, in)
 	}
@@ -206,7 +211,7 @@ func TestEntityQuery_ResolveAssetIDSearch(t *testing.T) {
 }
 ```
 
-`TestEntityRepository_QueryByGroup_AssetIDRange`: items with asset IDs 5, 10, 15 and one with none (0). Assert the returned asset IDs for `{10, MaxInt64}` → 10, 15; `{5, 10}` → 5, 10; `{1, MaxInt64}` → 5, 10, 15; `{1, 0}` → none; `{15, 5}` → none, without an error.
+`TestEntityRepository_QueryByGroup_AssetIDRange`: items with asset IDs 5, 10, 15 and one with none (0). The test group is shared, so keep only the entities created here (a `mine` filter). Assert their asset IDs for `{10, MaxInt64}` → 10, 15; `{5, 10}` → 5, 10; `{1, MaxInt64}` → 5, 10, 15; `{1, 0}` → none; `{15, 5}` → none, without an error.
 
 `TestToEntityQuery_AssetIDRange` in the service test file: `toEntityQuery(customsinventory.ScopeQuery{Q: "#>=100"})` has an empty `Search` and `AssetIDRange` `{100, MaxInt64}`. The existing `#000-123` assertion at `service_customs_inventory_test.go:302` must keep passing.
 
@@ -220,10 +225,10 @@ Expected: FAIL, `undefined: ParseAssetIDSearch`.
 - `ParseAssetIDSearch`, in `asset_id_type.go`: match the trimmed term case-insensitively against a package-level regexp:
 
   ```go
-  `(?i)^(?:#|asset[- ]?id)\s*(>=|<=|>|<)\s*([0-9-]+)(?:\s+(>=|<=|>|<)\s*([0-9-]+))?$`
+  `(?i)^(?:#|asset[- ]?id)\s*(>=|<=|>|<)\s*([0-9-]+)(?:\s*(>=|<=|>|<)\s*([0-9-]+))?$`
   ```
 
-  Start from `AssetIDRange{1, math.MaxInt64}`. Read each value with `ParseAssetID`; a failure means `false`. Apply each comparison as a tightening: `>=n` raises `Min` to `n`, `>n` to `n+1`, `<=n` lowers `Max` to `n`, `<n` to `n-1`, keeping `Min` at 1 or more. Those tightenings give the test table's results.
+  Start from `AssetIDRange{1, math.MaxInt64}`. Read each value with `ParseAssetID`; a failure means `false`. Apply each comparison as a tightening, which never loosens the range: `>=n` raises `Min` to `n`, `>n` to `n+1`, `<=n` lowers `Max` to `n`, `<n` to `n-1`, keeping `Min` at 1 or more. `>n` with `n` at `math.MaxInt64` has no `n+1`, so it sets `Max` to 0 instead, which leaves an empty range. Those tightenings give the test table's results.
 - `ResolveAssetIDSearch`: the exact `#` handling moved here from the handler, then `ParseAssetIDSearch`.
 - `QueryByGroup`: next to the `q.AssetID` filter, add `entity.AssetIDGTE` and `entity.AssetIDLTE` when `q.AssetIDRange != nil`.
 - Handler `extractQuery` and customs `toEntityQuery`: replace their `#` blocks with `v.ResolveAssetIDSearch()`. Update the comment above `toEntityQuery`.
@@ -273,7 +278,7 @@ Expected: FAIL, the helper and the hint don't exist. The filter steps pass alrea
 
 - [ ] **Step 4: Run the checks**
 
-Run: `task ui:fix`, `task ui:check`, then `task test:e2e -- label-batch customs-inventory`.
+Run: `task ui:fix`, `task ui:check`, then `task test:e2e -- --project=chromium --project=webkit label-batch customs-inventory`.
 Expected: clean; both specs pass in chromium and webkit. Firefox doesn't launch on the local machine, so it's left to CI.
 
 - [ ] **Step 5: Commit and open PR B**
@@ -283,4 +288,4 @@ git add frontend
 git commit -m "feat(labels): explain the asset ID filter on the batch print page"
 ```
 
-PR B is stacked on PR A. In the body, name R3 and the spec, and say that CI runs once it retargets to `main`.
+PR B is stacked on PR A. In the body, name R3 and the spec, and say that CI doesn't run while it's stacked. A retarget to `main` doesn't start CI either, because `pull-requests.yaml` has no `edited` trigger. So after PR A merges, update PR B from `main` and push, and PR B merges only once that CI is green.
