@@ -92,35 +92,37 @@
     return { rows: data.items || [], total: data.total };
   }
 
-  // Only the latest search counts: a slower, older response changes nothing. Returns true
-  // when this call's response is now on screen.
+  // Only the latest search counts: a slower, older response changes nothing.
   let latestSearch = 0;
-  async function search(): Promise<boolean> {
+  // A sort change re-orders the selection when the first response in the new order is on
+  // screen, whichever search brings it. A search or filter change alone must not.
+  let reorderPending = false;
+  async function search() {
     const current = ++latestSearch;
     loading.value = true;
     try {
       const found = await fetchResults();
-      if (current !== latestSearch) return false;
+      if (current !== latestSearch) return;
       results.value = found.rows;
       total.value = found.total;
-      return true;
+      if (reorderPending) {
+        reorderPending = false;
+        selectedIds.value = orderSelection(
+          selectedIds.value,
+          found.rows.map(r => r.id)
+        );
+      }
     } catch {
       if (current === latestSearch) toast.error(t("items.toast.failed_search_items"));
-      return false;
     } finally {
       if (current === latestSearch) loading.value = false;
     }
   }
 
   watchDebounced([query, selectedTags, selectedLocations], search, { debounce: 250, maxWait: 1000 });
-  // A sort change also re-orders the selection. A search or filter change must not.
-  watch([orderBy, orderDirection], async () => {
-    if (await search()) {
-      selectedIds.value = orderSelection(
-        selectedIds.value,
-        results.value.map(r => r.id)
-      );
-    }
+  watch([orderBy, orderDirection], () => {
+    reorderPending = true;
+    search();
   });
   watch(kind, () => {
     selectedIds.value = [];

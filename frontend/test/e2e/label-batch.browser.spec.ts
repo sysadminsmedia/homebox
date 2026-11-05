@@ -39,6 +39,22 @@ function entitiesResponse(page: Page, match: (params: URLSearchParams) => boolea
 const hasDirection = (direction: Direction) => (params: URLSearchParams) =>
   params.get("orderDirection") === (direction === "Ascending" ? "asc" : "desc");
 
+// Holds the matching requests until the returned function is called.
+async function holdRequests(page: Page, match: (params: URLSearchParams) => boolean): Promise<() => void> {
+  let release = () => {};
+  const held = new Promise<void>(resolve => {
+    release = resolve;
+  });
+  await page.route(
+    url => isEntitiesRequest(url, match),
+    async route => {
+      await held;
+      await route.continue();
+    }
+  );
+  return release;
+}
+
 async function pickDirection(page: Page, direction: Direction) {
   await page.getByRole("combobox", { name: "Order Direction" }).click();
   await page.getByRole("option", { name: direction }).click();
@@ -143,17 +159,7 @@ test.describe("batch print list", () => {
     await tick(page, 1);
     await tick(page, 0);
 
-    let release = () => {};
-    const held = new Promise<void>(resolve => {
-      release = resolve;
-    });
-    await page.route(
-      url => isEntitiesRequest(url, hasDirection("Descending")),
-      async route => {
-        await held;
-        await route.continue();
-      }
-    );
+    const release = await holdRequests(page, hasDirection("Descending"));
 
     await pickDirection(page, "Descending");
     await chooseDirection(page, "Ascending");
@@ -169,6 +175,35 @@ test.describe("batch print list", () => {
     await expectAssetIdOrder(page, "Ascending");
     await expectBadge(page, first, 1);
     await expectBadge(page, second, 2);
+  });
+
+  test("re-orders the selection when a newer search overtakes the sort request", async ({ page }) => {
+    await openBatchPage(page);
+    await expectAssetIdOrder(page, "Ascending");
+
+    // The first two demo items share their first word, so a search for it keeps both listed.
+    const first = await rowName(page, 0);
+    const second = await rowName(page, 1);
+    const word = first.split(" ")[0]!;
+    expect(second).toContain(word);
+    await tick(page, 0);
+    await tick(page, 1);
+
+    const isSortRequest = (params: URLSearchParams) => hasDirection("Descending")(params) && !params.get("q");
+    const release = await holdRequests(page, isSortRequest);
+
+    await pickDirection(page, "Descending");
+    const overtaking = entitiesResponse(page, params => params.get("q") === word);
+    await page.getByRole("textbox", { name: "Search" }).fill(word);
+    await overtaking;
+    await expectBadge(page, second, 1);
+    await expectBadge(page, first, 2);
+
+    const stale = entitiesResponse(page, isSortRequest);
+    release();
+    await stale;
+    await expectBadge(page, second, 1);
+    await expectBadge(page, first, 2);
   });
 
   test("says when more items match than it shows", async ({ page }) => {
