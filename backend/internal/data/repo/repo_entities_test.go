@@ -1040,6 +1040,59 @@ func TestEntityRepository_QueryByGroup_TiesOrderByID(t *testing.T) {
 	}
 }
 
+// TestEntityRepository_QueryByGroup_AssetIDRange verifies the range filter,
+// including that an entity without an asset ID (0) never matches and that a
+// range which can't match gives no results rather than an error.
+func TestEntityRepository_QueryByGroup_AssetIDRange(t *testing.T) {
+	ctx := context.Background()
+	itemET := useItemEntityType(t)
+
+	// The test group is shared, so only the entities created here are compared.
+	mine := make(map[uuid.UUID]AssetID, 4)
+	for _, aid := range []AssetID{5, 10, 15, 0} {
+		e, err := tRepos.Entities.Create(ctx, tGroup.ID, EntityCreate{
+			Name:         "asset range item",
+			EntityTypeID: itemET.ID,
+			AssetID:      aid,
+		})
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = tRepos.Entities.Delete(ctx, e.ID) })
+		mine[e.ID] = aid
+	}
+
+	const top = AssetID(math.MaxInt64)
+	tests := []struct {
+		name string
+		in   AssetIDRange
+		want []AssetID
+	}{
+		{"from a value", AssetIDRange{10, top}, []AssetID{10, 15}},
+		{"between two values, both inclusive", AssetIDRange{5, 10}, []AssetID{5, 10}},
+		{"everything with an asset ID", AssetIDRange{1, top}, []AssetID{5, 10, 15}},
+		{"empty range below every ID", AssetIDRange{1, 0}, []AssetID{}},
+		{"reversed range", AssetIDRange{15, 5}, []AssetID{}},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			res, err := tRepos.Entities.QueryByGroup(ctx, tGroup.ID, EntityQuery{
+				Page:         -1,
+				PageSize:     -1,
+				OrderBy:      "assetId",
+				AssetIDRange: &tc.in,
+			})
+			require.NoError(t, err)
+
+			got := make([]AssetID, 0, len(mine))
+			for _, e := range res.Items {
+				if aid, ok := mine[e.ID]; ok {
+					got = append(got, aid)
+				}
+			}
+			assert.Equal(t, tc.want, got)
+		})
+	}
+}
+
 // The table links an item's parent to /location/ or /item/, so the summaries
 // must carry the parent's entity type.
 func TestEntityRepository_QueryByGroup_ParentHasEntityType(t *testing.T) {

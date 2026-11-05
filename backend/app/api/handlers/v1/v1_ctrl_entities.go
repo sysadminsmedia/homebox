@@ -48,7 +48,7 @@ func startEntityCtrlSpan(ctx context.Context, name string, attrs ...attribute.Ke
 //	@Summary	Query All Entities
 //	@Tags		Entities
 //	@Produce	json
-//	@Param		q				query		string		false	"search string; matches names, descriptions, serial/model numbers, manufacturers, notes, purchase sources, tag names, and custom field values. Use #<assetId> to look up by asset ID and double quotes for exact phrases"
+//	@Param		q				query		string		false	"search string; matches names, descriptions, serial/model numbers, manufacturers, notes, purchase sources, tag names, and custom field values. Use #<assetId> to look up by asset ID, #>=100, #<=200 or #>=100 <=200 to filter by asset ID, and double quotes for exact phrases"
 //	@Param		page			query		int			false	"page number"
 //	@Param		pageSize		query		int			false	"items per page"
 //	@Param		tags			query		[]string	false	"tags Ids"	collectionFormat(multi)
@@ -102,15 +102,7 @@ func (ctrl *V1Controller) HandleEntitiesGetAll() errchain.HandlerFunc {
 
 		v.FilterChildren = queryBool(params.Get("filterChildren"))
 
-		if strings.HasPrefix(v.Search, "#") {
-			aidStr := strings.TrimPrefix(v.Search, "#")
-
-			aid, ok := repo.ParseAssetID(aidStr)
-			if ok {
-				v.Search = ""
-				v.AssetID = aid
-			}
-		}
+		v.ResolveAssetIDSearch()
 
 		return v
 	}
