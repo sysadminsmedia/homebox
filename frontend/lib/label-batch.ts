@@ -10,6 +10,11 @@ export const BATCH_ORDER_FIELDS = [
   "insured",
 ] as const;
 
+// True for an exact asset ID term such as "#000-123", not for a comparison or text.
+export function isExactAssetIdSearch(q: string): boolean {
+  return /^#[0-9-]+$/.test(q);
+}
+
 // Selected items in the list take the list's order. Selected items outside it stay
 // selected, after them, in their old order.
 export function orderSelection(selectedIds: string[], resultIds: string[]): string[] {

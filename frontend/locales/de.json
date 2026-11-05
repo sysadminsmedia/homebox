@@ -857,6 +857,7 @@
     "pages": {
         "label_templates": {
             "batch": {
+                "asset_filter_hint": "Nach Asset-ID filtern mit #>=100, oder #>=100 <=200 für einen Bereich.",
                 "results_truncated": "Die ersten {shown} von {total} Artikeln werden angezeigt. Grenzen Sie die Suche ein, um die übrigen zu sehen."
             }
         },

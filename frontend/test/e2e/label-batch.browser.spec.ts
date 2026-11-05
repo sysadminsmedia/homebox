@@ -220,4 +220,38 @@ test.describe("batch print list", () => {
 
     await expect(page.getByText(/^Showing the first \d+ of \d+ items\./)).toBeVisible();
   });
+
+  test("filters by asset ID comparisons", async ({ page }) => {
+    await openBatchPage(page);
+    const hint = page.getByText("Filter by asset ID with #>=100, or #>=100 <=200 for a range.");
+    await expect(hint).toBeVisible();
+    await expectAssetIdOrder(page, "Ascending");
+
+    const from = (await assetIds(page))[2]!;
+    const term = `#>=${from}`;
+    const search = page.getByRole("textbox", { name: "Search" });
+    const filtered = entitiesResponse(page, params => params.get("q") === term);
+    await search.fill(term);
+    await filtered;
+    await expect.poll(async () => (await assetIds(page))[0]).toBe(from);
+    expect((await assetIds(page)).every(id => id >= from)).toBe(true);
+
+    await search.fill("#>=200000 <=100");
+    await expect(page.getByText("No items found. Try adjusting your search.")).toBeVisible();
+
+    await page.getByRole("group").getByRole("button", { name: "Locations" }).click();
+    await expect(hint).toHaveCount(0);
+  });
+});
+
+test("the search page shows the query ID only for an exact asset ID", async ({ page }) => {
+  await login(page);
+  await page.goto("/search");
+
+  const search = page.getByRole("textbox", { name: "Search" });
+  const queryId = page.getByText(/^Querying Asset ID Number:/);
+  await search.fill("#000-001");
+  await expect(queryId).toBeVisible();
+  await search.fill("#>=1");
+  await expect(queryId).toHaveCount(0);
 });

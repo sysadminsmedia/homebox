@@ -1,5 +1,14 @@
 import { describe, expect, test } from "vitest";
-import { orderSelection } from "./label-batch";
+import { isExactAssetIdSearch, orderSelection } from "./label-batch";
+
+describe("isExactAssetIdSearch", () => {
+  test.each(["#000-123", "#123"])("accepts %s", q => {
+    expect(isExactAssetIdSearch(q)).toBe(true);
+  });
+  test.each(["#>=100", "#>=100 <=200", "#abc", "#", "books"])("rejects %s", q => {
+    expect(isExactAssetIdSearch(q)).toBe(false);
+  });
+});
 
 describe("orderSelection", () => {
   test("follows the list order", () => {

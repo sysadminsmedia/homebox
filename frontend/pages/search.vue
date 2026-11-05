@@ -5,6 +5,7 @@
   import type { EntitySummary, EntityTypeSummary, TagSummary } from "~~/lib/api/types/data-contracts";
   import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
+  import { isExactAssetIdSearch } from "~~/lib/label-batch";
   import MdiLoading from "~icons/mdi/loading";
   import MdiMagnify from "~icons/mdi/magnify";
   import MdiDelete from "~icons/mdi/delete";
@@ -197,7 +198,7 @@
     return [aidInt, true];
   }
 
-  const byAssetId = computed(() => query.value?.startsWith("#") || false);
+  const byAssetId = computed(() => isExactAssetIdSearch(query.value ?? ""));
   const parsedAssetId = computed(() => {
     if (!byAssetId.value) {
       return "";
