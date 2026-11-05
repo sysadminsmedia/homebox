@@ -430,7 +430,7 @@
         name: "items.sold_notes",
         type: "markdown",
         text: item.value?.soldNotes || "",
-      }
+      },
     ];
 
     if (!preferences.value.showEmpty) {
