@@ -102,7 +102,7 @@ func TestRenderElementsFarOutsideLabelAreSkippedQuickly(t *testing.T) {
 		"rect negative":    canvasObject("rect", -1e9, -1e9, 100, 100, mergeMaps(far, map[string]interface{}{"fill": black})),
 		"rect positive":    canvasObject("rect", 1e9, 1e9, 100, 100, mergeMaps(far, map[string]interface{}{"fill": black})),
 		"image negative":   canvasObject("image", -1e9, -1e9, 100, 100, mergeMaps(far, map[string]interface{}{"src": smallPNGDataURL(t)})),
-		"text negative":    canvasObject("textbox", -1e9, -1e9, 100, 20, mergeMaps(far, map[string]interface{}{"text": "far", "fontSize": 12.0, "fill": black})),
+		"text negative":    canvasObject("textbox", -1e9, -1e9, 100, 20, mergeMaps(far, map[string]interface{}{"text": "far", frameKeyFont: 12.0, "fill": black})),
 		"barcode negative": canvasObject("group", -1e9, -1e9, 100, 100, mergeMaps(far, map[string]interface{}{"data": map[string]interface{}{"type": "barcode", "format": "qr", "contentSource": "item_url"}})),
 	}
 	for name, obj := range cases {
@@ -125,7 +125,7 @@ func TestRenderRotatedTextFrameWithBadWidthIsBounded(t *testing.T) {
 	frame := func(data map[string]interface{}) map[string]interface{} {
 		d := mergeMaps(map[string]interface{}{"wrap": true}, data)
 		return map[string]interface{}{
-			"text": "frame", "fontSize": 12.0, "fill": black, "angle": 90.0,
+			"text": "frame", frameKeyFont: 12.0, "fill": black, "angle": 90.0,
 			keyOriginX: topLeft, keyOriginY: "top", "data": d,
 		}
 	}

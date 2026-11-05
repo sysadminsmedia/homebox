@@ -43,7 +43,7 @@ func TestRotatedTextKeepsOriginAndIsNotClipped(t *testing.T) {
 		CanvasData: map[string]interface{}{
 			"objects": []interface{}{
 				canvasObject("textbox", left, top, 60, 24, map[string]interface{}{
-					"text": "HELLO", "fontSize": 20.0, "fill": "#000000", "angle": 90.0,
+					"text": "HELLO", frameKeyFont: 20.0, "fill": "#000000", "angle": 90.0,
 				}),
 			},
 		},
@@ -90,7 +90,7 @@ func TestRotatedTextRejectsOversizedBuffers(t *testing.T) {
 		CanvasData: map[string]interface{}{
 			"objects": []interface{}{
 				canvasObject("textbox", 0, 0, 100000, 3000, map[string]interface{}{
-					"text": "HUGE", "fontSize": 2000.0, "fill": "#000000", "angle": 45.0, "textAlign": alignCenter,
+					"text": "HUGE", frameKeyFont: 2000.0, "fill": "#000000", "angle": 45.0, "textAlign": alignCenter,
 				}),
 			},
 		},
