@@ -30,7 +30,6 @@
 
               # backend
               go
-              glibc.static
               gofumpt
               golangci-lint
               sqlite
