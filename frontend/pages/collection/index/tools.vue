@@ -356,7 +356,7 @@
   onServerEvent(ServerEvent.ImportMutation, refreshBackups);
 
   function downloadUrl(id: string): string {
-    return api.backups.downloadURL(id);
+    return api.backups.downloadURL(id, prefs.value.collectionId ?? undefined);
   }
 
   function formatBytes(n: number): string {
