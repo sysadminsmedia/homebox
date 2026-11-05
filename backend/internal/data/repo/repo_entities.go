@@ -3157,12 +3157,20 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 				 lower(NAME)`
 
 	if tq.WithItems {
-		// Items hang off their effective location. The same expression has to be
-		// used in both arms: an overridden child's effective parent is a
-		// location, so the recursive arm (items only) can't also pick it up and
-		// list it twice.
+		// Items hang off their effective location. The base arm uses the
+		// effective-location expression, so overridden children are picked up
+		// under the location they're stored in. The recursive arm only follows
+		// non-overridden children: an override always names a location and p is
+		// always an item, so COALESCE(override, parent) = p.id reduces to
+		// "override IS NULL AND parent = p.id".
+		//
+		// Both details of the recursive arm are deliberate (#1827). SQLite has no
+		// real index on entity_children and relies on an automatic index over
+		// (group_entities, entity_children) for this join; joining on the COALESCE
+		// expression prevents that and makes the walk quadratic. The IS NULL test
+		// is wrapped in a CASE so the planner can't pick idx_entities_location to
+		// satisfy it, which matches nearly every row and is even slower.
 		eff := locationOrParentColumn("e")
-		effChild := locationOrParentColumn("c")
 		itemQuery := `, item_tree(id, NAME, parent_id, level, node_type) AS
 		(
 			SELECT  e.id,
@@ -3180,14 +3188,15 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 
 			SELECT  c.id,
 					c.NAME,
-					` + effChild + ` AS parent_id,
+					c.entity_children AS parent_id,
 					level + 1,
 					'item' AS node_type
 			FROM    entities c
 			JOIN    entity_types ct ON ct.id = c.entity_type_entities
 			JOIN    item_tree p
-			ON      ` + effChild + ` = p.id
-			WHERE   ct.is_location = false
+			ON      c.entity_children = p.id
+			WHERE   (CASE WHEN c.entity_location_entities IS NULL THEN 1 ELSE 0 END) = 1
+			AND     ct.is_location = false
 			AND     c.group_entities = $1
 			AND     level < 10 -- prevent infinite loop & excessive recursion
 		)`
