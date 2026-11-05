@@ -1003,6 +1003,43 @@ func TestEntityRepository_QueryByGroup_OrderByLocation(t *testing.T) {
 	assert.Equal(t, []uuid.UUID{box.ID, nested.ID, direct.ID, orphan.ID}, order("desc"))
 }
 
+// TestEntityRepository_QueryByGroup_TiesOrderByID verifies that entities tying
+// on the chosen order field come back in ID order, so a tie can't change
+// between requests or pages. IDs are random, so insertion order can't pass this.
+func TestEntityRepository_QueryByGroup_TiesOrderByID(t *testing.T) {
+	ctx := context.Background()
+	containerET := useContainerEntityType(t)
+	itemET := useItemEntityType(t)
+
+	room := mustCreateEntity(t, "Tie Room", containerET.ID, uuid.Nil)
+
+	// The test group is shared, so only the entities created here are ordered.
+	mine := make(map[uuid.UUID]bool, 5)
+	for range 5 {
+		mine[mustCreateEntity(t, "Same name", itemET.ID, room.ID).ID] = true
+	}
+
+	for _, orderBy := range []string{"", "quantity", "location"} {
+		t.Run("orderBy="+orderBy, func(t *testing.T) {
+			res, err := tRepos.Entities.QueryByGroup(ctx, tGroup.ID, EntityQuery{
+				Page:     -1,
+				PageSize: -1,
+				OrderBy:  orderBy,
+			})
+			require.NoError(t, err)
+
+			got := make([]string, 0, len(mine))
+			for _, e := range res.Items {
+				if mine[e.ID] {
+					got = append(got, e.ID.String())
+				}
+			}
+			require.Len(t, got, len(mine))
+			assert.IsIncreasing(t, got)
+		})
+	}
+}
+
 // The table links an item's parent to /location/ or /item/, so the summaries
 // must carry the parent's entity type.
 func TestEntityRepository_QueryByGroup_ParentHasEntityType(t *testing.T) {

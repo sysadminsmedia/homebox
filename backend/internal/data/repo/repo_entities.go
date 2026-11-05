@@ -772,6 +772,8 @@ func orderByLocation(gid uuid.UUID, desc bool) entity.OrderOption {
 func applyEntityOrder(qb *ent.EntityQuery, gid uuid.UUID, q EntityQuery) (*ent.EntityQuery, string) {
 	var orderBy string
 	defaultDesc := false
+	// Ties order by ID, so they can't change between requests or pages.
+	tieBreak := ent.Asc(entity.FieldID)
 
 	switch q.OrderBy {
 	case "createdAt":
@@ -792,16 +794,16 @@ func applyEntityOrder(qb *ent.EntityQuery, gid uuid.UUID, q EntityQuery) (*ent.E
 		orderBy = entity.FieldPurchasePrice
 	case "location":
 		// Sort by the name of the nearest location ancestor.
-		return qb.Order(orderByLocation(gid, q.OrderDirection == "desc")), "location"
+		return qb.Order(orderByLocation(gid, q.OrderDirection == "desc"), tieBreak), "location"
 	default: // "name"
 		orderBy = entity.FieldName
 	}
 
 	desc := q.OrderDirection == "desc" || (q.OrderDirection == "" && defaultDesc)
 	if desc {
-		return qb.Order(ent.Desc(orderBy)), orderBy
+		return qb.Order(ent.Desc(orderBy), tieBreak), orderBy
 	}
-	return qb.Order(ent.Asc(orderBy)), orderBy
+	return qb.Order(ent.Asc(orderBy), tieBreak), orderBy
 }
 
 // QueryByGroup returns a list of entities that belong to a specific group based on the provided query.
