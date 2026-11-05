@@ -362,7 +362,7 @@
       </div>
     </div>
 
-    <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_400px]">
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_400px]">
       <!-- Left: pick what to print -->
       <section class="flex min-h-[420px] flex-col rounded-lg border bg-card">
         <div class="flex flex-col gap-3 border-b p-4">
@@ -584,7 +584,7 @@
         <template v-if="selectedIds.length">{{ summary }}</template>
         <template v-else>{{ $t("pages.label_templates.batch.nothing_selected") }}</template>
       </span>
-      <div class="flex gap-2">
+      <div class="flex flex-wrap gap-2">
         <Button variant="outline" :disabled="selectedIds.length === 0" @click="selectedIds = []">
           {{ $t("pages.label_templates.batch.clear_selection") }}
         </Button>
