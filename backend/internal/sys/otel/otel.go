@@ -22,7 +22,6 @@ import (
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutmetric"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	otellog "go.opentelemetry.io/otel/log"
-	"go.opentelemetry.io/otel/log/global"
 	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/propagation"
 	sdklog "go.opentelemetry.io/otel/sdk/log"
@@ -64,7 +63,7 @@ func (p *Provider) MeterProvider() metric.MeterProvider {
 // LoggerProvider returns the underlying OpenTelemetry LoggerProvider.
 func (p *Provider) LoggerProvider() otellog.LoggerProvider {
 	if p == nil || p.lp == nil {
-		return global.GetLoggerProvider()
+		return otel.GetLoggerProvider()
 	}
 	return p.lp
 }
@@ -229,7 +228,7 @@ func NewProvider(ctx context.Context, cfg *config.OTelConfig, buildVersion strin
 		)
 
 		// Set as global logger provider
-		global.SetLoggerProvider(lp)
+		otel.SetLoggerProvider(lp)
 
 		log.Info().
 			Str("exporter", cfg.Exporter).

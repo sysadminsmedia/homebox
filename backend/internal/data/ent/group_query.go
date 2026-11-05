@@ -19,6 +19,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/export"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/labeltemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
@@ -41,6 +42,7 @@ type GroupQuery struct {
 	withNotifiers        *NotifierQuery
 	withEntityTemplates  *EntityTemplateQuery
 	withExports          *ExportQuery
+	withLabelTemplates   *LabelTemplateQuery
 	withUserGroups       *UserGroupQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -247,6 +249,28 @@ func (_q *GroupQuery) QueryExports() *ExportQuery {
 			sqlgraph.From(group.Table, group.FieldID, selector),
 			sqlgraph.To(export.Table, export.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, group.ExportsTable, group.ExportsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryLabelTemplates chains the current query on the "label_templates" edge.
+func (_q *GroupQuery) QueryLabelTemplates() *LabelTemplateQuery {
+	query := (&LabelTemplateClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(labeltemplate.Table, labeltemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.LabelTemplatesTable, group.LabelTemplatesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -476,6 +500,7 @@ func (_q *GroupQuery) Clone() *GroupQuery {
 		withNotifiers:        _q.withNotifiers.Clone(),
 		withEntityTemplates:  _q.withEntityTemplates.Clone(),
 		withExports:          _q.withExports.Clone(),
+		withLabelTemplates:   _q.withLabelTemplates.Clone(),
 		withUserGroups:       _q.withUserGroups.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
@@ -571,6 +596,17 @@ func (_q *GroupQuery) WithExports(opts ...func(*ExportQuery)) *GroupQuery {
 	return _q
 }
 
+// WithLabelTemplates tells the query-builder to eager-load the nodes that are connected to
+// the "label_templates" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *GroupQuery) WithLabelTemplates(opts ...func(*LabelTemplateQuery)) *GroupQuery {
+	query := (&LabelTemplateClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withLabelTemplates = query
+	return _q
+}
+
 // WithUserGroups tells the query-builder to eager-load the nodes that are connected to
 // the "user_groups" edge. The optional arguments are used to configure the query builder of the edge.
 func (_q *GroupQuery) WithUserGroups(opts ...func(*UserGroupQuery)) *GroupQuery {
@@ -660,7 +696,7 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 	var (
 		nodes       = []*Group{}
 		_spec       = _q.querySpec()
-		loadedTypes = [9]bool{
+		loadedTypes = [10]bool{
 			_q.withUsers != nil,
 			_q.withEntityTypes != nil,
 			_q.withEntities != nil,
@@ -669,6 +705,7 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 			_q.withNotifiers != nil,
 			_q.withEntityTemplates != nil,
 			_q.withExports != nil,
+			_q.withLabelTemplates != nil,
 			_q.withUserGroups != nil,
 		}
 	)
@@ -745,6 +782,13 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 		if err := _q.loadExports(ctx, query, nodes,
 			func(n *Group) { n.Edges.Exports = []*Export{} },
 			func(n *Group, e *Export) { n.Edges.Exports = append(n.Edges.Exports, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withLabelTemplates; query != nil {
+		if err := _q.loadLabelTemplates(ctx, query, nodes,
+			func(n *Group) { n.Edges.LabelTemplates = []*LabelTemplate{} },
+			func(n *Group, e *LabelTemplate) { n.Edges.LabelTemplates = append(n.Edges.LabelTemplates, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1029,6 +1073,37 @@ func (_q *GroupQuery) loadExports(ctx context.Context, query *ExportQuery, nodes
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "group_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *GroupQuery) loadLabelTemplates(ctx context.Context, query *LabelTemplateQuery, nodes []*Group, init func(*Group), assign func(*Group, *LabelTemplate)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Group)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.LabelTemplate(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(group.LabelTemplatesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.group_label_templates
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "group_label_templates" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "group_label_templates" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

@@ -15,6 +15,7 @@ export enum DialogID {
   CreateApiKey = "create-api-key",
   CreateApiKeyResult = "create-api-key-result",
   CreateEntity = "create-entity",
+  CreateLabelTemplate = "create-label-template",
   CreateTag = "create-tag",
   CreateCollection = "create-collection",
   CreateGroupInvite = "create-group-invite",
@@ -27,12 +28,13 @@ export enum DialogID {
   Import = "import",
   ItemImage = "item-image",
   ItemTableSettings = "item-table-settings",
-  PrintLabel = "print-label",
+  PrintLabelTemplate = "print-label-template",
   ProductImport = "product-import",
   QuickMenu = "quick-menu",
   Scanner = "scanner",
   PageQRCode = "page-qr-code",
   UpdateTag = "update-tag",
+  UpdateLabelTemplate = "update-label-template",
   UpdateLocation = "update-location",
   UpdateTemplate = "update-template",
   ItemChangeDetails = "item-table-updater",
@@ -77,6 +79,13 @@ export type DialogParamsMap = {
   };
   [DialogID.CreateCollection]?: { redirectTo?: string };
   [DialogID.JoinCollection]?: { redirectTo?: string; inviteCode?: string };
+  [DialogID.PrintLabelTemplate]: {
+    itemIds?: string[];
+    locationIds?: string[];
+  };
+  [DialogID.UpdateLabelTemplate]: {
+    templateId: string;
+  };
 };
 
 /**

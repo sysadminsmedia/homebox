@@ -40,8 +40,19 @@ function importFileGenerator(entries: number): ImportObj[] {
 
   const pick = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
 
-  const tags = faker.word.words(5).split(" ").join(";");
-  const locations = faker.word.words(3).split(" ");
+  // faker.word.words can repeat a word. A repeated tag or location name is one
+  // record on the server but two entries in the expected totals below, so the
+  // names have to be distinct.
+  const distinctWords = (count: number): string[] => {
+    const words = new Set<string>();
+    while (words.size < count) {
+      words.add(faker.word.sample());
+    }
+    return [...words];
+  };
+
+  const tags = distinctWords(5).join(";");
+  const locations = distinctWords(3);
 
   const half = Math.floor(entries / 2);
 

@@ -1792,6 +1792,516 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/label-templates": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Get All Label Templates",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.LabelTemplateSummary"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Create Label Template",
+                "parameters": [
+                    {
+                        "description": "Template Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.LabelTemplateCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.LabelTemplateOut"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/barcode-formats": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Get Supported Barcode Formats",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/labelmaker.BarcodeFormatInfo"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/presets": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Get Label Size Presets",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/labelmaker.LabelPreset"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Get Label Template",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.LabelTemplateOut"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Update Label Template",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Template Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.LabelTemplateUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.LabelTemplateOut"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Delete Label Template",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/duplicate": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Duplicate Label Template",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.LabelTemplateOut"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/preview": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "image/png"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Preview Label Template",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/print": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Print Labels",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Print request",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.LabelTemplatePrintRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.LabelTemplatePrintResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/print-locations": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Print Location Labels",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Print request",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.LabelTemplatePrintLocationsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.LabelTemplatePrintResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/render": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "image/png",
+                    "application/pdf"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Render Label for Items",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Items to render",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.LabelTemplateRenderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/render-assets": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Renders one label per asset ID in the range. Asset IDs that no entity has yet get a label with only the asset ID and asset URL, for pre-printing tags.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "image/png",
+                    "application/pdf"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Render Labels for an Asset ID Range",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Asset range to render",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.LabelTemplateRenderAssetsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/render-locations": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "image/png",
+                    "application/pdf"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Render Label for Locations",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Locations to render",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.LabelTemplateRenderLocationsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/labelmaker/asset/{id}": {
             "get": {
                 "security": [
@@ -4096,6 +4606,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/ent.GroupInvitationToken"
                     }
                 },
+                "label_templates": {
+                    "description": "LabelTemplates holds the value of the label_templates edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.LabelTemplate"
+                    }
+                },
                 "notifiers": {
                     "description": "Notifiers holds the value of the notifiers edge.",
                     "type": "array",
@@ -4174,6 +4691,109 @@ const docTemplate = `{
                     "allOf": [
                         {
                             "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.LabelTemplate": {
+            "type": "object",
+            "properties": {
+                "canvas_data": {
+                    "description": "Fabric.js compatible canvas JSON",
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description holds the value of the \"description\" field.",
+                    "type": "string"
+                },
+                "dpi": {
+                    "description": "Output DPI for rendering",
+                    "type": "integer"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the LabelTemplateQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.LabelTemplateEdges"
+                        }
+                    ]
+                },
+                "height": {
+                    "description": "Label height in mm",
+                    "type": "number"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "is_shared": {
+                    "description": "Whether template is shared with group",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "offset_x": {
+                    "description": "Horizontal print offset in mm; positive moves labels right",
+                    "type": "number"
+                },
+                "offset_y": {
+                    "description": "Vertical print offset in mm; positive moves labels down",
+                    "type": "number"
+                },
+                "output_format": {
+                    "description": "Output format: png, pdf",
+                    "type": "string"
+                },
+                "owner_id": {
+                    "description": "User who created this template",
+                    "type": "string"
+                },
+                "preset": {
+                    "description": "Preset size key like 'brother_dk2205'",
+                    "type": "string"
+                },
+                "sheet_layout": {
+                    "description": "Custom sheet layout (page size, grid, margins, gaps in mm); overrides the preset's",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/labelmaker.SheetLayout"
+                        }
+                    ]
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                },
+                "width": {
+                    "description": "Label width in mm",
+                    "type": "number"
+                }
+            }
+        },
+        "ent.LabelTemplateEdges": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                },
+                "owner": {
+                    "description": "Owner holds the value of the owner edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.User"
                         }
                     ]
                 }
@@ -4592,6 +5212,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/ent.Group"
                     }
                 },
+                "label_templates": {
+                    "description": "LabelTemplates holds the value of the label_templates edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.LabelTemplate"
+                    }
+                },
                 "notifiers": {
                     "description": "Notifiers holds the value of the notifiers edge.",
                     "type": "array",
@@ -4709,6 +5336,171 @@ const docTemplate = `{
                 "StatusCompleted",
                 "StatusFailed"
             ]
+        },
+        "labelmaker.BarcodeFormat": {
+            "type": "string",
+            "enum": [
+                "qr",
+                "code128",
+                "code39",
+                "datamatrix",
+                "ean13",
+                "ean8",
+                "upca"
+            ],
+            "x-enum-varnames": [
+                "BarcodeQR",
+                "BarcodeCode128",
+                "BarcodeCode39",
+                "BarcodeDataMatrix",
+                "BarcodeEAN13",
+                "BarcodeEAN8",
+                "BarcodeUPCA"
+            ]
+        },
+        "labelmaker.BarcodeFormatInfo": {
+            "type": "object",
+            "properties": {
+                "contentType": {
+                    "description": "What kind of content this format supports",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/labelmaker.ContentType"
+                        }
+                    ]
+                },
+                "description": {
+                    "type": "string"
+                },
+                "format": {
+                    "$ref": "#/definitions/labelmaker.BarcodeFormat"
+                },
+                "is2D": {
+                    "type": "boolean"
+                },
+                "maxLength": {
+                    "description": "0 means variable/unlimited",
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "labelmaker.ContentType": {
+            "type": "string",
+            "enum": [
+                "any",
+                "alphanumeric",
+                "numeric"
+            ],
+            "x-enum-comments": {
+                "ContentTypeAlphanumeric": "Letters, numbers, limited symbols",
+                "ContentTypeAny": "Can encode any text (URLs, names, etc.)",
+                "ContentTypeNumeric": "Digits only"
+            },
+            "x-enum-descriptions": [
+                "Can encode any text (URLs, names, etc.)",
+                "Letters, numbers, limited symbols",
+                "Digits only"
+            ],
+            "x-enum-varnames": [
+                "ContentTypeAny",
+                "ContentTypeAlphanumeric",
+                "ContentTypeNumeric"
+            ]
+        },
+        "labelmaker.LabelPreset": {
+            "type": "object",
+            "properties": {
+                "brand": {
+                    "type": "string"
+                },
+                "continuous": {
+                    "description": "Whether this is continuous tape",
+                    "type": "boolean"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "height": {
+                    "description": "Height in mm",
+                    "type": "number"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sheetLayout": {
+                    "description": "Sheet layout information (for Avery-style sheet labels)\nIf SheetLayout is set, labels are arranged on a printable sheet",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/labelmaker.SheetLayout"
+                        }
+                    ]
+                },
+                "twoColor": {
+                    "description": "Whether this supports two-color printing (black/red)",
+                    "type": "boolean"
+                },
+                "width": {
+                    "description": "Width in mm",
+                    "type": "number"
+                }
+            }
+        },
+        "labelmaker.SheetLayout": {
+            "type": "object",
+            "properties": {
+                "columns": {
+                    "description": "Number of labels across",
+                    "type": "integer",
+                    "maximum": 50,
+                    "minimum": 1
+                },
+                "gutterH": {
+                    "description": "Horizontal gap between labels in mm",
+                    "type": "number",
+                    "maximum": 500,
+                    "minimum": 0
+                },
+                "gutterV": {
+                    "description": "Vertical gap between labels in mm",
+                    "type": "number",
+                    "maximum": 500,
+                    "minimum": 0
+                },
+                "marginLeft": {
+                    "description": "Left margin in mm",
+                    "type": "number",
+                    "maximum": 500,
+                    "minimum": 0
+                },
+                "marginTop": {
+                    "description": "Top margin in mm",
+                    "type": "number",
+                    "maximum": 500,
+                    "minimum": 0
+                },
+                "pageHeight": {
+                    "description": "Sheet height in mm (e.g., 279.4 for Letter, 297 for A4)",
+                    "type": "number",
+                    "maximum": 1000
+                },
+                "pageWidth": {
+                    "description": "Sheet width in mm (e.g., 215.9 for Letter, 210 for A4)",
+                    "type": "number",
+                    "maximum": 1000
+                },
+                "rows": {
+                    "description": "Number of labels down",
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                }
+            }
         },
         "repo.APIKeyCreate": {
             "type": "object",
@@ -4839,7 +5631,9 @@ const docTemplate = `{
                     "maxLength": 1000
                 },
                 "entityTypeId": {
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "locationId": {
                     "description": "Only needed when ParentID is another item and this lives elsewhere (#1688).",
@@ -5589,7 +6383,9 @@ const docTemplate = `{
                     "maxLength": 1000
                 },
                 "entityTypeId": {
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "fields": {
                     "type": "array",
@@ -5840,6 +6636,253 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "string"
+                }
+            }
+        },
+        "repo.LabelTemplateCreate": {
+            "type": "object",
+            "required": [
+                "height",
+                "name",
+                "width"
+            ],
+            "properties": {
+                "canvasData": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "dpi": {
+                    "type": "integer",
+                    "maximum": 1200,
+                    "minimum": 72
+                },
+                "height": {
+                    "type": "number",
+                    "maximum": 1000
+                },
+                "isShared": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "offsetX": {
+                    "type": "number",
+                    "maximum": 50,
+                    "minimum": -50
+                },
+                "offsetY": {
+                    "type": "number",
+                    "maximum": 50,
+                    "minimum": -50
+                },
+                "outputFormat": {
+                    "type": "string",
+                    "enum": [
+                        "png",
+                        "pdf"
+                    ]
+                },
+                "preset": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "sheetLayout": {
+                    "description": "SheetLayout overrides the preset's page layout; null follows the preset",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/labelmaker.SheetLayout"
+                        }
+                    ],
+                    "x-nullable": true
+                },
+                "width": {
+                    "type": "number",
+                    "maximum": 1000
+                }
+            }
+        },
+        "repo.LabelTemplateOut": {
+            "type": "object",
+            "properties": {
+                "canvasData": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "dpi": {
+                    "type": "integer"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isOwner": {
+                    "type": "boolean"
+                },
+                "isShared": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "offsetX": {
+                    "type": "number"
+                },
+                "offsetY": {
+                    "type": "number"
+                },
+                "outputFormat": {
+                    "type": "string"
+                },
+                "ownerId": {
+                    "type": "string"
+                },
+                "preset": {
+                    "type": "string"
+                },
+                "sheetLayout": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/labelmaker.SheetLayout"
+                        }
+                    ],
+                    "x-nullable": true
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "width": {
+                    "type": "number"
+                }
+            }
+        },
+        "repo.LabelTemplateSummary": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isOwner": {
+                    "type": "boolean"
+                },
+                "isShared": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "preset": {
+                    "type": "string"
+                },
+                "sheetLayout": {
+                    "description": "SheetLayout is the template's own page layout, null when it follows the preset",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/labelmaker.SheetLayout"
+                        }
+                    ],
+                    "x-nullable": true
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "width": {
+                    "type": "number"
+                }
+            }
+        },
+        "repo.LabelTemplateUpdate": {
+            "type": "object",
+            "required": [
+                "height",
+                "name",
+                "width"
+            ],
+            "properties": {
+                "canvasData": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "dpi": {
+                    "type": "integer",
+                    "maximum": 1200,
+                    "minimum": 72
+                },
+                "height": {
+                    "type": "number",
+                    "maximum": 1000
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isShared": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "offsetX": {
+                    "type": "number",
+                    "maximum": 50,
+                    "minimum": -50
+                },
+                "offsetY": {
+                    "type": "number",
+                    "maximum": 50,
+                    "minimum": -50
+                },
+                "outputFormat": {
+                    "type": "string",
+                    "enum": [
+                        "png",
+                        "pdf"
+                    ]
+                },
+                "preset": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "sheetLayout": {
+                    "description": "SheetLayout overrides the preset's page layout; null follows the preset",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/labelmaker.SheetLayout"
+                        }
+                    ],
+                    "x-nullable": true
+                },
+                "width": {
+                    "type": "number",
+                    "maximum": 1000
                 }
             }
         },
@@ -6181,7 +7224,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "booleanValue": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "id": {
                     "type": "string"
@@ -6190,13 +7235,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "numberValue": {
-                    "type": "integer"
+                    "type": "integer",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "textValue": {
                     "type": "string"
                 },
                 "timeValue": {
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "type": {
                     "type": "string"
@@ -6586,6 +7635,193 @@ const docTemplate = `{
                     "type": "integer",
                     "maximum": 100,
                     "minimum": 1
+                }
+            }
+        },
+        "v1.LabelPrintItem": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "description": "Number of copies for this item",
+                    "type": "integer"
+                }
+            }
+        },
+        "v1.LabelPrintLocation": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "description": "Number of copies for this location",
+                    "type": "integer"
+                }
+            }
+        },
+        "v1.LabelTemplatePrintLocationsRequest": {
+            "type": "object",
+            "properties": {
+                "copies": {
+                    "description": "Default copies per label",
+                    "type": "integer"
+                },
+                "locationIds": {
+                    "description": "Simple list (1 copy each)",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "locations": {
+                    "description": "Locations with individual quantities",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.LabelPrintLocation"
+                    }
+                }
+            }
+        },
+        "v1.LabelTemplatePrintRequest": {
+            "type": "object",
+            "properties": {
+                "copies": {
+                    "description": "Default copies per label (used if item.quantity is 0)",
+                    "type": "integer"
+                },
+                "itemIds": {
+                    "description": "Simple list (1 copy each) - for backward compatibility",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "items": {
+                    "description": "Items with individual quantities",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.LabelPrintItem"
+                    }
+                }
+            }
+        },
+        "v1.LabelTemplatePrintResponse": {
+            "type": "object",
+            "properties": {
+                "labelCount": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "v1.LabelTemplateRenderAssetsRequest": {
+            "type": "object",
+            "properties": {
+                "endAssetId": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "format": {
+                    "description": "\"png\" or \"pdf\", defaults to \"pdf\"",
+                    "type": "string"
+                },
+                "pageSize": {
+                    "description": "\"Letter\" or \"A4\" for PDF",
+                    "type": "string"
+                },
+                "showCutGuides": {
+                    "description": "Draw light borders around labels for cutting",
+                    "type": "boolean"
+                },
+                "skipLabels": {
+                    "description": "Empty slots before the first label, for partly used sheets",
+                    "type": "integer",
+                    "maximum": 1000,
+                    "minimum": 0
+                },
+                "startAssetId": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        },
+        "v1.LabelTemplateRenderLocationsRequest": {
+            "type": "object",
+            "required": [
+                "locationIds"
+            ],
+            "properties": {
+                "format": {
+                    "description": "\"png\" or \"pdf\", defaults to \"png\"",
+                    "type": "string"
+                },
+                "locationIds": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "pageSize": {
+                    "description": "\"Letter\", \"A4\", or \"Custom\" for PDF",
+                    "type": "string"
+                },
+                "showCutGuides": {
+                    "description": "Draw light borders around labels for cutting",
+                    "type": "boolean"
+                },
+                "skipLabels": {
+                    "description": "Leave this many positions empty on the first sheet",
+                    "type": "integer"
+                }
+            }
+        },
+        "v1.LabelTemplateRenderRequest": {
+            "type": "object",
+            "required": [
+                "itemIds"
+            ],
+            "properties": {
+                "canvasData": {
+                    "description": "Optional: canvas data for live preview (overrides saved template)",
+                    "type": "string"
+                },
+                "format": {
+                    "description": "\"png\" or \"pdf\", defaults to \"png\"",
+                    "type": "string"
+                },
+                "itemIds": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "pageSize": {
+                    "description": "\"Letter\", \"A4\", or \"Custom\" for PDF",
+                    "type": "string"
+                },
+                "showCutGuides": {
+                    "description": "Draw light borders around labels for cutting",
+                    "type": "boolean"
+                },
+                "skipLabels": {
+                    "description": "Leave this many positions empty on the first sheet",
+                    "type": "integer"
                 }
             }
         },

@@ -10,6 +10,7 @@
     <EntityCreateModal />
     <WipeInventoryDialog />
     <TagCreateModal />
+    <LabelTemplatePrintDialog />
     <ItemBarcodeModal />
     <AppQuickMenuModal :actions="quickMenuActions" />
     <AppScannerModal />
@@ -290,6 +291,7 @@
   import EntityCreateModal from "~/components/Entity/CreateModal.vue";
   import WipeInventoryDialog from "~/components/WipeInventoryDialog.vue";
   import TagCreateModal from "~/components/Tag/CreateModal.vue";
+  import LabelTemplatePrintDialog from "~/components/LabelTemplate/PrintDialog.vue";
   import ItemBarcodeModal from "~/components/Item/BarcodeModal.vue";
   import AppQuickMenuModal from "~/components/App/QuickMenuModal.vue";
   import AppScannerModal from "~/components/App/ScannerModal.vue";
@@ -446,9 +448,24 @@
     {
       icon: MdiAccount,
       id: 6,
-      active: computed(() => route.path === "/profile"),
+      active: computed(() => route.path === "/profile" || route.path.startsWith("/label-templates")),
       name: computed(() => t("menu.profile")),
       to: "/profile",
+      // Label templates are personal unless shared, so they live under the profile
+      collapsible: [
+        {
+          id: 51,
+          active: computed(() => route.path === "/profile"),
+          name: computed(() => t("profile.user_profile")),
+          to: "/profile",
+        },
+        {
+          id: 52,
+          active: computed(() => route.path.startsWith("/label-templates")),
+          name: computed(() => t("menu.label_templates")),
+          to: "/label-templates",
+        },
+      ],
     },
     {
       icon: MdiCog,

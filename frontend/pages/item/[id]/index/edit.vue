@@ -331,6 +331,12 @@
       label: "items.sold_at",
       ref: "soldDate",
     },
+    {
+      type: "textarea",
+      label: "items.sold_notes",
+      ref: "soldNotes",
+      maxLength: 1000,
+    },
   ];
 
   // - Attachments

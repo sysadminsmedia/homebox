@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net"
 	"net/url"
 	"os"
 	"strings"
@@ -100,7 +101,9 @@ func (c MeilisearchConf) MarshalJSON() ([]byte, error) {
 // Validate enforces secure transport for the Meilisearch connection. The API
 // key is sent on every request, so a non-local endpoint reached over plaintext
 // http would leak it on the wire. https is always allowed; http is permitted
-// only for loopback hosts.
+// only for loopback and private addresses (see IsLocalNetworkIP). A literal IP host is checked here; a hostname (e.g. a
+// Docker Compose service name) can only be checked once resolved, so the
+// Meilisearch client enforces the same rule on every connection it dials.
 func (c MeilisearchConf) Validate() error {
 	if c.Host == "" {
 		return errors.New("search.meilisearch.host must not be empty")
@@ -113,15 +116,23 @@ func (c MeilisearchConf) Validate() error {
 	case "https":
 		return nil
 	case "http":
-		switch strings.ToLower(u.Hostname()) {
-		case "localhost", "127.0.0.1", "::1":
-			return nil
-		default:
+		if u.Hostname() == "" {
+			return errors.New("search.meilisearch.host must include a hostname")
+		}
+		if ip := net.ParseIP(u.Hostname()); ip != nil && !IsLocalNetworkIP(ip) {
 			return fmt.Errorf("search.meilisearch.host uses insecure http for non-local host %q: use https", u.Host)
 		}
+		return nil
 	default:
 		return fmt.Errorf("search.meilisearch.host has unsupported scheme %q: must be http or https", u.Scheme)
 	}
+}
+
+// IsLocalNetworkIP reports whether ip is a loopback address or a private
+// address (RFC 1918 IPv4 or RFC 4193 IPv6 unique local), i.e. a destination
+// plaintext http may be used for.
+func IsLocalNetworkIP(ip net.IP) bool {
+	return ip.IsLoopback() || ip.IsPrivate()
 }
 
 type Options struct {
@@ -248,6 +259,30 @@ type AuthRateLimit struct {
 	MaxBackoff  time.Duration `yaml:"max_backoff"  conf:"default:5m"`
 }
 
+// loadEnvFiles sets <prefix>_<NAME> from the contents of the file named by <prefix>_<NAME>_FILE,
+// so secrets can be supplied as files (Docker/Kubernetes secrets, systemd credentials) instead of
+// plain environment variables. The _FILE variant takes precedence, and trailing newlines are trimmed.
+func loadEnvFiles(prefix string) error {
+	for _, kv := range os.Environ() {
+		key, path, _ := strings.Cut(kv, "=")
+		name, ok := strings.CutSuffix(key, "_FILE")
+		if !ok || !strings.HasPrefix(name, prefix+"_") {
+			continue
+		}
+
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return fmt.Errorf("reading %s: %w", key, err)
+		}
+
+		if err := os.Setenv(name, strings.TrimRight(string(data), "\r\n")); err != nil {
+			return fmt.Errorf("setting %s from %s: %w", name, key, err)
+		}
+	}
+
+	return nil
+}
+
 // New parses the CLI/Config file and returns a Config struct. If the file argument is an empty string, the
 // file is not read. If the file is not empty, the file is read and the Config struct is returned.
 func New(buildstr string, description string) (*Config, error) {
@@ -257,6 +292,10 @@ func New(buildstr string, description string) (*Config, error) {
 	cfg.Version = conf.Version{
 		Build: buildstr,
 		Desc:  description,
+	}
+
+	if err := loadEnvFiles(prefix); err != nil {
+		return &cfg, fmt.Errorf("loading config from files: %w", err)
 	}
 
 	help, err := conf.Parse(prefix, &cfg)

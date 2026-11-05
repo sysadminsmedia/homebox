@@ -22,6 +22,26 @@
   const confirm = useConfirm();
   const preferences = useViewPreferences();
   const { openDialog } = useDialog();
+  const { isQuickPrintAvailable, quickPrintItems } = useQuickPrint();
+
+  const isQuickPrinting = ref(false);
+
+  async function handleQuickPrint(itemIds: string[]) {
+    isQuickPrinting.value = true;
+    try {
+      const success = await quickPrintItems(itemIds);
+      if (success) {
+        toast.success(t("components.item.view.table.dropdown.quick_print_success"));
+      } else {
+        // Should not happen if isQuickPrintAvailable is true, but fallback to dialog
+        openDialog(DialogID.PrintLabelTemplate, { params: { itemIds } });
+      }
+    } catch (e) {
+      toast.error(t("components.item.view.table.dropdown.quick_print_failed"), { description: (e as Error).message });
+    } finally {
+      isQuickPrinting.value = false;
+    }
+  }
 
   const props = defineProps<{
     item?: EntitySummary;
@@ -241,6 +261,32 @@
           multi
             ? t("components.item.view.table.dropdown.duplicate_selected")
             : t("components.item.view.table.dropdown.duplicate_item")
+        }}
+      </DropdownMenuItem>
+      <!-- quick print (default template and server label printer configured) -->
+      <DropdownMenuItem
+        v-if="isQuickPrintAvailable"
+        :disabled="isQuickPrinting"
+        @click="handleQuickPrint(multi ? multi.items.map(row => row.original.id) : [item!.id])"
+      >
+        {{
+          multi
+            ? t("components.item.view.table.dropdown.quick_print_selected")
+            : t("components.item.view.table.dropdown.quick_print_item")
+        }}
+      </DropdownMenuItem>
+      <!-- print labels (with dialog) -->
+      <DropdownMenuItem
+        @click="
+          openDialog(DialogID.PrintLabelTemplate, {
+            params: { itemIds: multi ? multi.items.map(row => row.original.id) : [item!.id] },
+          })
+        "
+      >
+        {{
+          multi
+            ? t("components.item.view.table.dropdown.print_labels_selected")
+            : t("components.item.view.table.dropdown.print_label_item")
         }}
       </DropdownMenuItem>
       <!-- delete -->

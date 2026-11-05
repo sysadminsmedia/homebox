@@ -1,575 +1,235 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
-  import DOMPurify from "dompurify";
-  import { route } from "../../lib/api/base";
-  import { Toaster, toast } from "@/components/ui/sonner";
-  import { Separator } from "@/components/ui/separator";
+  import { toast } from "@/components/ui/sonner";
+  import MdiDownload from "~icons/mdi/download";
+  import MdiLoading from "~icons/mdi/loading";
+  import MdiPrinter from "~icons/mdi/printer";
   import { Button } from "@/components/ui/button";
-  import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
-  import { Checkbox } from "@/components/ui/checkbox";
+  import { Label } from "@/components/ui/label";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+  import { Checkbox } from "@/components/ui/checkbox";
+  import BaseContainer from "@/components/Base/Container.vue";
+
+  // Asset ID labels: print-ahead tags for a range of asset IDs, rendered from a
+  // label template. Asset IDs no item has yet get a label with just the ID and
+  // its /a/<asset id> link, so tags can be applied when items arrive.
+
+  const MAX_RANGE = 1000;
 
   const { t } = useI18n();
+  const measurement = useMeasurement();
 
   definePageMeta({
     middleware: ["auth"],
-    layout: false,
   });
+
   useHead({
-    title: "HomeBox | " + t("reports.label_generator.title"),
+    title: computed(() => `HomeBox | ${t("reports.label_generator.title")}`),
   });
 
   const api = useUserApi();
+  const { templates, pending: templatesPending } = useLabelTemplates();
+  const { presets } = useLabelPresets();
 
-  const bordered = ref(false);
-  const printLocationRow = ref(true);
-  const labelBlankLine = "_______________";
+  const selectedTemplateId = ref<string>("");
+  const selectedTemplate = computed(() => templates.value?.find(tpl => tpl.id === selectedTemplateId.value) ?? null);
 
-  // Behavior constants for HomeBox text replacement
-  const BEHAVIOR_SHOW = "show";
-  const BEHAVIOR_ALWAYS_REPLACE = "always_replace";
-  const BEHAVIOR_ITEM_NO_NAME_NO_LOCATION = "item_no_name_no_location";
-  const BEHAVIOR_ITEM_NO_NAME = "item_no_name";
-  const BEHAVIOR_ITEM_NO_LOCATION = "item_no_location";
-
-  const replaceHomeboxBehavior = ref(BEHAVIOR_SHOW);
-  const replaceHomeboxText = ref(labelBlankLine);
-
-  const displayProperties = reactive({
-    baseURL: window.location.origin,
-    assetRange: 1,
-    assetRangeMax: 91,
-    skipLabels: 0,
-    measure: "in",
-    gapY: 0.25,
-    columns: 3,
-    cardHeight: 1,
-    cardWidth: 2.63,
-    pageWidth: 8.5,
-    pageHeight: 11,
-    pageTopPadding: 0.52,
-    pageBottomPadding: 0.42,
-    pageLeftPadding: 0.25,
-    pageRightPadding: 0.1,
+  // Labels per sheet for templates printed on sheets: their own layout, else their preset's (e.g. Avery 5160)
+  const sheetCapacity = computed(() => {
+    const tpl = selectedTemplate.value;
+    const layout =
+      tpl?.sheetLayout ?? (tpl?.preset ? presets.value?.find(p => p.key === tpl.preset)?.sheetLayout : undefined);
+    return layout ? layout.columns * layout.rows : null;
   });
 
-  type LabelOptionInput = {
-    measure: string;
-    page: {
-      height: number;
-      width: number;
-      pageTopPadding: number;
-      pageBottomPadding: number;
-      pageLeftPadding: number;
-      pageRightPadding: number;
-    };
-    cardHeight: number;
-    cardWidth: number;
-  };
+  const startAssetId = ref(1);
+  const endAssetId = ref(30);
+  const skip = ref(0);
+  const pageSize = ref<"Letter" | "A4">("Letter");
+  const showCutGuides = ref(false);
+  const isRendering = ref(false);
 
-  type Output = {
-    measure: string;
-    cols: number;
-    rows: number;
-    gapY: number;
-    gapX: number;
-    card: {
-      width: number;
-      height: number;
-    };
-    page: {
-      width: number;
-      height: number;
-      pt: number;
-      pb: number;
-      pl: number;
-      pr: number;
-    };
-  };
-
-  function calculateGridData(input: LabelOptionInput): Output {
-    const { page, cardHeight, cardWidth } = input;
-
-    const measureRegex = /in|cm|mm/;
-    const measure = measureRegex.test(input.measure) ? input.measure : "in";
-
-    const availablePageWidth = page.width - page.pageLeftPadding - page.pageRightPadding;
-    const availablePageHeight = page.height - page.pageTopPadding - page.pageBottomPadding;
-
-    if (availablePageWidth < cardWidth || availablePageHeight < cardHeight) {
-      toast.error(t("reports.label_generator.toast.page_too_small_card"));
-      return out.value;
+  // Default to filling the rest of one sheet when a sheet template is picked
+  watch([sheetCapacity, skip], ([capacity]) => {
+    if (capacity) {
+      endAssetId.value = startAssetId.value + Math.max(capacity - skip.value, 1) - 1;
     }
-
-    const cols = Math.floor(availablePageWidth / cardWidth);
-    const rows = Math.floor(availablePageHeight / cardHeight);
-    const gapX = (availablePageWidth - cols * cardWidth) / (cols - 1);
-    const gapY = (page.height - rows * cardHeight) / (rows - 1);
-
-    return {
-      measure,
-      cols,
-      rows,
-      gapX,
-      gapY,
-      card: {
-        width: cardWidth,
-        height: cardHeight,
-      },
-      page: {
-        width: page.width,
-        height: page.height,
-        pt: page.pageTopPadding,
-        pb: page.pageBottomPadding,
-        pl: page.pageLeftPadding,
-        pr: page.pageRightPadding,
-      },
-    };
-  }
-
-  interface InputDef {
-    label: string;
-    ref: keyof typeof displayProperties;
-    type?: "number" | "text";
-    min?: number;
-    step?: number;
-  }
-
-  const propertyInputs = computed<InputDef[]>(() => {
-    return [
-      {
-        label: t("reports.label_generator.asset_start"),
-        ref: "assetRange",
-      },
-      {
-        label: t("reports.label_generator.asset_end"),
-        ref: "assetRangeMax",
-      },
-      {
-        label: t("reports.label_generator.skip_first_labels"),
-        ref: "skipLabels",
-        min: 0,
-        step: 1,
-      },
-      {
-        label: t("reports.label_generator.measure_type"),
-        ref: "measure",
-        type: "text",
-      },
-      {
-        label: t("reports.label_generator.label_height"),
-        ref: "cardHeight",
-      },
-      {
-        label: t("reports.label_generator.label_width"),
-        ref: "cardWidth",
-      },
-      {
-        label: t("reports.label_generator.page_width"),
-        ref: "pageWidth",
-      },
-      {
-        label: t("reports.label_generator.page_height"),
-        ref: "pageHeight",
-      },
-      {
-        label: t("reports.label_generator.page_top_padding"),
-        ref: "pageTopPadding",
-      },
-      {
-        label: t("reports.label_generator.page_bottom_padding"),
-        ref: "pageBottomPadding",
-      },
-      {
-        label: t("reports.label_generator.page_left_padding"),
-        ref: "pageLeftPadding",
-      },
-      {
-        label: t("reports.label_generator.page_right_padding"),
-        ref: "pageRightPadding",
-      },
-      {
-        label: t("reports.label_generator.base_url"),
-        ref: "baseURL",
-        type: "text",
-      },
-    ];
   });
 
-  type LabelData = {
-    url: string;
-    name: string;
-    assetID: string;
-    location: string;
-  };
+  const labelCount = computed(() => endAssetId.value - startAssetId.value + 1);
 
-  function fmtAssetID(aid: number | string) {
-    aid = aid.toString();
-
-    let aidStr = aid.toString().padStart(6, "0");
-    aidStr = aidStr.slice(0, 3) + "-" + aidStr.slice(3);
-    return aidStr;
-  }
-
-  function getQRCodeUrl(assetID: string): string {
-    let origin = displayProperties.baseURL.trim();
-
-    // remove trailing slash
-    if (origin.endsWith("/")) {
-      origin = origin.slice(0, -1);
+  const rangeError = computed(() => {
+    if (!Number.isInteger(startAssetId.value) || startAssetId.value < 1) {
+      return t("reports.label_generator.errors.start_invalid");
     }
-
-    const data = `${origin}/a/${assetID}`;
-
-    return route(`/qrcode`, { data: encodeURIComponent(data) });
-  }
-
-  function getItem(
-    n: number,
-    item: { assetId: string; name: string; parent?: { name: string } | null } | null
-  ): LabelData {
-    // format n into - seperated string with leading zeros
-    const assetID = fmtAssetID(item?.assetId ?? n + 1);
-
-    return {
-      url: getQRCodeUrl(assetID),
-      assetID: item?.assetId ?? assetID,
-      name: item?.name ?? labelBlankLine,
-      // Since the entities refactor an item's whereabouts is its parent
-      // entity (a location or a container item) — the old `location` edge no
-      // longer exists (#1574).
-      location: item?.parent?.name ?? labelBlankLine,
-    };
-  }
-
-  const { data: allFields } = await useAsyncData(async () => {
-    const { data, error } = await api.items.getAll({ orderBy: "assetId" });
-
-    if (error) {
-      return {
-        items: [],
-      };
+    if (!Number.isInteger(endAssetId.value) || endAssetId.value < startAssetId.value) {
+      return t("reports.label_generator.errors.end_before_start");
     }
-
-    return data;
+    if (labelCount.value > MAX_RANGE) {
+      return t("reports.label_generator.errors.too_many", { max: MAX_RANGE });
+    }
+    if (!Number.isInteger(skip.value) || skip.value < 0) {
+      return t("reports.label_generator.errors.skip_invalid");
+    }
+    return null;
   });
 
-  const items = computed(() => {
-    if (displayProperties.assetRange > displayProperties.assetRangeMax) {
-      return [];
-    }
+  const canGenerate = computed(() => !!selectedTemplateId.value && !rangeError.value && !isRendering.value);
 
-    const diff = displayProperties.assetRangeMax - displayProperties.assetRange;
+  async function renderPDF(): Promise<Blob | null> {
+    if (!canGenerate.value) return null;
 
-    if (diff > 999) {
-      return [];
-    }
-
-    const items: LabelData[] = [];
-    for (let i = displayProperties.assetRange - 1; i < displayProperties.assetRangeMax - 1; i++) {
-      const item = allFields?.value?.items?.[i];
-      // Real items render their own data; indices past the inventory render
-      // as blank pre-printable labels. The old guard required the removed
-      // `location` edge and thus blanked every label (#1574).
-      items.push(getItem(i, item ?? null));
-    }
-    return items;
-  });
-
-  const getHomeBoxLineText = computed(() => {
-    return (item: LabelData): string | null => {
-      if (replaceHomeboxBehavior.value === BEHAVIOR_SHOW) {
-        return "HomeBox";
-      }
-      if (replaceHomeboxBehavior.value === BEHAVIOR_ALWAYS_REPLACE) {
-        return replaceHomeboxText.value;
-      }
-      if (
-        replaceHomeboxBehavior.value === BEHAVIOR_ITEM_NO_NAME_NO_LOCATION &&
-        item.name === labelBlankLine &&
-        item.location === labelBlankLine
-      ) {
-        return replaceHomeboxText.value;
-      }
-      if (replaceHomeboxBehavior.value === BEHAVIOR_ITEM_NO_NAME && item.name === labelBlankLine) {
-        return replaceHomeboxText.value;
-      }
-      if (replaceHomeboxBehavior.value === BEHAVIOR_ITEM_NO_LOCATION && item.location === labelBlankLine) {
-        return replaceHomeboxText.value;
-      }
+    isRendering.value = true;
+    try {
+      return await api.labelTemplates.renderAssets(selectedTemplateId.value, {
+        startAssetId: startAssetId.value,
+        endAssetId: endAssetId.value,
+        skipLabels: skip.value,
+        format: "pdf",
+        pageSize: pageSize.value,
+        showCutGuides: showCutGuides.value,
+      });
+    } catch {
+      toast.error(t("components.label_template.toast.render_failed"));
       return null;
-    };
-  });
-
-  type Row = {
-    items: Array<LabelData | null>;
-  };
-
-  type Page = {
-    rows: Row[];
-  };
-
-  const pages = ref<Page[]>([]);
-
-  const out = ref({
-    measure: "in",
-    cols: 0,
-    rows: 0,
-    gapY: 0,
-    gapX: 0,
-    card: {
-      width: 0,
-      height: 0,
-    },
-    page: {
-      width: 0,
-      height: 0,
-      pt: 0,
-      pb: 0,
-      pl: 0,
-      pr: 0,
-    },
-  });
-
-  function calcPages() {
-    // Set Out Dimensions
-    out.value = calculateGridData({
-      measure: displayProperties.measure,
-      page: {
-        height: displayProperties.pageHeight,
-        width: displayProperties.pageWidth,
-        pageTopPadding: displayProperties.pageTopPadding,
-        pageBottomPadding: displayProperties.pageBottomPadding,
-        pageLeftPadding: displayProperties.pageLeftPadding,
-        pageRightPadding: displayProperties.pageRightPadding,
-      },
-      cardHeight: displayProperties.cardHeight,
-      cardWidth: displayProperties.cardWidth,
-    });
-
-    const calc: Page[] = [];
-
-    const perPage = out.value.rows * out.value.cols;
-    const maxSkipLabels = Math.max(0, perPage - 1);
-
-    const skipLabelsRaw = Number(displayProperties.skipLabels);
-    const skipLabels = Number.isFinite(skipLabelsRaw)
-      ? Math.min(maxSkipLabels, Math.max(0, Math.floor(skipLabelsRaw)))
-      : 0;
-    if (Number(displayProperties.skipLabels) !== skipLabels) {
-      displayProperties.skipLabels = skipLabels;
+    } finally {
+      isRendering.value = false;
     }
-
-    const sourceItems = items.value;
-    if (sourceItems.length === 0) {
-      pages.value = [];
-      return;
-    }
-
-    const itemsCopy: Array<LabelData | null> = [...sourceItems];
-    if (skipLabels > 0) {
-      itemsCopy.unshift(...Array.from({ length: skipLabels }, () => null));
-    }
-
-    while (itemsCopy.length > 0) {
-      const page: Page = {
-        rows: [],
-      };
-
-      for (let i = 0; i < perPage; i++) {
-        const item = itemsCopy.shift();
-        if (typeof item === "undefined") {
-          break;
-        }
-
-        if (i % out.value.cols === 0) {
-          page.rows.push({
-            items: [],
-          });
-        }
-
-        page.rows[page.rows.length - 1]!.items.push(item ?? null);
-      }
-
-      calc.push(page);
-    }
-
-    pages.value = calc;
   }
 
-  onMounted(() => {
-    calcPages();
-  });
+  async function handleDownload() {
+    const blob = await renderPDF();
+    if (!blob) return;
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `asset-labels-${startAssetId.value}-${endAssetId.value}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    toast.success(t("components.label_template.toast.downloaded"));
+  }
+
+  async function handlePrint() {
+    const blob = await renderPDF();
+    if (!blob) return;
+
+    const url = URL.createObjectURL(blob);
+    const printWindow = window.open(url, "_blank");
+    if (printWindow) {
+      printWindow.onload = () => {
+        printWindow.print();
+      };
+    }
+  }
 </script>
 
 <template>
-  <div class="print:hidden">
-    <Toaster />
-    <div class="container prose mx-auto max-w-4xl p-4 pt-6">
-      <h1>HomeBox {{ $t("reports.label_generator.title") }}</h1>
-      <p>
-        {{ $t("reports.label_generator.instruction_1") }}
-      </p>
-      <p>
-        {{ $t("reports.label_generator.instruction_2") }}
-      </p>
-      <p v-html="DOMPurify.sanitize($t('reports.label_generator.instruction_3'))" />
-      <h2>{{ $t("reports.label_generator.tips") }}</h2>
-      <ul>
-        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_1'))" />
-        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_2'))" />
-        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_3'))" />
-      </ul>
-      <div class="flex flex-wrap gap-2">
-        <NuxtLink href="/collection/tools">{{ $t("collection.tabs.tools") }}</NuxtLink>
-        <NuxtLink href="/home">{{ $t("menu.home") }}</NuxtLink>
-      </div>
+  <BaseContainer>
+    <div class="mb-6">
+      <h1 class="text-2xl font-semibold">{{ $t("reports.label_generator.title") }}</h1>
+      <p class="text-muted-foreground">{{ $t("reports.label_generator.description") }}</p>
     </div>
-    <Separator class="mx-auto max-w-4xl" />
-    <div class="container mx-auto max-w-4xl p-4">
-      <div class="mx-auto grid grid-cols-2 gap-3">
-        <div v-for="(prop, i) in propertyInputs" :key="i" class="flex w-full max-w-xs flex-col">
-          <Label :for="`input-${prop.ref}`">
-            {{ prop.label }}
-          </Label>
-          <Input
-            :id="`input-${prop.ref}`"
-            v-model="displayProperties[prop.ref]"
-            :type="prop.type ? prop.type : 'number'"
-            :min="prop.min"
-            :max="prop.ref === 'skipLabels' ? Math.max(0, out.rows * out.cols - 1) : undefined"
-            :step="prop.type === 'text' ? undefined : (prop.step ?? 0.01)"
-            :placeholder="$t('reports.label_generator.input_placeholder')"
-            class="w-full max-w-xs"
-          />
+
+    <Card class="mb-6">
+      <CardHeader>
+        <CardTitle>{{ $t("pages.label_templates.batch.select_template") }}</CardTitle>
+        <CardDescription>{{ $t("reports.label_generator.template_hint") }}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div v-if="templatesPending" class="text-muted-foreground">{{ $t("global.loading") }}</div>
+        <div v-else-if="!templates || templates.length === 0" class="text-muted-foreground">
+          {{ $t("pages.label_templates.batch.no_templates") }}
+          <NuxtLink to="/label-templates" class="text-primary underline">
+            {{ $t("pages.label_templates.batch.create_template") }}
+          </NuxtLink>
         </div>
-        <div class="flex w-full max-w-xs flex-col">
-          <Label for="select-replaceHomeboxBehavior">
-            {{ $t("reports.label_generator.replace_homebox_behavior") }}
-          </Label>
-          <Select id="select-replaceHomeboxBehavior" v-model="replaceHomeboxBehavior" class="w-full max-w-xs">
-            <SelectTrigger>
-              <SelectValue />
+        <div v-else class="space-y-2">
+          <Label for="template">{{ $t("components.label_template.print_dialog.select_template") }}</Label>
+          <Select v-model="selectedTemplateId">
+            <SelectTrigger id="template">
+              <SelectValue :placeholder="$t('components.label_template.print_dialog.select_placeholder')" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem :value="BEHAVIOR_SHOW">
-                {{ $t("reports.label_generator.replace_homebox_behavior_show_homebox") }}
-              </SelectItem>
-              <SelectItem :value="BEHAVIOR_ITEM_NO_NAME_NO_LOCATION">
-                {{ $t("reports.label_generator.replace_homebox_behavior_item_no_name_no_location") }}
-              </SelectItem>
-              <SelectItem :value="BEHAVIOR_ITEM_NO_NAME">
-                {{ $t("reports.label_generator.replace_homebox_behavior_item_no_name") }}
-              </SelectItem>
-              <SelectItem :value="BEHAVIOR_ITEM_NO_LOCATION">
-                {{ $t("reports.label_generator.replace_homebox_behavior_item_no_location") }}
-              </SelectItem>
-              <SelectItem :value="BEHAVIOR_ALWAYS_REPLACE">
-                {{ $t("reports.label_generator.replace_homebox_behavior_always_replace") }}
+              <SelectItem v-for="tpl in templates" :key="tpl.id" :value="tpl.id">
+                {{ tpl.name }} ({{ measurement.formatSize(tpl.width, tpl.height) }})
               </SelectItem>
             </SelectContent>
           </Select>
+          <p v-if="sheetCapacity" class="text-sm text-muted-foreground">
+            {{ $t("reports.label_generator.sheet_capacity", { count: sheetCapacity }) }}
+          </p>
         </div>
-        <div v-if="replaceHomeboxBehavior !== BEHAVIOR_SHOW" class="flex w-full max-w-xs flex-col">
-          <Label for="input-replaceHomeboxText">
-            {{ $t("reports.label_generator.replace_homebox_text") }}
-          </Label>
-          <Input
-            id="input-replaceHomeboxText"
-            v-model="replaceHomeboxText"
-            type="text"
-            :placeholder="$t('reports.label_generator.input_placeholder')"
-            class="w-full max-w-xs"
-          />
-        </div>
-      </div>
-      <div class="max-w-xs">
-        <div class="flex items-center gap-2 py-4">
-          <Checkbox id="borderedLabels" v-model="bordered" />
-          <Label class="cursor-pointer" for="borderedLabels">
-            {{ $t("reports.label_generator.bordered_labels") }}
-          </Label>
-        </div>
-        <div class="flex items-center gap-2 py-4">
-          <Checkbox id="printLocationRow" v-model="printLocationRow" />
-          <Label class="cursor-pointer" for="printLocationRow">
-            {{ $t("reports.label_generator.print_location_row") }}
-          </Label>
-        </div>
-      </div>
+      </CardContent>
+    </Card>
 
-      <div>
-        <p>{{ $t("reports.label_generator.qr_code_example") }} {{ displayProperties.baseURL }}/a/{asset_id}</p>
-        <Button size="lg" class="my-4 w-full" @click="calcPages">
-          {{ $t("reports.label_generator.generate_page") }}
-        </Button>
-      </div>
-    </div>
-  </div>
-  <div class="flex flex-col items-center">
-    <section
-      v-for="(page, pi) in pages"
-      :key="pi"
-      class="border-2 print:border-none"
-      :style="{
-        paddingTop: `${out.page.pt}${out.measure}`,
-        paddingBottom: `${out.page.pb}${out.measure}`,
-        paddingLeft: `${out.page.pl}${out.measure}`,
-        paddingRight: `${out.page.pr}${out.measure}`,
-        width: `${out.page.width}${out.measure}`,
-        background: `white`,
-        color: `black`,
-      }"
-    >
-      <div
-        v-for="(row, ri) in page.rows"
-        :key="ri"
-        class="flex break-inside-avoid"
-        :style="{
-          columnGap: `${out.gapX}${out.measure}`,
-          rowGap: `${out.gapY}${out.measure}`,
-        }"
-      >
-        <div
-          v-for="(item, idx) in row.items"
-          :key="idx"
-          class="flex border-2"
-          :class="{
-            'border-black': bordered && !!item,
-            'border-transparent': !bordered || !item,
-          }"
-          :style="{
-            height: `${out.card.height}${out.measure}`,
-            width: `${out.card.width}${out.measure}`,
-          }"
-        >
-          <template v-if="item">
-            <div class="flex items-center">
-              <img
-                :src="item.url"
-                :style="{
-                  minWidth: `${out.card.height * 0.9}${out.measure}`,
-                  width: `${out.card.height * 0.9}${out.measure}`,
-                  height: `${out.card.height * 0.9}${out.measure}`,
-                }"
-              />
-            </div>
-            <div class="ml-2 flex flex-col justify-center">
-              <div class="font-bold">{{ item.assetID }}</div>
-              <div
-                v-if="getHomeBoxLineText(item)"
-                class="text-xs"
-                :class="{ 'font-light italic': getHomeBoxLineText(item) !== labelBlankLine }"
-              >
-                {{ getHomeBoxLineText(item) }}
-              </div>
-              <div class="overflow-hidden text-wrap text-xs">{{ item.name }}</div>
-              <div v-if="printLocationRow" class="text-xs">{{ item.location }}</div>
-            </div>
-          </template>
+    <Card class="mb-6">
+      <CardHeader>
+        <CardTitle>{{ $t("reports.label_generator.range_title") }}</CardTitle>
+        <CardDescription>{{ $t("reports.label_generator.range_hint") }}</CardDescription>
+      </CardHeader>
+      <CardContent class="space-y-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div class="space-y-2">
+            <Label for="startAssetId">{{ $t("reports.label_generator.asset_start") }}</Label>
+            <Input id="startAssetId" v-model.number="startAssetId" type="number" min="1" step="1" />
+          </div>
+          <div class="space-y-2">
+            <Label for="endAssetId">{{ $t("reports.label_generator.asset_end") }}</Label>
+            <Input id="endAssetId" v-model.number="endAssetId" type="number" min="1" step="1" />
+          </div>
+          <div class="space-y-2">
+            <Label for="skip">{{ $t("reports.label_generator.skip_first_labels") }}</Label>
+            <Input id="skip" v-model.number="skip" type="number" min="0" step="1" />
+          </div>
         </div>
-      </div>
-    </section>
-  </div>
+        <p v-if="rangeError" class="text-sm text-destructive">{{ rangeError }}</p>
+        <p v-else class="text-sm text-muted-foreground">
+          {{ $t("reports.label_generator.label_count", { count: labelCount }) }}
+        </p>
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div class="space-y-2">
+            <Label for="pageSize">{{ $t("pages.label_templates.batch.page_size") }}</Label>
+            <Select v-model="pageSize">
+              <SelectTrigger id="pageSize">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Letter">Letter ({{ measurement.formatSize(215.9, 279.4) }})</SelectItem>
+                <SelectItem value="A4">A4 ({{ measurement.formatSize(210, 297) }})</SelectItem>
+              </SelectContent>
+            </Select>
+            <p v-if="sheetCapacity" class="text-xs text-muted-foreground">
+              {{ $t("reports.label_generator.page_size_sheet_hint") }}
+            </p>
+          </div>
+          <div class="flex items-center gap-2 sm:mt-8">
+            <Checkbox id="cutGuides" v-model="showCutGuides" />
+            <Label for="cutGuides" class="cursor-pointer text-sm font-normal">
+              {{ $t("pages.label_templates.batch.show_cut_guides") }}
+            </Label>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          <Button :disabled="!canGenerate" @click="handleDownload">
+            <MdiLoading v-if="isRendering" class="mr-2 size-4 animate-spin" />
+            <MdiDownload v-else class="mr-2 size-4" />
+            {{ $t("reports.label_generator.download_pdf") }}
+          </Button>
+          <Button variant="outline" :disabled="!canGenerate" @click="handlePrint">
+            <MdiPrinter class="mr-2 size-4" />
+            {{ $t("reports.label_generator.print_pdf") }}
+          </Button>
+        </div>
+        <p class="text-xs text-muted-foreground">{{ $t("reports.label_generator.print_tip") }}</p>
+      </CardContent>
+    </Card>
+  </BaseContainer>
 </template>
