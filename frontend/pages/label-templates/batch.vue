@@ -6,6 +6,7 @@
   import type { FlatTreeItem } from "~~/composables/use-location-helpers";
   import { useTagStore } from "~~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
+  import { BATCH_ORDER_FIELDS, orderSelection } from "~~/lib/label-batch";
   import MdiLoading from "~icons/mdi/loading";
   import MdiPrinter from "~icons/mdi/printer";
   import MdiDownload from "~icons/mdi/download";
@@ -43,7 +44,21 @@
 
   const loading = ref(false);
   const results = ref<EntitySummary[]>([]);
+  const total = ref(0);
   const query = ref("");
+
+  const orderBy = ref("assetId");
+  const orderDirection = ref("asc");
+  const ORDER_FIELD_LABELS: Record<(typeof BATCH_ORDER_FIELDS)[number], string> = {
+    assetId: "items.asset_id",
+    name: "items.name",
+    location: "items.location",
+    createdAt: "items.created_at",
+    updatedAt: "items.updated_at",
+    quantity: "items.quantity",
+    purchasePrice: "items.purchase_price",
+    insured: "items.insured",
+  };
 
   const locationsStore = useLocationStore();
   const tagStore = useTagStore();
@@ -57,32 +72,56 @@
     await search();
   });
 
-  async function search() {
+  async function fetchResults(): Promise<{ rows: EntitySummary[]; total: number }> {
+    if (kind.value === "locations") {
+      const { data, error } = await api.items.getLocations({ filterChildren: false });
+      if (error) throw new Error("locations");
+      const q = query.value.trim().toLowerCase();
+      const rows = (data ?? []).filter(l => !q || l.name.toLowerCase().includes(q));
+      return { rows, total: rows.length };
+    }
+    const { data, error } = await api.items.getAll({
+      q: query.value || "",
+      parentIds: selectedLocations.value.map(l => l.id),
+      tags: selectedTags.value.map(l => l.id),
+      pageSize: 100,
+      orderBy: orderBy.value,
+      orderDirection: orderDirection.value,
+    });
+    if (error) throw new Error("items");
+    return { rows: data.items || [], total: data.total };
+  }
+
+  // Only the latest search counts: a slower, older response changes nothing. Returns true
+  // when this call's response is now on screen.
+  let latestSearch = 0;
+  async function search(): Promise<boolean> {
+    const current = ++latestSearch;
     loading.value = true;
     try {
-      if (kind.value === "locations") {
-        const { data, error } = await api.items.getLocations({ filterChildren: false });
-        if (error) throw new Error("locations");
-        const q = query.value.trim().toLowerCase();
-        results.value = (data ?? []).filter(l => !q || l.name.toLowerCase().includes(q));
-      } else {
-        const { data, error } = await api.items.getAll({
-          q: query.value || "",
-          parentIds: selectedLocations.value.map(l => l.id),
-          tags: selectedTags.value.map(l => l.id),
-          pageSize: 100,
-        });
-        if (error) throw new Error("items");
-        results.value = data.items || [];
-      }
+      const found = await fetchResults();
+      if (current !== latestSearch) return false;
+      results.value = found.rows;
+      total.value = found.total;
+      return true;
     } catch {
-      toast.error(t("items.toast.failed_search_items"));
+      if (current === latestSearch) toast.error(t("items.toast.failed_search_items"));
+      return false;
     } finally {
-      loading.value = false;
+      if (current === latestSearch) loading.value = false;
     }
   }
 
   watchDebounced([query, selectedTags, selectedLocations], search, { debounce: 250, maxWait: 1000 });
+  // A sort change also re-orders the selection. A search or filter change must not.
+  watch([orderBy, orderDirection], async () => {
+    if (await search()) {
+      selectedIds.value = orderSelection(
+        selectedIds.value,
+        results.value.map(r => r.id)
+      );
+    }
+  });
   watch(kind, () => {
     selectedIds.value = [];
     quantities.value = {};
@@ -371,6 +410,25 @@
             <template v-if="kind === 'items'">
               <SearchFilter v-model="selectedLocations" :label="$t('global.locations')" :options="locationFlatTree" />
               <SearchFilter v-model="selectedTags" :label="$t('global.tags')" :options="tags" />
+              <Select v-model="orderBy">
+                <SelectTrigger class="h-9 w-auto" :aria-label="$t('items.order_by')">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem v-for="field in BATCH_ORDER_FIELDS" :key="field" :value="field">
+                    {{ $t(ORDER_FIELD_LABELS[field]) }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <Select v-model="orderDirection">
+                <SelectTrigger class="h-9 w-auto" :aria-label="$t('items.order_direction')">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="asc">{{ $t("items.asc") }}</SelectItem>
+                  <SelectItem value="desc">{{ $t("items.desc") }}</SelectItem>
+                </SelectContent>
+              </Select>
             </template>
             <div role="group" class="inline-flex h-9 overflow-hidden rounded-md border text-sm">
               <button
@@ -409,6 +467,9 @@
             </label>
             <span class="hidden sm:inline">{{ $t("pages.label_templates.batch.drag_hint") }}</span>
           </div>
+          <p v-if="kind === 'items' && total > results.length" class="text-sm text-muted-foreground">
+            {{ $t("pages.label_templates.batch.results_truncated", { shown: results.length, total }) }}
+          </p>
         </div>
 
         <div v-if="loading" class="flex flex-1 items-center justify-center py-12">
