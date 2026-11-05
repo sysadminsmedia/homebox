@@ -3159,17 +3159,22 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 	if tq.WithItems {
 		// Items hang off their effective location. The base arm uses the
 		// effective-location expression, so overridden children are picked up
-		// under the location they're stored in. The recursive arm only follows
-		// non-overridden children: an override always names a location and p is
-		// always an item, so COALESCE(override, parent) = p.id reduces to
-		// "override IS NULL AND parent = p.id".
+		// under the location they're stored in. The recursive arm follows
+		// children through their parent column and skips those whose override
+		// names a location, since the base arm already placed them.
+		//
+		// An override is only validated as a location when it is written; if
+		// its target later stops being one (its type is changed, or the type's
+		// is_location flag is cleared), it is treated as unset, like NULL, and
+		// the child stays under its parent instead of dropping out of the tree.
 		//
 		// Both details of the recursive arm are deliberate (#1827). SQLite has no
 		// real index on entity_children and relies on an automatic index over
 		// (group_entities, entity_children) for this join; joining on the COALESCE
-		// expression prevents that and makes the walk quadratic. The IS NULL test
-		// is wrapped in a CASE so the planner can't pick idx_entities_location to
-		// satisfy it, which matches nearly every row and is even slower.
+		// expression prevents that and makes the walk quadratic. The override
+		// test is wrapped in a CASE so the planner can't pick
+		// idx_entities_location to satisfy it, which matches nearly every row
+		// and is even slower.
 		eff := locationOrParentColumn("e")
 		itemQuery := `, item_tree(id, NAME, parent_id, level, node_type) AS
 		(
@@ -3195,7 +3200,17 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 			JOIN    entity_types ct ON ct.id = c.entity_type_entities
 			JOIN    item_tree p
 			ON      c.entity_children = p.id
-			WHERE   (CASE WHEN c.entity_location_entities IS NULL THEN 1 ELSE 0 END) = 1
+			WHERE   (CASE
+						WHEN c.entity_location_entities IS NULL THEN 1
+						WHEN EXISTS (
+							SELECT  1
+							FROM    entities l
+							JOIN    entity_types lt ON lt.id = l.entity_type_entities
+							WHERE   l.id = c.entity_location_entities
+							AND     lt.is_location = true
+						) THEN 0
+						ELSE 1
+					END) = 1
 			AND     ct.is_location = false
 			AND     c.group_entities = $1
 			AND     level < 10 -- prevent infinite loop & excessive recursion
