@@ -6,6 +6,9 @@ const PASSWORD = process.env.E2E_PASSWORD || "demodemo";
 
 type Direction = "Ascending" | "Descending";
 
+// page.route can't see requests the PWA service worker handles, which happens on WebKit.
+test.use({ serviceWorkers: "block" });
+
 // Logs in through the API, as the customs inventory spec does: WebKit on Linux drops the
 // cookies of a form login.
 async function login(page: Page) {
