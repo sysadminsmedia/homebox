@@ -3167,6 +3167,8 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 		// its target later stops being one (its type is changed, or the type's
 		// is_location flag is cleared), it is treated as unset, like NULL, and
 		// the child stays under its parent instead of dropping out of the tree.
+		// The same goes for an override naming another group's location: the
+		// base arm only sees this group's locations, so it can't place it there.
 		//
 		// Both details of the recursive arm are deliberate (#1827). SQLite has no
 		// real index on entity_children and relies on an automatic index over
@@ -3207,6 +3209,7 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 							FROM    entities l
 							JOIN    entity_types lt ON lt.id = l.entity_type_entities
 							WHERE   l.id = c.entity_location_entities
+							AND     l.group_entities = $1
 							AND     lt.is_location = true
 						) THEN 0
 						ELSE 1
