@@ -365,6 +365,73 @@ func TestEntityLocation_TreePlacesOverriddenChildUnderItsLocation(t *testing.T) 
 	assert.Equal(t, "Attic", parentOf[parent.ID])
 }
 
+// An override is only checked when written. If it later stops naming one of the
+// group's locations (its target becomes an item, or the row points at another
+// group's location), the tree must treat it as unset rather than drop the child
+// and its descendants.
+func TestEntityLocation_TreeKeepsChildWhoseOverrideIsNoLongerALocation(t *testing.T) {
+	cases := map[string]func(t *testing.T, f locationFixture, spare EntityOut){
+		// The Basement becomes an item.
+		"target no longer a location": func(t *testing.T, f locationFixture, _ EntityOut) {
+			require.NoError(t, tClient.Entity.UpdateOneID(f.basement.ID).SetEntityTypeID(f.itemType).Exec(context.Background()))
+		},
+		// The override points at a location in another group. Writes reject
+		// this, so it can only come from bad data.
+		"target in another group": func(t *testing.T, f locationFixture, spare EntityOut) {
+			other := newLocationFixture(t, "loc-tree-stale-override-other")
+			require.NoError(t, tClient.Entity.UpdateOneID(spare.ID).SetLocationID(other.basement.ID).Exec(context.Background()))
+		},
+	}
+
+	for name, makeStale := range cases {
+		t.Run(name, func(t *testing.T) {
+			ctx := context.Background()
+			f := newLocationFixture(t, "loc-tree-stale-override")
+
+			parent, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
+				Name: "Product", EntityTypeID: f.itemType, ParentID: f.attic.ID,
+			})
+			require.NoError(t, err)
+			spare, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
+				Name: "Spare Part", EntityTypeID: f.itemType,
+				ParentID:   parent.ID,
+				LocationID: f.basement.ID,
+			})
+			require.NoError(t, err)
+			screw, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
+				Name: "Screw", EntityTypeID: f.itemType, ParentID: spare.ID,
+			})
+			require.NoError(t, err)
+
+			makeStale(t, f, spare)
+
+			tree, err := tRepos.Entities.Tree(ctx, f.gid, TreeQuery{WithItems: true})
+			require.NoError(t, err)
+
+			parentOf := map[uuid.UUID]string{}
+			seen := map[uuid.UUID]int{}
+			var walk func(nodes []*TreeItem, parentName string)
+			walk = func(nodes []*TreeItem, parentName string) {
+				for _, n := range nodes {
+					seen[n.ID]++
+					parentOf[n.ID] = parentName
+					walk(n.Children, n.Name)
+				}
+			}
+			roots := make([]*TreeItem, 0, len(tree))
+			for i := range tree {
+				roots = append(roots, &tree[i])
+			}
+			walk(roots, "")
+
+			assert.Equal(t, 1, seen[spare.ID], "child with a stale override must appear exactly once")
+			assert.Equal(t, "Product", parentOf[spare.ID], "a stale override falls back to the parent chain")
+			assert.Equal(t, 1, seen[screw.ID], "descendants of that child must stay visible")
+			assert.Equal(t, "Spare Part", parentOf[screw.ID])
+		})
+	}
+}
+
 // #1691's hazard applied to the new field: GET a body, PUT it straight back, and
 // the entity must not move. An inherited location must not become a pinned
 // override, and an override must not be dropped.

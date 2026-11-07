@@ -3157,12 +3157,27 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 				 lower(NAME)`
 
 	if tq.WithItems {
-		// Items hang off their effective location. The same expression has to be
-		// used in both arms: an overridden child's effective parent is a
-		// location, so the recursive arm (items only) can't also pick it up and
-		// list it twice.
+		// Items hang off their effective location. The base arm uses the
+		// effective-location expression, so overridden children are picked up
+		// under the location they're stored in. The recursive arm follows
+		// children through their parent column and skips those whose override
+		// names a location, since the base arm already placed them.
+		//
+		// An override is only validated as a location when it is written; if
+		// its target later stops being one (its type is changed, or the type's
+		// is_location flag is cleared), it is treated as unset, like NULL, and
+		// the child stays under its parent instead of dropping out of the tree.
+		// The same goes for an override naming another group's location: the
+		// base arm only sees this group's locations, so it can't place it there.
+		//
+		// Both details of the recursive arm are deliberate (#1827). SQLite has no
+		// real index on entity_children and relies on an automatic index over
+		// (group_entities, entity_children) for this join; joining on the COALESCE
+		// expression prevents that and makes the walk quadratic. The override
+		// test is wrapped in a CASE so the planner can't pick
+		// idx_entities_location to satisfy it, which matches nearly every row
+		// and is even slower.
 		eff := locationOrParentColumn("e")
-		effChild := locationOrParentColumn("c")
 		itemQuery := `, item_tree(id, NAME, parent_id, level, node_type) AS
 		(
 			SELECT  e.id,
@@ -3180,14 +3195,26 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 
 			SELECT  c.id,
 					c.NAME,
-					` + effChild + ` AS parent_id,
+					c.entity_children AS parent_id,
 					level + 1,
 					'item' AS node_type
 			FROM    entities c
 			JOIN    entity_types ct ON ct.id = c.entity_type_entities
 			JOIN    item_tree p
-			ON      ` + effChild + ` = p.id
-			WHERE   ct.is_location = false
+			ON      c.entity_children = p.id
+			WHERE   (CASE
+						WHEN c.entity_location_entities IS NULL THEN 1
+						WHEN EXISTS (
+							SELECT  1
+							FROM    entities l
+							JOIN    entity_types lt ON lt.id = l.entity_type_entities
+							WHERE   l.id = c.entity_location_entities
+							AND     l.group_entities = $1
+							AND     lt.is_location = true
+						) THEN 0
+						ELSE 1
+					END) = 1
+			AND     ct.is_location = false
 			AND     c.group_entities = $1
 			AND     level < 10 -- prevent infinite loop & excessive recursion
 		)`
