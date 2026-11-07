@@ -16,6 +16,7 @@ var (
 	ContextUserToken = &contextKeys{name: "UserToken"}
 	ContextTenant    = &contextKeys{name: "Tenant"}
 	ContextAPIKey    = &contextKeys{name: "APIKey"}
+	ContextJWT       = &contextKeys{name: "JWT"}
 )
 
 type Context struct {
@@ -102,5 +103,20 @@ func SetAPIKeyAuth(ctx context.Context) context.Context {
 // static API key.
 func IsAPIKeyAuth(ctx context.Context) bool {
 	v, _ := ctx.Value(ContextAPIKey).(bool)
+	return v
+}
+
+// SetJWTAuth marks the request context as authenticated via a short-lived
+// bearer JWT from an external identity provider (HBOX_AUTH_JWT_*). Such
+// requests may use everyday data only: routes that manage credentials,
+// sessions, the account or collection membership refuse them (mwDenyJWT).
+func SetJWTAuth(ctx context.Context) context.Context {
+	return context.WithValue(ctx, ContextJWT, true)
+}
+
+// IsJWTAuth reports whether the current request was authenticated via an
+// external identity provider's bearer JWT.
+func IsJWTAuth(ctx context.Context) bool {
+	v, _ := ctx.Value(ContextJWT).(bool)
 	return v
 }

@@ -23,6 +23,7 @@ type app struct {
 	notifierTestLimiter *simpleRateLimiter
 	registerLimiter     *simpleRateLimiter
 	otel                *otel.Provider
+	jwtAuth             *jwtAuthenticator // nil unless HBOX_AUTH_JWT_* is set
 }
 
 func new(conf *config.Config) *app {
