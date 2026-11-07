@@ -325,10 +325,12 @@ func (r *GroupRepository) GroupByID(ctx context.Context, id uuid.UUID) (Group, e
 	return r.groupMapper.MapErr(r.db.Group.Get(ctx, id))
 }
 
-func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) error {
+// GroupDelete deletes the group and everything in it. It returns the IDs of any
+// personal collections created for members who had no other membership.
+func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) ([]uuid.UUID, error) {
 	tx, err := r.db.Tx(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	itm, err := tx.Entity.Query().
@@ -339,7 +341,7 @@ func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) error {
 		if rerr := tx.Rollback(); rerr != nil {
 			log.Error().Err(rerr).Msg("failed to rollback transaction")
 		}
-		return err
+		return nil, err
 	}
 
 	// Keep attachment row operations on the same transaction.
@@ -363,7 +365,7 @@ func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) error {
 		if rerr := tx.Rollback(); rerr != nil {
 			log.Error().Err(rerr).Msg("failed to rollback transaction")
 		}
-		return err
+		return nil, err
 	}
 
 	// Delete any associated notifiers
@@ -373,7 +375,30 @@ func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) error {
 		if rerr := tx.Rollback(); rerr != nil {
 			log.Error().Err(rerr).Msg("failed to rollback transaction")
 		}
-		return err
+		return nil, err
+	}
+
+	// Move every member's default group off this one before it goes away.
+	// Otherwise the FK's ON DELETE SET NULL blanks default_group_id, and a
+	// member whose only collection this was is left with no tenant at all.
+	members, err := tx.UserGroup.Query().
+		Where(usergroup.GroupID(id)).
+		All(ctx)
+	if err != nil {
+		if rerr := tx.Rollback(); rerr != nil {
+			log.Error().Err(rerr).Msg("failed to rollback transaction")
+		}
+		return nil, err
+	}
+
+	created, err := reassignDefaultGroups(ctx, tx, id, lo.Map(members, func(m *ent.UserGroup, _ int) uuid.UUID {
+		return m.UserID
+	}))
+	if err != nil {
+		if rerr := tx.Rollback(); rerr != nil {
+			log.Error().Err(rerr).Msg("failed to rollback transaction")
+		}
+		return nil, err
 	}
 
 	// Delete the group
@@ -381,10 +406,13 @@ func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) error {
 		if rerr := tx.Rollback(); rerr != nil {
 			log.Error().Err(rerr).Msg("failed to rollback transaction")
 		}
-		return err
+		return nil, err
 	}
 
-	return tx.Commit()
+	if err := tx.Commit(); err != nil {
+		return nil, err
+	}
+	return created, nil
 }
 
 func (r *GroupRepository) InvitationGet(ctx context.Context, token []byte) (GroupInvitation, error) {
@@ -472,8 +500,90 @@ func (r *GroupRepository) IsOwnerOf(ctx context.Context, userID, groupID uuid.UU
 		Exist(ctx)
 }
 
-func (r *GroupRepository) RemoveMember(ctx context.Context, groupID, userID uuid.UUID) error {
-	return r.db.Group.UpdateOneID(groupID).RemoveUserIDs(userID).Exec(ctx)
+// RemoveMember removes userID from groupID and, in the same transaction, moves
+// the user's default group off groupID. A user left with no memberships gets a
+// fresh personal collection: with zero groups every tenant-scoped route —
+// including logout and self-deletion — rejects them, and only database surgery
+// could restore the account. It returns the IDs of any collections it created
+// so the caller can seed them.
+func (r *GroupRepository) RemoveMember(ctx context.Context, groupID, userID uuid.UUID) ([]uuid.UUID, error) {
+	tx, err := r.db.Tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	n, err := tx.UserGroup.Delete().
+		Where(usergroup.UserID(userID), usergroup.GroupID(groupID)).
+		Exec(ctx)
+	if err != nil {
+		_ = tx.Rollback()
+		return nil, err
+	}
+	if n == 0 {
+		_ = tx.Rollback()
+		return nil, &ent.NotFoundError{}
+	}
+
+	created, err := reassignDefaultGroups(ctx, tx, groupID, []uuid.UUID{userID})
+	if err != nil {
+		_ = tx.Rollback()
+		return nil, err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return nil, err
+	}
+	return created, nil
+}
+
+// reassignDefaultGroups is run after userIDs have lost (or are about to lose)
+// their membership in leavingGroupID. Each user whose default group is
+// leavingGroupID, or unset, is pointed at another group they still belong to;
+// a user with no other membership is given a new collection they own, so no
+// account is ever left without a tenant. It returns the created group IDs.
+func reassignDefaultGroups(ctx context.Context, tx *ent.Tx, leavingGroupID uuid.UUID, userIDs []uuid.UUID) ([]uuid.UUID, error) {
+	var created []uuid.UUID
+
+	for _, uid := range userIDs {
+		u, err := tx.User.Get(ctx, uid)
+		if err != nil {
+			return nil, err
+		}
+
+		remaining, err := tx.UserGroup.Query().
+			Where(usergroup.UserID(uid), usergroup.GroupIDNEQ(leavingGroupID)).
+			All(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		if len(remaining) == 0 {
+			g, err := tx.Group.Create().SetName(fmt.Sprintf("%s's Home", u.Name)).Save(ctx)
+			if err != nil {
+				return nil, err
+			}
+			if _, err := tx.UserGroup.Create().
+				SetUserID(uid).
+				SetGroupID(g.ID).
+				SetRole(usergroup.RoleOwner).
+				Save(ctx); err != nil {
+				return nil, err
+			}
+			if err := tx.User.UpdateOneID(uid).SetDefaultGroupID(g.ID).Exec(ctx); err != nil {
+				return nil, err
+			}
+			created = append(created, g.ID)
+			continue
+		}
+
+		if u.DefaultGroupID == nil || *u.DefaultGroupID == leavingGroupID {
+			if err := tx.User.UpdateOneID(uid).SetDefaultGroupID(remaining[0].GroupID).Exec(ctx); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return created, nil
 }
 
 func (r *GroupRepository) InvitationDecrement(ctx context.Context, id uuid.UUID) error {
