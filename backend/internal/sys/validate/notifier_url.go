@@ -198,10 +198,11 @@ func resolveHostForPolicy(ctx context.Context, host string, cfg *config.Notifier
 		resolved = append(resolved, addr.IP)
 	}
 
-	// Expand DNS64-synthesized IPv6 addresses (RFC 6052) into their embedded
-	// IPv4 addresses so the allow/block rules below are applied to the IPv4
-	// destination the NAT64 gateway will actually reach. The original IPv6
-	// address stays in the list so IPv6 rules still apply to it.
+	// Expand IPv6 addresses that embed an IPv4 destination into that IPv4
+	// address so the allow/block rules below are applied to the host a
+	// translator or relay will actually reach: DNS64-synthesized addresses
+	// (RFC 6052) and 6to4 addresses (RFC 3056). The original IPv6 address stays
+	// in the list so IPv6 rules still apply to it.
 	checkIPs := make([]net.IP, 0, len(resolved))
 	for _, ip := range resolved {
 		checkIPs = append(checkIPs, ip)
@@ -210,6 +211,9 @@ func resolveHostForPolicy(ctx context.Context, host string, cfg *config.Notifier
 			return nil, fmt.Errorf("IP %s is in a DNS64 range but no valid embedded IPv4 address could be extracted", ip.String())
 		}
 		checkIPs = append(checkIPs, embedded...)
+		if v4 := sixToFourEmbeddedIPv4(ip); v4 != nil {
+			checkIPs = append(checkIPs, v4)
+		}
 	}
 
 	// If AllowNets is configured it acts as an allowlist: every IP must match,
@@ -458,6 +462,26 @@ func dns64EmbeddedIPv4s(ip net.IP, dns64Nets []string) ([]net.IP, bool) {
 	return candidates, inRange
 }
 
+// sixToFourPrefix is the 6to4 transition prefix (RFC 3056).
+var sixToFourPrefix = &net.IPNet{
+	IP:   net.IP{0x20, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	Mask: net.CIDRMask(16, 128),
+}
+
+// sixToFourEmbeddedIPv4 returns the IPv4 address embedded in bits 16-47 of a
+// 6to4 address (2002:V4ADDR::/48), or nil if ip is not a 6to4 address. A 6to4
+// relay delivers traffic for such an address to that IPv4 host, so
+// [2002:7f00:1::] must be judged as 127.0.0.1.
+func sixToFourEmbeddedIPv4(ip net.IP) net.IP {
+	if ip.To4() != nil || !sixToFourPrefix.Contains(ip) {
+		return nil
+	}
+
+	b := ip.To16()
+
+	return net.IPv4(b[2], b[3], b[4], b[5])
+}
+
 // isLocalhost checks if an IP is a localhost address
 func isLocalhost(ip net.IP) bool {
 	return ip.IsLoopback()
@@ -496,6 +520,7 @@ func isBogonNetwork(ip net.IP) bool {
 		"2001::/32",     // TEREDO
 		"2001:10::/28",  // ORCHID
 		"2001:db8::/32", // Documentation
+		"2002::/16",     // 6to4 (RFC 3056, deprecated by RFC 7526)
 		"fc00::/7",      // Unique local
 		"fe80::/10",     // Link-local
 		"ff00::/8",      // Multicast
