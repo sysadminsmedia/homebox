@@ -14,6 +14,9 @@ jobs:
   playwright-tests:
     timeout-minutes: 60
     strategy:
+      # One shard failing to download a tool should not cancel the others,
+      # so "Re-run failed jobs" only has to repeat that shard.
+      fail-fast: false
       matrix:
         shardIndex: [1,2,3,4]
         shardTotal: [4]
@@ -25,7 +28,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      # GitHub's release downloads sometimes answer 504, so try once more before failing the job.
       - name: Install Task
+        id: install-task
+        continue-on-error: true
+        uses: arduino/setup-task@b91d5d2c96a56797b48ac1e0e89220bf64044611
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Task (retry)
+        if: steps.install-task.outcome == 'failure'
         uses: arduino/setup-task@b91d5d2c96a56797b48ac1e0e89220bf64044611
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}

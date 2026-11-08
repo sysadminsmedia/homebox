@@ -58,7 +58,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      # GitHub's release downloads sometimes answer 504, so try once more before failing the job.
       - name: Install Task
+        id: install-task
+        continue-on-error: true
+        uses: arduino/setup-task@b91d5d2c96a56797b48ac1e0e89220bf64044611
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Task (retry)
+        if: steps.install-task.outcome == 'failure'
         uses: arduino/setup-task@b91d5d2c96a56797b48ac1e0e89220bf64044611
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -109,7 +118,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      # GitHub's release downloads sometimes answer 504, so try once more before failing the job.
       - name: Install Task
+        id: install-task
+        continue-on-error: true
+        uses: arduino/setup-task@b91d5d2c96a56797b48ac1e0e89220bf64044611
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Task (retry)
+        if: steps.install-task.outcome == 'failure'
         uses: arduino/setup-task@b91d5d2c96a56797b48ac1e0e89220bf64044611
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}

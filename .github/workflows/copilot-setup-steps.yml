@@ -40,7 +40,16 @@ jobs:
           go-version: "1.27"
           cache-dependency-path: backend/go.mod
 
+      # GitHub's release downloads sometimes answer 504, so try once more before failing the job.
       - name: Install Task
+        id: install-task
+        continue-on-error: true
+        uses: arduino/setup-task@b91d5d2c96a56797b48ac1e0e89220bf64044611
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Task (retry)
+        if: steps.install-task.outcome == 'failure'
         uses: arduino/setup-task@b91d5d2c96a56797b48ac1e0e89220bf64044611
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
