@@ -221,6 +221,38 @@ test.describe("batch print list", () => {
     await expect(page.getByText(/^Showing the first \d+ of \d+ items\./)).toBeVisible();
   });
 
+  test("says when selected items outside the list don't follow a sort change", async ({ page }) => {
+    await openBatchPage(page);
+    await expectAssetIdOrder(page, "Ascending");
+
+    const first = await rowName(page, 0);
+    const second = await rowName(page, 1);
+    await tick(page, 0);
+    await tick(page, 1);
+    const message = page.getByText("1 selected item isn't in the list, so it didn't follow the new sort.", {
+      exact: false,
+    });
+    await expect(message).toHaveCount(0);
+
+    // The descending list leaves the second item out, as the 100-row limit would.
+    await page.route(
+      url => isEntitiesRequest(url, hasDirection("Descending")),
+      async route => {
+        const response = await route.fetch();
+        const body = await response.json();
+        const items = body.items.filter((item: { name: string }) => item.name !== second);
+        await route.fulfill({ response, json: { ...body, items } });
+      }
+    );
+    await chooseDirection(page, "Descending");
+    await expect(message).toBeVisible();
+    await expectBadge(page, first, 1);
+
+    await page.unrouteAll();
+    await chooseDirection(page, "Ascending");
+    await expect(message).toHaveCount(0);
+  });
+
   test("filters by asset ID comparisons", async ({ page }) => {
     await openBatchPage(page);
     const hint = page.getByText("Filter by asset ID with #>=100, or #>=100 <=200 for a range.");

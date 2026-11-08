@@ -25,6 +25,8 @@ Upstream has no issue about this page. Related, but not overlapping: PR #1391 (o
   - selected items in the list take their new list order;
   - selected items no longer in the list stay selected, after them, in their old order.
 
+  When some selected items aren't in the list at a sort change, the page says how many, and that they didn't follow the new sort (`unsorted_selection_one` / `_many` in §3). The message stays while any of them is still selected, and goes once a sort change finds them all in the list.
+
   This replaces any manual drag order. Changing a filter or search term leaves the selection order alone.
 - **FR-6** When two items tie on the chosen field, the server orders them by ID, so a tie can't change between requests. This applies to every order-by value and to every caller of the entity query.
 
@@ -63,15 +65,17 @@ Key prefix `pages.label_templates.batch.`:
 |---|---|---|
 | `results_truncated` | Showing the first {shown} of {total} items. Narrow the search to reach the others. | Die ersten {shown} von {total} Artikeln werden angezeigt. Grenzen Sie die Suche ein, um die übrigen zu sehen. |
 | `asset_filter_hint` | Filter by asset ID with #>=100, or #>=100 <=200 for a range. | Nach Asset-ID filtern mit #>=100, oder #>=100 <=200 für einen Bereich. |
+| `unsorted_selection_one` | 1 selected item isn't in the list, so it didn't follow the new sort. It prints after the sorted ones. | 1 ausgewählter Artikel ist nicht in der Liste und folgt daher nicht der neuen Sortierung. Er wird nach den sortierten gedruckt. |
+| `unsorted_selection_many` | {count} selected items aren't in the list, so they didn't follow the new sort. They print after the sorted ones, in their earlier order. | {count} ausgewählte Artikel sind nicht in der Liste und folgen daher nicht der neuen Sortierung. Sie werden nach den sortierten in ihrer bisherigen Reihenfolge gedruckt. |
 
 `de.json` has no `pages.label_templates` block yet, so the rest of this page stays in English until it is translated. `items.asc` and `items.desc` also exist only in English; add them to `de.json` as `Aufsteigend` and `Absteigend`. `items.order_direction` exists in neither file, though the search page already uses it; add it as `Order Direction` and `Sortierrichtung`, and use it as the direction select's label.
 
-## 4. Calls made while designing (the user can change them)
+## 4. Calls made while designing (confirmed on PR #32)
 
 1. **Asset ID is the default sort.** Labels are usually printed in ID order. Name order stays one click away.
 2. **The sort isn't remembered.** It resets to the default on each visit, like the page's other filters.
 3. **A sort change overrides manual drag order (FR-5).** The person asked for an order, so the print follows it. Dragging afterwards still works.
-4. **Items without an asset ID sort first when ascending,** as they do on the search page today. `#>=1` hides them.
+4. **Items with no value in the active sort field rank first when ascending, whichever field that is,** as they do on the search page today: no asset ID for Asset ID, a price of 0 for Purchase price, and so on. Descending puts them last. Location is the exception, also as on the search page: items without a location sort last in both directions. A list filled by 100 such items is a sign to narrow the search, for example with `#>=1` for Asset ID.
 5. **The search box carries the filter, not a new field.** `#` already means "asset ID" there, so the search page and the customs export get it too.
 6. **The 100-row limit stays, with a message.** Lifting it needs paging on this page, which isn't needed to solve the problem: filters reach the rest.
 7. **No location sorting.** The location list keeps its current order.
