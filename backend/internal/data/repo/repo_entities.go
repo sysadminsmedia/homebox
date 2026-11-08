@@ -68,13 +68,14 @@ type (
 		Fields           []FieldQuery `json:"fields"`
 		Page             int
 		PageSize         int
-		AssetID          AssetID `json:"assetId"`
-		MatchAllTags     bool    `json:"matchAllTags"` // require every selected tag (AND) instead of any (OR); ignored when NegateTags is set
-		NegateTags       bool    `json:"negateTags"`
-		OnlyWithoutPhoto bool    `json:"onlyWithoutPhoto"`
-		OnlyWithPhoto    bool    `json:"onlyWithPhoto"`
-		IncludeArchived  bool    `json:"includeArchived"`
-		FilterChildren   bool    `json:"filterChildren"` // when true, only return root entities (no parent)
+		AssetID          AssetID       `json:"assetId"`
+		AssetIDRange     *AssetIDRange `json:"-"`
+		MatchAllTags     bool          `json:"matchAllTags"` // require every selected tag (AND) instead of any (OR); ignored when NegateTags is set
+		NegateTags       bool          `json:"negateTags"`
+		OnlyWithoutPhoto bool          `json:"onlyWithoutPhoto"`
+		OnlyWithPhoto    bool          `json:"onlyWithPhoto"`
+		IncludeArchived  bool          `json:"includeArchived"`
+		FilterChildren   bool          `json:"filterChildren"` // when true, only return root entities (no parent)
 	}
 
 	DuplicateOptions struct {
@@ -863,6 +864,13 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 
 	if !q.AssetID.Nil() {
 		qb = qb.Where(entity.AssetID(int64(q.AssetID)))
+	}
+
+	if q.AssetIDRange != nil {
+		qb = qb.Where(
+			entity.AssetIDGTE(int64(q.AssetIDRange.Min)),
+			entity.AssetIDLTE(int64(q.AssetIDRange.Max)),
+		)
 	}
 
 	var andPredicates []predicate.Entity

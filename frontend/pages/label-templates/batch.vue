@@ -456,6 +456,9 @@
               </button>
             </div>
           </div>
+          <p v-if="kind === 'items'" class="text-xs text-muted-foreground">
+            {{ $t("pages.label_templates.batch.asset_filter_hint") }}
+          </p>
           <div class="flex items-center justify-between text-sm text-muted-foreground">
             <label class="flex items-center gap-2">
               <Checkbox

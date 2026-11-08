@@ -1269,6 +1269,7 @@
                 "kind_locations": "Locations",
                 "results_selected": "{results} results, {selected} selected",
                 "results_truncated": "Showing the first {shown} of {total} items. Narrow the search to reach the others.",
+                "asset_filter_hint": "Filter by asset ID with #>=100, or #>=100 <=200 for a range.",
                 "unsorted_selection_one": "1 selected item isn't in the list, so it didn't follow the new sort. It prints after the sorted ones.",
                 "unsorted_selection_many": "{count} selected items aren't in the list, so they didn't follow the new sort. They print after the sorted ones, in their earlier order.",
                 "drag_hint": "Drag selected rows to set the print order",

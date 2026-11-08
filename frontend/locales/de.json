@@ -857,6 +857,7 @@
     "pages": {
         "label_templates": {
             "batch": {
+                "asset_filter_hint": "Nach Asset-ID filtern mit #>=100, oder #>=100 <=200 für einen Bereich.",
                 "results_truncated": "Die ersten {shown} von {total} Artikeln werden angezeigt. Grenzen Sie die Suche ein, um die übrigen zu sehen.",
                 "unsorted_selection_many": "{count} ausgewählte Artikel sind nicht in der Liste und folgen daher nicht der neuen Sortierung. Sie werden nach den sortierten in ihrer bisherigen Reihenfolge gedruckt.",
                 "unsorted_selection_one": "1 ausgewählter Artikel ist nicht in der Liste und folgt daher nicht der neuen Sortierung. Er wird nach den sortierten gedruckt."

@@ -2,9 +2,62 @@ package repo
 
 import (
 	"encoding/json"
+	"math"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
+
+func TestParseAssetIDSearch(t *testing.T) {
+	const top = AssetID(math.MaxInt64)
+	valid := map[string]AssetIDRange{
+		"#>=100":                {100, top},
+		"#>= 100":               {100, top},
+		"# >= 000-100":          {100, top},
+		"asset-id >= 000-100":   {100, top},
+		"Asset ID>=100":         {100, top},
+		"assetid >= 100":        {100, top},
+		"#>100":                 {101, top},
+		"#<=200":                {1, 200},
+		"#<200":                 {1, 199},
+		"#>=100 <=200":          {100, 200},
+		"#>=100<=200":           {100, 200},
+		"#<=200 >=100":          {100, 200},
+		"#>=0":                  {1, top},
+		"#<1":                   {1, 0},
+		"#>=200 <=100":          {200, 100},
+		"#>9223372036854775807": {1, 0},
+	}
+	for in, want := range valid {
+		got, ok := ParseAssetIDSearch(in)
+		assert.True(t, ok, in)
+		assert.Equal(t, want, got, in)
+	}
+	for _, in := range []string{"", "#", "#000-123", "#abc", "#>=", "#>=abc", "#>=100 books", "books #>=100", "asset-id", "asset-id 100", "#>=1 <=2 <=3", "#>=99999999999999999999"} {
+		_, ok := ParseAssetIDSearch(in)
+		assert.False(t, ok, in)
+	}
+}
+
+func TestEntityQuery_ResolveAssetIDSearch(t *testing.T) {
+	exact := EntityQuery{Search: "#000-123"}
+	exact.ResolveAssetIDSearch()
+	assert.Equal(t, AssetID(123), exact.AssetID)
+	assert.Empty(t, exact.Search)
+	assert.Nil(t, exact.AssetIDRange)
+
+	ranged := EntityQuery{Search: "#>=100"}
+	ranged.ResolveAssetIDSearch()
+	require.NotNil(t, ranged.AssetIDRange)
+	assert.Empty(t, ranged.Search)
+
+	text := EntityQuery{Search: "#abc"}
+	text.ResolveAssetIDSearch()
+	assert.Equal(t, "#abc", text.Search)
+	assert.Nil(t, text.AssetIDRange)
+}
 
 func TestAssetID_MarshalJSON(t *testing.T) {
 	tests := []struct {
