@@ -92,6 +92,8 @@ test.describe("batch print page layout", () => {
       const filters = [
         list.getByPlaceholder("Search"),
         list.getByRole("button", { name: "Tags" }),
+        list.getByRole("combobox", { name: "Order By" }),
+        list.getByRole("combobox", { name: "Order Direction" }),
         list.getByRole("button", { name: "Items", exact: true }),
       ];
       for (const filter of filters) await expectInsideViewport(page, filter);
