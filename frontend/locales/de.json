@@ -622,6 +622,7 @@
         "add": "Hinzufügen",
         "advanced": "Erweitert",
         "archived": "Archiviert",
+        "asc": "Aufsteigend",
         "asset_id": "Asset-ID",
         "associated_with_multiple": "Diese Asset-ID ist mit mehreren Artikeln verknüpft",
         "attachment": "Anhang",
@@ -631,6 +632,7 @@
         "custom_fields": "Benutzerdefinierte Felder",
         "delete_attachment_confirm": "Sind Sie sicher, dass Sie diesen Anhang löschen möchten?",
         "delete_item_confirm": "Sind Sie sicher, dass Sie diesen Artikel löschen möchten?",
+        "desc": "Absteigend",
         "description": "Beschreibung",
         "details": "Details",
         "drag_and_drop": "Ziehen Sie Dateien hierher und legen Sie sie dort ab oder klicken Sie, um Dateien auszuwählen",
@@ -683,6 +685,7 @@
         "only_without_photo": "Nur Artikel ohne Foto",
         "options": "Optionen",
         "order_by": "Sortieren nach",
+        "order_direction": "Sortierrichtung",
         "pages": "Seite { page } von { totalPages }",
         "parent_item": "Übergeordneter Artikel",
         "photo": "Foto",
@@ -852,6 +855,14 @@
         "templates": "Vorlagen"
     },
     "pages": {
+        "label_templates": {
+            "batch": {
+                "asset_filter_hint": "Nach Asset-ID filtern mit #>=100, oder #>=100 <=200 für einen Bereich.",
+                "results_truncated": "Die ersten {shown} von {total} Artikeln werden angezeigt. Grenzen Sie die Suche ein, um die übrigen zu sehen.",
+                "unsorted_selection_many": "{count} ausgewählte Artikel sind nicht in der Liste und folgen daher nicht der neuen Sortierung. Sie werden nach den sortierten in ihrer bisherigen Reihenfolge gedruckt.",
+                "unsorted_selection_one": "1 ausgewählter Artikel ist nicht in der Liste und folgt daher nicht der neuen Sortierung. Er wird nach den sortierten gedruckt."
+            }
+        },
         "templates": {
             "no_templates": "Noch keine Vorlagen.",
             "title": "Vorlagen"

@@ -319,8 +319,8 @@ func (s *CustomsInventoryService) scopeIDs(ctx context.Context, gid uuid.UUID, s
 	return ids, nil
 }
 
-// toEntityQuery mirrors HandleEntitiesGetAll's query parsing, including the
-// "#000-123" asset ID search, without paging.
+// toEntityQuery mirrors HandleEntitiesGetAll's query parsing, including asset ID
+// terms such as "#000-123" and "#>=100", without paging.
 func toEntityQuery(q customsinventory.ScopeQuery) repo.EntityQuery {
 	v := repo.EntityQuery{
 		Page:             -1,
@@ -340,12 +340,7 @@ func toEntityQuery(q customsinventory.ScopeQuery) repo.EntityQuery {
 			v.Fields = append(v.Fields, repo.FieldQuery{Name: name, Value: value})
 		}
 	}
-	if aidStr, ok := strings.CutPrefix(v.Search, "#"); ok {
-		if aid, ok := repo.ParseAssetID(aidStr); ok {
-			v.Search = ""
-			v.AssetID = aid
-		}
-	}
+	v.ResolveAssetIDSearch()
 	return v
 }
 

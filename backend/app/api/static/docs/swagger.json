@@ -244,7 +244,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "search string; matches names, descriptions, serial/model numbers, manufacturers, notes, purchase sources, tag names, and custom field values. Use #\u003cassetId\u003e to look up by asset ID and double quotes for exact phrases",
+                        "description": "search string; matches names, descriptions, serial/model numbers, manufacturers, notes, purchase sources, tag names, and custom field values. Use #\u003cassetId\u003e to look up by asset ID, #\u003e=100, #\u003c=200 or #\u003e=100 \u003c=200 to filter by asset ID, and double quotes for exact phrases",
                         "name": "q",
                         "in": "query"
                     },

@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"context"
 	"io"
+	"math"
 	"slices"
 	"strings"
 	"testing"
@@ -302,6 +303,13 @@ func TestToEntityQuery(t *testing.T) {
 	q = toEntityQuery(customsinventory.ScopeQuery{Q: "#000-123"})
 	assert.Empty(t, q.Search)
 	assert.Equal(t, repo.AssetID(123), q.AssetID)
+}
+
+func TestToEntityQuery_AssetIDRange(t *testing.T) {
+	q := toEntityQuery(customsinventory.ScopeQuery{Q: "#>=100"})
+	assert.Empty(t, q.Search)
+	require.NotNil(t, q.AssetIDRange)
+	assert.Equal(t, repo.AssetIDRange{Min: 100, Max: math.MaxInt64}, *q.AssetIDRange)
 }
 
 func BenchmarkCustomsInventoryPreview1000(b *testing.B) {

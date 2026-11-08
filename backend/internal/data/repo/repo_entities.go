@@ -68,13 +68,14 @@ type (
 		Fields           []FieldQuery `json:"fields"`
 		Page             int
 		PageSize         int
-		AssetID          AssetID `json:"assetId"`
-		MatchAllTags     bool    `json:"matchAllTags"` // require every selected tag (AND) instead of any (OR); ignored when NegateTags is set
-		NegateTags       bool    `json:"negateTags"`
-		OnlyWithoutPhoto bool    `json:"onlyWithoutPhoto"`
-		OnlyWithPhoto    bool    `json:"onlyWithPhoto"`
-		IncludeArchived  bool    `json:"includeArchived"`
-		FilterChildren   bool    `json:"filterChildren"` // when true, only return root entities (no parent)
+		AssetID          AssetID       `json:"assetId"`
+		AssetIDRange     *AssetIDRange `json:"-"`
+		MatchAllTags     bool          `json:"matchAllTags"` // require every selected tag (AND) instead of any (OR); ignored when NegateTags is set
+		NegateTags       bool          `json:"negateTags"`
+		OnlyWithoutPhoto bool          `json:"onlyWithoutPhoto"`
+		OnlyWithPhoto    bool          `json:"onlyWithPhoto"`
+		IncludeArchived  bool          `json:"includeArchived"`
+		FilterChildren   bool          `json:"filterChildren"` // when true, only return root entities (no parent)
 	}
 
 	DuplicateOptions struct {
@@ -772,6 +773,8 @@ func orderByLocation(gid uuid.UUID, desc bool) entity.OrderOption {
 func applyEntityOrder(qb *ent.EntityQuery, gid uuid.UUID, q EntityQuery) (*ent.EntityQuery, string) {
 	var orderBy string
 	defaultDesc := false
+	// Ties order by ID, so they can't change between requests or pages.
+	tieBreak := ent.Asc(entity.FieldID)
 
 	switch q.OrderBy {
 	case "createdAt":
@@ -792,16 +795,16 @@ func applyEntityOrder(qb *ent.EntityQuery, gid uuid.UUID, q EntityQuery) (*ent.E
 		orderBy = entity.FieldPurchasePrice
 	case "location":
 		// Sort by the name of the nearest location ancestor.
-		return qb.Order(orderByLocation(gid, q.OrderDirection == "desc")), "location"
+		return qb.Order(orderByLocation(gid, q.OrderDirection == "desc"), tieBreak), "location"
 	default: // "name"
 		orderBy = entity.FieldName
 	}
 
 	desc := q.OrderDirection == "desc" || (q.OrderDirection == "" && defaultDesc)
 	if desc {
-		return qb.Order(ent.Desc(orderBy)), orderBy
+		return qb.Order(ent.Desc(orderBy), tieBreak), orderBy
 	}
-	return qb.Order(ent.Asc(orderBy)), orderBy
+	return qb.Order(ent.Asc(orderBy), tieBreak), orderBy
 }
 
 // QueryByGroup returns a list of entities that belong to a specific group based on the provided query.
@@ -861,6 +864,13 @@ func (r *EntityRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q En
 
 	if !q.AssetID.Nil() {
 		qb = qb.Where(entity.AssetID(int64(q.AssetID)))
+	}
+
+	if q.AssetIDRange != nil {
+		qb = qb.Where(
+			entity.AssetIDGTE(int64(q.AssetIDRange.Min)),
+			entity.AssetIDLTE(int64(q.AssetIDRange.Max)),
+		)
 	}
 
 	var andPredicates []predicate.Entity
