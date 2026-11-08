@@ -6,6 +6,7 @@
   import type { FlatTreeItem } from "~~/composables/use-location-helpers";
   import { useTagStore } from "~~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
+  import { BATCH_ORDER_FIELDS, orderSelection } from "~~/lib/label-batch";
   import MdiLoading from "~icons/mdi/loading";
   import MdiPrinter from "~icons/mdi/printer";
   import MdiDownload from "~icons/mdi/download";
@@ -43,7 +44,21 @@
 
   const loading = ref(false);
   const results = ref<EntitySummary[]>([]);
+  const total = ref(0);
   const query = ref("");
+
+  const orderBy = ref("assetId");
+  const orderDirection = ref("asc");
+  const ORDER_FIELD_LABELS: Record<(typeof BATCH_ORDER_FIELDS)[number], string> = {
+    assetId: "items.asset_id",
+    name: "items.name",
+    location: "items.location",
+    createdAt: "items.created_at",
+    updatedAt: "items.updated_at",
+    quantity: "items.quantity",
+    purchasePrice: "items.purchase_price",
+    insured: "items.insured",
+  };
 
   const locationsStore = useLocationStore();
   const tagStore = useTagStore();
@@ -57,34 +72,60 @@
     await search();
   });
 
+  async function fetchResults(): Promise<{ rows: EntitySummary[]; total: number }> {
+    if (kind.value === "locations") {
+      const { data, error } = await api.items.getLocations({ filterChildren: false });
+      if (error) throw new Error("locations");
+      const q = query.value.trim().toLowerCase();
+      const rows = (data ?? []).filter(l => !q || l.name.toLowerCase().includes(q));
+      return { rows, total: rows.length };
+    }
+    const { data, error } = await api.items.getAll({
+      q: query.value || "",
+      parentIds: selectedLocations.value.map(l => l.id),
+      tags: selectedTags.value.map(l => l.id),
+      pageSize: 100,
+      orderBy: orderBy.value,
+      orderDirection: orderDirection.value,
+    });
+    if (error) throw new Error("items");
+    return { rows: data.items || [], total: data.total };
+  }
+
+  // Only the latest search counts: a slower, older response changes nothing.
+  let latestSearch = 0;
+  // A sort change re-orders the selection when the first response in the new order is on
+  // screen, whichever search brings it. A search or filter change alone must not.
+  let reorderPending = false;
   async function search() {
+    const current = ++latestSearch;
     loading.value = true;
     try {
-      if (kind.value === "locations") {
-        const { data, error } = await api.items.getLocations({ filterChildren: false });
-        if (error) throw new Error("locations");
-        const q = query.value.trim().toLowerCase();
-        results.value = (data ?? []).filter(l => !q || l.name.toLowerCase().includes(q));
-      } else {
-        const { data, error } = await api.items.getAll({
-          q: query.value || "",
-          parentIds: selectedLocations.value.map(l => l.id),
-          tags: selectedTags.value.map(l => l.id),
-          pageSize: 100,
-        });
-        if (error) throw new Error("items");
-        results.value = data.items || [];
+      const found = await fetchResults();
+      if (current !== latestSearch) return;
+      results.value = found.rows;
+      total.value = found.total;
+      if (reorderPending) {
+        reorderPending = false;
+        const listed = new Set(found.rows.map(r => r.id));
+        selectedIds.value = orderSelection(selectedIds.value, [...listed]);
+        unsortedIds.value = selectedIds.value.filter(id => !listed.has(id));
       }
     } catch {
-      toast.error(t("items.toast.failed_search_items"));
+      if (current === latestSearch) toast.error(t("items.toast.failed_search_items"));
     } finally {
-      loading.value = false;
+      if (current === latestSearch) loading.value = false;
     }
   }
 
   watchDebounced([query, selectedTags, selectedLocations], search, { debounce: 250, maxWait: 1000 });
+  watch([orderBy, orderDirection], () => {
+    reorderPending = true;
+    search();
+  });
   watch(kind, () => {
     selectedIds.value = [];
+    unsortedIds.value = [];
     quantities.value = {};
     search();
   });
@@ -100,6 +141,9 @@
   };
 
   const isSelected = (id: string) => selectedIds.value.includes(id);
+  // Selected items the last sort change couldn't place, because they weren't in the list.
+  const unsortedIds = ref<string[]>([]);
+  const unsortedCount = computed(() => unsortedIds.value.filter(isSelected).length);
   function toggle(id: string, on?: boolean) {
     const has = isSelected(id);
     const want = on ?? !has;
@@ -371,6 +415,25 @@
             <template v-if="kind === 'items'">
               <SearchFilter v-model="selectedLocations" :label="$t('global.locations')" :options="locationFlatTree" />
               <SearchFilter v-model="selectedTags" :label="$t('global.tags')" :options="tags" />
+              <Select v-model="orderBy">
+                <SelectTrigger class="h-9 w-auto" :aria-label="$t('items.order_by')">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem v-for="field in BATCH_ORDER_FIELDS" :key="field" :value="field">
+                    {{ $t(ORDER_FIELD_LABELS[field]) }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <Select v-model="orderDirection">
+                <SelectTrigger class="h-9 w-auto" :aria-label="$t('items.order_direction')">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="asc">{{ $t("items.asc") }}</SelectItem>
+                  <SelectItem value="desc">{{ $t("items.desc") }}</SelectItem>
+                </SelectContent>
+              </Select>
             </template>
             <div role="group" class="inline-flex h-9 overflow-hidden rounded-md border text-sm">
               <button
@@ -409,6 +472,16 @@
             </label>
             <span class="hidden sm:inline">{{ $t("pages.label_templates.batch.drag_hint") }}</span>
           </div>
+          <p v-if="kind === 'items' && total > results.length" class="text-sm text-muted-foreground">
+            {{ $t("pages.label_templates.batch.results_truncated", { shown: results.length, total }) }}
+          </p>
+          <p v-if="kind === 'items' && unsortedCount > 0" class="text-sm text-muted-foreground">
+            {{
+              $t(`pages.label_templates.batch.unsorted_selection_${unsortedCount === 1 ? "one" : "many"}`, {
+                count: unsortedCount,
+              })
+            }}
+          </p>
         </div>
 
         <div v-if="loading" class="flex flex-1 items-center justify-center py-12">
