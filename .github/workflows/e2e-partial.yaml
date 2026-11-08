@@ -93,7 +93,18 @@ jobs:
         run: pnpm install
         working-directory: frontend
 
+      # Artifact downloads can fail on GitHub's side even after the action's own retries.
       - name: Download blob reports from GitHub Actions Artifacts
+        id: download-blob-reports
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          path: frontend/all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
+
+      - name: Download blob reports (retry)
+        if: steps.download-blob-reports.outcome == 'failure'
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           path: frontend/all-blob-reports
