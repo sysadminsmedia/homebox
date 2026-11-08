@@ -14,6 +14,9 @@ jobs:
   playwright-tests:
     timeout-minutes: 60
     strategy:
+      # One shard failing to download a tool should not cancel the others,
+      # so "Re-run failed jobs" only has to repeat that shard.
+      fail-fast: false
       matrix:
         shardIndex: [1,2,3,4]
         shardTotal: [4]
@@ -25,7 +28,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      # GitHub's release downloads sometimes answer 504, so try once more before failing the job.
       - name: Install Task
+        id: install-task
+        continue-on-error: true
+        uses: arduino/setup-task@b91d5d2c96a56797b48ac1e0e89220bf64044611
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Task (retry)
+        if: steps.install-task.outcome == 'failure'
         uses: arduino/setup-task@b91d5d2c96a56797b48ac1e0e89220bf64044611
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -81,7 +93,18 @@ jobs:
         run: pnpm install
         working-directory: frontend
 
+      # Artifact downloads can fail on GitHub's side even after the action's own retries.
       - name: Download blob reports from GitHub Actions Artifacts
+        id: download-blob-reports
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          path: frontend/all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
+
+      - name: Download blob reports (retry)
+        if: steps.download-blob-reports.outcome == 'failure'
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           path: frontend/all-blob-reports
