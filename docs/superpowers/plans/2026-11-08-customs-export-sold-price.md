@@ -96,7 +96,7 @@ git commit -m "feat(customs): treat items with a sold price as sold"
 
 **Interfaces:**
 - Consumes: `Item.SoldPrice` from Task 1.
-- Produces: field `Item.SoldTo string` (right after `SoldPrice`); `IssueSoldToWithoutPrice IssueCode = "sold_to_without_price"`, in `IssueOrder` right after `IssueContainerQuantity`; unexported `soldToWithoutPrice(it Item) bool` and `addExcludedIssues(issues *issueSet, code IssueCode, it Item, item IssueItem)` in `build.go`.
+- Produces: field `Item.SoldTo string` (right after `SoldPrice`); `IssueSoldToWithoutPrice IssueCode = "sold_to_without_price"`, in `IssueOrder` right after `IssueContentSplit` (the last warning; `IssueContainerQuantity` is info); unexported `soldToWithoutPrice(it Item) bool` and `addExcludedIssues(issues *issueSet, code IssueCode, it Item, item IssueItem)` in `build.go`.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -115,7 +115,7 @@ git commit -m "feat(customs): treat items with a sold price as sold"
 - `issueNames(r, IssueSoldToWithoutPrice)` equals `[]string{"Bookshelf", "Shelf", "Sofa"}`;
 - that issue's `Severity` is `SeverityWarning`, and every item's `Detail` is `""`;
 - no `r.Excluded` entry has ID `id(102)` or `id(110)`;
-- `slices.Index(IssueOrder, IssueSoldToWithoutPrice)` is `slices.Index(IssueOrder, IssueContainerQuantity) + 1`.
+- `slices.Index(IssueOrder, IssueSoldToWithoutPrice)` is `slices.Index(IssueOrder, IssueContentSplit) + 1`, and every code after it in `IssueOrder` has `SeverityOf` = `SeverityInfo`.
 
 `TestBuild_RollUp_SoldToWithoutPriceContent` in `contents_test.go`: `in := containerInput()`; `setItem(&in, bookID, …SoldTo = "Jane Doe")`. Assert `issueNames(r, IssueSoldToWithoutPrice)` is `[]string{"Book"}`, `r.Excluded` is empty and `lineByName(t, r, "Box books").UnitCents` is `6300` (the book is still rolled in).
 
@@ -128,7 +128,7 @@ Expected: build failure, no field `SoldTo` and no `IssueSoldToWithoutPrice`.
 
 - [ ] **Step 3: Implement the code and the warning**
 
-- `model.go`: add `SoldTo string` after `SoldPrice`; add the const after `IssueContainerQuantity`, and the same position in `IssueOrder`. `SeverityOf` already returns `warning` for it.
+- `model.go`: add `SoldTo string` after `SoldPrice`; add the const after `IssueContentSplit`, and put it right after `IssueContentSplit` in `IssueOrder`, before `IssueContainerQuantity`. `SeverityOf` already returns `warning` for it.
 - `build.go`: `soldToWithoutPrice` is `strings.TrimSpace(it.SoldTo) != "" && ToCents(it.SoldPrice) == 0`.
   - `addExcludedIssues` adds `code` for `item`, plus `IssueSoldToWithoutPrice` when `code == IssueExcludedSold` and `soldToWithoutPrice(it)`. It replaces the `issues.add(code, …)` call in `Build`'s exclusion loop, so `Build` doesn't grow (gocyclo).
   - In `itemIssues`, add `IssueSoldToWithoutPrice` with `ref` when `soldToWithoutPrice(e.it)`.
@@ -140,8 +140,8 @@ Expected: PASS, `golden_report.json` unchanged.
 
 - [ ] **Step 5: Add the copy and regenerate**
 
-Add `issue_sold_to_without_price` to `components.reports.customs_inventory` in both locale files, right after `issue_container_quantity`, with the exact en and de text from spec §3. Then run `task --force generate` and `git checkout backend/go.sum`.
-Expected: `git diff --stat` shows only the two locale files, `backend/app/api/static/docs/`, `docs/public/api/` and `data-contracts.ts`. `CustomsInventoryIssueCode` has `IssueSoldToWithoutPrice = "sold_to_without_price"` between `IssueContainerQuantity` and `IssueExcludedLocation`.
+Add `issue_sold_to_without_price` to `components.reports.customs_inventory` in both locale files, right after `issue_content_split`, with the exact en and de text from spec §3. Then run `task --force generate` and `git checkout backend/go.sum`.
+Expected: `git diff --stat` shows only the two locale files, `backend/app/api/static/docs/`, `docs/public/api/` and `data-contracts.ts`. `CustomsInventoryIssueCode` has `IssueSoldToWithoutPrice = "sold_to_without_price"` between `IssueContentSplit` and `IssueContainerQuantity`.
 
 - [ ] **Step 6: Commit**
 

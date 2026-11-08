@@ -31,7 +31,7 @@ An item with a **sold price** but no sold date is still exported, as if it were 
   - every entity on a line, scope or content;
   - every entity left out as `excluded_sold` (that is, one with a sold date). See Q3.
 
-  It is never raised for entities left out as `location`, `archived` or `not_found`. The issue has no detail text. In `IssueOrder` it comes right after `container_quantity`, so it is the last warning, before the `excluded_*` info codes.
+  It is never raised for entities left out as `location`, `archived` or `not_found`. The issue has no detail text. In `IssueOrder` it comes right after `content_split` and before `container_quantity`, so it is the last warning, before every info code (the dialog shows issues in this order).
 - **Unchanged:**
   - NFR-1 (a): every sold entity ends in exactly one excluded entry, even when both the date and the price are set;
   - the API request and the response shape. The only API change is the new `IssueCode` value, which reaches the swagger docs and the TS enum `CustomsInventoryIssueCode` through codegen;
