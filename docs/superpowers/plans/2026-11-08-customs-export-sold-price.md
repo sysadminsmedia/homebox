@@ -55,7 +55,7 @@
 
 `TestBuild_ExcludesSoldByPrice` in `build_test.go`: `in := goldenInput()`; `setItem(&in, id(171), …SoldPrice = 300)` (Tent, price only); `setItem(&in, id(182), …SoldPrice = 80)` (Bookshelf, date and price). `r := mustBuild(t, in)`. Assert:
 - `issueNames(r, IssueExcludedSold)` equals `[]string{"Bookshelf", "Tent"}`;
-- `r.Excluded` holds exactly one entry with ID `id(182)`;
+- exactly one `r.Excluded` entry has ID `id(182)` (NFR-1 a: date and price together give one entry, not two);
 - `issueNames(r, IssuePurchasedAfterReference)` is empty (Tent was its only member).
 
 `TestBuild_RollUp_SoldByPriceContentExcluded` in `contents_test.go`, next to `TestBuild_RollUp_SoldContentExcluded`, with the same assertions: `setItem(&in, bookID, …SoldPrice = 25)` → one excluded entry, `bookID`, `IssueExcludedSold`; `lineByName(t, r, "Box books").UnitCents` is `3300`.
