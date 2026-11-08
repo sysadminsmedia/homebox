@@ -857,7 +857,9 @@
     "pages": {
         "label_templates": {
             "batch": {
-                "results_truncated": "Die ersten {shown} von {total} Artikeln werden angezeigt. Grenzen Sie die Suche ein, um die übrigen zu sehen."
+                "results_truncated": "Die ersten {shown} von {total} Artikeln werden angezeigt. Grenzen Sie die Suche ein, um die übrigen zu sehen.",
+                "unsorted_selection_many": "{count} ausgewählte Artikel sind nicht in der Liste und folgen daher nicht der neuen Sortierung. Sie werden nach den sortierten in ihrer bisherigen Reihenfolge gedruckt.",
+                "unsorted_selection_one": "1 ausgewählter Artikel ist nicht in der Liste und folgt daher nicht der neuen Sortierung. Er wird nach den sortierten gedruckt."
             }
         },
         "templates": {

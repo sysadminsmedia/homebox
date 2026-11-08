@@ -107,10 +107,9 @@
       total.value = found.total;
       if (reorderPending) {
         reorderPending = false;
-        selectedIds.value = orderSelection(
-          selectedIds.value,
-          found.rows.map(r => r.id)
-        );
+        const listed = new Set(found.rows.map(r => r.id));
+        selectedIds.value = orderSelection(selectedIds.value, [...listed]);
+        unsortedIds.value = selectedIds.value.filter(id => !listed.has(id));
       }
     } catch {
       if (current === latestSearch) toast.error(t("items.toast.failed_search_items"));
@@ -126,6 +125,7 @@
   });
   watch(kind, () => {
     selectedIds.value = [];
+    unsortedIds.value = [];
     quantities.value = {};
     search();
   });
@@ -141,6 +141,9 @@
   };
 
   const isSelected = (id: string) => selectedIds.value.includes(id);
+  // Selected items the last sort change couldn't place, because they weren't in the list.
+  const unsortedIds = ref<string[]>([]);
+  const unsortedCount = computed(() => unsortedIds.value.filter(isSelected).length);
   function toggle(id: string, on?: boolean) {
     const has = isSelected(id);
     const want = on ?? !has;
@@ -471,6 +474,13 @@
           </div>
           <p v-if="kind === 'items' && total > results.length" class="text-sm text-muted-foreground">
             {{ $t("pages.label_templates.batch.results_truncated", { shown: results.length, total }) }}
+          </p>
+          <p v-if="kind === 'items' && unsortedCount > 0" class="text-sm text-muted-foreground">
+            {{
+              $t(`pages.label_templates.batch.unsorted_selection_${unsortedCount === 1 ? "one" : "many"}`, {
+                count: unsortedCount,
+              })
+            }}
           </p>
         </div>
 
