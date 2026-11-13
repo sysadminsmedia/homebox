@@ -39,6 +39,29 @@
     },
   });
 
+  /**
+   * The item a duplicated entry belongs to.
+   *
+   * On an item's own Maintenance tab that is `currentItemId`. On the GLOBAL Maintenance
+   * page there is no current item, and the duplicate dialog was handed
+   * `props.currentItemId!` — a non-null assertion, which only silences TypeScript and
+   * supplies no runtime value. `EditModal` then created maintenance for `undefined` and
+   * the request failed with "Failed to create entry."
+   *
+   * Each entry already carries its own `itemID`; the template beside this uses it to link
+   * to the item. Preferring `currentItemId` keeps the item view behaving exactly as it
+   * did, and falls back to the entry's own item where there is no current one.
+   *
+   * `unknown` rather than the entry type because the template's `e` is inferred as
+   * `true | MaintenanceEntryWithDetails[] | undefined` throughout this component - a
+   * pre-existing typing problem this file already carries 25 errors for. Narrowing at the
+   * call site would add a 26th of the same kind; taking `unknown` and asserting here adds
+   * none. Worth fixing properly, but not from inside this bug.
+   */
+  function duplicateItemId(entry: unknown): string {
+    return props.currentItemId ?? (entry as MaintenanceEntryWithDetails).itemID;
+  }
+
   const { data: maintenanceDataList, refresh: refreshList } = useAsyncData(
     async () => {
       const { data } =
@@ -241,7 +264,11 @@
             variant="outline"
             @click="
               openDialog(DialogID.EditMaintenance, {
-                params: { type: 'duplicate', maintenanceEntry: e, itemId: props.currentItemId! },
+                params: {
+                  type: 'duplicate',
+                  maintenanceEntry: e,
+                  itemId: duplicateItemId(e),
+                },
                 onClose: result => {
                   if (result) {
                     refreshList();
