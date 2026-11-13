@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"path"
 	"path/filepath"
+	"slices"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/hay-kot/httpkit/errchain"
@@ -131,38 +132,45 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 			a.mwGroupOwner,
 		}
 
+		// accountMW / accountOwnerMW additionally refuse external identity
+		// provider JWTs (HBOX_AUTH_JWT_*). Use them for anything that creates or
+		// manages credentials or sessions, changes the account, or manages
+		// collection membership: those tokens are for everyday data only.
+		accountMW := append(slices.Clone(userMW), a.mwDenyJWT)
+		accountOwnerMW := append(slices.Clone(ownerMW), a.mwDenyJWT)
+
 		r.Get("/ws/events", chain.ToHandlerFunc(v1Ctrl.HandleCacheWS(), append([]errchain.Middleware{a.mwAllowQuerySessionToken}, userMW...)...))
 
 		// User management endpoints
 		r.Get("/users/self", chain.ToHandlerFunc(v1Ctrl.HandleUserSelf(), userMW...))
-		r.Put("/users/self", chain.ToHandlerFunc(v1Ctrl.HandleUserSelfUpdate(), userMW...))
-		r.Delete("/users/self", chain.ToHandlerFunc(v1Ctrl.HandleUserSelfDelete(), userMW...))
+		r.Put("/users/self", chain.ToHandlerFunc(v1Ctrl.HandleUserSelfUpdate(), accountMW...))
+		r.Delete("/users/self", chain.ToHandlerFunc(v1Ctrl.HandleUserSelfDelete(), accountMW...))
 		r.Get("/users/self/settings", chain.ToHandlerFunc(v1Ctrl.HandleUserSelfSettingsGet(), userMW...))
 		r.Put("/users/self/settings", chain.ToHandlerFunc(v1Ctrl.HandleUserSelfSettingsUpdate(), userMW...))
-		r.Post("/users/logout", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogout(), userMW...))
-		r.Post("/users/logout/all", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogoutAll(), userMW...))
-		r.Get("/users/refresh", chain.ToHandlerFunc(v1Ctrl.HandleAuthRefresh(), userMW...))
-		r.Put("/users/self/change-password", chain.ToHandlerFunc(v1Ctrl.HandleUserSelfChangePassword(), userMW...))
+		r.Post("/users/logout", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogout(), accountMW...))
+		r.Post("/users/logout/all", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogoutAll(), accountMW...))
+		r.Get("/users/refresh", chain.ToHandlerFunc(v1Ctrl.HandleAuthRefresh(), accountMW...))
+		r.Put("/users/self/change-password", chain.ToHandlerFunc(v1Ctrl.HandleUserSelfChangePassword(), accountMW...))
 
 		// User API keys (static tokens that authenticate as the owning user)
-		r.Get("/users/self/api-keys", chain.ToHandlerFunc(v1Ctrl.HandleUserAPIKeysList(), userMW...))
-		r.Post("/users/self/api-keys", chain.ToHandlerFunc(v1Ctrl.HandleUserAPIKeyCreate(), userMW...))
-		r.Delete("/users/self/api-keys/{id}", chain.ToHandlerFunc(v1Ctrl.HandleUserAPIKeyDelete(), userMW...))
+		r.Get("/users/self/api-keys", chain.ToHandlerFunc(v1Ctrl.HandleUserAPIKeysList(), accountMW...))
+		r.Post("/users/self/api-keys", chain.ToHandlerFunc(v1Ctrl.HandleUserAPIKeyCreate(), accountMW...))
+		r.Delete("/users/self/api-keys/{id}", chain.ToHandlerFunc(v1Ctrl.HandleUserAPIKeyDelete(), accountMW...))
 
 		// Group management endpoints
 		r.Get("/groups/all", chain.ToHandlerFunc(v1Ctrl.HandleGroupsGetAll(), userMW...))
-		r.Post("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupCreate(), userMW...))
+		r.Post("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupCreate(), accountMW...))
 		r.Get("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupGet(), userMW...))
-		r.Put("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupUpdate(), ownerMW...))
-		r.Delete("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupDelete(), ownerMW...))
+		r.Put("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupUpdate(), accountOwnerMW...))
+		r.Delete("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupDelete(), accountOwnerMW...))
 
 		r.Get("/groups/members", chain.ToHandlerFunc(v1Ctrl.HandleGroupMembersGetAll(), userMW...))
-		r.Delete("/groups/members/{user_id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupMemberRemove(), ownerMW...))
+		r.Delete("/groups/members/{user_id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupMemberRemove(), accountOwnerMW...))
 
-		r.Get("/groups/invitations", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsGetAll(), userMW...))
-		r.Post("/groups/invitations", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsCreate(), ownerMW...))
-		r.Delete("/groups/invitations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsDelete(), ownerMW...))
-		r.Post("/groups/invitations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsAccept(), userMW...))
+		r.Get("/groups/invitations", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsGetAll(), accountMW...))
+		r.Post("/groups/invitations", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsCreate(), accountOwnerMW...))
+		r.Delete("/groups/invitations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsDelete(), accountOwnerMW...))
+		r.Post("/groups/invitations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupInvitationsAccept(), accountMW...))
 
 		// Collection export/import (group-scoped)
 		r.Post("/group/exports", chain.ToHandlerFunc(v1Ctrl.HandleExportsCreate(), userMW...))
