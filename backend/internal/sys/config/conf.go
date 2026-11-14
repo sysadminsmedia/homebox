@@ -221,6 +221,7 @@ func (c OIDCConf) MarshalJSON() ([]byte, error) {
 
 type BarcodeAPIConf struct {
 	TokenBarcodespider   string `yaml:"token_barcodespider"`
+	TokenDiscogs         string `yaml:"token_discogs"`
 	OpenFoodFactsContact string `yaml:"openfoodfacts_contact"`
 }
 
@@ -229,6 +230,9 @@ func (c BarcodeAPIConf) MarshalJSON() ([]byte, error) {
 	a := alias(c)
 	if a.TokenBarcodespider != "" {
 		a.TokenBarcodespider = redactedValue
+	}
+	if a.TokenDiscogs != "" {
+		a.TokenDiscogs = redactedValue
 	}
 	return json.Marshal(a)
 }

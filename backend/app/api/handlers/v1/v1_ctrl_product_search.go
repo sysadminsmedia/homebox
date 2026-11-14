@@ -186,6 +186,22 @@ type BARCODESPIDER_COMResponse struct {
 	} `json:"Stores"`
 }
 
+type DiscogsSearchResponse struct {
+	Results []struct {
+		ID         int      `json:"id"`
+		Title      string   `json:"title"`
+		Country    string   `json:"country"`
+		Year       string   `json:"year"`
+		Format     []string `json:"format"`
+		Label      []string `json:"label"`
+		CatalogNo  string   `json:"catno"`
+		Genre      []string `json:"genre"`
+		Style      []string `json:"style"`
+		CoverImage string   `json:"cover_image"`
+		URI        string   `json:"uri"`
+	} `json:"results"`
+}
+
 func lookupUPCItemDB(iEan string) ([]repo.BarcodeProduct, error) {
 	resp, err := barcodeHTTPClient.Get("https://api.upcitemdb.com/prod/trial/lookup?upc=" + url.QueryEscape(iEan))
 	if err != nil {
@@ -271,6 +287,72 @@ func lookupBarcodespider(tokenAPI string, iEan string) ([]repo.BarcodeProduct, e
 	p.ImageURL = result.ItemAttributes.Image
 
 	return []repo.BarcodeProduct{p}, nil
+}
+
+func lookupDiscogs(tokenAPI string, iEan string) ([]repo.BarcodeProduct, error) {
+	if strings.TrimSpace(tokenAPI) == "" {
+		return nil, errors.New("no Discogs API token configured; set HBOX_BARCODE_TOKEN_DISCOGS")
+	}
+
+	endpoint := "https://api.discogs.com/database/search?type=release&format=vinyl&barcode=" + url.QueryEscape(iEan)
+	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Authorization", "Discogs token="+sanitizeHeader(strings.TrimSpace(tokenAPI)))
+	req.Header.Set("User-Agent", "Homebox-Discogs-Barcode/1.0 (+https://github.com/sysadminsmedia/homebox)")
+
+	resp, err := barcodeHTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("Discogs API returned status code: %d", resp.StatusCode)
+	}
+
+	var result DiscogsSearchResponse
+	if err := decodeBarcodeResponse(resp.Body, &result); err != nil {
+		return nil, err
+	}
+
+	products := make([]repo.BarcodeProduct, 0, len(result.Results))
+	for _, release := range result.Results {
+		if strings.TrimSpace(release.Title) == "" {
+			continue
+		}
+
+		var p repo.BarcodeProduct
+		p.SearchEngineName = "discogs.com"
+		p.Barcode = iEan
+		p.Item.Name = release.Title
+		p.Manufacturer = strings.Join(release.Label, ", ")
+		p.ModelNumber = release.CatalogNo
+		p.ImageURL = release.CoverImage
+
+		discogsURL := "https://www.discogs.com/release/" + fmt.Sprint(release.ID)
+		if strings.HasPrefix(release.URI, "/release/") {
+			discogsURL = "https://www.discogs.com" + release.URI
+		}
+		details := make([]string, 0, 6)
+		for _, detail := range []string{
+			release.Year,
+			release.Country,
+			strings.Join(release.Format, ", "),
+			strings.Join(release.Genre, ", "),
+			strings.Join(release.Style, ", "),
+		} {
+			if strings.TrimSpace(detail) != "" {
+				details = append(details, detail)
+			}
+		}
+		details = append(details, "Data provided by Discogs: "+discogsURL)
+		p.Item.Description = strings.Join(details, " | ")
+		products = append(products, p)
+	}
+
+	return products, nil
 }
 
 // sanitizeHeader removes control characters that could cause HTTP header injection.
@@ -499,6 +581,15 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 				name: "barcodespider.com",
 				run: func() ([]repo.BarcodeProduct, error) {
 					return lookupBarcodespider(conf.TokenBarcodespider, q.EAN)
+				},
+			})
+		}
+
+		if conf.TokenDiscogs != "" {
+			lookups = append(lookups, lookup{
+				name: "discogs.com",
+				run: func() ([]repo.BarcodeProduct, error) {
+					return lookupDiscogs(conf.TokenDiscogs, q.EAN)
 				},
 			})
 		}

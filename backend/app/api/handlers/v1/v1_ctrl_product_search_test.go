@@ -308,3 +308,56 @@ func TestSanitizeHeaderRemovesControlCharacters(t *testing.T) {
 		t.Fatalf("unexpected sanitized header: %q", got)
 	}
 }
+
+func TestLookupDiscogsMapsVinylRelease(t *testing.T) {
+	originalClient := barcodeHTTPClient
+	barcodeHTTPClient = &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		if r.URL.Host != "api.discogs.com" {
+			t.Fatalf("unexpected host: %s", r.URL.Host)
+		}
+		if r.URL.Query().Get("barcode") != "602508888073" {
+			t.Fatalf("unexpected barcode query: %s", r.URL.RawQuery)
+		}
+		if r.URL.Query().Get("format") != "vinyl" || r.URL.Query().Get("type") != "release" {
+			t.Fatalf("expected vinyl release filters: %s", r.URL.RawQuery)
+		}
+		if got := r.Header.Get("Authorization"); got != "Discogs token=test-token" {
+			t.Fatalf("unexpected authorization header: %q", got)
+		}
+		body := `{"results":[{"id":15703104,"title":"Agnes Chan - あなたにありがとう","country":"Japan","year":"1977","format":["Vinyl","LP"],"label":["Warner Bros. Records"],"catno":"L-10091W","genre":["Pop"],"style":["Kayōkyoku"],"cover_image":"https://i.discogs.com/example.jpg","uri":"/release/15703104-Agnes-Chan"}]}`
+		return &http.Response{
+			StatusCode: http.StatusOK,
+			Header:     make(http.Header),
+			Body:       io.NopCloser(strings.NewReader(body)),
+			Request:    r,
+		}, nil
+	})}
+	t.Cleanup(func() { barcodeHTTPClient = originalClient })
+
+	products, err := lookupDiscogs("test-token", "602508888073")
+	if err != nil {
+		t.Fatalf("lookup Discogs: %v", err)
+	}
+	if len(products) != 1 {
+		t.Fatalf("expected one result, got %d", len(products))
+	}
+	p := products[0]
+	if p.SearchEngineName != "discogs.com" || p.Barcode != "602508888073" {
+		t.Fatalf("unexpected source metadata: %+v", p)
+	}
+	if p.Item.Name != "Agnes Chan - あなたにありがとう" {
+		t.Fatalf("unexpected name: %s", p.Item.Name)
+	}
+	if p.Manufacturer != "Warner Bros. Records" || p.ModelNumber != "L-10091W" {
+		t.Fatalf("unexpected label/catalogue mapping: %+v", p)
+	}
+	if !strings.Contains(p.Item.Description, "Data provided by Discogs: https://www.discogs.com/release/15703104-Agnes-Chan") {
+		t.Fatalf("missing Discogs attribution/link: %s", p.Item.Description)
+	}
+}
+
+func TestLookupDiscogsRequiresToken(t *testing.T) {
+	if _, err := lookupDiscogs("", "1234567890123"); err == nil {
+		t.Fatal("expected missing token error")
+	}
+}
