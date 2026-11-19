@@ -44,8 +44,9 @@ export default {
     },
     extend: {
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
+        // daisyUI has no tokens for these; it derives them from base-content opacity.
+        border: "hsl(var(--foreground) / 0.1)",
+        input: "hsl(var(--foreground) / 0.2)",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         "background-accent": "hsl(var(--background-accent))",
@@ -64,7 +65,7 @@ export default {
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          foreground: "hsl(var(--foreground) / 0.7)",
         },
         accent: {
           DEFAULT: "hsl(var(--accent))",
@@ -87,11 +88,11 @@ export default {
           foreground: "hsl(var(--sidebar-primary-foreground))",
         },
         "sidebar-accent": {
-          DEFAULT: "hsl(var(--sidebar-accent))",
+          DEFAULT: "hsl(var(--sidebar-foreground) / 0.1)",
           foreground: "hsl(var(--sidebar-accent-foreground))",
         },
-        "sidebar-border": "hsl(var(--sidebar-border))",
-        "sidebar-ring": "hsl(var(--sidebar-ring))",
+        "sidebar-border": "hsl(var(--sidebar-foreground) / 0.1)",
+        "sidebar-ring": "hsl(var(--ring))",
       },
       borderRadius: {
         xl: "calc(var(--radius) + 4px)",
@@ -127,14 +128,14 @@ export default {
         DEFAULT: {
           css: {
             "--tw-prose-headings": "hsl(var(--foreground))",
-            "--tw-prose-lead": "hsl(var(--muted-foreground))",
+            "--tw-prose-lead": "hsl(var(--foreground) / 0.7)",
             "--tw-prose-bold": "hsl(var(--foreground))",
             "--tw-prose-counters": "hsl(var(--foreground) / 0.7)",
             "--tw-prose-bullets": "hsl(var(--foreground) / 0.7)",
             "--tw-prose-hr": "hsl(var(--foreground) / 0.25)",
             "--tw-prose-quotes": "hsl(var(--foreground))",
             "--tw-prose-quote-borders": "hsl(var(--foreground) / 0.4)",
-            "--tw-prose-captions": "hsl(var(--muted-foreground))",
+            "--tw-prose-captions": "hsl(var(--foreground) / 0.7)",
             "--tw-prose-kbd": "hsl(var(--foreground))",
             "--tw-prose-kbd-shadows": "hsl(var(--foreground) / 0.1)",
             "--tw-prose-code": "hsl(var(--foreground))",
