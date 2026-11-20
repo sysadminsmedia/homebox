@@ -359,8 +359,8 @@ func TestLookupDiscogsMapsVinylRelease(t *testing.T) {
 	if p.Manufacturer != "Warner Bros. Records" || p.ModelNumber != "L-10091W" {
 		t.Fatalf("unexpected label/catalogue mapping: %+v", p)
 	}
-	if !strings.Contains(p.Item.Description, "A1 — ありがとう — 3:10") || !strings.Contains(p.Item.Description, "https://www.discogs.com/release/15703104-Agnes-Chan") {
-		t.Fatalf("missing Discogs tracklist or attribution/link: %s", p.Item.Description)
+	if p.Item.Description != "[Discogs release 15703104](https://www.discogs.com/release/15703104-Agnes-Chan)" {
+		t.Fatalf("unexpected compact Discogs description: %s", p.Item.Description)
 	}
 	fieldValues := make(map[string]string, len(p.Fields))
 	for _, field := range p.Fields {
@@ -373,6 +373,7 @@ func TestLookupDiscogsMapsVinylRelease(t *testing.T) {
 		"Format":                   "1 x, Vinyl, LP, Album",
 		"Pressed By":               "Example Pressing",
 		"Matrix / Runout (Side A)": "L-10091W-A",
+		"Tracklist":                "A1 — ありがとう — 3:10; B1 — 虹 — 4:02",
 		"Edition Notes":            "Gatefold sleeve.",
 	} {
 		if fieldValues[name] != expected {

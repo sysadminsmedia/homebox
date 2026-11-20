@@ -378,7 +378,7 @@ func lookupDiscogs(tokenAPI string, iEan string) ([]repo.BarcodeProduct, error) 
 			p.Fields = discogsFallbackFields(release.ID, iEan, release.Year, release.Country, release.Format, release.Genre, release.Style, discogsURL)
 		} else {
 			p.Manufacturer, p.ModelNumber = discogsLabelAndCatalog(details)
-			p.Item.Description = discogsTracklistDescription(details.Tracklist, discogsURL)
+			p.Item.Description = discogsTracklistDescription(details.ID, discogsURL)
 			p.Fields = discogsReleaseFields(details, iEan, discogsURL)
 		}
 		products = append(products, p)
@@ -510,39 +510,30 @@ func discogsReleaseFields(release DiscogsReleaseResponse, barcode, discogsURL st
 		}
 		fields = appendDiscogsField(fields, name, identifier.Value)
 	}
+	fields = appendDiscogsField(fields, "Tracklist", discogsTracklistText(release.Tracklist))
 	fields = appendDiscogsField(fields, "Edition Notes", release.Notes)
 	return fields
 }
 
-func discogsTracklistDescription(tracklist []struct {
+func discogsTracklistText(tracklist []struct {
 	Position string `json:"position"`
 	Title    string `json:"title"`
 	Duration string `json:"duration"`
 	Type     string `json:"type_"`
-}, discogsURL string) string {
-	const maxDescriptionRunes = 1000
-	footer := "\n\nFull release details: " + discogsURL
-	description := "### Tracklist"
-	truncated := false
+}) string {
+	tracks := make([]string, 0, len(tracklist))
 	for _, track := range tracklist {
 		if track.Type != "track" || strings.TrimSpace(track.Title) == "" {
 			continue
 		}
-		line := "\n- " + strings.TrimSpace(strings.Join([]string{track.Position, track.Title, track.Duration}, " — "))
-		line = strings.ReplaceAll(line, " —  — ", " — ")
-		if len([]rune(description+line+footer)) > maxDescriptionRunes {
-			truncated = true
-			break
-		}
-		description += line
+		entry := strings.TrimSpace(strings.Join([]string{track.Position, track.Title, track.Duration}, " — "))
+		tracks = append(tracks, strings.ReplaceAll(entry, " —  — ", " — "))
 	}
-	if truncated {
-		description += "\n- …"
-	}
-	if len([]rune(description+footer)) <= maxDescriptionRunes {
-		description += footer
-	}
-	return description
+	return strings.Join(tracks, "; ")
+}
+
+func discogsTracklistDescription(releaseID int, discogsURL string) string {
+	return fmt.Sprintf("[Discogs release %d](%s)", releaseID, discogsURL)
 }
 
 // sanitizeHeader removes control characters that could cause HTTP header injection.
