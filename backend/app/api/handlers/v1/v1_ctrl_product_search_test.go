@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 	"time"
+	"unicode/utf8"
 
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
@@ -379,6 +380,19 @@ func TestLookupDiscogsMapsVinylRelease(t *testing.T) {
 		if fieldValues[name] != expected {
 			t.Fatalf("unexpected %s field: got %q want %q", name, fieldValues[name], expected)
 		}
+	}
+}
+
+func TestDiscogsTextFieldTruncatesToSchemaByteLimit(t *testing.T) {
+	field := discogsTextField("Tracklist", strings.Repeat("A1 — Длинное название; ", 40))
+	if len(field.TextValue) > 500 {
+		t.Fatalf("field exceeds schema limit: %d bytes", len(field.TextValue))
+	}
+	if !utf8.ValidString(field.TextValue) {
+		t.Fatal("truncated field is not valid UTF-8")
+	}
+	if !strings.HasSuffix(field.TextValue, "...") {
+		t.Fatalf("expected truncation suffix, got %q", field.TextValue)
 	}
 }
 

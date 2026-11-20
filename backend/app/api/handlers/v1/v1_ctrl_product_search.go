@@ -12,6 +12,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/server"
@@ -414,11 +415,20 @@ func lookupDiscogsRelease(tokenAPI string, releaseID int) (DiscogsReleaseRespons
 
 func discogsTextField(name, value string) repo.EntityFieldData {
 	value = strings.TrimSpace(value)
-	runes := []rune(value)
-	if len(runes) > 500 {
-		value = string(runes[:497]) + "..."
-	}
+	value = truncateUTF8(value, 500)
 	return repo.EntityFieldData{Type: "text", Name: name, TextValue: value}
+}
+
+func truncateUTF8(value string, maxBytes int) string {
+	if len(value) <= maxBytes {
+		return value
+	}
+	const suffix = "..."
+	limit := maxBytes - len(suffix)
+	for limit > 0 && !utf8.ValidString(value[:limit]) {
+		limit--
+	}
+	return value[:limit] + suffix
 }
 
 func appendDiscogsField(fields []repo.EntityFieldData, name, value string) []repo.EntityFieldData {
