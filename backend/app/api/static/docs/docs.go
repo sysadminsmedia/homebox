@@ -5574,6 +5574,12 @@ const docTemplate = `{
                 "barcode": {
                     "type": "string"
                 },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.EntityFieldData"
+                    }
+                },
                 "imageBase64": {
                     "type": "string"
                 },
@@ -5630,6 +5636,12 @@ const docTemplate = `{
                     "type": "string",
                     "x-nullable": true,
                     "x-omitempty": true
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.EntityFieldData"
+                    }
                 },
                 "locationId": {
                     "description": "Only needed when ParentID is another item and this lives elsewhere (#1688).",

@@ -110,7 +110,8 @@ type (
 		Manufacturer string `json:"manufacturer" validate:"max=255" extensions:"x-nullable,x-omitempty"`
 
 		// Edges
-		TagIDs []uuid.UUID `json:"tagIds"`
+		TagIDs []uuid.UUID       `json:"tagIds"`
+		Fields []EntityFieldData `json:"fields,omitempty"`
 	}
 
 	EntityUpdate struct {
@@ -1264,6 +1265,7 @@ func (r *EntityRepository) Create(ctx context.Context, gid uuid.UUID, data Entit
 			attribute.Bool("entity.parent_id.set", data.ParentID != uuid.Nil),
 			attribute.Bool("entity.entity_type_id.set", data.EntityTypeID != uuid.Nil),
 			attribute.Int("entity.tags.count", len(data.TagIDs)),
+			attribute.Int("entity.fields.count", len(data.Fields)),
 			attribute.Int64("entity.asset_id", int64(data.AssetID)),
 		))
 	defer span.End()
@@ -1296,7 +1298,21 @@ func (r *EntityRepository) Create(ctx context.Context, gid uuid.UUID, data Entit
 		return EntityOut{}, err
 	}
 
-	q := r.db.Entity.Create().
+	tx, err := r.db.Tx(ctx)
+	if err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+	committed := false
+	defer func() {
+		if !committed {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				log.Warn().Err(rollbackErr).Msg("failed to rollback transaction during entity creation")
+			}
+		}
+	}()
+
+	q := tx.Entity.Create().
 		SetImportRef(data.ImportRef).
 		SetName(data.Name).
 		SetQuantity(data.Quantity).
@@ -1335,6 +1351,32 @@ func (r *EntityRepository) Create(ctx context.Context, gid uuid.UUID, data Entit
 		recordSpanError(span, err)
 		return EntityOut{}, err
 	}
+
+	for _, field := range data.Fields {
+		builder := tx.EntityField.Create().
+			SetEntityID(result.ID).
+			SetType(entityfield.Type(field.Type)).
+			SetName(field.Name)
+		switch field.Type {
+		case "number":
+			builder.SetNumberValue(field.NumberValue)
+		case "boolean":
+			builder.SetBooleanValue(field.BooleanValue)
+		default:
+			builder.SetTextValue(field.TextValue)
+		}
+		if _, err = builder.Save(ctx); err != nil {
+			wrapped := fmt.Errorf("failed to create field %s: %w", field.Name, err)
+			recordSpanError(span, wrapped)
+			return EntityOut{}, wrapped
+		}
+	}
+
+	if err = tx.Commit(); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+	committed = true
 
 	span.SetAttributes(
 		attribute.String("entity.id", result.ID.String()),

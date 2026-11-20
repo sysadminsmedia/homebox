@@ -231,6 +231,7 @@
   import BaseModal from "@/components/App/CreateModal.vue";
   import type {
     EntityCreate,
+    EntityFieldData,
     EntityTemplateOut,
     EntityTemplateSummary,
     EntityOut,
@@ -378,6 +379,7 @@
     // Populated by the barcode product-import flow; passed through on create (#1578).
     manufacturer: "",
     modelNumber: "",
+    fields: [] as EntityFieldData[],
     tags: [] as string[],
     photos: [] as PhotoPreview[],
   });
@@ -587,6 +589,7 @@
           // created item isn't missing manufacturer/model (#1578).
           form.manufacturer = params.product.manufacturer ?? "";
           form.modelNumber = params.product.modelNumber ?? "";
+          form.fields = params.product.fields ?? [];
 
           if (params.product.imageURL) {
             appendPhotos([
@@ -696,6 +699,7 @@
         description: form.description,
         manufacturer: form.manufacturer,
         modelNumber: form.modelNumber,
+        fields: form.fields,
         tagIds: form.tags,
         entityTypeId: selectedEntityType.value?.id || "",
       };
@@ -752,6 +756,7 @@
     form.color = "";
     form.manufacturer = "";
     form.modelNumber = "";
+    form.fields = [];
     form.photos = [];
     form.tags = [];
     selectedTemplate.value = null;

@@ -3708,6 +3708,10 @@ components:
       properties:
         barcode:
           type: string
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/repo.EntityFieldData"
         imageBase64:
           type: string
         imageURL:
@@ -3747,6 +3751,10 @@ components:
           type: string
           x-omitempty: true
           nullable: true
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/repo.EntityFieldData"
         locationId:
           description: Only needed when ParentID is another item and this lives elsewhere
             (#1688).

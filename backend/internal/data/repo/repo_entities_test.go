@@ -124,6 +124,27 @@ func TestEntityRepository_GetOne(t *testing.T) {
 	}
 }
 
+func TestEntityRepository_CreateWithFields(t *testing.T) {
+	itemType := useItemEntityType(t)
+	created, err := tRepos.Entities.Create(context.Background(), tGroup.ID, EntityCreate{
+		Name:         "Discogs import",
+		EntityTypeID: itemType.ID,
+		Fields: []EntityFieldData{
+			{Type: "text", Name: "Discogs Release ID", TextValue: "28577464"},
+			{Type: "text", Name: "Format", TextValue: "2 x Vinyl; LP"},
+		},
+	})
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = tRepos.Entities.Delete(context.Background(), created.ID) })
+	require.Len(t, created.Fields, 2)
+	values := map[string]string{}
+	for _, field := range created.Fields {
+		values[field.Name] = field.TextValue
+	}
+	assert.Equal(t, "28577464", values["Discogs Release ID"])
+	assert.Equal(t, "2 x Vinyl; LP", values["Format"])
+}
+
 func TestEntityRepository_GetAll(t *testing.T) {
 	length := 10
 	expected := useEntities(t, length)

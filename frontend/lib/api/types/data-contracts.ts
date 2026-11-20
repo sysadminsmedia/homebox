@@ -877,6 +877,7 @@ export interface APIKeyOut {
 
 export interface BarcodeProduct {
   barcode: string;
+  fields: EntityFieldData[];
   imageBase64: string;
   imageURL: string;
   item: EntityCreate;
@@ -899,6 +900,7 @@ export interface EntityCreate {
   /** @maxLength 1000 */
   description: string;
   entityTypeId?: string | null;
+  fields: EntityFieldData[];
   /** Only needed when ParentID is another item and this lives elsewhere (#1688). */
   locationId?: string | null;
   /** @maxLength 255 */

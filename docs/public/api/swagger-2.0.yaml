@@ -1279,6 +1279,10 @@ definitions:
     properties:
       barcode:
         type: string
+      fields:
+        items:
+          $ref: '#/definitions/repo.EntityFieldData'
+        type: array
       imageBase64:
         type: string
       imageURL:
@@ -1316,6 +1320,10 @@ definitions:
         type: string
         x-nullable: true
         x-omitempty: true
+      fields:
+        items:
+          $ref: '#/definitions/repo.EntityFieldData'
+        type: array
       locationId:
         description: Only needed when ParentID is another item and this lives elsewhere
           (#1688).

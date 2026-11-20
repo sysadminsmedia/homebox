@@ -315,16 +315,24 @@ func TestLookupDiscogsMapsVinylRelease(t *testing.T) {
 		if r.URL.Host != "api.discogs.com" {
 			t.Fatalf("unexpected host: %s", r.URL.Host)
 		}
-		if r.URL.Query().Get("barcode") != "602508888073" {
-			t.Fatalf("unexpected barcode query: %s", r.URL.RawQuery)
-		}
-		if r.URL.Query().Get("format") != "vinyl" || r.URL.Query().Get("type") != "release" {
-			t.Fatalf("expected vinyl release filters: %s", r.URL.RawQuery)
-		}
 		if got := r.Header.Get("Authorization"); got != "Discogs token=test-token" {
 			t.Fatalf("unexpected authorization header: %q", got)
 		}
-		body := `{"results":[{"id":15703104,"title":"Agnes Chan - あなたにありがとう","country":"Japan","year":"1977","format":["Vinyl","LP"],"label":["Warner Bros. Records"],"catno":"L-10091W","genre":["Pop"],"style":["Kayōkyoku"],"cover_image":"https://i.discogs.com/example.jpg","uri":"/release/15703104-Agnes-Chan"}]}`
+		body := ""
+		switch r.URL.Path {
+		case "/database/search":
+			if r.URL.Query().Get("barcode") != "602508888073" {
+				t.Fatalf("unexpected barcode query: %s", r.URL.RawQuery)
+			}
+			if r.URL.Query().Get("format") != "vinyl" || r.URL.Query().Get("type") != "release" || r.URL.Query().Get("per_page") != "10" {
+				t.Fatalf("expected vinyl release filters: %s", r.URL.RawQuery)
+			}
+			body = `{"results":[{"id":15703104,"title":"Agnes Chan - あなたにありがとう","country":"Japan","year":"1977","format":["Vinyl","LP"],"label":["Warner Bros. Records"],"catno":"L-10091W","genre":["Pop"],"style":["Kayōkyoku"],"cover_image":"https://i.discogs.com/example.jpg","uri":"/release/15703104-Agnes-Chan"}]}`
+		case "/releases/15703104":
+			body = `{"id":15703104,"master_id":12345,"country":"Japan","released":"1977-08-25","genres":["Pop"],"styles":["Kayōkyoku"],"notes":"Gatefold sleeve.","labels":[{"name":"Warner Bros. Records","catno":"L-10091W"}],"formats":[{"name":"Vinyl","qty":"1","descriptions":["LP","Album"]}],"companies":[{"name":"Example Pressing","entity_type_name":"Pressed By"}],"identifiers":[{"type":"Barcode","value":"602508888073"},{"type":"Matrix / Runout","value":"L-10091W-A","description":"Side A"}],"tracklist":[{"position":"A1","title":"ありがとう","duration":"3:10","type_":"track"},{"position":"B1","title":"虹","duration":"4:02","type_":"track"}]}`
+		default:
+			t.Fatalf("unexpected Discogs path: %s", r.URL.Path)
+		}
 		return &http.Response{
 			StatusCode: http.StatusOK,
 			Header:     make(http.Header),
@@ -351,8 +359,25 @@ func TestLookupDiscogsMapsVinylRelease(t *testing.T) {
 	if p.Manufacturer != "Warner Bros. Records" || p.ModelNumber != "L-10091W" {
 		t.Fatalf("unexpected label/catalogue mapping: %+v", p)
 	}
-	if !strings.Contains(p.Item.Description, "Data provided by Discogs: https://www.discogs.com/release/15703104-Agnes-Chan") {
-		t.Fatalf("missing Discogs attribution/link: %s", p.Item.Description)
+	if !strings.Contains(p.Item.Description, "A1 — ありがとう — 3:10") || !strings.Contains(p.Item.Description, "https://www.discogs.com/release/15703104-Agnes-Chan") {
+		t.Fatalf("missing Discogs tracklist or attribution/link: %s", p.Item.Description)
+	}
+	fieldValues := make(map[string]string, len(p.Fields))
+	for _, field := range p.Fields {
+		fieldValues[field.Name] = field.TextValue
+	}
+	for name, expected := range map[string]string{
+		"Discogs Release ID":       "15703104",
+		"Discogs Master ID":        "12345",
+		"Release Date":             "1977-08-25",
+		"Format":                   "1 x, Vinyl, LP, Album",
+		"Pressed By":               "Example Pressing",
+		"Matrix / Runout (Side A)": "L-10091W-A",
+		"Edition Notes":            "Gatefold sleeve.",
+	} {
+		if fieldValues[name] != expected {
+			t.Fatalf("unexpected %s field: got %q want %q", name, fieldValues[name], expected)
+		}
 	}
 }
 
