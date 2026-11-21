@@ -351,7 +351,7 @@ func lookupDiscogs(ctx context.Context, tokenAPI string, iEan string) ([]repo.Ba
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("Discogs API returned status code: %d", resp.StatusCode)
+		return nil, fmt.Errorf("discogs API returned status code: %d", resp.StatusCode)
 	}
 
 	var result DiscogsSearchResponse
@@ -418,7 +418,7 @@ func lookupDiscogsRelease(ctx context.Context, tokenAPI string, releaseID int) (
 	}
 	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
-		return DiscogsReleaseResponse{}, fmt.Errorf("Discogs release API returned status code: %d", resp.StatusCode)
+		return DiscogsReleaseResponse{}, fmt.Errorf("discogs release API returned status code: %d", resp.StatusCode)
 	}
 
 	var result DiscogsReleaseResponse
