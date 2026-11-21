@@ -331,13 +331,13 @@ func lookupBarcodespider(tokenAPI string, iEan string) ([]repo.BarcodeProduct, e
 	return []repo.BarcodeProduct{p}, nil
 }
 
-func lookupDiscogs(tokenAPI string, iEan string) ([]repo.BarcodeProduct, error) {
+func lookupDiscogs(ctx context.Context, tokenAPI string, iEan string) ([]repo.BarcodeProduct, error) {
 	if strings.TrimSpace(tokenAPI) == "" {
 		return nil, errors.New("no Discogs API token configured; set HBOX_BARCODE_TOKEN_DISCOGS")
 	}
 
 	endpoint := "https://api.discogs.com/database/search?type=release&format=vinyl&per_page=10&barcode=" + url.QueryEscape(iEan)
-	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -359,7 +359,7 @@ func lookupDiscogs(tokenAPI string, iEan string) ([]repo.BarcodeProduct, error) 
 		return nil, err
 	}
 
-	detailCtx, cancelDetails := context.WithTimeout(context.Background(), discogsDetailLookupTimeout)
+	detailCtx, cancelDetails := context.WithTimeout(ctx, discogsDetailLookupTimeout)
 	defer cancelDetails()
 
 	products := make([]repo.BarcodeProduct, 0, len(result.Results))
@@ -795,7 +795,7 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 			lookups = append(lookups, lookup{
 				name: "discogs.com",
 				run: func() ([]repo.BarcodeProduct, error) {
-					return lookupDiscogs(conf.TokenDiscogs, q.EAN)
+					return lookupDiscogs(r.Context(), conf.TokenDiscogs, q.EAN)
 				},
 			})
 		}

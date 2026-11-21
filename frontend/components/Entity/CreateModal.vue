@@ -317,6 +317,10 @@
 
   const nameInput = ref<HTMLInputElement | null>(null);
 
+  // Async template responses must not apply after a newer selection or a
+  // barcode import has invalidated the request that produced them.
+  let templateRequestGeneration = 0;
+
   // Entity type selection
   const entityTypes = computed(() => entityTypeStore.allTypes);
   const selectedEntityType = ref<EntityTypeSummary | null>(null);
@@ -336,7 +340,9 @@
     if (et?.isLocation || !et?.defaultTemplateId || !et.defaultTemplate) {
       clearTemplate();
     } else {
+      const requestGeneration = ++templateRequestGeneration;
       const { data, error } = await api.templates.get(et.defaultTemplateId);
+      if (requestGeneration !== templateRequestGeneration) return;
       if (!error && data) {
         selectedTemplate.value = {
           id: data.id,
@@ -386,6 +392,7 @@
 
   async function handleTemplateSelected(template: EntityTemplateSummary | null) {
     if (!template) {
+      templateRequestGeneration++;
       // Template was deselected, clear template data and remove from storage
       templateData.value = null;
       templateUserSelected.value = false;
@@ -397,7 +404,9 @@
     templateUserSelected.value = true;
 
     // Load full template details
+    const requestGeneration = ++templateRequestGeneration;
     const { data, error } = await api.templates.get(template.id);
+    if (requestGeneration !== templateRequestGeneration) return;
     if (error || !data) {
       toast.error(t("components.template.toast.load_failed"));
       return;
@@ -437,7 +446,9 @@
     if (!lastTemplateId) return;
 
     // Load the template details
+    const requestGeneration = ++templateRequestGeneration;
     const { data, error } = await api.templates.get(lastTemplateId);
+    if (requestGeneration !== templateRequestGeneration) return;
     if (error || !data) {
       // Template might have been deleted, clear the stored ID
       localStorage.removeItem(LAST_TEMPLATE_KEY);
@@ -470,6 +481,7 @@
   }
 
   function clearTemplate() {
+    templateRequestGeneration++;
     selectedTemplate.value = null;
     templateData.value = null;
     templateUserSelected.value = false;
@@ -588,6 +600,7 @@
         if (params.product) {
           // A template restored by an earlier create uses a different endpoint,
           // which cannot carry barcode-imported custom fields.
+          templateRequestGeneration++;
           templateData.value = null;
           selectedTemplate.value = null;
           templateUserSelected.value = false;

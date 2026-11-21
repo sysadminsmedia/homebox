@@ -1,7 +1,9 @@
 package v1
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -343,7 +345,7 @@ func TestLookupDiscogsMapsVinylRelease(t *testing.T) {
 	})}
 	t.Cleanup(func() { barcodeHTTPClient = originalClient })
 
-	products, err := lookupDiscogs("test-token", "602508888073")
+	products, err := lookupDiscogs(context.Background(), "test-token", "602508888073")
 	if err != nil {
 		t.Fatalf("lookup Discogs: %v", err)
 	}
@@ -383,6 +385,22 @@ func TestLookupDiscogsMapsVinylRelease(t *testing.T) {
 	}
 }
 
+func TestLookupDiscogsHonorsRequestCancellation(t *testing.T) {
+	originalClient := barcodeHTTPClient
+	barcodeHTTPClient = &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		<-r.Context().Done()
+		return nil, r.Context().Err()
+	})}
+	t.Cleanup(func() { barcodeHTTPClient = originalClient })
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	_, err := lookupDiscogs(ctx, "test-token", "1234567890123")
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("expected request cancellation, got %v", err)
+	}
+}
+
 func TestLookupDiscogsBoundsDetailEnrichmentTime(t *testing.T) {
 	originalClient := barcodeHTTPClient
 	originalTimeout := discogsDetailLookupTimeout
@@ -409,7 +427,7 @@ func TestLookupDiscogsBoundsDetailEnrichmentTime(t *testing.T) {
 	})
 
 	started := time.Now()
-	products, err := lookupDiscogs("test-token", "1234567890123")
+	products, err := lookupDiscogs(context.Background(), "test-token", "1234567890123")
 	if err != nil {
 		t.Fatalf("lookup Discogs: %v", err)
 	}
@@ -441,7 +459,7 @@ func TestDiscogsTextFieldTruncatesToSchemaByteLimit(t *testing.T) {
 }
 
 func TestLookupDiscogsRequiresToken(t *testing.T) {
-	if _, err := lookupDiscogs("", "1234567890123"); err == nil {
+	if _, err := lookupDiscogs(context.Background(), "", "1234567890123"); err == nil {
 		t.Fatal("expected missing token error")
 	}
 }
