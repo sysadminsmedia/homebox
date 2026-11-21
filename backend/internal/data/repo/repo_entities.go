@@ -111,7 +111,7 @@ type (
 
 		// Edges
 		TagIDs []uuid.UUID       `json:"tagIds"`
-		Fields []EntityFieldData `json:"fields,omitempty"`
+		Fields []EntityFieldData `json:"fields,omitempty" extensions:"x-nullable,x-omitempty"`
 	}
 
 	EntityUpdate struct {

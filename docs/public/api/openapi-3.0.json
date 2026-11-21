@@ -5934,7 +5934,9 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/repo.EntityFieldData"
-                        }
+                        },
+                        "x-omitempty": true,
+                        "nullable": true
                     },
                     "locationId": {
                         "description": "Only needed when ParentID is another item and this lives elsewhere (#1688).",

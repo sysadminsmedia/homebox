@@ -5641,7 +5641,9 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/repo.EntityFieldData"
-                    }
+                    },
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "locationId": {
                     "description": "Only needed when ParentID is another item and this lives elsewhere (#1688).",

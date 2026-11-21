@@ -900,7 +900,7 @@ export interface EntityCreate {
   /** @maxLength 1000 */
   description: string;
   entityTypeId?: string | null;
-  fields: EntityFieldData[];
+  fields?: EntityFieldData[] | null;
   /** Only needed when ParentID is another item and this lives elsewhere (#1688). */
   locationId?: string | null;
   /** @maxLength 255 */

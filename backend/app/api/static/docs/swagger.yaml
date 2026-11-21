@@ -1324,6 +1324,8 @@ definitions:
         items:
           $ref: '#/definitions/repo.EntityFieldData'
         type: array
+        x-nullable: true
+        x-omitempty: true
       locationId:
         description: Only needed when ParentID is another item and this lives elsewhere
           (#1688).

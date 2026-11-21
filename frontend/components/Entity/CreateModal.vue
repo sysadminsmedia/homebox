@@ -559,6 +559,9 @@
       parent.value = {};
       resolvedParent.value = null;
       form.parentId = null;
+      // These values belong to the previous dialog invocation and must never
+      // leak into a regular create or a later barcode import.
+      form.fields = [];
 
       if (params.baseType === "item") {
         selectedEntityType.value = entityTypes.value.find(t => !t.isLocation) || null;
@@ -583,6 +586,11 @@
         }
 
         if (params.product) {
+          // A template restored by an earlier create uses a different endpoint,
+          // which cannot carry barcode-imported custom fields.
+          templateData.value = null;
+          selectedTemplate.value = null;
+          templateUserSelected.value = false;
           form.name = params.product.item.name;
           form.description = params.product.item.description;
           // Carry the looked-up identifications into the create payload so the

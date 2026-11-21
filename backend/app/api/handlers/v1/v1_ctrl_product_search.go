@@ -2,6 +2,7 @@ package v1
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -34,6 +35,11 @@ const (
 // barcodeHTTPClient is shared by every barcode lookup so outbound requests reuse a
 // single connection pool instead of allocating a client per call.
 var barcodeHTTPClient = &http.Client{Timeout: barcodeHTTPTimeoutSec * time.Second}
+
+// discogsDetailLookupTimeout bounds enrichment across all releases returned by
+// one search. Keep it replaceable so tests can exercise deadline behavior
+// without waiting for the production timeout.
+var discogsDetailLookupTimeout = barcodeHTTPTimeoutSec * time.Second
 
 // decodeBarcodeResponse streams the response body into v. Decoding directly off the
 // body avoids materializing the whole payload before parsing it.
@@ -353,6 +359,9 @@ func lookupDiscogs(tokenAPI string, iEan string) ([]repo.BarcodeProduct, error) 
 		return nil, err
 	}
 
+	detailCtx, cancelDetails := context.WithTimeout(context.Background(), discogsDetailLookupTimeout)
+	defer cancelDetails()
+
 	products := make([]repo.BarcodeProduct, 0, len(result.Results))
 	for _, release := range result.Results {
 		if strings.TrimSpace(release.Title) == "" {
@@ -370,9 +379,15 @@ func lookupDiscogs(tokenAPI string, iEan string) ([]repo.BarcodeProduct, error) 
 			discogsURL = "https://www.discogs.com" + release.URI
 		}
 
-		details, err := lookupDiscogsRelease(tokenAPI, release.ID)
-		if err != nil {
-			log.Warn().Err(err).Int("release_id", release.ID).Msg("Discogs release details unavailable; using search result")
+		var details DiscogsReleaseResponse
+		var detailErr error
+		if detailCtx.Err() == nil {
+			details, detailErr = lookupDiscogsRelease(detailCtx, tokenAPI, release.ID)
+		} else {
+			detailErr = detailCtx.Err()
+		}
+		if detailErr != nil {
+			log.Warn().Err(detailErr).Int("release_id", release.ID).Msg("Discogs release details unavailable; using search result")
 			p.Manufacturer = strings.Join(release.Label, ", ")
 			p.ModelNumber = release.CatalogNo
 			p.Item.Description = "Data provided by Discogs: " + discogsURL
@@ -388,9 +403,9 @@ func lookupDiscogs(tokenAPI string, iEan string) ([]repo.BarcodeProduct, error) 
 	return products, nil
 }
 
-func lookupDiscogsRelease(tokenAPI string, releaseID int) (DiscogsReleaseResponse, error) {
+func lookupDiscogsRelease(ctx context.Context, tokenAPI string, releaseID int) (DiscogsReleaseResponse, error) {
 	endpoint := "https://api.discogs.com/releases/" + fmt.Sprint(releaseID)
-	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
 	if err != nil {
 		return DiscogsReleaseResponse{}, err
 	}

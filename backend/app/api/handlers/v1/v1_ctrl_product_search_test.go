@@ -383,6 +383,50 @@ func TestLookupDiscogsMapsVinylRelease(t *testing.T) {
 	}
 }
 
+func TestLookupDiscogsBoundsDetailEnrichmentTime(t *testing.T) {
+	originalClient := barcodeHTTPClient
+	originalTimeout := discogsDetailLookupTimeout
+	discogsDetailLookupTimeout = 20 * time.Millisecond
+	detailCalls := 0
+	barcodeHTTPClient = &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		if r.URL.Path == "/database/search" {
+			body := `{"results":[{"id":1,"title":"First","label":["Label 1"]},{"id":2,"title":"Second","label":["Label 2"]}]}`
+			return &http.Response{
+				StatusCode: http.StatusOK,
+				Header:     make(http.Header),
+				Body:       io.NopCloser(strings.NewReader(body)),
+				Request:    r,
+			}, nil
+		}
+
+		detailCalls++
+		<-r.Context().Done()
+		return nil, r.Context().Err()
+	})}
+	t.Cleanup(func() {
+		barcodeHTTPClient = originalClient
+		discogsDetailLookupTimeout = originalTimeout
+	})
+
+	started := time.Now()
+	products, err := lookupDiscogs("test-token", "1234567890123")
+	if err != nil {
+		t.Fatalf("lookup Discogs: %v", err)
+	}
+	if elapsed := time.Since(started); elapsed > 200*time.Millisecond {
+		t.Fatalf("detail enrichment exceeded its overall budget: %s", elapsed)
+	}
+	if detailCalls != 1 {
+		t.Fatalf("expected no new detail requests after deadline, got %d", detailCalls)
+	}
+	if len(products) != 2 {
+		t.Fatalf("expected both fallback products, got %d", len(products))
+	}
+	if products[0].Manufacturer != "Label 1" || products[1].Manufacturer != "Label 2" {
+		t.Fatalf("expected search-result fallbacks, got %+v", products)
+	}
+}
+
 func TestDiscogsTextFieldTruncatesToSchemaByteLimit(t *testing.T) {
 	field := discogsTextField("Tracklist", strings.Repeat("A1 — Длинное название; ", 40))
 	if len(field.TextValue) > 500 {
