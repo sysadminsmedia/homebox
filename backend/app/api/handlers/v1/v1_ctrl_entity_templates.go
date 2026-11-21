@@ -104,15 +104,41 @@ func (ctrl *V1Controller) HandleEntityTemplatesDelete() errchain.HandlerFunc {
 }
 
 type EntityTemplateCreateItemRequest struct {
-	Name        string    `json:"name"        validate:"required,min=1,max=255"`
-	Description string    `json:"description" validate:"max=1000"`
-	ParentID    uuid.UUID `json:"parentId"    validate:"required"`
-	LocationID  uuid.UUID `json:"locationId"  extensions:"x-nullable,x-omitempty"`
+	Name         string                 `json:"name"             validate:"required,min=1,max=255"`
+	Description  string                 `json:"description"      validate:"max=1000"`
+	Manufacturer string                 `json:"manufacturer"     validate:"max=255"                  extensions:"x-nullable,x-omitempty"`
+	ModelNumber  string                 `json:"modelNumber"      validate:"max=255"                  extensions:"x-nullable,x-omitempty"`
+	Fields       []repo.EntityFieldData `json:"fields,omitempty" extensions:"x-nullable,x-omitempty"`
+	ParentID     uuid.UUID              `json:"parentId"         validate:"required"`
+	LocationID   uuid.UUID              `json:"locationId"       extensions:"x-nullable,x-omitempty"`
 	// EntityTypeID is the entity type selected by the user. When set it takes
 	// precedence; when empty the repository falls back to the group's default.
 	EntityTypeID uuid.UUID   `json:"entityTypeId"`
 	TagIDs       []uuid.UUID `json:"tagIds"`
 	Quantity     *float64    `json:"quantity"`
+}
+
+// mergeTemplateAndImportedFields keeps every distinct template and imported
+// field. When both sources define the same name and type, the imported value
+// wins because it describes the specific item being created.
+func mergeTemplateAndImportedFields(templateFields, importedFields []repo.EntityFieldData) []repo.EntityFieldData {
+	fields := append([]repo.EntityFieldData(nil), templateFields...)
+	fieldIndexes := make(map[string]int, len(fields))
+	for i, field := range fields {
+		fieldIndexes[field.Type+"\x00"+field.Name] = i
+	}
+
+	for _, field := range importedFields {
+		key := field.Type + "\x00" + field.Name
+		if i, exists := fieldIndexes[key]; exists {
+			fields[i] = field
+			continue
+		}
+		fieldIndexes[key] = len(fields)
+		fields = append(fields, field)
+	}
+
+	return fields
 }
 
 // HandleEntityTemplatesCreateItem godoc
@@ -149,6 +175,16 @@ func (ctrl *V1Controller) HandleEntityTemplatesCreateItem() errchain.HandlerFunc
 				BooleanValue: f.BooleanValue,
 			}
 		})
+		fields = mergeTemplateAndImportedFields(fields, body.Fields)
+
+		manufacturer := template.DefaultManufacturer
+		if body.Manufacturer != "" {
+			manufacturer = body.Manufacturer
+		}
+		modelNumber := template.DefaultModelNumber
+		if body.ModelNumber != "" {
+			modelNumber = body.ModelNumber
+		}
 
 		// Create entity with all template data in a single transaction
 		return ctrl.repo.Entities.CreateFromTemplate(r.Context(), auth.GID, repo.EntityCreateFromTemplate{
@@ -160,8 +196,8 @@ func (ctrl *V1Controller) HandleEntityTemplatesCreateItem() errchain.HandlerFunc
 			EntityTypeID:     body.EntityTypeID,
 			TagIDs:           body.TagIDs,
 			Insured:          template.DefaultInsured,
-			Manufacturer:     template.DefaultManufacturer,
-			ModelNumber:      template.DefaultModelNumber,
+			Manufacturer:     manufacturer,
+			ModelNumber:      modelNumber,
 			LifetimeWarranty: template.DefaultLifetimeWarranty,
 			WarrantyDetails:  template.DefaultWarrantyDetails,
 			Fields:           fields,

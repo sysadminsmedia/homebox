@@ -7855,8 +7855,28 @@
                         "description": "EntityTypeID is the entity type selected by the user. When set it takes\nprecedence; when empty the repository falls back to the group's default.",
                         "type": "string"
                     },
+                    "fields": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/repo.EntityFieldData"
+                        },
+                        "x-omitempty": true,
+                        "nullable": true
+                    },
                     "locationId": {
                         "type": "string",
+                        "x-omitempty": true,
+                        "nullable": true
+                    },
+                    "manufacturer": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "x-omitempty": true,
+                        "nullable": true
+                    },
+                    "modelNumber": {
+                        "type": "string",
+                        "maxLength": 255,
                         "x-omitempty": true,
                         "nullable": true
                     },

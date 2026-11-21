@@ -697,6 +697,9 @@
       const templateRequest = {
         name: form.name,
         description: form.description,
+        manufacturer: form.manufacturer,
+        modelNumber: form.modelNumber,
+        fields: form.fields,
         parentId: form.location?.id as string,
         tagIds: form.tags,
         quantity: form.quantity,

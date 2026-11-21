@@ -147,6 +147,69 @@ describe("templates lifecycle (create, update, delete)", () => {
     expect(deleteResponse.status).toBe(204);
   });
 
+  test("creating from a template preserves imported metadata alongside template fields", async () => {
+    const api = await sharedUserClient();
+    const NIL_UUID = "00000000-0000-0000-0000-000000000000";
+
+    const { response: locationResponse, data: location } = await api.items.createLocation(factories.location());
+    expect(locationResponse.status).toBe(201);
+    const { response: typesResponse, data: entityTypes } = await api.entityTypes.getAll();
+    expect(typesResponse.status).toBe(200);
+    const itemType = entityTypes.find(type => !type.isLocation);
+    expect(itemType).toBeTruthy();
+
+    const templateData = factories.template();
+    templateData.defaultManufacturer = "Template Manufacturer";
+    templateData.defaultModelNumber = "TEMPLATE-1";
+    templateData.fields = [
+      { id: NIL_UUID, name: "Template Field", type: "text", textValue: "Template Value" },
+      { id: NIL_UUID, name: "Country", type: "text", textValue: "Template Country" },
+    ];
+    const { response: templateResponse, data: template } = await api.templates.create(templateData);
+    expect(templateResponse.status).toBe(201);
+
+    const importedField = {
+      id: NIL_UUID,
+      name: "Discogs Release ID",
+      type: "text",
+      textValue: "28577464",
+      numberValue: 0,
+      booleanValue: false,
+    };
+    const importedCollision = {
+      ...importedField,
+      name: "Country",
+      textValue: "Europe",
+    };
+    const { response: createResponse, data: item } = await api.templates.createItem(template.id, {
+      name: "Imported record",
+      description: "Imported from Discogs",
+      manufacturer: "Walt Disney Records",
+      modelNumber: "00050087534707",
+      fields: [importedField, importedCollision],
+      parentId: location.id,
+      entityTypeId: itemType!.id,
+      quantity: 1,
+      tagIds: [],
+    });
+
+    expect(createResponse.status).toBe(201);
+    expect(item.manufacturer).toBe("Walt Disney Records");
+    expect(item.modelNumber).toBe("00050087534707");
+    expect(item.fields).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "Template Field", textValue: "Template Value" }),
+        expect.objectContaining({ name: "Discogs Release ID", textValue: "28577464" }),
+        expect.objectContaining({ name: "Country", textValue: "Europe" }),
+      ])
+    );
+    expect(item.fields.filter(field => field.name === "Country")).toHaveLength(1);
+
+    await api.items.delete(item.id);
+    await api.templates.delete(template.id);
+    await api.items.deleteLocation(location.id);
+  });
+
   test("user should be able to update template custom fields", async () => {
     const api = await sharedUserClient();
     const NIL_UUID = "00000000-0000-0000-0000-000000000000";
