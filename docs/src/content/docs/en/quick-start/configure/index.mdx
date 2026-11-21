@@ -63,6 +63,7 @@ import {Tabs, TabItem} from "@astrojs/starlight/components";
 | HBOX_DEMO_PASSWORD                      |                                                                                                | password for the seeded demo user. Required (minimum 12 characters) when `HBOX_DEMO=true` and `HBOX_MODE=production`. In development mode an unset value falls back to the public default `demodemo`.                                |
 | HBOX_OIDC_ENABLED                       | false                                                                                          | enable OpenID Connect (OIDC) authentication                                                                                                                                               |
 | HBOX_OIDC_ISSUER_URL                    |                                                                                                | OIDC provider issuer URL (required when OIDC is enabled)                                                                                                                                  |
+| HBOX_OIDC_DISCOVERY_URL                 |                                                                                                | URL to fetch the provider's `/.well-known/openid-configuration` from, when it isn't the issuer URL. ID tokens must still come from `HBOX_OIDC_ISSUER_URL`                                 |
 | HBOX_OIDC_CLIENT_ID                     |                                                                                                | OIDC client ID (required when OIDC is enabled)                                                                                                                                            |
 | HBOX_OIDC_CLIENT_SECRET                 |                                                                                                | OIDC client secret (required when OIDC is enabled)                                                                                                                                        |
 | HBOX_OIDC_SCOPE                         | openid profile email                                                                           | OIDC scopes to request from the provider                                                                                                                                                  |
@@ -180,6 +181,7 @@ OPTIONS
       --oidc-button-text                    <string>    (default: Sign in with OIDC)
       --oidc-client-id                      <string>
       --oidc-client-secret                  <string>
+      --oidc-discovery-url                  <string>
       --oidc-email-claim                    <string>    (default: email)
       --oidc-email-verified-claim           <string>    (default: email_verified)
       --oidc-enabled                        <bool>      (default: false)
