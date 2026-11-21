@@ -1279,6 +1279,10 @@ definitions:
     properties:
       barcode:
         type: string
+      fields:
+        items:
+          $ref: '#/definitions/repo.EntityFieldData'
+        type: array
       imageBase64:
         type: string
       imageURL:
@@ -1314,6 +1318,12 @@ definitions:
         type: string
       entityTypeId:
         type: string
+        x-nullable: true
+        x-omitempty: true
+      fields:
+        items:
+          $ref: '#/definitions/repo.EntityFieldData'
+        type: array
         x-nullable: true
         x-omitempty: true
       locationId:

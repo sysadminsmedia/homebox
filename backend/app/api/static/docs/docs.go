@@ -5574,6 +5574,12 @@ const docTemplate = `{
                 "barcode": {
                     "type": "string"
                 },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.EntityFieldData"
+                    }
+                },
                 "imageBase64": {
                     "type": "string"
                 },
@@ -5628,6 +5634,14 @@ const docTemplate = `{
                 },
                 "entityTypeId": {
                     "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.EntityFieldData"
+                    },
                     "x-nullable": true,
                     "x-omitempty": true
                 },

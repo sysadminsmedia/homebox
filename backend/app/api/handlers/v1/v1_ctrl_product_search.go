@@ -2,6 +2,7 @@ package v1
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -12,6 +13,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/server"
@@ -33,6 +35,11 @@ const (
 // barcodeHTTPClient is shared by every barcode lookup so outbound requests reuse a
 // single connection pool instead of allocating a client per call.
 var barcodeHTTPClient = &http.Client{Timeout: barcodeHTTPTimeoutSec * time.Second}
+
+// discogsDetailLookupTimeout bounds enrichment across all releases returned by
+// one search. Keep it replaceable so tests can exercise deadline behavior
+// without waiting for the production timeout.
+var discogsDetailLookupTimeout = barcodeHTTPTimeoutSec * time.Second
 
 // decodeBarcodeResponse streams the response body into v. Decoding directly off the
 // body avoids materializing the whole payload before parsing it.
@@ -186,6 +193,57 @@ type BARCODESPIDER_COMResponse struct {
 	} `json:"Stores"`
 }
 
+type DiscogsSearchResponse struct {
+	Results []struct {
+		ID         int      `json:"id"`
+		Title      string   `json:"title"`
+		Country    string   `json:"country"`
+		Year       string   `json:"year"`
+		Format     []string `json:"format"`
+		Label      []string `json:"label"`
+		CatalogNo  string   `json:"catno"`
+		Genre      []string `json:"genre"`
+		Style      []string `json:"style"`
+		CoverImage string   `json:"cover_image"`
+		URI        string   `json:"uri"`
+	} `json:"results"`
+}
+
+type DiscogsReleaseResponse struct {
+	ID       int      `json:"id"`
+	MasterID int      `json:"master_id"`
+	Country  string   `json:"country"`
+	Released string   `json:"released"`
+	Notes    string   `json:"notes"`
+	Genres   []string `json:"genres"`
+	Styles   []string `json:"styles"`
+	Labels   []struct {
+		Name  string `json:"name"`
+		CatNo string `json:"catno"`
+	} `json:"labels"`
+	Formats []struct {
+		Name         string   `json:"name"`
+		Qty          string   `json:"qty"`
+		Text         string   `json:"text"`
+		Descriptions []string `json:"descriptions"`
+	} `json:"formats"`
+	Companies []struct {
+		Name           string `json:"name"`
+		EntityTypeName string `json:"entity_type_name"`
+	} `json:"companies"`
+	Identifiers []struct {
+		Type        string `json:"type"`
+		Value       string `json:"value"`
+		Description string `json:"description"`
+	} `json:"identifiers"`
+	Tracklist []struct {
+		Position string `json:"position"`
+		Title    string `json:"title"`
+		Duration string `json:"duration"`
+		Type     string `json:"type_"`
+	} `json:"tracklist"`
+}
+
 func lookupUPCItemDB(iEan string) ([]repo.BarcodeProduct, error) {
 	resp, err := barcodeHTTPClient.Get("https://api.upcitemdb.com/prod/trial/lookup?upc=" + url.QueryEscape(iEan))
 	if err != nil {
@@ -271,6 +329,236 @@ func lookupBarcodespider(tokenAPI string, iEan string) ([]repo.BarcodeProduct, e
 	p.ImageURL = result.ItemAttributes.Image
 
 	return []repo.BarcodeProduct{p}, nil
+}
+
+func lookupDiscogs(ctx context.Context, tokenAPI string, iEan string) ([]repo.BarcodeProduct, error) {
+	if strings.TrimSpace(tokenAPI) == "" {
+		return nil, errors.New("no Discogs API token configured; set HBOX_BARCODE_TOKEN_DISCOGS")
+	}
+
+	endpoint := "https://api.discogs.com/database/search?type=release&format=vinyl&per_page=10&barcode=" + url.QueryEscape(iEan)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Authorization", "Discogs token="+sanitizeHeader(strings.TrimSpace(tokenAPI)))
+	req.Header.Set("User-Agent", "Homebox-Discogs-Barcode/1.0 (+https://github.com/sysadminsmedia/homebox)")
+
+	resp, err := barcodeHTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("discogs API returned status code: %d", resp.StatusCode)
+	}
+
+	var result DiscogsSearchResponse
+	if err := decodeBarcodeResponse(resp.Body, &result); err != nil {
+		return nil, err
+	}
+
+	detailCtx, cancelDetails := context.WithTimeout(ctx, discogsDetailLookupTimeout)
+	defer cancelDetails()
+
+	products := make([]repo.BarcodeProduct, 0, len(result.Results))
+	for _, release := range result.Results {
+		if strings.TrimSpace(release.Title) == "" {
+			continue
+		}
+
+		var p repo.BarcodeProduct
+		p.SearchEngineName = "discogs.com"
+		p.Barcode = iEan
+		p.Item.Name = release.Title
+		p.ImageURL = release.CoverImage
+
+		discogsURL := "https://www.discogs.com/release/" + fmt.Sprint(release.ID)
+		if strings.HasPrefix(release.URI, "/release/") {
+			discogsURL = "https://www.discogs.com" + release.URI
+		}
+
+		var details DiscogsReleaseResponse
+		var detailErr error
+		if detailCtx.Err() == nil {
+			details, detailErr = lookupDiscogsRelease(detailCtx, tokenAPI, release.ID)
+		} else {
+			detailErr = detailCtx.Err()
+		}
+		if detailErr != nil {
+			log.Warn().Err(detailErr).Int("release_id", release.ID).Msg("Discogs release details unavailable; using search result")
+			p.Manufacturer = strings.Join(release.Label, ", ")
+			p.ModelNumber = release.CatalogNo
+			p.Item.Description = "Data provided by Discogs: " + discogsURL
+			p.Fields = discogsFallbackFields(release.ID, iEan, release.Year, release.Country, release.Format, release.Genre, release.Style, discogsURL)
+		} else {
+			p.Manufacturer, p.ModelNumber = discogsLabelAndCatalog(details)
+			p.Item.Description = discogsTracklistDescription(details.ID, discogsURL)
+			p.Fields = discogsReleaseFields(details, iEan, discogsURL)
+		}
+		products = append(products, p)
+	}
+
+	return products, nil
+}
+
+func lookupDiscogsRelease(ctx context.Context, tokenAPI string, releaseID int) (DiscogsReleaseResponse, error) {
+	endpoint := "https://api.discogs.com/releases/" + fmt.Sprint(releaseID)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
+	if err != nil {
+		return DiscogsReleaseResponse{}, err
+	}
+	req.Header.Set("Authorization", "Discogs token="+sanitizeHeader(strings.TrimSpace(tokenAPI)))
+	req.Header.Set("User-Agent", "Homebox-Discogs-Barcode/1.0 (+https://github.com/sysadminsmedia/homebox)")
+
+	resp, err := barcodeHTTPClient.Do(req)
+	if err != nil {
+		return DiscogsReleaseResponse{}, err
+	}
+	defer func() { _ = resp.Body.Close() }()
+	if resp.StatusCode != http.StatusOK {
+		return DiscogsReleaseResponse{}, fmt.Errorf("discogs release API returned status code: %d", resp.StatusCode)
+	}
+
+	var result DiscogsReleaseResponse
+	if err := decodeBarcodeResponse(resp.Body, &result); err != nil {
+		return DiscogsReleaseResponse{}, err
+	}
+	return result, nil
+}
+
+func discogsTextField(name, value string) repo.EntityFieldData {
+	value = strings.TrimSpace(value)
+	value = truncateUTF8(value, 500)
+	return repo.EntityFieldData{Type: "text", Name: name, TextValue: value}
+}
+
+func truncateUTF8(value string, maxBytes int) string {
+	if len(value) <= maxBytes {
+		return value
+	}
+	const suffix = "..."
+	limit := maxBytes - len(suffix)
+	for limit > 0 && !utf8.ValidString(value[:limit]) {
+		limit--
+	}
+	return value[:limit] + suffix
+}
+
+func appendDiscogsField(fields []repo.EntityFieldData, name, value string) []repo.EntityFieldData {
+	if strings.TrimSpace(value) == "" {
+		return fields
+	}
+	return append(fields, discogsTextField(name, value))
+}
+
+func discogsFallbackFields(releaseID int, barcode, year, country string, format, genre, style []string, discogsURL string) []repo.EntityFieldData {
+	fields := make([]repo.EntityFieldData, 0, 8)
+	fields = appendDiscogsField(fields, "Discogs Release ID", fmt.Sprint(releaseID))
+	fields = appendDiscogsField(fields, "Discogs URL", discogsURL)
+	fields = appendDiscogsField(fields, "Release Year", year)
+	fields = appendDiscogsField(fields, "Country", country)
+	fields = appendDiscogsField(fields, "Format", strings.Join(format, "; "))
+	fields = appendDiscogsField(fields, "Genre", strings.Join(genre, "; "))
+	fields = appendDiscogsField(fields, "Style", strings.Join(style, "; "))
+	fields = appendDiscogsField(fields, "Barcode", barcode)
+	return fields
+}
+
+func discogsLabelAndCatalog(release DiscogsReleaseResponse) (string, string) {
+	labels := make([]string, 0, len(release.Labels))
+	catalog := ""
+	for _, label := range release.Labels {
+		if strings.TrimSpace(label.Name) != "" && !containsString(labels, label.Name) {
+			labels = append(labels, label.Name)
+		}
+		if catalog == "" {
+			catalog = strings.TrimSpace(label.CatNo)
+		}
+	}
+	return strings.Join(labels, ", "), catalog
+}
+
+func containsString(values []string, target string) bool {
+	for _, value := range values {
+		if value == target {
+			return true
+		}
+	}
+	return false
+}
+
+func discogsFormat(release DiscogsReleaseResponse) string {
+	parts := make([]string, 0, len(release.Formats))
+	for _, format := range release.Formats {
+		values := make([]string, 0, 3+len(format.Descriptions))
+		if strings.TrimSpace(format.Qty) != "" {
+			values = append(values, format.Qty+" x")
+		}
+		values = append(values, format.Name)
+		values = append(values, format.Descriptions...)
+		if strings.TrimSpace(format.Text) != "" {
+			values = append(values, format.Text)
+		}
+		parts = append(parts, strings.Join(values, ", "))
+	}
+	return strings.Join(parts, "; ")
+}
+
+func discogsReleaseFields(release DiscogsReleaseResponse, barcode, discogsURL string) []repo.EntityFieldData {
+	fields := make([]repo.EntityFieldData, 0, 16+len(release.Identifiers))
+	fields = appendDiscogsField(fields, "Discogs Release ID", fmt.Sprint(release.ID))
+	if release.MasterID != 0 {
+		fields = appendDiscogsField(fields, "Discogs Master ID", fmt.Sprint(release.MasterID))
+	}
+	fields = appendDiscogsField(fields, "Discogs URL", discogsURL)
+	fields = appendDiscogsField(fields, "Release Date", release.Released)
+	fields = appendDiscogsField(fields, "Country", release.Country)
+	fields = appendDiscogsField(fields, "Format", discogsFormat(release))
+	fields = appendDiscogsField(fields, "Genre", strings.Join(release.Genres, "; "))
+	fields = appendDiscogsField(fields, "Style", strings.Join(release.Styles, "; "))
+	fields = appendDiscogsField(fields, "Barcode", barcode)
+
+	for _, company := range release.Companies {
+		if company.EntityTypeName == "Pressed By" {
+			fields = appendDiscogsField(fields, "Pressed By", company.Name)
+		}
+	}
+	for _, identifier := range release.Identifiers {
+		name := identifier.Type
+		if identifier.Type == "Barcode" {
+			continue
+		}
+		if strings.TrimSpace(identifier.Description) != "" {
+			name += " (" + identifier.Description + ")"
+		}
+		fields = appendDiscogsField(fields, name, identifier.Value)
+	}
+	fields = appendDiscogsField(fields, "Tracklist", discogsTracklistText(release.Tracklist))
+	fields = appendDiscogsField(fields, "Edition Notes", release.Notes)
+	return fields
+}
+
+func discogsTracklistText(tracklist []struct {
+	Position string `json:"position"`
+	Title    string `json:"title"`
+	Duration string `json:"duration"`
+	Type     string `json:"type_"`
+}) string {
+	tracks := make([]string, 0, len(tracklist))
+	for _, track := range tracklist {
+		if track.Type != "track" || strings.TrimSpace(track.Title) == "" {
+			continue
+		}
+		entry := strings.TrimSpace(strings.Join([]string{track.Position, track.Title, track.Duration}, " — "))
+		tracks = append(tracks, strings.ReplaceAll(entry, " —  — ", " — "))
+	}
+	return strings.Join(tracks, "; ")
+}
+
+func discogsTracklistDescription(releaseID int, discogsURL string) string {
+	return fmt.Sprintf("[Discogs release %d](%s)", releaseID, discogsURL)
 }
 
 // sanitizeHeader removes control characters that could cause HTTP header injection.
@@ -499,6 +787,15 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 				name: "barcodespider.com",
 				run: func() ([]repo.BarcodeProduct, error) {
 					return lookupBarcodespider(conf.TokenBarcodespider, q.EAN)
+				},
+			})
+		}
+
+		if conf.TokenDiscogs != "" {
+			lookups = append(lookups, lookup{
+				name: "discogs.com",
+				run: func() ([]repo.BarcodeProduct, error) {
+					return lookupDiscogs(r.Context(), conf.TokenDiscogs, q.EAN)
 				},
 			})
 		}

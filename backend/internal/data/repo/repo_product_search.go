@@ -11,8 +11,9 @@ type BarcodeProduct struct {
 	Country string `json:"notes"`
 	Barcode string `json:"barcode"`
 
-	ImageURL    string `json:"imageURL"`
-	ImageBase64 string `json:"imageBase64"`
+	ImageURL    string            `json:"imageURL"`
+	ImageBase64 string            `json:"imageBase64"`
+	Fields      []EntityFieldData `json:"fields,omitempty"`
 
 	Item EntityCreate `json:"item"`
 }

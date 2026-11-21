@@ -3708,6 +3708,10 @@ components:
       properties:
         barcode:
           type: string
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/repo.EntityFieldData"
         imageBase64:
           type: string
         imageURL:
@@ -3745,6 +3749,12 @@ components:
           maxLength: 1000
         entityTypeId:
           type: string
+          x-omitempty: true
+          nullable: true
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/repo.EntityFieldData"
           x-omitempty: true
           nullable: true
         locationId:
