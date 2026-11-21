@@ -194,6 +194,7 @@ type LabelMakerConf struct {
 
 type OIDCConf struct {
 	IssuerURL          string        `yaml:"issuer_url"`
+	DiscoveryURL       string        `yaml:"discovery_url"`
 	ClientID           string        `yaml:"client_id"`
 	ClientSecret       string        `yaml:"client_secret"`
 	Scope              string        `yaml:"scope"                conf:"default:openid profile email"`

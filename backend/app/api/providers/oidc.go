@@ -55,6 +55,15 @@ func NewOIDCProvider(service *services.UserService, config *config.OIDCConf, opt
 		return nil, fmt.Errorf("OIDC issuer URL is required when OIDC is enabled (set HBOX_OIDC_ISSUER_URL)")
 	}
 
+	// Discover from the discovery URL when one is set. This allows Homebox to reach a provider
+	// on another address than its public issuer URL. ID tokens must still come from the issuer.
+	discoveryURL := config.IssuerURL
+	baseCtx := context.Background()
+	if config.DiscoveryURL != "" {
+		discoveryURL = config.DiscoveryURL
+		baseCtx = oidc.InsecureIssuerURLContext(baseCtx, config.IssuerURL)
+	}
+
 	// Attempt to create OIDC provider with retry logic for Docker Compose environments
 	// Retries up to 4 times with exponential backoff delays
 	var provider *oidc.Provider
@@ -63,8 +72,8 @@ func NewOIDCProvider(service *services.UserService, config *config.OIDCConf, opt
 	delays := []time.Duration{0, 500 * time.Millisecond, 2 * time.Second, 5 * time.Second}
 
 	for attempt := 1; attempt <= maxRetries; attempt++ {
-		ctx, cancel := context.WithTimeout(context.Background(), config.RequestTimeout)
-		provider, err = oidc.NewProvider(ctx, config.IssuerURL)
+		ctx, cancel := context.WithTimeout(baseCtx, config.RequestTimeout)
+		provider, err = oidc.NewProvider(ctx, discoveryURL)
 		cancel()
 
 		if err == nil {
@@ -98,6 +107,7 @@ func NewOIDCProvider(service *services.UserService, config *config.OIDCConf, opt
 
 	log.Info().
 		Str("issuer", config.IssuerURL).
+		Str("discovery_url", discoveryURL).
 		Str("client_id", config.ClientID).
 		Str("scope", config.Scope).
 		Msg("OIDC provider initialized successfully with discovery")

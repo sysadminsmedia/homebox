@@ -3,6 +3,7 @@ module github.com/sysadminsmedia/homebox/backend
 go 1.27.0
 
 require (
+	chainguard.dev/go-oidctest v0.4.0
 	codeberg.org/go-pdf/fpdf v0.11.1
 	entgo.io/ent v0.14.6
 	github.com/XSAM/otelsql v0.44.0
@@ -16,6 +17,7 @@ require (
 	github.com/gen2brain/jpegxl v0.6.0
 	github.com/gen2brain/webp v0.6.4
 	github.com/go-chi/chi/v5 v5.5.0
+	github.com/go-jose/go-jose/v4 v4.1.5
 	github.com/go-playground/validator/v10 v10.30.5
 	github.com/gocarina/gocsv v0.0.0-20261012193826-401c25af6907
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
@@ -135,7 +137,6 @@ require (
 	github.com/felixge/httpsnoop v1.1.0 // indirect
 	github.com/fogleman/gg v1.3.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.16 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.5 // indirect
 	github.com/go-logr/logr v1.4.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect

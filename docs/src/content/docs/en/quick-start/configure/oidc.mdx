@@ -32,6 +32,8 @@ HomeBox supports OpenID Connect (OIDC) authentication, allowing users to log in 
 - **Auto Redirect to OIDC**: Set `HBOX_OIDC_AUTO_REDIRECT=true` to automatically redirect users to the OIDC provider for authentication.
 - **Local Login**: Set `HBOX_OPTIONS_ALLOW_LOCAL_LOGIN=false` to disable the usage of local credentials.
 - **Email Verification**: Set `HBOX_OIDC_VERIFY_EMAIL=true` to require email verification from the OIDC provider before login.
+- **Discovery URL**: Set `HBOX_OIDC_DISCOVERY_URL` when Homebox should fetch the provider's configuration from somewhere other than the issuer URL. Homebox fetches `/.well-known/openid-configuration` from it, and uses the endpoints it lists, but still requires ID tokens issued by `HBOX_OIDC_ISSUER_URL`.
+    - Some providers, such as Azure AD B2C, serve their configuration from a different URL than the issuer in their tokens, and need this set.
 
 ## Security Considerations
 - Store `HBOX_OIDC_CLIENT_SECRET` in a securely, (e.g., environment variable manager or secret management tool).
