@@ -1525,12 +1525,19 @@ func (r *EntityRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID
 		fieldsCtx, fieldsSpan := entityTracer().Start(ctx, "repo.EntityRepository.CreateFromTemplate.fields",
 			trace.WithAttributes(attribute.Int("fields.count", len(data.Fields))))
 		for _, field := range data.Fields {
-			_, err = tx.EntityField.Create().
+			fieldBuilder := tx.EntityField.Create().
 				SetEntityID(newEntityID).
 				SetType(entityfield.Type(field.Type)).
-				SetName(field.Name).
-				SetTextValue(field.TextValue).
-				Save(fieldsCtx)
+				SetName(field.Name)
+			switch field.Type {
+			case "number":
+				fieldBuilder.SetNumberValue(field.NumberValue)
+			case "boolean":
+				fieldBuilder.SetBooleanValue(field.BooleanValue)
+			default:
+				fieldBuilder.SetTextValue(field.TextValue)
+			}
+			_, err = fieldBuilder.Save(fieldsCtx)
 			if err != nil {
 				wrapped := fmt.Errorf("failed to create field %s: %w", field.Name, err)
 				recordSpanError(fieldsSpan, wrapped)

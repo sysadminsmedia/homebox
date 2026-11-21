@@ -501,6 +501,39 @@ func TestEntityRepository_CreateFromTemplate_DefaultsEntityType(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestEntityRepository_CreateFromTemplate_PreservesTypedFieldValues(t *testing.T) {
+	containerET := useContainerEntityType(t)
+
+	cf := containerFactory()
+	cf.EntityTypeID = containerET.ID
+	container, err := tRepos.Entities.Create(context.Background(), tGroup.ID, cf)
+	require.NoError(t, err)
+
+	out, err := tRepos.Entities.CreateFromTemplate(context.Background(), tGroup.ID, EntityCreateFromTemplate{
+		Name:        fk.Str(10),
+		Description: fk.Str(20),
+		Quantity:    1,
+		ParentID:    container.ID,
+		Fields: []EntityFieldData{
+			{Name: "Rating", Type: "number", NumberValue: 45},
+			{Name: "Sealed", Type: "boolean", BooleanValue: true},
+		},
+	})
+	require.NoError(t, err)
+	require.Len(t, out.Fields, 2)
+	fieldsByName := make(map[string]EntityFieldData, len(out.Fields))
+	for _, field := range out.Fields {
+		fieldsByName[field.Name] = field
+	}
+	assert.Equal(t, 45, fieldsByName["Rating"].NumberValue)
+	assert.True(t, fieldsByName["Sealed"].BooleanValue)
+
+	err = tRepos.Entities.Delete(context.Background(), out.ID)
+	require.NoError(t, err)
+	err = tRepos.Entities.Delete(context.Background(), container.ID)
+	require.NoError(t, err)
+}
+
 // TestEntityRepository_CreateFromTemplate_UsesSelectedEntityType verifies that
 // the user-selected entity type takes precedence over the default fallback.
 func TestEntityRepository_CreateFromTemplate_UsesSelectedEntityType(t *testing.T) {

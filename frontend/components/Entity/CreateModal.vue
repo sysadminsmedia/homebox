@@ -574,6 +574,8 @@
       // These values belong to the previous dialog invocation and must never
       // leak into a regular create or a later barcode import.
       form.fields = [];
+      form.manufacturer = "";
+      form.modelNumber = "";
 
       if (params.baseType === "item") {
         selectedEntityType.value = entityTypes.value.find(t => !t.isLocation) || null;
