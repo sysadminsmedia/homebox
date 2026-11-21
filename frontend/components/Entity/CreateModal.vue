@@ -231,6 +231,7 @@
   import BaseModal from "@/components/App/CreateModal.vue";
   import type {
     EntityCreate,
+    EntityFieldData,
     EntityTemplateOut,
     EntityTemplateSummary,
     EntityOut,
@@ -316,6 +317,10 @@
 
   const nameInput = ref<HTMLInputElement | null>(null);
 
+  // Async template responses must not apply after a newer selection or a
+  // barcode import has invalidated the request that produced them.
+  let templateRequestGeneration = 0;
+
   // Entity type selection
   const entityTypes = computed(() => entityTypeStore.allTypes);
   const selectedEntityType = ref<EntityTypeSummary | null>(null);
@@ -335,7 +340,9 @@
     if (et?.isLocation || !et?.defaultTemplateId || !et.defaultTemplate) {
       clearTemplate();
     } else {
+      const requestGeneration = ++templateRequestGeneration;
       const { data, error } = await api.templates.get(et.defaultTemplateId);
+      if (requestGeneration !== templateRequestGeneration) return;
       if (!error && data) {
         selectedTemplate.value = {
           id: data.id,
@@ -378,12 +385,14 @@
     // Populated by the barcode product-import flow; passed through on create (#1578).
     manufacturer: "",
     modelNumber: "",
+    fields: [] as EntityFieldData[],
     tags: [] as string[],
     photos: [] as PhotoPreview[],
   });
 
   async function handleTemplateSelected(template: EntityTemplateSummary | null) {
     if (!template) {
+      templateRequestGeneration++;
       // Template was deselected, clear template data and remove from storage
       templateData.value = null;
       templateUserSelected.value = false;
@@ -395,7 +404,9 @@
     templateUserSelected.value = true;
 
     // Load full template details
+    const requestGeneration = ++templateRequestGeneration;
     const { data, error } = await api.templates.get(template.id);
+    if (requestGeneration !== templateRequestGeneration) return;
     if (error || !data) {
       toast.error(t("components.template.toast.load_failed"));
       return;
@@ -435,7 +446,9 @@
     if (!lastTemplateId) return;
 
     // Load the template details
+    const requestGeneration = ++templateRequestGeneration;
     const { data, error } = await api.templates.get(lastTemplateId);
+    if (requestGeneration !== templateRequestGeneration) return;
     if (error || !data) {
       // Template might have been deleted, clear the stored ID
       localStorage.removeItem(LAST_TEMPLATE_KEY);
@@ -468,6 +481,7 @@
   }
 
   function clearTemplate() {
+    templateRequestGeneration++;
     selectedTemplate.value = null;
     templateData.value = null;
     templateUserSelected.value = false;
@@ -557,6 +571,11 @@
       parent.value = {};
       resolvedParent.value = null;
       form.parentId = null;
+      // These values belong to the previous dialog invocation and must never
+      // leak into a regular create or a later barcode import.
+      form.fields = [];
+      form.manufacturer = "";
+      form.modelNumber = "";
 
       if (params.baseType === "item") {
         selectedEntityType.value = entityTypes.value.find(t => !t.isLocation) || null;
@@ -581,12 +600,19 @@
         }
 
         if (params.product) {
+          // A template restored by an earlier create uses a different endpoint,
+          // which cannot carry barcode-imported custom fields.
+          templateRequestGeneration++;
+          templateData.value = null;
+          selectedTemplate.value = null;
+          templateUserSelected.value = false;
           form.name = params.product.item.name;
           form.description = params.product.item.description;
           // Carry the looked-up identifications into the create payload so the
           // created item isn't missing manufacturer/model (#1578).
           form.manufacturer = params.product.manufacturer ?? "";
           form.modelNumber = params.product.modelNumber ?? "";
+          form.fields = params.product.fields ?? [];
 
           if (params.product.imageURL) {
             appendPhotos([
@@ -673,6 +699,9 @@
       const templateRequest = {
         name: form.name,
         description: form.description,
+        manufacturer: form.manufacturer,
+        modelNumber: form.modelNumber,
+        fields: form.fields,
         parentId: form.location?.id as string,
         tagIds: form.tags,
         quantity: form.quantity,
@@ -696,6 +725,7 @@
         description: form.description,
         manufacturer: form.manufacturer,
         modelNumber: form.modelNumber,
+        fields: form.fields,
         tagIds: form.tags,
         entityTypeId: selectedEntityType.value?.id || "",
       };
@@ -752,6 +782,7 @@
     form.color = "";
     form.manufacturer = "";
     form.modelNumber = "";
+    form.fields = [];
     form.photos = [];
     form.tags = [];
     selectedTemplate.value = null;

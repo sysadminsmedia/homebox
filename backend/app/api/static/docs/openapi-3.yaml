@@ -3708,6 +3708,10 @@ components:
       properties:
         barcode:
           type: string
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/repo.EntityFieldData"
         imageBase64:
           type: string
         imageURL:
@@ -3745,6 +3749,12 @@ components:
           maxLength: 1000
         entityTypeId:
           type: string
+          x-omitempty: true
+          nullable: true
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/repo.EntityFieldData"
           x-omitempty: true
           nullable: true
         locationId:
@@ -5086,8 +5096,24 @@ components:
 
             precedence; when empty the repository falls back to the group's default.
           type: string
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/repo.EntityFieldData"
+          x-omitempty: true
+          nullable: true
         locationId:
           type: string
+          x-omitempty: true
+          nullable: true
+        manufacturer:
+          type: string
+          maxLength: 255
+          x-omitempty: true
+          nullable: true
+        modelNumber:
+          type: string
+          maxLength: 255
           x-omitempty: true
           nullable: true
         name:

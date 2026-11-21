@@ -124,6 +124,27 @@ func TestEntityRepository_GetOne(t *testing.T) {
 	}
 }
 
+func TestEntityRepository_CreateWithFields(t *testing.T) {
+	itemType := useItemEntityType(t)
+	created, err := tRepos.Entities.Create(context.Background(), tGroup.ID, EntityCreate{
+		Name:         "Discogs import",
+		EntityTypeID: itemType.ID,
+		Fields: []EntityFieldData{
+			{Type: "text", Name: "Discogs Release ID", TextValue: "28577464"},
+			{Type: "text", Name: "Format", TextValue: "2 x Vinyl; LP"},
+		},
+	})
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = tRepos.Entities.Delete(context.Background(), created.ID) })
+	require.Len(t, created.Fields, 2)
+	values := map[string]string{}
+	for _, field := range created.Fields {
+		values[field.Name] = field.TextValue
+	}
+	assert.Equal(t, "28577464", values["Discogs Release ID"])
+	assert.Equal(t, "2 x Vinyl; LP", values["Format"])
+}
+
 func TestEntityRepository_GetAll(t *testing.T) {
 	length := 10
 	expected := useEntities(t, length)
@@ -474,6 +495,39 @@ func TestEntityRepository_CreateFromTemplate_DefaultsEntityType(t *testing.T) {
 	assert.False(t, out.EntityType.IsLocation)
 
 	// Cleanup
+	err = tRepos.Entities.Delete(context.Background(), out.ID)
+	require.NoError(t, err)
+	err = tRepos.Entities.Delete(context.Background(), container.ID)
+	require.NoError(t, err)
+}
+
+func TestEntityRepository_CreateFromTemplate_PreservesTypedFieldValues(t *testing.T) {
+	containerET := useContainerEntityType(t)
+
+	cf := containerFactory()
+	cf.EntityTypeID = containerET.ID
+	container, err := tRepos.Entities.Create(context.Background(), tGroup.ID, cf)
+	require.NoError(t, err)
+
+	out, err := tRepos.Entities.CreateFromTemplate(context.Background(), tGroup.ID, EntityCreateFromTemplate{
+		Name:        fk.Str(10),
+		Description: fk.Str(20),
+		Quantity:    1,
+		ParentID:    container.ID,
+		Fields: []EntityFieldData{
+			{Name: "Rating", Type: "number", NumberValue: 45},
+			{Name: "Sealed", Type: "boolean", BooleanValue: true},
+		},
+	})
+	require.NoError(t, err)
+	require.Len(t, out.Fields, 2)
+	fieldsByName := make(map[string]EntityFieldData, len(out.Fields))
+	for _, field := range out.Fields {
+		fieldsByName[field.Name] = field
+	}
+	assert.Equal(t, 45, fieldsByName["Rating"].NumberValue)
+	assert.True(t, fieldsByName["Sealed"].BooleanValue)
+
 	err = tRepos.Entities.Delete(context.Background(), out.ID)
 	require.NoError(t, err)
 	err = tRepos.Entities.Delete(context.Background(), container.ID)

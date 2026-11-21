@@ -877,6 +877,7 @@ export interface APIKeyOut {
 
 export interface BarcodeProduct {
   barcode: string;
+  fields: EntityFieldData[];
   imageBase64: string;
   imageURL: string;
   item: EntityCreate;
@@ -899,6 +900,7 @@ export interface EntityCreate {
   /** @maxLength 1000 */
   description: string;
   entityTypeId?: string | null;
+  fields?: EntityFieldData[] | null;
   /** Only needed when ParentID is another item and this lives elsewhere (#1688). */
   locationId?: string | null;
   /** @maxLength 255 */
@@ -1636,7 +1638,12 @@ export interface EntityTemplateCreateItemRequest {
    * precedence; when empty the repository falls back to the group's default.
    */
   entityTypeId: string;
+  fields?: EntityFieldData[] | null;
   locationId?: string | null;
+  /** @maxLength 255 */
+  manufacturer?: string | null;
+  /** @maxLength 255 */
+  modelNumber?: string | null;
   /**
    * @minLength 1
    * @maxLength 255

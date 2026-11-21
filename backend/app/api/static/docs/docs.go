@@ -5574,6 +5574,12 @@ const docTemplate = `{
                 "barcode": {
                     "type": "string"
                 },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.EntityFieldData"
+                    }
+                },
                 "imageBase64": {
                     "type": "string"
                 },
@@ -5628,6 +5634,14 @@ const docTemplate = `{
                 },
                 "entityTypeId": {
                     "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.EntityFieldData"
+                    },
                     "x-nullable": true,
                     "x-omitempty": true
                 },
@@ -7548,8 +7562,28 @@ const docTemplate = `{
                     "description": "EntityTypeID is the entity type selected by the user. When set it takes\nprecedence; when empty the repository falls back to the group's default.",
                     "type": "string"
                 },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.EntityFieldData"
+                    },
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
                 "locationId": {
                     "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "manufacturer": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "modelNumber": {
+                    "type": "string",
+                    "maxLength": 255,
                     "x-nullable": true,
                     "x-omitempty": true
                 },

@@ -1,13 +1,16 @@
 package v1
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
+	"unicode/utf8"
 
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
@@ -306,5 +309,157 @@ func TestSanitizeHeaderRemovesControlCharacters(t *testing.T) {
 	got := sanitizeHeader("owner@example.com\r\nInjected: value\t")
 	if got != "owner@example.comInjected: value" {
 		t.Fatalf("unexpected sanitized header: %q", got)
+	}
+}
+
+func TestLookupDiscogsMapsVinylRelease(t *testing.T) {
+	originalClient := barcodeHTTPClient
+	barcodeHTTPClient = &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		if r.URL.Host != "api.discogs.com" {
+			t.Fatalf("unexpected host: %s", r.URL.Host)
+		}
+		if got := r.Header.Get("Authorization"); got != "Discogs token=test-token" {
+			t.Fatalf("unexpected authorization header: %q", got)
+		}
+		body := ""
+		switch r.URL.Path {
+		case "/database/search":
+			if r.URL.Query().Get("barcode") != "602508888073" {
+				t.Fatalf("unexpected barcode query: %s", r.URL.RawQuery)
+			}
+			if r.URL.Query().Get("format") != "vinyl" || r.URL.Query().Get("type") != "release" || r.URL.Query().Get("per_page") != "10" {
+				t.Fatalf("expected vinyl release filters: %s", r.URL.RawQuery)
+			}
+			body = `{"results":[{"id":15703104,"title":"Agnes Chan - あなたにありがとう","country":"Japan","year":"1977","format":["Vinyl","LP"],"label":["Warner Bros. Records"],"catno":"L-10091W","genre":["Pop"],"style":["Kayōkyoku"],"cover_image":"https://i.discogs.com/example.jpg","uri":"/release/15703104-Agnes-Chan"}]}`
+		case "/releases/15703104":
+			body = `{"id":15703104,"master_id":12345,"country":"Japan","released":"1977-08-25","genres":["Pop"],"styles":["Kayōkyoku"],"notes":"Gatefold sleeve.","labels":[{"name":"Warner Bros. Records","catno":"L-10091W"}],"formats":[{"name":"Vinyl","qty":"1","descriptions":["LP","Album"]}],"companies":[{"name":"Example Pressing","entity_type_name":"Pressed By"}],"identifiers":[{"type":"Barcode","value":"602508888073"},{"type":"Matrix / Runout","value":"L-10091W-A","description":"Side A"}],"tracklist":[{"position":"A1","title":"ありがとう","duration":"3:10","type_":"track"},{"position":"B1","title":"虹","duration":"4:02","type_":"track"}]}`
+		default:
+			t.Fatalf("unexpected Discogs path: %s", r.URL.Path)
+		}
+		return &http.Response{
+			StatusCode: http.StatusOK,
+			Header:     make(http.Header),
+			Body:       io.NopCloser(strings.NewReader(body)),
+			Request:    r,
+		}, nil
+	})}
+	t.Cleanup(func() { barcodeHTTPClient = originalClient })
+
+	products, err := lookupDiscogs(context.Background(), "test-token", "602508888073")
+	if err != nil {
+		t.Fatalf("lookup Discogs: %v", err)
+	}
+	if len(products) != 1 {
+		t.Fatalf("expected one result, got %d", len(products))
+	}
+	p := products[0]
+	if p.SearchEngineName != "discogs.com" || p.Barcode != "602508888073" {
+		t.Fatalf("unexpected source metadata: %+v", p)
+	}
+	if p.Item.Name != "Agnes Chan - あなたにありがとう" {
+		t.Fatalf("unexpected name: %s", p.Item.Name)
+	}
+	if p.Manufacturer != "Warner Bros. Records" || p.ModelNumber != "L-10091W" {
+		t.Fatalf("unexpected label/catalogue mapping: %+v", p)
+	}
+	if p.Item.Description != "[Discogs release 15703104](https://www.discogs.com/release/15703104-Agnes-Chan)" {
+		t.Fatalf("unexpected compact Discogs description: %s", p.Item.Description)
+	}
+	fieldValues := make(map[string]string, len(p.Fields))
+	for _, field := range p.Fields {
+		fieldValues[field.Name] = field.TextValue
+	}
+	for name, expected := range map[string]string{
+		"Discogs Release ID":       "15703104",
+		"Discogs Master ID":        "12345",
+		"Release Date":             "1977-08-25",
+		"Format":                   "1 x, Vinyl, LP, Album",
+		"Pressed By":               "Example Pressing",
+		"Matrix / Runout (Side A)": "L-10091W-A",
+		"Tracklist":                "A1 — ありがとう — 3:10; B1 — 虹 — 4:02",
+		"Edition Notes":            "Gatefold sleeve.",
+	} {
+		if fieldValues[name] != expected {
+			t.Fatalf("unexpected %s field: got %q want %q", name, fieldValues[name], expected)
+		}
+	}
+}
+
+func TestLookupDiscogsHonorsRequestCancellation(t *testing.T) {
+	originalClient := barcodeHTTPClient
+	barcodeHTTPClient = &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		<-r.Context().Done()
+		return nil, r.Context().Err()
+	})}
+	t.Cleanup(func() { barcodeHTTPClient = originalClient })
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	_, err := lookupDiscogs(ctx, "test-token", "1234567890123")
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("expected request cancellation, got %v", err)
+	}
+}
+
+func TestLookupDiscogsBoundsDetailEnrichmentTime(t *testing.T) {
+	originalClient := barcodeHTTPClient
+	originalTimeout := discogsDetailLookupTimeout
+	discogsDetailLookupTimeout = 20 * time.Millisecond
+	detailCalls := 0
+	barcodeHTTPClient = &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		if r.URL.Path == "/database/search" {
+			body := `{"results":[{"id":1,"title":"First","label":["Label 1"]},{"id":2,"title":"Second","label":["Label 2"]}]}`
+			return &http.Response{
+				StatusCode: http.StatusOK,
+				Header:     make(http.Header),
+				Body:       io.NopCloser(strings.NewReader(body)),
+				Request:    r,
+			}, nil
+		}
+
+		detailCalls++
+		<-r.Context().Done()
+		return nil, r.Context().Err()
+	})}
+	t.Cleanup(func() {
+		barcodeHTTPClient = originalClient
+		discogsDetailLookupTimeout = originalTimeout
+	})
+
+	started := time.Now()
+	products, err := lookupDiscogs(context.Background(), "test-token", "1234567890123")
+	if err != nil {
+		t.Fatalf("lookup Discogs: %v", err)
+	}
+	if elapsed := time.Since(started); elapsed > 200*time.Millisecond {
+		t.Fatalf("detail enrichment exceeded its overall budget: %s", elapsed)
+	}
+	if detailCalls != 1 {
+		t.Fatalf("expected no new detail requests after deadline, got %d", detailCalls)
+	}
+	if len(products) != 2 {
+		t.Fatalf("expected both fallback products, got %d", len(products))
+	}
+	if products[0].Manufacturer != "Label 1" || products[1].Manufacturer != "Label 2" {
+		t.Fatalf("expected search-result fallbacks, got %+v", products)
+	}
+}
+
+func TestDiscogsTextFieldTruncatesToSchemaByteLimit(t *testing.T) {
+	field := discogsTextField("Tracklist", strings.Repeat("A1 — Длинное название; ", 40))
+	if len(field.TextValue) > 500 {
+		t.Fatalf("field exceeds schema limit: %d bytes", len(field.TextValue))
+	}
+	if !utf8.ValidString(field.TextValue) {
+		t.Fatal("truncated field is not valid UTF-8")
+	}
+	if !strings.HasSuffix(field.TextValue, "...") {
+		t.Fatalf("expected truncation suffix, got %q", field.TextValue)
+	}
+}
+
+func TestLookupDiscogsRequiresToken(t *testing.T) {
+	if _, err := lookupDiscogs(context.Background(), "", "1234567890123"); err == nil {
+		t.Fatal("expected missing token error")
 	}
 }

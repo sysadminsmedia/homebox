@@ -1279,6 +1279,10 @@ definitions:
     properties:
       barcode:
         type: string
+      fields:
+        items:
+          $ref: '#/definitions/repo.EntityFieldData'
+        type: array
       imageBase64:
         type: string
       imageURL:
@@ -1314,6 +1318,12 @@ definitions:
         type: string
       entityTypeId:
         type: string
+        x-nullable: true
+        x-omitempty: true
+      fields:
+        items:
+          $ref: '#/definitions/repo.EntityFieldData'
+        type: array
         x-nullable: true
         x-omitempty: true
       locationId:
@@ -2647,7 +2657,23 @@ definitions:
           EntityTypeID is the entity type selected by the user. When set it takes
           precedence; when empty the repository falls back to the group's default.
         type: string
+      fields:
+        items:
+          $ref: '#/definitions/repo.EntityFieldData'
+        type: array
+        x-nullable: true
+        x-omitempty: true
       locationId:
+        type: string
+        x-nullable: true
+        x-omitempty: true
+      manufacturer:
+        maxLength: 255
+        type: string
+        x-nullable: true
+        x-omitempty: true
+      modelNumber:
+        maxLength: 255
         type: string
         x-nullable: true
         x-omitempty: true
