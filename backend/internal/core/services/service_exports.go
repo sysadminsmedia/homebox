@@ -63,6 +63,13 @@ const attachmentsDir = "attachments/"
 // import builds INSERT from the JSON keys. Adding a new TABLE still requires
 // editing this list and (probably) the dependency graph; same for adding a
 // new FK column to an existing table that points at another exported table.
+//
+// Every foreign-key column on an exported table MUST be listed in exactly one
+// of groupCols, userCols, fkCols or deferCols. The import introspects the
+// destination schema's FK columns and refuses any row carrying a FK column
+// that is not covered by the spec, so forgetting to add a new FK here fails
+// the import loudly instead of letting an attacker-controlled zip write a raw
+// UUID into it. See replayImportRows.
 type tableSpec struct {
 	// name is the SQL table name.
 	name string
@@ -97,7 +104,8 @@ type tableSpec struct {
 // server (or a server that already received this export once), reusing PKs
 // causes UNIQUE-constraint violations. Remapping always = simpler invariant.
 //
-// Self-referential FKs (entities.entity_children, tags.tag_children,
+// Self-referential FKs (entities.entity_children,
+// entities.entity_location_entities, tags.tag_children,
 // attachments.attachment_thumbnail) and forward-circular FKs
 // (entity_types.entity_type_default_template,
 // entity_templates.entity_template_location) live in deferCols so the first
@@ -141,7 +149,10 @@ var exportTables = []tableSpec{
 		pkCol:     "id",
 		groupCols: []string{"group_entities"},
 		fkCols:    map[string]string{"entity_type_entities": "entity_types"},
-		deferCols: map[string]string{"entity_children": entitiesTable},
+		deferCols: map[string]string{
+			"entity_children":          entitiesTable,
+			"entity_location_entities": entitiesTable,
+		},
 	},
 	{
 		name:   "entity_fields",
@@ -1084,6 +1095,67 @@ func boolColumns(ctx context.Context, db sqlQuerier, dialect, table string) (map
 	return cols, nil
 }
 
+// fkColumns returns the columns of table that participate in a foreign-key
+// constraint on the destination database. The import uses this to make sure
+// every FK column a row carries is one the tableSpec knows how to remap; see
+// rejectUnmappedFKColumns.
+func fkColumns(ctx context.Context, db sqlQuerier, dialect, table string) (map[string]struct{}, error) {
+	if !isValidSQLIdent(table) {
+		return nil, fmt.Errorf("invalid table identifier %q", table)
+	}
+
+	query := `SELECT "from" FROM pragma_foreign_key_list(?)`
+	if dialect == "postgres" {
+		query = `SELECT kcu.column_name
+			FROM information_schema.table_constraints tc
+			JOIN information_schema.key_column_usage kcu
+			  ON kcu.constraint_name = tc.constraint_name
+			 AND kcu.constraint_schema = tc.constraint_schema
+			 AND kcu.table_name = tc.table_name
+			WHERE tc.constraint_type = 'FOREIGN KEY'
+			  AND tc.table_schema = current_schema()
+			  AND tc.table_name = $1`
+	}
+
+	rows, err := db.QueryContext(ctx, query, table)
+	if err != nil {
+		return nil, fmt.Errorf("introspect foreign keys on %q: %w", table, err)
+	}
+	defer func() { _ = rows.Close() }()
+
+	cols := make(map[string]struct{})
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			return nil, fmt.Errorf("introspect foreign keys on %q: %w", table, err)
+		}
+		cols[name] = struct{}{}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("introspect foreign keys on %q: %w", table, err)
+	}
+	return cols, nil
+}
+
+// rejectUnmappedFKColumns fails if row carries a non-null value in a
+// foreign-key column that the tableSpec does not remap. insertRow turns
+// every JSON key into a column, so without this check a crafted archive
+// could set e.g. entities.entity_location_entities to a UUID owned by
+// another group and the id-only FK constraint would accept it.
+func rejectUnmappedFKColumns(row map[string]any, table string, dbFKCols, knownFKCols map[string]struct{}) error {
+	for col := range dbFKCols {
+		if _, known := knownFKCols[col]; known {
+			continue
+		}
+		v, present := row[col]
+		if !present || v == nil || v == "" {
+			continue
+		}
+		return fmt.Errorf("insert %s: foreign key column %q is not supported by this import and cannot be set", table, col)
+	}
+	return nil
+}
+
 // coerceBoolColumns rewrites the boolean-typed entries of row in place so the
 // driver is handed a real bool regardless of how the source engine encoded it.
 func coerceBoolColumns(row map[string]any, boolCols map[string]struct{}) error {
@@ -1272,23 +1344,48 @@ func (s *ExportService) replayImportRows(ctx context.Context, tx *sql.Tx, zr *zi
 		idMap[table][oldID] = newID
 	}
 
-	// remapFK substitutes an old FK value with its remapped new value, or
-	// returns the original if unknown (which surfaces as a FK violation on
-	// insert — better to fail loud than silently null it out).
-	remapFK := func(target string, v any) any {
+	// remapFK substitutes an old FK value with its remapped new value. A
+	// value that is not in the id map is a hard error: every row an export
+	// can legitimately reference lives in the same zip, so an unknown id can
+	// only come from a hand-crafted archive. Passing the original value
+	// through would let it satisfy the DB FK constraint against a row owned
+	// by a different group (the FKs are id-only, with no group component),
+	// which is a cross-tenant write.
+	remapFK := func(target string, v any) (any, error) {
 		if v == nil {
-			return nil
+			return nil, nil
 		}
 		s := fmt.Sprint(v)
 		if s == "" {
-			return nil
+			return nil, nil
 		}
 		if mapping, ok := idMap[target]; ok {
 			if newID, found := mapping[s]; found {
-				return newID
+				return newID, nil
 			}
 		}
-		return v
+		return nil, fmt.Errorf("foreign key %q references a %s row that is not part of this export", s, target)
+	}
+
+	// specFKCols is the set of FK columns the spec knows how to remap for
+	// each table. Any other FK column found on the destination schema is
+	// rejected if a row carries it: without a remap entry its value would be
+	// inserted verbatim and could point at another group's row.
+	specFKCols := func(spec tableSpec) map[string]struct{} {
+		out := make(map[string]struct{})
+		for _, c := range spec.groupCols {
+			out[c] = struct{}{}
+		}
+		for _, c := range spec.userCols {
+			out[c] = struct{}{}
+		}
+		for c := range spec.fkCols {
+			out[c] = struct{}{}
+		}
+		for c := range spec.deferCols {
+			out[c] = struct{}{}
+		}
+		return out
 	}
 
 	type deferredUpdate struct {
@@ -1310,13 +1407,21 @@ func (s *ExportService) replayImportRows(ctx context.Context, tx *sql.Tx, zr *zi
 		if err != nil {
 			return nil, err
 		}
+		dbFKCols, err := fkColumns(ctx, tx, s.dialect, spec.name)
+		if err != nil {
+			return nil, err
+		}
+		knownFKCols := specFKCols(spec)
 		for _, row := range rows {
+			if err := rejectUnmappedFKColumns(row, spec.name, dbFKCols, knownFKCols); err != nil {
+				return nil, err
+			}
 			if err := coerceBoolColumns(row, boolCols); err != nil {
 				return nil, fmt.Errorf("insert %s: %w", spec.name, err)
 			}
 			newID, err := remapImportRow(row, spec, gid, userID, srcGroupID, remapFK, rememberID)
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("insert %s: %w", spec.name, err)
 			}
 			for col, target := range spec.deferCols {
 				if v, ok := row[col]; ok && v != nil && v != "" {
@@ -1340,7 +1445,10 @@ func (s *ExportService) replayImportRows(ctx context.Context, tx *sql.Tx, zr *zi
 
 	// Apply deferred updates (self-referential and forward-circular FKs).
 	for _, d := range deferred {
-		newFK := remapFK(d.targetTable, d.oldFKValue)
+		newFK, err := remapFK(d.targetTable, d.oldFKValue)
+		if err != nil {
+			return nil, fmt.Errorf("deferred update %s.%s: %w", d.table, d.col, err)
+		}
 		q := fmt.Sprintf("UPDATE %s SET %s = %s WHERE id = %s",
 			d.table, d.col, placeholder(s.dialect, 1), placeholder(s.dialect, 2))
 		if _, err := tx.ExecContext(ctx, q, newFK, d.newID); err != nil {
@@ -1360,7 +1468,7 @@ func remapImportRow(
 	row map[string]any,
 	spec tableSpec,
 	gid, userID, srcGroupID uuid.UUID,
-	remapFK func(target string, v any) any,
+	remapFK func(target string, v any) (any, error),
 	rememberID func(table, oldID, newID string),
 ) (string, error) {
 	var newID string
@@ -1384,7 +1492,11 @@ func remapImportRow(
 	}
 	for col, target := range spec.fkCols {
 		if v, ok := row[col]; ok {
-			row[col] = remapFK(target, v)
+			newV, err := remapFK(target, v)
+			if err != nil {
+				return "", fmt.Errorf("column %q: %w", col, err)
+			}
+			row[col] = newV
 		}
 	}
 	// Attachment paths are "{group_id}/documents/{hash}"; rewrite the source

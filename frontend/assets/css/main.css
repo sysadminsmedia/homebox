@@ -970,7 +970,7 @@
 
 /* transparent subtle scrollbar */
 ::-webkit-scrollbar {
-  width: 0.2em;
+  width: 12px;
   background-color: #F5F5F5;
 }
 

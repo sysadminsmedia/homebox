@@ -81,7 +81,24 @@ func (svc *GroupService) DeleteGroup(ctx Context) error {
 		return err
 	}
 
-	return svc.repos.Groups.GroupDelete(ctx.Context, ctx.GID)
+	created, err := svc.repos.Groups.GroupDelete(ctx.Context, ctx.GID)
+	if err != nil {
+		return err
+	}
+
+	return svc.seedCreatedGroups(ctx, created)
+}
+
+// seedCreatedGroups gives collections created for orphaned members the same
+// default entity types a user-created collection gets.
+func (svc *GroupService) seedCreatedGroups(ctx Context, groupIDs []uuid.UUID) error {
+	for _, gid := range groupIDs {
+		if err := ensureDefaultEntityTypes(ctx.Context, svc.repos, gid); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (svc *GroupService) NewInvitation(ctx Context, uses int, expiresAt time.Time) (repo.GroupInvitation, string, error) {
@@ -112,33 +129,14 @@ func (svc *GroupService) RemoveMember(ctx Context, userID uuid.UUID) error {
 		return errors.New("user ID cannot be empty")
 	}
 
-	err := svc.repos.Groups.RemoveMember(ctx.Context, ctx.GID, userID)
+	// The repository reassigns the removed user's default group in the same
+	// transaction, creating a personal collection if this was their only one.
+	created, err := svc.repos.Groups.RemoveMember(ctx.Context, ctx.GID, userID)
 	if err != nil {
 		return err
 	}
 
-	// If the removed group was the user's default group, reassign to another group
-	removedUser, err := svc.repos.Users.GetOneID(ctx.Context, userID)
-	if err != nil {
-		return err
-	}
-
-	if removedUser.DefaultGroupID == ctx.GID {
-		// Find another group the user is still a member of
-		var newDefaultGroupID uuid.UUID
-		for _, gid := range removedUser.GroupIDs {
-			if gid != ctx.GID {
-				newDefaultGroupID = gid
-				break
-			}
-		}
-		// Update to another group, or uuid.Nil if the user has no remaining groups
-		if err := svc.repos.Users.UpdateDefaultGroup(ctx.Context, userID, newDefaultGroupID); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return svc.seedCreatedGroups(ctx, created)
 }
 
 func (svc *GroupService) DeleteInvitation(ctx Context, id uuid.UUID) error {

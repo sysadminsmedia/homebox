@@ -416,6 +416,56 @@ func TestValidateNotifierURL(t *testing.T) {
 			config:      config.NotifierConf{BlockCloudMetadata: true},
 			expectError: false,
 		},
+		// 6to4 (2002::/16) test cases: the embedded IPv4 must be judged like the
+		// plain IPv4 address, and the prefix itself is a bogon.
+		{
+			name:        "6to4_blocked_by_bogon",
+			url:         "generic://http://[2002:808:808::]/webhook",
+			config:      config.NotifierConf{BlockBogonNets: true},
+			expectError: true,
+		},
+		{
+			name:        "6to4_embedded_localhost_blocked",
+			url:         "generic://http://[2002:7f00:1::]/webhook",
+			config:      config.NotifierConf{BlockLocalhost: true},
+			expectError: true,
+		},
+		{
+			name:        "6to4_embedded_private_ip_blocked",
+			url:         "generic://http://[2002:c0a8:101::]/webhook",
+			config:      config.NotifierConf{BlockLocalNets: true},
+			expectError: true,
+		},
+		{
+			name:        "6to4_embedded_cloud_metadata_blocked",
+			url:         "generic://http://[2002:a9fe:a9fe::]/webhook",
+			config:      config.NotifierConf{BlockCloudMetadata: true},
+			expectError: true,
+		},
+		{
+			name:        "6to4_embedded_ip_checked_against_block_nets",
+			url:         "generic://http://[2002:c0a8:101::1]/webhook",
+			config:      config.NotifierConf{BlockNets: []string{cidrPrivate24}},
+			expectError: true,
+		},
+		{
+			name:        "6to4_allow_nets_requires_embedded_ip_allowed",
+			url:         "generic://http://[2002:c0a8:101::]/webhook",
+			config:      config.NotifierConf{AllowNets: []string{"2002::/16"}},
+			expectError: true,
+		},
+		{
+			name:        "6to4_allow_nets_passes_when_prefix_and_embedded_ip_allowed",
+			url:         "generic://http://[2002:c0a8:101::]/webhook",
+			config:      config.NotifierConf{AllowNets: []string{"2002::/16", cidrPrivate24}},
+			expectError: false,
+		},
+		{
+			name:        "6to4_embedded_public_ip_passes_without_bogon_block",
+			url:         "generic://http://[2002:808:808::]/webhook",
+			config:      config.NotifierConf{BlockLocalhost: true, BlockLocalNets: true, BlockCloudMetadata: true},
+			expectError: false,
+		},
 	}
 
 	for _, tt := range tests {
@@ -534,6 +584,35 @@ func TestEmbeddedIPv4(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := embeddedIPv4(net.ParseIP(tt.ip), tt.prefixLen)
+			if tt.expected == "" {
+				if result != nil {
+					t.Errorf("expected no extraction but got %v", result)
+				}
+				return
+			}
+			if result == nil || result.String() != tt.expected {
+				t.Errorf("expected %v but got %v", tt.expected, result)
+			}
+		})
+	}
+}
+
+func TestSixToFourEmbeddedIPv4(t *testing.T) {
+	tests := []struct {
+		name     string
+		ip       string
+		expected string // empty means not a 6to4 address
+	}{
+		{"loopback", "2002:7f00:1::", "127.0.0.1"},
+		{"metadata", "2002:a9fe:a9fe::", "169.254.169.254"},
+		{"subnet_and_interface_bits_ignored", "2002:c0a8:101:abcd::1", "192.168.1.1"},
+		{"outside_prefix", "2003:7f00:1::", ""},
+		{"ipv4", "127.0.0.1", ""},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := sixToFourEmbeddedIPv4(net.ParseIP(tt.ip))
 			if tt.expected == "" {
 				if result != nil {
 					t.Errorf("expected no extraction but got %v", result)

@@ -720,6 +720,13 @@ func TestEntityRepository_WipeInventory(t *testing.T) {
 		_, err = tRepos.Entities.GetOneByGroup(context.Background(), tGroup.ID, entity2.ID)
 		require.Error(t, err, "Entity 2 should be deleted")
 
+		// Verify containers are deleted
+		_, err = tRepos.Entities.GetOneByGroup(context.Background(), tGroup.ID, container1.ID)
+		require.Error(t, err, "Container 1 should be deleted")
+
+		_, err = tRepos.Entities.GetOneByGroup(context.Background(), tGroup.ID, container2.ID)
+		require.Error(t, err, "Container 2 should be deleted")
+
 		// Verify maintenance entries are deleted
 		maint1List, err := tRepos.MaintEntry.GetMaintenanceByItemID(context.Background(), tGroup.ID, entity1.ID, MaintenanceFilters{})
 		require.NoError(t, err)
@@ -790,6 +797,10 @@ func TestEntityRepository_WipeInventory_OnlyItems(t *testing.T) {
 	// Verify tag still exists
 	_, err = tRepos.Tags.GetOneByGroup(context.Background(), tGroup.ID, tagObj.ID)
 	require.NoError(t, err, "Tag should still exist")
+
+	// Verify container still exists
+	_, err = tRepos.Entities.GetOneByGroup(context.Background(), tGroup.ID, container.ID)
+	require.NoError(t, err, "Container should still exist")
 
 	// Cleanup
 	_ = tRepos.Tags.DeleteByGroup(context.Background(), tGroup.ID, tagObj.ID)

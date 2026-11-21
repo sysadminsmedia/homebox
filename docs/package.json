@@ -14,18 +14,18 @@
   },
   "dependencies": {
     "@aria-ui/core": "^0.2.1",
-    "@astrojs/cloudflare": "^14.3.3",
-    "@astrojs/starlight": "^0.42.5",
+    "@astrojs/cloudflare": "^14.4.0",
+    "@astrojs/starlight": "^0.42.6",
     "@astrojs/starlight-tailwind": "^5.0.0",
     "@fontsource-variable/atkinson-hyperlegible-mono": "^5.3.0",
     "@fontsource-variable/atkinson-hyperlegible-next": "^5.3.0",
     "@tailwindcss/vite": "^4.3.3",
-    "astro": "^7.3.5",
+    "astro": "^7.4.0",
     "astro-icon": "^1.2.0",
     "astro-theme-toggle": "^0.8.2",
     "sharp": "^0.35.5",
     "starlight-auto-drafts": "^0.3.1",
-    "starlight-changelogs": "^0.7.0",
+    "starlight-changelogs": "^0.7.1",
     "starlight-github-alerts": "^0.5.0",
     "starlight-sidebar-topics": "^0.9.0",
     "starlight-theme-nova": "^0.12.3",
@@ -33,11 +33,11 @@
   },
   "devDependencies": {
     "@iconify-json/fluent-emoji-flat": "^1.2.6",
-    "@iconify-json/material-symbols": "^1.2.94",
-    "@iconify-json/simple-icons": "^1.2.98",
+    "@iconify-json/material-symbols": "^1.2.95",
+    "@iconify-json/simple-icons": "^1.2.100",
     "rollup-plugin-visualizer": "^7.1.1",
     "starlight-openapi": "^0.26.3",
-    "wrangler": "^4.147.0"
+    "wrangler": "^4.151.1"
   },
   "packageManager": "pnpm@10.34.6",
   "pnpm": {

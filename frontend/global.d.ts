@@ -11,4 +11,5 @@ declare module "vue" {
     $otelEnabled: boolean;
   }
 }
+
 export {};

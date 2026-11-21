@@ -2,6 +2,9 @@ package search
 
 import (
 	"context"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
 	"os"
 	"testing"
 	"time"
@@ -269,4 +272,58 @@ func TestNewEngine_MeilisearchUnreachable(t *testing.T) {
 	}, nil, nil)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "not reachable")
+}
+
+func TestRejectNonLocalNetwork(t *testing.T) {
+	tests := []struct {
+		address string
+		wantErr bool
+	}{
+		{"127.0.0.1:7700", false},
+		{"[::1]:7700", false},
+		{"10.1.2.3:7700", false},
+		{"172.18.0.4:7700", false},
+		{"192.168.1.20:7700", false},
+		{"172.32.0.1:7700", true},
+		{"8.8.8.8:7700", true},
+		{"[fd00::1]:7700", false},
+		{"[fdab:cdef::5]:7700", false},
+		{"[2001:db8::1]:7700", true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.address, func(t *testing.T) {
+			err := rejectNonLocalNetwork("tcp", tt.address, nil)
+			if tt.wantErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+// TestLocalNetworkOnlyOptions_ResolvesHostnames verifies the guard runs on the
+// resolved address, so a hostname (as with Docker Compose service names) that
+// resolves to a local address is allowed while a public IP is refused.
+func TestLocalNetworkOnlyOptions_ResolvesHostnames(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"status":"available"}`))
+	}))
+	t.Cleanup(srv.Close)
+
+	u, err := url.Parse(srv.URL)
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	local := meilisearch.New("http://localhost:"+u.Port(), localNetworkOnlyOptions()...)
+	_, err = local.HealthWithContext(ctx)
+	require.NoError(t, err)
+
+	public := meilisearch.New("http://8.8.8.8:7700", localNetworkOnlyOptions()...)
+	_, err = public.HealthWithContext(ctx)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "refusing insecure http connection")
 }

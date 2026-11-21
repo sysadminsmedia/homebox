@@ -100,7 +100,7 @@ type (
 		Quantity     float64   `json:"quantity"`
 		Description  string    `json:"description"  validate:"max=1000"`
 		AssetID      AssetID   `json:"-"`
-		EntityTypeID uuid.UUID `json:"entityTypeId"`
+		EntityTypeID uuid.UUID `json:"entityTypeId" extensions:"x-nullable,x-omitempty"`
 		// Only needed when ParentID is another item and this lives elsewhere (#1688).
 		LocationID uuid.UUID `json:"locationId" extensions:"x-nullable,x-omitempty"`
 
@@ -143,7 +143,7 @@ type (
 		// Otherwise ParentID carries the location. See resolveLocationOverride.
 		LocationID               uuid.UUID `json:"locationId"               extensions:"x-nullable,x-omitempty"`
 		ID                       uuid.UUID `json:"id"`
-		EntityTypeID             uuid.UUID `json:"entityTypeId"`
+		EntityTypeID             uuid.UUID `json:"entityTypeId"             extensions:"x-nullable,x-omitempty"`
 		Insured                  bool      `json:"insured"`
 		Archived                 bool      `json:"archived"`
 		SyncChildEntityLocations bool      `json:"syncChildEntityLocations"`
@@ -1104,6 +1104,45 @@ func (r *EntityRepository) QueryByAssetID(ctx context.Context, gid uuid.UUID, as
 	}, nil
 }
 
+// GetIDsByAssetIDRange returns the IDs of entities in the group whose asset ID
+// falls within [start, end], keyed by asset ID. Asset IDs without an entity are
+// absent from the map.
+func (r *EntityRepository) GetIDsByAssetIDRange(ctx context.Context, gid uuid.UUID, start, end AssetID) (map[AssetID]uuid.UUID, error) {
+	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.GetIDsByAssetIDRange",
+		trace.WithAttributes(
+			attribute.String("group.id", gid.String()),
+			attribute.Int64("asset_id.start", int64(start)),
+			attribute.Int64("asset_id.end", int64(end)),
+		))
+	defer span.End()
+
+	entities, err := r.db.Entity.Query().
+		Where(
+			entity.HasGroupWith(group.ID(gid)),
+			entity.AssetIDGTE(int64(start)),
+			entity.AssetIDLTE(int64(end)),
+		).
+		// Same ordering as QueryByAssetID, so duplicates resolve the same way
+		Order(ent.Asc(entity.FieldName)).
+		Select(entity.FieldID, entity.FieldAssetID).
+		All(ctx)
+	if err != nil {
+		recordSpanError(span, err)
+		return nil, err
+	}
+
+	ids := make(map[AssetID]uuid.UUID, len(entities))
+	for _, e := range entities {
+		// Asset IDs aren't enforced unique; keep the first by name
+		if _, ok := ids[AssetID(e.AssetID)]; !ok {
+			ids[AssetID(e.AssetID)] = e.ID
+		}
+	}
+
+	span.SetAttributes(attribute.Int("results.count", len(ids)))
+	return ids, nil
+}
+
 // GetAll returns all the entities in the database with the Tags, Parent, and EntityType eager loaded.
 func (r *EntityRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]EntityOut, error) {
 	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.GetAll",
@@ -1623,7 +1662,10 @@ func (r *EntityRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wip
 
 	loadCtx, loadSpan := entityTracer().Start(ctx, "repo.EntityRepository.WipeInventory.loadEntities")
 	entities, err := r.db.Entity.Query().
-		Where(entity.HasGroupWith(group.ID(gid))).
+		Where(
+			entity.HasGroupWith(group.ID(gid)),
+			entity.HasEntityTypeWith(entitytype.IsLocation(false)),
+		).
 		WithAttachments().
 		All(loadCtx)
 	if err != nil {
@@ -1655,6 +1697,7 @@ func (r *EntityRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wip
 			Where(
 				entity.ID(e.ID),
 				entity.HasGroupWith(group.ID(gid)),
+				entity.HasEntityTypeWith(entitytype.IsLocation(false)),
 			).Exec(entCtx)
 		if err != nil {
 			recordSpanError(entSpan, err)
@@ -2763,6 +2806,16 @@ func (r *EntityRepository) GetAllContainers(ctx context.Context, gid uuid.UUID, 
 	return list, nil
 }
 
+// GetItemCountByGroup returns the summed quantity of non-archived items whose
+// effective location is the given entity.
+func (r *EntityRepository) GetItemCountByGroup(ctx context.Context, gid, id uuid.UUID) (float64, error) {
+	counts, err := r.getChildItemCounts(ctx, gid, []uuid.UUID{id})
+	if err != nil {
+		return 0, err
+	}
+	return counts[id], nil
+}
+
 // GetContainerByGroup returns a single container entity by ID, verified to belong to a specific group.
 func (r *EntityRepository) GetContainerByGroup(ctx context.Context, gid, id uuid.UUID) (EntityOut, error) {
 	ctx, span := entityTracer().Start(ctx, "repo.EntityRepository.GetContainerByGroup",
@@ -3004,6 +3057,7 @@ func (r *EntityRepository) PathForEntity(ctx context.Context, gid, entityID uuid
 		SELECT e.id, e.name, e.entity_children
 		FROM entities e
 		JOIN entity_path ep ON e.id = ep.entity_children
+		WHERE e.group_entities = $2
 	  )
 
 	  SELECT id, name
@@ -3083,6 +3137,7 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 			ON     c.entity_children = p.id
 			WHERE  level < 10 -- prevent infinite loop & excessive recursion
 			AND    ct.is_location = true
+			AND    c.group_entities = $1
 		){{ WITH_ITEMS }}
 
 		SELECT   id,
@@ -3102,12 +3157,27 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 				 lower(NAME)`
 
 	if tq.WithItems {
-		// Items hang off their effective location. The same expression has to be
-		// used in both arms: an overridden child's effective parent is a
-		// location, so the recursive arm (items only) can't also pick it up and
-		// list it twice.
+		// Items hang off their effective location. The base arm uses the
+		// effective-location expression, so overridden children are picked up
+		// under the location they're stored in. The recursive arm follows
+		// children through their parent column and skips those whose override
+		// names a location, since the base arm already placed them.
+		//
+		// An override is only validated as a location when it is written; if
+		// its target later stops being one (its type is changed, or the type's
+		// is_location flag is cleared), it is treated as unset, like NULL, and
+		// the child stays under its parent instead of dropping out of the tree.
+		// The same goes for an override naming another group's location: the
+		// base arm only sees this group's locations, so it can't place it there.
+		//
+		// Both details of the recursive arm are deliberate (#1827). SQLite has no
+		// real index on entity_children and relies on an automatic index over
+		// (group_entities, entity_children) for this join; joining on the COALESCE
+		// expression prevents that and makes the walk quadratic. The override
+		// test is wrapped in a CASE so the planner can't pick
+		// idx_entities_location to satisfy it, which matches nearly every row
+		// and is even slower.
 		eff := locationOrParentColumn("e")
-		effChild := locationOrParentColumn("c")
 		itemQuery := `, item_tree(id, NAME, parent_id, level, node_type) AS
 		(
 			SELECT  e.id,
@@ -3118,20 +3188,34 @@ func (r *EntityRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery
 			FROM    entities e
 			JOIN    entity_types et ON et.id = e.entity_type_entities
 			WHERE   et.is_location = false
+			AND     e.group_entities = $1
 			AND     ` + eff + ` IN (SELECT id FROM entity_tree)
 
 			UNION ALL
 
 			SELECT  c.id,
 					c.NAME,
-					` + effChild + ` AS parent_id,
+					c.entity_children AS parent_id,
 					level + 1,
 					'item' AS node_type
 			FROM    entities c
 			JOIN    entity_types ct ON ct.id = c.entity_type_entities
 			JOIN    item_tree p
-			ON      ` + effChild + ` = p.id
-			WHERE   ct.is_location = false
+			ON      c.entity_children = p.id
+			WHERE   (CASE
+						WHEN c.entity_location_entities IS NULL THEN 1
+						WHEN EXISTS (
+							SELECT  1
+							FROM    entities l
+							JOIN    entity_types lt ON lt.id = l.entity_type_entities
+							WHERE   l.id = c.entity_location_entities
+							AND     l.group_entities = $1
+							AND     lt.is_location = true
+						) THEN 0
+						ELSE 1
+					END) = 1
+			AND     ct.is_location = false
+			AND     c.group_entities = $1
 			AND     level < 10 -- prevent infinite loop & excessive recursion
 		)`
 
