@@ -49,11 +49,11 @@
         <TagSelector v-model="form.defaultTagIds" :tags="tags ?? []" />
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-2">
-            <Switch id="defaultInsured" v-model:checked="form.defaultInsured" />
+            <Switch id="defaultInsured" v-model="form.defaultInsured" />
             <Label for="defaultInsured" class="text-sm">{{ $t("global.insured") }}</Label>
           </div>
           <div class="flex items-center gap-2">
-            <Switch id="defaultLifetimeWarranty" v-model:checked="form.defaultLifetimeWarranty" />
+            <Switch id="defaultLifetimeWarranty" v-model="form.defaultLifetimeWarranty" />
             <Label for="defaultLifetimeWarranty" class="text-sm">{{
               $t("components.template.form.lifetime_warranty")
             }}</Label>

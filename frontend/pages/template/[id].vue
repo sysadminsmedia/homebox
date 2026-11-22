@@ -197,11 +197,11 @@
           <TagSelector v-model="updateData.defaultTagIds" :tags="tags ?? []" />
           <div class="flex items-center gap-4">
             <div class="flex items-center gap-2">
-              <Switch id="editInsured" v-model:checked="updateData.defaultInsured" />
+              <Switch id="editInsured" v-model="updateData.defaultInsured" />
               <Label for="editInsured" class="text-sm">{{ $t("global.insured") }}</Label>
             </div>
             <div class="flex items-center gap-2">
-              <Switch id="editWarranty" v-model:checked="updateData.defaultLifetimeWarranty" />
+              <Switch id="editWarranty" v-model="updateData.defaultLifetimeWarranty" />
               <Label for="editWarranty" class="text-sm">{{ $t("components.template.form.lifetime_warranty") }}</Label>
             </div>
           </div>
