@@ -1277,6 +1277,8 @@
         "notifiers_sub": "Get notifications for upcoming maintenance reminders",
         "override_locale": "Override Date and Currency Language",
         "test": "Test",
+        "theme_dark": "Dark Themes",
+        "theme_light": "Light Themes",
         "theme_settings": "Theme Settings",
         "theme_settings_sub": "Theme settings are stored in your browser's local storage. You can change the theme at any time. If you're\n having trouble setting your theme try refreshing your browser.",
         "toast": {
