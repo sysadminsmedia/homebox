@@ -273,6 +273,8 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 		trace.WithAttributes(attribute.Int("rows.count", len(sheet.Rows))))
 	defer importSpan.End()
 
+	_, hasLocationCol := sheet.GetColumn("HB.location")
+
 	finished := 0
 
 	for i := range sheet.Rows {
@@ -422,10 +424,22 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 			}
 		})
 
+		parentID := locationID
+		var locationOverrideID uuid.UUID
+		if !createRequired && !hasLocationCol {
+			if entity.Parent != nil {
+				parentID = entity.Parent.ID
+			}
+			if entity.LocationID != nil {
+				locationOverrideID = *entity.LocationID
+			}
+		}
+
 		updateEntity := repo.EntityUpdate{
-			ID:       entity.ID,
-			TagIDs:   tagIds,
-			ParentID: locationID,
+			ID:         entity.ID,
+			TagIDs:     tagIds,
+			ParentID:   parentID,
+			LocationID: locationOverrideID,
 
 			Name:        row.Name,
 			Description: row.Description,
@@ -484,6 +498,10 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 // as a cache of already-known location paths and is updated in place with any
 // locations that are created. It returns the ID of the row's leaf location.
 func (svc *EntityService) csvImportRowLocation(ctx context.Context, gid uuid.UUID, row reporting.ExportCSVRow, locationMap map[string]uuid.UUID) (uuid.UUID, error) {
+	if len(row.Location) == 0 {
+		return uuid.Nil, nil
+	}
+
 	path := serializeLocation(row.Location)
 
 	locationID, ok := locationMap[path]
