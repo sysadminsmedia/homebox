@@ -424,16 +424,7 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 			}
 		})
 
-		parentID := locationID
-		var locationOverrideID uuid.UUID
-		if !createRequired && !hasLocationCol {
-			if entity.Parent != nil {
-				parentID = entity.Parent.ID
-			}
-			if entity.LocationID != nil {
-				locationOverrideID = *entity.LocationID
-			}
-		}
+		parentID, locationOverrideID := resolveCSVUpdateLocations(createRequired, hasLocationCol, locationID, entity)
 
 		updateEntity := repo.EntityUpdate{
 			ID:         entity.ID,
@@ -491,6 +482,19 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 	importSpan.SetAttributes(attribute.Int("rows.imported.count", finished))
 	span.SetAttributes(attribute.Int("rows.imported.count", finished))
 	return finished, nil
+}
+
+func resolveCSVUpdateLocations(createRequired, hasLocationCol bool, resolvedLocationID uuid.UUID, existing repo.EntityOut) (parentID, locationID uuid.UUID) {
+	if createRequired || hasLocationCol {
+		return resolvedLocationID, uuid.Nil
+	}
+	if existing.Parent != nil {
+		parentID = existing.Parent.ID
+	}
+	if existing.LocationID != nil {
+		locationID = *existing.LocationID
+	}
+	return parentID, locationID
 }
 
 // csvImportRowLocation resolves the leaf location for a CSV import row, creating
