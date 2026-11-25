@@ -242,11 +242,11 @@
       },
       {
         name: "items.insured",
-        text: item.value?.insured ? "Yes" : "No",
+        text: item.value?.insured ? t("global.yes") : t("global.no"),
       },
       {
         name: "items.archived",
-        text: item.value?.archived ? "Yes" : "No",
+        text: item.value?.archived ? t("global.yes") : t("global.no"),
       },
       {
         name: "items.notes",
@@ -336,7 +336,7 @@
     const details: Details = [
       {
         name: "items.lifetime_warranty",
-        text: item.value?.lifetimeWarranty ? "Yes" : "No",
+        text: item.value?.lifetimeWarranty ? t("global.yes") : t("global.no"),
       },
     ];
 
