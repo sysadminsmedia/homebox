@@ -510,3 +510,25 @@ func TestAttachmentRepo_FilesystemRootBucket(t *testing.T) {
 
 	require.NoError(t, bucket.Delete(ctx, key))
 }
+
+// #1851: a PDF has no thumbnail, and that is not a failure. The caller can tell
+// this case from a real error and log it at debug level.
+func TestAttachmentRepo_CreateThumbnail_UnsupportedTypeIsNotSupportedError(t *testing.T) {
+	ctx := context.Background()
+	entity := useEntities(t, 1)[0]
+
+	pdf, err := tRepos.Attachments.Create(ctx, entity.ID, ItemCreateAttachment{Title: "manual.pdf", Content: strings.NewReader("%PDF-1.7\n%test\n")}, attachment.TypeManual, false)
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, pdf.ID)
+	})
+
+	err = tRepos.Attachments.CreateThumbnail(ctx, tGroup.ID, pdf.ID, pdf.Title, pdf.Path)
+	require.Error(t, err)
+	require.ErrorIs(t, err, ErrThumbnailNotSupported)
+	assert.Contains(t, err.Error(), "manual.pdf")
+
+	got, err := tRepos.Attachments.Get(ctx, tGroup.ID, pdf.ID)
+	require.NoError(t, err)
+	assert.Nil(t, got.Edges.Thumbnail, "no thumbnail is saved for an unsupported type")
+}

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/md5"
+	"errors"
 	"fmt"
 	"image"
 	"io"
@@ -654,6 +655,11 @@ func (r *AttachmentRepo) Rename(ctx context.Context, gid uuid.UUID, id uuid.UUID
 	return r.db.Attachment.UpdateOneID(id).SetTitle(title).Save(ctx)
 }
 
+// ErrThumbnailNotSupported is returned by CreateThumbnail for a file that no
+// thumbnail is made for, such as a PDF. This is expected for documents, so
+// callers log it at debug level, not as an error.
+var ErrThumbnailNotSupported = errors.New("file type is not supported for thumbnail creation")
+
 //nolint:gocyclo
 func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmentId uuid.UUID, title string, path string) error {
 	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.CreateThumbnail")
@@ -882,7 +888,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		}
 		att.SetPath(uploadResult.Path)
 	default:
-		return fmt.Errorf("file type %s is not supported for thumbnail creation or document thumnails disabled", title)
+		return fmt.Errorf("%w: %s (or document thumbnails are disabled)", ErrThumbnailNotSupported, title)
 	}
 
 	att.SetMimeType("image/webp")

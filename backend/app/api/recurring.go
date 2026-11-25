@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -9,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/graceful"
 	"github.com/rs/zerolog/log"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
 	"gocloud.dev/blob"
@@ -158,7 +160,11 @@ func registerRecurringTasks(app *app, cfg *config.Config, runner *graceful.Runne
 						log.Error().Err(err).Str("attachment_id", msg.Metadata["attachment_id"]).Msg("failed to parse attachment ID from message metadata")
 					}
 					err = app.repos.Attachments.CreateThumbnail(ctx, groupId, attachmentId, msg.Metadata["title"], msg.Metadata["path"])
-					if err != nil {
+					switch {
+					case errors.Is(err, repo.ErrThumbnailNotSupported):
+						// A PDF or another document: there is no thumbnail to make, and nothing failed.
+						log.Debug().Err(err).Msg("no thumbnail created")
+					case err != nil:
 						log.Err(err).Msg("failed to create thumbnail")
 					}
 					msg.Ack()
