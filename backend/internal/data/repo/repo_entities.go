@@ -1872,38 +1872,10 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		q.SetEntityTypeID(data.EntityTypeID)
 	}
 
-	tagsCtx, tagsSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.tags")
-	currentTags, err := tx.Entity.Query().
-		Where(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))).
-		QueryTag().All(tagsCtx)
-	if err != nil {
-		recordSpanError(tagsSpan, err)
-		tagsSpan.End()
+	if err := syncEntityTagsTx(ctx, tx, gid, data.ID, data.TagIDs, q); err != nil {
 		recordSpanError(span, err)
 		return EntityOut{}, err
 	}
-
-	set := newIDSet(currentTags)
-
-	added := 0
-	for _, l := range data.TagIDs {
-		if set.Contains(l) {
-			set.Remove(l)
-			continue
-		}
-		q.AddTagIDs(l)
-		added++
-	}
-
-	removed := set.Len()
-	if removed > 0 {
-		q.RemoveTagIDs(set.Slice()...)
-	}
-	tagsSpan.SetAttributes(
-		attribute.Int("tags.added.count", added),
-		attribute.Int("tags.removed.count", removed),
-	)
-	tagsSpan.End()
 
 	if parentID != uuid.Nil {
 		q.SetParentID(parentID)
@@ -1946,87 +1918,10 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		return EntityOut{}, err
 	}
 
-	fieldsCtx, fieldsSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.fields",
-		trace.WithAttributes(attribute.Int("fields.input.count", len(data.Fields))))
-	fields, err := tx.EntityField.Query().
-		Where(entityfield.HasEntityWith(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid)))).
-		All(fieldsCtx)
-	if err != nil {
-		recordSpanError(fieldsSpan, err)
-		fieldsSpan.End()
+	if err := syncEntityFieldsTx(ctx, tx, gid, data.ID, data.Fields); err != nil {
 		recordSpanError(span, err)
 		return EntityOut{}, err
 	}
-
-	fieldIds := newIDSet(fields)
-	fieldsSpan.SetAttributes(attribute.Int("fields.existing.count", len(fields)))
-
-	createdFields := 0
-	updatedFields := 0
-	// Update Existing Fields
-	for _, f := range data.Fields {
-		if f.ID == uuid.Nil {
-			_, err = tx.EntityField.Create().
-				SetEntityID(data.ID).
-				SetType(entityfield.Type(f.Type)).
-				SetName(f.Name).
-				SetTextValue(f.TextValue).
-				SetNumberValue(f.NumberValue).
-				SetBooleanValue(f.BooleanValue).
-				Save(fieldsCtx)
-			if err != nil {
-				recordSpanError(fieldsSpan, err)
-				fieldsSpan.End()
-				recordSpanError(span, err)
-				return EntityOut{}, err
-			}
-			createdFields++
-		}
-
-		opt := tx.EntityField.Update().
-			Where(
-				entityfield.ID(f.ID),
-				entityfield.HasEntityWith(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))),
-			).
-			SetType(entityfield.Type(f.Type)).
-			SetName(f.Name).
-			SetTextValue(f.TextValue).
-			SetNumberValue(f.NumberValue).
-			SetBooleanValue(f.BooleanValue)
-
-		_, err = opt.Save(fieldsCtx)
-		if err != nil {
-			recordSpanError(fieldsSpan, err)
-			fieldsSpan.End()
-			recordSpanError(span, err)
-			return EntityOut{}, err
-		}
-		updatedFields++
-
-		fieldIds.Remove(f.ID)
-		continue
-	}
-
-	deletedFields := 0
-	if fieldIds.Len() > 0 {
-		deletedFields, err = tx.EntityField.Delete().
-			Where(
-				entityfield.IDIn(fieldIds.Slice()...),
-				entityfield.HasEntityWith(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))),
-			).Exec(fieldsCtx)
-		if err != nil {
-			recordSpanError(fieldsSpan, err)
-			fieldsSpan.End()
-			recordSpanError(span, err)
-			return EntityOut{}, err
-		}
-	}
-	fieldsSpan.SetAttributes(
-		attribute.Int("fields.created.count", createdFields),
-		attribute.Int("fields.updated.count", updatedFields),
-		attribute.Int("fields.deleted.count", deletedFields),
-	)
-	fieldsSpan.End()
 
 	if err := tx.Commit(); err != nil {
 		recordSpanError(span, err)
@@ -2042,6 +1937,117 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 	out, err := r.GetOneByGroup(ctx, gid, data.ID)
 	recordSpanError(span, err)
 	return out, err
+}
+
+func syncEntityTagsTx(ctx context.Context, tx *ent.Tx, gid, entityID uuid.UUID, tagIDs []uuid.UUID, q *ent.EntityUpdate) error {
+	tagsCtx, tagsSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.tags")
+	defer tagsSpan.End()
+
+	currentTags, err := tx.Entity.Query().
+		Where(entity.ID(entityID), entity.HasGroupWith(group.ID(gid))).
+		QueryTag().All(tagsCtx)
+	if err != nil {
+		recordSpanError(tagsSpan, err)
+		return err
+	}
+
+	set := newIDSet(currentTags)
+	added := 0
+	for _, l := range tagIDs {
+		if set.Contains(l) {
+			set.Remove(l)
+			continue
+		}
+		q.AddTagIDs(l)
+		added++
+	}
+
+	removed := set.Len()
+	if removed > 0 {
+		q.RemoveTagIDs(set.Slice()...)
+	}
+	tagsSpan.SetAttributes(
+		attribute.Int("tags.added.count", added),
+		attribute.Int("tags.removed.count", removed),
+	)
+	return nil
+}
+
+func syncEntityFieldsTx(ctx context.Context, tx *ent.Tx, gid, entityID uuid.UUID, inputFields []EntityFieldData) error {
+	fieldsCtx, fieldsSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.fields",
+		trace.WithAttributes(attribute.Int("fields.input.count", len(inputFields))))
+	defer fieldsSpan.End()
+
+	fields, err := tx.EntityField.Query().
+		Where(entityfield.HasEntityWith(entity.ID(entityID), entity.HasGroupWith(group.ID(gid)))).
+		All(fieldsCtx)
+	if err != nil {
+		recordSpanError(fieldsSpan, err)
+		return err
+	}
+
+	fieldIds := newIDSet(fields)
+	fieldsSpan.SetAttributes(attribute.Int("fields.existing.count", len(fields)))
+
+	createdFields := 0
+	updatedFields := 0
+	// Update Existing Fields
+	for _, f := range inputFields {
+		if f.ID == uuid.Nil {
+			_, err = tx.EntityField.Create().
+				SetEntityID(entityID).
+				SetType(entityfield.Type(f.Type)).
+				SetName(f.Name).
+				SetTextValue(f.TextValue).
+				SetNumberValue(f.NumberValue).
+				SetBooleanValue(f.BooleanValue).
+				Save(fieldsCtx)
+			if err != nil {
+				recordSpanError(fieldsSpan, err)
+				return err
+			}
+			createdFields++
+		}
+
+		opt := tx.EntityField.Update().
+			Where(
+				entityfield.ID(f.ID),
+				entityfield.HasEntityWith(entity.ID(entityID), entity.HasGroupWith(group.ID(gid))),
+			).
+			SetType(entityfield.Type(f.Type)).
+			SetName(f.Name).
+			SetTextValue(f.TextValue).
+			SetNumberValue(f.NumberValue).
+			SetBooleanValue(f.BooleanValue)
+
+		_, err = opt.Save(fieldsCtx)
+		if err != nil {
+			recordSpanError(fieldsSpan, err)
+			return err
+		}
+		updatedFields++
+
+		fieldIds.Remove(f.ID)
+	}
+
+	deletedFields := 0
+	if fieldIds.Len() > 0 {
+		deletedFields, err = tx.EntityField.Delete().
+			Where(
+				entityfield.IDIn(fieldIds.Slice()...),
+				entityfield.HasEntityWith(entity.ID(entityID), entity.HasGroupWith(group.ID(gid))),
+			).Exec(fieldsCtx)
+		if err != nil {
+			recordSpanError(fieldsSpan, err)
+			return err
+		}
+	}
+	fieldsSpan.SetAttributes(
+		attribute.Int("fields.created.count", createdFields),
+		attribute.Int("fields.updated.count", updatedFields),
+		attribute.Int("fields.deleted.count", deletedFields),
+	)
+	return nil
 }
 
 func (r *EntityRepository) GetAllZeroImportRef(ctx context.Context, gid uuid.UUID) ([]uuid.UUID, error) {
