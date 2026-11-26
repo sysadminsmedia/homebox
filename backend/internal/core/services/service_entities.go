@@ -273,6 +273,8 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 		trace.WithAttributes(attribute.Int("rows.count", len(sheet.Rows))))
 	defer importSpan.End()
 
+	_, hasLocationCol := sheet.GetColumn("HB.location")
+
 	finished := 0
 
 	for i := range sheet.Rows {
@@ -422,10 +424,13 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 			}
 		})
 
+		parentID, locationOverrideID := resolveCSVUpdateLocations(createRequired, hasLocationCol, locationID, entity)
+
 		updateEntity := repo.EntityUpdate{
-			ID:       entity.ID,
-			TagIDs:   tagIds,
-			ParentID: locationID,
+			ID:         entity.ID,
+			TagIDs:     tagIds,
+			ParentID:   parentID,
+			LocationID: locationOverrideID,
 
 			Name:        row.Name,
 			Description: row.Description,
@@ -479,11 +484,29 @@ func (svc *EntityService) CsvImport(ctx context.Context, gid uuid.UUID, data io.
 	return finished, nil
 }
 
+func resolveCSVUpdateLocations(createRequired, hasLocationCol bool, resolvedLocationID uuid.UUID, existing repo.EntityOut) (parentID, locationID uuid.UUID) {
+	if createRequired || hasLocationCol {
+		return resolvedLocationID, uuid.Nil
+	}
+	if existing.Parent != nil {
+		parentID = existing.Parent.ID
+	}
+	parentIsLocation := existing.Parent != nil && existing.Parent.EntityType != nil && existing.Parent.EntityType.IsLocation
+	if existing.LocationID != nil && !parentIsLocation {
+		locationID = *existing.LocationID
+	}
+	return parentID, locationID
+}
+
 // csvImportRowLocation resolves the leaf location for a CSV import row, creating
 // any missing locations in the row's location path as it goes. locationMap acts
 // as a cache of already-known location paths and is updated in place with any
 // locations that are created. It returns the ID of the row's leaf location.
 func (svc *EntityService) csvImportRowLocation(ctx context.Context, gid uuid.UUID, row reporting.ExportCSVRow, locationMap map[string]uuid.UUID) (uuid.UUID, error) {
+	if len(row.Location) == 0 {
+		return uuid.Nil, nil
+	}
+
 	path := serializeLocation(row.Location)
 
 	locationID, ok := locationMap[path]

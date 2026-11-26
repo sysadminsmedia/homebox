@@ -1815,7 +1815,21 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 	}
 	span.SetAttributes(attribute.Bool("entity.location_override.set", locationOverride != uuid.Nil))
 
-	q := r.db.Entity.Update().Where(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))).
+	tx, err := r.db.Tx(ctx)
+	if err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+	committed := false
+	defer func() {
+		if !committed {
+			if err := tx.Rollback(); err != nil {
+				log.Warn().Err(err).Msg("failed to rollback transaction during entity update")
+			}
+		}
+	}()
+
+	q := tx.Entity.Update().Where(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))).
 		SetName(data.Name).
 		SetDescription(data.Description).
 		SetSerialNumber(data.SerialNumber).
@@ -1858,38 +1872,10 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		q.SetEntityTypeID(data.EntityTypeID)
 	}
 
-	tagsCtx, tagsSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.tags")
-	currentTags, err := r.db.Entity.Query().
-		Where(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))).
-		QueryTag().All(tagsCtx)
-	if err != nil {
-		recordSpanError(tagsSpan, err)
-		tagsSpan.End()
+	if err := syncEntityTagsTx(ctx, tx, gid, data.ID, data.TagIDs, q); err != nil {
 		recordSpanError(span, err)
 		return EntityOut{}, err
 	}
-
-	set := newIDSet(currentTags)
-
-	added := 0
-	for _, l := range data.TagIDs {
-		if set.Contains(l) {
-			set.Remove(l)
-			continue
-		}
-		q.AddTagIDs(l)
-		added++
-	}
-
-	removed := set.Len()
-	if removed > 0 {
-		q.RemoveTagIDs(set.Slice()...)
-	}
-	tagsSpan.SetAttributes(
-		attribute.Int("tags.added.count", added),
-		attribute.Int("tags.removed.count", removed),
-	)
-	tagsSpan.End()
 
 	if parentID != uuid.Nil {
 		q.SetParentID(parentID)
@@ -1918,7 +1904,7 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 	// hierarchy on every save before #1591.
 	if data.SyncChildEntityLocations {
 		syncCtx, syncSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.syncChildLocations")
-		cleared, err := clearChildLocationOverrides(syncCtx, r.db.Entity, gid, data.ID)
+		cleared, err := clearChildLocationOverrides(syncCtx, tx.Entity, gid, data.ID)
 		if err != nil {
 			recordSpanError(syncSpan, err)
 			syncSpan.End()
@@ -1927,18 +1913,77 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		}
 		syncSpan.SetAttributes(attribute.Int("children.location_overrides.cleared", cleared))
 		syncSpan.End()
+	} else if _, err := reconcileChildLocationOverrides(ctx, tx.Entity, tx.EntityType, gid, data.ID, data.EntityTypeID); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
 	}
 
+	if err := syncEntityFieldsTx(ctx, tx, gid, data.ID, data.Fields); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+
+	if err := tx.Commit(); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+	committed = true
+
+	r.publishMutationEvent(gid)
+	// Fetch the returned record scoped to the caller's group. The update above is
+	// group-scoped and a no-op across tenants, so an unscoped GetOne would return
+	// another group's entity in the response body. GetOneByGroup returns not-found
+	// for a foreign entity, matching the 404 behavior of GET/DELETE.
+	out, err := r.GetOneByGroup(ctx, gid, data.ID)
+	recordSpanError(span, err)
+	return out, err
+}
+
+func syncEntityTagsTx(ctx context.Context, tx *ent.Tx, gid, entityID uuid.UUID, tagIDs []uuid.UUID, q *ent.EntityUpdate) error {
+	tagsCtx, tagsSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.tags")
+	defer tagsSpan.End()
+
+	currentTags, err := tx.Entity.Query().
+		Where(entity.ID(entityID), entity.HasGroupWith(group.ID(gid))).
+		QueryTag().All(tagsCtx)
+	if err != nil {
+		recordSpanError(tagsSpan, err)
+		return err
+	}
+
+	set := newIDSet(currentTags)
+	added := 0
+	for _, l := range tagIDs {
+		if set.Contains(l) {
+			set.Remove(l)
+			continue
+		}
+		q.AddTagIDs(l)
+		added++
+	}
+
+	removed := set.Len()
+	if removed > 0 {
+		q.RemoveTagIDs(set.Slice()...)
+	}
+	tagsSpan.SetAttributes(
+		attribute.Int("tags.added.count", added),
+		attribute.Int("tags.removed.count", removed),
+	)
+	return nil
+}
+
+func syncEntityFieldsTx(ctx context.Context, tx *ent.Tx, gid, entityID uuid.UUID, inputFields []EntityFieldData) error {
 	fieldsCtx, fieldsSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.fields",
-		trace.WithAttributes(attribute.Int("fields.input.count", len(data.Fields))))
-	fields, err := r.db.EntityField.Query().
-		Where(entityfield.HasEntityWith(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid)))).
+		trace.WithAttributes(attribute.Int("fields.input.count", len(inputFields))))
+	defer fieldsSpan.End()
+
+	fields, err := tx.EntityField.Query().
+		Where(entityfield.HasEntityWith(entity.ID(entityID), entity.HasGroupWith(group.ID(gid)))).
 		All(fieldsCtx)
 	if err != nil {
 		recordSpanError(fieldsSpan, err)
-		fieldsSpan.End()
-		recordSpanError(span, err)
-		return EntityOut{}, err
+		return err
 	}
 
 	fieldIds := newIDSet(fields)
@@ -1947,10 +1992,10 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 	createdFields := 0
 	updatedFields := 0
 	// Update Existing Fields
-	for _, f := range data.Fields {
+	for _, f := range inputFields {
 		if f.ID == uuid.Nil {
-			_, err = r.db.EntityField.Create().
-				SetEntityID(data.ID).
+			_, err = tx.EntityField.Create().
+				SetEntityID(entityID).
 				SetType(entityfield.Type(f.Type)).
 				SetName(f.Name).
 				SetTextValue(f.TextValue).
@@ -1959,17 +2004,15 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 				Save(fieldsCtx)
 			if err != nil {
 				recordSpanError(fieldsSpan, err)
-				fieldsSpan.End()
-				recordSpanError(span, err)
-				return EntityOut{}, err
+				return err
 			}
 			createdFields++
 		}
 
-		opt := r.db.EntityField.Update().
+		opt := tx.EntityField.Update().
 			Where(
 				entityfield.ID(f.ID),
-				entityfield.HasEntityWith(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))),
+				entityfield.HasEntityWith(entity.ID(entityID), entity.HasGroupWith(group.ID(gid))),
 			).
 			SetType(entityfield.Type(f.Type)).
 			SetName(f.Name).
@@ -1980,28 +2023,23 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		_, err = opt.Save(fieldsCtx)
 		if err != nil {
 			recordSpanError(fieldsSpan, err)
-			fieldsSpan.End()
-			recordSpanError(span, err)
-			return EntityOut{}, err
+			return err
 		}
 		updatedFields++
 
 		fieldIds.Remove(f.ID)
-		continue
 	}
 
 	deletedFields := 0
 	if fieldIds.Len() > 0 {
-		deletedFields, err = r.db.EntityField.Delete().
+		deletedFields, err = tx.EntityField.Delete().
 			Where(
 				entityfield.IDIn(fieldIds.Slice()...),
-				entityfield.HasEntityWith(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))),
+				entityfield.HasEntityWith(entity.ID(entityID), entity.HasGroupWith(group.ID(gid))),
 			).Exec(fieldsCtx)
 		if err != nil {
 			recordSpanError(fieldsSpan, err)
-			fieldsSpan.End()
-			recordSpanError(span, err)
-			return EntityOut{}, err
+			return err
 		}
 	}
 	fieldsSpan.SetAttributes(
@@ -2009,16 +2047,7 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		attribute.Int("fields.updated.count", updatedFields),
 		attribute.Int("fields.deleted.count", deletedFields),
 	)
-	fieldsSpan.End()
-
-	r.publishMutationEvent(gid)
-	// Fetch the returned record scoped to the caller's group. The update above is
-	// group-scoped and a no-op across tenants, so an unscoped GetOne would return
-	// another group's entity in the response body. GetOneByGroup returns not-found
-	// for a foreign entity, matching the 404 behavior of GET/DELETE.
-	out, err := r.GetOneByGroup(ctx, gid, data.ID)
-	recordSpanError(span, err)
-	return out, err
+	return nil
 }
 
 func (r *EntityRepository) GetAllZeroImportRef(ctx context.Context, gid uuid.UUID) ([]uuid.UUID, error) {
@@ -2235,6 +2264,11 @@ func (r *EntityRepository) Patch(ctx context.Context, gid, id uuid.UUID, data En
 			recordSpanError(span, err)
 			return err
 		}
+	}
+
+	if _, err := reconcileChildLocationOverrides(ctx, tx.Entity, tx.EntityType, gid, id, data.EntityTypeID); err != nil {
+		recordSpanError(span, err)
+		return err
 	}
 
 	// A parent change deliberately leaves children alone: they stay attached
