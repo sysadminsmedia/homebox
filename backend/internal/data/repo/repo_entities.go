@@ -1927,6 +1927,9 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		}
 		syncSpan.SetAttributes(attribute.Int("children.location_overrides.cleared", cleared))
 		syncSpan.End()
+	} else if _, err := reconcileChildLocationOverrides(ctx, r.db.Entity, r.db.EntityType, gid, data.ID, data.EntityTypeID); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
 	}
 
 	fieldsCtx, fieldsSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.fields",
@@ -2235,6 +2238,11 @@ func (r *EntityRepository) Patch(ctx context.Context, gid, id uuid.UUID, data En
 			recordSpanError(span, err)
 			return err
 		}
+	}
+
+	if _, err := reconcileChildLocationOverrides(ctx, tx.Entity, tx.EntityType, gid, id, data.EntityTypeID); err != nil {
+		recordSpanError(span, err)
+		return err
 	}
 
 	// A parent change deliberately leaves children alone: they stay attached

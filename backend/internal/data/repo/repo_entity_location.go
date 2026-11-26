@@ -124,6 +124,22 @@ func clearChildLocationOverrides(ctx context.Context, c *ent.EntityClient, gid, 
 		Save(ctx)
 }
 
+// reconcileChildLocationOverrides drops direct children's overrides when an
+// entity's type becomes a location, since overrides are only valid under
+// non-location parents.
+func reconcileChildLocationOverrides(ctx context.Context, c *ent.EntityClient, tClient *ent.EntityTypeClient, gid, entityID, entityTypeID uuid.UUID) (int, error) {
+	if entityTypeID == uuid.Nil {
+		return 0, nil
+	}
+	isLocation, err := tClient.Query().
+		Where(entitytype.ID(entityTypeID), entitytype.IsLocation(true)).
+		Exist(ctx)
+	if err != nil || !isLocation {
+		return 0, err
+	}
+	return clearChildLocationOverrides(ctx, c, gid, entityID)
+}
+
 // locationOrParentColumn is the effective-location expression for the raw SQL
 // queries, where ent's predicate builder isn't available.
 func locationOrParentColumn(table string) string {

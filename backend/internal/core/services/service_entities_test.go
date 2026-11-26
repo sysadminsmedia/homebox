@@ -195,3 +195,65 @@ func TestEntityService_CsvImport_UpdateByRefWithoutLocationColumn(t *testing.T) 
 	require.NoError(t, err)
 	require.Nil(t, cleared.Parent)
 }
+
+func TestEntityService_CsvImport_WithoutLocationSucceedsAfterParentBecomesLocation(t *testing.T) {
+	ctx := context.Background()
+
+	grp, err := tRepos.Groups.GroupCreate(ctx, "csv-parent-becomes-loc-"+fk.Str(4), uuid.Nil)
+	require.NoError(t, err)
+
+	itemType, err := tRepos.EntityTypes.GetDefault(ctx, grp.ID, false)
+	require.NoError(t, err)
+	locType, err := tRepos.EntityTypes.GetDefault(ctx, grp.ID, true)
+	require.NoError(t, err)
+
+	attic, err := tRepos.Entities.Create(ctx, grp.ID, repo.EntityCreate{
+		Name: "Attic", EntityTypeID: locType.ID,
+	})
+	require.NoError(t, err)
+	basement, err := tRepos.Entities.Create(ctx, grp.ID, repo.EntityCreate{
+		Name: "Basement", EntityTypeID: locType.ID,
+	})
+	require.NoError(t, err)
+
+	parent, err := tRepos.Entities.Create(ctx, grp.ID, repo.EntityCreate{
+		Name: "Toolbox", EntityTypeID: itemType.ID, ParentID: attic.ID,
+	})
+	require.NoError(t, err)
+
+	child, err := tRepos.Entities.Create(ctx, grp.ID, repo.EntityCreate{
+		ImportRef:    "child-ref-1",
+		Name:         "Wrench",
+		EntityTypeID: itemType.ID,
+		ParentID:     parent.ID,
+		LocationID:   basement.ID,
+		Quantity:     1,
+	})
+	require.NoError(t, err)
+
+	_, err = tRepos.Entities.UpdateByGroup(ctx, grp.ID, repo.EntityUpdate{
+		ID:           parent.ID,
+		Name:         parent.Name,
+		Quantity:     1,
+		ParentID:     attic.ID,
+		EntityTypeID: locType.ID,
+	})
+	require.NoError(t, err)
+
+	csvData := strings.Join([]string{
+		"HB.import_ref,HB.name,HB.description",
+		"child-ref-1,Wrench,updated description",
+		"",
+	}, "\n")
+
+	n, err := tSvc.Entities.CsvImport(ctx, grp.ID, strings.NewReader(csvData))
+	require.NoError(t, err)
+	require.Equal(t, 1, n)
+
+	got, err := tRepos.Entities.GetOneByGroup(ctx, grp.ID, child.ID)
+	require.NoError(t, err)
+	require.Equal(t, "updated description", got.Description)
+	require.Nil(t, got.LocationID)
+	require.NotNil(t, got.Parent)
+	require.Equal(t, parent.ID, got.Parent.ID)
+}

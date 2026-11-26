@@ -491,7 +491,8 @@ func resolveCSVUpdateLocations(createRequired, hasLocationCol bool, resolvedLoca
 	if existing.Parent != nil {
 		parentID = existing.Parent.ID
 	}
-	if existing.LocationID != nil {
+	parentIsLocation := existing.Parent != nil && existing.Parent.EntityType != nil && existing.Parent.EntityType.IsLocation
+	if existing.LocationID != nil && !parentIsLocation {
 		locationID = *existing.LocationID
 	}
 	return parentID, locationID

@@ -520,3 +520,70 @@ func TestEntityLocation_DeletingLocationFallsBackToInheritance(t *testing.T) {
 	require.NotNil(t, survived.Parent)
 	assert.Equal(t, parent.ID, survived.Parent.ID)
 }
+
+func TestEntityLocation_BecomingLocationClearsChildOverrides(t *testing.T) {
+	locType := func(t *testing.T, gid uuid.UUID) uuid.UUID {
+		t.Helper()
+		et, err := tRepos.EntityTypes.GetDefault(context.Background(), gid, true)
+		require.NoError(t, err)
+		return et.ID
+	}
+
+	t.Run("UpdateByGroup", func(t *testing.T) {
+		ctx := context.Background()
+		f := newLocationFixture(t, "loc-become-update")
+
+		parent, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
+			Name: testParentName, EntityTypeID: f.itemType, ParentID: f.attic.ID,
+		})
+		require.NoError(t, err)
+
+		child, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
+			Name: testChildName, EntityTypeID: f.itemType,
+			ParentID: parent.ID, LocationID: f.basement.ID,
+		})
+		require.NoError(t, err)
+
+		_, err = tRepos.Entities.UpdateByGroup(ctx, f.gid, EntityUpdate{
+			ID:           parent.ID,
+			Name:         testParentName,
+			Quantity:     1,
+			ParentID:     f.attic.ID,
+			EntityTypeID: locType(t, f.gid),
+		})
+		require.NoError(t, err)
+
+		got, err := tRepos.Entities.GetOneByGroup(ctx, f.gid, child.ID)
+		require.NoError(t, err)
+		assert.Nil(t, got.LocationID)
+		require.NotNil(t, got.Location)
+		assert.Equal(t, parent.ID, got.Location.ID)
+	})
+
+	t.Run("Patch", func(t *testing.T) {
+		ctx := context.Background()
+		f := newLocationFixture(t, "loc-become-patch")
+
+		parent, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
+			Name: testParentName, EntityTypeID: f.itemType, ParentID: f.attic.ID,
+		})
+		require.NoError(t, err)
+
+		child, err := tRepos.Entities.Create(ctx, f.gid, EntityCreate{
+			Name: testChildName, EntityTypeID: f.itemType,
+			ParentID: parent.ID, LocationID: f.basement.ID,
+		})
+		require.NoError(t, err)
+
+		err = tRepos.Entities.Patch(ctx, f.gid, parent.ID, EntityPatch{
+			EntityTypeID: locType(t, f.gid),
+		})
+		require.NoError(t, err)
+
+		got, err := tRepos.Entities.GetOneByGroup(ctx, f.gid, child.ID)
+		require.NoError(t, err)
+		assert.Nil(t, got.LocationID)
+		require.NotNil(t, got.Location)
+		assert.Equal(t, parent.ID, got.Location.ID)
+	})
+}
