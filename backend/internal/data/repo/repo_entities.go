@@ -1815,7 +1815,21 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 	}
 	span.SetAttributes(attribute.Bool("entity.location_override.set", locationOverride != uuid.Nil))
 
-	q := r.db.Entity.Update().Where(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))).
+	tx, err := r.db.Tx(ctx)
+	if err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+	committed := false
+	defer func() {
+		if !committed {
+			if err := tx.Rollback(); err != nil {
+				log.Warn().Err(err).Msg("failed to rollback transaction during entity update")
+			}
+		}
+	}()
+
+	q := tx.Entity.Update().Where(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))).
 		SetName(data.Name).
 		SetDescription(data.Description).
 		SetSerialNumber(data.SerialNumber).
@@ -1859,7 +1873,7 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 	}
 
 	tagsCtx, tagsSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.tags")
-	currentTags, err := r.db.Entity.Query().
+	currentTags, err := tx.Entity.Query().
 		Where(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))).
 		QueryTag().All(tagsCtx)
 	if err != nil {
@@ -1918,7 +1932,7 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 	// hierarchy on every save before #1591.
 	if data.SyncChildEntityLocations {
 		syncCtx, syncSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.syncChildLocations")
-		cleared, err := clearChildLocationOverrides(syncCtx, r.db.Entity, gid, data.ID)
+		cleared, err := clearChildLocationOverrides(syncCtx, tx.Entity, gid, data.ID)
 		if err != nil {
 			recordSpanError(syncSpan, err)
 			syncSpan.End()
@@ -1927,14 +1941,14 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		}
 		syncSpan.SetAttributes(attribute.Int("children.location_overrides.cleared", cleared))
 		syncSpan.End()
-	} else if _, err := reconcileChildLocationOverrides(ctx, r.db.Entity, r.db.EntityType, gid, data.ID, data.EntityTypeID); err != nil {
+	} else if _, err := reconcileChildLocationOverrides(ctx, tx.Entity, tx.EntityType, gid, data.ID, data.EntityTypeID); err != nil {
 		recordSpanError(span, err)
 		return EntityOut{}, err
 	}
 
 	fieldsCtx, fieldsSpan := entityTracer().Start(ctx, "repo.EntityRepository.UpdateByGroup.fields",
 		trace.WithAttributes(attribute.Int("fields.input.count", len(data.Fields))))
-	fields, err := r.db.EntityField.Query().
+	fields, err := tx.EntityField.Query().
 		Where(entityfield.HasEntityWith(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid)))).
 		All(fieldsCtx)
 	if err != nil {
@@ -1952,7 +1966,7 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 	// Update Existing Fields
 	for _, f := range data.Fields {
 		if f.ID == uuid.Nil {
-			_, err = r.db.EntityField.Create().
+			_, err = tx.EntityField.Create().
 				SetEntityID(data.ID).
 				SetType(entityfield.Type(f.Type)).
 				SetName(f.Name).
@@ -1969,7 +1983,7 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 			createdFields++
 		}
 
-		opt := r.db.EntityField.Update().
+		opt := tx.EntityField.Update().
 			Where(
 				entityfield.ID(f.ID),
 				entityfield.HasEntityWith(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))),
@@ -1995,7 +2009,7 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 
 	deletedFields := 0
 	if fieldIds.Len() > 0 {
-		deletedFields, err = r.db.EntityField.Delete().
+		deletedFields, err = tx.EntityField.Delete().
 			Where(
 				entityfield.IDIn(fieldIds.Slice()...),
 				entityfield.HasEntityWith(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))),
@@ -2013,6 +2027,12 @@ func (r *EntityRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, dat
 		attribute.Int("fields.deleted.count", deletedFields),
 	)
 	fieldsSpan.End()
+
+	if err := tx.Commit(); err != nil {
+		recordSpanError(span, err)
+		return EntityOut{}, err
+	}
+	committed = true
 
 	r.publishMutationEvent(gid)
 	// Fetch the returned record scoped to the caller's group. The update above is
