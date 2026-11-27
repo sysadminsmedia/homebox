@@ -4069,6 +4069,10 @@ const docTemplate = `{
                     "description": "Notes holds the value of the \"notes\" field.",
                     "type": "string"
                 },
+                "notify_warranty_expiration": {
+                    "description": "NotifyWarrantyExpiration holds the value of the \"notify_warranty_expiration\" field.",
+                    "type": "boolean"
+                },
                 "purchase_date": {
                     "description": "PurchaseDate holds the value of the \"purchase_date\" field.",
                     "type": "string"
@@ -5809,6 +5813,9 @@ const docTemplate = `{
                     "description": "Extras",
                     "type": "string"
                 },
+                "notifyWarrantyExpiration": {
+                    "type": "boolean"
+                },
                 "parent": {
                     "description": "Edges",
                     "allOf": [
@@ -6416,6 +6423,9 @@ const docTemplate = `{
                 "notes": {
                     "description": "Extras",
                     "type": "string"
+                },
+                "notifyWarrantyExpiration": {
+                    "type": "boolean"
                 },
                 "parentId": {
                     "type": "string",

@@ -74,6 +74,8 @@ func (Entity) Fields() []ent.Field {
 		field.Text("warranty_details").
 			MaxLen(1000).
 			Optional(),
+		field.Bool("notify_warranty_expiration").
+			Default(false),
 
 		// ------------------------------------
 		// item purchase
